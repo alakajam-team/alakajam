@@ -1,0 +1,29 @@
+{
+  "name": "we-jam",
+  "version": "0.0.0",
+  "description": "Game jam system",
+  "main": "meadowlark.js",
+  "scripts": {
+    "start": "node --harmony wejam.js",
+    "nodemon": "nodemon --exec node --harmony wejam.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mkalam-alami/we-jam.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mkalam-alami/issues"
+  },
+  "dependencies": {
+    "bookshelf": "^0.10.2",
+    "bookshelf-uuid": "^1.0.0",
+    "express": "^4.14.0",
+    "express-nunjucks": "^2.1.2",
+    "knex": "^0.12.6",
+    "nunjucks": "^3.0.0",
+    "sqlite3": "^3.1.8"
+  },
+  "devDependencies": {
+  }
+}

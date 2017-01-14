@@ -1,0 +1,8 @@
+# Local files
+node_modules
+config.js
+*.log
+
+# OS-specific garbage
+.DS_Store
+*~
