@@ -1,16 +1,14 @@
-let db = require('../lib/db')
-
-let Entry = require('../models/entry')
+const Entry = require('../models/entry')
 
 module.exports = {
-  
-  initRoutes: function(app) {
+
+  initRoutes: function (app) {
     app.use('/', index)
   }
-  
+
 }
 
-async function index(req, res) {
+async function index (req, res) {
   try {
     await new Entry({title: 'Game'}).save()
     let count = await new Entry().count()

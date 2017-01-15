@@ -1,11 +1,11 @@
 const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
+const init = require('./lib/init')
 const system = require('./lib/system')
-const dbSchema = require('./lib/db_schema')
+const log = require('./lib/log')
 
-dbSchema.dropCreate().then(function() {
-
+init().then(function () {
   // App setup
 
   const app = express()
@@ -26,7 +26,7 @@ dbSchema.dropCreate().then(function() {
 
   // Launch
 
-  app.listen(8000)
-  console.log('Listening on port 8000.')
-  
+  const config = require('./config')
+  app.listen(config.SERVER_PORT)
+  log.info(`Server started on port ${config.SERVER_PORT}.`)
 })
