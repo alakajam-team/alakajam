@@ -5,7 +5,8 @@
   "main": "meadowlark.js",
   "scripts": {
     "start": "node --harmony wejam.js",
-    "nodemon": "nodemon --exec node --harmony wejam.js"
+    "debug": "node-debug --nodejs --harmony wejam.js",
+    "forever": "forever -w -c \"node --harmony\" wejam.js"
   },
   "repository": {
     "type": "git",

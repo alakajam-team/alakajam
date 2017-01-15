@@ -2,28 +2,31 @@ const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
 const system = require('./lib/system')
+const dbSchema = require('./lib/db_schema')
 
-// App setup
+dbSchema.dropCreate().then(function() {
 
-const app = express()
-const isDev = app.get('env') === 'development'
+  // App setup
 
-system.gracefulShutdown(app)
+  const app = express()
+  const isDev = app.get('env') === 'development'
 
-app.set('views', path.join(__dirname, '/templates'))
+  system.gracefulShutdown(app)
 
-expressNunjucks(app, {
-  watch: isDev,
-  noCache: isDev
+  app.set('views', path.join(__dirname, '/templates'))
+
+  expressNunjucks(app, {
+    watch: isDev,
+    noCache: isDev
+  })
+
+  // App routing
+
+  require('./controllers/index.js').initRoutes(app)
+
+  // Launch
+
+  app.listen(8000)
+  console.log('Listening on port 8000.')
+  
 })
-
-// App routing
-
-app.get('/', function (req, res) {
-  res.render('index')
-})
-
-// Launch
-
-app.listen(8000)
-console.log('Listening on port 8000.')
