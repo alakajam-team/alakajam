@@ -1,0 +1,20 @@
+{% extends "_page.html" %}
+
+{% block body %}
+
+<h1>{{ entry.get('title') }}</h1>
+
+<p><a href="/">(Back)</a></p>
+
+<div style="max-width: 900px; margin: auto">
+  <div style="width: 60%; display: inline-block">
+    {% if entry.get('screenshot') %}
+    <img src="{{entry.screenshot}}" style="width: 100%" />
+    {% endif %}
+  </div>
+  <div style="width: 40%; display: inline-block">
+    {{ entry.get('description') }}
+  </div>
+</div>
+
+{% endblock %}

@@ -1,11 +1,17 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>WeJam</title>
-</head>
-<body>
-  <h1>WeJam</h1>
-  <p>Hello world! Entry count = {{count}}</p>
-</body>
-</html>
+{% extends "_page.html" %}
+
+{% block body %}
+
+<h1>WeJam</h1>
+
+{% for event in events %}
+<h2>{{ event.get('title') }} ({{ event.related('entries').length }} entries)</h2>
+
+<ul>
+  {% for entry in event.related('entries') %}
+  <li><a href="/entry/{{ entry.get('id') }}">{{ entry.get('title') }}</a></li>
+  {% endfor %}
+</ul>
+{% endfor %}
+
+{% endblock %}
