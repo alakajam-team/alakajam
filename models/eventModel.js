@@ -2,29 +2,32 @@
 
 let db = require('../lib/db')
 
-// Object model
-
+/**
+ * Object model
+ */
 let Event = db.model('Event', {
   tableName: 'event',
   uuid: true,
-  entries: function() {
+  entries: function () {
     return this.hasMany('Entry')
   }
 })
 
-// DB table
-
-let schema = db.knex.schema
-
+/**
+ * Table create
+ */
 Event.up = async function () {
-  await schema.createTable('event', function (table) {
+  await db.knex.schema.createTable('event', function (table) {
     table.uuid('id').primary()
     table.string('title')
   })
 }
 
+/**
+ * Table drop
+ */
 Event.down = async function () {
-  await schema.dropTableIfExists('event')
+  await db.knex.schema.dropTableIfExists('event')
 }
 
 module.exports = Event

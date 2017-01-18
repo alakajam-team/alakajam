@@ -2,8 +2,9 @@
 
 let db = require('../lib/db')
 
-// Object model
-
+/**
+ * Object model
+ */
 let Entry = db.model('Entry', {
   tableName: 'entry',
   uuid: true,
@@ -12,12 +13,11 @@ let Entry = db.model('Entry', {
   }
 })
 
-// DB table
-
-let schema = db.knex.schema
-
+/**
+ * Table create
+ */
 Entry.up = async function () {
-  await schema.createTable('entry', function (table) {
+  await db.knex.schema.createTable('entry', function (table) {
     table.uuid('id').primary()
     table.string('title')
     table.string('screenshot')
@@ -25,8 +25,11 @@ Entry.up = async function () {
   })
 }
 
+/**
+ * Table drop
+ */
 Entry.down = async function () {
-  await schema.dropTableIfExists('entry')
+  await db.knex.schema.dropTableIfExists('entry')
 }
 
 module.exports = Entry

@@ -2,13 +2,13 @@
 
 {% block body %}
 
-<h1>WeJam</h1>
+<h1>We Jam</h1>
 
 {% for event in events %}
 <h2>{{ event.get('title') }} ({{ event.related('entries').length }} entries)</h2>
 
 <ul>
-  {% for entry in event.related('entries') %}
+  {% for entry in event.related('entries').models %}
   <li><a href="/entry/{{ entry.get('id') }}">{{ entry.get('title') }}</a></li>
   {% endfor %}
 </ul>

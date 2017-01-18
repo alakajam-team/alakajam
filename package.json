@@ -19,12 +19,13 @@
   "dependencies": {
     "bookshelf": "^0.10.2",
     "bookshelf-uuid": "^1.0.0",
-    "debug": "^2.6.0",
     "express": "^4.14.0",
     "express-nunjucks": "^2.1.2",
     "knex": "^0.12.6",
     "moment": "^2.17.1",
     "nunjucks": "^3.0.0",
+    "postcss-cssnext": "^2.9.0",
+    "postcss-middleware": "^1.1.2",
     "promisify-node": "^0.4.0",
     "sqlite3": "^3.1.8",
     "winston": "^2.3.0"

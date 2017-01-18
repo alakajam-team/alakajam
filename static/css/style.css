@@ -1,0 +1,7 @@
+:root {
+  --bgColor: #DDD;
+}
+
+body {
+  background-color: var(--bgColor);
+}

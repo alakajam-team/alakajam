@@ -8,5 +8,8 @@ module.exports = {
   DB_USER: 'root',
   DB_PASSWORD: '',
   DB_NAME: '',
-  DB_SQLITE_FILENAME: 'data/db.sqlite'
+  DB_SQLITE_FILENAME: 'data/db.sqlite',
+
+  // Debug options
+  DEBUG_SQL: false
 }

@@ -1,4 +1,4 @@
-const Entry = require('../models/entry')
+const Entry = require('../models/entryModel')
 
 module.exports = {
 
@@ -10,19 +10,25 @@ module.exports = {
 
 }
 
-// Entry view page
+/**
+ * Browse entry
+ */
 async function viewEntry (req, res) {
   let entry = await Entry.where('id', req.params.uuid).fetch()
   res.render('entry', { entry: entry })
 }
 
-// Entry edit page
+/**
+ * Edit entry
+ */
 async function editEntry (req, res) {
   // TODO
   res.end('edit')
 }
 
-// Entry save handling
+/**
+ * Save entry
+ */
 async function saveEntry (req, res) {
   // TODO
   res.redirect('/entry/' + req.params.entryId)
