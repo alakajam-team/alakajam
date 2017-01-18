@@ -4,6 +4,7 @@ config.js
 
 # Data
 data/
+*.log
 
 # OS-specific garbage
 .DS_Store

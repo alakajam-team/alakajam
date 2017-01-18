@@ -3,8 +3,6 @@
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const express = require('express')
-const config = require('./config')
-const middleware = require('./lib/middleware')
 const log = require('./lib/log')
 
 createApp()
@@ -14,9 +12,13 @@ createApp()
  */
 async function createApp () {
   catchErrorsAndSignals()
+  await initFilesLayout()
+  
+  const middleware = require('./lib/middleware')
+  const config = require('./config')
+  
   const app = express()
   app.locals.devMode = app.get('env') === 'development'
-  await initFilesLayout()
   await initDatabase(app.locals.devMode)
   await middleware.configure(app)
   app.listen(config.SERVER_PORT)
@@ -58,7 +60,6 @@ async function initFilesLayout () {
   try {
     await fs.access(DATA_PATH, fs.constants.R_OK)
   } catch (e) {
-    log.error(e.message)
     await fs.mkdir(DATA_PATH)
   }
 
@@ -70,7 +71,7 @@ async function initFilesLayout () {
   } catch (e) {
     let sampleConfig = await fs.readFile(CONFIG_SAMPLE_PATH)
     await fs.appendFile(CONFIG_PATH, sampleConfig)
-    log.info(CONFIG_PATH + ' initialized')
+    log.info(CONFIG_PATH + ' initialized with sample values')
   }
 }
 
