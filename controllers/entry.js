@@ -4,8 +4,8 @@ const Entry = require('../models/entryModel')
 module.exports = {
 
   initRoutes: function (app) {
-    app.use('/entry/:uuid\*', fetchFilter)
-    
+    app.use('/entry/:uuid*', entryMiddleware)
+
     app.get('/entry/:uuid', viewEntry)
     app.get('/entry/:uuid/edit', editEntry)
     app.post('/entry/:uuid/edit', saveEntry)
@@ -16,7 +16,7 @@ module.exports = {
 /**
  * Fetches the current entry & event
  */
-async function fetchFilter (req, res, next) {
+async function entryMiddleware (req, res, next) {
   let entry = await Entry.where('id', req.params.uuid).fetch({ withRelated: 'event' })
   if (entry === null) {
     res.locals.errorMessage = 'Entry not found'
@@ -64,7 +64,7 @@ async function saveEntry (req, res) {
       entry.set('link', fields.link)
       entry.set('description', fields.description)
       entry.save()
-      
+
       res.redirect('/entry/' + req.params.uuid)
     }
   })
