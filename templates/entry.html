@@ -2,18 +2,21 @@
 
 {% block body %}
 
-<h1>{{ entry.get('title') }}</h1>
+<h1><a href="/">Events</a> > <a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a> > {{ entry.get('title') }}</h1>
 
-<p><a href="/">(Back)</a></p>
-
-<div style="max-width: 900px; margin: auto">
-  <div style="width: 60%; display: inline-block">
-    {% if entry.get('screenshot') %}
-    <img src="{{entry.screenshot}}" style="width: 100%" />
-    {% endif %}
-  </div>
-  <div style="width: 40%; display: inline-block">
-    <img src="/static/images/test.png" /> {{ entry.get('description') }}
+<div class="container">
+  <div class="row entry">
+    <div class="col-md-4">
+      {% if entry.get('screenshot') %}
+      <img src="{{entry.screenshot}}" style="width: 100%" />
+      {% else %}
+      <img src="/static/images/test.png" style="width: 100%" />
+      {% endif %}
+    </div>
+    <div class="col-md-8 panel">
+      <p>{{ entry.get('description') }}</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
   </div>
 </div>
 

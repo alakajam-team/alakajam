@@ -12,7 +12,7 @@ module.exports = {
  * Browse event
  */
 async function viewEvent (req, res, next) {
-  let event = await Event.where('id', req.params.uuid).fetch()
+  let event = await Event.where('id', req.params.uuid).fetch({ withRelated: 'entries' })
   if (event !== null) {
     res.render('event', { event: event })
   } else {

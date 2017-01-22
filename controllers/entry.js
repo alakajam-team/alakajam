@@ -14,9 +14,12 @@ module.exports = {
  * Browse entry
  */
 async function viewEntry (req, res, next) {
-  let entry = await Entry.where('id', req.params.uuid).fetch()
+  let entry = await Entry.where('id', req.params.uuid).fetch({ withRelated: 'event' })
   if (entry !== null) {
-    res.render('entry', { entry: entry })
+    res.render('entry', {
+      entry: entry,
+      event: entry.related('event')
+    })
   } else {
     res.locals.errorMessage = 'Entry not found'
     next()

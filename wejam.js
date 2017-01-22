@@ -80,13 +80,26 @@ async function initFilesLayout () {
  * XXX Currently the whole DB is recreated on each startup
  */
 async function initDatabase (withSamples) {
+  const config = require('./config.js')
+  
   try {
-    const db = require('./lib/db')
-    await db.dropCreateTables()
-    if (withSamples) {
-      await db.insertSamples()
+    if (config.DB_TYPE === 'sqlite3') {
+      await fs.access(config.DB_SQLITE_FILENAME, fs.constants.R_OK)
+      log.info('Existing database found.')
+    }
+    else {
+      // TODO Don't drop create for other DBMS
+      throw new Error()
     }
   } catch (e) {
-    log.error(e.stack)
+    try {
+      const db = require('./lib/db')
+      await db.dropCreateTables()
+      if (withSamples) {
+        await db.insertSamples()
+      }
+    } catch (e) {
+      log.error(e.stack)
+    }
   }
 }

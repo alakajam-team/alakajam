@@ -1,29 +1,28 @@
 {% extends "_page.html" %}
+{% import "_macros.html" as macros %}
 
 {% block body %}
 
 <h1>Current event</h1>
 
 {% for event in events %}
-<div class="event-row">
+<div class="event-row panel">
   <div class="event-row__header row">
-    <div class="event-row__title col-md-8"><a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a></div>
-    <div class="event-row__status col-md-4">{{ event.related('entries').length }} entries</div>
+    <div class="event-row__title col-md-3"><a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a></div>
+    <div class="event-row__status col-md-9">
+      Current state: <b>open (closes in 20:00:00)</b><br />
+      Entry count: <b>{{ event.related('entries').length }}</b>
+    </div>
   </div>
   <div class="row">
     {% for entry in event.related('entries').models %}
-    <a class="event-row__entry col-md-2" href="/entry/{{ entry.get('id') }}">
-      <img src="/static/images/test.png" style="width: 100%" /><br />
-      {{ entry.get('title') }}
-    </a>
+      {{ macros.entryThumb(entry) }}
     {% endfor %}
   </div>
 </div>
 {% endfor %}
 
 <h1>News</h1>
-
-<p>This theme looks awful.</p>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 

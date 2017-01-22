@@ -1,11 +1,16 @@
 {% extends "_page.html" %}
+{% import "_macros.html" as macros %}
 
 {% block body %}
 
-<h1>{{ event.get('title') }}</h1>
+<h1><a href="/">Events</a> > {{ event.get('title') }}</h1>
 
-<p><a href="/">(Back)</a></p>
-
-<img src="/static/images/todo.gif" />
+<div class="container">
+  <div class="row">
+    {% for entry in event.related('entries').models %}
+      {{ macros.entryThumb(entry) }}
+    {% endfor %}
+  </div>
+</div>
 
 {% endblock %}
