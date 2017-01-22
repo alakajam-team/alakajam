@@ -20,7 +20,9 @@ Entry.up = async function () {
   await db.knex.schema.createTable('entry', function (table) {
     table.uuid('id').primary()
     table.string('title')
-    table.string('screenshot')
+    table.string('description')
+    table.string('link')
+    table.string('picture')
     table.uuid('event_id').references('event.id')
   })
 }

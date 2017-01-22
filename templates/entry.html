@@ -7,8 +7,8 @@
 <div class="container">
   <div class="row entry">
     <div class="col-md-4">
-      {% if entry.get('screenshot') %}
-      <img src="{{entry.screenshot}}" style="width: 100%" />
+      {% if entry.get('picture') %}
+      <img src="{{entry.picture}}" style="width: 100%" />
       {% else %}
       <img src="/static/images/test.png" style="width: 100%" />
       {% endif %}
@@ -17,6 +17,7 @@
       <p>{{ entry.get('description') }}</p>
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
     </div>
+    <a class="btn btn-primary" href="/entry/{{ entry.get('id') }}/edit">Edit this entry</a>
   </div>
 </div>
 

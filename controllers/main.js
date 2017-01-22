@@ -8,6 +8,7 @@ module.exports = {
   initRoutes: function (app) {
     app.get('/', index)
     app.get('/chat', chat)
+    app.get('/admin', resetDb)
   }
 
 }
@@ -30,4 +31,15 @@ async function index (req, res) {
  */
 async function chat (req, res) {
   res.render('chat')
+}
+
+/**
+ * XXX Temporary
+ * Resets the DB
+ */
+async function resetDb (req, res) {
+  const db = require('../lib/db')
+  await db.dropCreateTables()
+  await db.insertSamples()
+  res.end('DB reset done.')
 }

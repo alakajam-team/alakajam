@@ -1,0 +1,48 @@
+{% extends "_page.html" %}
+
+{% block body %}
+
+<h1><a href="/">Events</a> > <a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a> > <a href="/entry/{{ entry.get('id') }}">{{ entry.get('title') }}</a></h1>
+
+<form method="post">
+
+  <div class="container">
+    <div class="row entry">
+        
+        <div class="col-md-7">
+          <div class="form-group input-group-lg">
+            <label for="title">Game name</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Game name" value="{{ entry.get('title') }}">
+          </div>
+          <div class="form-group">
+            <label for="title">Link</label>
+            <input type="text" class="form-control" id="link" name="link" placeholder="http://..." value="{{ entry.get('link') }}">
+          </div>
+          <div class="form-group">
+            <label for="title">Description</label>
+            <textarea class="form-control" style="min-height: 200px" id="description" name="description" placeholder="A short description of your game">{{ entry.get('description') }}</textarea>
+          </div>
+          <div class="form-group pull-right">
+            <input type="submit" class="btn btn-primary" value="Save changes" />
+          </div>
+        </div>
+        
+        <div class="col-md-5">
+          <div class="form-group">
+            <label for="title">Picture</label>
+            <input type="file" id="picture" name="picture" />
+            
+            <br />
+            {% if entry.get('picture') %}
+            <img src="{{entry.picture}}" style="width: 100%" />
+            {% else %}
+            <img src="/static/images/test.png" style="width: 100%" />
+            {% endif %}
+          </div>
+        </div>
+    </div>
+  </div>
+
+</form>
+
+{% endblock %}

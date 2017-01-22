@@ -13,10 +13,10 @@ createApp()
 async function createApp () {
   catchErrorsAndSignals()
   await initFilesLayout()
-  
+
   const middleware = require('./lib/middleware')
   const config = require('./config')
-  
+
   let app = express()
   app.locals.devMode = app.get('env') === 'development'
   await initDatabase(app.locals.devMode)
@@ -81,13 +81,12 @@ async function initFilesLayout () {
  */
 async function initDatabase (withSamples) {
   const config = require('./config.js')
-  
+
   try {
     if (config.DB_TYPE === 'sqlite3') {
       await fs.access(config.DB_SQLITE_FILENAME, fs.constants.R_OK)
       log.info('Existing database found.')
-    }
-    else {
+    } else {
       // TODO Don't drop create for other DBMS
       throw new Error()
     }
