@@ -1,7 +1,27 @@
 :root {
-  --bgColor: #DDD;
+  --primary: #FFF;
+  --secondary: #F05;
+  --background: #DDD;
+  --spacing: 20px;
 }
 
 body {
-  background-color: var(--bgColor);
+  background-color: var(--background);
+}
+
+.event-row {
+  background-color: var(--primary);
+  padding: var(--spacing);
+}
+
+.event-row__title {
+  font-size: 2.5rem;
+}
+
+.event-row__entry {
+  padding-top: var(--spacing);
+}
+.event-row__entry:hover {
+  background-color: var(--secondary);
+  color: var(--primary);
 }

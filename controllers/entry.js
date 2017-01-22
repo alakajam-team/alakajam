@@ -13,9 +13,14 @@ module.exports = {
 /**
  * Browse entry
  */
-async function viewEntry (req, res) {
+async function viewEntry (req, res, next) {
   let entry = await Entry.where('id', req.params.uuid).fetch()
-  res.render('entry', { entry: entry })
+  if (entry !== null) {
+    res.render('entry', { entry: entry })
+  } else {
+    res.locals.errorMessage = 'Entry not found'
+    next()
+  }
 }
 
 /**

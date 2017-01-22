@@ -5,13 +5,21 @@
 <h1>We Jam</h1>
 
 {% for event in events %}
-<h2>{{ event.get('title') }} ({{ event.related('entries').length }} entries)</h2>
+<div class="event-row">
+  <div class="event-row__header row">
+    <div class="event-row__title col-md-8"><a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a></div>
+    <div class="event-row__status col-md-4">{{ event.related('entries').length }} entries</div>
+  </div>
+  <div class="row">
+    {% for entry in event.related('entries').models %}
+    <a class="event-row__entry col-md-2" href="/entry/{{ entry.get('id') }}">
+      <img src="/static/images/test.png" style="width: 100%" /><br />
+      {{ entry.get('title') }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
 
-<ul>
-  {% for entry in event.related('entries').models %}
-  <li><a href="/entry/{{ entry.get('id') }}">{{ entry.get('title') }}</a></li>
-  {% endfor %}
-</ul>
 {% endfor %}
 
 {% endblock %}

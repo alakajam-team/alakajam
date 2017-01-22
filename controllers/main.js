@@ -7,6 +7,7 @@ module.exports = {
 
   initRoutes: function (app) {
     app.get('/', index)
+    app.get('/chat', chat)
   }
 
 }
@@ -22,4 +23,11 @@ async function index (req, res) {
     log.error(e.message)
     res.end('error: ' + e.message)
   }
+}
+
+/**
+ * IRC Chat
+ */
+async function chat (req, res) {
+  res.render('chat')
 }
