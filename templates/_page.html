@@ -10,6 +10,46 @@
 </head>
 <body>
 
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <!-- Mobile navbar -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Events</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">WeJam</a>
+      </div>
+      
+      <!-- Desktop navbar -->
+      <!-- TODO Move this logic in global context filter -->
+      {% if path == 'chat' %}
+        {% set isChat = true %}
+      {% else %}
+        {% set isEvents = true %}
+      {% endif %}
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li {% if isEvents %}class="active"{% endif %}><a href="/">Events</a></li>
+          <li {% if isChat %}class="active"{% endif %}><a href="/chat">Chat</a></li>
+        </ul>
+        <!-- Sample "Profile"-like block
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">Link</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+            </ul>
+          </li>
+        </ul> -->
+      </div>
+    </div>
+  </nav>
+
   <div class="container">
    {% block body %}{% endblock %}
   </div>

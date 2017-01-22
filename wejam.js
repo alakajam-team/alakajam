@@ -17,7 +17,7 @@ async function createApp () {
   const middleware = require('./lib/middleware')
   const config = require('./config')
   
-  const app = express()
+  let app = express()
   app.locals.devMode = app.get('env') === 'development'
   await initDatabase(app.locals.devMode)
   await middleware.configure(app)
