@@ -10,7 +10,7 @@ Requirement: NodeJS 7.2+
 
 ## Dev tooling
 
-`npm install -g standard nodemon node-inspector`
+`npm install -g standard forever node-inspector`
 
 * Make the app restart automatically upon file changes with `npm run-script forever`
 * Debug code by running `npm run-script debug`
