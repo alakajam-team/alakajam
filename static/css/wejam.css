@@ -1,6 +1,6 @@
 :root {
   --text: #19181b; /* dark purple */
-  --links: #5b6ada; /* blue */
+  --links: #265cd9; /* blue */
   --linksalt: color(var(--links) lightness(30%)); /* darker blue */
   
   --bg: linear-gradient(to bottom, #fff8 20%, #fff4 100%); /* lighter */
@@ -18,7 +18,7 @@ html {
 }
 
 body {
-  background: linear-gradient(to bottom, #cac2d6 0%, #dfdae7 100%);
+  background: linear-gradient(to bottom, #c7cdd1 0%, #e3e6e8 100%);
   color: var(--text);
   height: 100%;
   padding-top: 70px;
@@ -40,17 +40,36 @@ a:hover {
 
 /* Nav bar */
 
-.navbar-default .navbar-nav a, .navbar-brand {
+.navbar-default {
+  /* Whole navbar */
+  background: linear-gradient(to bottom, #a8d9ff 0%, #a8cbff 100%);
   font-size: 2rem;
+}
+
+.navbar-default .navbar-brand, .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>li>a {
+  /* All links  */
+  color: var(--linksalt);
   padding: 20px;
   letter-spacing: 3px;
 }
-.navbar-brand {
-  font-size: 3.5rem;
-  padding-right: 50px;
+
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover {
+  /* Active link */
+  background: none;
+  background-color: white;
+  color: var(--text);
 }
-.navbar-default .navbar-brand:focus, .navbar-default .navbar-brand:hover {
-  color: var(--links);
+
+.navbar-brand {
+  /* Logo link */
+  font-size: 3.5rem;
+  margin-right: 50px;
+}
+
+.navbar-nav a:hover {
+  /* Non-active link hover */
+  background: linear-gradient(to bottom, #c2e4ff 0%, #c2daff 100%);
+  color: var(--text);
 }
 
 /* Reusable blocks */

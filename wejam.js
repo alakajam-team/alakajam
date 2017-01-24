@@ -55,13 +55,10 @@ function catchErrorsAndSignals () {
  * Initialize files for first startup
  */
 async function initFilesLayout () {
-  // Create data folder
-  const DATA_PATH = './data'
-  try {
-    await fs.access(DATA_PATH, fs.constants.R_OK)
-  } catch (e) {
-    await fs.mkdir(DATA_PATH)
-  }
+  // Create data folders
+  createFolderIfMissing('./data')
+  createFolderIfMissing('./data/tmp')
+  createFolderIfMissing('./static/uploads')
 
   // Create config.js if missing
   const CONFIG_PATH = './config.js'
@@ -72,6 +69,14 @@ async function initFilesLayout () {
     let sampleConfig = await fs.readFile(CONFIG_SAMPLE_PATH)
     await fs.appendFile(CONFIG_PATH, sampleConfig)
     log.info(CONFIG_PATH + ' initialized with sample values')
+  }
+}
+
+async function createFolderIfMissing (path) {
+  try {
+    await fs.access(path, fs.constants.R_OK)
+  } catch (e) {
+    await fs.mkdir(path)
   }
 }
 

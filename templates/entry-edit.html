@@ -4,7 +4,7 @@
 
 <h1><a href="/">Events</a> > <a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a> > <a href="/entry/{{ entry.get('id') }}">{{ entry.get('title') }}</a></h1>
 
-<form method="post">
+<form action="/entry/{{ entry.get('id') }}" method="post" enctype="multipart/form-data">
 
   <div class="container">
     <div class="row entry">
@@ -24,6 +24,7 @@
           </div>
           <div class="form-group pull-right">
             <input type="submit" class="btn btn-primary" value="Save changes" />
+            <a class="btn btn-default" href="/entry/{{ entry.get('id') }}">Cancel</a> 
           </div>
         </div>
         
@@ -31,10 +32,13 @@
           <div class="form-group">
             <label for="title">Picture</label>
             <input type="file" id="picture" name="picture" />
+            {% if entry.has('picture') %}
+            <label><input type="checkbox" name="pictureDelete" /> Delete picture</label>
+            {% endif %}
             
             <br />
-            {% if entry.get('picture') %}
-            <img src="{{entry.picture}}" style="width: 100%" />
+            {% if entry.has('picture') %}
+            <img src="{{ entry.get('picture') }}" style="width: 100%" />
             {% else %}
             <img src="/static/images/test.png" style="width: 100%" />
             {% endif %}

@@ -1,4 +1,7 @@
 const formidable = require('formidable')
+const promisify = require('promisify-node')
+const fs = promisify('fs')
+const path = require('path')
 const Entry = require('../models/entryModel')
 
 module.exports = {
@@ -8,7 +11,7 @@ module.exports = {
 
     app.get('/entry/:uuid', viewEntry)
     app.get('/entry/:uuid/edit', editEntry)
-    app.post('/entry/:uuid/edit', saveEntry)
+    app.post('/entry/:uuid', saveEntry)
   }
 
 }
@@ -19,8 +22,7 @@ module.exports = {
 async function entryMiddleware (req, res, next) {
   let entry = await Entry.where('id', req.params.uuid).fetch({ withRelated: 'event' })
   if (entry === null) {
-    res.locals.errorMessage = 'Entry not found'
-    res.error404()
+    res.error(404, 'Entry not found')
   } else {
     res.locals.entry = entry
     res.locals.event = entry.related('event')
@@ -31,7 +33,7 @@ async function entryMiddleware (req, res, next) {
 /**
  * Browse entry
  */
-async function viewEntry (req, res) {
+function viewEntry (req, res) {
   res.render('entry', {
     entry: res.locals.entry,
     event: res.locals.event
@@ -41,7 +43,7 @@ async function viewEntry (req, res) {
 /**
  * Edit entry
  */
-async function editEntry (req, res) {
+function editEntry (req, res) {
   res.render('entry-edit', {
     entry: res.locals.entry,
     event: res.locals.event
@@ -51,21 +53,33 @@ async function editEntry (req, res) {
 /**
  * Save entry
  */
-async function saveEntry (req, res) {
-  let form = new formidable.IncomingForm()
-  form.parse(req, function (error, fields, files) {
-    if (error) {
-      // TODO 500 page (replace error404 method with a more generic one)
-      res.end(error)
-    } else {
-      // TODO Save uploaded file, escape input
-      let entry = res.locals.entry
-      entry.set('title', fields.title)
-      entry.set('link', fields.link)
-      entry.set('description', fields.description)
-      entry.save()
-
-      res.redirect('/entry/' + req.params.uuid)
+function saveEntry (req, res) {
+  req.parseForm(async function (error, fields, files) {
+    if (!res.headersSent) { // FIXME Why?
+      if (error) {
+        res.error(500, error)
+      } else {
+        let entry = res.locals.entry
+        entry.set('title', fields.title)
+        entry.set('link', fields.link)
+        entry.set('description', fields.description)
+        if (fields.pictureDelete) {
+          entry.set('picture', null)
+        } else if (files.picture) {
+          // TODO Consts import to hold paths and URLs
+          let newFilename = entry.get('id') + path.extname(files.picture.path)
+          let newPath = path.join(__dirname, '../static/uploads', newFilename)
+          try {
+            await fs.rename(files.picture.path, newPath)
+            entry.set('picture', '/static/uploads/' + newFilename)
+          }
+          catch (e) {
+            res.error(500, 'Failed to upload picture: ' + e.message)
+          }
+        }
+        entry.save()
+        viewEntry(req, res)
+      }
     }
   })
 }

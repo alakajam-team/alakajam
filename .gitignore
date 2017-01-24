@@ -4,6 +4,7 @@ config.js
 
 # Data
 data/
+static/uploads
 *.log
 
 # OS-specific garbage

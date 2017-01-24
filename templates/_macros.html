@@ -1,6 +1,7 @@
 {% macro entryThumb(entry) %}
 <a class="entry-thumb col-md-2" href="/entry/{{ entry.get('id') }}">
-  <img class="entry-thumb__picture" src="/static/images/test.png" />
+  {% set picturePath = entry.get('picture') if entry.has('picture') else '/static/images/test.png' %}
+  <img class="entry-thumb__picture" src="{{ picturePath }}" />
   <div class="entry-thumb__title" >{{ entry.get('title') }}</div>
 </a>
 {% endmacro %}
