@@ -1,5 +1,7 @@
 # WeJam
 
+> Current progress : Mostly just a skeleton for a generic website. You can browse an event and its entries.
+
 ## Setup
 
 Requirement: NodeJS 7.2+
