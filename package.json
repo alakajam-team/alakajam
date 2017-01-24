@@ -25,6 +25,7 @@
     "knex": "^0.12.6",
     "moment": "^2.17.1",
     "nunjucks": "^3.0.0",
+    "pg": "^6.1.2",
     "postcss-cssnext": "^2.9.0",
     "postcss-middleware": "^1.1.2",
     "promisify-node": "^0.4.0",

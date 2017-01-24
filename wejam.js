@@ -81,18 +81,21 @@ async function initFilesLayout () {
  */
 async function initDatabase (withSamples) {
   const config = require('./config.js')
+  const db = require('./lib/db')
 
-  try {
-    if (config.DB_TYPE === 'sqlite3') {
-      await fs.access(config.DB_SQLITE_FILENAME, fs.constants.R_OK)
-      log.info('Existing database found.')
-    } else {
-      // TODO Don't drop create for other DBMS
-      throw new Error()
-    }
-  } catch (e) {
+  let dbMissing = false
+  
+  if (config.DB_TYPE === 'sqlite3') {
     try {
-      const db = require('./lib/db')
+       await fs.access(config.DB_SQLITE_FILENAME, fs.constants.R_OK)
+    } catch (e) {
+      dbMissing = true
+    }
+  } 
+  
+  let dbInitialized = dbMissing || db.isInitialized()
+  if (!dbInitialized) {
+    try {
       await db.dropCreateTables()
       if (withSamples) {
         await db.insertSamples()
@@ -100,5 +103,7 @@ async function initDatabase (withSamples) {
     } catch (e) {
       log.error(e.stack)
     }
+  } else {
+    log.info('Existing database found.')
   }
 }
