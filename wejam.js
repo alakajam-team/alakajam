@@ -5,6 +5,8 @@ const fs = promisify('fs')
 const express = require('express')
 const log = require('./lib/log')
 
+log.info("Server starting...")
+
 createApp()
 
 /**
@@ -39,11 +41,11 @@ function catchErrorsAndSignals () {
   })
 
   // Stop the server gracefully upon shut down signals
+  // XXX Doesn't work on Windows
   let signals = ['SIGINT', 'SIGQUIT', 'SIGTERM']
   signals.forEach((signal) => {
     process.on(signal, () => _doGracefulShutdown())
   })
-
   function _doGracefulShutdown (cb) {
     const db = require('./lib/db')
     log.info('Shutting down.')
@@ -52,7 +54,7 @@ function catchErrorsAndSignals () {
 }
 
 /**
- * Initialize files for first startup
+ * Initialize files upon first startup
  */
 async function initFilesLayout () {
   // Create data folders
@@ -81,8 +83,7 @@ async function createFolderIfMissing (path) {
 }
 
 /**
- * DB initialization.
- * XXX Currently the whole DB is recreated on each startup
+ * DB initialization
  */
 async function initDatabase (withSamples) {
   const config = require('./config.js')
