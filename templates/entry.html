@@ -17,7 +17,7 @@
       <p>{{ entry.get('description') }}</p>
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
     </div>
-    {% if entry.has('link') %}
+    {% if entry.get('link') %}
     <a class="btn btn-primary" href="{{ entry.get('link') }}">Play this game</a>
     {% endif %}
     <a class="btn btn-default" href="/entry/{{ entry.get('id') }}/edit">Edit entry</a>

@@ -1,7 +1,10 @@
+'use strict'
+
 const formidable = require('formidable')
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
+const log = require('../lib/log')
 const Entry = require('../models/entryModel')
 
 module.exports = {
@@ -53,33 +56,27 @@ function editEntry (req, res) {
 /**
  * Save entry
  */
-function saveEntry (req, res) {
-  req.parseForm(async function (error, fields, files) {
+async function saveEntry (req, res) {
+  try {
+    let [fields, files] = await req.parseForm()
     if (!res.headersSent) { // FIXME Why?
-      if (error) {
-        res.error(500, error)
-      } else {
-        let entry = res.locals.entry
-        entry.set('title', fields.title)
-        entry.set('link', fields.link)
-        entry.set('description', fields.description)
-        if (fields.pictureDelete) {
-          entry.set('picture', null)
-        } else if (files.picture) {
-          // TODO Consts import to hold paths and URLs
-          let newFilename = entry.get('id') + path.extname(files.picture.path)
-          let newPath = path.join(__dirname, '../static/uploads', newFilename)
-          try {
-            await fs.rename(files.picture.path, newPath)
-            entry.set('picture', '/static/uploads/' + newFilename)
-          }
-          catch (e) {
-            res.error(500, 'Failed to upload picture: ' + e.message)
-          }
-        }
-        entry.save()
-        viewEntry(req, res)
+      let entry = res.locals.entry
+      entry.set('title', fields.title)
+      entry.set('link', fields.link || undefined)
+      entry.set('description', fields.description)
+      if (fields.pictureDelete) {
+        entry.set('picture', null)
+      } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
+        // TODO Consts import to hold paths and URLs
+        let newFilename = entry.get('id') + path.extname(files.picture.path)
+        let newPath = path.join(__dirname, '../static/uploads', newFilename)
+        await fs.rename(files.picture.path, newPath)
+        entry.set('picture', '/static/uploads/' + newFilename)
       }
+      entry.save()
+      viewEntry(req, res)
     }
-  })
+  } catch (e) {
+    res.errorPage(500, e.message)
+  }
 }

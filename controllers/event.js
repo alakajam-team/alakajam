@@ -1,3 +1,5 @@
+'use strict'
+
 const Event = require('../models/eventModel')
 
 module.exports = {
