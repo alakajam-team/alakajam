@@ -4,9 +4,9 @@
   "description": "Game jam system",
   "main": "meadowlark.js",
   "scripts": {
-    "start": "node --harmony wejam.js",
-    "debug": "node-debug --nodejs --harmony wejam.js",
-    "forever": "forever -w -c \"node --harmony\" wejam.js"
+    "start": "node wejam.js",
+    "debug": "node-debug wejam.js",
+    "forever": "forever wejam.js"
   },
   "repository": {
     "type": "git",

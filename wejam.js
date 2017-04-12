@@ -5,7 +5,7 @@ const fs = promisify('fs')
 const express = require('express')
 const log = require('./lib/log')
 
-log.info("Server starting...")
+log.info('Server starting...')
 
 createApp()
 
@@ -90,15 +90,15 @@ async function initDatabase (withSamples) {
   const db = require('./lib/db')
 
   let dbMissing = false
-  
+
   if (config.DB_TYPE === 'sqlite3') {
     try {
-       await fs.access(config.DB_SQLITE_FILENAME, fs.constants.R_OK)
+      await fs.access(config.DB_SQLITE_FILENAME, fs.constants.R_OK)
     } catch (e) {
       dbMissing = true
     }
-  } 
-  
+  }
+
   let dbInitialized = !dbMissing && await db.isInitialized()
   if (!dbInitialized) {
     try {

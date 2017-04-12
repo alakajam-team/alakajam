@@ -4,18 +4,18 @@
 
 ## Setup
 
-Requirement: NodeJS 7.2+
+Requirement: NodeJS 7.6+
 
 * `npm install`
-* `npm start` (or `node --harmony wejam.js`)
+* `node wejam.js`
 * Browse to `http://localhost:8000`
 
 ### Dev tooling
 
 `npm install -g standard forever node-inspector`
 
-* Make the app restart automatically upon file changes with `npm run-script forever`
-* Debug code by running `npm run-script debug`
+* Make the app restart automatically upon file changes with `forever we-jam.js`
+* Debug code with `node-debug we-jam.js`
 * Validate code style with `standard`
 
 ### Troubleshooting

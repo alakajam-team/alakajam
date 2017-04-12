@@ -1,10 +1,8 @@
 'use strict'
 
-const formidable = require('formidable')
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
-const log = require('../lib/log')
 const Entry = require('../models/entryModel')
 
 module.exports = {
