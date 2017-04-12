@@ -34,7 +34,7 @@ function catchErrorsAndSignals () {
   // Display unhandled rejections more nicely
   process.on('unhandledException', (e) => {
     log.error('Unhandled promise rejection:', e)
-    _doGracefulShutdown(() => process.exit(-1))
+    _doGracefulShutdown()
   })
   process.on('unhandledRejection', (reason, p) => {
     log.error('Unhandled promise rejection:', p)
@@ -44,12 +44,12 @@ function catchErrorsAndSignals () {
   // XXX Doesn't work on Windows
   let signals = ['SIGINT', 'SIGQUIT', 'SIGTERM']
   signals.forEach((signal) => {
-    process.on(signal, () => _doGracefulShutdown())
+    process.on(signal, _doGracefulShutdown)
   })
   function _doGracefulShutdown (cb) {
     const db = require('./lib/db')
     log.info('Shutting down.')
-    db.knex.destroy(cb)
+    db.knex.destroy(() => process.exit(-1))
   }
 }
 
@@ -99,7 +99,7 @@ async function initDatabase (withSamples) {
     }
   } 
   
-  let dbInitialized = dbMissing || db.isInitialized()
+  let dbInitialized = !dbMissing && await db.isInitialized()
   if (!dbInitialized) {
     try {
       await db.dropCreateTables()
