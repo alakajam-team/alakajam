@@ -10,18 +10,13 @@ Requirement: NodeJS 7.6+
 * `node wejam.js`
 * Browse to `http://localhost:8000`
 
-### Dev tooling
+### Dev tools
 
-`npm install -g standard browser-refresh node-inspector`
+Prerequisite: `npm install -g standard browser-refresh node-inspector`
 
-* `browser-refresh wejam.js` launches the app, and makes the server and browser refresh when needed upon file changes (you need first to enable `DEBUG_REFRESH_BROWSER` in `config.js`)
-* `node-debug we-jam.js` launches the app in debug mode
-* `standard` validates the code style
-
-### Troubleshooting
-
-* Can't install `node-inspector` on Windows? Try an older version: `npm install -g node-inspector@0.7.5`.
-* Can't kill node with Ctrl+C on Windows? Use the task manager.
+* `browser-refresh wejam.js`: launches the app, and makes the server and browser refresh when needed upon file changes (you need first to enable `DEBUG_REFRESH_BROWSER` in `config.js`)
+* `node-debug we-jam.js`: launches the app in debug mode
+* `standard`: validates the code style
 
 ## Architecture
 
