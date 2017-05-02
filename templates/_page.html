@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WeJam</title>
+  <title>WeJam!</title>
+  <link href="https://fonts.googleapis.com/css?family=Chewy" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-theme.min.css" />
-  <link rel="stylesheet" type="text/css" href="/static/css/wejam.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/bootflat-wejam.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/site.css" />
 </head>
 <body>
 
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
-      <!-- Mobile navbar -->
+      {# Mobile navbar #}
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
           <span class="sr-only"></span>
@@ -20,11 +21,11 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">WeJam</a>
+        <a class="navbar-brand" href="/"><img src="/static/images/logo.svg" /> WeJam!</a>
       </div>
       
-      <!-- Desktop navbar -->
-      <!-- TODO Move this logic in global context filter -->
+      {# Desktop navbar #}
+      {# TODO Move this logic in global context filter #}
       {% if path == '/chat' %}
         {% set isChat = true %}
       {% else %}
@@ -34,18 +35,14 @@
         <ul class="nav navbar-nav">
           <li {% if isEvents %}class="active"{% endif %}><a href="/">Events</a></li>
           <li {% if isChat %}class="active"{% endif %}><a href="/chat">Chat</a></li>
-        </ul>
-        <!-- Sample "Profile"-like block
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="#">Link</a></li>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="/static/images/sample.jpg" class="navbar-profileicon" /> <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="#">Action</a></li>
-              <li><a href="#">Another action</a></li>
+              <li><a href="#">Fake link to profile</a></li>
+              <li><a href="#">Fake logout</a></li>
             </ul>
           </li>
-        </ul> -->
+        </ul>
       </div>
     </div>
   </nav>
