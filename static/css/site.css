@@ -19,8 +19,8 @@
   };
 
   /* UI elements */
-  --navbar-height: 55px;
-  --eventbar-height: 40px;
+  --navbar-height: 50px;
+  --eventbar-height: 60px;
 }
 
 /* General */
@@ -41,7 +41,7 @@ body {
   padding-top: 70px;
 }
 body.in-event {
-  padding-top: 120px;
+  padding-top: 130px;
 }
 
 div {
@@ -170,12 +170,8 @@ a:hover {
   color: var(--alt);
 
   &__info {
-    display: block;
+    display: inline-block;
     text-align: center;
-
-    @media (min-width: 768px) {
-      display: inline-block;
-    }
   }
 
   &__name {
@@ -184,27 +180,20 @@ a:hover {
     line-height: var(--eventbar-height);
     padding-right: 10px;
     vertical-align: top;
-    font-size: 1.3rem;
+    font-size: 2rem;
   }
 
   &__dates {
     display: inline-block;
     line-height: var(--eventbar-height);
     vertical-align: top;
-    font-size: .7rem;
-    color: var(--text);
-
-    @media (min-width: 768px) {
-      padding-right: 20px;
-    }
+    padding-right: 30px;
+    font-size: .9rem;
+    color: var(--text-light);
   }
 
   &__links {
-    display: block;
-
-    @media (min-width: 768px) {
-      display: inline-block;
-    }
+    display: inline-block;
   }
 
   &__link {
@@ -286,15 +275,17 @@ a:hover {
 /* Event row */
 
 .event-row {
+  margin-bottom: 20px;
+
   &__header {
     background-color: var(--alt);
-    margin: -20px;
     padding: 10px;
     margin-bottom: 20px;
   }
 
   &__title a {
-    font-size: 2.5rem;
+    @apply --alt-font;
+    font-size: 2rem;
     color: white;
   }
 
@@ -310,7 +301,6 @@ a:hover {
   display: block;
   text-align: center;
   background-color: white;
-  margin: 0 10px;
   width: 100%;
   height: 250px;
 

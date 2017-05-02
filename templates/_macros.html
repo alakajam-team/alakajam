@@ -14,12 +14,18 @@
 {% endmacro %}
 
 {% macro eventPanel(event) %}
-<div class="event-row panel">
-  <div class="event-row__header row">
-    <div class="event-row__title col-md-3"><a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a></div>
-    <div class="event-row__status col-md-9">
-      Current state: <b>open (closes in 20:00:00)</b><br />
-      Entry count: <b>{{ event.related('entries').length }}</b>
+<div class="container event-row">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="container event-row__header">
+        <div class="row">
+          <div class="event-row__title col-md-3"><a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a></div>
+          <div class="event-row__status col-md-9">
+            Current state: <b>open (closes in 20:00:00)</b><br />
+            Entry count: <b>{{ event.related('entries').length }}</b>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row">

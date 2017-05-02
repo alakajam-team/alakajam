@@ -10,3 +10,6 @@ static/uploads
 # OS-specific garbage
 .DS_Store
 *~
+
+# Misc
+*.psd

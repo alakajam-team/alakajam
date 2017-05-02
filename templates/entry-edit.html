@@ -7,11 +7,14 @@
 
 {% block body %}
 
-<h1><a href="/">Events</a> > <a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a> > <a href="/entry/{{ entry.get('id') }}">{{ entry.get('title') }}</a></h1>
-
 <form action="/entry/{{ entry.get('id') }}" method="post" enctype="multipart/form-data">
 
   <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 id="title-display"></h1>
+      </div>
+    </div>
     <div class="row entry">
         
         <div class="col-md-7">
@@ -62,9 +65,22 @@
 {% block scripts %}
 <script type="text/javascript" src="/static/js/simplemde.min.js"></script>
 <script>
+// Markdown editor
 var simplemde = new SimpleMDE({
   element: $('#description')[0],
   spellChecker: false
 })
+
+// Sync H1 with title input
+var $titleInput = $('#title')
+var $titleDisplay = $('#title-display')
+var defaultText = "My {{ event.get('title') }} entry"
+$titleInput.on('change keyup', refreshTitleDisplay)
+refreshTitleDisplay()
+
+function refreshTitleDisplay () {
+  $titleDisplay.text($titleInput.val() || defaultText)
+}
+
 </script>
 {% endblock %}
