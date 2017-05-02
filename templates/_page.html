@@ -7,13 +7,14 @@
   <link href="https://fonts.googleapis.com/css?family=Chewy" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="/static/css/bootflat-wejam.css" />
+  {% block styles %}{% endblock %}
   <link rel="stylesheet" type="text/css" href="/static/css/site.css" />
 </head>
 <body {% if (event) %}class="in-event"{% endif %}>
 
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
-      {# Mobile navbar #}
+      {# ==== Main header (mobile) ==== #}
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
           <span class="sr-only"></span>
@@ -24,7 +25,7 @@
         <a class="navbar-brand" href="/"><img src="/static/images/logo.svg" /> WeJam!</a>
       </div>
       
-      {# Desktop navbar #}
+      {# ==== Main header (desktop) ==== #}
       {% if (event and liveEvent and event.get('id') == liveEvent.get('id')) %}
         {% set isLiveEvent = true %}
       {% endif %}
@@ -50,19 +51,23 @@
         </ul>
       </div>
     </div>
+
+    {# ==== Event header ==== #}
     {% if (event) %}
     <div class="event-header">
       <div class="container">
-        <div class="row">
-          <a href="/event/{{ event.get('id') }}" class="col-sm-2 event-header__name" >{{ event.get('title') }}</a>
-          <div class="col-sm-7 event-header__links">
-            <a href="#" class="event-header__link"><span class="glyphicon glyphicon-grain"></span> Theme</a>
-            <a href="/event/{{ event.get('id') }}" class="event-header__link active"><span class="glyphicon glyphicon-tower"></span> Games</a>
-            <a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
-          </div>
-          <div class="col-sm-3 event-header__dates">
+        <div class="event-header__info">
+          <a href="/event/{{ event.get('id') }}" class="event-header__name">
+            {{ event.get('title') }}
+          </a>
+          <div class="event-header__dates">
             Januember 29 - 31, 2017
           </div>
+        </div>
+        <div class="event-header__links">
+          <a href="#" class="event-header__link"><span class="glyphicon glyphicon-grain"></span> Theme</a>
+          <a href="/event/{{ event.get('id') }}" class="event-header__link active"><span class="glyphicon glyphicon-tower"></span> Games</a>
+          <a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
         </div>
       </div>
     </div>
@@ -75,5 +80,6 @@
   
  <script type="text/javascript" src="/static/js/jquery.min.js"></script>
  <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+ {% block scripts %}{% endblock %}
 </body>
 </html>

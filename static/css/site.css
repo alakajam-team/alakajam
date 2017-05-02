@@ -4,8 +4,9 @@
   --main-dark: color(var(--main) lightness(25%));
   --alt: #f2536d;
   --bg: #eee;
-  --text: #111;
-  --text-light: #AAA;
+  --text: #1f3038;
+  --text-light: #4f7080;
+  --text-lighter: #AAA;
 
   /* Fonts */
   --alt-font: {
@@ -43,9 +44,20 @@ body.in-event {
 }
 
 h1 {
-  font-size: 2.5rem;
-  font-variant: small-caps;
-  letter-spacing: 2px;
+  @apply --alt-font;
+  margin: 0 0 15px 0;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+h2 {
+  margin: 0 0 10px 0;
+}
+h3 {
+  margin: 0 0 10px 0;
+}
+h4 {
+  margin: 0 0 10px 0;
 }
 
 a {
@@ -141,27 +153,51 @@ a:hover {
 
 .event-header {
   @apply --shadow;
+  display: flex;
+  box-sizing: border-box;
   width: 100%;
-  line-height: calc(var(--eventbar-height));
+  line-height: var(--eventbar-height);
   background-color: white;
   color: var(--alt);
-  box-sizing: border-box;
+
+  &__info {
+    display: block;
+    text-align: center;
+
+    @media (min-width: 768px) {
+      display: inline-block;
+    }
+  }
 
   &__name {
     @apply --alt-font;
+    display: inline-block;
+    line-height: var(--eventbar-height);
+    padding-right: 10px;
+    vertical-align: top;
     font-size: 1.3rem;
-    line-height: calc(var(--eventbar-height));
   }
 
   &__dates {
-    text-align: right;
-    font-size: 1rem;
+    display: inline-block;
+    line-height: var(--eventbar-height);
+    vertical-align: top;
+    font-size: .7rem;
     color: var(--text);
+
+    @media (min-width: 768px) {
+      padding-right: 20px;
+    }
   }
+
   &__links {
-    height: var(--eventbar-height);
-    display: flex;
+    display: block;
+
+    @media (min-width: 768px) {
+      display: inline-block;
+    }
   }
+
   &__link {
     display: inline-block;
     box-sizing: border-box;
@@ -180,7 +216,7 @@ a:hover {
     }
 
     &.disabled {
-      color: var(--text-light);
+      color: var(--text-lighter);
       cursor: default;
       &:hover {
         background-color: inherit;
@@ -197,6 +233,46 @@ a:hover {
   @apply --shadow;
   padding: 20px;
 }
+
+/* User contents */
+
+.user-contents {
+  & h1 {
+    font-size: 1.9rem;
+  }
+  & h2 {
+    font-size: 1.5rem;
+  }
+  & h3 {
+    font-size: 1.3rem;
+    color: var(--text-light);
+  }
+  & h4 {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: var(--text-light);
+  }
+
+
+  &__editor {
+    border: 1px solid #aab2bd;
+    border-radius: 4px;
+
+    & .editor-toolbar {
+      border: none;
+      border-bottom: 1px solid #aab2bd;
+    }
+
+    & .CodeMirror {
+      border: none;
+
+      & .CodeMirror-code .cm-header-1 {
+        line-height: 100%;
+      }
+    }
+  }
+}
+
 
 /* Event row */
 

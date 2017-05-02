@@ -25,20 +25,14 @@ async function anyPageMiddleware (req, res, next) {
  * Home page
  */
 async function index (req, res) {
-  try {
-    if (res.locals.liveEvent) {
-      // Fetch related entries
-      let liveEventId = res.locals.liveEvent['id']
-      let liveEventModel = await new Event({ id: liveEventId })
-        .fetch({ withRelated: 'entries' })
-      res.locals.liveEvent = liveEventModel
-    }
-    res.render('index')
-  } catch (e) {
-    // TODO Normalize error handling
-    log.error(e.message)
-    res.end('error: ' + e.message)
+  if (res.locals.liveEvent) {
+    // Fetch related entries
+    let liveEventId = res.locals.liveEvent['id']
+    let liveEventModel = await new Event({ id: liveEventId })
+      .fetch({ withRelated: 'entries' })
+    res.locals.liveEvent = liveEventModel
   }
+  res.render('index')
 }
 
 /**

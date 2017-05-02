@@ -13,9 +13,8 @@
       <img src="/static/images/test.png" style="width: 100%" />
       {% endif %}
     </div>
-    <div class="col-md-8 panel">
-      <p>{{ entry.get('description') }}</p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    <div class="col-md-8 panel user-contents">
+      {{ entry.get('description') | markdown | safe }}
     </div>
     {% if entry.get('link') %}
     <a class="btn btn-primary" href="{{ entry.get('link') }}">Play this game</a>
