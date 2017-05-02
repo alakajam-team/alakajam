@@ -1,9 +1,16 @@
 {% macro entryThumb(entry) %}
-<a class="entry-thumb col-md-2" href="/entry/{{ entry.get('id') }}">
-  {% set picturePath = entry.get('picture') if entry.has('picture') else '/static/images/test.png' %}
-  <img class="entry-thumb__picture" src="{{ picturePath }}" />
-  <div class="entry-thumb__title" >{{ entry.get('title') }}</div>
-</a>
+<div class="col-md-3">
+  <a class="entry-thumb" href="/entry/{{ entry.get('id') }}">
+    {% set picturePath = entry.get('picture') if entry.has('picture') else '/static/images/test.png' %}
+    <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
+      <div class="entry-thumb__picture-gradient"></div>
+    </div>
+    <div class="entry-thumb__details" >
+      <div class="entry-thumb__title" >{{ entry.get('title') }}</div>
+      <div class="entry-thumb__author" >by <b>Someone</b></div>
+    </div>
+  </a>
+</div>
 {% endmacro %}
 
 {% macro eventPanel(event) %}

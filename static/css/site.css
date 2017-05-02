@@ -3,6 +3,7 @@
   --main: #00b1d5;
   --main-dark: color(var(--main) lightness(25%));
   --alt: #f2536d;
+  --alt-dark: color(var(--alt) lightness(25%));
   --bg: #eee;
   --text: #1f3038;
   --text-light: #4f7080;
@@ -43,10 +44,14 @@ body.in-event {
   padding-top: 120px;
 }
 
+div {
+  box-sizing: border-box;
+}
+
 h1 {
   @apply --alt-font;
   margin: 0 0 15px 0;
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   letter-spacing: 1px;
   color: var(--text);
 }
@@ -138,7 +143,11 @@ a:hover {
     }
   }
 
-  /* Profile icon */
+  /* Profile menu */
+
+  & .navbar-profile {
+    font-weight: bold;
+  }
 
   & .navbar-profileicon {
     width: 36px;
@@ -297,24 +306,67 @@ a:hover {
 /* Entry thumb */
 
 .entry-thumb {
+  @apply --shadow;
+  display: block;
   text-align: center;
+  background-color: white;
+  margin: 0 10px;
+  width: 100%;
+  height: 250px;
 
   &__picture {
-    @apply --shadow;
-    border: 5px solid white;
-    width: 95%;
+    height: 150px;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: 0.3s;
   }
-
   &:hover &__picture {
     border: 5px solid var(--alt);
+    transition: 0.1s;
+  }
+
+  &__picture-gradient {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to bottom,
+      transparent 0%, transparent 40%, rgba(0,0,0,0.25) 100%);
+  }
+
+  &__details {
+    height: 100px;
+    padding: 10px;
+    text-align: left;
+  }
+
+  &__title {
+    font-size: 1.1rem;
   }
   &:hover &__title {
-    font-weight: bold;
+    color: var(--alt-dark);
+    transition: 0.1s;
+  }
+
+  &__author {
+    color: var(--text);
   }
 }
 
 /* Entry page */
 
 .entry {
-  margin-top: 20px;
+
+  &__picture {
+    @apply --shadow;
+    margin-bottom: 20px;
+    text-align: center;
+    background-color: var(--text);
+    border-radius: 4px;
+
+    & img {
+      max-width: 100%;
+      max-height: 400px;
+    }
+  }
+
 }
