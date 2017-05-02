@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node wejam.js",
     "debug": "node-debug wejam.js",
-    "forever": "forever -w wejam.js"
+    "watch": "browser-refresh wejam.js"
   },
   "repository": {
     "type": "git",
@@ -29,10 +29,11 @@
     "postcss-cssnext": "^2.9.0",
     "postcss-middleware": "^1.1.2",
     "promisify-node": "^0.4.0",
+    "showdown": "^1.6.4",
     "sqlite3": "^3.1.8",
     "winston": "^2.3.0"
   },
   "devDependencies": {
-    "showdown": "^1.6.4"
+    "browser-refresh-client": "^1.1.4"
   }
 }

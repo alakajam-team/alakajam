@@ -1,6 +1,5 @@
 'use strict'
 
-const log = require('../lib/log')
 const Event = require('../models/eventModel')
 
 module.exports = {
@@ -17,7 +16,7 @@ module.exports = {
 }
 
 async function anyPageMiddleware (req, res, next) {
-  res.locals.liveEvent  = await new Event().fetch() // XXX Temporary query
+  res.locals.liveEvent = await new Event().fetch() // XXX Temporary query
   next()
 }
 

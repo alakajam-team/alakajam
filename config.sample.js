@@ -18,5 +18,6 @@ module.exports = {
   DB_NAME: 'wejam', */
 
   // Debug options
-  DEBUG_SQL: false
+  DEBUG_SQL: false,
+  DEBUG_REFRESH_BROWSER: false
 }

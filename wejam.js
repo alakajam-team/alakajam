@@ -4,6 +4,7 @@ const promisify = require('promisify-node')
 const fs = promisify('fs')
 const express = require('express')
 const log = require('./lib/log')
+const browserRefreshClient = require('browser-refresh-client')
 
 log.info('Server starting...')
 
@@ -23,7 +24,7 @@ async function createApp () {
   app.locals.devMode = app.get('env') === 'development'
   await initDatabase(app.locals.devMode)
   await middleware.configure(app)
-  app.listen(config.SERVER_PORT)
+  app.listen(config.SERVER_PORT, configureBrowserRefresh)
   log.info(`Server started on port ${config.SERVER_PORT}.`)
 }
 
@@ -111,5 +112,17 @@ async function initDatabase (withSamples) {
     }
   } else {
     log.info('Existing database found.')
+  }
+}
+
+function configureBrowserRefresh () {
+  const config = require('./config.js')
+
+  if (config.DEBUG_REFRESH_BROWSER && process.send) {
+    process.send('online')
+    browserRefreshClient
+      .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg',
+        { autoRefresh: false })
+      .onFileModified(() => browserRefreshClient.refreshPage())
   }
 }
