@@ -35,20 +35,14 @@ async function entryMiddleware (req, res, next) {
  * Browse entry
  */
 function viewEntry (req, res) {
-  res.render('entry', {
-    entry: res.locals.entry,
-    event: res.locals.event
-  })
+  res.render('entry')
 }
 
 /**
  * Edit entry
  */
 function editEntry (req, res) {
-  res.render('entry-edit', {
-    entry: res.locals.entry,
-    event: res.locals.event
-  })
+  res.render('entry-edit')
 }
 
 /**

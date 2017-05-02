@@ -30,7 +30,7 @@ a {
   text-decoration: none;
 }
 a:hover, a:focus {
-  color: #4fc1e9;
+  color: inherit;
   text-decoration: none;
 }
 a:focus {

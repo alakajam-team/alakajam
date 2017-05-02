@@ -3,8 +3,6 @@
 
 {% block body %}
 
-<h1><a href="/">Events</a> > {{ event.get('title') }}</h1>
-
 <div class="container">
   <div class="row">
     {% for entry in event.related('entries').models %}

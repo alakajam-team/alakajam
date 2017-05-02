@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node wejam.js",
     "debug": "node-debug wejam.js",
-    "forever": "forever wejam.js"
+    "forever": "forever -w wejam.js"
   },
   "repository": {
     "type": "git",

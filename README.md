@@ -14,7 +14,7 @@ Requirement: NodeJS 7.6+
 
 `npm install -g standard forever node-inspector`
 
-* Make the app restart automatically upon file changes with `forever wejam.js`
+* Make the app restart automatically upon file changes with `forever -w wejam.js`
 * Debug code with `node-debug we-jam.js`
 * Validate code style with `standard`
 

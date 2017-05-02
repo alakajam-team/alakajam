@@ -5,22 +5,7 @@
 
 <h1>Current event</h1>
 
-{% for event in events %}
-<div class="event-row panel">
-  <div class="event-row__header row">
-    <div class="event-row__title col-md-3"><a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a></div>
-    <div class="event-row__status col-md-9">
-      Current state: <b>open (closes in 20:00:00)</b><br />
-      Entry count: <b>{{ event.related('entries').length }}</b>
-    </div>
-  </div>
-  <div class="row">
-    {% for entry in event.related('entries').models %}
-      {{ macros.entryThumb(entry) }}
-    {% endfor %}
-  </div>
-</div>
-{% endfor %}
+{{ macros.eventPanel(liveEvent) }}
 
 <h1>News</h1>
 

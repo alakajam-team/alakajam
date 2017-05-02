@@ -5,15 +5,20 @@
   --alt: #f2536d;
   --bg: #eee;
   --text: #111;
+  --text-light: #AAA;
 
   /* Fonts */
   --alt-font: {
     font-family: 'Chewy', cursive;
     letter-spacing: 2px;
   };
+  --shadow: {
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+  };
 
   /* UI elements */
-  --navbar-height: 60px;
+  --navbar-height: 55px;
+  --eventbar-height: 40px;
 }
 
 /* General */
@@ -32,6 +37,9 @@ body {
   color: var(--text);
   height: 100%;
   padding-top: 70px;
+}
+body.in-event {
+  padding-top: 120px;
 }
 
 h1 {
@@ -91,7 +99,6 @@ a:hover {
     & > li.active a {
       border-bottom: 4px solid white;
       box-sizing: border-box;
-      height: var(--navbar-height);
     }
 
     & > li > a, & > li.active > a {
@@ -99,9 +106,22 @@ a:hover {
       padding: 0 20px;
       color: white;
       line-height: var(--navbar-height);
+      height: var(--navbar-height);
 
       &:hover {
         background-color: rgba(255,255,255,0.15);
+      }
+    }
+
+    & > li.live a {
+      background-color: var(--alt);
+      line-height: calc(var(--navbar-height) / 3);
+      padding-top: calc(var(--navbar-height) / 6);
+      font-size: 1rem;
+      margin-right: 20px;
+
+      &:hover {
+        background-color: var(--alt);
       }
     }
   }
@@ -117,46 +137,104 @@ a:hover {
 
 }
 
+/* Event header */
+
+.event-header {
+  @apply --shadow;
+  width: 100%;
+  line-height: calc(var(--eventbar-height));
+  background-color: white;
+  color: var(--alt);
+  box-sizing: border-box;
+
+  &__name {
+    @apply --alt-font;
+    font-size: 1.3rem;
+    line-height: calc(var(--eventbar-height));
+  }
+
+  &__dates {
+    text-align: right;
+    font-size: 1rem;
+    color: var(--text);
+  }
+  &__links {
+    height: var(--eventbar-height);
+    display: flex;
+  }
+  &__link {
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: top;
+    padding: 0 15px;
+    margin: 0;
+    height: var(--eventbar-height);
+    font-size: 1rem;
+
+    &:hover {
+      background-color: color(var(--alt) alpha(10%));
+    }
+
+    &.active {
+      border-bottom: 4px solid var(--alt);
+    }
+
+    &.disabled {
+      color: var(--text-light);
+      cursor: default;
+      &:hover {
+        background-color: inherit;
+      }
+    }
+  }
+}
+
 
 /* Reusable blocks */
 
 .panel {
   background: white;
-  box-shadow: 1px 1px 2px #0003;
+  @apply --shadow;
   padding: 20px;
 }
 
 /* Event row */
 
-.event-row__header {
-  background-color: var(--alt);
-  margin: -20px;
-  padding: 10px;
-  margin-bottom: 20px;
-}
+.event-row {
+  &__header {
+    background-color: var(--alt);
+    margin: -20px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
 
-.event-row__title a {
-  font-size: 2.5rem;
-  color: white;
-}
-.event-row__status {
-  color: white;
+  &__title a {
+    font-size: 2.5rem;
+    color: white;
+  }
+
+  &__status {
+    color: white;
+  }
 }
 
 /* Entry thumb */
 
 .entry-thumb {
   text-align: center;
-}
-.entry-thumb__picture {
-  border: 5px solid white;
-  width: 95%;
-}
-.entry-thumb:hover .entry-thumb__picture {
-  border: 5px solid var(--alt);
-}
-.entry-thumb:hover .entry-thumb__title {
-  font-weight: bold;
+
+  &__picture {
+    @apply --shadow;
+    border: 5px solid white;
+    width: 95%;
+  }
+
+  &:hover &__picture {
+    border: 5px solid var(--alt);
+  }
+  &:hover &__title {
+    font-weight: bold;
+  }
 }
 
 /* Entry page */

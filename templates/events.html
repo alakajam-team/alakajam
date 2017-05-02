@@ -1,0 +1,12 @@
+{% extends "_page.html" %}
+{% import "_macros.html" as macros %}
+
+{% block body %}
+
+<h1>Events</h1>
+
+{% for event in events %}
+  {{ macros.eventPanel(event) }}
+{% endfor %}
+
+{% endblock %}

@@ -9,7 +9,7 @@
   <link rel="stylesheet" type="text/css" href="/static/css/bootflat-wejam.css" />
   <link rel="stylesheet" type="text/css" href="/static/css/site.css" />
 </head>
-<body>
+<body {% if (event) %}class="in-event"{% endif %}>
 
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -25,16 +25,21 @@
       </div>
       
       {# Desktop navbar #}
-      {# TODO Move this logic in global context filter #}
-      {% if path == '/chat' %}
-        {% set isChat = true %}
-      {% else %}
-        {% set isEvents = true %}
+      {% if (event and liveEvent and event.get('id') == liveEvent.get('id')) %}
+        {% set isLiveEvent = true %}
       {% endif %}
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav">
-          <li {% if isEvents %}class="active"{% endif %}><a href="/">Events</a></li>
-          <li {% if isChat %}class="active"{% endif %}><a href="/chat">Chat</a></li>
+          {% if (liveEvent) %}
+          <li class="live {% if isLiveEvent %}active{% endif %}">
+            <a href="/event/{{ liveEvent.id }}">
+            Live: <b>1st WeJam!</b><br />
+            Theme: <b>You are not alone</b>
+            </a>
+          </li>
+          {% endif %}
+          <li {% if path == '/events' %}class="active"{% endif %}><a href="/events">Events</a></li>
+          <li {% if path == '/chat' %}class="active"{% endif %}><a href="/chat">Chat</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="/static/images/sample.jpg" class="navbar-profileicon" /> <span class="caret"></span></a>
             <ul class="dropdown-menu">
@@ -45,6 +50,23 @@
         </ul>
       </div>
     </div>
+    {% if (event) %}
+    <div class="event-header">
+      <div class="container">
+        <div class="row">
+          <a href="/event/{{ event.get('id') }}" class="col-sm-2 event-header__name" >{{ event.get('title') }}</a>
+          <div class="col-sm-7 event-header__links">
+            <a href="#" class="event-header__link"><span class="glyphicon glyphicon-grain"></span> Theme</a>
+            <a href="/event/{{ event.get('id') }}" class="event-header__link active"><span class="glyphicon glyphicon-tower"></span> Games</a>
+            <a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
+          </div>
+          <div class="col-sm-3 event-header__dates">
+            Januember 29 - 31, 2017
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </nav>
 
   <div class="container">
