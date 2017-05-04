@@ -3,7 +3,7 @@
 /**
  * Database storage configuration.
  * Requiring the module returns a [Bookshelf](http://bookshelfjs.org/) instance.
- * 
+ *
  * @module core/db
  */
 
@@ -18,6 +18,7 @@ module.exports = initializeDatabase()
 // Models sorted by table creation order
 const MODEL_FILENAMES_UP = models.modelFilenamesUp()
 const MODEL_FILENAMES_DOWN = MODEL_FILENAMES_UP.slice().reverse()
+const SETTING_DB_VERSION = 'db_version'
 
 function initializeDatabase () {
   let knexInstance = createKnexInstance()
@@ -60,32 +61,52 @@ function createBookshelfInstance (knexInstance) {
   db.plugin('pagination')
 
   /**
-   * Checks whether the database has been initialized
-   * @returns {boolean}
+   * Finds the current DB version
+   * @returns {number} The DB version, or 0 if the DB is empty
    */
-  db.isInitialized = async function () {
+  db.findCurrentVersion = async function () {
+    const settingService = require('../services/setting-service')
     try {
-      await require('../models/' + MODEL_FILENAMES_UP[0]).count()
-      return true
+      return await settingService.find(SETTING_DB_VERSION, 0)
     } catch (e) {
-      return false
+      // Table missing
+      // log.warn(e.message)
+      return 0
     }
   }
 
   /**
-   * Recreates the whole database.
+   * Drops all tables from the database.
    * @returns {void}
    */
-  db.dropCreateTables = async function () {
+  db.dropTables = async function () {
     for (let modelFilename of MODEL_FILENAMES_DOWN) {
       log.info('Drop model: ' + modelFilename + '...')
       let model = require('../models/' + modelFilename)
       await model.down()
     }
+  }
+
+  /**
+   * Upgrades the whole database to the latest version.
+   * Creates the tables if needed.
+   * @returns {void}
+   */
+  db.upgradeTables = async function () {
+    let currentVersion = await db.findCurrentVersion()
+    let upgradeRequired = currentVersion < models.version
+
     for (let modelFilename of MODEL_FILENAMES_UP) {
-      log.info('Create model: ' + modelFilename + '...')
       let model = require('../models/' + modelFilename)
-      await model.up()
+      if (upgradeRequired) {
+        console.log(modelFilename, model)
+        await model.up(currentVersion)
+      }
+    }
+
+    if (upgradeRequired) {
+      const settingService = require('../services/setting-service')
+      await settingService.save(SETTING_DB_VERSION, models.version)
     }
   }
 
@@ -100,7 +121,7 @@ function createBookshelfInstance (knexInstance) {
 
     let weJam1 = new Event({
       title: '1st WeJam',
-      status_global: 'closed'
+      status: 'closed'
     })
     await weJam1.save()
 
@@ -109,7 +130,7 @@ function createBookshelfInstance (knexInstance) {
 
     let weJam2 = new Event({
       title: '2nd WeJam',
-      status_global: 'open'
+      status: 'open'
     })
     await weJam2.save()
 

@@ -2,13 +2,13 @@
 
 /**
  * Server middleware configuration.
- * 
+ *
  * @description Sets up:
  * - CSS processing (cssnext)
  * - Templating (nunjucks)
  * - Form parsing / file upload (formidable)
  * - Error pages
- * 
+ *
  * @module core/middleware
  */
 

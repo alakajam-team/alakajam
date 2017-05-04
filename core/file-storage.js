@@ -2,13 +2,13 @@
 
 /**
  * File & folder manipulation, mostly for picture storage.
- * 
+ *
  * @module core/file-storage
  */
 
 const promisify = require('promisify-node')
 const fs = promisify('fs')
-const path = require('path')
+// const path = require('path')
 
 module.exports = {
   move,
@@ -17,7 +17,7 @@ module.exports = {
   createFolderIfMissing
 }
 
-const UPLOADS_ROOT = path.join(__dirname, '../static/uploads')
+// const UPLOADS_ROOT = path.join(__dirname, '../static/uploads')
 
 /**
   Moves the file from a path to another. Typically used for saving temporary files.
@@ -27,25 +27,25 @@ const UPLOADS_ROOT = path.join(__dirname, '../static/uploads')
   If target path doesn't contain an extension
 */
 async function move (sourcePath, targetPath) {
-
+  // TODO
 }
 
-async function readDocument (path) {
-  
+async function readDocument (documentPath) {
+  // TODO
 }
 
-async function saveDocument (path, data) {
-
+async function saveDocument (documentPath, data) {
+  // TODO
 }
 
 /**
  * Creates a folder. No op if the folder exists.
  * XXX Does *not* support recursive creation
  */
-async function createFolderIfMissing (path) {
+async function createFolderIfMissing (folderPath) {
   try {
-    await fs.access(path, fs.constants.R_OK)
+    await fs.access(folderPath, fs.constants.R_OK)
   } catch (e) {
-    await fs.mkdir(path)
+    await fs.mkdir(folderPath)
   }
 }

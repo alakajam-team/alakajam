@@ -2,7 +2,7 @@
 
 /**
  * Controllers listing
- * 
+ *
  * @module controllers
  */
 

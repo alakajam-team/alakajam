@@ -2,7 +2,7 @@
 
 /**
  * Entry pages
- * 
+ *
  * @module controllers/entry
  */
 
@@ -71,7 +71,7 @@ async function saveEntry (req, res) {
         await fs.rename(files.picture.path, newPath)
         entry.set('picture', '/static/uploads/' + newFilename)
       }
-      entry.save()
+      await entry.save()
       viewEntry(req, res)
     }
   } catch (e) {

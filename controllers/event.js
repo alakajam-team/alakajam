@@ -2,7 +2,7 @@
 
 /**
  * Event pages
- * 
+ *
  * @module controllers/event
  */
 

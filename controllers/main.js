@@ -2,7 +2,7 @@
 
 /**
  * Global pages
- * 
+ *
  * @module controllers/main
  */
 
@@ -22,7 +22,10 @@ module.exports = {
 }
 
 async function anyPageMiddleware (req, res, next) {
-  res.locals.liveEvent = await eventService.findLiveEvent()
+  res.locals.liveEvent = await eventService.findEventByStatus('open')
+  if (!res.locals.liveEvent) {
+    res.locals.nextEvent = await eventService.findEventByStatus('pending')
+  }
   next()
 }
 
@@ -31,10 +34,10 @@ async function anyPageMiddleware (req, res, next) {
  */
 async function index (req, res) {
   if (res.locals.liveEvent) {
-    // Fetch related entries
-    let liveEventId = res.locals.liveEvent['id']
-    let liveEventModel = await eventService.findEventById(liveEventId)
-    res.locals.liveEvent = liveEventModel
+    res.locals.liveEvent.load('entries')
+  }
+  if (res.locals.nextEvent) {
+    res.locals.nextEvent.load('entries')
   }
   res.render('index')
 }
@@ -62,7 +65,9 @@ async function chat (req, res) {
  */
 async function resetDb (req, res) {
   const db = require('../core/db')
-  await db.dropCreateTables()
+  await db.dropTables()
+  await db.upgradeTables()
   await db.insertSamples()
-  res.end('DB reset done.')
+  let version = await db.findCurrentVersion()
+  res.end('DB reset done (current version : ' + version + ').')
 }

@@ -2,39 +2,52 @@
 
 /**
  * Event model
- * 
- * @module models/event
+ *
+ * @param {uuid} uuid UUID
+ * @param {string} name Name
+ * @param {string} title Title
+ *
+ * @module models/event-model
  */
 
 let db = require('../core/db')
 
-/**
- * Object model
- */
-let Event = db.model('Event', {
-  tableName: 'event',
-  uuid: true,
-  entries: function () {
-    return this.hasMany('Entry')
-  }
-})
+module.exports = createModel()
 
-/**
- * Table create
- */
-Event.up = async function () {
-  await db.knex.schema.createTable('event', function (table) {
-    table.uuid('id').primary()
-    table.string('title')
-    table.string('status_global')
+function createModel () {
+  let model = db.model('Event', {
+    tableName: 'event',
+    idAttribute: 'uuid',
+    hasTimestamps: true,
+    uuid: true,
+    entries: function () {
+      return this.hasMany('Entry', 'event_uuid')
+    }
   })
-}
 
-/**
- * Table drop
- */
-Event.down = async function () {
-  await db.knex.schema.dropTableIfExists('event')
-}
+  model.up = async function up (currentVersion) {
+    if (currentVersion < 1) {
+      await db.knex.schema.createTable('event', function (table) {
+        table.uuid('uuid').primary()
+        table.string('name')
+        table.string('title')
+        table.string('display_dates')
+        table.string('display_theme')
+        table.string('status')
+        table.string('status_theme')
+        table.string('status_entry')
+        table.string('status_results')
+        table.boolean('is_template')
+        table.string('cron_config')
+        table.dateTime('published_at')
+        table.timestamps()
+      })
+    }
+  }
 
-module.exports = Event
+  model.down = async function down () {
+    await db.knex.schema.dropTableIfExists('event')
+  }
+
+  return model
+}

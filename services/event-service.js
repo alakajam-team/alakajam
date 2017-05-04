@@ -2,8 +2,8 @@
 
 /**
  * Service for interacting with events & entries.
- * 
- * @module services/event
+ *
+ * @module services/event-service
  */
 
 const Event = require('../models/event-model')
@@ -12,7 +12,7 @@ const Entry = require('../models/entry-model')
 module.exports = {
   findEventById,
   findAllEvents,
-  findLiveEvent,
+  findEventByStatus,
   findEntryById
 }
 
@@ -22,7 +22,7 @@ module.exports = {
  * @returns {Event}
  */
 async function findEventById (uuid) {
-  return await Event.where('id', uuid).fetch({ withRelated: 'entries' })
+  return Event.where('uuid', uuid).fetch({ withRelated: 'entries' })
 }
 
 /**
@@ -31,17 +31,24 @@ async function findEventById (uuid) {
  */
 async function findAllEvents () {
   let eventModels = await new Event()
-    .orderBy('title', 'DESC') // XXX Temporary
+    .orderBy('title', 'DESC') // XXX Temporary prop
     .fetchAll({ withRelated: 'entries' })
   return eventModels.models
 }
 
 /**
  * Fetches the currently live Event.
- * @returns {Event}
+ * @param globalStatus {string} One of "pending", "open", "closed"
+ * @returns {Event} The earliest pending event OR the currently open event OR the last closed event.
  */
-async function findLiveEvent () {
-  return await new Event({ status_global: 'open' }).fetch()
+async function findEventByStatus (status) {
+  let sortOrder = 'ASC'
+  if (status === 'closed') {
+    sortOrder = 'DESC'
+  }
+  return Event.where('status', status)
+    .orderBy('title', sortOrder) // XXX Temporary prop
+    .fetch()
 }
 
 /**
@@ -50,5 +57,5 @@ async function findLiveEvent () {
  * @returns {Entry}
  */
 async function findEntryById (uuid) {
-  return await new Entry({id: uuid}).fetch({ withRelated: 'event' })
+  return Entry.where('uuid', uuid).fetch({ withRelated: 'event' })
 }

@@ -2,42 +2,47 @@
 
 /**
  * Entry model
- * 
- * @module models/entry
+ *
+ * @module models/entry-model
  */
 
 let db = require('../core/db')
 
-/**
- * Object model
- */
-let Entry = db.model('Entry', {
-  tableName: 'entry',
-  uuid: true,
-  event: function () {
-    return this.belongsTo('Event')
-  }
-})
+module.exports = createModel()
 
-/**
- * Table create
- */
-Entry.up = async function () {
-  await db.knex.schema.createTable('entry', function (table) {
-    table.uuid('id').primary()
-    table.string('title')
-    table.string('description')
-    table.string('link')
-    table.string('picture')
-    table.uuid('event_id').references('event.id')
+function createModel () {
+  let model = db.model('Entry', {
+    tableName: 'entry',
+    idAttribute: 'uuid',
+    hasTimestamps: true,
+    uuid: true,
+    event: function () {
+      return this.belongsTo('Event', 'event_uuid')
+    }
   })
-}
 
-/**
- * Table drop
- */
-Entry.down = async function () {
-  await db.knex.schema.dropTableIfExists('entry')
-}
+  model.up = async function up (currentVersion) {
+    if (currentVersion < 1) {
+      await db.knex.schema.createTable('entry', function (table) {
+        table.uuid('uuid').primary()
+        table.uuid('event_uuid').references('event.uuid')
+        table.uuid('event_name')
+        table.uuid('team_uuid') // .references('team.uuid')
+        table.string('team_title')
+        table.string('name')
+        table.string('title')
+        table.string('body')
+        table.string('results')
+        table.string('picture')
+        table.dateTime('published_at')
+        table.timestamps()
+      })
+    }
+  }
 
-module.exports = Entry
+  model.down = async function down () {
+    await db.knex.schema.dropTableIfExists('entry')
+  }
+
+  return model
+}

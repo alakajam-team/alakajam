@@ -7,7 +7,7 @@
 
 {% block body %}
 
-<form action="/entry/{{ entry.get('id') }}" method="post" enctype="multipart/form-data">
+<form action="/entry/{{ entry.get('uuid') }}" method="post" enctype="multipart/form-data">
 
   <div class="container">
     <div class="row">
@@ -34,7 +34,7 @@
           </div>
           <div class="form-group pull-right">
             <input type="submit" class="btn btn-primary" value="Save changes" />
-            <a class="btn btn-default" href="/entry/{{ entry.get('id') }}">Cancel</a> 
+            <a class="btn btn-default" href="/entry/{{ entry.get('uuid') }}">Cancel</a> 
           </div>
         </div>
         

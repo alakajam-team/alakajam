@@ -235,15 +235,6 @@ a:hover {
   }
 }
 
-
-/* Reusable blocks */
-
-.panel {
-  background: white;
-  @apply --shadow;
-  padding: 20px;
-}
-
 /* User contents */
 
 .user-contents {

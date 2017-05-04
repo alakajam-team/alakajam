@@ -1,6 +1,6 @@
 {% macro entryThumb(entry, cols = 3) %}
 <div class="col-sm-4 col-md-{{ cols }}">
-  <a class="entry-thumb" href="/entry/{{ entry.get('id') }}">
+  <a class="entry-thumb" href="/entry/{{ entry.get('uuid') }}">
     {% set picturePath = entry.get('picture') if entry.has('picture') else '/static/images/test.png' %}
     <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
       <div class="entry-thumb__picture-gradient"></div>
@@ -13,25 +13,25 @@
 </div>
 {% endmacro %}
 
-{% macro eventPanel(event, entryCols = 3) %}
-<div class="container-fluid event-row">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="container-fluid event-row__header">
-        <div class="row">
-          <div class="event-row__title col-md-4"><a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a></div>
-          <div class="event-row__status col-md-8">
-            Current state: <b>{{ event.get('status_global') }}</b><br />
-            Entry count: <b>{{ event.related('entries').length }}</b>
+{% macro eventWithEntries(event, entryCols = 3) %}
+  <div class="container-fluid event-row">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="container-fluid event-row__header">
+          <div class="row">
+            <div class="event-row__title col-md-4"><a href="/event/{{ event.get('uuid') }}">{{ event.get('title') }}</a></div>
+            <div class="event-row__status col-md-8">
+              Current state: <b>{{ event.get('status_global') }}</b><br />
+              Entry count: <b>{{ event.related('entries').length }}</b>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="row">
+      {% for entry in event.related('entries').models %}
+        {{ entryThumb(entry, entryCols) }}
+      {% endfor %}
+    </div>
   </div>
-  <div class="row">
-    {% for entry in event.related('entries').models %}
-      {{ entryThumb(entry, entryCols) }}
-    {% endfor %}
-  </div>
-</div>
 {% endmacro %}

@@ -13,9 +13,9 @@ const promisify = require('promisify-node')
 const fs = promisify('fs')
 const express = require('express')
 const browserRefreshClient = require('browser-refresh-client')
-const log = require('./core/log')
 const fileStorage = require('./core/file-storage')
 
+const log = global.log = require('./core/log')
 log.info('Server starting...')
 
 createApp()
@@ -89,31 +89,23 @@ async function initFilesLayout () {
  * DB initialization
  */
 async function initDatabase (withSamples) {
-  const config = require('./config.js')
   const db = require('./core/db')
-
-  let dbMissing = false
-
-  if (config.DB_TYPE === 'sqlite3') {
-    try {
-      await fs.access(config.DB_SQLITE_FILENAME, fs.constants.R_OK)
-    } catch (e) {
-      dbMissing = true
-    }
+  let currentVersion = await db.findCurrentVersion()
+  if (currentVersion > 0) {
+    log.info('Database found in version ' + currentVersion + '.')
+  } else {
+    log.info('Empty database found.')
   }
 
-  let dbInitialized = !dbMissing && await db.isInitialized()
-  if (!dbInitialized) {
-    try {
-      await db.dropCreateTables()
-      if (withSamples) {
-        await db.insertSamples()
-      }
-    } catch (e) {
-      log.error(e.stack)
-    }
+  await db.upgradeTables(currentVersion)
+  if (currentVersion === 0 && withSamples) {
+    await db.insertSamples()
+  }
+  let newVersion = await db.findCurrentVersion()
+  if (newVersion > currentVersion) {
+    log.info('Database upgraded to version ' + newVersion + '.')
   } else {
-    log.info('Existing database found.')
+    log.info('No database upgrade needed.')
   }
 }
 
