@@ -17,7 +17,10 @@ module.exports = {
     return [
       'setting-model',
       'event-model',
-      'entry-model'
+      'entry-model',
+      'team-model',
+      'user-model',
+      'user-role-model'
     ]
   }
 

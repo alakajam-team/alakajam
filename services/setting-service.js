@@ -16,13 +16,16 @@
 /**
  * Fetches a Setting and returns its value.
  * @param key {uuid} Key
- * @param default {string} An optional default value
+ * @param default {string|function} An optional default value.
+ *   If a function is passed, it will be evaluated first.
  * @returns {void}
  */
  async function find (key, defaultValue = null) {
    let settingModel = await Setting.where('key', key).fetch()
    if (settingModel) {
      return settingModel.get('value')
+   } else if (typeof defaultValue === 'function') {
+     return defaultValue()
    } else {
      return defaultValue
    }

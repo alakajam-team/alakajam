@@ -24,7 +24,7 @@
    */
    model.up = async function up (currentVersion) {
      if (currentVersion < 1) {
-       await db.knex.schema.createTable('setting', function (table) {
+       await db.knex.schema.createTableIfNotExists('setting', function (table) {
          table.string('key').primary()
          table.string('value')
        })

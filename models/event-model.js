@@ -3,9 +3,23 @@
 /**
  * Event model
  *
+ * @description ## Table columns
+ *
  * @param {uuid} uuid UUID
- * @param {string} name Name
- * @param {string} title Title
+ * @param {string} name Name, unique and used in URLs
+ * @param {string} title Title, for display only
+ * @param {string} display_dates The event dates, for display only
+ * @param {string} display_theme The event theme, for display only
+ * @param {string} status General status: 'pending', 'open' or 'closed'
+ * @param {string} status_theme Theme voting status: 'on', 'off', 'disabled'
+ * @param {string} status_entry Entry submission status: 'on', 'off', 'disabled'
+ * @param {string} status_results Event resutls status: 'on', 'off', 'disabled'
+ * @param {boolean} is_template Whether this is an actual event or just a template
+ * @param {string} cron_config JSON holding data specific to the cron task
+ *   in charge of running the event automatically
+ * @param {date} published_at Event publication date. If empty, the event is a draft.
+ * @param {date} created_at Creation time
+ * @param {date} modified_at Last modification time
  *
  * @module models/event-model
  */
@@ -27,7 +41,7 @@ function createModel () {
 
   model.up = async function up (currentVersion) {
     if (currentVersion < 1) {
-      await db.knex.schema.createTable('event', function (table) {
+      await db.knex.schema.createTableIfNotExists('event', function (table) {
         table.uuid('uuid').primary()
         table.string('name')
         table.string('title')

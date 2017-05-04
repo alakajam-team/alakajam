@@ -23,7 +23,7 @@ function createModel () {
 
   model.up = async function up (currentVersion) {
     if (currentVersion < 1) {
-      await db.knex.schema.createTable('entry', function (table) {
+      await db.knex.schema.createTableIfNotExists('entry', function (table) {
         table.uuid('uuid').primary()
         table.uuid('event_uuid').references('event.uuid')
         table.uuid('event_name')
@@ -31,9 +31,9 @@ function createModel () {
         table.string('team_title')
         table.string('name')
         table.string('title')
-        table.string('body')
+        table.string('body', 10000)
         table.string('results')
-        table.string('picture')
+        table.string('picture') // TODO Replace with document API
         table.dateTime('published_at')
         table.timestamps()
       })

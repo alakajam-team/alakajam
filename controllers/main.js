@@ -21,12 +21,12 @@ module.exports = {
 }
 
 async function anyPageMiddleware (req, res, next) {
-  res.locals.path =  req.originalUrl
+  res.locals.path = req.originalUrl
   res.locals.liveEvent = await eventService.findEventByStatus('open')
   if (!res.locals.liveEvent) {
     res.locals.nextEvent = await eventService.findEventByStatus('pending')
   }
-  
+
   next()
 }
 

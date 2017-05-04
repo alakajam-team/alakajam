@@ -99,7 +99,7 @@ function createBookshelfInstance (knexInstance) {
     for (let modelFilename of MODEL_FILENAMES_UP) {
       let model = require('../models/' + modelFilename)
       if (upgradeRequired) {
-        console.log(modelFilename, model)
+        log.info('Upgrade model: ' + modelFilename + '...')
         await model.up(currentVersion)
       }
     }
@@ -123,7 +123,7 @@ function createBookshelfInstance (knexInstance) {
       title: '1st WeJam',
       status: 'closed',
       display_dates: 'Novembary 17 - 20, 2016',
-      display_theme: 'Make a website',
+      display_theme: 'Make a website'
     })
     await weJam1.save()
 
