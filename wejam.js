@@ -115,13 +115,11 @@ async function initDatabase (withSamples) {
 function configureBrowserRefresh () {
   const config = require('./config.js')
 
-  if (process.send) {
+  if (process.send && config.DEBUG_REFRESH_BROWSER) {
     process.send('online')
-    if (config.DEBUG_REFRESH_BROWSER) {
-      browserRefreshClient
-        .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg',
-          { autoRefresh: false })
-        .onFileModified(() => browserRefreshClient.refreshPage())
-    }
+    browserRefreshClient
+      .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg',
+        { autoRefresh: false })
+      .onFileModified(() => browserRefreshClient.refreshPage())
   }
 }

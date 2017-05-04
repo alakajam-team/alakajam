@@ -16,16 +16,17 @@ module.exports = {
     app.get('/', index)
     app.get('/events', events)
     app.get('/chat', chat)
-    app.get('/admin', resetDb)
   }
 
 }
 
 async function anyPageMiddleware (req, res, next) {
+  res.locals.path =  req.originalUrl
   res.locals.liveEvent = await eventService.findEventByStatus('open')
   if (!res.locals.liveEvent) {
     res.locals.nextEvent = await eventService.findEventByStatus('pending')
   }
+  
   next()
 }
 
@@ -57,17 +58,4 @@ async function events (req, res) {
  */
 async function chat (req, res) {
   res.render('chat')
-}
-
-/**
- * XXX Temporary admin page
- * Resets the DB
- */
-async function resetDb (req, res) {
-  const db = require('../core/db')
-  await db.dropTables()
-  await db.upgradeTables()
-  await db.insertSamples()
-  let version = await db.findCurrentVersion()
-  res.end('DB reset done (current version : ' + version + ').')
 }

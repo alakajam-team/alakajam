@@ -27,15 +27,15 @@
       
       {# ==== Main header (desktop) ==== #}
       {% if (event and liveEvent and event.get('uuid') == liveEvent.get('uuid')) %}
-        {% set isLiveEvent = true %}
+      {% set isLiveEvent = true %}
       {% endif %}
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav">
           {% if (liveEvent) %}
           <li class="live {{ 'active' if isLiveEvent }}">
             <a href="/event/{{ liveEvent.get('uuid') }}">
-            Live: <b>{{ liveEvent.get('title') }}</b><br />
-            Theme: <b>{{ liveEvent.get('display_theme') }}</b>
+              Live: <b>{{ liveEvent.get('title') }}</b><br />
+              Theme: <b>{{ liveEvent.get('display_theme') }}</b>
             </a>
           </li>
           {% endif %}
@@ -69,20 +69,24 @@
         <div class="event-header__links">
           <a href="#" class="event-header__link"><span class="glyphicon glyphicon-grain"></span> Theme</a><!--
           --><a href="/event/{{ event.get('uuid') }}" class="event-header__link active"><span class="glyphicon glyphicon-tower"></span> Games</a><!--
-          --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
-        </div>
+        --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
       </div>
     </div>
-    {% endif %}
-  </nav>
-
-  <div class="container">
-   {% block body %}{% endblock %}
   </div>
-  
- <script type="text/javascript" src="/static/js/jquery.min.js"></script>
- <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
- <script src="{{ browserRefreshUrl }}"></script>
- {% block scripts %}{% endblock %}
+  {% endif %}
+</nav>
+
+<div class="container">
+ {% block body %}{% endblock %}
+</div>
+
+<footer class="container footer">
+  <a href="/admin">Administration</a> | <a href="https://github.com/mkalam-alami/wejam">WeJam! on Github</a>
+</footer>
+
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+<script src="{{ browserRefreshUrl }}"></script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

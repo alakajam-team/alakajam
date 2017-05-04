@@ -60,12 +60,10 @@ async function configure (app) {
     // Context made available anywhere
     let superRender = res.render
     res.render = function (template, context) {
-      // TODO Move to controllers/main
-      context = Object.assign({
-        path: req.url,
+      let mergedContext = Object.assign({
         browserRefreshUrl: process.env.BROWSER_REFRESH_URL
       }, context, res.locals)
-      superRender.call(res, template, context)
+      superRender.call(res, template, mergedContext)
     }
 
     next()

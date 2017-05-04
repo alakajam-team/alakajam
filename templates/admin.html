@@ -1,0 +1,19 @@
+{% extends "_page.html" %}
+
+{% block body %}
+
+<div class="row">
+
+  <h1>Administration</h1>
+
+  <p><a href="/">(Back)</a></p>
+  
+  {% if message %}
+  <div class="well">{{ message }}</div>
+  {% endif %}
+
+  <a href="/admin/reset" class="btn btn-danger" onclick="return confirm('Reset the whole DB?')">Reset database</a>
+
+</div>
+
+{% endblock %}
