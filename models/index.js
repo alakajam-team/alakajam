@@ -1,5 +1,12 @@
 'use strict'
 
+/**
+ * Models listing
+ * 
+ * @module models
+ */
+
+
 module.exports = {
 
   /*
@@ -7,8 +14,8 @@ module.exports = {
    */
   modelFilenamesUp: function () {
     return [
-      'eventModel',
-      'entryModel'
+      'event-model',
+      'entry-model'
     ]
   }
 

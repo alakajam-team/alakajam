@@ -1,5 +1,5 @@
-{% macro entryThumb(entry) %}
-<div class="col-md-3">
+{% macro entryThumb(entry, cols = 3) %}
+<div class="col-md-{{ cols }}">
   <a class="entry-thumb" href="/entry/{{ entry.get('id') }}">
     {% set picturePath = entry.get('picture') if entry.has('picture') else '/static/images/test.png' %}
     <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
@@ -13,14 +13,14 @@
 </div>
 {% endmacro %}
 
-{% macro eventPanel(event) %}
-<div class="container event-row">
+{% macro eventPanel(event, entryCols = 3) %}
+<div class="container-fluid event-row">
   <div class="row">
     <div class="col-md-12">
-      <div class="container event-row__header">
+      <div class="container-fluid event-row__header">
         <div class="row">
-          <div class="event-row__title col-md-3"><a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a></div>
-          <div class="event-row__status col-md-9">
+          <div class="event-row__title col-md-4"><a href="/event/{{ event.get('id') }}">{{ event.get('title') }}</a></div>
+          <div class="event-row__status col-md-8">
             Current state: <b>open (closes in 20:00:00)</b><br />
             Entry count: <b>{{ event.related('entries').length }}</b>
           </div>
@@ -30,7 +30,7 @@
   </div>
   <div class="row">
     {% for entry in event.related('entries').models %}
-      {{ entryThumb(entry) }}
+      {{ entryThumb(entry, entryCols) }}
     {% endfor %}
   </div>
 </div>

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node wejam.js",
     "debug": "node-debug wejam.js",
-    "watch": "browser-refresh wejam.js"
+    "watch": "browser-refresh wejam.js",
+    "docs": "jsdoc -c jsdoc.json -d docs -r core models services controllers wejam.js"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "winston": "^2.3.0"
   },
   "devDependencies": {
-    "browser-refresh-client": "^1.1.4"
+    "browser-refresh-client": "^1.1.4",
+    "jsdoc-strip-async-await": "^0.1.0"
   }
 }

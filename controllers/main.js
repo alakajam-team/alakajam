@@ -1,6 +1,12 @@
 'use strict'
 
-const Event = require('../models/eventModel')
+/**
+ * Global pages
+ * 
+ * @module controllers/main
+ */
+
+const Event = require('../models/event-model')
 
 module.exports = {
 
@@ -56,7 +62,7 @@ async function chat (req, res) {
  * Resets the DB
  */
 async function resetDb (req, res) {
-  const db = require('../lib/db')
+  const db = require('../core/db')
   await db.dropCreateTables()
   await db.insertSamples()
   res.end('DB reset done.')

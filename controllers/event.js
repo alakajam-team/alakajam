@@ -1,6 +1,12 @@
 'use strict'
 
-const Event = require('../models/eventModel')
+/**
+ * Event pages
+ * 
+ * @module controllers/event
+ */
+
+const Event = require('../models/event-model')
 
 module.exports = {
 

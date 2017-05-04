@@ -1,23 +1,33 @@
 'use strict'
 
+/**
+ * Entry point for the WeJam! game jam system
+ *
+ * @description
+ * Starts the Node server
+ *
+ * @module wejam
+ */
+
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const express = require('express')
-const log = require('./lib/log')
 const browserRefreshClient = require('browser-refresh-client')
+const log = require('./core/log')
+const fileStorage = require('./core/file-storage')
 
 log.info('Server starting...')
 
 createApp()
 
-/**
+/*
  * Create, configure and launch the server
  */
 async function createApp () {
   catchErrorsAndSignals()
   await initFilesLayout()
 
-  const middleware = require('./lib/middleware')
+  const middleware = require('./core/middleware')
   const config = require('./config')
 
   let app = express()
@@ -28,7 +38,7 @@ async function createApp () {
   log.info(`Server started on port ${config.SERVER_PORT}.`)
 }
 
-/**
+/*
  * Catch unhandled errors and system signals
  */
 function catchErrorsAndSignals () {
@@ -48,20 +58,20 @@ function catchErrorsAndSignals () {
     process.on(signal, _doGracefulShutdown)
   })
   function _doGracefulShutdown (cb) {
-    const db = require('./lib/db')
+    const db = require('./core/db')
     log.info('Shutting down.')
     db.knex.destroy(() => process.exit(-1))
   }
 }
 
-/**
+/*
  * Initialize files upon first startup
  */
 async function initFilesLayout () {
   // Create data folders
-  createFolderIfMissing('./data')
-  createFolderIfMissing('./data/tmp')
-  createFolderIfMissing('./static/uploads')
+  await fileStorage.createFolderIfMissing('./data')
+  await fileStorage.createFolderIfMissing('./data/tmp')
+  await fileStorage.createFolderIfMissing('./static/uploads')
 
   // Create config.js if missing
   const CONFIG_PATH = './config.js'
@@ -75,20 +85,12 @@ async function initFilesLayout () {
   }
 }
 
-async function createFolderIfMissing (path) {
-  try {
-    await fs.access(path, fs.constants.R_OK)
-  } catch (e) {
-    await fs.mkdir(path)
-  }
-}
-
-/**
+/*
  * DB initialization
  */
 async function initDatabase (withSamples) {
   const config = require('./config.js')
-  const db = require('./lib/db')
+  const db = require('./core/db')
 
   let dbMissing = false
 
@@ -115,14 +117,19 @@ async function initDatabase (withSamples) {
   }
 }
 
+/*
+ * Use browser-refresh to refresh the browser automatically during development
+ */
 function configureBrowserRefresh () {
   const config = require('./config.js')
 
-  if (config.DEBUG_REFRESH_BROWSER && process.send) {
+  if (process.send) {
     process.send('online')
-    browserRefreshClient
-      .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg',
-        { autoRefresh: false })
-      .onFileModified(() => browserRefreshClient.refreshPage())
+    if (config.DEBUG_REFRESH_BROWSER) {
+      browserRefreshClient
+        .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg',
+          { autoRefresh: false })
+        .onFileModified(() => browserRefreshClient.refreshPage())
+    }
   }
 }

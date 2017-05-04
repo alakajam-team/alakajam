@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * Controllers listing
+ * 
+ * @module controllers
+ */
+
 module.exports = {
 
   initRoutes: function (app) {

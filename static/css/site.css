@@ -113,34 +113,46 @@ a:hover {
       float: right;
     }
 
-    & > li.active a {
-      border-bottom: 4px solid white;
-      box-sizing: border-box;
-    }
+    & > li {
 
-    & > li > a, & > li.active > a {
-      font-size: 1.1rem;
-      padding: 0 20px;
-      color: white;
-      line-height: var(--navbar-height);
-      height: var(--navbar-height);
-
-      &:hover {
-        background-color: rgba(255,255,255,0.15);
+      &.active > a {
+        background-color: white;
+        color: var(--main);
       }
-    }
 
-    & > li.live a {
-      background-color: var(--alt);
-      line-height: calc(var(--navbar-height) / 3);
-      padding-top: calc(var(--navbar-height) / 6);
-      font-size: 1rem;
-      margin-right: 20px;
+      & > a {
+        color: white;
+      }
 
-      &:hover {
+      & > a, &.active > a {
+        font-size: 1.1rem;
+        padding: 0 20px;
+        line-height: var(--navbar-height);
+        height: var(--navbar-height);
+
+        &:hover {
+          background-color: rgba(255,255,255,0.15);
+        }
+      }
+
+      &.live a {
         background-color: var(--alt);
+        line-height: calc(var(--navbar-height) / 3);
+        padding-top: calc(var(--navbar-height) / 6);
+        font-size: 1rem;
+        margin-right: 20px;
+
+        &:hover {
+          background-color: var(--alt);
+        }
+      }
+
+      &.live.active a {
+        background-color: white;
+        color: var(--text-light);
       }
     }
+
   }
 
   /* Profile menu */
@@ -161,7 +173,6 @@ a:hover {
 /* Event header */
 
 .event-header {
-  @apply --shadow;
   display: flex;
   box-sizing: border-box;
   width: 100%;
@@ -303,6 +314,7 @@ a:hover {
   background-color: white;
   width: 100%;
   height: 250px;
+  margin-bottom: 20px;
 
   &__picture {
     height: 150px;

@@ -2,6 +2,10 @@
 node_modules/
 config.js
 
+# Docs
+docs/*.html
+docs/*/
+
 # Data
 data/
 static/uploads

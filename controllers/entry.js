@@ -1,9 +1,15 @@
 'use strict'
 
+/**
+ * Entry pages
+ * 
+ * @module controllers/entry
+ */
+
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
-const Entry = require('../models/entryModel')
+const Entry = require('../models/entry-model')
 
 module.exports = {
 

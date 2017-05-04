@@ -1,0 +1,12 @@
+/*
+ * Build the docs with `npm run-script docs`
+ */
+{
+    "plugins": [
+      "plugins/markdown",
+      "node_modules/jsdoc-strip-async-await"
+    ],
+    "markdown": {
+      "tags": ["description"]
+    }
+}
