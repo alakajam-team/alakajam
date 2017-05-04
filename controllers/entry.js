@@ -9,7 +9,7 @@
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
-const Entry = require('../models/entry-model')
+const eventService = require('../services/event-service')
 
 module.exports = {
 
@@ -27,14 +27,14 @@ module.exports = {
  * Fetches the current entry & event
  */
 async function entryMiddleware (req, res, next) {
-  let entry = await Entry.where('id', req.params.uuid).fetch({ withRelated: 'event' })
+  let entry = await eventService.findEntryById(req.params.uuid)
   if (entry === null) {
-    res.error(404, 'Entry not found')
+    res.errorPage(404, 'Entry not found')
   } else {
     res.locals.entry = entry
     res.locals.event = entry.related('event')
+    next()
   }
-  next()
 }
 
 /**

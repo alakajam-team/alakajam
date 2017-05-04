@@ -6,7 +6,7 @@
  * @module controllers/event
  */
 
-const Event = require('../models/event-model')
+const eventService = require('../services/event-service')
 
 module.exports = {
 
@@ -20,7 +20,7 @@ module.exports = {
  * Browse event
  */
 async function viewEvent (req, res, next) {
-  let event = await Event.where('id', req.params.uuid).fetch({ withRelated: 'entries' })
+  let event = await eventService.findEventById(req.params.uuid)
   if (event !== null) {
     res.render('event', {
       event: event

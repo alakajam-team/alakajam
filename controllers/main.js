@@ -6,7 +6,7 @@
  * @module controllers/main
  */
 
-const Event = require('../models/event-model')
+const eventService = require('../services/event-service')
 
 module.exports = {
 
@@ -22,7 +22,7 @@ module.exports = {
 }
 
 async function anyPageMiddleware (req, res, next) {
-  res.locals.liveEvent = await new Event().fetch() // XXX Temporary query
+  res.locals.liveEvent = await eventService.findLiveEvent()
   next()
 }
 
@@ -33,8 +33,7 @@ async function index (req, res) {
   if (res.locals.liveEvent) {
     // Fetch related entries
     let liveEventId = res.locals.liveEvent['id']
-    let liveEventModel = await new Event({ id: liveEventId })
-      .fetch({ withRelated: 'entries' })
+    let liveEventModel = await eventService.findEventById(liveEventId)
     res.locals.liveEvent = liveEventModel
   }
   res.render('index')
@@ -44,9 +43,9 @@ async function index (req, res) {
  * Events listing
  */
 async function events (req, res) {
-  let eventModels = await new Event().fetchAll({ withRelated: 'entries' })
+  let eventModels = await eventService.findAllEvents()
   res.render('events', {
-    events: eventModels.models
+    events: eventModels
   })
 }
 

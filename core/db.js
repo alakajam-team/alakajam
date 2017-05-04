@@ -24,7 +24,7 @@ function initializeDatabase () {
   return createBookshelfInstance(knexInstance)
 }
 
-/**
+/*
  * Knex (SQL builder) init
  */
 function createKnexInstance () {
@@ -50,10 +50,8 @@ function createKnexInstance () {
   return knex(knexOptions)
 }
 
-/**
- * Bookshelf (ORM) init with custom methods:
- * - dropCreateTables
- * - insertSamples
+/*
+ * Bookshelf (ORM) init with custom methods.
  */
 function createBookshelfInstance (knexInstance) {
   let db = bookshelf(knexInstance)
@@ -61,16 +59,23 @@ function createBookshelfInstance (knexInstance) {
   db.plugin('registry')
   db.plugin('pagination')
 
+  /**
+   * Checks whether the database has been initialized
+   * @returns {boolean}
+   */
   db.isInitialized = async function () {
     try {
       await require('../models/' + MODEL_FILENAMES_UP[0]).count()
       return true
     } catch (e) {
-      console.log(e)
       return false
     }
   }
 
+  /**
+   * Recreates the whole database.
+   * @returns {void}
+   */
   db.dropCreateTables = async function () {
     for (let modelFilename of MODEL_FILENAMES_DOWN) {
       log.info('Drop model: ' + modelFilename + '...')
@@ -84,16 +89,33 @@ function createBookshelfInstance (knexInstance) {
     }
   }
 
+  /**
+   * Inserts sample data in the database.
+   * @returns {void}
+   */
   db.insertSamples = async function () {
     log.info('Inserting samples...')
 
-    let Event = require('../models/eventModel')
+    let Event = require('../models/event-model')
 
-    let weJam1 = new Event({ title: 'WeJam #1' })
+    let weJam1 = new Event({
+      title: '1st WeJam',
+      status_global: 'closed'
+    })
     await weJam1.save()
+
     let weJam1Entries = weJam1.related('entries')
-    await weJam1Entries.create({ title: 'Game A' })
-    await weJam1Entries.create({ title: 'Game B' })
+    await weJam1Entries.create({ title: 'Old Game' })
+
+    let weJam2 = new Event({
+      title: '2nd WeJam',
+      status_global: 'open'
+    })
+    await weJam2.save()
+
+    let weJam2Entries = weJam2.related('entries')
+    await weJam2Entries.create({ title: 'Game A' })
+    await weJam2Entries.create({ title: 'Game B' })
   }
 
   return db

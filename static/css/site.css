@@ -4,6 +4,7 @@
   --main-dark: color(var(--main) lightness(25%));
   --alt: #f2536d;
   --alt-dark: color(var(--alt) lightness(25%));
+  --alt-transparent: color(var(--alt) alpha(10%));
   --bg: #eee;
   --text: #1f3038;
   --text-light: #4f7080;
@@ -217,7 +218,7 @@ a:hover {
     font-size: 1rem;
 
     &:hover {
-      background-color: color(var(--alt) alpha(10%));
+      background-color: var(--alt-transparent);
     }
 
     &.active {
@@ -345,9 +346,9 @@ a:hover {
     font-size: 1.1rem;
   }
   &:hover &__title {
-    color: var(--alt-dark);
-    transition: 0.1s;
+    font-weight: bold;
   }
+
 
   &__author {
     color: var(--text);

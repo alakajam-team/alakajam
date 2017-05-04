@@ -26,6 +26,7 @@ Event.up = async function () {
   await db.knex.schema.createTable('event', function (table) {
     table.uuid('id').primary()
     table.string('title')
+    table.string('status_global')
   })
 }
 
