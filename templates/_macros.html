@@ -7,31 +7,39 @@
     </div>
     <div class="entry-thumb__details" >
       <div class="entry-thumb__title" >{{ entry.get('title') }}</div>
-      <div class="entry-thumb__author" >by <b>Someone</b></div>
+      <div class="entry-thumb__author" >by <b>{{ entry.get('team_title') }}</b></div>
     </div>
   </a>
 </div>
 {% endmacro %}
 
-{% macro eventWithEntries(event, entryCols = 3) %}
-  <div class="container-fluid event-row">
+{% macro eventRow(event, withEntries = true, entryCols = 3) %}
+  <div class="container-fluid event-row {{ 'live' if event.get('status') == 'open' }}">
     <div class="row">
       <div class="col-md-12">
         <div class="container-fluid event-row__header">
           <div class="row">
-            <div class="event-row__title col-md-4"><a href="/event/{{ event.get('uuid') }}">{{ event.get('title') }}</a></div>
-            <div class="event-row__status col-md-8">
-              Current state: <b>{{ event.get('status_global') }}</b><br />
+            <div class="event-row__title col-sm-4"><a href="/event/{{ event.get('uuid') }}">{{ event.get('title') }}</a></div>
+            <div class="event-row__status col-sm-3">
+              Current state: <b>{{ event.get('status') }}</b><br />
               Entry count: <b>{{ event.related('entries').length }}</b>
             </div>
+            <div class="event-row__status col-sm-5">
+              Dates: <b>{{ event.get('display_dates') }}</b><br />
+              Theme: <b>{{ event.get('display_theme') }}</b>
+            </div>
+
+            
           </div>
         </div>
       </div>
     </div>
+    {% if withEntries %}
     <div class="row">
       {% for entry in event.related('entries').models %}
         {{ entryThumb(entry, entryCols) }}
       {% endfor %}
     </div>
+    {% endif %}
   </div>
 {% endmacro %}

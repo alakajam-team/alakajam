@@ -281,9 +281,12 @@ a:hover {
   margin-bottom: 20px;
 
   &__header {
-    background-color: var(--alt);
+    background-color: var(--main-dark);
     padding: 10px;
     margin-bottom: 20px;
+  }
+  &.live &__header {
+    background-color: var(--alt);
   }
 
   &__title a {

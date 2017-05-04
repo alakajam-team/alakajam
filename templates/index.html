@@ -15,11 +15,11 @@
 
     {% if (liveEvent) %}
       <h1>Current event</h1>
-      {{ macros.eventWithEntries(liveEvent, 4) }}
+      {{ macros.eventRow(liveEvent, true, 4) }}
     {% else %}
       <h1>Next event</h1>
       {% if (nextEvent) %}
-        {{ macros.eventWithEntries(nextEvent, 4) }}
+        {{ macros.eventRow(nextEvent, true, 4) }}
       {% else %}
         <div class="well">No upcoming event.</div>
       {% endif %}

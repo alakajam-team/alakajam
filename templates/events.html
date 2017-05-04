@@ -6,7 +6,7 @@
 <h1>Events</h1>
 
 {% for event in events %}
-  {{ macros.eventWithEntries(event) }}
+  {{ macros.eventRow(event, false) }}
 {% endfor %}
 
 {% endblock %}
