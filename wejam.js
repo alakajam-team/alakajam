@@ -69,9 +69,8 @@ function catchErrorsAndSignals () {
  */
 async function initFilesLayout () {
   // Create data folders
-  await fileStorage.createFolderIfMissing('./data')
-  await fileStorage.createFolderIfMissing('./data/tmp')
-  await fileStorage.createFolderIfMissing('./static/uploads')
+  await fileStorage.createFolderIfMissing('data/tmp')
+  await fileStorage.createFolderIfMissing('static/uploads')
 
   // Create config.js if missing
   const CONFIG_PATH = './config.js'

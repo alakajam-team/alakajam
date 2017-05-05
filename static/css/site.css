@@ -74,6 +74,10 @@ a:hover {
   text-decoration: none;
 }
 
+.editor-toolbar.fullscreen, .CodeMirror-fullscreen, .editor-preview-side { 
+  z-index: 2000;
+}
+
 /* Nav bar */
 
 .navbar-default {

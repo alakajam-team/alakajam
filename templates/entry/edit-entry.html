@@ -24,12 +24,12 @@
           </div>
           <div class="form-group">
             <label for="title">Link</label>
-            <input type="text" class="form-control" id="link" name="link" placeholder="http://..." value="{{ entry.get('link') }}">
+            <input type="text" class="form-control" id="link" name="link" placeholder="http://..." value="{{ entry.get('links')[0].url }}">
           </div>
           <div class="form-group">
             <label for="title">Description</label>
             <div class="user-contents user-contents__editor">
-              <textarea class="form-control" style="min-height: 200px" id="description" name="description" placeholder="A short description of your game">{{ entry.get('description') }}</textarea>
+              <textarea class="form-control" style="min-height: 200px" id="body" name="body" placeholder="A short description of your game">{{ entry.get('body') }}</textarea>
             </div>
           </div>
           <div class="form-group pull-right">
@@ -47,8 +47,8 @@
             {% endif %}
             
             <br />
-            {% if entry.has('picture') %}
-            <img src="{{ entry.get('picture') }}" style="width: 100%" />
+            {% if entry.has('pictures') and entry.get('pictures').length > 0  %}
+            <img src="{{ entry.get('pictures')[0] }}" style="width: 100%" />
             {% else %}
             <img src="/static/images/test.png" style="width: 100%" />
             {% endif %}

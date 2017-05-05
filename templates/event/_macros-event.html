@@ -1,7 +1,7 @@
 {% macro entryThumb(entry, cols = 3) %}
 <div class="col-sm-4 col-md-{{ cols }}">
   <a class="entry-thumb" href="/entry/{{ entry.get('uuid') }}">
-    {% set picturePath = entry.get('picture') if entry.has('picture') else '/static/images/test.png' %}
+    {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/test.png' %}
     <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
       <div class="entry-thumb__picture-gradient"></div>
     </div>

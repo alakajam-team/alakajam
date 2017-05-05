@@ -60,5 +60,13 @@ function initializeLogging () {
     colorize: true
   })
 
+  /**
+   * Logs the current stacktrace at info level
+   */
+  winston.whereami = function () {
+    let lines = new Error().stack.split('\n')
+    winston.info('I am' + lines.slice(2).join('\n'))
+  }
+
   return winston
 }

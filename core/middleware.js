@@ -109,6 +109,20 @@ async function configure (app) {
 function errorPage (req, res, code, message) {
   let errorTemplate = (code === 404) ? '404' : '500'
   let defaultMessage = (code === 404) ? 'Page not found' : ''
+
+  // Internal error logging
+  if (code !== 404) {
+    if (message instanceof Error) {
+      log.error(message.message + '\n' + message.stack)
+    } else {
+      log.error(message || defaultMessage)
+    }
+  }
+
+  // Page rendering
+  if (message instanceof Error) {
+    message = message.message
+  }
   res.status(code)
   res.render(errorTemplate, {message: message || defaultMessage})
 }

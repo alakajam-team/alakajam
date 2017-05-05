@@ -10,6 +10,7 @@ const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
 const eventService = require('../services/event-service')
+const fileStorage = require('../core/file-storage')
 
 module.exports = {
 
@@ -59,22 +60,29 @@ async function saveEntry (req, res) {
     let [fields, files] = await req.parseForm()
     if (!res.headersSent) { // FIXME Why?
       let entry = res.locals.entry
+      let picturePath = '/entry/' + entry.get('uuid')
+      let linksObject = null
+      if (fields.link) {
+        linksObject = [{
+          url: fields.link,
+          title: 'Play'
+        }]
+      }
+
       entry.set('title', fields.title)
-      entry.set('link', fields.link || undefined)
-      entry.set('description', fields.description)
+      entry.set('links', linksObject)
+      entry.set('body', fields.body)
       if (fields.pictureDelete) {
-        entry.set('picture', null)
+        fileStorage.remove(picturePath)
       } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
-        // TODO Consts import to hold paths and URLs
-        let newFilename = entry.get('id') + path.extname(files.picture.path)
-        let newPath = path.join(__dirname, '../static/uploads', newFilename)
-        await fs.rename(files.picture.path, newPath)
-        entry.set('picture', '/static/uploads/' + newFilename)
+        let finalPath = await fileStorage.move(files.picture.path, picturePath)
+        entry.set('pictures', [finalPath])
       }
       await entry.save()
+      
       viewEntry(req, res)
     }
   } catch (e) {
-    res.errorPage(500, e.message)
+    res.errorPage(500, e)
   }
 }

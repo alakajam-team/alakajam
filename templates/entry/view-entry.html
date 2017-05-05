@@ -11,20 +11,22 @@
   <div class="row">
     <div class="col-md-8">
       <div class="entry__picture">
-        {% if entry.has('picture') %}
-        <img src="{{ entry.get('picture') }}"/>
+        {% if entry.has('pictures') and entry.get('pictures').length > 0 %}
+        <img src="{{ entry.get('pictures')[0] }}"/>
         {% else %}
         <img src="/static/images/test.png" />
         {% endif %}
       </div>
       <div class="well">
-        {{ entry.get('description') | markdown | safe }}
+        {{ entry.get('body') | markdown | safe }}
       </div>
     </div>
     <div class="col-md-4 well user-contents">
-      {% if entry.get('link') %}
-      <a class="btn btn-primary" href="{{ entry.get('link') }}">Play this game</a>
-      {% endif %}
+      {% for link in entry.get('links') %}
+         <a class="btn btn-primary" href="{{ link.url }}">
+         {{ link.title }}
+         </a>
+      {% endfor %}
       <a class="btn btn-default" href="/entry/{{ entry.get('uuid') }}/edit">Edit entry</a>
     </div>
   </div>
