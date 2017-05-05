@@ -6,14 +6,18 @@
  * @module controllers/entry
  */
 
+const fileStorage = require('../core/file-storage')
 const userService = require('../services/user-service')
+const sessionService = require('../services/session-service')
+const randomKey = require('random-key')
 
 module.exports = {
 
   initRoutes: function (app) {
-    app.use('/register', register)
-    app.use('/login', login)
-    app.use('/logout', logout)
+    app.get('/register', register)
+    app.get('/login', login)
+    app.post('/login', authenticate)
+    app.get('/logout', logout)
 
     app.get('/user/:uuid', viewUserProfile)
   }
@@ -32,17 +36,35 @@ async function register (req, res) {
  * Login form
  */
 async function login (req, res) {
-  // TODO
   res.render('login')
+}
+
+async function authenticate (req, res) {
+  let context = {}
+  let [fields, files] = await req.parseForm()
+  if (fields.name && fields.password) {
+    let user = await userService.authenticate(fields.name, fields.password)
+    if (user) {
+      context.user = user
+      context.infoMessage = 'Authentication successful'
+      sessionService.openSession(req, res, user, !!fields['remember-me'])
+    } else {
+      context.errorMessage = 'Authentication failed'
+    }
+  } else {
+      context.errorMessage = 'Username or password missing'
+  }
+
+  res.render('login', context)
 }
 
 /**
  * Login form
  */
 async function logout (req, res) {
-  // TODO
+  sessionService.invalidateSession(req, res)
   res.render('login', {
-    message: 'Logout successful.'
+    infoMessage: 'Logout successful.'
   })
 }
 

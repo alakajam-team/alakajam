@@ -1,6 +1,6 @@
 {% macro entryThumb(entry, cols = 3) %}
 <div class="col-sm-4 col-md-{{ cols }}">
-  <a class="entry-thumb" href="/entry/{{ entry.get('uuid') }}">
+  <a class="entry-thumb" href="{{ buildUrl(entry, 'entry') }}">
     {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/test.png' %}
     <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
       <div class="entry-thumb__picture-gradient"></div>
@@ -19,7 +19,7 @@
       <div class="col-md-12">
         <div class="container-fluid event-table__header">
           <div class="row">
-            <div class="event-table__title col-sm-4"><a href="/event/{{ event.get('uuid') }}">{{ event.get('title') }}</a></div>
+            <div class="event-table__title col-sm-4"><a href="{{ buildUrl(event, 'event') }}">{{ event.get('title') }}</a></div>
             <div class="event-table__status col-sm-3">
               Current state: <b>{{ event.get('status') }}</b><br />
               Entry count: <b>{{ event.related('entries').length }}</b>

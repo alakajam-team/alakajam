@@ -33,7 +33,7 @@
         <ul class="nav navbar-nav">
           {% if (liveEvent) %}
           <li class="live {{ 'active' if isLiveEvent }}">
-            <a href="/event/{{ liveEvent.get('uuid') }}">
+            <a href="{{ buildUrl(liveEvent, 'event') }}">
               Live: <b>{{ liveEvent.get('title') }}</b><br />
               Theme: <b>{{ liveEvent.get('display_theme') }}</b>
             </a>

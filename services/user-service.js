@@ -1,12 +1,14 @@
  'use strict'
 
 /**
- * User servoce
+ * User service
  *
  * @module services/user-service
  */
 
  const md5 = require('md5')
+ const randomKey = require('random-key')
+ const fileStorage = require('../core/file-storage')
  const settingService = require('../services/setting-service')
  const User = require('../models/user-model')
 
@@ -14,7 +16,8 @@
    findById,
    findByName,
    register,
-   authenticate
+   authenticate,
+   hashPassword
  }
 
  const SETTING_PASSWORD_PEPPER = 'password_pepper'
@@ -53,20 +56,28 @@
  }
 
 /**
- * Authenticates against a user name and password
+ * Authenticates against a user name and password, and updates the session accordingly
  * @param name {string} name
  * @param password {string} clear password (will be hashed & compared to the DB entry)
  * @returns {User} The User, or false if the authentication failed
  */
  async function authenticate (name, password) {
-   let user = await User.where('uuid', name).fetch()
+   let user = await User.query(function (query) {
+     query.where('name', name).orWhere('email', name)
+   }).fetch()
    if (user) {
      let hashToTest = await hashPassword(password)
-     return hashToTest === user.get('password')
-   } else {
-     return false
+     if (hashToTest === user.get('password')) {
+       return user
+     }
    }
+   return false
  }
+
+// TODO Replace md5 with more robust hashing technique
+// TODO Replace DB-stored pepper with 1. encryption 2. key stored separately from DB
+// http://stackoverflow.com/questions/549
+// https://paragonie.com/blog/2015/04/secure-authentication-php-with-long-term-persistence
 
  async function hashPassword (password) {
    let pepper = await findOrCreatePasswordPepper()
@@ -76,7 +87,7 @@
  async function findOrCreatePasswordPepper () {
    let pepper = await settingService.find(SETTING_PASSWORD_PEPPER)
    if (!pepper) {
-     pepper = md5(Math.random())
+     pepper = randomKey.generate()
      settingService.save(SETTING_PASSWORD_PEPPER, pepper)
    }
    return pepper

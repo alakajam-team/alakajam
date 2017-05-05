@@ -117,7 +117,16 @@ function createBookshelfInstance (knexInstance) {
   db.insertSamples = async function () {
     log.info('Inserting samples...')
 
+    let userService = require('../services/user-service')
+    let User = require('../models/user-model')
     let Event = require('../models/event-model')
+
+    let adminUser = new User({
+      name: 'admin',
+      title: 'Administrator',
+      password: await userService.hashPassword('admin')
+    })
+    await adminUser.save()
 
     let weJam1 = new Event({
       title: '1st WeJam',

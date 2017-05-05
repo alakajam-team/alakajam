@@ -4,35 +4,39 @@
 
 <div class="row">
   <div class="col-sm-6 col-sm-offset-3">
-    <div class="panel panel-info login">
+    <div class="panel {{ 'panel-warning' if errorMessage }} {{ 'panel-info' if infoMessage }} login">
 
-      {% if message %}
+      {% if infoMessage or errorMessage %}
       <div class="panel-heading">
-        <h3 class="panel-title">{{ message }}</h3>
+        <h3 class="panel-title">{{ infoMessage or errorMessage }}</h3>
       </div>
       {% endif %}
 
       <div class="well">
         <h1>Login</h1>
 
-        <form>
+        {% if not user %}
+        <form method="post" action="/login">
           <div class="form-group">
             <label for="username">Username / Email address</label>
-            <input type="email" class="form-control" id="username" placeholder="Username / Email address">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Username / Email address">
           </div>
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
           </div>
           <div class="form-group">
             <div class="checkbox">
               <label>
-                <input type="checkbox"> Remember me
+                <input type="checkbox" name="remember-me"> Remember me
               </label>
             </div>
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
+        {% else %}
+        <p>You are logged in as <b>{{ user.get('name') }}.</b></p>
+        {% endif %}
       </div>
     </div>
   </div>

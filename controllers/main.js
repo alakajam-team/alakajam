@@ -7,6 +7,8 @@
  */
 
 const eventService = require('../services/event-service')
+const userService = require('../services/user-service')
+const sessionService = require('../services/session-service')
 
 module.exports = {
 
@@ -21,11 +23,24 @@ module.exports = {
 }
 
 async function anyPageMiddleware (req, res, next) {
+  sessionService.restoreSessionifNeeded(req, res)
+  
   res.locals.path = req.originalUrl
-  res.locals.liveEvent = await eventService.findEventByStatus('open')
-  if (!res.locals.liveEvent) {
-    res.locals.nextEvent = await eventService.findEventByStatus('pending')
+
+  let liveEventTask = eventService.findEventByStatus('open').then(async function (liveEvent) {
+    if (liveEvent) {
+      res.locals.liveEvent = liveEvent
+    } else {
+      res.locals.nextEvent = await eventService.findEventByStatus('pending')
+    }
+  })
+  let userTask = null
+  if (req.session.userId) {
+    userTask = userService.findById(req.session.userId).then(function (user) {
+      res.locals.user = user
+    })
   }
+  await Promise.all([liveEventTask, userTask]) // Parallelize fetching event & user info
 
   next()
 }

@@ -15,11 +15,18 @@
 const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
+const cookies = require('cookies')
 const postCss = require('postcss-middleware')
 const formidable = require('formidable')
 const promisify = require('promisify-node')
 const showdown = require('showdown')
+const moment = require('moment')
+const randomKey = require('random-key')
+const settingService = require('../services/setting-service.js')
+const userService = require('../services/user-service.js')
+const sessionService = require('../services/session-service.js')
 const controllers = require('../controllers/index.js')
+const buildUrl = require('../controllers/build-url.js')
 
 module.exports = {
   configure
@@ -32,6 +39,11 @@ const MB = 1024 * 1024
  * Setup app middleware
  */
 async function configure (app) {
+  // Session management
+  app.locals.sessionCache = await sessionService.loadSessionCache()
+  let sessionKey = await findOrCreateSessionKey()
+  app.use(cookies.express([sessionKey]))
+
   // Routing: static files (including NextCSS filter)
   app.use('/static/css/site.css', postCss({
     src: (req) => path.join(ROOT_PATH, '/static/css/site.css', req.path),
@@ -48,9 +60,14 @@ async function configure (app) {
 
   // Templating: custom filters
   let markdownConverter = new showdown.Converter()
+  nunjucks.env.addGlobal('buildUrl', buildUrl)
+  nunjucks.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
   nunjucks.env.addFilter('markdown', function (str) {
     return markdownConverter.makeHtml(str)
   })
+  nunjucks.env.addFilter('date', function(date) {
+    return moment(date).fromNow();
+  });
 
   // Templating: rendering context
   app.use(function (req, res, next) {
@@ -58,12 +75,10 @@ async function configure (app) {
     res.errorPage = (code, message) => errorPage(req, res, code, message)
 
     // Context made available anywhere
-    let superRender = res.render
+    let nativeRender = res.render
     res.render = function (template, context) {
-      let mergedContext = Object.assign({
-        browserRefreshUrl: process.env.BROWSER_REFRESH_URL
-      }, context, res.locals)
-      superRender.call(res, template, mergedContext)
+      let mergedContext = Object.assign({}, context, res.locals)
+      nativeRender.call(res, template, mergedContext)
     }
 
     next()
@@ -99,6 +114,15 @@ async function configure (app) {
       errorPage(req, res, 404)
     }
   })
+}
+
+async function findOrCreateSessionKey() {
+  let sessionKey = await settingService.find('session_key')
+  if (!sessionKey) {
+    sessionKey = randomKey.generate()
+    await settingService.save('session_key')
+  }
+  return sessionKey
 }
 
 /*

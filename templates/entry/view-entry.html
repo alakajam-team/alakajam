@@ -27,7 +27,7 @@
          {{ link.title }}
          </a>
       {% endfor %}
-      <a class="btn btn-default" href="/entry/{{ entry.get('uuid') }}/edit">Edit entry</a>
+      <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
     </div>
   </div>
 </div>

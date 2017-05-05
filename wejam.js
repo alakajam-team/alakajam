@@ -9,14 +9,14 @@
  * @module wejam
  */
 
+const log = global.log = require('./core/log')
+log.info('Starting server...')
+
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const express = require('express')
 const browserRefreshClient = require('browser-refresh-client')
 const fileStorage = require('./core/file-storage')
-
-const log = global.log = require('./core/log')
-log.info('Server starting...')
 
 createApp()
 
@@ -35,7 +35,7 @@ async function createApp () {
   await initDatabase(app.locals.devMode)
   await middleware.configure(app)
   app.listen(config.SERVER_PORT, configureBrowserRefresh)
-  log.info(`Server started on port ${config.SERVER_PORT}.`)
+  log.info('Server started on port ' + config.SERVER_PORT + '.')
 }
 
 /*
