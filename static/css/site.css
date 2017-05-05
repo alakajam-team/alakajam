@@ -275,9 +275,9 @@ a:hover {
 }
 
 
-/* Event row */
+/* Event table */
 
-.event-row {
+.event-table {
   margin-bottom: 20px;
 
   &__header {
@@ -364,6 +364,15 @@ a:hover {
       max-width: 100%;
       max-height: 400px;
     }
+  }
+
+}
+
+/* Login form */
+
+.login {
+  @media (min-width: 768px) {
+    margin: 100px 0;
   }
 
 }

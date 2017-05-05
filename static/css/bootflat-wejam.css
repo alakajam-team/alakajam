@@ -1069,7 +1069,6 @@ blockquote {
 .checkbox label, .radio label {
   position: relative;
   top: 2px;
-  padding-left: 5px;
 }
 
 .icheckbox_flat,

@@ -22,7 +22,7 @@ module.exports = {
 async function viewEvent (req, res, next) {
   let event = await eventService.findEventById(req.params.uuid)
   if (event !== null) {
-    res.render('event', {
+    res.render('event/view-event', {
       event: event
     })
   } else {

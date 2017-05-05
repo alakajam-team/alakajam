@@ -1,0 +1,86 @@
+{% extends "_page.html" %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="/static/css/simplemde.min.css" />
+{% endblock %}
+
+
+{% block body %}
+
+<form action="/entry/{{ entry.get('uuid') }}" method="post" enctype="multipart/form-data">
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 id="title-display"></h1>
+      </div>
+    </div>
+    <div class="row entry">
+        
+        <div class="col-md-7">
+          <div class="form-group input-group-lg">
+            <label for="title">Game name</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Game name" value="{{ entry.get('title') }}">
+          </div>
+          <div class="form-group">
+            <label for="title">Link</label>
+            <input type="text" class="form-control" id="link" name="link" placeholder="http://..." value="{{ entry.get('link') }}">
+          </div>
+          <div class="form-group">
+            <label for="title">Description</label>
+            <div class="user-contents user-contents__editor">
+              <textarea class="form-control" style="min-height: 200px" id="description" name="description" placeholder="A short description of your game">{{ entry.get('description') }}</textarea>
+            </div>
+          </div>
+          <div class="form-group pull-right">
+            <input type="submit" class="btn btn-primary" value="Save changes" />
+            <a class="btn btn-default" href="/entry/{{ entry.get('uuid') }}">Cancel</a> 
+          </div>
+        </div>
+        
+        <div class="col-md-5">
+          <div class="form-group">
+            <label for="title">Picture</label>
+            <input type="file" id="picture" name="picture" />
+            {% if entry.has('picture') %}
+            <label><input type="checkbox" name="pictureDelete" /> Delete picture</label>
+            {% endif %}
+            
+            <br />
+            {% if entry.has('picture') %}
+            <img src="{{ entry.get('picture') }}" style="width: 100%" />
+            {% else %}
+            <img src="/static/images/test.png" style="width: 100%" />
+            {% endif %}
+          </div>
+        </div>
+    </div>
+  </div>
+
+</form>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script type="text/javascript" src="/static/js/simplemde.min.js"></script>
+<script>
+// Markdown editor
+var simplemde = new SimpleMDE({
+  element: $('#description')[0],
+  spellChecker: false
+})
+
+// Sync H1 with title input
+var $titleInput = $('#title')
+var $titleDisplay = $('#title-display')
+var defaultText = "My {{ event.get('title') }} entry"
+$titleInput.on('change keyup', refreshTitleDisplay)
+refreshTitleDisplay()
+
+function refreshTitleDisplay () {
+  $titleDisplay.text($titleInput.val() || defaultText)
+}
+
+</script>
+{% endblock %}
