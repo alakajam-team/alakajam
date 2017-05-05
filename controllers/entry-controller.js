@@ -6,9 +6,6 @@
  * @module controllers/entry-controller
  */
 
-const promisify = require('promisify-node')
-const fs = promisify('fs')
-const path = require('path')
 const eventService = require('../services/event-service')
 const fileStorage = require('../core/file-storage')
 
@@ -79,7 +76,7 @@ async function saveEntry (req, res) {
         entry.set('pictures', [finalPath])
       }
       await entry.save()
-      
+
       viewEntry(req, res)
     }
   } catch (e) {

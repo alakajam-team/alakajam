@@ -6,10 +6,8 @@
  * @module controllers/user-controller
  */
 
-const fileStorage = require('../core/file-storage')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
-const randomKey = require('random-key')
 
 module.exports = {
 
@@ -41,7 +39,7 @@ async function login (req, res) {
 
 async function authenticate (req, res) {
   let context = {}
-  let [fields, files] = await req.parseForm()
+  let [fields] = await req.parseForm()
   if (fields.name && fields.password) {
     let user = await userService.authenticate(fields.name, fields.password)
     if (user) {
@@ -52,7 +50,7 @@ async function authenticate (req, res) {
       context.errorMessage = 'Authentication failed'
     }
   } else {
-      context.errorMessage = 'Username or password missing'
+    context.errorMessage = 'Username or password missing'
   }
 
   res.render('login', context)

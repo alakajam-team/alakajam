@@ -8,7 +8,6 @@
 
  const md5 = require('md5')
  const randomKey = require('random-key')
- const fileStorage = require('../core/file-storage')
  const settingService = require('../services/setting-service')
  const User = require('../models/user-model')
 

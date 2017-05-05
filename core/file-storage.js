@@ -34,17 +34,17 @@ const UPLOADS_ROOT = path.join(SOURCES_ROOT, UPLOADS_PATH)
   @returns the final target path
 */
 async function move (sourcePath, targetPath, isUpload = true) {
-  let truePath = targetPath.replace(/^[\\\/]/, '')
+  let truePath = targetPath.replace(/^[\\/]/, '')
   let sourcePathExtension = path.extname(sourcePath)
   if (!targetPath.endsWith(sourcePathExtension)) {
     // TODO replace extension rather than just append
     truePath += sourcePathExtension
   }
 
-  let absolutePath = toAbsolutePath(documentPath, isUpload)
+  let absolutePath = toAbsolutePath(targetPath, isUpload)
   await createFolderIfMissing(path.dirname(absolutePath))
   await fs.rename(sourcePath, absolutePath)
-  
+
   return url.resolve(UPLOADS_PATH, truePath)
 }
 
@@ -80,13 +80,13 @@ async function write (documentPath, data, isUpload = true) {
   if (typeof data === 'function') {
     data = data()
   }
-  if (typeof data === 'object' || typeof data === 'array') {
+  if (typeof data === 'object') {
     data = JSON.stringify(data)
   }
 
   let absolutePath = toAbsolutePath(documentPath, isUpload)
   await createFolderIfMissing(path.dirname(documentPath))
-  return await fs.writeFile(absolutePath, data)
+  return fs.writeFile(absolutePath, data)
 }
 
 async function remove (documentPath, isUpload = true) {

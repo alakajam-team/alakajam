@@ -22,11 +22,11 @@ const promisify = require('promisify-node')
 const showdown = require('showdown')
 const moment = require('moment')
 const randomKey = require('random-key')
-const settingService = require('../services/setting-service.js')
-const userService = require('../services/user-service.js')
-const sessionService = require('../services/session-service.js')
-const controllers = require('../controllers/index.js')
-const buildUrl = require('../controllers/build-url.js')
+const log = require('./log')
+const settingService = require('../services/setting-service')
+const sessionService = require('../services/session-service')
+const controllers = require('../controllers/index')
+const buildUrl = require('../controllers/build-url')
 
 module.exports = {
   configure
@@ -65,9 +65,9 @@ async function configure (app) {
   nunjucks.env.addFilter('markdown', function (str) {
     return markdownConverter.makeHtml(str)
   })
-  nunjucks.env.addFilter('date', function(date) {
-    return moment(date).fromNow();
-  });
+  nunjucks.env.addFilter('date', function (date) {
+    return moment(date).fromNow()
+  })
 
   // Templating: rendering context
   app.use(function (req, res, next) {
@@ -116,7 +116,7 @@ async function configure (app) {
   })
 }
 
-async function findOrCreateSessionKey() {
+async function findOrCreateSessionKey () {
   let sessionKey = await settingService.find('session_key')
   if (!sessionKey) {
     sessionKey = randomKey.generate()
