@@ -9,11 +9,11 @@
 module.exports = {
 
   initRoutes: function (app) {
-    require('./main.js').initRoutes(app)
-    require('./user.js').initRoutes(app)
-    require('./admin.js').initRoutes(app)
-    require('./event.js').initRoutes(app)
-    require('./entry.js').initRoutes(app)
+    require('./main-controller.js').initRoutes(app)
+    require('./user-controller.js').initRoutes(app)
+    require('./admin-controller.js').initRoutes(app)
+    require('./event-controller.js').initRoutes(app)
+    require('./entry-controller.js').initRoutes(app)
   }
 
 }

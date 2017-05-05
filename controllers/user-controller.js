@@ -1,9 +1,9 @@
 'use strict'
 
 /**
- * Entry pages
+ * User and authentication pages
  *
- * @module controllers/entry
+ * @module controllers/user-controller
  */
 
 const fileStorage = require('../core/file-storage')

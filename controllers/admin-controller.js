@@ -3,7 +3,7 @@
 /**
  * Global pages
  *
- * @module controllers/main
+ * @module controllers/main-controller
  */
 
 const db = require('../core/db')
