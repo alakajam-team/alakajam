@@ -30,7 +30,7 @@ function createModel () {
         table.string('email')
         table.string('password')
         table.string('body', 10000)
-        table.string('is_moderator')
+        table.string('is_mod')
         table.string('is_admin')
         table.dateTime('published_at')
         table.timestamps()
