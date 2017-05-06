@@ -13,9 +13,9 @@ module.exports = {
 
   initRoutes: function (app) {
     app.get('/register', register)
-    app.get('/login', login)
-    app.post('/login', authenticate)
-    app.get('/logout', logout)
+    app.get('/login', loginForm)
+    app.post('/login', doLogin)
+    app.get('/logout', doLogout)
 
     app.get('/user/:uuid', viewUserProfile)
   }
@@ -33,11 +33,11 @@ async function register (req, res) {
 /**
  * Login form
  */
-async function login (req, res) {
+async function loginForm (req, res) {
   res.render('login')
 }
 
-async function authenticate (req, res) {
+async function doLogin (req, res) {
   let context = {}
   let [fields] = await req.parseForm()
   if (fields.name && fields.password) {
@@ -59,7 +59,7 @@ async function authenticate (req, res) {
 /**
  * Login form
  */
-async function logout (req, res) {
+async function doLogout (req, res) {
   sessionService.invalidateSession(req, res)
   res.render('login', {
     infoMessage: 'Logout successful.'

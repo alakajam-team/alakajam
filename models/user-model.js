@@ -29,6 +29,7 @@ function createModel () {
         table.string('title')
         table.string('email')
         table.string('password')
+        table.string('password_salt')
         table.string('body', 10000)
         table.string('is_mod')
         table.string('is_admin')

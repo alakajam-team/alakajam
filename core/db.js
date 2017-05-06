@@ -124,9 +124,9 @@ function createBookshelfInstance (knexInstance) {
     let adminUser = new User({
       name: 'admin',
       title: 'Administrator',
-      password: await userService.hashPassword('admin'),
       is_admin: true
     })
+    userService.setPassword(adminUser, 'admin')
     await adminUser.save()
 
     let weJam1 = new Event({

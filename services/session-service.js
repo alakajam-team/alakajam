@@ -7,19 +7,19 @@
  * @module services/session-service
  */
 
-  const md5 = require('md5')
-  const randomKey = require('random-key')
-  const log = require('../core/log')
-  const fileStorage = require('../core/file-storage')
+const crypto = require('crypto')
+const randomKey = require('random-key')
+const log = require('../core/log')
+const fileStorage = require('../core/file-storage')
 
-  module.exports = {
-    loadSessionCache,
-    openSession,
-    invalidateSession,
-    restoreSessionifNeeded
-  }
+module.exports = {
+  loadSessionCache,
+  openSession,
+  invalidateSession,
+  restoreSessionifNeeded
+}
 
-  const SESSIONS_FILE = 'data/sessions.json'
+const SESSIONS_FILE = 'data/sessions.json'
 
 /**
  * (Sync) Checks whether a user session is valid
@@ -43,7 +43,7 @@
       let rememberMeCookie = req.cookies.get('rememberMe')
       if (rememberMeCookie) {
         let sessionCache = res.app.locals.sessionCache
-        let sessionInfo = sessionCache[md5(rememberMeCookie)]
+        let sessionInfo = sessionCache[hash(rememberMeCookie)]
         if (sessionInfo) {
           req.session = {userId: sessionInfo.userId}
         } else {
@@ -70,7 +70,7 @@
     let rememberMeCookie = req.cookies.get('rememberMe')
     if (rememberMeCookie) {
       let sessionCache = res.app.locals.sessionCache
-      delete sessionCache[md5(rememberMeCookie)]
+      delete sessionCache[hash(rememberMeCookie)]
     }
 
     req.cookies.set('rememberMe')
@@ -108,7 +108,7 @@
       let token = randomKey.generate()
       let maxAge = 30 * 24 * 3600000
       let tokenExpires = now + maxAge
-      sessionCache[md5(token)] = {
+      sessionCache[hash(token)] = {
         userId: user.get('uuid'),
         expires: tokenExpires
       }
@@ -124,3 +124,7 @@
     fileStorage.write(SESSIONS_FILE, sessionCache, false)
     .catch((e) => log.error(e.message))
   }
+
+function hash(token) {
+  return crypto.createHash('sha256').update(token).digest('hex')
+}

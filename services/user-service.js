@@ -6,7 +6,7 @@
  * @module services/user-service
  */
 
- const md5 = require('md5')
+ const crypto = require('crypto')
  const randomKey = require('random-key')
  const settingService = require('../services/setting-service')
  const User = require('../models/user-model')
@@ -16,7 +16,7 @@
    findByName,
    register,
    authenticate,
-   hashPassword
+   setPassword
  }
 
  const SETTING_PASSWORD_PEPPER = 'password_pepper'
@@ -65,7 +65,7 @@
      query.where('name', name).orWhere('email', name)
    }).fetch()
    if (user) {
-     let hashToTest = await hashPassword(password)
+     let hashToTest = hashPassword(password, user.get('password_salt'))
      if (hashToTest === user.get('password')) {
        return user
      }
@@ -73,21 +73,18 @@
    return false
  }
 
-// TODO Replace md5 with more robust hashing technique
-// TODO Replace DB-stored pepper with 1. encryption 2. key stored separately from DB
-// http://stackoverflow.com/questions/549
-// https://paragonie.com/blog/2015/04/secure-authentication-php-with-long-term-persistence
-
- async function hashPassword (password) {
-   let pepper = await findOrCreatePasswordPepper()
-   return md5(password + pepper)
+/**
+ * Sets a password to a User
+ * @param {User} user User model
+ * @param {string} password New password, in clear form
+ */
+ function setPassword(user, password) {
+  let salt = randomKey.generate()
+  user.set('password_salt', salt)
+  let hash = hashPassword(password, salt)
+  user.set('password', hash)
  }
 
- async function findOrCreatePasswordPepper () {
-   let pepper = await settingService.find(SETTING_PASSWORD_PEPPER)
-   if (!pepper) {
-     pepper = randomKey.generate()
-     settingService.save(SETTING_PASSWORD_PEPPER, pepper)
-   }
-   return pepper
+ function hashPassword (password, salt) {
+  return crypto.createHash('sha256').update(password + salt).digest('hex')
  }
