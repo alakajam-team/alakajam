@@ -13,7 +13,10 @@ module.exports = {
   findEventById,
   findAllEvents,
   findEventByStatus,
-  findEntryById
+
+  createEntry,
+  findEntryById,
+  findUserEntryForEvent
 }
 
 /**
@@ -51,6 +54,21 @@ async function findEventByStatus (status) {
     .fetch()
 }
 
+async function createEntry (user, event) {
+  // TODO Better use of Bookshelf API
+  let entry = new Entry()
+  await entry.save() // XXX generate UUID
+  entry.set('event_uuid', event.get('uuid')) 
+  entry.set('event_name', event.get('name')) // TODO Model listener
+  let userRole = await entry.userRoles().create({
+    user_uuid: user.get('uuid'),
+    user_title: user.get('title'),
+    role: 'owner'
+  })
+  await userRole.save()
+  return entry
+}
+
 /**
  * Fetches an Entry by its ID.
  * @param uuid {uuid} Entry UUID
@@ -58,4 +76,20 @@ async function findEventByStatus (status) {
  */
 async function findEntryById (uuid) {
   return Entry.where('uuid', uuid).fetch({ withRelated: 'event' })
+}
+
+/**
+ * Retrieves the entry a user submited to an event
+ * @param  {User} user
+ * @param  {string} eventUuid
+ * @return {Entry|null}
+ */
+async function findUserEntryForEvent (user, eventUuid) {
+  return Entry.query((query) => {
+    query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
+    query.where({
+      'event_uuid': eventUuid,
+      'user_role.user_uuid': user.get('uuid')
+    })
+  }).fetch()
 }

@@ -16,8 +16,9 @@ function createModel () {
     idAttribute: 'uuid',
     hasTimestamps: true,
     uuid: true,
+
     roles: function () {
-      return this.belongsTo('User', 'event_uuid')
+      return this.hasMany('UserRole', 'user_uuid')
     }
   })
 

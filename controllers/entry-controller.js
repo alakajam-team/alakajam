@@ -7,6 +7,7 @@
  */
 
 const eventService = require('../services/event-service')
+const Entry = require('../models/entry-model')
 const fileStorage = require('../core/file-storage')
 
 module.exports = {
@@ -14,9 +15,11 @@ module.exports = {
   initRoutes: function (app) {
     app.use('/entry/:uuid*', entryMiddleware)
 
+    app.get('/event/:eventUuid/create-entry', createEntry)
+    app.post('/event/:eventUuid/create-entry', saveEntry)
     app.get('/entry/:uuid', viewEntry)
-    app.get('/entry/:uuid/edit', editEntry)
     app.post('/entry/:uuid', saveEntry)
+    app.get('/entry/:uuid/edit', editEntry)
   }
 
 }
@@ -25,12 +28,18 @@ module.exports = {
  * Fetches the current entry & event
  */
 async function entryMiddleware (req, res, next) {
-  let entry = await eventService.findEntryById(req.params.uuid)
-  if (entry === null) {
-    res.errorPage(404, 'Entry not found')
-  } else {
-    res.locals.entry = entry
-    res.locals.event = entry.related('event')
+  if (req.params.uuid) {
+    let entry = await eventService.findEntryById(req.params.uuid)
+    if (entry === null) {
+      res.errorPage(404, 'Entry not found')
+    } else {
+      res.locals.entry = entry
+      res.locals.event = entry.related('event')
+      next()
+    }
+  }
+  if (req.params.eventUuid) {
+    res.locals.event = await eventService.findEventById(req.params.eventUuid)
     next()
   }
 }
@@ -45,6 +54,15 @@ function viewEntry (req, res) {
 /**
  * Edit entry
  */
+async function createEntry (req, res) {
+  res.render('entry/edit-entry', {entry: new Entry({
+    event_uuid: res.locals.event.get('uuid')
+  })})
+}
+
+/**
+ * Edit entry
+ */
 function editEntry (req, res) {
   res.render('entry/edit-entry')
 }
@@ -53,10 +71,16 @@ function editEntry (req, res) {
  * Save entry
  */
 async function saveEntry (req, res) {
+  // TODO Security
+
   try {
     let [fields, files] = await req.parseForm()
     if (!res.headersSent) { // FIXME Why?
+      if (!res.locals.entry) {
+        res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
+      }
       let entry = res.locals.entry
+
       let picturePath = '/entry/' + entry.get('uuid')
       let linksObject = null
       if (fields.link) {

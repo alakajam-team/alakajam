@@ -120,6 +120,7 @@ function createBookshelfInstance (knexInstance) {
     let userService = require('../services/user-service')
     let User = require('../models/user-model')
     let Event = require('../models/event-model')
+    let Entry = require('../models/entry-model')
 
     let adminUser = new User({
       name: 'admin',
@@ -148,9 +149,8 @@ function createBookshelfInstance (knexInstance) {
     })
     await weJam2.save()
 
-    let weJam2Entries = weJam2.related('entries')
-    await weJam2Entries.create({ title: 'Game A' })
-    await weJam2Entries.create({ title: 'Game B' })
+    await weJam2.entries().create({ title: 'Game A' })
+    await weJam2.entries().create({ title: 'Game B' })
   }
 
   return db

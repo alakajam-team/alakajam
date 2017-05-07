@@ -11,9 +11,28 @@ const eventService = require('../services/event-service')
 module.exports = {
 
   initRoutes: function (app) {
+    app.use('/event/:uuid*', eventMiddleware)
+
     app.get('/event/:uuid', viewEvent)
   }
 
+}
+
+/**
+ * Fetches the event & optionally the user's entry
+ */
+async function eventMiddleware (req, res, next) {
+  let eventTask = await eventService.findEventById(req.params.uuid)
+    .then(event => res.locals.event = event)
+  let entryTask = true
+  if (res.locals.user) {
+    entryTask = eventService.findUserEntryForEvent(res.locals.user, req.params.uuid)
+      .then(entry => {
+        res.locals.userEntry = entry
+      })
+  }
+  Promise.all([eventTask, entryTask])
+  next()
 }
 
 /**
@@ -22,7 +41,7 @@ module.exports = {
 async function viewEvent (req, res, next) {
   let event = await eventService.findEventById(req.params.uuid)
   if (event !== null) {
-    res.render('event/view-event', {
+    res.render('event/view-event-games', {
       event: event
     })
   } else {

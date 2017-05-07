@@ -1,0 +1,33 @@
+{% extends "_page.html" %}
+{% import "event/_macros-event.html" as eventMacros %}
+
+{% block body %}
+
+{% if user %}
+<div class="row well">
+    <div class="col-xs-8">
+      <h1 style="margin: 0">
+      {% if userEntry %}
+      Your entry: <a href="{{ buildUrl(userEntry, 'entry') }}">{{ userEntry.get('title') }}</a>
+      {% else %}
+      You have no entry
+      </h1>
+      {% endif %}
+    </div>
+    <div class="col-xs-4 text-right">
+      {% if userEntry %}
+      <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-info">Edit entry</a>
+      {% else %}
+      <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-info">Submit entry</a>
+      {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+  {% for entry in event.related('entries').models %}
+    {{ eventMacros.entryThumb(entry) }}
+  {% endfor %}
+</div>
+
+{% endblock %}

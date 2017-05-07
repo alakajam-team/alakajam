@@ -34,6 +34,7 @@ function createModel () {
     idAttribute: 'uuid',
     hasTimestamps: true,
     uuid: true,
+    
     entries: function () {
       return this.hasMany('Entry', 'event_uuid')
     }

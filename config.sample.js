@@ -19,5 +19,6 @@ module.exports = {
 
   // Debug options
   DEBUG_SQL: false,
-  DEBUG_REFRESH_BROWSER: false
+  DEBUG_REFRESH_BROWSER: false,
+  DEBUG_ADMIN: true
 }

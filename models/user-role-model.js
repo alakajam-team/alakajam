@@ -14,7 +14,14 @@
    let model = db.model('UserRole', {
      tableName: 'user_role',
      idAttribute: 'id',
-     hasTimestamps: true
+     hasTimestamps: true,
+
+     user: function () {
+      return this.belongsTo('User', 'user_uuid')
+     },
+     node: function () {
+      return this.morphTo('node', ['node_type', 'node_uuid'], Entry)
+     }
    })
 
    model.up = async function up (currentVersion) {

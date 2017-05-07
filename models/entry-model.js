@@ -11,12 +11,23 @@ let db = require('../core/db')
 module.exports = createModel()
 
 function createModel () {
+  let modelPrototype = db.Model.prototype
+
   let model = db.model('Entry', {
     tableName: 'entry',
     idAttribute: 'uuid',
     hasTimestamps: true,
     uuid: true,
+
+    event: function () {
+      return this.belongsTo('Event', 'event_uuid')
+    },
+    userRoles: function () {
+      return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
+    },
+
     initialize: function initialize (attrs) {
+      modelPrototype.initialize.call(this)
       attrs = attrs || {}
       attrs.links = attrs.links || []
       attrs.pictures = attrs.pictures || []
@@ -31,9 +42,6 @@ function createModel () {
       if (attrs.links) attrs.links = JSON.stringify(attrs.links)
       if (attrs.pictures) attrs.pictures = JSON.stringify(attrs.pictures)
       return attrs
-    },
-    event: function () {
-      return this.belongsTo('Event', 'event_uuid')
     }
   })
 
