@@ -41,7 +41,7 @@ async function move (sourcePath, targetPath, isUpload = true) {
     truePath += sourcePathExtension
   }
 
-  let absolutePath = toAbsolutePath(targetPath, isUpload)
+  let absolutePath = toAbsolutePath(truePath, isUpload)
   await createFolderIfMissing(path.dirname(absolutePath))
   await fs.rename(sourcePath, absolutePath)
 
