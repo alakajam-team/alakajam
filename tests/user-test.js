@@ -1,9 +1,8 @@
 'use strict'
 
-const weJamTest = require('./support/wejam-test.js')
-const assert = require('assert')
+require('./support/wejam-test.js')
 
-before(weJamTest)
+const assert = require('assert')
 
 describe('userService', async function() {
   

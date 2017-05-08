@@ -10,11 +10,18 @@ const rimraf = promisify('rimraf')
 const path = require('path')
 const log = global.log = require('../../core/log')
 
-module.exports = async function weJamInit () {
-  await createConfigFileIfMissing()
-  overrideConfig()
-  await initFilesLayout()
-  await initDatabase()
+let initialized = false
+
+before(weJamInit)
+
+async function weJamInit () {
+  if (!initialized) {
+    await createConfigFileIfMissing()
+    overrideConfig()
+    await initFilesLayout()
+    await initDatabase()
+    initialized = true
+  }
 }
 
 function overrideConfig () {
@@ -49,7 +56,7 @@ function overrideConfig () {
 }
 
 async function createConfigFileIfMissing () {
-  const CONFIG_PATH = '../../config.js'
+  const CONFIG_PATH = './config.js'
   const CONFIG_SAMPLE_PATH = './config.sample.js'
   try {
     await fs.access(CONFIG_PATH, fs.constants.R_OK)
