@@ -9,15 +9,21 @@
  * @module wejam
  */
 
-const log = global.log = require('./core/log')
-log.info('Starting server...')
+let log
+try {
+  log = global.log = require('./core/log')
+  log.info('Starting server...')
+} catch (e) {
+  console.error('Failed to start the server: ' + e.message)
+  console.error('Did you run "npm install"?')
+  return
+}
 
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
 const express = require('express')
 const browserRefreshClient = require('browser-refresh-client')
-const fileStorage = require('./core/file-storage')
 
 createApp()
 
@@ -79,9 +85,10 @@ async function initFilesLayout () {
     await fs.writeFile(CONFIG_PATH, sampleConfig)
     log.info(CONFIG_PATH + ' initialized with sample values')
   }
-  const config = require('./config')
 
   // Create data folders
+  const config = require('./config')
+  const fileStorage = require('./core/file-storage')
   await fileStorage.createFolderIfMissing(path.join(config.DATA_PATH, '/tmp'))
   await fileStorage.createFolderIfMissing(config.UPLOADS_PATH)
 }
