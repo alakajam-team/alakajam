@@ -21,13 +21,9 @@ const moment = require('moment')
 module.exports = initializeLogging()
 
 /*
- * Configure the Winston logger to print pretty & informative log lines
+ * Configure the Winston logger to print pretty, colorful & informative log lines
  */
 function initializeLogging () {
-  // Little bit of spacing upon server boot
-  console.log('')
-
-  // Activate colors + use custom formatter
   let sourcesRoot = path.join(__dirname, '..')
   winston.remove(winston.transports.Console)
   winston.add(winston.transports.Console, {

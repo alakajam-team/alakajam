@@ -42,6 +42,7 @@
   "devDependencies": {
     "browser-refresh-client": "^1.1.4",
     "jsdoc-strip-async-await": "^0.1.0",
-    "mocha": "^3.3.0"
+    "mocha": "^3.3.0",
+    "rimraf": "^2.6.1"
   }
 }

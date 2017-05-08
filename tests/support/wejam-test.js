@@ -6,6 +6,7 @@
 
 const promisify = require('promisify-node')
 const fs = promisify('fs')
+const rimraf = promisify('rimraf')
 const path = require('path')
 const log = global.log = require('../../core/log')
 
@@ -63,15 +64,15 @@ async function initFilesLayout () {
   const fileStorage = require('../../core/file-storage')
 
   // Delete/recreate folders
-  await fileStorage.remove(config.DATA_PATH, false)
-  await fileStorage.remove(config.UPLOADS_PATH, false)
+  await rimraf(config.DATA_PATH)
+  await rimraf(config.UPLOADS_PATH)
   await fileStorage.createFolderIfMissing(path.join(config.DATA_PATH, '/tmp'))
   await fileStorage.createFolderIfMissing(config.UPLOADS_PATH)
 }
 
 async function initDatabase () {
   const db = require('../../core/db')
-  await db.upgradeTables(0)
+  await db.upgradeTables(true)
 }
 
 async function unlinkIfExists (path) {

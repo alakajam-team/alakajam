@@ -91,16 +91,19 @@ function createBookshelfInstance (knexInstance) {
   /**
    * Upgrades the whole database to the latest version.
    * Creates the tables if needed.
+   * @param {boolean} silent Whether to log DB upgrades
    * @returns {void}
    */
-  db.upgradeTables = async function () {
+  db.upgradeTables = async function (silent) {
     let currentVersion = await db.findCurrentVersion()
     let upgradeRequired = currentVersion < models.version
 
     for (let modelFilename of MODEL_FILENAMES_UP) {
       let model = require('../models/' + modelFilename)
       if (upgradeRequired) {
-        log.info('Upgrade model: ' + modelFilename + '...')
+        if (!silent) {
+          log.info('Upgrade model: ' + modelFilename + '...')
+        }
         await model.up(currentVersion)
       }
     }
