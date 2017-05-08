@@ -1,6 +1,6 @@
 # WeJam!
 
-> Current progress: Mostly just a skeleton for a generic website. You can browse an event and its entries.
+> Current progress: You can browse events and entries, register and submit your own. Plenty of security holes, no admin UI.
 
 ## Setup
 
