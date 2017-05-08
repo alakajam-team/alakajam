@@ -156,6 +156,17 @@ a:hover {
         background-color: white;
         color: var(--text-light);
       }
+
+      &.nav-login {
+        color: white;
+        font-size: 0.9rem;
+        padding: 0 15px;
+
+        & a {
+          display: inline-block;
+          padding: 0 5px;
+        }
+      }
     }
 
   }

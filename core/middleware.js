@@ -24,6 +24,7 @@ const moment = require('moment')
 const randomKey = require('random-key')
 const log = require('./log')
 const config = require('../config')
+const fileStorage = require('../core/file-storage')
 const settingService = require('../services/setting-service')
 const sessionService = require('../services/session-service')
 const controllers = require('../controllers/index')
@@ -107,6 +108,8 @@ async function configure (app) {
     req.parseForm = async function () {
       return await parseRequest(req, res)
     }
+    res.on('finish', cleanupFormFilesCallback(req, res));
+    res.on('close', cleanupFormFilesCallback(req, res));
     next()
   })
 
@@ -121,6 +124,17 @@ async function configure (app) {
       errorPage(req, res, 404)
     }
   })
+}
+
+function cleanupFormFilesCallback(req, res) {
+  return async function cleanupFormFiles () {
+    let {files} = await req.parseForm()
+    for (let key in files) {
+      fileStorage.remove(files[key].path, false)
+    }
+    res.removeAllListeners('finish');
+    res.removeAllListeners('close');
+  }
 }
 
 async function findOrCreateSessionKey () {

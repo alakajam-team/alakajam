@@ -34,14 +34,11 @@ function hasPermission (user, model, minimalRole) {
   if (user) {
     let acceptRoles = getRolesEqualOrAbove(minimalRole)
     let allUserRoles = model.related('userRoles')
-    console.log(model.relations)
     if (acceptRoles && allUserRoles) {
-      console.log(allUserRoles.length)
       let userRoles = allUserRoles.where({
         user_uuid: user.get('uuid')
       })
       for (let userRole of userRoles) {
-        console.log(userRole.get('role'))
         if (acceptRoles.indexOf(userRole.get('role'))) {
           return true
         }

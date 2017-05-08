@@ -23,7 +23,6 @@ module.exports = {
 }
 
 const SOURCES_ROOT = path.join(__dirname, '..')
-const UPLOADS_ROOT = path.join(SOURCES_ROOT, config.UPLOADS_PATH)
 
 /**
   Moves the file from a path to another. Typically used for saving temporary files.
@@ -91,17 +90,20 @@ async function write (documentPath, data, isUpload = true) {
 
 async function remove (documentPath, isUpload = true) {
   let absolutePath = toAbsolutePath(documentPath, isUpload)
-  if (await exists(absolutePath)) {
+  if (await exists(documentPath, false)) {
     await fs.unlink(absolutePath)
   }
 }
 
-function toAbsolutePath (relativePath, isUpload) {
-  if (isUpload) {
-    return path.join(UPLOADS_ROOT, relativePath)
-  } else {
-    return path.join(SOURCES_ROOT, relativePath)
+function toAbsolutePath (anyPath, isUpload) {
+  let prefix = ''
+  if (anyPath.indexOf(SOURCES_ROOT) === -1) {
+    prefix = SOURCES_ROOT
   }
+  if (isUpload) {
+    prefix = path.join(prefix, SOURCES_ROOT)
+  }
+  return path.join(prefix, anyPath)
 }
 
 /**
