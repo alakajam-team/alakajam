@@ -108,8 +108,8 @@ async function configure (app) {
     req.parseForm = async function () {
       return await parseRequest(req, res)
     }
-    res.on('finish', cleanupFormFilesCallback(req, res));
-    res.on('close', cleanupFormFilesCallback(req, res));
+  /*  res.on('finish', cleanupFormFilesCallback(req, res));
+    res.on('close', cleanupFormFilesCallback(req, res));*/
     next()
   })
 
@@ -130,7 +130,7 @@ function cleanupFormFilesCallback(req, res) {
   return async function cleanupFormFiles () {
     let {files} = await req.parseForm()
     for (let key in files) {
-      fileStorage.remove(files[key].path, false)
+  //    fileStorage.remove(files[key].path, false)
     }
     res.removeAllListeners('finish');
     res.removeAllListeners('close');

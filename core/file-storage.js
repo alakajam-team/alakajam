@@ -23,6 +23,7 @@ module.exports = {
 }
 
 const SOURCES_ROOT = path.join(__dirname, '..')
+const UPLOADS_URL = ('/' + config.UPLOADS_PATH + '/').replace(/\/\//g, '')
 
 /**
   Moves the file from a path to another. Typically used for saving temporary files.
@@ -33,7 +34,7 @@ const SOURCES_ROOT = path.join(__dirname, '..')
   @returns the final target path
 */
 async function move (sourcePath, targetPath, isUpload = true) {
-  let truePath = targetPath.replace(/^[\\/]/, '')
+  let truePath = targetPath.replace(/^[\\/]/, '') // remove leading slash
   let sourcePathExtension = path.extname(sourcePath)
   if (!targetPath.endsWith(sourcePathExtension)) {
     // TODO replace extension rather than just append
@@ -43,8 +44,7 @@ async function move (sourcePath, targetPath, isUpload = true) {
   let absolutePath = toAbsolutePath(truePath, isUpload)
   await createFolderIfMissing(path.dirname(absolutePath))
   await fs.rename(sourcePath, absolutePath)
-
-  return url.resolve(config.UPLOADS_PATH, truePath)
+  return url.resolve('/' + config.UPLOADS_PATH + '/', truePath)
 }
 
 async function exists (documentPath, isUpload = true) {
@@ -101,7 +101,7 @@ function toAbsolutePath (anyPath, isUpload) {
     prefix = SOURCES_ROOT
   }
   if (isUpload) {
-    prefix = path.join(prefix, SOURCES_ROOT)
+    prefix = path.join(prefix, config.UPLOADS_PATH)
   }
   return path.join(prefix, anyPath)
 }
