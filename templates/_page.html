@@ -55,7 +55,7 @@
             </li>
           {% else %}
             <li><a href="/login"><b>Login</b></a></li>
-           <!-- TODO <li><a href="/register"><b>Register</b></a></li>-->
+            <li><a href="/register"><b>Register</b></a></li>
           {% endif %}
         </ul>
       </div>
@@ -74,7 +74,7 @@
           </div>
         </div>
         <div class="event-header__links">
-          <a href="#" class="event-header__link"><span class="glyphicon glyphicon-grain"></span> Theme</a><!--
+          <a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-grain"></span> Theme</a><!--
           --><a href="/event/{{ event.get('uuid') }}" class="event-header__link active"><span class="glyphicon glyphicon-tower"></span> Games</a><!--
         --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
       </div>

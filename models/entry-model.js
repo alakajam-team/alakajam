@@ -19,12 +19,20 @@ function createModel () {
     hasTimestamps: true,
     uuid: true,
 
+    // Relations
+
     event: function () {
       return this.belongsTo('Event', 'event_uuid')
     },
     userRoles: function () {
       return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
     },
+
+    // Cascading
+    
+    dependents: ['userRoles'],
+
+    // Listeners
 
     initialize: function initialize (attrs) {
       modelPrototype.initialize.call(this)

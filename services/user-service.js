@@ -43,15 +43,21 @@
  * Registers a new user
  * @param name {string} name
  * @param password {string} clear password (will be hashed before storage)
- * @returns {User} The User
+ * @returns {User|boolean} The User, or false if the user is already taken
  */
  async function register (name, password) {
-   let user = new User({
-     name: name,
-     password: hashPassword(password)
-   })
-   await user.save()
-   return user
+   let count = await User.where('name', name).count()
+   if (count === 0) {
+     let user = new User({
+       name: name,
+       title: name
+     })
+     setPassword(user, password)
+     await user.save()
+     return user
+   } else {
+     return false
+   }
  }
 
 /**

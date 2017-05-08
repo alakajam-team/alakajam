@@ -26,7 +26,7 @@ const log = require('./log')
 const settingService = require('../services/setting-service')
 const sessionService = require('../services/session-service')
 const controllers = require('../controllers/index')
-const buildUrl = require('../controllers/build-url')
+const templating = require('../controllers/templating')
 
 module.exports = {
   configure
@@ -60,8 +60,10 @@ async function configure (app) {
 
   // Templating: custom filters
   let markdownConverter = new showdown.Converter()
-  nunjucks.env.addGlobal('buildUrl', buildUrl)
   nunjucks.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
+  for (var functionName in templating) {
+     nunjucks.env.addGlobal(functionName, templating[functionName])
+  }
   nunjucks.env.addFilter('markdown', function (str) {
     return markdownConverter.makeHtml(str)
   })
@@ -89,16 +91,20 @@ async function configure (app) {
   form.uploadDir = path.join(__dirname, '../data/tmp')
   form.maxFieldsSize = 2 * MB
   form.keepExtensions = true
-  let parseRequest = promisify(function (req, callback) {
-    form.parse(req, function (error, fields, files) {
-      callback(error, {fields, files})
-    })
+  let parseRequest = promisify(function (req, res, callback) {
+    if (!res.locals.form) {
+      form.parse(req, function (error, fields, files) {
+        res.locals.form = {fields, files}
+        callback(error, res.locals.form)
+      })
+    } else {
+      callback(null, res.locals.form)
+    }
   })
   app.use(function (req, res, next) {
-    // usage: let [fields, files] = await req.parseForm()
+    // usage: let {fields, files} = await req.parseForm()
     req.parseForm = async function () {
-      let result = await parseRequest(req)
-      return [result.fields, result.files]
+      return await parseRequest(req, res)
     }
     next()
   })

@@ -60,6 +60,7 @@ async function createEntry (user, event) {
   await entry.save() // XXX generate UUID
   entry.set('event_uuid', event.get('uuid')) 
   entry.set('event_name', event.get('name')) // TODO Model listener
+  entry.set('team_title', user.get('title'))
   let userRole = await entry.userRoles().create({
     user_uuid: user.get('uuid'),
     user_title: user.get('title'),
@@ -75,7 +76,7 @@ async function createEntry (user, event) {
  * @returns {Entry}
  */
 async function findEntryById (uuid) {
-  return Entry.where('uuid', uuid).fetch({ withRelated: 'event' })
+  return Entry.where('uuid', uuid).fetch({ withRelated: ['event', 'userRoles'] })
 }
 
 /**

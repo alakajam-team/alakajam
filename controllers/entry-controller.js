@@ -9,17 +9,20 @@
 const eventService = require('../services/event-service')
 const Entry = require('../models/entry-model')
 const fileStorage = require('../core/file-storage')
+const templating = require('./templating')
 
 module.exports = {
 
   initRoutes: function (app) {
     app.use('/entry/:uuid*', entryMiddleware)
+    app.use('/event/:eventUuid*', entryMiddleware)
 
     app.get('/event/:eventUuid/create-entry', createEntry)
     app.post('/event/:eventUuid/create-entry', saveEntry)
     app.get('/entry/:uuid', viewEntry)
     app.post('/entry/:uuid', saveEntry)
     app.get('/entry/:uuid/edit', editEntry)
+    app.get('/entry/:uuid/delete', deleteEntry)
   }
 
 }
@@ -74,7 +77,7 @@ async function saveEntry (req, res) {
   // TODO Security
 
   try {
-    let [fields, files] = await req.parseForm()
+    let {fields, files} = await req.parseForm()
     if (!res.headersSent) { // FIXME Why?
       if (!res.locals.entry) {
         res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
@@ -93,6 +96,7 @@ async function saveEntry (req, res) {
       entry.set('title', fields.title)
       entry.set('links', linksObject)
       entry.set('body', fields.body)
+      entry.set('team_title', res.locals.user.get('title'))
       if (fields.pictureDelete) {
         fileStorage.remove(picturePath)
       } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
@@ -106,4 +110,10 @@ async function saveEntry (req, res) {
   } catch (e) {
     res.errorPage(500, e)
   }
+}
+
+async function deleteEntry (req, res, next) {
+  await res.locals.entry.destroy()
+  req.url = templating.buildUrl(res.locals.event, 'event')
+  next()
 }

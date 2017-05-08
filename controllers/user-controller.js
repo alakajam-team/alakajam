@@ -12,7 +12,8 @@ const sessionService = require('../services/session-service')
 module.exports = {
 
   initRoutes: function (app) {
-    app.get('/register', register)
+    app.get('/register', registerForm)
+    app.post('/register', doRegister)
     app.get('/login', loginForm)
     app.post('/login', doLogin)
     app.get('/logout', doLogout)
@@ -23,11 +24,34 @@ module.exports = {
 }
 
 /**
- * Login form
+ * Register form
  */
-async function register (req, res) {
-  // TODO
+async function registerForm (req, res) {
   res.render('register')
+}
+
+/**
+ * Register
+ */
+async function doRegister (req, res) {
+  let {fields} = await req.parseForm()
+  let errorMessage = null
+  if (!(fields.name && fields.password)) {
+    errorMessage = 'Username or password missing'
+  } else if (fields.password !== fields['password-bis']) {
+    errorMessage = 'Passwords do not match'
+  } else {
+    let user = await userService.register(fields.name, fields.password)
+    if (user) {
+      doLogin(req, res)
+    } else {
+      errorMessage = 'Username is taken'
+    }
+  }
+
+  if (errorMessage) {
+    res.render('register', { errorMessage })
+  }
 }
 
 /**
@@ -37,9 +61,12 @@ async function loginForm (req, res) {
   res.render('login')
 }
 
+/**
+ * Login
+ */
 async function doLogin (req, res) {
   let context = {}
-  let [fields] = await req.parseForm()
+  let {fields} = await req.parseForm()
   if (fields.name && fields.password) {
     let user = await userService.authenticate(fields.name, fields.password)
     if (user) {
@@ -57,7 +84,7 @@ async function doLogin (req, res) {
 }
 
 /**
- * Login form
+ * Logout
  */
 async function doLogout (req, res) {
   sessionService.invalidateSession(req, res)

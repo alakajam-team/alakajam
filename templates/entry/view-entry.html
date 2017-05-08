@@ -27,7 +27,9 @@
          {{ link.title }}
          </a>
       {% endfor %}
+      {% if hasPermission(user, entry, 'write') %}
       <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
+      {% endif %}
     </div>
   </div>
 </div>
