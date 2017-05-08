@@ -7,8 +7,10 @@
  * @module services/session-service
  */
 
+const path = require('path')
 const crypto = require('crypto')
 const randomKey = require('random-key')
+const config = require('../config')
 const log = require('../core/log')
 const fileStorage = require('../core/file-storage')
 
@@ -19,7 +21,7 @@ module.exports = {
   restoreSessionifNeeded
 }
 
-const SESSIONS_FILE = 'data/sessions.json'
+const SESSIONS_FILE = path.join(config.DATA_PATH, 'sessions.json')
 
 /**
  * (Sync) Checks whether a user session is valid

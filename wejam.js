@@ -14,6 +14,7 @@ log.info('Starting server...')
 
 const promisify = require('promisify-node')
 const fs = promisify('fs')
+const path = require('path')
 const express = require('express')
 const browserRefreshClient = require('browser-refresh-client')
 const fileStorage = require('./core/file-storage')
@@ -68,10 +69,6 @@ function catchErrorsAndSignals () {
  * Initialize files upon first startup
  */
 async function initFilesLayout () {
-  // Create data folders
-  await fileStorage.createFolderIfMissing('data/tmp')
-  await fileStorage.createFolderIfMissing('static/uploads')
-
   // Create config.js if missing
   const CONFIG_PATH = './config.js'
   const CONFIG_SAMPLE_PATH = './config.sample.js'
@@ -79,9 +76,14 @@ async function initFilesLayout () {
     await fs.access(CONFIG_PATH, fs.constants.R_OK)
   } catch (e) {
     let sampleConfig = await fs.readFile(CONFIG_SAMPLE_PATH)
-    await fs.appendFile(CONFIG_PATH, sampleConfig)
+    await fs.writeFile(CONFIG_PATH, sampleConfig)
     log.info(CONFIG_PATH + ' initialized with sample values')
   }
+  const config = require('./config')
+
+  // Create data folders
+  await fileStorage.createFolderIfMissing(path.join(config.DATA_PATH, '/tmp'))
+  await fileStorage.createFolderIfMissing(config.UPLOADS_PATH)
 }
 
 /*

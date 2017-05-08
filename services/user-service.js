@@ -20,6 +20,9 @@
  }
 
  const SETTING_PASSWORD_PEPPER = 'password_pepper'
+ const USERNAME_VALIDATION_REGEX = /^[a-zA-Z][-\w]+$/g
+ const USERNAME_MIN_LENGTH = 3
+ const PASSWORD_MIN_LENGTH = 6
 
 /**
  * Fetches a User
@@ -43,21 +46,29 @@
  * Registers a new user
  * @param name {string} name
  * @param password {string} clear password (will be hashed before storage)
- * @returns {User|boolean} The User, or false if the user is already taken
+ * @returns {boolean|string} true, or an error message
  */
  async function register (name, password) {
-   let count = await User.where('name', name).count()
-   if (count === 0) {
-     let user = new User({
-       name: name,
-       title: name
-     })
-     setPassword(user, password)
-     await user.save()
-     return user
-   } else {
-     return false
+   if (!name.match(USERNAME_VALIDATION_REGEX)) {
+     return 'Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.'
+   } 
+   if (name.length < USERNAME_MIN_LENGTH) {
+     return 'Username length must be at least ' + USERNAME_MIN_LENGTH
    }
+   if (password.length < PASSWORD_MIN_LENGTH) {
+     return 'Password length must be at least ' + PASSWORD_MIN_LENGTH
+   }
+   if (await User.where('name', name).count() > 0) {
+     return 'Username is taken'
+   }
+
+   let user = new User({
+     name: name,
+     title: name
+   })
+   setPassword(user, password)
+   await user.save()
+   return true
  }
 
 /**

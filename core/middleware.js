@@ -23,6 +23,7 @@ const showdown = require('showdown')
 const moment = require('moment')
 const randomKey = require('random-key')
 const log = require('./log')
+const config = require('../config')
 const settingService = require('../services/setting-service')
 const sessionService = require('../services/session-service')
 const controllers = require('../controllers/index')
@@ -88,7 +89,7 @@ async function configure (app) {
 
   // Formidable (form parsing/file upload)
   let form = new formidable.IncomingForm()
-  form.uploadDir = path.join(__dirname, '../data/tmp')
+  form.uploadDir = path.join(__dirname, '..', config.DATA_PATH, 'tmp')
   form.maxFieldsSize = 2 * MB
   form.keepExtensions = true
   let parseRequest = promisify(function (req, res, callback) {

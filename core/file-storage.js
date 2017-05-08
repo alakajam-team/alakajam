@@ -11,6 +11,7 @@ const fs = promisify('fs')
 const mkdirp = promisify('mkdirp')
 const path = require('path')
 const url = require('url')
+const config = require('../config')
 
 module.exports = {
   move,
@@ -22,8 +23,7 @@ module.exports = {
 }
 
 const SOURCES_ROOT = path.join(__dirname, '..')
-const UPLOADS_PATH = '/static/uploads/'
-const UPLOADS_ROOT = path.join(SOURCES_ROOT, UPLOADS_PATH)
+const UPLOADS_ROOT = path.join(SOURCES_ROOT, config.UPLOADS_PATH)
 
 /**
   Moves the file from a path to another. Typically used for saving temporary files.
@@ -45,7 +45,7 @@ async function move (sourcePath, targetPath, isUpload = true) {
   await createFolderIfMissing(path.dirname(absolutePath))
   await fs.rename(sourcePath, absolutePath)
 
-  return url.resolve(UPLOADS_PATH, truePath)
+  return url.resolve(config.UPLOADS_PATH, truePath)
 }
 
 async function exists (documentPath, isUpload = true) {
@@ -91,7 +91,9 @@ async function write (documentPath, data, isUpload = true) {
 
 async function remove (documentPath, isUpload = true) {
   let absolutePath = toAbsolutePath(documentPath, isUpload)
-  await fs.unlink(absolutePath)
+  if (await exists(absolutePath)) {
+    await fs.unlink(absolutePath)
+  }
 }
 
 function toAbsolutePath (relativePath, isUpload) {

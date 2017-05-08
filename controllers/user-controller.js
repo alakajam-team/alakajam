@@ -41,11 +41,11 @@ async function doRegister (req, res) {
   } else if (fields.password !== fields['password-bis']) {
     errorMessage = 'Passwords do not match'
   } else {
-    let user = await userService.register(fields.name, fields.password)
-    if (user) {
+    let result = await userService.register(fields.name, fields.password)
+    if (result === true) {
       doLogin(req, res)
     } else {
-      errorMessage = 'Username is taken'
+      errorMessage = result
     }
   }
 
