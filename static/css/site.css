@@ -27,7 +27,7 @@
 /* General */
 
 body, p {
-  font-family: Tahoma, Geneva, sans-serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 html {
@@ -57,19 +57,18 @@ h1 {
   color: var(--text);
 }
 h2 {
-  @apply --alt-font;
-  font-size: 2rem;
+  font-weight: bold;
+  font-size: 1.6rem;
   margin: 0 0 10px 0;
 }
 h3 {
-  @apply --alt-font;
-  font-size: 1.7rem;
+  font-size: 1.4rem;
   margin: 0 0 10px 0;
 }
 h4 {
-  @apply --alt-font;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin: 0 0 10px 0;
+  color: var(--text-light);
 }
 
 a {
@@ -78,6 +77,10 @@ a {
 a:hover {
   color: var(--alt);
   text-decoration: none;
+}
+
+.spacing {
+  margin: 10px 0 20px 0;
 }
 
 .editor-toolbar.fullscreen, .CodeMirror-fullscreen, .editor-preview-side { 

@@ -4,6 +4,49 @@
 
 <h1>General</h1>
 
-<p>TODO</p>
+<h2>Account info</h2>
+
+<form action="/settings" method="post" class="spacing">
+
+<div class="form-group">
+  <label for="name">Account name</label>
+  <input type="text" class="form-control" id="password" name="password" placeholder="Account name" value="{{ user.get('name') }}">
+</div>
+
+<div class="form-group">
+  <label for="name">Display name</label>
+  <input type="text" class="form-control" id="password" name="password" placeholder="Account name" value="{{ user.get('title') }}">
+</div>
+
+<div class="form-group">
+  <input type="submit" class="btn btn-default" name="action-account" value="Save changes" />
+</div>
+
+</form>
+
+<h2>Change password</h2>
+
+<form action="/settings" method="post" class="spacing">
+
+<div class="form-group">
+  <label for="password">Current password</label>
+  <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+</div>
+
+<div class="form-group">
+  <label for="password">New password</label>
+  <input type="password" class="form-control" id="new-password" name="new-password" placeholder="Password">
+</div>
+
+<div class="form-group">
+  <label for="password-bis">Repeat new password</label>
+  <input type="password" class="form-control" id="new-password-bis" name="new-password-bis" placeholder="Password">
+</div>
+
+<div class="form-group">
+  <input type="submit" class="btn btn-default" name="action-password" value="Change password" />
+</div>
+
+</form>
 
 {% endblock %}

@@ -19,6 +19,7 @@ module.exports = {
     app.get('/logout', doLogout)
 
     app.get('/settings', settingsGeneral)
+    app.post('/settings', saveSettingsGeneral)
     app.get('/settings/profile', settingsProfile)
 
     app.get('/user/:uuid', viewUserProfile)
@@ -101,6 +102,16 @@ async function doLogout (req, res) {
  */
 async function settingsGeneral (req, res) {
   res.render('user/settings-general')
+}
+
+/**
+ * Save general user info
+ */
+async function saveSettingsGeneral (req, res) {
+  // TODO
+  res.render('user/settings-general', {
+    message: 'Nothing changed because not implemented yet :D'
+  })
 }
 
 /**

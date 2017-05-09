@@ -6,7 +6,7 @@
   <div class="row">
     <div class="col-sm-3">
       <div class="list-group">
-        <div class="list-group-item"><h3 style="margin: 0">User settings</h3></div>
+        <div class="list-group-item"><h4 style="margin: 0">User settings</h4></div>
         <a href="/settings" class="list-group-item 
         {{ 'active' if path == '/settings'}}">General</a>
         <a href="/settings/profile" class="list-group-item 
@@ -14,6 +14,10 @@
       </div>
     </div>
     <div class="col-sm-9">
+      {% if message %}
+        <div class="alert alert-warning">{{ message }}</div>
+      {% endif %}
+
       {% block settingsBody %}{% endblock %}
     </div>
   </div>
