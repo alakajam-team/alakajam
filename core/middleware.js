@@ -74,7 +74,7 @@ async function configure (app) {
   })
 
   // Templating: rendering context
-  app.use(function (req, res, next) {
+  app.use(function templateTooling (req, res, next) {
     // Allow anyone to display an error page
     res.errorPage = (code, message) => errorPage(req, res, code, message)
 
@@ -108,8 +108,8 @@ async function configure (app) {
     req.parseForm = async function () {
       return await parseRequest(req, res)
     }
-  /*  res.on('finish', cleanupFormFilesCallback(req, res));
-    res.on('close', cleanupFormFilesCallback(req, res));*/
+    res.on('finish', cleanupFormFilesCallback(req, res));
+    res.on('close', cleanupFormFilesCallback(req, res));
     next()
   })
 
@@ -117,12 +117,11 @@ async function configure (app) {
   controllers.initRoutes(app)
 
   // Routing: 500/404
-  app.use(function (err, req, res, next) {
-    if (err) {
-      errorPage(req, res, 500, err.message)
-    } else {
-      errorPage(req, res, 404)
-    }
+  app.use(function notFound (req, res) {
+    errorPage(req, res, 404)
+  })
+  app.use(function error (err, req, res, next) {
+    errorPage(req, res, 500, err.message)
   })
 }
 
@@ -130,7 +129,7 @@ function cleanupFormFilesCallback(req, res) {
   return async function cleanupFormFiles () {
     let {files} = await req.parseForm()
     for (let key in files) {
-  //    fileStorage.remove(files[key].path, false)
+      fileStorage.remove(files[key].path, false)
     }
     res.removeAllListeners('finish');
     res.removeAllListeners('close');

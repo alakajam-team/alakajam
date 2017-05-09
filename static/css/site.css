@@ -57,12 +57,18 @@ h1 {
   color: var(--text);
 }
 h2 {
+  @apply --alt-font;
+  font-size: 2rem;
   margin: 0 0 10px 0;
 }
 h3 {
+  @apply --alt-font;
+  font-size: 1.7rem;
   margin: 0 0 10px 0;
 }
 h4 {
+  @apply --alt-font;
+  font-size: 1.5rem;
   margin: 0 0 10px 0;
 }
 

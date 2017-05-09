@@ -7,15 +7,16 @@
 
 {% block body %}
 
-<form action="{{ buildUrl(entry, 'entry') }}" method="post" enctype="multipart/form-data">
+<div class="container">
+  <form action="{{ buildUrl(entry, 'entry') }}" method="post" enctype="multipart/form-data">
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h1 id="title-display"></h1>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 id="title-display"></h1>
+        </div>
       </div>
-    </div>
-    <div class="row entry">
+      <div class="row entry">
         
         <div class="col-md-7">
           <div class="form-group input-group-lg">
@@ -65,10 +66,11 @@
             {% endif %}
           </div>
         </div>
+      </div>
     </div>
-  </div>
 
-</form>
+  </form>
+</div>
 
 {% endblock %}
 

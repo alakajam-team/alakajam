@@ -2,41 +2,43 @@
 
 {% block body %}
 
-<div class="row">
-  <div class="col-sm-6 col-sm-offset-3">
-    <div class="panel {{ 'panel-warning' if errorMessage }} {{ 'panel-info' if infoMessage }} login">
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <div class="panel {{ 'panel-warning' if errorMessage }} {{ 'panel-info' if infoMessage }} login">
 
-      {% if infoMessage or errorMessage %}
-      <div class="panel-heading">
-        <h3 class="panel-title">{{ infoMessage or errorMessage }}</h3>
-      </div>
-      {% endif %}
+        {% if infoMessage or errorMessage %}
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ infoMessage or errorMessage }}</h3>
+        </div>
+        {% endif %}
 
-      <div class="well">
-        <h1>Register</h1>
+        <div class="well">
+          <h1>Register</h1>
 
-        <form method="post" action="/register">
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Username">
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-          </div>
-          <div class="form-group">
-            <label for="password-bis">Repeat password</label>
-            <input type="password" class="form-control" id="password-bis" name="password-bis" placeholder="Repeat assword">
-          </div>
-          <div class="form-group">
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" name="remember-me"> Remember me
-              </label>
+          <form method="post" action="/register">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" class="form-control" id="name" name="name" placeholder="Username">
             </div>
-          </div>
-          <button type="submit" class="btn btn-default">Submit</button>
-        </form>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+            </div>
+            <div class="form-group">
+              <label for="password-bis">Repeat password</label>
+              <input type="password" class="form-control" id="password-bis" name="password-bis" placeholder="Repeat assword">
+            </div>
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" name="remember-me"> Remember me
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

@@ -1,0 +1,22 @@
+{% extends "_page.html" %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="list-group">
+        <div class="list-group-item"><h3 style="margin: 0">User settings</h3></div>
+        <a href="/settings" class="list-group-item 
+        {{ 'active' if path == '/settings'}}">General</a>
+        <a href="/settings/profile" class="list-group-item 
+        {{ 'active' if path == '/settings/profile'}}">Profile</a>
+      </div>
+    </div>
+    <div class="col-sm-9">
+      {% block settingsBody %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -3,10 +3,12 @@
 
 {% block body %}
 
-<h1>Events</h1>
+<div class="container">
+  <h1>Events</h1>
 
-{% for event in events %}
+  {% for event in events %}
   {{ eventMacros.eventTable(event, false) }}
-{% endfor %}
+  {% endfor %}
+</div>
 
 {% endblock %}

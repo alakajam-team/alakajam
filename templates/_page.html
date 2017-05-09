@@ -49,7 +49,8 @@
                 <img src="/static/images/sample.jpg" class="navbar-profileicon" /> <span class="navbar-profile hidden-sm">{{ user.get('title') }}</span> <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="/user/todo">Profile</a></li>
+                <li><a href="/user/{{ user.get('name')}}">Profile</a></li>
+                <li><a href="/settings">Settings</a></li>
                 <li><a href="/logout">Logout</a></li>
               </ul>
             </li>
@@ -82,9 +83,7 @@
   {% endif %}
 </nav>
 
-<div class="container">
- {% block body %}{% endblock %}
-</div>
+{% block body %}{% endblock %}
 
 <footer class="container footer">
   {% if user and user.get('is_admin') %}<a href="/admin">Administration</a> | {% endif %}<a href="https://github.com/mkalam-alami/wejam">WeJam! on Github</a>

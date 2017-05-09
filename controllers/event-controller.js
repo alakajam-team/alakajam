@@ -31,7 +31,7 @@ async function eventMiddleware (req, res, next) {
         res.locals.userEntry = entry
       })
   }
-  Promise.all([eventTask, entryTask])
+  await Promise.all([eventTask, entryTask])
   next()
 }
 

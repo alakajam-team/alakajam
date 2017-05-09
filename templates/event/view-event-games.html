@@ -4,13 +4,14 @@
 {% block body %}
 
 {% if user %}
-<div class="row well">
+<div class="container">
+  <div class="row well">
     <div class="col-xs-8">
       <h1 style="margin: 0">
-      {% if userEntry %}
-      Your entry: <a href="{{ buildUrl(userEntry, 'entry') }}">{{ userEntry.get('title') }}</a>
-      {% else %}
-      You have no entry
+        {% if userEntry %}
+        Your entry: <a href="{{ buildUrl(userEntry, 'entry') }}">{{ userEntry.get('title') }}</a>
+        {% else %}
+        You have no entry
       </h1>
       {% endif %}
     </div>
@@ -21,13 +22,14 @@
       <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-info">Submit entry</a>
       {% endif %}
     </div>
-</div>
-{% endif %}
+  </div>
+  {% endif %}
 
-<div class="row">
-  {% for entry in event.related('entries').models %}
+  <div class="row">
+    {% for entry in event.related('entries').models %}
     {{ eventMacros.entryThumb(entry) }}
-  {% endfor %}
+    {% endfor %}
+  </div>
 </div>
 
 {% endblock %}

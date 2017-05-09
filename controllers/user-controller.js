@@ -18,6 +18,9 @@ module.exports = {
     app.post('/login', doLogin)
     app.get('/logout', doLogout)
 
+    app.get('/settings', settingsGeneral)
+    app.get('/settings/profile', settingsProfile)
+
     app.get('/user/:uuid', viewUserProfile)
   }
 
@@ -94,7 +97,21 @@ async function doLogout (req, res) {
 }
 
 /**
- * Displays a user profile
+ * Manage general user info
+ */
+async function settingsGeneral (req, res) {
+  res.render('user/settings-general')
+}
+
+/**
+ * Manage user profile contents
+ */
+async function settingsProfile (req, res) {
+  res.render('user/settings-profile')
+}
+
+/**
+ * Display a user profile
  */
 async function viewUserProfile (req, res) {
   res.render('user/profile')
