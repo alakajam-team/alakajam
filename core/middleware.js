@@ -71,6 +71,12 @@ async function configure (app) {
     return markdownConverter.makeHtml(str)
   })
   nunjucks.env.addFilter('date', function (date) {
+    return moment(date).format('MMMM Do YYYY')
+  })
+  nunjucks.env.addFilter('dateTime', function (date) {
+    return moment(date).format('MMMM Do YYYY, h:mm:ss a')
+  })
+  nunjucks.env.addFilter('relativeTime', function (date) {
     return moment(date).fromNow()
   })
 

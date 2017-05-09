@@ -347,6 +347,7 @@ img.preview {
   &__picture {
     height: 150px;
     width: 100%;
+    background-color: var(--main-dark);
     background-size: cover;
     background-position: center;
     transition: 0.3s;
@@ -390,7 +391,7 @@ img.preview {
     @apply --shadow;
     margin-bottom: 20px;
     text-align: center;
-    background-color: var(--text);
+    background-color: var(--main-dark);
     border-radius: 4px;
 
     & img {
@@ -426,6 +427,10 @@ img.preview {
   &__name {
     color: var(--text-light);
     font-weight: normal;
+  }
+
+  &__joined {
+    color: var(--text-light);
   }
 
   &__social-link {

@@ -10,7 +10,7 @@
         {% if profileUser.get('avatar') %}
         <img src="{{ profileUser.get('avatar') }}" class="profile__avatar" />
         {% else %}
-        <img src="/static/images/avatar.jpg" class="profile__avatar" />
+        <img src="/static/images/default-avatar.png" class="profile__avatar" />
         {% endif %}
       </div>
 
@@ -20,6 +20,9 @@
       <h3 class="profile__name">
         {{ profileUser.get('name') }}
       </h3>
+      <p class="profile__joined">
+        Joined {{ profileUser.get('created_at') | relativeTime }}
+      </p>
 
       {% if user and (user.get('uuid') == profileUser.get('uuid')) %}
       <a href="/settings" class="btn btn-info">Edit profile</a>
@@ -44,12 +47,15 @@
     </div>
 
     <div class="col-md-9">
+      {% if profileUser.get('body') %}
       <h2>Bio</h2>
       <div class="well">
         {{ profileUser.get('body') | markdown | safe }}
       </div>
+      {% endif %}
 
-      <h2>All entries</h2>
+      <h2>Games</h2>
+      {% if entries.length > 0 %}
       <div class="container-fluid" style="padding: 0">
         <div class="row">
           {% for entry in entries %}
@@ -57,6 +63,9 @@
           {% endfor %}
         </div>
       </div>
+      {% else %}
+      <div class="well">This user didn't submit games... Yet!</div>
+      {% endif %}
     </div>
   </div>
 </div>

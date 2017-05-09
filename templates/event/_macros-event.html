@@ -1,13 +1,17 @@
 {% macro entryThumb(entry, cols = 3) %}
 <div class="col-sm-4 col-md-{{ cols }}">
   <a class="entry-thumb" href="{{ buildUrl(entry, 'entry') }}">
-    {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/test.png' %}
+    {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
     <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
       <div class="entry-thumb__picture-gradient"></div>
     </div>
     <div class="entry-thumb__details" >
       <div class="entry-thumb__title" >{{ entry.get('title') }}</div>
-      <div class="entry-thumb__author" >by <b>{{ entry.get('team_title') }}</b></div>
+      <div class="entry-thumb__author" >by 
+      {% for userRole in entry.related('userRoles').models %}
+      <strong>{{ userRole.get('user_title') }}</strong>{{ ', ' if not loop.last }}
+      {% endfor %}
+      </div>
     </div>
   </a>
 </div>

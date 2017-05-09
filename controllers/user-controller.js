@@ -117,6 +117,10 @@ async function settingsGeneral (req, res) {
         user.set('social_twitter', fields.twitter.replace('@', ''))
         user.set('body', fields.body)
 
+        if (user.hasChanged('title')) {
+          await userService.refreshUserReferences(user)
+        }
+
         // TODO Formidable shouldn't create an empty file
         let newAvatar = files.avatar && files.avatar.size > 0
         if (user.get('avatar') && (files['avatar-delete'] || newAvatar)) {
@@ -188,7 +192,7 @@ async function viewUserProfile (req, res) {
   if (user) {
     res.render('user/profile', {
       profileUser: user,
-      entries: await eventService.findUserEntries(res.locals.user)
+      entries: await eventService.findUserEntries(user)
     })
   } else {
     res.errorPage(400, 'No user exists with name ' + req.params.name)

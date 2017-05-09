@@ -27,9 +27,7 @@ async function eventMiddleware (req, res, next) {
   let entryTask = true
   if (res.locals.user) {
     entryTask = eventService.findUserEntryForEvent(res.locals.user, req.params.uuid)
-      .then(entry => {
-        res.locals.userEntry = entry
-      })
+      .then(entry => res.locals.userEntry = entry)
   }
   await Promise.all([eventTask, entryTask])
   next()
@@ -38,14 +36,10 @@ async function eventMiddleware (req, res, next) {
 /**
  * Browse event
  */
-async function viewEvent (req, res, next) {
-  let event = await eventService.findEventById(req.params.uuid)
-  if (event !== null) {
-    res.render('event/view-event-games', {
-      event: event
-    })
+async function viewEvent (req, res) {
+  if (res.locals.event) {
+    res.render('event/view-event-games')
   } else {
-    res.locals.errorMessage = 'Event not found'
-    next()
+    res.errorPage(404, 'Event not found')
   }
 }

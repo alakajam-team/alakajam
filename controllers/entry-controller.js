@@ -93,7 +93,6 @@ async function saveEntry (req, res) {
     entry.set('title', fields.title)
     entry.set('links', linksObject)
     entry.set('body', fields.body)
-    entry.set('team_title', res.locals.user.get('title'))
     if (fields['picture-delete'] && entry.get('pictures').length > 0) {
       await fileStorage.remove(entry.get('pictures')[0], false)
       entry.set('pictures', [])
@@ -102,6 +101,7 @@ async function saveEntry (req, res) {
       entry.set('pictures', [finalPath])
     }
     await entry.save()
+    await entry.related('userRoles').fetch()
 
     viewEntry(req, res)
   }

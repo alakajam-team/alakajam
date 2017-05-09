@@ -26,7 +26,8 @@ module.exports = {
  * @returns {Event}
  */
 async function findEventById (uuid) {
-  return Event.where('uuid', uuid).fetch({ withRelated: 'entries' })
+  return Event.where('uuid', uuid)
+    .fetch({ withRelated: ['entries', 'entries.userRoles'] })
 }
 
 /**
@@ -36,7 +37,7 @@ async function findEventById (uuid) {
 async function findAllEvents () {
   let eventModels = await new Event()
     .orderBy('title', 'DESC') // XXX Temporary prop
-    .fetchAll({ withRelated: 'entries' })
+    .fetchAll({ withRelated: ['entries'] })
   return eventModels.models
 }
 
@@ -58,16 +59,15 @@ async function findEventByStatus (status) {
 async function createEntry (user, event) {
   // TODO Better use of Bookshelf API
   let entry = new Entry()
-  await entry.save() // XXX generate UUID
+  await entry.save() // otherwise the user role won't have a node_uuid
   entry.set('event_uuid', event.get('uuid')) 
-  entry.set('event_name', event.get('name')) // TODO Model listener
-  entry.set('team_title', user.get('title'))
-  let userRole = await entry.userRoles().create({
+  entry.set('event_name', event.get('name'))
+  await entry.userRoles().create({
     user_uuid: user.get('uuid'),
+    user_name: user.get('name'),
     user_title: user.get('title'),
     role: 'owner'
   })
-  await userRole.save()
   return entry
 }
 
@@ -88,8 +88,8 @@ async function findEntryById (uuid) {
 async function findUserEntries (user) {
   let entryCollection = await Entry.query((query) => {
     query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
-    query.where('user_role.user_uuid', user.get('uuid'))
-  }).fetchAll()
+      .where('user_role.user_uuid', user.get('uuid'))
+  }).fetchAll({ withRelated: ['userRoles'] })
   return entryCollection.models
 }
 
@@ -102,9 +102,9 @@ async function findUserEntries (user) {
 async function findUserEntryForEvent (user, eventUuid) {
   return Entry.query((query) => {
     query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
-    query.where({
-      'event_uuid': eventUuid,
-      'user_role.user_uuid': user.get('uuid')
-    })
-  }).fetch()
+      .where({
+        'event_uuid': eventUuid,
+        'user_role.user_uuid': user.get('uuid')
+      })
+  }).fetch({ withRelated: ['userRoles'] })
 }

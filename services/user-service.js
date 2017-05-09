@@ -8,15 +8,18 @@
 
  const crypto = require('crypto')
  const randomKey = require('random-key')
+ const db = require('../core/db')
  const settingService = require('../services/setting-service')
  const User = require('../models/user-model')
+ const UserRole = require('../models/user-role-model')
 
  module.exports = {
    findById,
    findByName,
    register,
    authenticate,
-   setPassword
+   setPassword,
+   refreshUserReferences
  }
 
  const SETTING_PASSWORD_PEPPER = 'password_pepper'
@@ -116,7 +119,6 @@
  * @returns {boolean|string} true, or an error message
  */
 function validatePassword(password) {
-  console.log(password)
    if (password.length < PASSWORD_MIN_LENGTH) {
      return 'Password length must be at least ' + PASSWORD_MIN_LENGTH
    } else {
@@ -126,4 +128,21 @@ function validatePassword(password) {
 
  function hashPassword (password, salt) {
   return crypto.createHash('sha256').update(password + salt).digest('hex')
+ }
+
+/**
+ * Refreshes various models that cache user name and/or title.
+ * Call this after changing the name or title of an user.
+ * @param {User} user User model
+ */
+ async function refreshUserReferences(user) {
+  // TODO Transaction
+  let userRolesCollection = await UserRole.where('user_uuid', user.get('uuid')).fetchAll()
+  console.log(userRolesCollection)
+  for (let userRole of userRolesCollection.models) {
+    console.log(userRole.get('user_title'))
+    userRole.set('user_name', user.get('name'))
+    userRole.set('user_title', user.get('title'))
+    await userRole.save()
+  }
  }

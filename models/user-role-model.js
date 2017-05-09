@@ -29,6 +29,7 @@
        await db.knex.schema.createTableIfNotExists('user_role', function (table) {
          table.increments('id').primary()
          table.uuid('user_uuid').references('user.uuid')
+         table.string('user_name')
          table.string('user_title')
          table.uuid('node_uuid')
          table.string('node_type')

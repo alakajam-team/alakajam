@@ -59,11 +59,9 @@ function createModel () {
         table.uuid('uuid').primary()
         table.uuid('event_uuid').references('event.uuid')
         table.uuid('event_name')
-        table.uuid('team_uuid') // .references('team.uuid')
         table.string('links') // JSON Array : [{url, title}]
         table.string('pictures') // JSON Array : [path]
         table.string('category')
-        table.string('team_title')
         table.string('name')
         table.string('title')
         table.string('body', 10000)
