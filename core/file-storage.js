@@ -23,7 +23,7 @@ module.exports = {
 }
 
 const SOURCES_ROOT = path.join(__dirname, '..')
-const UPLOADS_URL = ('/' + config.UPLOADS_PATH + '/').replace(/\/\//g, '')
+const UPLOADS_URL = ('/' + config.UPLOADS_PATH + '/').replace(/\/\//g, '/')
 
 /**
   Moves the file from a path to another. Typically used for saving temporary files.
@@ -44,7 +44,7 @@ async function move (sourcePath, targetPath, isUpload = true) {
   let absolutePath = toAbsolutePath(truePath, isUpload)
   await createFolderIfMissing(path.dirname(absolutePath))
   await fs.rename(sourcePath, absolutePath)
-  return url.resolve('/' + config.UPLOADS_PATH + '/', truePath)
+  return url.resolve(UPLOADS_URL, truePath)
 }
 
 async function exists (documentPath, isUpload = true) {
@@ -90,7 +90,7 @@ async function write (documentPath, data, isUpload = true) {
 
 async function remove (documentPath, isUpload = true) {
   let absolutePath = toAbsolutePath(documentPath, isUpload)
-  if (await exists(documentPath, false)) {
+  if (await exists(documentPath, isUpload)) {
     await fs.unlink(absolutePath)
   }
 }

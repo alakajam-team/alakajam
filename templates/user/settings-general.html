@@ -1,4 +1,9 @@
 {% extends "user/_page-settings.html" %}
+{% import "_macros.html" as macros %}
+
+{% block styles %}
+  {{ macros.editorStyles() }}
+{% endblock %}
 
 {% block settingsBody %}
 
@@ -6,47 +11,54 @@
 
 <h2>Account info</h2>
 
-<form action="/settings" method="post" class="spacing">
+<form action="/settings" method="post" enctype="multipart/form-data">
 
-<div class="form-group">
-  <label for="name">Account name</label>
-  <input type="text" class="form-control" id="password" name="password" placeholder="Account name" value="{{ user.get('name') }}">
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="title">Display name</label>
+      <input type="text" class="form-control input-lg" id="password" name="title" placeholder="Display name" value="{{ user.get('title') }}">
+    </div> 
+
+    <div class="form-group">
+      <label for="name">Email address</label> <span class="text-muted">(will not be made public)</span>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ user.get('email') }}" />
+    </div>
+
+    <div class="form-group">
+      <label for="name">Website</label>
+      <input type="url" class="form-control" id="website" name="website" placeholder="http://" value="{{ user.get('social_web') }}" />
+    </div>
+
+    <div class="form-group">
+      <label for="name">Twitter</label>
+      <input type="text" class="form-control" id="twitter" name="twitter" placeholder="@username" value="{{ '@' + user.get('social_twitter') if user.get('social_twitter') }}" />
+    </div>
+
+    <div class="form-group">
+      <input type="submit" class="btn btn-default" value="Save changes" />
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="name">Avatar</label>
+      {{ macros.pictureInput('avatar', user.get('avatar')) }}
+    </div>
+  </div>
 </div>
 
-<div class="form-group">
-  <label for="name">Display name</label>
-  <input type="text" class="form-control" id="password" name="password" placeholder="Account name" value="{{ user.get('title') }}">
-</div>
+<h2 class="spacing">About</h2>
 
 <div class="form-group">
-  <input type="submit" class="btn btn-default" name="action-account" value="Save changes" />
+  {{ macros.editor('body', user.get('body')) }}
+  <input type="submit" class="btn btn-default" value="Save changes" />
 </div>
 
 </form>
 
-<h2>Change password</h2>
+{% endblock %}
 
-<form action="/settings" method="post" class="spacing">
-
-<div class="form-group">
-  <label for="password">Current password</label>
-  <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-</div>
-
-<div class="form-group">
-  <label for="password">New password</label>
-  <input type="password" class="form-control" id="new-password" name="new-password" placeholder="Password">
-</div>
-
-<div class="form-group">
-  <label for="password-bis">Repeat new password</label>
-  <input type="password" class="form-control" id="new-password-bis" name="new-password-bis" placeholder="Password">
-</div>
-
-<div class="form-group">
-  <input type="submit" class="btn btn-default" name="action-password" value="Change password" />
-</div>
-
-</form>
-
+{% block scripts %} 
+{{ macros.editorScripts(user.get('uuid')) }}
 {% endblock %}

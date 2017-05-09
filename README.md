@@ -10,6 +10,8 @@ Requirement: NodeJS 7.6+
 * `node wejam.js`
 * Browse to `http://localhost:8000`
 
+There is a default admin user (`administrator`/`administrator`).
+
 ### Dev tools
 
 Prerequisite: `npm install -g standard browser-refresh node-inspector jsdoc mocha`

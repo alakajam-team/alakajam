@@ -16,6 +16,7 @@ module.exports = {
 
   createEntry,
   findEntryById,
+  findUserEntries,
   findUserEntryForEvent
 }
 
@@ -77,6 +78,19 @@ async function createEntry (user, event) {
  */
 async function findEntryById (uuid) {
   return Entry.where('uuid', uuid).fetch({ withRelated: ['event', 'userRoles'] })
+}
+
+/**
+ * Retrieves all the entries an user contributed to
+ * @param  {User} user
+ * @return {array[Entry]|null}
+ */
+async function findUserEntries (user) {
+  let entryCollection = await Entry.query((query) => {
+    query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
+    query.where('user_role.user_uuid', user.get('uuid'))
+  }).fetchAll()
+  return entryCollection.models
 }
 
 /**

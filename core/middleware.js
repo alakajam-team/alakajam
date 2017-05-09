@@ -63,6 +63,7 @@ async function configure (app) {
   // Templating: custom filters
   let markdownConverter = new showdown.Converter()
   nunjucks.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
+  nunjucks.env.addGlobal('devMode', app.locals.devMode)
   for (var functionName in templating) {
      nunjucks.env.addGlobal(functionName, templating[functionName])
   }

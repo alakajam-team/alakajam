@@ -4,9 +4,49 @@
 {% block body %}
 
 <div class="container">
+  <h1>
+    {{ profileUser.get('title') }}
+  </h1>
   <div class="row">
-    <h1>User profile</h1>
-    <p>TODO</p>
+    <div class="col-md-3 well">
+      <div class="text-center">
+        {% if profileUser.get('avatar') %}
+        <img src="{{ profileUser.get('avatar') }}" class="preview" />
+        {% else %}
+        <img src="/static/images/avatar.jpg" class="preview" />
+        {% endif %}
+      </div>
+      <div class="spacing">
+        {% if profileUser.get('social_web') %}
+        <div class="profile__social-link">
+          <a href="{{ profileUser.get('social_web') }}">
+            <img src="/static/images/globe.png" alt="Website" /> Website
+          </a>
+        </div>
+        {% endif %}
+        {% if profileUser.get('social_twitter') %}
+        <div class="profile__social-link">
+          <a href="https://www.twitter.com/{{ profileUser.get('social_twitter') }}">
+            <img src="/static/images/twitter.svg" alt="Github" /> Twitter
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="well">
+        {{ profileUser.get('body') | markdown | safe }}
+      </div>
+    </div>
+  </div>
+
+  <h2>All entries</h2>
+  <div class="row">
+    <div class="col-md-6">
+      {% for entry in entries %}
+      {{ eventMacros.entryThumb(entry, 6) }}
+      {% endfor %}
+    </div>
   </div>
 </div>
 

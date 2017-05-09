@@ -79,8 +79,13 @@ a:hover {
   text-decoration: none;
 }
 
+img.preview {
+  max-width: 100%;
+  max-height: 150px;
+}
+
 .spacing {
-  margin: 10px 0 20px 0;
+  margin-top: 20px;
 }
 
 .editor-toolbar.fullscreen, .CodeMirror-fullscreen, .editor-preview-side { 
@@ -180,7 +185,7 @@ a:hover {
 
   }
 
-  /* Profile menu */
+  /* User profile menu */
 
   & .navbar-profile {
     font-weight: bold;
@@ -398,5 +403,15 @@ a:hover {
   @media (min-width: 768px) {
     margin: 100px 0;
   }
+}
 
+/* User profile */
+
+.profile__social-link {
+  line-height: 30px;
+
+  & img {
+    height: 20px;
+    vertical-align: middle;
+  }
 }

@@ -55,11 +55,12 @@
    if (name.length < USERNAME_MIN_LENGTH) {
      return 'Username length must be at least ' + USERNAME_MIN_LENGTH
    }
-   if (password.length < PASSWORD_MIN_LENGTH) {
-     return 'Password length must be at least ' + PASSWORD_MIN_LENGTH
-   }
    if (await User.where('name', name).count() > 0) {
      return 'Username is taken'
+   }
+   let passwordValidationResult = validatePassword(password)
+   if (passwordValidationResult !== true) {
+     return passwordValidationResult
    }
 
    let user = new User({
@@ -94,13 +95,34 @@
  * Sets a password to a User
  * @param {User} user User model
  * @param {string} password New password, in clear form
+ * @returns {boolean|string} true, or an error message
  */
  function setPassword(user, password) {
+   let passwordValidationResult = validatePassword(password)
+   if (passwordValidationResult !== true) {
+     return passwordValidationResult
+   }
+
   let salt = randomKey.generate()
   user.set('password_salt', salt)
   let hash = hashPassword(password, salt)
   user.set('password', hash)
+  return true
  }
+
+/**
+ * Validates the given password
+ * @param {string} password
+ * @returns {boolean|string} true, or an error message
+ */
+function validatePassword(password) {
+  console.log(password)
+   if (password.length < PASSWORD_MIN_LENGTH) {
+     return 'Password length must be at least ' + PASSWORD_MIN_LENGTH
+   } else {
+      return true
+   }
+}
 
  function hashPassword (password, salt) {
   return crypto.createHash('sha256').update(password + salt).digest('hex')

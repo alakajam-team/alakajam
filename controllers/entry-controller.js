@@ -74,41 +74,36 @@ function editEntry (req, res) {
  * Save entry
  */
 async function saveEntry (req, res) {
-  // TODO Security
-
-  try {
-    let {fields, files} = await req.parseForm()
-    if (!res.headersSent) { // FIXME Why?
-      if (!res.locals.entry) {
-        res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
-      }
-      let entry = res.locals.entry
-
-      let picturePath = '/entry/' + entry.get('uuid')
-      let linksObject = null
-      if (fields.link) {
-        linksObject = [{
-          url: fields.link,
-          title: 'Play'
-        }]
-      }
-
-      entry.set('title', fields.title)
-      entry.set('links', linksObject)
-      entry.set('body', fields.body)
-      entry.set('team_title', res.locals.user.get('title'))
-      if (fields.pictureDelete) {
-        fileStorage.remove(picturePath)
-      } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
-        let finalPath = await fileStorage.move(files.picture.path, picturePath)
-        entry.set('pictures', [finalPath])
-      }
-      await entry.save()
-
-      viewEntry(req, res)
+  let {fields, files} = await req.parseForm()
+  if (!res.headersSent) { // FIXME Why?
+    if (!res.locals.entry) {
+      res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
     }
-  } catch (e) {
-    res.errorPage(500, e)
+    let entry = res.locals.entry
+
+    let picturePath = '/entry/' + entry.get('uuid')
+    let linksObject = null
+    if (fields.link) {
+      linksObject = [{
+        url: fields.link,
+        title: 'Play'
+      }]
+    }
+
+    entry.set('title', fields.title)
+    entry.set('links', linksObject)
+    entry.set('body', fields.body)
+    entry.set('team_title', res.locals.user.get('title'))
+    if (fields['picture-delete'] && entry.get('pictures').length > 0) {
+      await fileStorage.remove(entry.get('pictures')[0], false)
+      entry.set('pictures', [])
+    } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
+      let finalPath = await fileStorage.move(files.picture.path, picturePath)
+      entry.set('pictures', [finalPath])
+    }
+    await entry.save()
+
+    viewEntry(req, res)
   }
 }
 

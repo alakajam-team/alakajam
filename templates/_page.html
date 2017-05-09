@@ -46,7 +46,12 @@
           {% if user %}
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                <img src="/static/images/sample.jpg" class="navbar-profileicon" /> <span class="navbar-profile hidden-sm">{{ user.get('title') }}</span> <span class="caret"></span>
+                {% if user.get('avatar') %}
+                <img src="{{ user.get('avatar') }}" class="navbar-profileicon" />
+                {% else %}
+                <img src="/static/images/sample.jpg" class="navbar-profileicon" />
+                {% endif %}
+                <span class="navbar-profile hidden-sm">{{ user.get('title') }}</span> <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="/user/{{ user.get('name')}}">Profile</a></li>

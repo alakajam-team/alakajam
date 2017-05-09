@@ -8,6 +8,8 @@
 
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
+const eventService = require('../services/event-service')
+const fileStorage = require('../core/file-storage')
 
 module.exports = {
 
@@ -18,11 +20,10 @@ module.exports = {
     app.post('/login', doLogin)
     app.get('/logout', doLogout)
 
-    app.get('/settings', settingsGeneral)
-    app.post('/settings', saveSettingsGeneral)
-    app.get('/settings/profile', settingsProfile)
+    app.all('/settings', settingsGeneral)
+    app.all('/settings/password', settingsPassword)
 
-    app.get('/user/:uuid', viewUserProfile)
+    app.get('/user/:name', viewUserProfile)
   }
 
 }
@@ -101,29 +102,95 @@ async function doLogout (req, res) {
  * Manage general user info
  */
 async function settingsGeneral (req, res) {
-  res.render('user/settings-general')
-}
+  try {
+    let errorMessage = '', infoMessage = ''
 
-/**
- * Save general user info
- */
-async function saveSettingsGeneral (req, res) {
-  // TODO
-  res.render('user/settings-general', {
-    message: 'Nothing changed because not implemented yet :D'
-  })
+    if (req.method === 'POST') {
+      let {fields, files} = await req.parseForm()
+      if (!res.headersSent) { // FIXME Why?
+        let user = res.locals.user
+
+        // General settings form
+        user.set('title', fields.title || user.get('name'))
+        user.set('email', fields.email)
+        user.set('social_web', fields.website)
+        user.set('social_twitter', fields.twitter.replace('@', ''))
+        user.set('body', fields.body)
+
+        // TODO Formidable shouldn't create an empty file
+        let newAvatar = files.avatar && files.avatar.size > 0
+        if (user.get('avatar') && (files['avatar-delete'] || newAvatar)) {
+          await fileStorage.remove(user.get('avatar'), false)
+          user.unset('avatar')
+        }
+        if (newAvatar) { 
+          let avatarPath = '/user/' + user.get('uuid')
+          let finalPath = await fileStorage.move(files.avatar.path, avatarPath)
+          user.set('avatar', finalPath)
+        }
+        await user.save()
+      }
+    }
+
+    res.render('user/settings-general', {
+      errorMessage,
+      infoMessage
+    })
+  } catch (e) {
+    res.errorPage(500, e)
+  }
 }
 
 /**
  * Manage user profile contents
  */
-async function settingsProfile (req, res) {
-  res.render('user/settings-profile')
+async function settingsPassword (req, res) {
+  try {
+    let errorMessage = '', infoMessage = ''
+    
+    if (req.method === 'POST') {
+      let {fields} = await req.parseForm()
+
+      // Change password form
+      if (!fields['password']) {
+        errorMessage = 'You must enter your current password'
+      } else if (!await userService.authenticate(user.get('name'), fields['password'])) {
+        errorMessage = 'Current password is incorrect'
+      } else if (!fields['new-password']) {
+        errorMessage = 'You must enter a new password'
+      } else if (fields['new-password'] !== fields['new-password-bis']) {
+        errorMessage = 'New passwords do not match'
+      } else {
+        let result = userService.setPassword(user, fields['new-password'])
+        if (result !== true) {
+          errorMessage = result
+        } else {
+          await user.save()
+          infoMessage = 'Password change successful'
+        }
+      }
+    }
+
+    res.render('user/settings-password', {
+      errorMessage,
+      infoMessage
+    })
+  } catch (e) {
+    res.errorPage(500, e)
+  }
 }
 
 /**
  * Display a user profile
  */
 async function viewUserProfile (req, res) {
-  res.render('user/profile')
+  let user = await userService.findByName(req.params.name)
+  if (user) {
+    res.render('user/profile', {
+      profileUser: user,
+      entries: await eventService.findUserEntries(res.locals.user)
+    })
+  } else {
+    res.errorPage(400, 'No user exists with name ' + req.params.name)
+  }
 }

@@ -127,11 +127,11 @@ function createBookshelfInstance (knexInstance) {
     let Entry = require('../models/entry-model')
 
     let adminUser = new User({
-      name: 'admin',
+      name: 'administrator',
       title: 'Administrator',
       is_admin: true
     })
-    userService.setPassword(adminUser, 'admin')
+    userService.setPassword(adminUser, 'administrator')
     await adminUser.save()
 
     let weJam1 = new Event({

@@ -1,9 +1,9 @@
 {% extends "_page.html" %}
+{% import "_macros.html" as macros %}
 
 {% block styles %}
-<link rel="stylesheet" type="text/css" href="/static/css/simplemde.min.css" />
+  {{ macros.editorStyles() }}
 {% endblock %}
-
 
 {% block body %}
 
@@ -25,12 +25,12 @@
           </div>
           <div class="form-group">
             <label for="title">Link</label>
-            <input type="text" class="form-control" id="link" name="link" placeholder="http://..." value="{{ entry.get('links')[0].url }}">
+            <input type="url" class="form-control" id="link" name="link" placeholder="http://..." value="{{ entry.get('links')[0].url }}">
           </div>
           <div class="form-group">
             <label for="title">Description</label>
             <div class="user-contents user-contents__editor">
-              <textarea class="form-control" style="min-height: 200px" id="body" name="body" placeholder="A short description of your game">{{ entry.get('body') }}</textarea>
+              {{ macros.editor('body', entry.get('body')) }}
             </div>
           </div>
           <div class="form-group">
@@ -53,17 +53,10 @@
         <div class="col-md-5">
           <div class="form-group">
             <label for="title">Picture</label>
-            <input type="file" id="picture" name="picture" />
-            {% if entry.has('picture') %}
-            <label><input type="checkbox" name="pictureDelete" /> Delete picture</label>
+            {% if entry.has('pictures') and entry.get('pictures').length > 0 %}
+              {% set picture = entry.get('pictures')[0] %}
             {% endif %}
-            
-            <br />
-            {% if entry.has('pictures') and entry.get('pictures').length > 0  %}
-            <img src="{{ entry.get('pictures')[0] }}" style="width: 100%" />
-            {% else %}
-            <img src="/static/images/test.png" style="width: 100%" />
-            {% endif %}
+            {{ macros.pictureInput('picture', picture, '/static/images/test.png') }}
           </div>
         </div>
       </div>
@@ -74,15 +67,9 @@
 
 {% endblock %}
 
-
-{% block scripts %}
-<script type="text/javascript" src="/static/js/simplemde.min.js"></script>
+{% block scripts %} 
+{{ macros.editorScripts(entry.get('uuid')) }}
 <script>
-// Markdown editor
-var simplemde = new SimpleMDE({
-  element: $('#description')[0],
-  spellChecker: false
-})
 
 // Sync H1 with title input
 var $titleInput = $('#title')

@@ -34,6 +34,9 @@ function createModel () {
         table.string('body', 10000)
         table.string('is_mod')
         table.string('is_admin')
+        table.string('avatar')
+        table.string('social_web', 100)
+        table.string('social_twitter', 100)
         table.timestamps()
       })
     }

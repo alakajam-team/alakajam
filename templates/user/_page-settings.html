@@ -9,13 +9,16 @@
         <div class="list-group-item"><h4 style="margin: 0">User settings</h4></div>
         <a href="/settings" class="list-group-item 
         {{ 'active' if path == '/settings'}}">General</a>
-        <a href="/settings/profile" class="list-group-item 
-        {{ 'active' if path == '/settings/profile'}}">Profile</a>
+        <a href="/settings/password" class="list-group-item 
+        {{ 'active' if path == '/settings/password'}}">Change password</a>
       </div>
     </div>
     <div class="col-sm-9">
-      {% if message %}
-        <div class="alert alert-warning">{{ message }}</div>
+      {% if infoMessage %}
+        <div class="alert alert-info">{{ infoMessage }}</div>
+      {% endif %}
+      {% if errorMessage %}
+        <div class="alert alert-warning">{{ errorMessage }}</div>
       {% endif %}
 
       {% block settingsBody %}{% endblock %}

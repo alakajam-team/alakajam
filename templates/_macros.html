@@ -1,0 +1,35 @@
+{% macro editor(editorName, editorContents) %}
+  <textarea class="form-control simplemde-editor" style="min-height: 200px" name="{{ editorName }}">{{ editorContents }}</textarea>
+{% endmacro %}
+
+{% macro editorStyles() %}
+  <link rel="stylesheet" type="text/css" href="/static/css/simplemde.min.css" />
+{% endmacro %}
+
+{% macro editorScripts(autoSaveId = '') %}
+  <script type="text/javascript" src="/static/js/simplemde.min.js"></script>
+  <script>
+  // Markdown editor
+  var simplemde = new SimpleMDE({
+    element: $('.simplemde-editor')[0],
+    spellChecker: false,
+    autosave: {
+      enabled: {{ 'true' if autoSaveId else 'false' }},
+      uniqueId: '{{ autoSaveId }}'
+    }
+  })
+  </script>
+{% endmacro %}
+
+{% macro pictureInput(name, value, defaultValue = null) %}
+  <input type="file" name="{{ name }}" class="btn" />
+  {% if value %}
+  <label><input type="checkbox" name="{{ name }}-delete" /> Delete picture</label>
+  {% endif %}
+  <br />
+  {% if value  %}
+  <img src="{{ value }}" style="width: 100%; max-width: 150px" />
+  {% elseif defaultValue %}
+  <img src="{{ defaultValue }}" style="width: 100%; max-width: 150px" />
+  {% endif %}
+{% endmacro %}
