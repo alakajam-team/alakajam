@@ -3,24 +3,33 @@
 
 {% block body %}
 
-<div class="container">
-  <h1>
-    {{ profileUser.get('title') }}
-  </h1>
+<div class="container profile">
   <div class="row">
-    <div class="col-md-3 well">
+    <div class="col-md-3">
       <div class="text-center">
         {% if profileUser.get('avatar') %}
-        <img src="{{ profileUser.get('avatar') }}" class="preview" />
+        <img src="{{ profileUser.get('avatar') }}" class="profile__avatar" />
         {% else %}
-        <img src="/static/images/avatar.jpg" class="preview" />
+        <img src="/static/images/avatar.jpg" class="profile__avatar" />
         {% endif %}
       </div>
+
+      <h1 class="profile__title">
+        {{ profileUser.get('title') }}
+      </h1>
+      <h3 class="profile__name">
+        {{ profileUser.get('name') }}
+      </h3>
+
+      {% if user and (user.get('uuid') == profileUser.get('uuid')) %}
+      <a href="/settings" class="btn btn-info">Edit profile</a>
+      {% endif %}
+
       <div class="spacing">
         {% if profileUser.get('social_web') %}
         <div class="profile__social-link">
           <a href="{{ profileUser.get('social_web') }}">
-            <img src="/static/images/globe.png" alt="Website" /> Website
+            <span class="glyphicon glyphicon-globe" style="color: #444; font-size: 20px; top: 4px"></span> Website
           </a>
         </div>
         {% endif %}
@@ -33,21 +42,25 @@
         {% endif %}
       </div>
     </div>
+
     <div class="col-md-9">
+      <h2>Bio</h2>
       <div class="well">
         {{ profileUser.get('body') | markdown | safe }}
       </div>
-    </div>
-  </div>
 
-  <h2>All entries</h2>
-  <div class="row">
-    <div class="col-md-6">
-      {% for entry in entries %}
-      {{ eventMacros.entryThumb(entry, 6) }}
-      {% endfor %}
+      <h2>All entries</h2>
+      <div class="container-fluid" style="padding: 0">
+        <div class="row">
+          {% for entry in entries %}
+          {{ eventMacros.entryThumb(entry, 4) }}
+          {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
+</div>
+
 </div>
 
 {% endblock %}

@@ -3,7 +3,7 @@
   --main: #00b1d5;
   --main-dark: color(var(--main) lightness(25%));
   --alt: #f2536d;
-  --alt-dark: color(var(--alt) lightness(25%));
+  --alt-dark: color(var(--alt) lightness(35%));
   --alt-transparent: color(var(--alt) alpha(10%));
   --bg: #eee;
   --text: #1f3038;
@@ -11,6 +11,10 @@
   --text-lighter: #AAA;
 
   /* Fonts */
+  --main-font: {
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    letter-spacing: 0;
+  };
   --alt-font: {
     font-family: 'Chewy', cursive;
     letter-spacing: 2px;
@@ -27,7 +31,7 @@
 /* General */
 
 body, p {
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  @apply --main-font;
 }
 
 html {
@@ -75,7 +79,7 @@ a {
   color: var(--alt);
 }
 a:hover {
-  color: var(--alt);
+  color: var(--alt-dark);
   text-decoration: none;
 }
 
@@ -191,9 +195,9 @@ img.preview {
     font-weight: bold;
   }
 
-  & .navbar-profileicon {
+  & .navbar-avatar {
     width: 36px;
-    border-radius: 18px;
+    border-radius: 6px;
     vertical-align: top;
     margin-top: calc((var(--navbar-height) - 36px) / 2);
   }
@@ -407,11 +411,30 @@ img.preview {
 
 /* User profile */
 
-.profile__social-link {
-  line-height: 30px;
+.profile {
 
-  & img {
-    height: 20px;
-    vertical-align: middle;
+  &__avatar {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 5%;
   }
+
+  &__title {
+    margin: 20px 0 0 0;
+  }
+
+  &__name {
+    color: var(--text-light);
+    font-weight: normal;
+  }
+
+  &__social-link {
+    line-height: 30px;
+
+    & img {
+      height: 20px;
+      vertical-align: middle;
+    }
+  }
+
 }
