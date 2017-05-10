@@ -18,7 +18,6 @@ module.exports = {
       'setting-model',
       'event-model',
       'entry-model',
-      'team-model',
       'user-model',
       'user-role-model'
     ]

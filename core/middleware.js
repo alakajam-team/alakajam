@@ -48,7 +48,7 @@ async function configure (app) {
 
   // Routing: static files (including NextCSS filter)
   app.use('/static/css/site.css', postCss({
-    src: (req) => path.join(ROOT_PATH, '/static/css/site.css', req.path),
+    src: () => path.join(ROOT_PATH, '/static/css/site.css'),
     plugins: [require('postcss-cssnext')]
   }))
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
