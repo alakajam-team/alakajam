@@ -10,54 +10,50 @@
 <div class="container">
   <form action="{{ buildUrl(entry, 'entry') }}" method="post" enctype="multipart/form-data">
 
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <h1 id="title-display"></h1>
+    <div class="row">
+      <div class="col-md-12">
+        <h1 id="title-display"></h1>
+      </div>
+    </div>
+
+    <div class="row entry">
+      <div class="col-md-7">
+        <div class="form-group input-group-lg">
+          <label for="title">Game name</label>
+          <input type="text" class="form-control" id="title" name="title" placeholder="Game name" value="{{ entry.get('title') }}">
+        </div>
+        <div class="form-group">
+          <label for="title">Link</label>
+          <input type="url" class="form-control" id="link" name="link" placeholder="http://..." value="{{ entry.get('links')[0].url }}">
+        </div>
+        <div class="form-group">
+          <label for="title">Description</label>
+          <div class="user-contents user-contents__editor">
+            {{ macros.editor('body', entry.get('body')) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <div class="col-xs-6">
+              {% if entry.has('uuid') %}
+              <a class="btn btn-default" onclick="return confirm('Delete the entry? This cannot be reverted!')" href="{{ buildUrl(entry, 'entry', 'delete') }}">Delete</a> 
+              {% endif %}
+            </div>
+            <div class="col-xs-6 text-right">
+              <input type="submit" class="btn btn-primary" value="Save changes" />
+              <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
+            </div>
+          </div>
         </div>
       </div>
-      <div class="row entry">
-        
-        <div class="col-md-7">
-          <div class="form-group input-group-lg">
-            <label for="title">Game name</label>
-            <input type="text" class="form-control" id="title" name="title" placeholder="Game name" value="{{ entry.get('title') }}">
-          </div>
-          <div class="form-group">
-            <label for="title">Link</label>
-            <input type="url" class="form-control" id="link" name="link" placeholder="http://..." value="{{ entry.get('links')[0].url }}">
-          </div>
-          <div class="form-group">
-            <label for="title">Description</label>
-            <div class="user-contents user-contents__editor">
-              {{ macros.editor('body', entry.get('body')) }}
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-xs-6">
-                  {% if entry.has('uuid') %}
-                  <a class="btn btn-default" onclick="return confirm('Delete the entry? This cannot be reverted!')" href="{{ buildUrl(entry, 'entry', 'delete') }}">Delete</a> 
-                  {% endif %}
-                </div>
-                <div class="col-xs-6 text-right">
-                  <input type="submit" class="btn btn-primary" value="Save changes" />
-                  <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-5">
-          <div class="form-group">
-            <label for="title">Picture</label>
-            {% if entry.has('pictures') and entry.get('pictures').length > 0 %}
-              {% set picture = entry.get('pictures')[0] %}
-            {% endif %}
-            {{ macros.pictureInput('picture', picture, '/static/images/default-entry.png') }}
-          </div>
+      
+      <div class="col-md-5">
+        <div class="form-group">
+          <label for="title">Picture</label>
+          {% if entry.has('pictures') and entry.get('pictures').length > 0 %}
+            {% set picture = entry.get('pictures')[0] %}
+          {% endif %}
+          {{ macros.pictureInput('picture', picture, '/static/images/default-entry.png') }}
         </div>
       </div>
     </div>

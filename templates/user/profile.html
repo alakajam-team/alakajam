@@ -56,12 +56,10 @@
 
       <h2>Games</h2>
       {% if entries.length > 0 %}
-      <div class="container-fluid" style="padding: 0">
-        <div class="row">
-          {% for entry in entries %}
-          {{ eventMacros.entryThumb(entry, 4) }}
-          {% endfor %}
-        </div>
+      <div class="row">
+        {% for entry in entries %}
+        {{ eventMacros.entryThumb(entry, 4) }}
+        {% endfor %}
       </div>
       {% else %}
       <div class="well">This user didn't submit games... Yet!</div>

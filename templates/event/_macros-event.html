@@ -18,10 +18,10 @@
 {% endmacro %}
 
 {% macro eventTable(event, withEntries = true, entryCols = 3) %}
-  <div class="container-fluid event-table {{ 'live' if event.get('status') == 'open' }}">
+  <div class="event-table {{ 'live' if event.get('status') == 'open' }}">
     <div class="row">
       <div class="col-md-12">
-        <div class="container-fluid event-table__header">
+        <div class="event-table__header">
           <div class="row">
             <div class="event-table__title col-sm-4"><a href="{{ buildUrl(event, 'event') }}">{{ event.get('title') }}</a></div>
             <div class="event-table__status col-sm-3">

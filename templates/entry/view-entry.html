@@ -21,21 +21,23 @@
         {{ entry.get('body') | markdown | safe }}
       </div>
     </div>
-    <div class="col-md-4 well user-contents">
-      <p>A game by 
-      {% for userRole in entry.related('userRoles').models %}
-      <a href="{{ buildUrl(userRole, 'user') }}">{{ userRole.get('user_title') }}</a>{{ ', ' if not loop.last }}
-      {% endfor %}
-      </p>
+    <div class="col-md-4 user-contents">
+      <div class="well">
+        <p>A game by 
+        {% for userRole in entry.related('userRoles').models %}
+        <a href="{{ buildUrl(userRole, 'user') }}">{{ userRole.get('user_title') }}</a>{{ ', ' if not loop.last }}
+        {% endfor %}
+        </p>
 
-      {% for link in entry.get('links') %}
-         <a class="btn btn-primary" href="{{ link.url }}">
-         {{ link.title }}
-         </a>
-      {% endfor %}
-      {% if hasPermission(user, entry, 'write') %}
-      <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
-      {% endif %}
+        {% for link in entry.get('links') %}
+           <a class="btn btn-primary" href="{{ link.url }}">
+           {{ link.title }}
+           </a>
+        {% endfor %}
+        {% if hasPermission(user, entry, 'write') %}
+        <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>

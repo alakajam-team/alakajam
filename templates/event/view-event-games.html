@@ -5,22 +5,28 @@
 
 <div class="container">
   {% if user %}
-  <div class="row well">
-    <div class="col-xs-8">
-      <h1 style="margin: 0">
-        {% if userEntry %}
-        Your entry: <a href="{{ buildUrl(userEntry, 'entry') }}">{{ userEntry.get('title') }}</a>
-        {% else %}
-        You have no entry
-      </h1>
-      {% endif %}
-    </div>
-    <div class="col-xs-4 text-right">
-      {% if userEntry %}
-      <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-info">Edit entry</a>
-      {% else %}
-      <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-info">Submit entry</a>
-      {% endif %}
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="well">
+        <div class="row">
+          <div class="col-xs-8">
+            <h1 style="margin: 0">
+              {% if userEntry %}
+              Your entry: <a href="{{ buildUrl(userEntry, 'entry') }}">{{ userEntry.get('title') }}</a>
+              {% else %}
+              You have no entry
+              {% endif %}
+            </h1>
+          </div>
+          <div class="col-xs-4 text-right">
+            {% if userEntry %}
+            <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-info">Edit entry</a>
+            {% else %}
+            <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-info">Submit entry</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   {% endif %}

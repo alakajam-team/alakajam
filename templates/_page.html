@@ -90,8 +90,14 @@
 
 {% block body %}{% endblock %}
 
-<footer class="container footer">
-  {% if user and user.get('is_admin') %}<a href="/admin">Administration</a> | {% endif %}<a href="https://github.com/mkalam-alami/wejam">WeJam! on Github</a>
+<footer class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="footer">
+        {% if user and user.get('is_admin') %}<a href="/admin">Administration</a> | {% endif %}<a href="https://github.com/mkalam-alami/wejam">WeJam! on Github</a>
+      </div>
+    </div>
+  </div>
 </footer>
 
 <script type="text/javascript" src="/static/js/jquery.min.js"></script>
