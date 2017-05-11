@@ -24,8 +24,8 @@
      }
    })
 
-   model.up = async function up (currentVersion) {
-     if (currentVersion < 1) {
+   model.up = async function up (applyVersion) {
+     if (applyVersion === 1) {
        await db.knex.schema.createTableIfNotExists('user_role', function (table) {
          table.increments('id').primary()
          table.uuid('user_uuid').references('user.uuid')

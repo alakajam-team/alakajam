@@ -22,8 +22,8 @@
    * @param {string} key Unique key
    * @param {string} value Value
    */
-   model.up = async function up (currentVersion) {
-     if (currentVersion < 1) {
+   model.up = async function up (applyVersion) {
+     if (applyVersion === 1) {
        await db.knex.schema.createTableIfNotExists('setting', function (table) {
          table.string('key').primary()
          table.string('value')

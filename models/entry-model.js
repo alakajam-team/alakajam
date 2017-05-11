@@ -53,8 +53,8 @@ function createModel () {
     }
   })
 
-  model.up = async function up (currentVersion) {
-    if (currentVersion < 1) {
+  model.up = async function up (applyVersion) {
+    if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('entry', function (table) {
         table.uuid('uuid').primary()
         table.uuid('event_uuid').references('event.uuid')
