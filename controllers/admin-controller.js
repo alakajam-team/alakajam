@@ -51,14 +51,16 @@ async function adminHome (req, res) {
  * TODO Make it only available in dev environments
  */
 async function adminDev (req, res) {
-  let {fields} = await req.parseForm()
   let infoMessage = '', errorMessage = ''
-  if (fields['db_reset']) {
-    await db.dropTables()
-    await db.upgradeTables()
-    await db.insertSamples()
-    let version = await db.findCurrentVersion()
-    infoMessage = 'DB reset done (current version : ' + version + ').'
+  if (req.method === 'POST') {
+    let {fields} = await req.parseForm()
+    if (fields['db-reset']) {
+      await db.dropTables()
+      await db.upgradeTables()
+      await db.insertSamples()
+      let version = await db.findCurrentVersion()
+      infoMessage = 'DB reset done (current version : ' + version + ').'
+    }
   }
   res.render('admin/admin-dev', {
     infoMessage,

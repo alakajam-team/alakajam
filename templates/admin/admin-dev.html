@@ -2,20 +2,15 @@
 
 {% block adminBody %}
 
-<div class="container">
-  <div class="row">
+<h1>Developer tools</h1>
 
-    <h1>Administration</h1>
+{% if infoMessage %}
+<div class="well">{{ infoMessage }}</div>
+{% endif %}
 
-    <p><a href="/">(Back)</a></p>
-    
-    {% if message %}
-    <div class="well">{{ message }}</div>
-    {% endif %}
+<form method="post">
+  <input type="submit" name="db-reset" class="btn btn-danger" onclick="return confirm('Reset the whole DB?')" value="Reset database" />
+</form>
 
-    <a href="/admin/reset" class="btn btn-danger" onclick="return confirm('Reset the whole DB?')">Reset database</a>
-
-  </div>
-</div>
 
 {% endblock %}
