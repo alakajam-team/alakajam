@@ -8,13 +8,14 @@
 
 const db = require('../core/db')
 const config = require('../config')
+const postService = require('../services/post-service')
 
 module.exports = {
 
   initRoutes: function (app) {
     app.use('/admin*', adminSecurity)
-    app.get('/admin', admin)
-    app.get('/admin/reset', resetDb)
+    app.all('/admin', adminHome)
+    app.all('/admin/dev', adminDev)
   }
 
 }
@@ -28,22 +29,39 @@ async function adminSecurity (req, res, next) {
 }
 
 /**
- * Admin page
+ * Edit home announcement
  */
-async function admin (req, res) {
-  res.render('admin')
+async function adminHome (req, res) {
+  let homePost = await postService.findHomePost()
+
+  if (req.method === 'POST') {
+    let {fields} = await req.parseForm()
+    homePost.set('title', fields.title)
+    homePost.set('body', fields.body)
+    await homePost.save()
+  }
+
+  res.render('admin/admin-home', {
+    homePost
+  })
 }
 
 /**
- * XXX Temporary admin page
- * Resets the DB
+ * Admin developer tools
+ * TODO Make it only available in dev environments
  */
-async function resetDb (req, res) {
-  await db.dropTables()
-  await db.upgradeTables()
-  await db.insertSamples()
-  let version = await db.findCurrentVersion()
-  res.render('admin', {
-    message: 'DB reset done (current version : ' + version + ').'
+async function adminDev (req, res) {
+  let {fields} = await req.parseForm()
+  let infoMessage = '', errorMessage = ''
+  if (fields['db_reset']) {
+    await db.dropTables()
+    await db.upgradeTables()
+    await db.insertSamples()
+    let version = await db.findCurrentVersion()
+    infoMessage = 'DB reset done (current version : ' + version + ').'
+  }
+  res.render('admin/admin-dev', {
+    infoMessage,
+    errorMessage
   })
 }

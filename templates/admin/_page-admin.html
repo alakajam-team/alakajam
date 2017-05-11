@@ -1,0 +1,29 @@
+{% extends "_page.html" %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="list-group panel">
+        <div class="list-group-item list-group-item-danger"><h4 style="margin: 0; color: white">Administration</h4></div>
+        <a href="/admin" class="list-group-item 
+        {{ 'list-group-item-warning' if path == '/admin'}}">General</a>
+        <a href="/admin/dev" class="list-group-item 
+        {{ 'list-group-item-warning' if path == '/admin/dev'}}">Change password</a>
+      </div>
+    </div>
+    <div class="col-sm-9">
+      {% if infoMessage %}
+        <div class="alert alert-info">{{ infoMessage }}</div>
+      {% endif %}
+      {% if errorMessage %}
+        <div class="alert alert-warning">{{ errorMessage }}</div>
+      {% endif %}
+
+      {% block adminBody %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

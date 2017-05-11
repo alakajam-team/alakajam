@@ -5,22 +5,23 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-3">
-      <h1>News</h1>
-
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-
-      <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <div class="col-md-6">
+      {% if homePost %}
+        <h1>News: {{ homePost.get('title') }}</h1>
+        <div class="well">{{ homePost.get('body') | markdown | safe }}</div>
+      {% else %}
+        <h1>News</h1>
+        <div class="well">No news yet!</div>
+      {% endif %}
     </div>
-    <div class="col-md-9">
-
+    <div class="col-md-6">
       {% if (liveEvent) %}
       <h1>Current event</h1>
-      {{ eventMacros.eventTable(liveEvent, true, 4) }}
+      {{ eventMacros.eventTable(liveEvent, true, 6) }}
       {% else %}
       <h1>Next event</h1>
       {% if (nextEvent) %}
-      {{ eventMacros.eventTable(nextEvent, true, 4) }}
+      {{ eventMacros.eventTable(nextEvent, true, 6) }}
       {% else %}
       <div class="well">No upcoming event.</div>
       {% endif %}

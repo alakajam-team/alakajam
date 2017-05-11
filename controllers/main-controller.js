@@ -9,6 +9,7 @@
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
+const postService = require('../services/post-service')
 
 module.exports = {
 
@@ -55,7 +56,9 @@ async function index (req, res) {
   if (res.locals.nextEvent) {
     res.locals.nextEvent.load(['entries', 'entries.userRoles'])
   }
-  res.render('index')
+  res.render('index', {
+    homePost: await postService.findHomePost()
+  })
 }
 
 /**
