@@ -345,16 +345,18 @@ img.preview {
   margin-bottom: 20px;
 
   &__picture {
+    display: block;
     height: 150px;
     width: 100%;
     background-color: var(--main-dark);
     background-size: cover;
     background-position: center;
     transition: 0.3s;
-  }
-  &:hover &__picture {
-    border: 5px solid var(--alt);
-    transition: 0.1s;
+
+    &:hover {
+      border: 5px solid var(--alt);
+      transition: 0.1s;
+    }
   }
 
   &__picture-gradient {
@@ -372,9 +374,10 @@ img.preview {
 
   &__title {
     font-size: 1.1rem;
-  }
-  &:hover &__title {
-    font-weight: bold;
+
+    &:hover {
+      font-weight: bold;
+    }
   }
 
 

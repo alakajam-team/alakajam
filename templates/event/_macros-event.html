@@ -1,19 +1,23 @@
 {% macro entryThumb(entry, cols = 3) %}
 <div class="col-sm-4 col-md-{{ cols }}">
-  <a class="entry-thumb" href="{{ buildUrl(entry, 'entry') }}">
+  <div class="entry-thumb">
     {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
-    <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
+    <a class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')" href="{{ buildUrl(entry, 'entry') }}">
       <div class="entry-thumb__picture-gradient"></div>
-    </div>
+    </a>
     <div class="entry-thumb__details" >
-      <div class="entry-thumb__title" >{{ entry.get('title') }}</div>
+      <a class="entry-thumb__title"  href="{{ buildUrl(entry, 'entry') }}">
+        {{ entry.get('title') }}
+      </a>
       <div class="entry-thumb__author" >by 
       {% for userRole in entry.related('userRoles').models %}
-      <strong>{{ userRole.get('user_title') }}</strong>{{ ', ' if not loop.last }}
+       <a href="{{ buildUrl(userRole, 'user') }}">
+        {{ userRole.get('user_title') }}{{ ', ' if not loop.last }}
+       </a>
       {% endfor %}
       </div>
     </div>
-  </a>
+  </div>
 </div>
 {% endmacro %}
 
