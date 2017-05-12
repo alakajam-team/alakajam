@@ -7,13 +7,15 @@
  */
 
 const log = require('../core/log')
+const securityService = require('../services/security-service')
 
 module.exports = {
   buildUrl,
-  hasPermission
+  
+  canUserRead: securityService.canUserRead,
+  canUserWrite: securityService.canUserWrite,
+  canUserManage: securityService.canUserManage
 }
-
-const ROLE_ORDER = ['read', 'write', 'owner']
 
 function buildUrl (model, type, page = null) {
   let pagePath = (page ? '/' + page : '')
@@ -35,35 +37,12 @@ function buildUrl (model, type, page = null) {
     let userUuid = model.get('name') || model.get('user_name')
     return '/user/' + userUuid + pagePath
 
+  } else if (type === 'post') {
+    // Post model
+    let postId = model.get('id')
+    return '/post/' + postId + pagePath
+
   } else {
     throw new Error('Unknown model type ' + type)
-  }
-}
-
-function hasPermission (user, model, minimalRole) {
-  if (user) {
-    let acceptRoles = getRolesEqualOrAbove(minimalRole)
-    let allUserRoles = model.related('userRoles')
-    if (acceptRoles && allUserRoles) {
-      let userRoles = allUserRoles.where({
-        user_uuid: user.get('uuid')
-      })
-      for (let userRole of userRoles) {
-        if (acceptRoles.indexOf(userRole.get('role'))) {
-          return true
-        }
-      }
-    }
-  }
-  return false
-}
-
-function getRolesEqualOrAbove (role) {
-  let roleIndex = ROLE_ORDER.indexOf(role)
-  if (roleIndex !== -1) {
-    return ROLE_ORDER.slice(roleIndex)
-  } else {
-    log.warn('Unknown role: ' + role + ' (allowed: ' + ROLE_ORDER.join(',') + ')')
-    return false
   }
 }

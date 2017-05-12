@@ -1,31 +1,19 @@
 {% extends "admin/_page-admin.html" %}
-{% import "_macros.html" as macros %}
-
-{% block styles %}
-{{ macros.editorStyles() }}
-{% endblock %}
+{% import "post/_macros-post.html" as postMacros %}
 
 {% block adminBody %}
 
-<h1>Home announcement</h1>
+<h1>Announcements</h1>
 
-<form method="post">
+<div class="form-group">
+  <a href="/post/create?special_post_type=announcement" class="btn btn-primary">Create new announcement</a>
+</div>
 
-  <div class="form-group input-group-lg">
-    <label for="title">Title</label>
-    <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ homePost.get('title') }}">
-  </div>
+{% for post in posts  %}
+  {{ postMacros.post(post, user, {allowMod: true, noBody: true}) }}
+{% endfor %}
+{% if posts.length === 0 %}
+  <div class="well">Nothing yet!</div>
+{% endif %}
 
-  <div class="form-group">
-    {{ macros.editor('body', homePost.get('body')) }}
-  </div>
-
-  <input type="submit" class="btn btn-primary" value="Save changes" />
-
-</form>
-
-{% endblock %}
-
-{% block scripts %} 
-{{ macros.editorScripts('home') }}
 {% endblock %}

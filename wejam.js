@@ -59,15 +59,18 @@ function catchErrorsAndSignals () {
   })
 
   // Stop the server gracefully upon shut down signals
-  // XXX Doesn't work on Windows
+  let alreadyShuttingDown = false
   let signals = ['SIGINT', 'SIGQUIT', 'SIGTERM']
   signals.forEach((signal) => {
     process.on(signal, _doGracefulShutdown)
   })
   function _doGracefulShutdown (cb) {
-    const db = require('./core/db')
-    log.info('Shutting down.')
-    db.knex.destroy(() => process.exit(-1))
+    if (!alreadyShuttingDown) {
+      alreadyShuttingDown = true
+      const db = require('./core/db')
+      log.info('Shutting down.')
+      db.knex.destroy(() => process.exit(-1))
+    }
   }
 }
 

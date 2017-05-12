@@ -1,6 +1,7 @@
 :root {
   /* Colors */
   --main: #00b1d5;
+  --main-light: color(var(--main) lightness(45%));
   --main-dark: color(var(--main) lightness(25%));
   --alt: #f2536d;
   --alt-dark: color(var(--alt) lightness(35%));
@@ -62,7 +63,7 @@ h1 {
 }
 h2 {
   font-weight: bold;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   margin: 0 0 10px 0;
 }
 h3 {
@@ -154,7 +155,7 @@ img.preview {
         height: var(--navbar-height);
 
         &:hover {
-          background-color: rgba(255,255,255,0.15);
+          background-color: var(--main-light);
         }
       }
 
@@ -202,6 +203,88 @@ img.preview {
     margin-top: calc((var(--navbar-height) - 36px) / 2);
   }
 
+}
+
+/* Blog posts */
+
+.post {
+
+  &__heading {
+    display: block;
+    background-color: var(--main);
+    color: white;
+
+    & h2 {
+      margin: 0;
+      padding: 10px 15px;
+    }
+
+    &:hover {
+      background-color: var(--main-light);
+      color: white;
+    }
+  }
+
+  &__details {
+    border-bottom: 1px solid #DADADA;
+    line-height: 36px;
+    font-weight: bold;
+
+    & a {
+      margin-top: 3px;
+      margin-right: 3px;
+    }
+  }
+
+  &__date {
+    color: var(--text-lighter);
+  }
+
+  &__avatar {
+    width: 36px;
+    margin-right: 5px;
+    vertical-align: top;
+  }
+
+}
+
+/* User contents */
+
+.user-contents {
+  & h1 {
+    font-size: 1.9rem;
+  }
+  & h2 {
+    font-size: 1.5rem;
+  }
+  & h3 {
+    font-size: 1.3rem;
+    color: var(--text-light);
+  }
+  & h4 {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: var(--text-light);
+  }
+
+
+  &__editor {
+    border: 1px solid #aab2bd;
+    border-radius: 4px;
+
+    & .editor-toolbar {
+      border: none;
+      border-bottom: 1px solid #aab2bd;
+    }
+
+    & .CodeMirror {
+      border: none;
+
+      & .CodeMirror-code .cm-header-1 {
+        line-height: 100%;
+      }
+    }
+  }
 }
 
 /* Event header */
@@ -263,45 +346,6 @@ img.preview {
       cursor: default;
       &:hover {
         background-color: inherit;
-      }
-    }
-  }
-}
-
-/* User contents */
-
-.user-contents {
-  & h1 {
-    font-size: 1.9rem;
-  }
-  & h2 {
-    font-size: 1.5rem;
-  }
-  & h3 {
-    font-size: 1.3rem;
-    color: var(--text-light);
-  }
-  & h4 {
-    font-size: 1.2rem;
-    font-weight: normal;
-    color: var(--text-light);
-  }
-
-
-  &__editor {
-    border: 1px solid #aab2bd;
-    border-radius: 4px;
-
-    & .editor-toolbar {
-      border: none;
-      border-bottom: 1px solid #aab2bd;
-    }
-
-    & .CodeMirror {
-      border: none;
-
-      & .CodeMirror-code .cm-header-1 {
-        line-height: 100%;
       }
     }
   }

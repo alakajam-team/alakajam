@@ -9,12 +9,13 @@
 const db = require('../core/db')
 const config = require('../config')
 const postService = require('../services/post-service')
+const Post = require('../models/post-model')
 
 module.exports = {
 
   initRoutes: function (app) {
     app.use('/admin*', adminSecurity)
-    app.all('/admin', adminHome)
+    app.get('/admin', adminHome)
     app.all('/admin/dev', adminDev)
   }
 
@@ -32,17 +33,8 @@ async function adminSecurity (req, res, next) {
  * Edit home announcement
  */
 async function adminHome (req, res) {
-  let homePost = await postService.findHomePost()
-
-  if (req.method === 'POST') {
-    let {fields} = await req.parseForm()
-    homePost.set('title', fields.title)
-    homePost.set('body', fields.body)
-    await homePost.save()
-  }
-
   res.render('admin/admin-home', {
-    homePost
+    posts: await postService.findAnnouncements()
   })
 }
 

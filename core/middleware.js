@@ -88,7 +88,7 @@ async function configure (app) {
     // Context made available anywhere
     let nativeRender = res.render
     res.render = function (template, context) {
-      let mergedContext = Object.assign({}, context, res.locals)
+      let mergedContext = Object.assign({}, res.locals, context)
       nativeRender.call(res, template, mergedContext)
     }
 

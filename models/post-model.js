@@ -16,10 +16,16 @@ function createModel () {
     hasTimestamps: true,
 
     entry: function () {
-      return this.belongsTo('Entry', 'entry_id', 'entry_uuid')
+      return this.belongsTo('Entry', 'entry_id', 'uuid')
     },
     event: function () {
-      return this.belongsTo('Event', 'event_id', 'event_uuid')
+      return this.belongsTo('Event', 'event_id', 'uuid')
+    },
+    author: function () {
+      return this.belongsTo('User', 'author_user_id', 'uuid')
+    },
+    userRoles: function () {
+      return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
     }
   })
 
@@ -27,6 +33,7 @@ function createModel () {
     if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('post', function (table) {
         table.increments('id').primary()
+        table.string('author_user_id')
         table.string('name')
         table.string('title')
         table.string('guild_id')

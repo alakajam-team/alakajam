@@ -1,0 +1,42 @@
+{# Allowed options: noHeading #}
+{% macro post(post, readingUser, options = {}) %}
+
+{% set author = post.related('author') %}
+{% set postUrl = buildUrl(post, 'post') %}
+
+<div class="post panel">
+  {% if not options.noHeading %}
+    {% if path === postUrl %}
+    <div class="post__heading">
+      <h2>{{ post.get('title') }}</h2>
+    </div>
+    {% else %}
+    <a href="{{ buildUrl(post, 'post') }}" class="post__heading">
+      <h2>{{ post.get('title') }}</h2>
+    </a>
+    {% endif %}
+  {% endif %}
+
+  <div class="post__details">
+    {% if author.get('avatar') %}
+    <img src="{{ author.get('avatar') }}" class="post__avatar" /> 
+    {% else %}
+    <img src="/static/images/default-avatar.png" class="post__avatar" /> 
+    {% endif %}
+    <a href="{{ buildUrl(author, 'user') }}">{{ author.get('title') }}</a>
+    • {{ post.get('published_at') | relativeTime }}
+   <!-- <span class="post__date">({{ post.get('published_at') | dateTime }})</span>-->
+    • 0 comments
+    {% if canUserWrite(readingUser, post, options) %}
+    <a class="btn btn-default btn-sm pull-right" href="{{ buildUrl(post, 'post', 'edit') }}">Edit post</a>
+    {% endif %}
+  </div>
+
+  {% if not options.noBody %}
+  <div class="post__body panel-body">
+    {{ post.get('body') | markdown | safe }}
+  </div>
+  {% endif %}
+</div>
+
+{% endmacro %}

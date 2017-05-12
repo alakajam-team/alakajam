@@ -6,10 +6,11 @@
  * @module controllers/user-controller
  */
 
+const fileStorage = require('../core/file-storage')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
-const fileStorage = require('../core/file-storage')
+const postService = require('../services/post-service')
 
 module.exports = {
 
@@ -192,7 +193,8 @@ async function viewUserProfile (req, res) {
   if (user) {
     res.render('user/profile', {
       profileUser: user,
-      entries: await eventService.findUserEntries(user)
+      entries: await eventService.findUserEntries(user),
+      posts: await postService.findUserPosts(user.get('uuid'))
     })
   } else {
     res.errorPage(400, 'No user exists with name ' + req.params.name)

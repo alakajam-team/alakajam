@@ -8,6 +8,7 @@
 
 const Event = require('../models/event-model')
 const Entry = require('../models/entry-model')
+const securityService = require('../services/security-service')
 
 module.exports = {
   findEventById,
@@ -56,6 +57,12 @@ async function findEventByStatus (status) {
     .fetch()
 }
 
+/**
+ * Creates and persists a new entry, initializing the owner UserRole.
+ * @param  {User} user 
+ * @param  {Event} event 
+ * @return {Entry}
+ */
 async function createEntry (user, event) {
   // TODO Better use of Bookshelf API
   let entry = new Entry()
@@ -66,7 +73,7 @@ async function createEntry (user, event) {
     user_uuid: user.get('uuid'),
     user_name: user.get('name'),
     user_title: user.get('title'),
-    role: 'owner'
+    permission: securityService.PERMISSION_MANAGE
   })
   return entry
 }

@@ -57,7 +57,7 @@ async function index (req, res) {
     res.locals.nextEvent.load(['entries', 'entries.userRoles'])
   }
   res.render('index', {
-    homePost: await postService.findHomePost()
+    posts: await postService.findAnnouncements()
   })
 }
 

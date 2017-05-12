@@ -1,17 +1,18 @@
 {% extends "_page.html" %}
 {% import "event/_macros-event.html" as eventMacros %}
+{% import "post/_macros-post.html" as postMacros %}
 
 {% block body %}
 
 <div class="container">
   <div class="row">
     <div class="col-md-6">
-      {% if homePost %}
-        <h1>News: {{ homePost.get('title') }}</h1>
-        <div class="well">{{ homePost.get('body') | markdown | safe }}</div>
-      {% else %}
-        <h1>News</h1>
-        <div class="well">No news yet!</div>
+      <h1>Announcements</h1>
+      {% for post in posts  %}
+        {{ postMacros.post(post, user) }}
+      {% endfor %}
+      {% if posts.length === 0 %}
+        <div class="well">Nothing yet!</div>
       {% endif %}
     </div>
     <div class="col-md-6">

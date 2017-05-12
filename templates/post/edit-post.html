@@ -1,0 +1,58 @@
+{% extends "_page.html" %}
+{% import "_macros.html" as macros %}
+
+{% block styles %}
+{{ macros.editorStyles() }}
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+  <h1 id="title-display"></h1>
+
+  <form method="post">
+
+    <div class="form-group input-group-lg">
+      <label for="title">Title</label>
+      <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ post.get('title') }}">
+    </div>
+
+    <div class="form-group">
+      {{ macros.editor('body', post.get('body')) }}
+    </div>
+
+    <div class="row">
+      <div class="col-xs-6">
+        {% if post.has('id') %}
+        <a class="btn btn-default" onclick="return confirm('Delete the post? This cannot be reverted!')" href="{{ buildUrl(post, 'post', 'delete') }}">Delete</a> 
+        {% endif %}
+      </div>
+      <div class="col-xs-6 text-right">
+        <input type="submit" class="btn btn-primary" value="Save changes" />
+        <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
+      </div>
+    </div>
+  </form>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %} 
+{{ macros.editorScripts() }}
+<script>
+
+// Sync H1 with title input
+var $titleInput = $('#title')
+var $titleDisplay = $('#title-display')
+var defaultText = "Blog post"
+$titleInput.on('change keyup', refreshTitleDisplay)
+refreshTitleDisplay()
+
+function refreshTitleDisplay () {
+  $titleDisplay.text($titleInput.val() || defaultText)
+}
+
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "_page.html" %}
+{% import "post/_macros-post.html" as postMacros %}
+
+{% block body %}
+
+<div class="container">
+  <h1>{{ post.get('title') }}</h1>
+  {{ postMacros.post(post, user, {noHeading: true}) }}
+</div>
+
+{% endblock %}

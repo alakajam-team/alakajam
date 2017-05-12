@@ -20,7 +20,7 @@
       return this.belongsTo('User', 'user_uuid')
      },
      node: function () {
-      return this.morphTo('node', ['node_type', 'node_uuid'], Entry)
+      return this.morphTo('node', ['node_type', 'node_uuid'], Entry, Post)
      }
    })
 
@@ -33,7 +33,7 @@
          table.string('user_title')
          table.uuid('node_uuid')
          table.string('node_type')
-         table.string('role')
+         table.string('permission')
          table.timestamps()
        })
      }

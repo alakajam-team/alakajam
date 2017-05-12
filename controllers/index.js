@@ -14,6 +14,7 @@ module.exports = {
     require('./admin-controller.js').initRoutes(app)
     require('./entry-controller.js').initRoutes(app)
     require('./event-controller.js').initRoutes(app)
+    require('./post-controller.js').initRoutes(app)
   }
 
 }
