@@ -128,7 +128,7 @@ async function settingsGeneral (req, res) {
           user.unset('avatar')
         }
         if (newAvatar) { 
-          let avatarPath = '/user/' + user.get('uuid')
+          let avatarPath = '/user/' + user.get('id')
           let finalPath = await fileStorage.move(files.avatar.path, avatarPath)
           user.set('avatar', finalPath)
         }

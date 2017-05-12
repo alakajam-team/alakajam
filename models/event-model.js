@@ -5,7 +5,7 @@
  *
  * @description ## Table columns
  *
- * @param {uuid} uuid UUID
+ * @param {id} id ID
  * @param {string} name Name, unique and used in URLs
  * @param {string} title Title, for display only
  * @param {string} display_dates The event dates, for display only
@@ -31,19 +31,18 @@ module.exports = createModel()
 function createModel () {
   let model = db.model('Event', {
     tableName: 'event',
-    idAttribute: 'uuid',
+    idAttribute: 'id',
     hasTimestamps: true,
-    uuid: true,
     
     entries: function () {
-      return this.hasMany('Entry', 'event_uuid')
+      return this.hasMany('Entry', 'event_id')
     }
   })
 
   model.up = async function up (applyVersion) {
     if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('event', function (table) {
-        table.uuid('uuid').primary()
+        table.increments('id').primary()
         table.string('name')
         table.string('title')
         table.string('display_dates')

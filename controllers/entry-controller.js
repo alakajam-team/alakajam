@@ -14,15 +14,15 @@ const templating = require('./templating')
 module.exports = {
 
   initRoutes: function (app) {
-    app.use('/entry/:uuid*', entryMiddleware)
-    app.use('/event/:eventUuid*', entryMiddleware)
+    app.use('/entry/:id*', entryMiddleware)
+    app.use('/event/:eventId*', entryMiddleware)
 
-    app.get('/event/:eventUuid/create-entry', createEntry)
-    app.post('/event/:eventUuid/create-entry', saveEntry)
-    app.get('/entry/:uuid', viewEntry)
-    app.post('/entry/:uuid', saveEntry)
-    app.get('/entry/:uuid/edit', editEntry)
-    app.get('/entry/:uuid/delete', deleteEntry)
+    app.get('/event/:eventId/create-entry', createEntry)
+    app.post('/event/:eventId/create-entry', saveEntry)
+    app.get('/entry/:id', viewEntry)
+    app.post('/entry/:id', saveEntry)
+    app.get('/entry/:id/edit', editEntry)
+    app.get('/entry/:id/delete', deleteEntry)
   }
 
 }
@@ -31,8 +31,8 @@ module.exports = {
  * Fetches the current entry & event
  */
 async function entryMiddleware (req, res, next) {
-  if (req.params.uuid) {
-    let entry = await eventService.findEntryById(req.params.uuid)
+  if (req.params.id) {
+    let entry = await eventService.findEntryById(req.params.id)
     if (entry === null) {
       res.errorPage(404, 'Entry not found')
     } else {
@@ -41,8 +41,8 @@ async function entryMiddleware (req, res, next) {
       next()
     }
   }
-  if (req.params.eventUuid) {
-    res.locals.event = await eventService.findEventById(req.params.eventUuid)
+  if (req.params.eventId) {
+    res.locals.event = await eventService.findEventById(req.params.eventId)
     next()
   }
 }
@@ -59,7 +59,7 @@ function viewEntry (req, res) {
  */
 async function createEntry (req, res) {
   res.render('entry/edit-entry', {entry: new Entry({
-    event_uuid: res.locals.event.get('uuid')
+    event_id: res.locals.event.get('id')
   })})
 }
 
@@ -81,7 +81,7 @@ async function saveEntry (req, res) {
     }
     let entry = res.locals.entry
 
-    let picturePath = '/entry/' + entry.get('uuid')
+    let picturePath = '/entry/' + entry.get('id')
     let linksObject = null
     if (fields.link) {
       linksObject = [{

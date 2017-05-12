@@ -22,11 +22,11 @@ module.exports = {
 
 /**
  * Fetches an Event by its ID, with all its Entries.
- * @param uuid {uuid} Event UUID
+ * @param id {id} Event ID
  * @returns {Event}
  */
-async function findEventById (uuid) {
-  return Event.where('uuid', uuid)
+async function findEventById (id) {
+  return Event.where('id', id)
     .fetch({ withRelated: ['entries', 'entries.userRoles'] })
 }
 
@@ -59,11 +59,11 @@ async function findEventByStatus (status) {
 async function createEntry (user, event) {
   // TODO Better use of Bookshelf API
   let entry = new Entry()
-  await entry.save() // otherwise the user role won't have a node_uuid
-  entry.set('event_uuid', event.get('uuid')) 
+  await entry.save() // otherwise the user role won't have a node_id
+  entry.set('event_id', event.get('id')) 
   entry.set('event_name', event.get('name'))
   await entry.userRoles().create({
-    user_uuid: user.get('uuid'),
+    user_id: user.get('id'),
     user_name: user.get('name'),
     user_title: user.get('title'),
     role: 'owner'
@@ -73,11 +73,11 @@ async function createEntry (user, event) {
 
 /**
  * Fetches an Entry by its ID.
- * @param uuid {uuid} Entry UUID
+ * @param id {id} Entry ID
  * @returns {Entry}
  */
-async function findEntryById (uuid) {
-  return Entry.where('uuid', uuid).fetch({ withRelated: ['event', 'userRoles'] })
+async function findEntryById (id) {
+  return Entry.where('id', id).fetch({ withRelated: ['event', 'userRoles'] })
 }
 
 /**
@@ -87,8 +87,8 @@ async function findEntryById (uuid) {
  */
 async function findUserEntries (user) {
   let entryCollection = await Entry.query((query) => {
-    query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
-      .where('user_role.user_uuid', user.get('uuid'))
+    query.innerJoin('user_role', 'entry.id', 'user_role.node_id')
+      .where('user_role.user_id', user.get('id'))
   }).fetchAll({ withRelated: ['userRoles'] })
   return entryCollection.models
 }
@@ -96,15 +96,15 @@ async function findUserEntries (user) {
 /**
  * Retrieves the entry a user submited to an event
  * @param  {User} user
- * @param  {string} eventUuid
+ * @param  {string} eventId
  * @return {Entry|null}
  */
-async function findUserEntryForEvent (user, eventUuid) {
+async function findUserEntryForEvent (user, eventId) {
   return Entry.query((query) => {
-    query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
+    query.innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .where({
-        'event_uuid': eventUuid,
-        'user_role.user_uuid': user.get('uuid')
+        'entry.event_id': eventId,
+        'user_role.user_id': user.get('id')
       })
   }).fetch({ withRelated: ['userRoles'] })
 }

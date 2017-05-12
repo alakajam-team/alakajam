@@ -15,17 +15,16 @@ function createModel () {
 
   let model = db.model('Entry', {
     tableName: 'entry',
-    idAttribute: 'uuid',
+    idAttribute: 'id',
     hasTimestamps: true,
-    uuid: true,
 
     // Relations
 
     event: function () {
-      return this.belongsTo('Event', 'event_uuid')
+      return this.belongsTo('Event', 'event_id')
     },
     userRoles: function () {
-      return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
+      return this.morphMany('UserRole', 'node', ['node_type', 'node_id'])
     },
 
     // Cascading
@@ -56,9 +55,9 @@ function createModel () {
   model.up = async function up (applyVersion) {
     if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('entry', function (table) {
-        table.uuid('uuid').primary()
-        table.uuid('event_uuid').references('event.uuid')
-        table.uuid('event_name')
+        table.increments('id').primary()
+        table.integer('event_id').references('event.id')
+        table.integer('event_name')
         table.string('links') // JSON Array : [{url, title}]
         table.string('pictures') // JSON Array : [path]
         table.string('category')

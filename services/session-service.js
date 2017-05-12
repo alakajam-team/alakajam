@@ -97,7 +97,7 @@ const SESSIONS_FILE = path.join(config.DATA_PATH, 'sessions.json')
     }
 
   // Write session cookie
-    req.session = {userId: user.get('uuid')}
+    req.session = {userId: user.get('id')}
     req.cookies.set('session', JSON.stringify(req.session), {
       httpOnly: true,
       signed: true
@@ -111,7 +111,7 @@ const SESSIONS_FILE = path.join(config.DATA_PATH, 'sessions.json')
       let maxAge = 30 * 24 * 3600000
       let tokenExpires = now + maxAge
       sessionCache[hash(token)] = {
-        userId: user.get('uuid'),
+        userId: user.get('id'),
         expires: tokenExpires
       }
       req.cookies.set('rememberMe', token, {

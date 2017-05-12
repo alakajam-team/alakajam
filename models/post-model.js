@@ -16,10 +16,10 @@ function createModel () {
     hasTimestamps: true,
 
     entry: function () {
-      return this.belongsTo('Entry', 'entry_id', 'entry_uuid')
+      return this.belongsTo('Entry', 'entry_id', 'entry_id')
     },
     event: function () {
-      return this.belongsTo('Event', 'event_id', 'event_uuid')
+      return this.belongsTo('Event', 'event_id', 'event_id')
     }
   })
 

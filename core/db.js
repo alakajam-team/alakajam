@@ -58,7 +58,6 @@ function createBookshelfInstance (knexInstance) {
   let db = bookshelf(knexInstance)
   db.plugin('registry')
   db.plugin('pagination')
-  db.plugin(require('bookshelf-uuid'))
   db.plugin(require('bookshelf-cascade-delete'))
 
   /**

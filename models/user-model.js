@@ -13,19 +13,18 @@ module.exports = createModel()
 function createModel () {
   let model = db.model('User', {
     tableName: 'user',
-    idAttribute: 'uuid',
+    idAttribute: 'id',
     hasTimestamps: true,
-    uuid: true,
 
     roles: function () {
-      return this.hasMany('UserRole', 'user_uuid')
+      return this.hasMany('UserRole', 'user_id')
     }
   })
 
   model.up = async function up (applyVersion) {
      if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('user', function (table) {
-        table.uuid('uuid').primary()
+        table.increments('id').primary()
         table.string('name')
         table.string('title')
         table.string('email')

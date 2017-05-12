@@ -21,7 +21,6 @@
   "dependencies": {
     "bookshelf": "^0.10.2",
     "bookshelf-cascade-delete": "^2.0.1",
-    "bookshelf-uuid": "^1.0.0",
     "cookies": "^0.7.0",
     "express": "^4.14.0",
     "express-nunjucks": "^2.1.2",
