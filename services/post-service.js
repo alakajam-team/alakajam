@@ -56,6 +56,7 @@ async function findUserPosts (userId) {
       // TODO Better use of Bookshelf API
       qb.innerJoin('user_role', 'post.id', 'user_role.node_uuid')
         .where('user_role.user_uuid', userId)
+        .where('published_at', '<=', new Date())
     })
     .orderBy('published_at', 'DESC')
     .fetchAll({ withRelated: ['author', 'userRoles'] })
