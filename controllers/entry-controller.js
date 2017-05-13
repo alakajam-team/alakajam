@@ -107,8 +107,7 @@ async function saveEntry (req, res) {
   }
 }
 
-async function deleteEntry (req, res, next) {
+async function deleteEntry (req, res) {
   await res.locals.entry.destroy()
-  req.url = templating.buildUrl(res.locals.event, 'event')
-  next()
+  res.redirect(templating.buildUrl(res.locals.event, 'event'))
 }

@@ -23,6 +23,7 @@ module.exports = {
     app.get('/post/:id/edit', editPost)
     app.post('/post/:id/edit', savePost)
     app.get('/post/:id', viewPost)
+    app.get('/post/:id/delete', deletePost)
   }
 
 }
@@ -113,4 +114,9 @@ function validateSpecialPostType (specialPostType, user) {
   if (specialPostType === 'announcement' && !securityService.isMod(user)) {
     throw new Error('non-mod ' + user.get('name') + ' attempted to create an announcement')
   }
+}
+
+async function deletePost (req, res) {
+  await res.locals.post.destroy()
+  res.redirect('/')
 }
