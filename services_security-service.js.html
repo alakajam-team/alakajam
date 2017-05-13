@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: core/log.js</title>
+    <title>JSDoc: Source: services/security-service.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: core/log.js</h1>
+    <h1 class="page-title">Source: services/security-service.js</h1>
 
     
 
@@ -29,70 +29,110 @@
             <pre class="prettyprint source linenums"><code>'use strict'
 
 /**
- * Logging configuration (uses Winston).
+ * Security service. Helps with checking permissions.
  *
- * @description ## Usage
- * ```
- * log.debug('message')
- * log.info('message')
- * log.warn('message')
- * log.error('message')
- * ```
- *
- * @module core/log
+ * @module services/security-service
  */
 
-const path = require('path')
-const winston = require('winston')
-const moment = require('moment')
+const constants = require('../core/constants')
 
-module.exports = initializeLogging()
+module.exports = {
+  canUserRead,
+  canUserWrite,
+  canUserManage,
+  isMod,
+  isAdmin,
+  getPermissionsEqualOrAbove
+}
 
-/*
- * Configure the Winston logger to print pretty, colorful &amp; informative log lines
+/**
+ * Checks if a user can read the given model
+ * @param  {User} user (optional)
+ * @param  {Entry|Post} model
+ * @param  {object} options (optional) allowMods allowAdmins
+ * @return {boolean}
  */
-function initializeLogging () {
-  let sourcesRoot = path.join(__dirname, '..')
-  winston.remove(winston.transports.Console)
-  winston.add(winston.transports.Console, {
-    timestamp: function () {
-      return moment().format('hh:mm:ss.SSS')
-    },
-    formatter: function (options) {
-      // Figure out the logging caller location
-      // XXX slow and hacky approach, not thoroughly &amp; cross-platformly tested
-      let location = '?'
-      let lines = new Error().stack.split('\n')
-      for (let line of lines) {
-        if (line.indexOf(sourcesRoot) !== -1 &amp;&amp;
-            line.indexOf(__filename) === -1 &amp;&amp;
-            line.indexOf('node_modules') === -1) {
-          let locInfo = line.replace(/(.*\()/g, '')
-            .replace(process.cwd(), '')
-            .split(/[ :]/g)
-          location = locInfo[locInfo.length - 3].replace('\\', '') +
-            ':' + locInfo[locInfo.length - 2]
-          break
-        }
-      }
+function canUserRead(user, model, options = {}) {
+  return canUser(user, model, constants.PERMISSION_READ, options)
+}
 
-      // Build the logging line
-      let level = options.level
-      let prefix = options.timestamp() + ' ' + options.level.toUpperCase() + ' (' + location + ')'
-      return winston.config.colorize(level, prefix) + (options.message ? ' ' + options.message : '')
-    },
-    colorize: true
-  })
+/**
+ * Checks if a user can write in the given model
+ * @param  {User} user (optional)
+ * @param  {Entry|Post} model
+ * @param  {object} options (optional) allowMods allowAdmins
+ * @return {boolean}
+ */
+function canUserWrite(user, model, options = {}) {
+  return canUser(user, model, constants.PERMISSION_WRITE, options)
+}
 
-  /**
-   * Logs the current stacktrace at info level
-   */
-  winston.whereami = function () {
-    let lines = new Error().stack.split('\n')
-    winston.info('I am' + lines.slice(2).join('\n'))
+/**
+ * Checks if a user can manage the given model
+ * @param  {User} user (optional)
+ * @param  {Entry|Post} model
+ * @param  {object} options (optional) allowMods allowAdmins
+ * @return {boolean}
+ */
+function canUserManage(user, model, options = {}) {
+  return canUser(user, model, constants.PERMISSION_MANAGE, options)
+}
+
+function canUser(user, model, permission, options = {}) {
+  if (!user) {
+    return false
+  }
+  if (!model.relations.userRoles) {
+    throw new Error('Model does not have user roles')
   }
 
-  return winston
+  if (options.allowMods &amp;&amp; isMod(user) || options.allowAdmins &amp;&amp; isAdmin(user)) {
+    return true
+  }
+
+  let acceptPermissions = getPermissionsEqualOrAbove(permission)
+  let allUserRoles = model.related('userRoles')
+  if (acceptPermissions &amp;&amp; allUserRoles) {
+    let userRoles = allUserRoles.where({
+      user_uuid: user.get('uuid')
+    })
+    for (let userRole of userRoles) {
+      if (acceptPermissions.indexOf(userRole.get('permission'))) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+/**
+ * @param  {User}  user 
+ * @return {boolean}     
+ */
+function isMod (user) {
+  return user &amp;&amp; (user.get('is_mod') || user.get('is_admin'))
+}
+
+/**
+ * @param  {User}  user 
+ * @return {boolean}     
+ */
+function isAdmin (user) {
+  return user &amp;&amp; user.get('is_admin')
+}
+
+/**
+ * @param  {string} permission
+ * @return {array(string)}
+ */
+function getPermissionsEqualOrAbove (permission) {
+  let permissionIndex = constants.ORDERED_PERMISSIONS.indexOf(permission)
+  if (permissionIndex !== -1) {
+    return constants.ORDERED_PERMISSIONS.slice(permissionIndex)
+  } else {
+    log.warn('Unknown permission: ' + permission + ' (allowed: ' + constants.ORDERED_PERMISSIONS.join(',') + ')')
+    return false
+  }
 }
 </code></pre>
         </article>

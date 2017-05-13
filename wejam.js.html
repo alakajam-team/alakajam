@@ -37,14 +37,21 @@
  * @module wejam
  */
 
+let log
+try {
+  log = global.log = require('./core/log')
+  log.info('Starting server...')
+} catch (e) {
+  console.error('Failed to start the server: ' + e.message)
+  console.error('Did you run "npm install"?')
+  return
+}
+
 const promisify = require('promisify-node')
 const fs = promisify('fs')
+const path = require('path')
 const express = require('express')
 const browserRefreshClient = require('browser-refresh-client')
-const fileStorage = require('./core/file-storage')
-
-const log = global.log = require('./core/log')
-log.info('Server starting...')
 
 createApp()
 
@@ -63,7 +70,7 @@ async function createApp () {
   await initDatabase(app.locals.devMode)
   await middleware.configure(app)
   app.listen(config.SERVER_PORT, configureBrowserRefresh)
-  log.info(`Server started on port ${config.SERVER_PORT}.`)
+  log.info('Server started on port ' + config.SERVER_PORT + '.')
 }
 
 /*
@@ -80,15 +87,18 @@ function catchErrorsAndSignals () {
   })
 
   // Stop the server gracefully upon shut down signals
-  // XXX Doesn't work on Windows
+  let alreadyShuttingDown = false
   let signals = ['SIGINT', 'SIGQUIT', 'SIGTERM']
   signals.forEach((signal) => {
     process.on(signal, _doGracefulShutdown)
   })
   function _doGracefulShutdown (cb) {
-    const db = require('./core/db')
-    log.info('Shutting down.')
-    db.knex.destroy(() => process.exit(-1))
+    if (!alreadyShuttingDown) {
+      alreadyShuttingDown = true
+      const db = require('./core/db')
+      log.info('Shutting down.')
+      db.knex.destroy(() => process.exit(-1))
+    }
   }
 }
 
@@ -96,10 +106,6 @@ function catchErrorsAndSignals () {
  * Initialize files upon first startup
  */
 async function initFilesLayout () {
-  // Create data folders
-  await fileStorage.createFolderIfMissing('data/tmp')
-  await fileStorage.createFolderIfMissing('static/uploads')
-
   // Create config.js if missing
   const CONFIG_PATH = './config.js'
   const CONFIG_SAMPLE_PATH = './config.sample.js'
@@ -107,9 +113,15 @@ async function initFilesLayout () {
     await fs.access(CONFIG_PATH, fs.constants.R_OK)
   } catch (e) {
     let sampleConfig = await fs.readFile(CONFIG_SAMPLE_PATH)
-    await fs.appendFile(CONFIG_PATH, sampleConfig)
+    await fs.writeFile(CONFIG_PATH, sampleConfig)
     log.info(CONFIG_PATH + ' initialized with sample values')
   }
+
+  // Create data folders
+  const config = require('./config')
+  const fileStorage = require('./core/file-storage')
+  await fileStorage.createFolderIfMissing(path.join(config.DATA_PATH, '/tmp'))
+  await fileStorage.createFolderIfMissing(config.UPLOADS_PATH)
 }
 
 /*
@@ -160,13 +172,13 @@ function configureBrowserRefresh () {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_build-url.html">controllers/build-url</a></li><li><a href="module-controllers_entry.html">controllers/entry</a></li><li><a href="module-controllers_event.html">controllers/event</a></li><li><a href="module-controllers_main.html">controllers/main</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_team-model.html">models/team-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri May 05 2017 19:17:35 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

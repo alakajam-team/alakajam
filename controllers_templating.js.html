@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: models/setting-model</title>
+    <title>JSDoc: Source: controllers/templating.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,126 +17,69 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: models/setting-model</h1>
+    <h1 class="page-title">Source: controllers/templating.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Global setting model</p></div>
-        
+/**
+ * Utilities made available in all templates
+ *
+ * @module controllers/templating
+ */
 
-        
-            
+const log = require('../core/log')
+const securityService = require('../services/security-service')
+const postService = require('../services/post-service')
 
+module.exports = {
+  buildUrl,
 
+  isPast: postService.isPast,
+  
+  canUserRead: securityService.canUserRead,
+  canUserWrite: securityService.canUserWrite,
+  canUserManage: securityService.canUserManage
+}
 
+function buildUrl (model, type, page = null) {
+  let pagePath = (page ? '/' + page : '')
 
+  if (type === 'event') {
+    // Event model
+    return '/event/' + model.get('uuid') + pagePath
 
+  } else if (type === 'entry') {
+    // Entry model
+    if (model &amp;&amp; model.get('uuid')) {
+      return '/entry/' + model.get('uuid') + pagePath
+    } else {
+      return '/event/' + model.get('event_uuid') + '/create-entry'
+    }
 
+  } else if (type === 'user') {
+    // User model
+    let userUuid = model.get('name') || model.get('user_name')
+    return '/user/' + userUuid + pagePath
 
+  } else if (type === 'post') {
+    // Post model
+    let postId = model.get('id')
+    return '/post/' + postId + pagePath
 
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_setting-model.js.html">models/setting-model.js</a>, <a href="models_setting-model.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+  } else {
+    throw new Error('Unknown model type ' + type)
+  }
+}
+</code></pre>
+        </article>
+    </section>
 
 
 

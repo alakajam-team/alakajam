@@ -39,12 +39,31 @@ let db = require('../core/db')
 module.exports = createModel()
 
 function createModel () {
+  let modelPrototype = db.Model.prototype
+
   let model = db.model('Entry', {
     tableName: 'entry',
     idAttribute: 'uuid',
     hasTimestamps: true,
     uuid: true,
+
+    // Relations
+
+    event: function () {
+      return this.belongsTo('Event', 'event_uuid')
+    },
+    userRoles: function () {
+      return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
+    },
+
+    // Cascading
+    
+    dependents: ['userRoles'],
+
+    // Listeners
+
     initialize: function initialize (attrs) {
+      modelPrototype.initialize.call(this)
       attrs = attrs || {}
       attrs.links = attrs.links || []
       attrs.pictures = attrs.pictures || []
@@ -59,23 +78,18 @@ function createModel () {
       if (attrs.links) attrs.links = JSON.stringify(attrs.links)
       if (attrs.pictures) attrs.pictures = JSON.stringify(attrs.pictures)
       return attrs
-    },
-    event: function () {
-      return this.belongsTo('Event', 'event_uuid')
     }
   })
 
-  model.up = async function up (currentVersion) {
-    if (currentVersion &lt; 1) {
+  model.up = async function up (applyVersion) {
+    if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('entry', function (table) {
         table.uuid('uuid').primary()
         table.uuid('event_uuid').references('event.uuid')
         table.uuid('event_name')
-        table.uuid('team_uuid') // .references('team.uuid')
         table.string('links') // JSON Array : [{url, title}]
         table.string('pictures') // JSON Array : [path]
         table.string('category')
-        table.string('team_title')
         table.string('name')
         table.string('title')
         table.string('body', 10000)
@@ -103,13 +117,13 @@ function createModel () {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_build-url.html">controllers/build-url</a></li><li><a href="module-controllers_entry.html">controllers/entry</a></li><li><a href="module-controllers_event.html">controllers/event</a></li><li><a href="module-controllers_main.html">controllers/main</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_team-model.html">models/team-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri May 05 2017 19:17:35 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

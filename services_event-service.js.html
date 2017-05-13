@@ -36,12 +36,17 @@
 
 const Event = require('../models/event-model')
 const Entry = require('../models/entry-model')
+const securityService = require('../services/security-service')
 
 module.exports = {
   findEventById,
   findAllEvents,
   findEventByStatus,
-  findEntryById
+
+  createEntry,
+  findEntryById,
+  findUserEntries,
+  findUserEntryForEvent
 }
 
 /**
@@ -50,17 +55,18 @@ module.exports = {
  * @returns {Event}
  */
 async function findEventById (uuid) {
-  return Event.where('uuid', uuid).fetch({ withRelated: 'entries' })
+  return Event.where('uuid', uuid)
+    .fetch({ withRelated: ['entries', 'entries.userRoles'] })
 }
 
 /**
  * Fetches all Events and their Entries.
- * @returns {Array(Event)}
+ * @returns {array(Event)}
  */
 async function findAllEvents () {
   let eventModels = await new Event()
     .orderBy('title', 'DESC') // XXX Temporary prop
-    .fetchAll({ withRelated: 'entries' })
+    .fetchAll({ withRelated: ['entries'] })
   return eventModels.models
 }
 
@@ -80,12 +86,62 @@ async function findEventByStatus (status) {
 }
 
 /**
+ * Creates and persists a new entry, initializing the owner UserRole.
+ * @param  {User} user 
+ * @param  {Event} event 
+ * @return {Entry}
+ */
+async function createEntry (user, event) {
+  // TODO Better use of Bookshelf API
+  let entry = new Entry()
+  await entry.save() // otherwise the user role won't have a node_uuid
+  entry.set('event_uuid', event.get('uuid')) 
+  entry.set('event_name', event.get('name'))
+  await entry.userRoles().create({
+    user_uuid: user.get('uuid'),
+    user_name: user.get('name'),
+    user_title: user.get('title'),
+    permission: securityService.PERMISSION_MANAGE
+  })
+  return entry
+}
+
+/**
  * Fetches an Entry by its ID.
  * @param uuid {uuid} Entry UUID
  * @returns {Entry}
  */
 async function findEntryById (uuid) {
-  return Entry.where('uuid', uuid).fetch({ withRelated: 'event' })
+  return Entry.where('uuid', uuid).fetch({ withRelated: ['event', 'userRoles'] })
+}
+
+/**
+ * Retrieves all the entries an user contributed to
+ * @param  {User} user
+ * @return {array(Entry)|null}
+ */
+async function findUserEntries (user) {
+  let entryCollection = await Entry.query((query) => {
+    query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
+      .where('user_role.user_uuid', user.get('uuid'))
+  }).fetchAll({ withRelated: ['userRoles'] })
+  return entryCollection.models
+}
+
+/**
+ * Retrieves the entry a user submited to an event
+ * @param  {User} user
+ * @param  {string} eventUuid
+ * @return {Entry|null}
+ */
+async function findUserEntryForEvent (user, eventUuid) {
+  return Entry.query((query) => {
+    query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
+      .where({
+        'event_uuid': eventUuid,
+        'user_role.user_uuid': user.get('uuid')
+      })
+  }).fetch({ withRelated: ['userRoles'] })
 }
 </code></pre>
         </article>
@@ -97,13 +153,13 @@ async function findEntryById (uuid) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_build-url.html">controllers/build-url</a></li><li><a href="module-controllers_entry.html">controllers/entry</a></li><li><a href="module-controllers_event.html">controllers/event</a></li><li><a href="module-controllers_main.html">controllers/main</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_team-model.html">models/team-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri May 05 2017 19:17:35 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

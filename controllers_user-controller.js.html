@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/user-controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/user-controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+/**
+ * User and authentication pages
+ *
+ * @module controllers/user-controller
+ */
+
+const fileStorage = require('../core/file-storage')
+const userService = require('../services/user-service')
+const sessionService = require('../services/session-service')
+const eventService = require('../services/event-service')
+const postService = require('../services/post-service')
+
+module.exports = {
+
+  initRoutes: function (app) {
+    app.get('/register', registerForm)
+    app.post('/register', doRegister)
+    app.get('/login', loginForm)
+    app.post('/login', doLogin)
+    app.get('/logout', doLogout)
+
+    app.all('/settings', settingsGeneral)
+    app.all('/settings/password', settingsPassword)
+
+    app.get('/user/:name', viewUserProfile)
+  }
+
+}
+
+/**
+ * Register form
+ */
+async function registerForm (req, res) {
+  res.render('register')
+}
+
+/**
+ * Register
+ */
+async function doRegister (req, res) {
+  let {fields} = await req.parseForm()
+  let errorMessage = null
+  if (!(fields.name &amp;&amp; fields.password)) {
+    errorMessage = 'Username or password missing'
+  } else if (fields.password !== fields['password-bis']) {
+    errorMessage = 'Passwords do not match'
+  } else {
+    let result = await userService.register(fields.name, fields.password)
+    if (result === true) {
+      doLogin(req, res)
+    } else {
+      errorMessage = result
+    }
+  }
+
+  if (errorMessage) {
+    res.render('register', { errorMessage })
+  }
+}
+
+/**
+ * Login form
+ */
+async function loginForm (req, res) {
+  res.render('login')
+}
+
+/**
+ * Login
+ */
+async function doLogin (req, res) {
+  let context = {}
+  let {fields} = await req.parseForm()
+  if (fields.name &amp;&amp; fields.password) {
+    let user = await userService.authenticate(fields.name, fields.password)
+    if (user) {
+      context.user = user
+      context.infoMessage = 'Authentication successful'
+      sessionService.openSession(req, res, user, !!fields['remember-me'])
+    } else {
+      context.errorMessage = 'Authentication failed'
+    }
+  } else {
+    context.errorMessage = 'Username or password missing'
+  }
+
+  res.render('login', context)
+}
+
+/**
+ * Logout
+ */
+async function doLogout (req, res) {
+  sessionService.invalidateSession(req, res)
+  res.render('login', {
+    infoMessage: 'Logout successful.'
+  })
+}
+
+/**
+ * Manage general user info
+ */
+async function settingsGeneral (req, res) {
+  try {
+    let errorMessage = '', infoMessage = ''
+
+    if (req.method === 'POST') {
+      let {fields, files} = await req.parseForm()
+      if (!res.headersSent) { // FIXME Why?
+        let user = res.locals.user
+
+        // General settings form
+        user.set('title', fields.title || user.get('name'))
+        user.set('email', fields.email)
+        user.set('social_web', fields.website)
+        user.set('social_twitter', fields.twitter.replace('@', ''))
+        user.set('body', fields.body)
+
+        if (user.hasChanged('title')) {
+          await userService.refreshUserReferences(user)
+        }
+
+        // TODO Formidable shouldn't create an empty file
+        let newAvatar = files.avatar &amp;&amp; files.avatar.size > 0
+        if (user.get('avatar') &amp;&amp; (files['avatar-delete'] || newAvatar)) {
+          await fileStorage.remove(user.get('avatar'), false)
+          user.unset('avatar')
+        }
+        if (newAvatar) { 
+          let avatarPath = '/user/' + user.get('uuid')
+          let finalPath = await fileStorage.move(files.avatar.path, avatarPath)
+          user.set('avatar', finalPath)
+        }
+        await user.save()
+      }
+    }
+
+    res.render('user/settings-general', {
+      errorMessage,
+      infoMessage
+    })
+  } catch (e) {
+    res.errorPage(500, e)
+  }
+}
+
+/**
+ * Manage user profile contents
+ */
+async function settingsPassword (req, res) {
+  try {
+    let errorMessage = '', infoMessage = ''
+    
+    if (req.method === 'POST') {
+      let {fields} = await req.parseForm()
+
+      // Change password form
+      if (!fields['password']) {
+        errorMessage = 'You must enter your current password'
+      } else if (!await userService.authenticate(user.get('name'), fields['password'])) {
+        errorMessage = 'Current password is incorrect'
+      } else if (!fields['new-password']) {
+        errorMessage = 'You must enter a new password'
+      } else if (fields['new-password'] !== fields['new-password-bis']) {
+        errorMessage = 'New passwords do not match'
+      } else {
+        let result = userService.setPassword(user, fields['new-password'])
+        if (result !== true) {
+          errorMessage = result
+        } else {
+          await user.save()
+          infoMessage = 'Password change successful'
+        }
+      }
+    }
+
+    res.render('user/settings-password', {
+      errorMessage,
+      infoMessage
+    })
+  } catch (e) {
+    res.errorPage(500, e)
+  }
+}
+
+/**
+ * Display a user profile
+ */
+async function viewUserProfile (req, res) {
+  let user = await userService.findByName(req.params.name)
+  if (user) {
+    res.render('user/profile', {
+      profileUser: user,
+      entries: await eventService.findUserEntries(user),
+      posts: await postService.findUserPosts(user.get('uuid'))
+    })
+  } else {
+    res.errorPage(400, 'No user exists with name ' + req.params.name)
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

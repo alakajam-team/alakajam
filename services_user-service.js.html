@@ -29,24 +29,31 @@
             <pre class="prettyprint source linenums"><code> 'use strict'
 
 /**
- * User servoce
+ * User service
  *
  * @module services/user-service
  */
 
- const md5 = require('md5')
+ const crypto = require('crypto')
  const randomKey = require('random-key')
+ const db = require('../core/db')
  const settingService = require('../services/setting-service')
  const User = require('../models/user-model')
+ const UserRole = require('../models/user-role-model')
 
  module.exports = {
    findById,
    findByName,
    register,
-   authenticate
+   authenticate,
+   setPassword,
+   refreshUserReferences
  }
 
  const SETTING_PASSWORD_PEPPER = 'password_pepper'
+ const USERNAME_VALIDATION_REGEX = /^[a-zA-Z][-\w]+$/g
+ const USERNAME_MIN_LENGTH = 3
+ const PASSWORD_MIN_LENGTH = 6
 
 /**
  * Fetches a User
@@ -70,45 +77,102 @@
  * Registers a new user
  * @param name {string} name
  * @param password {string} clear password (will be hashed before storage)
- * @returns {User} The User
+ * @returns {boolean|string} true, or an error message
  */
  async function register (name, password) {
+   if (!name.match(USERNAME_VALIDATION_REGEX)) {
+     return 'Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.'
+   } 
+   if (name.length &lt; USERNAME_MIN_LENGTH) {
+     return 'Username length must be at least ' + USERNAME_MIN_LENGTH
+   }
+   if (await User.where('name', name).count() > 0) {
+     return 'Username is taken'
+   }
+   let passwordValidationResult = validatePassword(password)
+   if (passwordValidationResult !== true) {
+     return passwordValidationResult
+   }
+
    let user = new User({
      name: name,
-     password: hashPassword(password)
+     title: name
    })
+   setPassword(user, password)
    await user.save()
-   return user
+   return true
  }
 
 /**
- * Authenticates against a user name and password
+ * Authenticates against a user name and password, and updates the session accordingly
  * @param name {string} name
  * @param password {string} clear password (will be hashed &amp; compared to the DB entry)
  * @returns {User} The User, or false if the authentication failed
  */
  async function authenticate (name, password) {
-   let user = await User.where('uuid', name).fetch()
+   let user = await User.query(function (query) {
+     query.where('name', name).orWhere('email', name)
+   }).fetch()
    if (user) {
-     let hashToTest = await hashPassword(password)
-     return hashToTest === user.get('password')
+     let hashToTest = hashPassword(password, user.get('password_salt'))
+     if (hashToTest === user.get('password')) {
+       return user
+     }
+   }
+   return false
+ }
+
+/**
+ * Sets a password to a User
+ * @param {User} user User model
+ * @param {string} password New password, in clear form
+ * @returns {boolean|string} true, or an error message
+ */
+ function setPassword(user, password) {
+   let passwordValidationResult = validatePassword(password)
+   if (passwordValidationResult !== true) {
+     return passwordValidationResult
+   }
+
+  let salt = randomKey.generate()
+  user.set('password_salt', salt)
+  let hash = hashPassword(password, salt)
+  user.set('password', hash)
+  return true
+ }
+
+/**
+ * Validates the given password
+ * @param {string} password
+ * @returns {boolean|string} true, or an error message
+ */
+function validatePassword(password) {
+   if (password.length &lt; PASSWORD_MIN_LENGTH) {
+     return 'Password length must be at least ' + PASSWORD_MIN_LENGTH
    } else {
-     return false
+      return true
    }
+}
+
+ function hashPassword (password, salt) {
+  return crypto.createHash('sha256').update(password + salt).digest('hex')
  }
 
- async function hashPassword (password) {
-   let pepper = await findOrCreatePasswordPepper()
-   return md5(password + pepper)
- }
-
- async function findOrCreatePasswordPepper () {
-   let pepper = await settingService.find(SETTING_PASSWORD_PEPPER)
-   if (!pepper) {
-     pepper = randomKey.generate()
-     settingService.save(SETTING_PASSWORD_PEPPER, pepper)
-   }
-   return pepper
+/**
+ * Refreshes various models that cache user name and/or title.
+ * Call this after changing the name or title of an user.
+ * @param {User} user User model
+ */
+ async function refreshUserReferences(user) {
+  // TODO Transaction
+  let userRolesCollection = await UserRole.where('user_uuid', user.get('uuid')).fetchAll()
+  console.log(userRolesCollection)
+  for (let userRole of userRolesCollection.models) {
+    console.log(userRole.get('user_title'))
+    userRole.set('user_name', user.get('name'))
+    userRole.set('user_title', user.get('title'))
+    await userRole.save()
+  }
  }
 </code></pre>
         </article>
@@ -120,13 +184,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_build-url.html">controllers/build-url</a></li><li><a href="module-controllers_entry.html">controllers/entry</a></li><li><a href="module-controllers_event.html">controllers/event</a></li><li><a href="module-controllers_main.html">controllers/main</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_team-model.html">models/team-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri May 05 2017 19:17:35 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

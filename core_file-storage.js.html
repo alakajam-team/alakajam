@@ -39,6 +39,7 @@ const fs = promisify('fs')
 const mkdirp = promisify('mkdirp')
 const path = require('path')
 const url = require('url')
+const config = require('../config')
 
 module.exports = {
   move,
@@ -49,8 +50,8 @@ module.exports = {
   createFolderIfMissing
 }
 
-const UPLOADS_PATH = '/static/uploads/'
-const UPLOADS_ROOT = path.join(__dirname, '..', UPLOADS_PATH)
+const SOURCES_ROOT = path.join(__dirname, '..')
+const UPLOADS_URL = ('/' + config.UPLOADS_PATH + '/').replace(/\/\//g, '/')
 
 /**
   Moves the file from a path to another. Typically used for saving temporary files.
@@ -60,23 +61,22 @@ const UPLOADS_ROOT = path.join(__dirname, '..', UPLOADS_PATH)
   If target path doesn't contain an extension
   @returns the final target path
 */
-async function move (sourcePath, targetPath) {
-  let truePath = targetPath.replace(/^[\\\/]/, '')
+async function move (sourcePath, targetPath, isUpload = true) {
+  let truePath = targetPath.replace(/^[\\/]/, '') // remove leading slash
   let sourcePathExtension = path.extname(sourcePath)
   if (!targetPath.endsWith(sourcePathExtension)) {
     // TODO replace extension rather than just append
     truePath += sourcePathExtension
   }
 
-  let absolutePath = path.join(UPLOADS_ROOT, truePath)
+  let absolutePath = toAbsolutePath(truePath, isUpload)
   await createFolderIfMissing(path.dirname(absolutePath))
   await fs.rename(sourcePath, absolutePath)
-  
-  return url.resolve(UPLOADS_PATH, truePath)
+  return url.resolve(UPLOADS_URL, truePath)
 }
 
-async function exists (documentPath) {
-  let absolutePath = path.join(UPLOADS_ROOT, documentPath)
+async function exists (documentPath, isUpload = true) {
+  let absolutePath = toAbsolutePath(documentPath, isUpload)
   try {
     await fs.access(absolutePath, fs.constants.R_OK)
     return true
@@ -85,20 +85,53 @@ async function exists (documentPath) {
   }
 }
 
-async function read (documentPath) {
-  let absolutePath = path.join(UPLOADS_ROOT, documentPath)
-  return await fs.readFile(absolutePath)
+/**
+ * [read description]
+ * @param  {string}  documentPath
+ * @param  {Boolean} isUpload
+ * @return {string} the file contents as a string. Caller must parse JSON himself if needed.
+ */
+async function read (documentPath, isUpload = true) {
+  let absolutePath = toAbsolutePath(documentPath, isUpload)
+  let fileBuffer = await fs.readFile(absolutePath)
+  return fileBuffer.toString()
 }
 
-async function write (documentPath, data) {
-  let absolutePath = path.join(UPLOADS_ROOT, documentPath)
+/**
+ * Writes data to a file
+ * @param  {string} documentPath Destination file
+ * @param  {string} data Contents to write. If a function, will be evaluated. If an object/array, will be stringified.
+ * @return {bool} isUpload (Optional) Whether to consider paths relative to the uploads folder (default) or the sources root.
+ */
+async function write (documentPath, data, isUpload = true) {
+  if (typeof data === 'function') {
+    data = data()
+  }
+  if (typeof data === 'object') {
+    data = JSON.stringify(data)
+  }
+
+  let absolutePath = toAbsolutePath(documentPath, isUpload)
   await createFolderIfMissing(path.dirname(documentPath))
-  return await fs.writeFile(absolutePath, data)
+  return fs.writeFile(absolutePath, data)
 }
 
-async function remove (documentPath) {
-  let absolutePath = path.join(UPLOADS_ROOT, documentPath)
-  await fs.unlink(absolutePath)
+async function remove (documentPath, isUpload = true) {
+  let absolutePath = toAbsolutePath(documentPath, isUpload)
+  if (await exists(documentPath, isUpload)) {
+    await fs.unlink(absolutePath)
+  }
+}
+
+function toAbsolutePath (anyPath, isUpload) {
+  let prefix = ''
+  if (anyPath.indexOf(SOURCES_ROOT) === -1) {
+    prefix = SOURCES_ROOT
+  }
+  if (isUpload) {
+    prefix = path.join(prefix, config.UPLOADS_PATH)
+  }
+  return path.join(prefix, anyPath)
 }
 
 /**
@@ -120,13 +153,13 @@ async function createFolderIfMissing (folderPath) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_build-url.html">controllers/build-url</a></li><li><a href="module-controllers_entry.html">controllers/entry</a></li><li><a href="module-controllers_event.html">controllers/event</a></li><li><a href="module-controllers_main.html">controllers/main</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_team-model.html">models/team-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri May 05 2017 19:17:35 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: models/setting-model</title>
+    <title>JSDoc: Source: core/constants.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,126 +17,48 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: models/setting-model</h1>
+    <h1 class="page-title">Source: core/constants.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Global setting model</p></div>
-        
+/**
+ * Constants
+ * 
+ * @module core/constants
+ */
 
-        
-            
+const PERMISSION_READ ='read'
+const PERMISSION_WRITE = 'write'
+const PERMISSION_MANAGE = 'manage'
+const ORDERED_PERMISSIONS = [PERMISSION_READ, PERMISSION_WRITE, PERMISSION_MANAGE]
 
+module.exports = {
+  // Security
+  PERMISSION_READ,
+  PERMISSION_WRITE,
+  PERMISSION_MANAGE,
+  ORDERED_PERMISSIONS,
 
+  // Posts
+  SPECIAL_POST_TYPE_ANNOUNCEMENT: 'announcement',
 
+  // Dates
+  DATE_FORMAT: 'MMMM Do YYYY',
+  DATE_TIME_FORMAT: 'MMMM Do YYYY, h:mm',
+  PICKER_DATE_TIME_FORMAT: 'YYYY-MM-DD hh:mm',
+  PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii'
 
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_setting-model.js.html">models/setting-model.js</a>, <a href="models_setting-model.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+}
+</code></pre>
+        </article>
+    </section>
 
 
 

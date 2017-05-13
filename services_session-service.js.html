@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/session-service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/session-service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>  'use strict'
+
+/**
+ * Session service. Manipulates cookies, and controls a session cache
+ * matching hashes of session tokens with user IDs (to support "remember me" stuff).
+ *
+ * @module services/session-service
+ */
+
+const path = require('path')
+const crypto = require('crypto')
+const randomKey = require('random-key')
+const config = require('../config')
+const log = require('../core/log')
+const fileStorage = require('../core/file-storage')
+
+module.exports = {
+  loadSessionCache,
+  openSession,
+  invalidateSession,
+  restoreSessionifNeeded
+}
+
+const SESSIONS_FILE = path.join(config.DATA_PATH, 'sessions.json')
+
+/**
+ * (Sync) Checks whether a user session is valid
+ * @returns {boolean} true if valid, false if invalid (usually because expired)
+ */
+  function restoreSessionifNeeded (req, res) {
+    req.session = {}
+
+  // TODO refresh cookies if they're getting close to expiry
+    let sessionCookie = req.cookies.get('session')
+    if (sessionCookie) {
+      try {
+        req.session = JSON.parse(sessionCookie)
+      } catch (e) {
+        req.cookies.set('session')
+        sessionCookie = null
+      }
+    }
+
+    if (!sessionCookie) {
+      let rememberMeCookie = req.cookies.get('rememberMe')
+      if (rememberMeCookie) {
+        let sessionCache = res.app.locals.sessionCache
+        let sessionInfo = sessionCache[hash(rememberMeCookie)]
+        if (sessionInfo) {
+          req.session = {userId: sessionInfo.userId}
+        } else {
+          req.cookies.set('rememberMe')
+        }
+      }
+    }
+  }
+
+/**
+ * Loads the session cache from the persisted sessions file.
+ * @return {Object} Session cache object
+ */
+  async function loadSessionCache () {
+    if (await fileStorage.exists(SESSIONS_FILE, false)) {
+      let rawFile = await fileStorage.read(SESSIONS_FILE, false)
+      return JSON.parse(rawFile)
+    } else {
+      return {}
+    }
+  }
+
+  function invalidateSession (req, res) {
+    let rememberMeCookie = req.cookies.get('rememberMe')
+    if (rememberMeCookie) {
+      let sessionCache = res.app.locals.sessionCache
+      delete sessionCache[hash(rememberMeCookie)]
+    }
+
+    req.cookies.set('rememberMe')
+    req.cookies.set('session')
+    req.session = null
+    res.locals.user = null
+  }
+
+/**
+ * Opens or refreshes a user session
+ */
+  function openSession (req, res, user, rememberMe) {
+    invalidateSession(req, res)
+
+  // Clean expired sessions
+    let sessionCache = res.app.locals.sessionCache
+    let now = Date.now()
+    for (let existingToken in sessionCache) {
+      if (sessionCache[existingToken].expires &lt; now) {
+        delete sessionCache[existingToken]
+      }
+    }
+
+  // Write session cookie
+    req.session = {userId: user.get('uuid')}
+    req.cookies.set('session', JSON.stringify(req.session), {
+      httpOnly: true,
+      signed: true
+    })
+    res.locals.user = user
+
+  // Write remember me cookie &amp; store token hash
+  // TODO Use better hashing than MD5
+    if (rememberMe) {
+      let token = randomKey.generate()
+      let maxAge = 30 * 24 * 3600000
+      let tokenExpires = now + maxAge
+      sessionCache[hash(token)] = {
+        userId: user.get('uuid'),
+        expires: tokenExpires
+      }
+      req.cookies.set('rememberMe', token, {
+        maxAge: maxAge,
+        expires: new Date(tokenExpires),
+        httpOnly: true,
+        signed: true
+      })
+    }
+
+  // Persist cache (no need to await)
+    fileStorage.write(SESSIONS_FILE, sessionCache, false)
+    .catch((e) => log.error(e.message))
+  }
+
+function hash(token) {
+  return crypto.createHash('sha256').update(token).digest('hex')
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

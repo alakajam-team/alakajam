@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: models/setting-model</title>
+    <title>JSDoc: Source: controllers/main-controller.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,126 +17,97 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: models/setting-model</h1>
+    <h1 class="page-title">Source: controllers/main-controller.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Global setting model</p></div>
-        
+/**
+ * Global pages
+ *
+ * @module controllers/main-controller
+ */
 
-        
-            
+const constants = require('../core/constants')
+const eventService = require('../services/event-service')
+const userService = require('../services/user-service')
+const sessionService = require('../services/session-service')
+const postService = require('../services/post-service')
 
+module.exports = {
 
+  initRoutes: function (app) {
+    app.use('*', anyPageMiddleware)
 
+    app.get('/', index)
+    app.get('/events', events)
+    app.get('/chat', chat)
+  }
 
+}
 
+async function anyPageMiddleware (req, res, next) {
+  sessionService.restoreSessionifNeeded(req, res)
 
+  res.locals.path = req.originalUrl
 
+  let liveEventTask = eventService.findEventByStatus('open').then(async function (liveEvent) {
+    if (liveEvent) {
+      res.locals.liveEvent = liveEvent
+    } else {
+      res.locals.nextEvent = await eventService.findEventByStatus('pending')
+    }
+  })
+  let userTask = null
+  if (req.session.userId) {
+    userTask = userService.findById(req.session.userId).then(function (user) {
+      res.locals.user = user
+    })
+  }
+  await Promise.all([liveEventTask, userTask]) // Parallelize fetching event &amp; user info
 
+  next()
+}
 
+/**
+ * Home page
+ */
+async function index (req, res) {
+  if (res.locals.liveEvent) {
+    await res.locals.liveEvent.load(['entries', 'entries.userRoles'])
+  }
+  res.render('index', {
+    posts: await postService.findPostFeed({
+      specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT
+    })
+  })
+}
 
+/**
+ * Events listing
+ */
+async function events (req, res) {
+  let eventModels = await eventService.findAllEvents()
+  res.render('events', {
+    events: eventModels
+  })
+}
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_setting-model.js.html">models/setting-model.js</a>, <a href="models_setting-model.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+/**
+ * IRC Chat
+ */
+async function chat (req, res) {
+  res.render('chat')
+}
+</code></pre>
+        </article>
+    </section>
 
 
 

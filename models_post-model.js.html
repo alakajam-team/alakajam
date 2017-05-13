@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: models/setting-model</title>
+    <title>JSDoc: Source: models/post-model.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,126 +17,73 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: models/setting-model</h1>
+    <h1 class="page-title">Source: models/post-model.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Global setting model</p></div>
-        
+/**
+ * Post model
+ *
+ * @module models/post-model
+ */
 
-        
-            
+let db = require('../core/db')
 
+module.exports = createModel()
 
+function createModel () {
+  let model = db.model('Post', {
+    tableName: 'post',
+    hasTimestamps: true,
 
+    entry: function () {
+      return this.belongsTo('Entry', 'entry_id', 'uuid')
+    },
+    event: function () {
+      return this.belongsTo('Event', 'event_id', 'uuid')
+    },
+    author: function () {
+      return this.belongsTo('User', 'author_user_id', 'uuid')
+    },
+    userRoles: function () {
+      return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
+    }
+  })
 
+  model.up = async function up (applyVersion) {
+    if (applyVersion === 1) {
+      await db.knex.schema.createTableIfNotExists('post', function (table) {
+        table.increments('id').primary()
+        table.string('author_user_id')
+        table.string('name')
+        table.string('title')
+        table.string('guild_id')
+        table.string('entry_id')
+        table.string('event_id')
+        table.string('body', 10000)
+        table.date('published_at')
+        table.string('special_post_type')
+        table.timestamps()
+      })
+    }
+  }
 
+  model.down = async function down () {
+    await db.knex.schema.dropTableIfExists('post')
+  }
 
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_setting-model.js.html">models/setting-model.js</a>, <a href="models_setting-model.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+  return model
+}
+</code></pre>
+        </article>
+    </section>
 
 
 
