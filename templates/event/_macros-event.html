@@ -25,9 +25,11 @@
   <div class="event-table {{ 'live' if event.get('status') == 'open' }}">
     <div class="row">
       <div class="col-md-12">
-        <div class="event-table__header">
+        <a class="event-table__header" href="{{ buildUrl(event, 'event') }}">
           <div class="row">
-            <div class="event-table__title col-sm-4"><a href="{{ buildUrl(event, 'event') }}">{{ event.get('title') }}</a></div>
+            <div class="event-table__title col-sm-4">
+              <h2>{{ event.get('title') }}</h2>
+            </div>
             <div class="event-table__status col-sm-3">
               Current state: <b>{{ event.get('status') }}</b><br />
               Entry count: <b>{{ event.related('entries').length }}</b>
@@ -37,7 +39,7 @@
               Theme: <b>{{ event.get('display_theme') }}</b>
             </div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
     {% if withEntries %}

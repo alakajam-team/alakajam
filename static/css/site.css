@@ -4,6 +4,7 @@
   --main-light: color(var(--main) lightness(45%));
   --main-dark: color(var(--main) lightness(25%));
   --alt: #f2536d;
+  --alt-light: color(var(--alt) lightness(70%));
   --alt-dark: color(var(--alt) lightness(35%));
   --alt-transparent: color(var(--alt) alpha(10%));
   --bg: #eee;
@@ -57,7 +58,8 @@ div {
 h1 {
   @apply --alt-font;
   margin: 0 0 15px 0;
-  font-size: 2.4rem;
+  font-size: 2.5rem;
+  font-weight: normal;
   letter-spacing: 1px;
   color: var(--text);
 }
@@ -171,7 +173,7 @@ img.preview {
         margin-right: 20px;
 
         &:hover {
-          background-color: var(--alt);
+          background-color: var(--alt-light);
         }
       }
 
@@ -261,6 +263,15 @@ img.preview {
 
   &__schedule {
     display: none;
+  }
+
+  & h1 {
+    font-weight: normal;
+    font-size: 2.2rem;
+  }
+
+  & img {
+    max-width: 100%;
   }
 
 }
@@ -375,18 +386,23 @@ img.preview {
   margin-bottom: 20px;
 
   &__header {
-    background-color: var(--main-dark);
+    display: block;
     padding: 10px;
     margin-bottom: 20px;
+    background-color: var(--main);
+    color: white;
+
+    &:hover {
+      color: white;
+      background-color: var(--main-light);
+    }
   }
   &.live &__header {
     background-color: var(--alt);
-  }
 
-  &__title a {
-    @apply --alt-font;
-    font-size: 2rem;
-    color: white;
+    &:hover {
+      background-color: var(--alt-light);
+    }
   }
 
   &__status {

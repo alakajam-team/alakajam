@@ -51,10 +51,7 @@ async function anyPageMiddleware (req, res, next) {
  */
 async function index (req, res) {
   if (res.locals.liveEvent) {
-    res.locals.liveEvent.load(['entries', 'entries.userRoles'])
-  }
-  if (res.locals.nextEvent) {
-    res.locals.nextEvent.load(['entries', 'entries.userRoles'])
+    await res.locals.liveEvent.load(['entries', 'entries.userRoles'])
   }
   res.render('index', {
     posts: await postService.findAnnouncements()
