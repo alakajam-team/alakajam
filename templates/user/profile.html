@@ -67,8 +67,8 @@
       {% endif %}
 
       <h1>Posts</h1>
-      {% if posts.length > 0 %}
-        {% for post in posts %}
+      {% if posts.models.length > 0 %}
+        {% for post in posts.models %}
         {{ postMacros.post(post, user) }}
         {% endfor %}
       {% else %}

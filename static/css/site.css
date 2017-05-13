@@ -97,6 +97,10 @@ img.preview {
   z-index: 2000;
 }
 
+.datetimepicker {
+  background-color: white;
+}
+
 /* Nav bar */
 
 .navbar-default {
@@ -244,6 +248,10 @@ img.preview {
     width: 36px;
     margin-right: 5px;
     vertical-align: top;
+  }
+
+  &__schedule {
+    display: none;
   }
 
 }

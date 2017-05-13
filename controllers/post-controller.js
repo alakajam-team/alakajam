@@ -6,6 +6,8 @@
  * @module controllers/post-controller
  */
 
+const moment = require('moment')
+const constants = require('../core/constants')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const templating = require('./templating')
@@ -39,7 +41,13 @@ async function postMiddleware (req, res, next) {
 }
 
 async function viewPost (req, res) {
-  res.render('post/view-post')
+  // Check permissions
+  if (postService.isPast(res.locals.post.get('published_at'))
+      || securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true })) {
+    res.render('post/view-post')
+  } else {
+    res.errorPage(404, 'Post not found')
+  }
 }
 
 async function editPost (req, res) {
@@ -73,13 +81,26 @@ async function savePost (req, res) {
     post.set('title', fields.title)
     post.set('body', fields.body)
 
-    // Save
-    if (!post.get('published_at')) {
+    // Publication strategy
+    let redirectToView = true
+    if (fields.publish) {
       post.set('published_at', new Date())
+    } else if (fields.unpublish) {
+      post.set('published_at', null)
+      redirectToView = false
+    } else if (fields['save-custom']) {
+      post.set('published_at', moment(fields['published-at'], constants.PICKER_DATE_TIME_FORMAT).toDate())
     }
+
+    // Save
     await post.save()
 
-    res.redirect(templating.buildUrl(post, 'post')) // TODO move buildUrl to routing-service
+    // Render
+    if (redirectToView) {
+      res.redirect(templating.buildUrl(post, 'post')) // TODO move buildUrl to routing-service
+    } else {
+      res.render('post/edit-post', { post })
+    }
   } else {
     res.errorPage(403, 'Forbidden')
   }

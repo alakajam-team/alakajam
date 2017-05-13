@@ -24,8 +24,13 @@
     <img src="/static/images/default-avatar.png" class="post__avatar" /> 
     {% endif %}
     <a href="{{ buildUrl(author, 'user') }}">{{ author.get('title') }}</a>
-    • {{ post.get('published_at') | relativeTime }}
-   <!-- <span class="post__date">({{ post.get('published_at') | dateTime }})</span>-->
+    • {% if isPast(post.get('published_at')) %}
+        {{ post.get('published_at') | relativeTime }}
+      {% elseif post.get('published_at') %}
+        <span class="badge">Scheduled</span> for {{ post.get('published_at') | dateTime }}
+      {% else %}
+        <span class="badge">Draft</span>
+      {% endif %}
     • 0 comments
     {% if canUserWrite(readingUser, post, options) %}
     <a class="btn btn-default btn-sm pull-right" href="{{ buildUrl(post, 'post', 'edit') }}">Edit post</a>

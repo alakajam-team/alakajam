@@ -9,10 +9,20 @@
   <a href="/post/create?special_post_type=announcement" class="btn btn-primary">Create new announcement</a>
 </div>
 
-{% for post in posts  %}
+{% if draftPosts.length > 0 %}
+  <h2>Drafts</h2>
+  {% for post in draftPosts %}
+    {{ postMacros.post(post, user, {allowMod: true, noBody: true}) }}
+  {% endfor %}
+
+  <h2>Published</h2>
+{% endif %}
+
+{% for post in publishedPosts %}
   {{ postMacros.post(post, user, {allowMod: true, noBody: true}) }}
 {% endfor %}
-{% if posts.length === 0 %}
+
+{% if publishedPosts.length === 0 %}
   <div class="well">Nothing yet!</div>
 {% endif %}
 

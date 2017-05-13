@@ -10,6 +10,8 @@ const Post = require('../models/post-model')
 const securityService = require('../services/security-service')
 
 module.exports = {
+  isPast,
+
   findAnnouncements,
   findPostById,
   findUserPosts,
@@ -18,13 +20,30 @@ module.exports = {
 }
 
 /**
- * 
+ * Indicates if a date is already past
+ * @param  {number}  time 
+ * @return {Boolean} 
  */
-async function findAnnouncements () {
-  let postCollection = await Post.where('special_post_type', 'announcement')
+function isPast (time) {
+  return time && (new Date().getTime() - time) > 0
+}
+
+/**
+ * Finds all announcement posts
+ * @param  {object} evenDrafts
+ * @return {array[Post]}
+ */
+async function findAnnouncements (options = {}) {
+  let postCollection = await Post.query(function (qb) {
+      qb = qb.where('special_post_type', 'announcement')
+      if (!options.withDrafts) {
+        qb = qb.where('published_at', '<=', new Date())
+      }
+      return qb
+    })
     .orderBy('published_at', 'DESC')
     .fetchAll({withRelated: ['author', 'userRoles']})
-  return postCollection.models
+  return postCollection
 }
 
 async function findPostById (postId) {
@@ -33,14 +52,14 @@ async function findPostById (postId) {
 }
 
 async function findUserPosts (userId) {
-  let postCollection = await Post.query((query) => {
+  let postCollection = await Post.query((qb) => {
       // TODO Better use of Bookshelf API
-      query.innerJoin('user_role', 'post.id', 'user_role.node_uuid')
+      qb.innerJoin('user_role', 'post.id', 'user_role.node_uuid')
         .where('user_role.user_uuid', userId)
     })
     .orderBy('published_at', 'DESC')
     .fetchAll({ withRelated: ['author', 'userRoles'] })
-  return postCollection.models
+  return postCollection
 }
 
 /**

@@ -24,6 +24,7 @@ const moment = require('moment')
 const randomKey = require('random-key')
 const log = require('./log')
 const config = require('../config')
+const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const settingService = require('../services/setting-service')
 const sessionService = require('../services/session-service')
@@ -63,18 +64,34 @@ async function configure (app) {
   // Templating: custom filters
   let markdownConverter = new showdown.Converter()
   nunjucks.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
+  nunjucks.env.addGlobal('constants', constants)
   nunjucks.env.addGlobal('devMode', app.locals.devMode)
   for (var functionName in templating) {
-     nunjucks.env.addGlobal(functionName, templating[functionName])
+    nunjucks.env.addGlobal(functionName, templating[functionName])
   }
   nunjucks.env.addFilter('markdown', function (str) {
     return markdownConverter.makeHtml(str)
   })
   nunjucks.env.addFilter('date', function (date) {
-    return moment(date).format('MMMM Do YYYY')
+    if (date) {
+      return moment(date).format(constants.DATE_FORMAT)
+    } else {
+      return ''
+    }
   })
   nunjucks.env.addFilter('dateTime', function (date) {
-    return moment(date).format('MMMM Do YYYY, h:mm:ss a')
+    if (date) {
+      return moment(date).format(constants.DATE_TIME_FORMAT)
+    } else {
+      return ''
+    }
+  })
+  nunjucks.env.addFilter('pickerDateTime', function (date) {
+    if (date) {
+      return moment(date).format(constants.PICKER_DATE_TIME_FORMAT)
+    } else {
+      return ''
+    }
   })
   nunjucks.env.addFilter('relativeTime', function (date) {
     return moment(date).fromNow()
@@ -115,8 +132,8 @@ async function configure (app) {
     req.parseForm = async function () {
       return await parseRequest(req, res)
     }
-    res.on('finish', cleanupFormFilesCallback(req, res));
-    res.on('close', cleanupFormFilesCallback(req, res));
+    res.on('finish', cleanupFormFilesCallback(req, res))
+    res.on('close', cleanupFormFilesCallback(req, res))
     next()
   })
 
@@ -132,14 +149,14 @@ async function configure (app) {
   })
 }
 
-function cleanupFormFilesCallback(req, res) {
+function cleanupFormFilesCallback (req, res) {
   return async function cleanupFormFiles () {
     let {files} = await req.parseForm()
     for (let key in files) {
       fileStorage.remove(files[key].path, false)
     }
-    res.removeAllListeners('finish');
-    res.removeAllListeners('close');
+    res.removeAllListeners('finish')
+    res.removeAllListeners('close')
   }
 }
 

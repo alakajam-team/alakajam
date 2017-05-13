@@ -8,9 +8,12 @@
 
 const log = require('../core/log')
 const securityService = require('../services/security-service')
+const postService = require('../services/post-service')
 
 module.exports = {
   buildUrl,
+
+  isPast: postService.isPast,
   
   canUserRead: securityService.canUserRead,
   canUserWrite: securityService.canUserWrite,

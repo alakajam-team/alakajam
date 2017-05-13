@@ -33,8 +33,11 @@ async function adminSecurity (req, res, next) {
  * Edit home announcement
  */
 async function adminHome (req, res) {
+  let allPostsCollection = await postService.findAnnouncements({ withDrafts: true })
+  let draftPosts = allPostsCollection.where({'published_at': null})
   res.render('admin/admin-home', {
-    posts: await postService.findAnnouncements()
+    draftPosts,
+    publishedPosts: allPostsCollection.difference(draftPosts)
   })
 }
 

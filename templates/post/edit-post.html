@@ -19,21 +19,40 @@
     </div>
 
     <div class="form-group">
+      <label for="body">Body</label>
       {{ macros.editor('body', post.get('body')) }}
     </div>
 
     <div class="row">
-      <div class="col-xs-6">
+      <div class="col-xs-4">
         {% if post.has('id') %}
         <a class="btn btn-default" onclick="return confirm('Delete the post? This cannot be reverted!')" href="{{ buildUrl(post, 'post', 'delete') }}">Delete</a> 
         {% endif %}
       </div>
-      <div class="col-xs-6 text-right">
-        <input type="submit" class="btn btn-primary" value="Save changes" />
+      <div class="col-xs-8 post__actions text-right">
+        {% if post.get('published_at') %}
+        <input type="submit" class="btn btn-primary" name="save" value="Save changes" />
+        <input type="submit" class="btn btn-default" name="unpublish" value="Unpublish" />
+        {% else %}
+        <input type="submit" class="btn btn-primary" name="publish" value="Save and publish now" />
+        <input type="submit" class="btn btn-default" name="save-draft" value="Save draft" />
+        {% endif %}
+        <input id="schedule-show" type="button" class="btn btn-default" name="save" value="Schedule..." />
         <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
       </div>
+      <div class="col-xs-8 post__schedule text-right form-inline">
+        <div class="form-group">
+          <label for="published-at">Publication date</label>
+          <input type="text" id="published-at" name="published-at" class="form-control" value="{{ post.get('published_at') | pickerDateTime }}" placeholder="Publication date" />
+        </div>
+        <div class="form-group">
+          <input type="submit" class="btn btn-primary" name="save-custom" value="Schedule" />
+          <input id="schedule-hide" type="button" class="btn btn-default" value="Back..." />
+        </div>
+      </div>
     </div>
-  </form>
+  </div>
+</form>
 
 </div>
 
@@ -42,6 +61,29 @@
 {% block scripts %} 
 {{ macros.editorScripts() }}
 <script>
+
+// Schedule actions
+$scheduleShowButton = $('#schedule-show')
+$scheduleHideButton = $('#schedule-hide')
+$scheduleBlock = $('.post__schedule')
+$actionsBlock = $('.post__actions')
+$scheduleShowButton.click(function () {
+  $scheduleBlock.show()
+  $actionsBlock.hide()
+});
+$scheduleHideButton.click(function () {
+  $scheduleBlock.hide()
+  $actionsBlock.show()
+})
+
+// Publication date picker
+$("#published-at").datetimepicker({
+  format: '{{ constants.PICKER_CLIENT_DATE_TIME_FORMAT }}',
+  autoClose: true,
+  todayBtn: true,
+  pickerPosition: "top-left"
+})
+$.fn.datetimepicker.dates['en'].today = 'Now'
 
 // Sync H1 with title input
 var $titleInput = $('#title')
