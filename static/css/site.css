@@ -148,11 +148,11 @@ img.preview {
         color: var(--main);
       }
 
-      & > a {
+      & > a, & > div {
         color: white;
       }
 
-      & > a, &.active > a {
+      & > a, &.active > a, & > div {
         font-size: 1.1rem;
         padding: 0 20px;
         line-height: var(--navbar-height);
@@ -188,6 +188,15 @@ img.preview {
         & a {
           display: inline-block;
           padding: 0 5px;
+        }
+      }
+
+      & a > img {
+        border: 0px solid white;
+
+        &:hover {
+          border: 4px solid white;
+          transition: 0.1s;
         }
       }
     }
