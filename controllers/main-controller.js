@@ -6,6 +6,7 @@
  * @module controllers/main-controller
  */
 
+const constants = require('../core/constants')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
@@ -54,7 +55,9 @@ async function index (req, res) {
     await res.locals.liveEvent.load(['entries', 'entries.userRoles'])
   }
   res.render('index', {
-    posts: await postService.findAnnouncements()
+    posts: await postService.findPostFeed({
+      specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT
+    })
   })
 }
 

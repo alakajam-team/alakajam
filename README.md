@@ -1,8 +1,8 @@
-# WeJam!
+## WeJam!
 
-> Current progress: You can browse events and entries, register and submit your own. Plenty of security holes, no admin UI.
+> Current progress: A very early alpha website, with posts half-implemented, no events administration, awful security, and no voting system.
 
-## Setup
+### Setup
 
 Requirement: NodeJS 7.6+
 

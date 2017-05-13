@@ -18,6 +18,9 @@ module.exports = {
   PERMISSION_MANAGE,
   ORDERED_PERMISSIONS,
 
+  // Posts
+  SPECIAL_POST_TYPE_ANNOUNCEMENT: 'announcement',
+
   // Dates
   DATE_FORMAT: 'MMMM Do YYYY',
   DATE_TIME_FORMAT: 'MMMM Do YYYY, h:mm',

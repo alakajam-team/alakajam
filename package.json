@@ -7,7 +7,7 @@
     "start": "node wejam.js",
     "debug": "node-debug wejam.js",
     "watch": "browser-refresh wejam.js",
-    "docs": "jsdoc -c jsdoc.json -d docs -r core models services controllers wejam.js",
+    "docs": "jsdoc -c jsdoc.json -d docs -R README.md -r core models services controllers wejam.js",
     "test": "mocha tests/"
   },
   "repository": {

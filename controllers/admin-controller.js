@@ -6,8 +6,9 @@
  * @module controllers/main-controller
  */
 
-const db = require('../core/db')
 const config = require('../config')
+const db = require('../core/db')
+const constants = require('../core/constants')
 const postService = require('../services/post-service')
 const Post = require('../models/post-model')
 
@@ -33,7 +34,10 @@ async function adminSecurity (req, res, next) {
  * Edit home announcement
  */
 async function adminHome (req, res) {
-  let allPostsCollection = await postService.findAnnouncements({ withDrafts: true })
+  let allPostsCollection = await postService.findPostFeed({
+    specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
+    withDrafts: true
+  })
   let draftPosts = allPostsCollection.where({'published_at': null})
   res.render('admin/admin-home', {
     draftPosts,

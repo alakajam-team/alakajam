@@ -33,7 +33,7 @@ async function findEventById (uuid) {
 
 /**
  * Fetches all Events and their Entries.
- * @returns {Array(Event)}
+ * @returns {array(Event)}
  */
 async function findAllEvents () {
   let eventModels = await new Event()
@@ -90,7 +90,7 @@ async function findEntryById (uuid) {
 /**
  * Retrieves all the entries an user contributed to
  * @param  {User} user
- * @return {array[Entry]|null}
+ * @return {array(Entry)|null}
  */
 async function findUserEntries (user) {
   let entryCollection = await Entry.query((query) => {
