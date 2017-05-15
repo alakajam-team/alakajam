@@ -25,8 +25,8 @@ module.exports = {
     router.use('*', mainController.anyPageMiddleware)
     router.use('/admin*', adminController.adminMiddleware)
     router.use('/entry/:id*', entryController.entryMiddleware)
-    router.use('/event/:eventName*', entryController.entryMiddleware)
-    router.use('/event/:eventName*', eventController.eventMiddleware)
+    // Why `{0,}` instead of `*`? See: https://github.com/expressjs/express/issues/2495
+    router.use('/:eventName([^/]{0,}-[^/]{0,})', eventController.eventMiddleware)
     router.use('/post/:id', postController.postMiddleware)
 
     router.get('/', mainController.index)
@@ -45,14 +45,14 @@ module.exports = {
     router.get('/admin', adminController.adminHome)
     router.all('/admin/dev', adminController.adminDev)
 
-    router.get('/event/:eventName/create-entry', entryController.createEntry)
-    router.post('/event/:eventName/create-entry', entryController.saveEntry)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.createEntry)
+    router.post('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.saveEntry)
     router.get('/entry/:id', entryController.viewEntry)
     router.post('/entry/:id', entryController.saveEntry)
     router.get('/entry/:id/edit', entryController.editEntry)
     router.get('/entry/:id/delete', entryController.deleteEntry)
 
-    router.get('/event/:eventName', eventController.viewEvent)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewEvent)
 
     router.get('/post/create', postController.editPost)
     router.post('/post/create', postController.savePost)

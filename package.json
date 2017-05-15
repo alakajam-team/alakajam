@@ -46,6 +46,10 @@
     "rimraf": "^2.6.1"
   },
   "standard": {
-    "globals": ["describe", "it", "before"]
+    "globals": [
+      "describe",
+      "it",
+      "before"
+    ]
   }
 }

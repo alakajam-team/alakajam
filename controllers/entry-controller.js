@@ -34,10 +34,6 @@ async function entryMiddleware (req, res, next) {
       next()
     }
   }
-  if (req.params.eventName) {
-    res.locals.event = await eventService.findEventByName(req.params.eventName)
-    next()
-  }
 }
 
 /**
