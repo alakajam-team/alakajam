@@ -19,7 +19,7 @@ module.exports = {
 }
 
 async function anyPageMiddleware (req, res, next) {
-  sessionService.restoreSessionifNeeded(req, res)
+  sessionService.restoreSessionIfNeeded(req, res)
 
   res.locals.path = req.originalUrl
 
