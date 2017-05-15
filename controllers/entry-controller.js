@@ -24,16 +24,19 @@ module.exports = {
  * Fetches the current entry & event
  */
 async function entryMiddleware (req, res, next) {
-  if (req.params.id) {
-    let entry = await eventService.findEntryById(req.params.id)
-    if (entry === null) {
-      res.errorPage(404, 'Entry not found')
-    } else {
-      res.locals.entry = entry
-      res.locals.event = entry.related('event')
-      next()
-    }
+  let entry = await eventService.findEntryById(req.params.entryId)
+  if (!entry) {
+    res.errorPage(404, 'Entry not found')
+    return
   }
+  res.locals.entry = entry
+
+  if (req.params.eventName !== entry.get('event_name')) {
+    res.redirect(templating.buildUrl(entry, 'entry', req.params.rest))
+    return
+  }
+
+  next()
 }
 
 /**
@@ -93,7 +96,7 @@ async function saveEntry (req, res) {
     await entry.save()
     await entry.related('userRoles').fetch()
 
-    viewEntry(req, res)
+    res.redirect(templating.buildUrl(entry, 'entry'))
   }
 }
 
