@@ -34,8 +34,8 @@ async function entryMiddleware (req, res, next) {
       next()
     }
   }
-  if (req.params.eventId) {
-    res.locals.event = await eventService.findEventById(req.params.eventId)
+  if (req.params.eventName) {
+    res.locals.event = await eventService.findEventByName(req.params.eventName)
     next()
   }
 }
@@ -52,7 +52,8 @@ function viewEntry (req, res) {
  */
 async function createEntry (req, res) {
   res.render('entry/edit-entry', {entry: new Entry({
-    event_id: res.locals.event.get('id')
+    event_id: res.locals.event.get('id'),
+    event_name: res.locals.event.get('name')
   })})
 }
 

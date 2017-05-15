@@ -17,14 +17,12 @@ module.exports = {
  * Fetches the event & optionally the user's entry
  */
 async function eventMiddleware (req, res, next) {
-  let eventTask = await eventService.findEventById(req.params.id)
-    .then(event => { res.locals.event = event })
-  let entryTask = true
-  if (res.locals.user) {
-    entryTask = eventService.findUserEntryForEvent(res.locals.user, req.params.id)
-      .then(entry => { res.locals.userEntry = entry })
+  let event = await eventService.findEventByName(req.params.eventName)
+  res.locals.event = event
+  if (event && res.locals.user) {
+    let userEntry = await eventService.findUserEntryForEvent(res.locals.user, event.get('id'))
+    res.locals.userEntry = userEntry
   }
-  await Promise.all([eventTask, entryTask])
   next()
 }
 

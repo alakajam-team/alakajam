@@ -57,7 +57,7 @@ function createModel () {
       await db.knex.schema.createTableIfNotExists('entry', function (table) {
         table.increments('id').primary()
         table.integer('event_id').references('event.id')
-        table.integer('event_name')
+        table.string('event_name')
         table.string('links') // JSON Array : [{url, title}]
         table.string('pictures') // JSON Array : [path]
         table.string('category')

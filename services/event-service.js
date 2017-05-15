@@ -12,6 +12,7 @@ const securityService = require('../services/security-service')
 
 module.exports = {
   findEventById,
+  findEventByName,
   findAllEvents,
   findEventByStatus,
 
@@ -28,6 +29,16 @@ module.exports = {
  */
 async function findEventById (id) {
   return Event.where('id', id)
+    .fetch({ withRelated: ['entries', 'entries.userRoles'] })
+}
+
+/**
+ * Fetches an Event by its name, with all its Entries.
+ * @param id {id} Event name
+ * @returns {Event}
+ */
+async function findEventByName (name) {
+  return Event.where('name', name)
     .fetch({ withRelated: ['entries', 'entries.userRoles'] })
 }
 
