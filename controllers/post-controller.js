@@ -14,18 +14,11 @@ const templating = require('./templating')
 const Post = require('../models/post-model')
 
 module.exports = {
-
-  initRoutes: function (router) {
-    router.use('/post/:id', postMiddleware)
-
-    router.get('/post/create', editPost)
-    router.post('/post/create', savePost)
-    router.get('/post/:id/edit', editPost)
-    router.post('/post/:id/edit', savePost)
-    router.get('/post/:id', viewPost)
-    router.get('/post/:id/delete', deletePost)
-  }
-
+  postMiddleware,
+  editPost,
+  savePost,
+  viewPost,
+  deletePost
 }
 
 async function postMiddleware (req, res, next) {

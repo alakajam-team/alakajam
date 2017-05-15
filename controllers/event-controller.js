@@ -9,13 +9,8 @@
 const eventService = require('../services/event-service')
 
 module.exports = {
-
-  initRoutes: function (router) {
-    router.use('/event/:id*', eventMiddleware)
-
-    router.get('/event/:id', viewEvent)
-  }
-
+  eventMiddleware,
+  viewEvent
 }
 
 /**

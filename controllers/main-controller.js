@@ -12,15 +12,10 @@ const sessionService = require('../services/session-service')
 const postService = require('../services/post-service')
 
 module.exports = {
-
-  initRoutes: function (router) {
-    router.use('*', anyPageMiddleware)
-
-    router.get('/', index)
-    router.get('/events', events)
-    router.get('/chat', chat)
-  }
-
+  anyPageMiddleware,
+  index,
+  events,
+  chat
 }
 
 async function anyPageMiddleware (req, res, next) {

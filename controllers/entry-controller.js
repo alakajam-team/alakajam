@@ -12,19 +12,12 @@ const fileStorage = require('../core/file-storage')
 const templating = require('./templating')
 
 module.exports = {
-
-  initRoutes: function (router) {
-    router.use('/entry/:id*', entryMiddleware)
-    router.use('/event/:eventId*', entryMiddleware)
-
-    router.get('/event/:eventId/create-entry', createEntry)
-    router.post('/event/:eventId/create-entry', saveEntry)
-    router.get('/entry/:id', viewEntry)
-    router.post('/entry/:id', saveEntry)
-    router.get('/entry/:id/edit', editEntry)
-    router.get('/entry/:id/delete', deleteEntry)
-  }
-
+  entryMiddleware,
+  createEntry,
+  saveEntry,
+  viewEntry,
+  editEntry,
+  deleteEntry
 }
 
 /**

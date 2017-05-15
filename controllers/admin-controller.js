@@ -11,16 +11,12 @@ const config = require('../config')
 const postService = require('../services/post-service')
 
 module.exports = {
-
-  initRoutes: function (router) {
-    router.use('/admin*', adminSecurity)
-    router.get('/admin', adminHome)
-    router.all('/admin/dev', adminDev)
-  }
-
+  adminMiddleware,
+  adminHome,
+  adminDev
 }
 
-async function adminSecurity (req, res, next) {
+async function adminMiddleware (req, res, next) {
   if ((!res.locals.user || !res.locals.user.get('is_admin')) && !config.DEBUG_ADMIN) {
     res.render('403')
   } else {
