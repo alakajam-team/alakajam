@@ -28,7 +28,7 @@ function buildUrl (model, type, page = null) {
   } else if (type === 'entry') {
     // Entry model
     if (model && model.get('id')) {
-      return '/' + model.get('event_name') + '/' + model.get('id') + pagePath
+      return '/' + model.get('event_name') + '/' + model.get('id') + '/' + model.get('name') + pagePath
     } else {
       return '/' + model.get('event_name') + '/create-entry'
     }

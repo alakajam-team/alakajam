@@ -6,7 +6,9 @@
  * @module models/entry-model
  */
 
-let db = require('../core/db')
+const db = require('../core/db')
+
+const slug = require('slug')
 
 module.exports = createModel()
 
@@ -35,6 +37,9 @@ function createModel () {
 
     initialize: function initialize (attrs) {
       modelPrototype.initialize.call(this)
+      this.on('saving', function (model, attrs, options) {
+        model.set('name', slug(model.get('title') || ''))
+      })
       attrs = attrs || {}
       attrs.links = attrs.links || []
       attrs.pictures = attrs.pictures || []

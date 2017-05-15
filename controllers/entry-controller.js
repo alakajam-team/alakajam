@@ -31,7 +31,8 @@ async function entryMiddleware (req, res, next) {
   }
   res.locals.entry = entry
 
-  if (req.params.eventName !== entry.get('event_name')) {
+  if (req.params.eventName !== entry.get('event_name') ||
+      req.params.entryName !== entry.get('name')) {
     res.redirect(templating.buildUrl(entry, 'entry', req.params.rest))
     return
   }

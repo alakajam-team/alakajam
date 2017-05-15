@@ -22,10 +22,12 @@ module.exports = {
     const postController = require('./post-controller.js')
     const userController = require('./user-controller.js')
 
+    // Run all middleware before any actual route handlers
+
     router.use('*', mainController.anyPageMiddleware)
     router.use('/admin*', adminController.adminMiddleware)
     // Why `{0,}` instead of `*`? See: https://github.com/expressjs/express/issues/2495
-    router.use('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:rest*?', entryController.entryMiddleware)
+    router.use('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?/:rest*?', entryController.entryMiddleware)
     router.use('/:eventName([^/]{0,}-[^/]{0,})', eventController.eventMiddleware)
     router.use('/post/:id', postController.postMiddleware)
 
@@ -47,10 +49,10 @@ module.exports = {
 
     router.get('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.createEntry)
     router.post('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.saveEntry)
-    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)', entryController.viewEntry)
-    router.post('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)', entryController.saveEntry)
-    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/edit', entryController.editEntry)
-    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/delete', entryController.deleteEntry)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?', entryController.viewEntry)
+    router.post('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?', entryController.saveEntry)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit', entryController.editEntry)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete', entryController.deleteEntry)
 
     router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewEvent)
 
