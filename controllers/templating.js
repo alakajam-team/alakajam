@@ -25,26 +25,50 @@ function buildUrl (model, type, page = null) {
 
   if (type === 'event') {
     // Event model
-    return '/event/' + model.get('uuid') + pagePath
+    return '/event/' + model.get('id') + pagePath
 
   } else if (type === 'entry') {
     // Entry model
-    if (model && model.get('uuid')) {
-      return '/entry/' + model.get('uuid') + pagePath
+    if (model && model.get('id')) {
+      return '/entry/' + model.get('id') + pagePath
     } else {
-      return '/event/' + model.get('event_uuid') + '/create-entry'
+      return '/event/' + model.get('event_id') + '/create-entry'
     }
 
   } else if (type === 'user') {
     // User model
-    let userUuid = model.get('name') || model.get('user_name')
-    return '/user/' + userUuid + pagePath
+    let userId = model.get('name') || model.get('user_name')
+    return '/user/' + userId + pagePath
 
   } else if (type === 'post') {
     // Post model
     let postId = model.get('id')
     return '/post/' + postId + pagePath
+  }
+}
 
+function hasPermission (user, model, minimalRole) {
+  if (user) {
+    let acceptRoles = getRolesEqualOrAbove(minimalRole)
+    let allUserRoles = model.related('userRoles')
+    if (acceptRoles && allUserRoles) {
+      let userRoles = allUserRoles.where({
+        user_id: user.get('id')
+      })
+      for (let userRole of userRoles) {
+        if (acceptRoles.indexOf(userRole.get('role'))) {
+          return true
+        }
+      }
+    }
+  }
+  return false
+}
+
+function getRolesEqualOrAbove (role) {
+  let roleIndex = ROLE_ORDER.indexOf(role)
+  if (roleIndex !== -1) {
+    return ROLE_ORDER.slice(roleIndex)
   } else {
     throw new Error('Unknown model type ' + type)
   }

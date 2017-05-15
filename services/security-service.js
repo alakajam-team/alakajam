@@ -74,7 +74,7 @@ function canUser(user, model, permission, options = {}) {
   let allUserRoles = model.related('userRoles')
   if (acceptPermissions && allUserRoles) {
     let userRoles = allUserRoles.where({
-      user_uuid: user.get('uuid')
+      user_id: user.get('id')
     })
     for (let userRole of userRoles) {
       if (acceptPermissions.indexOf(userRole.get('permission'))) {

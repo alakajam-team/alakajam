@@ -15,7 +15,7 @@
 
 /**
  * Fetches a Setting and returns its value.
- * @param key {uuid} Key
+ * @param key {id} Key
  * @param default {string|function} An optional default value.
  *   If a function is passed, it will be evaluated first.
  * @returns {void}
@@ -33,7 +33,7 @@
 
 /**
  * Sets a Setting value.
- * @param key {uuid} Key
+ * @param key {id} Key
  * @param value {string} The new value
  * @returns {void}
  */

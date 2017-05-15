@@ -16,17 +16,18 @@ function createModel () {
     hasTimestamps: true,
 
     entry: function () {
-      return this.belongsTo('Entry', 'entry_id', 'uuid')
+      return this.belongsTo('Entry', 'entry_id', 'id')
     },
     event: function () {
-      return this.belongsTo('Event', 'event_id', 'uuid')
+      return this.belongsTo('Event', 'event_id', 'id')
     },
     author: function () {
-      return this.belongsTo('User', 'author_user_id', 'uuid')
+      return this.belongsTo('User', 'author_user_id', 'id')
     },
     userRoles: function () {
-      return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
-    }
+      // TODO isn't it sufficient to specify either 'node' or ['node_type', 'node_id']?
+      return this.morphMany('UserRole', 'node', ['node_type', 'node_id'])
+    },
   })
 
   model.up = async function up (applyVersion) {

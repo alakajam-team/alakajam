@@ -29,11 +29,11 @@
 
 /**
  * Fetches a User
- * @param uuid {uuid} UUID
+ * @param id {id} ID
  * @returns {User}
  */
- async function findById (uuid) {
-   return User.where('uuid', uuid).fetch()
+ async function findById (id) {
+   return User.where('id', id).fetch()
  }
 
 /**
@@ -137,7 +137,7 @@ function validatePassword(password) {
  */
  async function refreshUserReferences(user) {
   // TODO Transaction
-  let userRolesCollection = await UserRole.where('user_uuid', user.get('uuid')).fetchAll()
+  let userRolesCollection = await UserRole.where('user_id', user.get('id')).fetchAll()
   console.log(userRolesCollection)
   for (let userRole of userRolesCollection.models) {
     console.log(userRole.get('user_title'))

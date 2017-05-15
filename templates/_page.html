@@ -27,7 +27,7 @@
       </div>
       
       {# ==== Main header (desktop) ==== #}
-      {% if (event and liveEvent and event.get('uuid') == liveEvent.get('uuid')) %}
+      {% if (event and liveEvent and event.get('id') == liveEvent.get('id')) %}
       {% set isLiveEvent = true %}
       {% endif %}
       <div class="collapse navbar-collapse" id="navbar-collapse">
@@ -74,7 +74,7 @@
     <div class="event-header">
       <div class="container">
         <div class="event-header__info">
-          <a href="/event/{{ event.get('uuid') }}" class="event-header__name">
+          <a href="/event/{{ event.get('id') }}" class="event-header__name">
             {{ event.get('title') }}
           </a>
           <div class="event-header__dates hidden-xs">
@@ -83,7 +83,7 @@
         </div>
         <div class="event-header__links">
           <a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-grain"></span> Theme</a><!--
-          --><a href="/event/{{ event.get('uuid') }}" class="event-header__link active"><span class="glyphicon glyphicon-tower"></span> Games</a><!--
+          --><a href="/event/{{ event.get('id') }}" class="event-header__link active"><span class="glyphicon glyphicon-tower"></span> Games</a><!--
         --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
       </div>
     </div>

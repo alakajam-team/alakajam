@@ -54,8 +54,8 @@ async function findPostById (postId) {
 async function findUserPosts (userId) {
   let postCollection = await Post.query((qb) => {
       // TODO Better use of Bookshelf API
-      qb.innerJoin('user_role', 'post.id', 'user_role.node_uuid')
-        .where('user_role.user_uuid', userId)
+      qb.innerJoin('user_role', 'post.id', 'user_role.node_id')
+        .where('user_role.user_id', userId)
         .where('published_at', '<=', new Date())
     })
     .orderBy('published_at', 'DESC')
@@ -71,10 +71,10 @@ async function findUserPosts (userId) {
 async function createPost (user) {
   // TODO Better use of Bookshelf API
   let post = new Post()
-  post.set('author_user_id', user.get('uuid'))
-  await post.save() // otherwise the user role won't have a node_uuid
+  post.set('author_user_id', user.get('id'))
+  await post.save() // otherwise the user role won't have a node_id
   await post.userRoles().create({
-    user_uuid: user.get('uuid'),
+    user_id: user.get('id'),
     user_name: user.get('name'),
     user_title: user.get('title'),
     permission: securityService.PERMISSION_MANAGE

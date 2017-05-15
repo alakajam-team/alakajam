@@ -129,7 +129,7 @@ async function settingsGeneral (req, res) {
           user.unset('avatar')
         }
         if (newAvatar) { 
-          let avatarPath = '/user/' + user.get('uuid')
+          let avatarPath = '/user/' + user.get('id')
           let finalPath = await fileStorage.move(files.avatar.path, avatarPath)
           user.set('avatar', finalPath)
         }
@@ -194,7 +194,7 @@ async function viewUserProfile (req, res) {
     res.render('user/profile', {
       profileUser: user,
       entries: await eventService.findUserEntries(user),
-      posts: await postService.findUserPosts(user.get('uuid'))
+      posts: await postService.findUserPosts(user.get('id'))
     })
   } else {
     res.errorPage(400, 'No user exists with name ' + req.params.name)

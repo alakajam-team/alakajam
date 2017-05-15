@@ -17,10 +17,10 @@
      hasTimestamps: true,
 
      user: function () {
-      return this.belongsTo('User', 'user_uuid')
+      return this.belongsTo('User', 'user_id')
      },
      node: function () {
-      return this.morphTo('node', ['node_type', 'node_uuid'], Entry, Post)
+      return this.morphTo('node', ['node_type', 'node_id'], Entry, Post)
      }
    })
 
@@ -28,10 +28,10 @@
      if (applyVersion === 1) {
        await db.knex.schema.createTableIfNotExists('user_role', function (table) {
          table.increments('id').primary()
-         table.uuid('user_uuid').references('user.uuid')
+         table.integer('user_id').references('user.id')
          table.string('user_name')
          table.string('user_title')
-         table.uuid('node_uuid')
+         table.integer('node_id')
          table.string('node_type')
          table.string('permission')
          table.timestamps()
