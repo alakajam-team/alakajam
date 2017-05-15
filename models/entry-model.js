@@ -28,7 +28,7 @@ function createModel () {
     },
 
     // Cascading
-    
+
     dependents: ['userRoles'],
 
     // Listeners

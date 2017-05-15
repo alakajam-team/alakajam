@@ -33,7 +33,7 @@ function createModel () {
     tableName: 'event',
     idAttribute: 'id',
     hasTimestamps: true,
-    
+
     entries: function () {
       return this.hasMany('Entry', 'event_id')
     }

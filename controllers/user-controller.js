@@ -127,7 +127,7 @@ async function settingsGeneral (req, res) {
         await fileStorage.remove(user.get('avatar'), false)
         user.unset('avatar')
       }
-      if (newAvatar) { 
+      if (newAvatar) {
         let avatarPath = '/user/' + user.get('id')
         let finalPath = await fileStorage.move(files.avatar.path, avatarPath)
         user.set('avatar', finalPath)
@@ -147,7 +147,7 @@ async function settingsGeneral (req, res) {
  */
 async function settingsPassword (req, res) {
   let errorMessage = '', infoMessage = ''
-  
+
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
 

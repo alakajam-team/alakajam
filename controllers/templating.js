@@ -14,7 +14,7 @@ module.exports = {
   buildUrl,
 
   isPast: postService.isPast,
-  
+
   canUserRead: securityService.canUserRead,
   canUserWrite: securityService.canUserWrite,
   canUserManage: securityService.canUserManage
@@ -26,7 +26,6 @@ function buildUrl (model, type, page = null) {
   if (type === 'event') {
     // Event model
     return '/event/' + model.get('id') + pagePath
-
   } else if (type === 'entry') {
     // Entry model
     if (model && model.get('id')) {
@@ -34,12 +33,10 @@ function buildUrl (model, type, page = null) {
     } else {
       return '/event/' + model.get('event_id') + '/create-entry'
     }
-
   } else if (type === 'user') {
     // User model
     let userId = model.get('name') || model.get('user_name')
     return '/user/' + userId + pagePath
-
   } else if (type === 'post') {
     // Post model
     let postId = model.get('id')

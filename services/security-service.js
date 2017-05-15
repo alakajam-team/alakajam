@@ -6,7 +6,7 @@
  * @module services/security-service
  */
 
-const PERMISSION_READ ='read'
+const PERMISSION_READ = 'read'
 const PERMISSION_WRITE = 'write'
 const PERMISSION_MANAGE = 'manage'
 const ORDERED_PERMISSIONS = [PERMISSION_READ, PERMISSION_WRITE, PERMISSION_MANAGE]
@@ -32,7 +32,7 @@ module.exports = {
  * @param  {object options (optional) allowMods allowAdmins
  * @return {boolean}
  */
-function canUserRead(user, model, options = {}) {
+function canUserRead (user, model, options = {}) {
   return canUser(user, model, PERMISSION_READ, options)
 }
 
@@ -43,7 +43,7 @@ function canUserRead(user, model, options = {}) {
  * @param  {object options (optional) allowMods allowAdmins
  * @return {boolean}
  */
-function canUserWrite(user, model, options = {}) {
+function canUserWrite (user, model, options = {}) {
   return canUser(user, model, PERMISSION_WRITE, options)
 }
 
@@ -54,11 +54,11 @@ function canUserWrite(user, model, options = {}) {
  * @param  {object options (optional) allowMods allowAdmins
  * @return {boolean}
  */
-function canUserManage(user, model, options = {}) {
+function canUserManage (user, model, options = {}) {
   return canUser(user, model, PERMISSION_MANAGE, options)
 }
 
-function canUser(user, model, permission, options = {}) {
+function canUser (user, model, permission, options = {}) {
   if (!user) {
     return false
   }

@@ -59,15 +59,15 @@ async function findEventByStatus (status) {
 
 /**
  * Creates and persists a new entry, initializing the owner UserRole.
- * @param  {User} user 
- * @param  {Event} event 
+ * @param  {User} user
+ * @param  {Event} event
  * @return {Entry}
  */
 async function createEntry (user, event) {
   // TODO Better use of Bookshelf API
   let entry = new Entry()
   await entry.save() // otherwise the user role won't have a node_id
-  entry.set('event_id', event.get('id')) 
+  entry.set('event_id', event.get('id'))
   entry.set('event_name', event.get('name'))
   await entry.userRoles().create({
     user_id: user.get('id'),

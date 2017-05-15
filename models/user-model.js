@@ -22,7 +22,7 @@ function createModel () {
   })
 
   model.up = async function up (applyVersion) {
-     if (applyVersion === 1) {
+    if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('user', function (table) {
         table.increments('id').primary()
         table.string('name')

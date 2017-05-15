@@ -8,7 +8,7 @@
 
 module.exports = {
 
-  version: 1, // NB. No need to increment DB versioning until we're going live 
+  version: 1, // NB. No need to increment DB versioning until we're going live
 
   /*
    * List models in table creation order

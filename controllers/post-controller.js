@@ -43,8 +43,8 @@ async function postMiddleware (req, res, next) {
 
 async function viewPost (req, res) {
   // Check permissions
-  if (postService.isPast(res.locals.post.get('published_at'))
-      || securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true })) {
+  if (postService.isPast(res.locals.post.get('published_at')) ||
+      securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true })) {
     res.render('post/view-post')
   } else {
     res.errorPage(404, 'Post not found')
@@ -62,9 +62,8 @@ async function savePost (req, res) {
   let post = res.locals.post
 
   // Check permissions
-  if (post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })
-      || !post && res.locals.user) {
-
+  if (post && securityService.canUserWrite(res.locals.user, post, { allowMods: true }) ||
+      !post && res.locals.user) {
     // Create new post if needed
     let creation = false
     if (!post) {
@@ -76,7 +75,7 @@ async function savePost (req, res) {
         post.set('special_post_type', specialPostType)
       }
     }
-    
+
     // Fill post from form info
     let {fields} = await req.parseForm()
     post.set('title', fields.title)

@@ -42,7 +42,7 @@ function overrideConfig () {
     DB_PASSWORD: '',
     DB_NAME: '',
     DB_SQLITE_FILENAME: 'tests/data/db.sqlite',
-    
+
     // Debug options
     DEBUG_SQL: false,
     DEBUG_REFRESH_BROWSER: false,

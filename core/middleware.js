@@ -195,6 +195,6 @@ function errorPage (req, res, code, err) {
   res.status(code)
   res.render(errorTemplate, {
     message,
-    stack,
+    stack
   })
 }

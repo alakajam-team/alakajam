@@ -27,7 +27,7 @@ function createModel () {
     userRoles: function () {
       // TODO isn't it sufficient to specify either 'node' or ['node_type', 'node_id']?
       return this.morphMany('UserRole', 'node', ['node_type', 'node_id'])
-    },
+    }
   })
 
   model.up = async function up (applyVersion) {
