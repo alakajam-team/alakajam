@@ -125,7 +125,6 @@ function createBookshelfInstance (knexInstance) {
     let userService = require('../services/user-service')
     let User = require('../models/user-model')
     let Event = require('../models/event-model')
-    let Entry = require('../models/entry-model')
 
     let adminUser = new User({
       name: 'administrator',

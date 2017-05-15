@@ -20,7 +20,7 @@ function createModel () {
       return this.belongsTo('User', 'user_id')
     },
     node: function () {
-      return this.morphTo('node', ['node_type', 'node_id'], Entry, Post)
+      return this.morphTo('node', ['node_type', 'node_id'], 'Entry', 'Post')
     }
   })
 

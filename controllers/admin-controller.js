@@ -9,7 +9,6 @@
 const db = require('../core/db')
 const config = require('../config')
 const postService = require('../services/post-service')
-const Post = require('../models/post-model')
 
 module.exports = {
 
@@ -46,7 +45,8 @@ async function adminHome (req, res) {
  * TODO Make it only available in dev environments
  */
 async function adminDev (req, res) {
-  let infoMessage = '', errorMessage = ''
+  let infoMessage = ''
+  let errorMessage = ''
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
     if (fields['db-reset']) {

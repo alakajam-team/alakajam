@@ -6,6 +6,8 @@
  * @module services/security-service
  */
 
+const log = require('../core/log')
+
 const PERMISSION_READ = 'read'
 const PERMISSION_WRITE = 'write'
 const PERMISSION_MANAGE = 'manage'
@@ -66,7 +68,7 @@ function canUser (user, model, permission, options = {}) {
     throw new Error('Model does not have user roles')
   }
 
-  if (options.allowMods && isMod(user) || options.allowAdmins && isAdmin(user)) {
+  if ((options.allowMods && isMod(user)) || (options.allowAdmins && isAdmin(user))) {
     return true
   }
 

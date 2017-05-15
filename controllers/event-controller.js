@@ -23,11 +23,11 @@ module.exports = {
  */
 async function eventMiddleware (req, res, next) {
   let eventTask = await eventService.findEventById(req.params.id)
-    .then(event => res.locals.event = event)
+    .then(event => { res.locals.event = event })
   let entryTask = true
   if (res.locals.user) {
     entryTask = eventService.findUserEntryForEvent(res.locals.user, req.params.id)
-      .then(entry => res.locals.userEntry = entry)
+      .then(entry => { res.locals.userEntry = entry })
   }
   await Promise.all([eventTask, entryTask])
   next()

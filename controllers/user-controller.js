@@ -103,7 +103,8 @@ async function doLogout (req, res) {
  * Manage general user info
  */
 async function settingsGeneral (req, res) {
-  let errorMessage = '', infoMessage = ''
+  let errorMessage = ''
+  let infoMessage = ''
 
   if (req.method === 'POST') {
     let {fields, files} = await req.parseForm()
@@ -146,10 +147,12 @@ async function settingsGeneral (req, res) {
  * Manage user profile contents
  */
 async function settingsPassword (req, res) {
-  let errorMessage = '', infoMessage = ''
+  let errorMessage = ''
+  let infoMessage = ''
 
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
+    let user = res.locals.user
 
     // Change password form
     if (!fields['password']) {

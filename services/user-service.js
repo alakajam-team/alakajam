@@ -8,8 +8,6 @@
 
 const crypto = require('crypto')
 const randomKey = require('random-key')
-const db = require('../core/db')
-const settingService = require('../services/setting-service')
 const User = require('../models/user-model')
 const UserRole = require('../models/user-role-model')
 
@@ -22,7 +20,6 @@ module.exports = {
   refreshUserReferences
 }
 
-const SETTING_PASSWORD_PEPPER = 'password_pepper'
 const USERNAME_VALIDATION_REGEX = /^[a-zA-Z][-\w]+$/g
 const USERNAME_MIN_LENGTH = 3
 const PASSWORD_MIN_LENGTH = 6

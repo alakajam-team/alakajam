@@ -47,7 +47,7 @@ async function findAnnouncements (options = {}) {
 }
 
 async function findPostById (postId) {
-  return await Post.where('id', postId)
+  return Post.where('id', postId)
     .fetch({withRelated: ['author', 'userRoles']})
 }
 

@@ -130,7 +130,7 @@ async function configure (app) {
   app.use(function (req, res, next) {
     // usage: let {fields, files} = await req.parseForm()
     req.parseForm = async function () {
-      return await parseRequest(req, res)
+      return parseRequest(req, res)
     }
     res.on('finish', cleanupFormFilesCallback(req, res))
     res.on('close', cleanupFormFilesCallback(req, res))
@@ -179,7 +179,7 @@ function errorPage (req, res, code, err) {
   // Check whether 'development' is on, rather than whether 'production' is
   // off, so we don't leak stack traces in case production is ever
   // misconfigured to leave this undefined.
-  const stack = process.env.NODE_ENV == 'development' ? err && err.stack : undefined
+  const stack = process.env.NODE_ENV === 'development' ? err && err.stack : undefined
 
   // Internal error logging
   if (code !== 404) {

@@ -62,13 +62,11 @@ async function savePost (req, res) {
   let post = res.locals.post
 
   // Check permissions
-  if (post && securityService.canUserWrite(res.locals.user, post, { allowMods: true }) ||
-      !post && res.locals.user) {
+  if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) ||
+      !(post && res.locals.user)) {
     // Create new post if needed
-    let creation = false
     if (!post) {
       post = await postService.createPost(res.locals.user)
-      creation = true
       let specialPostType = req.query['special_post_type']
       if (specialPostType) {
         validateSpecialPostType(specialPostType, res.locals.user)

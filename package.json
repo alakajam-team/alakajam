@@ -44,5 +44,8 @@
     "jsdoc-strip-async-await": "^0.1.0",
     "mocha": "^3.3.0",
     "rimraf": "^2.6.1"
+  },
+  "standard": {
+    "globals": ["describe", "it", "before"]
   }
 }
