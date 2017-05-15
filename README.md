@@ -22,4 +22,6 @@ Prerequisite: `npm install -g standard browser-refresh node-inspector jsdoc moch
 * `standard`: Validates the code style.
 * `mocha tests/`: Runs unit tests.
 
+Please run `githooks/install.sh` to install useful Git hooks in your clone.
+
 See also [the wiki](https://github.com/mkalam-alami/we-jam/wiki) for additional developer documentation.

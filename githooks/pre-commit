@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Ensure all javascript files staged for commit pass standard code style
+# From: https://standardjs.com/index.html#is-there-a-git-pre-commit-hook
+echo "Checking JavaScript Standard Style..."
+git diff --name-only --cached --relative | grep '\.jsx\?$' | xargs -r standard
+if [[ $? -ne 0 ]]; then
+  echo "Style errors were detected. Try running `standard --fix` to fix them automatically."
+  exit 1
+fi
