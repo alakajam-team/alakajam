@@ -20,6 +20,7 @@ Prerequisite: `npm install -g standard browser-refresh node-inspector jsdoc moch
 * `browser-refresh wejam.js`: Launches the app, and makes the server and browser refresh when needed upon file changes.
 * `node-debug we-jam.js`: Launches the app in debug mode.
 * `standard`: Validates the code style.
+* `githooks/install.sh`: Automates code style validation before each commit.
 * `mocha tests/`: Runs unit tests.
 
 Please run `githooks/install.sh` to install useful Git hooks in your clone.
