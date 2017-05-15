@@ -13,12 +13,12 @@ const postService = require('../services/post-service')
 
 module.exports = {
 
-  initRoutes: function (app) {
-    app.use('*', anyPageMiddleware)
+  initRoutes: function (router) {
+    router.use('*', anyPageMiddleware)
 
-    app.get('/', index)
-    app.get('/events', events)
-    app.get('/chat', chat)
+    router.get('/', index)
+    router.get('/events', events)
+    router.get('/chat', chat)
   }
 
 }

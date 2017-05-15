@@ -15,15 +15,15 @@ const Post = require('../models/post-model')
 
 module.exports = {
 
-  initRoutes: function (app) {
-    app.use('/post/:id', postMiddleware)
+  initRoutes: function (router) {
+    router.use('/post/:id', postMiddleware)
 
-    app.get('/post/create', editPost)
-    app.post('/post/create', savePost)
-    app.get('/post/:id/edit', editPost)
-    app.post('/post/:id/edit', savePost)
-    app.get('/post/:id', viewPost)
-    app.get('/post/:id/delete', deletePost)
+    router.get('/post/create', editPost)
+    router.post('/post/create', savePost)
+    router.get('/post/:id/edit', editPost)
+    router.post('/post/:id/edit', savePost)
+    router.get('/post/:id', viewPost)
+    router.get('/post/:id/delete', deletePost)
   }
 
 }

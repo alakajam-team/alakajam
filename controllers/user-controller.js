@@ -14,17 +14,17 @@ const postService = require('../services/post-service')
 
 module.exports = {
 
-  initRoutes: function (app) {
-    app.get('/register', registerForm)
-    app.post('/register', doRegister)
-    app.get('/login', loginForm)
-    app.post('/login', doLogin)
-    app.get('/logout', doLogout)
+  initRoutes: function (router) {
+    router.get('/register', registerForm)
+    router.post('/register', doRegister)
+    router.get('/login', loginForm)
+    router.post('/login', doLogin)
+    router.get('/logout', doLogout)
 
-    app.all('/settings', settingsGeneral)
-    app.all('/settings/password', settingsPassword)
+    router.all('/settings', settingsGeneral)
+    router.all('/settings/password', settingsPassword)
 
-    app.get('/user/:name', viewUserProfile)
+    router.get('/user/:name', viewUserProfile)
   }
 
 }

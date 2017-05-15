@@ -12,10 +12,10 @@ const postService = require('../services/post-service')
 
 module.exports = {
 
-  initRoutes: function (app) {
-    app.use('/admin*', adminSecurity)
-    app.get('/admin', adminHome)
-    app.all('/admin/dev', adminDev)
+  initRoutes: function (router) {
+    router.use('/admin*', adminSecurity)
+    router.get('/admin', adminHome)
+    router.all('/admin/dev', adminDev)
   }
 
 }

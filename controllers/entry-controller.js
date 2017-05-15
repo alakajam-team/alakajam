@@ -13,16 +13,16 @@ const templating = require('./templating')
 
 module.exports = {
 
-  initRoutes: function (app) {
-    app.use('/entry/:id*', entryMiddleware)
-    app.use('/event/:eventId*', entryMiddleware)
+  initRoutes: function (router) {
+    router.use('/entry/:id*', entryMiddleware)
+    router.use('/event/:eventId*', entryMiddleware)
 
-    app.get('/event/:eventId/create-entry', createEntry)
-    app.post('/event/:eventId/create-entry', saveEntry)
-    app.get('/entry/:id', viewEntry)
-    app.post('/entry/:id', saveEntry)
-    app.get('/entry/:id/edit', editEntry)
-    app.get('/entry/:id/delete', deleteEntry)
+    router.get('/event/:eventId/create-entry', createEntry)
+    router.post('/event/:eventId/create-entry', saveEntry)
+    router.get('/entry/:id', viewEntry)
+    router.post('/entry/:id', saveEntry)
+    router.get('/entry/:id/edit', editEntry)
+    router.get('/entry/:id/delete', deleteEntry)
   }
 
 }
