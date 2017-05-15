@@ -13,20 +13,14 @@ const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 
 module.exports = {
-
-  initRoutes: function (app) {
-    app.get('/register', registerForm)
-    app.post('/register', doRegister)
-    app.get('/login', loginForm)
-    app.post('/login', doLogin)
-    app.get('/logout', doLogout)
-
-    app.all('/settings', settingsGeneral)
-    app.all('/settings/password', settingsPassword)
-
-    app.get('/user/:name', viewUserProfile)
-  }
-
+  registerForm,
+  doRegister,
+  loginForm,
+  doLogin,
+  doLogout,
+  settingsGeneral,
+  settingsPassword,
+  viewUserProfile
 }
 
 /**

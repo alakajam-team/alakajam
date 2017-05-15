@@ -6,7 +6,9 @@
  * @module models/entry-model
  */
 
-let db = require('../core/db')
+const db = require('../core/db')
+
+const slug = require('slug')
 
 module.exports = createModel()
 
@@ -35,6 +37,9 @@ function createModel () {
 
     initialize: function initialize (attrs) {
       modelPrototype.initialize.call(this)
+      this.on('saving', function (model, attrs, options) {
+        model.set('name', slug(model.get('title') || ''))
+      })
       attrs = attrs || {}
       attrs.links = attrs.links || []
       attrs.pictures = attrs.pictures || []
@@ -57,7 +62,7 @@ function createModel () {
       await db.knex.schema.createTableIfNotExists('entry', function (table) {
         table.increments('id').primary()
         table.integer('event_id').references('event.id')
-        table.integer('event_name')
+        table.string('event_name')
         table.string('links') // JSON Array : [{url, title}]
         table.string('pictures') // JSON Array : [path]
         table.string('category')

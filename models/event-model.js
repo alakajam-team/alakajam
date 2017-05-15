@@ -55,6 +55,8 @@ function createModel () {
         table.string('cron_config')
         table.dateTime('published_at')
         table.timestamps()
+
+        table.unique('name')
       })
     }
   }

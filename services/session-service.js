@@ -18,7 +18,7 @@ module.exports = {
   loadSessionCache,
   openSession,
   invalidateSession,
-  restoreSessionifNeeded
+  restoreSessionIfNeeded
 }
 
 const SESSIONS_FILE = path.join(config.DATA_PATH, 'sessions.json')
@@ -27,7 +27,7 @@ const SESSIONS_FILE = path.join(config.DATA_PATH, 'sessions.json')
  * (Sync) Checks whether a user session is valid
  * @returns {boolean} true if valid, false if invalid (usually because expired)
  */
-function restoreSessionifNeeded (req, res) {
+function restoreSessionIfNeeded (req, res) {
   req.session = {}
 
   // TODO refresh cookies if they're getting close to expiry

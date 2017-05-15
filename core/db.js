@@ -136,6 +136,7 @@ function createBookshelfInstance (knexInstance) {
 
     let weJam1 = new Event({
       title: '1st WeJam',
+      name: '1st-wejam',
       status: 'closed',
       display_dates: 'Novembary 17 - 20, 2016',
       display_theme: 'Make a website'
@@ -143,18 +144,19 @@ function createBookshelfInstance (knexInstance) {
     await weJam1.save()
 
     let weJam1Entries = weJam1.related('entries')
-    await weJam1Entries.create({ title: 'Old Game' })
+    await weJam1Entries.create({ title: 'Old Game', event_name: '1st-wejam' })
 
     let weJam2 = new Event({
       title: '2nd WeJam',
+      name: '2nd-wejam',
       status: 'open',
       display_dates: 'Januember 29 - 31, 2017',
       display_theme: 'You are not alone'
     })
     await weJam2.save()
 
-    await weJam2.entries().create({ title: 'Game A' })
-    await weJam2.entries().create({ title: 'Game B' })
+    await weJam2.entries().create({ title: 'Game A', event_name: '2nd-wejam' })
+    await weJam2.entries().create({ title: 'Game B', event_name: '2nd-wejam' })
   }
 
   return db

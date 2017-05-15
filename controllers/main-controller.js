@@ -12,19 +12,14 @@ const sessionService = require('../services/session-service')
 const postService = require('../services/post-service')
 
 module.exports = {
-
-  initRoutes: function (app) {
-    app.use('*', anyPageMiddleware)
-
-    app.get('/', index)
-    app.get('/events', events)
-    app.get('/chat', chat)
-  }
-
+  anyPageMiddleware,
+  index,
+  events,
+  chat
 }
 
 async function anyPageMiddleware (req, res, next) {
-  sessionService.restoreSessionifNeeded(req, res)
+  sessionService.restoreSessionIfNeeded(req, res)
 
   res.locals.path = req.originalUrl
 

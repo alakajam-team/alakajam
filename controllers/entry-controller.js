@@ -12,39 +12,32 @@ const fileStorage = require('../core/file-storage')
 const templating = require('./templating')
 
 module.exports = {
-
-  initRoutes: function (app) {
-    app.use('/entry/:id*', entryMiddleware)
-    app.use('/event/:eventId*', entryMiddleware)
-
-    app.get('/event/:eventId/create-entry', createEntry)
-    app.post('/event/:eventId/create-entry', saveEntry)
-    app.get('/entry/:id', viewEntry)
-    app.post('/entry/:id', saveEntry)
-    app.get('/entry/:id/edit', editEntry)
-    app.get('/entry/:id/delete', deleteEntry)
-  }
-
+  entryMiddleware,
+  createEntry,
+  saveEntry,
+  viewEntry,
+  editEntry,
+  deleteEntry
 }
 
 /**
  * Fetches the current entry & event
  */
 async function entryMiddleware (req, res, next) {
-  if (req.params.id) {
-    let entry = await eventService.findEntryById(req.params.id)
-    if (entry === null) {
-      res.errorPage(404, 'Entry not found')
-    } else {
-      res.locals.entry = entry
-      res.locals.event = entry.related('event')
-      next()
-    }
+  let entry = await eventService.findEntryById(req.params.entryId)
+  if (!entry) {
+    res.errorPage(404, 'Entry not found')
+    return
   }
-  if (req.params.eventId) {
-    res.locals.event = await eventService.findEventById(req.params.eventId)
-    next()
+  res.locals.entry = entry
+
+  if (req.params.eventName !== entry.get('event_name') ||
+      req.params.entryName !== entry.get('name')) {
+    res.redirect(templating.buildUrl(entry, 'entry', req.params.rest))
+    return
   }
+
+  next()
 }
 
 /**
@@ -59,7 +52,8 @@ function viewEntry (req, res) {
  */
 async function createEntry (req, res) {
   res.render('entry/edit-entry', {entry: new Entry({
-    event_id: res.locals.event.get('id')
+    event_id: res.locals.event.get('id'),
+    event_name: res.locals.event.get('name')
   })})
 }
 
@@ -103,7 +97,7 @@ async function saveEntry (req, res) {
     await entry.save()
     await entry.related('userRoles').fetch()
 
-    viewEntry(req, res)
+    res.redirect(templating.buildUrl(entry, 'entry'))
   }
 }
 
