@@ -5,6 +5,6 @@
 echo "Checking JavaScript Standard Style..."
 git diff --name-only --cached --relative | grep '\.jsx\?$' | xargs -r standard
 if [[ $? -ne 0 ]]; then
-  echo "Style errors were detected. Try running `standard --fix` to fix them automatically."
+  echo 'Style errors were detected. Aborting commit.'
   exit 1
 fi
