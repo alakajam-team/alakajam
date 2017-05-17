@@ -82,8 +82,9 @@
           </div>
         </div>
         <div class="event-header__links">
-          <a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-grain"></span> Theme</a><!--
-          --><a href="{{ buildUrl(event, 'event') }}" class="event-header__link active"><span class="glyphicon glyphicon-tower"></span> Games</a><!--
+          <a href="{{ buildUrl(event, 'event') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event') }}"><span class="glyphicon glyphicon-home"></span> Posts</a><!--
+          --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-grain"></span> Theme</a><!--
+          --><a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link  {{ 'active' if path == buildUrl(event, 'event', 'games') }}"><span class="glyphicon glyphicon-tower"></span> Games</a><!--
         --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
       </div>
     </div>

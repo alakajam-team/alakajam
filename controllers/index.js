@@ -55,7 +55,8 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit', entryController.editEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete', entryController.deleteEntry)
 
-    router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewEvent)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewEventPosts)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/games', eventController.viewEventGames)
 
     router.get('/post/create', postController.editPost)
     router.post('/post/create', postController.savePost)
