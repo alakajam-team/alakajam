@@ -6,15 +6,25 @@
  * @module models/post-model
  */
 
+let slug = require('slug')
 let db = require('../core/db')
 
 module.exports = createModel()
 
 function createModel () {
+  let modelPrototype = db.Model.prototype
+
   let model = db.model('Post', {
     tableName: 'post',
     hasTimestamps: true,
 
+    initialize: function initialize (attrs) {
+      modelPrototype.initialize.call(this)
+      this.on('saving', function (model, attrs, options) {
+        model.set('name', slug(model.get('title') || ''))
+      })
+      return attrs
+    },
     entry: function () {
       return this.belongsTo('Entry', 'entry_id', 'id')
     },

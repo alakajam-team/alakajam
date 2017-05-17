@@ -22,8 +22,8 @@ module.exports = {
 }
 
 async function postMiddleware (req, res, next) {
-  if (req.params.id && req.params.id !== 'create') {
-    res.locals.post = await postService.findPostById(req.params.id)
+  if (req.params.postId && req.params.postId !== 'create') {
+    res.locals.post = await postService.findPostById(req.params.postId)
     if (!res.locals.post) {
       res.errorPage(404, 'Post not found')
     } else {

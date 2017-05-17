@@ -8,6 +8,7 @@
 
 const log = require('../core/log')
 
+// TODO Use constants
 const PERMISSION_READ = 'read'
 const PERMISSION_WRITE = 'write'
 const PERMISSION_MANAGE = 'manage'

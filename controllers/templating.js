@@ -33,12 +33,11 @@ function buildUrl (model, type, page = null) {
       return '/' + model.get('event_name') + '/create-entry'
     }
   } else if (type === 'user') {
-    // User model
+    // User Role model / User model
     let userId = model.get('name') || model.get('user_name')
     return '/user/' + userId + pagePath
   } else if (type === 'post') {
     // Post model
-    let postId = model.get('id')
-    return '/post/' + postId + pagePath
+    return '/post/' + model.get('id') + (pagePath || '/' + model.get('name'))
   }
 }

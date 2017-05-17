@@ -29,7 +29,8 @@ module.exports = {
     // Why `{0,}` instead of `*`? See: https://github.com/expressjs/express/issues/2495
     router.use('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?/:rest*?', entryController.entryMiddleware)
     router.use('/:eventName([^/]{0,}-[^/]{0,})', eventController.eventMiddleware)
-    router.use('/post/:id', postController.postMiddleware)
+    router.use('/post/:postId', postController.postMiddleware)
+    router.use('/post/:postId/*', postController.postMiddleware)
 
     router.get('/', mainController.index)
     router.get('/events', mainController.events)
@@ -60,8 +61,9 @@ module.exports = {
     router.post('/post/create', postController.savePost)
     router.get('/post/:id/edit', postController.editPost)
     router.post('/post/:id/edit', postController.savePost)
-    router.get('/post/:id', postController.viewPost)
     router.get('/post/:id/delete', postController.deletePost)
+    router.get('/post/:id', postController.viewPost)
+    router.get('/post/:id(\\d+)/:postName?/:rest*?', postController.viewPost)
   }
 
 }
