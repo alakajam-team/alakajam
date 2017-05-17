@@ -38,6 +38,6 @@ function buildUrl (model, type, page = null) {
     return '/user/' + userId + pagePath
   } else if (type === 'post') {
     // Post model
-    return '/post/' + model.get('id') + (pagePath || '/' + model.get('name'))
+    return '/post/' + model.get('id') + '/' + model.get('name') + pagePath
   }
 }

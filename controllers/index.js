@@ -59,11 +59,11 @@ module.exports = {
 
     router.get('/post/create', postController.editPost)
     router.post('/post/create', postController.savePost)
-    router.get('/post/:id/edit', postController.editPost)
-    router.post('/post/:id/edit', postController.savePost)
-    router.get('/post/:id/delete', postController.deletePost)
-    router.get('/post/:id', postController.viewPost)
-    router.get('/post/:id(\\d+)/:postName?/:rest*?', postController.viewPost)
+    router.get('/post/:postId', postController.viewPost)
+    router.get('/post/:postId(\\d+)/:postName?', postController.viewPost)
+    router.post('/post/:postId(\\d+)/:postName/edit', postController.savePost)
+    router.get('/post/:postId(\\d+)/:postName/edit', postController.editPost)
+    router.get('/post/:postId(\\d+)/:postName/delete', postController.deletePost)
   }
 
 }
