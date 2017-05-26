@@ -38,7 +38,9 @@ async function eventMiddleware (req, res, next) {
 async function viewEventPosts (req, res) {
   // TODO Attach actual event posts
   res.render('event/view-event-posts', {
-    posts: await postService.findAnnouncements()
+    posts: await postService.findPostFeed({
+      eventId: res.locals.event.get('id')
+    })
   })
 }
 

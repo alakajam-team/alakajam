@@ -12,7 +12,12 @@
     </div>
     {% else %}
     <a href="{{ buildUrl(post, 'post') }}" class="post__heading">
-      <h2>{{ post.get('title') }}</h2>
+      <h2>
+        {{ post.get('title') }}
+        {% if not options.hideSpecialLabels and post.get('special_post_type') == 'announcement' %}
+          <div class="label label-default pull-right">ANNOUNCEMENT</div>
+        {% endif %}
+      </h2>
     </a>
     {% endif %}
   {% endif %}

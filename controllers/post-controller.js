@@ -40,15 +40,18 @@ async function viewPost (req, res) {
       securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true })) {
     res.render('post/view-post')
   } else {
-    res.errorPage(404, 'Post not found')
+    res.errorPage(403)
   }
 }
 
 async function editPost (req, res) {
   if (!res.locals.post) {
     res.locals.post = new Post()
+  } else if (securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
+    res.render('post/edit-post')
+  } else {
+    res.errorPage(403)
   }
-  res.render('post/edit-post')
 }
 
 async function savePost (req, res) {
@@ -93,7 +96,7 @@ async function savePost (req, res) {
       res.render('post/edit-post', { post })
     }
   } else {
-    res.errorPage(403, 'Forbidden')
+    res.errorPage(403)
   }
 }
 

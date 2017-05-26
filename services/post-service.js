@@ -61,12 +61,11 @@ async function findPostById (postId) {
 async function findUserPosts (userId) {
   let postCollection = await Post.query((qb) => {
       // TODO Better use of Bookshelf API
-    qb.innerJoin('user_role', 'post.id', 'user_role.node_id')
+      qb.innerJoin('user_role', 'post.id', 'user_role.node_id')
         .where('user_role.user_id', userId)
         .where('published_at', '<=', new Date())
         .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
     })
-  })
     .orderBy('published_at', 'DESC')
     .fetchAll({ withRelated: ['author', 'userRoles'] })
   return postCollection

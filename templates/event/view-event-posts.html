@@ -9,6 +9,12 @@
       {% for post in posts.models %}
       {{ postMacros.post(post) }}
       {% endfor %}
+
+      {% if posts.models.length === 0 %}
+      <div class="well">
+        No posts yet.
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

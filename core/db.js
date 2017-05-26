@@ -10,6 +10,7 @@
 const knex = require('knex')
 const bookshelf = require('bookshelf')
 const config = require('../config')
+const constants = require('../core/constants')
 const log = require('./log')
 const models = require('../models/index')
 
@@ -123,16 +124,29 @@ function createBookshelfInstance (knexInstance) {
     log.info('Inserting samples...')
 
     let userService = require('../services/user-service')
-    let User = require('../models/user-model')
     let Event = require('../models/event-model')
+    let eventService = require('../services/event-service')
+    let postService = require('../services/post-service')
 
-    let adminUser = new User({
-      name: 'administrator',
-      title: 'Administrator',
+    // Default users
+    
+    await userService.register('administrator', 'administrator')
+    let adminUser = await userService.findByName('administrator')
+    adminUser.set({
+      'title': 'Administraor',
       is_admin: true
     })
-    userService.setPassword(adminUser, 'administrator')
     await adminUser.save()
+
+    await userService.register('entrant', 'entrant')
+    let entrantUser = await userService.findByName('entrant')
+    entrantUser.set({
+      'title': 'Entrant',
+      'body': 'I am definitely **not** a robot.'
+    })
+    await entrantUser.save()
+
+    // 1st WeJam event
 
     let weJam1 = new Event({
       title: '1st WeJam',
@@ -142,10 +156,12 @@ function createBookshelfInstance (knexInstance) {
       display_theme: 'Make a website'
     })
     await weJam1.save()
+    let userEntry = await eventService.createEntry(entrantUser, weJam1)
+    userEntry.set('title', 'Old Game')
+    await userEntry.save()
 
-    let weJam1Entries = weJam1.related('entries')
-    await weJam1Entries.create({ title: 'Old Game', event_name: '1st-wejam' })
-
+    // 2nd WeJam event
+    
     let weJam2 = new Event({
       title: '2nd WeJam',
       name: '2nd-wejam',
@@ -155,8 +171,33 @@ function createBookshelfInstance (knexInstance) {
     })
     await weJam2.save()
 
-    await weJam2.entries().create({ title: 'Game A', event_name: '2nd-wejam' })
-    await weJam2.entries().create({ title: 'Game B', event_name: '2nd-wejam' })
+    let adminEntry = await eventService.createEntry(adminUser, weJam1)
+    adminEntry.set('title', 'Super Game')
+    await adminEntry.save()
+    userEntry = await eventService.createEntry(entrantUser, weJam2)
+    userEntry.set('title', 'Awesome Game')
+    await userEntry.save()
+
+    let post = await postService.createPost(entrantUser)
+    post.set({
+      title: "I'm in!",
+      body: "This is my second game and I'm really excited.",
+      event_id: weJam2.get('id'),
+      entry_id: userEntry.get('id'),
+      published_at: new Date()
+    })
+    await post.save()
+
+    post = await postService.createPost(adminUser)
+    post.set({
+      title: "Event started!",
+      body: "The theme is `You are not alone`. Have fun!",
+      event_id: weJam2.get('id'),
+      special_post_type: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
+      published_at: new Date()
+    })
+    await post.save()
+
   }
 
   return db

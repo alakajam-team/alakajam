@@ -6,17 +6,8 @@
  * @module services/security-service
  */
 
-<<<<<<< HEAD
 const constants = require('../core/constants')
-=======
 const log = require('../core/log')
-
-// TODO Use constants
-const PERMISSION_READ = 'read'
-const PERMISSION_WRITE = 'write'
-const PERMISSION_MANAGE = 'manage'
-const ORDERED_PERMISSIONS = [PERMISSION_READ, PERMISSION_WRITE, PERMISSION_MANAGE]
->>>>>>> 2d981149614cc308ced5bbf8af452698dd24c376
 
 module.exports = {
   canUserRead,

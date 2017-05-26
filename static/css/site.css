@@ -156,7 +156,7 @@ img.preview {
 
       & > a, &.active > a, & > div {
         font-size: 1.1rem;
-        padding: 0 20px;
+        padding: 0 10px;
         line-height: var(--navbar-height);
         height: var(--navbar-height);
 

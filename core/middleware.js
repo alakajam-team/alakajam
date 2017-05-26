@@ -100,7 +100,7 @@ async function configure (app) {
   // Templating: rendering context
   app.use(function templateTooling (req, res, next) {
     // Allow anyone to display an error page
-    res.errorPage = (code, message) => errorPage(req, res, code, message)
+    res.errorPage = (code, message) => errorPage(req, res, code, message, app.locals.devMode)
 
     // Context made available anywhere
     let nativeRender = res.render
@@ -142,10 +142,10 @@ async function configure (app) {
 
   // Routing: 500/404
   app.use(function notFound (req, res) {
-    errorPage(req, res, 404)
+    errorPage(req, res, 404, undefined, app.locals.devMode)
   })
-  app.use(function error (err, req, res, next) {
-    errorPage(req, res, 500, err)
+  app.use(function error (error, req, res, next) {
+    errorPage(req, res, 500, error, app.locals.devMode)
   })
 }
 
@@ -172,28 +172,36 @@ async function findOrCreateSessionKey () {
 /*
  * Middleware displaying an error page
  * code = HTTP error code
- * err = Error object or string message (optional)
+ * error = Error object or string message (optional)
  */
-function errorPage (req, res, code, err) {
-  const message = (err && err.message) || err || ((code === 404) ? 'Page not found' : 'Internal error')
-  // Check whether 'development' is on, rather than whether 'production' is
-  // off, so we don't leak stack traces in case production is ever
-  // misconfigured to leave this undefined.
-  const stack = process.env.NODE_ENV === 'development' ? err && err.stack : undefined
+function errorPage (req, res, code, error, devMode) {
+  const stack = devMode ? error && error.stack : undefined
+  let message = (typeof error == 'object') ? error.message : error
+  let title
+  switch (code) {
+    case 404:
+      title = 'Page not found'
+      break
+    case 403:
+      title = 'Forbidden'
+      break
+    case 500:
+      title = 'Internal error'
+      break
+    default:
+      title = 'Error'
+  }
 
   // Internal error logging
-  if (code !== 404) {
-    if (stack) {
-      log.error(message + '\n' + stack)
-    } else {
-      log.error(message)
-    }
+  if (code !== 404 && code !== 403) {
+    log.error(message + (error ? '\n' + error.stack : ''))
   }
 
   // Page rendering
-  let errorTemplate = (code === 404) ? '404' : '500'
   res.status(code)
-  res.render(errorTemplate, {
+  res.render('error', {
+    code,
+    title,
     message,
     stack
   })

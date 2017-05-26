@@ -38,6 +38,9 @@ async function createApp () {
   const config = require('./config')
 
   let app = express()
+  // Check whether 'development' is on, rather than whether 'production' is
+  // off, so we don't leak stack traces in case production is ever
+  // misconfigured to leave this undefined.
   app.locals.devMode = app.get('env') === 'development'
   await initDatabase(app.locals.devMode)
   await middleware.configure(app)
