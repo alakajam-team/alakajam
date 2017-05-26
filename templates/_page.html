@@ -93,7 +93,7 @@
     {% endif %}
   </nav>
 
-  {% if (user and user.get('is_mod') or user.get('is_admin')) %}
+  {% if user and (user.get('is_mod') or user.get('is_admin')) %}
   <div class="moderation-bar">
     <div class="container">
       <div class="row">
