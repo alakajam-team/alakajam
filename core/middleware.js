@@ -170,10 +170,10 @@ function cleanupFormFilesCallback (req, res) {
 }
 
 async function findOrCreateSessionKey () {
-  let sessionKey = await settingService.find('session_key')
+  let sessionKey = await settingService.find(constants.SETTING_SESSION_KEY)
   if (!sessionKey) {
     sessionKey = randomKey.generate()
-    await settingService.save('session_key')
+    await settingService.save(constants.SETTING_SESSION_KEY, sessionKey)
   }
   return sessionKey
 }

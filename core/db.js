@@ -19,7 +19,6 @@ module.exports = initializeDatabase()
 // Models sorted by table creation order
 const MODEL_FILENAMES_UP = models.modelFilenamesUp()
 const MODEL_FILENAMES_DOWN = MODEL_FILENAMES_UP.slice().reverse()
-const SETTING_DB_VERSION = 'db_version'
 
 function initializeDatabase () {
   let knexInstance = createKnexInstance()
@@ -68,7 +67,7 @@ function createBookshelfInstance (knexInstance) {
   db.findCurrentVersion = async function () {
     const settingService = require('../services/setting-service')
     try {
-      return await settingService.find(SETTING_DB_VERSION, 0)
+      return await settingService.find(constants.SETTING_DB_VERSION, 0)
     } catch (e) {
       // Table missing
       // log.warn(e.message)
@@ -112,7 +111,7 @@ function createBookshelfInstance (knexInstance) {
 
     if (upgradeRequired) {
       const settingService = require('../services/setting-service')
-      await settingService.save(SETTING_DB_VERSION, models.version)
+      await settingService.save(constants.SETTING_DB_VERSION, models.version)
     }
   }
 

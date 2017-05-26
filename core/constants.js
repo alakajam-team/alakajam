@@ -12,6 +12,12 @@ const PERMISSION_MANAGE = 'manage'
 const ORDERED_PERMISSIONS = [PERMISSION_READ, PERMISSION_WRITE, PERMISSION_MANAGE]
 
 module.exports = {
+  // Settings
+  SETTING_DB_VERSION: 'db_version',
+  SETTING_SESSION_KEY: 'session_key',
+  SETTING_INVITE_PASSWORD: 'invite_password',
+  SETTING_INVITE_PEPPER: 'invite_pepper',
+
   // Security
   PERMISSION_READ,
   PERMISSION_WRITE,
