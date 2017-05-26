@@ -7,11 +7,11 @@
 
 {% block dashboardBody %}
 
-<h1>General</h1>
+<h1>Settings</h1>
 
 <h2>Account info</h2>
 
-<form action="/settings" method="post" enctype="multipart/form-data">
+<form action="{{ buildUrl(user, 'user', 'settings') }}" method="post" enctype="multipart/form-data">
 
 <div class="row">
   <div class="col-md-6">

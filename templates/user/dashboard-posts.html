@@ -3,7 +3,7 @@
 
 {% block dashboardBody %}
 
-<h1>Posts</h1>
+<h1>My posts</h1>
 
 {% if newPostEvent %}
 <p>
@@ -11,12 +11,21 @@
 </p>
 {% endif %}
 
-{% if posts.models.length > 0 %}
-  {% for post in posts.models %}
-  {{ postMacros.post(post, user, {noBody: true}) }}
+{% if draftPosts.length > 0 %}
+  <h2>Drafts</h2>
+  {% for post in draftPosts %}
+    {{ postMacros.post(post, user, {noBody: true}) }}
   {% endfor %}
-{% else %}
-<div class="well">This user didn't write posts... Yet!</div>
+
+  <h2>Published</h2>
+{% endif %}
+
+{% for post in publishedPosts %}
+  {{ postMacros.post(post, user, {noBody: true}) }}
+{% endfor %}
+
+{% if publishedPosts.length === 0 %}
+  <div class="well">You haven't published posts yet.</div>
 {% endif %}
 
 {% endblock %}

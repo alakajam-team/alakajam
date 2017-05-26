@@ -4,8 +4,12 @@
 {% block body %}
 
 <div class="container">
-  <h1>{{ post.get('title') }}</h1>
-  {{ postMacros.post(post, user, {noHeading: true}) }}
+<div class="row">
+  <div class="col-lg-offset-1 col-lg-10">
+    <h1>{{ post.get('title') }}</h1>
+    {{ postMacros.post(post, user, {noHeading: true}) }}
+  </div>
+</div>
 </div>
 
 {% endblock %}

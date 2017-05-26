@@ -103,14 +103,15 @@ async function dashboardPosts (req, res) {
   if (!newPostEvent) {
     newPostEvent = await eventService.findEventByStatus('pending')
   }
-
-  let posts = await postService.findPosts({ 
+  let allPostsCollection = await postService.findPosts({ 
     userId: res.locals.user.get('id'),
     withDrafts: true
   })
-
+  let draftPosts = allPostsCollection.where({'published_at': null})
+  
   res.render('user/dashboard-posts', {
-    posts,
+    publishedPosts: allPostsCollection.difference(draftPosts),
+    draftPosts, 
     newPostEvent
   })
 }

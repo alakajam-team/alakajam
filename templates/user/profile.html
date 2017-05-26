@@ -26,7 +26,7 @@
       </p>
 
       {% if user and (user.get('id') == profileUser.get('id')) %}
-      <a href="/settings" class="btn btn-info">Edit profile</a>
+      <a href="/dashboard/posts" class="btn btn-default">Dashboard</a>
       {% endif %}
 
       <div class="spacing">
@@ -66,7 +66,7 @@
       <div class="well">This user didn't submit games... Yet!</div>
       {% endif %}
 
-      <h1>Posts</h1>
+      <h1>Latest posts</h1>
       {% if posts.models.length > 0 %}
         {% for post in posts.models %}
         {{ postMacros.post(post, user) }}
