@@ -14,11 +14,12 @@ const postService = require('../services/post-service')
 module.exports = {
   adminMiddleware,
   adminHome,
+  adminStatus,
   adminDev
 }
 
 async function adminMiddleware (req, res, next) {
-  if ((!res.locals.user || !res.locals.user.get('is_admin')) && !config.DEBUG_ADMIN) {
+  if ((!res.locals.user || !res.locals.user.get('is_mod')) && !config.DEBUG_ADMIN) {
     res.render('403')
   } else {
     next()
@@ -44,21 +45,48 @@ async function adminHome (req, res) {
  * Admin developer tools
  * TODO Make it only available in dev environments
  */
-async function adminDev (req, res) {
-  let infoMessage = ''
-  let errorMessage = ''
-  if (req.method === 'POST') {
-    let {fields} = await req.parseForm()
-    if (fields['db-reset']) {
-      await db.dropTables()
-      await db.upgradeTables()
-      await db.insertSamples()
-      let version = await db.findCurrentVersion()
-      infoMessage = 'DB reset done (current version : ' + version + ').'
+async function adminStatus (req, res) {
+  if (res.locals.user.get('is_admin')) {
+    let pictureResizeEnabled = false
+    try {
+      require('sharp')
+      pictureResizeEnabled = true
+    } catch (e) {
+      // Nothing
     }
+
+    res.render('admin/admin-status', {
+      devMode: !!res.app.locals.devMode,
+      pictureResizeEnabled
+    })
+  } else {
+    res.errorPage(403)
   }
-  res.render('admin/admin-dev', {
-    infoMessage,
-    errorMessage
-  })
+}
+
+/**
+ * Admin developer tools
+ * TODO Make it only available in dev environments
+ */
+async function adminDev (req, res) {
+  if (res.locals.user.get('is_admin')) {
+    let infoMessage = ''
+    let errorMessage = ''
+    if (req.method === 'POST') {
+      let {fields} = await req.parseForm()
+      if (fields['db-reset']) {
+        await db.dropTables()
+        await db.upgradeTables()
+        await db.insertSamples()
+        let version = await db.findCurrentVersion()
+        infoMessage = 'DB reset done (current version : ' + version + ').'
+      }
+    }
+    res.render('admin/admin-dev', {
+      infoMessage,
+      errorMessage
+    })
+  } else {
+    res.errorPage(403)
+  }
 }

@@ -13,9 +13,16 @@ const path = require('path')
 const url = require('url')
 const config = require('../config')
 
+let sharp = null
+try {
+  sharp = require('sharp')
+} catch (e) {
+  // Nothing
+}
+
 module.exports = {
   toUploadPath,
-  move,
+  savePictureUpload,
   exists,
   read,
   write,
@@ -24,49 +31,51 @@ module.exports = {
 }
 
 const SOURCES_ROOT = path.join(__dirname, '..')
-const STATIC_ROOT = path.join(SOURCES_ROOT, 'static')
-const UPLOADS_URL = ('/' + config.UPLOADS_PATH + '/').replace(/\/\//g, '/')
-
-/**
- * Prepends the specified path with the uploads static folder
- * @param  {string} anyPath 
- * @return {string}
- */
-function toUploadPath (anyPath) {
-  if (anyPath.indexOf(config.UPLOADS_PATH) === -1) {
-    return path.join(config.UPLOADS_PATH, anyPath)
-  } else {
-    return anyPath
-  }
-}
 
 /**
  * Moves the file from a path to another. Typically used for saving temporary files.
- * @param {string} sourcePath - The full path to the file to move
- * @param {string} targetPath - The path to the destination, relative to the uploads folder.
+ * @param {string} sourcePath The full path to the file to move
+ * @param {string} targetPath The path to the destination, relative to the uploads folder.
+ * @param {object} options (Optional) allowed: maxDiagonal
  *   If the file extension is omitted, it will be grabbed from the source path. If folders don't exist, they will be created.
- * If target path doesn't contain an extension
- * @returns the URL to that path if possible
+ * @returns the URL to that path
  */
-async function move (sourcePath, targetPath) {
-  let trueTargetPath = targetPath.replace(/^[\\/]/, '') // remove leading slash
+async function savePictureUpload (sourcePath, targetPath, options = {}) {
+  let actualTargetPath = targetPath.replace(/^[\\/]/, '') // remove leading slash
+  if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
+    actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath)
+  }
   let sourcePathExtension = path.extname(sourcePath)
   if (!targetPath.endsWith(sourcePathExtension)) {
     // TODO replace extension rather than just append
-    trueTargetPath += sourcePathExtension
+    actualTargetPath += sourcePathExtension
   }
 
-  let absoluteTargetPath = toAbsolutePath(trueTargetPath)
+  let absoluteTargetPath = toAbsolutePath(actualTargetPath)
   await createFolderIfMissing(path.dirname(absoluteTargetPath))
-  await fs.rename(sourcePath, absoluteTargetPath)
-  if (absoluteTargetPath.indexOf(STATIC_ROOT) !== -1) {
-    log.info("!")
-  log.info(url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath)))
-  log.whereami()
-    return url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath))
-  } else {
-    return null
+  await resize(sourcePath, absoluteTargetPath, options.maxDiagonal || 2000)
+  return url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath))
+}
+
+async function resize (sourcePath, targetPath, maxDiagonal) {
+  // Sharp is an optional dependency
+  if (sharp) {
+    // Check whether image is too big
+    let meta = await sharp.metadata(sourcePath)
+    let diagonalSq = meta.width * meta.width + meta.height * meta.height
+    if (diagonalSq > maxDiagonal * maxDiagonal) {
+      // Resize to max size
+      let diagonal = Math.max(Math.sqrt(diagonalSq))
+      return sharp(sourcePath)
+        .resize(
+          Math.max(meta.width * maxDiagonal / diagonal),
+          Math.max(meta.height * maxDiagonal / diagonal))
+        .toFile(targetPath)
+    }
   }
+
+  // Don't modify the image if small enough (or sharp is missing)
+  return fs.rename(sourcePath, targetPath)
 }
 
 async function exists (documentPath) {
@@ -76,6 +85,18 @@ async function exists (documentPath) {
     return true
   } catch (e) {
     return false
+  }
+}
+/**
+ * Prepends the specified path with the uploads static folder
+ * @param  {string} anyPath
+ * @return {string}
+ */
+function toUploadPath (anyPath) {
+  if (anyPath.indexOf(config.UPLOADS_PATH) === -1) {
+    return path.join(config.UPLOADS_PATH, anyPath)
+  } else {
+    return anyPath
   }
 }
 

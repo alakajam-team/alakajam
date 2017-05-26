@@ -50,6 +50,7 @@ module.exports = {
 
     router.get('/admin', adminController.adminHome)
     router.all('/admin/dev', adminController.adminDev)
+    router.all('/admin/status', adminController.adminStatus)
 
     router.get('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.createEntry)
     router.post('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.saveEntry)

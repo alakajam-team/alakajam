@@ -9,7 +9,6 @@
 const Event = require('../models/event-model')
 const Entry = require('../models/entry-model')
 const constants = require('../core/constants')
-const securityService = require('../services/security-service')
 
 module.exports = {
   findEventById,

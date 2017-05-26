@@ -27,7 +27,6 @@ function buildUrl (model, type, page = null, options = {}) {
   if (type === 'event') {
     // Event model
     return '/' + model.get('name') + pagePath
-
   } else if (type === 'entry') {
     // Entry model
     if (model && model.get('id')) {
@@ -35,7 +34,6 @@ function buildUrl (model, type, page = null, options = {}) {
     } else {
       return '/' + model.get('event_name') + '/create-entry'
     }
-
   } else if (type === 'user') {
     // User Role model / User model
     if (DASHBOARD_PAGES.indexOf(page) !== -1) {
@@ -44,7 +42,6 @@ function buildUrl (model, type, page = null, options = {}) {
       let userId = model.get('name') || model.get('user_name')
       return '/user/' + userId + pagePath
     }
-
   } else if (type === 'post') {
     // Post model
     if (page === 'create') {
@@ -55,6 +52,5 @@ function buildUrl (model, type, page = null, options = {}) {
     } else {
       return '/post/' + model.get('id') + '/' + model.get('name') + pagePath
     }
-    
   }
 }

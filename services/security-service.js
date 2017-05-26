@@ -25,7 +25,7 @@ module.exports = {
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
-function canUserRead(user, model, options = {}) {
+function canUserRead (user, model, options = {}) {
   return canUser(user, model, constants.PERMISSION_READ, options)
 }
 
@@ -36,7 +36,7 @@ function canUserRead(user, model, options = {}) {
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
-function canUserWrite(user, model, options = {}) {
+function canUserWrite (user, model, options = {}) {
   return canUser(user, model, constants.PERMISSION_WRITE, options)
 }
 
@@ -47,7 +47,7 @@ function canUserWrite(user, model, options = {}) {
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
-function canUserManage(user, model, options = {}) {
+function canUserManage (user, model, options = {}) {
   return canUser(user, model, constants.PERMISSION_MANAGE, options)
 }
 
@@ -79,16 +79,16 @@ function canUser (user, model, permission, options = {}) {
 }
 
 /**
- * @param  {User}  user 
- * @return {boolean}     
+ * @param  {User}  user
+ * @return {boolean}
  */
 function isMod (user) {
   return user && (user.get('is_mod') || user.get('is_admin'))
 }
 
 /**
- * @param  {User}  user 
- * @return {boolean}     
+ * @param  {User}  user
+ * @return {boolean}
  */
 function isAdmin (user) {
   return user && user.get('is_admin')

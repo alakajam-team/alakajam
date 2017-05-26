@@ -66,10 +66,10 @@ async function configure (app) {
   nunjucks.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
   nunjucks.env.addGlobal('constants', constants)
   nunjucks.env.addGlobal('devMode', app.locals.devMode)
-  nunjucks.env.addGlobal('context', function() {
+  nunjucks.env.addGlobal('context', function () {
     // lets devs display the whole templating context with
     // {{ context() | prettyDump | safe }}
-    return this.ctx;
+    return this.ctx
   })
   for (var functionName in templating) {
     nunjucks.env.addGlobal(functionName, templating[functionName])
@@ -185,7 +185,7 @@ async function findOrCreateSessionKey () {
  */
 function errorPage (req, res, code, error, devMode) {
   const stack = devMode ? error && error.stack : undefined
-  let message = (typeof error == 'object') ? error.message : error
+  let message = (typeof error === 'object') ? error.message : error
   let title
   switch (code) {
     case 404:

@@ -96,7 +96,7 @@ async function saveEntry (req, res) {
       await fileStorage.remove(entry.get('pictures')[0])
       entry.set('pictures', [])
     } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
-      let finalPath = await fileStorage.move(files.picture.path, fileStorage.toUploadPath(picturePath))
+      let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
       entry.set('pictures', [finalPath])
     }
     await entry.save()

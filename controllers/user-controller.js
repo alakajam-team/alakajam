@@ -82,7 +82,8 @@ async function dashboardSettings (req, res) {
       }
       if (newAvatar) {
         let avatarPath = '/user/' + user.get('id')
-        let finalPath = await fileStorage.move(files.avatar.path, fileStorage.toUploadPath(avatarPath))
+        let finalPath = await fileStorage.savePictureUpload(
+          files.avatar.path, avatarPath, {maxDiagonal: 500})
         user.set('avatar', finalPath)
       }
       await user.save()
@@ -103,15 +104,15 @@ async function dashboardPosts (req, res) {
   if (!newPostEvent) {
     newPostEvent = await eventService.findEventByStatus('pending')
   }
-  let allPostsCollection = await postService.findPosts({ 
+  let allPostsCollection = await postService.findPosts({
     userId: res.locals.user.get('id'),
     withDrafts: true
   })
   let draftPosts = allPostsCollection.where({'published_at': null})
-  
+
   res.render('user/dashboard-posts', {
     publishedPosts: allPostsCollection.difference(draftPosts),
-    draftPosts, 
+    draftPosts,
     newPostEvent
   })
 }

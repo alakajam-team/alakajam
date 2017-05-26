@@ -36,7 +36,7 @@ async function eventMiddleware (req, res, next) {
  * Browse event posts
  */
 async function viewEventPosts (req, res) {
-  let userPost = undefined
+  let userPost
   if (res.locals.user) {
     let userPosts = await postService.findPosts({ userId: res.locals.user.get('id') })
     userPost = (userPosts.models.length > 0) ? userPosts.models[0] : undefined

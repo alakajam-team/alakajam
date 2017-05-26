@@ -129,7 +129,7 @@ function createBookshelfInstance (knexInstance) {
     let postService = require('../services/post-service')
 
     // Default users
-    
+
     await userService.register('administrator', 'administrator')
     let adminUser = await userService.findByName('administrator')
     adminUser.set({
@@ -161,7 +161,7 @@ function createBookshelfInstance (knexInstance) {
     await userEntry.save()
 
     // 2nd WeJam event
-    
+
     let weJam2 = new Event({
       title: '2nd WeJam',
       name: '2nd-wejam',
@@ -190,14 +190,13 @@ function createBookshelfInstance (knexInstance) {
 
     post = await postService.createPost(adminUser)
     post.set({
-      title: "Event started!",
-      body: "The theme is `You are not alone`. Have fun!",
+      title: 'Event started!',
+      body: 'The theme is `You are not alone`. Have fun!',
       event_id: weJam2.get('id'),
       special_post_type: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
       published_at: new Date()
     })
     await post.save()
-
   }
 
   return db
