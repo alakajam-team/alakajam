@@ -6,26 +6,37 @@
  * @module models/post-model
  */
 
+let slug = require('slug')
 let db = require('../core/db')
 
 module.exports = createModel()
 
 function createModel () {
+  let modelPrototype = db.Model.prototype
+
   let model = db.model('Post', {
     tableName: 'post',
     hasTimestamps: true,
 
+    initialize: function initialize (attrs) {
+      modelPrototype.initialize.call(this)
+      this.on('saving', function (model, attrs, options) {
+        model.set('name', slug(model.get('title') || ''))
+      })
+      return attrs
+    },
     entry: function () {
-      return this.belongsTo('Entry', 'entry_id', 'uuid')
+      return this.belongsTo('Entry', 'entry_id', 'id')
     },
     event: function () {
-      return this.belongsTo('Event', 'event_id', 'uuid')
+      return this.belongsTo('Event', 'event_id', 'id')
     },
     author: function () {
-      return this.belongsTo('User', 'author_user_id', 'uuid')
+      return this.belongsTo('User', 'author_user_id', 'id')
     },
     userRoles: function () {
-      return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
+      // TODO isn't it sufficient to specify either 'node' or ['node_type', 'node_id']?
+      return this.morphMany('UserRole', 'node', ['node_type', 'node_id'])
     }
   })
 

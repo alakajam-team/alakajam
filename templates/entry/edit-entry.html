@@ -35,7 +35,7 @@
         <div class="form-group">
           <div class="row">
             <div class="col-xs-6">
-              {% if entry.has('uuid') %}
+              {% if entry.has('id') %}
               <a class="btn btn-default" onclick="return confirm('Delete the entry? This cannot be reverted!')" href="{{ buildUrl(entry, 'entry', 'delete') }}">Delete</a> 
               {% endif %}
             </div>
@@ -64,7 +64,7 @@
 {% endblock %}
 
 {% block scripts %} 
-{{ macros.editorScripts(entry.get('uuid')) }}
+{{ macros.editorScripts(entry.get('id')) }}
 <script>
 
 // Sync H1 with title input

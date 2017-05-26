@@ -16,7 +16,7 @@ try {
 } catch (e) {
   console.error('Failed to start the server: ' + e.message)
   console.error('Did you run "npm install"?')
-  return
+  process.exit(1)
 }
 
 const promisify = require('promisify-node')

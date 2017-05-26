@@ -8,7 +8,6 @@ const promisify = require('promisify-node')
 const fs = promisify('fs')
 const rimraf = promisify('rimraf')
 const path = require('path')
-const log = global.log = require('../../core/log')
 
 let initialized = false
 
@@ -42,7 +41,7 @@ function overrideConfig () {
     DB_PASSWORD: '',
     DB_NAME: '',
     DB_SQLITE_FILENAME: 'tests/data/db.sqlite',
-    
+
     // Debug options
     DEBUG_SQL: false,
     DEBUG_REFRESH_BROWSER: false,
@@ -80,8 +79,4 @@ async function initFilesLayout () {
 async function initDatabase () {
   const db = require('../../core/db')
   await db.upgradeTables(true)
-}
-
-async function unlinkIfExists (path) {
-
 }

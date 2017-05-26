@@ -6,7 +6,17 @@
  * @module services/security-service
  */
 
+<<<<<<< HEAD
 const constants = require('../core/constants')
+=======
+const log = require('../core/log')
+
+// TODO Use constants
+const PERMISSION_READ = 'read'
+const PERMISSION_WRITE = 'write'
+const PERMISSION_MANAGE = 'manage'
+const ORDERED_PERMISSIONS = [PERMISSION_READ, PERMISSION_WRITE, PERMISSION_MANAGE]
+>>>>>>> 2d981149614cc308ced5bbf8af452698dd24c376
 
 module.exports = {
   canUserRead,
@@ -50,7 +60,7 @@ function canUserManage(user, model, options = {}) {
   return canUser(user, model, constants.PERMISSION_MANAGE, options)
 }
 
-function canUser(user, model, permission, options = {}) {
+function canUser (user, model, permission, options = {}) {
   if (!user) {
     return false
   }
@@ -58,7 +68,7 @@ function canUser(user, model, permission, options = {}) {
     throw new Error('Model does not have user roles')
   }
 
-  if (options.allowMods && isMod(user) || options.allowAdmins && isAdmin(user)) {
+  if ((options.allowMods && isMod(user)) || (options.allowAdmins && isAdmin(user))) {
     return true
   }
 
@@ -66,7 +76,7 @@ function canUser(user, model, permission, options = {}) {
   let allUserRoles = model.related('userRoles')
   if (acceptPermissions && allUserRoles) {
     let userRoles = allUserRoles.where({
-      user_uuid: user.get('uuid')
+      user_id: user.get('id')
     })
     for (let userRole of userRoles) {
       if (acceptPermissions.indexOf(userRole.get('permission'))) {

@@ -2,11 +2,11 @@
 
 /**
  * Constants
- * 
+ *
  * @module core/constants
  */
 
-const PERMISSION_READ ='read'
+const PERMISSION_READ = 'read'
 const PERMISSION_WRITE = 'write'
 const PERMISSION_MANAGE = 'manage'
 const ORDERED_PERMISSIONS = [PERMISSION_READ, PERMISSION_WRITE, PERMISSION_MANAGE]

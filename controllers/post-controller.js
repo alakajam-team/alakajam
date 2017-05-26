@@ -14,23 +14,16 @@ const templating = require('./templating')
 const Post = require('../models/post-model')
 
 module.exports = {
-
-  initRoutes: function (app) {
-    app.use('/post/:id', postMiddleware)
-
-    app.get('/post/create', editPost)
-    app.post('/post/create', savePost)
-    app.get('/post/:id/edit', editPost)
-    app.post('/post/:id/edit', savePost)
-    app.get('/post/:id', viewPost)
-    app.get('/post/:id/delete', deletePost)
-  }
-
+  postMiddleware,
+  editPost,
+  savePost,
+  viewPost,
+  deletePost
 }
 
 async function postMiddleware (req, res, next) {
-  if (req.params.id && req.params.id !== 'create') {
-    res.locals.post = await postService.findPostById(req.params.id)
+  if (req.params.postId && req.params.postId !== 'create') {
+    res.locals.post = await postService.findPostById(req.params.postId)
     if (!res.locals.post) {
       res.errorPage(404, 'Post not found')
     } else {
@@ -43,8 +36,8 @@ async function postMiddleware (req, res, next) {
 
 async function viewPost (req, res) {
   // Check permissions
-  if (postService.isPast(res.locals.post.get('published_at'))
-      || securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true })) {
+  if (postService.isPast(res.locals.post.get('published_at')) ||
+      securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true })) {
     res.render('post/view-post')
   } else {
     res.errorPage(404, 'Post not found')
@@ -62,21 +55,18 @@ async function savePost (req, res) {
   let post = res.locals.post
 
   // Check permissions
-  if (post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })
-      || !post && res.locals.user) {
-
+  if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) ||
+      !(post && res.locals.user)) {
     // Create new post if needed
-    let creation = false
     if (!post) {
       post = await postService.createPost(res.locals.user)
-      creation = true
       let specialPostType = req.query['special_post_type']
       if (specialPostType) {
         validateSpecialPostType(specialPostType, res.locals.user)
         post.set('special_post_type', specialPostType)
       }
     }
-    
+
     // Fill post from form info
     let {fields} = await req.parseForm()
     post.set('title', fields.title)

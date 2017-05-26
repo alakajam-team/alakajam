@@ -10,19 +10,14 @@ const config = require('../config')
 const db = require('../core/db')
 const constants = require('../core/constants')
 const postService = require('../services/post-service')
-const Post = require('../models/post-model')
 
 module.exports = {
-
-  initRoutes: function (app) {
-    app.use('/admin*', adminSecurity)
-    app.get('/admin', adminHome)
-    app.all('/admin/dev', adminDev)
-  }
-
+  adminMiddleware,
+  adminHome,
+  adminDev
 }
 
-async function adminSecurity (req, res, next) {
+async function adminMiddleware (req, res, next) {
   if ((!res.locals.user || !res.locals.user.get('is_admin')) && !config.DEBUG_ADMIN) {
     res.render('403')
   } else {
@@ -50,7 +45,8 @@ async function adminHome (req, res) {
  * TODO Make it only available in dev environments
  */
 async function adminDev (req, res) {
-  let infoMessage = '', errorMessage = ''
+  let infoMessage = ''
+  let errorMessage = ''
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
     if (fields['db-reset']) {

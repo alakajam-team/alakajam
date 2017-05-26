@@ -12,39 +12,32 @@ const fileStorage = require('../core/file-storage')
 const templating = require('./templating')
 
 module.exports = {
-
-  initRoutes: function (app) {
-    app.use('/entry/:uuid*', entryMiddleware)
-    app.use('/event/:eventUuid*', entryMiddleware)
-
-    app.get('/event/:eventUuid/create-entry', createEntry)
-    app.post('/event/:eventUuid/create-entry', saveEntry)
-    app.get('/entry/:uuid', viewEntry)
-    app.post('/entry/:uuid', saveEntry)
-    app.get('/entry/:uuid/edit', editEntry)
-    app.get('/entry/:uuid/delete', deleteEntry)
-  }
-
+  entryMiddleware,
+  createEntry,
+  saveEntry,
+  viewEntry,
+  editEntry,
+  deleteEntry
 }
 
 /**
  * Fetches the current entry & event
  */
 async function entryMiddleware (req, res, next) {
-  if (req.params.uuid) {
-    let entry = await eventService.findEntryById(req.params.uuid)
-    if (entry === null) {
-      res.errorPage(404, 'Entry not found')
-    } else {
-      res.locals.entry = entry
-      res.locals.event = entry.related('event')
-      next()
-    }
+  let entry = await eventService.findEntryById(req.params.entryId)
+  if (!entry) {
+    res.errorPage(404, 'Entry not found')
+    return
   }
-  if (req.params.eventUuid) {
-    res.locals.event = await eventService.findEventById(req.params.eventUuid)
-    next()
+  res.locals.entry = entry
+
+  if (req.params.eventName !== entry.get('event_name') ||
+      req.params.entryName !== entry.get('name')) {
+    res.redirect(templating.buildUrl(entry, 'entry', req.params.rest))
+    return
   }
+
+  next()
 }
 
 /**
@@ -59,7 +52,8 @@ function viewEntry (req, res) {
  */
 async function createEntry (req, res) {
   res.render('entry/edit-entry', {entry: new Entry({
-    event_uuid: res.locals.event.get('uuid')
+    event_id: res.locals.event.get('id'),
+    event_name: res.locals.event.get('name')
   })})
 }
 
@@ -81,7 +75,7 @@ async function saveEntry (req, res) {
     }
     let entry = res.locals.entry
 
-    let picturePath = '/entry/' + entry.get('uuid')
+    let picturePath = '/entry/' + entry.get('id')
     let linksObject = null
     if (fields.link) {
       linksObject = [{
@@ -103,7 +97,7 @@ async function saveEntry (req, res) {
     await entry.save()
     await entry.related('userRoles').fetch()
 
-    viewEntry(req, res)
+    res.redirect(templating.buildUrl(entry, 'entry'))
   }
 }
 

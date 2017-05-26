@@ -130,7 +130,7 @@ async function configure (app) {
   app.use(function (req, res, next) {
     // usage: let {fields, files} = await req.parseForm()
     req.parseForm = async function () {
-      return await parseRequest(req, res)
+      return parseRequest(req, res)
     }
     res.on('finish', cleanupFormFilesCallback(req, res))
     res.on('close', cleanupFormFilesCallback(req, res))
@@ -145,7 +145,7 @@ async function configure (app) {
     errorPage(req, res, 404)
   })
   app.use(function error (err, req, res, next) {
-    errorPage(req, res, 500, err.message)
+    errorPage(req, res, 500, err)
   })
 }
 
@@ -171,26 +171,30 @@ async function findOrCreateSessionKey () {
 
 /*
  * Middleware displaying an error page
- * code = Error code
- * message = Error message (optional)
+ * code = HTTP error code
+ * err = Error object or string message (optional)
  */
-function errorPage (req, res, code, message) {
-  let errorTemplate = (code === 404) ? '404' : '500'
-  let defaultMessage = (code === 404) ? 'Page not found' : ''
+function errorPage (req, res, code, err) {
+  const message = (err && err.message) || err || ((code === 404) ? 'Page not found' : 'Internal error')
+  // Check whether 'development' is on, rather than whether 'production' is
+  // off, so we don't leak stack traces in case production is ever
+  // misconfigured to leave this undefined.
+  const stack = process.env.NODE_ENV === 'development' ? err && err.stack : undefined
 
   // Internal error logging
   if (code !== 404) {
-    if (message instanceof Error) {
-      log.error(message.message + '\n' + message.stack)
+    if (stack) {
+      log.error(message + '\n' + stack)
     } else {
-      log.error(message || defaultMessage)
+      log.error(message)
     }
   }
 
   // Page rendering
-  if (message instanceof Error) {
-    message = message.message
-  }
+  let errorTemplate = (code === 404) ? '404' : '500'
   res.status(code)
-  res.render(errorTemplate, {message: message || defaultMessage})
+  res.render(errorTemplate, {
+    message,
+    stack
+  })
 }

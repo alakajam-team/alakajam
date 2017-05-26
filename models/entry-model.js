@@ -6,7 +6,9 @@
  * @module models/entry-model
  */
 
-let db = require('../core/db')
+const db = require('../core/db')
+
+const slug = require('slug')
 
 module.exports = createModel()
 
@@ -15,27 +17,29 @@ function createModel () {
 
   let model = db.model('Entry', {
     tableName: 'entry',
-    idAttribute: 'uuid',
+    idAttribute: 'id',
     hasTimestamps: true,
-    uuid: true,
 
     // Relations
 
     event: function () {
-      return this.belongsTo('Event', 'event_uuid')
+      return this.belongsTo('Event', 'event_id')
     },
     userRoles: function () {
-      return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
+      return this.morphMany('UserRole', 'node', ['node_type', 'node_id'])
     },
 
     // Cascading
-    
+
     dependents: ['userRoles'],
 
     // Listeners
 
     initialize: function initialize (attrs) {
       modelPrototype.initialize.call(this)
+      this.on('saving', function (model, attrs, options) {
+        model.set('name', slug(model.get('title') || ''))
+      })
       attrs = attrs || {}
       attrs.links = attrs.links || []
       attrs.pictures = attrs.pictures || []
@@ -56,9 +60,9 @@ function createModel () {
   model.up = async function up (applyVersion) {
     if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('entry', function (table) {
-        table.uuid('uuid').primary()
-        table.uuid('event_uuid').references('event.uuid')
-        table.uuid('event_name')
+        table.increments('id').primary()
+        table.integer('event_id').references('event.id')
+        table.string('event_name')
         table.string('links') // JSON Array : [{url, title}]
         table.string('pictures') // JSON Array : [path]
         table.string('category')
