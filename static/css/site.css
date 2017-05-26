@@ -320,10 +320,10 @@ img.preview {
   }
 
   &__link {
-    @apply --alt-font;
+    font-weight: bold;
     vertical-align: middle;
     padding: 0 5px;
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: white;
   }
   &__link:hover {

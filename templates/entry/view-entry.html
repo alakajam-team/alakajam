@@ -21,6 +21,17 @@
       <div class="well post">
         {{ entry.get('body') | markdown | safe }}
       </div>
+
+      <h2>Latest posts</h2>
+      {% for post in posts.models %}
+      {{ postMacros.post(post, user, {noBody: true}) }}
+      {% endfor %}
+
+      <h2>Comments</h2>
+      <div class="well">
+        No comments yet.
+      </div>
+
     </div>
     <div class="col-md-4 user-contents">
       <div class="well">
@@ -39,19 +50,6 @@
         <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
         {% endif %}
       </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      {% for post in posts.models %}
-      {{ postMacros.post(post, user) }}
-      {% endfor %}
-
-      {% if posts.models.length === 0 %}
-      <div class="well">
-        No posts yet.
-      </div>
-      {% endif %}
     </div>
   </div>
 </div>

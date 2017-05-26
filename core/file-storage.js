@@ -14,6 +14,7 @@ const url = require('url')
 const config = require('../config')
 
 module.exports = {
+  toUploadPath,
   move,
   exists,
   read,
@@ -23,32 +24,53 @@ module.exports = {
 }
 
 const SOURCES_ROOT = path.join(__dirname, '..')
+const STATIC_ROOT = path.join(SOURCES_ROOT, 'static')
 const UPLOADS_URL = ('/' + config.UPLOADS_PATH + '/').replace(/\/\//g, '/')
 
 /**
-  Moves the file from a path to another. Typically used for saving temporary files.
-  @param {string} sourcePath - The full path to the file to move
-  @param {string} targetPath - The path to the destination, relative to the uploads folder.
-    If the file extension is omitted, it will be grabbed from the source path. If folders don't exist, they will be created.
-  If target path doesn't contain an extension
-  @returns the final target path
-*/
-async function move (sourcePath, targetPath, isUpload = true) {
-  let truePath = targetPath.replace(/^[\\/]/, '') // remove leading slash
+ * Prepends the specified path with the uploads static folder
+ * @param  {string} anyPath 
+ * @return {string}
+ */
+function toUploadPath (anyPath) {
+  if (anyPath.indexOf(config.UPLOADS_PATH) === -1) {
+    return path.join(config.UPLOADS_PATH, anyPath)
+  } else {
+    return anyPath
+  }
+}
+
+/**
+ * Moves the file from a path to another. Typically used for saving temporary files.
+ * @param {string} sourcePath - The full path to the file to move
+ * @param {string} targetPath - The path to the destination, relative to the uploads folder.
+ *   If the file extension is omitted, it will be grabbed from the source path. If folders don't exist, they will be created.
+ * If target path doesn't contain an extension
+ * @returns the URL to that path if possible
+ */
+async function move (sourcePath, targetPath) {
+  let trueTargetPath = targetPath.replace(/^[\\/]/, '') // remove leading slash
   let sourcePathExtension = path.extname(sourcePath)
   if (!targetPath.endsWith(sourcePathExtension)) {
     // TODO replace extension rather than just append
-    truePath += sourcePathExtension
+    trueTargetPath += sourcePathExtension
   }
 
-  let absolutePath = toAbsolutePath(truePath, isUpload)
-  await createFolderIfMissing(path.dirname(absolutePath))
-  await fs.rename(sourcePath, absolutePath)
-  return url.resolve(UPLOADS_URL, truePath)
+  let absoluteTargetPath = toAbsolutePath(trueTargetPath)
+  await createFolderIfMissing(path.dirname(absoluteTargetPath))
+  await fs.rename(sourcePath, absoluteTargetPath)
+  if (absoluteTargetPath.indexOf(STATIC_ROOT) !== -1) {
+    log.info("!")
+  log.info(url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath)))
+  log.whereami()
+    return url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath))
+  } else {
+    return null
+  }
 }
 
-async function exists (documentPath, isUpload = true) {
-  let absolutePath = toAbsolutePath(documentPath, isUpload)
+async function exists (documentPath) {
+  let absolutePath = toAbsolutePath(documentPath)
   try {
     await fs.access(absolutePath, fs.constants.R_OK)
     return true
@@ -60,11 +82,10 @@ async function exists (documentPath, isUpload = true) {
 /**
  * [read description]
  * @param  {string}  documentPath
- * @param  {Boolean} isUpload
  * @return {string} the file contents as a string. Caller must parse JSON himself if needed.
  */
-async function read (documentPath, isUpload = true) {
-  let absolutePath = toAbsolutePath(documentPath, isUpload)
+async function read (documentPath) {
+  let absolutePath = toAbsolutePath(documentPath)
   let fileBuffer = await fs.readFile(absolutePath)
   return fileBuffer.toString()
 }
@@ -73,9 +94,8 @@ async function read (documentPath, isUpload = true) {
  * Writes data to a file
  * @param  {string} documentPath Destination file
  * @param  {string} data Contents to write. If a function, will be evaluated. If an object/array, will be stringified.
- * @return {bool} isUpload (Optional) Whether to consider paths relative to the uploads folder (default) or the sources root.
  */
-async function write (documentPath, data, isUpload = true) {
+async function write (documentPath, data) {
   if (typeof data === 'function') {
     data = data()
   }
@@ -83,27 +103,24 @@ async function write (documentPath, data, isUpload = true) {
     data = JSON.stringify(data)
   }
 
-  let absolutePath = toAbsolutePath(documentPath, isUpload)
+  let absolutePath = toAbsolutePath(documentPath)
   await createFolderIfMissing(path.dirname(documentPath))
   return fs.writeFile(absolutePath, data)
 }
 
-async function remove (documentPath, isUpload = true) {
-  let absolutePath = toAbsolutePath(documentPath, isUpload)
-  if (await exists(documentPath, isUpload)) {
+async function remove (documentPath) {
+  let absolutePath = toAbsolutePath(documentPath)
+  if (await exists(documentPath)) {
     await fs.unlink(absolutePath)
   }
 }
 
-function toAbsolutePath (anyPath, isUpload) {
-  let prefix = ''
+function toAbsolutePath (anyPath) {
   if (anyPath.indexOf(SOURCES_ROOT) === -1) {
-    prefix = SOURCES_ROOT
+    return path.join(SOURCES_ROOT, anyPath)
+  } else {
+    return anyPath
   }
-  if (isUpload) {
-    prefix = path.join(prefix, config.UPLOADS_PATH)
-  }
-  return path.join(prefix, anyPath)
 }
 
 /**

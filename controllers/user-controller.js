@@ -77,12 +77,12 @@ async function dashboardSettings (req, res) {
       // TODO Formidable shouldn't create an empty file
       let newAvatar = files.avatar && files.avatar.size > 0
       if (user.get('avatar') && (files['avatar-delete'] || newAvatar)) {
-        await fileStorage.remove(user.get('avatar'), false)
+        await fileStorage.remove(user.get('avatar'))
         user.unset('avatar')
       }
       if (newAvatar) {
         let avatarPath = '/user/' + user.get('id')
-        let finalPath = await fileStorage.move(files.avatar.path, avatarPath)
+        let finalPath = await fileStorage.move(files.avatar.path, fileStorage.toUploadPath(avatarPath))
         user.set('avatar', finalPath)
       }
       await user.save()

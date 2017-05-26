@@ -162,7 +162,7 @@ function cleanupFormFilesCallback (req, res) {
   return async function cleanupFormFiles () {
     let {files} = await req.parseForm()
     for (let key in files) {
-      fileStorage.remove(files[key].path, false)
+      fileStorage.remove(files[key].path)
     }
     res.removeAllListeners('finish')
     res.removeAllListeners('close')

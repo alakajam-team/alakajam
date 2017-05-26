@@ -135,9 +135,7 @@ function hashPassword (password, salt) {
 async function refreshUserReferences (user) {
   // TODO Transaction
   let userRolesCollection = await UserRole.where('user_id', user.get('id')).fetchAll()
-  console.log(userRolesCollection)
   for (let userRole of userRolesCollection.models) {
-    console.log(userRole.get('user_title'))
     userRole.set('user_name', user.get('name'))
     userRole.set('user_title', user.get('title'))
     await userRole.save()

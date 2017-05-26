@@ -60,8 +60,8 @@ function restoreSessionIfNeeded (req, res) {
  * @return {Object} Session cache object
  */
 async function loadSessionCache () {
-  if (await fileStorage.exists(SESSIONS_FILE, false)) {
-    let rawFile = await fileStorage.read(SESSIONS_FILE, false)
+  if (await fileStorage.exists(SESSIONS_FILE)) {
+    let rawFile = await fileStorage.read(SESSIONS_FILE)
     return JSON.parse(rawFile)
   } else {
     return {}

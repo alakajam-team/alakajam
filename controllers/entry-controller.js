@@ -93,10 +93,10 @@ async function saveEntry (req, res) {
     entry.set('links', linksObject)
     entry.set('body', fields.body)
     if (fields['picture-delete'] && entry.get('pictures').length > 0) {
-      await fileStorage.remove(entry.get('pictures')[0], false)
+      await fileStorage.remove(entry.get('pictures')[0])
       entry.set('pictures', [])
     } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
-      let finalPath = await fileStorage.move(files.picture.path, picturePath)
+      let finalPath = await fileStorage.move(files.picture.path, fileStorage.toUploadPath(picturePath))
       entry.set('pictures', [finalPath])
     }
     await entry.save()
