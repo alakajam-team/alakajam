@@ -7,14 +7,17 @@
 
   <p>{{ message }}</p>
 
-  {% if devMode and message and message.indexOf('no such column:') !== -1 %}
-  <div class="alert alert-warning"><h4>"No such column" error tip</h4> If you're not sure why you have this, your database model is probably out of date. You can reset the database from the <a href="/admin">administration</a></div>
-  {% endif %}
+  {% if devMode %}
 
-  {% if stack %}
-  <h2>Stack trace</h2>
-  <pre>{{ stack }}</pre>
-  <p><em>Set <code>NODE_ENV=production</code> to disable sending stack traces to the client.</em></p>
+    {% if stack %}
+    <h2>Stack trace</h2>
+    <pre>{{ stack }}</pre>
+    {% endif %}
+
+    {% if message and message.indexOf('no such column:') !== -1 %}
+    <div class="alert alert-warning"><h4>"No such column" error tip</h4> If you're not sure why you have this, your database model is probably out of date. You can reset the database from the <a href="/admin">administration</a></div>
+    {% endif %}
+
   {% endif %}
 
   <p><a href="/">(Back)</a></p>

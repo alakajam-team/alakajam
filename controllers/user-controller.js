@@ -15,8 +15,10 @@ const postService = require('../services/post-service')
 module.exports = {
   viewUserProfile,
 
-  settingsGeneral,
-  settingsPassword,
+  dashboardMiddleware,
+  dashboardPosts,
+  dashboardSettings,
+  dashboardPassword,
 
   registerForm,
   doRegister,
@@ -41,10 +43,18 @@ async function viewUserProfile (req, res) {
   }
 }
 
+async function dashboardMiddleware (req, res, next) {
+  if (!res.locals.user) {
+    res.errorPage(403, 'You are not logged in.')
+  } else {
+    next()
+  }
+}
+
 /**
  * Manage general user info
  */
-async function settingsGeneral (req, res) {
+async function dashboardSettings (req, res) {
   let errorMessage = ''
   let infoMessage = ''
 
@@ -79,16 +89,36 @@ async function settingsGeneral (req, res) {
     }
   }
 
-  res.render('user/settings-general', {
+  res.render('user/dashboard-settings', {
     errorMessage,
     infoMessage
   })
 }
 
 /**
+ * Manage user posts
+ */
+async function dashboardPosts (req, res) {
+  let newPostEvent = await eventService.findEventByStatus('open')
+  if (!newPostEvent) {
+    newPostEvent = await eventService.findEventByStatus('pending')
+  }
+
+  let posts = await postService.findPosts({ 
+    userId: res.locals.user.get('id'),
+    withDrafts: true
+  })
+
+  res.render('user/dashboard-posts', {
+    posts,
+    newPostEvent
+  })
+}
+
+/**
  * Manage user profile contents
  */
-async function settingsPassword (req, res) {
+async function dashboardPassword (req, res) {
   let errorMessage = ''
   let infoMessage = ''
 
@@ -116,7 +146,7 @@ async function settingsPassword (req, res) {
     }
   }
 
-  res.render('user/settings-password', {
+  res.render('user/dashboard-password', {
     errorMessage,
     infoMessage
   })

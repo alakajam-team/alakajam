@@ -58,7 +58,8 @@
               </div>
               <ul class="dropdown-menu">
                 <li><a href="/user/{{ user.get('name')}}">Profile</a></li>
-                <li><a href="/settings">Settings</a></li>
+                <li><a href="/dashboard/posts">My Posts</a></li>
+                <li><a href="/dashboard/settings">My Settings</a></li>
                 <li><a href="/logout">Logout</a></li>
               </ul>
             </li>
@@ -112,6 +113,8 @@
     <div class="row">
       <div class="col-xs-12">
         <div class="footer">
+          {% if devMode %}<span class="label label-default has-tooltip" data-toggle="tooltip" data-placement="top" title="" data-original-title="Set `NODE_ENV=production` in production for security and performance">Server launched in development mode</span>
+          {% endif %}
           <a href="https://github.com/mkalam-alami/wejam">WeJam! on Github</a>
         </div>
       </div>
@@ -122,6 +125,9 @@
   <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
   <script src="{{ browserRefreshUrl }}"></script>
+  <script type="text/javascript">
+    $('.has-tooltip').tooltip()
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

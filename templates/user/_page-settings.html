@@ -6,11 +6,13 @@
   <div class="row">
     <div class="col-sm-3">
       <div class="list-group">
-        <div class="list-group-item"><h4 style="margin: 0">User settings</h4></div>
-        <a href="/settings" class="list-group-item 
-        {{ 'active' if path == '/settings'}}">General</a>
-        <a href="/settings/password" class="list-group-item 
-        {{ 'active' if path == '/settings/password'}}">Change password</a>
+        <div class="list-group-item"><h4 style="margin: 0">User dashboard</h4></div>
+        <a href="/dashboard/posts" class="list-group-item 
+        {{ 'active' if path == '/dashboard/posts'}}">Posts</a>
+        <a href="/dashboard/settings" class="list-group-item 
+        {{ 'active' if path == '/dashboard/settings'}}">Settings</a>
+        <a href="/dashboard/password" class="list-group-item 
+        {{ 'active' if path == '/dashboard/password'}}">Change password</a>
       </div>
     </div>
     <div class="col-sm-9">
@@ -21,7 +23,7 @@
         <div class="alert alert-warning">{{ errorMessage }}</div>
       {% endif %}
 
-      {% block settingsBody %}{% endblock %}
+      {% block dashboardBody %}{% endblock %}
     </div>
   </div>
 </div>

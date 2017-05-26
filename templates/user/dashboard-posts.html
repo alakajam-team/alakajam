@@ -1,12 +1,22 @@
-{% extends "_page.html" %}
+{% extends "user/_page-settings.html" %}
 {% import "post/_macros-post.html" as postMacros %}
 
-{% block body %}
+{% block dashboardBody %}
 
-<div class="container profile">
-  <div class="row">
-  <h1>TODO</h1>
-  </div>
-</div>
+<h1>Posts</h1>
+
+{% if newPostEvent %}
+<p>
+  <a href="{{ buildUrl(null, 'post', 'create', {eventId: newPostEvent.get('id')}) }}" class="btn btn-primary">Create new post</a>
+</p>
+{% endif %}
+
+{% if posts.models.length > 0 %}
+  {% for post in posts.models %}
+  {{ postMacros.post(post, user, {noBody: true}) }}
+  {% endfor %}
+{% else %}
+<div class="well">This user didn't write posts... Yet!</div>
+{% endif %}
 
 {% endblock %}

@@ -41,8 +41,11 @@ module.exports = {
     router.get('/login', userController.loginForm)
     router.post('/login', userController.doLogin)
     router.get('/logout', userController.doLogout)
-    router.all('/settings', userController.settingsGeneral)
-    router.all('/settings/password', userController.settingsPassword)
+
+    router.use('/dashboard*', userController.dashboardMiddleware)
+    router.all('/dashboard/posts', userController.dashboardPosts)
+    router.all('/dashboard/settings', userController.dashboardSettings)
+    router.all('/dashboard/password', userController.dashboardPassword)
     router.get('/user/:name', userController.viewUserProfile)
 
     router.get('/admin', adminController.adminHome)
