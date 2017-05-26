@@ -9,6 +9,7 @@
 const moment = require('moment')
 const constants = require('../core/constants')
 const postService = require('../services/post-service')
+const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
 const templating = require('./templating')
 const Post = require('../models/post-model')
@@ -45,10 +46,32 @@ async function viewPost (req, res) {
 }
 
 async function editPost (req, res) {
-  if (!res.locals.post) {
-    res.locals.post = new Post()
-  } else if (securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
-    res.render('post/edit-post')
+  let createMode = !res.locals.post
+  if (createMode || securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
+    if (createMode) {
+      let post = new Post()
+      post.set('event_id', req.query.eventId)
+      post.set('entry_id', req.query.entryId)
+      res.locals.post = post
+    }
+
+    // Fetch related event/entry
+    let post = res.locals.post
+    let context = {}
+    if (post.get('event_id')) {
+      context.event = await eventService.findEventById(post.get('event_id'))
+    }
+    if (post.get('entry_id')) {
+      context.entry = await eventService.findEntryById(post.get('entry_id'))
+    }
+
+    // Late post attachment to entry
+    if (post.get('event_id') && !post.get('entry_id')) {
+      context.entry = await eventService.findUserEntryForEvent(
+        res.locals.user, context.event.get('id'))
+    }
+
+    res.render('post/edit-post', context)
   } else {
     res.errorPage(403)
   }
@@ -74,6 +97,8 @@ async function savePost (req, res) {
     let {fields} = await req.parseForm()
     post.set('title', fields.title)
     post.set('body', fields.body)
+    post.set('event_id', fields['event_id'])
+    post.set('entry_id', fields['entry_id'])
 
     // Publication strategy
     let redirectToView = true

@@ -13,84 +13,32 @@ const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 
 module.exports = {
+  viewUserProfile,
+
+  settingsGeneral,
+  settingsPassword,
+
   registerForm,
   doRegister,
   loginForm,
   doLogin,
-  doLogout,
-  settingsGeneral,
-  settingsPassword,
-  viewUserProfile
+  doLogout
 }
 
 /**
- * Register form
+ * Display a user profile
  */
-async function registerForm (req, res) {
-  res.render('register')
-}
-
-/**
- * Register
- */
-async function doRegister (req, res) {
-  let {fields} = await req.parseForm()
-  let errorMessage = null
-  if (!(fields.name && fields.password)) {
-    errorMessage = 'Username or password missing'
-  } else if (fields.password !== fields['password-bis']) {
-    errorMessage = 'Passwords do not match'
+async function viewUserProfile (req, res) {
+  let user = await userService.findByName(req.params.name)
+  if (user) {
+    res.render('user/profile', {
+      profileUser: user,
+      entries: await eventService.findUserEntries(user),
+      posts: await postService.findPosts({ userId: user.get('id') })
+    })
   } else {
-    let result = await userService.register(fields.name, fields.password)
-    if (result === true) {
-      doLogin(req, res)
-    } else {
-      errorMessage = result
-    }
+    res.errorPage(400, 'No user exists with name ' + req.params.name)
   }
-
-  if (errorMessage) {
-    res.render('register', { errorMessage })
-  }
-}
-
-/**
- * Login form
- */
-async function loginForm (req, res) {
-  res.render('login')
-}
-
-/**
- * Login
- */
-async function doLogin (req, res) {
-  let context = {}
-  let {fields} = await req.parseForm()
-  if (fields.name && fields.password) {
-    let user = await userService.authenticate(fields.name, fields.password)
-    if (user) {
-      context.user = user
-      context.infoMessage = 'Authentication successful'
-      sessionService.openSession(req, res, user, !!fields['remember-me'])
-    } else {
-      context.errorMessage = 'Authentication failed'
-    }
-  } else {
-    context.errorMessage = 'Username or password missing'
-  }
-
-  res.render('login', context)
-}
-
-/**
- * Logout
- */
-async function doLogout (req, res) {
-  sessionService.invalidateSession(req, res)
-  res.render('login', {
-    infoMessage: 'Logout successful.'
-  })
 }
 
 /**
@@ -175,17 +123,71 @@ async function settingsPassword (req, res) {
 }
 
 /**
- * Display a user profile
+ * Register form
  */
-async function viewUserProfile (req, res) {
-  let user = await userService.findByName(req.params.name)
-  if (user) {
-    res.render('user/profile', {
-      profileUser: user,
-      entries: await eventService.findUserEntries(user),
-      posts: await postService.findUserPosts(user.get('id'))
-    })
+async function registerForm (req, res) {
+  res.render('register')
+}
+
+/**
+ * Register
+ */
+async function doRegister (req, res) {
+  let {fields} = await req.parseForm()
+  let errorMessage = null
+  if (!(fields.name && fields.password)) {
+    errorMessage = 'Username or password missing'
+  } else if (fields.password !== fields['password-bis']) {
+    errorMessage = 'Passwords do not match'
   } else {
-    res.errorPage(400, 'No user exists with name ' + req.params.name)
+    let result = await userService.register(fields.name, fields.password)
+    if (result === true) {
+      doLogin(req, res)
+    } else {
+      errorMessage = result
+    }
   }
+
+  if (errorMessage) {
+    res.render('register', { errorMessage })
+  }
+}
+
+/**
+ * Login form
+ */
+async function loginForm (req, res) {
+  res.render('login')
+}
+
+/**
+ * Login
+ */
+async function doLogin (req, res) {
+  let context = {}
+  let {fields} = await req.parseForm()
+  if (fields.name && fields.password) {
+    let user = await userService.authenticate(fields.name, fields.password)
+    if (user) {
+      context.user = user
+      context.infoMessage = 'Authentication successful'
+      sessionService.openSession(req, res, user, !!fields['remember-me'])
+    } else {
+      context.errorMessage = 'Authentication failed'
+    }
+  } else {
+    context.errorMessage = 'Username or password missing'
+  }
+
+  res.render('login', context)
+}
+
+/**
+ * Logout
+ */
+async function doLogout (req, res) {
+  sessionService.invalidateSession(req, res)
+  res.render('login', {
+    infoMessage: 'Logout successful.'
+  })
 }

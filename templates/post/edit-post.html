@@ -18,6 +18,26 @@
       <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ post.get('title') }}">
     </div>
 
+    {% if event or entry %}
+    <div class="form-group">
+      <label>Topics</label>
+      <div class="form-inline">
+        {% if event %}
+        Event <span class="label label-default">
+          {{ event.get('title') }}
+        </span>&nbsp;
+        {% endif %}
+        {% if entry %}
+        Event <span class="label label-default">
+          {{ entry.get('title') }}
+        </span>
+        {% endif %}
+        <input type="hidden" name="event_id" value="{{ event.get('id') if event }}" />
+        <input type="hidden" name="entry_id" value="{{ entry.get('id') if entry }}" />
+      </div>
+    </div>
+    {% endif %}
+
     <div class="form-group">
       <label for="body">Body</label>
       {{ macros.editor('body', post.get('body')) }}

@@ -220,6 +220,30 @@ img.preview {
 
 }
 
+.action-banner {
+  @apply --shadow;
+  background-color: var(--alt);
+  margin-bottom: 20px;
+  padding: 10px;
+  
+  &__info {
+    font-size: 1.3rem;
+    color: white;
+  }
+
+  &__link {
+    @apply --alt-font;
+    vertical-align: middle;
+    padding: 0 5px;
+    font-size: 2rem;
+    color: white;
+  }
+  &__link:hover {
+    color: white;
+    background-color: var(--alt-light);
+  }
+}
+
 /* Blog posts */
 
 .post {
@@ -386,6 +410,7 @@ img.preview {
   margin-bottom: 20px;
 
   &__header {
+    @apply --shadow;
     display: block;
     padding: 10px;
     margin-bottom: 20px;

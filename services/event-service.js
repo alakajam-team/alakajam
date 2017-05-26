@@ -8,6 +8,7 @@
 
 const Event = require('../models/event-model')
 const Entry = require('../models/entry-model')
+const constants = require('../core/constants')
 const securityService = require('../services/security-service')
 
 module.exports = {
@@ -84,7 +85,7 @@ async function createEntry (user, event) {
     user_id: user.get('id'),
     user_name: user.get('name'),
     user_title: user.get('title'),
-    permission: securityService.PERMISSION_MANAGE
+    permission: constants.PERMISSION_MANAGE
   })
   return entry
 }
@@ -104,8 +105,9 @@ async function findEntryById (id) {
  * @return {array(Entry)|null}
  */
 async function findUserEntries (user) {
-  let entryCollection = await Entry.query((query) => {
-    query.innerJoin('user_role', 'entry.id', 'user_role.node_id')
+  let entryCollection = await Entry.query((qb) => {
+    qb.distinct()
+      .innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .where('user_role.user_id', user.get('id'))
   }).fetchAll({ withRelated: ['userRoles'] })
   return entryCollection.models

@@ -7,6 +7,7 @@
  */
 
 const eventService = require('../services/event-service')
+const postService = require('../services/post-service')
 const Entry = require('../models/entry-model')
 const fileStorage = require('../core/file-storage')
 const templating = require('./templating')
@@ -43,8 +44,12 @@ async function entryMiddleware (req, res, next) {
 /**
  * Browse entry
  */
-function viewEntry (req, res) {
-  res.render('entry/view-entry')
+async function viewEntry (req, res) {
+  res.render('entry/view-entry', {
+    posts: await postService.findPosts({
+      entryId: res.locals.entry.get('id')
+    })
+  })
 }
 
 /**

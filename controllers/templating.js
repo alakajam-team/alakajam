@@ -19,7 +19,7 @@ module.exports = {
   canUserManage: securityService.canUserManage
 }
 
-function buildUrl (model, type, page = null) {
+function buildUrl (model, type, page = null, options = {}) {
   let pagePath = (page ? '/' + page : '')
 
   if (type === 'event') {
@@ -38,6 +38,13 @@ function buildUrl (model, type, page = null) {
     return '/user/' + userId + pagePath
   } else if (type === 'post') {
     // Post model
-    return '/post/' + model.get('id') + '/' + model.get('name') + pagePath
+    if (page === 'create') {
+      pagePath += '?'
+      if (options.eventId) pagePath += 'eventId=' + options.eventId
+      if (options.entryId) pagePath += '&entryId=' + options.entryId
+      return '/post' + pagePath
+    } else {
+      return '/post/' + model.get('id') + '/' + model.get('name') + pagePath
+    }
   }
 }

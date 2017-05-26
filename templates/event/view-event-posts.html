@@ -4,10 +4,32 @@
 {% block body %}
 
 <div class="container">
+  {% if user %}
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="action-banner">
+        <div class="row">
+          <div class="col-xs-8 action-banner__info">
+            {% if userPost %}
+              Your latest post: <a href="{{ buildUrl(userPost, 'post') }}" class="action-banner__link">{{ userPost.get('title') }}</a>
+            {% else %}
+            You have no posts in this event
+            {% endif %}
+          </div>
+          <div class="col-xs-4 text-right">
+            <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-default">Create new post</a>
+            <a href="{{ buildUrl(user, 'user') }}" class="btn btn-default">My posts</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
   <div class="row">
     <div class="col-xs-12">
       {% for post in posts.models %}
-      {{ postMacros.post(post) }}
+      {{ postMacros.post(post, user) }}
       {% endfor %}
 
       {% if posts.models.length === 0 %}

@@ -36,9 +36,15 @@ async function eventMiddleware (req, res, next) {
  * Browse event posts
  */
 async function viewEventPosts (req, res) {
-  // TODO Attach actual event posts
+  let userPost = undefined
+  if (res.locals.user) {
+    let userPosts = await postService.findPosts({ userId: res.locals.user.get('id') })
+    userPost = (userPosts.models.length > 0) ? userPosts.models[0] : undefined
+  }
+
   res.render('event/view-event-posts', {
-    posts: await postService.findPostFeed({
+    userPost: userPost,
+    posts: await postService.findPosts({
       eventId: res.locals.event.get('id')
     })
   })

@@ -50,7 +50,7 @@ async function index (req, res) {
     await res.locals.liveEvent.load(['entries', 'entries.userRoles'])
   }
   res.render('index', {
-    posts: await postService.findPostFeed({
+    posts: await postService.findPosts({
       specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT
     })
   })

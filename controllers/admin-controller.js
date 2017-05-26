@@ -29,7 +29,7 @@ async function adminMiddleware (req, res, next) {
  * Edit home announcement
  */
 async function adminHome (req, res) {
-  let allPostsCollection = await postService.findPostFeed({
+  let allPostsCollection = await postService.findPosts({
     specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
     withDrafts: true
   })

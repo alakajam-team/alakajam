@@ -133,7 +133,7 @@ function createBookshelfInstance (knexInstance) {
     await userService.register('administrator', 'administrator')
     let adminUser = await userService.findByName('administrator')
     adminUser.set({
-      'title': 'Administraor',
+      'title': 'Administrator',
       is_admin: true
     })
     await adminUser.save()
