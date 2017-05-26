@@ -71,43 +71,57 @@
 
     {# ==== Event header ==== #}
     {% if (event) %}
-    <div class="event-header">
-      <div class="container">
-        <div class="event-header__info">
-          <a href="{{ buildUrl(event, 'event') }}" class="event-header__name">
-            {{ event.get('title') }}
-          </a>
-          <div class="event-header__dates hidden-xs">
-            {{ event.get('display_dates') }}
+      <div class="event-header">
+        <div class="container">
+          <div class="event-header__info">
+            <a href="{{ buildUrl(event, 'event') }}" class="event-header__name">
+              {{ event.get('title') }}
+            </a>
+            <div class="event-header__dates hidden-xs">
+              {{ event.get('display_dates') }}
+            </div>
           </div>
+          <div class="event-header__links">
+            <a href="{{ buildUrl(event, 'event') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event') }}"><span class="glyphicon glyphicon-home"></span> Posts</a><!--
+            --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-grain"></span> Theme</a><!--
+            --><a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link  {{ 'active' if path == buildUrl(event, 'event', 'games') }}"><span class="glyphicon glyphicon-tower"></span> Games</a><!--
+          --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
         </div>
-        <div class="event-header__links">
-          <a href="{{ buildUrl(event, 'event') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event') }}"><span class="glyphicon glyphicon-home"></span> Posts</a><!--
-          --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-grain"></span> Theme</a><!--
-          --><a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link  {{ 'active' if path == buildUrl(event, 'event', 'games') }}"><span class="glyphicon glyphicon-tower"></span> Games</a><!--
-        --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
+      </div>
+    </div>
+    {% endif %}
+  </nav>
+
+  {% if (user and user.get('is_mod') or user.get('is_admin')) %}
+  <div class="moderation-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <a href="/admin" class="btn"><span class="glyphicon glyphicon-wrench"></span> Mod dashboard</a>
+          {% block moderation %}&nbsp;{% endblock %}
+        </div>
       </div>
     </div>
   </div>
   {% endif %}
-</nav>
 
-{% block body %}{% endblock %}
 
-<footer class="container">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="footer">
-        {% if user and user.get('is_admin') %}<a href="/admin">Administration</a> | {% endif %}<a href="https://github.com/mkalam-alami/wejam">WeJam! on Github</a>
+  {% block body %}{% endblock %}
+
+  <footer class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="footer">
+          <a href="https://github.com/mkalam-alami/wejam">WeJam! on Github</a>
+        </div>
       </div>
     </div>
-  </div>
-</footer>
+  </footer>
 
-<script type="text/javascript" src="/static/js/jquery.min.js"></script>
-<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
-<script src="{{ browserRefreshUrl }}"></script>
-{% block scripts %}{% endblock %}
+  <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
+  <script src="{{ browserRefreshUrl }}"></script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

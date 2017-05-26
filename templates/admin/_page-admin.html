@@ -6,12 +6,19 @@
   <div class="row">
     <div class="col-sm-3">
       <div class="list-group panel">
-        <div class="list-group-item list-group-item-danger"><h4 style="margin: 0; color: white">Administration</h4></div>
+        <div class="list-group-item list-group-item-default"><h4 style="margin: 0">Moderation</h4></div>
         <a href="/admin" class="list-group-item 
         {{ 'list-group-item-warning' if path == '/admin'}}">Announcements</a>
-        <a href="/admin/dev" class="list-group-item 
-        {{ 'list-group-item-warning' if path == '/admin/dev'}}">Developer tools</a>
       </div>
+
+      {% if (user.get('is_admin')) %}
+      <div class="list-group panel">
+        <div class="list-group-item list-group-item-default"><h4 style="margin: 0">Administration</h4></div>
+        <a href="/admin/dev" class="list-group-item 
+        {{ 'list-group-item-danger' if path == '/admin/dev'}}">Developer tools</a>
+      </div>
+      {% endif %}
+
     </div>
     <div class="col-sm-9">
       {% if infoMessage %}

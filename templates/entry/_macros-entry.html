@@ -1,0 +1,53 @@
+{% macro entryThumb(entry, cols = 3) %}
+<div class="col-sm-4 col-md-{{ cols }}">
+  <div class="entry-thumb">
+    {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
+    <a class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')" href="{{ buildUrl(entry, 'entry') }}">
+      <div class="entry-thumb__picture-gradient"></div>
+    </a>
+    <div class="entry-thumb__details" >
+      <a class="entry-thumb__title"  href="{{ buildUrl(entry, 'entry') }}">
+        {{ entry.get('title') }}
+      </a>
+      <div class="entry-thumb__author" >by 
+      {% for userRole in entry.related('userRoles').models %}
+       <a href="{{ buildUrl(userRole, 'user') }}">
+        {{ userRole.get('user_title') }}{{ ', ' if not loop.last }}
+       </a>
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro eventTable(event, withEntries = true, entryCols = 3) %}
+  <div class="event-table {{ 'live' if event.get('status') == 'open' }}">
+    <div class="row">
+      <div class="col-md-12">
+        <a class="event-table__header" href="{{ buildUrl(event, 'event') }}">
+          <div class="row">
+            <div class="event-table__title col-sm-4">
+              <h2>{{ event.get('title') }}</h2>
+            </div>
+            <div class="event-table__status col-sm-3">
+              Current state: <b>{{ event.get('status') }}</b><br />
+              Entry count: <b>{{ event.related('entries').length }}</b>
+            </div>
+            <div class="event-table__status col-sm-5">
+              Dates: <b>{{ event.get('display_dates') }}</b><br />
+              Theme: <b>{{ event.get('display_theme') }}</b>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% if withEntries %}
+    <div class="row">
+      {% for entry in event.related('entries').models %}
+        {{ entryThumb(entry, entryCols) }}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+{% endmacro %}

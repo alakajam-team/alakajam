@@ -1,0 +1,5 @@
+{% extends "_page.html" %}
+
+{% block moderation %}
+  {% if entry %}<a href="{{ buildUrl(entry, 'entry', 'edit') }}" class="btn"><span class="glyphicon glyphicon-pencil"></span> Edit entry</a>{% endif %}
+{% endblock %}

@@ -11,6 +11,9 @@
   --text: #1f3038;
   --text-light: #4f7080;
   --text-lighter: #AAA;
+  --moderation: #ffce54;
+  --moderation-light: #ffe198;
+  --moderation-dark: #f6bb42;
 
   /* Fonts */
   --main-font: {
@@ -103,7 +106,7 @@ img.preview {
   background-color: white;
 }
 
-/* Nav bar */
+/* ============================== Navigation ============================== */
 
 .navbar-default {
   background-color: var(--main);
@@ -220,6 +223,91 @@ img.preview {
 
 }
 
+.event-header {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  line-height: var(--eventbar-height);
+  background-color: white;
+  color: var(--alt);
+
+  &__info {
+    display: inline-block;
+    text-align: center;
+  }
+
+  &__name {
+    @apply --alt-font;
+    display: inline-block;
+    line-height: var(--eventbar-height);
+    padding-right: 10px;
+    vertical-align: top;
+    font-size: 2rem;
+  }
+
+  &__dates {
+    display: inline-block;
+    line-height: var(--eventbar-height);
+    vertical-align: top;
+    padding-right: 30px;
+    font-size: .9rem;
+    color: var(--text-light);
+  }
+
+  &__links {
+    display: inline-block;
+  }
+
+  &__link {
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: top;
+    padding: 0 15px;
+    margin: 0;
+    height: var(--eventbar-height);
+    font-size: 1rem;
+
+    &:hover {
+      background-color: var(--alt-transparent);
+    }
+
+    &.active {
+      border-bottom: 4px solid var(--alt);
+    }
+
+    &.disabled {
+      color: var(--text-lighter);
+      cursor: default;
+      &:hover {
+        background-color: inherit;
+      }
+    }
+  }
+}
+
+.moderation-bar {
+  margin: -20px 0 20px 0;
+  width: 100%;
+  background-color: var(--moderation-light);
+
+  & .btn {
+    background-color: var(--moderation);
+    border-color: var(--moderation);
+    color: var(--text);
+    padding: 0px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 0;
+    margin-right: 5px;
+
+    &:hover {
+    background-color: var(--moderation-dark);
+    border-color: var(--moderation-dark);
+    color: white;
+    }
+  }
+}
+
 .action-banner {
   @apply --shadow;
   background-color: var(--alt);
@@ -244,7 +332,7 @@ img.preview {
   }
 }
 
-/* Blog posts */
+/* ============================== Blog posts ============================== */
 
 .post {
 
@@ -339,70 +427,8 @@ img.preview {
   }
 }
 
-/* Event header */
 
-.event-header {
-  display: flex;
-  box-sizing: border-box;
-  width: 100%;
-  line-height: var(--eventbar-height);
-  background-color: white;
-  color: var(--alt);
-
-  &__info {
-    display: inline-block;
-    text-align: center;
-  }
-
-  &__name {
-    @apply --alt-font;
-    display: inline-block;
-    line-height: var(--eventbar-height);
-    padding-right: 10px;
-    vertical-align: top;
-    font-size: 2rem;
-  }
-
-  &__dates {
-    display: inline-block;
-    line-height: var(--eventbar-height);
-    vertical-align: top;
-    padding-right: 30px;
-    font-size: .9rem;
-    color: var(--text-light);
-  }
-
-  &__links {
-    display: inline-block;
-  }
-
-  &__link {
-    display: inline-block;
-    box-sizing: border-box;
-    vertical-align: top;
-    padding: 0 15px;
-    margin: 0;
-    height: var(--eventbar-height);
-    font-size: 1rem;
-
-    &:hover {
-      background-color: var(--alt-transparent);
-    }
-
-    &.active {
-      border-bottom: 4px solid var(--alt);
-    }
-
-    &.disabled {
-      color: var(--text-lighter);
-      cursor: default;
-      &:hover {
-        background-color: inherit;
-      }
-    }
-  }
-}
-
+/* ============================== Events ============================== */
 
 /* Event table */
 
@@ -506,6 +532,8 @@ img.preview {
   }
 
 }
+
+/* ============================== User pages ============================== */
 
 /* Login form */
 
