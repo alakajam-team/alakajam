@@ -61,15 +61,15 @@ async function resize (sourcePath, targetPath, maxDiagonal) {
   // Sharp is an optional dependency
   if (sharp) {
     // Check whether image is too big
-    let meta = await sharp.metadata(sourcePath)
+    let source = sharp(sourcePath)
+    let meta = await source.metadata()
     let diagonalSq = meta.width * meta.width + meta.height * meta.height
     if (diagonalSq > maxDiagonal * maxDiagonal) {
       // Resize to max size
       let diagonal = Math.max(Math.sqrt(diagonalSq))
-      return sharp(sourcePath)
-        .resize(
-          Math.max(meta.width * maxDiagonal / diagonal),
-          Math.max(meta.height * maxDiagonal / diagonal))
+      return source.resize(
+          Math.ceil(meta.width * maxDiagonal / diagonal),
+          Math.ceil(meta.height * maxDiagonal / diagonal))
         .toFile(targetPath)
     }
   }
