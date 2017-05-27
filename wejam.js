@@ -92,8 +92,17 @@ async function initFilesLayout () {
     log.info(CONFIG_PATH + ' initialized with sample values')
   }
 
+  // Look for missing config keys
+  const config = require(CONFIG_PATH)
+  const configSample = require(CONFIG_SAMPLE_PATH)
+  for (let key in configSample) {
+    if (config[key] === undefined) {
+      log.warn('Key "' + key + '" missing from config.js, using default value "' + configSample[key] + '"')
+      config[key] = configSample[key]
+    }
+  }
+
   // Create data folders
-  const config = require('./config')
   const fileStorage = require('./core/file-storage')
   await fileStorage.createFolderIfMissing(path.join(config.DATA_PATH, '/tmp'))
   await fileStorage.createFolderIfMissing(config.UPLOADS_PATH)
