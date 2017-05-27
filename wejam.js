@@ -96,7 +96,7 @@ async function initFilesLayout () {
   const config = require(CONFIG_PATH)
   const configSample = require(CONFIG_SAMPLE_PATH)
   for (let key in configSample) {
-    if (config[key] === undefined) {
+    if (config[key] === undefined && (key !== 'DB_SQLITE_FILENAME' || config['DB_TYPE'] === 'sqlite3')) {
       log.warn('Key "' + key + '" missing from config.js, using default value "' + configSample[key] + '"')
       config[key] = configSample[key]
     }
