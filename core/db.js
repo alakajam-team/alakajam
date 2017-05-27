@@ -196,6 +196,8 @@ function createBookshelfInstance (knexInstance) {
       published_at: new Date()
     })
     await post.save()
+
+    await postService.createComment(entrantUser, post, 'Seriously? We already had this theme twice')
   }
 
   return db

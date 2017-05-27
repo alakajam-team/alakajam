@@ -20,7 +20,8 @@ module.exports = {
       'entry-model',
       'user-model',
       'user-role-model',
-      'post-model'
+      'post-model',
+      'comment-model'
     ]
   }
 

@@ -28,6 +28,9 @@ function createModel () {
     userRoles: function () {
       return this.morphMany('UserRole', 'node', ['node_type', 'node_id'])
     },
+    comments: function () {
+      return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
+    },
 
     // Cascading
 

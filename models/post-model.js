@@ -26,17 +26,20 @@ function createModel () {
       return attrs
     },
     entry: function () {
-      return this.belongsTo('Entry', 'entry_id', 'id')
+      return this.belongsTo('Entry', 'entry_id')
     },
     event: function () {
-      return this.belongsTo('Event', 'event_id', 'id')
+      return this.belongsTo('Event', 'event_id')
     },
     author: function () {
-      return this.belongsTo('User', 'author_user_id', 'id')
+      return this.belongsTo('User', 'author_user_id')
     },
     userRoles: function () {
       // TODO isn't it sufficient to specify either 'node' or ['node_type', 'node_id']?
       return this.morphMany('UserRole', 'node', ['node_type', 'node_id'])
+    },
+    comments: function () {
+      return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
     }
   })
 

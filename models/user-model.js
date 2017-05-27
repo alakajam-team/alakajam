@@ -18,6 +18,9 @@ function createModel () {
 
     roles: function () {
       return this.hasMany('UserRole', 'user_id')
+    },
+    comments: function () {
+      return this.hasMany('Comment', 'user_id')
     }
   })
 

@@ -7,6 +7,7 @@
  */
 
 const Post = require('../models/post-model')
+// const Comment = require('../models/comment-model')
 const constants = require('../core/constants')
 const securityService = require('../services/security-service')
 
@@ -16,7 +17,8 @@ module.exports = {
   findPosts,
   findPostById,
 
-  createPost
+  createPost,
+  createComment
 }
 
 /**
@@ -75,4 +77,20 @@ async function createPost (user) {
     permission: constants.PERMISSION_MANAGE
   })
   return post
+}
+
+/**
+ * Creates and persists a new comment.
+ * @param  {User} user
+ * @param  {Post|Entry} node
+ * @param  {string} comment body
+ * @return {Comment}
+ */
+async function createComment (user, node, body) {
+  let comment = await node.comments().create({
+    user_id: user.get('id'),
+    body: body
+  })
+  await comment.save()
+  return comment
 }
