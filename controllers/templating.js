@@ -15,6 +15,7 @@ module.exports = {
   buildUrl,
 
   isPast: postService.isPast,
+  wasEdited: postService.wasEdited,
 
   canUserRead: securityService.canUserRead,
   canUserWrite: securityService.canUserWrite,

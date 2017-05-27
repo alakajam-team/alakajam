@@ -75,6 +75,7 @@ function createModel () {
         table.string('results')
         table.string('picture') // TODO Replace with document API
         table.dateTime('published_at')
+        table.integer('comment_count')
         table.timestamps()
       })
     }

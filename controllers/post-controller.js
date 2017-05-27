@@ -37,9 +37,15 @@ async function postMiddleware (req, res, next) {
 
 async function viewPost (req, res) {
   // Check permissions
+  let post = res.locals.post
   if (postService.isPast(res.locals.post.get('published_at')) ||
-      securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true })) {
-    res.render('post/view-post')
+      securityService.canUserRead(res.locals.user, post, { allowMods: true })) {
+    await post.load(['comments', 'comments.user'])
+    let comments = post.related('comments')
+          .sortBy(comment => comment.get('created_at'))
+    res.render('post/view-post', {
+      comments
+    })
   } else {
     res.errorPage(403)
   }

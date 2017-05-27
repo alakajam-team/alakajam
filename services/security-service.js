@@ -21,7 +21,7 @@ module.exports = {
 /**
  * Checks if a user can read the given model
  * @param  {User} user (optional)
- * @param  {Entry|Post} model
+ * @param  {Entry|Post|Comment} model
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
@@ -32,7 +32,7 @@ function canUserRead (user, model, options = {}) {
 /**
  * Checks if a user can write in the given model
  * @param  {User} user (optional)
- * @param  {Entry|Post} model
+ * @param  {Entry|Post|Comment} model
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
@@ -43,7 +43,7 @@ function canUserWrite (user, model, options = {}) {
 /**
  * Checks if a user can manage the given model
  * @param  {User} user (optional)
- * @param  {Entry|Post} model
+ * @param  {Entry|Post|Comment} model
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
@@ -55,14 +55,19 @@ function canUser (user, model, permission, options = {}) {
   if (!user) {
     return false
   }
-  if (!model.relations.userRoles) {
-    throw new Error('Model does not have user roles')
-  }
-
   if ((options.allowMods && isMod(user)) || (options.allowAdmins && isAdmin(user))) {
     return true
   }
 
+  // Comments
+  if (model.get('user_id')) {
+    return model.get('user_id') === user.get('id')
+  }
+
+  // User/Posts (permission-based)
+  if (!model.relations.userRoles) {
+    throw new Error('Model does not have user roles')
+  }
   let acceptPermissions = getPermissionsEqualOrAbove(permission)
   let allUserRoles = model.related('userRoles')
   if (acceptPermissions && allUserRoles) {

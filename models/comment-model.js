@@ -6,14 +6,11 @@
  * @module models/comment-model
  */
 
-let slug = require('slug')
 let db = require('../core/db')
 
 module.exports = createModel()
 
 function createModel () {
-  let modelPrototype = db.Model.prototype
-
   let model = db.model('Comment', {
     tableName: 'comment',
     hasTimestamps: true,
@@ -21,7 +18,7 @@ function createModel () {
     node: function () {
       return this.morphTo('node', ['node_type', 'node_id'], 'Entry', 'Post')
     },
-    author: function () {
+    user: function () {
       return this.belongsTo('User', 'user_id', 'id')
     },
     parentComment: function () {

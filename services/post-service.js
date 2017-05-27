@@ -13,6 +13,7 @@ const securityService = require('../services/security-service')
 
 module.exports = {
   isPast,
+  wasEdited,
 
   findPosts,
   findPostById,
@@ -28,6 +29,15 @@ module.exports = {
  */
 function isPast (time) {
   return time && (new Date().getTime() - time) > 0
+}
+
+/**
+ * Tells whether a model has been edited > 1 hour after its creation
+ * @param  {Model} model Any model with timestamps
+ * @return {bool}
+ */
+function wasEdited (model) {
+  return model.get('updated_at') - model.get('created_at') > 3600 * 1000
 }
 
 /**

@@ -56,6 +56,7 @@ function createModel () {
         table.string('body', 10000)
         table.date('published_at')
         table.string('special_post_type')
+        table.integer('comment_count')
         table.timestamps()
       })
     }

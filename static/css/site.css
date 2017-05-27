@@ -8,6 +8,7 @@
   --alt-dark: color(var(--alt) lightness(35%));
   --alt-transparent: color(var(--alt) alpha(10%));
   --bg: #eee;
+  --borders: #dadada;
   --text: #1f3038;
   --text-light: #4f7080;
   --text-lighter: #AAA;
@@ -314,14 +315,11 @@ img.preview {
 }
 
 .action-banner {
-  @apply --shadow;
-  background-color: var(--alt);
-  margin-bottom: 20px;
-  padding: 10px;
+  margin-bottom: 10px;
   
   &__info {
     font-size: 1.3rem;
-    color: white;
+    padding-right: 10px;
   }
 
   &__link {
@@ -329,11 +327,6 @@ img.preview {
     vertical-align: middle;
     padding: 0 5px;
     font-size: 1.5rem;
-    color: white;
-  }
-  &__link:hover {
-    color: white;
-    background-color: var(--alt-light);
   }
 }
 
@@ -343,22 +336,24 @@ img.preview {
 
   &__heading {
     display: block;
-    background-color: var(--main);
-    color: white;
+    color: var(--text);
 
     & h2 {
+      @apply --alt-font;
       margin: 0;
-      padding: 10px 15px;
+      padding: 10px 0;
     }
 
     &:hover {
-      background-color: var(--main-light);
-      color: white;
+      background-color: var(--borders);
+      color: var(--text);
+      transition: 0.1s;
+      padding: 0 10px;
     }
   }
 
   &__details {
-    border-bottom: 1px solid #DADADA;
+    border-bottom: 1px solid var(--borders);
     line-height: 36px;
     font-weight: bold;
 

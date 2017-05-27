@@ -97,14 +97,20 @@ function createBookshelfInstance (knexInstance) {
     let currentVersion = await db.findCurrentVersion()
     let upgradeRequired = currentVersion < models.version
 
+    // Load all models modules
+    let modelModules = {}
+    for (let modelFilename of MODEL_FILENAMES_UP) {
+      modelModules[modelFilename] = require('../models/' + modelFilename)
+    }
+
+    // Upgrade models if needed
     while (currentVersion < models.version) {
       let nextVersion = currentVersion + 1
       for (let modelFilename of MODEL_FILENAMES_UP) {
-        let model = require('../models/' + modelFilename)
         if (!silent) {
           log.info('Upgrade model: ' + modelFilename + ' to version ' + nextVersion + '...')
         }
-        await model.up(nextVersion)
+        await modelModules[modelFilename].up(nextVersion)
       }
       currentVersion = nextVersion
     }

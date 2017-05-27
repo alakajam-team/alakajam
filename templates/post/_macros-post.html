@@ -1,27 +1,28 @@
 
-{# Allowed options: noHeading noBody hideSpecialLabels #}
+{# Allowed options: hideHeading hideBody hideSpecialLabels showComments allowMod #}
 {% macro post(post, readingUser, options = {}) %}
 
 {% set author = post.related('author') %}
 {% set postUrl = buildUrl(post, 'post') %}
 
-<div class="post panel">
-  {% if not options.noHeading %}
-    {% if path === postUrl %}
-    <div class="post__heading">
-      <h2>{{ post.get('title') }}</h2>
-    </div>
-    {% else %}
-    <a href="{{ buildUrl(post, 'post') }}" class="post__heading">
-      <h2>
-        {{ post.get('title') }}
-        {% if not options.hideSpecialLabels and post.get('special_post_type') == 'announcement' %}
-          <div class="label label-default pull-right">ANNOUNCEMENT</div>
-        {% endif %}
-      </h2>
-    </a>
-    {% endif %}
+{% if not options.hideHeading %}
+  {% if path === postUrl %}
+  <div class="post__heading">
+    <h2>{{ post.get('title') }}</h2>
+  </div>
+  {% else %}
+  <a href="{{ buildUrl(post, 'post') }}" class="post__heading">
+    <h2>
+      {{ post.get('title') }}
+      {% if not options.hideSpecialLabels and post.get('special_post_type') == 'announcement' %}
+        <div class="label label-warning pull-right">ANNOUNCEMENT</div>
+      {% endif %}
+    </h2>
+  </a>
   {% endif %}
+{% endif %}
+
+<div class="post panel">
 
   <div class="post__details">
     {% if author.get('avatar') %}
@@ -31,7 +32,7 @@
     {% endif %}
     <a href="{{ buildUrl(author, 'user') }}">{{ author.get('title') }}</a>
     • {% if isPast(post.get('published_at')) %}
-        {{ post.get('published_at') | relativeTime }}
+        <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('published_at') | dateTime }}">{{ post.get('published_at') | relativeTime }}</span>
       {% elseif post.get('published_at') %}
         <span class="badge">Scheduled</span> for {{ post.get('published_at') | dateTime }}
       {% else %}
@@ -43,11 +44,45 @@
     {% endif %}
   </div>
 
-  {% if not options.noBody %}
+  {% if not options.hideBody %}
   <div class="post__body panel-body">
     {{ post.get('body') | markdown | safe }}
   </div>
   {% endif %}
+
 </div>
+
+{% endmacro %}
+
+
+{% macro comments(comments, readingUser, options) %}
+
+{% for comment in comments %}
+  {% set author = comment.related('user') %}
+  <div class="post panel">
+    <div class="post__details">
+      {% if author.get('avatar') %}
+      <img src="{{ author.get('avatar') }}" class="post__avatar" /> 
+      {% else %}
+      <img src="/static/images/default-avatar.png" class="post__avatar" /> 
+      {% endif %}
+      <a href="{{ buildUrl(author, 'user') }}">{{ author.get('title') }}</a>
+      • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime }}">{{ comment.get('created_at') | relativeTime }}</span>
+      {% if wasEdited(comment) %}
+      • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
+      {% endif %}
+      {% if canUserWrite(readingUser, comment, options) %}
+      <a class="btn btn-default btn-sm pull-right" href="#">Edit comment</a>
+      {% endif %}
+    </div>
+    <div class="post__body panel-body">
+        {{ comment.get('body') }}
+    </div>
+  </div>
+{% endfor %}
+
+{% if comments.length === 0 %}
+<div class="well">No comments.</div>
+{% endif %}
 
 {% endmacro %}

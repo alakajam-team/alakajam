@@ -12,14 +12,14 @@
 {% if draftPosts.length > 0 %}
   <h2>Drafts</h2>
   {% for post in draftPosts %}
-    {{ postMacros.post(post, user, {allowMod: true, noBody: true}) }}
+    {{ postMacros.post(post, user, {allowMods: true, hideBody: true}) }}
   {% endfor %}
 
   <h2>Published</h2>
 {% endif %}
 
 {% for post in publishedPosts %}
-  {{ postMacros.post(post, user, {allowMod: true, noBody: true}) }}
+  {{ postMacros.post(post, user, {allowMods: true, hideBody: true}) }}
 {% endfor %}
 
 {% if publishedPosts.length === 0 %}

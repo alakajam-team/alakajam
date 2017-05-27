@@ -24,7 +24,7 @@
 
       <h2>Latest posts</h2>
       {% for post in posts.models %}
-      {{ postMacros.post(post, user, {noBody: true}) }}
+      {{ postMacros.post(post, user, {hideBody: true}) }}
       {% endfor %}
 
       <h2>Comments</h2>
