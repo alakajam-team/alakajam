@@ -15,7 +15,7 @@
 
     <div class="form-group input-group-lg">
       <label for="title">Title</label>
-      <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ post.get('title') }}">
+      <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ post.get('title') }}" required="required">
     </div>
 
     {% if event or entry %}
