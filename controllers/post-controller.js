@@ -40,12 +40,25 @@ async function viewPost (req, res) {
   let post = res.locals.post
   if (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, post, { allowMods: true })) {
+    let context = {}
+
+    // Attach sorted comments
     await post.load(['comments', 'comments.user'])
-    let comments = post.related('comments')
+    context.comments = post.related('comments')
           .sortBy(comment => comment.get('created_at'))
-    res.render('post/view-post', {
-      comments
-    })
+
+    // Attach related entry/event
+    if (post.get('event_id')) {
+      await post.load(['event', 'entry', 'entry.userRoles'])
+      if (post.related('event').id) {
+        context.event = post.related('event')
+      }
+      if (post.related('entry').id) {
+        context.entry = post.related('entry')
+      }
+    }
+
+    res.render('post/view-post', context)
   } else {
     res.errorPage(403)
   }
@@ -72,7 +85,7 @@ async function editPost (req, res) {
     }
 
     // Late post attachment to entry
-    if (post.get('event_id') && !post.get('entry_id')) {
+    if (!post.get('special_post_type') && post.get('event_id') && !post.get('entry_id')) {
       context.entry = await eventService.findUserEntryForEvent(
         res.locals.user, context.event.get('id'))
     }

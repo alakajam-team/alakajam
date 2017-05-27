@@ -1,5 +1,6 @@
 {% extends "post/_page-post.html" %}
 {% import "post/_macros-post.html" as postMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
 
 {% block body %}
 
@@ -8,10 +9,18 @@
   <div class="col-lg-offset-1 col-lg-10">
     <h1>{{ post.get('title') }}</h1>
     {{ postMacros.post(post, user, {hideHeading: true}) }}
-
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-offset-1 col-lg-6 col-md-7">
     <h2>Comments</h2>
     {{ postMacros.comments(post.related('comments').models, user, {allowMods: true}) }}
     <input type="button" class="btn btn-primary" value="Reply" />
+  </div>
+  <div class="col-lg-4 col-md-5">
+    <h2>Related</h2>
+    {{ eventMacros.eventTable(event, false) if event }}
+    {{ eventMacros.entryThumb(entry, 12) if entry }}
   </div>
 </div>
 </div>
