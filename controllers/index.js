@@ -44,6 +44,7 @@ module.exports = {
 
     router.use('/dashboard*', userController.dashboardMiddleware)
     router.all('/dashboard/posts', userController.dashboardPosts)
+    router.all('/dashboard/invite', userController.dashboardInvite)
     router.all('/dashboard/settings', userController.dashboardSettings)
     router.all('/dashboard/password', userController.dashboardPassword)
     router.get('/user/:name', userController.viewUserProfile)

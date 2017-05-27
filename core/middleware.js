@@ -42,6 +42,8 @@ const MB = 1024 * 1024
  * Setup app middleware
  */
 async function configure (app) {
+  app.locals.config = config
+
   // Session management
   app.locals.sessionCache = await sessionService.loadSessionCache()
   let sessionKey = await findOrCreateSessionKey()

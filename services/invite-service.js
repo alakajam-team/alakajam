@@ -15,7 +15,7 @@ const CIPHER_ALGO = 'aes-256-ctr'
 
 module.exports = {
   generateKey,
-  verifyKey
+  validateKey
 }
 
 /**
@@ -25,20 +25,32 @@ module.exports = {
 async function generateKey () {
   let invitePassword = await findOrCreateSetting(constants.SETTING_INVITE_PASSWORD)
   let invitePepper = await findOrCreateSetting(constants.SETTING_INVITE_PEPPER)
-  let randomString = randomKey.generate(4)
-  let encrypted = encrypt(randomString + invitePepper, invitePassword)
+  let decrypted = insert(invitePepper, randomKey.generate(4))
+  let encrypted = encrypt(decrypted, invitePassword)
   return prettifyKey(encrypted)
+}
+
+function insert (invitePepper, randomString) {
+  let position = randomKey.generate(1).charCodeAt(0) % randomString.length
+  return randomString.slice(0, position) + invitePepper + randomString.slice(position)
 }
 
 /**
  * Verifies an invite key
  * @return {bool}
  */
-async function verifyKey (text) {
-  let invitePassword = await findOrCreateSetting(constants.SETTING_INVITE_PASSWORD)
-  let invitePepper = await findOrCreateSetting(constants.SETTING_INVITE_PEPPER)
-  let decrypted = decrypt(text.replace(/-/g, ''), invitePassword)
-  return decrypted.indexOf(invitePepper) !== -1
+async function validateKey (text) {
+  if (text) {
+    let invitePassword = await findOrCreateSetting(constants.SETTING_INVITE_PASSWORD)
+    let invitePepper = await findOrCreateSetting(constants.SETTING_INVITE_PEPPER)
+    try {
+      let decrypted = decrypt(text.replace(/-/g, ''), invitePassword)
+      return decrypted.indexOf(invitePepper) !== -1
+    } catch (e) {
+      // Decryption failed
+    }
+  }
+  return false
 }
 
 async function findOrCreateSetting (setting) {

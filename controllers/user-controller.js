@@ -6,17 +6,20 @@
  * @module controllers/user-controller
  */
 
+const config = require('../config')
 const fileStorage = require('../core/file-storage')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
+const inviteService = require('../services/invite-service')
 
 module.exports = {
   viewUserProfile,
 
   dashboardMiddleware,
   dashboardPosts,
+  dashboardInvite,
   dashboardSettings,
   dashboardPassword,
 
@@ -118,6 +121,15 @@ async function dashboardPosts (req, res) {
 }
 
 /**
+ * Generate invite keys
+ */
+async function dashboardInvite (req, res) {
+  res.render('user/dashboard-invite', {
+    inviteKey: await inviteService.generateKey()
+  })
+}
+
+/**
  * Manage user profile contents
  */
 async function dashboardPassword (req, res) {
@@ -167,7 +179,9 @@ async function registerForm (req, res) {
 async function doRegister (req, res) {
   let {fields} = await req.parseForm()
   let errorMessage = null
-  if (!(fields.name && fields.password)) {
+  if (!await inviteService.validateKey(fields.invite) && !config.DEBUG_ALLOW_INVALID_INVITE_KEYS) {
+    errorMessage = 'Invalid invite key'
+  } else if (!(fields.name && fields.password)) {
     errorMessage = 'Username or password missing'
   } else if (fields.password !== fields['password-bis']) {
     errorMessage = 'Passwords do not match'
@@ -181,7 +195,8 @@ async function doRegister (req, res) {
   }
 
   if (errorMessage) {
-    res.render('register', { errorMessage })
+    fields.errorMessage = errorMessage
+    res.render('register', fields)
   }
 }
 

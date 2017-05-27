@@ -106,6 +106,11 @@ img.preview {
   background-color: white;
 }
 
+.code {
+  font-family: Consolas, Lucida Console, monospace;
+  font-weight: bold;
+}
+
 /* ============================== Navigation ============================== */
 
 .navbar-default {

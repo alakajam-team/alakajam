@@ -46,7 +46,7 @@ async function adminHome (req, res) {
  * TODO Make it only available in dev environments
  */
 async function adminStatus (req, res) {
-  if (res.locals.user.get('is_admin')) {
+  if (config.DEBUG_ADMIN || res.locals.user.get('is_admin')) {
     let pictureResizeEnabled = false
     try {
       require('sharp')
@@ -69,7 +69,7 @@ async function adminStatus (req, res) {
  * TODO Make it only available in dev environments
  */
 async function adminDev (req, res) {
-  if (res.locals.user.get('is_admin')) {
+  if (config.DEBUG_ADMIN || res.locals.user.get('is_admin')) {
     let infoMessage = ''
     let errorMessage = ''
     if (req.method === 'POST') {

@@ -18,16 +18,20 @@
 
           <form method="post" action="/register">
             <div class="form-group">
+              <label for="username">Invite key</label>
+              <input type="text" class="form-control code" id="invite" name="invite" placeholder="XXXX-XXXX-XXXX-XXXX" value="{{ invite }}" />
+            </div>
+            <div class="form-group">
               <label for="username">Username</label>
-              <input type="text" class="form-control" id="name" name="name" placeholder="Username">
+              <input type="text" class="form-control" id="name" name="name" placeholder="Username" value="{{ name }}" />
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+              <input type="password" class="form-control" id="password" name="password" placeholder="Password" />
             </div>
             <div class="form-group">
               <label for="password-bis">Repeat password</label>
-              <input type="password" class="form-control" id="password-bis" name="password-bis" placeholder="Repeat assword">
+              <input type="password" class="form-control" id="password-bis" name="password-bis" placeholder="Repeat assword" />
             </div>
             <div class="form-group">
               <div class="checkbox">
