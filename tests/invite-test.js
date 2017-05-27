@@ -10,6 +10,6 @@ describe('inviteService', async function () {
     let str = await inviteService.generateKey()
     assert.equal(str.length, 4 * 4 + 3, 'keys should follow the format xxxx-xxxx-xxxx-xxxx')
     assert.equal(str.replace(/-/g, '').length, 4 * 4)
-    assert(await inviteService.verifyKey(str))
+    assert(await inviteService.validateKey(str))
   })
 })
