@@ -125,15 +125,13 @@ function createBookshelfInstance (knexInstance) {
    * Inserts sample data in the database.
    * @returns {void}
    */
-  db.insertSamples = async function () {
-    log.info('Inserting samples...')
+  db.insertInitialData = async function (withSamples) {
+    const userService = require('../services/user-service')
+    const Event = require('../models/event-model')
+    const eventService = require('../services/event-service')
+    const postService = require('../services/post-service')
 
-    let userService = require('../services/user-service')
-    let Event = require('../models/event-model')
-    let eventService = require('../services/event-service')
-    let postService = require('../services/post-service')
-
-    // Default users
+    // Mandatory admin account
 
     await userService.register('administrator', 'administrator')
     let adminUser = await userService.findByName('administrator')
@@ -143,67 +141,73 @@ function createBookshelfInstance (knexInstance) {
     })
     await adminUser.save()
 
-    await userService.register('entrant', 'entrant')
-    let entrantUser = await userService.findByName('entrant')
-    entrantUser.set({
-      'title': 'Entrant',
-      'body': 'I am definitely **not** a robot.'
-    })
-    await entrantUser.save()
+    // Samples
 
-    // 1st WeJam event
+    if (withSamples) {
+      log.info('Inserting samples...')
 
-    let weJam1 = new Event({
-      title: '1st WeJam',
-      name: '1st-wejam',
-      status: 'closed',
-      display_dates: 'Novembary 17 - 20, 2016',
-      display_theme: 'Make a website'
-    })
-    await weJam1.save()
-    let userEntry = await eventService.createEntry(entrantUser, weJam1)
-    userEntry.set('title', 'Old Game')
-    await userEntry.save()
+      await userService.register('entrant', 'entrant')
+      let entrantUser = await userService.findByName('entrant')
+      entrantUser.set({
+        'title': 'Entrant',
+        'body': 'I am definitely **not** a robot.'
+      })
+      await entrantUser.save()
 
-    // 2nd WeJam event
+      // 1st WeJam event
 
-    let weJam2 = new Event({
-      title: '2nd WeJam',
-      name: '2nd-wejam',
-      status: 'open',
-      display_dates: 'Januember 29 - 31, 2017',
-      display_theme: 'You are not alone'
-    })
-    await weJam2.save()
+      let weJam1 = new Event({
+        title: '1st WeJam',
+        name: '1st-wejam',
+        status: 'closed',
+        display_dates: 'Novembary 17 - 20, 2016',
+        display_theme: 'Make a website'
+      })
+      await weJam1.save()
+      let userEntry = await eventService.createEntry(entrantUser, weJam1)
+      userEntry.set('title', 'Old Game')
+      await userEntry.save()
 
-    let adminEntry = await eventService.createEntry(adminUser, weJam1)
-    adminEntry.set('title', 'Super Game')
-    await adminEntry.save()
-    userEntry = await eventService.createEntry(entrantUser, weJam2)
-    userEntry.set('title', 'Awesome Game')
-    await userEntry.save()
+      // 2nd WeJam event
 
-    let post = await postService.createPost(entrantUser)
-    post.set({
-      title: "I'm in!",
-      body: "This is my second game and I'm really excited.",
-      event_id: weJam2.get('id'),
-      entry_id: userEntry.get('id'),
-      published_at: new Date()
-    })
-    await post.save()
+      let weJam2 = new Event({
+        title: '2nd WeJam',
+        name: '2nd-wejam',
+        status: 'open',
+        display_dates: 'Januember 29 - 31, 2017',
+        display_theme: 'You are not alone'
+      })
+      await weJam2.save()
 
-    post = await postService.createPost(adminUser)
-    post.set({
-      title: 'Event started!',
-      body: 'The theme is `You are not alone`. Have fun!',
-      event_id: weJam2.get('id'),
-      special_post_type: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
-      published_at: new Date()
-    })
-    await post.save()
+      let adminEntry = await eventService.createEntry(adminUser, weJam1)
+      adminEntry.set('title', 'Super Game')
+      await adminEntry.save()
+      userEntry = await eventService.createEntry(entrantUser, weJam2)
+      userEntry.set('title', 'Awesome Game')
+      await userEntry.save()
 
-    await postService.createComment(entrantUser, post, 'Seriously? We already had this theme twice')
+      let post = await postService.createPost(entrantUser)
+      post.set({
+        title: "I'm in!",
+        body: "This is my second game and I'm really excited.",
+        event_id: weJam2.get('id'),
+        entry_id: userEntry.get('id'),
+        published_at: new Date()
+      })
+      await post.save()
+
+      post = await postService.createPost(adminUser)
+      post.set({
+        title: 'Event started!',
+        body: 'The theme is `You are not alone`. Have fun!',
+        event_id: weJam2.get('id'),
+        special_post_type: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
+        published_at: new Date()
+      })
+      await post.save()
+
+      await postService.createComment(entrantUser, post, 'Seriously? We already had this theme twice')
+    }
   }
 
   return db

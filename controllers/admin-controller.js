@@ -19,7 +19,8 @@ module.exports = {
 }
 
 async function adminMiddleware (req, res, next) {
-  if ((!res.locals.user || !res.locals.user.get('is_mod')) && !config.DEBUG_ADMIN) {
+  let isMod = res.locals.user.get('is_mod') || res.locals.user.get('is_admin')
+  if ((!res.locals.user || !isMod) && !config.DEBUG_ADMIN) {
     res.errorPage(403)
   } else {
     next()
@@ -69,24 +70,28 @@ async function adminStatus (req, res) {
  * TODO Make it only available in dev environments
  */
 async function adminDev (req, res) {
-  if (config.DEBUG_ADMIN || res.locals.user.get('is_admin')) {
-    let infoMessage = ''
-    let errorMessage = ''
-    if (req.method === 'POST') {
-      let {fields} = await req.parseForm()
-      if (fields['db-reset']) {
-        await db.dropTables()
-        await db.upgradeTables()
-        await db.insertSamples()
-        let version = await db.findCurrentVersion()
-        infoMessage = 'DB reset done (current version : ' + version + ').'
+  if (res.app.locals.devMode) {
+    if (config.DEBUG_ADMIN || res.locals.user.get('is_admin')) {
+      let infoMessage = ''
+      let errorMessage = ''
+      if (req.method === 'POST') {
+        let {fields} = await req.parseForm()
+        if (fields['db-reset']) {
+          await db.dropTables()
+          await db.upgradeTables()
+          await db.insertInitialData(config.DEBUG_INSERT_SAMPLES)
+          let version = await db.findCurrentVersion()
+          infoMessage = 'DB reset done (current version : ' + version + ').'
+        }
       }
+      res.render('admin/admin-dev', {
+        infoMessage,
+        errorMessage
+      })
+    } else {
+      res.errorPage(403)
     }
-    res.render('admin/admin-dev', {
-      infoMessage,
-      errorMessage
-    })
   } else {
-    res.errorPage(403)
+    res.errorPage(404, 'Page only available in development mode')
   }
 }

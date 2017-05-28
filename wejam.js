@@ -42,7 +42,7 @@ async function createApp () {
   // off, so we don't leak stack traces in case production is ever
   // misconfigured to leave this undefined.
   app.locals.devMode = app.get('env') === 'development'
-  await initDatabase(app.locals.devMode)
+  await initDatabase(app.locals.devMode && config.DEBUG_INSERT_SAMPLES)
   await middleware.configure(app)
   app.listen(config.SERVER_PORT, configureBrowserRefresh)
   log.info('Server started on port ' + config.SERVER_PORT + '.')
@@ -121,8 +121,8 @@ async function initDatabase (withSamples) {
   }
 
   await db.upgradeTables(currentVersion)
-  if (currentVersion === 0 && withSamples) {
-    await db.insertSamples()
+  if (currentVersion === 0) {
+    await db.insertInitialData(withSamples)
   }
   let newVersion = await db.findCurrentVersion()
   if (newVersion > currentVersion) {
