@@ -161,7 +161,10 @@ function createBookshelfInstance (knexInstance) {
         name: '1st-wejam',
         status: 'closed',
         display_dates: 'Novembary 17 - 20, 2016',
-        display_theme: 'Make a website'
+        display_theme: 'Make a website',
+        status_theme: 'disabled',
+        status_entry: 'on',
+        status_results: 'disabled'
       })
       await weJam1.save()
       let userEntry = await eventService.createEntry(entrantUser, weJam1)
@@ -175,7 +178,10 @@ function createBookshelfInstance (knexInstance) {
         name: '2nd-wejam',
         status: 'open',
         display_dates: 'Januember 29 - 31, 2017',
-        display_theme: 'You are not alone'
+        display_theme: 'You are not alone',
+        status_theme: 'disabled',
+        status_entry: 'on',
+        status_results: 'off'
       })
       await weJam2.save()
 
@@ -207,6 +213,19 @@ function createBookshelfInstance (knexInstance) {
       await post.save()
 
       await postService.createComment(entrantUser, post, 'Seriously? We already had this theme twice')
+
+      // Planned 3rd WeJam event
+
+      let weJam3 = new Event({
+        title: '3rd WeJam',
+        name: '3rd-wejam',
+        status: 'pending',
+        display_dates: 'Marchpril 5 - 8, 2017',
+        status_theme: 'off',
+        status_entry: 'off',
+        status_results: 'off'
+      })
+      await weJam3.save()
     }
   }
 

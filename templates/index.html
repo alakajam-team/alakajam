@@ -22,15 +22,17 @@
     </div>
     <div class="col-md-6">
       {% if (liveEvent) %}
-      <h1>Current event</h1>
-      {{ eventMacros.eventTable(liveEvent, true, 6) }}
-      {% else %}
-      <h1>Next event</h1>
-      {% if (nextEvent) %}
-      {{ eventMacros.eventTable(nextEvent, true, 6) }}
-      {% else %}
-      <div class="well">No upcoming event.</div>
+        <h1>Current event</h1>
+        {{ eventMacros.eventTable(liveEvent, true, 6) }}
       {% endif %}
+      {% if (nextEvents or not liveEvent) %}
+        <h1>Upcoming events</h1>
+        {% for nextEvent in nextEvents %}
+          {{ eventMacros.eventTable(nextEvent, true, 6) }}
+        {% endfor %}
+        {% if nextEvents.length === 0 %}
+          <div class="well">No upcoming event.</div>
+        {% endif %}
       {% endif %}
     </div>
   </div>

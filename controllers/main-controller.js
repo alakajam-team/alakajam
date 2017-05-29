@@ -49,10 +49,10 @@ async function index (req, res) {
   if (res.locals.liveEvent) {
     await res.locals.liveEvent.load(['entries', 'entries.userRoles'])
   }
+  let nextEventsCollection = await eventService.findEvents({status: 'pending'})
   res.render('index', {
-    posts: await postService.findPosts({
-      specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT
-    })
+    posts: await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT }),
+    nextEvents: nextEventsCollection.models
   })
 }
 
@@ -60,9 +60,9 @@ async function index (req, res) {
  * Events listing
  */
 async function events (req, res) {
-  let eventModels = await eventService.findAllEvents()
+  let eventsCollection = await eventService.findEvents()
   res.render('events', {
-    events: eventModels
+    events: eventsCollection.models
   })
 }
 

@@ -84,10 +84,19 @@
             </div>
           </div>
           <div class="event-header__links">
-            <a href="{{ buildUrl(event, 'event') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event') }}"><span class="glyphicon glyphicon-home"></span> Posts</a><!--
-            --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-grain"></span> Theme</a><!--
-            --><a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link  {{ 'active' if path == buildUrl(event, 'event', 'games') }}"><span class="glyphicon glyphicon-tower"></span> Games</a><!--
-          --><a href="#" class="event-header__link disabled"><span class="glyphicon glyphicon-th-list"></span> Results</a>
+            <!-- TODO Refactor using a macro -->
+            <a href="{{ buildUrl(event, 'event') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event') }}">
+              <span class="glyphicon glyphicon-home"></span> Posts
+            </a><!--
+            -->{% if event.get('status_theme') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'themes') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'themes') }} {{ 'disabled' if event.get('status_theme') !== 'on' }}">
+              <span class="glyphicon glyphicon-grain"></span> Theme
+            </a>{% endif %}<!--
+            -->{% if event.get('status_entry') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'games') }} {{ 'disabled' if event.get('status_entry') !== 'on' }}">
+              <span class="glyphicon glyphicon-tower"></span> Games
+            </a>{% endif %}<!--
+            -->{% if event.get('status_results') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'results') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'results') }} {{ 'disabled' if event.get('status_results') !== 'on' }}">
+              <span class="glyphicon glyphicon-th-list"></span> Results
+            </a>{% endif %}
         </div>
       </div>
     </div>
@@ -128,6 +137,10 @@
   <script src="{{ browserRefreshUrl }}"></script>
   <script type="text/javascript">
     $('.has-tooltip').tooltip()
+    
+    $('a.disabled').click(function (e) {
+      e.preventDefault()
+    })
   </script>
   {% block scripts %}{% endblock %}
 </body>

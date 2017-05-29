@@ -13,8 +13,8 @@ const constants = require('../core/constants')
 module.exports = {
   findEventById,
   findEventByName,
-  findAllEvents,
   findEventByStatus,
+  findEvents,
 
   createEntry,
   findEntryById,
@@ -44,13 +44,16 @@ async function findEventByName (name) {
 
 /**
  * Fetches all Events and their Entries.
+ * @param {object} options Allowed: status
  * @returns {array(Event)}
  */
-async function findAllEvents () {
+async function findEvents (options = {}) {
   let eventModels = await new Event()
-    .orderBy('title', 'DESC') // XXX Temporary prop
-    .fetchAll({ withRelated: ['entries'] })
-  return eventModels.models
+    .orderBy('created_at', 'DESC')
+  if (options.status) {
+    eventModels = eventModels.where('status', options.status)
+  }
+  return eventModels.fetchAll({ withRelated: ['entries'] })
 }
 
 /**
@@ -64,7 +67,7 @@ async function findEventByStatus (status) {
     sortOrder = 'DESC'
   }
   return Event.where('status', status)
-    .orderBy('title', sortOrder) // XXX Temporary prop
+    .orderBy('created_at', sortOrder)
     .fetch()
 }
 

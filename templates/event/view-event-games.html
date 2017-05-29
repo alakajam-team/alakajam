@@ -4,7 +4,7 @@
 {% block body %}
 
 <div class="container">
-  {% if user %}
+  {% if user and event.get('status_entry') === 'on' %}
   <div class="row">
     <div class="col-xs-12">
       <div class="action-banner">
@@ -31,9 +31,13 @@
   {% endif %}
 
   <div class="row">
-    {% for entry in event.related('entries').models %}
+    {% set entries = event.related('entries').models %}
+    {% for entry in entries %}
     {{ eventMacros.entryThumb(entry) }}
     {% endfor %}
+    {% if entries.length === 0 %}
+      <div class="well">The event has no entries yet.</div>
+    {% endif %}
   </div>
 </div>
 
