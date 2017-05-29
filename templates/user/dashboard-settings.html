@@ -1,8 +1,8 @@
 {% extends "user/_page-dashboard.html" %}
-{% import "_macros.html" as macros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block styles %}
-  {{ macros.editorStyles() }}
+  {{ formMacros.editorStyles() }}
 {% endblock %}
 
 {% block dashboardBody %}
@@ -44,7 +44,7 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="name">Avatar</label>
-      {{ macros.pictureInput('avatar', user.get('avatar')) }}
+      {{ formMacros.pictureInput('avatar', user.get('avatar')) }}
     </div>
   </div>
 </div>
@@ -52,7 +52,7 @@
 <h2 class="spacing">Bio</h2>
 
 <div class="form-group">
-  {{ macros.editor('body', user.get('body')) }}
+  {{ formMacros.editor('body', user.get('body')) }}
   <input type="submit" class="btn btn-primary" value="Save changes" />
   <a href="/user/{{ user.get('name') }}" class="btn btn-default">View profile</a>
 </div>
@@ -62,5 +62,5 @@
 {% endblock %}
 
 {% block scripts %} 
-{{ macros.editorScripts(user.get('id')) }}
+  {{ formMacros.editorScripts(user.get('id')) }}
 {% endblock %}
