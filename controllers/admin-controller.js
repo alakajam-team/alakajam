@@ -19,7 +19,7 @@ module.exports = {
 }
 
 async function adminMiddleware (req, res, next) {
-  if (!config.DEBUG_ADMIN && (!res.locals.user || 
+  if (!config.DEBUG_ADMIN && (!res.locals.user ||
       (!res.locals.user.get('is_mod') && !res.locals.user.get('is_admin')))) {
     res.errorPage(403)
   } else {

@@ -1,22 +1,28 @@
 {% macro editor(editorName, editorContents) %}
-  <textarea class="form-control simplemde-editor" style="min-height: 200px" name="{{ editorName }}">{{ editorContents }}</textarea>
+  <textarea class="form-control simplemde-editor" name="{{ editorName }}">{{ editorContents }}</textarea>
 {% endmacro %}
 
 {% macro editorStyles() %}
   <link rel="stylesheet" type="text/css" href="/static/css/simplemde.min.css" />
 {% endmacro %}
 
-{% macro editorScripts(autoSaveId = '') %}
+{% macro editorScripts(options = {}) %}
   <script type="text/javascript" src="/static/js/simplemde.min.js"></script>
   <script>
   // Markdown editor
-  var simplemde = new SimpleMDE({
-    element: $('.simplemde-editor')[0],
-    spellChecker: false,
-    autosave: {
-      enabled: {{ 'true' if autoSaveId else 'false' }},
-      uniqueId: '{{ autoSaveId }}'
-    }
+  $('.simplemde-editor').each(function () {
+    new SimpleMDE({
+      element: this,
+      spellChecker: false,
+      {% if options.toolbar === false %}
+      toolbar: false,
+      {% endif %}
+      status: false,
+      autosave: {
+        enabled: {{ 'true' if options.autoSaveId else 'false' }},
+        uniqueId: '{{ options.autoSaveId }}'
+      }
+    })
   })
   </script>
 {% endmacro %}

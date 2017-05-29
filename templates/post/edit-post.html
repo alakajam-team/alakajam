@@ -1,8 +1,8 @@
 {% extends "post/_page-post.html" %}
-{% import "_macros.html" as macros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block styles %}
-{{ macros.editorStyles() }}
+{{ formMacros.editorStyles() }}
 {% endblock %}
 
 {% block body %}
@@ -42,7 +42,7 @@
 
     <div class="form-group">
       <label for="body">Body</label>
-      {{ macros.editor('body', post.get('body')) }}
+      {{ formMacros.editor('body', post.get('body')) }}
     </div>
 
     <div class="row">
@@ -83,7 +83,7 @@
 {% endblock %}
 
 {% block scripts %} 
-{{ macros.editorScripts() }}
+{{ formMacros.editorScripts() }}
 <script>
 
 // Schedule actions

@@ -1,3 +1,4 @@
+{% import "_macros-form.html" as formMacros %}
 
 {# Allowed options: hideHeading hideBody hideSpecialLabels showComments allowMod #}
 {% macro post(post, readingUser, options = {}) %}
@@ -25,12 +26,14 @@
 <div class="post panel">
 
   <div class="post__details">
-    {% if author.get('avatar') %}
-    <img src="{{ author.get('avatar') }}" class="post__avatar" /> 
-    {% else %}
-    <img src="/static/images/default-avatar.png" class="post__avatar" /> 
-    {% endif %}
-    <a href="{{ buildUrl(author, 'user') }}">{{ author.get('title') }}</a>
+    <a href="{{ buildUrl(author, 'user') }}">
+      {% if author.get('avatar') %}
+      <img src="{{ author.get('avatar') }}" class="post__avatar" /> 
+      {% else %}
+      <img src="/static/images/default-avatar.png" class="post__avatar" /> 
+      {% endif %}
+      {{ author.get('title') }}
+    </a>
     • {% if isPast(post.get('published_at')) %}
         <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('published_at') | dateTime }}">{{ post.get('published_at') | relativeTime }}</span>
       {% elseif post.get('published_at') %}
@@ -58,31 +61,85 @@
 {% macro comments(comments, readingUser, options) %}
 
 {% for comment in comments %}
-  {% set author = comment.related('user') %}
-  <div class="post panel">
-    <div class="post__details">
-      {% if author.get('avatar') %}
-      <img src="{{ author.get('avatar') }}" class="post__avatar" /> 
-      {% else %}
-      <img src="/static/images/default-avatar.png" class="post__avatar" /> 
-      {% endif %}
-      <a href="{{ buildUrl(author, 'user') }}">{{ author.get('title') }}</a>
-      • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime }}">{{ comment.get('created_at') | relativeTime }}</span>
-      {% if wasEdited(comment) %}
-      • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
-      {% endif %}
-      {% if canUserWrite(readingUser, comment, options) %}
-      <a class="btn btn-default btn-sm pull-right" href="#">Edit comment</a>
-      {% endif %}
+  {% if options.editComment === comment %}
+    {{ commentEditor(comment, readingUser, options) }}
+  {% else %}
+    {% set author = comment.related('user') %}
+    <div class="row comment">
+      <div class="col-xs-offset-1 col-xs-11">
+        <div class="comment__details">
+          <a href="{{ buildUrl(author, 'user') }}">
+            <div class="comment__avatar-container">
+              {% if author.get('avatar') %}
+              <img src="{{ author.get('avatar') }}" /> 
+              {% else %}
+              <img src="/static/images/default-avatar.png" />
+              {% endif %}
+            </div>
+            {{ author.get('title') }}
+           </a>
+          • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime }}">{{ comment.get('created_at') | relativeTime }}</span>
+          {% if wasEdited(comment) %}
+          • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
+          {% endif %}
+          {% if canUserWrite(readingUser, comment, options) %}
+          <a class="btn btn-default btn-xs pull-right" href="#"><span class="glyphicon glyphicon-pencil"></span></a>
+          {% endif %}
+        </div>
+        <div class="panel comment__body">
+            {{ comment.get('body') }}
+        </div>
+      </div>
     </div>
-    <div class="post__body panel-body">
-        {{ comment.get('body') }}
-    </div>
-  </div>
+  {% endif %}
 {% endfor %}
 
 {% if comments.length === 0 %}
 <div class="well">No comments.</div>
 {% endif %}
 
+{{ commentEditor(null, readingUser, options) }}
+
+<style type="text/css">
+  .CodeMirror, .CodeMirror-scroll {
+    min-height: 120px;
+  }
+</style>
+
+{% endmacro %}
+
+
+{% macro commentEditor(comment, readingUser, options) %}
+{% set user = comment.related('user') if comment and comment.related('user') else readingUser %}
+<form method="post" action="/comment" class="comment">
+  <input type="hidden" name="path" value="{{ options.redirectTo }}" />
+  
+  <div class="row">
+    <div class="col-xs-offset-1 col-xs-11">
+      <div class="comment__details">
+        <div class="comment__avatar-container">
+          {% if user.get('avatar') %}
+          <img src="{{ user.get('avatar') }}" /> 
+          {% else %}
+          <img src="/static/images/default-avatar.png" />
+          {% endif %}
+        </div>
+        {{ user.get('title') }}
+      </div>
+      <div style="margin-bottom: 10px">
+        {{ formMacros.editor('comment', comment.get('body') if comment) }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-offset-1 col-xs-3">
+      <input type="submit" class="btn btn-default btn-sm" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"/>
+    </div>
+    <div class="col-xs-8 text-right">
+      <input type="submit" class="btn btn-primary btn-sm" value="Publish" />
+      <input type="submit" class="btn btn-default btn-sm" value="Cancel" />
+    </div>
+  </div>
+</form>
 {% endmacro %}

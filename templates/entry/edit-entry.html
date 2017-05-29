@@ -1,8 +1,8 @@
 {% extends "entry/_page-entry.html" %}
-{% import "_macros.html" as macros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block styles %}
-  {{ macros.editorStyles() }}
+  {{ formMacros.editorStyles() }}
 {% endblock %}
 
 {% block body %}
@@ -29,7 +29,7 @@
         <div class="form-group">
           <label for="title">Description</label>
           <div class="user-contents user-contents__editor">
-            {{ macros.editor('body', entry.get('body')) }}
+            {{ formMacros.editor('body', entry.get('body')) }}
           </div>
         </div>
         <div class="form-group">
@@ -53,7 +53,7 @@
           {% if entry.has('pictures') and entry.get('pictures').length > 0 %}
             {% set picture = entry.get('pictures')[0] %}
           {% endif %}
-          {{ macros.pictureInput('picture', picture, '/static/images/default-entry.png') }}
+          {{ formMacros.pictureInput('picture', picture, '/static/images/default-entry.png') }}
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@
 {% endblock %}
 
 {% block scripts %} 
-{{ macros.editorScripts(entry.get('id')) }}
+{{ formMacros.editorScripts({autoSaveId: entry.get('id')}) }}
 <script>
 
 // Sync H1 with title input
