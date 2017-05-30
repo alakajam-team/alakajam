@@ -9,7 +9,7 @@
 const securityService = require('../services/security-service')
 const postService = require('../services/post-service')
 
-const DASHBOARD_PAGES = ['pages', 'settings', 'password']
+const DASHBOARD_PAGES = ['posts', 'settings', 'password']
 
 module.exports = {
   buildUrl,
