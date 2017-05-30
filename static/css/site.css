@@ -3,6 +3,7 @@
   --main: #00b1d5;
   --main-light: color(var(--main) lightness(45%));
   --main-dark: color(var(--main) lightness(25%));
+  --main-transparent: color(var(--main) alpha(10%));
   --alt: #f2536d;
   --alt-light: color(var(--alt) lightness(70%));
   --alt-dark: color(var(--alt) lightness(35%));
@@ -10,7 +11,7 @@
   --bg: #eee;
   --borders: #dadada;
   --text: #1f3038;
-  --text-light: #4f7080;
+  --text-light: color(var(--text) alpha(70%));
   --text-lighter: #AAA;
   --moderation: #ffce54;
   --moderation-light: #ffe198;
@@ -478,6 +479,10 @@ img.preview {
     margin-bottom: 20px;
     background-color: var(--main);
     color: white;
+    
+    & h2 {
+      margin: 0;
+    }
 
     &:hover {
       color: white;
@@ -491,9 +496,30 @@ img.preview {
       background-color: var(--alt-light);
     }
   }
-
+  
   &__status {
-    color: white;
+    font-size: 0.8rem;
+    vertical-align: middle;
+  }
+  
+  &__theme {
+    font-size: 1.2rem;
+    font-style: italic;
+  }
+  
+  &__details {
+    margin: -20px 0 20px 0;
+    border-radius: 0;
+    background-color: var(--main-transparent);
+  }
+  &.live &__details {
+    background-color: var(--alt-transparent);
+  }
+  
+  &__detail {
+    padding: 10px;
+    font-size: 1.0rem;
+    font-weight: bold;
   }
 }
 

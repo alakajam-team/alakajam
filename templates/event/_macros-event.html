@@ -50,19 +50,40 @@
       <div class="col-md-12">
         <a class="event-table__header" href="{{ buildUrl(event, 'event') }}">
           <div class="row">
-            <div class="event-table__title col-sm-4">
-              <h2>{{ event.get('title') }}</h2>
+            <div class="col-sm-6">
+              <h2>
+                {% if event.get('status') === 'pending' %}
+                  <span class="label label-default event-table__status">Upcoming</span>
+                {% elseif event.get('status') === 'open' %}
+                  <span class="label label-danger event-table__status">Live!</span>
+                {% endif %}
+                {{ event.get('title') }}
+              </h2>
             </div>
-            <div class="event-table__status col-sm-3">
-              Current state: <b>{{ event.get('status') }}</b><br />
-              Entry count: <b>{{ event.related('entries').length }}</b>
-            </div>
-            <div class="event-table__status col-sm-5">
-              Dates: <b>{{ event.get('display_dates') }}</b><br />
-              Theme: <b>{{ event.get('display_theme') }}</b>
+            <div class="col-sm-6 text-right event-table__theme">
+              {{ event.get('display_theme') }}
             </div>
           </div>
         </a>
+        <div class="event-table__details">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="event-table__detail">
+                <span class="glyphicon glyphicon-calendar"></span> {{ event.get('display_dates') }}
+              </div>
+            </div>
+            {% if event.related('entries').length > 0 %}
+            <div class="col-sm-6 text-right">
+              <div class="event-table__detail">
+                <a href="{{ buildUrl(event, 'event', 'games') }}">
+                  <span class="glyphicon glyphicon-tower"></span>
+                  {{ event.related('entries').length }} game{{ 's' if event.related('entries').length > 1 }}
+                </a>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
     {% if withEntries %}

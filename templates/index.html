@@ -28,13 +28,11 @@
     </div>
     <div class="col-md-6">
       {% if (liveEvent) %}
-        <h2>Current event</h2>
-        {{ eventMacros.eventTable(liveEvent, true, 6) }}
+        {{ eventMacros.eventTable(liveEvent, false, 6) }}
       {% endif %}
       {% if (nextEvents or not liveEvent) %}
-        <h2>Upcoming events</h2>
         {% for nextEvent in nextEvents %}
-          {{ eventMacros.eventTable(nextEvent, true, 6) }}
+          {{ eventMacros.eventTable(nextEvent, false, 6) }}
         {% endfor %}
         {% if nextEvents.length === 0 %}
           <div class="well">No upcoming event.</div>
