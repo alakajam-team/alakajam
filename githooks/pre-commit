@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# Ensure all javascript files staged for commit pass standard code style
+# Ensure all JavaScript files staged for commit pass standard code style
 # From: https://standardjs.com/index.html#is-there-a-git-pre-commit-hook
-echo "Checking JavaScript Standard Style..."
-git diff --name-only --cached --relative | grep '\.jsx\?$' | xargs -r standard
+function xargs-r() {
+  # Portable version of "xargs -r". The -r flag is a GNU extension that
+  # prevents xargs from running if there are no input files.
+  if IFS= read -r -d '' path; then
+    { echo -n "$path"; echo -ne "\0"; cat; } | xargs $@
+  fi
+}
+git diff -z --name-only --cached --relative | grep -z '\.jsx\?$' | xargs-r -0 -t standard
 if [[ $? -ne 0 ]]; then
-  echo 'Style errors were detected. Aborting commit.'
+  echo 'JavaScript Standard Style errors were detected. Aborting commit.'
   exit 1
 fi
