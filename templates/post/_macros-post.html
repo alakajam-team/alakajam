@@ -7,19 +7,17 @@
 {% set postUrl = buildUrl(post, 'post') %}
 
 {% if not options.hideHeading %}
+  {% set h = 'h2' if options.hideBody else 'h1' %}
   {% if path === postUrl %}
   <div class="post__heading">
-    <h2>{{ post.get('title') }}</h2>
+    <{{h}}>{{ post.get('title') }}</{{h}}>
   </div>
   {% else %}
-  <a href="{{ buildUrl(post, 'post') }}" class="post__heading">
-    <h2>
+  <{{h}} class="post__heading">
+    <a href="{{ buildUrl(post, 'post') }}">
       {{ post.get('title') }}
-      {% if not options.hideSpecialLabels and post.get('special_post_type') == 'announcement' %}
-        <div class="label label-warning pull-right">ANNOUNCEMENT</div>
-      {% endif %}
-    </h2>
-  </a>
+    </a>
+  </{{h}}>
   {% endif %}
 {% endif %}
 
@@ -44,6 +42,9 @@
     • 0 comments
     {% if canUserWrite(readingUser, post, options) %}
     <a class="btn btn-default btn-sm pull-right" href="{{ buildUrl(post, 'post', 'edit') }}">Edit post</a>
+    {% endif %}
+    {% if not options.hideSpecialLabels and post.get('special_post_type') == 'announcement' %}
+      <div class="label label-warning pull-right" style="margin: 10px">ANNOUNCEMENT</div>
     {% endif %}
   </div>
 
@@ -111,6 +112,7 @@
 
 {% macro commentEditor(comment, readingUser, options) %}
 {% set user = comment.related('user') if comment and comment.related('user') else readingUser %}
+{% if user %}
 <form method="post" action="/comment" class="comment">
   <input type="hidden" name="path" value="{{ options.redirectTo }}" />
   
@@ -142,4 +144,5 @@
     </div>
   </div>
 </form>
+{% endif %}
 {% endmacro %}

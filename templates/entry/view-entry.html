@@ -18,9 +18,11 @@
         <img src="/static/images/default-entry.png" style="padding: 20px" />
         {% endif %}
       </div>
+      {% if entry.get('body') %}
       <div class="well post">
         {{ entry.get('body') | markdown | safe }}
       </div>
+      {% endif %}
 
       <h2>Latest posts</h2>
       {% for post in posts.models %}

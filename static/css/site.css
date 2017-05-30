@@ -69,7 +69,7 @@ h1 {
 }
 h2 {<
   font-weight: bold;
-  font-size: 1.7rem;
+  font-size: 1.6rem;
   margin: 0 0 10px 0;
 }
 h3 {
@@ -122,10 +122,15 @@ img.preview {
   font-weight: bold;
 }
 
+.has-tooltip {
+  cursor: help;
+}
+
 /* ============================== Navigation ============================== */
 
 .navbar-default {
   background-color: var(--main);
+  border: none;
   font-size: 2rem;
 
   /* Nav logo */
@@ -332,6 +337,7 @@ img.preview {
   }
 
   &__link {
+    @apply --alt-font;
     font-weight: bold;
     vertical-align: middle;
     padding: 0 5px;
@@ -344,20 +350,16 @@ img.preview {
 .post {
 
   &__heading {
-    display: block;
-    color: var(--text);
+    @apply --alt-font;
+    margin: 0;
+    padding: 10px 0;
 
-    & h2 {
-      @apply --alt-font;
-      margin: 0;
-      padding: 10px 0;
-    }
-
-    &:hover {
-      background-color: var(--borders);
+    & a {
       color: var(--text);
-      transition: 0.1s;
-      padding: 0 10px;
+      
+      &:hover {
+        color: var(--alt-dark);
+      }
     }
   }
 
@@ -469,8 +471,6 @@ img.preview {
 /* Event table */
 
 .event-table {
-  margin-bottom: 20px;
-
   &__header {
     @apply --shadow;
     display: block;
@@ -664,6 +664,59 @@ img.preview {
       height: 20px;
       vertical-align: middle;
     }
+  }
+
+}
+
+/* ============================== Home page ============================== */
+
+.home-announcement {
+  & h1 > a {
+    color: var(--text);
+    
+    &:hover {
+      color: var(--alt-dark);
+    }
+  }
+}
+
+.home-bar {
+  @apply --shadow;
+  background-color: var(--main);
+  margin: -20px 0 20px 0;
+  padding-top: 10px;
+}
+
+.home-brand {
+  position: relative;
+  width: 300px;
+  margin: auto;
+  text-align: center;
+  cursor: default;
+  
+  &__logo {
+    width: 120px;
+    padding-bottom: 40px;
+  
+    &:hover {
+      transform: rotate(360deg);
+      transition: 0.5s;
+    }
+  }
+  
+  &__name {
+    position: absolute;
+    left: 0;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    @apply --alt-font;
+    font-size: 3rem;
+    font-weight: bold;
+    height: var(--navbar-height);
+    text-shadow: 0px 3px 0px var(--main-dark);
+    color: white;
+    transition: 0.15s;
   }
 
 }

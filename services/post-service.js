@@ -17,6 +17,7 @@ module.exports = {
 
   findPosts,
   findPostById,
+  findLatestAnnouncement,
 
   createPost,
   createComment
@@ -67,6 +68,12 @@ async function findPosts (options = {}) {
 
 async function findPostById (postId) {
   return Post.where('id', postId)
+    .fetch({withRelated: ['author', 'userRoles']})
+}
+
+async function findLatestAnnouncement () {
+  return Post.where('special_post_type', constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
+    .orderBy('published_at', 'DESC')
     .fetch({withRelated: ['author', 'userRoles']})
 }
 

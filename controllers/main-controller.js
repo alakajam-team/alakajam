@@ -16,6 +16,7 @@ module.exports = {
   anyPageMiddleware,
   index,
   events,
+  announcements,
   chat
 }
 
@@ -51,7 +52,7 @@ async function index (req, res) {
   }
   let nextEventsCollection = await eventService.findEvents({status: 'pending'})
   res.render('index', {
-    posts: await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT }),
+    announcement: await postService.findLatestAnnouncement(),
     nextEvents: nextEventsCollection.models
   })
 }
@@ -64,6 +65,15 @@ async function events (req, res) {
   await eventsCollection.load('entries.userRoles')
   res.render('events', {
     events: eventsCollection.models
+  })
+}
+
+/**
+ * Announcements listing
+ */
+async function announcements (req, res) {
+  res.render('announcements', {
+    posts: await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT })
   })
 }
 

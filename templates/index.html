@@ -9,24 +9,30 @@
 
 {% block body %}
 
+<div class="home-bar">
+  <div class="home-brand">
+    <img class="home-brand__logo" src="/static/images/logo.svg" />
+    <span class="home-brand__name">WeJam!</span>
+  </div>
+</div>
+
 <div class="container">
   <div class="row">
-    <div class="col-md-6">
-      <h1>Announcements</h1>
-      {% for post in posts.models  %}
-        {{ postMacros.post(post, user, {hideSpecialLabels: true}) }}
-      {% endfor %}
-      {% if publishedPosts.length === 0 %}
-        <div class="well">Nothing yet!</div>
+    <div class="col-md-6 home-announcement">
+      {% if announcement %}
+        {{ postMacros.post(announcement, user) }}
+        <a href="/announcements" class="btn btn-sm btn-default">Browse announcements <span class="glyphicon glyphicon-chevron-right"></span></a>
+      {% else %}
+        <div class="well">No announcements yet!</div>
       {% endif %}
     </div>
     <div class="col-md-6">
       {% if (liveEvent) %}
-        <h1>Current event</h1>
+        <h2>Current event</h2>
         {{ eventMacros.eventTable(liveEvent, true, 6) }}
       {% endif %}
       {% if (nextEvents or not liveEvent) %}
-        <h1>Upcoming events</h1>
+        <h2>Upcoming events</h2>
         {% for nextEvent in nextEvents %}
           {{ eventMacros.eventTable(nextEvent, true, 6) }}
         {% endfor %}
@@ -34,6 +40,7 @@
           <div class="well">No upcoming event.</div>
         {% endif %}
       {% endif %}
+      <a href="/events" class="btn btn-sm btn-default">Browse events <span class="glyphicon glyphicon-chevron-right"></span></a>
     </div>
   </div>
 </div>
