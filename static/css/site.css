@@ -550,6 +550,61 @@ img.preview {
   }
 }
 
+
+.entry-small-thumb {
+  @apply --shadow;
+  position: relative;
+  display: block;
+  background-color: white;
+  width: 100%;
+  height: 60px;
+  margin-bottom: 20px;
+
+  &__picture {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    float: left;
+    width: 60px;
+    height: 60px;
+    background-color: var(--main-dark);
+    background-size: cover;
+    background-position: center;
+    transition: 0.3s;
+
+    &:hover {
+      border: 4px solid var(--alt);
+      transition: 0.1s;
+    }
+  }
+  
+  &__details {
+    height: 60px;
+    padding: 6px;
+    padding-left: 66px;
+    text-align: left;
+    overflow: hidden;
+  }
+
+  &__title {
+    font-size: 1.0rem;
+    font-weight: bold;
+    line-height: 1.0rem;
+    margin-bottom: 4px;
+
+    &:hover {
+      font-weight: bold;
+    }
+  }
+
+  &__author {
+    font-size: 0.85rem;
+    line-height: 0.8rem;
+    color: var(--text);
+  }
+}
+
 /* Entry page */
 
 .entry {

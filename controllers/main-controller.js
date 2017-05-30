@@ -61,6 +61,7 @@ async function index (req, res) {
  */
 async function events (req, res) {
   let eventsCollection = await eventService.findEvents()
+  await eventsCollection.load('entries.userRoles')
   res.render('events', {
     events: eventsCollection.models
   })
