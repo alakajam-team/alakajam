@@ -154,11 +154,11 @@ function createBookshelfInstance (knexInstance) {
       })
       await entrantUser.save()
 
-      // 1st WeJam event
+      // 1st event
 
-      let weJam1 = new Event({
-        title: '1st WeJam',
-        name: '1st-wejam',
+      let event1 = new Event({
+        title: '1st Alakajam',
+        name: '1st-alakajam',
         status: 'closed',
         display_dates: 'Novembary 17 - 20, 2016',
         display_theme: 'Make a website',
@@ -166,16 +166,16 @@ function createBookshelfInstance (knexInstance) {
         status_entry: 'on',
         status_results: 'disabled'
       })
-      await weJam1.save()
-      let userEntry = await eventService.createEntry(entrantUser, weJam1)
+      await event1.save()
+      let userEntry = await eventService.createEntry(entrantUser, event1)
       userEntry.set('title', 'Old Game')
       await userEntry.save()
 
-      // 2nd WeJam event
+      // 2nd event
 
-      let weJam2 = new Event({
-        title: '2nd WeJam',
-        name: '2nd-wejam',
+      let event2 = new Event({
+        title: '2nd Alakajam',
+        name: '2nd-alakajam',
         status: 'open',
         display_dates: 'Januember 29 - 31, 2017',
         display_theme: 'You are not alone',
@@ -183,12 +183,12 @@ function createBookshelfInstance (knexInstance) {
         status_entry: 'on',
         status_results: 'off'
       })
-      await weJam2.save()
+      await event2.save()
 
-      let adminEntry = await eventService.createEntry(adminUser, weJam1)
+      let adminEntry = await eventService.createEntry(adminUser, event1)
       adminEntry.set('title', 'Super Game')
       await adminEntry.save()
-      userEntry = await eventService.createEntry(entrantUser, weJam2)
+      userEntry = await eventService.createEntry(entrantUser, event2)
       userEntry.set('title', 'Awesome Game')
       await userEntry.save()
 
@@ -196,7 +196,7 @@ function createBookshelfInstance (knexInstance) {
       post.set({
         title: "I'm in!",
         body: "This is my second game and I'm really excited.",
-        event_id: weJam2.get('id'),
+        event_id: event2.get('id'),
         entry_id: userEntry.get('id'),
         published_at: new Date()
       })
@@ -206,7 +206,7 @@ function createBookshelfInstance (knexInstance) {
       post.set({
         title: 'Event started!',
         body: 'The theme is `You are not alone`. Have fun!',
-        event_id: weJam2.get('id'),
+        event_id: event2.get('id'),
         special_post_type: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
         published_at: new Date()
       })
@@ -214,18 +214,18 @@ function createBookshelfInstance (knexInstance) {
 
       await postService.createComment(entrantUser, post, 'Seriously? We already had this theme twice')
 
-      // Planned 3rd WeJam event
+      // Planned 3rd event
 
-      let weJam3 = new Event({
-        title: '3rd WeJam',
-        name: '3rd-wejam',
+      let event3 = new Event({
+        title: '3rd Alakajam',
+        name: '3rd-alakajam',
         status: 'pending',
         display_dates: 'Marchpril 5 - 8, 2017',
         status_theme: 'off',
         status_entry: 'off',
         status_results: 'off'
       })
-      await weJam3.save()
+      await event3.save()
     }
   }
 

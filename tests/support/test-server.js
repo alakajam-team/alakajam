@@ -11,9 +11,9 @@ const path = require('path')
 
 let initialized = false
 
-before(weJamInit)
+before(init)
 
-async function weJamInit () {
+async function init () {
   if (!initialized) {
     await createConfigFileIfMissing()
     overrideConfig()

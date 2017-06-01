@@ -19,7 +19,7 @@ module.exports = {
   DB_HOST: 'localhost',
   DB_USER: 'postgres',
   DB_PASSWORD: '',
-  DB_NAME: 'wejam', */
+  DB_NAME: 'alakajam', */
 
   // Debug options
   DEBUG_INSERT_SAMPLES: true, // Inserts sample data upon DB init

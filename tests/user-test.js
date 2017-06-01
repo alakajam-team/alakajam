@@ -1,6 +1,6 @@
 'use strict'
 
-require('./support/wejam-test.js')
+require('./support/test-server.js')
 
 const assert = require('assert')
 
