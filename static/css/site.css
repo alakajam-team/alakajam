@@ -12,7 +12,7 @@
   --borders: #dadada;
   --text: #1f3038;
   --text-light: color(var(--text) alpha(70%));
-  --text-lighter: #AAA;
+  --text-lighter: color(var(--text) alpha(40%));
   --moderation: #ffce54;
   --moderation-light: #ffe198;
   --moderation-dark: #f6bb42;
@@ -36,6 +36,11 @@
 }
 
 /* General */
+
+::selection {
+  background: var(--text-lighter);
+  color: white;
+}
 
 body, p {
   @apply --main-font;
@@ -533,6 +538,7 @@ img.preview {
   width: 100%;
   height: 250px;
   margin-bottom: 20px;
+  text-align: left;
 
   &__picture {
     display: block;
@@ -543,10 +549,10 @@ img.preview {
     background-position: center;
     transition: 0.3s;
 
-    &:hover {
-      border: 4px solid var(--alt);
-      transition: 0.1s;
-    }
+  }
+  & a:hover &__picture {
+    border: 4px solid var(--alt);
+    transition: 0.1s;
   }
 
   &__picture-gradient {
@@ -558,20 +564,17 @@ img.preview {
 
   &__details {
     height: 100px;
-    padding: 10px;
-    text-align: left;
   }
 
   &__title {
+    padding: 10px;
+    padding-bottom: 0;
     font-size: 1.1rem;
-
-    &:hover {
-      font-weight: bold;
-    }
+    font-weight: bold;
   }
 
-
   &__author {
+    padding-left: 10px;
     color: var(--text);
   }
 }
@@ -598,11 +601,10 @@ img.preview {
     background-size: cover;
     background-position: center;
     transition: 0.3s;
-
-    &:hover {
-      border: 4px solid var(--alt);
-      transition: 0.1s;
-    }
+  }
+  & a:hover &__picture {
+    border: 4px solid var(--alt);
+    transition: 0.1s;
   }
   
   &__details {

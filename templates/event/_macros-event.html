@@ -2,20 +2,18 @@
 <div class="col-sm-4 col-md-{{ cols }}">
   <div class="entry-thumb">
     {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
-    <a class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')" href="{{ buildUrl(entry, 'entry') }}">
-      <div class="entry-thumb__picture-gradient"></div>
-    </a>
-    <div class="entry-thumb__details" >
-      <a class="entry-thumb__title"  href="{{ buildUrl(entry, 'entry') }}">
-        {{ entry.get('title') }}
-      </a>
-      <div class="entry-thumb__author" >by 
-      {% for userRole in entry.related('userRoles').models %}
-       <a href="{{ buildUrl(userRole, 'user') }}">
-        {{ userRole.get('user_title') }}{{ ', ' if not loop.last }}
-       </a>
-      {% endfor %}
+    <a href="{{ buildUrl(entry, 'entry') }}">
+      <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
+        <div class="entry-thumb__picture-gradient"></div>
       </div>
+      <div class="entry-thumb__title">{{ entry.get('title') }}</div>
+    </a>
+    <div class="entry-thumb__author" >by 
+    {% for userRole in entry.related('userRoles').models %}
+     <a href="{{ buildUrl(userRole, 'user') }}">
+      {{ userRole.get('user_title') }}{{ ', ' if not loop.last }}
+     </a>
+    {% endfor %}
     </div>
   </div>
 </div>
@@ -27,7 +25,7 @@
     {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
     <div class="entry-small-thumb__details">
       <a href="{{ buildUrl(entry, 'entry') }}">
-        <img class="entry-small-thumb__picture" src="{{ picturePath }}" />
+        <div class="entry-small-thumb__picture" style="background-image: url('{{ picturePath }}')"></div>
         <div class="entry-small-thumb__title"  href="{{ buildUrl(entry, 'entry') }}">
           {{ entry.get('title') }}
         </div>
