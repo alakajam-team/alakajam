@@ -82,19 +82,19 @@ function catchErrorsAndSignals () {
  */
 async function initFilesLayout () {
   // Create config.js if missing
-  const CONFIG_PATH = './config.js'
-  const CONFIG_SAMPLE_PATH = './config.sample.js'
+  let configPath = path.join(__dirname, './config.js')
+  let configSamplePath = path.join(__dirname, './config.sample.js')
   try {
-    await fs.access(CONFIG_PATH, fs.constants.R_OK)
+    await fs.access(configPath, fs.constants.R_OK)
   } catch (e) {
-    let sampleConfig = await fs.readFile(CONFIG_SAMPLE_PATH)
-    await fs.writeFile(CONFIG_PATH, sampleConfig)
-    log.info(CONFIG_PATH + ' initialized with sample values')
+    let sampleConfig = await fs.readFile(configSamplePath)
+    await fs.writeFile(configPath, sampleConfig)
+    log.info(configPath + ' initialized with sample values')
   }
 
   // Look for missing config keys
-  const config = require(CONFIG_PATH)
-  const configSample = require(CONFIG_SAMPLE_PATH)
+  const config = require(configPath)
+  const configSample = require(configSamplePath)
   for (let key in configSample) {
     if (config[key] === undefined && (key !== 'DB_SQLITE_FILENAME' || config['DB_TYPE'] === 'sqlite3')) {
       log.warn('Key "' + key + '" missing from config.js, using default value "' + configSample[key] + '"')
