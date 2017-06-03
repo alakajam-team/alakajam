@@ -1,0 +1,19 @@
+# Docs
+docs/*.html
+docs/*/
+
+# Data
+data*/
+tests/data/
+static/uploads
+*.log
+*.out
+*.pid
+.git
+
+# OS-specific garbage
+.DS_Store
+*~
+
+# Misc
+*.psd

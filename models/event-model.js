@@ -24,7 +24,7 @@
  * @module models/event-model
  */
 
-let db = require('../core/db')
+const db = require('../core/db')
 
 module.exports = createModel()
 

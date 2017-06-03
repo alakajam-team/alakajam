@@ -6,10 +6,11 @@
  * @module controllers/entry-controller
  */
 
+const fileStorage = require('../core/file-storage')
+const forms = require('../core/forms')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 const Entry = require('../models/entry-model')
-const fileStorage = require('../core/file-storage')
 const templating = require('./templating')
 
 module.exports = {
@@ -75,34 +76,46 @@ function editEntry (req, res) {
 async function saveEntry (req, res) {
   let {fields, files} = await req.parseForm()
   if (!res.headersSent) { // FIXME Why?
-    if (!res.locals.entry) {
-      res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
-    }
-    let entry = res.locals.entry
+    let errorMessage = null
 
-    let picturePath = '/entry/' + entry.get('id')
-    let linksObject = null
-    if (fields.link) {
-      linksObject = [{
-        url: fields.link,
-        title: 'Play'
-      }]
+    if (fields.link && !forms.isURL(fields.link)) {
+      errorMessage = 'Invalid link'
     }
 
-    entry.set('title', fields.title)
-    entry.set('links', linksObject)
-    entry.set('body', fields.body)
-    if (fields['picture-delete'] && entry.get('pictures').length > 0) {
-      await fileStorage.remove(entry.get('pictures')[0])
-      entry.set('pictures', [])
-    } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
-      let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
-      entry.set('pictures', [finalPath])
-    }
-    await entry.save()
-    await entry.related('userRoles').fetch()
+    if (!errorMessage) {
+      if (!res.locals.entry) {
+        res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
+      }
+      let entry = res.locals.entry
 
-    res.redirect(templating.buildUrl(entry, 'entry'))
+      let picturePath = '/entry/' + entry.get('id')
+      let linksObject = null
+      if (fields.link) {
+        linksObject = [{
+          url: fields.link,
+          title: 'Play'
+        }]
+      }
+
+      entry.set('title', forms.sanitizeString(fields.title))
+      entry.set('links', linksObject)
+      entry.set('body', forms.sanitizeMarkdown(fields.body))
+      if (fields['picture-delete'] && entry.get('pictures').length > 0) {
+        await fileStorage.remove(entry.get('pictures')[0])
+        entry.set('pictures', [])
+      } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
+        let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
+        entry.set('pictures', [finalPath])
+      }
+      await entry.save()
+      await entry.related('userRoles').fetch()
+
+      res.redirect(templating.buildUrl(entry, 'entry'))
+    } else {
+      res.render('entry/edit-entry', {
+        errorMessage
+      })
+    }
   }
 }
 

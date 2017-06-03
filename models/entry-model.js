@@ -6,9 +6,8 @@
  * @module models/entry-model
  */
 
-const db = require('../core/db')
-
 const slug = require('slug')
+const db = require('../core/db')
 
 module.exports = createModel()
 

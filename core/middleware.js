@@ -19,13 +19,13 @@ const cookies = require('cookies')
 const postCss = require('postcss-middleware')
 const formidable = require('formidable')
 const promisify = require('promisify-node')
-const showdown = require('showdown')
 const moment = require('moment')
 const randomKey = require('random-key')
 const log = require('./log')
 const config = require('../config')
 const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
+const forms = require('../core/forms')
 const settingService = require('../services/setting-service')
 const sessionService = require('../services/session-service')
 const controllers = require('../controllers/index')
@@ -64,7 +64,6 @@ async function configure (app) {
   })
 
   // Templating: custom filters
-  let markdownConverter = new showdown.Converter()
   nunjucks.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
   nunjucks.env.addGlobal('constants', constants)
   nunjucks.env.addGlobal('devMode', app.locals.devMode)
@@ -81,7 +80,7 @@ async function configure (app) {
     return '<pre>' + JSON.stringify(obj, null, 2) + '</pre>'
   })
   nunjucks.env.addFilter('markdown', function (str) {
-    return markdownConverter.makeHtml(str)
+    return forms.markdownToHtml(str)
   })
   nunjucks.env.addFilter('date', function (date) {
     if (date) {

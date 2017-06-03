@@ -4,10 +4,6 @@
 
 <h1>Developer tools</h1>
 
-{% if infoMessage %}
-<div class="well">{{ infoMessage }}</div>
-{% endif %}
-
 <form method="post">
   <input type="submit" name="db-reset" class="btn btn-danger" onclick="return confirm('Reset the whole DB?')" value="Reset database" />
 </form>

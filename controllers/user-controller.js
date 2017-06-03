@@ -8,6 +8,7 @@
 
 const config = require('../config')
 const fileStorage = require('../core/file-storage')
+const forms = require('../core/forms')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
@@ -66,30 +67,38 @@ async function dashboardSettings (req, res) {
     if (!res.headersSent) { // FIXME Why?
       let user = res.locals.user
 
-      // General settings form
-      user.set('title', fields.title || user.get('name'))
-      user.set('email', fields.email)
-      user.set('social_web', fields.website)
-      user.set('social_twitter', fields.twitter.replace('@', ''))
-      user.set('body', fields.body)
-
-      if (user.hasChanged('title')) {
-        await userService.refreshUserReferences(user)
+      if (fields.email && forms.isEmail(fields.email)) {
+        errorMessage = 'Invalid email'
+      } else if (fields['social_web'] && !forms.isURL(fields['social_web'])) {
+        errorMessage = 'Invalid URL'
       }
 
-      // TODO Formidable shouldn't create an empty file
-      let newAvatar = files.avatar && files.avatar.size > 0
-      if (user.get('avatar') && (files['avatar-delete'] || newAvatar)) {
-        await fileStorage.remove(user.get('avatar'))
-        user.unset('avatar')
+      if (!errorMessage) {
+        // General settings form
+        user.set('title', forms.sanitizeString(fields.title || user.get('name')))
+        user.set('email', fields.email)
+        user.set('social_web', fields.website)
+        user.set('social_twitter', forms.sanitizeString(fields.twitter.replace('@', '')))
+        user.set('body', forms.sanitizeMarkdown(fields.body))
+
+        if (user.hasChanged('title')) {
+          await userService.refreshUserReferences(user)
+        }
+
+        // TODO Formidable shouldn't create an empty file
+        let newAvatar = files.avatar && files.avatar.size > 0
+        if (user.get('avatar') && (files['avatar-delete'] || newAvatar)) {
+          await fileStorage.remove(user.get('avatar'))
+          user.unset('avatar')
+        }
+        if (newAvatar) {
+          let avatarPath = '/user/' + user.get('id')
+          let finalPath = await fileStorage.savePictureUpload(
+            files.avatar.path, avatarPath, {maxDiagonal: 500})
+          user.set('avatar', finalPath)
+        }
+        await user.save()
       }
-      if (newAvatar) {
-        let avatarPath = '/user/' + user.get('id')
-        let finalPath = await fileStorage.savePictureUpload(
-          files.avatar.path, avatarPath, {maxDiagonal: 500})
-        user.set('avatar', finalPath)
-      }
-      await user.save()
     }
   }
 
@@ -183,6 +192,8 @@ async function doRegister (req, res) {
     errorMessage = 'Invalid invite key'
   } else if (!(fields.name && fields.password)) {
     errorMessage = 'Username or password missing'
+  } else if (!forms.isUsername(fields.name)) {
+    errorMessage = 'Your usename is too weird (either too short, or has special chars other than "_" or "-", or starts with a number)'
   } else if (fields.password !== fields['password-bis']) {
     errorMessage = 'Passwords do not match'
   } else {

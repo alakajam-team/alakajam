@@ -8,6 +8,7 @@
 
 const moment = require('moment')
 const constants = require('../core/constants')
+const forms = require('../core/forms')
 const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
@@ -114,10 +115,10 @@ async function savePost (req, res) {
 
     // Fill post from form info
     let {fields} = await req.parseForm()
-    post.set('title', fields.title)
-    post.set('body', fields.body)
-    post.set('event_id', fields['event_id'])
-    post.set('entry_id', fields['entry_id'])
+    post.set('title', forms.sanitizeString(fields.title))
+    post.set('body', forms.sanitizeMarkdown(fields.body))
+    post.set('event_id', forms.sanitizeString(fields['event_id']))
+    post.set('entry_id', forms.sanitizeString(fields['entry_id']))
 
     // Publication strategy
     let redirectToView = true

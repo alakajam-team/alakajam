@@ -6,8 +6,8 @@
  * @module models/post-model
  */
 
-let slug = require('slug')
-let db = require('../core/db')
+const slug = require('slug')
+const db = require('../core/db')
 
 module.exports = createModel()
 
