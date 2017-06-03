@@ -8,8 +8,11 @@
  */
 
 const knex = require('knex')
-const path = require('path')
 const bookshelf = require('bookshelf')
+const moment = require('moment')
+const promisify = require('promisify-node')
+const fs = promisify('fs')
+const path = require('path')
 const config = require('../config')
 const constants = require('../core/constants')
 const log = require('./log')
@@ -124,9 +127,10 @@ function createBookshelfInstance (knexInstance) {
 
   /**
    * Inserts sample data in the database.
+   * @param {bool|string} samples true to add samples, 'nightly' to add the special nighly post
    * @returns {void}
    */
-  db.insertInitialData = async function (withSamples) {
+  db.insertInitialData = async function (samples) {
     const userService = require('../services/user-service')
     const Event = require('../models/event-model')
     const eventService = require('../services/event-service')
@@ -144,7 +148,7 @@ function createBookshelfInstance (knexInstance) {
 
     // Samples
 
-    if (withSamples) {
+    if (samples) {
       log.info('Inserting samples...')
 
       await userService.register('entrant', 'entrant')
@@ -211,6 +215,13 @@ function createBookshelfInstance (knexInstance) {
         special_post_type: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
         published_at: new Date()
       })
+      if (samples === 'nightly') {
+        let changesBuffer = await fs.readFile(path.join(__dirname, '../tests/nightly/CHANGES.md'))
+        post.set({
+          title: 'Nightly: ' + moment().format('MMMM Do YYYY'),
+          body: changesBuffer.toString()
+        })
+      }
       await post.save()
 
       await postService.createComment(entrantUser, post, 'Seriously? We already had this theme twice')

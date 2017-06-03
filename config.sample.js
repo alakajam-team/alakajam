@@ -22,9 +22,9 @@ module.exports = {
   DB_NAME: 'alakajam', */
 
   // Debug options
-  DEBUG_INSERT_SAMPLES: true, // Inserts sample data upon DB init
+  DEBUG_INSERT_SAMPLES: true, // Inserts sample data upon DB init (false/true/'nightly')
   DEBUG_SQL: false, // Traces all SQL calls
   DEBUG_REFRESH_BROWSER: true, // Refreshes the browser automatically upon code changes
   DEBUG_ADMIN: false, // Lets you access the "/admin" URL even when logged out
-  DEBUG_ALLOW_INVALID_INVITE_KEYS: false // Lets you register without an invite key
+  DEBUG_ALLOW_INVALID_INVITE_KEYS: false // Lets you register without an invite key,
 }
