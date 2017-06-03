@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd `dirname $0`
+
 # Kill previously running server
 cat server.pid | xargs kill -TERM
 
