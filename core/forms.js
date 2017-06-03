@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * Validation, sanitization and transformation of data from forms
+ * Tools for validating, sanitizing and transforming data from forms
  *
  * @module core/forms
  */
@@ -79,7 +79,7 @@ function isUsername (username) {
 }
 
 /**
- * Converts the given Markdow to XSS-safe HTML
+ * Converts the given Markdown to XSS-safe HTML
  * @param  {string} markdown
  * @return {string}
  */

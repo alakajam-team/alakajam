@@ -48,7 +48,7 @@
       <div class="col-md-12">
         <a class="event-table__header" href="{{ buildUrl(event, 'event') }}">
           <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-7">
               <h2>
                 {% if event.get('status') === 'pending' %}
                   <span class="label label-default event-table__status">Upcoming</span>
@@ -58,7 +58,7 @@
                 {{ event.get('title') }}
               </h2>
             </div>
-            <div class="col-sm-6 text-right event-table__theme">
+            <div class="col-sm-5 text-right event-table__theme">
               {{ event.get('display_theme') }}
             </div>
           </div>

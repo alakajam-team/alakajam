@@ -105,6 +105,15 @@
     {% endif %}
   </nav>
 
+  {% if path == '/' %}
+    <div class="home-bar">
+      <div class="home-brand">
+        <img class="home-brand__logo" src="/static/images/logo.svg" />
+        <span class="home-brand__name">Alakajam!</span>
+      </div>
+    </div>
+  {% endif %}
+
   {% if user and (user.get('is_mod') or user.get('is_admin')) %}
   <div class="moderation-bar">
     <div class="container">

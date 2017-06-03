@@ -38,7 +38,10 @@ async function eventMiddleware (req, res, next) {
 async function viewEventPosts (req, res) {
   let userPost
   if (res.locals.user) {
-    let userPosts = await postService.findPosts({ userId: res.locals.user.get('id') })
+    let userPosts = await postService.findPosts({
+      userId: res.locals.user.id,
+      eventId: res.locals.event.id
+    })
     userPost = (userPosts.models.length > 0) ? userPosts.models[0] : undefined
   }
 

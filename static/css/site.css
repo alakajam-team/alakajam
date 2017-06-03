@@ -484,6 +484,7 @@ img.preview {
     margin-bottom: 20px;
     background-color: var(--main);
     color: white;
+    max-width: 750px;
     
     & h2 {
       margin: 0;
@@ -513,6 +514,7 @@ img.preview {
   }
   
   &__details {
+    max-width: 750px;
     margin: -20px 0 20px 0;
     border-radius: 0;
     background-color: var(--main-transparent);

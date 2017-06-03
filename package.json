@@ -4,10 +4,10 @@
   "description": "Game jam system",
   "main": "meadowlark.js",
   "scripts": {
-    "start": "node wejam.js",
-    "debug": "node-debug wejam.js",
-    "watch": "browser-refresh wejam.js",
-    "docs": "jsdoc -c jsdoc.json -d docs -R README.md -r core models services controllers wejam.js",
+    "start": "node server.js",
+    "debug": "node-debug server.js",
+    "watch": "browser-refresh server.js",
+    "docs": "rm -r docs && jsdoc -c jsdoc.json -d docs -R README.md -r core models services controllers server.js",
     "test": "mocha tests/"
   },
   "repository": {
