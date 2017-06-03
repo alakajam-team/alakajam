@@ -104,8 +104,8 @@ async function initFilesLayout () {
 
   // Create data folders
   const fileStorage = require('./core/file-storage')
-  await fileStorage.createFolderIfMissing(path.join(config.DATA_PATH, '/tmp'))
-  await fileStorage.createFolderIfMissing(config.UPLOADS_PATH)
+  await fileStorage.createFolderIfMissing(path.join(__dirname, config.DATA_PATH, '/tmp'))
+  await fileStorage.createFolderIfMissing(path.join(__dirname, config.UPLOADS_PATH))
 }
 
 /*

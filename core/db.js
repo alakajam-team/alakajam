@@ -8,6 +8,7 @@
  */
 
 const knex = require('knex')
+const path = require('path')
 const bookshelf = require('bookshelf')
 const config = require('../config')
 const constants = require('../core/constants')
@@ -37,7 +38,7 @@ function createKnexInstance () {
 
   if (config.DB_TYPE === 'sqlite3') {
     knexOptions.connection = {
-      filename: config.DB_SQLITE_FILENAME
+      filename: path.join(__dirname, '..', config.DB_SQLITE_FILENAME)
     }
   } else {
     knexOptions.connection = {

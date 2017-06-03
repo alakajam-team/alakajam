@@ -7,10 +7,12 @@ docs/*.html
 docs/*/
 
 # Data
-data/
+data*/
 tests/data/
 static/uploads
 *.log
+*.out
+*.pid
 
 # OS-specific garbage
 .DS_Store
