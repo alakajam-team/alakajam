@@ -8,6 +8,7 @@ cat server.pid | xargs kill -TERM
 # Update sources and reset data
 rm -r ../../data
 git pull
+npm install
 
 # Start new server
 node ../../server.js > server.log 1>&1 &
