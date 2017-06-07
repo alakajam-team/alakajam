@@ -12,7 +12,7 @@ Requirement: NodeJS 7.6+
 
 There is a default admin user (`administrator`/`administrator`).
 
-### Optional tools
+### Developer tools
 
 #### Recommended tools
 
@@ -21,7 +21,7 @@ Prerequisite: `npm install -g standard browser-refresh`
 * `browser-refresh server.js`: Launches the app, and makes the server and browser refresh when needed upon file changes.
 * `standard`: Validates the code style. Run `githooks/install.sh` to trigger validation automatically before committing.
 
-### Additional tools
+#### Additional tools
 
 Prerequisite: `npm install -g node-inspector jsdoc mocha`
 
