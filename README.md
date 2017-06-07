@@ -1,8 +1,8 @@
-## Alakajam! *(previously WeJam!)*
+# Alakajam! *(previously WeJam!)*
 
 > Current progress: A very early alpha website, with posts half-implemented, no events administration, awful security, and no voting system.
 
-### Initial setup
+## Initial setup
 
 Requirement: NodeJS 7.6+
 
@@ -12,18 +12,16 @@ Requirement: NodeJS 7.6+
 
 There is a default admin user (`administrator`/`administrator`).
 
-### Developer tools
+## Developer tools
 
-#### Recommended tools
+Prerequisite: `npm install -g standard browser-refresh node-inspector jsdoc mocha`
 
-Prerequisite: `npm install -g standard browser-refresh`
+### Recommended
 
 * `browser-refresh server.js`: Launches the app, and makes the server and browser refresh when needed upon file changes.
 * `standard`: Validates the code style. Run `githooks/install.sh` to trigger validation automatically before committing.
 
-#### Additional tools
-
-Prerequisite: `npm install -g node-inspector jsdoc mocha`
+### Other
 
 * `node-debug server.js`: Launches the app in debug mode.
 * `npm run-script docs`: Generates the JS documentation in the `docs/` folder.
