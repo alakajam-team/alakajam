@@ -5,6 +5,10 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 # Changelog
 
+### June 7th
+
+* Comments now work on blog posts
+
 ### June 3rd
 
 * Support for making posts (including announcements for moderators)
@@ -12,5 +16,3 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 * Mods can edit any post or any game thanks to a special toolbar
 * Form data is now sanitized
 * URLs are now pretty
-
-NB. Comments don't work yet.
