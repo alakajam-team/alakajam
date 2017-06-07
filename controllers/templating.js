@@ -30,8 +30,8 @@ function buildUrl (model, type, page = null, options = {}) {
     return '/' + model.get('name') + pagePath
   } else if (type === 'entry') {
     // Entry model
-    if (model && model.get('id')) {
-      return '/' + model.get('event_name') + '/' + model.get('id') + '/' + model.get('name') + pagePath
+    if (model && model.id) {
+      return '/' + model.get('event_name') + '/' + model.id + '/' + model.get('name') + pagePath
     } else {
       return '/' + model.get('event_name') + '/create-entry'
     }
@@ -51,7 +51,14 @@ function buildUrl (model, type, page = null, options = {}) {
       if (options.entryId) pagePath += '&entryId=' + options.entryId
       return '/post' + pagePath
     } else {
-      return '/post/' + model.get('id') + '/' + model.get('name') + pagePath
+      return '/post/' + model.id + '/' + model.get('name') + pagePath
     }
+  } else if (type === 'comment') {
+    // Comment model
+    let pageParams = ''
+    if (model && page === 'edit') {
+      pageParams = 'editComment=' + model.id
+    }
+    return '?' + pageParams + (model ? '#c' + model.id : '')
   }
 }

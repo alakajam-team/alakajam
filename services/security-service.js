@@ -41,9 +41,9 @@ function canUserWrite (user, model, options = {}) {
 }
 
 /**
- * Checks if a user can manage the given model
- * @param  {User} user (optional)
- * @param  {Entry|Post|Comment} model
+ * Checks if a user can manage the given model. Always returns false if no model is given.
+ * @param  {User} (optional) user
+ * @param  {Entry|Post|Comment} (optional) model
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
@@ -52,7 +52,7 @@ function canUserManage (user, model, options = {}) {
 }
 
 function canUser (user, model, permission, options = {}) {
-  if (!user) {
+  if (!user || !model) {
     return false
   }
   if ((options.allowMods && isMod(user)) || (options.allowAdmins && isAdmin(user))) {
@@ -61,7 +61,11 @@ function canUser (user, model, permission, options = {}) {
 
   // Comments
   if (model.get('user_id')) {
-    return model.get('user_id') === user.get('id')
+    if (permission === constants.PERMISSION_READ) {
+      return canUser(user, model.related('node'), permission, options)
+    } else {
+      return model.get('user_id') === user.get('id')
+    }
   }
 
   // User/Posts (permission-based)

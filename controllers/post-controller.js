@@ -17,23 +17,39 @@ const Post = require('../models/post-model')
 
 module.exports = {
   postMiddleware,
+
   editPost,
   savePost,
   viewPost,
-  deletePost
+  deletePost,
+
+  saveComment
 }
 
 async function postMiddleware (req, res, next) {
   if (req.params.postId && req.params.postId !== 'create') {
-    res.locals.post = await postService.findPostById(req.params.postId)
+    // Fetch current post
+    if (forms.isId(req.params.postId)) {
+      res.locals.post = await postService.findPostById(req.params.postId)
+    }
     if (!res.locals.post) {
       res.errorPage(404, 'Post not found')
-    } else {
-      next()
+      return
     }
-  } else {
-    next()
+
+    // Fetch comment to edit
+    if (req.query.editComment) {
+      if (forms.isId(req.query.editComment)) {
+        res.locals.editComment = await postService.findCommentById(req.query.editComment)
+      }
+      if (!securityService.canUserWrite(res.locals.user, res.locals.editComment, { allowMods: true })) {
+        res.errorPage(403, 'Cannot edit this comment')
+        return
+      }
+    }
   }
+
+  next()
 }
 
 async function viewPost (req, res) {
@@ -45,7 +61,7 @@ async function viewPost (req, res) {
 
     // Attach sorted comments
     await post.load(['comments', 'comments.user'])
-    context.comments = post.related('comments')
+    context.sortedComments = post.related('comments')
           .sortBy(comment => comment.get('created_at'))
 
     // Attach related entry/event
@@ -157,4 +173,45 @@ function validateSpecialPostType (specialPostType, user) {
 async function deletePost (req, res) {
   await res.locals.post.destroy()
   res.redirect('/')
+}
+
+/**
+ * Save or delete a comment
+ */
+async function saveComment (req, res) {
+  let redirectUrl = templating.buildUrl(res.locals.post, 'post')
+  let {fields} = await req.parseForm()
+
+  // Find or create comment
+  let comment = null
+  let isNewComment = false
+  if (fields.id) {
+    if (forms.isId(fields.id)) {
+      comment = await postService.findCommentById(fields.id)
+    } else {
+      res.errorPage(404, 'Comment not found')
+      return
+    }
+  } else {
+    isNewComment = true
+    comment = await postService.createComment(res.locals.user, res.locals.post)
+  }
+
+  if (securityService.canUserWrite(res.locals.user, comment, { allowMods: true })) {
+    // Update or delete comment
+    if (fields.delete) {
+      await comment.destroy()
+    } else {
+      comment.set('body', forms.sanitizeMarkdown(fields.body))
+      await comment.save()
+      redirectUrl += templating.buildUrl(comment, 'comment')
+    }
+
+    // Update post comment count
+    if (fields.delete || isNewComment) {
+      await postService.refreshCommentCount(res.locals.post)
+    }
+  }
+
+  res.redirect(redirectUrl)
 }

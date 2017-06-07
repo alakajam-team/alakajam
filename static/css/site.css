@@ -406,7 +406,12 @@ img.preview {
 }
 
 .comment {
-  margin-bottom: 10px;
+  position: relative;
+  
+  &__anchor {
+    position: absolute;
+    top: -60px;
+  }
 
   &__avatar-container {
     padding-right: 0;
@@ -429,7 +434,15 @@ img.preview {
   &__body {
     padding: 10px;
   }
+  
+  &__actions {
+    margin-top: 10px;
+  }
 
+}
+.in-event .comment__anchor {
+  position: absolute;
+  top: calc(-60px - var(--eventbar-height));
 }
 
 /* User contents */

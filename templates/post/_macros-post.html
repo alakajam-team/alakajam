@@ -39,7 +39,7 @@
       {% else %}
         <span class="badge">Draft</span>
       {% endif %}
-    • 0 comments
+    • {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
     {% if canUserWrite(readingUser, post, options) %}
     <a class="btn btn-default btn-sm pull-right" href="{{ buildUrl(post, 'post', 'edit') }}">Edit post</a>
     {% endif %}
@@ -60,14 +60,14 @@
 
 
 {% macro comments(comments, readingUser, options) %}
-
 {% for comment in comments %}
-  {% if options.editComment === comment %}
+  {% if options.editComment and options.editComment.id === comment.id %}
     {{ commentEditor(comment, readingUser, options) }}
   {% else %}
     {% set author = comment.related('user') %}
     <div class="row comment">
       <div class="col-xs-offset-1 col-xs-11">
+        <a class="comment__anchor" name="c{{ comment.id if comment }}"></a>
         <div class="comment__details">
           <a href="{{ buildUrl(author, 'user') }}">
             <div class="comment__avatar-container">
@@ -84,11 +84,11 @@
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
           {% endif %}
           {% if canUserWrite(readingUser, comment, options) %}
-          <a class="btn btn-default btn-xs pull-right" href="#"><span class="glyphicon glyphicon-pencil"></span></a>
+          <a class="btn btn-default btn-xs pull-right" href="{{ buildUrl(comment, 'comment', 'edit') }}"><span class="glyphicon glyphicon-pencil"></span></a>
           {% endif %}
         </div>
         <div class="panel comment__body">
-            {{ comment.get('body') }}
+            {{ comment.get('body') | markdown | safe }}
         </div>
       </div>
     </div>
@@ -113,9 +113,10 @@
 {% macro commentEditor(comment, readingUser, options) %}
 {% set user = comment.related('user') if comment and comment.related('user') else readingUser %}
 {% if user %}
-<form method="post" action="/comment" class="comment">
+<form method="post" action="{{ buildUrl(comment, 'comment', 'edit') }}" class="comment">
   <input type="hidden" name="path" value="{{ options.redirectTo }}" />
-  
+  <input type="hidden" name="id" value="{{ comment.id if comment }}" />
+  <a class="comment__anchor" name="c{{ comment.id if comment }}"></a>
   <div class="row">
     <div class="col-xs-offset-1 col-xs-11">
       <div class="comment__details">
@@ -128,19 +129,23 @@
         </div>
         {{ user.get('title') }}
       </div>
-      <div style="margin-bottom: 10px">
-        {{ formMacros.editor('comment', comment.get('body') if comment) }}
-      </div>
-    </div>
-  </div>
+      <div class="{{ 'well' if comment and comment.id }}" style="margin-bottom: 10px">
+        {{ formMacros.editor('body', comment.get('body') if comment) }}
 
-  <div class="row">
-    <div class="col-xs-offset-1 col-xs-3">
-      <input type="submit" class="btn btn-default btn-sm" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"/>
-    </div>
-    <div class="col-xs-8 text-right">
-      <input type="submit" class="btn btn-primary btn-sm" value="Publish" />
-      <input type="submit" class="btn btn-default btn-sm" value="Cancel" />
+        <div class="row comment__actions">
+          <div class="col-xs-4">
+            {% if comment and comment.id %}
+            <input type="submit" name="delete" class="btn btn-default btn-sm" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"/>
+            {% endif %}
+          </div>
+          <div class="col-xs-8 text-right">
+            <input type="submit" name="save" class="btn btn-primary btn-sm" value="Publish" />
+            {% if comment and comment.id %}
+              <a href="{{ buildUrl(comment, 'comment') }}" class="btn btn-default btn-sm">Cancel</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </form>

@@ -225,6 +225,7 @@ function createBookshelfInstance (knexInstance) {
       await post.save()
 
       await postService.createComment(entrantUser, post, 'Seriously? We already had this theme twice')
+      await postService.refreshCommentCount(post)
 
       // Planned 3rd event
 

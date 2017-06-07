@@ -20,6 +20,7 @@ module.exports = {
   isEmail,
   isURL,
   isUsername,
+  isId,
 
   markdownToHtml
 }
@@ -74,8 +75,17 @@ function isURL (string) {
  * @param  {string} string
  * @return {Boolean}
  */
-function isUsername (username) {
-  return username.length >= 3 && /^[a-zA-Z][0-9a-zA-Z_-]+$/.test(username)
+function isUsername (string) {
+  return string.length >= 3 && /^[a-zA-Z][0-9a-zA-Z_-]+$/.test(string)
+}
+
+/**
+ * Checks whether the string is a valid ID. If so, additional sanitizing is not needed.
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isId (string) {
+  return validator.isInt(string, { min: 1 })
 }
 
 /**

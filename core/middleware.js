@@ -117,6 +117,7 @@ async function configure (app) {
     res.render = function (template, context) {
       let mergedContext = Object.assign({}, res.locals, context)
       nativeRender.call(res, template, mergedContext)
+      res.rendered = true
     }
 
     next()

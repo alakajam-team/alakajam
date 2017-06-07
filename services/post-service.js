@@ -7,7 +7,7 @@
  */
 
 const Post = require('../models/post-model')
-// const Comment = require('../models/comment-model')
+const Comment = require('../models/comment-model')
 const constants = require('../core/constants')
 const securityService = require('../services/security-service')
 
@@ -18,8 +18,10 @@ module.exports = {
   findPosts,
   findPostById,
   findLatestAnnouncement,
+  findCommentById,
 
   createPost,
+  refreshCommentCount,
   createComment
 }
 
@@ -77,6 +79,11 @@ async function findLatestAnnouncement () {
     .fetch({withRelated: ['author', 'userRoles']})
 }
 
+async function findCommentById (commentId) {
+  return Comment.where('id', commentId)
+    .fetch({withRelated: ['user']})
+}
+
 /**
  * Creates and persists a new post, initializing the owner UserRole.
  * @param  {User} user
@@ -97,10 +104,10 @@ async function createPost (user) {
 }
 
 /**
- * Creates and persists a new comment.
+ * Creates a new comment.
  * @param  {User} user
  * @param  {Post|Entry} node
- * @param  {string} comment body
+ * @param  {string} (optional) comment body
  * @return {Comment}
  */
 async function createComment (user, node, body) {
@@ -108,6 +115,16 @@ async function createComment (user, node, body) {
     user_id: user.get('id'),
     body: body
   })
-  await comment.save()
   return comment
+}
+
+/**
+ * Updates the comment count on the given node and saves it.
+ * @param {Post|Entry} node
+ */
+async function refreshCommentCount (node) {
+  await node.load('comments')
+  let commentCount = node.related('comments').size()
+  node.set('comment_count', commentCount)
+  await node.save()
 }

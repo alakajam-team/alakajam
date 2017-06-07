@@ -20,7 +20,7 @@
   {% set hasRelated = entry or event %}
   <div class="{{ 'col-lg-offset-1 col-lg-6 col-md-7' if hasRelated else 'col-lg-offset-2 col-lg-8' }}">
     <h2>Comments</h2>
-    {{ postMacros.comments(post.related('comments').models, user, {allowMods: true, redirectTo: path, editComment: editComment}) }}
+    {{ postMacros.comments(sortedComments, user, {allowMods: true, redirectTo: path, editComment: editComment}) }}
   </div>
   {% if hasRelated %}
   <div class="col-lg-4 col-md-5">

@@ -68,6 +68,7 @@ module.exports = {
     router.post('/post/create', postController.savePost)
     router.get('/post/:postId', postController.viewPost)
     router.get('/post/:postId(\\d+)/:postName?', postController.viewPost)
+    router.post('/post/:postId(\\d+)/:postName?', postController.saveComment)
     router.post('/post/:postId(\\d+)/:postName/edit', postController.savePost)
     router.get('/post/:postId(\\d+)/:postName/edit', postController.editPost)
     router.get('/post/:postId(\\d+)/:postName/delete', postController.deletePost)
