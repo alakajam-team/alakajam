@@ -7,10 +7,12 @@
  */
 
 const constants = require('../core/constants')
+const forms = require('../core/forms')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const postService = require('../services/post-service')
+const securityService = require('../services/security-service')
 
 module.exports = {
   anyPageMiddleware,
@@ -21,10 +23,27 @@ module.exports = {
 }
 
 async function anyPageMiddleware (req, res, next) {
-  sessionService.restoreSessionIfNeeded(req, res)
-
   res.locals.path = req.originalUrl
 
+  // Fetch current user
+  sessionService.restoreSessionIfNeeded(req, res)
+  let userTask = null
+  if (req.session.userId) {
+    userTask = userService.findById(req.session.userId).then(function (user) {
+      res.locals.user = user
+
+      // Fetch comment to edit
+      if (req.query.editComment && forms.isId(req.query.editComment)) {
+        return postService.findCommentById(req.query.editComment).then(function (comment) {
+          if (securityService.canUserWrite(user, comment, { allowMods: true })) {
+            res.locals.editComment = comment
+          }
+        })
+      }
+    })
+  }
+
+  // Fetch live event
   let liveEventTask = eventService.findEventByStatus('open').then(async function (liveEvent) {
     if (liveEvent) {
       res.locals.liveEvent = liveEvent
@@ -32,13 +51,8 @@ async function anyPageMiddleware (req, res, next) {
       res.locals.nextEvent = await eventService.findEventByStatus('pending')
     }
   })
-  let userTask = null
-  if (req.session.userId) {
-    userTask = userService.findById(req.session.userId).then(function (user) {
-      res.locals.user = user
-    })
-  }
-  await Promise.all([liveEventTask, userTask]) // Parallelize fetching event & user info
+
+  await Promise.all([liveEventTask, userTask]) // Parallelize fetching both
 
   next()
 }

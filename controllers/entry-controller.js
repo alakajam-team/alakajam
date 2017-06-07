@@ -12,6 +12,7 @@ const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 const Entry = require('../models/entry-model')
 const templating = require('./templating')
+const postController = require('./post-controller')
 
 module.exports = {
   entryMiddleware,
@@ -47,6 +48,7 @@ async function entryMiddleware (req, res, next) {
  */
 async function viewEntry (req, res) {
   res.render('entry/view-entry', {
+    sortedComments: await postService.findCommentsSortedForDisplay(res.locals.entry),
     posts: await postService.findPosts({
       entryId: res.locals.entry.get('id')
     })
@@ -75,7 +77,15 @@ function editEntry (req, res) {
  */
 async function saveEntry (req, res) {
   let {fields, files} = await req.parseForm()
-  if (!res.headersSent) { // FIXME Why?
+
+  if (fields['is-comment-form']) {
+    // Handle comment form
+    let redirectUrl = await postController.handleSaveComment(fields,
+      res.locals.user, res.locals.entry, templating.buildUrl(res.locals.entry, 'entry'))
+    res.redirect(redirectUrl)
+  } else if (!res.headersSent) { // FIXME Why?
+    // Update entry
+
     let errorMessage = null
 
     if (fields.link && !forms.isURL(fields.link)) {

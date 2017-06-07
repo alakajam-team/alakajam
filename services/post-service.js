@@ -19,6 +19,7 @@ module.exports = {
   findPostById,
   findLatestAnnouncement,
   findCommentById,
+  findCommentsSortedForDisplay,
 
   createPost,
   refreshCommentCount,
@@ -82,6 +83,16 @@ async function findLatestAnnouncement () {
 async function findCommentById (commentId) {
   return Comment.where('id', commentId)
     .fetch({withRelated: ['user']})
+}
+
+/**
+ * Fetchs the comments of the given node, and sorts them by creation date.
+ * @param  {Post|Entry} node
+ * @return {array(Comment)}
+ */
+async function findCommentsSortedForDisplay (node) {
+  await node.load(['comments', 'comments.user'])
+  return node.related('comments').sortBy(comment => comment.get('created_at'))
 }
 
 /**

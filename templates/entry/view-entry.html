@@ -1,5 +1,10 @@
 {% extends "entry/_page-entry.html" %}
 {% import "post/_macros-post.html" as postMacros %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block styles %}
+  {{ formMacros.editorStyles() }}
+{% endblock %}
 
 {% block body %}
 
@@ -29,10 +34,8 @@
       {{ postMacros.post(post, user, {hideBody: true}) }}
       {% endfor %}
 
-      <h2>Comments</h2>
-      <div class="well">
-        No comments yet.
-      </div>
+      <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
+      {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
 
     </div>
     <div class="col-md-4 user-contents">
@@ -56,4 +59,8 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+  {{ formMacros.editorScripts() }}
 {% endblock %}

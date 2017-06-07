@@ -18,12 +18,12 @@
 </div>
 <div class="row">
   {% set hasRelated = entry or event %}
-  <div class="{{ 'col-lg-offset-1 col-lg-6 col-md-7' if hasRelated else 'col-lg-offset-2 col-lg-8' }}">
+  <div class="col-md-7 col-lg-8 {{ 'col-lg-offset-2' if not hasRelated }} ">
     <h2>Comments</h2>
-    {{ postMacros.comments(sortedComments, user, {allowMods: true, redirectTo: path, editComment: editComment}) }}
+    {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
   </div>
   {% if hasRelated %}
-  <div class="col-lg-4 col-md-5">
+  <div class="col-md-5 col-lg-4">
     <h2>Related</h2>
     {{ eventMacros.entryThumb(entry, 12) if entry }}
     {{ eventMacros.eventTable(event, false) if event }}

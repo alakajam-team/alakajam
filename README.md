@@ -14,21 +14,24 @@ There is a default admin user (`administrator`/`administrator`).
 
 ### Optional tools
 
-#### Dev tools
+#### Recommended tools
 
-Prerequisite: `npm install -g standard browser-refresh node-inspector jsdoc mocha`
+Prerequisite: `npm install -g standard browser-refresh`
 
 * `browser-refresh server.js`: Launches the app, and makes the server and browser refresh when needed upon file changes.
+* `standard`: Validates the code style. Run `githooks/install.sh` to trigger validation automatically before committing.
+
+### Additional tools
+
+Prerequisite: `npm install -g node-inspector jsdoc mocha`
+
 * `node-debug server.js`: Launches the app in debug mode.
-* `standard`: Validates the code style
 * `npm run-script docs`: Generates the JS documentation in the `docs/` folder.
 * `mocha tests/`: Runs unit tests.
 
-Please run `githooks/install.sh` to install useful Git hooks in your clone.
-
 See also [the wiki](https://github.com/mkalam-alami/wejam/wiki) for additional developer documentation.
 
-#### Picture resizing
+#### Enabling picture resizing
 
 If the `sharp` dependency failed to install in the initial setup, your picture uploads won't be resized. If you want to fix that:
 

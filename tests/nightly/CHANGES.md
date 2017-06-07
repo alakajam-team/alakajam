@@ -7,7 +7,7 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 ### June 7th
 
-* Comments now work on blog posts
+* Comments now work (both on blog posts and games)
 
 ### June 3rd
 

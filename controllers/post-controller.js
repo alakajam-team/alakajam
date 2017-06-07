@@ -16,6 +16,8 @@ const templating = require('./templating')
 const Post = require('../models/post-model')
 
 module.exports = {
+  handleSaveComment,
+
   postMiddleware,
 
   editPost,
@@ -28,24 +30,12 @@ module.exports = {
 
 async function postMiddleware (req, res, next) {
   if (req.params.postId && req.params.postId !== 'create') {
-    // Fetch current post
     if (forms.isId(req.params.postId)) {
       res.locals.post = await postService.findPostById(req.params.postId)
     }
     if (!res.locals.post) {
       res.errorPage(404, 'Post not found')
       return
-    }
-
-    // Fetch comment to edit
-    if (req.query.editComment) {
-      if (forms.isId(req.query.editComment)) {
-        res.locals.editComment = await postService.findCommentById(req.query.editComment)
-      }
-      if (!securityService.canUserWrite(res.locals.user, res.locals.editComment, { allowMods: true })) {
-        res.errorPage(403, 'Cannot edit this comment')
-        return
-      }
     }
   }
 
@@ -57,12 +47,9 @@ async function viewPost (req, res) {
   let post = res.locals.post
   if (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, post, { allowMods: true })) {
-    let context = {}
-
-    // Attach sorted comments
-    await post.load(['comments', 'comments.user'])
-    context.sortedComments = post.related('comments')
-          .sortBy(comment => comment.get('created_at'))
+    let context = {
+      sortedComments: await postService.findCommentsSortedForDisplay(post)
+    }
 
     // Attach related entry/event
     if (post.get('event_id')) {
@@ -179,8 +166,22 @@ async function deletePost (req, res) {
  * Save or delete a comment
  */
 async function saveComment (req, res) {
-  let redirectUrl = templating.buildUrl(res.locals.post, 'post')
   let {fields} = await req.parseForm()
+  let redirectUrl = await handleSaveComment(fields, res.locals.user, res.locals.post, templating.buildUrl(res.locals.post, 'post'))
+  res.redirect(redirectUrl)
+}
+
+/**
+ * Handler for handling the comment saving form.
+ * Reusable between all controllers of models supporting comments.
+ * @param {object} fields The parsed form fields
+ * @param {User} user The current user
+ * @param {Post|Entry} node The current node model
+ * @param {string} baseUrl The view URL for the current node
+ * @return {string} A URL to redirect to
+ */
+async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
+  let redirectUrl = baseUrl
 
   // Find or create comment
   let comment = null
@@ -189,15 +190,14 @@ async function saveComment (req, res) {
     if (forms.isId(fields.id)) {
       comment = await postService.findCommentById(fields.id)
     } else {
-      res.errorPage(404, 'Comment not found')
-      return
+      return redirectUrl
     }
   } else {
     isNewComment = true
-    comment = await postService.createComment(res.locals.user, res.locals.post)
+    comment = await postService.createComment(currentUser, currentNode)
   }
 
-  if (securityService.canUserWrite(res.locals.user, comment, { allowMods: true })) {
+  if (securityService.canUserWrite(currentUser, comment, { allowMods: true })) {
     // Update or delete comment
     if (fields.delete) {
       await comment.destroy()
@@ -207,11 +207,11 @@ async function saveComment (req, res) {
       redirectUrl += templating.buildUrl(comment, 'comment')
     }
 
-    // Update post comment count
+    // Update node comment count
     if (fields.delete || isNewComment) {
-      await postService.refreshCommentCount(res.locals.post)
+      await postService.refreshCommentCount(currentNode)
     }
   }
 
-  res.redirect(redirectUrl)
+  return redirectUrl
 }
