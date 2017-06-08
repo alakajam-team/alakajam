@@ -26,7 +26,7 @@ module.exports = {
 
   // Posts
   SPECIAL_POST_TYPE_ANNOUNCEMENT: 'announcement',
-  ALLOWED_POST_TAGS: [ 'b', 'i', 'em', 'strong', 'a', 'u' ],
+  ALLOWED_POST_TAGS: [ 'b', 'i', 'em', 'strong', 'a', 'u', 'br' ],
   ALLOWED_POST_ATTRIBUTES: { 'a': [ 'href' ] },
 
   // Dates

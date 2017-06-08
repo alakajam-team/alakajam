@@ -74,7 +74,6 @@ function createBookshelfInstance (knexInstance) {
       return await settingService.find(constants.SETTING_DB_VERSION, 0)
     } catch (e) {
       // Table missing
-      // log.warn(e.message)
       return 0
     }
   }

@@ -2,11 +2,6 @@
 {% import "event/_macros-event.html" as eventMacros %}
 {% import "post/_macros-post.html" as postMacros %}
 
-{% block moderation %}
-  {% if liveEvent %}<a href="{{ buildUrl(liveEvent, 'event', 'edit') }}" class="btn"><span class="glyphicon glyphicon-pencil"></span> Edit current event</a>{% endif %}
-  {% if nextEvent %}<a href="{{ buildUrl(nextEvent, 'event', 'edit') }}" class="btn"><span class="glyphicon glyphicon-pencil"></span> Edit next event</a>{% endif %}
-{% endblock %}
-
 {% block body %}
 
 <div class="container">
