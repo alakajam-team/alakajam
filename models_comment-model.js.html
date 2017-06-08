@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: core/db</title>
+    <title>JSDoc: Source: models/comment-model.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,127 +17,66 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: core/db</h1>
+    <h1 class="page-title">Source: models/comment-model.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Database storage configuration.
-Requiring the module returns a <a href="http://bookshelfjs.org/">Bookshelf</a> instance.</p></div>
-        
+/**
+ * Comment model
+ *
+ * @module models/comment-model
+ */
 
-        
-            
+let db = require('../core/db')
 
+module.exports = createModel()
 
+function createModel () {
+  let model = db.model('Comment', {
+    tableName: 'comment',
+    hasTimestamps: true,
 
+    node: function () {
+      return this.morphTo('node', ['node_type', 'node_id'], 'Entry', 'Post')
+    },
+    user: function () {
+      return this.belongsTo('User', 'user_id', 'id')
+    },
+    parentComment: function () {
+      return this.belongsTo('Comment', 'parent_id', 'id')
+    }
+  })
 
+  model.up = async function up (applyVersion) {
+    if (applyVersion === 1) {
+      await db.knex.schema.createTableIfNotExists('comment', function (table) {
+        table.increments('id').primary()
+        table.integer('node_id')
+        table.string('node_type')
+        table.integer('user_id')
+        table.integer('parent_id')
+        table.string('body', 10000)
+        table.timestamps()
+      })
+    }
+  }
 
+  model.down = async function down () {
+    await db.knex.schema.dropTableIfExists('comment')
+  }
 
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_db.js.html">core/db.js</a>, <a href="core_db.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+  return model
+}
+</code></pre>
+        </article>
+    </section>
 
 
 

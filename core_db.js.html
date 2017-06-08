@@ -37,7 +37,12 @@
 
 const knex = require('knex')
 const bookshelf = require('bookshelf')
+const moment = require('moment')
+const promisify = require('promisify-node')
+const fs = promisify('fs')
+const path = require('path')
 const config = require('../config')
+const constants = require('../core/constants')
 const log = require('./log')
 const models = require('../models/index')
 
@@ -46,7 +51,6 @@ module.exports = initializeDatabase()
 // Models sorted by table creation order
 const MODEL_FILENAMES_UP = models.modelFilenamesUp()
 const MODEL_FILENAMES_DOWN = MODEL_FILENAMES_UP.slice().reverse()
-const SETTING_DB_VERSION = 'db_version'
 
 function initializeDatabase () {
   let knexInstance = createKnexInstance()
@@ -65,7 +69,7 @@ function createKnexInstance () {
 
   if (config.DB_TYPE === 'sqlite3') {
     knexOptions.connection = {
-      filename: config.DB_SQLITE_FILENAME
+      filename: path.join(__dirname, '..', config.DB_SQLITE_FILENAME)
     }
   } else {
     knexOptions.connection = {
@@ -86,7 +90,6 @@ function createBookshelfInstance (knexInstance) {
   let db = bookshelf(knexInstance)
   db.plugin('registry')
   db.plugin('pagination')
-  db.plugin(require('bookshelf-uuid'))
   db.plugin(require('bookshelf-cascade-delete'))
 
   /**
@@ -96,7 +99,7 @@ function createBookshelfInstance (knexInstance) {
   db.findCurrentVersion = async function () {
     const settingService = require('../services/setting-service')
     try {
-      return await settingService.find(SETTING_DB_VERSION, 0)
+      return await settingService.find(constants.SETTING_DB_VERSION, 0)
     } catch (e) {
       // Table missing
       // log.warn(e.message)
@@ -126,65 +129,145 @@ function createBookshelfInstance (knexInstance) {
     let currentVersion = await db.findCurrentVersion()
     let upgradeRequired = currentVersion &lt; models.version
 
+    // Load all models modules
+    let modelModules = {}
+    for (let modelFilename of MODEL_FILENAMES_UP) {
+      modelModules[modelFilename] = require('../models/' + modelFilename)
+    }
+
+    // Upgrade models if needed
     while (currentVersion &lt; models.version) {
       let nextVersion = currentVersion + 1
       for (let modelFilename of MODEL_FILENAMES_UP) {
-        let model = require('../models/' + modelFilename)
         if (!silent) {
           log.info('Upgrade model: ' + modelFilename + ' to version ' + nextVersion + '...')
         }
-        await model.up(nextVersion)
+        await modelModules[modelFilename].up(nextVersion)
       }
       currentVersion = nextVersion
     }
 
     if (upgradeRequired) {
       const settingService = require('../services/setting-service')
-      await settingService.save(SETTING_DB_VERSION, models.version)
+      await settingService.save(constants.SETTING_DB_VERSION, models.version)
     }
   }
 
   /**
    * Inserts sample data in the database.
+   * @param {bool|string} samples true to add samples, 'nightly' to add the special nighly post
    * @returns {void}
    */
-  db.insertSamples = async function () {
-    log.info('Inserting samples...')
+  db.insertInitialData = async function (samples) {
+    const userService = require('../services/user-service')
+    const Event = require('../models/event-model')
+    const eventService = require('../services/event-service')
+    const postService = require('../services/post-service')
 
-    let userService = require('../services/user-service')
-    let User = require('../models/user-model')
-    let Event = require('../models/event-model')
-    let Entry = require('../models/entry-model')
+    // Mandatory admin account
 
-    let adminUser = new User({
-      name: 'administrator',
-      title: 'Administrator',
+    await userService.register('administrator', 'administrator')
+    let adminUser = await userService.findByName('administrator')
+    adminUser.set({
+      'title': 'Administrator',
       is_admin: true
     })
-    userService.setPassword(adminUser, 'administrator')
     await adminUser.save()
 
-    let weJam1 = new Event({
-      title: '1st WeJam',
-      status: 'closed',
-      display_dates: 'Novembary 17 - 20, 2016',
-      display_theme: 'Make a website'
-    })
-    await weJam1.save()
+    // Samples
 
-    let weJam1Entries = weJam1.related('entries')
-    await weJam1Entries.create({ title: 'Old Game' })
+    if (samples) {
+      log.info('Inserting samples...')
 
-    let weJam2 = new Event({
-      title: '2nd WeJam',
-      status: 'open',
-      display_dates: 'Januember 29 - 31, 2017',
-      display_theme: 'You are not alone'
-    })
-    await weJam2.save()
+      await userService.register('entrant', 'entrant')
+      let entrantUser = await userService.findByName('entrant')
+      entrantUser.set({
+        'title': 'Entrant',
+        'body': 'I am definitely **not** a robot.'
+      })
+      await entrantUser.save()
 
-    await weJam2.entries().create({ title: 'Game A' })
-    await weJam2.entries().create({ title: 'Game B' })
+      // 1st event
+
+      let event1 = new Event({
+        title: '1st Alakajam',
+        name: '1st-alakajam',
+        status: 'closed',
+        display_dates: 'Novembary 17 - 20, 2016',
+        display_theme: 'Make a website',
+        status_theme: 'disabled',
+        status_entry: 'on',
+        status_results: 'disabled'
+      })
+      await event1.save()
+      let userEntry = await eventService.createEntry(entrantUser, event1)
+      userEntry.set('title', 'Old Game')
+      await userEntry.save()
+
+      // 2nd event
+
+      let event2 = new Event({
+        title: '2nd Alakajam',
+        name: '2nd-alakajam',
+        status: 'open',
+        display_dates: 'Januember 29 - 31, 2017',
+        display_theme: 'You are not alone',
+        status_theme: 'disabled',
+        status_entry: 'on',
+        status_results: 'off'
+      })
+      await event2.save()
+
+      let adminEntry = await eventService.createEntry(adminUser, event1)
+      adminEntry.set('title', 'Super Game')
+      await adminEntry.save()
+      userEntry = await eventService.createEntry(entrantUser, event2)
+      userEntry.set('title', 'Awesome Game')
+      await userEntry.save()
+
+      let post = await postService.createPost(entrantUser)
+      post.set({
+        title: "I'm in!",
+        body: "This is my second game and I'm really excited.",
+        event_id: event2.get('id'),
+        entry_id: userEntry.get('id'),
+        published_at: new Date()
+      })
+      await post.save()
+
+      post = await postService.createPost(adminUser)
+      post.set({
+        title: 'Event started!',
+        body: 'The theme is `You are not alone`. Have fun!',
+        event_id: event2.get('id'),
+        special_post_type: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
+        published_at: new Date()
+      })
+      if (samples === 'nightly') {
+        let changesBuffer = await fs.readFile(path.join(__dirname, '../tests/nightly/CHANGES.md'))
+        post.set({
+          title: 'Nightly: ' + moment().format('MMMM Do YYYY'),
+          body: changesBuffer.toString()
+        })
+      }
+      await post.save()
+
+      await postService.createComment(entrantUser, post, 'Seriously? We already had this theme twice')
+      await postService.refreshCommentCount(post)
+
+      // Planned 3rd event
+
+      let event3 = new Event({
+        title: '3rd Alakajam',
+        name: '3rd-alakajam',
+        status: 'pending',
+        display_dates: 'Marchpril 5 - 8, 2017',
+        status_theme: 'off',
+        status_entry: 'off',
+        status_results: 'off'
+      })
+      await event3.save()
+    }
   }
 
   return db
@@ -199,13 +282,13 @@ function createBookshelfInstance (knexInstance) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

@@ -47,13 +47,13 @@ const cookies = require('cookies')
 const postCss = require('postcss-middleware')
 const formidable = require('formidable')
 const promisify = require('promisify-node')
-const showdown = require('showdown')
 const moment = require('moment')
 const randomKey = require('random-key')
 const log = require('./log')
 const config = require('../config')
 const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
+const forms = require('../core/forms')
 const settingService = require('../services/setting-service')
 const sessionService = require('../services/session-service')
 const controllers = require('../controllers/index')
@@ -70,6 +70,8 @@ const MB = 1024 * 1024
  * Setup app middleware
  */
 async function configure (app) {
+  app.locals.config = config
+
   // Session management
   app.locals.sessionCache = await sessionService.loadSessionCache()
   let sessionKey = await findOrCreateSessionKey()
@@ -90,15 +92,23 @@ async function configure (app) {
   })
 
   // Templating: custom filters
-  let markdownConverter = new showdown.Converter()
   nunjucks.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
   nunjucks.env.addGlobal('constants', constants)
   nunjucks.env.addGlobal('devMode', app.locals.devMode)
+  nunjucks.env.addGlobal('context', function () {
+    // lets devs display the whole templating context with
+    // {{ context() | prettyDump | safe }}
+    return this.ctx
+  })
   for (var functionName in templating) {
     nunjucks.env.addGlobal(functionName, templating[functionName])
   }
+
+  nunjucks.env.addFilter('prettyDump', function (obj) {
+    return '&lt;pre>' + JSON.stringify(obj, null, 2) + '&lt;/pre>'
+  })
   nunjucks.env.addFilter('markdown', function (str) {
-    return markdownConverter.makeHtml(str)
+    return forms.markdownToHtml(str)
   })
   nunjucks.env.addFilter('date', function (date) {
     if (date) {
@@ -128,13 +138,14 @@ async function configure (app) {
   // Templating: rendering context
   app.use(function templateTooling (req, res, next) {
     // Allow anyone to display an error page
-    res.errorPage = (code, message) => errorPage(req, res, code, message)
+    res.errorPage = (code, message) => errorPage(req, res, code, message, app.locals.devMode)
 
     // Context made available anywhere
     let nativeRender = res.render
     res.render = function (template, context) {
       let mergedContext = Object.assign({}, res.locals, context)
       nativeRender.call(res, template, mergedContext)
+      res.rendered = true
     }
 
     next()
@@ -158,7 +169,7 @@ async function configure (app) {
   app.use(function (req, res, next) {
     // usage: let {fields, files} = await req.parseForm()
     req.parseForm = async function () {
-      return await parseRequest(req, res)
+      return parseRequest(req, res)
     }
     res.on('finish', cleanupFormFilesCallback(req, res))
     res.on('close', cleanupFormFilesCallback(req, res))
@@ -170,10 +181,10 @@ async function configure (app) {
 
   // Routing: 500/404
   app.use(function notFound (req, res) {
-    errorPage(req, res, 404)
+    errorPage(req, res, 404, undefined, app.locals.devMode)
   })
-  app.use(function error (err, req, res, next) {
-    errorPage(req, res, 500, err.message)
+  app.use(function error (error, req, res, next) {
+    errorPage(req, res, 500, error, app.locals.devMode)
   })
 }
 
@@ -181,7 +192,7 @@ function cleanupFormFilesCallback (req, res) {
   return async function cleanupFormFiles () {
     let {files} = await req.parseForm()
     for (let key in files) {
-      fileStorage.remove(files[key].path, false)
+      fileStorage.remove(files[key].path)
     }
     res.removeAllListeners('finish')
     res.removeAllListeners('close')
@@ -189,38 +200,50 @@ function cleanupFormFilesCallback (req, res) {
 }
 
 async function findOrCreateSessionKey () {
-  let sessionKey = await settingService.find('session_key')
+  let sessionKey = await settingService.find(constants.SETTING_SESSION_KEY)
   if (!sessionKey) {
     sessionKey = randomKey.generate()
-    await settingService.save('session_key')
+    await settingService.save(constants.SETTING_SESSION_KEY, sessionKey)
   }
   return sessionKey
 }
 
 /*
  * Middleware displaying an error page
- * code = Error code
- * message = Error message (optional)
+ * code = HTTP error code
+ * error = Error object or string message (optional)
  */
-function errorPage (req, res, code, message) {
-  let errorTemplate = (code === 404) ? '404' : '500'
-  let defaultMessage = (code === 404) ? 'Page not found' : ''
+function errorPage (req, res, code, error, devMode) {
+  const stack = devMode ? error &amp;&amp; error.stack : undefined
+  let message = (typeof error === 'object') ? error.message : error
+  let title
+  switch (code) {
+    case 404:
+      title = 'Page not found'
+      break
+    case 403:
+      title = 'Forbidden'
+      break
+    case 500:
+      title = 'Internal error'
+      break
+    default:
+      title = 'Error'
+  }
 
   // Internal error logging
-  if (code !== 404) {
-    if (message instanceof Error) {
-      log.error(message.message + '\n' + message.stack)
-    } else {
-      log.error(message || defaultMessage)
-    }
+  if (code !== 404 &amp;&amp; code !== 403) {
+    log.error(message + (error ? '\n' + error.stack : ''))
   }
 
   // Page rendering
-  if (message instanceof Error) {
-    message = message.message
-  }
   res.status(code)
-  res.render(errorTemplate, {message: message || defaultMessage})
+  res.render('error', {
+    code,
+    title,
+    message,
+    stack
+  })
 }
 </code></pre>
         </article>
@@ -232,13 +255,13 @@ function errorPage (req, res, code, message) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

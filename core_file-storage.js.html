@@ -41,8 +41,16 @@ const path = require('path')
 const url = require('url')
 const config = require('../config')
 
+let sharp = null
+try {
+  sharp = require('sharp')
+} catch (e) {
+  // Nothing
+}
+
 module.exports = {
-  move,
+  toUploadPath,
+  savePictureUpload,
   exists,
   read,
   write,
@@ -51,32 +59,55 @@ module.exports = {
 }
 
 const SOURCES_ROOT = path.join(__dirname, '..')
-const UPLOADS_URL = ('/' + config.UPLOADS_PATH + '/').replace(/\/\//g, '/')
 
 /**
-  Moves the file from a path to another. Typically used for saving temporary files.
-  @param {string} sourcePath - The full path to the file to move
-  @param {string} targetPath - The path to the destination, relative to the uploads folder.
-    If the file extension is omitted, it will be grabbed from the source path. If folders don't exist, they will be created.
-  If target path doesn't contain an extension
-  @returns the final target path
-*/
-async function move (sourcePath, targetPath, isUpload = true) {
-  let truePath = targetPath.replace(/^[\\/]/, '') // remove leading slash
+ * Moves the file from a path to another. Typically used for saving temporary files.
+ * @param {string} sourcePath The full path to the file to move
+ * @param {string} targetPath The path to the destination, relative to the uploads folder.
+ * @param {object} options (Optional) allowed: maxDiagonal
+ *   If the file extension is omitted, it will be grabbed from the source path. If folders don't exist, they will be created.
+ * @returns the URL to that path
+ */
+async function savePictureUpload (sourcePath, targetPath, options = {}) {
+  let actualTargetPath = targetPath.replace(/^[\\/]/, '') // remove leading slash
+  if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
+    actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath)
+  }
   let sourcePathExtension = path.extname(sourcePath)
   if (!targetPath.endsWith(sourcePathExtension)) {
     // TODO replace extension rather than just append
-    truePath += sourcePathExtension
+    actualTargetPath += sourcePathExtension
   }
 
-  let absolutePath = toAbsolutePath(truePath, isUpload)
-  await createFolderIfMissing(path.dirname(absolutePath))
-  await fs.rename(sourcePath, absolutePath)
-  return url.resolve(UPLOADS_URL, truePath)
+  let absoluteTargetPath = toAbsolutePath(actualTargetPath)
+  await createFolderIfMissing(path.dirname(absoluteTargetPath))
+  await resize(sourcePath, absoluteTargetPath, options.maxDiagonal || 2000)
+  return url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath))
 }
 
-async function exists (documentPath, isUpload = true) {
-  let absolutePath = toAbsolutePath(documentPath, isUpload)
+async function resize (sourcePath, targetPath, maxDiagonal) {
+  // Sharp is an optional dependency
+  if (sharp) {
+    // Check whether image is too big
+    let source = sharp(sourcePath)
+    let meta = await source.metadata()
+    let diagonalSq = meta.width * meta.width + meta.height * meta.height
+    if (diagonalSq > maxDiagonal * maxDiagonal) {
+      // Resize to max size
+      let diagonal = Math.max(Math.sqrt(diagonalSq))
+      return source.resize(
+          Math.ceil(meta.width * maxDiagonal / diagonal),
+          Math.ceil(meta.height * maxDiagonal / diagonal))
+        .toFile(targetPath)
+    }
+  }
+
+  // Don't modify the image if small enough (or sharp is missing)
+  return fs.rename(sourcePath, targetPath)
+}
+
+async function exists (documentPath) {
+  let absolutePath = toAbsolutePath(documentPath)
   try {
     await fs.access(absolutePath, fs.constants.R_OK)
     return true
@@ -84,15 +115,26 @@ async function exists (documentPath, isUpload = true) {
     return false
   }
 }
+/**
+ * Prepends the specified path with the uploads static folder
+ * @param  {string} anyPath
+ * @return {string}
+ */
+function toUploadPath (anyPath) {
+  if (anyPath.indexOf(config.UPLOADS_PATH) === -1) {
+    return path.join(config.UPLOADS_PATH, anyPath)
+  } else {
+    return anyPath
+  }
+}
 
 /**
  * [read description]
  * @param  {string}  documentPath
- * @param  {Boolean} isUpload
  * @return {string} the file contents as a string. Caller must parse JSON himself if needed.
  */
-async function read (documentPath, isUpload = true) {
-  let absolutePath = toAbsolutePath(documentPath, isUpload)
+async function read (documentPath) {
+  let absolutePath = toAbsolutePath(documentPath)
   let fileBuffer = await fs.readFile(absolutePath)
   return fileBuffer.toString()
 }
@@ -101,9 +143,8 @@ async function read (documentPath, isUpload = true) {
  * Writes data to a file
  * @param  {string} documentPath Destination file
  * @param  {string} data Contents to write. If a function, will be evaluated. If an object/array, will be stringified.
- * @return {bool} isUpload (Optional) Whether to consider paths relative to the uploads folder (default) or the sources root.
  */
-async function write (documentPath, data, isUpload = true) {
+async function write (documentPath, data) {
   if (typeof data === 'function') {
     data = data()
   }
@@ -111,27 +152,24 @@ async function write (documentPath, data, isUpload = true) {
     data = JSON.stringify(data)
   }
 
-  let absolutePath = toAbsolutePath(documentPath, isUpload)
+  let absolutePath = toAbsolutePath(documentPath)
   await createFolderIfMissing(path.dirname(documentPath))
   return fs.writeFile(absolutePath, data)
 }
 
-async function remove (documentPath, isUpload = true) {
-  let absolutePath = toAbsolutePath(documentPath, isUpload)
-  if (await exists(documentPath, isUpload)) {
+async function remove (documentPath) {
+  let absolutePath = toAbsolutePath(documentPath)
+  if (await exists(documentPath)) {
     await fs.unlink(absolutePath)
   }
 }
 
-function toAbsolutePath (anyPath, isUpload) {
-  let prefix = ''
+function toAbsolutePath (anyPath) {
   if (anyPath.indexOf(SOURCES_ROOT) === -1) {
-    prefix = SOURCES_ROOT
+    return path.join(SOURCES_ROOT, anyPath)
+  } else {
+    return anyPath
   }
-  if (isUpload) {
-    prefix = path.join(prefix, config.UPLOADS_PATH)
-  }
-  return path.join(prefix, anyPath)
 }
 
 /**
@@ -153,13 +191,13 @@ async function createFolderIfMissing (folderPath) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

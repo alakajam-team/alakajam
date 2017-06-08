@@ -34,26 +34,40 @@
  * @module models/post-model
  */
 
-let db = require('../core/db')
+const slug = require('slug')
+const db = require('../core/db')
 
 module.exports = createModel()
 
 function createModel () {
+  let modelPrototype = db.Model.prototype
+
   let model = db.model('Post', {
     tableName: 'post',
     hasTimestamps: true,
 
+    initialize: function initialize (attrs) {
+      modelPrototype.initialize.call(this)
+      this.on('saving', function (model, attrs, options) {
+        model.set('name', slug(model.get('title') || ''))
+      })
+      return attrs
+    },
     entry: function () {
-      return this.belongsTo('Entry', 'entry_id', 'uuid')
+      return this.belongsTo('Entry', 'entry_id')
     },
     event: function () {
-      return this.belongsTo('Event', 'event_id', 'uuid')
+      return this.belongsTo('Event', 'event_id')
     },
     author: function () {
-      return this.belongsTo('User', 'author_user_id', 'uuid')
+      return this.belongsTo('User', 'author_user_id')
     },
     userRoles: function () {
-      return this.morphMany('UserRole', 'node', ['node_type', 'node_uuid'])
+      // TODO isn't it sufficient to specify either 'node' or ['node_type', 'node_id']?
+      return this.morphMany('UserRole', 'node', ['node_type', 'node_id'])
+    },
+    comments: function () {
+      return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
     }
   })
 
@@ -70,6 +84,7 @@ function createModel () {
         table.string('body', 10000)
         table.date('published_at')
         table.string('special_post_type')
+        table.integer('comment_count')
         table.timestamps()
       })
     }
@@ -91,13 +106,13 @@ function createModel () {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

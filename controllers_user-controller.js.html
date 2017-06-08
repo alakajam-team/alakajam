@@ -34,27 +34,173 @@
  * @module controllers/user-controller
  */
 
+const config = require('../config')
 const fileStorage = require('../core/file-storage')
+const forms = require('../core/forms')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
+const inviteService = require('../services/invite-service')
 
 module.exports = {
+  viewUserProfile,
 
-  initRoutes: function (app) {
-    app.get('/register', registerForm)
-    app.post('/register', doRegister)
-    app.get('/login', loginForm)
-    app.post('/login', doLogin)
-    app.get('/logout', doLogout)
+  dashboardMiddleware,
+  dashboardPosts,
+  dashboardInvite,
+  dashboardSettings,
+  dashboardPassword,
 
-    app.all('/settings', settingsGeneral)
-    app.all('/settings/password', settingsPassword)
+  registerForm,
+  doRegister,
+  loginForm,
+  doLogin,
+  doLogout
+}
 
-    app.get('/user/:name', viewUserProfile)
+/**
+ * Display a user profile
+ */
+async function viewUserProfile (req, res) {
+  let user = await userService.findByName(req.params.name)
+  if (user) {
+    res.render('user/profile', {
+      profileUser: user,
+      entries: await eventService.findUserEntries(user),
+      posts: await postService.findPosts({ userId: user.get('id') })
+    })
+  } else {
+    res.errorPage(400, 'No user exists with name ' + req.params.name)
+  }
+}
+
+async function dashboardMiddleware (req, res, next) {
+  if (!res.locals.user) {
+    res.errorPage(403, 'You are not logged in.')
+  } else {
+    next()
+  }
+}
+
+/**
+ * Manage general user info
+ */
+async function dashboardSettings (req, res) {
+  let errorMessage = ''
+  let infoMessage = ''
+
+  if (req.method === 'POST') {
+    let {fields, files} = await req.parseForm()
+    if (!res.headersSent) { // FIXME Why?
+      let user = res.locals.user
+
+      if (fields.email &amp;&amp; forms.isEmail(fields.email)) {
+        errorMessage = 'Invalid email'
+      } else if (fields['social_web'] &amp;&amp; !forms.isURL(fields['social_web'])) {
+        errorMessage = 'Invalid URL'
+      }
+
+      if (!errorMessage) {
+        // General settings form
+        user.set('title', forms.sanitizeString(fields.title || user.get('name')))
+        user.set('email', fields.email)
+        user.set('social_web', fields.website)
+        user.set('social_twitter', forms.sanitizeString(fields.twitter.replace('@', '')))
+        user.set('body', forms.sanitizeMarkdown(fields.body))
+
+        if (user.hasChanged('title')) {
+          await userService.refreshUserReferences(user)
+        }
+
+        // TODO Formidable shouldn't create an empty file
+        let newAvatar = files.avatar &amp;&amp; files.avatar.size > 0
+        if (user.get('avatar') &amp;&amp; (files['avatar-delete'] || newAvatar)) {
+          await fileStorage.remove(user.get('avatar'))
+          user.unset('avatar')
+        }
+        if (newAvatar) {
+          let avatarPath = '/user/' + user.get('id')
+          let finalPath = await fileStorage.savePictureUpload(
+            files.avatar.path, avatarPath, {maxDiagonal: 500})
+          user.set('avatar', finalPath)
+        }
+        await user.save()
+      }
+    }
   }
 
+  res.render('user/dashboard-settings', {
+    errorMessage,
+    infoMessage
+  })
+}
+
+/**
+ * Manage user posts
+ */
+async function dashboardPosts (req, res) {
+  let newPostEvent = await eventService.findEventByStatus('open')
+  if (!newPostEvent) {
+    newPostEvent = await eventService.findEventByStatus('pending')
+  }
+  let allPostsCollection = await postService.findPosts({
+    userId: res.locals.user.get('id'),
+    withDrafts: true
+  })
+  let draftPosts = allPostsCollection.where({'published_at': null})
+
+  res.render('user/dashboard-posts', {
+    publishedPosts: allPostsCollection.difference(draftPosts),
+    draftPosts,
+    newPostEvent
+  })
+}
+
+/**
+ * Generate invite keys
+ */
+async function dashboardInvite (req, res) {
+  res.render('user/dashboard-invite', {
+    inviteKey: await inviteService.generateKey()
+  })
+}
+
+/**
+ * Manage user profile contents
+ */
+async function dashboardPassword (req, res) {
+  let errorMessage = ''
+  let infoMessage = ''
+
+  if (req.method === 'POST') {
+    let {fields} = await req.parseForm()
+    let user = res.locals.user
+
+    // Change password form
+    if (!fields['password']) {
+      errorMessage = 'You must enter your current password'
+    } else if (!await userService.authenticate(user.get('name'), fields['password'])) {
+      errorMessage = 'Current password is incorrect'
+    } else if (!fields['new-password']) {
+      errorMessage = 'You must enter a new password'
+    } else if (fields['new-password'] !== fields['new-password-bis']) {
+      errorMessage = 'New passwords do not match'
+    } else {
+      let result = userService.setPassword(user, fields['new-password'])
+      if (result !== true) {
+        errorMessage = result
+      } else {
+        await user.save()
+        infoMessage = 'Password change successful'
+      }
+    }
+  }
+
+  res.render('user/dashboard-password', {
+    errorMessage,
+    infoMessage
+  })
 }
 
 /**
@@ -70,8 +216,12 @@ async function registerForm (req, res) {
 async function doRegister (req, res) {
   let {fields} = await req.parseForm()
   let errorMessage = null
-  if (!(fields.name &amp;&amp; fields.password)) {
+  if (!await inviteService.validateKey(fields.invite) &amp;&amp; !config.DEBUG_ALLOW_INVALID_INVITE_KEYS) {
+    errorMessage = 'Invalid invite key'
+  } else if (!(fields.name &amp;&amp; fields.password)) {
     errorMessage = 'Username or password missing'
+  } else if (!forms.isUsername(fields.name)) {
+    errorMessage = 'Your usename is too weird (either too short, or has special chars other than "_" or "-", or starts with a number)'
   } else if (fields.password !== fields['password-bis']) {
     errorMessage = 'Passwords do not match'
   } else {
@@ -84,7 +234,8 @@ async function doRegister (req, res) {
   }
 
   if (errorMessage) {
-    res.render('register', { errorMessage })
+    fields.errorMessage = errorMessage
+    res.render('register', fields)
   }
 }
 
@@ -126,108 +277,6 @@ async function doLogout (req, res) {
     infoMessage: 'Logout successful.'
   })
 }
-
-/**
- * Manage general user info
- */
-async function settingsGeneral (req, res) {
-  try {
-    let errorMessage = '', infoMessage = ''
-
-    if (req.method === 'POST') {
-      let {fields, files} = await req.parseForm()
-      if (!res.headersSent) { // FIXME Why?
-        let user = res.locals.user
-
-        // General settings form
-        user.set('title', fields.title || user.get('name'))
-        user.set('email', fields.email)
-        user.set('social_web', fields.website)
-        user.set('social_twitter', fields.twitter.replace('@', ''))
-        user.set('body', fields.body)
-
-        if (user.hasChanged('title')) {
-          await userService.refreshUserReferences(user)
-        }
-
-        // TODO Formidable shouldn't create an empty file
-        let newAvatar = files.avatar &amp;&amp; files.avatar.size > 0
-        if (user.get('avatar') &amp;&amp; (files['avatar-delete'] || newAvatar)) {
-          await fileStorage.remove(user.get('avatar'), false)
-          user.unset('avatar')
-        }
-        if (newAvatar) { 
-          let avatarPath = '/user/' + user.get('uuid')
-          let finalPath = await fileStorage.move(files.avatar.path, avatarPath)
-          user.set('avatar', finalPath)
-        }
-        await user.save()
-      }
-    }
-
-    res.render('user/settings-general', {
-      errorMessage,
-      infoMessage
-    })
-  } catch (e) {
-    res.errorPage(500, e)
-  }
-}
-
-/**
- * Manage user profile contents
- */
-async function settingsPassword (req, res) {
-  try {
-    let errorMessage = '', infoMessage = ''
-    
-    if (req.method === 'POST') {
-      let {fields} = await req.parseForm()
-
-      // Change password form
-      if (!fields['password']) {
-        errorMessage = 'You must enter your current password'
-      } else if (!await userService.authenticate(user.get('name'), fields['password'])) {
-        errorMessage = 'Current password is incorrect'
-      } else if (!fields['new-password']) {
-        errorMessage = 'You must enter a new password'
-      } else if (fields['new-password'] !== fields['new-password-bis']) {
-        errorMessage = 'New passwords do not match'
-      } else {
-        let result = userService.setPassword(user, fields['new-password'])
-        if (result !== true) {
-          errorMessage = result
-        } else {
-          await user.save()
-          infoMessage = 'Password change successful'
-        }
-      }
-    }
-
-    res.render('user/settings-password', {
-      errorMessage,
-      infoMessage
-    })
-  } catch (e) {
-    res.errorPage(500, e)
-  }
-}
-
-/**
- * Display a user profile
- */
-async function viewUserProfile (req, res) {
-  let user = await userService.findByName(req.params.name)
-  if (user) {
-    res.render('user/profile', {
-      profileUser: user,
-      entries: await eventService.findUserEntries(user),
-      posts: await postService.findUserPosts(user.get('uuid'))
-    })
-  } else {
-    res.errorPage(400, 'No user exists with name ' + req.params.name)
-  }
-}
 </code></pre>
         </article>
     </section>
@@ -238,13 +287,13 @@ async function viewUserProfile (req, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

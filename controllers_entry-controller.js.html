@@ -34,52 +34,53 @@
  * @module controllers/entry-controller
  */
 
-const eventService = require('../services/event-service')
-const Entry = require('../models/entry-model')
 const fileStorage = require('../core/file-storage')
+const forms = require('../core/forms')
+const eventService = require('../services/event-service')
+const postService = require('../services/post-service')
+const Entry = require('../models/entry-model')
 const templating = require('./templating')
+const postController = require('./post-controller')
 
 module.exports = {
-
-  initRoutes: function (app) {
-    app.use('/entry/:uuid*', entryMiddleware)
-    app.use('/event/:eventUuid*', entryMiddleware)
-
-    app.get('/event/:eventUuid/create-entry', createEntry)
-    app.post('/event/:eventUuid/create-entry', saveEntry)
-    app.get('/entry/:uuid', viewEntry)
-    app.post('/entry/:uuid', saveEntry)
-    app.get('/entry/:uuid/edit', editEntry)
-    app.get('/entry/:uuid/delete', deleteEntry)
-  }
-
+  entryMiddleware,
+  createEntry,
+  saveEntry,
+  viewEntry,
+  editEntry,
+  deleteEntry
 }
 
 /**
  * Fetches the current entry &amp; event
  */
 async function entryMiddleware (req, res, next) {
-  if (req.params.uuid) {
-    let entry = await eventService.findEntryById(req.params.uuid)
-    if (entry === null) {
-      res.errorPage(404, 'Entry not found')
-    } else {
-      res.locals.entry = entry
-      res.locals.event = entry.related('event')
-      next()
-    }
+  let entry = await eventService.findEntryById(req.params.entryId)
+  if (!entry) {
+    res.errorPage(404, 'Entry not found')
+    return
   }
-  if (req.params.eventUuid) {
-    res.locals.event = await eventService.findEventById(req.params.eventUuid)
-    next()
+  res.locals.entry = entry
+
+  if (req.params.eventName !== entry.get('event_name') ||
+      req.params.entryName !== entry.get('name')) {
+    res.redirect(templating.buildUrl(entry, 'entry', req.params.rest))
+    return
   }
+
+  next()
 }
 
 /**
  * Browse entry
  */
-function viewEntry (req, res) {
-  res.render('entry/view-entry')
+async function viewEntry (req, res) {
+  res.render('entry/view-entry', {
+    sortedComments: await postService.findCommentsSortedForDisplay(res.locals.entry),
+    posts: await postService.findPosts({
+      entryId: res.locals.entry.get('id')
+    })
+  })
 }
 
 /**
@@ -87,7 +88,8 @@ function viewEntry (req, res) {
  */
 async function createEntry (req, res) {
   res.render('entry/edit-entry', {entry: new Entry({
-    event_uuid: res.locals.event.get('uuid')
+    event_id: res.locals.event.get('id'),
+    event_name: res.locals.event.get('name')
   })})
 }
 
@@ -103,42 +105,63 @@ function editEntry (req, res) {
  */
 async function saveEntry (req, res) {
   let {fields, files} = await req.parseForm()
-  if (!res.headersSent) { // FIXME Why?
-    if (!res.locals.entry) {
-      res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
-    }
-    let entry = res.locals.entry
 
-    let picturePath = '/entry/' + entry.get('uuid')
-    let linksObject = null
-    if (fields.link) {
-      linksObject = [{
-        url: fields.link,
-        title: 'Play'
-      }]
+  if (fields['is-comment-form']) {
+    // Handle comment form
+    let redirectUrl = await postController.handleSaveComment(fields,
+      res.locals.user, res.locals.entry, templating.buildUrl(res.locals.entry, 'entry'))
+    res.redirect(redirectUrl)
+  } else if (!res.headersSent) { // FIXME Why?
+    // Update entry
+
+    let errorMessage = null
+
+    if (fields.link &amp;&amp; !forms.isURL(fields.link)) {
+      errorMessage = 'Invalid link'
     }
 
-    entry.set('title', fields.title)
-    entry.set('links', linksObject)
-    entry.set('body', fields.body)
-    if (fields['picture-delete'] &amp;&amp; entry.get('pictures').length > 0) {
-      await fileStorage.remove(entry.get('pictures')[0], false)
-      entry.set('pictures', [])
-    } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
-      let finalPath = await fileStorage.move(files.picture.path, picturePath)
-      entry.set('pictures', [finalPath])
-    }
-    await entry.save()
-    await entry.related('userRoles').fetch()
+    if (!errorMessage) {
+      if (!res.locals.entry) {
+        res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
+      }
+      let entry = res.locals.entry
 
-    viewEntry(req, res)
+      let picturePath = '/entry/' + entry.get('id')
+      let linksObject = null
+      if (fields.link) {
+        linksObject = [{
+          url: fields.link,
+          title: 'Play'
+        }]
+      }
+
+      entry.set('title', forms.sanitizeString(fields.title))
+      entry.set('links', linksObject)
+      entry.set('body', forms.sanitizeMarkdown(fields.body))
+      if (fields['picture-delete'] &amp;&amp; entry.get('pictures').length > 0) {
+        await fileStorage.remove(entry.get('pictures')[0])
+        entry.set('pictures', [])
+      } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
+        let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
+        entry.set('pictures', [finalPath])
+      }
+      await entry.save()
+      await entry.related('userRoles').fetch()
+
+      res.redirect(templating.buildUrl(entry, 'entry'))
+    } else {
+      res.render('entry/edit-entry', {
+        errorMessage
+      })
+    }
   }
 }
 
 async function deleteEntry (req, res) {
   await res.locals.entry.destroy()
   res.redirect(templating.buildUrl(res.locals.event, 'event'))
-}</code></pre>
+}
+</code></pre>
         </article>
     </section>
 
@@ -148,13 +171,13 @@ async function deleteEntry (req, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

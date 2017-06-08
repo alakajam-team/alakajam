@@ -36,12 +36,13 @@
 
 const Event = require('../models/event-model')
 const Entry = require('../models/entry-model')
-const securityService = require('../services/security-service')
+const constants = require('../core/constants')
 
 module.exports = {
   findEventById,
-  findAllEvents,
+  findEventByName,
   findEventByStatus,
+  findEvents,
 
   createEntry,
   findEntryById,
@@ -51,23 +52,36 @@ module.exports = {
 
 /**
  * Fetches an Event by its ID, with all its Entries.
- * @param uuid {uuid} Event UUID
+ * @param id {id} Event ID
  * @returns {Event}
  */
-async function findEventById (uuid) {
-  return Event.where('uuid', uuid)
+async function findEventById (id) {
+  return Event.where('id', id)
+    .fetch({ withRelated: ['entries', 'entries.userRoles'] })
+}
+
+/**
+ * Fetches an Event by its name, with all its Entries.
+ * @param id {id} Event name
+ * @returns {Event}
+ */
+async function findEventByName (name) {
+  return Event.where('name', name)
     .fetch({ withRelated: ['entries', 'entries.userRoles'] })
 }
 
 /**
  * Fetches all Events and their Entries.
+ * @param {object} options Allowed: status
  * @returns {array(Event)}
  */
-async function findAllEvents () {
+async function findEvents (options = {}) {
   let eventModels = await new Event()
-    .orderBy('title', 'DESC') // XXX Temporary prop
-    .fetchAll({ withRelated: ['entries'] })
-  return eventModels.models
+    .orderBy('created_at', 'DESC')
+  if (options.status) {
+    eventModels = eventModels.where('status', options.status)
+  }
+  return eventModels.fetchAll({ withRelated: ['entries'] })
 }
 
 /**
@@ -81,38 +95,38 @@ async function findEventByStatus (status) {
     sortOrder = 'DESC'
   }
   return Event.where('status', status)
-    .orderBy('title', sortOrder) // XXX Temporary prop
+    .orderBy('created_at', sortOrder)
     .fetch()
 }
 
 /**
  * Creates and persists a new entry, initializing the owner UserRole.
- * @param  {User} user 
- * @param  {Event} event 
+ * @param  {User} user
+ * @param  {Event} event
  * @return {Entry}
  */
 async function createEntry (user, event) {
   // TODO Better use of Bookshelf API
   let entry = new Entry()
-  await entry.save() // otherwise the user role won't have a node_uuid
-  entry.set('event_uuid', event.get('uuid')) 
+  await entry.save() // otherwise the user role won't have a node_id
+  entry.set('event_id', event.get('id'))
   entry.set('event_name', event.get('name'))
   await entry.userRoles().create({
-    user_uuid: user.get('uuid'),
+    user_id: user.get('id'),
     user_name: user.get('name'),
     user_title: user.get('title'),
-    permission: securityService.PERMISSION_MANAGE
+    permission: constants.PERMISSION_MANAGE
   })
   return entry
 }
 
 /**
  * Fetches an Entry by its ID.
- * @param uuid {uuid} Entry UUID
+ * @param id {id} Entry ID
  * @returns {Entry}
  */
-async function findEntryById (uuid) {
-  return Entry.where('uuid', uuid).fetch({ withRelated: ['event', 'userRoles'] })
+async function findEntryById (id) {
+  return Entry.where('id', id).fetch({ withRelated: ['event', 'userRoles'] })
 }
 
 /**
@@ -121,9 +135,10 @@ async function findEntryById (uuid) {
  * @return {array(Entry)|null}
  */
 async function findUserEntries (user) {
-  let entryCollection = await Entry.query((query) => {
-    query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
-      .where('user_role.user_uuid', user.get('uuid'))
+  let entryCollection = await Entry.query((qb) => {
+    qb.distinct()
+      .innerJoin('user_role', 'entry.id', 'user_role.node_id')
+      .where('user_role.user_id', user.get('id'))
   }).fetchAll({ withRelated: ['userRoles'] })
   return entryCollection.models
 }
@@ -131,15 +146,15 @@ async function findUserEntries (user) {
 /**
  * Retrieves the entry a user submited to an event
  * @param  {User} user
- * @param  {string} eventUuid
+ * @param  {string} eventId
  * @return {Entry|null}
  */
-async function findUserEntryForEvent (user, eventUuid) {
+async function findUserEntryForEvent (user, eventId) {
   return Entry.query((query) => {
-    query.innerJoin('user_role', 'uuid', 'user_role.node_uuid')
+    query.innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .where({
-        'event_uuid': eventUuid,
-        'user_role.user_uuid': user.get('uuid')
+        'entry.event_id': eventId,
+        'user_role.user_id': user.get('id')
       })
   }).fetch({ withRelated: ['userRoles'] })
 }
@@ -153,13 +168,13 @@ async function findUserEntryForEvent (user, eventUuid) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

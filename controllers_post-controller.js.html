@@ -36,79 +36,120 @@
 
 const moment = require('moment')
 const constants = require('../core/constants')
+const forms = require('../core/forms')
 const postService = require('../services/post-service')
+const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
 const templating = require('./templating')
 const Post = require('../models/post-model')
 
 module.exports = {
+  handleSaveComment,
 
-  initRoutes: function (app) {
-    app.use('/post/:id', postMiddleware)
+  postMiddleware,
 
-    app.get('/post/create', editPost)
-    app.post('/post/create', savePost)
-    app.get('/post/:id/edit', editPost)
-    app.post('/post/:id/edit', savePost)
-    app.get('/post/:id', viewPost)
-    app.get('/post/:id/delete', deletePost)
-  }
+  editPost,
+  savePost,
+  viewPost,
+  deletePost,
 
+  saveComment
 }
 
 async function postMiddleware (req, res, next) {
-  if (req.params.id &amp;&amp; req.params.id !== 'create') {
-    res.locals.post = await postService.findPostById(req.params.id)
+  if (req.params.postId &amp;&amp; req.params.postId !== 'create') {
+    if (forms.isId(req.params.postId)) {
+      res.locals.post = await postService.findPostById(req.params.postId)
+    }
     if (!res.locals.post) {
       res.errorPage(404, 'Post not found')
-    } else {
-      next()
+      return
     }
-  } else {
-    next()
   }
+
+  next()
 }
 
 async function viewPost (req, res) {
   // Check permissions
-  if (postService.isPast(res.locals.post.get('published_at'))
-      || securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true })) {
-    res.render('post/view-post')
+  let post = res.locals.post
+  if (postService.isPast(res.locals.post.get('published_at')) ||
+      securityService.canUserRead(res.locals.user, post, { allowMods: true })) {
+    let context = {
+      sortedComments: await postService.findCommentsSortedForDisplay(post)
+    }
+
+    // Attach related entry/event
+    if (post.get('event_id')) {
+      await post.load(['event', 'entry', 'entry.userRoles'])
+      if (post.related('event').id) {
+        context.event = post.related('event')
+      }
+      if (post.related('entry').id) {
+        context.entry = post.related('entry')
+      }
+    }
+
+    res.render('post/view-post', context)
   } else {
-    res.errorPage(404, 'Post not found')
+    res.errorPage(403)
   }
 }
 
 async function editPost (req, res) {
-  if (!res.locals.post) {
-    res.locals.post = new Post()
+  let createMode = !res.locals.post
+  if (createMode || securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
+    if (createMode) {
+      let post = new Post()
+      post.set('event_id', req.query.eventId)
+      post.set('entry_id', req.query.entryId)
+      res.locals.post = post
+    }
+
+    // Fetch related event/entry
+    let post = res.locals.post
+    let context = {}
+    if (post.get('event_id')) {
+      context.event = await eventService.findEventById(post.get('event_id'))
+    }
+    if (post.get('entry_id')) {
+      context.entry = await eventService.findEntryById(post.get('entry_id'))
+    }
+
+    // Late post attachment to entry
+    if (!post.get('special_post_type') &amp;&amp; post.get('event_id') &amp;&amp; !post.get('entry_id')) {
+      context.entry = await eventService.findUserEntryForEvent(
+        res.locals.user, context.event.get('id'))
+    }
+
+    res.render('post/edit-post', context)
+  } else {
+    res.errorPage(403)
   }
-  res.render('post/edit-post')
 }
 
 async function savePost (req, res) {
   let post = res.locals.post
 
   // Check permissions
-  if (post &amp;&amp; securityService.canUserWrite(res.locals.user, post, { allowMods: true })
-      || !post &amp;&amp; res.locals.user) {
-
+  if ((post &amp;&amp; securityService.canUserWrite(res.locals.user, post, { allowMods: true })) ||
+      !(post &amp;&amp; res.locals.user)) {
     // Create new post if needed
-    let creation = false
     if (!post) {
       post = await postService.createPost(res.locals.user)
-      creation = true
       let specialPostType = req.query['special_post_type']
       if (specialPostType) {
         validateSpecialPostType(specialPostType, res.locals.user)
         post.set('special_post_type', specialPostType)
       }
     }
-    
+
     // Fill post from form info
     let {fields} = await req.parseForm()
-    post.set('title', fields.title)
-    post.set('body', fields.body)
+    post.set('title', forms.sanitizeString(fields.title))
+    post.set('body', forms.sanitizeMarkdown(fields.body))
+    post.set('event_id', forms.sanitizeString(fields['event_id']))
+    post.set('entry_id', forms.sanitizeString(fields['entry_id']))
 
     // Publication strategy
     let redirectToView = true
@@ -131,7 +172,7 @@ async function savePost (req, res) {
       res.render('post/edit-post', { post })
     }
   } else {
-    res.errorPage(403, 'Forbidden')
+    res.errorPage(403)
   }
 }
 
@@ -148,6 +189,60 @@ async function deletePost (req, res) {
   await res.locals.post.destroy()
   res.redirect('/')
 }
+
+/**
+ * Save or delete a comment
+ */
+async function saveComment (req, res) {
+  let {fields} = await req.parseForm()
+  let redirectUrl = await handleSaveComment(fields, res.locals.user, res.locals.post, templating.buildUrl(res.locals.post, 'post'))
+  res.redirect(redirectUrl)
+}
+
+/**
+ * Handler for handling the comment saving form.
+ * Reusable between all controllers of models supporting comments.
+ * @param {object} fields The parsed form fields
+ * @param {User} user The current user
+ * @param {Post|Entry} node The current node model
+ * @param {string} baseUrl The view URL for the current node
+ * @return {string} A URL to redirect to
+ */
+async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
+  let redirectUrl = baseUrl
+
+  // Find or create comment
+  let comment = null
+  let isNewComment = false
+  if (fields.id) {
+    if (forms.isId(fields.id)) {
+      comment = await postService.findCommentById(fields.id)
+    } else {
+      return redirectUrl
+    }
+  } else {
+    isNewComment = true
+    comment = await postService.createComment(currentUser, currentNode)
+  }
+
+  if (securityService.canUserWrite(currentUser, comment, { allowMods: true })) {
+    // Update or delete comment
+    if (fields.delete) {
+      await comment.destroy()
+    } else {
+      comment.set('body', forms.sanitizeMarkdown(fields.body))
+      await comment.save()
+      redirectUrl += templating.buildUrl(comment, 'comment')
+    }
+
+    // Update node comment count
+    if (fields.delete || isNewComment) {
+      await postService.refreshCommentCount(currentNode)
+    }
+  }
+
+  return redirectUrl
+}
 </code></pre>
         </article>
     </section>
@@ -158,13 +253,13 @@ async function deletePost (req, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

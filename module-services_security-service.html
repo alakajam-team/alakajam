@@ -137,14 +137,14 @@
 
     
 
-    <h4 class="name" id="~canUserManage"><span class="type-signature">(inner) </span>canUserManage<span class="signature">(user, model, options)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="~canUserManage"><span class="type-signature">(inner) </span>canUserManage<span class="signature">((optional), (optional), options)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Checks if a user can manage the given model</p>
+    <p>Checks if a user can manage the given model. Always returns false if no model is given.</p>
 </div>
 
 
@@ -180,7 +180,7 @@
 
         <tr>
             
-                <td class="name"><code>user</code></td>
+                <td class="name"><code>(optional)</code></td>
             
 
             <td class="type">
@@ -196,14 +196,14 @@
 
             
 
-            <td class="description last"><p>(optional)</p></td>
+            <td class="description last"><p>user</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>model</code></td>
+                <td class="name"><code>(optional)</code></td>
             
 
             <td class="type">
@@ -213,6 +213,9 @@
 |
 
 <span class="param-type">Post</span>
+|
+
+<span class="param-type">Comment</span>
 
 
             
@@ -222,7 +225,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>model</p></td>
         </tr>
 
     
@@ -286,7 +289,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line49">line 49</a>
+        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line50">line 50</a>
     </li></ul></dd>
     
 
@@ -411,6 +414,9 @@
 |
 
 <span class="param-type">Post</span>
+|
+
+<span class="param-type">Comment</span>
 
 
             
@@ -484,7 +490,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line27">line 27</a>
+        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line28">line 28</a>
     </li></ul></dd>
     
 
@@ -609,6 +615,9 @@
 |
 
 <span class="param-type">Post</span>
+|
+
+<span class="param-type">Comment</span>
 
 
             
@@ -682,7 +691,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line38">line 38</a>
+        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -827,7 +836,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line100">line 100</a>
+        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line110">line 110</a>
     </li></ul></dd>
     
 
@@ -972,7 +981,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line92">line 92</a>
+        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line102">line 102</a>
     </li></ul></dd>
     
 
@@ -1117,7 +1126,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line84">line 84</a>
+        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -1177,13 +1186,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

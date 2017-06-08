@@ -35,87 +35,137 @@
  */
 
 const Post = require('../models/post-model')
+const Comment = require('../models/comment-model')
 const constants = require('../core/constants')
 const securityService = require('../services/security-service')
 
 module.exports = {
   isPast,
+  wasEdited,
 
-  findPostFeed,
+  findPosts,
   findPostById,
-  findUserPosts,
+  findLatestAnnouncement,
+  findCommentById,
+  findCommentsSortedForDisplay,
 
-  createPost
+  createPost,
+  refreshCommentCount,
+  createComment
 }
 
 /**
  * Indicates if a date is already past
- * @param  {number}  time 
- * @return {Boolean} 
+ * @param  {number}  time
+ * @return {Boolean}
  */
 function isPast (time) {
   return time &amp;&amp; (new Date().getTime() - time) > 0
 }
 
 /**
+ * Tells whether a model has been edited > 1 hour after its creation
+ * @param  {Model} model Any model with timestamps
+ * @return {bool}
+ */
+function wasEdited (model) {
+  return model.get('updated_at') - model.get('created_at') > 3600 * 1000
+}
+
+/**
  * Finds all posts from a feed (specified through options)
- * @param  {object} options among "specialPostType withDrafts eventId entryId guildId"
+ * @param  {object} options among "specialPostType withDrafts eventId entryId userId"
  * @return {array(Post)}
  */
-async function findPostFeed (options = {}) {
+async function findPosts (options = {}) {
   let postCollection = await Post.query(function (qb) {
-      if (options.specialPostType) qb = qb.where('special_post_type', options.specialPostType)
-      if (options.eventId) qb = qb.where('event_id', options.eventId)
-      if (options.entryId) qb = qb.where('entry_id', options.entryId)
-      if (options.guildId) qb = qb.where('guild_id', options.guildId)
-      if (!options.withDrafts) qb = qb.where('published_at', '&lt;=', new Date())
-      return qb
-    })
+    qb = qb.distinct()
+    if (options.specialPostType) qb = qb.where('special_post_type', options.specialPostType)
+    if (options.eventId) qb = qb.where('event_id', options.eventId)
+    if (options.entryId) qb = qb.where('entry_id', options.entryId)
+    if (options.guildId) qb = qb.where('guild_id', options.guildId)
+    if (options.userId) {
+      qb = qb.innerJoin('user_role', 'post.id', 'user_role.node_id')
+          .where('user_role.user_id', options.userId)
+          .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
+    }
+    if (!options.withDrafts) qb = qb.where('published_at', '&lt;=', new Date())
+    return qb
+  })
     .orderBy('published_at', 'DESC')
     .fetchAll({withRelated: ['author', 'userRoles']})
   return postCollection
 }
 
 async function findPostById (postId) {
-  return await Post.where('id', postId)
+  return Post.where('id', postId)
     .fetch({withRelated: ['author', 'userRoles']})
 }
 
-/**
- * Finds all posts a user can write to
- * @param  {string} userId
- * @return {Collection(Post)} 
- */
-async function findUserPosts (userId) {
-  let postCollection = await Post.query((qb) => {
-      // TODO Better use of Bookshelf API
-      qb.innerJoin('user_role', 'post.id', 'user_role.node_uuid')
-        .where('user_role.user_uuid', userId)
-        .where('published_at', '&lt;=', new Date())
-        .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
-    })
+async function findLatestAnnouncement () {
+  return Post.where('special_post_type', constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
     .orderBy('published_at', 'DESC')
-    .fetchAll({ withRelated: ['author', 'userRoles'] })
-  return postCollection
+    .fetch({withRelated: ['author', 'userRoles']})
+}
+
+async function findCommentById (commentId) {
+  return Comment.where('id', commentId)
+    .fetch({withRelated: ['user']})
+}
+
+/**
+ * Fetchs the comments of the given node, and sorts them by creation date.
+ * @param  {Post|Entry} node
+ * @return {array(Comment)}
+ */
+async function findCommentsSortedForDisplay (node) {
+  await node.load(['comments', 'comments.user'])
+  return node.related('comments').sortBy(comment => comment.get('created_at'))
 }
 
 /**
  * Creates and persists a new post, initializing the owner UserRole.
- * @param  {User} user 
+ * @param  {User} user
  * @return {Post}
  */
 async function createPost (user) {
   // TODO Better use of Bookshelf API
   let post = new Post()
-  post.set('author_user_id', user.get('uuid'))
-  await post.save() // otherwise the user role won't have a node_uuid
+  post.set('author_user_id', user.get('id'))
+  await post.save() // otherwise the user role won't have a node_id
   await post.userRoles().create({
-    user_uuid: user.get('uuid'),
+    user_id: user.get('id'),
     user_name: user.get('name'),
     user_title: user.get('title'),
-    permission: securityService.PERMISSION_MANAGE
+    permission: constants.PERMISSION_MANAGE
   })
   return post
+}
+
+/**
+ * Creates a new comment.
+ * @param  {User} user
+ * @param  {Post|Entry} node
+ * @param  {string} (optional) comment body
+ * @return {Comment}
+ */
+async function createComment (user, node, body) {
+  let comment = await node.comments().create({
+    user_id: user.get('id'),
+    body: body
+  })
+  return comment
+}
+
+/**
+ * Updates the comment count on the given node and saves it.
+ * @param {Post|Entry} node
+ */
+async function refreshCommentCount (node) {
+  await node.load('comments')
+  let commentCount = node.related('comments').size()
+  node.set('comment_count', commentCount)
+  await node.save()
 }
 </code></pre>
         </article>
@@ -127,13 +177,13 @@ async function createPost (user) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

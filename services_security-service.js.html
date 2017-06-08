@@ -35,6 +35,7 @@
  */
 
 const constants = require('../core/constants')
+const log = require('../core/log')
 
 module.exports = {
   canUserRead,
@@ -48,53 +49,62 @@ module.exports = {
 /**
  * Checks if a user can read the given model
  * @param  {User} user (optional)
- * @param  {Entry|Post} model
+ * @param  {Entry|Post|Comment} model
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
-function canUserRead(user, model, options = {}) {
+function canUserRead (user, model, options = {}) {
   return canUser(user, model, constants.PERMISSION_READ, options)
 }
 
 /**
  * Checks if a user can write in the given model
  * @param  {User} user (optional)
- * @param  {Entry|Post} model
+ * @param  {Entry|Post|Comment} model
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
-function canUserWrite(user, model, options = {}) {
+function canUserWrite (user, model, options = {}) {
   return canUser(user, model, constants.PERMISSION_WRITE, options)
 }
 
 /**
- * Checks if a user can manage the given model
- * @param  {User} user (optional)
- * @param  {Entry|Post} model
+ * Checks if a user can manage the given model. Always returns false if no model is given.
+ * @param  {User} (optional) user
+ * @param  {Entry|Post|Comment} (optional) model
  * @param  {object} options (optional) allowMods allowAdmins
  * @return {boolean}
  */
-function canUserManage(user, model, options = {}) {
+function canUserManage (user, model, options = {}) {
   return canUser(user, model, constants.PERMISSION_MANAGE, options)
 }
 
-function canUser(user, model, permission, options = {}) {
-  if (!user) {
+function canUser (user, model, permission, options = {}) {
+  if (!user || !model) {
     return false
   }
-  if (!model.relations.userRoles) {
-    throw new Error('Model does not have user roles')
-  }
-
-  if (options.allowMods &amp;&amp; isMod(user) || options.allowAdmins &amp;&amp; isAdmin(user)) {
+  if ((options.allowMods &amp;&amp; isMod(user)) || (options.allowAdmins &amp;&amp; isAdmin(user))) {
     return true
   }
 
+  // Comments
+  if (model.get('user_id')) {
+    if (permission === constants.PERMISSION_READ) {
+      return canUser(user, model.related('node'), permission, options)
+    } else {
+      return model.get('user_id') === user.get('id')
+    }
+  }
+
+  // User/Posts (permission-based)
+  if (!model.relations.userRoles) {
+    throw new Error('Model does not have user roles')
+  }
   let acceptPermissions = getPermissionsEqualOrAbove(permission)
   let allUserRoles = model.related('userRoles')
   if (acceptPermissions &amp;&amp; allUserRoles) {
     let userRoles = allUserRoles.where({
-      user_uuid: user.get('uuid')
+      user_id: user.get('id')
     })
     for (let userRole of userRoles) {
       if (acceptPermissions.indexOf(userRole.get('permission'))) {
@@ -106,16 +116,16 @@ function canUser(user, model, permission, options = {}) {
 }
 
 /**
- * @param  {User}  user 
- * @return {boolean}     
+ * @param  {User}  user
+ * @return {boolean}
  */
 function isMod (user) {
   return user &amp;&amp; (user.get('is_mod') || user.get('is_admin'))
 }
 
 /**
- * @param  {User}  user 
- * @return {boolean}     
+ * @param  {User}  user
+ * @return {boolean}
  */
 function isAdmin (user) {
   return user &amp;&amp; user.get('is_admin')
@@ -144,13 +154,13 @@ function getPermissionsEqualOrAbove (permission) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

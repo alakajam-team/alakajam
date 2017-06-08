@@ -35,28 +35,43 @@
  */
 
 const constants = require('../core/constants')
+const forms = require('../core/forms')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const postService = require('../services/post-service')
+const securityService = require('../services/security-service')
 
 module.exports = {
-
-  initRoutes: function (app) {
-    app.use('*', anyPageMiddleware)
-
-    app.get('/', index)
-    app.get('/events', events)
-    app.get('/chat', chat)
-  }
-
+  anyPageMiddleware,
+  index,
+  events,
+  announcements,
+  chat
 }
 
 async function anyPageMiddleware (req, res, next) {
-  sessionService.restoreSessionifNeeded(req, res)
-
   res.locals.path = req.originalUrl
 
+  // Fetch current user
+  sessionService.restoreSessionIfNeeded(req, res)
+  let userTask = null
+  if (req.session.userId) {
+    userTask = userService.findById(req.session.userId).then(function (user) {
+      res.locals.user = user
+
+      // Fetch comment to edit
+      if (req.query.editComment &amp;&amp; forms.isId(req.query.editComment)) {
+        return postService.findCommentById(req.query.editComment).then(function (comment) {
+          if (securityService.canUserWrite(user, comment, { allowMods: true })) {
+            res.locals.editComment = comment
+          }
+        })
+      }
+    })
+  }
+
+  // Fetch live event
   let liveEventTask = eventService.findEventByStatus('open').then(async function (liveEvent) {
     if (liveEvent) {
       res.locals.liveEvent = liveEvent
@@ -64,13 +79,8 @@ async function anyPageMiddleware (req, res, next) {
       res.locals.nextEvent = await eventService.findEventByStatus('pending')
     }
   })
-  let userTask = null
-  if (req.session.userId) {
-    userTask = userService.findById(req.session.userId).then(function (user) {
-      res.locals.user = user
-    })
-  }
-  await Promise.all([liveEventTask, userTask]) // Parallelize fetching event &amp; user info
+
+  await Promise.all([liveEventTask, userTask]) // Parallelize fetching both
 
   next()
 }
@@ -82,10 +92,10 @@ async function index (req, res) {
   if (res.locals.liveEvent) {
     await res.locals.liveEvent.load(['entries', 'entries.userRoles'])
   }
+  let nextEventsCollection = await eventService.findEvents({status: 'pending'})
   res.render('index', {
-    posts: await postService.findPostFeed({
-      specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT
-    })
+    announcement: await postService.findLatestAnnouncement(),
+    nextEvents: nextEventsCollection.models
   })
 }
 
@@ -93,9 +103,19 @@ async function index (req, res) {
  * Events listing
  */
 async function events (req, res) {
-  let eventModels = await eventService.findAllEvents()
+  let eventsCollection = await eventService.findEvents()
+  await eventsCollection.load('entries.userRoles')
   res.render('events', {
-    events: eventModels
+    events: eventsCollection.models
+  })
+}
+
+/**
+ * Announcements listing
+ */
+async function announcements (req, res) {
+  res.render('announcements', {
+    posts: await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT })
   })
 }
 
@@ -115,13 +135,13 @@ async function chat (req, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li><li><a href="module-wejam.html">wejam</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat May 13 2017 19:59:57 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

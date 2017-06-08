@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: core/db</title>
+    <title>JSDoc: Source: core/forms.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,127 +17,116 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: core/db</h1>
+    <h1 class="page-title">Source: core/forms.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Database storage configuration.
-Requiring the module returns a <a href="http://bookshelfjs.org/">Bookshelf</a> instance.</p></div>
-        
+/**
+ * Tools for validating, sanitizing and transforming data from forms
+ *
+ * @module core/forms
+ */
 
-        
-            
+const sanitizeHtml = require('sanitize-html')
+const xss = require('xss')
+const validator = require('validator')
+const striptags = require('striptags')
+const showdown = require('showdown')
+const constants = require('../core/constants')
 
+module.exports = {
+  sanitizeString,
+  sanitizeMarkdown,
 
+  isEmail,
+  isURL,
+  isUsername,
+  isId,
 
+  markdownToHtml
+}
 
+// Libs init
+const showdownConverter = new showdown.Converter()
 
+/**
+ * Sanitizes a string form input (by removing any tags).
+ * If the string is meant for anything other than direct display (e.g. links, markdown...)
+ * then this is not the right filter.
+ * Use this on all string input unless you need more advanced escaping (e.g. for URLs, for Markdown)
+ * @param  {string} string
+ * @return {string}
+ */
+function sanitizeString (string) {
+  return striptags(string)
+}
 
+/**
+ * Sanitizes Markdown form input (by fixing/stripping any embedded HTML tags)
+ * @param  {string} markdown
+ * @return {string}
+ */
+function sanitizeMarkdown (markdown) {
+  return sanitizeHtml(markdown, {
+    allowedTags: constants.ALLOWED_POST_TAGS,
+    allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES
+  })
+}
 
+/**
+ * Checks whether the string is a valid email. If so, additional sanitizing is not needed.
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isEmail (string) {
+  return validator.isEmail(string)
+}
 
+/**
+ * Checks whether the string is a valid URL. If so, additional sanitizing is not needed.
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isURL (string) {
+  return validator.isURL(string)
+}
 
+/**
+ * Checks whether the string is a valid username. If so, additional sanitizing is not needed.
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isUsername (string) {
+  return string.length >= 3 &amp;&amp; /^[a-zA-Z][0-9a-zA-Z_-]+$/.test(string)
+}
 
+/**
+ * Checks whether the string is a valid ID. If so, additional sanitizing is not needed.
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isId (string) {
+  return validator.isInt(string, { min: 1 })
+}
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_db.js.html">core/db.js</a>, <a href="core_db.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+/**
+ * Converts the given Markdown to XSS-safe HTML
+ * @param  {string} markdown
+ * @return {string}
+ */
+function markdownToHtml (markdown) {
+  return xss(showdownConverter.makeHtml(markdown))
+}
+</code></pre>
+        </article>
+    </section>
 
 
 
