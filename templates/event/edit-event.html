@@ -1,0 +1,107 @@
+{% extends "_page.html" %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block body %}
+
+<div class="container">
+  <form action="{{ buildUrl(event, 'event') }}" method="post" enctype="multipart/form-data">
+
+
+    <div class="label label-danger">
+      /!\ THIS FORM DOESN'T WORK YET
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h1 id="title-display"></h1>
+        
+        {% if errorMessage %}
+          <div class="alert alert-warning">{{ errorMessage }}</div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="form-group input-group-lg">
+          <label for="title">Title</label>
+          <input type="text" class="form-control" id="title" name="title" value="{{ event.get('title') }}" required="required" />
+        </div>
+        <div class="form-group">
+          <label for="title">Slug</label>
+          <input type="text" class="form-control" id="name" name="name" value="{{ event.get('name') }}" required="required" />
+        </div>
+        <div class="form-group">
+          <label for="title">Dates</label>
+          <input type="text" class="form-control" id="display-dates" name="display-dates" value="{{ event.get('display_dates') }}" />
+        </div>
+        <div class="form-group">
+          <label for="title">Theme</label>
+          <input type="text" class="form-control" id="display-theme" name="display-theme" value="{{ event.get('display_theme') }}" />
+        </div>
+        <div class="form-group">
+          <label for="radio">Global status</label>
+          <div>
+          {{ formMacros.radio('status', 'pending', 'Pending', event.get('status')) }}
+          {{ formMacros.radio('status', 'open', 'Open', event.get('status')) }}
+          {{ formMacros.radio('status', 'closed', 'Closed', event.get('status')) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="radio">Theme voting status</label>
+          <div>
+          {{ formMacros.radio('status-theme', 'disabled', 'Disabled', event.get('status_theme')) }}
+          {{ formMacros.radio('status-theme', 'off', 'Off', event.get('status_theme')) }}
+          {{ formMacros.radio('status-theme', 'on', 'On', event.get('status_theme')) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="radio">Entry submission status</label>
+          <div>
+          {{ formMacros.radio('status-entry', 'disabled', 'Disabled', event.get('status_entry')) }}
+          {{ formMacros.radio('status-entry', 'off', 'Off', event.get('status_entry')) }}
+          {{ formMacros.radio('status-entry', 'on', 'On', event.get('status_entry')) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="radio">Event results status</label>
+          <div>
+          {{ formMacros.radio('status-results', 'disabled', 'Disabled', event.get('status_results')) }}
+          {{ formMacros.radio('status-results', 'off', 'Off', event.get('status_results')) }}
+          {{ formMacros.radio('status-results', 'on', 'On', event.get('status_results')) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-10 col-md-offset-1 text-right">
+              <!-- TODO Publish -->
+              <input type="submit" class="btn btn-primary" value="Save changes" />
+              <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}
+
+{% block scripts %} 
+{{ formMacros.radioScripts() }}
+<script>
+
+// Sync H1 with title input
+var $titleInput = $('#title')
+var $titleDisplay = $('#title-display')
+var defaultText = "New event"
+$titleInput.on('change keyup', refreshTitleDisplay)
+refreshTitleDisplay()
+
+function refreshTitleDisplay () {
+  $titleDisplay.text($titleInput.val() || defaultText)
+}
+
+</script>
+{% endblock %}

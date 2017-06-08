@@ -11,8 +11,11 @@ const postService = require('../services/post-service')
 
 module.exports = {
   eventMiddleware,
+
   viewEventPosts,
-  viewEventGames
+  viewEventGames,
+
+  editEvent
 }
 
 /**
@@ -58,4 +61,8 @@ async function viewEventPosts (req, res) {
  */
 async function viewEventGames (req, res) {
   res.render('event/view-event-games')
+}
+
+async function editEvent (req, res) {
+  res.render('event/edit-event')
 }

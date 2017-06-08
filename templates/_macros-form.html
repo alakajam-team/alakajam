@@ -39,3 +39,24 @@
   <img src="{{ defaultValue }}" style="width: 100%; max-width: 150px" />
   {% endif %}
 {% endmacro %}
+
+{% macro radioStyles() %}
+  <link rel="stylesheet" type="text/css" href="/static/css/icheck-skin.css" />
+{% endmacro %}
+
+{% macro radio(name, value, label, modelProperty) %}
+  <label for="{{ name }}-{{ value }}">
+    <input type="radio" id="{{ name }}-{{ value }}" name="{{ name }}" value="{{ value }}" {{ 'checked="checked"' if modelProperty === value }} />
+    <span class="radio-label">{{ label }}</span>
+  </label>
+{% endmacro %}
+
+{% macro radioScripts() %}
+<script type="text/javascript" src="/static/js/icheck.min.js"></script>
+<script type="text/javascript">
+  $('input[type="radio"]').iCheck({
+    checkboxClass: 'icheckbox_flat',
+    radioClass: 'iradio_flat'
+  });
+</script>
+{% endmacro %}

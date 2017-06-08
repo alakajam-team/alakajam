@@ -73,7 +73,7 @@ h1 {
   letter-spacing: 1px;
   color: var(--text);
 }
-h2 {<
+h2 {
   font-weight: bold;
   font-size: 1.6rem;
   margin: 0 0 10px 0;
@@ -130,6 +130,11 @@ img.preview {
 
 .has-tooltip {
   cursor: help;
+}
+
+.radio-label {
+  margin: 0 10px 0 2px;
+  font-weight: normal;
 }
 
 /* ============================== Navigation ============================== */

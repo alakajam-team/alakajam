@@ -23,42 +23,46 @@ module.exports = {
 }
 
 function buildUrl (model, type, page = null, options = {}) {
-  let pagePath = (page ? '/' + page : '')
+  try {
+    let pagePath = (page ? '/' + page : '')
 
-  if (type === 'event') {
-    // Event model
-    return '/' + model.get('name') + pagePath
-  } else if (type === 'entry') {
-    // Entry model
-    if (model && model.id) {
-      return '/' + model.get('event_name') + '/' + model.id + '/' + model.get('name') + pagePath
-    } else {
-      return '/' + model.get('event_name') + '/create-entry'
+    if (type === 'event') {
+      // Event model
+      return '/' + model.get('name') + pagePath
+    } else if (type === 'entry') {
+      // Entry model
+      if (model && model.id) {
+        return '/' + model.get('event_name') + '/' + model.id + '/' + model.get('name') + pagePath
+      } else {
+        return '/' + model.get('event_name') + '/create-entry'
+      }
+    } else if (type === 'user') {
+      // User Role model / User model
+      if (DASHBOARD_PAGES.indexOf(page) !== -1) {
+        return '/dashboard/' + page
+      } else {
+        let userId = model.get('name') || model.get('user_name')
+        return '/user/' + userId + pagePath
+      }
+    } else if (type === 'post') {
+      // Post model
+      if (page === 'create') {
+        pagePath += '?'
+        if (options.eventId) pagePath += 'eventId=' + options.eventId
+        if (options.entryId) pagePath += '&entryId=' + options.entryId
+        return '/post' + pagePath
+      } else {
+        return '/post/' + model.id + '/' + model.get('name') + pagePath
+      }
+    } else if (type === 'comment') {
+      // Comment model
+      let pageParams = ''
+      if (model && page === 'edit') {
+        pageParams = 'editComment=' + model.id
+      }
+      return '?' + pageParams + (model ? '#c' + model.id : '')
     }
-  } else if (type === 'user') {
-    // User Role model / User model
-    if (DASHBOARD_PAGES.indexOf(page) !== -1) {
-      return '/dashboard/' + page
-    } else {
-      let userId = model.get('name') || model.get('user_name')
-      return '/user/' + userId + pagePath
-    }
-  } else if (type === 'post') {
-    // Post model
-    if (page === 'create') {
-      pagePath += '?'
-      if (options.eventId) pagePath += 'eventId=' + options.eventId
-      if (options.entryId) pagePath += '&entryId=' + options.entryId
-      return '/post' + pagePath
-    } else {
-      return '/post/' + model.id + '/' + model.get('name') + pagePath
-    }
-  } else if (type === 'comment') {
-    // Comment model
-    let pageParams = ''
-    if (model && page === 'edit') {
-      pageParams = 'editComment=' + model.id
-    }
-    return '?' + pageParams + (model ? '#c' + model.id : '')
+  } catch (e) {
+    throw new Error('Failed to build URL for model "' + model + '" of type "' + type + '"')
   }
 }

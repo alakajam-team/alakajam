@@ -13,7 +13,7 @@
  * @param {string} status General status: 'pending', 'open' or 'closed'
  * @param {string} status_theme Theme voting status: 'on', 'off', 'disabled'
  * @param {string} status_entry Entry submission status: 'on', 'off', 'disabled'
- * @param {string} status_results Event resutls status: 'on', 'off', 'disabled'
+ * @param {string} status_results Event results status: 'on', 'off', 'disabled'
  * @param {boolean} is_template Whether this is an actual event or just a template
  * @param {string} cron_config JSON holding data specific to the cron task
  *   in charge of running the event automatically
