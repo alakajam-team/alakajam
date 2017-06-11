@@ -113,7 +113,12 @@ async function editEvent (req, res) {
         status_entry: fields['status-entry'],
         status_results: fields['status-results']
       })
+
+      let nameChanged = event.hasChanged('name')
       event = await event.save()
+      if (nameChanged) {
+        await eventService.refreshEventReferences(event)
+      }
 
       if (creation) {
         res.redirect(templating.buildUrl(event, 'event', 'edit'))

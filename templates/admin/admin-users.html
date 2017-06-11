@@ -1,0 +1,45 @@
+{% extends "admin/_page-admin.html" %}
+
+{% block adminBody %}
+
+<h1>Users</h1>
+
+<table class="table">
+<thead>
+  <th>Title</th>
+  <th>Name</th>
+  <th>Mod/Admin</th>
+  <th></th>
+</thead>
+<tbody>
+  {% for someUser in users %}
+  <tr>
+    <td><a href="{{ buildUrl(someUser, 'user') }}">{{ someUser.get('title') }}</a></td>
+    <td>{{ someUser.get('name') }}</td>
+    <td>
+      {% if isAdmin(someUser) %}
+        <span class="label label-danger">Administrator</span>
+      {% elseif isMod(someUser) %}
+        <span class="label label-warning">Moderator</span>
+      {% endif %}
+    </td>
+    <td><a class="btn btn-primary btn-sm" href="{{ buildUrl(someUser, 'user', 'settings', { dashboardAdminMode: true }) }}">Edit</a></td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+
+{% endblock %}
+
+{% macro status(value) %}
+  {% if value === 'open' or value === 'on' %}
+    {% set class = 'info' %}
+  {% elseif value === 'off' %}
+    {% set class = 'warning' %}
+  {% elseif value === 'disabled' %}
+    {% set class = '' %}
+  {% else %}
+    {% set class = 'default' %}
+  {% endif %}
+  <span class="label label-{{ class }}">{{ value }}</span>
+{% endmacro %}

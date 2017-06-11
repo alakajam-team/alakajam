@@ -9,7 +9,7 @@
 const securityService = require('../services/security-service')
 const postService = require('../services/post-service')
 
-const DASHBOARD_PAGES = ['posts', 'settings', 'password']
+const DASHBOARD_PAGES = ['posts', 'invite', 'settings', 'password']
 
 module.exports = {
   buildUrl,
@@ -19,7 +19,9 @@ module.exports = {
 
   canUserRead: securityService.canUserRead,
   canUserWrite: securityService.canUserWrite,
-  canUserManage: securityService.canUserManage
+  canUserManage: securityService.canUserManage,
+  isAdmin: securityService.isAdmin,
+  isMod: securityService.isMod
 }
 
 function buildUrl (model, type, page = null, options = {}) {
@@ -43,6 +45,9 @@ function buildUrl (model, type, page = null, options = {}) {
     } else if (type === 'user') {
       // User Role model / User model
       if (DASHBOARD_PAGES.indexOf(page) !== -1) {
+        if (options.dashboardAdminMode) {
+          page += '?user=' + model.get('name')
+        }
         return '/dashboard/' + page
       } else {
         let userId = model.get('name') || model.get('user_name')

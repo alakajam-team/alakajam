@@ -9,42 +9,61 @@
 
 <h1>Settings</h1>
 
-<h2>Account info</h2>
+<form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}" method="post" enctype="multipart/form-data">
 
-<form action="{{ buildUrl(user, 'user', 'settings') }}" method="post" enctype="multipart/form-data">
+{% if dashboardAdminMode %}
+<div class="alert alert-danger">
+  <h2>Admin settings</h2>
+
+  <div class="form-group">
+    <label for="name">Special permissions</label>
+    <div>
+      {{ formMacros.radio('special-permissions', 'none', 'None', 'none' if not isMod(dashboardUser)) }}
+      {{ formMacros.radio('special-permissions', 'mod', 'Moderator', 'mod' if isMod(dashboardUser) and not isAdmin(dashboardUser)) }}
+      {{ formMacros.radio('special-permissions', 'admin', 'Administrator', 'admin' if isAdmin(dashboardUser)) }}
+    </div>
+  </div>
+  <div class="form-group">
+    <input type="submit" class="btn btn-danger" value="Save changes" />
+    <a href="/user/{{ dashboardUser.get('name') }}" class="btn btn-default">View profile</a>
+  </div>
+</div>
+{% endif %}
+
+<h2>Account info</h2>
 
 <div class="row">
   <div class="col-md-6">
     <div class="form-group">
       <label for="title">Display name</label>
-      <input type="text" class="form-control input-lg" id="password" name="title" placeholder="Display name" value="{{ user.get('title') }}">
+      <input type="text" class="form-control input-lg" id="password" name="title" placeholder="Display name" value="{{ dashboardUser.get('title') }}">
     </div> 
 
     <div class="form-group">
       <label for="name">Email address</label> <span class="text-muted">(will not be made public)</span>
-      <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ user.get('email') }}" />
+      <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ dashboardUser.get('email') }}" />
     </div>
 
     <div class="form-group">
       <label for="name">Website</label>
-      <input type="url" class="form-control" id="website" name="website" placeholder="http://" value="{{ user.get('social_web') }}" />
+      <input type="url" class="form-control" id="website" name="website" placeholder="http://" value="{{ dashboardUser.get('social_web') }}" />
     </div>
 
     <div class="form-group">
       <label for="name">Twitter</label>
-      <input type="text" class="form-control" id="twitter" name="twitter" placeholder="@username" value="{{ '@' + user.get('social_twitter') if user.get('social_twitter') }}" />
+      <input type="text" class="form-control" id="twitter" name="twitter" placeholder="@username" value="{{ '@' + dashboardUser.get('social_twitter') if dashboardUser.get('social_twitter') }}" />
     </div>
 
     <div class="form-group">
       <input type="submit" class="btn btn-primary" value="Save changes" />
-      <a href="/user/{{ user.get('name') }}" class="btn btn-default">View profile</a>
+      <a href="/user/{{ dashboardUser.get('name') }}" class="btn btn-default">View profile</a>
     </div>
   </div>
 
   <div class="col-md-6">
     <div class="form-group">
       <label for="name">Avatar</label>
-      {{ formMacros.pictureInput('avatar', user.get('avatar')) }}
+      {{ formMacros.pictureInput('avatar', dashboardUser.get('avatar')) }}
     </div>
   </div>
 </div>
@@ -52,9 +71,9 @@
 <h2 class="spacing">Bio</h2>
 
 <div class="form-group">
-  {{ formMacros.editor('body', user.get('body')) }}
+  {{ formMacros.editor('body', dashboardUser.get('body')) }}
   <input type="submit" class="btn btn-primary" value="Save changes" />
-  <a href="/user/{{ user.get('name') }}" class="btn btn-default">View profile</a>
+  <a href="/user/{{ dashboardUser.get('name') }}" class="btn btn-default">View profile</a>
 </div>
 
 </form>
@@ -62,5 +81,6 @@
 {% endblock %}
 
 {% block scripts %} 
-  {{ formMacros.editorScripts(user.get('id')) }}
+  {{ formMacros.editorScripts(dashboardUser.get('id')) }}
+  {{ formMacros.radioScripts() }}
 {% endblock %}

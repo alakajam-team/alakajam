@@ -2,22 +2,29 @@
 
 {% block body %}
 
+{% set options = { dashboardAdminMode: dashboardAdminMode } %}
+
 <div class="container">
   <div class="row">
     <div class="col-sm-3">
       <div class="list-group">
         <div class="list-group-item"><h4 style="margin: 0">User dashboard</h4></div>
-        <a href="/dashboard/posts" class="list-group-item 
-        {{ 'active' if path == '/dashboard/posts'}}">My posts</a>
-        <a href="/dashboard/invite" class="list-group-item 
-        {{ 'active' if path == '/dashboard/invite'}}">Invite keys</a>
-        <a href="/dashboard/settings" class="list-group-item 
-        {{ 'active' if path == '/dashboard/settings'}}">Settings</a>
-        <a href="/dashboard/password" class="list-group-item 
-        {{ 'active' if path == '/dashboard/password'}}">Change password</a>
+        {{ dashboardLink(dashboardUser, 'posts', 'My Posts', options) }}
+        {{ dashboardLink(dashboardUser, 'invite', 'Invite keys', options) }}
+        {{ dashboardLink(dashboardUser, 'settings', 'Settings', options) }}
+        {{ dashboardLink(dashboardUser, 'password', 'Change password', options) }}
       </div>
     </div>
     <div class="col-sm-9">
+      {% if dashboardAdminMode %}
+        <h2 style="margin-bottom: 20px">
+          <span class="label label-danger">
+            <span class="glyphicon glyphicon-user"></span> 
+            {{ dashboardUser.get('title') }}
+          </span>
+        </h2>
+      {% endif %}
+
       {% if infoMessage %}
         <div class="alert alert-info">{{ infoMessage }}</div>
       {% endif %}
@@ -31,3 +38,9 @@
 </div>
 
 {% endblock %}
+
+{% macro dashboardLink(dashboardUser, page, label, options) %}
+  {% set url = buildUrl(dashboardUser, 'user', page, options) %}
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} 
+    {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">{{ label }}</a>
+{% endmacro %}

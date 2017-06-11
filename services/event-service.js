@@ -12,6 +12,7 @@ const constants = require('../core/constants')
 
 module.exports = {
   createEvent,
+  refreshEventReferences,
 
   findEventById,
   findEventByName,
@@ -31,6 +32,20 @@ module.exports = {
  */
 function createEvent () {
   return new Event()
+}
+
+/**
+ * Refreshes various models that cache the event name.
+ * Call this after changing the name of an event.
+ * @param {Event} event
+ */
+async function refreshEventReferences (event) {
+  // TODO Transaction
+  let entryCollection = await Entry.where('event_id', event.id).fetchAll()
+  for (let entry of entryCollection.models) {
+    entry.set('event_name', event.get('name'))
+    await entry.save()
+  }
 }
 
 /**

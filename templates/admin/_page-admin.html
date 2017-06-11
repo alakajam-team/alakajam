@@ -16,6 +16,8 @@
         <div class="list-group-item list-group-item-default"><h4 style="margin: 0">Administration</h4></div>
         <a href="/admin/events" class="list-group-item 
         {{ 'list-group-item-danger' if path == '/admin/events'}}">Events</a>
+        <a href="/admin/users" class="list-group-item 
+        {{ 'list-group-item-danger' if path == '/admin/users'}}">Users</a>
         <a href="/admin/status" class="list-group-item 
         {{ 'list-group-item-danger' if path == '/admin/status'}}">Server status</a>
         {% if devMode %}

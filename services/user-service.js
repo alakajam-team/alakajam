@@ -12,10 +12,13 @@ const User = require('../models/user-model')
 const UserRole = require('../models/user-role-model')
 
 module.exports = {
+  findAll,
   findById,
   findByName,
+
   register,
   authenticate,
+
   setPassword,
   refreshUserReferences
 }
@@ -23,6 +26,14 @@ module.exports = {
 const USERNAME_VALIDATION_REGEX = /^[a-zA-Z][-\w]+$/g
 const USERNAME_MIN_LENGTH = 3
 const PASSWORD_MIN_LENGTH = 6
+
+/**
+ * Fetches all users
+ * @returns {Collection(User)}
+ */
+async function findAll () {
+  return User.fetchAll()
+}
 
 /**
  * Fetches a User

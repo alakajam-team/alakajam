@@ -14,11 +14,13 @@ const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 const inviteService = require('../services/invite-service')
+const securityService = require('../services/security-service')
 
 module.exports = {
+  dashboardMiddleware,
+
   viewUserProfile,
 
-  dashboardMiddleware,
   dashboardPosts,
   dashboardInvite,
   dashboardSettings,
@@ -29,6 +31,21 @@ module.exports = {
   loginForm,
   doLogin,
   doLogout
+}
+
+async function dashboardMiddleware (req, res, next) {
+  if (!res.locals.user) {
+    res.errorPage(403, 'You are not logged in.')
+  } else {
+    if (req.query.user && securityService.isAdmin(res.locals.user) &&
+        req.query.user !== res.locals.user.get('name')) {
+      res.locals.dashboardUser = await userService.findByName(forms.sanitizeString(req.query.user))
+      res.locals.dashboardAdminMode = true
+    } else {
+      res.locals.dashboardUser = res.locals.user
+    }
+    next()
+  }
 }
 
 /**
@@ -47,14 +64,6 @@ async function viewUserProfile (req, res) {
   }
 }
 
-async function dashboardMiddleware (req, res, next) {
-  if (!res.locals.user) {
-    res.errorPage(403, 'You are not logged in.')
-  } else {
-    next()
-  }
-}
-
 /**
  * Manage general user info
  */
@@ -65,39 +74,49 @@ async function dashboardSettings (req, res) {
   if (req.method === 'POST') {
     let {fields, files} = await req.parseForm()
     if (!res.headersSent) { // FIXME Why?
-      let user = res.locals.user
+      let dashboardUser = res.locals.dashboardUser
 
       if (fields.email && forms.isEmail(fields.email)) {
         errorMessage = 'Invalid email'
       } else if (fields['social_web'] && !forms.isURL(fields['social_web'])) {
         errorMessage = 'Invalid URL'
+      } else if (!res.locals.dashboardAdminMode && fields['special-permissions']) {
+        errorMessage = 'Not allowed to change special permissions on this user'
       }
 
       if (!errorMessage) {
         // General settings form
-        user.set('title', forms.sanitizeString(fields.title || user.get('name')))
-        user.set('email', fields.email)
-        user.set('social_web', fields.website)
-        user.set('social_twitter', forms.sanitizeString(fields.twitter.replace('@', '')))
-        user.set('body', forms.sanitizeMarkdown(fields.body))
+        dashboardUser.set('title', forms.sanitizeString(fields.title || dashboardUser.get('name')))
+        dashboardUser.set('email', fields.email)
+        dashboardUser.set('social_web', fields.website)
+        dashboardUser.set('social_twitter', forms.sanitizeString(fields.twitter.replace('@', '')))
+        dashboardUser.set('body', forms.sanitizeMarkdown(fields.body))
+        if (fields['special-permissions']) {
+          let isMod = fields['special-permissions'] === 'mod' || fields['special-permissions'] === 'admin'
+          let isAdmin = fields['special-permissions'] === 'admin'
+          dashboardUser.set({
+            'is_mod': isMod ? 'true' : '',
+            'is_admin': isAdmin ? 'true' : ''
+          })
+        }
 
-        if (user.hasChanged('title')) {
-          await userService.refreshUserReferences(user)
+        if (dashboardUser.hasChanged('title')) {
+          await userService.refreshUserReferences(dashboardUser)
         }
 
         // TODO Formidable shouldn't create an empty file
         let newAvatar = files.avatar && files.avatar.size > 0
-        if (user.get('avatar') && (files['avatar-delete'] || newAvatar)) {
-          await fileStorage.remove(user.get('avatar'))
-          user.unset('avatar')
+        if (dashboardUser.get('avatar') && (files['avatar-delete'] || newAvatar)) {
+          await fileStorage.remove(dashboardUser.get('avatar'))
+          dashboardUser.unset('avatar')
         }
         if (newAvatar) {
-          let avatarPath = '/user/' + user.get('id')
+          let avatarPath = '/user/' + dashboardUser.get('id')
           let finalPath = await fileStorage.savePictureUpload(
             files.avatar.path, avatarPath, {maxDiagonal: 500})
-          user.set('avatar', finalPath)
+          dashboardUser.set('avatar', finalPath)
         }
-        await user.save()
+        await dashboardUser.save()
       }
     }
   }
@@ -117,7 +136,7 @@ async function dashboardPosts (req, res) {
     newPostEvent = await eventService.findEventByStatus('pending')
   }
   let allPostsCollection = await postService.findPosts({
-    userId: res.locals.user.get('id'),
+    userId: res.locals.dashboardUser.get('id'),
     withDrafts: true
   })
   let draftPosts = allPostsCollection.where({'published_at': null})
@@ -147,23 +166,23 @@ async function dashboardPassword (req, res) {
 
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
-    let user = res.locals.user
+    let dashboardUser = res.locals.dashboardUser
 
     // Change password form
-    if (!fields['password']) {
+    if (!res.locals.dashboardAdminMode && !fields['password']) {
       errorMessage = 'You must enter your current password'
-    } else if (!await userService.authenticate(user.get('name'), fields['password'])) {
+    } else if (!res.locals.dashboardAdminMode && !await userService.authenticate(dashboardUser.get('name'), fields['password'])) {
       errorMessage = 'Current password is incorrect'
     } else if (!fields['new-password']) {
       errorMessage = 'You must enter a new password'
     } else if (fields['new-password'] !== fields['new-password-bis']) {
       errorMessage = 'New passwords do not match'
     } else {
-      let result = userService.setPassword(user, fields['new-password'])
+      let result = userService.setPassword(dashboardUser, fields['new-password'])
       if (result !== true) {
         errorMessage = result
       } else {
-        await user.save()
+        await dashboardUser.save()
         infoMessage = 'Password change successful'
       }
     }

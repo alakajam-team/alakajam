@@ -13,9 +13,10 @@
         {{ moderationLink('Edit live event', 'calendar', buildUrl(context.liveEvent, 'event', 'edit')) if context.liveEvent and not context.event }}
         {{ moderationLink('Edit upcoming event', 'calendar', buildUrl(context.nextEvent, 'event', 'edit')) if context.nextEvent }}
         {{ moderationLink('Create event', 'calendar', buildUrl(null, 'event', 'create')) if context.events }}
-        
-        {% endif %}
 
+        {{ moderationLink('Edit user', 'user', buildUrl(context.profileUser, 'user', 'settings', {dashboardAdminMode: true})) if context.profileUser }}
+        {{ moderationLink('Edit user', 'user', buildUrl(context.dashboardUser, 'user', 'settings', {dashboardAdminMode: true})) if context.dashboardUser }}
+        {% endif %}
       </div>
     </div>
   </div>

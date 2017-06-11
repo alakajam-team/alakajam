@@ -1,6 +1,6 @@
 {% import "_macros-form.html" as formMacros %}
 
-{# Allowed options: hideHeading hideBody hideSpecialLabels showComments allowMod #}
+{# Allowed options: hideHeading hideBody hideSpecialLabels showComments allowMods #}
 {% macro post(post, readingUser, options = {}) %}
 
 {% set author = post.related('author') %}
