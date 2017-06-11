@@ -8,6 +8,7 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 ### June 11th
 
 * Admins can manage events and create new ones
+* Admins can edit other users, and promote them to mods/admins
 
 ### June 7th
 
