@@ -1,6 +1,6 @@
 # Alakajam! *(previously WeJam!)*
 
-> Current progress: A very early alpha website, with posts half-implemented, no events administration, awful security, and no voting system.
+> Current progress: An alpha website with support for events, games and posts/comments. No voting system yet.
 
 ## Initial setup
 
