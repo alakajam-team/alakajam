@@ -10,17 +10,21 @@ const config = require('../config')
 const db = require('../core/db')
 const constants = require('../core/constants')
 const postService = require('../services/post-service')
+const securityService = require('../services/security-service')
+const eventService = require('../services/event-service')
 
 module.exports = {
   adminMiddleware,
+
   adminHome,
+
+  adminEvents,
   adminStatus,
   adminDev
 }
 
 async function adminMiddleware (req, res, next) {
-  if (!config.DEBUG_ADMIN && (!res.locals.user ||
-      (!res.locals.user.get('is_mod') && !res.locals.user.get('is_admin')))) {
+  if (!config.DEBUG_ADMIN && !securityService.isMod(res.locals.user)) {
     res.errorPage(403)
   } else {
     next()
@@ -43,55 +47,55 @@ async function adminHome (req, res) {
 }
 
 /**
- * Admin developer tools
- * TODO Make it only available in dev environments
+ * Admin only: events management
  */
-async function adminStatus (req, res) {
-  if (config.DEBUG_ADMIN || res.locals.user.get('is_admin')) {
-    let pictureResizeEnabled = false
-    try {
-      require('sharp')
-      pictureResizeEnabled = true
-    } catch (e) {
-      // Nothing
-    }
-
-    res.render('admin/admin-status', {
-      devMode: !!res.app.locals.devMode,
-      pictureResizeEnabled
-    })
-  } else {
-    res.errorPage(403)
-  }
+async function adminEvents (req, res) {
+  let events = await eventService.findEvents()
+  res.render('admin/admin-events', {
+    events: events.models
+  })
 }
 
 /**
- * Admin developer tools
- * TODO Make it only available in dev environments
+ * Admin only: server status
+ */
+async function adminStatus (req, res) {
+  let pictureResizeEnabled = false
+  try {
+    require('sharp')
+    pictureResizeEnabled = true
+  } catch (e) {
+    // Nothing
+  }
+
+  res.render('admin/admin-status', {
+    devMode: !!res.app.locals.devMode,
+    pictureResizeEnabled
+  })
+}
+
+/**
+ * Admin only: developer tools
  */
 async function adminDev (req, res) {
   if (res.app.locals.devMode) {
-    if (config.DEBUG_ADMIN || res.locals.user.get('is_admin')) {
-      let infoMessage = ''
-      let errorMessage = ''
-      if (req.method === 'POST') {
-        let {fields} = await req.parseForm()
-        if (fields['db-reset']) {
-          await db.dropTables()
-          await db.upgradeTables()
-          await db.insertInitialData(config.DEBUG_INSERT_SAMPLES)
-          let version = await db.findCurrentVersion()
-          infoMessage = 'DB reset done (current version : ' + version + ').'
-        }
+    let infoMessage = ''
+    let errorMessage = ''
+    if (req.method === 'POST') {
+      let {fields} = await req.parseForm()
+      if (fields['db-reset']) {
+        await db.dropTables()
+        await db.upgradeTables()
+        await db.insertInitialData(config.DEBUG_INSERT_SAMPLES)
+        let version = await db.findCurrentVersion()
+        infoMessage = 'DB reset done (current version : ' + version + ').'
       }
-      res.render('admin/admin-dev', {
-        infoMessage,
-        errorMessage
-      })
-    } else {
-      res.errorPage(403)
     }
+    res.render('admin/admin-dev', {
+      infoMessage,
+      errorMessage
+    })
   } else {
-    res.errorPage(404, 'Page only available in development mode')
+    res.errorPage(403, 'Page only available in development mode')
   }
 }

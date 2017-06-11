@@ -12,6 +12,8 @@
         {{ moderationLink('Edit event', 'calendar', buildUrl(context.event, 'event', 'edit')) if context.event }}
         {{ moderationLink('Edit live event', 'calendar', buildUrl(context.liveEvent, 'event', 'edit')) if context.liveEvent and not context.event }}
         {{ moderationLink('Edit upcoming event', 'calendar', buildUrl(context.nextEvent, 'event', 'edit')) if context.nextEvent }}
+        {{ moderationLink('Create event', 'calendar', buildUrl(null, 'event', 'create')) if context.events }}
+        
         {% endif %}
 
       </div>

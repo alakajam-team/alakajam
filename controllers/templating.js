@@ -28,7 +28,11 @@ function buildUrl (model, type, page = null, options = {}) {
 
     if (type === 'event') {
       // Event model
-      return '/' + model.get('name') + pagePath
+      if (model && model.id) {
+        return '/' + model.get('name') + pagePath
+      } else {
+        return '/create-event'
+      }
     } else if (type === 'entry') {
       // Entry model
       if (model && model.id) {

@@ -14,6 +14,8 @@
       {% if (user and user.get('is_admin') or config.DEBUG_ADMIN) %}
       <div class="list-group panel">
         <div class="list-group-item list-group-item-default"><h4 style="margin: 0">Administration</h4></div>
+        <a href="/admin/events" class="list-group-item 
+        {{ 'list-group-item-danger' if path == '/admin/events'}}">Events</a>
         <a href="/admin/status" class="list-group-item 
         {{ 'list-group-item-danger' if path == '/admin/status'}}">Server status</a>
         {% if devMode %}

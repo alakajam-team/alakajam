@@ -12,6 +12,7 @@ const validator = require('validator')
 const striptags = require('striptags')
 const showdown = require('showdown')
 const constants = require('../core/constants')
+const slug = require('slug')
 
 module.exports = {
   sanitizeString,
@@ -21,6 +22,8 @@ module.exports = {
   isURL,
   isUsername,
   isId,
+  isSlug,
+  isIn,
 
   markdownToHtml
 }
@@ -88,6 +91,26 @@ function isId (string) {
   return validator.isInt(string, { min: 1 })
 }
 
+/**
+ * Checks whether the string is a valid slug. If so, additional sanitizing is not needed.
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isSlug (string) {
+  return string && slug(string) === string
+}
+
+/**
+ * Checks whether the string is in an array of allowed values
+ * @param  {string} string
+ * @param  {array(string)} values
+ * @return {Boolean}
+ */
+function isIn (string, values) {
+  return validator.isIn(string, values)
+}
+
+/**
 /**
  * Converts the given Markdown to XSS-safe HTML
  * @param  {string} markdown

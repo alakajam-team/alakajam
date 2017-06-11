@@ -11,15 +11,26 @@ const Entry = require('../models/entry-model')
 const constants = require('../core/constants')
 
 module.exports = {
+  createEvent,
+
   findEventById,
   findEventByName,
   findEventByStatus,
   findEvents,
 
   createEntry,
+
   findEntryById,
   findUserEntries,
   findUserEntryForEvent
+}
+
+/**
+ * Creates a new empty event
+ * @return {Event}
+ */
+function createEvent () {
+  return new Event()
 }
 
 /**

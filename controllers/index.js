@@ -32,10 +32,14 @@ module.exports = {
     router.use('/post/:postId', postController.postMiddleware)
     router.use('/post/:postId/*', postController.postMiddleware)
 
+    // General
+
     router.get('/', mainController.index)
     router.get('/events', mainController.events)
     router.get('/announcements', mainController.announcements)
     router.get('/chat', mainController.chat)
+
+    // Users
 
     router.get('/register', userController.registerForm)
     router.post('/register', userController.doRegister)
@@ -50,9 +54,14 @@ module.exports = {
     router.all('/dashboard/password', userController.dashboardPassword)
     router.get('/user/:name', userController.viewUserProfile)
 
+    // Mod dashboard
+
     router.get('/admin', adminController.adminHome)
+    router.get('/admin/events', adminController.adminEvents)
     router.all('/admin/dev', adminController.adminDev)
     router.all('/admin/status', adminController.adminStatus)
+
+    // Events & Entries
 
     router.get('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.createEntry)
     router.post('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.saveEntry)
@@ -61,9 +70,15 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit', entryController.editEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete', entryController.deleteEntry)
 
+    router.get('/create-event', eventController.editEvent)
+    router.post('/create-event', eventController.editEvent)
     router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewEventPosts)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/games', eventController.viewEventGames)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
+    router.post('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/delete', eventController.deleteEvent)
+
+    // Posts
 
     router.get('/post/create', postController.editPost)
     router.post('/post/create', postController.savePost)

@@ -5,6 +5,10 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 # Changelog
 
+### June 11th
+
+* Admins can manage events and create new ones
+
 ### June 7th
 
 * Comments now work (both on blog posts and games)
