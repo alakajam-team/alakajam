@@ -5,8 +5,15 @@
 
 <h1>Announcements</h1>
 
+<h2>Create</h2>
+
 <div class="form-group">
-  <a href="/post/create?special_post_type=announcement" class="btn btn-warning">Create new announcement</a>
+  {% if liveEvent %}
+  <a href="{{ buildUrl(null, 'post', 'create', { eventId: liveEvent.id, specialPostType: 'announcement' }) }}" class="btn btn-warning">On live event <b>{{ liveEvent.get('title') }}</b></a>
+  {% elseif nextEvent %}
+  <a href="{{ buildUrl(null, 'post', 'create', { eventId: nextEvent.id, specialPostType: 'announcement' }) }}" class="btn btn-warning">On upcoming event <b>{{ liveEvent.get('title') }}</b></a>
+  {% endif %}
+  <a href="{{ buildUrl(null, 'post', 'create', { specialPostType: 'announcement' }) }}" class="btn btn-warning">On no event</a>
 </div>
 
 {% if draftPosts.length > 0 %}

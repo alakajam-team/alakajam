@@ -285,6 +285,11 @@ img.preview {
     color: var(--text-light);
   }
 
+  &__announcement {
+    /* TODO */
+    display: none;
+  }
+
   &__links {
     display: inline-block;
   }

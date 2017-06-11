@@ -32,9 +32,19 @@ async function eventMiddleware (req, res, next) {
     if (!event) {
       res.errorPage(404, 'Event not found')
       return
-    } else if (event && res.locals.user) {
-      let userEntry = await eventService.findUserEntryForEvent(res.locals.user, event.get('id'))
-      res.locals.userEntry = userEntry
+    } else {
+      let announcementTask = postService.findLatestAnnouncement({ eventId: event.id })
+          .then(function (announcement) {
+            res.locals.latestEventAnnouncement = announcement
+          })
+      let entryTask = true
+      if (res.locals.user) {
+        entryTask = eventService.findUserEntryForEvent(res.locals.user, event.get('id'))
+            .then(function (userEntry) {
+              res.locals.userEntry = userEntry
+            })
+      }
+      await Promise.all([announcementTask, entryTask])
     }
   }
   next()

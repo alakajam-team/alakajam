@@ -86,6 +86,13 @@
             <div class="event-header__dates hidden-xs">
               {{ event.get('display_dates') }}
             </div>
+            {% if latestEventAnnouncement %}
+            <div class="event-header__announcement">
+              <a href="{{ buildUrl(latestEventAnnouncement, 'post') }}">
+                {{ latestEventAnnouncement.get('title')}}
+              </a>
+            </div>
+            {% endif %}
           </div>
           <div class="event-header__links">
             <!-- TODO Refactor using a macro -->

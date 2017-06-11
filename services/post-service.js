@@ -74,9 +74,17 @@ async function findPostById (postId) {
     .fetch({withRelated: ['author', 'userRoles']})
 }
 
-async function findLatestAnnouncement () {
-  return Post.where('special_post_type', constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
-    .orderBy('published_at', 'DESC')
+/**
+ * Finds the latest announcement
+ * @param  {Object} options amoung "eventId"
+ * @return {Post}
+ */
+async function findLatestAnnouncement (options = {}) {
+  let query = Post.where('special_post_type', constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
+  if (options.eventId) {
+    query = query.where('event_id', options.eventId)
+  }
+  return query.orderBy('published_at', 'DESC')
     .fetch({withRelated: ['author', 'userRoles']})
 }
 

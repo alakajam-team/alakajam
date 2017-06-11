@@ -55,10 +55,10 @@ async function viewPost (req, res) {
     if (post.get('event_id')) {
       await post.load(['event', 'entry', 'entry.userRoles'])
       if (post.related('event').id) {
-        context.event = post.related('event')
+        context.relatedEvent = post.related('event')
       }
-      if (post.related('entry').id) {
-        context.entry = post.related('entry')
+      if (post.related('entry').id && !post.get('special_post_type')) {
+        context.relatedEntry = post.related('entry')
       }
     }
 
@@ -75,6 +75,7 @@ async function editPost (req, res) {
       let post = new Post()
       post.set('event_id', req.query.eventId)
       post.set('entry_id', req.query.entryId)
+      post.set('special_post_type', req.query['special_post_type'])
       res.locals.post = post
     }
 
@@ -82,11 +83,12 @@ async function editPost (req, res) {
     let post = res.locals.post
     let context = {}
     if (post.get('event_id')) {
-      context.event = await eventService.findEventById(post.get('event_id'))
+      context.relatedEvent = await eventService.findEventById(post.get('event_id'))
     }
     if (post.get('entry_id')) {
-      context.entry = await eventService.findEntryById(post.get('entry_id'))
+      context.relatedEntry = await eventService.findEntryById(post.get('entry_id'))
     }
+    context.specialPostType = forms.sanitizeString(post.get('special_post_type'))
 
     // Late post attachment to entry
     if (!post.get('special_post_type') && post.get('event_id') && !post.get('entry_id')) {

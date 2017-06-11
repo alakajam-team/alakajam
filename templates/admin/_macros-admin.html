@@ -5,12 +5,13 @@
       <div class="col-xs-12">
         <a href="/admin" class="btn"><span class="glyphicon glyphicon-wrench"></span> Mod dashboard</a>
 
-        {{ moderationLink('Edit post', 'pencil', buildUrl(context.post, 'post', 'edit')) if context.post }}
-        {{ moderationLink('Edit entry', 'tower', buildUrl(context.entry, 'entry', 'edit')) if context.entry }}
+        {{ moderationLink('Edit post', 'pencil', buildUrl(context.post, 'post', 'edit')) if context.post.id }}
+        {{ moderationLink('Edit entry', 'tower', buildUrl(context.entry, 'entry', 'edit')) if context.entry.id }}
+        {{ moderationLink('Create announcement', 'pencil', buildUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'announcement' })) if context.event.id }}
 
         {% if isAdmin %}
-        {{ moderationLink('Edit event', 'calendar', buildUrl(context.event, 'event', 'edit')) if context.event }}
-        {{ moderationLink('Edit live event', 'calendar', buildUrl(context.liveEvent, 'event', 'edit')) if context.liveEvent and not context.event }}
+        {{ moderationLink('Edit event', 'calendar', buildUrl(context.event, 'event', 'edit')) if context.event.id }}
+        {{ moderationLink('Edit live event', 'calendar', buildUrl(context.liveEvent, 'event', 'edit')) if context.liveEvent and not context.event.id }}
         {{ moderationLink('Edit upcoming event', 'calendar', buildUrl(context.nextEvent, 'event', 'edit')) if context.nextEvent }}
         {{ moderationLink('Create event', 'calendar', buildUrl(null, 'event', 'create')) if context.events }}
 

@@ -20,6 +20,13 @@
       <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ post.get('title') }}" required="required">
     </div>
 
+    {% if specialPostType %}
+    <div class="form-group">
+      <label>Special post type</label>
+      <h2><span class="label label-warning">{{ specialPostType }}</span></h2>
+    </div>
+    {% endif %}
+
     {% if event or entry %}
     <div class="form-group">
       <label>Topics</label>
@@ -30,7 +37,7 @@
         </span>&nbsp;
         {% endif %}
         {% if entry %}
-        Event <span class="label label-default">
+        Entry <span class="label label-default">
           {{ entry.get('title') }}
         </span>
         {% endif %}
