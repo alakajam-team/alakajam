@@ -70,15 +70,14 @@ async function findEventByName (name) {
 
 /**
  * Fetches all Events and their Entries.
- * @param {object} options Allowed: status
+ * @param {object} options Allowed: status name
  * @returns {array(Event)}
  */
 async function findEvents (options = {}) {
   let eventModels = await new Event()
     .orderBy('created_at', 'DESC')
-  if (options.status) {
-    eventModels = eventModels.where('status', options.status)
-  }
+  if (options.status) eventModels = eventModels.where('status', options.status)
+  if (options.name) eventModels = eventModels.where('name', options.name)
   return eventModels.fetchAll({ withRelated: ['entries'] })
 }
 
@@ -104,6 +103,10 @@ async function findEventByStatus (status) {
  * @return {Entry}
  */
 async function createEntry (user, event) {
+  if (await findUserEntryForEvent(user, event.id)) {
+    throw new Error('User already has an entry for this event')
+  }
+
   // TODO Better use of Bookshelf API
   let entry = new Entry()
   await entry.save() // otherwise the user role won't have a node_id

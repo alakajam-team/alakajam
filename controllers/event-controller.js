@@ -90,6 +90,11 @@ async function viewEventPosts (req, res) {
  * Browse event games
  */
 async function viewEventGames (req, res) {
+  if (res.locals.event.get('status_entry') !== 'on') {
+    res.errorPage(404)
+    return
+  }
+
   res.render('event/view-event-games')
 }
 
@@ -108,6 +113,10 @@ async function editEvent (req, res) {
   let redirected = false
 
   if (fields && fields.name && fields.title) {
+    let event = res.locals.event
+    let creation = !event
+
+    // TODO Typed fields should not be reset if validation fails
     if (!forms.isSlug(fields.name)) {
       errorMessage = 'Name is not a valid slug'
     } else if (!forms.isIn(fields.status, ['pending', 'open', 'closed'])) {
@@ -118,14 +127,18 @@ async function editEvent (req, res) {
       errorMessage = 'Invalid entry status'
     } else if (!forms.isIn(fields['status-results'], ['disabled', 'off', 'on'])) {
       errorMessage = 'Invalid results status'
+    } else if (event) {
+      let matchingEventsCollection = await eventService.findEvents({ name: fields.name })
+      for (let matchingEvent of matchingEventsCollection.models) {
+        if (event.id !== matchingEvent.id) {
+          errorMessage = 'Another event with the same exists'
+        }
+      }
     }
 
     if (!errorMessage) {
-      let event = res.locals.event
-      let creation = false
-      if (!event) {
+      if (creation) {
         event = eventService.createEvent()
-        creation = true
       }
 
       event.set({

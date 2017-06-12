@@ -10,7 +10,7 @@ const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
-const Entry = require('../models/entry-model')
+const securityService = require('../services/security-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 
@@ -59,17 +59,24 @@ async function viewEntry (req, res) {
  * Edit entry
  */
 async function createEntry (req, res) {
-  res.render('entry/edit-entry', {entry: new Entry({
-    event_id: res.locals.event.get('id'),
-    event_name: res.locals.event.get('name')
-  })})
+  if (!res.locals.user) {
+    res.errorPage(403)
+  } else if (await eventService.findUserEntryForEvent(res.locals.user, res.locals.event.id)) {
+    res.errorPage(403, 'User already has an entry for this event')
+  } else {
+    res.render('entry/edit-entry')
+  }
 }
 
 /**
  * Edit entry
  */
 function editEntry (req, res) {
-  res.render('entry/edit-entry')
+  if (!res.locals.user || !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true })) {
+    res.errorPage(403)
+  } else {
+    res.render('entry/edit-entry')
+  }
 }
 
 /**
@@ -83,6 +90,8 @@ async function saveEntry (req, res) {
     let redirectUrl = await postController.handleSaveComment(fields,
       res.locals.user, res.locals.entry, templating.buildUrl(res.locals.entry, 'entry'))
     res.redirect(redirectUrl)
+  } else if (!res.locals.user || (res.locals.entry && !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true }))) {
+    res.errorPage(403)
   } else if (!res.headersSent) { // FIXME Why?
     // Update entry
 

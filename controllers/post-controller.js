@@ -73,9 +73,13 @@ async function editPost (req, res) {
   if (createMode || securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
     if (createMode) {
       let post = new Post()
-      post.set('event_id', req.query.eventId)
-      post.set('entry_id', req.query.entryId)
-      post.set('special_post_type', req.query['special_post_type'])
+      if (forms.isId(req.query.eventId)) {
+        post.set('event_id', req.query.eventId)
+      }
+      if (forms.isId(req.query.entryId)) {
+        post.set('entry_id', req.query.entryId)
+      }
+      post.set('special_post_type', forms.sanitizeString(req.query['special_post_type']))
       res.locals.post = post
     }
 
@@ -88,7 +92,7 @@ async function editPost (req, res) {
     if (post.get('entry_id')) {
       context.relatedEntry = await eventService.findEntryById(post.get('entry_id'))
     }
-    context.specialPostType = forms.sanitizeString(post.get('special_post_type'))
+    context.specialPostType = post.get('special_post_type')
 
     // Late post attachment to entry
     if (!post.get('special_post_type') && post.get('event_id') && !post.get('entry_id')) {
