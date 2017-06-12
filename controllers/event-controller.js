@@ -15,6 +15,7 @@ const securityService = require('../services/security-service')
 module.exports = {
   eventMiddleware,
 
+  viewEventAnnouncements,
   viewEventPosts,
   viewEventGames,
 
@@ -51,6 +52,18 @@ async function eventMiddleware (req, res, next) {
 }
 
 /**
+ * Browse event announcements
+ */
+async function viewEventAnnouncements (req, res) {
+  res.render('event/view-event-announcements', {
+    posts: await postService.findPosts({
+      eventId: res.locals.event.get('id'),
+      specialPostType: 'announcement'
+    })
+  })
+}
+
+/**
  * Browse event posts
  */
 async function viewEventPosts (req, res) {
@@ -58,7 +71,8 @@ async function viewEventPosts (req, res) {
   if (res.locals.user) {
     let userPosts = await postService.findPosts({
       userId: res.locals.user.id,
-      eventId: res.locals.event.id
+      eventId: res.locals.event.id,
+      specialPostType: null
     })
     userPost = (userPosts.models.length > 0) ? userPosts.models[0] : undefined
   }
@@ -66,7 +80,8 @@ async function viewEventPosts (req, res) {
   res.render('event/view-event-posts', {
     userPost: userPost,
     posts: await postService.findPosts({
-      eventId: res.locals.event.get('id')
+      eventId: res.locals.event.get('id'),
+      specialPostType: null
     })
   })
 }

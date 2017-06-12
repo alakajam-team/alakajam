@@ -83,30 +83,34 @@
             <a href="{{ buildUrl(event, 'event') }}" class="event-header__name">
               {{ event.get('title') }}
             </a>
-            <div class="event-header__dates hidden-xs">
+            <div class="event-header__dates">
               {{ event.get('display_dates') }}
             </div>
-            {% if latestEventAnnouncement %}
-            <div class="event-header__announcement">
-              <a href="{{ buildUrl(latestEventAnnouncement, 'post') }}">
-                {{ latestEventAnnouncement.get('title')}}
-              </a>
-            </div>
-            {% endif %}
           </div>
           <div class="event-header__links">
             <!-- TODO Refactor using a macro -->
-            <a href="{{ buildUrl(event, 'event') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event') }}">
-              <span class="glyphicon glyphicon-home"></span> Posts
+            {% if latestEventAnnouncement %}
+              <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
+                <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
+                <span class="event-header__announcement-info">
+                  Announcement • {{ latestEventAnnouncement.get('created_at') | relativeTime }}
+                </span>
+              </a><!--
+              --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-sm hidden-md hidden-lg event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
+                <span class="glyphicon glyphicon-pushpin"></span>
+              </a><!--
+            -->{% endif %}<!--
+            --><a href="{{ buildUrl(event, 'event', 'posts') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'posts') }}">
+              <span class="glyphicon glyphicon-globe"></span> <span class="event-header__link-label">Posts</span>
             </a><!--
             -->{% if event.get('status_theme') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'themes') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'themes') }} {{ 'disabled' if event.get('status_theme') !== 'on' }}">
-              <span class="glyphicon glyphicon-grain"></span> Theme
+              <span class="glyphicon glyphicon-grain"></span> <span class="event-header__link-label">Theme</span>
             </a>{% endif %}<!--
             -->{% if event.get('status_entry') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'games') }} {{ 'disabled' if event.get('status_entry') !== 'on' }}">
-              <span class="glyphicon glyphicon-tower"></span> Games
+              <span class="glyphicon glyphicon-tower"></span> <span class="event-header__link-label">Games</span>
             </a>{% endif %}<!--
             -->{% if event.get('status_results') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'results') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'results') }} {{ 'disabled' if event.get('status_results') !== 'on' }}">
-              <span class="glyphicon glyphicon-th-list"></span> Results
+              <span class="glyphicon glyphicon-th-list"></span> <span class="event-header__link-label">Results</span>
             </a>{% endif %}
         </div>
       </div>
