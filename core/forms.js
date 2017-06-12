@@ -52,7 +52,7 @@ function sanitizeMarkdown (markdown) {
   return sanitizeHtml(markdown, {
     allowedTags: constants.ALLOWED_POST_TAGS,
     allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES
-  })
+  }).replace(/&gt;/g, '>') // ">"s are used in quote blocks
 }
 
 /**
