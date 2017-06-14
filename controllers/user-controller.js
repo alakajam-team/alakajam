@@ -79,9 +79,10 @@ async function dashboardFeed (req, res) {
     })
   ])
 
+  // TODO Limit at the SQL-level
   res.render('user/dashboard-feed', {
-    byUser: byUserCollection.models,
-    toUser: toUserCollection.models,
+    byUser: byUserCollection.take(20),
+    toUser: toUserCollection.take(20),
     latestEntry: latestEntries.length > 0 ? latestEntries[0] : null,
     latestPosts: latestPostsCollection.take(1)
   })

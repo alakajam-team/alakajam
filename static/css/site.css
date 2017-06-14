@@ -384,11 +384,10 @@ img.preview {
 /* ============================== Blog posts ============================== */
 
 .post {
-
   &__heading {
     @apply --alt-font;
     margin: 0;
-    padding: 10px 0;
+    padding-bottom: 10px;
 
     & a {
       color: var(--text);
