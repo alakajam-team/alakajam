@@ -21,6 +21,7 @@ module.exports = {
 
   viewUserProfile,
 
+  dashboardFeed,
   dashboardPosts,
   dashboardInvite,
   dashboardSettings,
@@ -62,6 +63,58 @@ async function viewUserProfile (req, res) {
   } else {
     res.errorPage(400, 'No user exists with name ' + req.params.name)
   }
+}
+
+/**
+ * View comment feed
+ */
+async function dashboardFeed (req, res) {
+  let [byUserCollection, toUserCollection, latestEntries, latestPostsCollection] = await Promise.all([
+    postService.findCommentsByUser(res.locals.dashboardUser),
+    postService.findCommentsToUser(res.locals.dashboardUser),
+    eventService.findUserEntries(res.locals.dashboardUser),
+    postService.findPosts({
+      userId: res.locals.dashboardUser.id,
+      specialPostType: null
+    })
+  ])
+
+  res.render('user/dashboard-feed', {
+    byUser: byUserCollection.models,
+    toUser: toUserCollection.models,
+    latestEntry: latestEntries.length > 0 ? latestEntries[0] : null,
+    latestPosts: latestPostsCollection.take(1)
+  })
+}
+
+/**
+ * Manage user posts
+ */
+async function dashboardPosts (req, res) {
+  let newPostEvent = await eventService.findEventByStatus('open')
+  if (!newPostEvent) {
+    newPostEvent = await eventService.findEventByStatus('pending')
+  }
+  let allPostsCollection = await postService.findPosts({
+    userId: res.locals.dashboardUser.get('id'),
+    withDrafts: true
+  })
+  let draftPosts = allPostsCollection.where({'published_at': null})
+
+  res.render('user/dashboard-posts', {
+    publishedPosts: allPostsCollection.difference(draftPosts),
+    draftPosts,
+    newPostEvent
+  })
+}
+
+/**
+ * Generate invite keys
+ */
+async function dashboardInvite (req, res) {
+  res.render('user/dashboard-invite', {
+    inviteKey: await inviteService.generateKey()
+  })
 }
 
 /**
@@ -124,36 +177,6 @@ async function dashboardSettings (req, res) {
   res.render('user/dashboard-settings', {
     errorMessage,
     infoMessage
-  })
-}
-
-/**
- * Manage user posts
- */
-async function dashboardPosts (req, res) {
-  let newPostEvent = await eventService.findEventByStatus('open')
-  if (!newPostEvent) {
-    newPostEvent = await eventService.findEventByStatus('pending')
-  }
-  let allPostsCollection = await postService.findPosts({
-    userId: res.locals.dashboardUser.get('id'),
-    withDrafts: true
-  })
-  let draftPosts = allPostsCollection.where({'published_at': null})
-
-  res.render('user/dashboard-posts', {
-    publishedPosts: allPostsCollection.difference(draftPosts),
-    draftPosts,
-    newPostEvent
-  })
-}
-
-/**
- * Generate invite keys
- */
-async function dashboardInvite (req, res) {
-  res.render('user/dashboard-invite', {
-    inviteKey: await inviteService.generateKey()
   })
 }
 

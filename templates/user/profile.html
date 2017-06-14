@@ -26,7 +26,7 @@
       </p>
 
       {% if user and (user.get('id') == profileUser.get('id')) %}
-      <a href="/dashboard/posts" class="btn btn-default">Dashboard</a>
+      <a href="{{ buildUrl(user, 'user', 'feed') }}" class="btn btn-default">View dashboard</a>
       {% endif %}
 
       <div class="spacing">

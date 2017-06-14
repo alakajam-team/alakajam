@@ -52,7 +52,7 @@
           {% if user %}
             <li class="dropdown">
               <div href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expafnded="false">
-                <a href="{{ buildUrl(user, 'user') }}" onclick="arguments[0].stopPropagation()">
+                <a href="{{ buildUrl(user, 'user', 'feed') }}" onclick="arguments[0].stopPropagation()">
                   {% if user.get('avatar') %}
                   <img src="{{ user.get('avatar') }}" class="navbar-avatar" />
                   {% else %}
@@ -62,10 +62,8 @@
                 <span class="navbar-profile hidden-sm">{{ user.get('title') }}</span> <span class="caret"></span>
               </div>
               <ul class="dropdown-menu">
-                <li><a href="/user/{{ user.get('name')}}">My profile</a></li>
-                <li><a href="/dashboard/posts">My posts</a></li>
-                <li><a href="/dashboard/invite">Invite keys</a></li>
-                <li><a href="/dashboard/settings">Settings</a></li>
+                <li><a href="{{ buildUrl(user, 'user', 'feed') }}">Dashboard</a></li>
+                <li><a href="{{ buildUrl(user, 'user') }}">Public profile</a></li>
                 <li><a href="/logout">Logout</a></li>
               </ul>
             </li>

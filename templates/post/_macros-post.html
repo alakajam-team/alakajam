@@ -66,7 +66,15 @@
   {% else %}
     {% set author = comment.related('user') %}
     <div class="row comment">
+      {% if options.linkToNode and not lastLinkedNode or node != lastLinkedNode %}
+      <div class="col-xs-12">
+        {% set node = comment.related('node') %}
+        <h4><a href="{{ buildUrl(node, comment.get('node_type')) }}#c{{ comment.id }}">{{ node.get('title') }}</a></h4>
+        {% set lastLinkedNode = node %}
+      </div>
+      {% endif %}
       <div class="col-xs-offset-1 col-xs-11">
+        
         <a class="comment__anchor" name="c{{ comment.id if comment }}"></a>
         <div class="comment__details">
           <a href="{{ buildUrl(author, 'user') }}">
@@ -83,7 +91,7 @@
           {% if wasEdited(comment) %}
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
           {% endif %}
-          {% if canUserWrite(readingUser, comment, options) %}
+          {% if not options.readOnly and canUserWrite(readingUser, comment, options) %}
           <a class="btn btn-default btn-xs pull-right" href="{{ buildUrl(comment, 'comment', 'edit') }}"><span class="glyphicon glyphicon-pencil"></span></a>
           {% endif %}
         </div>
@@ -99,7 +107,7 @@
 <div class="well">No comments.</div>
 {% endif %}
 
-{{ commentEditor(null, readingUser, options) }}
+{{ commentEditor(null, readingUser, options) if not options.readOnly }}
 
 <style type="text/css">
   .CodeMirror, .CodeMirror-scroll {

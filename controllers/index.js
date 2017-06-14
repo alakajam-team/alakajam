@@ -48,6 +48,7 @@ module.exports = {
     router.get('/logout', userController.doLogout)
 
     router.use('/dashboard*', userController.dashboardMiddleware)
+    router.all('/dashboard/feed', userController.dashboardFeed)
     router.all('/dashboard/posts', userController.dashboardPosts)
     router.all('/dashboard/invite', userController.dashboardInvite)
     router.all('/dashboard/settings', userController.dashboardSettings)

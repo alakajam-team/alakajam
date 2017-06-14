@@ -117,5 +117,8 @@ function isIn (string, values) {
  * @return {string}
  */
 function markdownToHtml (markdown) {
-  return xss(showdownConverter.makeHtml(markdown))
+  let htmlWithoutMentions = showdownConverter.makeHtml(markdown)
+  let htmlWithMentions = htmlWithoutMentions.replace(/@([a-z\d_]+)/ig, '<a href="/user/$1">@$1</a>')
+  let safeHtml = xss(htmlWithMentions)
+  return safeHtml
 }

@@ -33,7 +33,7 @@ function createModel () {
         table.string('user_title')
         table.integer('node_id')
         table.string('node_type')
-        table.string('permission')
+        table.string('permission') // allowed: owner
         table.timestamps()
       })
     }

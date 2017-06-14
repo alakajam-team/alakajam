@@ -1,4 +1,5 @@
 {% extends "_page.html" %}
+{% import "user/_macros-user.html" as userMacros %}
 
 {% block body %}
 
@@ -8,7 +9,13 @@
   <div class="row">
     <div class="col-sm-3">
       <div class="list-group">
-        <div class="list-group-item"><h4 style="margin: 0">User dashboard</h4></div>
+        <div class="list-group-item">
+          <h4 style="margin: 0">User dashboard</h4>
+        </div>
+        <div class="list-group-item">
+          {{ userMacros.userThumb(dashboardUser) }}
+        </div>
+        {{ dashboardLink(dashboardUser, 'feed', 'Home', options) }}
         {{ dashboardLink(dashboardUser, 'posts', 'My Posts', options) }}
         {{ dashboardLink(dashboardUser, 'invite', 'Invite keys', options) }}
         {{ dashboardLink(dashboardUser, 'settings', 'Settings', options) }}

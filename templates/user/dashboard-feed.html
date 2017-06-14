@@ -1,0 +1,41 @@
+{% extends "user/_page-dashboard.html" %}
+{% import "post/_macros-post.html" as postMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
+
+{% block dashboardBody %}
+
+<div class="row">
+  <div class="col-md-12">
+    <h1>Shortcuts</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-5">
+    <h4>Latest entry</h4>
+    {{ eventMacros.entrySmallThumb(latestEntry, 12) if latestEntry }}
+  </div>
+  <div class="col-md-7">
+    <h4>Latest post</h4>
+    {% for post in latestPosts %}
+      {{ postMacros.post(post, user, { hideBody: true }) }}
+    {% endfor %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h1>Comment feed</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-7">
+    <h2 class="has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="Comments on your entries and posts, plus those mentioning &quot;@{{ user.get('name') }}&quot; will be listed here.">Received comments &amp; mentions</span></h2>
+    {{ postMacros.comments(toUser, user, { readOnly: true, linkToNode: true }) }}
+  </div>
+  <div class="col-md-5">
+    <h2>Sent comments</h2>
+    {{ postMacros.comments(byUser, user, { readOnly: true, linkToNode: true }) }}
+  </div>
+</div>
+  
+{% endblock %}

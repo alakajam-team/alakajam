@@ -20,6 +20,8 @@ module.exports = {
   findLatestAnnouncement,
   findCommentById,
   findCommentsSortedForDisplay,
+  findCommentsByUser,
+  findCommentsToUser,
 
   createPost,
   refreshCommentCount,
@@ -94,13 +96,44 @@ async function findCommentById (commentId) {
 }
 
 /**
- * Fetchs the comments of the given node, and sorts them by creation date.
+ * Fetches the comments of the given node, and sorts them by creation date.
  * @param  {Post|Entry} node
  * @return {array(Comment)}
  */
 async function findCommentsSortedForDisplay (node) {
   await node.load(['comments', 'comments.user'])
   return node.related('comments').sortBy(comment => comment.get('created_at'))
+}
+
+/**
+ * Fetches all comments written by an user
+ * @param  {User} user
+ * @return {Collection(Comment)}
+ */
+async function findCommentsByUser (user) {
+  return await Comment.where('user_id', user.id)
+    .orderBy('created_at', 'DESC')
+    .fetchAll({withRelated: ['user', 'node']})
+}
+
+/**
+ * Fetches all comments interesting for an user.
+ * This includes both "@"-mentions and all comments to the user posts & entries.
+ * @param  {User} user
+ * @return {Collection(Comment)}
+ */
+async function findCommentsToUser (user) {
+  return await Comment.query(function (qb) {
+    qb.leftJoin('user_role', function () {
+      this.on('comment.node_id', '=', 'user_role.node_id')
+              .andOn('comment.node_type', '=', 'user_role.node_type')
+    })
+          .where('user_role.user_id', user.id)
+          .andWhere('comment.user_id', '<>', user.id)
+          .orWhere('body', 'like', '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
+  })
+    .orderBy('created_at', 'DESC')
+    .fetchAll({withRelated: ['user', 'node']})
 }
 
 /**

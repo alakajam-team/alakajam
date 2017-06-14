@@ -5,6 +5,10 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 # Changelog
 
+### June 14th
+
+* User dashboards now have a cool home page with a comment feed (not unlike Feedback Friends...)
+
 ### June 11th
 
 * Admins can manage events and create new ones

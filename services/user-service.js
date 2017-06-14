@@ -8,6 +8,7 @@
 
 const crypto = require('crypto')
 const randomKey = require('random-key')
+const config = require('../config')
 const User = require('../models/user-model')
 const UserRole = require('../models/user-role-model')
 
@@ -50,7 +51,12 @@ async function findById (id) {
  * @returns {User}
  */
 async function findByName (name) {
-  return User.where('name', name).fetch()
+  // XXX Case-insensitive search
+  if (config.DB_TYPE === 'postgresql') {
+    return User.where('name', 'ILIKE', name).fetch()
+  } else {
+    return User.where('name', 'LIKE', name).fetch()
+  }
 }
 
 /**

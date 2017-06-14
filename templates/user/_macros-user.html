@@ -1,0 +1,21 @@
+{% import "_macros-form.html" as formMacros %}
+
+{# Allowed options: hideHeading hideBody hideSpecialLabels showComments allowMods #}
+{% macro userThumb(user) %}
+
+<!-- TODO Clean styling -->
+<div style="padding: 8px">
+    {% if user.get('avatar') %}
+    <img src="{{ dashboardUser.get('avatar') }}" style="width: 50px; float: left" />
+    {% else %}
+    <img src="/static/images/default-avatar.png" style="width: 50px; float: left" />
+    {% endif %}
+    <h1 class="profile__title" style="font-size: 26px; padding-left: 60px; margin-top: 0">
+      <a href="{{ buildUrl(user, 'user') }}">{{ user.get('title') }}</a>
+    </h1>
+    <h3 class="profile__name" style="font-size: 18px; padding-left: 60px; margin-bottom: 2px">
+      {{ user.get('name') }}
+    </h3>
+</div>
+
+{% endmacro %}
