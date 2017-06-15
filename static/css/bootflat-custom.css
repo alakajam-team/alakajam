@@ -227,10 +227,12 @@ blockquote {
 .btn-warning, .btn-warning:active, .btn-warning.active, .btn-warning.disabled, .btn-warning[disabled] {
   background-color: #f6bb42;
   border-color: #f6bb42;
+  color: #876000;
 }
 .btn-warning:hover, .btn-warning:focus {
   background-color: #ffce54;
   border-color: #ffce54;
+  color: #876000;
 }
 .open .dropdown-toggle.btn-warning {
   background-color: #ffce54;
@@ -1879,7 +1881,7 @@ a.list-group-item-success.active, a.list-group-item-success:hover, a.list-group-
 
 .list-group-item-warning {
   color: #ffbf21;
-  background-color: #ffce54;
+  background-color: #f6bb42;
   border-color: #f6bb42 transparent transparent transparent;
 }
 .list-group-item-warning:first-child {
@@ -1890,11 +1892,12 @@ a.list-group-item-warning {
 }
 a.list-group-item-warning:hover, a.list-group-item-warning:focus {
   color: white;
-  background-color: #f6bb42;
+  background-color: #ffce54;
 }
 a.list-group-item-warning.active, a.list-group-item-warning:hover, a.list-group-item-warning:focus {
-  background-color: #f6bb42;
+  background-color: #ffce54;
   border-color: #ffce54 transparent transparent transparent;
+  color: #876000;
 }
 
 .list-group-item-info {

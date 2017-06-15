@@ -1,23 +1,31 @@
 :root {
-  /* Colors */
-  --main: #00b1d5;
-  --main-light: color(var(--main) lightness(45%));
-  --main-dark: color(var(--main) lightness(25%));
-  --main-transparent: color(var(--main) alpha(10%));
-  --alt: #f2536d;
-  --alt-light: color(var(--alt) lightness(70%));
-  --alt-dark: color(var(--alt) lightness(35%));
-  --alt-transparent: color(var(--alt) alpha(10%));
+  /* Main colors */
+  
   --bg: #eee;
   --borders: #dadada;
   --text: #1f3038;
   --text-light: color(var(--text) alpha(70%));
   --text-lighter: color(var(--text) alpha(40%));
+  
+  --main: #00b1d5;
+  --main-light: color(var(--main) lightness(45%));
+  --main-dark: color(var(--main) lightness(25%));
+  --main-transparent: color(var(--main) alpha(10%));
+  
+  --alt: #f2536d;
+  --alt-light: color(var(--alt) lightness(70%));
+  --alt-dark: color(var(--alt) lightness(35%));
+  --alt-transparent: color(var(--alt) alpha(10%));
+  
+  /* Mod / Admin colors (based on 'warning' and 'danger' colors from the Bootstrap theme) */
+  
   --moderation: #ffce54;
   --moderation-light: #ffe198;
   --moderation-dark: #f6bb42;
+  --moderation-text: #876000;
 
   /* Fonts */
+  
   --main-font: {
     font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     letter-spacing: 0;
@@ -31,6 +39,7 @@
   };
 
   /* UI elements */
+  
   --navbar-height: 50px;
   --eventbar-height: 60px;
 }
@@ -347,9 +356,9 @@ img.preview {
   background-color: var(--moderation-light);
 
   & .btn {
-    background-color: var(--moderation);
-    border-color: var(--moderation);
-    color: var(--text);
+    background-color: var(--moderation-dark);
+    border-color: var(--moderation-dark);
+    color: var(--moderation-text);
     padding: 0px 5px;
     font-size: 12px;
     line-height: 1.5;
@@ -357,9 +366,8 @@ img.preview {
     margin-right: 5px;
 
     &:hover {
-    background-color: var(--moderation-dark);
-    border-color: var(--moderation-dark);
-    color: white;
+      background-color: var(--moderation);
+      border-color: var(--moderation);
     }
   }
 }

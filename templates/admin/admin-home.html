@@ -5,15 +5,13 @@
 
 <h1>Announcements</h1>
 
-<h2>Create</h2>
-
 <div class="form-group">
   {% if liveEvent %}
-  <a href="{{ buildUrl(null, 'post', 'create', { eventId: liveEvent.id, specialPostType: 'announcement' }) }}" class="btn btn-warning">On live event <b>{{ liveEvent.get('title') }}</b></a>
+  <a href="{{ buildUrl(null, 'post', 'create', { eventId: liveEvent.id, specialPostType: 'announcement' }) }}" class="btn btn-warning">Create (on live <b>{{ liveEvent.get('title') }}</b>)</a>
   {% elseif nextEvent %}
-  <a href="{{ buildUrl(null, 'post', 'create', { eventId: nextEvent.id, specialPostType: 'announcement' }) }}" class="btn btn-warning">On upcoming event <b>{{ liveEvent.get('title') }}</b></a>
+  <a href="{{ buildUrl(null, 'post', 'create', { eventId: nextEvent.id, specialPostType: 'announcement' }) }}" class="btn btn-warning">Create (on upcoming <b>{{ liveEvent.get('title') }}</b>)</a>
   {% endif %}
-  <a href="{{ buildUrl(null, 'post', 'create', { specialPostType: 'announcement' }) }}" class="btn btn-warning">On no event</a>
+  <a href="{{ buildUrl(null, 'post', 'create', { specialPostType: 'announcement' }) }}" class="btn btn-warning">Create (no event)</a>
 </div>
 
 {% if draftPosts.length > 0 %}

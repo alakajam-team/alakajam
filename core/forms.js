@@ -61,7 +61,7 @@ function sanitizeMarkdown (markdown) {
  * @return {Boolean}
  */
 function isEmail (string) {
-  return validator.isEmail(string)
+  return string && validator.isEmail(string)
 }
 
 /**
@@ -70,7 +70,7 @@ function isEmail (string) {
  * @return {Boolean}
  */
 function isURL (string) {
-  return validator.isURL(string)
+  return string && validator.isURL(string)
 }
 
 /**
@@ -88,7 +88,7 @@ function isUsername (string) {
  * @return {Boolean}
  */
 function isId (string) {
-  return validator.isInt(string, { min: 1 })
+  return string && validator.isInt(string, { min: 1 })
 }
 
 /**
@@ -107,7 +107,7 @@ function isSlug (string) {
  * @return {Boolean}
  */
 function isIn (string, values) {
-  return validator.isIn(string, values)
+  return string && validator.isIn(string, values)
 }
 
 /**
