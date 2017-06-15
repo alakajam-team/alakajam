@@ -6,6 +6,7 @@
  * @module controllers/templating
  */
 
+const forms = require('../core/forms')
 const securityService = require('../services/security-service')
 const postService = require('../services/post-service')
 
@@ -13,6 +14,8 @@ const DASHBOARD_PAGES = ['feed', 'posts', 'invite', 'settings', 'password']
 
 module.exports = {
   buildUrl,
+
+  isId: forms.isId,
 
   isPast: postService.isPast,
   wasEdited: postService.wasEdited,

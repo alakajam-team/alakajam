@@ -5,6 +5,10 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 # Changelog
 
+### June 15th
+
+* Events can now have tabs for theme voting or game results. Admins can display any blog post in them (until the actual features are made).
+
 ### June 14th
 
 * User dashboards now have a cool home page with a comment feed (not unlike Feedback Friends...)

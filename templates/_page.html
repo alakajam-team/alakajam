@@ -102,13 +102,13 @@
             --><a href="{{ buildUrl(event, 'event', 'posts') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'posts') }}">
               <span class="glyphicon glyphicon-globe"></span> <span class="event-header__link-label">Posts</span>
             </a><!--
-            -->{% if event.get('status_theme') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'themes') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'themes') }} {{ 'disabled' if event.get('status_theme') !== 'on' }}">
+            -->{% if event.get('status_theme') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'themes') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'themes') }} {{ 'disabled' if event.get('status_theme') === 'off' }}">
               <span class="glyphicon glyphicon-grain"></span> <span class="event-header__link-label">Theme</span>
             </a>{% endif %}<!--
-            -->{% if event.get('status_entry') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'games') }} {{ 'disabled' if event.get('status_entry') !== 'on' }}">
+            -->{% if event.get('status_entry') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'games') }} {{ 'disabled' if event.get('status_entry') === 'off' }}">
               <span class="glyphicon glyphicon-tower"></span> <span class="event-header__link-label">Games</span>
             </a>{% endif %}<!--
-            -->{% if event.get('status_results') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'results') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'results') }} {{ 'disabled' if event.get('status_results') !== 'on' }}">
+            -->{% if event.get('status_results') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'results') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'results') }} {{ 'disabled' if event.get('status_results') === 'off' }}">
               <span class="glyphicon glyphicon-th-list"></span> <span class="event-header__link-label">Results</span>
             </a>{% endif %}
         </div>

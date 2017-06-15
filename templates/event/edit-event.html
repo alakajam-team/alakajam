@@ -53,6 +53,8 @@
             event.get('status_theme') if event) }}
           {{ formMacros.radio('status-theme', 'on', 'On', 
             event.get('status_theme') if event) }}
+          {{ formMacros.radio('status-theme', '', '', 
+            event.get('status_theme') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_theme')) }) }}
           </div>
         </div>
         <div class="form-group">
@@ -75,6 +77,8 @@
             event.get('status_results') if event) }}
           {{ formMacros.radio('status-results', 'on', 'On', 
             event.get('status_results') if event) }}
+          {{ formMacros.radio('status-results', '', '', 
+            event.get('status_results') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_results')) }) }}
           </div>
         </div>
         <div class="form-group">
@@ -116,7 +120,6 @@ var $nameInput = $('#name')
 var defaultText = "My event"
 $titleInput.on('change keyup', function () {
   refreshTitleDisplay()
-  console.log("ù")
   $nameInput.val(slug($titleInput.val()))
 })
 

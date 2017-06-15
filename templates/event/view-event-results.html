@@ -1,0 +1,18 @@
+{% extends "_page.html" %}
+{% import "post/_macros-post.html" as postMacros %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    {% if resultsPost %}
+      <div class="col-lg-offset-1 col-lg-10">
+        {{ postMacros.post(resultsPost, user) }}
+      </div>
+    {% else %} 
+      <div class="alert alert-warning">Game rating system not implemented yet.</div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

@@ -111,7 +111,7 @@ async function findCommentsSortedForDisplay (node) {
  * @return {Collection(Comment)}
  */
 async function findCommentsByUser (user) {
-  return await Comment.where('user_id', user.id)
+  return Comment.where('user_id', user.id)
     .orderBy('created_at', 'DESC')
     .fetchAll({withRelated: ['user', 'node']})
 }
@@ -123,14 +123,14 @@ async function findCommentsByUser (user) {
  * @return {Collection(Comment)}
  */
 async function findCommentsToUser (user) {
-  return await Comment.query(function (qb) {
+  return Comment.query(function (qb) {
     qb.leftJoin('user_role', function () {
       this.on('comment.node_id', '=', 'user_role.node_id')
-              .andOn('comment.node_type', '=', 'user_role.node_type')
+                .andOn('comment.node_type', '=', 'user_role.node_type')
     })
-          .where('user_role.user_id', user.id)
-          .andWhere('comment.user_id', '<>', user.id)
-          .orWhere('body', 'like', '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
+      .where('user_role.user_id', user.id)
+      .andWhere('comment.user_id', '<>', user.id)
+      .orWhere('body', 'like', '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
   })
     .orderBy('created_at', 'DESC')
     .fetchAll({withRelated: ['user', 'node']})

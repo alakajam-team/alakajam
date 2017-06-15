@@ -17,7 +17,9 @@ module.exports = {
 
   viewEventAnnouncements,
   viewEventPosts,
+  viewEventThemes,
   viewEventGames,
+  viewEventResults,
 
   editEvent,
   deleteEvent
@@ -87,6 +89,21 @@ async function viewEventPosts (req, res) {
 }
 
 /**
+ * Browse event theme voting
+ */
+async function viewEventThemes (req, res) {
+  let statusThemes = res.locals.event.get('status_theme')
+  if (forms.isId(statusThemes)) {
+    res.locals.themesPost = await postService.findPostById(statusThemes)
+  } else if (statusThemes !== 'on') {
+    res.errorPage(404)
+    return
+  }
+
+  res.render('event/view-event-themes')
+}
+
+/**
  * Browse event games
  */
 async function viewEventGames (req, res) {
@@ -96,6 +113,21 @@ async function viewEventGames (req, res) {
   }
 
   res.render('event/view-event-games')
+}
+
+/**
+ * Browse event results
+ */
+async function viewEventResults (req, res) {
+  let statusResults = res.locals.event.get('status_results')
+  if (forms.isId(statusResults)) {
+    res.locals.resultsPost = await postService.findPostById(statusResults)
+  } else if (statusResults !== 'on') {
+    res.errorPage(404)
+    return
+  }
+
+  res.render('event/view-event-results')
 }
 
 /**
@@ -121,11 +153,13 @@ async function editEvent (req, res) {
       errorMessage = 'Name is not a valid slug'
     } else if (!forms.isIn(fields.status, ['pending', 'open', 'closed'])) {
       errorMessage = 'Invalid status'
-    } else if (!forms.isIn(fields['status-theme'], ['disabled', 'off', 'on'])) {
+    } else if (!forms.isIn(fields['status-theme'], ['disabled', 'off', 'on']) &&
+        !forms.isId(fields['status-theme'])) {
       errorMessage = 'Invalid theme status'
     } else if (!forms.isIn(fields['status-entry'], ['disabled', 'off', 'on'])) {
       errorMessage = 'Invalid entry status'
-    } else if (!forms.isIn(fields['status-results'], ['disabled', 'off', 'on'])) {
+    } else if (!forms.isIn(fields['status-results'], ['disabled', 'off', 'on']) &&
+        !forms.isId(fields['status-results'])) {
       errorMessage = 'Invalid results status'
     } else if (event) {
       let matchingEventsCollection = await eventService.findEvents({ name: fields.name })
