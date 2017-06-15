@@ -43,8 +43,8 @@
     {% if canUserWrite(readingUser, post, options) %}
     <a class="btn btn-default btn-sm pull-right" href="{{ buildUrl(post, 'post', 'edit') }}">Edit post</a>
     {% endif %}
-    {% if not options.hideSpecialLabels and post.get('special_post_type') == 'announcement' %}
-      <div class="label label-warning pull-right" style="margin: 10px">ANNOUNCEMENT</div>
+    {% if not options.hideSpecialLabels and post.get('special_post_type') %}
+      <div class="label label-warning pull-right" style="margin: 10px">{{ post.get('special_post_type') | upper }}</div>
     {% endif %}
   </div>
 

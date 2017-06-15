@@ -80,6 +80,7 @@ async function editPost (req, res) {
         post.set('entry_id', req.query.entryId)
       }
       post.set('special_post_type', forms.sanitizeString(req.query['special_post_type']))
+      post.set('title', forms.sanitizeString(req.query.title))
       res.locals.post = post
     }
 
@@ -109,6 +110,7 @@ async function editPost (req, res) {
 async function savePost (req, res) {
   let post = res.locals.post
 
+  console.log(req.query)
   // Check permissions
   if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) ||
       !(post && res.locals.user)) {
@@ -155,7 +157,7 @@ async function savePost (req, res) {
 }
 
 function validateSpecialPostType (specialPostType, user) {
-  if (['announcement'].indexOf(specialPostType) === -1) {
+  if (constants.SPECIAL_POST_TYPES.indexOf(specialPostType) === -1) {
     throw new Error('invalid special post type: ' + specialPostType)
   }
   if (specialPostType === 'announcement' && !securityService.isMod(user)) {

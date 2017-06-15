@@ -1,13 +1,14 @@
 Welcome to the **Alakajam!** nightly (reset and updated every night). Look around and try the latest features as we code them! You can log in as `administrator/administrator` or `entrant/entrant`.
 
-#### Post bug reports and suggestions [on Github](https://github.com/mkalam-alami/wejam/issues)!
+#### Post bug reports and suggestions on [Google Forms](https://docs.google.com/forms/d/1RJqZKJL82xx5KqJ6pxUN0V6DtZWe5Ok5uEySv-7frvQ/prefill) or [Github](https://github.com/mkalam-alami/wejam/issues)!
 &nbsp;
 
 # Changelog
 
 ### June 15th
 
-* Events can now have tabs for theme voting or game results. Admins can display any blog post in them (until the actual features are made).
+* Article system (see the new "Feedback" header link)
+* Events can now have theme voting and game results tabs. While the features are missing, admins can display blog posts in it instead.
 
 ### June 14th
 

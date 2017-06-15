@@ -16,9 +16,11 @@ const securityService = require('../services/security-service')
 
 module.exports = {
   anyPageMiddleware,
+
   index,
   events,
   announcements,
+  article,
   chat
 }
 
@@ -89,6 +91,23 @@ async function announcements (req, res) {
   res.render('announcements', {
     posts: await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT })
   })
+}
+
+/**
+ * Articles
+ */
+async function article (req, res) {
+  // postName context variable is used to add a relevant "create article" mod button
+  res.locals.postName = forms.sanitizeString(req.params.name)
+  res.locals.post = await postService.findPost({
+    name: res.locals.postName,
+    specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE
+  })
+  if (res.locals.post) {
+    res.render('article')
+  } else {
+    res.errorPage(404)
+  }
 }
 
 /**

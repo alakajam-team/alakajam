@@ -38,6 +38,7 @@ module.exports = {
     router.get('/events', mainController.events)
     router.get('/announcements', mainController.announcements)
     router.get('/chat', mainController.chat)
+    router.get('/article/:name', mainController.article)
 
     // Users
 
@@ -58,6 +59,7 @@ module.exports = {
     // Mod dashboard
 
     router.get('/admin', adminController.adminHome)
+    router.get('/admin/articles', adminController.adminArticles)
     router.get('/admin/events', adminController.adminEvents)
     router.get('/admin/users', adminController.adminUsers)
     router.all('/admin/dev', adminController.adminDev)

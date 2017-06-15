@@ -150,6 +150,8 @@ function createBookshelfInstance (knexInstance) {
     if (samples) {
       log.info('Inserting samples...')
 
+      // Users
+
       await userService.register('entrant', 'entrant')
       let entrantUser = await userService.findByName('entrant')
       entrantUser.set({
@@ -157,6 +159,19 @@ function createBookshelfInstance (knexInstance) {
         'body': 'I am definitely **not** a robot.'
       })
       await entrantUser.save()
+
+      // Articles
+
+      let post = await postService.createPost(adminUser)
+      post.set({
+        title: 'feedback',
+        body: `We have set up a Google Form to gather any issues or suggestions you have. Click the link below to access it:
+## [Feedback and support form](https://docs.google.com/forms/d/1RJqZKJL82xx5KqJ6pxUN0V6DtZWe5Ok5uEySv-7frvQ/prefill)
+Alternately, you can contact us on <a href="https://github.com/mkalam-alami/wejam">Github</a> and <a href="https://twitter.com/AlakajamBang">Twitter</a>.`,
+        special_post_type: 'article',
+        published_at: new Date()
+      })
+      await post.save()
 
       // 1st event
 
@@ -196,7 +211,7 @@ function createBookshelfInstance (knexInstance) {
       userEntry.set('title', 'Awesome Game')
       await userEntry.save()
 
-      let post = await postService.createPost(entrantUser)
+      post = await postService.createPost(entrantUser)
       post.set({
         title: "I'm in!",
         body: "This is my second game and I'm really excited.",

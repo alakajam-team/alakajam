@@ -103,7 +103,7 @@ async function findEventByStatus (status) {
  * @return {Entry}
  */
 async function createEntry (user, event) {
-  if (await findUserEntryForEvent(user, event.id)) {
+  if (await findUserEntryForEvent(user, event.get('id'))) {
     throw new Error('User already has an entry for this event')
   }
 
@@ -155,7 +155,8 @@ async function findUserEntryForEvent (user, eventId) {
     query.innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .where({
         'entry.event_id': eventId,
-        'user_role.user_id': user.get('id')
+        'user_role.user_id': user.get('id'),
+        'user_role.node_type': 'entry'
       })
   }).fetch({ withRelated: ['userRoles'] })
 }

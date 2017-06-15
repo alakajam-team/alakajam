@@ -17,7 +17,7 @@
 
     <div class="form-group input-group-lg">
       <label for="title">Title</label>
-      <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ post.get('title') }}" required="required">
+      <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ post.get('title') }}" required="required" {{ 'disabled="disabled"' if post.get('special_post_type') === 'article' and post.get('id') }}>
     </div>
 
     {% if specialPostType %}

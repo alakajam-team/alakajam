@@ -17,6 +17,7 @@ module.exports = {
 
   findPosts,
   findPostById,
+  findPost,
   findLatestAnnouncement,
   findCommentById,
   findCommentsSortedForDisplay,
@@ -77,6 +78,19 @@ async function findPostById (postId) {
 }
 
 /**
+ * Finds one post
+ * @param  {object} options among "id name specialPostType"
+ * @return {Post}
+ */
+async function findPost (options = {}) {
+  let query = Post
+  if (options.id) query = query.where('id', options.id)
+  if (options.name) query = query.where('name', options.name)
+  if (options.specialPostType !== undefined) query = query.where('special_post_type', options.specialPostType)
+  return query.fetch({withRelated: ['author', 'userRoles']})
+}
+
+/**
  * Finds the latest announcement
  * @param  {Object} options amoung "eventId"
  * @return {Post}
@@ -126,7 +140,7 @@ async function findCommentsToUser (user) {
   return Comment.query(function (qb) {
     qb.leftJoin('user_role', function () {
       this.on('comment.node_id', '=', 'user_role.node_id')
-                .andOn('comment.node_type', '=', 'user_role.node_type')
+        .andOn('comment.node_type', '=', 'user_role.node_type')
     })
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '<>', user.id)

@@ -8,6 +8,7 @@
         {{ moderationLink('Edit post', 'pencil', buildUrl(context.post, 'post', 'edit')) if context.post.id }}
         {{ moderationLink('Edit entry', 'tower', buildUrl(context.entry, 'entry', 'edit')) if context.entry.id }}
         {{ moderationLink('Create announcement', 'pencil', buildUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'announcement' })) if context.event.id }}
+        {{ moderationLink('Create this article', 'pencil', buildUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'article', title: context.postName })) if context.postName and not context.post }}
 
         {% if isAdmin %}
         {{ moderationLink('Edit event', 'calendar', buildUrl(context.event, 'event', 'edit')) if context.event.id }}

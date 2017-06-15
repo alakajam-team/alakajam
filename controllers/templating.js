@@ -66,6 +66,7 @@ function buildUrl (model, type, page = null, options = {}) {
         if (options.eventId) pagePath += 'eventId=' + options.eventId
         if (options.entryId) pagePath += '&entryId=' + options.entryId
         if (options.specialPostType) pagePath += '&special_post_type=' + options.specialPostType
+        if (options.title) pagePath += '&title=' + options.title
         return '/post' + pagePath
       } else {
         return '/post/' + model.id + '/' + model.get('name') + pagePath

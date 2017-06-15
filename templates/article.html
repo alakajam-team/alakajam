@@ -1,0 +1,18 @@
+{% extends "_page.html" %}
+{% import "post/_macros-post.html" as postMacros %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10">
+      <h1>{{ post.get('title') | capitalize }}</h1>
+      <div class="post panel">
+        <div class="post__body panel-body">
+          {{ post.get('body') | markdown | safe }}
+        </div>
+      </div>
+  </div>
+</div>
+
+{% endblock %}

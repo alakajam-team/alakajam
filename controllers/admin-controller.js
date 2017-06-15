@@ -18,6 +18,7 @@ module.exports = {
   adminMiddleware,
 
   adminHome,
+  adminArticles,
 
   adminEvents,
   adminUsers,
@@ -34,7 +35,7 @@ async function adminMiddleware (req, res, next) {
 }
 
 /**
- * Edit home announcement
+ * Edit home announcements
  */
 async function adminHome (req, res) {
   let allPostsCollection = await postService.findPosts({
@@ -45,6 +46,30 @@ async function adminHome (req, res) {
   res.render('admin/admin-home', {
     draftPosts,
     publishedPosts: allPostsCollection.difference(draftPosts)
+  })
+}
+
+/**
+ * Edit articles
+ */
+async function adminArticles (req, res) {
+  let allPostsCollection = await postService.findPosts({
+    specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
+    withDrafts: true
+  })
+
+  let missingArticles = []
+  for (let articleName of constants.REQUIRED_ARTICLES) {
+    if (!allPostsCollection.find((post) => post.get('name') === articleName)) {
+      missingArticles.push(articleName)
+    }
+  }
+
+  let draftPosts = allPostsCollection.where({'published_at': null})
+  res.render('admin/admin-articles', {
+    draftPosts,
+    publishedPosts: allPostsCollection.difference(draftPosts),
+    missingArticles
   })
 }
 
