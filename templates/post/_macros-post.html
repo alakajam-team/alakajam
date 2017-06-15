@@ -1,6 +1,6 @@
 {% import "_macros-form.html" as formMacros %}
 
-{# Allowed options: hideHeading hideBody hideSpecialLabels showComments allowMods #}
+{# Allowed options: hideHeading hideBody hideSpecialLabels showId showComments allowMods #}
 {% macro post(post, readingUser, options = {}) %}
 
 {% set author = post.related('author') %}
@@ -16,6 +16,9 @@
   <{{h}} class="post__heading">
     <a href="{{ buildUrl(post, 'post') }}">
       {{ post.get('title') }}
+      {% if options.showId %}
+        <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
+      {% endif %}
     </a>
   </{{h}}>
   {% endif %}
