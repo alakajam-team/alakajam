@@ -130,7 +130,7 @@ async function dashboardSettings (req, res) {
     if (!res.headersSent) { // FIXME Why?
       let dashboardUser = res.locals.dashboardUser
 
-      if (fields.email && forms.isEmail(fields.email)) {
+      if (!forms.isEmail(fields.email)) {
         errorMessage = 'Invalid email'
       } else if (fields['social_web'] && !forms.isURL(fields['social_web'])) {
         errorMessage = 'Invalid URL'
@@ -233,14 +233,14 @@ async function doRegister (req, res) {
   let errorMessage = null
   if (!await inviteService.validateKey(fields.invite) && !config.DEBUG_ALLOW_INVALID_INVITE_KEYS) {
     errorMessage = 'Invalid invite key'
-  } else if (!(fields.name && fields.password)) {
-    errorMessage = 'Username or password missing'
+  } else if (!(fields.name && fields.password && fields.email)) {
+    errorMessage = 'A field is missing'
   } else if (!forms.isUsername(fields.name)) {
     errorMessage = 'Your usename is too weird (either too short, or has special chars other than "_" or "-", or starts with a number)'
   } else if (fields.password !== fields['password-bis']) {
     errorMessage = 'Passwords do not match'
   } else {
-    let result = await userService.register(fields.name, fields.password)
+    let result = await userService.register(fields.email, fields.name, fields.password)
     if (result === true) {
       doLogin(req, res)
     } else {

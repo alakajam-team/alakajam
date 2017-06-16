@@ -146,6 +146,13 @@ img.preview {
   font-weight: normal;
 }
 
+/* Required star
+.form-group.required label:after {
+  content:" *";
+  color:red;
+  font-weight: normal;
+}*/
+
 /* ============================== Navigation ============================== */
 
 .navbar-default {

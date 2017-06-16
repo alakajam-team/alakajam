@@ -40,6 +40,10 @@
   {% endif %}
 {% endmacro %}
 
+{% macro tooltip(title, options = {}) %}
+ <span class="glyphicon glyphicon-info-sign has-tooltip" data-toggle="tooltip" data-placement="{{ options.placement or 'top' }}" data-original-title="{{ title }}" style="font-size: 0.8rem"></span>
+{% endmacro %}
+
 {% macro radioStyles() %}
   <link rel="stylesheet" type="text/css" href="/static/css/icheck-skin.css" />
 {% endmacro %}

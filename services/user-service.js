@@ -9,6 +9,7 @@
 const crypto = require('crypto')
 const randomKey = require('random-key')
 const config = require('../config')
+const forms = require('../core/forms')
 const User = require('../models/user-model')
 const UserRole = require('../models/user-role-model')
 
@@ -61,11 +62,12 @@ async function findByName (name) {
 
 /**
  * Registers a new user
+ * @param email {string} email
  * @param name {string} name
- * @param password {string} clear password (will be hashed before storage)
+ * @param password {string} unencrypted password (will be hashed before storage)
  * @returns {boolean|string} true, or an error message
  */
-async function register (name, password) {
+async function register (email, name, password) {
   if (!name.match(USERNAME_VALIDATION_REGEX)) {
     return 'Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.'
   }
@@ -75,12 +77,16 @@ async function register (name, password) {
   if (await User.where('name', name).count() > 0) {
     return 'Username is taken'
   }
+  if (!forms.isEmail(email)) {
+    return 'Invalid email'
+  }
   let passwordValidationResult = validatePassword(password)
   if (passwordValidationResult !== true) {
     return passwordValidationResult
   }
 
   let user = new User({
+    email: email,
     name: name,
     title: name
   })

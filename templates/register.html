@@ -1,4 +1,5 @@
 {% extends "_page.html" %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block body %}
 
@@ -18,20 +19,24 @@
 
           <form method="post" action="/register">
             <div class="form-group">
-              <label for="username">Invite key</label>
-              <input type="text" class="form-control code" id="invite" name="invite" placeholder="XXXX-XXXX-XXXX-XXXX" value="{{ invite }}" />
+              <label for="username">Invite key {{ formMacros.tooltip('Alakajam! is an invite-only community. You must obtain a key from a member to join!', { placement: 'right' }) }}</label>
+              <input type="text" class="form-control code" id="invite" name="invite" placeholder="XXXX-XXXX-XXXX-XXXX" value="{{ invite }}" required="required" />
+            </div>
+            <div class="form-group">
+              <label for="username">Email address {{ formMacros.tooltip('Only used for password recovery. Any upcoming feature involving emails will be opt-in.', { placement: 'right' }) }}</label>
+              <input type="email" class="form-control" id="email" name="email" value="{{ email }}" required="required" />
             </div>
             <div class="form-group">
               <label for="username">Username</label>
-              <input type="text" class="form-control" id="name" name="name" placeholder="Username" value="{{ name }}" />
+              <input type="text" class="form-control" id="name" name="name" value="{{ name }}" required="required" />
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" class="form-control" id="password" name="password" placeholder="Password" />
+              <input type="password" class="form-control" id="password" name="password" required="required" />
             </div>
             <div class="form-group">
               <label for="password-bis">Repeat password</label>
-              <input type="password" class="form-control" id="password-bis" name="password-bis" placeholder="Repeat assword" />
+              <input type="password" class="form-control" id="password-bis" name="password-bis" required="required" />
             </div>
             <div class="form-group">
               <div class="checkbox">
