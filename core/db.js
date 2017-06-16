@@ -137,7 +137,7 @@ function createBookshelfInstance (knexInstance) {
 
     // Mandatory admin account
 
-    await userService.register('administrator', 'administrator')
+    await userService.register('administrator@example.com', 'administrator', 'administrator')
     let adminUser = await userService.findByName('administrator')
     adminUser.set({
       'title': 'Administrator',
@@ -152,7 +152,7 @@ function createBookshelfInstance (knexInstance) {
 
       // Users
 
-      await userService.register('entrant', 'entrant')
+      await userService.register('entrant@example.com', 'entrant', 'entrant')
       let entrantUser = await userService.findByName('entrant')
       entrantUser.set({
         'title': 'Entrant',
