@@ -59,7 +59,7 @@
       {% if entries.length > 0 %}
       <div class="row">
         {% for entry in entries %}
-        {{ eventMacros.entryThumb(entry, 4) }}
+          {{ eventMacros.entryThumb(entry, 4) }}
         {% endfor %}
       </div>
       {% else %}
@@ -67,9 +67,9 @@
       {% endif %}
 
       <h2>Latest posts</h2>
-      {% if posts.models.length > 0 %}
-        {% for post in posts.models %}
-        {{ postMacros.post(post, user) }}
+      {% if posts.length > 0 %}
+        {% for post in posts %}
+          {{ postMacros.post(post, user) }}
         {% endfor %}
       {% else %}
       <div class="well">This user didn't write posts... Yet!</div>

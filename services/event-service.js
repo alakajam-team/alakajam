@@ -139,7 +139,10 @@ async function findUserEntries (user) {
   let entryCollection = await Entry.query((qb) => {
     qb.distinct()
       .innerJoin('user_role', 'entry.id', 'user_role.node_id')
-      .where('user_role.user_id', user.get('id'))
+      .where({
+        'user_role.user_id': user.get('id'),
+        'user_role.node_type': 'entry'
+      })
   }).fetchAll({ withRelated: ['userRoles'] })
   return entryCollection.models
 }

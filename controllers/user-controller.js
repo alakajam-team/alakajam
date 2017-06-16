@@ -7,6 +7,7 @@
  */
 
 const config = require('../config')
+const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const userService = require('../services/user-service')
@@ -53,12 +54,19 @@ async function dashboardMiddleware (req, res, next) {
  * Display a user profile
  */
 async function viewUserProfile (req, res) {
-  let user = await userService.findByName(req.params.name)
-  if (user) {
+  let profileUser = await userService.findByName(req.params.name)
+  if (profileUser) {
+    let [entries, postsCollection] = await Promise.all([
+      eventService.findUserEntries(profileUser),
+      postService.findPosts({userId: profileUser.get('id')})
+    ])
+
     res.render('user/profile', {
-      profileUser: user,
-      entries: await eventService.findUserEntries(user),
-      posts: await postService.findPosts({ userId: user.get('id') })
+      profileUser,
+      entries,
+      posts: postsCollection.filter(function (post) {
+        return post.get('special_post_type') !== constants.SPECIAL_POST_TYPE_ARTICLE
+      })
     })
   } else {
     res.errorPage(400, 'No user exists with name ' + req.params.name)
