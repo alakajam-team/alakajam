@@ -49,7 +49,7 @@ function wasEdited (model) {
 
 /**
  * Finds all posts from a feed (specified through options)
- * @param  {object} options among "specialPostType withDrafts eventId entryId userId"
+ * @param  {object} options among "specialPostType allowDrafts eventId entryId userId"
  * @return {array(Post)}
  */
 async function findPosts (options = {}) {
@@ -64,7 +64,7 @@ async function findPosts (options = {}) {
           .where('user_role.user_id', options.userId)
           .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
     }
-    if (!options.withDrafts) qb = qb.where('published_at', '<=', new Date())
+    if (!options.allowDrafts) qb = qb.where('published_at', '<=', new Date())
     return qb
   })
     .orderBy('published_at', 'DESC')
@@ -79,7 +79,7 @@ async function findPostById (postId) {
 
 /**
  * Finds one post
- * @param  {object} options among "id name specialPostType"
+ * @param  {object} options among "id name specialPostType allowDrafts"
  * @return {Post}
  */
 async function findPost (options = {}) {
@@ -87,6 +87,7 @@ async function findPost (options = {}) {
   if (options.id) query = query.where('id', options.id)
   if (options.name) query = query.where('name', options.name)
   if (options.specialPostType !== undefined) query = query.where('special_post_type', options.specialPostType)
+  if (!options.allowDrafts) query = query.where('published_at', '<=', new Date())
   return query.fetch({withRelated: ['author', 'userRoles']})
 }
 

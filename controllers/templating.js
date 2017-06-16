@@ -6,6 +6,7 @@
  * @module controllers/templating
  */
 
+const constants = require('../core/constants')
 const forms = require('../core/forms')
 const securityService = require('../services/security-service')
 const postService = require('../services/post-service')
@@ -68,8 +69,10 @@ function buildUrl (model, type, page = null, options = {}) {
         if (options.specialPostType) pagePath += '&special_post_type=' + options.specialPostType
         if (options.title) pagePath += '&title=' + options.title
         return '/post' + pagePath
+      } else if (model.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE && !page) {
+        return '/article/' + model.get('name')
       } else {
-        return '/post/' + model.id + '/' + model.get('name') + pagePath
+        return '/post/' + model.id + '/' + (model.get('name') || 'untitled') + pagePath
       }
     } else if (type === 'comment') {
       // Comment model

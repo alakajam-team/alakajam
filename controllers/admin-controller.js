@@ -40,7 +40,7 @@ async function adminMiddleware (req, res, next) {
 async function adminHome (req, res) {
   let allPostsCollection = await postService.findPosts({
     specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
-    withDrafts: true
+    allowDrafts: true
   })
   let draftPosts = allPostsCollection.where({'published_at': null})
   res.render('admin/admin-home', {
@@ -55,7 +55,7 @@ async function adminHome (req, res) {
 async function adminArticles (req, res) {
   let allPostsCollection = await postService.findPosts({
     specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
-    withDrafts: true
+    allowDrafts: true
   })
 
   let missingArticles = []

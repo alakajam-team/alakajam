@@ -98,7 +98,7 @@ async function dashboardPosts (req, res) {
   }
   let allPostsCollection = await postService.findPosts({
     userId: res.locals.dashboardUser.get('id'),
-    withDrafts: true
+    allowDrafts: true
   })
   let draftPosts = allPostsCollection.where({'published_at': null})
 

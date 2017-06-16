@@ -21,7 +21,10 @@ function createModel () {
     initialize: function initialize (attrs) {
       modelPrototype.initialize.call(this)
       this.on('saving', function (model, attrs, options) {
-        model.set('name', slug(model.get('title') || ''))
+        this.trigger('titleChanged')
+      })
+      this.on('titleChanged', function () {
+        this.set('name', slug(this.get('title') || ''))
       })
       return attrs
     },

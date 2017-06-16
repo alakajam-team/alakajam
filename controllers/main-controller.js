@@ -101,9 +101,12 @@ async function article (req, res) {
   res.locals.postName = forms.sanitizeString(req.params.name)
   res.locals.post = await postService.findPost({
     name: res.locals.postName,
-    specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE
+    specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
+    allowDrafts: true
   })
-  if (res.locals.post) {
+
+  if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||
+      securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {
     res.render('article')
   } else {
     res.errorPage(404)

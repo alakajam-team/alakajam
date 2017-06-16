@@ -81,6 +81,20 @@ async function editPost (req, res) {
       }
       post.set('special_post_type', forms.sanitizeString(req.query['special_post_type']))
       post.set('title', forms.sanitizeString(req.query.title))
+
+      // Check whether we're trying to create an existing article
+      if (post.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE) {
+        post.trigger('titleChanged')
+        let existingPost = await postService.findPost({
+          name: post.get('name'),
+          specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
+          allowDrafts: true
+        })
+        if (existingPost) {
+          post = existingPost
+        }
+      }
+
       res.locals.post = post
     }
 
@@ -110,7 +124,6 @@ async function editPost (req, res) {
 async function savePost (req, res) {
   let post = res.locals.post
 
-  console.log(req.query)
   // Check permissions
   if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) ||
       !(post && res.locals.user)) {

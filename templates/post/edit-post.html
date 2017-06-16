@@ -17,7 +17,7 @@
 
     <div class="form-group input-group-lg">
       <label for="title">Title</label>
-      <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{ post.get('title') }}" required="required" {{ 'disabled="disabled"' if post.get('special_post_type') === 'article' and post.get('id') }}>
+      <input type="text" class="form-control" id="title" name="title" value="{{ post.get('title') }}" required="required" {{ 'readonly="readonly"' if post.get('special_post_type') === 'article' and post.get('id') }}>
     </div>
 
     {% if specialPostType %}
@@ -27,22 +27,22 @@
     </div>
     {% endif %}
 
-    {% if event or entry %}
+    {% if relatedEvent or relatedEntry %}
     <div class="form-group">
       <label>Topics</label>
       <div class="form-inline">
-        {% if event %}
+        {% if relatedEvent %}
         Event <span class="label label-default">
-          {{ event.get('title') }}
+          {{ relatedEvent.get('title') }}
         </span>&nbsp;
         {% endif %}
         {% if entry %}
         Entry <span class="label label-default">
-          {{ entry.get('title') }}
+          {{ relatedEntry.get('title') }}
         </span>
         {% endif %}
-        <input type="hidden" name="event_id" value="{{ event.get('id') if event }}" />
-        <input type="hidden" name="entry_id" value="{{ entry.get('id') if entry }}" />
+        <input type="hidden" name="event_id" value="{{ relatedEvent.get('id') if relatedEvent }}" />
+        <input type="hidden" name="entry_id" value="{{ relatedEntry.get('id') if relatedEntry }}" />
       </div>
     </div>
     {% endif %}
@@ -72,7 +72,7 @@
       <div class="col-xs-8 post__schedule text-right form-inline">
         <div class="form-group">
           <label for="published-at">Publication date</label>
-          <input type="text" id="published-at" name="published-at" class="form-control" value="{{ post.get('published_at') | pickerDateTime }}" placeholder="Publication date" />
+          <input type="text" id="published-at" name="published-at" class="form-control" value="{{ post.get('published_at') | pickerDateTime }}" />
         </div>
         <div class="form-group">
           <input type="submit" class="btn btn-primary" name="save-custom" value="Schedule" />

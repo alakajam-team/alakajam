@@ -13,6 +13,9 @@
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
       <h1>{{ post.get('title') }}</h1>
+      {% if not post.get('published_at') %}
+        <div class="alert alert-warning"><strong>Draft post</strong> Other users can't see it until it is published.</div>
+      {% endif %}
       {{ postMacros.post(post, user, {hideHeading: true}) }}
     </div>
   </div>
