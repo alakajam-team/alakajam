@@ -36,6 +36,7 @@ module.exports = {
 
     router.get('/', mainController.index)
     router.get('/events', mainController.events)
+    router.get('/people', mainController.people)
     router.get('/announcements', mainController.announcements)
     router.get('/chat', mainController.chat)
     router.get('/article/:name', mainController.article)

@@ -5,6 +5,12 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 # Changelog
 
+### June 16th
+
+* New "People" page in the header
+* Changes to the user registration process
+* Post drafts & articles now work better
+
 ### June 15th
 
 * Article system (see the new "Feedback" header link)

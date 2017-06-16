@@ -13,7 +13,7 @@
           <h4 style="margin: 0">User dashboard</h4>
         </div>
         <div class="list-group-item">
-          {{ userMacros.userThumb(dashboardUser) }}
+          {{ userMacros.userThumb(dashboardUser, { fullWidth: true }) }}
         </div>
         {{ dashboardLink(dashboardUser, 'feed', 'Home', options) }}
         {{ dashboardLink(dashboardUser, 'posts', 'My Posts', options) }}

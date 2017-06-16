@@ -19,6 +19,7 @@ module.exports = {
 
   index,
   events,
+  people,
   announcements,
   article,
   chat
@@ -90,6 +91,16 @@ async function events (req, res) {
 async function announcements (req, res) {
   res.render('announcements', {
     posts: await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT })
+  })
+}
+
+/**
+ * People listing
+ */
+async function people (req, res) {
+  let usersCollection = await userService.findAll()
+  res.render('people', {
+    users: usersCollection.models
   })
 }
 

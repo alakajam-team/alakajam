@@ -1,19 +1,18 @@
 {% import "_macros-form.html" as formMacros %}
 
 {# Allowed options: hideHeading hideBody hideSpecialLabels showComments allowMods #}
-{% macro userThumb(user) %}
+{% macro userThumb(user, options = {}) %}
 
-<!-- TODO Clean styling -->
-<div style="padding: 8px">
+<div class="user-thumb col-sm-4 {{ 'full-width' if options.fullWidth }}">
     {% if user.get('avatar') %}
-    <img src="{{ dashboardUser.get('avatar') }}" style="width: 50px; float: left" />
+    <img src="{{ dashboardUser.get('avatar') }}" class="user-thumb__avatar" />
     {% else %}
-    <img src="/static/images/default-avatar.png" style="width: 50px; float: left" />
+    <img src="/static/images/default-avatar.png" class="user-thumb__avatar" />
     {% endif %}
-    <h1 class="profile__title" style="font-size: 26px; padding-left: 60px; margin-top: 0">
+    <h1 class="user-thumb__title">
       <a href="{{ buildUrl(user, 'user') }}">{{ user.get('title') }}</a>
     </h1>
-    <h3 class="profile__name" style="font-size: 18px; padding-left: 60px; margin-bottom: 2px">
+    <h3 class="user-thumb__name">
       {{ user.get('name') }}
     </h3>
 </div>

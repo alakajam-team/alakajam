@@ -755,6 +755,49 @@ img.preview {
 
 }
 
+/* User thumbnail */
+
+.user-thumb {
+  overflow: hidden;
+  margin-bottom: 10px;
+
+  &.full-width {
+    width: 100%;
+    float: none;
+    margin-bottom: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  &__avatar {
+    width: 50px;
+    float: left;
+  }
+  &.full-width &__avatar {
+    float: none;
+    margin-bottom: 5px;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    padding-left: 60px;
+    margin: 0;
+  }
+  &.full-width &__title {
+    padding-left: 0;
+  }
+
+  &__name {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    padding-left: 60px;
+    margin-bottom: 2px;
+  }
+  &.full-width &__name {
+    padding-left: 0;
+  }
+}
+
 /* ============================== Home page ============================== */
 
 .home-announcement {
