@@ -166,7 +166,7 @@ function createBookshelfInstance (knexInstance) {
       post.set({
         title: 'feedback',
         body: `We have set up a Google Form to gather any issues or suggestions you have. Click the link below to access it:
-## [Feedback and support form](https://docs.google.com/forms/d/1RJqZKJL82xx5KqJ6pxUN0V6DtZWe5Ok5uEySv-7frvQ/prefill)
+## [Feedback and support form](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform?usp=sf_link)
 Alternately, you can contact us on <a href="https://github.com/mkalam-alami/wejam">Github</a> and <a href="https://twitter.com/AlakajamBang">Twitter</a>.`,
         special_post_type: 'article',
         published_at: new Date()
