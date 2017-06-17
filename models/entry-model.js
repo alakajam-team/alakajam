@@ -70,6 +70,7 @@ function createModel () {
         table.string('category')
         table.string('name')
         table.string('title')
+        table.string('description', 2000)
         table.string('body', 10000)
         table.string('results')
         table.string('picture') // TODO Replace with document API

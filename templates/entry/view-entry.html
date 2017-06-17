@@ -1,5 +1,6 @@
 {% extends "_page.html" %}
 {% import "post/_macros-post.html" as postMacros %}
+{% import "user/_macros-user.html" as userMacros %}
 {% import "_macros-form.html" as formMacros %}
 
 {% block styles %}
@@ -29,31 +30,43 @@
       </div>
       {% endif %}
 
+      {% if posts.models.length > 0 %}
       <h2>Latest posts</h2>
       {% for post in posts.models %}
-      {{ postMacros.post(post, user, {hideBody: true}) }}
+        {{ postMacros.post(post, user, {hideBody: true}) }}
       {% endfor %}
+      {% endif %}
 
       <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
       {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
 
     </div>
     <div class="col-md-4 user-contents">
+      {% if entry.get('description') %}
+      <h3>Description</h3>
       <div class="well">
-        <p>A game by 
-        {% for userRole in entry.related('userRoles').models %}
-        <a href="{{ buildUrl(userRole, 'user') }}">{{ userRole.get('user_title') }}</a>{{ ', ' if not loop.last }}
-        {% endfor %}
-        </p>
+        <p>{{ entry.get('description') }}</p>
+      </div>
+      {% endif %}
 
+      <h3>Links</h3>
+      <div class="entry__links">
         {% for link in entry.get('links') %}
            <a class="btn btn-primary" href="{{ link.url }}">
-           {{ link.title }}
+           {{ link.label }}
            </a>
         {% endfor %}
         {% if canUserWrite(user, entry) %}
         <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
         {% endif %}
+      </div>
+
+      <h3 style="margin-top: 10px">Author{{ 's' if entry.related('userRoles').models.length > 1 }}</h3>
+
+      <div class="row">
+        {% for userRole in entry.related('userRoles').models %}
+          {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}
+        {% endfor %}
       </div>
     </div>
   </div>

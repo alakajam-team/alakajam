@@ -21,17 +21,21 @@
     </div>
 
     <div class="row entry">
-      <div class="col-md-7">
+      <div class="col-md-8">
         <div class="form-group input-group-lg">
-          <label for="title">Game name</label>
-          <input type="text" class="form-control" id="title" name="title" placeholder="Game name" value="{{ entry.get('title') }}" required="required">
+          <label for="title">Game title</label>
+          <input type="text" class="form-control" name="title" value="{{ entry.get('title') }}" required="required">
         </div>
         <div class="form-group">
-          <label for="title">Link</label>
-          <input type="url" class="form-control" id="link" name="link" placeholder="http://..." value="{{ entry.get('links')[0].url }}">
+          <label for="title">Short description</label>
+          <textarea class="form-control" name="description" required="required">{{ entry.get('description') }}</textarea>
         </div>
         <div class="form-group">
-          <label for="title">Description</label>
+          <label for="title">Links</label>
+          <div class="js-links"></div>
+        </div>
+        <div class="form-group">
+          <label for="title">Details</label>
           <div class="user-contents user-contents__editor">
             {{ formMacros.editor('body', entry.get('body')) }}
           </div>
@@ -51,7 +55,7 @@
         </div>
       </div>
       
-      <div class="col-md-5">
+      <div class="col-md-4">
         <div class="form-group">
           <label for="title">Picture</label>
           {% if entry.has('pictures') and entry.get('pictures').length > 0 %}
@@ -65,6 +69,23 @@
   </form>
 </div>
 
+<script id="js-links-template" type="text/template">
+  <% for (var i in links) { %>
+    <div class="row" style="margin-bottom: 5px">
+      <div class="col-xs-3">
+        <input type="text" class="js-link-label form-control" data-row="<%= i %>" name="label<%= i %>" placeholder="Label" value="<%= links[i].label %>">
+      </div>
+      <div class="col-xs-8">
+        <input type="url" class="js-link-url form-control"  data-row="<%= i %>" name="url<%= i %>" placeholder="URL" value="<%= links[i].url %>">
+      </div>
+      <div class="col-xs-1">
+        <input type="button" class="js-remove-link btn btn-sm" data-row="<%= i %>" value="x" />
+      </div>
+    </div>
+  <% } %>
+  <input type="button" class="js-add-link btn btn-sm" value="Add link" />
+</script>
+
 {% endblock %}
 
 {% block scripts %} 
@@ -72,6 +93,7 @@
 <script>
 
 // Sync H1 with title input
+
 var $titleInput = $('#title')
 var $titleDisplay = $('#title-display')
 var defaultText = "My {{ event.get('title') }} entry"
@@ -80,6 +102,42 @@ refreshTitleDisplay()
 
 function refreshTitleDisplay () {
   $titleDisplay.text($titleInput.val() || defaultText)
+}
+
+// Manage links
+
+var linksTemplate = _.template($('#js-links-template').html())
+var links = {{ entry.get('links') | default('[]') | dump | safe }}
+if (links.length === 0) {
+  links.push([])
+}
+refreshLinksView()
+
+function refreshLinksView () {
+  $('.js-links').html(linksTemplate({ links: links }))
+  $('.js-add-link').click(function () {
+    refreshLinksModel()
+    links.push({})
+    refreshLinksView()
+  })
+  $('.js-remove-link').click(function () {
+    refreshLinksModel()
+    links.splice($(this).attr('data-row'), 1)
+    if (links.length === 0) {
+      links.push({})
+    }
+    refreshLinksView()
+  })
+}
+function refreshLinksModel () {
+  $('.js-link-label').each(function () {
+    $this = $(this)
+    links[$this.attr('data-row')].label = $this.val()
+  })
+  $('.js-link-url').each(function () {
+    $this = $(this)
+    links[$this.attr('data-row')].url = $this.val()
+  })
 }
 
 </script>

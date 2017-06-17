@@ -47,6 +47,9 @@ async function entryMiddleware (req, res, next) {
  * Browse entry
  */
 async function viewEntry (req, res) {
+  // Let the template display user thumbs
+  await res.locals.entry.load('userRoles.user')
+
   res.render('entry/view-entry', {
     sortedComments: await postService.findCommentsSortedForDisplay(res.locals.entry),
     posts: await postService.findPosts({
@@ -93,14 +96,26 @@ async function saveEntry (req, res) {
   } else if (!res.locals.user || (res.locals.entry && !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true }))) {
     res.errorPage(403)
   } else if (!res.headersSent) { // FIXME Why?
-    // Update entry
-
     let errorMessage = null
 
-    if (fields.link && !forms.isURL(fields.link)) {
-      errorMessage = 'Invalid link'
+    // Links parsing and validation
+    let links = []
+    let i = 0
+    while (fields['url' + i]) {
+      let label = forms.sanitizeString(fields['label' + i])
+      let url = fields['url' + i]
+      if (!forms.isURL(url) || !label) {
+        errorMessage = 'Link #' + i + ' is invalid'
+        break
+      }
+      links.push({
+        label,
+        url
+      })
+      i++
     }
 
+    // Entry update
     if (!errorMessage) {
       if (!res.locals.entry) {
         res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
@@ -108,16 +123,9 @@ async function saveEntry (req, res) {
       let entry = res.locals.entry
 
       let picturePath = '/entry/' + entry.get('id')
-      let linksObject = null
-      if (fields.link) {
-        linksObject = [{
-          url: fields.link,
-          title: 'Play'
-        }]
-      }
-
       entry.set('title', forms.sanitizeString(fields.title))
-      entry.set('links', linksObject)
+      entry.set('description', forms.sanitizeString(fields.description))
+      entry.set('links', links)
       entry.set('body', forms.sanitizeMarkdown(fields.body))
       if (fields['picture-delete'] && entry.get('pictures').length > 0) {
         await fileStorage.remove(entry.get('pictures')[0])

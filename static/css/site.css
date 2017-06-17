@@ -97,6 +97,11 @@ h4 {
   color: var(--text-light);
 }
 
+textarea.form-control {
+  resize: none;
+  height: 70px;
+}
+
 a {
   color: var(--alt);
   
@@ -709,6 +714,16 @@ img.preview {
     }
   }
 
+  &__links {
+    margin-bottom: 20px;
+
+    & a {
+      width: 100%;
+      display: block;
+      margin-bottom: 5px;
+    }
+  }
+
 }
 
 /* ============================== User pages ============================== */
@@ -764,9 +779,13 @@ img.preview {
   &.full-width {
     width: 100%;
     float: none;
-    margin-bottom: 0;
     padding: 0;
+    margin-left: 15px;
+  }
+  &.centered {
     text-align: center;
+    margin-left: 0;
+    margin-bottom: 0;
   }
 
   &__avatar {
@@ -774,8 +793,10 @@ img.preview {
     float: left;
   }
   &.full-width &__avatar {
-    float: none;
     margin-bottom: 5px;
+  }
+  &.centered &__avatar {
+    float: none;
   }
 
   &__title {
@@ -783,7 +804,7 @@ img.preview {
     padding-left: 60px;
     margin: 0;
   }
-  &.full-width &__title {
+  &.centered &__title {
     padding-left: 0;
   }
 
@@ -793,7 +814,7 @@ img.preview {
     padding-left: 60px;
     margin-bottom: 2px;
   }
-  &.full-width &__name {
+  &.centered &__name {
     padding-left: 0;
   }
 }
