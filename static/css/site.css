@@ -714,6 +714,12 @@ img.preview {
     }
   }
 
+  &__description {
+    font-size: 1.05rem;
+    font-weight: bold;
+    padding: 15px;
+  }
+
   &__links {
     margin-bottom: 20px;
 

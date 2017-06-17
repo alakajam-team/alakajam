@@ -40,7 +40,7 @@ const showdownConverter = new showdown.Converter()
  * @return {string}
  */
 function sanitizeString (string) {
-  return striptags(string)
+  return striptags(string).trim()
 }
 
 /**

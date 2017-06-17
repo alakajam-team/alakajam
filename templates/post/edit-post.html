@@ -14,6 +14,10 @@
   <h1 id="title-display"></h1>
 
   <form method="post">
+        
+    {% if errorMessage %}
+      <div class="alert alert-warning">{{ errorMessage }}</div>
+    {% endif %}
 
     <div class="form-group input-group-lg">
       <label for="title">Title</label>

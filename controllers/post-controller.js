@@ -127,42 +127,54 @@ async function savePost (req, res) {
   // Check permissions
   if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) ||
       !(post && res.locals.user)) {
-    // Create new post if needed
-    if (!post) {
-      post = await postService.createPost(res.locals.user)
-      let specialPostType = req.query['special_post_type']
-      if (specialPostType) {
-        validateSpecialPostType(specialPostType, res.locals.user)
-        post.set('special_post_type', specialPostType)
-      }
-    }
-
-    // Fill post from form info
+    let redirectToView = false
     let {fields} = await req.parseForm()
-    post.set('title', forms.sanitizeString(fields.title))
-    post.set('body', forms.sanitizeMarkdown(fields.body))
-    post.set('event_id', forms.sanitizeString(fields['event_id']))
-    post.set('entry_id', forms.sanitizeString(fields['entry_id']))
-
-    // Publication strategy
-    let redirectToView = true
-    if (fields.publish) {
-      post.set('published_at', new Date())
-    } else if (fields.unpublish) {
-      post.set('published_at', null)
-      redirectToView = false
-    } else if (fields['save-custom']) {
-      post.set('published_at', moment(fields['published-at'], constants.PICKER_DATE_TIME_FORMAT).toDate())
+    let title = forms.sanitizeString(fields.title)
+    let errorMessage = null
+    if (!title) {
+      errorMessage = 'Title is mandatory'
     }
 
-    // Save
-    await post.save()
+    if (!errorMessage) {
+      // Create new post if needed
+      if (!post) {
+        post = await postService.createPost(res.locals.user)
+        let specialPostType = req.query['special_post_type']
+        if (specialPostType) {
+          validateSpecialPostType(specialPostType, res.locals.user)
+          post.set('special_post_type', specialPostType)
+        }
+      }
+
+      // Fill post from form info
+      post.set('title', forms.sanitizeString(fields.title))
+      post.set('body', forms.sanitizeMarkdown(fields.body))
+      post.set('event_id', forms.sanitizeString(fields['event_id']))
+      post.set('entry_id', forms.sanitizeString(fields['entry_id']))
+
+      // Publication & redirection strategy
+      redirectToView = true
+      if (fields.publish) {
+        post.set('published_at', new Date())
+      } else if (fields.unpublish) {
+        post.set('published_at', null)
+        redirectToView = false
+      } else if (fields['save-custom']) {
+        post.set('published_at', moment(fields['published-at'], constants.PICKER_DATE_TIME_FORMAT).toDate())
+      }
+
+      // Save
+      await post.save()
+    }
 
     // Render
     if (redirectToView) {
       res.redirect(templating.buildUrl(post, 'post')) // TODO move buildUrl to routing-service
     } else {
-      res.render('post/edit-post', { post })
+      res.render('post/edit-post', {
+        post,
+        errorMessage
+      })
     }
   } else {
     res.errorPage(403)

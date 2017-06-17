@@ -44,8 +44,8 @@
     <div class="col-md-4 user-contents">
       {% if entry.get('description') %}
       <h3>Description</h3>
-      <div class="well">
-        <p>{{ entry.get('description') }}</p>
+      <div class="well entry__description">
+        {{ entry.get('description') }}
       </div>
       {% endif %}
 
@@ -56,6 +56,9 @@
            {{ link.label }}
            </a>
         {% endfor %}
+        {% if entry.get('links').length === 0 or not entry.get('links')[0].url %}
+          <div class="well">No links yet.</div>
+        {% endif %}
         {% if canUserWrite(user, entry) %}
         <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
         {% endif %}

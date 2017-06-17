@@ -61,7 +61,10 @@ async function findPosts (options = {}) {
     if (options.guildId) qb = qb.where('guild_id', options.guildId)
     if (options.userId) {
       qb = qb.innerJoin('user_role', 'post.id', 'user_role.node_id')
-          .where('user_role.user_id', options.userId)
+          .where({
+            'user_role.user_id': options.userId,
+            'user_role.node_type': 'post'
+          })
           .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
     }
     if (!options.allowDrafts) qb = qb.where('published_at', '<=', new Date())

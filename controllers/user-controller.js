@@ -82,8 +82,7 @@ async function dashboardFeed (req, res) {
     postService.findCommentsToUser(res.locals.dashboardUser),
     eventService.findUserEntries(res.locals.dashboardUser),
     postService.findPosts({
-      userId: res.locals.dashboardUser.id,
-      specialPostType: null
+      userId: res.locals.dashboardUser.id
     })
   ])
 
@@ -92,7 +91,7 @@ async function dashboardFeed (req, res) {
     byUser: byUserCollection.take(20),
     toUser: toUserCollection.take(20),
     latestEntry: latestEntries.length > 0 ? latestEntries[0] : null,
-    latestPosts: latestPostsCollection.take(1)
+    latestPosts: latestPostsCollection.take(3)
   })
 }
 
