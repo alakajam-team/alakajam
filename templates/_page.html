@@ -36,11 +36,11 @@
       {% endif %}
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav">
-          {% if liveEvent and path !== '/' %}
+          {% if liveEvent %}
           <li class="live {{ 'active' if isLiveEvent }}">
             <a href="{{ buildUrl(liveEvent, 'event') }}">
               <div class="live__icon">
-                <span class="label label-danger ">Live!</span>
+                <span class="label">Live!</span>
               </div>
               <div class="live__event">
                 {{ liveEvent.get('title') }}
