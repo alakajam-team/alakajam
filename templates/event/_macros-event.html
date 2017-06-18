@@ -43,17 +43,19 @@
 {% endmacro %}
 
 {% macro eventTable(event, withEntries = true, entryCols = 4, options = {}) %}
-  <div class="event-table {{ 'live' if event.get('status') == 'open' }}">
+  <div class="event-table {{ 'live' if not options.neutralStatus and event.get('status') === 'open' }}">
     <div class="row">
       <div class="col-md-12">
         <a class="event-table__header" href="{{ buildUrl(event, 'event') }}">
           <div class="row">
             <div class="col-sm-7">
               <h2>
-                {% if event.get('status') === 'pending' %}
-                  <span class="label label-default event-table__status">Upcoming</span>
-                {% elseif event.get('status') === 'open' %}
-                  <span class="label label-danger event-table__status">Live!</span>
+                {% if not options.neutralStatus %}
+                  {% if event.get('status') === 'pending' %}
+                    <span class="label label-default event-table__status">Upcoming</span>
+                  {% elseif event.get('status') === 'open' %}
+                    <span class="label label-danger event-table__status">Live!</span>
+                  {% endif %}
                 {% endif %}
                 {{ event.get('title') }}
               </h2>

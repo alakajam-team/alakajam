@@ -7,9 +7,32 @@
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
       <h2>Events</h2>
-      {% for event in events %}
-        {{ eventMacros.eventTable(event, true, 3) }}
-      {% endfor %}
+      {% if open.length > 0 %}
+      <div class="events-block events-block__live">
+        <h2>On now!</h2>
+        {% for event in open %}
+          {{ eventMacros.eventTable(event, true, 3, { neutralStatus: true }) }}
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      {% if pending.length > 0 %}
+      <div class="events-block events-block__pending">
+        <h2>Upcoming events</h2>
+        {% for event in pending %}
+          {{ eventMacros.eventTable(event, true, 3, { neutralStatus: true }) }}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if closed.length > 0 %}
+      <div class="events-block events-block__closed">
+        <h2>Past events</h2>
+        {% for event in closed %}
+          {{ eventMacros.eventTable(event, true, 3, { neutralStatus: true }) }}
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

@@ -9,14 +9,18 @@
   
   --main: #00b1d5;
   --main-light: color(var(--main) lightness(46%));
+  --main-lighter: color(var(--main) alpha(25%));
   --main-dark: color(var(--main) lightness(25%));
   --main-transparent: color(var(--main) alpha(10%));
   
   --alt: #f2536d;
   --alt-light: color(var(--alt) lightness(70%));
-  --alt-lighter: color(var(--alt) lightness(85%));
+  --alt-lighter: color(var(--alt) alpha(25%));
   --alt-dark: color(var(--alt) lightness(35%));
   --alt-transparent: color(var(--alt) alpha(10%));
+
+  --neutral: #888;
+  --neutral-lighter: color(var(--neutral) alpha(25%));
   
   /* Mod / Admin colors (based on 'warning' and 'danger' colors from the Bootstrap theme) */
   
@@ -587,6 +591,45 @@ img.preview {
 
 
 /* ============================== Events ============================== */
+
+/* Events page */
+
+.events-block {
+  padding: 10px;
+  margin-bottom: 20px;
+
+  & > h2 {
+    margin: -10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    color: white;
+  }
+
+  &__live {
+    background-color: var(--alt-lighter);
+
+    & > h2 {
+      background-color: var(--alt);
+    }
+  }
+
+  &__pending {
+    background-color: var(--main-lighter);
+
+    & > h2 {
+      background-color: var(--main);
+    }
+  }
+
+  &__closed {
+    background-color: var(--neutral-lighter);
+
+    & > h2 {
+      background-color: var(--neutral);
+    }
+  }
+}
+
 
 /* Event table */
 

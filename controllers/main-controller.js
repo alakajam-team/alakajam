@@ -78,10 +78,15 @@ async function index (req, res) {
  * Events listing
  */
 async function events (req, res) {
-  let eventsCollection = await eventService.findEvents()
-  await eventsCollection.load('entries.userRoles')
+  let [pendingCollection, openCollection, closedCollection] = await Promise.all([
+    await eventService.findEvents({status: 'pending'}),
+    await eventService.findEvents({status: 'open'}),
+    await eventService.findEvents({status: 'closed'})
+  ])
   res.render('events', {
-    events: eventsCollection.models
+    pending: pendingCollection.models,
+    open: openCollection.models,
+    closed: closedCollection.models
   })
 }
 
