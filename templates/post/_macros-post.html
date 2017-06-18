@@ -43,12 +43,16 @@
         <span class="badge">Draft</span>
       {% endif %}
     • {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
-    {% if canUserWrite(readingUser, post, options) %}
-    <a class="btn btn-default btn-sm pull-right" href="{{ buildUrl(post, 'post', 'edit') }}">Edit post</a>
-    {% endif %}
-    {% if not options.hideSpecialLabels and post.get('special_post_type') %}
-      <div class="label label-warning pull-right" style="margin: 10px">{{ post.get('special_post_type') | upper }}</div>
-    {% endif %}
+    <div class="pull-right {{ 'post__special-type' if post.get('special_post_type') }}">
+      {% if not options.hideSpecialLabels and post.get('special_post_type') %}
+        <span class="post__special-type-label">
+          {{ post.get('special_post_type') | upper }}
+        </span>
+      {% endif %}
+      {% if canUserWrite(readingUser, post, options) %}
+      <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit post</a>
+      {% endif %}
+    </div>
   </div>
 
   {% if not options.hideBody %}

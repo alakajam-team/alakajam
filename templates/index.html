@@ -2,21 +2,29 @@
 {% import "event/_macros-event.html" as eventMacros %}
 {% import "post/_macros-post.html" as postMacros %}
 
+{% block styles %}
+<link rel="stylesheet" href="/static/css/flipclock.css" />
+{% endblock %}
+
 {% block body %}
 
 <div class="container">
   <div class="row">
-    <div class="col-md-offset-2 col-md-8">
+
+    <div class="col-lg-offset-1 col-lg-10">
       {% if liveEvent %}
-        {{ eventMacros.eventTable(liveEvent, false, 6) }}
+  
+        <h1 class="text-center"><a href="{{ buildUrl(liveEvent, 'event') }}">{{ liveEvent.get('title') }}</a> ends in</h1>
+        <div class="home-countdown"></div>
+
+        {{ eventMacros.eventTable(liveEvent, false, 6, { latestEventAnnouncement: announcement, path: path }) }}
       {% elseif nextEvents and nextEvents.length > 0 %}
         {% for nextEvent in nextEvents %}
-          {{ eventMacros.eventTable(nextEvent, false, 6) }}
+          {{ eventMacros.eventTable(nextEvent, false, 6, { latestEventAnnouncement: announcement, path: path }) }}
         {% endfor %}
       {% else %}
         <div class="well">No upcoming event.</div>
       {% endif %}
-      <a href="/events" class="btn btn-sm btn-default pull-right">Browse events <span class="glyphicon glyphicon-chevron-right"></span></a>
     </div>
   </div>
   <div class="row">
@@ -31,4 +39,15 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="/static/js/flipclock.min.js"></script>
+<script type="text/javascript">
+// TODO Actual countdown
+$('.home-countdown').FlipClock(100000, { 
+  clockFace: 'DailyCounter',
+  countdown: true
+});
+</script>
 {% endblock %}

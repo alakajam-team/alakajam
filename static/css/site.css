@@ -8,12 +8,13 @@
   --text-lighter: color(var(--text) alpha(40%));
   
   --main: #00b1d5;
-  --main-light: color(var(--main) lightness(45%));
+  --main-light: color(var(--main) lightness(46%));
   --main-dark: color(var(--main) lightness(25%));
   --main-transparent: color(var(--main) alpha(10%));
   
   --alt: #f2536d;
   --alt-light: color(var(--alt) lightness(70%));
+  --alt-lighter: color(var(--alt) lightness(85%));
   --alt-dark: color(var(--alt) lightness(35%));
   --alt-transparent: color(var(--alt) alpha(10%));
   
@@ -40,7 +41,7 @@
 
   /* UI elements */
   
-  --navbar-height: 50px;
+  --navbar-height: 60px;
   --eventbar-height: 60px;
 }
 
@@ -64,10 +65,10 @@ body {
   background-color: var(--bg);
   color: var(--text);
   height: 100%;
-  padding-top: 70px;
+  padding-top: calc(var(--navbar-height) + 20px);
 }
 body.in-event {
-  padding-top: 130px;
+  padding-top: calc(var(--navbar-height) + var(--eventbar-height) + 20px);
 }
 
 div {
@@ -170,19 +171,17 @@ img.preview {
   & .navbar-header {
     & .navbar-brand {
       @apply --alt-font;
+      padding: 10px;
       font-size: 2rem;
       font-weight: bold;
       height: var(--navbar-height);
       text-shadow: 0px 3px 0px var(--main-dark);
       color: white;
-      transition: 0.15s;
 
       &:hover {
         text-shadow: 0px 3px 0px var(--alt);
         color: white;
         font-size: 2.2rem;
-        transform: rotate(-2deg);
-        transition: 0.03s;
         
         & img {
           border: 0;
@@ -192,6 +191,8 @@ img.preview {
       & img {
         height: 100%;
         display: inline-block;
+        margin-right: 5px;
+        margin-top: -2px;
       }
     }
   }
@@ -226,14 +227,34 @@ img.preview {
       }
 
       &.live a {
-        background-color: var(--alt);
+        background-color: var(--main-light);
         line-height: calc(var(--navbar-height) / 3);
         padding-top: calc(var(--navbar-height) / 6);
         font-size: 1rem;
         margin-right: 20px;
 
         &:hover {
-          background-color: var(--alt-light);
+          background-color: white;
+          color: var(--alt);
+        }
+
+        & .live__icon {
+          display: inline-block;
+          width: 45px;
+          height: 100%;
+        }
+        & .live__event {
+          vertical-align: middle;
+          display: inline-block;
+          margin-top: -2px;
+          margin-bottom: 4px; 
+          font-size: 1.2rem;
+          white-space: nowrap;
+        }
+        & .live__theme {
+          display: block;
+          font-style: italic;
+          font-size: 1.1rem;
         }
       }
 
@@ -348,7 +369,7 @@ img.preview {
   }
   
   &__announcement {
-    padding-top: calc(var(--eventbar-height) / 2 - 1.0rem);
+    padding-top: calc(var(--eventbar-height) / 2 - 1.2rem);
     line-height: 1.0rem;
     margin-right: 20px;
   }
@@ -363,7 +384,7 @@ img.preview {
 }
 
 .moderation-bar {
-  margin: -20px 0 20px 0;
+  margin: -21px 0 20px 0;
   width: 100%;
   background-color: var(--moderation-light);
 
@@ -424,8 +445,8 @@ img.preview {
     font-weight: bold;
 
     & a {
-      margin-top: 3px;
-      margin-right: 3px;
+      margin-top: -6px;
+      margin-right: 10px;
     }
   }
 
@@ -441,6 +462,22 @@ img.preview {
 
   &__schedule {
     display: none;
+  }
+
+  &__special-type {
+    background-color: var(--moderation);
+    white-space: nowrap;
+    padding: 0 10px;
+    height: 36px;
+
+    & a {
+      margin-right: 0;
+    }
+  }
+
+  &__special-type-label {
+    font-size: 1.3rem;
+    color: white;
   }
 
   & h1 {
@@ -539,26 +576,33 @@ img.preview {
 /* Event table */
 
 .event-table {
+  margin-bottom: 20px;
+
   &__header {
-    @apply --shadow;
     display: block;
-    padding: 10px;
+    padding: 10px 0 ;
     margin-bottom: 20px;
-    background-color: var(--main);
-    color: white;
-    max-width: 750px;
     
     & h2 {
+      @apply --alt-font;
+      color: var(--text);
+      font-weight: normal;
       margin: 0;
-    }
 
-    &:hover {
-      color: white;
-      background-color: var(--main-light);
+      &:hover {
+        color: var(--alt-dark);
+      }
     }
   }
   &.live &__header {
+    @apply --shadow;
+    padding: 10px;
     background-color: var(--alt);
+    color: white;
+
+    & h2 {
+      color: white;
+    }
 
     &:hover {
       background-color: var(--alt-light);
@@ -566,29 +610,36 @@ img.preview {
   }
   
   &__status {
+    @apply --main-font;
     font-size: 0.8rem;
     vertical-align: middle;
   }
   
-  &__theme {
-    font-size: 1.2rem;
-    font-style: italic;
-  }
-  
   &__details {
-    max-width: 750px;
-    margin: -20px 0 20px 0;
+    @apply --shadow;
+    margin-top: -20px;
     border-radius: 0;
-    background-color: var(--main-transparent);
-  }
-  &.live &__details {
-    background-color: var(--alt-transparent);
+    background-color: white;
+    width: 100%;
   }
   
   &__detail {
     padding: 10px;
     font-size: 1.0rem;
     font-weight: bold;
+  }
+
+  &__links {
+    background-color: white;
+    border-top: 1px solid var(--borders);
+
+    & a {
+      line-height: 60px;
+
+      &.event-header__announcement {
+        line-height: inherit;
+      }
+    }
   }
 }
 
@@ -827,6 +878,12 @@ img.preview {
 
 /* ============================== Home page ============================== */
 
+
+.home-countdown {
+  margin: 40px auto;
+  width: 620px;
+}
+
 .home-announcement {
   & h1 > a {
     color: var(--text);
@@ -846,29 +903,29 @@ img.preview {
 
 .home-brand {
   position: relative;
-  width: 300px;
+  width: 160px;
+  height: 160px;
   margin: auto;
+  margin-bottom: 20px;
   text-align: center;
   cursor: default;
+  background-color: var(--main);
+  border-radius: 50%;
   
   &__logo {
-    width: 120px;
+    margin-top: 20px;
+    width: 95px;
     padding-bottom: 40px;
-  
-    &:hover {
-      transform: rotate(360deg);
-      transition: 0.5s;
-    }
   }
   
   &__name {
     position: absolute;
     left: 0;
-    bottom: 20px;
+    bottom: 15px;
     width: 100%;
     text-align: center;
     @apply --alt-font;
-    font-size: 3rem;
+    font-size: 2.3rem;
     font-weight: bold;
     height: var(--navbar-height);
     text-shadow: 0px 3px 0px var(--main-dark);

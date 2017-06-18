@@ -4,11 +4,14 @@
 {% block body %}
 
 <div class="container">
-  <h2>Events</h2>
-
-  {% for event in events %}
-    {{ eventMacros.eventTable(event, true, 3) }}
-  {% endfor %}
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10">
+      <h2>Events</h2>
+      {% for event in events %}
+        {{ eventMacros.eventTable(event, true, 3) }}
+      {% endfor %}
+    </div>
+  </div>
 </div>
 
 {% endblock %}

@@ -1,4 +1,5 @@
 {% import "admin/_macros-admin.html" as adminMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
 
 <!doctype html>
 <html lang="en">
@@ -26,9 +27,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        {% if path !== '/' %}
-        <a class="navbar-brand" href="/"><img src="/static/images/logo.svg" /> Alakajam!</a>
-        {% endif %}
+        <a class="navbar-brand" href="/"><img src="/static/images/logo.svg" />Alakajam!</a>
       </div>
       
       {# ==== Main header (desktop) ==== #}
@@ -40,8 +39,15 @@
           {% if liveEvent and path !== '/' %}
           <li class="live {{ 'active' if isLiveEvent }}">
             <a href="{{ buildUrl(liveEvent, 'event') }}">
-              Live: <b>{{ liveEvent.get('title') }}</b><br />
-              Theme: <b>{{ liveEvent.get('display_theme') }}</b>
+              <div class="live__icon">
+                <span class="label label-danger ">Live!</span>
+              </div>
+              <div class="live__event">
+                {{ liveEvent.get('title') }}
+                <span class="live__theme">
+                  {{ liveEvent.get('display_theme') }}
+                </span>
+              </div>
             </a>
           </li>
           {% endif %}
@@ -89,44 +95,12 @@
             </div>
           </div>
           <div class="event-header__links">
-            <!-- TODO Refactor using a macro -->
-            {% if latestEventAnnouncement %}
-              <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
-                <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
-                <span class="event-header__announcement-info">
-                  Announcement • {{ latestEventAnnouncement.get('created_at') | relativeTime }}
-                </span>
-              </a><!--
-              --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-sm hidden-md hidden-lg event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
-                <span class="glyphicon glyphicon-pushpin"></span>
-              </a><!--
-            -->{% endif %}<!--
-            --><a href="{{ buildUrl(event, 'event', 'posts') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'posts') }}">
-              <span class="glyphicon glyphicon-globe"></span> <span class="event-header__link-label">Posts</span>
-            </a><!--
-            -->{% if event.get('status_theme') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'themes') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'themes') }} {{ 'disabled' if event.get('status_theme') === 'off' }}">
-              <span class="glyphicon glyphicon-grain"></span> <span class="event-header__link-label">Theme</span>
-            </a>{% endif %}<!--
-            -->{% if event.get('status_entry') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'games') }} {{ 'disabled' if event.get('status_entry') === 'off' }}">
-              <span class="glyphicon glyphicon-tower"></span> <span class="event-header__link-label">Games</span>
-            </a>{% endif %}<!--
-            -->{% if event.get('status_results') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'results') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'results') }} {{ 'disabled' if event.get('status_results') === 'off' }}">
-              <span class="glyphicon glyphicon-th-list"></span> <span class="event-header__link-label">Results</span>
-            </a>{% endif %}
+            {{ eventMacros.eventLinks (event, latestEventAnnouncement, path) }}
         </div>
       </div>
     </div>
     {% endif %}
   </nav>
-
-  {% if path == '/' %}
-    <div class="home-bar">
-      <div class="home-brand">
-        <img class="home-brand__logo" src="/static/images/logo.svg" />
-        <span class="home-brand__name">Alakajam!</span>
-      </div>
-    </div>
-  {% endif %}
 
   {% if user and (user.get('is_mod') or user.get('is_admin')) %}
     {{ adminMacros.moderationBar(context(), user.get('is_admin')) }}
