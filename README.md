@@ -1,6 +1,6 @@
 ![Alakajam!](https://raw.githubusercontent.com/mkalam-alami/wejam/17c312aa7d2dbc9f6b67b33e84b7170091378bda/static/images/logo.png)
 
-# Alakajam! *(previously WeJam!)*
+# Alakajam!
 
 > Current progress: An alpha website with support for events, games and posts/comments. No voting system yet.
 
