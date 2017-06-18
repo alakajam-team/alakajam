@@ -7,11 +7,11 @@
   --text-light: color(var(--text) alpha(70%));
   --text-lighter: color(var(--text) alpha(40%));
   
-  --main: #00b1d5;
+  --main: #00abd6;
   --main-light: color(var(--main) lightness(46%));
   --main-lighter: color(var(--main) alpha(25%));
   --main-lightest: color(var(--main) alpha(10%));
-  --main-dark: color(var(--main) lightness(25%));
+  --main-dark: color(var(--main) lightness(22%));
   --main-transparent: color(var(--main) alpha(10%));
   
   --alt: #f2536d;
@@ -131,6 +131,9 @@ a {
 img.preview {
   max-width: 100%;
   max-height: 150px;
+}
+img.no-border:hover, a:hover img.no-border {
+  border: 0;
 }
 
 .spacing {
@@ -441,6 +444,15 @@ img.preview {
     vertical-align: middle;
     padding: 0 5px;
     font-size: 1.5rem;
+  }
+}
+
+.footer {
+  &__link {
+    margin-right: 10px;
+  }
+  &__icon {
+    height: 16px;
   }
 }
 
