@@ -30,6 +30,7 @@ module.exports = {
  */
 async function eventMiddleware (req, res, next) {
   if (req.params.eventName !== 'create-event') {
+    console.log(req.params)
     let event = await eventService.findEventByName(req.params.eventName)
     res.locals.event = event
     if (!event) {
@@ -151,6 +152,8 @@ async function editEvent (req, res) {
     // TODO Typed fields should not be reset if validation fails
     if (!forms.isSlug(fields.name)) {
       errorMessage = 'Name is not a valid slug'
+    } else if (fields.name.indexOf('-') === -1) {
+      errorMessage = 'Name must contain at least one dash (-)'
     } else if (!forms.isIn(fields.status, ['pending', 'open', 'closed'])) {
       errorMessage = 'Invalid status'
     } else if (!forms.isIn(fields['status-theme'], ['disabled', 'off', 'on']) &&
