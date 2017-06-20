@@ -218,6 +218,11 @@ input.date-picker {
   font-weight: bold;
 }
 
+.toggle label.active {
+  background-color: #286090;
+  border-color: #204d74;
+}
+
 /* Required star
 .form-group.required label:after {
   content:" *";
@@ -1049,7 +1054,8 @@ input.date-picker {
     }
   }
 
-  &__description {
+  &__description,
+  &__category {
     font-size: 1.05rem;
     font-weight: bold;
     padding: 15px;
@@ -1064,6 +1070,7 @@ input.date-picker {
       margin-bottom: 5px;
     }
   }
+<<<<<<< HEAD
 
   &__score {
     margin-top: 10px;
@@ -1075,6 +1082,8 @@ input.date-picker {
     }
   }
 
+=======
+>>>>>>> Add solo/team category toggle to edit-entry
 }
 
 /* ============================== User pages ============================== */

@@ -143,6 +143,7 @@ async function saveEntry (req, res) {
 
       let picturePath = '/entry/' + entry.get('id')
       entry.set('title', forms.sanitizeString(fields.title))
+      entry.set('category', forms.sanitizeString(fields.category))
       entry.set('description', forms.sanitizeString(fields.description))
       entry.set('links', links)
       if (fields['picture-delete'] && entry.get('pictures').length > 0) {

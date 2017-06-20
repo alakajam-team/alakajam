@@ -26,6 +26,17 @@
           <label for="title">Game title</label>
           <input type="text" id="js-title" class="form-control" name="title" value="{{ entry.get('title') }}" required="required">
         </div>
+        <div>
+          <div class="form-group btn-group toggle team-toggle" data-toggle="buttons">
+            <label class="btn btn-primary active">
+              <input type="radio" name="category" value="solo" autocomplete="off" checked>Solo
+            </label>
+            <label class="btn btn-primary">
+              <input type="radio" name="category" value="team" autocomplete="off">Team
+            </label>
+          </div>
+          <p class="team-notice text-info hidden">You can manage your team after saving this entry.</p>
+        </div>
         <div class="form-group">
           <label for="title">Short description</label>
           <textarea class="form-control" name="description">{{ entry.get('description') }}</textarea>
@@ -141,6 +152,20 @@ function refreshLinksModel () {
     links[$this.attr('data-row')].url = $this.val()
   })
 }
+
+
+// Team toggle behaviour.
+var category = "{{ entry.get('category') | default('team') }}"
+$('.team-toggle label').each(function(i, el) {
+  el = $(el)
+  var input = el.find('input')
+  var active = input.val() === category
+  input.prop('checked', active)
+  el.toggleClass('active', active)
+})
+$('.toggle label').click(function(ev) {
+  $('.team-notice').toggleClass('hidden', $(this).find('input').val() !== 'team')
+});
 
 </script>
 {% endblock %}
