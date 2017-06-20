@@ -63,7 +63,7 @@
         {% endfor %}
       </div>
       {% else %}
-      <div class="well">This user didn't submit games... Yet!</div>
+      <div class="well">{{ profileUser.get('title') }} didn't submit games... Yet!</div>
       {% endif %}
 
       <h2>Latest posts</h2>
@@ -72,7 +72,7 @@
           {{ postMacros.post(post, user) }}
         {% endfor %}
       {% else %}
-      <div class="well">This user didn't write posts... Yet!</div>
+      <div class="well">{{ profileUser.get('title') }} didn't write posts... Yet!</div>
       {% endif %}
     </div>
   </div>

@@ -17,18 +17,18 @@
   <div class="col-md-7">
     <h4>Latest posts</h4>
     {% for post in latestPosts %}
-      {{ postMacros.post(post, user, { hideBody: true }) }}
+      {{ postMacros.post(post, user, { hideBody: true, hideSpecialLabels: true }) }}
     {% endfor %}
   </div>
 </div>
 
-<div class="row" style="margin-top: 10px">
+<div class="row" style="margin-top: 20px">
   <div class="col-md-7">
-    <h1>Received comments <span class="glyphicon glyphicon-info-sign has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="Comments on your entries and posts, plus those mentioning &quot;@{{ user.get('name') }}&quot; will be listed here." style="font-size: 1rem"></span></h1>
+    <h1>Received comments <span class="glyphicon glyphicon-info-sign has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="This lists comments people wrote on your entries and posts, plus any comments mentioning &quot;@{{ user.get('name') }}&quot;." style="font-size: 1rem"></span></h1>
     {{ postMacros.comments(toUser, user, { readOnly: true, linkToNode: true }) }}
   </div>
   <div class="col-md-5">
-    <h1>Sent comments</h1>
+    <h1>Your comments</h1>
     {{ postMacros.comments(byUser, user, { readOnly: true, linkToNode: true }) }}
   </div>
 </div>

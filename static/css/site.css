@@ -39,7 +39,7 @@
     letter-spacing: 0;
   };
   --alt-font: {
-    font-family: 'Chewy', cursive;
+    font-family: 'Fredoka One', cursive;
     letter-spacing: 2px;
   };
   --shadow: {
@@ -85,7 +85,7 @@ div {
 h1 {
   @apply --alt-font;
   margin: 0 0 15px 0;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: normal;
   letter-spacing: 1px;
   color: var(--text);
@@ -180,30 +180,22 @@ img.no-border:hover, a:hover img.no-border {
 
   & .navbar-header {
     & .navbar-brand {
-      @apply --alt-font;
-      padding: 10px;
-      font-size: 2rem;
-      font-weight: bold;
-      height: var(--navbar-height);
-      text-shadow: 0px 3px 0px var(--main-dark);
-      color: white;
-
-      &:hover {
-        text-shadow: 0px 3px 0px var(--alt);
-        color: white;
-        font-size: 2.2rem;
-        
-        & img {
-          border: 0;
-        }
-      }
-
-      & img {
-        height: 100%;
-        display: inline-block;
-        margin-right: 5px;
-        margin-top: -2px;
-      }
+      margin-top: 3px;
+      width: 220px;
+      height: 50px;
+      background: url('/static/images/brand.png');
+      padding: 0;
+    }
+      
+    & .navbar-brand__hover {
+      width: 1px; /* force preload */
+      height: 1px;
+      background: url('/static/images/brand_hover.png');
+    }
+    
+    & .navbar-brand:hover .navbar-brand__hover {
+      width: 220px;
+      height: 50px;
     }
   }
 
@@ -332,14 +324,15 @@ img.no-border:hover, a:hover img.no-border {
   &__info {
     display: inline-block;
     margin-right: 30px;
-    vertical-align: absmiddle;
+    vertical-align: middle;
   }
 
   &__name {
     @apply --alt-font;
     display: block;
+    padding-top: 2px;
     box-sizing: border-box;
-    font-size: 1.9rem;
+    font-size: 1.5rem;
   }
 
   &__dates {
@@ -460,9 +453,9 @@ img.no-border:hover, a:hover img.no-border {
 
 .post {
   &__heading {
-    @apply --alt-font;
+    font-weight: bold;
     margin: 0;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
 
     & a {
       color: var(--text);
@@ -510,7 +503,7 @@ img.no-border:hover, a:hover img.no-border {
   }
 
   &__special-type-label {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: white;
   }
 
@@ -930,7 +923,7 @@ img.no-border:hover, a:hover img.no-border {
   }
 
   &__title {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     padding-left: 60px;
     margin: 0;
   }
