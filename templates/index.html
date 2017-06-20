@@ -14,7 +14,7 @@
     <div class="col-lg-offset-1 col-lg-10">
       {% if liveEvent %}
   
-        <h1 class="text-center"><a href="{{ buildUrl(liveEvent, 'event') }}">{{ liveEvent.get('title') }}</a> ends in</h1>
+        <h1 class="text-center"><a href="{{ buildUrl(liveEvent, 'event') }}">{{ liveEvent.get('title') }}</a> {{ liveEvent.get('countdown_config').phrase | default('ends in') }}</h1>
         <div class="home-countdown"></div>
 
         {{ eventMacros.eventTable(liveEvent, false, 6, { latestEventAnnouncement: announcement, path: path }) }}
@@ -42,12 +42,14 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="/static/js/flipclock.min.js"></script>
-<script type="text/javascript">
-// TODO Actual countdown
-$('.home-countdown').FlipClock(100000, { 
-  clockFace: 'DailyCounter',
-  countdown: true
-});
-</script>
+{% if liveEvent %}
+  <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
+  <script type="text/javascript">
+  let diffMs = Date.parse('{{ liveEvent.get('countdown_config').date }}') - Date.now()
+  $('.home-countdown').FlipClock(diffMs / 1000, { 
+    clockFace: 'DailyCounter',
+    countdown: true
+  });
+  </script>
+{% endif %}
 {% endblock %}

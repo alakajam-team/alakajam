@@ -11,6 +11,7 @@ const xss = require('xss')
 const validator = require('validator')
 const striptags = require('striptags')
 const showdown = require('showdown')
+const moment = require('moment')
 const constants = require('../core/constants')
 const slug = require('slug')
 
@@ -24,6 +25,8 @@ module.exports = {
   isId,
   isSlug,
   isIn,
+
+  parseDateTime,
 
   markdownToHtml
 }
@@ -108,6 +111,19 @@ function isSlug (string) {
  */
 function isIn (string, values) {
   return string && validator.isIn(string, values)
+}
+
+/**
+ * Converts a string built in a date time picker to an actual date
+ * which can be stored in a model
+ */
+function parseDateTime (string) {
+  let momentDate = moment(string, constants.PICKER_DATE_TIME_FORMAT)
+  if (momentDate.isValid()) {
+    return momentDate.toDate()
+  } else {
+    return ''
+  }
 }
 
 /**

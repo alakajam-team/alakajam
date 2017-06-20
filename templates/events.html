@@ -6,10 +6,10 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
-      <h2>Events</h2>
+      <h1>Events</h1>
       {% if open.length > 0 %}
       <div class="events-block events-block__live">
-        <h2>On now!</h2>
+        <h4>On now!</h4>
         {% for event in open %}
           {{ eventMacros.eventTable(event, true, 3, { neutralStatus: true }) }}
         {% endfor %}
@@ -18,7 +18,7 @@
       
       {% if pending.length > 0 %}
       <div class="events-block events-block__pending">
-        <h2>Upcoming events</h2>
+        <h4>Upcoming events</h4>
         {% for event in pending %}
           {{ eventMacros.eventTable(event, true, 3, { neutralStatus: true }) }}
         {% endfor %}
@@ -27,7 +27,7 @@
 
       {% if closed.length > 0 %}
       <div class="events-block events-block__closed">
-        <h2>Past events</h2>
+        <h4>Past events</h4>
         {% for event in closed %}
           {{ eventMacros.eventTable(event, true, 3, { neutralStatus: true }) }}
         {% endfor %}

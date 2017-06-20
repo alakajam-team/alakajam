@@ -39,7 +39,7 @@ module.exports = {
   // Dates
   DATE_FORMAT: 'MMMM Do YYYY',
   DATE_TIME_FORMAT: 'MMMM Do YYYY, h:mm',
-  PICKER_DATE_TIME_FORMAT: 'YYYY-MM-DD hh:mm',
+  PICKER_DATE_TIME_FORMAT: 'YYYY-MM-DD HH:mm',
   PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii'
 
 }

@@ -19,19 +19,28 @@
       <div class="col-md-10 col-md-offset-1">
         <div class="form-group input-group-lg">
           <label for="title">Title</label>
-          <input type="text" class="form-control" id="title" name="title" value="{{ event.get('title') if event }}" required="required" />
+          <input type="text" class="form-control" name="title" value="{{ event.get('title') if event }}" required="required" />
         </div>
         <div class="form-group">
           <label for="title">Slug</label>
-          <input type="text" class="form-control" id="name" name="name" value="{{ event.get('name') if event }}" required="required" />
+          <input type="text" class="form-control" name="name" value="{{ event.get('name') if event }}" required="required" />
         </div>
         <div class="form-group">
           <label for="title">Dates</label>
-          <input type="text" class="form-control" id="display-dates" name="display-dates" value="{{ event.get('display_dates') if event }}" />
+          <input type="text" class="form-control" name="display-dates" value="{{ event.get('display_dates') if event }}" />
+        </div>
+        <div class="form-group">
+          <label for="title">Countdown</label>
+          <div class="form-inline">
+          Countdown phrase {{ formMacros.tooltip('For instance: "ends in", "voting starts in"...') }} 
+          <input type="text" class="form-control" name="countdown-phrase" value="{{ event.get('countdown_config').phrase if event }}" />
+          Target date
+          {{ formMacros.dateTimePicker('countdown-date', event.get('countdown_config').date if event) }}
+          </div>
         </div>
         <div class="form-group">
           <label for="title">Theme</label>
-          <input type="text" class="form-control" id="display-theme" name="display-theme" value="{{ event.get('display_theme') if event }}" />
+          <input type="text" class="form-control" name="display-theme" value="{{ event.get('display_theme') if event }}" />
         </div>
         <div class="form-group">
           <label for="radio">Global status</label>
@@ -109,6 +118,7 @@
 
 {% block scripts %} 
 {{ formMacros.radioScripts() }}
+{{ formMacros.dateTimePickerScripts() }}
 <script src="/static/js/slug.min.js"></script>
 <script>
 

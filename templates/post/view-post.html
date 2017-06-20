@@ -15,25 +15,38 @@
       <h1>{{ post.get('title') }}</h1>
       {% if not post.get('published_at') %}
         <div class="alert alert-warning"><strong>Draft post</strong> Other users can't see it until it is published.</div>
+      {% elseif not isPast(post.get('published_at')) %}
+        <div class="alert alert-warning"><strong>Pending post</strong> Other users can't see it until {{ post.get('published_at') | relativeTime }}.</div>
       {% endif %}
       {{ postMacros.post(post, user, {hideHeading: true}) }}
     </div>
   </div>
   {% if post.get('special_post_type') !== 'article' %}
-  <div class="row">
-    {% set hasRelated = relatedEntry or relatedEvent %}
-    <div class="col-md-7 col-lg-8 {{ 'col-lg-offset-2' if not hasRelated }} ">
-      <h2>Comments</h2>
-      {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
+    {% if relatedEvent %}
+    <div class="row">
+      <div class="col-lg-offset-1 col-lg-10">
+        <h2>Related</h2>
+      </div>
     </div>
-    {% if hasRelated %}
-    <div class="col-md-5 col-lg-4">
-      <h2>Related</h2>
-      {{ eventMacros.entryThumb(relatedEntry, 12) if relatedEntry }}
-      {{ eventMacros.eventTable(relatedEvent, false) if relatedEvent }}
+    <div class="row">
+      <div class="col-lg-1"></div>
+      {% if relatedEntry %}
+      <div class="col-lg-4 col-md-5">
+        {{ eventMacros.entryThumb(relatedEntry, 12) if relatedEntry }}
+      </div>
+      {% endif %}
+      <div class="{{ 'col-lg-6 col-md-7' if relatedEntry else 'col-lg-10' }}">
+        {{ eventMacros.eventTable(relatedEvent, false) if relatedEvent }}
+      </div>
     </div>
     {% endif %}
-  </div>
+    
+    <div class="row">
+      <div class="col-lg-offset-1 col-lg-10">
+        <h2>Comments</h2>
+        {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
+      </div>
+    </div>
   {% endif %}
 </div>
 

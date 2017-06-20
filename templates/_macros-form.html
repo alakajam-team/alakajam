@@ -1,3 +1,5 @@
+{# ======== MARKDOWN EDITOR ========= #}
+
 {% macro editor(editorName, editorContents) %}
   <textarea class="form-control simplemde-editor" name="{{ editorName }}">{{ editorContents }}</textarea>
 {% endmacro %}
@@ -27,6 +29,9 @@
   </script>
 {% endmacro %}
 
+
+{# ======== PICTURES ========= #}
+
 {% macro pictureInput(name, value, defaultValue = null) %}
   <input type="file" name="{{ name }}" class="btn" />
   {% if value %}
@@ -40,9 +45,15 @@
   {% endif %}
 {% endmacro %}
 
+
+{# ======== TOOLTIPS ========= #}
+
 {% macro tooltip(title, options = {}) %}
  <span class="glyphicon glyphicon-info-sign has-tooltip" data-toggle="tooltip" data-placement="{{ options.placement or 'top' }}" data-original-title="{{ title }}" style="font-size: 0.8rem"></span>
 {% endmacro %}
+
+
+{# ======== RADIO BUTTONS ========= #}
 
 {% macro radioStyles() %}
   <link rel="stylesheet" type="text/css" href="/static/css/icheck-skin.css" />
@@ -114,5 +125,23 @@
     }
   }
 
+</script>
+{% endmacro %}
+
+{# ======== DATE TIME PICKERS ========= #}
+
+{% macro dateTimePicker(name, value) %}
+  <input type="datetime" name="{{ name }}" class="form-control date-picker js-date-picker" value="{{ value | pickerDateTime }}" />
+{% endmacro %}
+
+{% macro dateTimePickerScripts() %}
+<script type="text/javascript">
+$(".js-date-picker").datetimepicker({
+  format: '{{ constants.PICKER_CLIENT_DATE_TIME_FORMAT }}',
+  autoClose: true,
+  todayBtn: true,
+  pickerPosition: "top-left"
+})
+$.fn.datetimepicker.dates['en'].today = 'Now'
 </script>
 {% endmacro %}

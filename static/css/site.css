@@ -162,6 +162,10 @@ img.no-border:hover, a:hover img.no-border {
   font-weight: normal;
 }
 
+input.date-picker {
+  width: 200px;
+}
+
 /* Required star
 .form-group.required label:after {
   content:" *";
@@ -473,7 +477,7 @@ img.no-border:hover, a:hover img.no-border {
 
     & a {
       margin-top: -6px;
-      margin-right: 10px;
+      margin-right: 5px;
     }
   }
 
@@ -606,7 +610,7 @@ img.no-border:hover, a:hover img.no-border {
   padding: 10px;
   margin-bottom: 20px;
 
-  & > h2 {
+  & > h4 {
     margin: -10px;
     margin-bottom: 10px;
     padding: 10px;
@@ -616,7 +620,7 @@ img.no-border:hover, a:hover img.no-border {
   &__live {
     background-color: var(--alt-lightest);
 
-    & > h2 {
+    & > h4 {
       background-color: var(--alt);
     }
   }
@@ -624,7 +628,7 @@ img.no-border:hover, a:hover img.no-border {
   &__pending {
     background-color: var(--main-lightest);
 
-    & > h2 {
+    & > h4 {
       background-color: var(--main);
     }
   }
@@ -632,7 +636,7 @@ img.no-border:hover, a:hover img.no-border {
   &__closed {
     background-color: var(--neutral-lightest);
 
-    & > h2 {
+    & > h4 {
       background-color: var(--neutral);
     }
   }
@@ -650,9 +654,7 @@ img.no-border:hover, a:hover img.no-border {
     margin-bottom: 20px;
     
     & h2 {
-      @apply --alt-font;
       color: var(--text);
-      font-weight: normal;
       margin: 0;
 
       &:hover {

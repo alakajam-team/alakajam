@@ -76,7 +76,7 @@
       <div class="col-xs-8 post__schedule text-right form-inline">
         <div class="form-group">
           <label for="published-at">Publication date</label>
-          <input type="text" id="published-at" name="published-at" class="form-control" value="{{ post.get('published_at') | pickerDateTime }}" />
+          {{ formMacros.dateTimePicker('published-at', post.get('published_at')) }}
         </div>
         <div class="form-group">
           <input type="submit" class="btn btn-primary" name="save-custom" value="Schedule" />
@@ -95,6 +95,7 @@
 
 {% block scripts %} 
 {{ formMacros.editorScripts() }}
+{{ formMacros.dateTimePickerScripts() }}
 <script>
 
 // Schedule actions
@@ -110,15 +111,6 @@ $scheduleHideButton.click(function () {
   $scheduleBlock.hide()
   $actionsBlock.show()
 })
-
-// Publication date picker
-$("#published-at").datetimepicker({
-  format: '{{ constants.PICKER_CLIENT_DATE_TIME_FORMAT }}',
-  autoClose: true,
-  todayBtn: true,
-  pickerPosition: "top-left"
-})
-$.fn.datetimepicker.dates['en'].today = 'Now'
 
 // Sync H1 with title input
 var $titleInput = $('#title')

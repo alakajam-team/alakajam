@@ -200,7 +200,11 @@ Alternately, you can contact us on <a href="https://github.com/mkalam-alami/weja
         display_theme: 'You are not alone',
         status_theme: 'disabled',
         status_entry: 'on',
-        status_results: 'off'
+        status_results: 'off',
+        countdown_config: {
+          phrase: 'starts in',
+          date: moment().add(1, 'days').toDate()
+        }
       })
       await event2.save()
 

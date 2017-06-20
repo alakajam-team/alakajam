@@ -5,6 +5,12 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 # Changelog
 
+### June 20th
+
+* New event countdown (can be tweaked by editing the event)
+* Entries can now have multiple links
+* Various theme changes and bugfixes
+
 ### June 16th
 
 * New "People" page in the header

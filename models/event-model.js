@@ -29,13 +29,37 @@ const db = require('../core/db')
 module.exports = createModel()
 
 function createModel () {
+  let modelPrototype = db.Model.prototype
+
   let model = db.model('Event', {
     tableName: 'event',
     idAttribute: 'id',
     hasTimestamps: true,
 
+    // Relations
+
     entries: function () {
       return this.hasMany('Entry', 'event_id')
+    },
+
+    // Listeners
+
+    initialize: function initialize (attrs) {
+      modelPrototype.initialize.call(this)
+      attrs = attrs || {}
+      attrs['countdown_config'] = attrs.links || {}
+      attrs['cron_config'] = attrs.links || {}
+      return attrs
+    },
+    parse: function parse (attrs) {
+      if (attrs['countdown_config']) attrs['countdown_config'] = JSON.parse(attrs['countdown_config'])
+      if (attrs['cron_config']) attrs['cron_config'] = JSON.parse(attrs['cron_config'])
+      return attrs
+    },
+    format: function format (attrs) {
+      if (attrs['countdown_config']) attrs['countdown_config'] = JSON.stringify(attrs['countdown_config'])
+      if (attrs['cron_config']) attrs['cron_config'] = JSON.stringify(attrs['cron_config'])
+      return attrs
     }
   })
 
@@ -51,8 +75,9 @@ function createModel () {
         table.string('status_theme')
         table.string('status_entry')
         table.string('status_results')
-        table.boolean('is_template')
+        table.string('countdown_config')
         table.string('cron_config')
+        table.boolean('is_template')
         table.dateTime('published_at')
         table.timestamps()
 

@@ -6,7 +6,6 @@
  * @module controllers/post-controller
  */
 
-const moment = require('moment')
 const constants = require('../core/constants')
 const forms = require('../core/forms')
 const postService = require('../services/post-service')
@@ -160,7 +159,7 @@ async function savePost (req, res) {
         post.set('published_at', null)
         redirectToView = false
       } else if (fields['save-custom']) {
-        post.set('published_at', moment(fields['published-at'], constants.PICKER_DATE_TIME_FORMAT).toDate())
+        post.set('published_at', forms.parseDateTime(fields['published-at']))
       }
 
       // Save

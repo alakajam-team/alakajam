@@ -183,7 +183,11 @@ async function editEvent (req, res) {
         status: fields.status,
         status_theme: fields['status-theme'],
         status_entry: fields['status-entry'],
-        status_results: fields['status-results']
+        status_results: fields['status-results'],
+        countdown_config: {
+          date: forms.parseDateTime(fields['countdown-date']),
+          phrase: forms.sanitizeString(fields['countdown-phrase'])
+        }
       })
 
       let nameChanged = event.hasChanged('name')
