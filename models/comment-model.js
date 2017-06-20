@@ -32,10 +32,13 @@ function createModel () {
         table.increments('id').primary()
         table.integer('node_id')
         table.string('node_type')
-        table.integer('user_id')
-        table.integer('parent_id')
+        table.integer('user_id').references('user.id')
+        table.integer('parent_id').references('comment.id')
         table.string('body', 10000)
         table.timestamps()
+
+        table.index('created_at')
+        table.index(['node_id', 'node_type'])
       })
     }
   }

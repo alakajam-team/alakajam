@@ -12,7 +12,7 @@
 
     <div class="row">
       <div class="col-md-12">
-        <h1 id="title-display"></h1>
+        <h1 id="js-title-display"></h1>
         
         {% if errorMessage %}
           <div class="alert alert-warning">{{ errorMessage }}</div>
@@ -24,11 +24,11 @@
       <div class="col-md-8">
         <div class="form-group input-group-lg">
           <label for="title">Game title</label>
-          <input type="text" class="form-control" name="title" value="{{ entry.get('title') }}" required="required">
+          <input type="text" id="js-title" class="form-control" name="title" value="{{ entry.get('title') }}" required="required">
         </div>
         <div class="form-group">
           <label for="title">Short description</label>
-          <textarea class="form-control" name="description" required="required">{{ entry.get('description') }}</textarea>
+          <textarea class="form-control" name="description">{{ entry.get('description') }}</textarea>
         </div>
         <div class="form-group">
           <label for="title">Links</label>
@@ -94,8 +94,8 @@
 
 // Sync H1 with title input
 
-var $titleInput = $('#title')
-var $titleDisplay = $('#title-display')
+var $titleInput = $('#js-title')
+var $titleDisplay = $('#js-title-display')
 var defaultText = "My {{ event.get('title') }} entry"
 $titleInput.on('change keyup', refreshTitleDisplay)
 refreshTitleDisplay()

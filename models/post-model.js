@@ -50,14 +50,13 @@ function createModel () {
     if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('post', function (table) {
         table.increments('id').primary()
-        table.string('author_user_id')
+        table.integer('author_user_id').references('user.id')
         table.string('name')
         table.string('title')
-        table.string('guild_id')
-        table.string('entry_id')
-        table.string('event_id')
+        table.integer('entry_id').references('entry.id')
+        table.integer('event_id').references('event.id')
         table.string('body', 10000)
-        table.date('published_at')
+        table.date('published_at').index()
         table.string('special_post_type')
         table.integer('comment_count')
         table.timestamps()

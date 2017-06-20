@@ -67,21 +67,19 @@ function createModel () {
     if (applyVersion === 1) {
       await db.knex.schema.createTableIfNotExists('event', function (table) {
         table.increments('id').primary()
-        table.string('name')
+        table.string('name').unique()
         table.string('title')
         table.string('display_dates')
         table.string('display_theme')
-        table.string('status')
+        table.string('status').index()
         table.string('status_theme')
         table.string('status_entry')
         table.string('status_results')
-        table.string('countdown_config')
+        table.string('countdown_config') // JSON Object : {phrase, date}
         table.string('cron_config')
         table.boolean('is_template')
-        table.dateTime('published_at')
+        table.dateTime('published_at').index()
         table.timestamps()
-
-        table.unique('name')
       })
     }
   }

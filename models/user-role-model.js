@@ -35,6 +35,8 @@ function createModel () {
         table.string('node_type')
         table.string('permission') // allowed: owner
         table.timestamps()
+
+        table.index(['node_id', 'node_type'])
       })
     }
   }

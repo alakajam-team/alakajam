@@ -31,7 +31,9 @@ module.exports = {
  * @return {Event}
  */
 function createEvent () {
-  return new Event()
+  return new Event({
+    'published_at': new Date() // TODO Let admins choose when to publish
+  })
 }
 
 /**
@@ -75,7 +77,7 @@ async function findEventByName (name) {
  */
 async function findEvents (options = {}) {
   let eventModels = await new Event()
-    .orderBy('created_at', 'DESC')
+    .orderBy('published_at', 'DESC')
   if (options.status) eventModels = eventModels.where('status', options.status)
   if (options.name) eventModels = eventModels.where('name', options.name)
   return eventModels.fetchAll({ withRelated: ['entries'] })

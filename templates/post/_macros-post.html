@@ -7,7 +7,7 @@
 {% set postUrl = buildUrl(post, 'post') %}
 
 {% if not options.hideHeading %}
-  {% set h = 'h2' if options.hideBody else 'h1' %}
+  {% set h = 'h3' if options.hideBody else 'h1' %}
   {% if path === postUrl %}
   <div class="post__heading">
     <{{h}}>{{ post.get('title') }}</{{h}}>

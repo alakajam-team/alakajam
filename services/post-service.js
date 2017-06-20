@@ -58,7 +58,6 @@ async function findPosts (options = {}) {
     if (options.specialPostType !== undefined) qb = qb.where('special_post_type', options.specialPostType)
     if (options.eventId) qb = qb.where('event_id', options.eventId)
     if (options.entryId) qb = qb.where('entry_id', options.entryId)
-    if (options.guildId) qb = qb.where('guild_id', options.guildId)
     if (options.userId) {
       qb = qb.innerJoin('user_role', 'post.id', 'user_role.node_id')
           .where({
@@ -119,6 +118,7 @@ async function findCommentById (commentId) {
  * @return {array(Comment)}
  */
 async function findCommentsSortedForDisplay (node) {
+  // TODO Actual SQL query
   await node.load(['comments', 'comments.user'])
   return node.related('comments').sortBy(comment => comment.get('created_at'))
 }
