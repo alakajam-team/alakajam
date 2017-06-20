@@ -18,7 +18,7 @@
   text-decoration: none;
   color: #ccc; }
 
-.flip-clock-wrapper a:hover {
+.flip-clock-wrapper a:hover {f
   color: #fff; }
 
 .flip-clock-wrapper ul {
@@ -43,7 +43,8 @@
 .flip-clock-meridium {
   background: none !important;
   box-shadow: 0 0 0 !important;
-  font-size: 36px !important; }
+  font-size: 36px !important;
+}
 
 .flip-clock-meridium a { color: #313333; }
 
@@ -68,11 +69,11 @@
   position: relative;
   float: left;
   margin: 5px;
-  width: 60px;
-  height: 90px;
+  width: 41px;
+  height: 50px;
   font-size: 80px;
   font-weight: bold;
-  line-height: 87px;
+  line-height: 50px;
   border-radius: 6px;
   background: #000;
 }
@@ -84,7 +85,7 @@
   top: 0;
   width: 100%;
   height: 100%;
-  line-height: 87px;
+  line-height: 50px;
   text-decoration: none !important;
 }
 
@@ -158,7 +159,7 @@
   text-align: center;
   background-color: #333;
   border-radius: 6px;
-  font-size: 70px; }
+  font-size: 40px; }
 
 .flip-clock-wrapper ul li a div.up div.inn {
   top: 0; }
@@ -170,7 +171,7 @@
 .flip-clock-wrapper ul.play li.flip-clock-before {
   z-index: 3; }
 
-.flip-clock-wrapper .flip {   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7); }
+.flip-clock-wrapper .flip {/*   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);*/ }
 
 .flip-clock-wrapper ul.play li.flip-clock-active {
   -webkit-animation: asd 0.5s 0.5s linear both;
@@ -183,7 +184,7 @@
   display: inline-block;
   position: relative;
   width: 20px;
-  height: 100px; }
+  height: 45px; }
 
 .flip-clock-divider:first-child {
   width: 0; }
@@ -191,31 +192,31 @@
 .flip-clock-dot {
   display: block;
   background: #323434;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   position: absolute;
   border-radius: 50%;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  /*box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);*/
   left: 5px; }
 
 .flip-clock-divider .flip-clock-label {
   position: absolute;
-  top: -1.5em;
-  right: -86px;
+  top: 60px;
+  right: -65px;
   color: black;
   text-shadow: none; }
 
 .flip-clock-divider.minutes .flip-clock-label {
-  right: -88px; }
+  right: -68px; }
 
 .flip-clock-divider.seconds .flip-clock-label {
-  right: -91px; }
+  right: -72px; }
 
 .flip-clock-dot.top {
-  top: 30px; }
+  bottom: 20px; }
 
 .flip-clock-dot.bottom {
-  bottom: 30px; }
+  bottom: 0px; }
 
 @-webkit-keyframes asd {
   0% {

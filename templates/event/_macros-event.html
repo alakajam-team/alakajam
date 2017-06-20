@@ -115,7 +115,7 @@
 
 <!-- TODO Refactor using a macro -->
 {% if latestEventAnnouncement %}
-  <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') or path === '/' }} event-header__announcement">
+  <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
     <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
     <span class="event-header__announcement-info">
       Announcement • {{ latestEventAnnouncement.get('created_at') | relativeTime }}

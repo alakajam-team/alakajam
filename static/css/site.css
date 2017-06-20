@@ -710,7 +710,7 @@ img.no-border:hover, a:hover img.no-border {
       line-height: 60px;
 
       &.event-header__announcement {
-        line-height: inherit;
+        line-height: 15px;
       }
     }
   }
@@ -953,11 +953,20 @@ img.no-border:hover, a:hover img.no-border {
 
 
 .home-countdown {
-  margin: 40px auto;
-  width: 620px;
+  margin: 10px auto 40px auto;
+  width: 470px;
+  
+  & .flip .inn {
+    background-color: var(--text)
+  }
+  & .flip-clock-label {
+    color: var(--text-light)
+  }
 }
 
 .home-announcement {
+  margin-top: 20px;
+  
   & h1 > a {
     color: var(--text);
     
