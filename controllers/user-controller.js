@@ -238,7 +238,7 @@ async function registerForm (req, res) {
 async function doRegister (req, res) {
   let {fields} = await req.parseForm()
   let errorMessage = null
-  if (!await inviteService.validateKey(fields.invite) && !config.DEBUG_ALLOW_INVALID_INVITE_KEYS) {
+  if (config.DEBUG_ENABLE_INVITE_SYSTEM && !await inviteService.validateKey(fields.invite)) {
     errorMessage = 'Invalid invite key'
   } else if (!(fields.name && fields.password && fields.email)) {
     errorMessage = 'A field is missing'

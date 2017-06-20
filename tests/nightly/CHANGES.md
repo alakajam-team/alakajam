@@ -9,6 +9,7 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 * New event countdown (can be tweaked by editing the event)
 * Entries can now have multiple links
+* Disabled key-based invite system
 * Various theme changes and bugfixes
 
 ### June 16th

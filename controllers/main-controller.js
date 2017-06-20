@@ -105,7 +105,7 @@ async function announcements (req, res) {
 async function people (req, res) {
   let usersCollection = await userService.findAll()
   res.render('people', {
-    users: usersCollection.models
+    users: usersCollection.sortBy((user) => -user.get('id'))
   })
 }
 
