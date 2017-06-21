@@ -21,6 +21,9 @@ function createModel () {
 
     // Relations
 
+    details: function () {
+      return this.hasOne('EntryDetails', 'entry_id')
+    },
     event: function () {
       return this.belongsTo('Event', 'event_id')
     },
@@ -65,14 +68,12 @@ function createModel () {
         table.increments('id').primary()
         table.integer('event_id').references('event.id')
         table.string('event_name')
-        table.string('links') // JSON Array : [{url, title}]
-        table.string('pictures') // JSON Array : [path]
-        table.string('category')
         table.string('name')
         table.string('title')
         table.string('description', 2000)
-        table.string('body', 10000)
-        table.string('results')
+        table.string('links') // JSON Array : [{url, title}]
+        table.string('pictures') // JSON Array : [path]
+        table.string('category') // "solo"/"team"
         table.dateTime('published_at')
         table.integer('comment_count')
         table.timestamps()

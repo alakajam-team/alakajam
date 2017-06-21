@@ -8,6 +8,7 @@
 
 const Event = require('../models/event-model')
 const Entry = require('../models/entry-model')
+const EntryDetails = require('../models/entry-details-model')
 const constants = require('../core/constants')
 
 module.exports = {
@@ -120,6 +121,12 @@ async function createEntry (user, event) {
     user_title: user.get('title'),
     permission: constants.PERMISSION_MANAGE
   })
+
+  let entryDetails = new EntryDetails({
+    entry_id: entry.get('id')
+  })
+  entryDetails.save()
+
   return entry
 }
 
@@ -129,7 +136,7 @@ async function createEntry (user, event) {
  * @returns {Entry}
  */
 async function findEntryById (id) {
-  return Entry.where('id', id).fetch({ withRelated: ['event', 'userRoles'] })
+  return Entry.where('id', id).fetch({ withRelated: ['details', 'event', 'userRoles'] })
 }
 
 /**

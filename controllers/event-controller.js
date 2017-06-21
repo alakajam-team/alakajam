@@ -30,7 +30,6 @@ module.exports = {
  */
 async function eventMiddleware (req, res, next) {
   if (req.params.eventName !== 'create-event') {
-    console.log(req.params)
     let event = await eventService.findEventByName(req.params.eventName)
     res.locals.event = event
     if (!event) {

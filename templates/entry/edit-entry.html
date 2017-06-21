@@ -37,7 +37,7 @@
         <div class="form-group">
           <label for="title">Details</label>
           <div class="user-contents user-contents__editor">
-            {{ formMacros.editor('body', entry.get('body')) }}
+            {{ formMacros.editor('body', entry.related('details').get('body')) }}
           </div>
         </div>
         <div class="form-group">

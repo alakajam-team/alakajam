@@ -93,10 +93,12 @@ async function register (email, name, password) {
   })
   setPassword(user, password)
   await user.save()
+
   let userDetails = new UserDetails({
     user_id: user.get('id')
   })
   await userDetails.save()
+
   return true
 }
 

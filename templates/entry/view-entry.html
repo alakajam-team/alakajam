@@ -24,9 +24,9 @@
         <img src="/static/images/default-entry.png" style="padding: 20px" />
         {% endif %}
       </div>
-      {% if entry.get('body') %}
+      {% if entry.related('details').get('body') %}
       <div class="well post">
-        {{ entry.get('body') | markdown | safe }}
+        {{ entry.related('details').get('body') | markdown | safe }}
       </div>
       {% endif %}
 
@@ -37,7 +37,7 @@
       {% endfor %}
       {% endif %}
 
-      <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
+      <h2>Comments <i>({{ entry.related('details').get('comment_count') or '0' }})</i></h2>
       {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
 
     </div>

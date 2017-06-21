@@ -166,6 +166,10 @@ input.date-picker {
   width: 200px;
 }
 
+.btn {
+  @apply --main-font
+}
+
 /* Required star
 .form-group.required label:after {
   content:" *";

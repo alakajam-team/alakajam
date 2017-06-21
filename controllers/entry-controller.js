@@ -126,7 +126,6 @@ async function saveEntry (req, res) {
       entry.set('title', forms.sanitizeString(fields.title))
       entry.set('description', forms.sanitizeString(fields.description))
       entry.set('links', links)
-      entry.set('body', forms.sanitizeMarkdown(fields.body))
       if (fields['picture-delete'] && entry.get('pictures').length > 0) {
         await fileStorage.remove(entry.get('pictures')[0])
         entry.set('pictures', [])
@@ -134,6 +133,11 @@ async function saveEntry (req, res) {
         let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
         entry.set('pictures', [finalPath])
       }
+
+      let entryDetails = entry.related('details')
+      entryDetails.set('body', forms.sanitizeMarkdown(fields.body))
+
+      await entryDetails.save()
       await entry.save()
       await entry.related('userRoles').fetch()
 
