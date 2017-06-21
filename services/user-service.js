@@ -11,6 +11,7 @@ const randomKey = require('random-key')
 const config = require('../config')
 const forms = require('../core/forms')
 const User = require('../models/user-model')
+const UserDetails = require('../models/user-details-model')
 const UserRole = require('../models/user-role-model')
 
 module.exports = {
@@ -54,9 +55,9 @@ async function findById (id) {
 async function findByName (name) {
   // XXX Case-insensitive search
   if (config.DB_TYPE === 'postgresql') {
-    return User.where('name', 'ILIKE', name).fetch()
+    return User.where('name', 'ILIKE', name).fetch({ withRelated: 'details' })
   } else {
-    return User.where('name', 'LIKE', name).fetch()
+    return User.where('name', 'LIKE', name).fetch({ withRelated: 'details' })
   }
 }
 
@@ -92,6 +93,10 @@ async function register (email, name, password) {
   })
   setPassword(user, password)
   await user.save()
+  let userDetails = new UserDetails({
+    user_id: user.get('id')
+  })
+  await userDetails.save()
   return true
 }
 

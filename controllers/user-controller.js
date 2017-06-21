@@ -58,7 +58,8 @@ async function viewUserProfile (req, res) {
   if (profileUser) {
     let [entries, postsCollection] = await Promise.all([
       eventService.findUserEntries(profileUser),
-      postService.findPosts({userId: profileUser.get('id')})
+      postService.findPosts({userId: profileUser.get('id')}),
+      profileUser.load('details')
     ])
 
     res.render('user/profile', {
@@ -129,6 +130,8 @@ async function dashboardInvite (req, res) {
  * Manage general user info
  */
 async function dashboardSettings (req, res) {
+  await res.locals.dashboardUser.load('details')
+
   let errorMessage = ''
   let infoMessage = ''
 
@@ -149,9 +152,6 @@ async function dashboardSettings (req, res) {
         // General settings form
         dashboardUser.set('title', forms.sanitizeString(fields.title || dashboardUser.get('name')))
         dashboardUser.set('email', fields.email)
-        dashboardUser.set('social_web', fields.website)
-        dashboardUser.set('social_twitter', forms.sanitizeString(fields.twitter.replace('@', '')))
-        dashboardUser.set('body', forms.sanitizeMarkdown(fields.body))
         if (fields['special-permissions']) {
           let isMod = fields['special-permissions'] === 'mod' || fields['special-permissions'] === 'admin'
           let isAdmin = fields['special-permissions'] === 'admin'
@@ -160,6 +160,13 @@ async function dashboardSettings (req, res) {
             'is_admin': isAdmin ? 'true' : ''
           })
         }
+        let dashboardUserDetails = dashboardUser.related('details')
+        dashboardUserDetails.set('social_links', {
+          website: fields.website,
+          twitter: forms.sanitizeString(fields.twitter.replace('@', ''))
+        })
+        dashboardUserDetails.set('body', forms.sanitizeMarkdown(fields.body))
+        await dashboardUserDetails.save()
 
         if (dashboardUser.hasChanged('title')) {
           await userService.refreshUserReferences(dashboardUser)

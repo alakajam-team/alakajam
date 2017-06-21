@@ -155,10 +155,11 @@ function createBookshelfInstance (knexInstance) {
       await userService.register('entrant@example.com', 'entrant', 'entrant')
       let entrantUser = await userService.findByName('entrant')
       entrantUser.set({
-        'title': 'Entrant',
-        'body': 'I am definitely **not** a robot.'
+        'title': 'Entrant'
       })
-      await entrantUser.save()
+      await entrantUser.related('details').set({
+        'body': 'I am definitely **not** a robot.'
+      }).save()
 
       // Articles
 

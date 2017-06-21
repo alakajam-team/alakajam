@@ -16,6 +16,9 @@ function createModel () {
     idAttribute: 'id',
     hasTimestamps: true,
 
+    details: function () {
+      return this.hasOne('UserDetails', 'user_id')
+    },
     roles: function () {
       return this.hasMany('UserRole', 'user_id')
     },
@@ -31,14 +34,11 @@ function createModel () {
         table.string('name').unique()
         table.string('title')
         table.string('email')
-        table.string('password')
-        table.string('password_salt')
-        table.string('body', 10000)
+        table.string('avatar')
         table.string('is_mod')
         table.string('is_admin')
-        table.string('avatar')
-        table.string('social_web', 100)
-        table.string('social_twitter', 100)
+        table.string('password')
+        table.string('password_salt')
         table.timestamps()
       })
     }

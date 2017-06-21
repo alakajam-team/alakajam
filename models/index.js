@@ -19,6 +19,7 @@ module.exports = {
       'event-model',
       'entry-model',
       'user-model',
+      'user-details-model',
       'user-role-model',
       'post-model',
       'comment-model'

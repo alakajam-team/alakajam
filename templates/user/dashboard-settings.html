@@ -44,14 +44,15 @@
       <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ dashboardUser.get('email') }}" required="required" />
     </div>
 
+    {% set socialLinks = dashboardUser.related('details').get('social_links') %}
     <div class="form-group">
       <label for="name">Website</label>
-      <input type="url" class="form-control" id="website" name="website" placeholder="http://" value="{{ dashboardUser.get('social_web') }}" />
+      <input type="url" class="form-control" id="website" name="website" placeholder="http://" value="{{ socialLinks.website }}" />
     </div>
 
     <div class="form-group">
       <label for="name">Twitter</label>
-      <input type="text" class="form-control" id="twitter" name="twitter" placeholder="@username" value="{{ '@' + dashboardUser.get('social_twitter') if dashboardUser.get('social_twitter') }}" />
+      <input type="text" class="form-control" id="twitter" name="twitter" placeholder="@username" value="{{ '@' + socialLinks.twitter if socialLinks.twitter }}" />
     </div>
 
     <div class="form-group">
@@ -71,7 +72,7 @@
 <h2 class="spacing">Bio</h2>
 
 <div class="form-group">
-  {{ formMacros.editor('body', dashboardUser.get('body')) }}
+  {{ formMacros.editor('body', dashboardUser.related('details').get('body')) }}
   <input type="submit" class="btn btn-primary" value="Save changes" />
   <a href="/user/{{ dashboardUser.get('name') }}" class="btn btn-default">View profile</a>
 </div>
