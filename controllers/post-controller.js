@@ -111,7 +111,7 @@ async function editPost (req, res) {
     // Late post attachment to entry
     if (!post.get('special_post_type') && post.get('event_id') && !post.get('entry_id')) {
       context.entry = await eventService.findUserEntryForEvent(
-        res.locals.user, context.event.get('id'))
+        res.locals.user, context.relatedEvent.get('id'))
     }
 
     res.render('post/edit-post', context)

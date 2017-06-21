@@ -8,6 +8,7 @@
 
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
+const models = require('../core/models')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
@@ -67,7 +68,12 @@ async function createEntry (req, res) {
   } else if (await eventService.findUserEntryForEvent(res.locals.user, res.locals.event.id)) {
     res.errorPage(403, 'User already has an entry for this event')
   } else {
-    res.render('entry/edit-entry')
+    res.render('entry/edit-entry', {
+      entry: new models.Entry({
+        event_id: res.locals.event.get('id'),
+        event_name: res.locals.event.get('name')
+      })
+    })
   }
 }
 

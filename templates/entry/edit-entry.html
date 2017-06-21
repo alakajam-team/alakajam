@@ -107,7 +107,7 @@ function refreshTitleDisplay () {
 // Manage links
 
 var linksTemplate = _.template($('#js-links-template').html())
-var links = {{ entry.get('links') | default('[]') | dump | safe }}
+var links = {{ entry.get('links') | default([]) | dump | safe }}
 if (links.length === 0) {
   links.push([])
 }

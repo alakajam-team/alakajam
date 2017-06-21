@@ -90,7 +90,7 @@ async function index (req, res) {
 
   // Gather any user posts
   let postsCollection = await postService.findPosts({specialPostType: null})
-  await postsCollection.load(['entry', 'event'])
+  await postsCollection.load(['entry', 'event', 'entry.userRoles'])
   context.posts = postsCollection.models
 
   res.render('index', context)

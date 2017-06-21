@@ -525,9 +525,8 @@ input.date-picker {
   }
   
   &__related {
-    background-color: var(--borders);
-    border-bottom: 1px solid var(--borders);
-    padding: 10px;
+    margin-top: -10px;
+    margin-bottom: 20px;
     
     & .entry-small-thumb {
       margin-bottom: 0;

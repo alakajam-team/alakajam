@@ -22,22 +22,26 @@
 {% macro entrySmallThumb(entry, cols = 4) %}
 <div class="col-xs-6 col-md-{{ cols }}">
   <div class="entry-small-thumb">
-    {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
-    <div class="entry-small-thumb__details">
-      <a href="{{ buildUrl(entry, 'entry') }}">
-        <div class="entry-small-thumb__picture" style="background-image: url('{{ picturePath }}')"></div>
-        <div class="entry-small-thumb__title"  href="{{ buildUrl(entry, 'entry') }}">
-          {{ entry.get('title') }}
+    {% if entry.get('id') %}
+      {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
+      <div class="entry-small-thumb__details">
+        <a href="{{ buildUrl(entry, 'entry') }}">
+          <div class="entry-small-thumb__picture" style="background-image: url('{{ picturePath }}')"></div>
+          <div class="entry-small-thumb__title"  href="{{ buildUrl(entry, 'entry') }}">
+            {{ entry.get('title') }}
+          </div>
+        </a>
+        <div class="entry-small-thumb__author" >by 
+        {% for userRole in entry.related('userRoles').models %}
+         <a href="{{ buildUrl(userRole, 'user') }}">
+          {{ userRole.get('user_title') }}{{ ', ' if not loop.last }}
+         </a>
+        {% endfor %}
         </div>
-      </a>
-      <div class="entry-small-thumb__author" >by 
-      {% for userRole in entry.related('userRoles').models %}
-       <a href="{{ buildUrl(userRole, 'user') }}">
-        {{ userRole.get('user_title') }}{{ ', ' if not loop.last }}
-       </a>
-      {% endfor %}
       </div>
-    </div>
+    {% else %}
+      <div class="text-center"><h4 style="padding-top: 18px">No entry</h4></div>
+    {% endif %}
   </div>
 </div>
 {% endmacro %}
@@ -112,31 +116,29 @@
 
 
 {% macro eventSmallTable(event) %}
-<div class="col-md-8">
-  <div class="panel event-small-table">
-    <div class="row">
-      <div class="col-xs-12">
-        <a class="event-small-table__header" href="{{ buildUrl(event, 'event') }}">
-          <h2>
-            {% if not options.neutralStatus %}
-              {% if event.get('status') === 'pending' %}
-                <span class="label label-default event-table__status">Upcoming</span>
-              {% elseif event.get('status') === 'open' %}
-                <span class="label label-danger event-table__status">Live!</span>
-              {% endif %}
+<div class="panel event-small-table">
+  <div class="row">
+    <div class="col-xs-12">
+      <a class="event-small-table__header" href="{{ buildUrl(event, 'event') }}">
+        <h2>
+          {% if not options.neutralStatus %}
+            {% if event.get('status') === 'pending' %}
+              <span class="label label-default event-table__status">Upcoming</span>
+            {% elseif event.get('status') === 'open' %}
+              <span class="label label-danger event-table__status">Live!</span>
             {% endif %}
-            {{ event.get('title') }}
-          </h2>
-        </a>
-      </div>
+          {% endif %}
+          {{ event.get('title') }}
+        </h2>
+      </a>
     </div>
-    <div class="row event-small-table__details">
-      <div class="col-xs-12">
-        <span class="glyphicon glyphicon-calendar"></span> {{ event.get('display_dates') or '(dates unknown)' }}
-        {% if event.get('display_theme') %}
-        &nbsp;<span class="glyphicon glyphicon-grain"></span> {{ event.get('display_theme') }}
-        {% endif %}
-      </div>
+  </div>
+  <div class="row event-small-table__details">
+    <div class="col-xs-12">
+      <span class="glyphicon glyphicon-calendar"></span> {{ event.get('display_dates') or '(dates unknown)' }}
+      {% if event.get('display_theme') %}
+      &nbsp;<span class="glyphicon glyphicon-grain"></span> {{ event.get('display_theme') }}
+      {% endif %}
     </div>
   </div>
 </div>
