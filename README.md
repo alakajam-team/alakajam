@@ -1,7 +1,5 @@
 ![Alakajam!](https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/brand.png)
 
-# Alakajam!
-
 > Current progress: An alpha website with support for events, games and posts/comments. No voting system yet.
 
 ## Initial setup
