@@ -26,7 +26,7 @@
           {% endif %}
         </div>
 
-        {{ eventMacros.eventTable(liveEvent, false, 6, { latestEventAnnouncement: announcement, path: path }) }}
+        {{ eventMacros.eventTable(liveEvent, false, 6, { latestEventAnnouncement: liveEventAnnouncement, path: path }) }}
         
       {% elseif nextEvents and nextEvents.length > 0 %}
       
@@ -36,7 +36,7 @@
         </div>
       
         {% for nextEvent in nextEvents %}
-          {{ eventMacros.eventTable(nextEvent, false, 6, { latestEventAnnouncement: announcement, path: path }) }}
+          {{ eventMacros.eventTable(nextEvent, false, 6, { latestEventAnnouncement: nextEventsAnnouncements[loop.index0], path: path }) }}
         {% endfor %}
         
       {% else %}
@@ -46,12 +46,18 @@
   </div>
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10 home-announcement">
-      {% if announcement %}
-        {{ postMacros.post(announcement, user) }}
-        <a href="/announcements" class="btn btn-sm btn-default pull-right">Browse announcements <span class="glyphicon glyphicon-chevron-right"></span></a>
-      {% else %}
-        <div class="well">No announcements yet!</div>
+      {% if homeAnnouncement %}
+        {{ postMacros.post(homeAnnouncement, user) }}
+        <div class="text-right">
+          <a href="/announcements" class="btn btn-sm btn-default">Browse announcements <span class="glyphicon glyphicon-chevron-right"></span></a>
+        </div>
       {% endif %}
+      {% if posts.length > 0 %}
+      <div class="horizontal-bar">Latest posts</div>
+      {% endif %}
+      {% for post in posts %}
+        {{ postMacros.post(post, user, { showRelatedBar: true }) }}
+      {% endfor %}
     </div>
   </div>
 </div>

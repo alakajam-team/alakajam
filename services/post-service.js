@@ -70,7 +70,11 @@ async function findPosts (options = {}) {
     return qb
   })
     .orderBy('published_at', 'DESC')
-    .fetchAll({withRelated: ['author', 'userRoles']})
+    .fetchPage({
+      pageSize: 10,
+      page: options.page,
+      withRelated: ['author', 'userRoles']
+    })
   return postCollection
 }
 

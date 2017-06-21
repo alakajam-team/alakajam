@@ -1,4 +1,5 @@
 {% import "_macros-form.html" as formMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
 
 {# Allowed options: hideHeading hideBody hideSpecialLabels showId showComments allowMods #}
 {% macro post(post, readingUser, options = {}) %}
@@ -54,13 +55,25 @@
       {% endif %}
     </div>
   </div>
-
+  
   {% if not options.hideBody %}
   <div class="post__body panel-body">
     {{ post.get('body') | markdown | safe }}
   </div>
   {% endif %}
-
+  
+  {% if options.showRelatedBar %}
+  <div class="post__related">
+    <div class="row">
+      {% if post.related('entry') %}
+        {{ eventMacros.entrySmallThumb(post.related('entry')) }}
+      {% endif %}
+      {% if post.related('event') %}
+        {{ eventMacros.eventSmallTable(post.related('event')) }}
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 {% endmacro %}

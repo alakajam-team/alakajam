@@ -45,8 +45,8 @@
           {{ relatedEntry.get('title') }}
         </span>
         {% endif %}
-        <input type="hidden" name="event_id" value="{{ relatedEvent.get('id') if relatedEvent }}" />
-        <input type="hidden" name="entry_id" value="{{ relatedEntry.get('id') if relatedEntry }}" />
+        <input type="hidden" name="event-id" value="{{ relatedEvent.get('id') if relatedEvent }}" />
+        <input type="hidden" name="entry-id" value="{{ relatedEntry.get('id') if relatedEntry }}" />
       </div>
     </div>
     {% endif %}

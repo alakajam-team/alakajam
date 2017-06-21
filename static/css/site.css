@@ -6,6 +6,7 @@
   --text: #1f3038;
   --text-light: color(var(--text) alpha(70%));
   --text-lighter: color(var(--text) alpha(40%));
+  --text-lightest: color(var(--text) alpha(30%));
   
   --main: #00abd6;
   --main-light: color(var(--main) lightness(46%));
@@ -168,6 +169,14 @@ input.date-picker {
 
 .btn {
   @apply --main-font
+}
+
+.horizontal-bar {
+  width: 100%;
+  margin: 20px 0;
+  font-weight: bold;
+  color: var(--text-lightest);
+  border-bottom: 1px solid var(--text-lightest);
 }
 
 /* Required star
@@ -514,6 +523,16 @@ input.date-picker {
     font-size: 1.2rem;
     color: white;
   }
+  
+  &__related {
+    background-color: var(--borders);
+    border-bottom: 1px solid var(--borders);
+    padding: 10px;
+    
+    & .entry-small-thumb {
+      margin-bottom: 0;
+    }
+  }
 
   & h1 {
     font-weight: normal;
@@ -712,6 +731,24 @@ input.date-picker {
         line-height: 15px;
       }
     }
+  }
+}
+
+.event-small-table {
+  width: 100%;
+  height: 60px;
+  padding: 7px;
+  margin-bottom: 0;
+  
+  &__header h2 {
+    width: 100%;
+    height: 28px;
+    font-size: 1.25rem;
+    margin-bottom: 0px;
+  }
+  
+  &__details {
+    margin-top: 0;
   }
 }
 

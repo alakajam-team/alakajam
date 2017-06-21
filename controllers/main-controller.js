@@ -64,14 +64,36 @@ async function anyPageMiddleware (req, res, next) {
  * Home page
  */
 async function index (req, res) {
+  let context = {}
+
   if (res.locals.liveEvent) {
+    // Find live event and its latest announcement
     await res.locals.liveEvent.load(['entries', 'entries.userRoles'])
+    context.liveEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.liveEvent.get('id') })
+    context.homeAnnouncement = context.liveEventAnnouncement
+  } else {
+    // Find next events
+    let nextEventsCollection = await eventService.findEvents({status: 'pending'})
+    context.nextEvents = nextEventsCollection.models
+
+    // Gather the latest announcements for all next events
+    context.nextEventsAnnouncements = []
+    context.homeAnnouncement = null
+    for (let nextEvent of context.nextEvents) {
+      let nextEventAnnouncement = await postService.findLatestAnnouncement({ eventId: nextEvent.get('id') })
+      context.nextEventsAnnouncements.push(nextEventAnnouncement)
+      if (!context.homeAnnouncement) {
+        context.homeAnnouncement = nextEventAnnouncement
+      }
+    }
   }
-  let nextEventsCollection = await eventService.findEvents({status: 'pending'})
-  res.render('index', {
-    announcement: await postService.findLatestAnnouncement(),
-    nextEvents: nextEventsCollection.models
-  })
+
+  // Gather any user posts
+  let postsCollection = await postService.findPosts({specialPostType: null})
+  await postsCollection.load(['entry', 'event'])
+  context.posts = postsCollection.models
+
+  res.render('index', context)
 }
 
 /**

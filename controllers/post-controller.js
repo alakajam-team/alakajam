@@ -148,8 +148,12 @@ async function savePost (req, res) {
       // Fill post from form info
       post.set('title', forms.sanitizeString(fields.title))
       post.set('body', forms.sanitizeMarkdown(fields.body))
-      post.set('event_id', forms.sanitizeString(fields['event_id']))
-      post.set('entry_id', forms.sanitizeString(fields['entry_id']))
+      if (forms.isId(fields['event-id'])) {
+        post.set('event_id', fields['event-id'])
+      }
+      if (forms.isId(fields['entry-id'])) {
+        post.set('entry_id', fields['entry-id'])
+      }
 
       // Publication & redirection strategy
       redirectToView = true

@@ -111,6 +111,38 @@
 {% endmacro %}
 
 
+{% macro eventSmallTable(event) %}
+<div class="col-md-8">
+  <div class="panel event-small-table">
+    <div class="row">
+      <div class="col-xs-12">
+        <a class="event-small-table__header" href="{{ buildUrl(event, 'event') }}">
+          <h2>
+            {% if not options.neutralStatus %}
+              {% if event.get('status') === 'pending' %}
+                <span class="label label-default event-table__status">Upcoming</span>
+              {% elseif event.get('status') === 'open' %}
+                <span class="label label-danger event-table__status">Live!</span>
+              {% endif %}
+            {% endif %}
+            {{ event.get('title') }}
+          </h2>
+        </a>
+      </div>
+    </div>
+    <div class="row event-small-table__details">
+      <div class="col-xs-12">
+        <span class="glyphicon glyphicon-calendar"></span> {{ event.get('display_dates') or '(dates unknown)' }}
+        {% if event.get('display_theme') %}
+        &nbsp;<span class="glyphicon glyphicon-grain"></span> {{ event.get('display_theme') }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+
 {% macro eventLinks (event, latestEventAnnouncement, path) %}
 
 <!-- TODO Refactor using a macro -->
