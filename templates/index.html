@@ -14,14 +14,31 @@
     <div class="col-lg-offset-1 col-lg-10">
       {% if liveEvent %}
   
-        <h1 class="text-center"><a href="{{ buildUrl(liveEvent, 'event') }}">{{ liveEvent.get('title') }}</a> {{ liveEvent.get('countdown_config').phrase | default('ends in') }}</h1>
-        <div class="home-countdown"></div>
+        <div class="home-jumbo">
+          <h1><a href="{{ buildUrl(liveEvent, 'event') }}">{{ liveEvent.get('title') }}</a> {{ liveEvent.get('countdown_config').phrase | default('ends in') }}</h1>
+          <div class="home-countdown"></div>
+          {% if liveEvent.get('display_theme') %}
+            {% if liveEvent.get('status_theme') !== 'off' and liveEvent.get('status_theme') !== 'disabled' %}
+              <h1>Theme: <a href="{{ buildUrl(liveEvent, 'event', 'themes') }}">{{ liveEvent.get('display_theme') }}</a></h1>
+            {% else %}
+              <h1>Theme: {{ liveEvent.get('display_theme') }}</h1>
+            {% endif %}
+          {% endif %}
+        </div>
 
         {{ eventMacros.eventTable(liveEvent, false, 6, { latestEventAnnouncement: announcement, path: path }) }}
+        
       {% elseif nextEvents and nextEvents.length > 0 %}
+      
+        {% set upcomingEvent = nextEvents[0] %}
+        <div class="home-jumbo">
+          <h1><a href="{{ buildUrl(upcomingEvent, 'event') }}">{{ upcomingEvent.get('title') }}</a> {{ 'starts ' + upcomingEvent.get('display_dates') if upcomingEvent.get('display_dates') else 'will come soon!' }}</h1></h1>
+        </div>
+      
         {% for nextEvent in nextEvents %}
           {{ eventMacros.eventTable(nextEvent, false, 6, { latestEventAnnouncement: announcement, path: path }) }}
         {% endfor %}
+        
       {% else %}
         <div class="well">No upcoming event.</div>
       {% endif %}
@@ -45,7 +62,7 @@
 {% if liveEvent %}
   <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
   <script type="text/javascript">
-  let diffMs = Date.parse('{{ liveEvent.get('countdown_config').date }}') - Date.now()
+  let diffMs = Math.max(0, Date.parse('{{ liveEvent.get('countdown_config').date }}') - Date.now())
   $('.home-countdown').FlipClock(diffMs / 1000, { 
     clockFace: 'DailyCounter',
     countdown: true

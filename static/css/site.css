@@ -274,7 +274,7 @@ input.date-picker {
         & .live__theme {
           display: block;
           font-style: italic;
-          font-size: 1.1rem;
+          font-size: 1.05rem;
         }
       }
 
@@ -950,9 +950,13 @@ input.date-picker {
 
 /* ============================== Home page ============================== */
 
+.home-jumbo {
+  text-align: center;
+  margin-bottom: 30px;
+}
 
 .home-countdown {
-  margin: 10px auto 40px auto;
+  margin: 10px auto 20px auto;
   width: 470px;
   
   & .flip .inn {

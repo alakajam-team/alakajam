@@ -45,7 +45,7 @@
               <div class="live__event">
                 {{ liveEvent.get('title') }}
                 <span class="live__theme">
-                  {{ liveEvent.get('display_theme') }}
+                  {{ liveEvent.get('display_theme') or '(Theme unknown)' }}
                 </span>
               </div>
             </a>
