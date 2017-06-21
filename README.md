@@ -1,4 +1,4 @@
-![Alakajam!](https://raw.githubusercontent.com/mkalam-alami/wejam/17c312aa7d2dbc9f6b67b33e84b7170091378bda/static/images/logo.png)
+![Alakajam!](https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/brand.png)
 
 # Alakajam!
 
