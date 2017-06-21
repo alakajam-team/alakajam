@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * User service
+ * models.User service
  *
  * @module services/user-service
  */
@@ -10,9 +10,7 @@ const crypto = require('crypto')
 const randomKey = require('random-key')
 const config = require('../config')
 const forms = require('../core/forms')
-const User = require('../models/user-model')
-const UserDetails = require('../models/user-details-model')
-const UserRole = require('../models/user-role-model')
+const models = require('../core/models')
 
 module.exports = {
   findAll,
@@ -35,29 +33,29 @@ const PASSWORD_MIN_LENGTH = 6
  * @returns {Collection(User)}
  */
 async function findAll () {
-  return User.fetchAll()
+  return models.User.fetchAll()
 }
 
 /**
- * Fetches a User
+ * Fetches a user
  * @param id {id} ID
  * @returns {User}
  */
 async function findById (id) {
-  return User.where('id', id).fetch()
+  return models.User.where('id', id).fetch()
 }
 
 /**
- * Fetches a User
+ * Fetches a user
  * @param name {name} name
  * @returns {User}
  */
 async function findByName (name) {
   // XXX Case-insensitive search
   if (config.DB_TYPE === 'postgresql') {
-    return User.where('name', 'ILIKE', name).fetch({ withRelated: 'details' })
+    return models.User.where('name', 'ILIKE', name).fetch({ withRelated: 'details' })
   } else {
-    return User.where('name', 'LIKE', name).fetch({ withRelated: 'details' })
+    return models.User.where('name', 'LIKE', name).fetch({ withRelated: 'details' })
   }
 }
 
@@ -75,7 +73,7 @@ async function register (email, name, password) {
   if (name.length < USERNAME_MIN_LENGTH) {
     return 'Username length must be at least ' + USERNAME_MIN_LENGTH
   }
-  if (await User.where('name', name).count() > 0) {
+  if (await models.User.where('name', name).count() > 0) {
     return 'Username is taken'
   }
   if (!forms.isEmail(email)) {
@@ -86,7 +84,7 @@ async function register (email, name, password) {
     return passwordValidationResult
   }
 
-  let user = new User({
+  let user = new models.User({
     email: email,
     name: name,
     title: name
@@ -94,7 +92,7 @@ async function register (email, name, password) {
   setPassword(user, password)
   await user.save()
 
-  let userDetails = new UserDetails({
+  let userDetails = new models.UserDetails({
     user_id: user.get('id')
   })
   await userDetails.save()
@@ -106,10 +104,10 @@ async function register (email, name, password) {
  * Authenticates against a user name and password, and updates the session accordingly
  * @param name {string} name
  * @param password {string} clear password (will be hashed & compared to the DB entry)
- * @returns {User} The User, or false if the authentication failed
+ * @returns {User} The models.User, or false if the authentication failed
  */
 async function authenticate (name, password) {
-  let user = await User.query(function (query) {
+  let user = await models.User.query(function (query) {
     query.where('name', name).orWhere('email', name)
   }).fetch()
   if (user) {
@@ -160,11 +158,11 @@ function hashPassword (password, salt) {
 /**
  * Refreshes various models that cache user name and/or title.
  * Call this after changing the name or title of an user.
- * @param {User} user User model
+ * @param {User} user
  */
 async function refreshUserReferences (user) {
   // TODO Transaction
-  let userRolesCollection = await UserRole.where('user_id', user.get('id')).fetchAll()
+  let userRolesCollection = await models.UserRole.where('user_id', user.get('id')).fetchAll()
   for (let userRole of userRolesCollection.models) {
     userRole.set('user_name', user.get('name'))
     userRole.set('user_title', user.get('title'))

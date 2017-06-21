@@ -121,11 +121,9 @@ async function adminDev (req, res) {
     if (req.method === 'POST') {
       let {fields} = await req.parseForm()
       if (fields['db-reset']) {
-        await db.dropTables()
-        await db.upgradeTables()
-        await db.insertInitialData(config.DEBUG_INSERT_SAMPLES)
-        let version = await db.findCurrentVersion()
-        infoMessage = 'DB reset done (current version : ' + version + ').'
+        await db.emptyDatabase()
+        let newVersion = await db.initDatabase(config.DEBUG_INSERT_SAMPLES)
+        infoMessage = 'DB reset done (current version : ' + newVersion + ').'
       }
     }
     res.render('admin/admin-dev', {

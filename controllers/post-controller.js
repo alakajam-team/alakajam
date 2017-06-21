@@ -8,11 +8,11 @@
 
 const constants = require('../core/constants')
 const forms = require('../core/forms')
+const models = require('../core/models')
 const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
 const templating = require('./templating')
-const Post = require('../models/post-model')
 
 module.exports = {
   handleSaveComment,
@@ -71,7 +71,7 @@ async function editPost (req, res) {
   let createMode = !res.locals.post
   if (createMode || securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
     if (createMode) {
-      let post = new Post()
+      let post = new models.Post()
       if (forms.isId(req.query.eventId)) {
         post.set('event_id', req.query.eventId)
       }

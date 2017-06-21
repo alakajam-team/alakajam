@@ -17,7 +17,6 @@ const SPECIAL_POST_TYPES = [SPECIAL_POST_TYPE_ANNOUNCEMENT, SPECIAL_POST_TYPE_AR
 
 module.exports = {
   // Settings
-  SETTING_DB_VERSION: 'db_version',
   SETTING_SESSION_KEY: 'session_key',
   SETTING_INVITE_PASSWORD: 'invite_password',
   SETTING_INVITE_PEPPER: 'invite_pepper',

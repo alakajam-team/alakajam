@@ -14,7 +14,7 @@ There is a default admin user (`administrator`/`administrator`).
 
 ## Developer tools
 
-Prerequisite: `npm install -g standard browser-refresh node-inspector jsdoc mocha`
+Prerequisite: `npm install -g knex standard browser-refresh node-inspector jsdoc mocha`
 
 ### Recommended
 

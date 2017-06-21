@@ -22,8 +22,6 @@ try {
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
-const express = require('express')
-const browserRefreshClient = require('browser-refresh-client')
 
 createApp()
 
@@ -34,7 +32,9 @@ async function createApp () {
   catchErrorsAndSignals()
   await initFilesLayout()
 
+  const express = require('express')
   const middleware = require('./core/middleware')
+  const db = require('./core/db')
   const config = require('./config')
 
   let app = express()
@@ -42,7 +42,7 @@ async function createApp () {
   // off, so we don't leak stack traces in case production is ever
   // misconfigured to leave this undefined.
   app.locals.devMode = app.get('env') === 'development'
-  await initDatabase(app.locals.devMode && config.DEBUG_INSERT_SAMPLES)
+  await db.initDatabase(app.locals.devMode && config.DEBUG_INSERT_SAMPLES)
   await middleware.configure(app)
   app.listen(config.SERVER_PORT, configureBrowserRefresh)
   log.info('Server started on port ' + config.SERVER_PORT + '.')
@@ -109,33 +109,10 @@ async function initFilesLayout () {
 }
 
 /*
- * DB initialization
- */
-async function initDatabase (withSamples) {
-  const db = require('./core/db')
-  let currentVersion = await db.findCurrentVersion()
-  if (currentVersion > 0) {
-    log.info('Database found in version ' + currentVersion + '.')
-  } else {
-    log.info('Empty database found.')
-  }
-
-  await db.upgradeTables(currentVersion)
-  if (currentVersion === 0) {
-    await db.insertInitialData(withSamples)
-  }
-  let newVersion = await db.findCurrentVersion()
-  if (newVersion > currentVersion) {
-    log.info('Database upgraded to version ' + newVersion + '.')
-  } else {
-    log.info('No database upgrade needed.')
-  }
-}
-
-/*
  * Use browser-refresh to refresh the browser automatically during development
  */
 function configureBrowserRefresh () {
+  const browserRefreshClient = require('browser-refresh-client')
   const config = require('./config.js')
 
   if (process.send && config.DEBUG_REFRESH_BROWSER) {

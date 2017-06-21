@@ -6,9 +6,7 @@
  * @module services/event-service
  */
 
-const Event = require('../models/event-model')
-const Entry = require('../models/entry-model')
-const EntryDetails = require('../models/entry-details-model')
+const models = require('../core/models')
 const constants = require('../core/constants')
 
 module.exports = {
@@ -32,7 +30,7 @@ module.exports = {
  * @return {Event}
  */
 function createEvent () {
-  return new Event({
+  return new models.Event({
     'published_at': new Date() // TODO Let admins choose when to publish
   })
 }
@@ -44,7 +42,7 @@ function createEvent () {
  */
 async function refreshEventReferences (event) {
   // TODO Transaction
-  let entryCollection = await Entry.where('event_id', event.id).fetchAll()
+  let entryCollection = await models.Entry.where('event_id', event.id).fetchAll()
   for (let entry of entryCollection.models) {
     entry.set('event_name', event.get('name'))
     await entry.save()
@@ -52,32 +50,32 @@ async function refreshEventReferences (event) {
 }
 
 /**
- * Fetches an Event by its ID, with all its Entries.
- * @param id {id} Event ID
+ * Fetches an models.Event by its ID, with all its Entries.
+ * @param id {id} models.Event ID
  * @returns {Event}
  */
 async function findEventById (id) {
-  return Event.where('id', id)
+  return models.Event.where('id', id)
     .fetch({ withRelated: ['entries', 'entries.userRoles'] })
 }
 
 /**
- * Fetches an Event by its name, with all its Entries.
- * @param id {id} Event name
+ * Fetches an models.Event by its name, with all its Entries.
+ * @param id {id} models.Event name
  * @returns {Event}
  */
 async function findEventByName (name) {
-  return Event.where('name', name)
+  return models.Event.where('name', name)
     .fetch({ withRelated: ['entries', 'entries.userRoles'] })
 }
 
 /**
- * Fetches all Events and their Entries.
+ * Fetches all models.Events and their Entries.
  * @param {object} options Allowed: status name
  * @returns {array(Event)}
  */
 async function findEvents (options = {}) {
-  let eventModels = await new Event()
+  let eventModels = await new models.Event()
     .orderBy('published_at', 'DESC')
   if (options.status) eventModels = eventModels.where('status', options.status)
   if (options.name) eventModels = eventModels.where('name', options.name)
@@ -85,7 +83,7 @@ async function findEvents (options = {}) {
 }
 
 /**
- * Fetches the currently live Event.
+ * Fetches the currently live models.Event.
  * @param globalStatus {string} One of "pending", "open", "closed"
  * @returns {Event} The earliest pending event OR the currently open event OR the last closed event.
  */
@@ -94,7 +92,7 @@ async function findEventByStatus (status) {
   if (status === 'closed') {
     sortOrder = 'DESC'
   }
-  return Event.where('status', status)
+  return models.Event.where('status', status)
     .orderBy('created_at', sortOrder)
     .fetch()
 }
@@ -111,7 +109,7 @@ async function createEntry (user, event) {
   }
 
   // TODO Better use of Bookshelf API
-  let entry = new Entry()
+  let entry = new models.Entry()
   await entry.save() // otherwise the user role won't have a node_id
   entry.set('event_id', event.get('id'))
   entry.set('event_name', event.get('name'))
@@ -122,7 +120,7 @@ async function createEntry (user, event) {
     permission: constants.PERMISSION_MANAGE
   })
 
-  let entryDetails = new EntryDetails({
+  let entryDetails = new models.EntryDetails({
     entry_id: entry.get('id')
   })
   entryDetails.save()
@@ -131,12 +129,12 @@ async function createEntry (user, event) {
 }
 
 /**
- * Fetches an Entry by its ID.
- * @param id {id} Entry ID
+ * Fetches an models.Entry by its ID.
+ * @param id {id} models.Entry ID
  * @returns {Entry}
  */
 async function findEntryById (id) {
-  return Entry.where('id', id).fetch({ withRelated: ['details', 'event', 'userRoles'] })
+  return models.Entry.where('id', id).fetch({ withRelated: ['details', 'event', 'userRoles'] })
 }
 
 /**
@@ -145,7 +143,7 @@ async function findEntryById (id) {
  * @return {array(Entry)|null}
  */
 async function findUserEntries (user) {
-  let entryCollection = await Entry.query((qb) => {
+  let entryCollection = await models.Entry.query((qb) => {
     qb.distinct()
       .innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .where({
@@ -163,7 +161,7 @@ async function findUserEntries (user) {
  * @return {Entry|null}
  */
 async function findUserEntryForEvent (user, eventId) {
-  return Entry.query((query) => {
+  return models.Entry.query((query) => {
     query.innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .where({
         'entry.event_id': eventId,

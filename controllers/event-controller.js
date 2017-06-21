@@ -152,7 +152,7 @@ async function editEvent (req, res) {
     if (!forms.isSlug(fields.name)) {
       errorMessage = 'Name is not a valid slug'
     } else if (fields.name.indexOf('-') === -1) {
-      errorMessage = 'Name must contain at least one dash (-)'
+      errorMessage = 'Name must contain at least one hyphen (-)'
     } else if (!forms.isIn(fields.status, ['pending', 'open', 'closed'])) {
       errorMessage = 'Invalid status'
     } else if (!forms.isIn(fields['status-theme'], ['disabled', 'off', 'on']) &&

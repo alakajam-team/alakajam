@@ -6,7 +6,7 @@
  * @module services/setting-service
  */
 
-const Setting = require('../models/setting-model')
+const models = require('../core/models')
 
 module.exports = {
   find,
@@ -21,7 +21,7 @@ module.exports = {
  * @returns {void}
  */
 async function find (key, defaultValue = null) {
-  let settingModel = await Setting.where('key', key).fetch()
+  let settingModel = await models.Setting.where('key', key).fetch()
   if (settingModel) {
     return settingModel.get('value')
   } else if (typeof defaultValue === 'function') {
@@ -38,10 +38,10 @@ async function find (key, defaultValue = null) {
  * @returns {void}
  */
 async function save (key, value) {
-  let settingModel = await Setting.where('key', key).fetch()
+  let settingModel = await models.Setting.where('key', key).fetch()
   let method = 'update'
   if (!settingModel) {
-    settingModel = new Setting({key: key})
+    settingModel = new models.Setting({key: key})
     method = 'insert' // setting the ID manually makes Bookshelf assume an update
   }
   settingModel.set('value', value)
