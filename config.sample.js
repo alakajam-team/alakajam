@@ -2,7 +2,7 @@ module.exports = {
   // Web server
   SERVER_PORT: 8000,
 
-  // Data storage
+  // File storage
   DATA_PATH: 'data/',
   UPLOADS_PATH: 'static/uploads/',
 
@@ -20,6 +20,9 @@ module.exports = {
   DB_USER: 'postgres',
   DB_PASSWORD: '',
   DB_NAME: 'alakajam', */
+
+  // Misc
+  // GOOGLE_ANALYTICS_ID: '',
 
   // Debug options
   DEBUG_INSERT_SAMPLES: true, // Inserts sample data upon DB init (false/true/'nightly')
