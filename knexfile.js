@@ -5,8 +5,11 @@
  */
 
 let config = require('./config')
+let path = require('path')
 
 module.exports = {
+
+  directory: path.join(path.relative(process.cwd(), __dirname), 'migrations'),
 
   development: {
     client: config.DB_TYPE,
