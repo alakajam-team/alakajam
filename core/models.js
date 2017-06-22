@@ -54,6 +54,9 @@ module.exports.User = bookshelf.model('User', {
   comments: function () {
     return this.hasMany('Comment', 'user_id')
   }
+}, {
+  // Cascading
+  dependents: ['details', 'roles']
 })
 
 /**
@@ -85,7 +88,7 @@ module.exports.UserDetails = bookshelf.model('UserDetails', {
     return attrs
   },
   format: function format (attrs) {
-    if (attrs['social_links']) attrs['social_links'] = JSON.stringify(attrs['social_links'])
+    if (attrs && attrs['social_links']) attrs['social_links'] = JSON.stringify(attrs['social_links'])
     return attrs
   }
 })
@@ -162,10 +165,13 @@ module.exports.Event = bookshelf.model('Event', {
     return attrs
   },
   format: function format (attrs) {
-    if (attrs['countdown_config']) attrs['countdown_config'] = JSON.stringify(attrs['countdown_config'])
-    if (attrs['cron_config']) attrs['cron_config'] = JSON.stringify(attrs['cron_config'])
+    if (attrs && attrs['countdown_config']) attrs['countdown_config'] = JSON.stringify(attrs['countdown_config'])
+    if (attrs && attrs['cron_config']) attrs['cron_config'] = JSON.stringify(attrs['cron_config'])
     return attrs
   }
+}, {
+  // Cascading
+  dependents: ['entries']
 })
 
 /*
@@ -202,10 +208,6 @@ module.exports.Entry = bookshelf.model('Entry', {
     return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
   },
 
-  // Cascading
-
-  dependents: ['userRoles'],
-
   // Listeners
 
   initialize: function initialize (attrs) {
@@ -224,10 +226,14 @@ module.exports.Entry = bookshelf.model('Entry', {
     return attrs
   },
   format: function format (attrs) {
-    if (attrs.links) attrs.links = JSON.stringify(attrs.links)
-    if (attrs.pictures) attrs.pictures = JSON.stringify(attrs.pictures)
+    if (attrs && attrs.links) attrs.links = JSON.stringify(attrs.links)
+    if (attrs && attrs.pictures) attrs.pictures = JSON.stringify(attrs.pictures)
     return attrs
   }
+
+}, {
+  // Cascading
+  dependents: ['userRoles', 'details', 'comments']
 })
 
 /*
@@ -291,6 +297,9 @@ module.exports.Post = bookshelf.model('Post', {
   comments: function () {
     return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
   }
+}, {
+  // Cascading
+  dependents: ['userRoles', 'comments']
 })
 
 /*

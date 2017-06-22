@@ -7,7 +7,6 @@
  * @module core/db
  */
 
-const knex = require('knex')
 const moment = require('moment')
 const promisify = require('promisify-node')
 const fs = promisify('fs')
@@ -20,8 +19,8 @@ const log = require('../core/log')
 module.exports = initBookshelf()
 
 function initBookshelf () {
-  let knexInstance = createKnexInstance()
-  let bookshelf = createBookshelfInstance(knexInstance)
+  let knex = createKnexInstance()
+  let bookshelf = createBookshelfInstance(knex)
 
   /**
    * Updates the database to the latest version
@@ -30,9 +29,9 @@ function initBookshelf () {
    */
   bookshelf.initDatabase = async function (withSamples) {
     log.info('Upgrading database...')
-    let previousVersion = await knexInstance.migrate.currentVersion()
-    await knexInstance.migrate.latest(knexfile)
-    let newVersion = await knexInstance.migrate.currentVersion()
+    let previousVersion = await knex.migrate.currentVersion()
+    await knex.migrate.latest(knexfile)
+    let newVersion = await knex.migrate.currentVersion()
 
     if (previousVersion !== newVersion) {
       log.info('Upgraded database from version ' + previousVersion + ' to ' + newVersion)
@@ -52,7 +51,7 @@ function initBookshelf () {
   bookshelf.emptyDatabase = async function () {
     let rollbackResult
     do {
-      rollbackResult = await knexInstance.migrate.rollback()
+      rollbackResult = await knex.migrate.rollback()
     } while (rollbackResult[0] !== 0)
   }
 
@@ -83,19 +82,20 @@ function createKnexInstance () {
       charset: 'utf8'
     }
   }
-  return knex(knexOptions)
+  return require('knex')(knexOptions)
 }
 
 /*
  * Bookshelf (ORM) init with custom methods.
- * @param  {Knex} knexInstance
+ * @param  {Knex} knex
  * @return {void}
  */
-function createBookshelfInstance (knexInstance) {
-  let bookshelf = require('bookshelf')(knexInstance)
+function createBookshelfInstance (knex) {
+  let bookshelf = require('bookshelf')(knex)
   bookshelf.plugin('registry')
   bookshelf.plugin('pagination')
   bookshelf.plugin(require('bookshelf-cascade-delete'))
+  console.log(bookshelf)
   return bookshelf
 }
 

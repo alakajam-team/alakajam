@@ -37,17 +37,20 @@ async function eventMiddleware (req, res, next) {
       return
     } else {
       let announcementTask = postService.findLatestAnnouncement({ eventId: event.id })
-          .then(function (announcement) {
-            res.locals.latestEventAnnouncement = announcement
-          })
+          .then((announcement) => { res.locals.latestEventAnnouncement = announcement })
+
       let entryTask = true
+      let userPostTask = true
       if (res.locals.user) {
         entryTask = eventService.findUserEntryForEvent(res.locals.user, event.get('id'))
-            .then(function (userEntry) {
-              res.locals.userEntry = userEntry
-            })
+            .then(userEntry => { res.locals.userEntry = userEntry })
+        userPostTask = postService.findPost({
+          userId: res.locals.user.id,
+          eventId: res.locals.event.id,
+          specialPostType: null
+        }).then(userPost => { res.locals.userPost = userPost })
       }
-      await Promise.all([announcementTask, entryTask])
+      await Promise.all([announcementTask, entryTask, userPostTask])
     }
   }
   next()
@@ -69,18 +72,7 @@ async function viewEventAnnouncements (req, res) {
  * Browse event posts
  */
 async function viewEventPosts (req, res) {
-  let userPost
-  if (res.locals.user) {
-    let userPosts = await postService.findPosts({
-      userId: res.locals.user.id,
-      eventId: res.locals.event.id,
-      specialPostType: null
-    })
-    userPost = (userPosts.models.length > 0) ? userPosts.models[0] : undefined
-  }
-
   res.render('event/view-event-posts', {
-    userPost: userPost,
     posts: await postService.findPosts({
       eventId: res.locals.event.get('id'),
       specialPostType: null

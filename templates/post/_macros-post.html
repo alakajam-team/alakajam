@@ -11,12 +11,20 @@
   {% set h = 'h3' if options.hideBody else 'h1' %}
   {% if path === postUrl %}
   <div class="post__heading">
-    <{{h}}>{{ post.get('title') }}</{{h}}>
+    <{{h}}>
+      {{ post.get('title') }}
+      {% if canUserWrite(readingUser, post, options) %}
+        <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
+      {% endif %}
+    </{{h}}>
   </div>
   {% else %}
   <{{h}} class="post__heading">
     <a href="{{ buildUrl(post, 'post') }}">
       {{ post.get('title') }}
+      {% if canUserWrite(readingUser, post, options) %}
+        <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
+      {% endif %}
       {% if options.showId %}
         <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
       {% endif %}
@@ -51,9 +59,6 @@
             {{ post.get('special_post_type') | upper }}
           </span>
         {% endif %}
-        {% if canUserWrite(readingUser, post, options) %}
-        <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit post</a>
-        {% endif %}
       </div>
     </div>
     
@@ -67,7 +72,9 @@
   {% if options.showRelatedBar %}
   <div class="post__related">
     <div class="row">
-      {{ eventMacros.entrySmallThumb(post.related('entry')) }}
+      <div class="col-md-4">
+        {{ eventMacros.entrySmallThumb(post.related('entry')) }}
+      </div>
       {% if post.related('event').get('id') %}
         <div class="col-md-8">
           {{ eventMacros.eventSmallTable(post.related('event')) }}

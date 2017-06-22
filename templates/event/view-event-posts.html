@@ -1,32 +1,10 @@
-{% extends "_page.html" %}
+{% extends "event/_page-event.html" %}
 {% import "post/_macros-post.html" as postMacros %}
 
 {% block body %}
+{{ super() }}
 
 <div class="container">
-  {% if user %}
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-      <div class="action-banner">
-        <div class="row">
-          <div class="col-xs-12 text-right">
-            <span class="action-banner__info">
-            {% if userPost %}
-              Your latest post: <a href="{{ buildUrl(userPost, 'post') }}" class="action-banner__link">{{ userPost.get('title') }}</a>
-            {% else %}
-            You have no posts in this event
-            {% endif %}
-            </span>
-
-            <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-primary">Create new post</a>
-            <a href="{{ buildUrl(user, 'user', 'posts') }}" class="btn btn-primary">My posts</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
       {% for post in posts.models %}

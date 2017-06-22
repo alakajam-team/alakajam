@@ -1,0 +1,53 @@
+{% extends "_page.html" %}
+{% import "_macros-form.html" as formMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
+
+{% block body %}
+
+{% if user %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-offset-1 col-md-5 action-banner">
+      <div class="action-banner__title">
+        Your entry
+       {% if userEntry %}
+         <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-xs btn-default pull-right">Edit entry</a>
+       {% elseif event.get('status') !== 'open' %}
+         <div class="pull-right">
+           {{ formMacros.tooltip('Users can only create entries while the event is open.') }}
+           <a href="#"class="btn btn-xs btn-default disabled">Create entry</a>
+         </div>
+       {% else %}
+         <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-xs btn-default pull-right">Create entry</a>
+       {% endif %}
+      </div>
+      {% if event.get('status_entry') === 'on' %}
+        {{ eventMacros.entrySmallThumb(userEntry, 8) }}
+      {% else %}
+        Entry submissions are not open yet.
+      {% endif %}
+    </div>
+    <div class="col-md-5 action-banner">
+      <div class="action-banner__title">
+        Your latest post
+        <div class="pull-right">
+          {% if userPost %}
+          <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-xs btn-default">Edit this post</a>
+          {% endif %}
+          <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-xs btn-default">Create post</a>
+          <a href="{{ buildUrl(user, 'user', 'posts') }}" class="btn btn-xs btn-default">My posts</a>
+        </div>
+      </div>
+      <div class="panel action-banner__post">
+        {% if userPost %}
+          <a href="{{ buildUrl(userPost, 'post') }}">{{ userPost.get('title') }}</a>
+        {% else %}
+          <div class="text-center"><h4 style="padding-top: 13px">No post</h4></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,35 +1,10 @@
-{% extends "_page.html" %}
+{% extends "event/_page-event.html" %}
 {% import "event/_macros-event.html" as eventMacros %}
 
 {% block body %}
+{{ super() }}
 
 <div class="container">
-  {% if user and event.get('status_entry') === 'on' %}
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-      <div class="action-banner">
-        <div class="row">
-          <div class="col-xs-12 text-right">
-            <span class="action-banner__info">
-            {% if userEntry %}
-            Your entry: <a href="{{ buildUrl(userEntry, 'entry') }}" class="action-banner__link">{{ userEntry.get('title') }}</a>
-            {% else %}
-            You have no entry
-            {% endif %}
-            </span>
-
-            {% if userEntry %}
-            <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-primary">Edit entry</a>
-            {% else %}
-            <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-primary">Submit entry</a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-
   <div class="row">
     {% set entries = event.related('entries').models %}
     {% for entry in entries %}

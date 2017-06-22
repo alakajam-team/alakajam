@@ -84,13 +84,15 @@ async function findPostById (postId) {
 
 /**
  * Finds one post
- * @param  {object} options among "id name specialPostType allowDrafts"
+ * @param  {object} options among "id name userId eventId specialPostType allowDrafts"
  * @return {Post}
  */
 async function findPost (options = {}) {
   let query = models.Post
   if (options.id) query = query.where('id', options.id)
   if (options.name) query = query.where('name', options.name)
+  if (options.eventId) query = query.where('event_id', options.eventId)
+  if (options.userId) query = query.where('author_user_id', options.userId)
   if (options.specialPostType !== undefined) query = query.where('special_post_type', options.specialPostType)
   if (!options.allowDrafts) query = query.where('published_at', '<=', new Date())
   return query.fetch({withRelated: ['author', 'userRoles']})
