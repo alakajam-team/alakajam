@@ -16,6 +16,7 @@ module.exports = {
   findAll,
   findById,
   findByName,
+  searchByName,
 
   register,
   authenticate,
@@ -57,6 +58,19 @@ async function findByName (name) {
   } else {
     return models.User.where('name', 'LIKE', name).fetch({ withRelated: 'details' })
   }
+}
+
+/**
+ * Search for a user by name.
+ * @param {string} fragment a contigious part of the user's title
+ * @returns {Promise(Bookshelf.Collection(User))} the collection of matching users.
+ */
+async function searchByName (search) {
+  return User.where(
+    'title',
+    config.DB_TYPE === 'postgresql' ? 'ILIKE' : 'LIKE',
+    `%${search}%`
+  ).fetchAll()
 }
 
 /**

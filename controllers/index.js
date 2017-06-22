@@ -54,6 +54,7 @@ module.exports = {
     router.all('/dashboard/settings', userController.dashboardSettings)
     router.all('/dashboard/password', userController.dashboardPassword)
     router.get('/user/:name', userController.viewUserProfile)
+    router.get('/search/user', userController.searchUsers)
 
     // Mod dashboard
 

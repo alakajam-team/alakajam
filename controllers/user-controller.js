@@ -33,7 +33,9 @@ module.exports = {
   doRegister,
   loginForm,
   doLogin,
-  doLogout
+  doLogout,
+
+  searchUsers
 }
 
 async function dashboardMiddleware (req, res, next) {
@@ -350,5 +352,23 @@ async function doLogout (req, res) {
   sessionService.invalidateSession(req, res)
   res.render('login', {
     infoMessage: 'Logout successful.'
+  })
+}
+
+/**
+ * Search for users by text
+ *
+ * @param {string} req.query.search a contigious fragment of the user's title
+ */
+function searchUsers (req, res) {
+  if (!req.query.search) {
+    res.errorPage(400)
+    return
+  }
+
+  userService.searchByName(req.query.search).then(users => {
+    res.json({
+      users: users.map(user => user.get('title'))
+    })
   })
 }
