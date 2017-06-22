@@ -11,7 +11,7 @@
         <div class="alert alert-warning"><strong>Draft article</strong> Other users can't see it until it is published.</div>
       {% endif %}
       <div class="post panel">
-        <div class="post__body panel-body">
+        <div class="post__body panel-body user-contents">
           {{ post.get('body') | markdown | safe }}
         </div>
       </div>

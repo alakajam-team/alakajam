@@ -82,6 +82,9 @@ async function configure (app) {
   nunjucks.env.addFilter('markdown', function (str) {
     return forms.markdownToHtml(str)
   })
+  nunjucks.env.addFilter('markdownUnescape', function (str) {
+    return str.replace(/&amp;/g, '&')
+  })
   nunjucks.env.addFilter('date', function (date) {
     if (date) {
       return moment(date).format(constants.DATE_FORMAT)

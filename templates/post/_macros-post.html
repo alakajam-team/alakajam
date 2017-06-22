@@ -63,7 +63,7 @@
     </div>
     
     {% if not options.hideBody %}
-    <div class="post__body panel-body">
+    <div class="post__body panel-body user-contents">
       {{ post.get('body') | markdown | safe }}
     </div>
     {% endif %}

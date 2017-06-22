@@ -1,7 +1,7 @@
 {# ======== MARKDOWN EDITOR ========= #}
 
 {% macro editor(editorName, editorContents) %}
-  <textarea class="form-control simplemde-editor" name="{{ editorName }}">{{ editorContents }}</textarea>
+  <textarea class="form-control simplemde-editor" name="{{ editorName }}">{{ editorContents | markdownUnescape }}</textarea>
 {% endmacro %}
 
 {% macro editorStyles() %}

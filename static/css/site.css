@@ -589,14 +589,29 @@ input.date-picker {
 
 .user-contents {
   & h1 {
+    margin-top: 20px;
     font-size: 1.9rem;
+
+    &:first-child {
+      margin-top: 0;
+    }
   }
   & h2 {
+    margin-top: 20px;
     font-size: 1.5rem;
+
+    &:first-child {
+      margin-top: 0;
+    }
   }
   & h3 {
+    margin-top: 10px;
     font-size: 1.3rem;
     color: var(--text-light);
+    
+    &:first-child {
+      margin-top: 0;
+    }
   }
   & h4 {
     font-size: 1.2rem;
