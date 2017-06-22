@@ -1055,17 +1055,21 @@ input.date-picker {
   &__links {
     height: 120px;
   }
-}
 
-.home-countdown {
-  margin: 10px auto 20px auto;
-  width: 470px;
-  
-  & .flip .inn {
-    background-color: var(--text)
+  &__countdown {
+    margin: 10px auto 20px auto;
+    width: 470px;
+    
+    & .flip .inn {
+      background-color: var(--text)
+    }
+    & .flip-clock-label {
+      color: var(--text-light)
+    }
   }
-  & .flip-clock-label {
-    color: var(--text-light)
+
+  &__social {
+    margin-top: 20px;
   }
 }
 

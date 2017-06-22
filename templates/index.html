@@ -12,11 +12,11 @@
   <div class="row">
 
     <div class="col-lg-offset-1 col-lg-10">
-      {% if liveEvent %}
+      <div class="home-jumbo {{ 'live' if liveEvent }}">
+        {% if liveEvent %}
   
-        <div class="home-jumbo live">
           <h1><a href="{{ buildUrl(liveEvent, 'event') }}">{{ liveEvent.get('title') }}</a> {{ liveEvent.get('countdown_config').phrase | default('ends in') }}</h1>
-          <div class="home-countdown"></div>
+          <div class="home-jumbo__countdown js-countdown"></div>
           {% if liveEvent.get('display_theme') %}
             {% if liveEvent.get('status_theme') !== 'off' and liveEvent.get('status_theme') !== 'disabled' %}
               <h1>Theme: <a href="{{ buildUrl(liveEvent, 'event', 'themes') }}">{{ liveEvent.get('display_theme') }}</a></h1>
@@ -40,25 +40,33 @@
               {{ eventMacros.eventBigLink(liveEvent, 'status_results', 'results', 'Results', 'th-list') }}
             </div>
           </div>
-        </div>
         
+        {% elseif nextEvents and nextEvents.length > 0 %}
         
-      {% elseif nextEvents and nextEvents.length > 0 %}
-      
-        {% set upcomingEvent = nextEvents[0] %}
-        <div class="home-jumbo">
+          {% set upcomingEvent = nextEvents[0] %}
           <h1><a href="{{ buildUrl(upcomingEvent, 'event') }}">{{ upcomingEvent.get('title') }}</a> {{ 'starts ' + upcomingEvent.get('display_dates') if upcomingEvent.get('display_dates') else 'will come soon!' }}</h1></h1>
-          <div class="home-countdown"></div>
+          <div class="home-jumbo__countdown js-countdown"></div>
+
+        {% else %}
+          <h1>No upcoming event.</h1>
+        {% endif %}
+
+        <div class="row">
+          <div class="col-xs-12 text-center home-jumbo__social">
+            Follow the event on 
+            <a href="https://twitter.com/AlakajamBang">
+              <img src="/static/images/twitter.svg" class="footer__icon no-border" /> 
+              <strong>@AlakajamBang</strong>
+            </a>
+          </div>
         </div>
-      
-        {% for nextEvent in nextEvents %}
-          {{ eventMacros.eventTable(nextEvent, { latestEventAnnouncement: nextEventsAnnouncements[loop.index0], path: path }) }}
-        {% endfor %}
-        
-      {% else %}
-        <div class="well">No upcoming event.</div>
-      {% endif %}
+      </div>
     </div>
+    
+    {% for nextEvent in nextEvents %}
+      {{ eventMacros.eventTable(nextEvent, { latestEventAnnouncement: nextEventsAnnouncements[loop.index0], path: path }) }}
+    {% endfor %}
+    
   </div>
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10 home-announcement">
@@ -92,7 +100,7 @@
   <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
   <script type="text/javascript">
   let diffMs = Math.max(0, Date.parse('{{ countdownEvent.get('countdown_config').date }}') - Date.now())
-  $('.home-countdown').FlipClock(diffMs / 1000, { 
+  $('.js-countdown').FlipClock(diffMs / 1000, { 
     clockFace: 'DailyCounter',
     countdown: true
   });
