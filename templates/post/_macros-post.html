@@ -59,7 +59,7 @@
         {% else %}
           <span class="badge">Draft</span>
         {% endif %}
-      • {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
+      • <a href="{{ buildUrl(post, 'post', '#comments') }}">{{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}</a>
     </div>
     
     {% if not options.hideBody %}
