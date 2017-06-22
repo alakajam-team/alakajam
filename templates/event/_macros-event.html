@@ -49,7 +49,7 @@
 </div>
 {% endmacro %}
 
-{% macro eventTable(event, withEntries = true, entryCols = 4, options = {}) %}
+{% macro eventTable(event, options = {}) %}
   <div class="event-table {{ 'live' if not options.neutralStatus and event.get('status') === 'open' }}">
     <div class="row">
       <div class="col-md-12">
@@ -95,6 +95,7 @@
             </div>
             {% endif %}
           </div>
+          {% if not options.hideLinks %}
           <div class="row">
             <div class="col-xs-12">
               <div class="event-table__links">
@@ -102,14 +103,15 @@
               </div>
             </div>
           </div>
+          {% endif %}
         </div>
       </div>
     </div>
     <!--
-    {% if withEntries %}
+    {% if options.withEntries %}
     <div class="row">
       {% for entry in event.related('entries').models %}
-        {{ entrySmallThumb(entry, entryCols) }}
+        {{ entrySmallThumb(entry, options.entryCols) }}
       {% endfor %}
     </div>
     {% endif %}
@@ -150,7 +152,6 @@
 
 {% macro eventLinks (event, latestEventAnnouncement, path) %}
 
-<!-- TODO Refactor using a macro -->
 {% if latestEventAnnouncement %}
   <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
     <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
@@ -160,19 +161,32 @@
   </a><!--
   --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-sm hidden-md hidden-lg event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
     <span class="glyphicon glyphicon-pushpin"></span>
-  </a><!--
--->{% endif %}<!--
---><a href="{{ buildUrl(event, 'event', 'posts') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'posts') }}">
-  <span class="glyphicon glyphicon-globe"></span> <span class="event-header__link-label">Posts</span>
-</a><!--
--->{% if event.get('status_theme') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'themes') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'themes') }} {{ 'disabled' if event.get('status_theme') === 'off' }}">
-  <span class="glyphicon glyphicon-grain"></span> <span class="event-header__link-label">Theme</span>
+  </a>
+{% endif %}
+{{ eventLink(event, null, 'posts', 'Posts', 'globe', path) }}<!--
+-->{{ eventLink(event, 'status_theme', 'theme', 'Theme', 'grain', path) }}<!--
+-->{{ eventLink(event, 'status_entry', 'games', 'Games', 'tower', path) }}<!--
+-->{{ eventLink(event, 'status_results', 'results', 'Results', 'th-list', path) }}
+
+{% endmacro %}
+
+{% macro eventLink (event, statusField, targetPath, label, icon, currentPath) %}<!--
+
+-->{% if not statusField or event.get(statusField) !== 'disabled' %}<a href="{{ buildUrl(event, 'event', targetPath) }}" class="event-header__link {{ 'active' if currentPath == buildUrl(event, 'event', targetPath) }} {{ 'disabled' if statusField and event.get(statusField) === 'off' }}">
+  <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="event-header__link-label">{{ label }}</span>
 </a>{% endif %}<!--
--->{% if event.get('status_entry') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'games') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'games') }} {{ 'disabled' if event.get('status_entry') === 'off' }}">
-  <span class="glyphicon glyphicon-tower"></span> <span class="event-header__link-label">Games</span>
-</a>{% endif %}<!--
--->{% if event.get('status_results') !== 'disabled' %}<a href="{{ buildUrl(event, 'event', 'results') }}" class="event-header__link {{ 'active' if path == buildUrl(event, 'event', 'results') }} {{ 'disabled' if event.get('status_results') === 'off' }}">
-  <span class="glyphicon glyphicon-th-list"></span> <span class="event-header__link-label">Results</span>
-</a>{% endif %}
+
+-->{% endmacro %}
+
+{% macro eventBigLink (event, statusField, targetPath, label, icon) %}
+
+{% if not statusField or event.get(statusField) !== 'disabled' %}
+  <a href="{{ buildUrl(event, 'event', targetPath) }}" class="event-big-link {{ 'disabled' if statusField and event.get(statusField) === 'off' else 'active' }}">
+    <div class="panel event-big-link__border">
+      <span class="glyphicon glyphicon-{{ icon }}"></span> 
+      <span class="event-big-link__label">{{ label }}</span>
+    </div>
+  </a>
+{% endif %}
 
 {% endmacro %}

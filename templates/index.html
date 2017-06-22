@@ -24,9 +24,24 @@
               <h1>Theme: {{ liveEvent.get('display_theme') }}</h1>
             {% endif %}
           {% endif %}
-        </div>
 
-        {{ eventMacros.eventTable(liveEvent, false, 6, { latestEventAnnouncement: liveEventAnnouncement, path: path }) }}
+          <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+              {{ eventMacros.eventTable(liveEvent, { hideLinks: true }) }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 text-center home-big-links">
+              {{ eventMacros.eventBigLink(liveEvent, null, 'announcements', 'News', 'pushpin') }}
+              {{ eventMacros.eventBigLink(liveEvent, null, 'posts', 'Posts', 'globe') }}
+              {{ eventMacros.eventBigLink(liveEvent, 'status_theme', 'theme', 'Theme', 'grain') }}
+              {{ eventMacros.eventBigLink(liveEvent, 'status_entry', 'games', 'Games', 'tower') }}
+              {{ eventMacros.eventBigLink(liveEvent, 'status_results', 'results', 'Results', 'th-list') }}
+            </div>
+          </div>
+        </div>
+        
         
       {% elseif nextEvents and nextEvents.length > 0 %}
       
@@ -36,7 +51,7 @@
         </div>
       
         {% for nextEvent in nextEvents %}
-          {{ eventMacros.eventTable(nextEvent, false, 6, { latestEventAnnouncement: nextEventsAnnouncements[loop.index0], path: path }) }}
+          {{ eventMacros.eventTable(nextEvent, { latestEventAnnouncement: nextEventsAnnouncements[loop.index0], path: path }) }}
         {% endfor %}
         
       {% else %}

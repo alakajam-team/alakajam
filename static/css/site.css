@@ -871,6 +871,45 @@ input.date-picker {
   }
 }
 
+.event-big-link {
+  display: inline-block;
+  width: 150px;
+  height: 130px;
+  transition: 0.3s;
+
+  &:last-child {
+    margin-right: -20px;
+  }
+
+  &__border {
+    float: left;
+    width: 130px;
+    height: 120px;
+    padding: 20px;
+  }
+
+  &.active:hover &__border {
+    color: var(--alt-dark);
+    border: 4px solid var(--alt-dark);
+    transition: 0.1s;
+  }
+
+  &.disabled, &.disabled:hover {
+    color: var(--text-lighter);
+  } 
+
+  & .glyphicon {
+    font-size: 2.2rem;
+  }
+
+  &__label {
+    font-size: 1.5rem;
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+  }
+}
+
 /* Entry page */
 
 .entry {
@@ -1002,8 +1041,10 @@ input.date-picker {
 /* ============================== Home page ============================== */
 
 .home-jumbo {
+  @apply --shadow;
   text-align: center;
-  margin-bottom: 30px;
+  background-color: var(--neutral-lightest);
+  padding: 20px;
 }
 
 .home-countdown {
@@ -1069,4 +1110,9 @@ input.date-picker {
     transition: 0.15s;
   }
 
+}
+
+.home-big-links {
+  height: 120px;
+  margin-bottom: 10px;
 }
