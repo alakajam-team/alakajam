@@ -21,11 +21,8 @@
          <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-xs btn-default pull-right">Create entry</a>
        {% endif %}
       </div>
-      {% if event.get('status_entry') === 'on' %}
-        {{ eventMacros.entrySmallThumb(userEntry, 8) }}
-      {% else %}
-        Entry submissions are not open yet.
-      {% endif %}
+      {{ eventMacros.entrySmallThumb(userEntry, { customMessage: 
+      "Entry submissions are not open yet." if event.get('status') === 'pending' }) }}
     </div>
     <div class="col-md-5 action-banner">
       <div class="action-banner__title">

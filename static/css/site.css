@@ -30,6 +30,7 @@
   
   --moderation: #ffce54;
   --moderation-light: #ffe198;
+  --moderation-lightest: color(var(--moderation-light) alpha(30%));
   --moderation-dark: #f6bb42;
   --moderation-text: #876000;
 
@@ -518,19 +519,19 @@ input.date-picker {
   }
 
   &__special-type {
-    background-color: var(--moderation);
+    @apply --main-font;
+    display: block;
+    font-weight: bold;
+    background-color: var(--moderation-dark);
     white-space: nowrap;
-    padding: 0 10px;
-    height: 36px;
-
-    & a {
-      margin-right: 0;
-    }
+    padding: 0 50px;
   }
 
   &__special-type-label {
+    display: block;
     font-size: 1.2rem;
     color: white;
+    line-height: 36px;
   }
 
   & h1 {
@@ -1045,6 +1046,15 @@ input.date-picker {
   text-align: center;
   background-color: var(--neutral-lightest);
   padding: 20px;
+  margin-bottom: 20px;
+
+  &.live {
+    background-color: var(--alt-lightest);
+  }
+
+  &__links {
+    height: 120px;
+  }
 }
 
 .home-countdown {
@@ -1110,9 +1120,4 @@ input.date-picker {
     transition: 0.15s;
   }
 
-}
-
-.home-big-links {
-  height: 120px;
-  margin-bottom: 10px;
 }

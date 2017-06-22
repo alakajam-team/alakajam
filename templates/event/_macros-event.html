@@ -24,7 +24,7 @@
 </div>
 {% endmacro %}
 
-{% macro entrySmallThumb(entry) %}
+{% macro entrySmallThumb(entry, options = {}) %}
 <div class="entry-small-thumb">
   {% if entry and entry.get('id') %}
     {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
@@ -44,7 +44,7 @@
       </div>
     </div>
   {% else %}
-    <div class="text-center"><h4 style="padding-top: 18px">No entry</h4></div>
+    <div class="text-center"><h4 style="padding-top: 18px">{{ options.customMessage or 'No entry' }}</h4></div>
   {% endif %}
 </div>
 {% endmacro %}

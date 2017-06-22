@@ -4,37 +4,44 @@
 {# Allowed options: hideHeading hideBody hideSpecialLabels showId showComments allowMods #}
 {% macro post(post, readingUser, options = {}) %}
 
-{% set author = post.related('author') %}
-{% set postUrl = buildUrl(post, 'post') %}
-
-{% if not options.hideHeading %}
-  {% set h = 'h3' if options.hideBody else 'h1' %}
-  <{{h}}>
-    <a class="post__heading" href="{{ buildUrl(post, 'post') }}">
-      {{ post.get('title') }}
-      {% if canUserWrite(readingUser, post, options) %}
-        <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
-      {% endif %}
-      {% if options.showId %}
-        <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
-      {% endif %}
-    </a>
-
-    <div class="post__related">
-    {% set relatedEvent = post.related('event') %}
-    {% set relatedEntry = post.related('entry') %}
-    {% if relatedEvent.get('id') %}
-      on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
-    {% endif %}
-    {% if relatedEntry.get('id') %}
-      entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">{{ relatedEntry.get('title') }}</a>
-    {% endif %}
-    </div>
-  </{{h}}>
-{% endif %}
-
 <div class="post">
 
+  {% set author = post.related('author') %}
+  {% set postUrl = buildUrl(post, 'post') %}
+
+  {% if not options.hideHeading %}
+    {% set h = 'h3' if options.hideBody else 'h1' %}
+    <{{h}}>
+      <a class="post__heading" href="{{ buildUrl(post, 'post') }}">
+        {{ post.get('title') }}
+        {% if canUserWrite(readingUser, post, options) %}
+          <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
+        {% endif %}
+        {% if options.showId %}
+          <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
+        {% endif %}
+        <div class="pull-right {{ 'post__special-type' if post.get('special_post_type') }}">
+          {% if not options.hideSpecialLabels and post.get('special_post_type') %}
+            <span class="post__special-type-label">
+              {{ post.get('special_post_type') | upper }}
+            </span>
+          {% endif %}
+        </div>
+      </a>
+
+      <div class="post__related">
+      {% set relatedEvent = post.related('event') %}
+      {% set relatedEntry = post.related('entry') %}
+      {% if relatedEvent.get('id') %}
+        on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
+      {% endif %}
+      {% if relatedEntry.get('id') %}
+        entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">{{ relatedEntry.get('title') }}</a>
+      {% endif %}
+      </div>
+    </{{h}}>
+  {% endif %}
+  
   <div class="panel">
     <div class="post__details">
       <a href="{{ buildUrl(author, 'user') }}">
@@ -53,13 +60,6 @@
           <span class="badge">Draft</span>
         {% endif %}
       • {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
-      <div class="pull-right {{ 'post__special-type' if post.get('special_post_type') }}">
-        {% if not options.hideSpecialLabels and post.get('special_post_type') %}
-          <span class="post__special-type-label">
-            {{ post.get('special_post_type') | upper }}
-          </span>
-        {% endif %}
-      </div>
     </div>
     
     {% if not options.hideBody %}
