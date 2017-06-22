@@ -95,7 +95,6 @@ function createBookshelfInstance (knex) {
   bookshelf.plugin('registry')
   bookshelf.plugin('pagination')
   bookshelf.plugin(require('bookshelf-cascade-delete'))
-  console.log(bookshelf)
   return bookshelf
 }
 

@@ -262,7 +262,7 @@ module.exports.EntryDetails = bookshelf.model('EntryDetails', {
   table.integer('entry_id').references('entry.id')
   table.integer('event_id').references('event.id')
   table.string('body', 10000)
-  table.date('published_at').index()
+  table.dateTime('published_at').index()
   table.string('special_post_type')
   table.integer('comment_count')
   table.timestamps()

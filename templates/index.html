@@ -56,7 +56,7 @@
       <div class="horizontal-bar">Latest posts</div>
       {% endif %}
       {% for post in posts %}
-        {{ postMacros.post(post, user, { showRelatedBar: true }) }}
+        {{ postMacros.post(post, user) }}
       {% endfor %}
     </div>
   </div>

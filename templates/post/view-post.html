@@ -12,40 +12,16 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
-      <h1>
-        {{ post.get('title') }}
-        {% if canUserWrite(user, post, options) %}
-          <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit post</a>
-        {% endif %}
-      </h1>
       {% if not post.get('published_at') %}
         <div class="alert alert-warning"><strong>Draft post</strong> Other users can't see it until it is published.</div>
       {% elseif not isPast(post.get('published_at')) %}
         <div class="alert alert-warning"><strong>Pending post</strong> Other users can't see it until {{ post.get('published_at') | relativeTime }}.</div>
       {% endif %}
-      {{ postMacros.post(post, user, {hideHeading: true}) }}
+      
+      {{ postMacros.post(post, user) }}
     </div>
   </div>
   {% if post.get('special_post_type') !== 'article' %}
-    {% if relatedEvent %}
-    <div class="row">
-      <div class="col-lg-offset-1 col-lg-10">
-        <h2>Related</h2>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-1"></div>
-      {% if relatedEntry %}
-      <div class="col-lg-4 col-md-5">
-        {{ eventMacros.entryThumb(relatedEntry, 12) if relatedEntry }}
-      </div>
-      {% endif %}
-      <div class="{{ 'col-lg-6 col-md-7' if relatedEntry else 'col-lg-10' }}">
-        {{ eventMacros.eventTable(relatedEvent, false) if relatedEvent }}
-      </div>
-    </div>
-    {% endif %}
-    
     <div class="row">
       <div class="col-lg-offset-1 col-lg-10">
         <h2>Comments</h2>

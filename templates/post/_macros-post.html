@@ -9,18 +9,8 @@
 
 {% if not options.hideHeading %}
   {% set h = 'h3' if options.hideBody else 'h1' %}
-  {% if path === postUrl %}
-  <div class="post__heading">
-    <{{h}}>
-      {{ post.get('title') }}
-      {% if canUserWrite(readingUser, post, options) %}
-        <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
-      {% endif %}
-    </{{h}}>
-  </div>
-  {% else %}
-  <{{h}} class="post__heading">
-    <a href="{{ buildUrl(post, 'post') }}">
+  <{{h}}>
+    <a class="post__heading" href="{{ buildUrl(post, 'post') }}">
       {{ post.get('title') }}
       {% if canUserWrite(readingUser, post, options) %}
         <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
@@ -29,8 +19,18 @@
         <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
       {% endif %}
     </a>
+
+    <div class="post__related">
+    {% set relatedEvent = post.related('event') %}
+    {% set relatedEntry = post.related('entry') %}
+    {% if relatedEvent.get('id') %}
+      on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
+    {% endif %}
+    {% if relatedEntry.get('id') %}
+      entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">{{ relatedEntry.get('title') }}</a>
+    {% endif %}
+    </div>
   </{{h}}>
-  {% endif %}
 {% endif %}
 
 <div class="post">

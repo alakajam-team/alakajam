@@ -479,17 +479,17 @@ input.date-picker {
 
 .post {
   &__heading {
-    font-weight: bold;
     margin: 0;
     padding-bottom: 5px;
-
-    & a {
-      color: var(--text);
+    color: var(--text);
       
-      &:hover {
-        color: var(--alt-dark);
-      }
+    &:hover {
+      color: var(--alt-dark);
     }
+  }
+  
+  &__related {
+    font-size: 1.2rem;
   }
 
   &__details {
@@ -531,11 +531,6 @@ input.date-picker {
   &__special-type-label {
     font-size: 1.2rem;
     color: white;
-  }
-  
-  &__related {
-    margin-top: -10px;
-    margin-bottom: 20px;
   }
 
   & h1 {
