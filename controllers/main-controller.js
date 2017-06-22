@@ -88,6 +88,10 @@ async function index (req, res) {
     }
   }
 
+  if (!context.homeAnnouncement) {
+    context.homeAnnouncement = await postService.findLatestAnnouncement()
+  }
+
   // Gather any user posts
   let postsCollection = await postService.findPosts({specialPostType: null})
   await postsCollection.load(['entry', 'event', 'entry.userRoles'])
