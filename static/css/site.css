@@ -1070,7 +1070,6 @@ input.date-picker {
       margin-bottom: 5px;
     }
   }
-<<<<<<< HEAD
 
   &__score {
     margin-top: 10px;
@@ -1081,9 +1080,6 @@ input.date-picker {
       font-size: 1.2rem;
     }
   }
-
-=======
->>>>>>> Add solo/team category toggle to edit-entry
 }
 
 /* ============================== User pages ============================== */

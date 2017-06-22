@@ -73,6 +73,7 @@ module.exports = {
     router.post('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?', entryController.saveEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit', entryController.editEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete', entryController.deleteEntry)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/manage-team', entryController.manageTeam)
 
     router.get('/create-event', eventController.editEvent)
     router.post('/create-event', eventController.editEvent)

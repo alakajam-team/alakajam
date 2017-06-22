@@ -22,7 +22,8 @@ module.exports = {
   saveEntry,
   viewEntry,
   editEntry,
-  deleteEntry
+  deleteEntry,
+  manageTeam
 }
 
 /**
@@ -95,6 +96,19 @@ function editEntry (req, res) {
   } else {
     res.render('entry/edit-entry')
   }
+}
+
+/**
+ * Manage entry team
+ */
+async function manageTeam (req, res) {
+  if (!res.locals.user || !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true })) {
+    res.errorPage(403)
+    return
+  }
+
+  await res.locals.entry.related('userRoles.user')
+  res.render('entry/manage-team')
 }
 
 /**

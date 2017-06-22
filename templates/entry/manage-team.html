@@ -1,0 +1,25 @@
+{% extends "_page.html" %}
+{% import "user/_macros-user.html" as userMacros %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <h3>Members ({{ entry.related('userRoles').models.length }})</h3>
+      <ul class="list-unstyled">
+        {% for userRole in entry.related('userRoles').models %}
+        <li class="member">
+          {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}
+          <h4>{{ userRole.get('user_title') }}</h4>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+{% endblock %}
