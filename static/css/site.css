@@ -800,6 +800,22 @@ input.date-picker {
     padding-left: 10px;
     color: var(--text);
   }
+  
+  &__event {
+    padding-top: 5px;
+    padding-left: 10px;
+    color: var(--text-light);
+    font-size: 0.8rem;
+    
+    & a {
+      font-weight: bold;
+      color: var(--text-light);
+      
+      &:hover {
+        color: var(--alt-dark);
+      }
+    }
+  }
 }
 
 

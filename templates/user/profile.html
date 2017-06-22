@@ -60,7 +60,7 @@
       {% if entries.length > 0 %}
       <div class="row">
         {% for entry in entries %}
-          {{ eventMacros.entryThumb(entry, 4) }}
+          {{ eventMacros.entryThumb(entry, 4, { showEvent: true}) }}
         {% endfor %}
       </div>
       {% else %}

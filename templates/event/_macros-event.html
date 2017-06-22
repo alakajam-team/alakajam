@@ -1,4 +1,4 @@
-{% macro entryThumb(entry, cols = 3) %}
+{% macro entryThumb(entry, cols = 3, options = {}) %}
 <div class="col-sm-4 col-md-{{ cols }}">
   <div class="entry-thumb">
     {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
@@ -9,12 +9,17 @@
       <div class="entry-thumb__title">{{ entry.get('title') }}</div>
     </a>
     <div class="entry-thumb__author" >by 
-    {% for userRole in entry.related('userRoles').models %}
-     <a href="{{ buildUrl(userRole, 'user') }}">
-      {{ userRole.get('user_title') }}{{ ', ' if not loop.last }}
-     </a>
-    {% endfor %}
+      {% for userRole in entry.related('userRoles').models %}
+       <a href="{{ buildUrl(userRole, 'user') }}">
+        {{ userRole.get('user_title') }}{{ ', ' if not loop.last }}
+       </a>
+      {% endfor %}
     </div>
+    {% if options.showEvent %}
+      <div class="entry-thumb__event" >
+        on <a href="{{ buildUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
+      </div>
+    {% endif %}
   </div>
 </div>
 {% endmacro %}

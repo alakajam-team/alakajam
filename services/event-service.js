@@ -123,7 +123,8 @@ async function createEntry (user, event) {
   let entryDetails = new models.EntryDetails({
     entry_id: entry.get('id')
   })
-  entryDetails.save()
+  await entryDetails.save()
+  await entry.load('details')
 
   return entry
 }
@@ -150,7 +151,7 @@ async function findUserEntries (user) {
         'user_role.user_id': user.get('id'),
         'user_role.node_type': 'entry'
       })
-  }).fetchAll({ withRelated: ['userRoles'] })
+  }).fetchAll({ withRelated: ['userRoles', 'event'] })
   return entryCollection.models
 }
 
