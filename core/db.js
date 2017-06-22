@@ -140,7 +140,7 @@ async function insertInitialData (samples) {
 
     let post = await postService.createPost(adminUser)
     post.set({
-      title: 'feedback',
+      title: 'help',
       body: `There is a Google Form to gather any issues or suggestions you have. Click the link below to access it:
 ## [Feedback and support form](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform?usp=sf_link)
 Alternately, you can contact us on <a href="https://github.com/mkalam-alami/wejam">Github</a> and <a href="https://twitter.com/AlakajamBang">Twitter</a>.`,

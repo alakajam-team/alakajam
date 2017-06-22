@@ -31,7 +31,7 @@ module.exports = {
   SPECIAL_POST_TYPE_ANNOUNCEMENT,
   SPECIAL_POST_TYPE_ARTICLE,
   SPECIAL_POST_TYPES,
-  REQUIRED_ARTICLES: ['feedback'],
+  REQUIRED_ARTICLES: ['help'],
   ALLOWED_POST_TAGS: [ 'b', 'i', 'em', 'strong', 'a', 'u', 'br' ],
   ALLOWED_POST_ATTRIBUTES: { 'a': [ 'href' ] },
 
