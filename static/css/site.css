@@ -112,6 +112,10 @@ textarea.form-control {
   resize: none;
   height: 70px;
 }
+textarea.simplemde-editor {
+  resize: vertical;
+  height: 300px;
+}
 
 a {
   color: var(--alt);
