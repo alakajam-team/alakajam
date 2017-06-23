@@ -9,6 +9,22 @@
  * @module server
  */
 
+// #19 Debugging start
+// https://stackoverflow.com/a/15586948
+let events = require('events')
+let EventEmitter = events.EventEmitter
+let originalAddListener = EventEmitter.prototype.addListener
+EventEmitter.prototype.addListener = function (type, listener) {
+  if (this.listenerCount(this, type) > 0) {
+    console.log(this.listenerCount(this, type) + ' listeners', new Error().stack)
+  }
+  if (this.listenerCount(this, type) >= 10) {
+    console.log('About to overflow???')
+  }
+  originalAddListener.apply(this, arguments)
+}
+// #19 Debugging end
+
 let log
 try {
   log = global.log = require('./core/log')

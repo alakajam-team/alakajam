@@ -16,13 +16,14 @@
   --main-transparent: color(var(--main) alpha(10%));
   
   --alt: #f2536d;
-  --alt-light: color(var(--alt) lightness(70%));
+  --alt-light: #f47171;
   --alt-lighter: color(var(--alt) alpha(25%));
-  --alt-lightest: color(var(--alt) alpha(10%));
+  --alt-lightest: #ffded6;
   --alt-dark: color(var(--alt) lightness(35%));
   --alt-transparent: color(var(--alt) alpha(10%));
 
   --neutral: #888;
+  --neutral-light: color(var(--neutral) alpha(70%));
   --neutral-lighter: color(var(--neutral) alpha(25%));
   --neutral-lightest: color(var(--neutral) alpha(10%));
   
@@ -659,7 +660,7 @@ input.date-picker {
     background-color: var(--alt-lightest);
 
     & > h4 {
-      background-color: var(--alt);
+      background-color: var(--alt-light);
     }
   }
 
@@ -667,7 +668,7 @@ input.date-picker {
     background-color: var(--main-lightest);
 
     & > h4 {
-      background-color: var(--main);
+      background-color: var(--main-light);
     }
   }
 
@@ -675,7 +676,7 @@ input.date-picker {
     background-color: var(--neutral-lightest);
 
     & > h4 {
-      background-color: var(--neutral);
+      background-color: var(--neutral-light);
     }
   }
 }
@@ -684,7 +685,12 @@ input.date-picker {
 /* Event table */
 
 .event-table {
+  padding: 10px;
   margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   &__header {
     display: block;
@@ -1057,9 +1063,10 @@ input.date-picker {
 /* ============================== Home page ============================== */
 
 .home-jumbo {
-  @apply --shadow;
   text-align: center;
   background-color: var(--neutral-lightest);
+  border: 1px solid var(--alt-lighter);
+  box-shadow: 1px 1px 2px var(--alt-lighter);
   padding: 20px;
   margin-bottom: 20px;
 
