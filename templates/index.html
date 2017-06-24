@@ -12,7 +12,7 @@
   <div class="row">
 
     <div class="col-lg-offset-1 col-lg-10">
-      <div class="home-jumbo {{ 'live' if liveEvent }}">
+      <div class="home-jumbo featured {{ 'live' if liveEvent }}">
         {% if liveEvent %}
   
           <h1><a href="{{ buildUrl(liveEvent, 'event') }}">{{ liveEvent.get('title') }}</a> {{ liveEvent.get('countdown_config').phrase | default('ends in') }}</h1>

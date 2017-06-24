@@ -185,6 +185,20 @@ input.date-picker {
   border-bottom: 1px solid var(--text-lightest);
 }
 
+.featured {
+  background-color: var(--neutral-lightest);
+  border: 1px solid var(--neutral-lighter);
+  box-shadow: 1px 1px 2px var(--neutral-lighter);
+  padding: 20px;
+  margin-bottom: 20px;
+
+  &.live {
+    background-color: var(--alt-lightest);
+    border: 1px solid var(--alt-lighter);
+    box-shadow: 1px 1px 2px var(--alt-lighter);
+  }
+}
+
 /* Required star
 .form-group.required label:after {
   content:" *";
@@ -1020,15 +1034,15 @@ input.date-picker {
 .user-thumb {
   overflow: hidden;
   margin-bottom: 10px;
-  height: 50px;
+  min-height: 50px;
 
   &.full-width {
-    width: 100%;
     float: none;
     padding: 0;
     margin-left: 15px;
   }
   &.centered {
+    width: 100%;
     text-align: center;
     margin-left: 0;
     margin-bottom: 0;
@@ -1036,12 +1050,20 @@ input.date-picker {
 
   &__avatar {
     width: 50px;
+    margin-left: -60px;
+    display: block;
     float: left;
+
+    & img {
+      width: 50px;
+    }
   }
   &.full-width &__avatar {
     margin-bottom: 5px;
   }
   &.centered &__avatar {
+    margin-left: 0;
+    width: 100%;
     float: none;
   }
 
@@ -1069,15 +1091,6 @@ input.date-picker {
 
 .home-jumbo {
   text-align: center;
-  background-color: var(--neutral-lightest);
-  border: 1px solid var(--alt-lighter);
-  box-shadow: 1px 1px 2px var(--alt-lighter);
-  padding: 20px;
-  margin-bottom: 20px;
-
-  &.live {
-    background-color: var(--alt-lightest);
-  }
 
   &__links {
     height: 120px;

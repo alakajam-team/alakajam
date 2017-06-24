@@ -4,13 +4,17 @@
 {% macro userThumb(user, options = {}) %}
 
 <div class="user-thumb col-sm-4 {{ 'full-width' if options.fullWidth }}  {{ 'centered' if options.centered }}">
-    {% if user.get('avatar') %}
-    <img src="{{ user.get('avatar') }}" class="user-thumb__avatar" />
-    {% else %}
-    <img src="/static/images/default-avatar.png" class="user-thumb__avatar" />
-    {% endif %}
     <h1 class="user-thumb__title">
-      <a href="{{ buildUrl(user, 'user') }}">{{ user.get('title') }}</a>
+      <a href="{{ buildUrl(user, 'user') }}">
+        <div class="user-thumb__avatar">
+          {% if user.get('avatar') %}
+            <img src="{{ user.get('avatar') }}" />
+          {% else %}
+            <img src="/static/images/default-avatar.png" />
+          {% endif %}
+        </div>
+        {{ user.get('title') }}
+      </a>
     </h1>
     <h3 class="user-thumb__name">
       {{ user.get('name') }}

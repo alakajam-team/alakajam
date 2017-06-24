@@ -51,7 +51,7 @@
     <div class="col-md-9">
       {% if profileUser.related('details').get('body') %}
       <h2>Bio</h2>
-      <div class="well">
+      <div class="featured">
         {{ profileUser.related('details').get('body') | markdown | safe }}
       </div>
       {% endif %}
