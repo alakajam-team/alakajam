@@ -81,8 +81,8 @@
                 <span class="navbar-profile hidden-sm">{{ user.get('title') }}</span> <span class="caret"></span>
               </div>
               <ul class="dropdown-menu">
-                <li><a href="{{ buildUrl(user, 'user', 'feed') }}">Dashboard</a></li>
                 <li><a href="{{ buildUrl(user, 'user') }}">Public profile</a></li>
+                <li><a href="{{ buildUrl(user, 'user', 'feed') }}">Dashboard</a></li>
                 <li><a href="/logout">Logout</a></li>
               </ul>
             </li>

@@ -120,8 +120,10 @@ async function events (req, res) {
  * Announcements listing
  */
 async function announcements (req, res) {
+  let posts = await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT })
+  await posts.load(['event', 'entry'])
   res.render('announcements', {
-    posts: await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT })
+    posts: posts.models
   })
 }
 

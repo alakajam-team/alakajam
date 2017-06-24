@@ -5,11 +5,9 @@
 
 <h1>Posts</h1>
 
-{% if newPostEvent %}
-<p>
-  <a href="{{ buildUrl(null, 'post', 'create', {eventId: newPostEvent.get('id')}) }}" class="btn btn-primary">Create new post</a>
-</p>
-{% endif %}
+<div class="form-group">
+  <a href="{{ buildUrl(null, 'post', 'create', {eventId: newPostEvent.get('id')}) if newPostEvent }}" class="btn btn-primary">Create post</a>
+</div>
 
 {% if draftPosts.length > 0 %}
   <h2>Drafts</h2>

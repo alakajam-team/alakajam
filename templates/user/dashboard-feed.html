@@ -20,8 +20,8 @@
     {% endif %}
 
     <div class="text-right">
-      <a href="{{ buildUrl(dashboardUser, 'user') }}" class="btn btn-xs btn-default"
-       style="margin-top: -15px; margin-right: 15px;">All entries</a>
+      <a href="{{ buildUrl(dashboardUser, 'user') }}" class="btn btn-default"
+       style="margin-top: -10px">All entries</a>
     </div>
   </div>
   <div class="col-md-7">
@@ -34,9 +34,9 @@
     <div class="well">No posts yet.</div>
     {% endif %}
 
-    <div class="text-right">
-      <a href="{{ buildUrl(dashboardUser, 'user', 'posts') }}" class="btn btn-xs btn-default"
-       style="margin-top: -15px;">All posts</a>
+    <div class="text-right" style="margin-top: -10px;">
+      <a href="{{ buildUrl(null, 'post', 'create') }}" class="btn btn-primary">Create post</a>
+      <a href="{{ buildUrl(dashboardUser, 'user', 'posts') }}" class="btn btn-default">All posts</a>
     </div>
   </div>
 </div>

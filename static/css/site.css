@@ -1014,6 +1014,10 @@ input.date-picker {
     font-weight: normal;
   }
 
+  &__id {
+    font-size: 0.8rem;
+  }
+
   &__joined {
     color: var(--text-light);
   }

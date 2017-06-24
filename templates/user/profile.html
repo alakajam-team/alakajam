@@ -20,6 +20,9 @@
       </h1>
       <h3 class="profile__name">
         {{ profileUser.get('name') }}
+        <span class="profile__id">
+          #{{ profileUser.get('id') }}
+        </span>
       </h3>
       <p class="profile__joined">
         Joined {{ profileUser.get('created_at') | relativeTime }}
