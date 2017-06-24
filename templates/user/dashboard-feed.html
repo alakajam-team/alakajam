@@ -14,9 +14,9 @@
     <h4>Latest entry</h4>
 
     {% if latestEntry %}
-      {{ eventMacros.entryThumb(latestEntry, 12, { showEvent: true }) if latestEntry }}
+      {{ eventMacros.entryThumb(latestEntry, { showEvent: true }) if latestEntry }}
     {% else %}
-    <div class="well">No entry yet.</div>
+      <div class="well">No entry yet.</div>
     {% endif %}
 
     <div class="text-right">

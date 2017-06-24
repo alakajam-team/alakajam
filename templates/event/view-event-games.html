@@ -8,7 +8,9 @@
   <div class="row">
     {% set entries = event.related('entries').models %}
     {% for entry in entries %}
-      {{ eventMacros.entryThumb(entry) }}
+      <div class="col-sm-4 col-md-3">
+        {{ eventMacros.entryThumb(entry) }}
+      </div>
     {% endfor %}
     {% if entries.length === 0 %}
       <div class="well">The event has no entries yet.</div>
