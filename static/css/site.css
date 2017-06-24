@@ -1020,6 +1020,7 @@ input.date-picker {
 .user-thumb {
   overflow: hidden;
   margin-bottom: 10px;
+  height: 50px;
 
   &.full-width {
     width: 100%;
