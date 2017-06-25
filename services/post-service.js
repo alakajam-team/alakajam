@@ -52,7 +52,8 @@ function wasEdited (model) {
  * @return {array(Post)}
  */
 async function findPosts (options = {}) {
-  let postCollection = await models.Post.query(function (qb) {
+  let postCollection = await models.Post
+  postCollection = postCollection.query(function (qb) {
     qb = qb.distinct()
     if (options.specialPostType !== undefined) qb = qb.where('special_post_type', options.specialPostType)
     if (options.eventId) qb = qb.where('event_id', options.eventId)
@@ -68,13 +69,19 @@ async function findPosts (options = {}) {
     if (!options.allowDrafts) qb = qb.where('published_at', '<=', new Date())
     return qb
   })
-    .orderBy('published_at', 'DESC')
-    .fetchPage({
-      pageSize: 10,
+  postCollection.orderBy('published_at', 'DESC')
+
+  if (options.pageCount) {
+    return postCollection.count().then(function (count) {
+      return Math.max(1, count / 10)
+    })
+  } else {
+    return postCollection.fetchPage({
+      pageSize: options.count ? undefined : 10,
       page: options.page,
       withRelated: ['author', 'userRoles']
     })
-  return postCollection
+  }
 }
 
 async function findPostById (postId) {

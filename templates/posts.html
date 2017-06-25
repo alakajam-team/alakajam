@@ -1,0 +1,24 @@
+{% extends "_page.html" %}
+{% import "post/_macros-post.html" as postMacros %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10">
+      <h2>{{ title }}</h2>
+
+      {{ postMacros.pagination(currentPage, pageCount) }}
+      {% for post in posts %}
+        {{ postMacros.post(post, user, { allowMods: true }) }}
+      {% endfor %}
+      {% if posts.length === 0 %}
+        <div class="well">
+          No posts yet.
+        </div>
+      {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

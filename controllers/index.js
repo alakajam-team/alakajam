@@ -37,9 +37,7 @@ module.exports = {
     router.get('/', mainController.index)
     router.get('/events', mainController.events)
     router.get('/people', mainController.people)
-    router.get('/announcements', mainController.announcements)
     router.get('/chat', mainController.chat)
-    router.get('/article/:name', mainController.article)
 
     // Users
 
@@ -87,6 +85,9 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/delete', eventController.deleteEvent)
 
     // Posts
+
+    router.get('/posts', postController.posts)
+    router.get('/article/:name', postController.article)
 
     router.get('/post/create', postController.editPost)
     router.post('/post/create', postController.savePost)

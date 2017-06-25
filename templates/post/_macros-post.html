@@ -188,3 +188,18 @@
 </form>
 {% endif %}
 {% endmacro %}
+
+
+{% macro pagination(currentPage = 1, pageCount = 1, baseUrl = '/posts?') %}
+{% set baseUrlQS = baseUrl + '?' if baseUrl.indexOf('?') === -1 else baseUrl %}
+{% set pagesToEnd = pageCount - currentPage %}
+{% set from = max(1, currentPage - max(5, 11 - pagesToEnd)) %}
+{% set to = min(pageCount, currentPage + max(5, 11 - currentPage)) %}
+<ul class="pagination">
+  <li class="{{ 'active' if currentPage === 1 }}"><a href="{{ baseUrlQS + '&p=1' }}">First page</a></li>
+  {% for page in range(from, to + 1) %}
+  <li class="{{ 'active' if currentPage === page }}"><a href="{{ baseUrlQS + '&p=' + page }}">{{ page }}</a></li>
+  {% endfor %}
+  <li class="{{ 'active' if currentPage === pageCount }}"><a href="{{ baseUrlQS + '&p=' + pageCount }}">Last page</a></li>
+</ul>
+{% endmacro %}

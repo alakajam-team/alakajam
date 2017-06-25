@@ -548,8 +548,8 @@ blockquote {
 }
 .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
   color: white;
-  background-color: #8cc152;
-  border-color: #8cc152;
+  background-color: #f2536d; /* alt */
+  border-color: #f2536d;
 }
 .pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {
   color: #e6e9ed;

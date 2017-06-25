@@ -88,6 +88,7 @@
       {% for post in posts %}
         {{ postMacros.post(post, user) }}
       {% endfor %}
+      {{ postMacros.pagination(1, pageCount, '/posts') }}
     </div>
   </div>
 </div>

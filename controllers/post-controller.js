@@ -19,6 +19,9 @@ module.exports = {
 
   postMiddleware,
 
+  posts,
+  article,
+
   editPost,
   savePost,
   viewPost,
@@ -39,6 +42,60 @@ async function postMiddleware (req, res, next) {
   }
 
   next()
+}
+
+/**
+ * Announcements listing
+ */
+async function posts (req, res) {
+  // Fetch posts
+  let specialPostType = forms.sanitizeString(req.query['special_post_type']) || null
+  let eventId = forms.sanitizeString(req.query['event_id']) || undefined
+  let currentPage = forms.isId(req.query.p) ? parseInt(req.query.p) : 1
+  let posts = await postService.findPosts({
+    specialPostType,
+    eventId,
+    page: currentPage
+  })
+  await posts.load(['event', 'entry'])
+  let pageCount = await postService.findPosts({
+    specialPostType,
+    eventId,
+    pageCount: true
+  })
+
+  // Determine title
+  let title = 'Posts'
+  if (specialPostType === constants.SPECIAL_POST_TYPE_ANNOUNCEMENT) {
+    title = 'Announcements'
+  }
+
+  res.render('posts', {
+    posts: posts.models,
+    title,
+    currentPage,
+    pageCount
+  })
+}
+
+/**
+ * Articles
+ */
+async function article (req, res) {
+  // postName context variable is used to add a relevant "create article" mod button
+  res.locals.postName = forms.sanitizeString(req.params.name)
+  res.locals.post = await postService.findPost({
+    name: res.locals.postName,
+    specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
+    allowDrafts: true
+  })
+
+  if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||
+      securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {
+    res.render('article')
+  } else {
+    res.errorPage(404)
+  }
 }
 
 async function viewPost (req, res) {

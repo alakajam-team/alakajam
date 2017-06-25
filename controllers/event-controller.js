@@ -76,6 +76,11 @@ async function viewEventPosts (req, res) {
     posts: await postService.findPosts({
       eventId: res.locals.event.get('id'),
       specialPostType: null
+    }),
+    pageCount: await postService.findPosts({
+      eventId: res.locals.event.get('id'),
+      specialPostType: null,
+      pageCount: true
     })
   })
 }

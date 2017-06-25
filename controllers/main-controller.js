@@ -6,7 +6,6 @@
  * @module controllers/main-controller
  */
 
-const constants = require('../core/constants')
 const forms = require('../core/forms')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
@@ -20,8 +19,6 @@ module.exports = {
   index,
   events,
   people,
-  announcements,
-  article,
   chat
 }
 
@@ -96,6 +93,10 @@ async function index (req, res) {
   let postsCollection = await postService.findPosts({specialPostType: null})
   await postsCollection.load(['entry', 'event', 'entry.userRoles'])
   context.posts = postsCollection.models
+  context.pageCount = await postService.findPosts({
+    specialPostType: null,
+    pageCount: true
+  })
 
   res.render('index', context)
 }
@@ -117,17 +118,6 @@ async function events (req, res) {
 }
 
 /**
- * Announcements listing
- */
-async function announcements (req, res) {
-  let posts = await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT })
-  await posts.load(['event', 'entry'])
-  res.render('announcements', {
-    posts: posts.models
-  })
-}
-
-/**
  * People listing
  */
 async function people (req, res) {
@@ -135,26 +125,6 @@ async function people (req, res) {
   res.render('people', {
     users: usersCollection.sortBy((user) => -user.get('id'))
   })
-}
-
-/**
- * Articles
- */
-async function article (req, res) {
-  // postName context variable is used to add a relevant "create article" mod button
-  res.locals.postName = forms.sanitizeString(req.params.name)
-  res.locals.post = await postService.findPost({
-    name: res.locals.postName,
-    specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
-    allowDrafts: true
-  })
-
-  if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||
-      securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {
-    res.render('article')
-  } else {
-    res.errorPage(404)
-  }
 }
 
 /**

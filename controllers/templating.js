@@ -16,6 +16,9 @@ const DASHBOARD_PAGES = ['feed', 'posts', 'invite', 'settings', 'password']
 module.exports = {
   buildUrl,
 
+  min: Math.min,
+  max: Math.max,
+
   isId: forms.isId,
 
   isPast: postService.isPast,
