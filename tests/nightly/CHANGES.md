@@ -5,6 +5,13 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 # Changelog
 
+### June 25th
+
+* Added support for embeds & tables in Markdown
+* Let the users set to which event a post should be attached
+* Added pagination to blog posts
+* Theme looks better on mobile
+
 ### June 20th
 
 * New event countdown (can be tweaked by editing the event)
