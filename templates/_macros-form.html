@@ -129,7 +129,8 @@
 </script>
 {% endmacro %}
 
-{# ======== DATE TIME PICKERS ========= #}
+
+{# ======== DATE TIME PICKER ========= #}
 
 {% macro dateTimePicker(name, value) %}
   <input type="datetime" name="{{ name }}" class="form-control date-picker js-date-picker" value="{{ value | pickerDateTime }}" />
@@ -145,4 +146,20 @@ $(".js-date-picker").datetimepicker({
 })
 $.fn.datetimepicker.dates['en'].today = 'Now'
 </script>
+{% endmacro %}
+
+
+{# ======== SELECT ========= #}
+
+{% macro select(name, models, selectedValue, options = {}) %}
+<select name="{{ name }}" class="form-control">
+  {% if options.nullable %}
+  <option value="" {{ 'selected' if not selectedValue }}></option>
+  {% endif %}
+  {% for model in models %}
+    <option value="{{ model.get('id') }}" {{ 'selected' if selectedValue === model.get('id') }}>
+      {{ model.get('title') }}
+    </option>}} 
+  {% endfor %}
+</select>
 {% endmacro %}

@@ -31,25 +31,12 @@
     </div>
     {% endif %}
 
-    {% if relatedEvent or relatedEntry %}
     <div class="form-group">
-      <label>Topics</label>
+      <label>Related event</label>
       <div class="form-inline">
-        {% if relatedEvent %}
-        Event <span class="label label-default">
-          {{ relatedEvent.get('title') }}
-        </span>&nbsp;
-        {% endif %}
-        {% if relatedEntry %}
-        Entry <span class="label label-default">
-          {{ relatedEntry.get('title') }}
-        </span>
-        {% endif %}
-        <input type="hidden" name="event-id" value="{{ relatedEvent.get('id') if relatedEvent }}" />
-        <input type="hidden" name="entry-id" value="{{ relatedEntry.get('id') if relatedEntry }}" />
+        {{ formMacros.select('event-id', allEvents, relatedEvent.get('id') if relatedEvent, { nullable: true }) }}
       </div>
     </div>
-    {% endif %}
 
     <div class="form-group">
       <label for="body">Body</label>

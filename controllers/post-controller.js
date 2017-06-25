@@ -97,22 +97,15 @@ async function editPost (req, res) {
       res.locals.post = post
     }
 
-    // Fetch related event/entry
+    // Fetch related event info
     let post = res.locals.post
-    let context = {}
+    let context = {
+      allEvents: (await eventService.findEvents()).models
+    }
     if (post.get('event_id')) {
       context.relatedEvent = await eventService.findEventById(post.get('event_id'))
     }
-    if (post.get('entry_id')) {
-      context.relatedEntry = await eventService.findEntryById(post.get('entry_id'))
-    }
     context.specialPostType = post.get('special_post_type')
-
-    // Late post attachment to entry
-    if (!post.get('special_post_type') && post.get('event_id') && !post.get('entry_id')) {
-      context.entry = await eventService.findUserEntryForEvent(
-        res.locals.user, context.relatedEvent.get('id'))
-    }
 
     res.render('post/edit-post', context)
   } else {
@@ -150,9 +143,14 @@ async function savePost (req, res) {
       post.set('body', forms.sanitizeMarkdown(fields.body))
       if (forms.isId(fields['event-id'])) {
         post.set('event_id', fields['event-id'])
-      }
-      if (forms.isId(fields['entry-id'])) {
-        post.set('entry_id', fields['entry-id'])
+        if (post.hasChanged('event_id')) {
+          let relatedEntry = await eventService.findUserEntryForEvent(
+            res.locals.user, post.get('event_id'))
+          post.set('entry_id', relatedEntry ? relatedEntry.get('id') : null)
+        }
+      } else {
+        post.set('event_id', null)
+        post.set('entry_id', null)
       }
 
       // Publication & redirection strategy
