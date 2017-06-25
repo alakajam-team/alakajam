@@ -509,6 +509,7 @@ input.date-picker {
   }
   
   &__related {
+    margin-top: 2px;
     font-size: 1.2rem;
   }
 

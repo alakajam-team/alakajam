@@ -191,17 +191,15 @@ Alternately, you can contact us on <a href="https://github.com/mkalam-alami/weja
     userEntry.set('title', 'Awesome Game')
     await userEntry.save()
 
-    for (let i = 0; i < 150; i++) {
-      post = await postService.createPost(entrantUser)
-      post.set({
-        title: "I'm in!",
-        body: "This is my second game and I'm really excited.",
-        event_id: event2.get('id'),
-        entry_id: userEntry.get('id'),
-        published_at: new Date()
-      })
-      await post.save()
-    }
+    post = await postService.createPost(entrantUser)
+    post.set({
+      title: "I'm in!",
+      body: "This is my second game and I'm really excited.",
+      event_id: event2.get('id'),
+      entry_id: userEntry.get('id'),
+      published_at: new Date()
+    })
+    await post.save()
 
     post = await postService.createPost(adminUser)
     post.set({

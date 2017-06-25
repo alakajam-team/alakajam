@@ -36,7 +36,7 @@ function restoreSessionIfNeeded (req, res) {
     try {
       req.session = JSON.parse(sessionCookie)
     } catch (e) {
-      req.cookies.set('session')
+      req.cookies.set('session') // clear session cookie
       sessionCookie = null
     }
   }
@@ -49,7 +49,7 @@ function restoreSessionIfNeeded (req, res) {
       if (sessionInfo) {
         req.session = {userId: sessionInfo.userId}
       } else {
-        req.cookies.set('rememberMe')
+        req.cookies.set('rememberMe') // clear remember me cookie
       }
     }
   }
