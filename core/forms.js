@@ -12,8 +12,9 @@ const validator = require('validator')
 const striptags = require('striptags')
 const showdown = require('showdown')
 const moment = require('moment')
-const constants = require('../core/constants')
 const slug = require('slug')
+const url = require('url')
+const constants = require('../core/constants')
 
 module.exports = {
   sanitizeString,
@@ -32,7 +33,13 @@ module.exports = {
 }
 
 // Libs init
-const showdownConverter = new showdown.Converter()
+
+const showdownConverter = new showdown.Converter({
+  tables: true
+})
+const customXss = new xss.FilterXSS({
+  whiteList: Object.assign(constants.ALLOWED_POST_ATTRIBUTES, xss.whiteList)
+})
 
 /**
  * Sanitizes a string form input (by removing any tags).
@@ -54,7 +61,15 @@ function sanitizeString (string) {
 function sanitizeMarkdown (markdown) {
   return sanitizeHtml(markdown, {
     allowedTags: constants.ALLOWED_POST_TAGS,
-    allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES
+    allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
+    exclusiveFilter: function (frame) {
+      if (frame.tag === 'iframe') {
+        let srcUrl = url.parse(frame.attribs.src)
+        return constants.ALLOWED_IFRAME_HOSTS.indexOf(srcUrl.host) === -1
+      } else {
+        return false
+      }
+    }
   }).replace(/&gt;/g, '>') // ">"s are used in quote blocks
 }
 
@@ -133,8 +148,8 @@ function parseDateTime (string) {
  * @return {string}
  */
 function markdownToHtml (markdown) {
-  let htmlWithoutMentions = showdownConverter.makeHtml(markdown)
-  let htmlWithMentions = htmlWithoutMentions.replace(/@([a-z\d_]+)/ig, '<a href="/user/$1">@$1</a>')
-  let safeHtml = xss(htmlWithMentions)
+  let html = showdownConverter.makeHtml(markdown)
+  let htmlWithMentions = html.replace(/@([a-z\d_]+)/ig, '<a href="/user/$1">@$1</a>')
+  let safeHtml = customXss.process(htmlWithMentions)
   return safeHtml
 }

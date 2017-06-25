@@ -15,6 +15,7 @@
   $('.simplemde-editor').each(function () {
     new SimpleMDE({
       element: this,
+      showIcons: ["code", "table"],
       spellChecker: false,
       {% if options.toolbar === false %}
       toolbar: false,

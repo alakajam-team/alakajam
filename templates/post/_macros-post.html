@@ -124,7 +124,7 @@
           <a class="btn btn-default btn-xs pull-right" href="{{ buildUrl(comment, 'comment', 'edit') }}"><span class="glyphicon glyphicon-pencil"></span></a>
           {% endif %}
         </div>
-        <div class="panel comment__body">
+        <div class="comment__body panel user-contents">
             {{ comment.get('body') | markdown | safe }}
         </div>
       </div>

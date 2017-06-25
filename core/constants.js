@@ -32,8 +32,12 @@ module.exports = {
   SPECIAL_POST_TYPE_ARTICLE,
   SPECIAL_POST_TYPES,
   REQUIRED_ARTICLES: ['help'],
-  ALLOWED_POST_TAGS: [ 'b', 'i', 'em', 'strong', 'a', 'u', 'br' ],
-  ALLOWED_POST_ATTRIBUTES: { 'a': [ 'href' ] },
+  ALLOWED_POST_TAGS: [ 'b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe' ],
+  ALLOWED_POST_ATTRIBUTES: {
+    'a': ['href'],
+    'iframe': ['src', 'width', 'height', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen']
+  },
+  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com'],
 
   // Dates
   DATE_FORMAT: 'MMMM Do YYYY',
