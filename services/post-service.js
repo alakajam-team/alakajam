@@ -54,7 +54,7 @@ function wasEdited (model) {
 async function findPosts (options = {}) {
   let postCollection = await models.Post
   postCollection = postCollection.query(function (qb) {
-    qb = qb.distinct()
+    if (!options.pageCount) qb = qb.distinct()
     if (options.specialPostType !== undefined) qb = qb.where('special_post_type', options.specialPostType)
     if (options.eventId) qb = qb.where('event_id', options.eventId)
     if (options.entryId) qb = qb.where('entry_id', options.entryId)
