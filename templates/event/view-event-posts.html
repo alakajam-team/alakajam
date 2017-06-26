@@ -10,13 +10,14 @@
       {% for post in posts.models %}
         {{ postMacros.post(post, user) }}
       {% endfor %}
-      {% if posts.models.length === 0 %}
-      <div class="well">
-        No posts yet.
-      </div>
-      {% endif %}
 
-      {{ postMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
+      {% if posts.models.length > 0 %}
+        {{ postMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
+      {% else %}
+        <div class="well">
+          No posts yet.
+        </div>
+      {% endif %}
     </div>
   </div>
 </div>

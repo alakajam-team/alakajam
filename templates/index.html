@@ -82,13 +82,15 @@
           <a href="/announcements" class="btn btn-sm btn-default">Browse announcements <span class="glyphicon glyphicon-chevron-right"></span></a>
         </div>
       {% endif %}
+
       {% if posts.length > 0 %}
-      <div class="horizontal-bar">Latest posts</div>
+        <div class="horizontal-bar">Latest posts</div>
+        {% for post in posts %}
+          {{ postMacros.post(post, user) }}
+        {% endfor %}
+        
+        {{ postMacros.pagination(1, pageCount, '/posts') }}
       {% endif %}
-      {% for post in posts %}
-        {{ postMacros.post(post, user) }}
-      {% endfor %}
-      {{ postMacros.pagination(1, pageCount, '/posts') }}
     </div>
   </div>
 </div>
