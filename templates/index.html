@@ -68,12 +68,18 @@
         </div>
       </div>
     </div>
-    
+  </div>
+
+  {% if nextEvents and nextEvents.length > 0 %}
+  <div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
     {% for nextEvent in nextEvents %}
       {{ eventMacros.eventTable(nextEvent, { latestEventAnnouncement: nextEventsAnnouncements[loop.index0], path: path }) }}
     {% endfor %}
-    
+    </div>
   </div>
+  {% endif %}
+    
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10 home-announcement">
       {% if homeAnnouncement %}
