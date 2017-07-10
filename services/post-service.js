@@ -54,7 +54,6 @@ function wasEdited (model) {
 async function findPosts (options = {}) {
   let postCollection = await models.Post
   postCollection = postCollection.query(function (qb) {
-    if (!options.pageCount) qb = qb.distinct()
     if (options.specialPostType !== undefined) qb = qb.where('special_post_type', options.specialPostType)
     if (options.eventId) qb = qb.where('event_id', options.eventId)
     if (options.entryId) qb = qb.where('entry_id', options.entryId)
@@ -67,14 +66,19 @@ async function findPosts (options = {}) {
           .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
     }
     if (!options.allowDrafts) qb = qb.where('published_at', '<=', new Date())
+    if (options.pageCount) {
+      qb = qb.count('*')
+        .groupBy('id', 'published_at') // PostgreSQL compat.
+    }
     return qb
   })
   postCollection.orderBy('published_at', 'DESC')
 
   if (options.pageCount) {
-    return postCollection.count().then(function (count) {
-      return Math.max(1, count / 10)
-    })
+    return postCollection.fetch()
+        .then(function (count) {
+          return Math.max(1, count / 10)
+        })
   } else {
     return postCollection.fetchPage({
       pageSize: options.count ? undefined : 10,
