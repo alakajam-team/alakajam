@@ -32,8 +32,7 @@
       <p class="profile__admin">
         <img src="/static/images/adminbadge.png" class="profile__admin" />
       </p>
-      {% endif %}
-      {% if profileUser.get('is_mod') %}
+      {% elseif profileUser.get('is_mod') %}
       <p class="profile__mod">
         <img src="/static/images/modbadge.png" class="profile__mod" />
       </p>

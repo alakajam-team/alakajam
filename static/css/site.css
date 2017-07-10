@@ -763,6 +763,7 @@ input.date-picker {
     padding: 10px;
     background-color: var(--alt);
     color: white;
+    text-align: left;
 
     & h2 {
       color: white;
@@ -1065,15 +1066,9 @@ input.date-picker {
     }
   }
 
-  &__admin {
+  &__admin, &__mod {
     max-width: 100%;
-    max-height: 57px;
-    border-radius: 2%;
-  }
-
-  &__mod {
-    max-width: 100%;
-    max-height: 57px;
+    max-height: 28.5px;
     border-radius: 2%;
   }
 

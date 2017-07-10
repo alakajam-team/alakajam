@@ -93,7 +93,7 @@ async function findEventByStatus (status) {
     sortOrder = 'DESC'
   }
   return models.Event.where('status', status)
-    .orderBy('created_at', sortOrder)
+    .orderBy('published_at', sortOrder)
     .fetch()
 }
 
