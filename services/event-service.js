@@ -75,11 +75,11 @@ async function findEventByName (name) {
  * @returns {array(Event)}
  */
 async function findEvents (options = {}) {
-  let eventModels = await new models.Event()
-    .orderBy('published_at', 'DESC')
-  if (options.status) eventModels = eventModels.where('status', options.status)
-  if (options.name) eventModels = eventModels.where('name', options.name)
-  return eventModels.fetchAll({ withRelated: ['entries'] })
+  let query = await new models.Event()
+  query.orderBy('published_at', options.sortDatesAscending ? 'ASC' : 'DESC')
+  if (options.status) query = query.where('status', options.status)
+  if (options.name) query = query.where('name', options.name)
+  return query.fetchAll({ withRelated: ['entries'] })
 }
 
 /**

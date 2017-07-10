@@ -106,7 +106,7 @@ async function index (req, res) {
  */
 async function events (req, res) {
   let [pendingCollection, openCollection, closedCollection] = await Promise.all([
-    await eventService.findEvents({status: 'pending'}),
+    await eventService.findEvents({status: 'pending', sortDatesAscending: true}),
     await eventService.findEvents({status: 'open'}),
     await eventService.findEvents({status: 'closed'})
   ])

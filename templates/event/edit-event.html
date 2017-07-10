@@ -130,7 +130,7 @@ var $nameInput = $('#js-name')
 var defaultText = "My event"
 $titleInput.on('change keyup', function () {
   refreshTitleDisplay()
-  $nameInput.val(slug($titleInput.val()))
+  $nameInput.val(slug($titleInput.val()).toLowerCase())
 })
 
 refreshTitleDisplay()

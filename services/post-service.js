@@ -77,7 +77,7 @@ async function findPosts (options = {}) {
   if (options.pageCount) {
     return postCollection.fetch()
         .then(function (results) {
-          if (results) {
+          if (results && results.get('count(*)')) {
             return Math.max(1, results.get('count(*)') / 10)
           } else {
             return 0

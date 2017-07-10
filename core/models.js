@@ -213,7 +213,7 @@ module.exports.Entry = bookshelf.model('Entry', {
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
     this.on('saving', function (model, attrs, options) {
-      model.set('name', slug(model.get('title') || ''))
+      model.set('name', slug(model.get('title') || '').toLowerCase())
     })
     attrs = attrs || {}
     attrs.links = attrs.links || []
@@ -277,7 +277,7 @@ module.exports.Post = bookshelf.model('Post', {
       this.trigger('titleChanged')
     })
     this.on('titleChanged', function () {
-      this.set('name', slug(this.get('title') || ''))
+      this.set('name', slug(this.get('title') || '').toLowerCase())
     })
     return attrs
   },
