@@ -42,7 +42,7 @@
       {% endfor %}
       {% endif %}
 
-      <h2>Comments <i>({{ entry.related('details').get('comment_count') or '0' }})</i></h2>
+      <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
       {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
 
     </div>
@@ -72,6 +72,11 @@
         {% for userRole in entry.related('userRoles').models %}
           {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}
         {% endfor %}
+      </div>
+
+      <div class="entry__score">
+        <span class="pull-right">{{ entry.get('feedback_score') }}</span>
+        Feedback Score
       </div>
     </div>
   </div>

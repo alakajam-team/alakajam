@@ -21,6 +21,7 @@ module.exports = {
   findCommentById,
   findCommentsSortedForDisplay,
   findCommentsByUser,
+  findCommentsByUserAndEvent,
   findCommentsToUser,
 
   createPost,
@@ -156,6 +157,24 @@ async function findCommentsByUser (user) {
   return models.Comment.where('user_id', user.id)
     .orderBy('created_at', 'DESC')
     .fetchAll({withRelated: ['user', 'node']})
+}
+
+/**
+ * Fetches all comments written by an user on an event's entries.
+ * @param  {integer} userId
+ * @param  {integer} eventId
+ * @return {Collection(Comment)}
+ */
+async function findCommentsByUserAndEvent (userId, eventId) {
+  return models.Comment.query(function (qb) {
+    qb.innerJoin('entry', 'comment.node_id', 'entry.id')
+        .where({
+          'user_id': userId,
+          'node_type': 'entry',
+          'entry.event_id': eventId
+        })
+  })
+      .fetchAll()
 }
 
 /**

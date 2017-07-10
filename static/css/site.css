@@ -619,6 +619,9 @@ input.date-picker {
 /* User contents */
 
 .user-contents {
+  word-wrap: break-word;
+  overflow: hidden;
+
   & h1 {
     margin-top: 20px;
     font-size: 1.9rem;
@@ -1025,6 +1028,16 @@ input.date-picker {
       width: 100%;
       display: block;
       margin-bottom: 5px;
+    }
+  }
+
+  &__score {
+    margin-top: 10px;
+    color: var(--text-light);
+    font-weight: bold;
+
+    & span {
+      font-size: 1.2rem;
     }
   }
 

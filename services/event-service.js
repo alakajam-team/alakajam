@@ -8,6 +8,7 @@
 
 const models = require('../core/models')
 const constants = require('../core/constants')
+const postService = require('./post-service')
 
 module.exports = {
   createEvent,
@@ -22,7 +23,10 @@ module.exports = {
 
   findEntryById,
   findUserEntries,
-  findUserEntryForEvent
+  findUserEntryForEvent,
+
+  refreshEntryScore,
+  refreshCommentScore
 }
 
 /**
@@ -158,7 +162,7 @@ async function findUserEntries (user) {
 /**
  * Retrieves the entry a user submited to an event
  * @param  {User} user
- * @param  {string} eventId
+ * @param  {integer} eventId
  * @return {Entry|null}
  */
 async function findUserEntryForEvent (user, eventId) {
@@ -170,4 +174,72 @@ async function findUserEntryForEvent (user, eventId) {
         'user_role.node_type': 'entry'
       })
   }).fetch({ withRelated: ['userRoles'] })
+}
+
+async function refreshEntryScore (entry) {
+  await entry.load(['comments', 'userRoles'])
+
+  let received = 0
+  let comments = entry.related('comments')
+  for (let comment of comments.models) {
+    received += comment.get('feedback_score')
+  }
+
+  let given = 0
+  let userRoles = entry.related('userRoles')
+  for (let userRole of userRoles.models) {
+    let givenComments = await postService.findCommentsByUserAndEvent(userRole.get('user_id'), entry.get('event_id'))
+    for (let givenComment of givenComments.models) {
+      given += givenComment.get('feedback_score')
+    }
+  }
+
+  // This formula boosts a little bit low scores (< 30) to ensure everybody gets at least some comments,
+  // and to reward people for posting their first comments. It also nerfs & caps very active commenters to prevent
+  // them from trusting the front page. Finally, negative scores are not cool so we use 100 as the origin.
+  // NB. It is inspired by the actual LD sorting equation: D = 50 + R - 5*sqrt(min(C,100))
+  // (except that here, higher is better)
+  entry.set('feedback_score', Math.floor(Math.max(0, 74 + 8.5 * Math.sqrt(10 + Math.min(given, 100)) - received)))
+  await entry.save()
+}
+
+async function refreshCommentScore (comment) {
+  await comment.load(['node.comments', 'node.userRoles'])
+
+  let isTeamMember = 0
+  let entry = comment.related('node')
+  let entryUserRoles = entry.related('userRoles')
+  for (let userRole of entryUserRoles.models) {
+    if (userRole.get('user_id') === comment.get('user_id')) {
+      isTeamMember = true
+      break
+    }
+  }
+
+  let adjustedScore = 0
+  if (!isTeamMember) {
+    let rawScore = _computeRawCommentScore(comment)
+
+    let previousCommentsScore = 0
+    let entryComments = entry.related('comments')
+    for (let entryComment of entryComments.models) {
+      if (entryComment.get('user_id') === comment.get('user_id') && entryComment.get('id') !== comment.get('id')) {
+        previousCommentsScore += entryComment.get('feedback_score')
+      }
+    }
+    adjustedScore = Math.max(0, Math.min(rawScore, 3 - previousCommentsScore))
+  }
+
+  comment.set('feedback_score', adjustedScore)
+}
+
+function _computeRawCommentScore (comment) {
+  let commentLength = comment.get('body').length
+  if (commentLength > 300) { // Elaborate comments
+    return 3
+  } else if (commentLength > 100) { // Interesting comments
+    return 2
+  } else { // Short comments
+    return 1
+  }
 }

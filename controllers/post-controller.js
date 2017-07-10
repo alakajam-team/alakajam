@@ -302,16 +302,33 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
   }
 
   if (securityService.canUserWrite(currentUser, comment, { allowMods: true })) {
-    // Update or delete comment
     if (fields.delete) {
+      // Delete comment
       await comment.destroy()
     } else {
+      // Update comment
       comment.set('body', forms.sanitizeMarkdown(fields.body))
+      await eventService.refreshCommentScore(comment)
       await comment.save()
+
+      // Refresh feedback score on both the giver & receiver entries
+      if (comment.get('node_type') === 'entry') {
+        let currentEntry = currentNode
+        let userEntry = await eventService.findUserEntryForEvent(
+          currentUser, currentEntry.get('event_id'))
+
+        // (No need to await, it's okay if the score is a bit late)
+        // XXXXXXXXXXXXX
+        await eventService.refreshEntryScore(currentEntry)
+        if (userEntry) {
+          await eventService.refreshEntryScore(userEntry)
+        }
+      }
+
       redirectUrl += templating.buildUrl(comment, 'comment')
     }
 
-    // Update node comment count
+    // Refresh node comment count
     if (fields.delete || isNewComment) {
       await postService.refreshCommentCount(currentNode)
     }
