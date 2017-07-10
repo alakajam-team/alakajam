@@ -34,6 +34,10 @@ async function entryMiddleware (req, res, next) {
     return
   }
   res.locals.entry = entry
+  res.locals.pageTitle = entry.get('title')
+  if (entry.get('pictures') && entry.get('pictures').length > 0) {
+    res.locals.pageImage = entry.get('pictures')[0]
+  }
 
   if (req.params.eventName !== entry.get('event_name') ||
       req.params.entryName !== entry.get('name')) {

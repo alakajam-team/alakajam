@@ -199,6 +199,15 @@ input.date-picker {
   }
 }
 
+.btn-alt {
+  background-color: var(--alt);
+  border: 0;
+
+  &:hover, &:active {
+    background-color: var(--alt-dark);
+  }
+}
+
 /* Required star
 .form-group.required label:after {
   content:" *";
@@ -464,7 +473,7 @@ input.date-picker {
   padding: 5px;
   margin-bottom: 20px;
   background-color: var(--borders);
-  height: 100px;
+  height: 110px;
   
   &__info {
     padding-right: 10px;
@@ -473,6 +482,8 @@ input.date-picker {
   &__title {
     padding-bottom: 5px;
     color: var(--text-light);
+    line-height: 38px;
+    height: 38px;
   }
 
   &__post {
@@ -1089,6 +1100,7 @@ input.date-picker {
 
   &__avatar {
     width: 50px;
+    max-height: 50px;
     margin-left: -60px;
     display: block;
     float: left;

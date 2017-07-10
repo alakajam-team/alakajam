@@ -76,8 +76,12 @@ async function findPosts (options = {}) {
 
   if (options.pageCount) {
     return postCollection.fetch()
-        .then(function (count) {
-          return Math.max(1, count / 10)
+        .then(function (results) {
+          if (results) {
+            return Math.max(1, results.get('count(*)') / 10)
+          } else {
+            return 0
+          }
         })
   } else {
     return postCollection.fetchPage({
@@ -115,7 +119,11 @@ async function findPost (options = {}) {
  * @return {Post}
  */
 async function findLatestAnnouncement (options = {}) {
-  let query = models.Post.where('special_post_type', constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
+  let query = models.Post
+    .where('special_post_type', constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
+    .query(function (qb) {
+      qb.whereNotNull('published_at')
+    })
   if (options.eventId) {
     query = query.where('event_id', options.eventId)
   }

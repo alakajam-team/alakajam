@@ -35,7 +35,10 @@ async function postMiddleware (req, res, next) {
     if (forms.isId(req.params.postId)) {
       res.locals.post = await postService.findPostById(req.params.postId)
     }
-    if (!res.locals.post) {
+
+    if (res.locals.post) {
+      res.locals.pageTitle = res.locals.post.get('title')
+    } else {
       res.errorPage(404, 'Post not found')
       return
     }
@@ -70,11 +73,21 @@ async function posts (req, res) {
     title = 'Announcements'
   }
 
+  // Determine base URL for pagination
+  let paginationBaseUrl = '/posts?'
+  if (specialPostType) {
+    paginationBaseUrl += '&special_post_type=' + specialPostType
+  }
+  if (eventId) {
+    paginationBaseUrl += '&event_id=' + eventId
+  }
+
   res.render('posts', {
     posts: posts.models,
     title,
     currentPage,
-    pageCount
+    pageCount,
+    paginationBaseUrl
   })
 }
 

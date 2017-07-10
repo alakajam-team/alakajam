@@ -30,14 +30,14 @@
       </a>
 
       <div class="post__related">
-      {% set relatedEvent = post.related('event') %}
-      {% set relatedEntry = post.related('entry') %}
-      {% if relatedEvent.get('id') %}
-        on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
-      {% endif %}
-      {% if relatedEntry.get('id') %}
-        entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">{{ relatedEntry.get('title') }}</a>
-      {% endif %}
+        {% set relatedEvent = post.related('event') %}
+        {% set relatedEntry = post.related('entry') %}
+        {% if relatedEvent.get('id') %}
+          on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
+        {% endif %}
+        {% if relatedEntry.get('id') %}
+          entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">{{ relatedEntry.get('title') }}</a>
+        {% endif %}
       </div>
     </{{h}}>
   {% endif %}

@@ -3,7 +3,7 @@
 {# Allowed options: hideHeading hideBody hideSpecialLabels showComments allowMods #}
 {% macro userThumb(user, options = {}) %}
 
-<div class="user-thumb col-sm-4 {{ 'full-width' if options.fullWidth }}  {{ 'centered' if options.centered }}">
+<div class="user-thumb {{ 'full-width' if options.fullWidth else 'col-sm-4' }} {{ 'centered' if options.centered }}">
     <h1 class="user-thumb__title">
       <a href="{{ buildUrl(user, 'user') }}">
         <div class="user-thumb__avatar">

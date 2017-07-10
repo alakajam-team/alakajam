@@ -8,7 +8,7 @@
     <div class="col-lg-offset-1 col-lg-10">
       <h2>{{ title }}</h2>
 
-      {{ postMacros.pagination(currentPage, pageCount) }}
+      {{ postMacros.pagination(currentPage, pageCount, paginationBaseUrl) }}
       {% for post in posts %}
         {{ postMacros.post(post, user, { allowMods: true }) }}
       {% endfor %}
