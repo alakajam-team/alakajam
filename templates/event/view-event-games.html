@@ -1,15 +1,21 @@
 {% extends "event/_page-event.html" %}
 {% import "event/_macros-event.html" as eventMacros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block body %}
 {{ super() }}
 
 <div class="container">
   <div class="row">
+    <div class="horizontal-bar">Entries are sorted by Feedback Score {{ formMacros.tooltip('Comment on other games to increase your score and get featured higher on the list!') }}</div>
     {% set entries = event.related('entries').models %}
     {% for entry in entries %}
       <div class="col-sm-4 col-md-3">
         {{ eventMacros.entryThumb(entry) }}
+        <div class="entry-thumb__score">
+          <span class="pull-right">{{ entry.get('feedback_score') | default('0') }}</span>
+          Feedback Score
+        </div>
       </div>
     {% endfor %}
     {% if entries.length === 0 %}
