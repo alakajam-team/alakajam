@@ -28,6 +28,17 @@
         Joined {{ profileUser.get('created_at') | relativeTime }}
       </p>
 
+      {% if profileUser.get('is_admin') %}
+      <p class="profile__admin">
+        <img src="/static/images/adminbadge.png" class="profile__admin" />
+      </p>
+      {% endif %}
+      {% if profileUser.get('is_mod') %}
+      <p class="profile__mod">
+        <img src="/static/images/modbadge.png" class="profile__mod" />
+      </p>
+      {% endif %}
+
       {% if user and (user.get('id') == profileUser.get('id')) %}
       <a href="{{ buildUrl(user, 'user', 'feed') }}" class="btn btn-default">View dashboard</a>
       {% endif %}

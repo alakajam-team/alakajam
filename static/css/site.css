@@ -1054,6 +1054,18 @@ input.date-picker {
     }
   }
 
+  &__admin {
+    max-width: 100%;
+    max-height: 57px;
+    border-radius: 2%;
+  }
+
+  &__mod {
+    max-width: 100%;
+    max-height: 57px;
+    border-radius: 2%;
+  }
+
 }
 
 /* User thumbnail */
