@@ -1,8 +1,8 @@
 {
-  "name": "we-jam",
-  "version": "0.0.0",
+  "name": "alakajam",
+  "version": "0.2.1-dev",
   "description": "Game jam system",
-  "main": "meadowlark.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "debug": "node-debug server.js",

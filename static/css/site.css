@@ -19,7 +19,7 @@
   --alt-light: #f47171;
   --alt-lighter: color(var(--alt) alpha(25%));
   --alt-lightest: #ffded6;
-  --alt-dark: color(var(--alt) lightness(35%));
+  --alt-dark: color(var(--alt) lightness(42%));
   --alt-transparent: color(var(--alt) alpha(10%));
 
   --neutral: #888;
@@ -739,6 +739,13 @@ input.date-picker {
 
 /* Event table */
 
+
+@keyframes anim-live-event {
+  0% { background-color: #da4453; }
+  50% { background-color: color(var(--alt-dark)); }
+  100% { background-color: #da4453; }
+}
+
 .event-table {
   padding: 10px;
   margin-bottom: 20px;
@@ -781,6 +788,10 @@ input.date-picker {
     @apply --main-font;
     font-size: 0.8rem;
     vertical-align: middle;
+    animation-name: anim-live-event;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
   }
   
   &__details {
