@@ -119,7 +119,7 @@ async function configure (app) {
     let nativeRender = res.render
     res.render = function (template, context) {
       let mergedContext = Object.assign({
-        rootUrl: req.protocol + '://' + req.headers.host
+        rootUrl: config.ROOT_URL
       }, res.locals, context)
       nativeRender.call(res, template, mergedContext)
       res.rendered = true
