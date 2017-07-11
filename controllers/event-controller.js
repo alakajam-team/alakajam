@@ -109,7 +109,14 @@ async function viewEventGames (req, res) {
     return
   }
 
-  res.render('event/view-event-games')
+  let sortedEntries = res.locals.event.related('entries')
+    .sortBy(function (entry) {
+      return -1 * entry.get('feedback_score')
+    })
+
+  res.render('event/view-event-games', {
+    sortedEntries
+  })
 }
 
 /**
