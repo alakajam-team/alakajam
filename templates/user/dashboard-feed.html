@@ -6,49 +6,45 @@
 
 <div class="row">
   <div class="col-md-12">
-    <h1>Shortcuts</h1>
   </div>
 </div>
 <div class="row">
+  <div class="col-md-7">
+    <h1>Notifications <span class="glyphicon glyphicon-info-sign has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="This feed lists all comments people wrote on your entries and posts, plus any comments mentioning &quot;@{{ user.get('name') }}&quot;." style="font-size: 1rem"></span></h1>
+    {{ postMacros.comments(toUser, user, { readOnly: true, linkToNode: true }) }}
+  </div>
   <div class="col-md-5">
+    <h1>Shortcuts</h1>
+    
     <h4>Latest entry</h4>
-
     {% if latestEntry %}
       {{ eventMacros.entryThumb(latestEntry, { showEvent: true }) if latestEntry }}
     {% else %}
       <div class="well">No entry yet.</div>
     {% endif %}
-
-    <div class="text-right">
-      <a href="{{ buildUrl(dashboardUser, 'user') }}" class="btn btn-default"
-       style="margin-top: -10px">All entries</a>
+    <div style="margin-top: -10px; margin-bottom: 20px">
+      <a href="{{ buildUrl(dashboardUser, 'user') }}" class="btn btn-default">All entries</a>
     </div>
-  </div>
-  <div class="col-md-7">
+    
     <h4>Latest posts</h4>
-
     {% for post in latestPosts %}
-      {{ postMacros.post(post, user, { hideBody: true, hideSpecialLabels: true }) }}
+      {{ postMacros.post(post, user, { hideDetails: true, hideSpecialLabels: true }) }}
     {% endfor %}
     {% if latestPosts.length === 0 %}
     <div class="well">No posts yet.</div>
     {% endif %}
-
-    <div class="text-right" style="margin-top: -10px;">
-      <a href="{{ buildUrl(null, 'post', 'create') }}" class="btn btn-primary">Create post</a>
+    <div style="margin-bottom: 20px">
       <a href="{{ buildUrl(dashboardUser, 'user', 'posts') }}" class="btn btn-default">All posts</a>
+      <a href="{{ buildUrl(null, 'post', 'create') }}" class="btn btn-primary">Create post</a>
     </div>
+    
+    <h4>Latest comments</h4>
+    {{ postMacros.comments(byUser, user, { readOnly: true, linkToNode: true }) }}
   </div>
 </div>
 
 <div class="row" style="margin-top: 20px">
   <div class="col-md-7">
-    <h1>Received comments <span class="glyphicon glyphicon-info-sign has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="This lists comments people wrote on your entries and posts, plus any comments mentioning &quot;@{{ user.get('name') }}&quot;." style="font-size: 1rem"></span></h1>
-    {{ postMacros.comments(toUser, user, { readOnly: true, linkToNode: true }) }}
-  </div>
-  <div class="col-md-5">
-    <h1>Your comments</h1>
-    {{ postMacros.comments(byUser, user, { readOnly: true, linkToNode: true }) }}
   </div>
 </div>
   

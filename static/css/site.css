@@ -788,6 +788,8 @@ input.date-picker {
     @apply --main-font;
     font-size: 0.8rem;
     vertical-align: middle;
+  }
+  &.live &__status {
     animation-name: anim-live-event;
     animation-duration: 1s;
     animation-iteration-count: infinite;

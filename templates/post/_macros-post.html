@@ -1,7 +1,7 @@
 {% import "_macros-form.html" as formMacros %}
 {% import "event/_macros-event.html" as eventMacros %}
 
-{# Allowed options: hideHeading hideBody hideSpecialLabels showId showComments allowMods #}
+{# Allowed options: hideHeading hideBody hideDetails hideSpecialLabels showId showComments allowMods #}
 {% macro post(post, readingUser, options = {}) %}
 
 <div class="post">
@@ -10,7 +10,7 @@
   {% set postUrl = buildUrl(post, 'post') %}
 
   {% if not options.hideHeading %}
-    {% set h = 'h3' if options.hideBody else 'h1' %}
+    {% set h = 'h3' if options.hideBody or options.hideDetails else 'h1' %}
     <{{h}}>
       <a class="post__heading" href="{{ buildUrl(post, 'post') }}">
         {{ post.get('title') }}
@@ -42,6 +42,7 @@
     </{{h}}>
   {% endif %}
   
+  {% if not options.hideDetails %}
   <div class="panel">
     <div class="post__details">
       <a href="{{ buildUrl(author, 'user') }}">
@@ -68,6 +69,7 @@
     </div>
     {% endif %}
   </div>
+  {% endif %}
   
   {% if options.showRelatedBar %}
   <div class="post__related">
