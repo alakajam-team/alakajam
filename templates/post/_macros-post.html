@@ -13,18 +13,24 @@
     {% set h = 'h3' if options.hideBody or options.hideDetails else 'h1' %}
     <{{h}}>
       <a class="post__heading" href="{{ buildUrl(post, 'post') }}">
-        {{ post.get('title') }}
-        {% if canUserWrite(readingUser, post, options) %}
-          <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
-        {% endif %}
-        {% if options.showId %}
-          <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
-        {% endif %}
-        <div class="pull-right {{ 'post__special-type' if post.get('special_post_type') }}">
+        <div class="row">
+          <div class="{{ 'col-xs-8 col-md-9' if not options.hideSpecialLabels and post.get('special_post_type') else 'col-xs-12' }}">
+            {{ post.get('title') }}
+            {% if canUserWrite(readingUser, post, options) %}
+              <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
+            {% endif %}
+            {% if options.showId %}
+              <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
+            {% endif %}
+          </div>
           {% if not options.hideSpecialLabels and post.get('special_post_type') %}
-            <span class="post__special-type-label">
-              {{ post.get('special_post_type') | upper }}
-            </span>
+          <div class="col-xs-4 col-md-3">
+            <div class="post__special-type">
+              <span class="post__special-type-label">
+                {{ post.get('special_post_type') | upper }}
+              </span>
+            </div>
+          </div>
           {% endif %}
         </div>
       </a>

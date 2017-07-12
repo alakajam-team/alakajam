@@ -500,6 +500,7 @@ input.date-picker {
 .footer {
   &__link {
     margin-right: 10px;
+    display: inline-block;
   }
   &__icon {
     height: 16px;
@@ -555,7 +556,7 @@ input.date-picker {
     font-weight: bold;
     background-color: var(--moderation-dark);
     white-space: nowrap;
-    padding: 0 50px;
+    text-align: center;
   }
 
   &__special-type-label {
@@ -799,13 +800,13 @@ input.date-picker {
   &__details {
     @apply --shadow;
     margin-top: -20px;
+    padding: 10px;
     border-radius: 0;
     background-color: white;
     width: 100%;
   }
   
   &__detail {
-    padding: 10px;
     font-size: 1.0rem;
     font-weight: bold;
   }
@@ -975,18 +976,21 @@ input.date-picker {
 .event-big-link {
   display: inline-block;
   width: 150px;
+  max-width: 23%;
   height: 130px;
   transition: 0.3s;
 
-  &:last-child {
-    margin-right: -20px;
+  @media (min-width: 768px) {
+    &:first-child {
+      margin-left: 20px;
+    }
   }
 
   &__border {
     float: left;
     width: 130px;
+    max-width: 100%;
     height: 120px;
-    padding: 20px;
   }
 
   &.active:hover &__border {
@@ -1000,6 +1004,7 @@ input.date-picker {
   } 
 
   & .glyphicon {
+    padding-top: 20px;
     font-size: 2.2rem;
   }
 
