@@ -372,6 +372,11 @@ input.date-picker {
     margin-right: 30px;
     vertical-align: middle;
   }
+  @media (max-width: 768px) {
+    &__info {
+      margin-right: 0;
+    }
+  }
 
   &__name {
     @apply --alt-font;
@@ -379,6 +384,13 @@ input.date-picker {
     padding-top: 2px;
     box-sizing: border-box;
     font-size: 1.5rem;
+  }
+  @media (max-width: 768px) {
+    &__name {
+      font-size: 1.3rem;
+      letter-spacing: 0px;
+      max-width: 250px;
+    }
   }
 
   &__dates {

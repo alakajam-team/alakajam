@@ -144,13 +144,13 @@
 {% macro eventLinks (event, latestEventAnnouncement, path) %}
 
 {% if latestEventAnnouncement %}
-  <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
+  <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs hidden-sm event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
     <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
     <span class="event-header__announcement-info">
       Announcement • {{ latestEventAnnouncement.get('created_at') | relativeTime }}
     </span>
   </a><!--
-  --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-sm hidden-md hidden-lg event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
+  --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-md hidden-lg event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
     <span class="glyphicon glyphicon-pushpin"></span>
   </a>
 {% endif %}
