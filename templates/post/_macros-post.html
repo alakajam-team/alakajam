@@ -14,7 +14,7 @@
     <{{h}}>
       <a class="post__heading" href="{{ buildUrl(post, 'post') }}">
         <div class="row">
-          <div class="{{ 'col-xs-8 col-md-9' if not options.hideSpecialLabels and post.get('special_post_type') else 'col-xs-12' }}">
+          <div class="{{ 'col-xs-10 col-sm-8 col-md-9' if not options.hideSpecialLabels and post.get('special_post_type') else 'col-xs-12' }}">
             {{ post.get('title') }}
             {% if canUserWrite(readingUser, post, options) %}
               <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
@@ -24,10 +24,15 @@
             {% endif %}
           </div>
           {% if not options.hideSpecialLabels and post.get('special_post_type') %}
-          <div class="col-xs-4 col-md-3">
+          <div class="col-xs-2 col-sm-4 col-md-3">
             <div class="post__special-type">
               <span class="post__special-type-label">
-                {{ post.get('special_post_type') | upper }}
+                <span class="hidden-xs visible-sm visible-md visible-lg">
+                  {{ post.get('special_post_type') | upper }}
+                </span>
+                <span class="visible-xs hidden-sm">
+                  <span class="glyphicon glyphicon-pushpin"></span>
+                </span>
               </span>
             </div>
           </div>
