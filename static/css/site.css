@@ -976,15 +976,8 @@ input.date-picker {
 .event-big-link {
   display: inline-block;
   width: 150px;
-  max-width: 23%;
   height: 130px;
   transition: 0.3s;
-
-  @media (min-width: 768px) {
-    &:first-child {
-      margin-left: 20px;
-    }
-  }
 
   &__border {
     float: left;
@@ -1180,7 +1173,8 @@ input.date-picker {
   text-align: center;
 
   &__links {
-    height: 120px;
+    margin-bottom: -20px;
+    margin-left: 10px;
   }
 
   &__countdown {
