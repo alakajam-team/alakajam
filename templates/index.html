@@ -12,39 +12,37 @@
   <div class="row">
 
     <div class="col-lg-offset-1 col-lg-10">
-      <div class="home-jumbo featured {{ 'live' if liveEvent }}">
-        {% if liveEvent %}
+      <div class="home-jumbo featured {{ 'live' if featuredEvent }}">
+        {% if featuredEvent and featuredEvent.get('status') !== 'pending' %}
   
-          <h1><a href="{{ buildUrl(liveEvent, 'event') }}">{{ liveEvent.get('title') }}</a> {{ liveEvent.get('countdown_config').phrase | default('ends in') }}</h1>
+          <h1><a href="{{ buildUrl(featuredEvent, 'event') }}">{{ featuredEvent.get('title') }}</a> {{ featuredEvent.get('countdown_config').phrase | default('ends in') }}</h1>
           <div class="home-jumbo__countdown js-countdown"></div>
-          {% if liveEvent.get('display_theme') %}
-            {% if liveEvent.get('status_theme') !== 'off' and liveEvent.get('status_theme') !== 'disabled' %}
-              <h1>Theme: <a href="{{ buildUrl(liveEvent, 'event', 'themes') }}">{{ liveEvent.get('display_theme') }}</a></h1>
+          {% if featuredEvent.get('display_theme') %}
+            {% if featuredEvent.get('status_theme') !== 'off' and featuredEvent.get('status_theme') !== 'disabled' %}
+              <h1>Theme: <a href="{{ buildUrl(featuredEvent, 'event', 'themes') }}">{{ featuredEvent.get('display_theme') }}</a></h1>
             {% else %}
-              <h1>Theme: {{ liveEvent.get('display_theme') }}</h1>
+              <h1>Theme: {{ featuredEvent.get('display_theme') }}</h1>
             {% endif %}
           {% endif %}
 
           <div class="row">
             <div class="col-md-offset-2 col-md-8">
-              {{ eventMacros.eventTable(liveEvent, { hideLinks: true }) }}
+              {{ eventMacros.eventTable(featuredEvent, { hideLinks: true }) }}
             </div>
           </div>
 
           <div class="row">
             <div class="col-xs-12 text-center home-jumbo__links">
-              {{ eventMacros.eventBigLink(liveEvent, null, 'announcements', 'News', 'pushpin') }}
-              {{ eventMacros.eventBigLink(liveEvent, null, 'posts', 'Posts', 'globe') }}
-              {{ eventMacros.eventBigLink(liveEvent, 'status_theme', 'theme', 'Theme', 'grain') }}
-              {{ eventMacros.eventBigLink(liveEvent, 'status_entry', 'games', 'Games', 'tower') }}
-              {{ eventMacros.eventBigLink(liveEvent, 'status_results', 'results', 'Results', 'th-list') }}
+              {{ eventMacros.eventBigLink(featuredEvent, null, 'announcements', 'News', 'pushpin') }}
+              {{ eventMacros.eventBigLink(featuredEvent, null, 'posts', 'Posts', 'globe') }}
+              {{ eventMacros.eventBigLink(featuredEvent, 'status_theme', 'theme', 'Theme', 'grain') }}
+              {{ eventMacros.eventBigLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower') }}
+              {{ eventMacros.eventBigLink(featuredEvent, 'status_results', 'results', 'Results', 'th-list') }}
             </div>
           </div>
         
-        {% elseif nextEvents and nextEvents.length > 0 %}
-        
-          {% set upcomingEvent = nextEvents[0] %}
-          <h1><a href="{{ buildUrl(upcomingEvent, 'event') }}">{{ upcomingEvent.get('title') }}</a> {{ 'starts ' + upcomingEvent.get('display_dates') if upcomingEvent.get('display_dates') else 'will come soon!' }}</h1></h1>
+        {% elseif featuredEvent and featuredEvent.get('status') === 'pending' %}
+          <h1><a href="{{ buildUrl(upcomingEvent, 'event') }}">{{ featuredEvent.get('title') }}</a> {{ 'starts ' + featuredEvent.get('display_dates') if featuredEvent.get('display_dates') else 'will come soon!' }}</h1></h1>
           <div class="home-jumbo__countdown js-countdown"></div>
 
         {% else %}
@@ -79,6 +77,17 @@
         </div>
       {% endif %}
 
+      {% if latestEntries.length > 0 %}
+        <div class="horizontal-bar">Latest entries</div>
+        <div class="row">
+        {% for entry in latestEntries %}
+          <div class="col-sm-4 col-md-3">
+          {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
+          </div>
+        {% endfor %}
+        </div>
+      {% endif %}
+      
       {% if posts.length > 0 %}
         <div class="horizontal-bar">Latest posts</div>
         {% for post in posts %}
@@ -95,8 +104,8 @@
 
 {% block scripts %}
 
-{% if liveEvent %}
-  {% set countdownEvent = liveEvent %}
+{% if featuredEvent %}
+  {% set countdownEvent = featuredEvent %}
 {% elseif nextEvents and nextEvents.length > 0 %}
   {% set countdownEvent = nextEvents[0] %}
 {% endif %}

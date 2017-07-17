@@ -60,6 +60,7 @@ module.exports = {
     router.get('/admin', adminController.adminHome)
     router.get('/admin/articles', adminController.adminArticles)
     router.get('/admin/events', adminController.adminEvents)
+    router.all('/admin/settings', adminController.adminSettings)
     router.get('/admin/users', adminController.adminUsers)
     router.all('/admin/dev', adminController.adminDev)
     router.all('/admin/status', adminController.adminStatus)

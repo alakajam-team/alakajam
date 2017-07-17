@@ -7,11 +7,13 @@
  */
 
 const forms = require('../core/forms')
+const constants = require('../core/constants')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
+const settingService = require('../services/setting-service')
 
 module.exports = {
   anyPageMiddleware,
@@ -43,16 +45,19 @@ async function anyPageMiddleware (req, res, next) {
     })
   }
 
-  // Fetch live event
-  let liveEventTask = eventService.findEventByStatus('open').then(async function (liveEvent) {
-    if (liveEvent) {
-      res.locals.liveEvent = liveEvent
-    } else {
-      res.locals.nextEvent = await eventService.findEventByStatus('pending')
-    }
-  })
+  // Fetch featured event
+  let featuredEventTask = settingService.find(constants.SETTING_FEATURED_EVENT_NAME)
+    .then(function (featuredEventName) {
+      if (featuredEventName) {
+        return eventService.findEventByName(featuredEventName)
+      }
+    }).then(function (featuredEvent) {
+      if (featuredEvent) {
+        res.locals.featuredEvent = featuredEvent
+      }
+    })
 
-  await Promise.all([liveEventTask, userTask]) // Parallelize fetching both
+  await Promise.all([featuredEventTask, userTask]) // Parallelize fetching both
 
   next()
 }
@@ -63,40 +68,40 @@ async function anyPageMiddleware (req, res, next) {
 async function index (req, res) {
   let context = {}
 
-  if (res.locals.liveEvent) {
+  let featuredEventTask
+  if (res.locals.featuredEvent) {
     // Find live event and its latest announcement
-    await res.locals.liveEvent.load(['entries', 'entries.userRoles'])
-    context.liveEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.liveEvent.get('id') })
-    context.homeAnnouncement = context.liveEventAnnouncement
-  } else {
-    // Find next events
-    let nextEventsCollection = await eventService.findEvents({status: 'pending'})
-    context.nextEvents = nextEventsCollection.models
-
-    // Gather the latest announcements for all next events
-    context.nextEventsAnnouncements = []
-    context.homeAnnouncement = null
-    for (let nextEvent of context.nextEvents) {
-      let nextEventAnnouncement = await postService.findLatestAnnouncement({ eventId: nextEvent.get('id') })
-      context.nextEventsAnnouncements.push(nextEventAnnouncement)
-      if (!context.homeAnnouncement) {
-        context.homeAnnouncement = nextEventAnnouncement
-      }
-    }
+    featuredEventTask = res.locals.featuredEvent.load(['entries', 'entries.userRoles'])
+      .then(async function () {
+        context.featuredEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
+        context.homeAnnouncement = context.featuredEventAnnouncement
+      })
   }
 
-  if (!context.homeAnnouncement) {
-    context.homeAnnouncement = await postService.findLatestAnnouncement()
-  }
+  // Find previous event
+  let previousEventTask = await eventService.findEventByStatus('closed')
+    .then(function (previousEvent) {
+      context.previousEvent = previousEvent
+    })
+
+  // Gather any entries
+  let latestEntriesTask = eventService.findLatestEntries()
+    .then(function (latestEntries) {
+      context.latestEntries = latestEntries.models
+    })
 
   // Gather any user posts
-  let postsCollection = await postService.findPosts({specialPostType: null})
-  await postsCollection.load(['entry', 'event', 'entry.userRoles'])
-  context.posts = postsCollection.models
-  context.pageCount = await postService.findPosts({
-    specialPostType: null,
-    pageCount: true
-  })
+  let postsTask = postService.findPosts({specialPostType: null})
+    .then(async function (postsCollection) {
+      await postsCollection.load(['entry', 'event', 'entry.userRoles'])
+      context.posts = postsCollection.models
+      context.pageCount = await postService.findPosts({
+        specialPostType: null,
+        pageCount: true
+      })
+    })
+
+  await Promise.all([featuredEventTask, previousEventTask, latestEntriesTask, postsTask]) // Parallelize fetching everything
 
   res.render('index', context)
 }

@@ -9,10 +9,12 @@
 const config = require('../config')
 const db = require('../core/db')
 const constants = require('../core/constants')
+const forms = require('../core/forms')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
+const settingService = require('../services/setting-service')
 
 module.exports = {
   adminMiddleware,
@@ -21,6 +23,7 @@ module.exports = {
   adminArticles,
 
   adminEvents,
+  adminSettings,
   adminUsers,
   adminStatus,
   adminDev
@@ -80,6 +83,45 @@ async function adminEvents (req, res) {
   let events = await eventService.findEvents()
   res.render('admin/admin-events', {
     events: events.models
+  })
+}
+
+/**
+ * Admin only: settings management
+ */
+async function adminSettings (req, res) {
+  // Save changed setting
+  if (req.method === 'POST') {
+    let {fields} = await req.parseForm()
+    if (constants.EDITABLE_SETTINGS.indexOf(fields.key) !== -1) {
+      await settingService.save(fields.key, forms.sanitizeString(fields.value))
+    } else {
+      req.errorPage(403, 'Tried to edit a non-editable setting')
+      return
+    }
+  }
+
+  // Gather editable settings
+  let settings = []
+  for (let key of constants.EDITABLE_SETTINGS) {
+    settings.push({
+      key,
+      value: await settingService.find(key)
+    })
+  }
+
+  // Fetch setting to edit
+  let editSetting
+  if (req.query.edit && forms.isSlug(req.query.edit)) {
+    editSetting = {
+      key: req.query.edit,
+      value: await settingService.find(req.query.edit)
+    }
+  }
+
+  res.render('admin/admin-settings', {
+    settings,
+    editSetting
   })
 }
 

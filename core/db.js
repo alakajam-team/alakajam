@@ -109,6 +109,7 @@ async function insertInitialData (samples) {
   const userService = require('../services/user-service')
   const eventService = require('../services/event-service')
   const postService = require('../services/post-service')
+  const settingService = require('../services/setting-service')
 
   // Mandatory admin account
 
@@ -183,6 +184,8 @@ Alternately, you can contact us on <a href="https://github.com/mkalam-alami/weja
       }
     })
     await event2.save()
+
+    settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
 
     let adminEntry = await eventService.createEntry(adminUser, event1)
     adminEntry.set('title', 'Super Game')

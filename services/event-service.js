@@ -21,6 +21,7 @@ module.exports = {
 
   createEntry,
 
+  findLatestEntries,
   findEntryById,
   findUserEntries,
   findUserEntryForEvent,
@@ -134,12 +135,27 @@ async function createEntry (user, event) {
 }
 
 /**
+ * Fetches the latest entries of any event
+ * @param id {id} models.Entry ID
+ * @returns {Entry}
+ */
+async function findLatestEntries () {
+  return models.Entry.forge()
+    .orderBy('created_at', 'DESC')
+    .fetchPage({
+      pageSize: 4,
+      withRelated: ['userRoles', 'event']
+    })
+}
+
+/**
  * Fetches an models.Entry by its ID.
  * @param id {id} models.Entry ID
  * @returns {Entry}
  */
 async function findEntryById (id) {
-  return models.Entry.where('id', id).fetch({ withRelated: ['details', 'event', 'userRoles'] })
+  return models.Entry.where('id', id)
+    .fetch({ withRelated: ['details', 'event', 'userRoles'] })
 }
 
 /**
