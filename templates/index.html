@@ -76,7 +76,7 @@
               <div class="col-md-8">
                 {% if homeAnnouncement %}
                   <div class="home-jumbo__announcement">
-                    {{ postMacros.post(homeAnnouncement, user, { thinPost: true }) }}
+                    {{ postMacros.post(homeAnnouncement, user, { hideSpecialLabels: true }) }}
                     <div class="home-jumbo__announcement-expand-bar">
                       <span class="home-jumbo__announcement-expand">
                         <span class="glyphicon glyphicon-arrow-down"></span> 
