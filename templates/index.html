@@ -11,72 +11,101 @@
 <div class="container">
   <div class="row">
 
-    <div class="col-lg-offset-1 col-lg-10">
-      <div class="home-jumbo featured {{ 'live' if featuredEvent }}">
-        {% if featuredEvent and featuredEvent.get('status') !== 'pending' %}
-  
-          <h1><a href="{{ buildUrl(featuredEvent, 'event') }}">{{ featuredEvent.get('title') }}</a> {{ featuredEvent.get('countdown_config').phrase | default('ends in') }}</h1>
-          <div class="home-jumbo__countdown js-countdown"></div>
-          {% if featuredEvent.get('display_theme') %}
-            {% if featuredEvent.get('status_theme') !== 'off' and featuredEvent.get('status_theme') !== 'disabled' %}
-              <h1>Theme: <a href="{{ buildUrl(featuredEvent, 'event', 'themes') }}">{{ featuredEvent.get('display_theme') }}</a></h1>
-            {% else %}
-              <h1>Theme: {{ featuredEvent.get('display_theme') }}</h1>
-            {% endif %}
-          {% endif %}
-
-          <div class="row">
-            <div class="col-md-offset-2 col-md-8">
-              {{ eventMacros.eventTable(featuredEvent, { hideLinks: true }) }}
+    <div class="col-lg-12">
+      <div class="home-jumbo">
+        {% if featuredEvent %}
+          <div class="event-table {{ 'live' if featuredEvent.get('status') === 'open' else 'not-live' }}">
+            <div class="row">
+              <div class="col-md-12">
+                <a class="event-table__header" href="{{ buildUrl(featuredEvent, 'event') }}">
+                  <h2>
+                    {% if featuredEvent.get('status') === 'open' %}
+                      <span class="label label-danger event-table__status">Live!</span>
+                    {% elseif featuredEvent.get('status') === 'pending' %}
+                      <span class="label label-default event-table__status">Up next!</span>
+                    {% else %}
+                      <span class="label label-default event-table__status">Closed</span>
+                    {% endif %}
+                    {{ featuredEvent.get('title') }}
+                  </h2>
+                </a>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-4">
+                <div class="home-jumbo__sidebar">
+                  <div class="home-jumbo__details panel">
+                    {% if featuredEvent.get('countdown_config').phrase %}
+                      <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }}<br />
+                    {% endif %}
+                    {% if featuredEvent.get('display_theme') %}
+                      <span class="glyphicon glyphicon-grain"></span> 
+                      {% if featuredEvent.get('status_theme') !== 'off' and featuredEvent.get('status_theme') !== 'disabled' %}
+                        Theme: <a href="{{ buildUrl(featuredEvent, 'event', 'themes') }}">{{ featuredEvent.get('display_theme') }}</a></h1>
+                      {% else %}
+                        Theme: {{ featuredEvent.get('display_theme') }}
+                      {% endif %}
+                    {% endif %}
+                    <div class="home-jumbo__countdown js-countdown"></div>
+                  </div>
+                  {{ jumboLink(featuredEvent, null, 'announcements', 'News', 'pushpin') }}
+                  {{ jumboLink(featuredEvent, null, 'posts', 'Posts', 'globe') }}
+                  {{ jumboLink(featuredEvent, 'status_theme', 'theme', 'Theme', 'grain') }}
+                  {{ jumboLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower') }}
+                  {{ jumboLink(featuredEvent, 'status_results', 'results', 'Results', 'th-list') }}
+                  <div class="home-jumbo__social">
+                    <a href="https://twitter.com/AlakajamBang" class="footer__link">
+                      <img src="/static/images/twitter.svg" class="footer__icon no-border" /> 
+                    </a>
+                    <a href="https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos" class="footer__link">
+                      <img src="/static/images/youtube.svg" class="footer__icon no-border" /> 
+                    </a>
+                    <a href="https://github.com/mkalam-alami/alakajam" class="footer__link">
+                      <img src="/static/images/github.svg" class="footer__icon no-border" /> 
+                    </a>
+                    <a href="https://www.reddit.com/r/alakajam/" class="footer__link">
+                      <img src="/static/images/reddit.svg" class="footer__icon no-border" /> 
+                    </a>
+                    <a href="/chat">
+                      <img src="/static/images/irc.svg" class="footer__icon no-border" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-8">
+                {% if homeAnnouncement %}
+                  <div class="home-jumbo__announcement">
+                    {{ postMacros.post(homeAnnouncement, user, { thinPost: true }) }}
+                    <div class="home-jumbo__announcement-expand-bar">
+                      <span class="home-jumbo__announcement-expand">
+                        <span class="glyphicon glyphicon-arrow-down"></span> 
+                        Expand
+                        <span class="glyphicon glyphicon-arrow-down"></span> 
+                      </span>
+                      <span class="home-jumbo__announcement-collapse">
+                        <span class="glyphicon glyphicon-arrow-up"></span> 
+                        Collapse
+                        <span class="glyphicon glyphicon-arrow-up"></span> 
+                      </span>
+                    </div>
+                  </div>
+                {% endif %}
+                <div class="home-jumbo__footer">
+                  <a href="/posts?special_post_type=announcement" class="btn btn-sm btn-default pull-right">Browse all announcements <span class="glyphicon glyphicon-chevron-right"></span></a>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="row">
-            <div class="col-xs-12 text-center home-jumbo__links">
-              {{ eventMacros.eventBigLink(featuredEvent, null, 'announcements', 'News', 'pushpin') }}
-              {{ eventMacros.eventBigLink(featuredEvent, null, 'posts', 'Posts', 'globe') }}
-              {{ eventMacros.eventBigLink(featuredEvent, 'status_theme', 'theme', 'Theme', 'grain') }}
-              {{ eventMacros.eventBigLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower') }}
-              {{ eventMacros.eventBigLink(featuredEvent, 'status_results', 'results', 'Results', 'th-list') }}
-            </div>
-          </div>
-        
-        {% elseif featuredEvent and featuredEvent.get('status') === 'pending' %}
-          <h1><a href="{{ buildUrl(upcomingEvent, 'event') }}">{{ featuredEvent.get('title') }}</a> {{ 'starts ' + featuredEvent.get('display_dates') if featuredEvent.get('display_dates') else 'will come soon!' }}</h1></h1>
-          <div class="home-jumbo__countdown js-countdown"></div>
-
         {% else %}
           <h1>Next event not announced yet.</h1>
         {% endif %}
-
-        <div class="row">
-          <div class="col-xs-12 text-center home-jumbo__social">
-            Follow the news on 
-            <a href="https://twitter.com/AlakajamBang" style="margin-right: 20px">
-              <img src="/static/images/twitter.svg" class="footer__icon no-border" /> 
-              <strong>@AlakajamBang</strong>
-            </a>
-
-            Join us on 
-            <a href="/chat">
-              <img src="/static/images/irc.svg" class="footer__icon no-border" /> 
-              <strong>IRC (#alakajam on irc.afternet.org)</strong>
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   </div>
-    
+  
   <div class="row">
-    <div class="col-lg-offset-1 col-lg-10 home-announcement">
-      {% if homeAnnouncement %}
-        {{ postMacros.post(homeAnnouncement, user) }}
-        <div class="text-right">
-          <a href="/posts?special_post_type=announcement" class="btn btn-sm btn-default">Browse announcements <span class="glyphicon glyphicon-chevron-right"></span></a>
-        </div>
-      {% endif %}
-
+    <div class="col-lg-offset-1 col-lg-10">
       {% if latestEntries.length > 0 %}
         <div class="horizontal-bar">Latest entries</div>
         <div class="row">
@@ -87,7 +116,11 @@
         {% endfor %}
         </div>
       {% endif %}
-      
+    </div>
+  </div>
+    
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10">
       {% if posts.length > 0 %}
         <div class="horizontal-bar">Latest posts</div>
         {% for post in posts %}
@@ -102,23 +135,48 @@
 
 {% endblock %}
 
+
+{% macro jumboLink (event, statusField, targetPath, label, icon) %}
+
+{% if not statusField or event.get(statusField) !== 'disabled' %}
+  <a href="{{ buildUrl(event, 'event', targetPath) }}" class="home-jumbo__link {{ 'disabled' if statusField and event.get(statusField) === 'off' else 'active' }}">
+    <div class="panel home-jumbo__link-border">
+      <span class="glyphicon glyphicon-{{ icon }}"></span> 
+      <span class="home-jumbo__link-label">{{ label }}</span>
+    </div>
+  </a>
+{% endif %}
+
+{% endmacro %}
+
+
 {% block scripts %}
+
+<script type="text/javascript">
+  // Announcement height limit and expand/collapse button
+  let maxAnnouncementHeight = Math.max(280, $('.home-jumbo__sidebar').height() - 50)
+  $('.home-jumbo__announcement').attr('style', 'max-height: ' + maxAnnouncementHeight + 'px')
+  $('.home-jumbo__announcement-expand-bar').click(function () {
+    $('.home-jumbo__announcement').toggleClass('expanded')
+  })
+</script>
 
 {% if featuredEvent %}
   {% set countdownEvent = featuredEvent %}
-{% elseif nextEvents and nextEvents.length > 0 %}
-  {% set countdownEvent = nextEvents[0] %}
 {% endif %}
 
 {% if countdownEvent and countdownEvent.get('countdown_config').date %}
   <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
   <script type="text/javascript">
   let diffMs = Math.max(0, Date.parse('{{ countdownEvent.get('countdown_config').date }}') - Date.now())
+  let $jsCountdown = $('.js-countdown')
+  $('.js-countdown').show()
   $('.js-countdown').FlipClock(diffMs / 1000, { 
     clockFace: 'DailyCounter',
     countdown: true
-  });
+  })
   </script>
 {% endif %}
 
 {% endblock %}
+

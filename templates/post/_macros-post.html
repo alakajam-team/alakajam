@@ -27,12 +27,21 @@
           <div class="col-xs-2 col-sm-4 col-md-3">
             <div class="post__special-type">
               <span class="post__special-type-label">
-                <span class="hidden-xs visible-sm visible-md visible-lg">
-                  {{ post.get('special_post_type') | upper }}
-                </span>
-                <span class="visible-xs hidden-sm">
-                  <span class="glyphicon glyphicon-pushpin"></span>
-                </span>
+                {% if not options.thinPost %}
+                  <span class="hidden-xs visible-sm visible-md visible-lg">
+                    {{ post.get('special_post_type') | upper }}
+                  </span>
+                  <span class="visible-xs hidden-sm">
+                    <span class="glyphicon glyphicon-pushpin"></span>
+                  </span>
+                {% else %}
+                  <span class="hidden-xs visible-sm hidden-md visible-lg">
+                    {{ post.get('special_post_type') | upper }}
+                  </span>
+                  <span class="visible-xs hidden-sm visible-md hidden-lg">
+                    <span class="glyphicon glyphicon-pushpin"></span>
+                  </span>
+                {% endif %}
               </span>
             </div>
           </div>

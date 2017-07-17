@@ -168,16 +168,3 @@
 </a>{% endif %}<!--
 
 -->{% endmacro %}
-
-{% macro eventBigLink (event, statusField, targetPath, label, icon) %}
-
-{% if not statusField or event.get(statusField) !== 'disabled' %}
-  <a href="{{ buildUrl(event, 'event', targetPath) }}" class="event-big-link {{ 'disabled' if statusField and event.get(statusField) === 'off' else 'active' }}">
-    <div class="panel event-big-link__border">
-      <span class="glyphicon glyphicon-{{ icon }}"></span> 
-      <span class="event-big-link__label">{{ label }}</span>
-    </div>
-  </a>
-{% endif %}
-
-{% endmacro %}

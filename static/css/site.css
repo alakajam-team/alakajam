@@ -181,8 +181,8 @@ input.date-picker {
   width: 100%;
   margin: 20px 0;
   font-weight: bold;
-  color: var(--text-lightest);
-  border-bottom: 1px solid var(--text-lightest);
+  color: var(--text-lighter);
+  border-bottom: 1px solid var(--text-lighter);
 }
 
 .featured {
@@ -293,7 +293,7 @@ input.date-picker {
 
         & .live__icon {
           display: inline-block;
-          width: 45px;
+          margin-right: 2px;
           height: 100%;
 
           & span {
@@ -716,6 +716,10 @@ input.date-picker {
 .events-block {
   padding: 10px;
   margin-bottom: 20px;
+  
+  & > div {
+    padding: 10px;
+  }
 
   & > h4 {
     margin: -10px;
@@ -760,7 +764,6 @@ input.date-picker {
 }
 
 .event-table {
-  padding: 10px;
   margin-bottom: 20px;
 
   &:last-child {
@@ -985,42 +988,6 @@ input.date-picker {
   }
 }
 
-.event-big-link {
-  display: inline-block;
-  width: 150px;
-  height: 130px;
-  transition: 0.3s;
-
-  &__border {
-    float: left;
-    width: 130px;
-    max-width: 100%;
-    height: 120px;
-  }
-
-  &.active:hover &__border {
-    color: var(--alt-dark);
-    border: 4px solid var(--alt-dark);
-    transition: 0.1s;
-  }
-
-  &.disabled, &.disabled:hover {
-    color: var(--text-lighter);
-  } 
-
-  & .glyphicon {
-    padding-top: 20px;
-    font-size: 2.2rem;
-  }
-
-  &__label {
-    font-size: 1.5rem;
-    display: block;
-    margin-top: 5px;
-    font-weight: bold;
-  }
-}
-
 /* Entry page */
 
 .entry {
@@ -1182,14 +1149,86 @@ input.date-picker {
 /* ============================== Home page ============================== */
 
 .home-jumbo {
-  text-align: center;
+  background-color: var(--borders);
 
-  &__links {
-    margin-bottom: -20px;
-    margin-left: 10px;
+  & .event-table.not-live .event-table__header {
+    @apply --shadow;
+    padding: 10px;
+    background-color: var(--main);
+    color: white;
+    text-align: left;
+
+    & h2 {
+      color: white;
+    }
+
+    &:hover {
+      background-color: var(--main-light);
+    }
+  }
+  
+  &__sidebar {
+    padding-left: 10px;
+    font-size: 0;
+  }
+  
+  &__details {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+  
+  &__link {
+    transition: 0.3s;
+    font-size: 2.0rem;
+    line-height: 30px;
+
+    &.disabled, &.disabled:hover {
+      color: var(--text-lighter);
+    } 
+
+    & .glyphicon {
+      vertical-align: middle;
+      font-size: 1.8rem;
+    }
+  }
+  @media (max-width: 1024px) {
+    & {
+      text-align: center;
+    }
+    
+    &__link {
+      display: inline-block;
+      width: auto;
+      
+      & .glyphicon {
+        margin-top: 0;
+      }
+    }
+  }
+  
+  &__link-border {
+    height: 60px;
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+  &__link.active:hover &__link-border {
+    color: var(--alt-dark);
+    border: 4px solid var(--alt-dark);
+    transition: 0.1s;
+  }
+  
+  &__link-label {
+    display: inline-block;
+    line-height: 1.8px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 0;
   }
 
   &__countdown {
+    display: none;
     margin: 10px auto 20px auto;
     width: 470px;
     
@@ -1201,20 +1240,90 @@ input.date-picker {
     }
   }
 
-  &__social {
-    margin-top: 20px;
+  &__announcement {
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    margin-right: 10px;
+    
+    & h1 > a {
+      color: var(--text);
+      
+      &:hover {
+        color: var(--alt-dark);
+      }
+    }
   }
-}
-
-.home-announcement {
-  margin-top: 20px;
+  @media (max-width: 1024px) {
+    &__announcement {
+      text-align: left;
+      max-height: none !important;
+      padding-right: 0;
+    }
+  }
   
-  & h1 > a {
-    color: var(--text);
+  &__announcement-expand-bar {
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    border-top: 1px solid var(--borders);
+    background-color: white;
+    text-align: center;
+    line-height: 30px;
+    vertical-align: middle;
+    font-weight: bold;
+    color: var(--alt);
+    box-shadow: 0px -3px 8px rgba(0, 0, 0, 0.15);
     
     &:hover {
       color: var(--alt-dark);
     }
+  }
+  
+  &__announcement-collapse {
+    display: none;
+  }
+  
+  &__announcement.expanded {
+    max-height: none !important;
+    
+    & .home-jumbo__announcement-expand-bar {
+      box-shadow: none;
+    }
+    & .home-jumbo__announcement-expand {
+      display: none;
+    }
+    & .home-jumbo__announcement-collapse {
+      display: inline;
+    }
+  }
+  @media (max-width: 1024px) {
+    &__announcement-expand-bar {
+      display: none;
+    }
+  }
+  
+  &__social {
+    padding: 10px 10px 10px 0;
+    opacity: 0.7;
+    
+    & img {
+      height: 24px;
+      margin-right: 2px;
+    }
+  }
+  @media (max-width: 1024px) {
+    &__social {
+      margin-bottom: 20px;
+    }
+  }
+
+  &__footer {
+    padding: 10px;
+    color: var(--text-lighter);
   }
 }
 
