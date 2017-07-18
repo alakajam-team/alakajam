@@ -153,6 +153,14 @@ async function saveEntry (req, res) {
 
       res.redirect(templating.buildUrl(entry, 'entry'))
     } else {
+      if (!res.locals.entry) {
+        // Creation form
+        res.locals.entry = new models.Entry({
+          event_id: res.locals.event.get('id'),
+          event_name: res.locals.event.get('name')
+        })
+      }
+
       res.render('entry/edit-entry', {
         errorMessage
       })
