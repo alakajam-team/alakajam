@@ -73,7 +73,10 @@ async function register (email, name, password) {
   if (name.length < USERNAME_MIN_LENGTH) {
     return 'Username length must be at least ' + USERNAME_MIN_LENGTH
   }
-  if (await models.User.where('name', name).count() > 0) {
+  let caseInsensitiveUsernameMatch = await models.User.query(function (query) {
+    query.whereRaw("LOWER(name) LIKE '%' || LOWER(?) || '%' ", name)
+  }).fetch()
+  if (caseInsensitiveUsernameMatch) {
     return 'Username is taken'
   }
   if (!forms.isEmail(email)) {
