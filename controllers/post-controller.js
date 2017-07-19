@@ -237,6 +237,7 @@ async function savePost (req, res) {
 
       // Save
       await post.save()
+      cacheProvider.cache.del(res.locals.user.get("name").toLowerCase() + "_latestPostsCollection")
     }
 
     // Render
@@ -264,6 +265,7 @@ function validateSpecialPostType (specialPostType, user) {
 
 async function deletePost (req, res) {
   await res.locals.post.destroy()
+  cacheProvider.cache.del(res.locals.user.get("name").toLowerCase() + "_latestPostsCollection")
   res.redirect('/')
 }
 
@@ -345,6 +347,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
 
       redirectUrl += templating.buildUrl(comment, 'comment')
     }
+    cacheProvider.cache.del(currentUser.get("name").toLowerCase() + "_byUserCollection")
 
     // Refresh node comment count
     if (fields.delete || isNewComment) {
