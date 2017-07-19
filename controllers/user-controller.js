@@ -10,6 +10,7 @@ const config = require('../config')
 const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
+const cacheProvider = require('../core/cache')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
@@ -36,7 +37,7 @@ module.exports = {
 }
 
 async function dashboardMiddleware (req, res, next) {
-  if (!res.locals.user) {
+  if (!res.locals.user || res.locals.user == undefined) {
     res.errorPage(403, 'You are not logged in.')
   } else {
     if (req.query.user && securityService.isAdmin(res.locals.user) &&
@@ -78,14 +79,37 @@ async function viewUserProfile (req, res) {
  * View comment feed
  */
 async function dashboardFeed (req, res) {
-  let [byUserCollection, toUserCollection, latestEntries, latestPostsCollection] = await Promise.all([
-    postService.findCommentsByUser(res.locals.dashboardUser),
-    postService.findCommentsToUser(res.locals.dashboardUser),
-    eventService.findUserEntries(res.locals.dashboardUser),
-    postService.findPosts({
-      userId: res.locals.dashboardUser.id
+  let dashboardUser = res.locals.user
+
+  // if an entry is not in the cache it will return undefined
+  let byUserCollection = cacheProvider.cache.get(dashboardUser.get("name").toLowerCase() + "_byUserCollection")
+  let toUserCollection = cacheProvider.cache.get(dashboardUser.get("name").toLowerCase() + "_toUserCollection")
+  let latestEntries = cacheProvider.cache.get(dashboardUser.get("name").toLowerCase() + "_latestEntries")
+  let latestPostsCollection = cacheProvider.cache.get(dashboardUser.get("name").toLowerCase() + "_latestPostsCollection")
+
+  if (byUserCollection == undefined) {
+    byUserCollection = await postService.findCommentsByUser(dashboardUser)
+    cacheProvider.cache.set(dashboardUser.get("name").toLowerCase() + "_byUserCollection", byUserCollection, cacheProvider.ttl_in_mins*60)
+  }
+  if (toUserCollection == undefined) {
+    toUserCollection = await postService.findCommentsToUser(dashboardUser)
+    cacheProvider.cache.set(dashboardUser.get("name").toLowerCase() + "_toUserCollection", toUserCollection, cacheProvider.ttl_in_mins*60)
+  }
+  if (latestEntries == undefined) {
+    latestEntries = await eventService.findUserEntries(dashboardUser)
+    cacheProvider.cache.set(dashboardUser.get("name").toLowerCase() + "_latestEntries", latestEntries, cacheProvider.ttl_in_mins*60)
+  }
+  if (latestPostsCollection == undefined) {
+    latestPostsCollection = await postService.findPosts({
+      userId: dashboardUser.id
     })
-  ])
+    cacheProvider.cache.set(dashboardUser.get("name").toLowerCase() + "_latestPostsCollection", latestPostsCollection, cacheProvider.ttl_in_mins*60)
+  }
+
+  dashboardUser.set('notifications_last_read', new Date().getTime())
+  await dashboardUser.save()
+
+  cacheProvider.cache.del(dashboardUser.get("name").toLowerCase() + "_unreadNotifications")
 
   // TODO Limit at the SQL-level
   res.render('user/dashboard-feed', {

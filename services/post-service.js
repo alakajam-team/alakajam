@@ -9,6 +9,7 @@
 const models = require('../core/models')
 const constants = require('../core/constants')
 const securityService = require('../services/security-service')
+const cacheProvider = require('../core/cache')
 
 module.exports = {
   isPast,
@@ -116,7 +117,7 @@ async function findPost (options = {}) {
 
 /**
  * Finds the latest announcement
- * @param  {Object} options amoung "eventId"
+ * @param  {Object} options among "eventId"
  * @return {Post}
  */
 async function findLatestAnnouncement (options = {}) {
@@ -181,9 +182,16 @@ async function findCommentsByUserAndEvent (userId, eventId) {
  * Fetches all comments interesting for an user.
  * This includes both "@"-mentions and all comments to the user posts & entries.
  * @param  {User} user
+ * @param  {Object} options among "notifications_last_read"
  * @return {Collection(Comment)}
  */
-async function findCommentsToUser (user) {
+async function findCommentsToUser (user, options={}) {
+  // let's view any notifs in the last x mins 
+  
+  let notifications_last_read = 0
+  if (options.notifications_last_read && user.get("notifications_last_read") != undefined) {
+    notifications_last_read = user.get("notifications_last_read")
+  }
   return models.Comment.query(function (qb) {
     qb.leftJoin('user_role', function () {
       this.on('comment.node_id', '=', 'user_role.node_id')
@@ -191,8 +199,10 @@ async function findCommentsToUser (user) {
     })
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '<>', user.id)
+      .andWhere('comment.updated_at', '>', notifications_last_read)
       .orWhere('body', 'like', '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
   })
+    .where('comment.updated_at', '>', notifications_last_read)
     .orderBy('created_at', 'DESC')
     .fetchAll({withRelated: ['user', 'node']})
 }

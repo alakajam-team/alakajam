@@ -78,8 +78,8 @@
 
           <li class="{{ 'active' if path == '/events' }}"><a href="/events">Events</a></li>
           <li class="{{ 'active' if path == '/people' }}"><a href="/people">People</a></li>
-          <li class="hidden-sm {{ 'active' if path == '/chat' }}"><a href="/chat">Chat</a></li></li>
-          <li class="{{ 'active' if path == '/article/help' }}"><a href="/article/help">Help</a>
+          <li class="hidden-sm {{ 'active' if path == '/chat' }}"><a href="/chat">Chat</a></li>
+          <li class="{{ 'active' if path == '/article/help' }}"><a href="/article/help">Help</a></li>
 
           {% if user %}
             <li class="dropdown">
@@ -89,6 +89,16 @@
                   <img src="{{ user.get('avatar') }}" class="navbar-avatar" />
                   {% else %}
                   <img src="/static/images/default-avatar.png" class="navbar-avatar" />
+                  {% endif %}
+                  {% if (unreadNotifications > 0) %}
+                  <div class="navbar-unread-notifications">
+                    <img src="/static/images/circle.png" class="navbar-unread-notifications-circle" />
+                    <div class="navbar-unread-notifications-wrapper">
+                      <div class="navbar-unread-notifications-text">
+                      {{ unreadNotifications }}
+                      </div>
+                    </div>
+                  </div>
                   {% endif %}
                 </a>
                 <span class="navbar-profile hidden-sm">{{ user.get('title') }}</span> <span class="caret"></span>
