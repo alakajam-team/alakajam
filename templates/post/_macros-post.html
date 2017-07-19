@@ -108,9 +108,9 @@
   {% else %}
     {% set author = comment.related('user') %}
     <div class="row comment">
+      {% set node = comment.related('node') %}
       {% if options.linkToNode and not lastLinkedNode or node != lastLinkedNode %}
       <div class="col-xs-12">
-        {% set node = comment.related('node') %}
         <h4><a href="{{ buildUrl(node, comment.get('node_type')) }}#c{{ comment.id }}">{{ node.get('title') }}</a></h4>
         {% set lastLinkedNode = node %}
       </div>
