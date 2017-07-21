@@ -237,7 +237,7 @@ async function savePost (req, res) {
 
       // Save
       await post.save()
-      cacheProvider.cache.del(res.locals.user.get("name").toLowerCase() + "_latestPostsCollection")
+      cacheProvider.cache.del(res.locals.user.get('name').toLowerCase() + '_latestPostsCollection')
     }
 
     // Render
@@ -265,7 +265,7 @@ function validateSpecialPostType (specialPostType, user) {
 
 async function deletePost (req, res) {
   await res.locals.post.destroy()
-  cacheProvider.cache.del(res.locals.user.get("name").toLowerCase() + "_latestPostsCollection")
+  cacheProvider.cache.del(res.locals.user.get('name').toLowerCase() + '_latestPostsCollection')
   res.redirect('/')
 }
 
@@ -329,25 +329,25 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
       }
 
       // we need to update the comment feed and unread notifications of users associated with the post/entry
-      let node = comment.related("node")
-      let userRoles = node.related("userRoles")
-      userRoles.forEach(function(userRole) {
-        cacheProvider.cache.del(userRole.get("user_name").toLowerCase() + "_toUserCollection")
-        cacheProvider.cache.del(userRole.get("user_name").toLowerCase() + "_unreadNotifications")
+      let node = comment.related('node')
+      let userRoles = node.related('userRoles')
+      userRoles.forEach(function (userRole) {
+        cacheProvider.cache.del(userRole.get('user_name').toLowerCase() + '_toUserCollection')
+        cacheProvider.cache.del(userRole.get('user_name').toLowerCase() + '_unreadNotifications')
       })
 
       // and also any users @mentioned in the comment
-      let body = comment.get("body")
-      body.split(" ").forEach(function (word) {
-        if (word.length > 0 && word[0]=="@") {
-          cacheProvider.cache.del(word.slice(1).toLowerCase() + "_toUserCollection")
-          cacheProvider.cache.del(word.slice(1).toLowerCase() + "_unreadNotifications")
+      let body = comment.get('body')
+      body.split(' ').forEach(function (word) {
+        if (word.length > 0 && word[0] == '@') {
+          cacheProvider.cache.del(word.slice(1).toLowerCase() + '_toUserCollection')
+          cacheProvider.cache.del(word.slice(1).toLowerCase() + '_unreadNotifications')
         }
       })
 
       redirectUrl += templating.buildUrl(comment, 'comment')
     }
-    cacheProvider.cache.del(currentUser.get("name").toLowerCase() + "_byUserCollection")
+    cacheProvider.cache.del(currentUser.get('name').toLowerCase() + '_byUserCollection')
 
     // Refresh node comment count
     if (fields.delete || isNewComment) {

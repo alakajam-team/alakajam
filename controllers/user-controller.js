@@ -37,7 +37,7 @@ module.exports = {
 }
 
 async function dashboardMiddleware (req, res, next) {
-  if (!res.locals.user || res.locals.user == undefined) {
+  if (!res.locals.user || res.locals.user === undefined) {
     res.errorPage(403, 'You are not logged in.')
   } else {
     if (req.query.user && securityService.isAdmin(res.locals.user) &&
@@ -82,34 +82,34 @@ async function dashboardFeed (req, res) {
   let dashboardUser = res.locals.user
 
   // if an entry is not in the cache it will return undefined
-  let byUserCollection = cacheProvider.cache.get(dashboardUser.get("name").toLowerCase() + "_byUserCollection")
-  let toUserCollection = cacheProvider.cache.get(dashboardUser.get("name").toLowerCase() + "_toUserCollection")
-  let latestEntries = cacheProvider.cache.get(dashboardUser.get("name").toLowerCase() + "_latestEntries")
-  let latestPostsCollection = cacheProvider.cache.get(dashboardUser.get("name").toLowerCase() + "_latestPostsCollection")
+  let byUserCollection = cacheProvider.cache.get(dashboardUser.get('name').toLowerCase() + '_byUserCollection')
+  let toUserCollection = cacheProvider.cache.get(dashboardUser.get('name').toLowerCase() + '_toUserCollection')
+  let latestEntries = cacheProvider.cache.get(dashboardUser.get('name').toLowerCase() + '_latestEntries')
+  let latestPostsCollection = cacheProvider.cache.get(dashboardUser.get('name').toLowerCase() + '_latestPostsCollection')
 
-  if (byUserCollection == undefined) {
+  if (byUserCollection === undefined) {
     byUserCollection = await postService.findCommentsByUser(dashboardUser)
-    cacheProvider.cache.set(dashboardUser.get("name").toLowerCase() + "_byUserCollection", byUserCollection, cacheProvider.ttl_in_mins*60)
+    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_byUserCollection', byUserCollection, cacheProvider.ttl_in_mins * 60)
   }
-  if (toUserCollection == undefined) {
+  if (toUserCollection === undefined) {
     toUserCollection = await postService.findCommentsToUser(dashboardUser)
-    cacheProvider.cache.set(dashboardUser.get("name").toLowerCase() + "_toUserCollection", toUserCollection, cacheProvider.ttl_in_mins*60)
+    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_toUserCollection', toUserCollection, cacheProvider.ttl_in_mins * 60)
   }
-  if (latestEntries == undefined) {
+  if (latestEntries === undefined) {
     latestEntries = await eventService.findUserEntries(dashboardUser)
-    cacheProvider.cache.set(dashboardUser.get("name").toLowerCase() + "_latestEntries", latestEntries, cacheProvider.ttl_in_mins*60)
+    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_latestEntries', latestEntries, cacheProvider.ttl_in_mins * 60)
   }
-  if (latestPostsCollection == undefined) {
+  if (latestPostsCollection === undefined) {
     latestPostsCollection = await postService.findPosts({
       userId: dashboardUser.id
     })
-    cacheProvider.cache.set(dashboardUser.get("name").toLowerCase() + "_latestPostsCollection", latestPostsCollection, cacheProvider.ttl_in_mins*60)
+    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_latestPostsCollection', latestPostsCollection, cacheProvider.ttl_in_mins * 60)
   }
 
   dashboardUser.set('notifications_last_read', new Date())
   await dashboardUser.save()
 
-  cacheProvider.cache.del(dashboardUser.get("name").toLowerCase() + "_unreadNotifications")
+  cacheProvider.cache.del(dashboardUser.get('name').toLowerCase() + '_unreadNotifications')
 
   // TODO Limit at the SQL-level
   res.render('user/dashboard-feed', {

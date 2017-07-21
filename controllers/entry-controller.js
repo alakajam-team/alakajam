@@ -152,7 +152,7 @@ async function saveEntry (req, res) {
       await entry.save()
       await entry.related('userRoles').fetch()
 
-      cacheProvider.cache.del(res.locals.user.get("name").toLowerCase() + "_latestEntries")
+      cacheProvider.cache.del(res.locals.user.get('name').toLowerCase() + '_latestEntries')
 
       res.redirect(templating.buildUrl(entry, 'entry'))
     } else {
@@ -173,6 +173,6 @@ async function saveEntry (req, res) {
 
 async function deleteEntry (req, res) {
   await res.locals.entry.destroy()
-  cacheProvider.cache.del(res.locals.user.get("name").toLowerCase() + "_latestEntries")
+  cacheProvider.cache.del(res.locals.user.get('name').toLowerCase() + '_latestEntries')
   res.redirect(templating.buildUrl(res.locals.event, 'event'))
 }

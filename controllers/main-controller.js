@@ -62,14 +62,12 @@ async function anyPageMiddleware (req, res, next) {
 
   // update unread notifications (from cache if possible)
   if (req.session.userId) {
-    if (cacheProvider.cache.get(res.locals.user.get("name").toLowerCase() + "_unreadNotifications") === undefined) {
-
+    if (cacheProvider.cache.get(res.locals.user.get('name').toLowerCase() + '_unreadNotifications') === undefined) {
       let commentsCollection = await postService.findCommentsToUser(res.locals.user, { notifications_last_read: true })
       res.locals.unreadNotifications = commentsCollection.length
-      cacheProvider.cache.set(res.locals.user.get("name").toLowerCase() + "_unreadNotifications", res.locals.unreadNotifications)
-    }
-    else {
-      res.locals.unreadNotifications = cacheProvider.cache.get(res.locals.user.get("name").toLowerCase() + "_unreadNotifications")
+      cacheProvider.cache.set(res.locals.user.get('name').toLowerCase() + '_unreadNotifications', res.locals.unreadNotifications)
+    } else {
+      res.locals.unreadNotifications = cacheProvider.cache.get(res.locals.user.get('name').toLowerCase() + '_unreadNotifications')
     }
   }
 
