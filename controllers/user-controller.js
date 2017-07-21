@@ -106,7 +106,7 @@ async function dashboardFeed (req, res) {
     cacheProvider.cache.set(dashboardUser.get("name").toLowerCase() + "_latestPostsCollection", latestPostsCollection, cacheProvider.ttl_in_mins*60)
   }
 
-  dashboardUser.set('notifications_last_read', new Date().getTime())
+  dashboardUser.set('notifications_last_read', new Date())
   await dashboardUser.save()
 
   cacheProvider.cache.del(dashboardUser.get("name").toLowerCase() + "_unreadNotifications")

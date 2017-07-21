@@ -84,7 +84,7 @@
           {% if user %}
             <li class="dropdown">
               <div href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expafnded="false">
-                <a href="{{ buildUrl(user, 'user', 'feed') }}" onclick="arguments[0].stopPropagation()">
+                <a class="navbar-avatar-wrapper" href="{{ buildUrl(user, 'user', 'feed') }}" onclick="arguments[0].stopPropagation()">
                   {% if user.get('avatar') %}
                   <img src="{{ user.get('avatar') }}" class="navbar-avatar" />
                   {% else %}
@@ -92,12 +92,7 @@
                   {% endif %}
                   {% if (unreadNotifications > 0) %}
                   <div class="navbar-unread-notifications">
-                    <img src="/static/images/circle.png" class="navbar-unread-notifications-circle" />
-                    <div class="navbar-unread-notifications-wrapper">
-                      <div class="navbar-unread-notifications-text">
-                      {{ unreadNotifications }}
-                      </div>
-                    </div>
+                    {{ unreadNotifications }}
                   </div>
                   {% endif %}
                 </a>

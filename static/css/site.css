@@ -358,36 +358,23 @@ input.date-picker {
     
   }
 
+  & .navbar-avatar-wrapper {
+    position: relative;
+  }
+
   & .navbar-unread-notifications {
     position: absolute;
-    left: 34px;
-    top: 3px;
-  }
-
-  & .navbar-unread-notifications-wrapper {
-    position: absolute;
-    height: 30%;
+    background-color: var(--alt);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
     text-align: center;
-    width: 100%;
-    margin: auto;
-    top: 0;
-    bottom: 55px;
-    right: 0;
-    left: 0;
-  }
-
-  & .navbar-unread-notifications-circle {
-    display: block;
-    max-width: 100%;
-    margin: auto;
-    padding: auto;
-  }
-
-  & .navbar-unread-notifications-text {
-    margin-top: auto;
+    top: -10px;
+    right: 0px;
     color: white;
-    font-size: 0.7rem;
-    text-align: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    line-height: 20px;
   }
 
 }

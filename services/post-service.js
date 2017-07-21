@@ -188,9 +188,9 @@ async function findCommentsByUserAndEvent (userId, eventId) {
 async function findCommentsToUser (user, options={}) {
   // let's view any notifs in the last x mins 
   
-  let notifications_last_read = 0
+  let notifications_last_read = new Date(0)
   if (options.notifications_last_read && user.get("notifications_last_read") != undefined) {
-    notifications_last_read = user.get("notifications_last_read")
+    notifications_last_read = new Date(user.get("notifications_last_read"))
   }
   return models.Comment.query(function (qb) {
     qb.leftJoin('user_role', function () {
