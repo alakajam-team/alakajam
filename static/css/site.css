@@ -208,6 +208,13 @@ input.date-picker {
   }
 }
 
+.count {
+  @apply --main-font;
+  color: var(--text-light);
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
 /* Required star
 .form-group.required label:after {
   content:" *";
@@ -1221,6 +1228,7 @@ input.date-picker {
     &__link {
       display: inline-block;
       width: auto;
+      margin: 4px;
       
       & .glyphicon {
         margin-top: 0;
@@ -1250,7 +1258,7 @@ input.date-picker {
   &__countdown {
     display: none;
     margin: 10px auto 20px auto;
-    width: 470px;
+    width: 332px;
     
     & .flip .inn {
       background-color: var(--text)

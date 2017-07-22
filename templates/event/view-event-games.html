@@ -7,7 +7,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="horizontal-bar">Entries are sorted by Feedback Score {{ formMacros.tooltip('Comment on other games to increase your score and get featured higher on the list!') }}</div>
+    <div class="horizontal-bar">{{ sortedEntries.length }} {{ 'entries' if sortedEntries.length !== 1 else 'entry' }} sorted by Feedback Score {{ formMacros.tooltip('Comment on other games to increase your score and get featured higher on the list!') }}</div>
     {% for entry in sortedEntries %}
       <div class="col-sm-4 col-md-3">
         {{ eventMacros.entryThumb(entry) }}

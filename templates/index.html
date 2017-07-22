@@ -33,7 +33,7 @@
             </div>
             
             <div class="row">
-              <div class="col-md-4">
+              <div class="col-md-5 col-lg-4">
                 <div class="home-jumbo__sidebar">
                   <div class="home-jumbo__details panel">
                     {% if featuredEvent.get('countdown_config').phrase %}
@@ -73,7 +73,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-8">
+              <div class="col-md-7 col-lg-8">
                 {% if homeAnnouncement %}
                   <div class="home-jumbo__announcement">
                     {{ postMacros.post(homeAnnouncement, user, { hideSpecialLabels: true }) }}
@@ -111,7 +111,7 @@
         <div class="row">
         {% for entry in latestEntries %}
           <div class="col-sm-4 col-md-3">
-          {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
+          {{ eventMacros.entrySmallThumb(entry) }}
           </div>
         {% endfor %}
         </div>

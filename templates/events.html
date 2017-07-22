@@ -6,7 +6,7 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
-      <h1>Events</h1>
+      <h1>Events <span class="count">({{ open.length + pending.length + closed.length }})</span></h1>
       {% if open.length > 0 %}
       <div class="events-block events-block__live">
         <h4>On now!</h4>
