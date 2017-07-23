@@ -13,7 +13,7 @@ const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
 const templating = require('./templating')
-const cacheProvider = require('../core/cache')
+const cache = require('../core/cache')
 
 module.exports = {
   handleSaveComment,
@@ -237,7 +237,7 @@ async function savePost (req, res) {
 
       // Save
       await post.save()
-      cacheProvider.cache.del(res.locals.user.get('name').toLowerCase() + '_latestPostsCollection')
+      cache.user(res.locals.user).del('latestPostsCollection')
     }
 
     // Render
@@ -265,7 +265,7 @@ function validateSpecialPostType (specialPostType, user) {
 
 async function deletePost (req, res) {
   await res.locals.post.destroy()
-  cacheProvider.cache.del(res.locals.user.get('name').toLowerCase() + '_latestPostsCollection')
+  cache.user(res.locals.user).del('latestPostsCollection')
   res.redirect('/')
 }
 
@@ -332,22 +332,24 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
       let node = comment.related('node')
       let userRoles = node.related('userRoles')
       userRoles.forEach(function (userRole) {
-        cacheProvider.cache.del(userRole.get('user_name').toLowerCase() + '_toUserCollection')
-        cacheProvider.cache.del(userRole.get('user_name').toLowerCase() + '_unreadNotifications')
+        let userCache = cache.user(userRole.get('user_name'))
+        userCache.del('toUserCollection')
+        userCache.del('unreadNotifications')
       })
 
       // and also any users @mentioned in the comment
       let body = comment.get('body')
       body.split(' ').forEach(function (word) {
         if (word.length > 0 && word[0] === '@') {
-          cacheProvider.cache.del(word.slice(1).toLowerCase() + '_toUserCollection')
-          cacheProvider.cache.del(word.slice(1).toLowerCase() + '_unreadNotifications')
+          let userCache = cache.user(word.slice(1))
+          userCache.del('toUserCollection')
+          userCache.del('unreadNotifications')
         }
       })
 
       redirectUrl += templating.buildUrl(comment, 'comment')
     }
-    cacheProvider.cache.del(currentUser.get('name').toLowerCase() + '_byUserCollection')
+    cache.user(currentUser.get('name')).del('byUserCollection')
 
     // Refresh node comment count
     if (fields.delete || isNewComment) {

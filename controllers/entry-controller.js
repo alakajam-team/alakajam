@@ -14,7 +14,7 @@ const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
-const cacheProvider = require('../core/cache')
+const cache = require('../core/cache')
 
 module.exports = {
   entryMiddleware,
@@ -155,7 +155,7 @@ async function saveEntry (req, res) {
       await entry.save()
       await entry.related('userRoles').fetch()
 
-      cacheProvider.cache.del(res.locals.user.get('name').toLowerCase() + '_latestEntries')
+      cache.user(res.locals.user).del('latestEntries')
 
       res.redirect(templating.buildUrl(entry, 'entry'))
     } else {
@@ -176,6 +176,6 @@ async function saveEntry (req, res) {
 
 async function deleteEntry (req, res) {
   await res.locals.entry.destroy()
-  cacheProvider.cache.del(res.locals.user.get('name').toLowerCase() + '_latestEntries')
+  cache.user(res.locals.user).del('latestEntries')
   res.redirect(templating.buildUrl(res.locals.event, 'event'))
 }

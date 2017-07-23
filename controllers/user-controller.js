@@ -10,7 +10,7 @@ const config = require('../config')
 const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
-const cacheProvider = require('../core/cache')
+const cache = require('../core/cache')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
@@ -82,41 +82,44 @@ async function dashboardFeed (req, res) {
   let dashboardUser = res.locals.user
 
   // if an entry is not in the cache it will return undefined
-  let byUserCollection = cacheProvider.cache.get(dashboardUser.get('name').toLowerCase() + '_byUserCollection')
-  let toUserCollection = cacheProvider.cache.get(dashboardUser.get('name').toLowerCase() + '_toUserCollection')
-  let latestEntries = cacheProvider.cache.get(dashboardUser.get('name').toLowerCase() + '_latestEntries')
-  let latestPostsCollection = cacheProvider.cache.get(dashboardUser.get('name').toLowerCase() + '_latestPostsCollection')
+  let userCache = cache.user(dashboardUser)
+  let byUserCollection = userCache.get('byUserCollection')
+  let toUserCollection = userCache.get('toUserCollection')
+  let latestEntries = userCache.get('latestEntries')
+  let latestPostsCollection = userCache.get('latestPostsCollection')
 
-  if (byUserCollection === undefined) {
+  if (!byUserCollection) {
     byUserCollection = await postService.findCommentsByUser(dashboardUser)
-    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_byUserCollection', byUserCollection, cacheProvider.ttlInMins * 60)
+    userCache.set('byUserCollection', byUserCollection)
   }
-  if (toUserCollection === undefined) {
+  if (!toUserCollection) {
     toUserCollection = await postService.findCommentsToUser(dashboardUser)
-    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_toUserCollection', toUserCollection, cacheProvider.ttlInMins * 60)
+    userCache.set('toUserCollection', toUserCollection)
   }
-  if (latestEntries === undefined) {
+  if (!latestEntries) {
     latestEntries = await eventService.findUserEntries(dashboardUser)
-    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_latestEntries', latestEntries, cacheProvider.ttlInMins * 60)
+    userCache.set('latestEntries', latestEntries)
   }
-  if (latestPostsCollection === undefined) {
+  if (!latestPostsCollection) {
     latestPostsCollection = await postService.findPosts({
       userId: dashboardUser.id
     })
-    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_latestPostsCollection', latestPostsCollection, cacheProvider.ttlInMins * 60)
+    userCache.set('latestPostsCollection', latestPostsCollection)
   }
 
+  let notificationsLastRead = dashboardUser.get('notifications_last_read')
   dashboardUser.set('notifications_last_read', new Date())
   await dashboardUser.save()
-
-  cacheProvider.cache.del(dashboardUser.get('name').toLowerCase() + '_unreadNotifications')
+  userCache.del('unreadNotifications')
+  res.locals.unreadNotifications = 0
 
   // TODO Limit at the SQL-level
   res.render('user/dashboard-feed', {
     byUser: byUserCollection.take(20),
     toUser: toUserCollection.take(20),
     latestEntry: latestEntries.length > 0 ? latestEntries[0] : null,
-    latestPosts: latestPostsCollection.take(3)
+    latestPosts: latestPostsCollection.take(3),
+    notificationsLastRead
   })
 }
 
@@ -311,6 +314,11 @@ async function doLogin (req, res) {
       context.user = user
       context.infoMessage = 'Authentication successful'
       sessionService.openSession(req, res, user, !!fields['remember-me'])
+
+      // Force notification count update
+      let commentsCollection = await postService.findCommentsToUser(res.locals.user, { notificationsLastRead: true })
+      context.unreadNotifications = commentsCollection.length
+      cache.user(user).set('unreadNotifications', context.unreadNotifications)
     } else {
       context.errorMessage = 'Authentication failed'
     }

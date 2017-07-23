@@ -181,14 +181,14 @@ async function findCommentsByUserAndEvent (userId, eventId) {
  * Fetches all comments interesting for an user.
  * This includes both "@"-mentions and all comments to the user posts & entries.
  * @param  {User} user
- * @param  {Object} options among "notifications_last_read"
+ * @param  {Object} options among "notificationsLastRead"
  * @return {Collection(Comment)}
  */
 async function findCommentsToUser (user, options = {}) {
   // let's view any notifs in the last x mins
 
   let notificationsLastRead = new Date(0)
-  if (options.notifications_last_read && user.get('notifications_last_read') !== undefined) {
+  if (options.notificationsLastRead && user.get('notifications_last_read') !== undefined) {
     notificationsLastRead = new Date(user.get('notifications_last_read'))
   }
   return models.Comment.query(function (qb) {
