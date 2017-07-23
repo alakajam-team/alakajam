@@ -89,21 +89,21 @@ async function dashboardFeed (req, res) {
 
   if (byUserCollection === undefined) {
     byUserCollection = await postService.findCommentsByUser(dashboardUser)
-    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_byUserCollection', byUserCollection, cacheProvider.ttl_in_mins * 60)
+    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_byUserCollection', byUserCollection, cacheProvider.ttlInMins * 60)
   }
   if (toUserCollection === undefined) {
     toUserCollection = await postService.findCommentsToUser(dashboardUser)
-    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_toUserCollection', toUserCollection, cacheProvider.ttl_in_mins * 60)
+    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_toUserCollection', toUserCollection, cacheProvider.ttlInMins * 60)
   }
   if (latestEntries === undefined) {
     latestEntries = await eventService.findUserEntries(dashboardUser)
-    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_latestEntries', latestEntries, cacheProvider.ttl_in_mins * 60)
+    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_latestEntries', latestEntries, cacheProvider.ttlInMins * 60)
   }
   if (latestPostsCollection === undefined) {
     latestPostsCollection = await postService.findPosts({
       userId: dashboardUser.id
     })
-    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_latestPostsCollection', latestPostsCollection, cacheProvider.ttl_in_mins * 60)
+    cacheProvider.cache.set(dashboardUser.get('name').toLowerCase() + '_latestPostsCollection', latestPostsCollection, cacheProvider.ttlInMins * 60)
   }
 
   dashboardUser.set('notifications_last_read', new Date())

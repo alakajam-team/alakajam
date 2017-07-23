@@ -339,7 +339,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
       // and also any users @mentioned in the comment
       let body = comment.get('body')
       body.split(' ').forEach(function (word) {
-        if (word.length > 0 && word[0] == '@') {
+        if (word.length > 0 && word[0] === '@') {
           cacheProvider.cache.del(word.slice(1).toLowerCase() + '_toUserCollection')
           cacheProvider.cache.del(word.slice(1).toLowerCase() + '_unreadNotifications')
         }

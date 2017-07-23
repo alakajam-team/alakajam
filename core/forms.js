@@ -26,6 +26,7 @@ module.exports = {
   isId,
   isSlug,
   isIn,
+  isLengthValid,
 
   parseDateTime,
 
@@ -42,15 +43,16 @@ const customXss = new xss.FilterXSS({
 })
 
 /**
- * Sanitizes a string form input (by removing any tags).
+ * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
  * If the string is meant for anything other than direct display (e.g. links, markdown...)
  * then this is not the right filter.
  * Use this on all string input unless you need more advanced escaping (e.g. for URLs, for Markdown)
  * @param  {string} string
+ * @param  {string} maxLength
  * @return {string}
  */
-function sanitizeString (string) {
-  return striptags(string).trim()
+function sanitizeString (string, maxLength = 255) {
+  return striptags(string).trim().slice(0, maxLength)
 }
 
 /**
@@ -58,7 +60,7 @@ function sanitizeString (string) {
  * @param  {string} markdown
  * @return {string}
  */
-function sanitizeMarkdown (markdown) {
+function sanitizeMarkdown (markdown, maxLength = 10000) {
   return sanitizeHtml(markdown, {
     allowedTags: constants.ALLOWED_POST_TAGS,
     allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
@@ -70,7 +72,9 @@ function sanitizeMarkdown (markdown) {
         return false
       }
     }
-  }).replace(/&gt;/g, '>') // ">"s are used in quote blocks
+  })
+    .replace(/&gt;/g, '>') // ">"s are used in quote blocks
+    .slice(0, maxLength)
 }
 
 /**
@@ -126,6 +130,26 @@ function isSlug (string) {
  */
 function isIn (string, values) {
   return string && validator.isIn(string, values)
+}
+
+/**
+ * Checks whether the string is not longer than the specified length.
+ * (Note: not checking this does not trigger crashes on the developer
+ * H2 database, instead strings are just truncated)
+ * @param  {[type]}  input     [description]
+ * @param  {Number}  maxLength [description]
+ * @return {Boolean}           [description]
+ */
+function isLengthValid (input, maxLength = 255) {
+  if (!input) {
+    return true
+  } else if (typeof input === 'string') {
+    return input.length <= maxLength
+  } else if (typeof input === 'object') {
+    return JSON.stringify(input).length <= maxLength
+  } else {
+    return input.toString().length <= maxLength
+  }
 }
 
 /**

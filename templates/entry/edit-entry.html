@@ -108,7 +108,9 @@ function refreshTitleDisplay () {
 
 var linksTemplate = _.template($('#js-links-template').html())
 var links = {{ entry.get('links') | default([]) | dump | safe }}
-if (links.length === 0) {
+if (!links) {
+  links = [[]]
+} else if (links.length === 0) {
   links.push([])
 }
 refreshLinksView()

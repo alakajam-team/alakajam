@@ -125,6 +125,9 @@ async function saveEntry (req, res) {
       })
       i++
     }
+    if (!forms.isLengthValid(links, 1000)) {
+      errorMessage = 'Too many links (max allowed: around 7)'
+    }
 
     // Entry update
     if (!errorMessage) {
