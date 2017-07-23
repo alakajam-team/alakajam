@@ -38,6 +38,7 @@ module.exports.Setting = bookshelf.model('Setting', {
   table.string('is_admin')
   table.string('password')
   table.string('password_salt')
+  table.dateTime('notifications_last_read')
   table.timestamps()
  */
 module.exports.User = bookshelf.model('User', {
@@ -131,6 +132,7 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * @param {string}  display_dates    The event dates, for display only
  * @param {string}  display_theme    The event theme, for display only
  * @param {string}  status           General status: 'pending', 'open' or 'closed'
+ * @param {string}  status_rules     Event rules status: 'off', 'disabled', or a post ID
  * @param {string}  status_theme     Theme voting status: 'on', 'off', 'disabled', or a post ID
  * @param {string}  status_entry     Entry submission status: 'on', 'off', 'disabled'
  * @param {string}  status_results   Event results status: 'on', 'off', 'disabled', or a post ID
@@ -184,6 +186,7 @@ module.exports.Event = bookshelf.model('Event', {
   table.string('links') // JSON Array : [{url, title}]
   table.string('pictures') // JSON Array : [path]
   table.string('category') // "solo"/"team"
+  table.integer('feedback_score').defaultTo(100)
   table.dateTime('published_at')
   table.integer('comment_count')
   table.timestamps()
@@ -309,6 +312,7 @@ module.exports.Post = bookshelf.model('Post', {
   table.integer('user_id').references('user.id')
   table.integer('parent_id').references('comment.id')
   table.string('body', 10000)
+  table.integer('feedback_score').defaultTo(0)
   table.timestamps()
  */
 module.exports.Comment = bookshelf.model('Comment', {

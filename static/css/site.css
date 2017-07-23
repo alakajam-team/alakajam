@@ -163,6 +163,9 @@ img.no-border:hover, a:hover img.no-border {
 .has-tooltip {
   cursor: help;
 }
+a.has-tooltip {
+  cursor: pointer;
+}
 
 .radio-label {
   margin: 0 10px 0 2px;
@@ -847,6 +850,9 @@ input.date-picker {
     background-color: white;
     width: 100%;
   }
+  &__details > div:first-child { /* info row */
+    padding-bottom: 10px;
+  }
   
   &__detail {
     font-size: 1.0rem;
@@ -1198,6 +1204,11 @@ input.date-picker {
     padding-left: 10px;
     font-size: 0;
   }
+  @media (max-width: 1024px) {
+    &__sidebar {
+      padding: 0 10px;
+    }
+  }
   
   &__details {
     font-size: 1.2rem;
@@ -1227,8 +1238,8 @@ input.date-picker {
     
     &__link {
       display: inline-block;
-      width: auto;
-      margin: 4px;
+      width: 48%;
+      margin: 1%;
       
       & .glyphicon {
         margin-top: 0;
@@ -1273,6 +1284,7 @@ input.date-picker {
     overflow: hidden;
     text-align: left;
     margin-right: 10px;
+    max-height: 300px;
     
     & h1 > a {
       color: var(--text);
@@ -1286,7 +1298,11 @@ input.date-picker {
     &__announcement {
       text-align: left;
       max-height: none !important;
-      padding-right: 0;
+      padding-left: 10px;
+
+      & .panel {
+        margin-bottom: 0;
+      }
     }
   }
   
@@ -1350,6 +1366,7 @@ input.date-picker {
   }
 
   &__footer {
+    height: 50px;
     padding: 10px;
     color: var(--text-lighter);
   }

@@ -61,7 +61,7 @@ async function anyPageMiddleware (req, res, next) {
   await Promise.all([featuredEventTask, userTask]) // Parallelize fetching both
 
   // update unread notifications (from cache if possible)
-  if (req.session.userId) {
+  if (res.locals.user) {
     if (cacheProvider.cache.get(res.locals.user.get('name').toLowerCase() + '_unreadNotifications') === undefined) {
       let commentsCollection = await postService.findCommentsToUser(res.locals.user, { notifications_last_read: true })
       res.locals.unreadNotifications = commentsCollection.length

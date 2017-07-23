@@ -55,21 +55,11 @@
                   {{ jumboLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower') }}
                   {{ jumboLink(featuredEvent, 'status_results', 'results', 'Results', 'th-list') }}
                   <div class="home-jumbo__social">
-                    <a href="https://twitter.com/AlakajamBang" class="footer__link">
-                      <img src="/static/images/twitter.svg" class="footer__icon no-border" /> 
-                    </a>
-                    <a href="https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos" class="footer__link">
-                      <img src="/static/images/youtube.svg" class="footer__icon no-border" /> 
-                    </a>
-                    <a href="https://github.com/mkalam-alami/alakajam" class="footer__link">
-                      <img src="/static/images/github.svg" class="footer__icon no-border" /> 
-                    </a>
-                    <a href="https://www.reddit.com/r/alakajam/" class="footer__link">
-                      <img src="/static/images/reddit.svg" class="footer__icon no-border" /> 
-                    </a>
-                    <a href="/chat">
-                      <img src="/static/images/irc.svg" class="footer__icon no-border" />
-                    </a>
+                    {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter') }}
+                    {{ socialLink('YouTube', 'https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos', 'youtube') }}
+                    {{ socialLink('Github', 'https://github.com/mkalam-alami/alakajam', 'github') }}
+                    {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit') }}
+                    {{ socialLink('IRC', '/chat', 'irc') }}
                   </div>
                 </div>
               </div>
@@ -137,7 +127,6 @@
 
 
 {% macro jumboLink (event, statusField, targetPath, label, icon) %}
-
 {% if not statusField or event.get(statusField) !== 'disabled' %}
   <a href="{{ buildUrl(event, 'event', targetPath) }}" class="home-jumbo__link {{ 'disabled' if statusField and event.get(statusField) === 'off' else 'active' }}">
     <div class="panel home-jumbo__link-border">
@@ -146,7 +135,13 @@
     </div>
   </a>
 {% endif %}
+{% endmacro %}
 
+
+{% macro socialLink (title, url, iconName) %}
+  <a href="{{ url }}" class="footer__link has-tooltip" data-toggle="tooltip" data-original-title="{{ title }}">
+    <img src="/static/images/{{ iconName }}.svg" class="footer__icon no-border" /> 
+  </a>
 {% endmacro %}
 
 
