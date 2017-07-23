@@ -4,6 +4,8 @@
 
 <h1>Server status</h1>
 
+<h2>General</h2>
+
 <table class="table" style="max-width: 300px">
 <tbody>
   <tr>
@@ -14,6 +16,48 @@
     <td>Picture resizing enabled</td>
     <td><span class="label label-default">{{ pictureResizeEnabled }}</span></td>
   </tr>
+</tbody>
+</table>
+
+<h2>Cache</h2>
+
+<h4>Global cache</h4>
+
+<p><a href="/admin/status?clearCache=true" class="btn btn-danger">Clear</a></p>
+
+<ul>
+  {% set cacheStats = cache.getStats() %}
+  <li>Key count: <b>{{ cacheStats.keys }}</b></li>
+  <li>Hits: <b>{{ cacheStats.hits }}</b></li>
+  <li>Misses: <b>{{ cacheStats.misses }}</b></li>
+  <li>Keys size: <b>{{ cacheStats.ksize }}</b></li>
+  <li>Values size: <b>{{ cacheStats.vsize }}</b></li>
+</ul>
+
+<table class="table" style="max-width: 300px">
+<tbody>
+  <tr>
+    <th>Key</th>
+    <th style="min-width: 180px">TTL</th>
+    <th>Value</th>
+  </tr>
+  {% for key in cache.keys() %}
+  <tr>
+    <td>{{ key }}</td>
+    <td>{{ cache.getTtl(key) | dateTime }}</td>
+    <td style="max-width: 500px; overflow: auto">
+      {% set value = cache.get(key) | prettyDump %}
+      {% if value.length > 100 %}
+        <input type="button" class="btn btn-sm btn-default" value="Toggle" onclick="$('#{{ key }}').toggle()" />
+        <div id="{{ key }}" style="display: none">
+          {{ value | safe }}
+        </div>
+      {% else %}
+        {{ value | safe }}
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
 </tbody>
 </table>
 

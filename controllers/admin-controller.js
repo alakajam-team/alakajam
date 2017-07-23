@@ -10,6 +10,7 @@ const config = require('../config')
 const db = require('../core/db')
 const constants = require('../core/constants')
 const forms = require('../core/forms')
+const cacheProvider = require('../core/cache')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const eventService = require('../services/event-service')
@@ -139,6 +140,10 @@ async function adminUsers (req, res) {
  * Admin only: server status
  */
 async function adminStatus (req, res) {
+  if (req.query.clearCache) {
+    cacheProvider.cache.flushAll()
+  }
+
   let pictureResizeEnabled = false
   try {
     require('sharp')
@@ -149,7 +154,8 @@ async function adminStatus (req, res) {
 
   res.render('admin/admin-status', {
     devMode: !!res.app.locals.devMode,
-    pictureResizeEnabled
+    pictureResizeEnabled,
+    cache: cacheProvider.cache
   })
 }
 
