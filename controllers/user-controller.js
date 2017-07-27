@@ -37,6 +37,8 @@ module.exports = {
 }
 
 async function dashboardMiddleware (req, res, next) {
+  res.locals.pageTitle = 'User dashboard'
+
   if (!res.locals.user || res.locals.user === undefined) {
     res.errorPage(403, 'You are not logged in.')
   } else {
@@ -57,6 +59,9 @@ async function dashboardMiddleware (req, res, next) {
 async function viewUserProfile (req, res) {
   let profileUser = await userService.findByName(req.params.name)
   if (profileUser) {
+    res.locals.pageTitle = profileUser.get('title')
+    res.locals.pageDescription = forms.markdownToText(profileUser.related('details').get('body'))
+
     let [entries, postsCollection] = await Promise.all([
       eventService.findUserEntries(profileUser),
       postService.findPosts({userId: profileUser.get('id')}),
@@ -263,6 +268,7 @@ async function dashboardPassword (req, res) {
  * Register form
  */
 async function registerForm (req, res) {
+  res.locals.pageTitle = 'Register'
   res.render('register')
 }
 
@@ -270,6 +276,8 @@ async function registerForm (req, res) {
  * Register
  */
 async function doRegister (req, res) {
+  res.locals.pageTitle = 'Register'
+
   let {fields} = await req.parseForm()
   let errorMessage = null
   if (config.DEBUG_ENABLE_INVITE_SYSTEM && !await inviteService.validateKey(fields.invite)) {
@@ -299,6 +307,8 @@ async function doRegister (req, res) {
  * Login form
  */
 async function loginForm (req, res) {
+  res.locals.pageTitle = 'Login'
+
   res.render('login')
 }
 
@@ -306,6 +316,8 @@ async function loginForm (req, res) {
  * Login
  */
 async function doLogin (req, res) {
+  res.locals.pageTitle = 'Login'
+
   let context = {}
   let {fields} = await req.parseForm()
   if (fields.name && fields.password) {
@@ -333,6 +345,8 @@ async function doLogin (req, res) {
  * Logout
  */
 async function doLogout (req, res) {
+  res.locals.pageTitle = 'Login'
+
   sessionService.invalidateSession(req, res)
   res.render('login', {
     infoMessage: 'Logout successful.'

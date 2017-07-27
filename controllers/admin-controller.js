@@ -31,6 +31,8 @@ module.exports = {
 }
 
 async function adminMiddleware (req, res, next) {
+  res.locals.pageTitle = 'Mod dashboard'
+
   if (!config.DEBUG_ADMIN && !securityService.isMod(res.locals.user)) {
     res.errorPage(403)
   } else {

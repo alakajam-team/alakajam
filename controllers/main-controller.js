@@ -122,6 +122,8 @@ async function index (req, res) {
  * Events listing
  */
 async function events (req, res) {
+  res.locals.pageTitle = 'Events'
+
   let [pendingCollection, openCollection, closedCollection] = await Promise.all([
     await eventService.findEvents({status: 'pending', sortDatesAscending: true}),
     await eventService.findEvents({status: 'open'}),
@@ -138,6 +140,8 @@ async function events (req, res) {
  * People listing
  */
 async function people (req, res) {
+  res.locals.pageTitle = 'People'
+
   let usersCollection = await userService.findAll()
   res.render('people', {
     users: usersCollection.sortBy((user) => -user.get('id'))
@@ -148,5 +152,7 @@ async function people (req, res) {
  * IRC Chat
  */
 async function chat (req, res) {
+  res.locals.pageTitle = 'Chat'
+
   res.render('chat')
 }

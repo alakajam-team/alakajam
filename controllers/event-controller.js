@@ -36,6 +36,14 @@ async function eventMiddleware (req, res, next) {
       res.errorPage(404, 'Event not found')
       return
     } else {
+      if (!res.locals.pageTitle) {
+        res.locals.pageTitle = event.get('title')
+        res.locals.pageDescription = 'An Alakajam! event. Dates: ' + event.get('display_dates') + '.'
+        if (event.get('display_theme')) {
+          res.locals.pageDescription += ' Theme: ' + event.get('display_theme')
+        }
+      }
+
       let announcementTask = postService.findLatestAnnouncement({ eventId: event.id })
           .then((announcement) => { res.locals.latestEventAnnouncement = announcement })
 
@@ -60,6 +68,8 @@ async function eventMiddleware (req, res, next) {
  * Browse event announcements
  */
 async function viewEventAnnouncements (req, res) {
+  res.locals.pageTitle += ' | Announcements'
+
   res.render('event/view-event-announcements', {
     posts: await postService.findPosts({
       eventId: res.locals.event.get('id'),
@@ -72,6 +82,8 @@ async function viewEventAnnouncements (req, res) {
  * Browse event posts
  */
 async function viewEventPosts (req, res) {
+  res.locals.pageTitle += ' | Posts'
+
   res.render('event/view-event-posts', {
     posts: await postService.findPosts({
       eventId: res.locals.event.get('id'),
@@ -89,6 +101,8 @@ async function viewEventPosts (req, res) {
  * Browse event theme voting
  */
 async function viewEventThemes (req, res) {
+  res.locals.pageTitle += ' | Themes'
+
   let statusThemes = res.locals.event.get('status_theme')
   if (forms.isId(statusThemes)) {
     res.locals.themesPost = await postService.findPostById(statusThemes)
@@ -104,6 +118,8 @@ async function viewEventThemes (req, res) {
  * Browse event games
  */
 async function viewEventGames (req, res) {
+  res.locals.pageTitle += ' | Games'
+
   if (res.locals.event.get('status_entry') !== 'on') {
     res.errorPage(404)
     return
@@ -123,6 +139,8 @@ async function viewEventGames (req, res) {
  * Browse event results
  */
 async function viewEventResults (req, res) {
+  res.locals.pageTitle += ' | Results'
+
   let statusResults = res.locals.event.get('status_results')
   if (forms.isId(statusResults)) {
     res.locals.resultsPost = await postService.findPostById(statusResults)

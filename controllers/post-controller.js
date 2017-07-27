@@ -9,11 +9,11 @@
 const constants = require('../core/constants')
 const forms = require('../core/forms')
 const models = require('../core/models')
+const cache = require('../core/cache')
 const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
 const templating = require('./templating')
-const cache = require('../core/cache')
 
 module.exports = {
   handleSaveComment,
@@ -39,6 +39,7 @@ async function postMiddleware (req, res, next) {
 
     if (res.locals.post) {
       res.locals.pageTitle = res.locals.post.get('title')
+      res.locals.pageDescription = res.locals.post.get('body')
     } else {
       res.errorPage(404, 'Post not found')
       return
@@ -73,6 +74,7 @@ async function posts (req, res) {
   if (specialPostType === constants.SPECIAL_POST_TYPE_ANNOUNCEMENT) {
     title = 'Announcements'
   }
+  res.locals.pageTitle = title
 
   // Determine base URL for pagination
   let paginationBaseUrl = '/posts?'
@@ -106,6 +108,8 @@ async function article (req, res) {
 
   if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {
+    res.locals.pageTitle = forms.capitalize(res.locals.post.get('title'))
+    res.locals.pageDescription = res.locals.post.get('body')
     res.render('article')
   } else {
     res.errorPage(404)

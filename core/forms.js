@@ -13,12 +13,15 @@ const striptags = require('striptags')
 const showdown = require('showdown')
 const moment = require('moment')
 const slug = require('slug')
+const nunjucks = require('nunjucks')
+const removeMarkdown = require('remove-markdown')
 const url = require('url')
 const constants = require('../core/constants')
 
 module.exports = {
   sanitizeString,
   sanitizeMarkdown,
+  capitalize: new nunjucks.Environment().filters.capitalize,
 
   isEmail,
   isURL,
@@ -30,7 +33,8 @@ module.exports = {
 
   parseDateTime,
 
-  markdownToHtml
+  markdownToHtml,
+  markdownToText
 }
 
 // Libs init
@@ -166,7 +170,6 @@ function parseDateTime (string) {
 }
 
 /**
-/**
  * Converts the given Markdown to XSS-safe HTML
  * @param  {string} markdown
  * @return {string}
@@ -185,4 +188,13 @@ function markdownToHtml (markdown) {
   let htmlWithMentions = htmlSplitByLinks.join('')
   let safeHtml = customXss.process(htmlWithMentions)
   return safeHtml
+}
+
+/**
+ * Converts the given Markdown to single-line text
+ * @param  {string} markdown
+ * @return {string}
+ */
+function markdownToText (markdown) {
+  return removeMarkdown(sanitizeMarkdown(markdown)).replace(/\n\r/g, ' ')
 }

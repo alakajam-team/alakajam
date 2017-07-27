@@ -36,6 +36,7 @@ async function entryMiddleware (req, res, next) {
   }
   res.locals.entry = entry
   res.locals.pageTitle = entry.get('title')
+  res.locals.pageDescription = entry.get('description') || entry.related('dezscription').get('body')
   if (entry.get('pictures') && entry.get('pictures').length > 0) {
     res.locals.pageImage = entry.get('pictures')[0]
   }
@@ -104,7 +105,8 @@ async function saveEntry (req, res) {
     let redirectUrl = await postController.handleSaveComment(fields,
       res.locals.user, res.locals.entry, templating.buildUrl(res.locals.entry, 'entry'))
     res.redirect(redirectUrl)
-  } else if (!res.locals.user || (res.locals.entry && !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true }))) {
+  } else if (!res.locals.user || (res.locals.entry &&
+      !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true }))) {
     res.errorPage(403)
   } else if (!res.headersSent) { // FIXME Why?
     let errorMessage = null
