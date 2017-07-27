@@ -173,7 +173,16 @@ function parseDateTime (string) {
  */
 function markdownToHtml (markdown) {
   let html = showdownConverter.makeHtml(markdown)
-  let htmlWithMentions = html.replace(/@([a-z\d_]+)/ig, '<a href="/user/$1">@$1</a>')
+
+  // Convert @mentions to links, unless we are already in a link
+  let htmlSplitByLinks = html.split(/(<a .*>.*<\/a>)/g)
+  let indexOutsideLinks = html.indexOf('<a ') === 0 ? 1 : 0
+  while (indexOutsideLinks < htmlSplitByLinks.length) {
+    htmlSplitByLinks[indexOutsideLinks] = htmlSplitByLinks[indexOutsideLinks].replace(/@([a-z\d_]+)/ig, '<a href="/user/$1">@$1</a>')
+    indexOutsideLinks += 2
+  }
+
+  let htmlWithMentions = htmlSplitByLinks.join('')
   let safeHtml = customXss.process(htmlWithMentions)
   return safeHtml
 }
