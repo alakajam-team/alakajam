@@ -223,10 +223,14 @@ async function savePost (req, res) {
       post.set('body', forms.sanitizeMarkdown(fields.body))
       if (forms.isId(fields['event-id'])) {
         post.set('event_id', fields['event-id'])
-        if (post.hasChanged('event_id')) {
-          let relatedEntry = await eventService.findUserEntryForEvent(
-            res.locals.user, post.get('event_id'))
-          post.set('entry_id', relatedEntry ? relatedEntry.get('id') : null)
+        if (!post.get('special_post_type')) {
+          if (post.hasChanged('event_id')) {
+            let relatedEntry = await eventService.findUserEntryForEvent(
+              res.locals.user, post.get('event_id'))
+            post.set('entry_id', relatedEntry ? relatedEntry.get('id') : null)
+          }
+        } else {
+          post.set('entry_id', null)
         }
       } else {
         post.set('event_id', null)
