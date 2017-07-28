@@ -125,10 +125,15 @@
             </a>
             <div class="event-header__dates">
               {{ event.get('display_dates') }}
+              {% if isId(event.get('status_rules')) %}
+                <a href="{{ buildUrl(event.get('status_rules'), 'post') }}">
+                  <span class="glyphicon glyphicon-info-sign"></span>
+                </a>
+              {% endif %}
             </div>
           </div>
           <div class="event-header__links">
-            {{ eventMacros.eventLinks (event, latestEventAnnouncement, path) }}
+            {{ eventMacros.eventLinks(event, latestEventAnnouncement, path) }}
         </div>
       </div>
     </div>

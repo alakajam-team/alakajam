@@ -1236,6 +1236,7 @@ input.date-picker {
     & .glyphicon {
       vertical-align: middle;
       font-size: 1.8rem;
+      margin-top: -3px;
     }
   }
   @media (max-width: 1024px) {
@@ -1247,11 +1248,24 @@ input.date-picker {
       display: inline-block;
       width: 48%;
       margin: 1%;
-      
-      & .glyphicon {
-        margin-top: 0;
-      }
     }
+  }
+  
+  &__news-link {
+    @apply --shadow;
+    background-color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+
+    &.disabled, &.disabled:hover {
+      color: var(--text-lighter);
+    } 
+  }
+  &__news-link:hover {
+    color: var(--alt-dark);
+    border: 4px solid var(--alt-dark);
+    transition: 0.1s;
+    padding: 2px 7px;
   }
   
   &__link-border {
@@ -1262,6 +1276,7 @@ input.date-picker {
   &__link.active:hover &__link-border {
     color: var(--alt-dark);
     border: 4px solid var(--alt-dark);
+    padding-top: 4px;
     transition: 0.1s;
   }
   

@@ -177,6 +177,9 @@ async function editEvent (req, res) {
       errorMessage = 'Name must contain at least one hyphen (-)'
     } else if (!forms.isIn(fields.status, ['pending', 'open', 'closed'])) {
       errorMessage = 'Invalid status'
+    } else if (!forms.isIn(fields['status-rules'], ['disabled', 'off']) &&
+        !forms.isId(fields['status-rules'])) {
+      errorMessage = 'Invalid welcome/rules post status'
     } else if (!forms.isIn(fields['status-theme'], ['disabled', 'off', 'on']) &&
         !forms.isId(fields['status-theme'])) {
       errorMessage = 'Invalid theme status'
@@ -205,6 +208,7 @@ async function editEvent (req, res) {
         display_dates: forms.sanitizeString(fields['display-dates']),
         display_theme: forms.sanitizeString(fields['display-theme']),
         status: fields.status,
+        status_rules: fields['status-rules'],
         status_theme: fields['status-theme'],
         status_entry: fields['status-entry'],
         status_results: fields['status-results'],

@@ -40,7 +40,7 @@
                       <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }}<br />
                     {% endif %}
                     {% if featuredEvent.get('display_theme') %}
-                      <span class="glyphicon glyphicon-grain"></span> 
+                      <span class="glyphicon glyphicon-apple"></span> 
                       {% if featuredEvent.get('status_theme') !== 'off' and featuredEvent.get('status_theme') !== 'disabled' %}
                         Theme: <a href="{{ buildUrl(featuredEvent, 'event', 'themes') }}">{{ featuredEvent.get('display_theme') }}</a></h1>
                       {% else %}
@@ -49,9 +49,9 @@
                     {% endif %}
                     <div class="home-jumbo__countdown js-countdown"></div>
                   </div>
-                  {{ jumboLink(featuredEvent, null, 'announcements', 'News', 'pushpin') }}
+                  {{ jumboLink(featuredEvent, 'status_rules', buildUrl(featuredEvent.get('status_rules'), 'post'), 'Welcome/Rules', 'info-sign', { absoluteUrl: true }) }}
                   {{ jumboLink(featuredEvent, null, 'posts', 'Posts', 'globe') }}
-                  {{ jumboLink(featuredEvent, 'status_theme', 'theme', 'Theme', 'grain') }}
+                  {{ jumboLink(featuredEvent, 'status_theme', 'theme', 'Theme', 'apple') }}
                   {{ jumboLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower') }}
                   {{ jumboLink(featuredEvent, 'status_results', 'results', 'Results', 'th-list') }}
                   <div class="home-jumbo__social">
@@ -82,7 +82,9 @@
                   </div>
                 {% endif %}
                 <div class="home-jumbo__footer">
-                  <a href="/posts?special_post_type=announcement" class="btn btn-sm btn-default pull-right">Browse all announcements <span class="glyphicon glyphicon-chevron-right"></span></a>
+                  <a href="{{ buildUrl(featuredEvent, 'event', 'announcements') }}" class="home-jumbo__news-link pull-right">
+                      <span class="glyphicon glyphicon-pushpin"></span> All announcements
+                  </a>
                 </div>
               </div>
             </div>
@@ -126,9 +128,9 @@
 {% endblock %}
 
 
-{% macro jumboLink (event, statusField, targetPath, label, icon) %}
+{% macro jumboLink (event, statusField, targetPath, label, icon, options = {}) %}
 {% if not statusField or event.get(statusField) !== 'disabled' %}
-  <a href="{{ buildUrl(event, 'event', targetPath) }}" class="home-jumbo__link {{ 'disabled' if statusField and event.get(statusField) === 'off' else 'active' }}">
+  <a href="{{ targetPath if options.absoluteUrl else buildUrl(event, 'event', targetPath) }}" class="home-jumbo__link {{ 'disabled' if statusField and event.get(statusField) === 'off' else 'active' }}">
     <div class="panel home-jumbo__link-border">
       <span class="glyphicon glyphicon-{{ icon }}"></span> 
       <span class="home-jumbo__link-label">{{ label }}</span>

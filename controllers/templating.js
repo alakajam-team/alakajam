@@ -72,10 +72,14 @@ function buildUrl (model, type, page = null, options = {}) {
         if (options.specialPostType) pagePath += '&special_post_type=' + options.specialPostType
         if (options.title) pagePath += '&title=' + options.title
         return '/post' + pagePath
-      } else if (model.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE && !page) {
-        return '/article/' + model.get('name')
+      } else if (model && typeof model === 'object') {
+        if (model.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE && !page) {
+          return '/article/' + model.get('name')
+        } else {
+          return '/post/' + model.id + '/' + (model.get('name') || 'untitled') + pagePath
+        }
       } else {
-        return '/post/' + model.id + '/' + (model.get('name') || 'untitled') + pagePath
+        return '/post/' + model
       }
     } else if (type === 'comment') {
       // Comment model
@@ -86,6 +90,6 @@ function buildUrl (model, type, page = null, options = {}) {
       return '?' + pageParams + (model ? '#c' + model.id : '')
     }
   } catch (e) {
-    throw new Error('Failed to build URL for model "' + model + '" of type "' + type + '"')
+    throw new Error('Failed to build URL for model "' + model + '" of type "' + type + '": ' + e.message)
   }
 }

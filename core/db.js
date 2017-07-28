@@ -220,6 +220,8 @@ Alternately, you can contact us on <a href="https://github.com/mkalam-alami/weja
       })
     }
     await post.save()
+    event2.set('status_rules', post.get('id'))
+    await event2.save()
 
     await postService.createComment(entrantUser, post, "I'm in!")
     await postService.refreshCommentCount(post)

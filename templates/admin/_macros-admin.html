@@ -12,6 +12,7 @@
 
         {% if isAdmin %}
         {{ moderationLink('Edit event', 'calendar', buildUrl(context.event, 'event', 'edit')) if context.event.id }}
+        {{ moderationLink('Edit featured event', 'calendar', buildUrl(context.featuredEvent, 'event', 'edit')) if context.featuredEvent.id }}
         {{ moderationLink('Create event', 'calendar', buildUrl(null, 'event', 'create')) if context.path === '/events' }}
 
         {{ moderationLink('Edit user', 'user', buildUrl(context.profileUser, 'user', 'settings', {dashboardAdminMode: true})) if context.profileUser }}
