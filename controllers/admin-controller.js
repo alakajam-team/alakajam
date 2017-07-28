@@ -133,8 +133,9 @@ async function adminSettings (req, res) {
  */
 async function adminUsers (req, res) {
   let users = await userService.findAll()
+  let sortedUsers = users.sortBy((user) => user.get('title'))
   res.render('admin/admin-users', {
-    users: users.models
+    users: sortedUsers
   })
 }
 
