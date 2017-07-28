@@ -1190,6 +1190,12 @@ input.date-picker {
 
 .home-jumbo {
   background-color: var(--borders);
+  
+  @media (max-width: 1024px) {
+    & {
+      text-align: center;
+    }
+  }
 
   & .event-table.not-live .event-table__header {
     @apply --shadow;
@@ -1239,17 +1245,6 @@ input.date-picker {
       margin-top: -3px;
     }
   }
-  @media (max-width: 1024px) {
-    & {
-      text-align: center;
-    }
-    
-    &__link {
-      display: inline-block;
-      width: 48%;
-      margin: 1%;
-    }
-  }
   
   &__news-link {
     @apply --shadow;
@@ -1278,6 +1273,16 @@ input.date-picker {
     border: 4px solid var(--alt-dark);
     padding-top: 4px;
     transition: 0.1s;
+  }
+  @media (max-width: 1024px) {
+    &__link {
+      line-height: 22px;
+    }
+    
+    &__link-border {
+      height: 45px;
+      margin-bottom: 4px;
+    }
   }
   
   &__link-label {
@@ -1384,6 +1389,7 @@ input.date-picker {
   @media (max-width: 1024px) {
     &__social {
       margin-bottom: 20px;
+      padding-left: 20px;
     }
   }
 
