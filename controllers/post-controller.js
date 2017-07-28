@@ -35,11 +35,17 @@ async function postMiddleware (req, res, next) {
   if (req.params.postId && req.params.postId !== 'create') {
     if (forms.isId(req.params.postId)) {
       res.locals.post = await postService.findPostById(req.params.postId)
+      res.locals.event = res.locals.post.related('event')
+      if (res.locals.event) {
+        res.locals.latestEventAnnouncement = await postService.findLatestAnnouncement({
+          eventId: res.locals.event.get('id')
+        })
+      }
     }
 
     if (res.locals.post) {
       res.locals.pageTitle = res.locals.post.get('title')
-      res.locals.pageDescription = res.locals.post.get('body')
+      res.locals.pageDescription = forms.markdownToText(res.locals.post.get('body'))
     } else {
       res.errorPage(404, 'Post not found')
       return
@@ -109,7 +115,7 @@ async function article (req, res) {
   if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {
     res.locals.pageTitle = forms.capitalize(res.locals.post.get('title'))
-    res.locals.pageDescription = res.locals.post.get('body')
+    res.locals.pageDescription = forms.markdownToText(res.locals.post.get('body'))
     res.render('article')
   } else {
     res.errorPage(404)
@@ -127,7 +133,6 @@ async function viewPost (req, res) {
 
     // Attach related entry/event
     if (post.get('event_id')) {
-      await post.load(['event', 'entry', 'entry.userRoles'])
       if (post.related('event').id) {
         context.relatedEvent = post.related('event')
       }

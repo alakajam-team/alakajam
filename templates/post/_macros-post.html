@@ -41,13 +41,18 @@
       </a>
 
       <div class="post__related">
-        {% set relatedEvent = post.related('event') %}
+        {% set relatedEvent = post.related('event') if post.related('event') %}
         {% set relatedEntry = post.related('entry') %}
         {% if relatedEvent.get('id') %}
           on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
         {% endif %}
         {% if relatedEntry.get('id') %}
-          entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">{{ relatedEntry.get('title') }}</a>
+          entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">
+            {% if relatedEntry.get('pictures').length > 0 %}
+              <img src="{{ relatedEntry.get('pictures')[0] }}" class="no-border" style="max-height: 22px" />
+            {% endif %}
+            {{ relatedEntry.get('title') }}
+          </a>
         {% endif %}
       </div>
     </{{h}}>

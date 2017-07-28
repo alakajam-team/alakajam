@@ -95,7 +95,7 @@ async function findPosts (options = {}) {
 
 async function findPostById (postId) {
   return models.Post.where('id', postId)
-    .fetch({withRelated: ['author', 'userRoles']})
+    .fetch({withRelated: ['author', 'userRoles', 'event', 'entry', 'entry.userRoles']})
 }
 
 /**
