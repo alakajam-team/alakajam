@@ -113,7 +113,15 @@ async function index (req, res) {
       })
     })
 
-  await Promise.all([featuredEventTask, previousEventTask, latestEntriesTask, postsTask]) // Parallelize fetching everything
+  // Find featured post
+  let featuredPostTask = settingService.find(constants.SETTING_FEATURED_POST_ID)
+    .then(async function (featuredPostId) {
+      if (featuredPostId) {
+        context.featuredPost = await postService.findPostById(featuredPostId)
+      }
+    })
+
+  await Promise.all([featuredEventTask, previousEventTask, latestEntriesTask, postsTask, featuredPostTask]) // Parallelize fetching everything
 
   res.render('index', context)
 }

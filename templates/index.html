@@ -10,10 +10,16 @@
 
 <div class="container">
   <div class="row">
-
+  
+    {% if featuredPost %}
+    <div class="col-lg-offset-1 col-lg-10">
+      {{ postMacros.post(featuredPost, user) }}
+    </div>
+    {% endif %}
+    
     <div class="col-lg-12">
+      {% if featuredEvent %}
       <div class="home-jumbo">
-        {% if featuredEvent %}
           <div class="event-table {{ 'live' if featuredEvent.get('status') === 'open' else 'not-live' }}">
             <div class="row">
               <div class="col-md-12">
@@ -89,10 +95,12 @@
               </div>
             </div>
           </div>
-        {% else %}
-          <h1>Next event not announced yet.</h1>
-        {% endif %}
       </div>
+      {% endif %}
+      
+      {% if not featuredEvent and not featuredPost %}
+        <h1 class="text-center">Next event not announced yet.</h1>
+      {% endif %}
     </div>
   </div>
   
