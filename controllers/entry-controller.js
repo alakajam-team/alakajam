@@ -36,7 +36,7 @@ async function entryMiddleware (req, res, next) {
   }
   res.locals.entry = entry
   res.locals.pageTitle = entry.get('title')
-  res.locals.pageDescription = entry.get('description') || entry.related('dezscription').get('body')
+  res.locals.pageDescription = entry.get('description') || entry.related('details').get('body')
   if (entry.get('pictures') && entry.get('pictures').length > 0) {
     res.locals.pageImage = entry.get('pictures')[0]
   }

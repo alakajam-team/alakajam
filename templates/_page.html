@@ -6,14 +6,15 @@
 <head>
   <title>Alakajam! {{ '| ' + pageTitle if pageTitle }}</title>
 
+  {% set pageDescription = pageDescription if pageDescription else 'A community for game development enthusiasts, organizing regular events and competitions.' %}
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@AlakajamBang" />
-  <meta name="twitter:title" content="Alakajam!" />
-  <meta name="twitter:description" content="{{ pageTitle if pageTitle else 'Alakajam!' }}" />
+  <meta name="twitter:title" content="{{ pageTitle if pageTitle else 'Alakajam!' }}" />
+  <meta name="twitter:description" content="{{ pageDescription | truncate(160) }}" />
   <meta name="twitter:image" content="{{ rootUrl }}{{ pageImage if pageImage else '/static/images/logo.png' }}" />
-  <meta name="description" content="{{ pageDescription if pageDescription else 'A community for game development enthusiasts, organizing regular events and competitions.' | truncate(160) }}" />
+  <meta name="description" content="{{ pageDescription | truncate(160) }}" />
 
   <link rel="shortcut icon" type="image/png" href="/static/images/favicon.png" />
   <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet"> 
