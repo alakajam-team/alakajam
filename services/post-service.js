@@ -199,7 +199,7 @@ async function findCommentsToUser (user, options = {}) {
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '<>', user.id)
       .andWhere('comment.updated_at', '>', notificationsLastRead)
-      .orWhere('body', 'like', '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
+      .orWhere('body', 'ilike', '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
   })
     .where('comment.updated_at', '>', notificationsLastRead)
     .orderBy('created_at', 'DESC')
