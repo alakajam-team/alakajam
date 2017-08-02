@@ -374,17 +374,21 @@ input.date-picker {
 
   & .navbar-unread-notifications {
     position: absolute;
-    background-color: var(--alt);
+    background-color: var(--neutral);
     width: 20px;
     height: 20px;
     border-radius: 50%;
     text-align: center;
-    top: -10px;
+    top: -11px;
     right: 0px;
     color: white;
     font-size: 0.8rem;
     font-weight: bold;
     line-height: 20px;
+    
+    &.unread {
+      background-color: var(--alt);
+    }
   }
 
 }
