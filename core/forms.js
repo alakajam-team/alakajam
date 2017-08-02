@@ -21,7 +21,9 @@ const constants = require('../core/constants')
 module.exports = {
   sanitizeString,
   sanitizeMarkdown,
+
   capitalize: new nunjucks.Environment().filters.capitalize,
+  slug: slug,
 
   isEmail,
   isURL,

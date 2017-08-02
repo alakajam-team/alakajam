@@ -21,8 +21,15 @@
 
     <div class="form-group input-group-lg">
       <label for="title">Title</label>
-      <input type="text" class="form-control" id="title" name="title" value="{{ post.get('title') }}" required="required" {{ 'readonly="readonly"' if post.get('special_post_type') === 'article' and post.get('id') }}>
+      <input type="text" class="form-control" id="title" name="title" value="{{ post.get('title') }}" required="required">
     </div>
+
+    {% if specialPostType === 'article' %}
+    <div class="form-group">
+      <label for="name">Article name {{ formMacros.tooltip('Will be used in the URL') }}</label>
+      <input type="text" class="form-control" id="name" name="name" value="{{ post.get('name') }}" required="required">
+    </div>
+    {% endif %}
 
     {% if specialPostType %}
     <div class="form-group">
@@ -83,6 +90,7 @@
 {% block scripts %} 
 {{ formMacros.editorScripts() }}
 {{ formMacros.dateTimePickerScripts() }}
+<script src="/static/js/slug.min.js"></script>
 <script>
 
 // Schedule actions
@@ -102,13 +110,21 @@ $scheduleHideButton.click(function () {
 // Sync H1 with title input
 var $titleInput = $('#title')
 var $titleDisplay = $('#title-display')
-var defaultText = "Blog post"
+var defaultText = "{{ specialPostType | capitalize if specialPostType else 'Blog post' }}"
 $titleInput.on('change keyup', refreshTitleDisplay)
 refreshTitleDisplay()
 
 function refreshTitleDisplay () {
   $titleDisplay.text($titleInput.val() || defaultText)
 }
+
+// Article slug
+$('#name').change(function () {
+  $(this).val(slug($(this).val()))
+})
+$('#title').keydown(function () {
+  $('#name').val(slug($(this).val()))
+})
 
 </script>
 {% endblock %}

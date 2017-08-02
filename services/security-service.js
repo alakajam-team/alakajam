@@ -6,7 +6,6 @@
  * @module services/security-service
  */
 
-const config = require('../config')
 const constants = require('../core/constants')
 const log = require('../core/log')
 
@@ -100,8 +99,8 @@ function isMod (user) {
  * @param  {User}  user
  * @return {boolean}
  */
-function isAdmin (user) {
-  return config.DEBUG_ADMIN || (user && user.get('is_admin'))
+function isAdmin (user, options = {}) {
+  return user && user.get('is_admin')
 }
 
 /**
