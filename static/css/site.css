@@ -1404,43 +1404,10 @@ input.date-picker {
   }
 }
 
-.home-bar {
-  @apply --shadow;
-  background-color: var(--main);
-  margin: -20px 0 20px 0;
-  padding-top: 10px;
-}
-
-.home-brand {
-  position: relative;
-  width: 160px;
-  height: 160px;
-  margin: auto;
-  margin-bottom: 20px;
-  text-align: center;
-  cursor: default;
-  background-color: var(--main);
-  border-radius: 50%;
-  
-  &__logo {
-    margin-top: 20px;
-    width: 95px;
-    padding-bottom: 40px;
+.home-entry {
+  @media (max-width: 1024px) {
+    & {
+      padding-bottom: 10px;
+    }
   }
-  
-  &__name {
-    position: absolute;
-    left: 0;
-    bottom: 15px;
-    width: 100%;
-    text-align: center;
-    @apply --alt-font;
-    font-size: 2.3rem;
-    font-weight: bold;
-    height: var(--navbar-height);
-    text-shadow: 0px 3px 0px var(--main-dark);
-    color: white;
-    transition: 0.15s;
-  }
-
 }
