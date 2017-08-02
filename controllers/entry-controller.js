@@ -71,15 +71,18 @@ async function viewEntry (req, res) {
 async function createEntry (req, res) {
   if (!res.locals.user) {
     res.errorPage(403)
-  } else if (await eventService.findUserEntryForEvent(res.locals.user, res.locals.event.id)) {
-    res.errorPage(403, 'User already has an entry for this event')
   } else {
-    res.render('entry/edit-entry', {
-      entry: new models.Entry({
-        event_id: res.locals.event.get('id'),
-        event_name: res.locals.event.get('name')
+    let existingEntry = await eventService.findUserEntryForEvent(res.locals.user, res.locals.event.id)
+    if (existingEntry) {
+      res.redirect(templating.buildUrl(existingEntry, 'entry', 'edit'))
+    } else {
+      res.render('entry/edit-entry', {
+        entry: new models.Entry({
+          event_id: res.locals.event.get('id'),
+          event_name: res.locals.event.get('name')
+        })
       })
-    })
+    }
   }
 }
 

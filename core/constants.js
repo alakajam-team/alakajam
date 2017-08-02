@@ -41,10 +41,11 @@ module.exports = {
   SPECIAL_POST_TYPE_ARTICLE,
   SPECIAL_POST_TYPES,
   REQUIRED_ARTICLES: ['help'],
-  ALLOWED_POST_TAGS: [ 'b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe' ],
+  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img'],
   ALLOWED_POST_ATTRIBUTES: {
     'a': ['href'],
-    'iframe': ['src', 'width', 'height', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen']
+    'iframe': ['src', 'width', 'height', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
+    'img': ['src', 'width', 'height']
   },
   ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com'],
 
