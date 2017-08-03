@@ -53,6 +53,13 @@ module.exports = {
   DATE_FORMAT: 'MMMM Do YYYY',
   DATE_TIME_FORMAT: 'MMMM Do YYYY, h:mm',
   PICKER_DATE_TIME_FORMAT: 'YYYY-MM-DD HH:mm',
-  PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii'
+  PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii',
+
+  // Misc
+  ALLOWED_PICTURE_MIMETYPES: [
+    'image/png',
+    'image/jpeg',
+    'image/gif'
+  ]
 
 }

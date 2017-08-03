@@ -134,9 +134,11 @@ async function saveEntry (req, res) {
     }
     if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
-    }
-    if (!res.locals.entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
+    } else if (!res.locals.entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
       errorMessage = 'Submissions are closed for this event'
+    } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
+      console.log(files.picture.path)
+      errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
     }
 
     // Entry update

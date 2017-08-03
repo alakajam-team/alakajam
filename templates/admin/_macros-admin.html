@@ -4,20 +4,22 @@
     <div class="row">
       <div class="col-xs-12">
         <a href="/admin" class="btn"><span class="glyphicon glyphicon-wrench"></span> Mod dashboard</a>
-
-        {{ moderationLink('Edit post', 'pencil', buildUrl(context.post, 'post', 'edit')) if context.post.id }}
-        {{ moderationLink('Edit entry', 'tower', buildUrl(context.entry, 'entry', 'edit')) if context.entry.id }}
-        {{ moderationLink('Create announcement', 'pencil', buildUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'announcement' })) if context.event.id }}
-        {{ moderationLink('Create this article', 'pencil', buildUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'article', title: context.postName })) if context.postName and not context.post }}
-
+        
         {% if isAdmin %}
-        {{ moderationLink('Edit event', 'calendar', buildUrl(context.event, 'event', 'edit')) if context.event.id }}
+        {{ moderationLink('Edit event', 'calendar', buildUrl(context.event, 'event', 'edit')) if context.event.id and not context.featuredEvent or context.event.id != context.featuredEvent.id }}
         {{ moderationLink('Edit featured event', 'calendar', buildUrl(context.featuredEvent, 'event', 'edit')) if context.featuredEvent.id }}
         {{ moderationLink('Create event', 'calendar', buildUrl(null, 'event', 'create')) if context.path === '/events' }}
 
         {{ moderationLink('Edit user', 'user', buildUrl(context.profileUser, 'user', 'settings', {dashboardAdminMode: true})) if context.profileUser }}
         {{ moderationLink('Edit user', 'user', buildUrl(context.dashboardUser, 'user', 'settings', {dashboardAdminMode: true})) if context.dashboardUser }}
         {% endif %}
+
+        {{ moderationLink('Create announcement', 'pencil', buildUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'announcement' })) if context.event.id }}
+        {{ moderationLink('Create this article', 'pencil', buildUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'article', title: context.postName })) if context.postName and not context.post }}
+        
+        {{ moderationLink('Edit post', 'pencil', buildUrl(context.post, 'post', 'edit')) if context.post.id }}
+        {{ moderationLink('Edit entry', 'tower', buildUrl(context.entry, 'entry', 'edit')) if context.entry.id }}
+
       </div>
     </div>
   </div>
