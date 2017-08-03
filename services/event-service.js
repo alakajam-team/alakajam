@@ -27,7 +27,9 @@ module.exports = {
   findUserEntryForEvent,
 
   refreshEntryScore,
-  refreshCommentScore
+  refreshCommentScore,
+
+  areSubmissionsAllowed
 }
 
 /**
@@ -258,4 +260,8 @@ function _computeRawCommentScore (comment) {
   } else { // Short comments
     return 1
   }
+}
+
+function areSubmissionsAllowed (event) {
+  return event && event.get('status') === 'open' && event.get('status_entry') === 'on'
 }

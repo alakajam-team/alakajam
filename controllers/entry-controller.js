@@ -71,6 +71,8 @@ async function viewEntry (req, res) {
 async function createEntry (req, res) {
   if (!res.locals.user) {
     res.errorPage(403)
+  } else if (!eventService.areSubmissionsAllowed(res.locals.event)) {
+    res.errorPage(403, 'Submissions are closed for this event')
   } else {
     let existingEntry = await eventService.findUserEntryForEvent(res.locals.user, res.locals.event.id)
     if (existingEntry) {
@@ -132,6 +134,9 @@ async function saveEntry (req, res) {
     }
     if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
+    }
+    if (!res.locals.entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
+      errorMessage = 'Submissions are closed for this event'
     }
 
     // Entry update

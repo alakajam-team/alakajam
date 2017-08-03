@@ -11,9 +11,8 @@
        <div>
          {% if userEntry %}
            <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-alt pull-right">Edit entry</a>
-         {% elseif event.get('status_entry') !== 'on' %}
+         {% elseif event.get('status') !== 'open' or event.get('status_entry') !== 'on' %}
            <div class="pull-right">
-             {{ formMacros.tooltip('Users can only create entries while the event is open.') }}
              <a href="#"class="btn btn-sm btn-default disabled">Create entry</a>
            </div>
          {% else %}
@@ -23,8 +22,12 @@
       <div class="action-banner__title">
         Your entry
       </div>
-      {{ eventMacros.entrySmallThumb(userEntry, { customMessage: 
-      "Entry submissions are not open yet." if event.get('status_entry') !== 'on' }) }}
+      {% if event.get('status') === 'closed' %}
+        {% set customMessage = "Entry submissions are closed" %}
+      {% elseif event.get('status_entry') !== 'on' %}
+        {% set customMessage = "Entry submissions are not open yet" %}
+      {% endif %}
+      {{ eventMacros.entrySmallThumb(userEntry, { customMessage: customMessage }) }}
     </div>
     <div class="col-md-5 action-banner">
       <div class="pull-right">
