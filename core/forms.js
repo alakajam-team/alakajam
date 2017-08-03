@@ -111,12 +111,12 @@ function isUsername (string) {
 }
 
 /**
- * Checks whether the string is a valid ID. If so, additional sanitizing is not needed.
- * @param  {string} string
+ * Checks whether the value is a valid ID. If so, additional sanitizing is not needed.
+ * @param  {string|number} value
  * @return {Boolean}
  */
-function isId (string) {
-  return string && validator.isInt(string, { min: 1 })
+function isId (value) {
+  return value && (typeof value === 'number' && value % 1 === 0 || validator.isInt(value, { min: 1 }))
 }
 
 /**
