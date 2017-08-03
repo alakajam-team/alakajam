@@ -92,7 +92,7 @@
 
   // Initialize text field with value if enabled
   $textFields.each(function () {
-    let textField = this
+    var textField = this
     refreshTextField(textField)
     getRadio(textField).on('ifChanged', function() {
       refreshTextField(textField)
@@ -109,14 +109,14 @@
   }
 
   function refreshRadio (textField) {
-    let $textField = $(textField)
-    let $radio = getRadio(textField)
+    var $textField = $(textField)
+    var $radio = getRadio(textField)
     $radio.val($textField.val())
   }
 
   function refreshTextField (textField) {
-    let $textField = $(textField)
-    let $radio = getRadio(textField)
+    var $textField = $(textField)
+    var $radio = getRadio(textField)
     if ($radio.get(0).checked) {
       $textField.val($radio.val())
       $textField.removeAttr('disabled')

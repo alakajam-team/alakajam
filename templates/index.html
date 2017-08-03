@@ -159,7 +159,7 @@
 
 <script type="text/javascript">
   // Announcement height limit and expand/collapse button
-  let maxAnnouncementHeight = Math.max(280, $('.home-jumbo__sidebar').height() - 50)
+  var maxAnnouncementHeight = Math.max(280, $('.home-jumbo__sidebar').height() - 50)
   $('.home-jumbo__announcement').attr('style', 'max-height: ' + maxAnnouncementHeight + 'px')
   $('.home-jumbo__announcement-expand-bar').click(function () {
     $('.home-jumbo__announcement').toggleClass('expanded')
@@ -173,8 +173,8 @@
 {% if countdownEvent and countdownEvent.get('countdown_config').date %}
   <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
   <script type="text/javascript">
-  let diffMs = Math.max(0, Date.parse('{{ countdownEvent.get('countdown_config').date }}') - Date.now())
-  let $jsCountdown = $('.js-countdown')
+  var diffMs = Math.max(0, Date.parse('{{ countdownEvent.get('countdown_config').date }}') - Date.now())
+  var $jsCountdown = $('.js-countdown')
   $('.js-countdown').show()
   $('.js-countdown').FlipClock(diffMs / 1000, { 
     clockFace: 'DailyCounter',
