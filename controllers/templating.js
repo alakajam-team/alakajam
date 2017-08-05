@@ -15,6 +15,7 @@ const DASHBOARD_PAGES = ['feed', 'posts', 'invite', 'settings', 'password']
 
 module.exports = {
   buildUrl,
+  buildApiUrl,
 
   min: Math.min,
   max: Math.max,
@@ -91,5 +92,14 @@ function buildUrl (model, type, page = null, options = {}) {
     }
   } catch (e) {
     throw new Error('Failed to build URL for model "' + model + '" of type "' + type + '": ' + e.message)
+  }
+}
+
+function buildApiUrl (id, options) {
+  switch (id) {
+    case 'userSearch':
+      return options && options.query ? `/search/user/?search=${options.query}` : '/search/user'
+    default:
+      throw new Error(`Failed to build API URL '${id}'`)
   }
 }

@@ -361,14 +361,17 @@ async function doLogout (req, res) {
  * @param {string} req.query.search a contigious fragment of the user's title
  */
 function searchUsers (req, res) {
-  if (!req.query.search) {
+  if (!req.query.search || req.query.search.length < 3) {
     res.errorPage(400)
     return
   }
 
   userService.searchByName(req.query.search).then(users => {
     res.json({
-      users: users.map(user => user.get('title'))
+      items: users.map(user => ({
+        title: user.get('title'),
+        name: user.get('name')
+      }))
     })
   })
 }

@@ -23,7 +23,8 @@ module.exports = {
   viewEntry,
   editEntry,
   deleteEntry,
-  manageTeam
+  manageTeam,
+  saveTeam
 }
 
 /**
@@ -107,8 +108,26 @@ async function manageTeam (req, res) {
     return
   }
 
-  await res.locals.entry.related('userRoles.user')
-  res.render('entry/manage-team')
+  const roles = res.locals.entry.related('userRoles')
+    .sortBy(role => role.get('user_name'))
+  res.render('entry/manage-team', {
+    roles
+  })
+}
+
+/**
+ * Save team modifications to entry
+ */
+async function saveTeam (req, res) {
+  const {user, entry, owner} = res.locals
+  if (
+    !user || !entry || !owner ||
+    !securityService.canUserWrite(user, entry, { allowMods: true })
+  ) {
+    res.errorPage(403)
+  }
+
+  res.render('entry/edit-entry')
 }
 
 /**
