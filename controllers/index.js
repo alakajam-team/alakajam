@@ -21,6 +21,7 @@ module.exports = {
     const mainController = require('./main-controller.js')
     const postController = require('./post-controller.js')
     const userController = require('./user-controller.js')
+    const apiController = require('./api-controller.js')
 
     // Run all middleware before any actual route handlers
 
@@ -98,6 +99,14 @@ module.exports = {
     router.post('/post/:postId(\\d+)/:postName/edit', postController.savePost)
     router.get('/post/:postId(\\d+)/:postName/edit', postController.editPost)
     router.get('/post/:postId(\\d+)/:postName/delete', postController.deletePost)
+
+    // JSON API
+
+    router.get('/api', apiController.index)
+    router.get('/api/featuredEvent', apiController.featuredEvent)
+    router.get('/api/event/:event', apiController.event)
+    router.get('/api/entry/:entry', apiController.entry)
+    router.get('/api/user/:user', apiController.user)
   }
 
 }

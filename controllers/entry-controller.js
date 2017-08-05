@@ -71,15 +71,20 @@ async function viewEntry (req, res) {
 async function createEntry (req, res) {
   if (!res.locals.user) {
     res.errorPage(403)
-  } else if (await eventService.findUserEntryForEvent(res.locals.user, res.locals.event.id)) {
-    res.errorPage(403, 'User already has an entry for this event')
+  } else if (!eventService.areSubmissionsAllowed(res.locals.event)) {
+    res.errorPage(403, 'Submissions are closed for this event')
   } else {
-    res.render('entry/edit-entry', {
-      entry: new models.Entry({
-        event_id: res.locals.event.get('id'),
-        event_name: res.locals.event.get('name')
+    let existingEntry = await eventService.findUserEntryForEvent(res.locals.user, res.locals.event.id)
+    if (existingEntry) {
+      res.redirect(templating.buildUrl(existingEntry, 'entry', 'edit'))
+    } else {
+      res.render('entry/edit-entry', {
+        entry: new models.Entry({
+          event_id: res.locals.event.get('id'),
+          event_name: res.locals.event.get('name')
+        })
       })
-    })
+    }
   }
 }
 
@@ -129,6 +134,11 @@ async function saveEntry (req, res) {
     }
     if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
+    } else if (!res.locals.entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
+      errorMessage = 'Submissions are closed for this event'
+    } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
+      console.log(files.picture.path)
+      errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
     }
 
     // Entry update

@@ -11,7 +11,9 @@ const fs = promisify('fs')
 const mkdirp = promisify('mkdirp')
 const path = require('path')
 const url = require('url')
+const mime = require('mime-types')
 const config = require('../config')
+const constants = require('./constants')
 
 let sharp = null
 try {
@@ -21,8 +23,10 @@ try {
 }
 
 module.exports = {
-  toUploadPath,
+  isValidPicture,
+
   savePictureUpload,
+
   exists,
   read,
   write,
@@ -33,14 +37,28 @@ module.exports = {
 const SOURCES_ROOT = path.join(__dirname, '..')
 
 /**
+ * @param {string} path
+ * @returns {bool} whather the specified path is a vaild picture
+ */
+function isValidPicture (path) {
+  let fileMimeType = mime.lookup(path)
+  return constants.ALLOWED_PICTURE_MIMETYPES.indexOf(fileMimeType) !== -1
+}
+
+/**
  * Moves the file from a path to another. Typically used for saving temporary files.
  * @param {string} sourcePath The full path to the file to move
  * @param {string} targetPath The path to the destination, relative to the uploads folder.
  * @param {object} options (Optional) allowed: maxDiagonal
  *   If the file extension is omitted, it will be grabbed from the source path. If folders don't exist, they will be created.
- * @returns the URL to that path
+ * @throws if the source path is not a valid picture
+ * @returns {string} the URL to that path
  */
 async function savePictureUpload (sourcePath, targetPath, options = {}) {
+  if (!isValidPicture(sourcePath)) {
+    throw new Error('Invalid picture mimetype (allowed: PNG GIF JPG)')
+  }
+
   let actualTargetPath = targetPath.replace(/^[\\/]/, '') // remove leading slash
   if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
     actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath)
@@ -85,18 +103,6 @@ async function exists (documentPath) {
     return true
   } catch (e) {
     return false
-  }
-}
-/**
- * Prepends the specified path with the uploads static folder
- * @param  {string} anyPath
- * @return {string}
- */
-function toUploadPath (anyPath) {
-  if (anyPath.indexOf(config.UPLOADS_PATH) === -1) {
-    return path.join(config.UPLOADS_PATH, anyPath)
-  } else {
-    return anyPath
   }
 }
 

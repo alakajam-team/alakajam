@@ -171,6 +171,7 @@ async function dashboardSettings (req, res) {
     let {fields, files} = await req.parseForm()
     if (!res.headersSent) { // FIXME Why?
       let dashboardUser = res.locals.dashboardUser
+      let newAvatar = files.avatar && files.avatar.size > 0
 
       if (!forms.isEmail(fields.email)) {
         errorMessage = 'Invalid email'
@@ -178,6 +179,8 @@ async function dashboardSettings (req, res) {
         errorMessage = 'Invalid URL'
       } else if (!res.locals.dashboardAdminMode && fields['special-permissions']) {
         errorMessage = 'Not allowed to change special permissions on this user'
+      } else if (newAvatar && !fileStorage.isValidPicture(files.avatar.path)) {
+        errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
       }
 
       if (!errorMessage) {
@@ -205,7 +208,6 @@ async function dashboardSettings (req, res) {
         }
 
         // TODO Formidable shouldn't create an empty file
-        let newAvatar = files.avatar && files.avatar.size > 0
         if (dashboardUser.get('avatar') && (files['avatar-delete'] || newAvatar)) {
           await fileStorage.remove(dashboardUser.get('avatar'))
           dashboardUser.unset('avatar')

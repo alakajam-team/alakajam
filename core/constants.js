@@ -41,10 +41,11 @@ module.exports = {
   SPECIAL_POST_TYPE_ARTICLE,
   SPECIAL_POST_TYPES,
   REQUIRED_ARTICLES: ['help'],
-  ALLOWED_POST_TAGS: [ 'b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe' ],
+  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img'],
   ALLOWED_POST_ATTRIBUTES: {
     'a': ['href'],
-    'iframe': ['src', 'width', 'height', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen']
+    'iframe': ['src', 'width', 'height', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
+    'img': ['src', 'width', 'height']
   },
   ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com'],
 
@@ -52,6 +53,13 @@ module.exports = {
   DATE_FORMAT: 'MMMM Do YYYY',
   DATE_TIME_FORMAT: 'MMMM Do YYYY, h:mm',
   PICKER_DATE_TIME_FORMAT: 'YYYY-MM-DD HH:mm',
-  PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii'
+  PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii',
+
+  // Misc
+  ALLOWED_PICTURE_MIMETYPES: [
+    'image/png',
+    'image/jpeg',
+    'image/gif'
+  ]
 
 }

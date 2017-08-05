@@ -162,7 +162,7 @@ async function editPost (req, res) {
       post.set('title', forms.sanitizeString(req.query.title))
 
       // Check whether we're trying to create an existing article
-      if (post.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE) {
+      if (post.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE && post.get('name')) {
         post.trigger('titleChanged')
         let existingPost = await postService.findPost({
           name: post.get('name'),
@@ -235,6 +235,9 @@ async function savePost (req, res) {
       } else {
         post.set('event_id', null)
         post.set('entry_id', null)
+      }
+      if (post.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE) {
+        post.set('name', forms.slug(fields.name || fields.title))
       }
 
       // Publication & redirection strategy
