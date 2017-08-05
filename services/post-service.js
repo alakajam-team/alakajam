@@ -9,6 +9,7 @@
 const models = require('../core/models')
 const constants = require('../core/constants')
 const securityService = require('../services/security-service')
+const config = require('../config')
 
 module.exports = {
   isPast,
@@ -199,7 +200,7 @@ async function findCommentsToUser (user, options = {}) {
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '<>', user.id)
       .andWhere('comment.updated_at', '>', notificationsLastRead)
-      .orWhere('body', 'ilike', '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
+      .orWhere('body', (config.DB_TYPE === 'sqlite3' ? 'like' : 'ilike'), '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
   })
     .where('comment.updated_at', '>', notificationsLastRead)
     .orderBy('created_at', 'DESC')
