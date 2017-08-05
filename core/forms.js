@@ -116,7 +116,7 @@ function isUsername (string) {
  * @return {Boolean}
  */
 function isId (value) {
-  return value && (typeof value === 'number' && value % 1 === 0 || validator.isInt(value, { min: 1 }))
+  return value && ((typeof value === 'number' && value % 1 === 0) || validator.isInt(value, { min: 1 }))
 }
 
 /**
