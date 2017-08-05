@@ -78,5 +78,5 @@ async function initFilesLayout () {
 
 async function initDatabase () {
   const db = require('../../core/db')
-  await db.upgradeTables(true)
+  await db.initDatabase(true)
 }
