@@ -70,7 +70,7 @@ async function initFilesLayout () {
   const fileStorage = require('../../core/file-storage')
 
   // Delete/recreate folders
-  await rimraf(config.DATA_PATH)
+  await rimraf(config.DB_SQLITE_FILENAME)
   await rimraf(config.UPLOADS_PATH)
   await fileStorage.createFolderIfMissing(path.join(config.DATA_PATH, '/tmp'))
   await fileStorage.createFolderIfMissing(config.UPLOADS_PATH)
