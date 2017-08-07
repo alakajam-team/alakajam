@@ -10,10 +10,167 @@
       <div class="col-lg-offset-1 col-lg-10">
         {{ postMacros.post(themesPost, user) }}
       </div>
-    {% else %} 
-      <div class="alert alert-warning">Theme voting system not implemented yet.</div>
+    {% else %}
+      <div class="col-xs-12">
+        <div class="panel">
+        
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h2>Theme ideas</h2>
+        <div class="well">
+          <div class="themes__ideas">
+            <div class="themes__idea">
+              <h1 style="margin-bottom: 0; font-size: 24px">Evolution</h1>
+              <p><span class="label label-primary">Active</span> after 5 votes</span></p>
+            </div>
+            <div class="themes__idea">
+              <h1 style="margin-bottom: 0; font-size: 24px">Evolution</h1>
+              <p><span class="label label-primary">Active</span> after 5 votes</span></p>
+            </div>
+            <div class="themes__idea">
+              <h1 style="margin-bottom: 0; font-size: 24px">Evolution</h1>
+              <p><span class="label label-primary">Active</span> after 5 votes</span></p>
+            </div>
+            <p style="display: none">You didn't submit any idea yet.</p>
+            <input type="submit" class="btn btn-primary" value="Manage theme ideas" />
+          </div>
+          <form method="post" style="display: none">
+            <div class="form-group">
+              <input type="text" class="form-control input-lg" readonly="readonly" placeholder="Idea #1" />
+              <p><span class="label label-default">Out</span> after 5 votes</span></p>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control input-lg" placeholder="Idea #2" />
+              <p><span class="label label-primary">Active</span> after 5 votes</span></p>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control input-lg" readonly="readonly" placeholder="Idea #1" />
+              <p><span class="label label-success">Shortlisted!</span> after 5 votes</span></p>
+            </div>
+            <input type="submit" class="btn btn-primary" value="Save changes" />
+            <input type="submit" class="btn btn-default" value="Cancel" />
+          </form>
+        </div>
+        <h2>Global stats</h2>
+        <div>
+          <p>
+            <b>50 ideas, 258 votes</b>
+           <div class="progress">
+            <div class="progress-bar progress-bar-primary" role="progressbar" style="width:60%">30 Active</div>
+            <div class="progress-bar progress-bar-warning" role="progressbar" style="width:40%">20 Out</div>
+           </div>
+           The lowest-ranking theme is eliminated every <b>10</b> votes (assuming it got at least <b>5</b> votes).
+          </p>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="theme__results" style="display: none">
+          <h2>Shortlist results</h2>
+          <div class="well">
+            <p>
+              <span class="pull-right">Your rankings</span>
+              Final rankings of the theme shortlist
+            </p>
+            <ol>
+              <li style="position: relative; width: 100%">
+                Evolution
+                <span class="pull-right label label-default">1st</span>
+              </li>
+              <li style="position: relative">
+                Evolution
+                <span class="pull-right label label-default">2nd</span>
+              </li>
+              <li style="position: relative">
+                Evolution
+                <span class="pull-right label label-default">4th</span>
+              </li>
+              <li style="position: relative">
+                Evolution
+                <span class="pull-right label label-default">3rd</span>
+              </li>
+              <li style="position: relative">
+                Evolution
+                <span class="pull-right label label-default">5th</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="theme__shortlist">
+          <h2>Shortlist ranking</h2>
+          <div class="well">
+            <p>Sort the top 10 of all suggested ideas by preference order!</p>
+            <ol id="js-shortlist">
+              <li style="position: relative; width: 100%">
+                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
+                Evolution
+                <span class="pull-right label label-default">1st</span>
+              </li>
+              <li style="position: relative">
+                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
+                Evolution
+                <span class="pull-right label label-default">2nd</span>
+              </li>
+              <li style="position: relative">
+                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
+                Evolution
+                <span class="pull-right label label-default">4th</span>
+              </li>
+              <li style="position: relative">
+                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
+                Evolution
+                <span class="pull-right label label-default">3rd</span>
+              </li>
+              <li style="position: relative">
+                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
+                Evolution
+                <span class="pull-right label label-default">5th</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="theme__voting" style="display: none">
+          <h2>Theme voting</h2>
+          <div class="well">
+            <div class="pull-left">
+              <input type="button" class="btn btn-success" value="^" />
+              <input type="button" class="btn btn-danger" value="v" />
+              <input type="button" class="btn btn-default" value="!" />
+            </div>
+            <h1>&nbsp;Evolution</h1>
+          </div>
+          <div class="horizontal-bar">Votes history</div>
+          <div class="row">
+            <div class="col-sm-6 col-md-4">
+              <div class="well">
+                <div class="pull-left">
+                  <input type="button" class="btn btn-xs btn-success" value="^" />
+                  <input type="button" class="btn btn-xs btn-danger" value="v" />
+                  <input type="button" class="btn btn-xs btn-default" value="!" />
+                </div>
+                <h1 style="font-size: 16px; margin-bottom: 0">&nbsp; Evolution</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     {% endif %}
   </div>
 </div>
 
 {% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="/static/js/sortable.min.js"></script>
+<script type="text/javascript">
+var list = document.getElementById('js-shortlist')
+Sortable.create(list, {
+  animation: 100
+})
+</script>
+{% endblock %}
+
+
+{% macro test() %}
+
+{% endmacro %}
