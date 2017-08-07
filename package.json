@@ -1,6 +1,6 @@
 {
   "name": "alakajam",
-  "version": "0.2.1-dev",
+  "version": "0.9.0-dev",
   "description": "Game jam system",
   "main": "server.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mkalam-alami/we-jam.git"
+    "url": "https://github.com/mkalam-alami/alakajam.git"
   },
   "license": "MIT",
   "bugs": {
