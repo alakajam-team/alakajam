@@ -1101,6 +1101,128 @@ input.date-picker {
 
 }
 
+/* Themes page */
+
+.themes {
+
+  &__ideas {
+    margin-bottom: 10px;
+  }
+  
+  &__idea {
+    border-bottom: 1px solid var(--borders);
+    padding: 10px 10px 15px 10px;
+    
+    & p {
+      margin-bottom: 0;
+      color: var(--text-light);
+    }
+    & .form-control {
+      margin-bottom: 5px;
+    }
+    & input[type=text] {
+      @apply --alt-font;
+      letter-spacing: 1px;
+    }
+  }
+  &__idea-label {
+    @apply --alt-font;
+    letter-spacing: 1px;
+    margin-bottom: 0;
+    font-size: 24px;
+  }
+
+  &__stats {
+   margin-top: 30px;
+  }
+  
+  & .progress {
+    border: 1px solid var(--neutral-light);
+    
+    & .progress-bar-default {
+      background-color: white;
+      color: var(--neutral);
+    }
+  }
+  &__progress-bar-out {
+      background-color: rgba(31, 48, 56, 0.4);
+  }
+  
+  &__shortlist ol, &__results ol {
+    padding-left: 0;
+    list-style-position: inside;
+  }
+  & .theme-shortlist-line {
+    position: relative;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--borders);
+    font-weight: bold;
+    color: var(--text-light);
+   
+    &:last-child {
+      border-bottom: 0;
+    }
+    &.draggable:hover {
+      background-color: var(--borders);
+    } 
+    &.draggable {
+      padding-left: 30px;
+      cursor: default;
+    }
+    
+    &__handle {
+      position: absolute;
+      left: 0;
+      top: 10px;
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+    
+    &__label {
+      @apply --alt-font;
+      color: var(--text);
+      padding-left: 10px;
+      font-weight: normal;
+      font-size: 1.4rem;
+    }
+    
+    &__ranking {
+      font-size: 1.1rem;
+      margin-top: 2px;
+    }
+  }
+  
+  & .theme-vote {
+    padding: 20px;
+    
+    &__buttons {
+      width: 100px;
+    }
+    
+    &__label {
+      @apply --alt-font;
+      font-size: 2rem;
+    }
+  }
+  
+  & .theme-past {
+    margin-bottom: 10px;
+    height: 25px;
+    
+    &__buttons {
+      width: 60px;
+      vertical-align: top;
+    }
+    
+    &__label {
+      @apply --alt-font;
+      letter-spacing: 0;
+      line-height: 0.9rem;
+    }
+  }
+}
+
+
 /* ============================== User pages ============================== */
 
 /* Login form */

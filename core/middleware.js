@@ -109,6 +109,12 @@ async function configure (app) {
   nunjucks.env.addFilter('relativeTime', function (date) {
     return moment(date).fromNow()
   })
+  nunjucks.env.addFilter('ordinal', function (n) {
+    // source: https://stackoverflow.com/a/12487454
+    let s = ['th', 'st', 'nd', 'rd']
+    let v = n % 100
+    return n + (s[(v - 20) % 10] || s[v] || s[0])
+  })
 
   // Templating: rendering context
   app.use(function templateTooling (req, res, next) {

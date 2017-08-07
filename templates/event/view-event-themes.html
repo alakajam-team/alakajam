@@ -4,153 +4,138 @@
 {% block body %}
 {{ super() }}
 
-<div class="container">
+<div class="container themes">
   <div class="row">
     {% if themesPost %}
       <div class="col-lg-offset-1 col-lg-10">
         {{ postMacros.post(themesPost, user) }}
       </div>
     {% else %}
-      <div class="col-xs-12">
-        <div class="panel">
-        
-        </div>
-      </div>
       <div class="col-md-4">
-        <h2>Theme ideas</h2>
-        <div class="well">
-          <div class="themes__ideas">
-            <div class="themes__idea">
-              <h1 style="margin-bottom: 0; font-size: 24px">Evolution</h1>
-              <p><span class="label label-primary">Active</span> after 5 votes</span></p>
-            </div>
-            <div class="themes__idea">
-              <h1 style="margin-bottom: 0; font-size: 24px">Evolution</h1>
-              <p><span class="label label-primary">Active</span> after 5 votes</span></p>
-            </div>
-            <div class="themes__idea">
-              <h1 style="margin-bottom: 0; font-size: 24px">Evolution</h1>
-              <p><span class="label label-primary">Active</span> after 5 votes</span></p>
-            </div>
-            <p style="display: none">You didn't submit any idea yet.</p>
-            <input type="submit" class="btn btn-primary" value="Manage theme ideas" />
-          </div>
-          <form method="post" style="display: none">
-            <div class="form-group">
-              <input type="text" class="form-control input-lg" readonly="readonly" placeholder="Idea #1" />
-              <p><span class="label label-default">Out</span> after 5 votes</span></p>
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control input-lg" placeholder="Idea #2" />
-              <p><span class="label label-primary">Active</span> after 5 votes</span></p>
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control input-lg" readonly="readonly" placeholder="Idea #1" />
-              <p><span class="label label-success">Shortlisted!</span> after 5 votes</span></p>
-            </div>
-            <input type="submit" class="btn btn-primary" value="Save changes" />
-            <input type="submit" class="btn btn-default" value="Cancel" />
-          </form>
-        </div>
-        <h2>Global stats</h2>
         <div>
-          <p>
-            <b>50 ideas, 258 votes</b>
-           <div class="progress">
-            <div class="progress-bar progress-bar-primary" role="progressbar" style="width:60%">30 Active</div>
-            <div class="progress-bar progress-bar-warning" role="progressbar" style="width:40%">20 Out</div>
-           </div>
-           The lowest-ranking theme is eliminated every <b>10</b> votes (assuming it got at least <b>5</b> votes).
-          </p>
+        <h2>Theme ideas
+          <input type="submit" class="btn btn-primary" value="Manage" /></h2>
+        <div class="panel themes__ideas">
+          <div class="themes__idea">
+            <div class="themes__idea-label">Evolution</div>
+            <p><span class="label">Out</span> after 5 votes</span></p>
+          </div>
+          <div class="themes__idea">
+            <div class="themes__idea-label">Evolution</div>
+            <p><span class="label label-default">Active</span> after 5 votes</span></p>
+          </div>
+          <div class="themes__idea">
+            <div class="themes__idea-label">Evolution</div>
+            <p><span class="label label-success">Qualified for shortlist!</span> after 5 votes</span></p>
+          </div>
+          <p style="display: none">You didn't submit any idea yet!</p>
+        </div>
+        </div>
+        
+        <form method="post" style="display: none">
+          <h2>Theme ideas 
+              <input type="submit" class="btn btn-primary" value="Save" />
+              <input type="submit" class="btn btn-default" value="Cancel" /></h2>
+          <div class="panel themes__ideas">
+            <div class="form-group themes__idea">
+              <input type="text" class="form-control input-lg" disabled="disabled" placeholder="Idea #1" value="Evolution" />
+              <p><span class="label">Out</span> after 5 votes</span></p>
+            </div>
+            <div class="form-group themes__idea">
+              <input type="text" class="form-control input-lg" placeholder="Idea #2" maxlength="60" />
+              <p><span class="label label-default">Active</span> after 5 votes</span></p>
+            </div>
+            <div class="form-group themes__idea">
+              <input type="text" class="form-control input-lg" disabled="disabled" placeholder="Idea #1" value="Evolution" />
+              <p><span class="label label-success">Qualified for shortlist!</span> after 5 votes</span></p>
+            </div>
+          </div>
+        </form>
+        
+        <div class="themes__stats">
+          <h2>Stats</h2>
+          <div>
+            <ul>
+              <li><b>You:</b> 3 ideas, 35 votes</li>
+              <li><b>Global:</b> 50 ideas, 258 votes</li>
+            </ul>
+             <div class="progress">
+              <div class="progress-bar progress-bar-default" role="progressbar" style="width: 60%">30 Active</div>
+              <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: 40%">20 Out</div>
+               <!--<div class="progress-bar progress-bar-success" role="progressbar" style="width: 10%">10 Shortlisted</div>
+              <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: 90%">40 Out</div>-->
+             </div>
+             The lowest-ranking theme is eliminated every <b>10</b> votes (assuming it got at least <b>5</b> votes).
+            </p>
+          </div>
         </div>
       </div>
+      
       <div class="col-md-8">
-        <div class="theme__results" style="display: none">
+        <div class="themes__results" style="display: none">
           <h2>Shortlist results</h2>
           <div class="well">
             <p>
-              <span class="pull-right">Your rankings</span>
+              <span class="pull-right">Your picks</span>
               Final rankings of the theme shortlist
             </p>
             <ol>
-              <li style="position: relative; width: 100%">
-                Evolution
-                <span class="pull-right label label-default">1st</span>
+              {% for i in range(0, 10) %}
+              <li class="theme-shortlist-line">
+                <span class="theme-shortlist-line__label">Evolution {{ i }}</span>
+                <span class="theme-shortlist-line__ranking pull-right label label-default">{{ [i, 1] | sum | ordinal }}</span>
               </li>
-              <li style="position: relative">
-                Evolution
-                <span class="pull-right label label-default">2nd</span>
-              </li>
-              <li style="position: relative">
-                Evolution
-                <span class="pull-right label label-default">4th</span>
-              </li>
-              <li style="position: relative">
-                Evolution
-                <span class="pull-right label label-default">3rd</span>
-              </li>
-              <li style="position: relative">
-                Evolution
-                <span class="pull-right label label-default">5th</span>
-              </li>
+              {% endfor %}
             </ol>
           </div>
         </div>
-        <div class="theme__shortlist">
-          <h2>Shortlist ranking</h2>
-          <div class="well">
-            <p>Sort the top 10 of all suggested ideas by preference order!</p>
-            <ol id="js-shortlist">
-              <li style="position: relative; width: 100%">
-                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
-                Evolution
-                <span class="pull-right label label-default">1st</span>
-              </li>
-              <li style="position: relative">
-                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
-                Evolution
-                <span class="pull-right label label-default">2nd</span>
-              </li>
-              <li style="position: relative">
-                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
-                Evolution
-                <span class="pull-right label label-default">4th</span>
-              </li>
-              <li style="position: relative">
-                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
-                Evolution
-                <span class="pull-right label label-default">3rd</span>
-              </li>
-              <li style="position: relative">
-                <span class="glyphicon glyphicon-option-vertical" style="position: absolute; left: -30px"></span> 
-                Evolution
-                <span class="pull-right label label-default">5th</span>
-              </li>
-            </ol>
-          </div>
-        </div>
-        <div class="theme__voting" style="display: none">
-          <h2>Theme voting</h2>
-          <div class="well">
-            <div class="pull-left">
-              <input type="button" class="btn btn-success" value="^" />
-              <input type="button" class="btn btn-danger" value="v" />
-              <input type="button" class="btn btn-default" value="!" />
+        
+        <div class="themes__shortlist" style="display: none">
+          <h2>Shortlist ranking
+            <input type="submit" class="btn btn-primary disabled" disabled="disabled" value="Save changes" /></h2>        
+          <form method="post">
+            <div class="well">
+              <p>These are the top 10 suggested ideas! Rank them by preference order.</p>
+              <ol id="js-shortlist">
+                {% for i in range(0, 10) %}
+                <li class="theme-shortlist-line draggable">
+                  <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
+                  <span class="theme-shortlist-line__label">Evolution {{ i }}</span>
+                </li>
+                {% endfor %}
+              </ol>
             </div>
-            <h1>&nbsp;Evolution</h1>
+          </form>
+        </div>
+        
+        <div class="themes__voting">
+          <h2>Theme voting</h2>
+          <div class="panel theme-vote">
+            <table>
+            <tr><td class="theme-vote__buttons">
+              <button class="btn btn-default"><span class="glyphicon glyphicon-arrow-up"></span></button>
+              <button class="btn btn-default"><span class="glyphicon glyphicon-arrow-down"></span></button>
+            </td><td class="theme-vote__label">
+              Evolution
+            </td></tr>
+            </table>
           </div>
           <div class="horizontal-bar">Votes history</div>
           <div class="row">
-            <div class="col-sm-6 col-md-4">
-              <div class="well">
-                <div class="pull-left">
-                  <input type="button" class="btn btn-xs btn-success" value="^" />
-                  <input type="button" class="btn btn-xs btn-danger" value="v" />
-                  <input type="button" class="btn btn-xs btn-default" value="!" />
-                </div>
-                <h1 style="font-size: 16px; margin-bottom: 0">&nbsp; Evolution</h1>
+            {% for i in range(0, 10) %}
+            <div class="col-sm-6">
+              <div class="theme-past">
+                <table>
+                <tr><td class="theme-past__buttons">
+                  <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                  <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                </td><td class="theme-past__label">
+                  Evolution
+                </td></tr>
+                </table>
               </div>
             </div>
+            {% endfor %}
           </div>
         </div>
       </div>
