@@ -21,8 +21,10 @@
    <li class="divider"></li> 
   <li><a href="{{ buildUrl(null, 'post', 'create') }}">Create post</a></li>
   <li><a href="{{ buildUrl(user, 'user', 'posts') }}">Manage posts</a></li>
+  {% if user %}
    <li class="divider"></li> 
   <li><a href="/logout">Logout</a></li>
+  {% endif %}
 </ul>
 {% endmacro %}
 
