@@ -117,9 +117,8 @@
           <li class="{{ 'active' if path == '/people' }}"><a href="/people">People</a></li>
           <li class="hidden-sm {{ 'active' if path == '/chat' }}"><a href="/chat">Chat</a></li>
           <li class="{{ 'active' if path == '/article/help' }}"><a href="/article/help">Help</a></li>
-          <li class="visible-xs {{ 'active' if path == '/logout' }}"><a href="/logout">Logout</a></li>
-
           {% if user %}
+            <li class="visible-xs {{ 'active' if path == '/logout' }}"><a href="/logout">Logout</a></li>
             <li class="dropdown hidden-xs">
             {{ userMenu(user, unreadNotifications) }}
             </li>
