@@ -237,7 +237,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line60">line 60</a>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line91">line 91</a>
     </li></ul></dd>
     
 
@@ -286,14 +286,523 @@
 
     
 
-    <h4 class="name" id="~isId"><span class="type-signature">(inner) </span>isId<span class="signature">(string)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    <h4 class="name" id="~isId"><span class="type-signature">(inner) </span>isId<span class="signature">(value)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Checks whether the string is a valid ID. If so, additional sanitizing is not needed.</p>
+    <p>Checks whether the value is a valid ID. If so, additional sanitizing is not needed.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~isIn"><span class="type-signature">(inner) </span>isIn<span class="signature">(string, values)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Checks whether the string is in an array of allowed values</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>string</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>values</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array(string)</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line137">line 137</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~isLengthValid"><span class="type-signature">(inner) </span>isLengthValid<span class="signature">(input, maxLength)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Checks whether the string is not longer than the specified length.
+(Note: not checking this does not trigger crashes on the developer
+H2 database, instead strings are just truncated)</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maxLength</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    255
+                
+                </td>
+            
+
+            <td class="description last"><p>[description]</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line149">line 149</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>[description]</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~isSlug"><span class="type-signature">(inner) </span>isSlug<span class="signature">(string)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Checks whether the string is a valid slug. If so, additional sanitizing is not needed.</p>
 </div>
 
 
@@ -386,7 +895,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line87">line 87</a>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line127">line 127</a>
     </li></ul></dd>
     
 
@@ -535,7 +1044,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line69">line 69</a>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line100">line 100</a>
     </li></ul></dd>
     
 
@@ -684,7 +1193,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line78">line 78</a>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line109">line 109</a>
     </li></ul></dd>
     
 
@@ -833,7 +1342,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line96">line 96</a>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line179">line 179</a>
     </li></ul></dd>
     
 
@@ -874,6 +1383,238 @@
 </dl>
 
     
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~markdownToText"><span class="type-signature">(inner) </span>markdownToText<span class="signature">(markdown)</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Converts the given Markdown to single-line text</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>markdown</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line200">line 200</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~parseDateTime"><span class="type-signature">(inner) </span>parseDateTime<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Converts a string built in a date time picker to an actual date
+which can be stored in a model</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line165">line 165</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -982,7 +1723,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line48">line 48</a>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line69">line 69</a>
     </li></ul></dd>
     
 
@@ -1031,14 +1772,14 @@
 
     
 
-    <h4 class="name" id="~sanitizeString"><span class="type-signature">(inner) </span>sanitizeString<span class="signature">(string)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="~sanitizeString"><span class="type-signature">(inner) </span>sanitizeString<span class="signature">(string, maxLength)</span><span class="type-signature"> &rarr; {string}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Sanitizes a string form input (by removing any tags).
+    <p>Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
 If the string is meant for anything other than direct display (e.g. links, markdown...)
 then this is not the right filter.
 Use this on all string input unless you need more advanced escaping (e.g. for URLs, for Markdown)</p>
@@ -1067,6 +1808,8 @@ Use this on all string input unless you need more advanced escaping (e.g. for UR
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -1091,6 +1834,39 @@ Use this on all string input unless you need more advanced escaping (e.g. for UR
 
             
 
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maxLength</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    255
+                
+                </td>
             
 
             <td class="description last"></td>
@@ -1134,7 +1910,7 @@ Use this on all string input unless you need more advanced escaping (e.g. for UR
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line39">line 39</a>
+        <a href="core_forms.js.html">core/forms.js</a>, <a href="core_forms.js.html#line60">line 60</a>
     </li></ul></dd>
     
 
@@ -1194,13 +1970,13 @@ Use this on all string input unless you need more advanced escaping (e.g. for UR
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

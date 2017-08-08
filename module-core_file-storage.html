@@ -189,7 +189,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line151">line 151</a>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line157">line 157</a>
     </li></ul></dd>
     
 
@@ -212,6 +212,155 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
 
 
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~isValidPicture"><span class="type-signature">(inner) </span>isValidPicture<span class="signature">(path)</span><span class="type-signature"> &rarr; {bool}</span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line43">line 43</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>whather the specified path is a vaild picture</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">bool</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -320,7 +469,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line108">line 108</a>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line114">line 114</a>
     </li></ul></dd>
     
 
@@ -373,7 +522,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
     
 
-    <h4 class="name" id="~savePictureUpload"><span class="type-signature">(inner) </span>savePictureUpload<span class="signature">(sourcePath, targetPath, options)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~savePictureUpload"><span class="type-signature">(inner) </span>savePictureUpload<span class="signature">(sourcePath, targetPath, options)</span><span class="type-signature"> &rarr; {string}</span></h4>
 
     
 
@@ -520,7 +669,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line43">line 43</a>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line57">line 57</a>
     </li></ul></dd>
     
 
@@ -541,6 +690,18 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
 
 
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        <p>if the source path is not a valid picture</p>
+    
+    </div>
+
+
+    
 
 
 <h5>Returns:</h5>
@@ -550,143 +711,6 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     <p>the URL to that path</p>
 </div>
 
-
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~toUploadPath"><span class="type-signature">(inner) </span>toUploadPath<span class="signature">(anyPath)</span><span class="type-signature"> &rarr; {string}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Prepends the specified path with the uploads static folder</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>anyPath</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line95">line 95</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
 
 
 <dl>
@@ -833,7 +857,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line119">line 119</a>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line125">line 125</a>
     </li></ul></dd>
     
 
@@ -875,13 +899,13 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

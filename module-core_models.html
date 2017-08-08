@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: core/db</title>
+    <title>JSDoc: Module: core/models</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: core/db</h1>
+    <h1 class="page-title">Module: core/models</h1>
 
     
 
@@ -38,8 +38,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>Database storage configuration.
-Requiring the module returns a <a href="http://bookshelfjs.org/">Bookshelf</a> instance.</p></div>
+            <div class="description"><p>Bookshelf models</p></div>
         
 
         
@@ -88,7 +87,7 @@ Requiring the module returns a <a href="http://bookshelfjs.org/">Bookshelf</a> i
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_db.js.html">core/db.js</a>, <a href="core_db.js.html#line3">line 3</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -129,106 +128,19 @@ Requiring the module returns a <a href="http://bookshelfjs.org/">Bookshelf</a> i
     
 
     
-
-    
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title">Members</h3>
 
         
             
+<h4 class="name" id=".Event"><span class="type-signature">(static) </span>Event<span class="type-signature"></span></h4>
 
-    
-
-    <h4 class="name" id="~insertInitialData"><span class="type-signature">(inner) </span>insertInitialData<span class="signature">(bookshelf, samples)</span><span class="type-signature"> &rarr; {void}</span></h4>
-
-    
 
 
 
 <div class="description">
-    <p>Inserts sample data in the database.</p>
+    <h2>Table columns</h2>
 </div>
 
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>bookshelf</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Bookshelf</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>samples</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-|
-
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>true to add samples, 'nightly' to add the special nighly post</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -264,7 +176,7 @@ Requiring the module returns a <a href="http://bookshelfjs.org/">Bookshelf</a> i
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_db.js.html">core/db.js</a>, <a href="core_db.js.html#line107">line 107</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line144">line 144</a>
     </li></ul></dd>
     
 
@@ -280,35 +192,279 @@ Requiring the module returns a <a href="http://bookshelfjs.org/">Bookshelf</a> i
 
 
 
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
         
+            
+<h4 class="name" id=".Setting"><span class="type-signature">(static) </span>Setting<span class="type-signature"></span></h4>
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">void</span>
 
 
-    </dd>
-</dl>
+<div class="description">
+    <p>table.string('key').primary()
+  table.string('value')
+  table.timestamps()</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line21">line 21</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
 
 
         
+            
+<h4 class="name" id=".User"><span class="type-signature">(static) </span>User<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>table.increments('id').primary()
+  table.string('name').unique()
+  table.string('title')
+  table.string('email')
+  table.string('avatar')
+  table.string('is_mod')
+  table.string('is_admin')
+  table.string('password')
+  table.string('password_salt')
+  table.dateTime('notifications_last_read')
+  table.timestamps()</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".UserDetails"><span class="type-signature">(static) </span>UserDetails<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>table.increments('id').primary()
+  table.integer('user_id').references('user.id').unique()
+  table.string('body', 10000)
+  table.string('social_links', 1000)</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line69">line 69</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".UserRole"><span class="type-signature">(static) </span>UserRole<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>table.increments('id').primary()
+  table.integer('user_id').references('user.id')
+  table.string('user_name')
+  table.string('user_title')
+  table.integer('node_id')
+  table.string('node_type')
+  table.string('permission') // allowed: owner
+  table.timestamps()</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line107">line 107</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
     
 
     

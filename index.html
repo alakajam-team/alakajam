@@ -43,9 +43,7 @@
 
 
     <section>
-        <article><h1>Alakajam! <em>(previously WeJam!)</em></h1><blockquote>
-<p>Current progress: A very early alpha website, with posts half-implemented, no events administration, awful security, and no voting system.</p>
-</blockquote>
+        <article><p><img src="https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/brand.png" alt="Alakajam!"></p>
 <h2>Initial setup</h2><p>Requirement: NodeJS 7.6+</p>
 <ul>
 <li><code>npm install</code></li>
@@ -53,7 +51,7 @@
 <li>Browse to <code>http://localhost:8000</code></li>
 </ul>
 <p>There is a default admin user (<code>administrator</code>/<code>administrator</code>).</p>
-<h2>Developer tools</h2><p>Prerequisite: <code>npm install -g standard browser-refresh node-inspector jsdoc mocha</code></p>
+<h2>Developer tools</h2><p>Prerequisite: <code>npm install -g knex standard browser-refresh node-inspector jsdoc mocha</code></p>
 <h3>Recommended</h3><ul>
 <li><code>browser-refresh server.js</code>: Launches the app, and makes the server and browser refresh when needed upon file changes.</li>
 <li><code>standard</code>: Validates the code style. Run <code>githooks/install.sh</code> to trigger validation automatically before committing.</li>
@@ -62,6 +60,7 @@
 <li><code>node-debug server.js</code>: Launches the app in debug mode.</li>
 <li><code>npm run-script docs</code>: Generates the JS documentation in the <code>docs/</code> folder.</li>
 <li><code>mocha tests/</code>: Runs unit tests.</li>
+<li><code>DEBUG=express:*</code>: Enables debugging of routes &amp; performance (must be set before launching the server)</li>
 </ul>
 <p>See also <a href="https://github.com/mkalam-alami/wejam/wiki">the wiki</a> for additional developer documentation.</p>
 <h4>Enabling picture resizing</h4><p>If the <code>sharp</code> dependency failed to install in the initial setup, your picture uploads won't be resized. If you want to fix that:</p>
@@ -79,13 +78,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

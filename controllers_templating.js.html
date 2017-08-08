@@ -34,60 +34,91 @@
  * @module controllers/templating
  */
 
+const constants = require('../core/constants')
+const forms = require('../core/forms')
 const securityService = require('../services/security-service')
 const postService = require('../services/post-service')
 
-const DASHBOARD_PAGES = ['posts', 'settings', 'password']
+const DASHBOARD_PAGES = ['feed', 'posts', 'invite', 'settings', 'password']
 
 module.exports = {
   buildUrl,
+
+  min: Math.min,
+  max: Math.max,
+
+  isId: forms.isId,
 
   isPast: postService.isPast,
   wasEdited: postService.wasEdited,
 
   canUserRead: securityService.canUserRead,
   canUserWrite: securityService.canUserWrite,
-  canUserManage: securityService.canUserManage
+  canUserManage: securityService.canUserManage,
+  isAdmin: securityService.isAdmin,
+  isMod: securityService.isMod
 }
 
 function buildUrl (model, type, page = null, options = {}) {
-  let pagePath = (page ? '/' + page : '')
+  try {
+    let pagePath = (page ? '/' + page : '')
 
-  if (type === 'event') {
-    // Event model
-    return '/' + model.get('name') + pagePath
-  } else if (type === 'entry') {
-    // Entry model
-    if (model &amp;&amp; model.id) {
-      return '/' + model.get('event_name') + '/' + model.id + '/' + model.get('name') + pagePath
-    } else {
-      return '/' + model.get('event_name') + '/create-entry'
+    if (type === 'event') {
+      // Event model
+      if (model &amp;&amp; model.id) {
+        if (page === 'posts') {
+          pagePath = ''
+        }
+        return '/' + model.get('name') + pagePath
+      } else {
+        return '/create-event'
+      }
+    } else if (type === 'entry') {
+      // Entry model
+      if (model &amp;&amp; model.id) {
+        return '/' + model.get('event_name') + '/' + model.id + '/' + model.get('name') + pagePath
+      } else {
+        return '/' + model.get('event_name') + '/create-entry'
+      }
+    } else if (type === 'user') {
+      // User Role model / User model
+      if (DASHBOARD_PAGES.indexOf(page) !== -1) {
+        if (options.dashboardAdminMode) {
+          page += '?user=' + model.get('name')
+        }
+        return '/dashboard/' + page
+      } else {
+        let userId = model.get('name') || model.get('user_name')
+        return '/user/' + userId + pagePath
+      }
+    } else if (type === 'post') {
+      // Post model
+      if (page === 'create') {
+        pagePath += '?'
+        if (options.eventId) pagePath += 'eventId=' + options.eventId
+        if (options.entryId) pagePath += '&amp;entryId=' + options.entryId
+        if (options.specialPostType) pagePath += '&amp;special_post_type=' + options.specialPostType
+        if (options.title) pagePath += '&amp;title=' + options.title
+        return '/post' + pagePath
+      } else if (model &amp;&amp; typeof model === 'object') {
+        if (model.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE &amp;&amp; !page) {
+          return '/article/' + model.get('name')
+        } else {
+          return '/post/' + model.id + '/' + (model.get('name') || 'untitled') + pagePath
+        }
+      } else {
+        return '/post/' + model
+      }
+    } else if (type === 'comment') {
+      // Comment model
+      let pageParams = ''
+      if (model &amp;&amp; page === 'edit') {
+        pageParams = 'editComment=' + model.id
+      }
+      return '?' + pageParams + (model ? '#c' + model.id : '')
     }
-  } else if (type === 'user') {
-    // User Role model / User model
-    if (DASHBOARD_PAGES.indexOf(page) !== -1) {
-      return '/dashboard/' + page
-    } else {
-      let userId = model.get('name') || model.get('user_name')
-      return '/user/' + userId + pagePath
-    }
-  } else if (type === 'post') {
-    // Post model
-    if (page === 'create') {
-      pagePath += '?'
-      if (options.eventId) pagePath += 'eventId=' + options.eventId
-      if (options.entryId) pagePath += '&amp;entryId=' + options.entryId
-      return '/post' + pagePath
-    } else {
-      return '/post/' + model.id + '/' + model.get('name') + pagePath
-    }
-  } else if (type === 'comment') {
-    // Comment model
-    let pageParams = ''
-    if (model &amp;&amp; page === 'edit') {
-      pageParams = 'editComment=' + model.id
-    }
-    return '?' + pageParams + (model ? '#c' + model.id : '')
+  } catch (e) {
+    throw new Error('Failed to build URL for model "' + model + '" of type "' + type + '": ' + e.message)
   }
 }
 </code></pre>
@@ -100,13 +131,13 @@ function buildUrl (model, type, page = null, options = {}) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

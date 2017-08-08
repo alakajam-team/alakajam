@@ -39,33 +39,54 @@ const xss = require('xss')
 const validator = require('validator')
 const striptags = require('striptags')
 const showdown = require('showdown')
+const moment = require('moment')
+const slug = require('slug')
+const nunjucks = require('nunjucks')
+const removeMarkdown = require('remove-markdown')
+const url = require('url')
 const constants = require('../core/constants')
 
 module.exports = {
   sanitizeString,
   sanitizeMarkdown,
 
+  capitalize: new nunjucks.Environment().filters.capitalize,
+  slug: slug,
+
   isEmail,
   isURL,
   isUsername,
   isId,
+  isSlug,
+  isIn,
+  isLengthValid,
 
-  markdownToHtml
+  parseDateTime,
+
+  markdownToHtml,
+  markdownToText
 }
 
 // Libs init
-const showdownConverter = new showdown.Converter()
+
+const showdownConverter = new showdown.Converter({
+  tables: true
+})
+const customXss = new xss.FilterXSS({
+  whiteList: Object.assign(constants.ALLOWED_POST_ATTRIBUTES, xss.whiteList)
+})
 
 /**
- * Sanitizes a string form input (by removing any tags).
+ * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
  * If the string is meant for anything other than direct display (e.g. links, markdown...)
  * then this is not the right filter.
  * Use this on all string input unless you need more advanced escaping (e.g. for URLs, for Markdown)
  * @param  {string} string
+ * @param  {string} maxLength
  * @return {string}
  */
-function sanitizeString (string) {
-  return striptags(string)
+function sanitizeString (string, maxLength = 255) {
+  return striptags(string).trim().slice(0, maxLength)
 }
 
 /**
@@ -73,11 +94,21 @@ function sanitizeString (string) {
  * @param  {string} markdown
  * @return {string}
  */
-function sanitizeMarkdown (markdown) {
+function sanitizeMarkdown (markdown, maxLength = 10000) {
   return sanitizeHtml(markdown, {
     allowedTags: constants.ALLOWED_POST_TAGS,
-    allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES
+    allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
+    exclusiveFilter: function (frame) {
+      if (frame.tag === 'iframe') {
+        let srcUrl = url.parse(frame.attribs.src)
+        return constants.ALLOWED_IFRAME_HOSTS.indexOf(srcUrl.host) === -1
+      } else {
+        return false
+      }
+    }
   })
+    .replace(/&amp;gt;/g, '>') // ">"s are used in quote blocks
+    .slice(0, maxLength)
 }
 
 /**
@@ -86,7 +117,7 @@ function sanitizeMarkdown (markdown) {
  * @return {Boolean}
  */
 function isEmail (string) {
-  return validator.isEmail(string)
+  return string &amp;&amp; validator.isEmail(string)
 }
 
 /**
@@ -95,7 +126,7 @@ function isEmail (string) {
  * @return {Boolean}
  */
 function isURL (string) {
-  return validator.isURL(string)
+  return string &amp;&amp; validator.isURL(string)
 }
 
 /**
@@ -108,12 +139,64 @@ function isUsername (string) {
 }
 
 /**
- * Checks whether the string is a valid ID. If so, additional sanitizing is not needed.
+ * Checks whether the value is a valid ID. If so, additional sanitizing is not needed.
+ * @param  {string|number} value
+ * @return {Boolean}
+ */
+function isId (value) {
+  return value &amp;&amp; ((typeof value === 'number' &amp;&amp; value % 1 === 0) || validator.isInt(value, { min: 1 }))
+}
+
+/**
+ * Checks whether the string is a valid slug. If so, additional sanitizing is not needed.
  * @param  {string} string
  * @return {Boolean}
  */
-function isId (string) {
-  return validator.isInt(string, { min: 1 })
+function isSlug (string) {
+  return string &amp;&amp; slug(string) === string
+}
+
+/**
+ * Checks whether the string is in an array of allowed values
+ * @param  {string} string
+ * @param  {array(string)} values
+ * @return {Boolean}
+ */
+function isIn (string, values) {
+  return string &amp;&amp; validator.isIn(string, values)
+}
+
+/**
+ * Checks whether the string is not longer than the specified length.
+ * (Note: not checking this does not trigger crashes on the developer
+ * H2 database, instead strings are just truncated)
+ * @param  {[type]}  input     [description]
+ * @param  {Number}  maxLength [description]
+ * @return {Boolean}           [description]
+ */
+function isLengthValid (input, maxLength = 255) {
+  if (!input) {
+    return true
+  } else if (typeof input === 'string') {
+    return input.length &lt;= maxLength
+  } else if (typeof input === 'object') {
+    return JSON.stringify(input).length &lt;= maxLength
+  } else {
+    return input.toString().length &lt;= maxLength
+  }
+}
+
+/**
+ * Converts a string built in a date time picker to an actual date
+ * which can be stored in a model
+ */
+function parseDateTime (string) {
+  let momentDate = moment(string, constants.PICKER_DATE_TIME_FORMAT)
+  if (momentDate.isValid()) {
+    return momentDate.toDate()
+  } else {
+    return ''
+  }
 }
 
 /**
@@ -122,7 +205,28 @@ function isId (string) {
  * @return {string}
  */
 function markdownToHtml (markdown) {
-  return xss(showdownConverter.makeHtml(markdown))
+  let html = showdownConverter.makeHtml(markdown)
+
+  // Convert @mentions to links, unless we are already in a link
+  let htmlSplitByLinks = html.split(/(&lt;a .*>.*&lt;\/a>)/g)
+  let indexOutsideLinks = html.indexOf('&lt;a ') === 0 ? 1 : 0
+  while (indexOutsideLinks &lt; htmlSplitByLinks.length) {
+    htmlSplitByLinks[indexOutsideLinks] = htmlSplitByLinks[indexOutsideLinks].replace(/@([a-z\d_]+)/ig, '&lt;a href="/user/$1">@$1&lt;/a>')
+    indexOutsideLinks += 2
+  }
+
+  let htmlWithMentions = htmlSplitByLinks.join('')
+  let safeHtml = customXss.process(htmlWithMentions)
+  return safeHtml
+}
+
+/**
+ * Converts the given Markdown to single-line text
+ * @param  {string} markdown
+ * @return {string}
+ */
+function markdownToText (markdown) {
+  return removeMarkdown(sanitizeMarkdown(markdown)).replace(/\n\r/g, ' ')
 }
 </code></pre>
         </article>
@@ -134,13 +238,13 @@ function markdownToHtml (markdown) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

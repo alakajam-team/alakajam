@@ -34,19 +34,22 @@
  * @module controllers/main-controller
  */
 
-const constants = require('../core/constants')
 const forms = require('../core/forms')
+const constants = require('../core/constants')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
+const settingService = require('../services/setting-service')
+const cache = require('../core/cache')
 
 module.exports = {
   anyPageMiddleware,
+
   index,
   events,
-  announcements,
+  people,
   chat
 }
 
@@ -71,16 +74,30 @@ async function anyPageMiddleware (req, res, next) {
     })
   }
 
-  // Fetch live event
-  let liveEventTask = eventService.findEventByStatus('open').then(async function (liveEvent) {
-    if (liveEvent) {
-      res.locals.liveEvent = liveEvent
-    } else {
-      res.locals.nextEvent = await eventService.findEventByStatus('pending')
-    }
-  })
+  // Fetch featured event
+  let featuredEventTask = settingService.find(constants.SETTING_FEATURED_EVENT_NAME)
+    .then(function (featuredEventName) {
+      if (featuredEventName) {
+        return eventService.findEventByName(featuredEventName)
+      }
+    }).then(function (featuredEvent) {
+      if (featuredEvent) {
+        res.locals.featuredEvent = featuredEvent
+      }
+    })
 
-  await Promise.all([liveEventTask, userTask]) // Parallelize fetching both
+  await Promise.all([featuredEventTask, userTask]) // Parallelize fetching both
+
+  // Update unread notifications, from cache if possible
+  if (res.locals.user &amp;&amp; res.locals.path !== '/dashboard/feed') {
+    let userCache = cache.user(res.locals.user)
+    res.locals.unreadNotifications = userCache.get('unreadNotifications')
+    if (!res.locals.unreadNotifications) {
+      let commentsCollection = await postService.findCommentsToUser(res.locals.user, { notificationsLastRead: true })
+      res.locals.unreadNotifications = commentsCollection.length
+      userCache.set('unreadNotifications', res.locals.unreadNotifications)
+    }
+  }
 
   next()
 }
@@ -89,33 +106,81 @@ async function anyPageMiddleware (req, res, next) {
  * Home page
  */
 async function index (req, res) {
-  if (res.locals.liveEvent) {
-    await res.locals.liveEvent.load(['entries', 'entries.userRoles'])
+  let context = {}
+
+  let featuredEventTask
+  if (res.locals.featuredEvent) {
+    // Find live event and its latest announcement
+    featuredEventTask = res.locals.featuredEvent.load(['entries', 'entries.userRoles'])
+      .then(async function () {
+        context.featuredEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
+        context.homeAnnouncement = context.featuredEventAnnouncement
+      })
   }
-  let nextEventsCollection = await eventService.findEvents({status: 'pending'})
-  res.render('index', {
-    announcement: await postService.findLatestAnnouncement(),
-    nextEvents: nextEventsCollection.models
-  })
+
+  // Find previous event
+  let previousEventTask = await eventService.findEventByStatus('closed')
+    .then(function (previousEvent) {
+      context.previousEvent = previousEvent
+    })
+
+  // Gather any entries
+  let latestEntriesTask = eventService.findLatestEntries()
+    .then(function (latestEntries) {
+      context.latestEntries = latestEntries.models
+    })
+
+  // Gather any user posts
+  let postsTask = postService.findPosts({specialPostType: null})
+    .then(async function (postsCollection) {
+      await postsCollection.load(['entry', 'event', 'entry.userRoles'])
+      context.posts = postsCollection.models
+      context.pageCount = await postService.findPosts({
+        specialPostType: null,
+        pageCount: true
+      })
+    })
+
+  // Find featured post
+  let featuredPostTask = settingService.find(constants.SETTING_FEATURED_POST_ID)
+    .then(async function (featuredPostId) {
+      if (featuredPostId) {
+        context.featuredPost = await postService.findPostById(featuredPostId)
+      }
+    })
+
+  await Promise.all([featuredEventTask, previousEventTask, latestEntriesTask, postsTask, featuredPostTask]) // Parallelize fetching everything
+
+  res.render('index', context)
 }
 
 /**
  * Events listing
  */
 async function events (req, res) {
-  let eventsCollection = await eventService.findEvents()
-  await eventsCollection.load('entries.userRoles')
+  res.locals.pageTitle = 'Events'
+
+  let [pendingCollection, openCollection, closedCollection] = await Promise.all([
+    await eventService.findEvents({status: 'pending', sortDatesAscending: true}),
+    await eventService.findEvents({status: 'open'}),
+    await eventService.findEvents({status: 'closed'})
+  ])
   res.render('events', {
-    events: eventsCollection.models
+    pending: pendingCollection.models,
+    open: openCollection.models,
+    closed: closedCollection.models
   })
 }
 
 /**
- * Announcements listing
+ * People listing
  */
-async function announcements (req, res) {
-  res.render('announcements', {
-    posts: await postService.findPosts({ specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT })
+async function people (req, res) {
+  res.locals.pageTitle = 'People'
+
+  let usersCollection = await userService.findAll()
+  res.render('people', {
+    users: usersCollection.sortBy((user) => -user.get('id'))
   })
 }
 
@@ -123,6 +188,8 @@ async function announcements (req, res) {
  * IRC Chat
  */
 async function chat (req, res) {
+  res.locals.pageTitle = 'Chat'
+
   res.render('chat')
 }
 </code></pre>
@@ -135,13 +202,13 @@ async function chat (req, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

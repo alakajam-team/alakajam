@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/api-controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/api-controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+/**
+ * JSON API
+ *
+ * @module controllers/api-controller
+ */
+
+const forms = require('../core/forms')
+const eventService = require('../services/event-service')
+const userService = require('../services/user-service')
+
+const PUBLIC_ATTRIBUTES_EVENT = ['id', 'name', 'title', 'display_dates', 'display_theme', 'status', 'status_theme', 'status_entry', 'status_results']
+const PUBLIC_ATTRIBUTES_ENTRY = ['id', 'event_id', 'event_name', 'name', 'title', 'description', 'links', 'pictures', 'category', 'comment_count', 'feedback_score']
+const PUBLIC_ATTRIBUTES_USER = ['id', 'name', 'title', 'avatar', 'is_mod', 'is_admin']
+const PUBLIC_ATTRIBUTES_COMMENT = ['id', 'user_id', 'parent_id', 'body', 'created_at', 'updated_at']
+
+module.exports = {
+  index,
+  featuredEvent,
+  event,
+  entry,
+  user
+}
+
+async function index (req, res) {
+  res.render('api/index')
+}
+
+/**
+ * Data about the currently featured event
+ */
+async function featuredEvent (req, res) {
+  if (res.locals.featuredEvent) {
+    req.params.event = res.locals.featuredEvent.get('id')
+    return event(req, res)
+  } else {
+    _renderJson(req, res, { error: 'No featured event' })
+  }
+}
+
+/**
+ * Data about a specific event
+ */
+async function event (req, res) {
+  let json = {}
+
+  let event
+  if (req.params.event &amp;&amp; forms.isId(req.params.event)) {
+    event = await eventService.findEventById(req.params.event)
+  } else {
+    event = await eventService.findEventByName(req.params.event)
+  }
+
+  if (event) {
+    json = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT)
+
+    await event.load('entries')
+    json.entries = []
+    for (let entry of event.related('entries').models) {
+      json.entries.push(_getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY))
+    }
+  } else {
+    json = { error: 'Event not found' }
+  }
+
+  _renderJson(req, res, json)
+}
+
+/**
+ * Data about a specific entry
+ */
+async function entry (req, res) {
+  let json = {}
+
+  if (forms.isId(req.params.entry)) {
+    let entry = await eventService.findEntryById(req.params.entry)
+    if (entry) {
+      json = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY)
+
+      await entry.load('comments')
+      json.comments = []
+      for (let comment of entry.related('comments').models) {
+        json.comments.push(_getAttributes(comment, PUBLIC_ATTRIBUTES_COMMENT))
+      }
+    } else {
+      json = { error: 'Entry not found' }
+    }
+  } else {
+    json = { error: 'Invalid entry ID' }
+  }
+
+  _renderJson(req, res, json)
+}
+
+/**
+ * Data about a specific user
+ */
+async function user (req, res) {
+  let json = {}
+
+  let user
+  if (forms.isId(req.params.user)) {
+    user = await userService.findById(req.params.user)
+  } else {
+    user = await userService.findByName(req.params.user)
+  }
+
+  if (user) {
+    json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
+  } else {
+    json = { error: 'User not found' }
+  }
+
+  _renderJson(req, res, json)
+}
+
+function _renderJson (req, res, json) {
+  if (req.query.pretty) {
+    res.render('api/pretty', { apiPath: req.path, json })
+  } else {
+    res.end(JSON.stringify(json))
+  }
+}
+
+function _getAttributes (model, whiteList) {
+  let values = {}
+  for (let attribute of whiteList) {
+    values[attribute] = model.get(attribute)
+  }
+  return values
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

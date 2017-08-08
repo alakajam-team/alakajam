@@ -39,12 +39,24 @@ const PERMISSION_WRITE = 'write'
 const PERMISSION_MANAGE = 'manage'
 const ORDERED_PERMISSIONS = [PERMISSION_READ, PERMISSION_WRITE, PERMISSION_MANAGE]
 
+const SPECIAL_POST_TYPE_ANNOUNCEMENT = 'announcement'
+const SPECIAL_POST_TYPE_ARTICLE = 'article'
+const SPECIAL_POST_TYPES = [SPECIAL_POST_TYPE_ANNOUNCEMENT, SPECIAL_POST_TYPE_ARTICLE]
+
+const SETTING_FEATURED_EVENT_NAME = 'featured_event_name'
+const SETTING_FEATURED_POST_ID = 'featured_post_id'
+const SETTING_SESSION_KEY = 'session_key'
+const SETTING_INVITE_PASSWORD = 'invite_password'
+const SETTING_INVITE_PEPPER = 'invite_pepper'
+
 module.exports = {
   // Settings
-  SETTING_DB_VERSION: 'db_version',
-  SETTING_SESSION_KEY: 'session_key',
-  SETTING_INVITE_PASSWORD: 'invite_password',
-  SETTING_INVITE_PEPPER: 'invite_pepper',
+  SETTING_FEATURED_EVENT_NAME,
+  SETTING_FEATURED_POST_ID,
+  SETTING_SESSION_KEY,
+  SETTING_INVITE_PASSWORD,
+  SETTING_INVITE_PEPPER,
+  EDITABLE_SETTINGS: [SETTING_FEATURED_EVENT_NAME, SETTING_FEATURED_POST_ID],
 
   // Security
   PERMISSION_READ,
@@ -53,15 +65,30 @@ module.exports = {
   ORDERED_PERMISSIONS,
 
   // Posts
-  SPECIAL_POST_TYPE_ANNOUNCEMENT: 'announcement',
-  ALLOWED_POST_TAGS: [ 'b', 'i', 'em', 'strong', 'a', 'u', 'br' ],
-  ALLOWED_POST_ATTRIBUTES: { 'a': [ 'href' ] },
+  SPECIAL_POST_TYPE_ANNOUNCEMENT,
+  SPECIAL_POST_TYPE_ARTICLE,
+  SPECIAL_POST_TYPES,
+  REQUIRED_ARTICLES: ['help'],
+  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img'],
+  ALLOWED_POST_ATTRIBUTES: {
+    'a': ['href'],
+    'iframe': ['src', 'width', 'height', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
+    'img': ['src', 'width', 'height']
+  },
+  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com'],
 
   // Dates
   DATE_FORMAT: 'MMMM Do YYYY',
   DATE_TIME_FORMAT: 'MMMM Do YYYY, h:mm',
-  PICKER_DATE_TIME_FORMAT: 'YYYY-MM-DD hh:mm',
-  PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii'
+  PICKER_DATE_TIME_FORMAT: 'YYYY-MM-DD HH:mm',
+  PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii',
+
+  // Misc
+  ALLOWED_PICTURE_MIMETYPES: [
+    'image/png',
+    'image/jpeg',
+    'image/gif'
+  ]
 
 }
 </code></pre>
@@ -74,13 +101,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

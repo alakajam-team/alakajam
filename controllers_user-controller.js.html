@@ -35,18 +35,23 @@
  */
 
 const config = require('../config')
+const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
+const cache = require('../core/cache')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 const inviteService = require('../services/invite-service')
+const securityService = require('../services/security-service')
 
 module.exports = {
+  dashboardMiddleware,
+
   viewUserProfile,
 
-  dashboardMiddleware,
+  dashboardFeed,
   dashboardPosts,
   dashboardInvite,
   dashboardSettings,
@@ -59,80 +64,95 @@ module.exports = {
   doLogout
 }
 
+async function dashboardMiddleware (req, res, next) {
+  res.locals.pageTitle = 'User dashboard'
+
+  if (!res.locals.user || res.locals.user === undefined) {
+    res.errorPage(403, 'You are not logged in.')
+  } else {
+    if (req.query.user &amp;&amp; securityService.isAdmin(res.locals.user) &amp;&amp;
+        req.query.user !== res.locals.user.get('name')) {
+      res.locals.dashboardUser = await userService.findByName(forms.sanitizeString(req.query.user))
+      res.locals.dashboardAdminMode = true
+    } else {
+      res.locals.dashboardUser = res.locals.user
+    }
+    next()
+  }
+}
+
 /**
  * Display a user profile
  */
 async function viewUserProfile (req, res) {
-  let user = await userService.findByName(req.params.name)
-  if (user) {
+  let profileUser = await userService.findByName(req.params.name)
+  if (profileUser) {
+    res.locals.pageTitle = profileUser.get('title')
+    res.locals.pageDescription = forms.markdownToText(profileUser.related('details').get('body'))
+
+    let [entries, postsCollection] = await Promise.all([
+      eventService.findUserEntries(profileUser),
+      postService.findPosts({userId: profileUser.get('id')}),
+      profileUser.load('details')
+    ])
+
     res.render('user/profile', {
-      profileUser: user,
-      entries: await eventService.findUserEntries(user),
-      posts: await postService.findPosts({ userId: user.get('id') })
+      profileUser,
+      entries,
+      posts: postsCollection.filter(function (post) {
+        return post.get('special_post_type') !== constants.SPECIAL_POST_TYPE_ARTICLE
+      })
     })
   } else {
     res.errorPage(400, 'No user exists with name ' + req.params.name)
   }
 }
 
-async function dashboardMiddleware (req, res, next) {
-  if (!res.locals.user) {
-    res.errorPage(403, 'You are not logged in.')
-  } else {
-    next()
-  }
-}
-
 /**
- * Manage general user info
+ * View comment feed
  */
-async function dashboardSettings (req, res) {
-  let errorMessage = ''
-  let infoMessage = ''
+async function dashboardFeed (req, res) {
+  let dashboardUser = res.locals.user
 
-  if (req.method === 'POST') {
-    let {fields, files} = await req.parseForm()
-    if (!res.headersSent) { // FIXME Why?
-      let user = res.locals.user
+  // if an entry is not in the cache it will return undefined
+  let userCache = cache.user(dashboardUser)
+  let byUserCollection = userCache.get('byUserCollection')
+  let toUserCollection = userCache.get('toUserCollection')
+  let latestEntries = userCache.get('latestEntries')
+  let latestPostsCollection = userCache.get('latestPostsCollection')
 
-      if (fields.email &amp;&amp; forms.isEmail(fields.email)) {
-        errorMessage = 'Invalid email'
-      } else if (fields['social_web'] &amp;&amp; !forms.isURL(fields['social_web'])) {
-        errorMessage = 'Invalid URL'
-      }
-
-      if (!errorMessage) {
-        // General settings form
-        user.set('title', forms.sanitizeString(fields.title || user.get('name')))
-        user.set('email', fields.email)
-        user.set('social_web', fields.website)
-        user.set('social_twitter', forms.sanitizeString(fields.twitter.replace('@', '')))
-        user.set('body', forms.sanitizeMarkdown(fields.body))
-
-        if (user.hasChanged('title')) {
-          await userService.refreshUserReferences(user)
-        }
-
-        // TODO Formidable shouldn't create an empty file
-        let newAvatar = files.avatar &amp;&amp; files.avatar.size > 0
-        if (user.get('avatar') &amp;&amp; (files['avatar-delete'] || newAvatar)) {
-          await fileStorage.remove(user.get('avatar'))
-          user.unset('avatar')
-        }
-        if (newAvatar) {
-          let avatarPath = '/user/' + user.get('id')
-          let finalPath = await fileStorage.savePictureUpload(
-            files.avatar.path, avatarPath, {maxDiagonal: 500})
-          user.set('avatar', finalPath)
-        }
-        await user.save()
-      }
-    }
+  if (!byUserCollection) {
+    byUserCollection = await postService.findCommentsByUser(dashboardUser)
+    userCache.set('byUserCollection', byUserCollection)
+  }
+  if (!toUserCollection) {
+    toUserCollection = await postService.findCommentsToUser(dashboardUser)
+    userCache.set('toUserCollection', toUserCollection)
+  }
+  if (!latestEntries) {
+    latestEntries = await eventService.findUserEntries(dashboardUser)
+    userCache.set('latestEntries', latestEntries)
+  }
+  if (!latestPostsCollection) {
+    latestPostsCollection = await postService.findPosts({
+      userId: dashboardUser.id
+    })
+    userCache.set('latestPostsCollection', latestPostsCollection)
   }
 
-  res.render('user/dashboard-settings', {
-    errorMessage,
-    infoMessage
+  let notificationsLastRead = dashboardUser.get('notifications_last_read')
+  dashboardUser.set('notifications_last_read', new Date())
+  await dashboardUser.save()
+  userCache.del('unreadNotifications')
+  res.locals.unreadNotifications = 0
+
+  // TODO Limit at the SQL-level
+  res.render('user/dashboard-feed', {
+    byUser: byUserCollection.take(20),
+    toUser: toUserCollection.take(20),
+    latestEntry: latestEntries.length > 0 ? latestEntries[0] : null,
+    latestPosts: latestPostsCollection.take(3),
+    notificationsLastRead
   })
 }
 
@@ -145,8 +165,8 @@ async function dashboardPosts (req, res) {
     newPostEvent = await eventService.findEventByStatus('pending')
   }
   let allPostsCollection = await postService.findPosts({
-    userId: res.locals.user.get('id'),
-    withDrafts: true
+    userId: res.locals.dashboardUser.get('id'),
+    allowDrafts: true
   })
   let draftPosts = allPostsCollection.where({'published_at': null})
 
@@ -167,6 +187,77 @@ async function dashboardInvite (req, res) {
 }
 
 /**
+ * Manage general user info
+ */
+async function dashboardSettings (req, res) {
+  await res.locals.dashboardUser.load('details')
+
+  let errorMessage = ''
+  let infoMessage = ''
+
+  if (req.method === 'POST') {
+    let {fields, files} = await req.parseForm()
+    if (!res.headersSent) { // FIXME Why?
+      let dashboardUser = res.locals.dashboardUser
+      let newAvatar = files.avatar &amp;&amp; files.avatar.size > 0
+
+      if (!forms.isEmail(fields.email)) {
+        errorMessage = 'Invalid email'
+      } else if (fields['social_web'] &amp;&amp; !forms.isURL(fields['social_web'])) {
+        errorMessage = 'Invalid URL'
+      } else if (!res.locals.dashboardAdminMode &amp;&amp; fields['special-permissions']) {
+        errorMessage = 'Not allowed to change special permissions on this user'
+      } else if (newAvatar &amp;&amp; !fileStorage.isValidPicture(files.avatar.path)) {
+        errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
+      }
+
+      if (!errorMessage) {
+        // General settings form
+        dashboardUser.set('title', forms.sanitizeString(fields.title || dashboardUser.get('name')))
+        dashboardUser.set('email', fields.email)
+        if (fields['special-permissions']) {
+          let isMod = fields['special-permissions'] === 'mod' || fields['special-permissions'] === 'admin'
+          let isAdmin = fields['special-permissions'] === 'admin'
+          dashboardUser.set({
+            'is_mod': isMod ? 'true' : '',
+            'is_admin': isAdmin ? 'true' : ''
+          })
+        }
+        let dashboardUserDetails = dashboardUser.related('details')
+        dashboardUserDetails.set('social_links', {
+          website: fields.website,
+          twitter: forms.sanitizeString(fields.twitter.replace('@', ''))
+        })
+        dashboardUserDetails.set('body', forms.sanitizeMarkdown(fields.body))
+        await dashboardUserDetails.save()
+
+        if (dashboardUser.hasChanged('title')) {
+          await userService.refreshUserReferences(dashboardUser)
+        }
+
+        // TODO Formidable shouldn't create an empty file
+        if (dashboardUser.get('avatar') &amp;&amp; (files['avatar-delete'] || newAvatar)) {
+          await fileStorage.remove(dashboardUser.get('avatar'))
+          dashboardUser.unset('avatar')
+        }
+        if (newAvatar) {
+          let avatarPath = '/user/' + dashboardUser.get('id')
+          let finalPath = await fileStorage.savePictureUpload(
+            files.avatar.path, avatarPath, {maxDiagonal: 500})
+          dashboardUser.set('avatar', finalPath)
+        }
+        await dashboardUser.save()
+      }
+    }
+  }
+
+  res.render('user/dashboard-settings', {
+    errorMessage,
+    infoMessage
+  })
+}
+
+/**
  * Manage user profile contents
  */
 async function dashboardPassword (req, res) {
@@ -175,23 +266,23 @@ async function dashboardPassword (req, res) {
 
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
-    let user = res.locals.user
+    let dashboardUser = res.locals.dashboardUser
 
     // Change password form
-    if (!fields['password']) {
+    if (!res.locals.dashboardAdminMode &amp;&amp; !fields['password']) {
       errorMessage = 'You must enter your current password'
-    } else if (!await userService.authenticate(user.get('name'), fields['password'])) {
+    } else if (!res.locals.dashboardAdminMode &amp;&amp; !await userService.authenticate(dashboardUser.get('name'), fields['password'])) {
       errorMessage = 'Current password is incorrect'
     } else if (!fields['new-password']) {
       errorMessage = 'You must enter a new password'
     } else if (fields['new-password'] !== fields['new-password-bis']) {
       errorMessage = 'New passwords do not match'
     } else {
-      let result = userService.setPassword(user, fields['new-password'])
+      let result = userService.setPassword(dashboardUser, fields['new-password'])
       if (result !== true) {
         errorMessage = result
       } else {
-        await user.save()
+        await dashboardUser.save()
         infoMessage = 'Password change successful'
       }
     }
@@ -207,6 +298,7 @@ async function dashboardPassword (req, res) {
  * Register form
  */
 async function registerForm (req, res) {
+  res.locals.pageTitle = 'Register'
   res.render('register')
 }
 
@@ -214,18 +306,20 @@ async function registerForm (req, res) {
  * Register
  */
 async function doRegister (req, res) {
+  res.locals.pageTitle = 'Register'
+
   let {fields} = await req.parseForm()
   let errorMessage = null
-  if (!await inviteService.validateKey(fields.invite) &amp;&amp; !config.DEBUG_ALLOW_INVALID_INVITE_KEYS) {
+  if (config.DEBUG_ENABLE_INVITE_SYSTEM &amp;&amp; !await inviteService.validateKey(fields.invite)) {
     errorMessage = 'Invalid invite key'
-  } else if (!(fields.name &amp;&amp; fields.password)) {
-    errorMessage = 'Username or password missing'
+  } else if (!(fields.name &amp;&amp; fields.password &amp;&amp; fields.email)) {
+    errorMessage = 'A field is missing'
   } else if (!forms.isUsername(fields.name)) {
     errorMessage = 'Your usename is too weird (either too short, or has special chars other than "_" or "-", or starts with a number)'
   } else if (fields.password !== fields['password-bis']) {
     errorMessage = 'Passwords do not match'
   } else {
-    let result = await userService.register(fields.name, fields.password)
+    let result = await userService.register(fields.email, fields.name, fields.password)
     if (result === true) {
       doLogin(req, res)
     } else {
@@ -243,6 +337,8 @@ async function doRegister (req, res) {
  * Login form
  */
 async function loginForm (req, res) {
+  res.locals.pageTitle = 'Login'
+
   res.render('login')
 }
 
@@ -250,6 +346,8 @@ async function loginForm (req, res) {
  * Login
  */
 async function doLogin (req, res) {
+  res.locals.pageTitle = 'Login'
+
   let context = {}
   let {fields} = await req.parseForm()
   if (fields.name &amp;&amp; fields.password) {
@@ -258,6 +356,11 @@ async function doLogin (req, res) {
       context.user = user
       context.infoMessage = 'Authentication successful'
       sessionService.openSession(req, res, user, !!fields['remember-me'])
+
+      // Force notification count update
+      let commentsCollection = await postService.findCommentsToUser(res.locals.user, { notificationsLastRead: true })
+      context.unreadNotifications = commentsCollection.length
+      cache.user(user).set('unreadNotifications', context.unreadNotifications)
     } else {
       context.errorMessage = 'Authentication failed'
     }
@@ -272,6 +375,8 @@ async function doLogin (req, res) {
  * Logout
  */
 async function doLogout (req, res) {
+  res.locals.pageTitle = 'Login'
+
   sessionService.invalidateSession(req, res)
   res.render('login', {
     infoMessage: 'Logout successful.'
@@ -287,13 +392,13 @@ async function doLogout (req, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

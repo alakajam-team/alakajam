@@ -29,21 +29,25 @@
             <pre class="prettyprint source linenums"><code>'use strict'
 
 /**
- * User service
+ * models.User service
  *
  * @module services/user-service
  */
 
 const crypto = require('crypto')
 const randomKey = require('random-key')
-const User = require('../models/user-model')
-const UserRole = require('../models/user-role-model')
+const config = require('../config')
+const forms = require('../core/forms')
+const models = require('../core/models')
 
 module.exports = {
+  findAll,
   findById,
   findByName,
+
   register,
   authenticate,
+
   setPassword,
   refreshUserReferences
 }
@@ -53,50 +57,77 @@ const USERNAME_MIN_LENGTH = 3
 const PASSWORD_MIN_LENGTH = 6
 
 /**
- * Fetches a User
+ * Fetches all users
+ * @returns {Collection(User)}
+ */
+async function findAll () {
+  return models.User.fetchAll()
+}
+
+/**
+ * Fetches a user
  * @param id {id} ID
  * @returns {User}
  */
 async function findById (id) {
-  return User.where('id', id).fetch()
+  return models.User.where('id', id).fetch()
 }
 
 /**
- * Fetches a User
+ * Fetches a user
  * @param name {name} name
  * @returns {User}
  */
 async function findByName (name) {
-  return User.where('name', name).fetch()
+  // XXX Case-insensitive search
+  if (config.DB_TYPE === 'postgresql') {
+    return models.User.where('name', 'ILIKE', name).fetch({ withRelated: 'details' })
+  } else {
+    return models.User.where('name', 'LIKE', name).fetch({ withRelated: 'details' })
+  }
 }
 
 /**
  * Registers a new user
+ * @param email {string} email
  * @param name {string} name
- * @param password {string} clear password (will be hashed before storage)
+ * @param password {string} unencrypted password (will be hashed before storage)
  * @returns {boolean|string} true, or an error message
  */
-async function register (name, password) {
+async function register (email, name, password) {
   if (!name.match(USERNAME_VALIDATION_REGEX)) {
     return 'Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.'
   }
   if (name.length &lt; USERNAME_MIN_LENGTH) {
     return 'Username length must be at least ' + USERNAME_MIN_LENGTH
   }
-  if (await User.where('name', name).count() > 0) {
+  let caseInsensitiveUsernameMatch = await models.User.query(function (query) {
+    query.whereRaw("LOWER(name) LIKE '%' || LOWER(?) || '%' ", name)
+  }).fetch()
+  if (caseInsensitiveUsernameMatch) {
     return 'Username is taken'
+  }
+  if (!forms.isEmail(email)) {
+    return 'Invalid email'
   }
   let passwordValidationResult = validatePassword(password)
   if (passwordValidationResult !== true) {
     return passwordValidationResult
   }
 
-  let user = new User({
+  let user = new models.User({
+    email: email,
     name: name,
     title: name
   })
   setPassword(user, password)
   await user.save()
+
+  let userDetails = new models.UserDetails({
+    user_id: user.get('id')
+  })
+  await userDetails.save()
+
   return true
 }
 
@@ -104,10 +135,10 @@ async function register (name, password) {
  * Authenticates against a user name and password, and updates the session accordingly
  * @param name {string} name
  * @param password {string} clear password (will be hashed &amp; compared to the DB entry)
- * @returns {User} The User, or false if the authentication failed
+ * @returns {User} The models.User, or false if the authentication failed
  */
 async function authenticate (name, password) {
-  let user = await User.query(function (query) {
+  let user = await models.User.query(function (query) {
     query.where('name', name).orWhere('email', name)
   }).fetch()
   if (user) {
@@ -158,11 +189,11 @@ function hashPassword (password, salt) {
 /**
  * Refreshes various models that cache user name and/or title.
  * Call this after changing the name or title of an user.
- * @param {User} user User model
+ * @param {User} user
  */
 async function refreshUserReferences (user) {
   // TODO Transaction
-  let userRolesCollection = await UserRole.where('user_id', user.get('id')).fetchAll()
+  let userRolesCollection = await models.UserRole.where('user_id', user.get('id')).fetchAll()
   for (let userRole of userRolesCollection.models) {
     userRole.set('user_name', user.get('name'))
     userRole.set('user_title', user.get('title'))
@@ -179,13 +210,13 @@ async function refreshUserReferences (user) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

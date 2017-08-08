@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: core/log.js</title>
+    <title>JSDoc: Source: core/cache.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: core/log.js</h1>
+    <h1 class="page-title">Source: core/cache.js</h1>
 
     
 
@@ -29,70 +29,51 @@
             <pre class="prettyprint source linenums"><code>'use strict'
 
 /**
- * Logging configuration (uses Winston).
+ * Cache configuration
  *
- * @description ## Usage
- * ```
- * log.debug('message')
- * log.info('message')
- * log.warn('message')
- * log.error('message')
- * ```
- *
- * @module core/log
+ * @module core/cache
  */
 
-const path = require('path')
-const winston = require('winston')
-const moment = require('moment')
-
-module.exports = initializeLogging()
+const NodeCache = require('node-cache')
 
 /*
- * Configure the Winston logger to print pretty, colorful &amp; informative log lines
+ * Caches declaration
+ * stdTTL: (default: 0) the standard ttl as number in seconds for every generated cache element. 0 = unlimited
+ * checkperiod: (default: 600) The period in seconds, as a number, used for the automatic delete check interval. 0 = no periodic check.
  */
-function initializeLogging () {
-  let sourcesRoot = path.join(__dirname, '..')
-  winston.remove(winston.transports.Console)
-  winston.add(winston.transports.Console, {
-    timestamp: function () {
-      return moment().format('hh:mm:ss.SSS')
-    },
-    formatter: function (options) {
-      // Figure out the logging caller location
-      // XXX slow and hacky approach, not thoroughly &amp; cross-platformly tested
-      let location = '?'
-      let lines = new Error().stack.split('\n')
-      for (let line of lines) {
-        if (line.indexOf(sourcesRoot) !== -1 &amp;&amp;
-            line.indexOf(__filename) === -1 &amp;&amp;
-            line.indexOf('node_modules') === -1) {
-          let locInfo = line.replace(/(.*\()/g, '')
-            .replace(process.cwd(), '')
-            .split(/[ :]/g)
-          location = locInfo[locInfo.length - 3].replace('\\', '') +
-            ':' + locInfo[locInfo.length - 2]
-          break
-        }
-      }
+const usersTtlInMins = 10
+const cacheMap = {
+  users: new NodeCache({ stdTTL: usersTtlInMins * 60, checkperiod: usersTtlInMins * 60 })
+}
 
-      // Build the logging line
-      let level = options.level
-      let prefix = options.timestamp() + ' ' + options.level.toUpperCase() + ' (' + location + ')'
-      return winston.config.colorize(level, prefix) + (options.message ? ' ' + options.message : '')
-    },
-    colorize: true
-  })
+module.exports = {
+  user,
+  cacheMap
+}
 
-  /**
-   * Logs the current stacktrace at info level
-   */
-  winston.whereami = function () {
-    let lines = new Error().stack.split('\n')
-    winston.info('I am' + lines.slice(2).join('\n'))
+/**
+ * Provides access to the cache for user information
+ * @param  {User|string} user User model, or directly the user name
+ * @return {PrefixedNodeCache} cache
+ */
+function user (user) {
+  return new PrefixedNodeCache(cacheMap.users, (typeof user === 'string') ? user : user.get('name'))
+}
+
+class PrefixedNodeCache {
+  constructor (cache, prefix) {
+    this.cache = cache
+    this.fullPrefix = prefix.toLowerCase() + '_'
   }
-
-  return winston
+  get (key) {
+    return this.cache.get(this.fullPrefix + key)
+  }
+  set (key, value, ttl) {
+    return this.cache.set(this.fullPrefix + key, value, ttl)
+  }
+  del (key) {
+    return this.cache.del(this.fullPrefix + key)
+  }
 }
 </code></pre>
         </article>

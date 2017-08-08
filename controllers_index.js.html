@@ -49,6 +49,7 @@ module.exports = {
     const mainController = require('./main-controller.js')
     const postController = require('./post-controller.js')
     const userController = require('./user-controller.js')
+    const apiController = require('./api-controller.js')
 
     // Run all middleware before any actual route handlers
 
@@ -60,10 +61,14 @@ module.exports = {
     router.use('/post/:postId', postController.postMiddleware)
     router.use('/post/:postId/*', postController.postMiddleware)
 
+    // General
+
     router.get('/', mainController.index)
     router.get('/events', mainController.events)
-    router.get('/announcements', mainController.announcements)
+    router.get('/people', mainController.people)
     router.get('/chat', mainController.chat)
+
+    // Users
 
     router.get('/register', userController.registerForm)
     router.post('/register', userController.doRegister)
@@ -72,15 +77,24 @@ module.exports = {
     router.get('/logout', userController.doLogout)
 
     router.use('/dashboard*', userController.dashboardMiddleware)
+    router.all('/dashboard/feed', userController.dashboardFeed)
     router.all('/dashboard/posts', userController.dashboardPosts)
     router.all('/dashboard/invite', userController.dashboardInvite)
     router.all('/dashboard/settings', userController.dashboardSettings)
     router.all('/dashboard/password', userController.dashboardPassword)
     router.get('/user/:name', userController.viewUserProfile)
 
+    // Mod dashboard
+
     router.get('/admin', adminController.adminHome)
+    router.get('/admin/articles', adminController.adminArticles)
+    router.get('/admin/events', adminController.adminEvents)
+    router.all('/admin/settings', adminController.adminSettings)
+    router.get('/admin/users', adminController.adminUsers)
     router.all('/admin/dev', adminController.adminDev)
     router.all('/admin/status', adminController.adminStatus)
+
+    // Events &amp; Entries
 
     router.get('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.createEntry)
     router.post('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.saveEntry)
@@ -89,8 +103,21 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit', entryController.editEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete', entryController.deleteEntry)
 
+    router.get('/create-event', eventController.editEvent)
+    router.post('/create-event', eventController.editEvent)
     router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewEventPosts)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/announcements', eventController.viewEventAnnouncements)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/themes', eventController.viewEventThemes)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/games', eventController.viewEventGames)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/results', eventController.viewEventResults)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
+    router.post('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/delete', eventController.deleteEvent)
+
+    // Posts
+
+    router.get('/posts', postController.posts)
+    router.get('/article/:name', postController.article)
 
     router.get('/post/create', postController.editPost)
     router.post('/post/create', postController.savePost)
@@ -100,6 +127,14 @@ module.exports = {
     router.post('/post/:postId(\\d+)/:postName/edit', postController.savePost)
     router.get('/post/:postId(\\d+)/:postName/edit', postController.editPost)
     router.get('/post/:postId(\\d+)/:postName/delete', postController.deletePost)
+
+    // JSON API
+
+    router.get('/api', apiController.index)
+    router.get('/api/featuredEvent', apiController.featuredEvent)
+    router.get('/api/event/:event', apiController.event)
+    router.get('/api/entry/:entry', apiController.entry)
+    router.get('/api/user/:user', apiController.user)
   }
 
 }
@@ -113,13 +148,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

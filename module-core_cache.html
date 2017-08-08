@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: core/log.js</title>
+    <title>JSDoc: Module: core/cache</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,86 +17,286 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: core/log.js</h1>
+    <h1 class="page-title">Module: core/cache</h1>
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>'use strict'
+        
+            
+        
+    
+</header>
 
-/**
- * Logging configuration (uses Winston).
- *
- * @description ## Usage
- * ```
- * log.debug('message')
- * log.info('message')
- * log.warn('message')
- * log.error('message')
- * ```
- *
- * @module core/log
- */
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Cache configuration</p></div>
+        
 
-const path = require('path')
-const winston = require('winston')
-const moment = require('moment')
+        
+            
 
-module.exports = initializeLogging()
 
-/*
- * Configure the Winston logger to print pretty, colorful &amp; informative log lines
- */
-function initializeLogging () {
-  let sourcesRoot = path.join(__dirname, '..')
-  winston.remove(winston.transports.Console)
-  winston.add(winston.transports.Console, {
-    timestamp: function () {
-      return moment().format('hh:mm:ss.SSS')
-    },
-    formatter: function (options) {
-      // Figure out the logging caller location
-      // XXX slow and hacky approach, not thoroughly &amp; cross-platformly tested
-      let location = '?'
-      let lines = new Error().stack.split('\n')
-      for (let line of lines) {
-        if (line.indexOf(sourcesRoot) !== -1 &amp;&amp;
-            line.indexOf(__filename) === -1 &amp;&amp;
-            line.indexOf('node_modules') === -1) {
-          let locInfo = line.replace(/(.*\()/g, '')
-            .replace(process.cwd(), '')
-            .split(/[ :]/g)
-          location = locInfo[locInfo.length - 3].replace('\\', '') +
-            ':' + locInfo[locInfo.length - 2]
-          break
-        }
-      }
 
-      // Build the logging line
-      let level = options.level
-      let prefix = options.timestamp() + ' ' + options.level.toUpperCase() + ' (' + location + ')'
-      return winston.config.colorize(level, prefix) + (options.message ? ' ' + options.message : '')
-    },
-    colorize: true
-  })
 
-  /**
-   * Logs the current stacktrace at info level
-   */
-  winston.whereami = function () {
-    let lines = new Error().stack.split('\n')
-    winston.info('I am' + lines.slice(2).join('\n'))
-  }
 
-  return winston
-}
-</code></pre>
-        </article>
-    </section>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_cache.js.html">core/cache.js</a>, <a href="core_cache.js.html#line3">line 3</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="~user"><span class="type-signature">(inner) </span>user<span class="signature">(user)</span><span class="type-signature"> &rarr; {PrefixedNodeCache}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Provides access to the cache for user information</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">User</span>
+|
+
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>User model, or directly the user name</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_cache.js.html">core/cache.js</a>, <a href="core_cache.js.html#line31">line 31</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>cache</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">PrefixedNodeCache</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

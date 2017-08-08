@@ -37,18 +37,31 @@
 const config = require('../config')
 const db = require('../core/db')
 const constants = require('../core/constants')
+const forms = require('../core/forms')
+const cache = require('../core/cache')
 const postService = require('../services/post-service')
+const securityService = require('../services/security-service')
+const eventService = require('../services/event-service')
+const userService = require('../services/user-service')
+const settingService = require('../services/setting-service')
 
 module.exports = {
   adminMiddleware,
+
   adminHome,
+  adminArticles,
+
+  adminEvents,
+  adminSettings,
+  adminUsers,
   adminStatus,
   adminDev
 }
 
 async function adminMiddleware (req, res, next) {
-  if (!config.DEBUG_ADMIN &amp;&amp; (!res.locals.user ||
-      (!res.locals.user.get('is_mod') &amp;&amp; !res.locals.user.get('is_admin')))) {
+  res.locals.pageTitle = 'Mod dashboard'
+
+  if (!config.DEBUG_ADMIN &amp;&amp; !securityService.isMod(res.locals.user)) {
     res.errorPage(403)
   } else {
     next()
@@ -56,12 +69,12 @@ async function adminMiddleware (req, res, next) {
 }
 
 /**
- * Edit home announcement
+ * Edit home announcements
  */
 async function adminHome (req, res) {
   let allPostsCollection = await postService.findPosts({
     specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
-    withDrafts: true
+    allowDrafts: true
   })
   let draftPosts = allPostsCollection.where({'published_at': null})
   res.render('admin/admin-home', {
@@ -71,56 +84,133 @@ async function adminHome (req, res) {
 }
 
 /**
- * Admin developer tools
- * TODO Make it only available in dev environments
+ * Edit articles
  */
-async function adminStatus (req, res) {
-  if (config.DEBUG_ADMIN || res.locals.user.get('is_admin')) {
-    let pictureResizeEnabled = false
-    try {
-      require('sharp')
-      pictureResizeEnabled = true
-    } catch (e) {
-      // Nothing
-    }
+async function adminArticles (req, res) {
+  let allPostsCollection = await postService.findPosts({
+    specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
+    allowDrafts: true
+  })
 
-    res.render('admin/admin-status', {
-      devMode: !!res.app.locals.devMode,
-      pictureResizeEnabled
-    })
-  } else {
-    res.errorPage(403)
+  let missingArticles = []
+  for (let articleName of constants.REQUIRED_ARTICLES) {
+    if (!allPostsCollection.find((post) => post.get('name') === articleName)) {
+      missingArticles.push(articleName)
+    }
   }
+
+  let draftPosts = allPostsCollection.where({'published_at': null})
+  res.render('admin/admin-articles', {
+    draftPosts,
+    publishedPosts: allPostsCollection.difference(draftPosts),
+    missingArticles
+  })
 }
 
 /**
- * Admin developer tools
- * TODO Make it only available in dev environments
+ * Admin only: events management
+ */
+async function adminEvents (req, res) {
+  let events = await eventService.findEvents()
+  res.render('admin/admin-events', {
+    events: events.models
+  })
+}
+
+/**
+ * Admin only: settings management
+ */
+async function adminSettings (req, res) {
+  // Save changed setting
+  if (req.method === 'POST') {
+    let {fields} = await req.parseForm()
+    if (constants.EDITABLE_SETTINGS.indexOf(fields.key) !== -1) {
+      await settingService.save(fields.key, forms.sanitizeString(fields.value))
+    } else {
+      req.errorPage(403, 'Tried to edit a non-editable setting')
+      return
+    }
+  }
+
+  // Gather editable settings
+  let settings = []
+  for (let key of constants.EDITABLE_SETTINGS) {
+    settings.push({
+      key,
+      value: await settingService.find(key)
+    })
+  }
+
+  // Fetch setting to edit
+  let editSetting
+  if (req.query.edit &amp;&amp; forms.isSlug(req.query.edit)) {
+    editSetting = {
+      key: req.query.edit,
+      value: await settingService.find(req.query.edit)
+    }
+  }
+
+  res.render('admin/admin-settings', {
+    settings,
+    editSetting
+  })
+}
+
+/**
+ * Admin only: users management
+ */
+async function adminUsers (req, res) {
+  let users = await userService.findAll()
+  let sortedUsers = users.sortBy((user) => user.get('title'))
+  res.render('admin/admin-users', {
+    users: sortedUsers
+  })
+}
+
+/**
+ * Admin only: server status
+ */
+async function adminStatus (req, res) {
+  if (req.query.clearCache) {
+    cache.cacheMap.users.flushAll()
+  }
+
+  let pictureResizeEnabled = false
+  try {
+    require('sharp')
+    pictureResizeEnabled = true
+  } catch (e) {
+    // Nothing
+  }
+
+  res.render('admin/admin-status', {
+    devMode: !!res.app.locals.devMode,
+    pictureResizeEnabled,
+    cache: cache.cacheMap.users
+  })
+}
+
+/**
+ * Admin only: developer tools
  */
 async function adminDev (req, res) {
   if (res.app.locals.devMode) {
-    if (config.DEBUG_ADMIN || res.locals.user.get('is_admin')) {
-      let infoMessage = ''
-      let errorMessage = ''
-      if (req.method === 'POST') {
-        let {fields} = await req.parseForm()
-        if (fields['db-reset']) {
-          await db.dropTables()
-          await db.upgradeTables()
-          await db.insertInitialData(config.DEBUG_INSERT_SAMPLES)
-          let version = await db.findCurrentVersion()
-          infoMessage = 'DB reset done (current version : ' + version + ').'
-        }
+    let infoMessage = ''
+    let errorMessage = ''
+    if (req.method === 'POST') {
+      let {fields} = await req.parseForm()
+      if (fields['db-reset']) {
+        await db.emptyDatabase()
+        let newVersion = await db.initDatabase(config.DEBUG_INSERT_SAMPLES)
+        infoMessage = 'DB reset done (current version : ' + newVersion + ').'
       }
-      res.render('admin/admin-dev', {
-        infoMessage,
-        errorMessage
-      })
-    } else {
-      res.errorPage(403)
     }
+    res.render('admin/admin-dev', {
+      infoMessage,
+      errorMessage
+    })
   } else {
-    res.errorPage(404, 'Page only available in development mode')
+    res.errorPage(403, 'Page only available in development mode')
   }
 }
 </code></pre>
@@ -133,13 +223,13 @@ async function adminDev (req, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_comment-model.html">models/comment-model</a></li><li><a href="module-models_entry-model.html">models/entry-model</a></li><li><a href="module-models_event-model.html">models/event-model</a></li><li><a href="module-models_post-model.html">models/post-model</a></li><li><a href="module-models_setting-model.html">models/setting-model</a></li><li><a href="module-models_user-model.html">models/user-model</a></li><li><a href="module-models_user-role-model.html">models/user-role-model</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jun 08 2017 23:57:49 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>
