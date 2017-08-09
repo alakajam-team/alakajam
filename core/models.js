@@ -167,6 +167,9 @@ module.exports.Event = bookshelf.model('Event', {
 
   // Relations
 
+  details: function () {
+    return this.hasOne('EventDetails', 'event_id')
+  },
   entries: function () {
     return this.hasMany('Entry', 'event_id')
   },
@@ -192,7 +195,30 @@ module.exports.Event = bookshelf.model('Event', {
   }
 }, {
   // Cascading
-  dependents: ['entries']
+  dependents: ['details', 'entries']
+})
+
+/**
+ * Event Details model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | event_id | Event ID
+ * | integer | theme_count | Number of theme ideas submitted
+ * | integer | active_theme_count | Number of active themes
+ * | integer | theme_vote_count | Number of theme votes
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
+ */
+module.exports.EventDetails = bookshelf.model('EventDetails', {
+  tableName: 'event_details',
+  idAttribute: 'id',
+  hasTimestamps: true,
+
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  }
 })
 
 /**
@@ -279,6 +305,79 @@ module.exports.EntryDetails = bookshelf.model('EntryDetails', {
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
   }
+})
+
+// ===============================================================
+// THEMES
+// ===============================================================
+
+/**
+ * Theme model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | event_id | Event ID
+ * | integer | user_id | User ID
+ * | integer | score |
+ * | integer | notes |
+ * | integer | reports |
+ * | string | status | 'active', 'out', 'banned', 'shortlist'
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
+ */
+module.exports.Theme = bookshelf.model('Theme', {
+  tableName: 'theme',
+  idAttribute: 'id',
+  hasTimestamps: true,
+
+  // Relations
+
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  },
+  user: function () {
+    return this.belongsTo('User', 'user_id')
+  },
+  votes: function () {
+    return this.hasMany('ThemeVote', 'theme_id')
+  }
+
+}, {
+  // Cascading
+  dependents: ['votes']
+})
+
+/**
+ * Theme Vote model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | theme_id | Theme ID
+ * | integer | event_id | Event ID
+ * | integer | user_id | User ID
+ * | integer | score |
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
+ */
+module.exports.ThemeVote = bookshelf.model('ThemeVote', {
+  tableName: 'theme_vote',
+  idAttribute: 'id',
+  hasTimestamps: true,
+
+  // Relations
+
+  theme: function () {
+    return this.belongsTo('Theme', 'theme_id')
+  },
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  },
+  user: function () {
+    return this.belongsTo('User', 'user_id')
+  }
+
 })
 
 // ===============================================================
