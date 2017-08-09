@@ -8,7 +8,7 @@
     "debug": "node-debug server.js",
     "watch": "browser-refresh server.js",
     "migrate": "knex migrate:latest",
-    "docs": "rm -r docs && jsdoc -c jsdoc.json -d docs -R README.md -r core models services controllers server.js",
+    "docs": "rm -r docs && jsdoc -c jsdoc.json -d docs -R README.md -r core services controllers server.js",
     "test": "mocha -t 10000 tests/"
   },
   "repository": {

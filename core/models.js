@@ -14,9 +14,14 @@ let modelPrototype = bookshelf.Model.prototype
 // TODO Set up BaseModel to make code more concise
 
 /**
-  table.string('key').primary()
-  table.string('value', 10000)
-  table.timestamps()
+ * Setting model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | string | key | Primary key
+ * | string | value | Setting value (max size: 10000)
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
  */
 module.exports.Setting = bookshelf.model('Setting', {
   tableName: 'setting',
@@ -29,17 +34,22 @@ module.exports.Setting = bookshelf.model('Setting', {
 // ===============================================================
 
 /**
-  table.increments('id').primary()
-  table.string('name').unique()
-  table.string('title')
-  table.string('email')
-  table.string('avatar')
-  table.string('is_mod')
-  table.string('is_admin')
-  table.string('password')
-  table.string('password_salt')
-  table.dateTime('notifications_last_read')
-  table.timestamps()
+ * User model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | string | name | User name (must be unique)
+ * | string | title |
+ * | string | email |
+ * | string | avatar |
+ * | string | is_mod |
+ * | string | is_admin |
+ * | string | password |
+ * | string | password_salt |
+ * | dateTime | notifications_last_read |
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
  */
 module.exports.User = bookshelf.model('User', {
   tableName: 'user',
@@ -61,10 +71,14 @@ module.exports.User = bookshelf.model('User', {
 })
 
 /**
-  table.increments('id').primary()
-  table.integer('user_id').references('user.id').unique()
-  table.string('body', 10000)
-  table.string('social_links', 1000)
+ * User Details model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | user_id | User ID (must be unique)
+ * | string | body | User bio (max size : 10000)
+ * | string | social_links | Social links JSON `{website, twitter}` (max size : 1000)
  */
 module.exports.UserDetails = bookshelf.model('UserDetails', {
   tableName: 'user_details',
@@ -95,14 +109,19 @@ module.exports.UserDetails = bookshelf.model('UserDetails', {
 })
 
 /**
-  table.increments('id').primary()
-  table.integer('user_id').references('user.id')
-  table.string('user_name')
-  table.string('user_title')
-  table.integer('node_id')
-  table.string('node_type')
-  table.string('permission') // allowed: owner
-  table.timestamps()
+ * User Role model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | integer (increments) | id | Primary key
+ * | integer | user_id | User ID
+ * | string | user_name | Local copy of the user name
+ * | string | user_title | Local copy of the user title
+ * | integer | node_id | ID of the target node
+ * | string | node_type | Type of the target node ('entry' or 'post')
+ * | string | permission | Permission: 'read', 'write', 'manage'
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
  */
 module.exports.UserRole = bookshelf.model('UserRole', {
   tableName: 'user_role',
@@ -124,22 +143,22 @@ module.exports.UserRole = bookshelf.model('UserRole', {
 /**
  * Event model
  *
- * @description ## Table columns
- *
- * @param {integer} id ID
- * @param {string}  name             Unique name used in URLs. Must have a hypen to prevent clashing other root URLs.
- * @param {string}  title
- * @param {string}  display_dates    The event dates, for display only
- * @param {string}  display_theme    The event theme, for display only
- * @param {string}  status           General status: 'pending', 'open' or 'closed'
- * @param {string}  status_rules     Event rules status: 'off', 'disabled', or a post ID
- * @param {string}  status_theme     Theme voting status: 'on', 'off', 'disabled', or a post ID
- * @param {string}  status_entry     Entry submission status: 'on', 'off', 'disabled'
- * @param {string}  status_results   Event results status: 'on', 'off', 'disabled', or a post ID
- * @param {string}  coutdown_config  Home page countdown info: {date, phrase}
- * @param {date}    published_at     Event publication date. If empty, the event is a draft.
- * @param {date}    created_at       Creation time
- * @param {date}    modified_at      Last modification time
+ * | type | name | description
+ * |--    |--    |--
+ * | integer | id | ID
+ * | string | name | Name (used in the URL). Must have a hyphen to prevent clashing other root URLs.
+ * | string | title | Title
+ * | string | display_dates | The event dates, for display only
+ * | string | display_theme | The event theme, for display only
+ * | string | status | General status: 'pending', 'open' or 'closed'
+ * | string | status_rules | Event rules status: 'off', 'disabled', or a post ID
+ * | string | status_theme | Theme voting status: 'on', 'off', 'disabled', or a post ID
+ * | string | status_entry | Entry submission status: 'on', 'off', 'disabled'
+ * | string | status_results | Event results status: 'on', 'off', 'disabled', or a post ID
+ * | string | coutdown_config | Home page countdown JSON: `{date, phrase}`
+ * | date | published_at | Publication date. If empty, the event is a draft.
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
  */
 module.exports.Event = bookshelf.model('Event', {
   tableName: 'event',
@@ -176,20 +195,25 @@ module.exports.Event = bookshelf.model('Event', {
   dependents: ['entries']
 })
 
-/*
-  table.increments('id').primary()
-  table.integer('event_id').references('event.id')
-  table.string('event_name')
-  table.string('name')
-  table.string('title')
-  table.string('description', 2000)
-  table.string('links') // JSON Array : [{url, title}]
-  table.string('pictures') // JSON Array : [path]
-  table.string('category') // "solo"/"team"
-  table.integer('feedback_score').defaultTo(100)
-  table.dateTime('published_at')
-  table.integer('comment_count')
-  table.timestamps()
+/**
+ * Entry model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | event_id | Event ID
+ * | string | event_name | Name (used in the URL)
+ * | string | name |
+ * | string | title |
+ * | string | description', 2000)
+ * | string | links | JSON Array : [{url, title}]
+ * | string | pictures | JSON Array : [path]
+ * | string | category | "solo"/"team"
+ * | integer | feedback_score | (defaults to 100)
+ * | dateTime | published_at |
+ * | integer | comment_count |
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
  */
 module.exports.Entry = bookshelf.model('Entry', {
   tableName: 'entry',
@@ -239,10 +263,14 @@ module.exports.Entry = bookshelf.model('Entry', {
   dependents: ['userRoles', 'details', 'comments']
 })
 
-/*
-  table.increments('id').primary()
-  table.integer('entry_id').references('entry.id').unique()
-  table.string('body', 10000)
+/**
+ * Entry Details model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | entry_id | Entry ID
+ * | string | body | Entry details (max size: 10000)
  */
 module.exports.EntryDetails = bookshelf.model('EntryDetails', {
   tableName: 'entry_details',
@@ -257,18 +285,23 @@ module.exports.EntryDetails = bookshelf.model('EntryDetails', {
 // POSTS
 // ===============================================================
 
-/*
-  table.increments('id').primary()
-  table.integer('author_user_id').references('user.id')
-  table.string('name')
-  table.string('title')
-  table.integer('entry_id').references('entry.id')
-  table.integer('event_id').references('event.id')
-  table.string('body', 10000)
-  table.dateTime('published_at').index()
-  table.string('special_post_type')
-  table.integer('comment_count')
-  table.timestamps()
+/**
+ * Post model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | author_user_id | Author user ID
+ * | string | name | Name (used in the URL)
+ * | string | title | Title
+ * | integer | entry_id | Entry ID
+ * | integer | event_id | Event ID
+ * | string | body | Post body (max size: 10000)
+ * | string | special_post_type | 'article', 'announcement' or empty
+ * | integer | comment_count | Number of comments made on this post
+ * | dateTime | published_at | Publication time
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
  */
 module.exports.Post = bookshelf.model('Post', {
   tableName: 'post',
@@ -307,15 +340,20 @@ module.exports.Post = bookshelf.model('Post', {
   dependents: ['userRoles', 'comments']
 })
 
-/*
-  table.increments('id').primary()
-  table.integer('node_id')
-  table.string('node_type')
-  table.integer('user_id').references('user.id')
-  table.integer('parent_id').references('comment.id')
-  table.string('body', 10000)
-  table.integer('feedback_score').defaultTo(0)
-  table.timestamps()
+/**
+ * Comment model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | node_id | ID of the target node
+ * | string | node_type | Type of the target node ('entry' or 'post')
+ * | integer | user_id | Author user ID
+ * | integer | parent_id | Parent comment ID
+ * | string | body | Comment body (max size: 10000)
+ * | integer | feedback_score | Feedback score gained through this comment (between 1 & 3)
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
  */
 module.exports.Comment = bookshelf.model('Comment', {
   tableName: 'comment',

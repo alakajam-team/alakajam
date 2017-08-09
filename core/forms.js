@@ -142,9 +142,9 @@ function isIn (string, values) {
  * Checks whether the string is not longer than the specified length.
  * (Note: not checking this does not trigger crashes on the developer
  * H2 database, instead strings are just truncated)
- * @param  {[type]}  input     [description]
- * @param  {Number}  maxLength [description]
- * @return {Boolean}           [description]
+ * @param  {any}  input
+ * @param  {Number}  maxLength
+ * @return {Boolean}
  */
 function isLengthValid (input, maxLength = 255) {
   if (!input) {
