@@ -9,6 +9,7 @@
 const forms = require('../core/forms')
 const templating = require('../controllers/templating')
 const eventService = require('../services/event-service')
+const eventThemeService = require('../services/event-theme-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 
@@ -104,14 +105,35 @@ async function viewEventThemes (req, res) {
   res.locals.pageTitle += ' | Themes'
 
   let statusThemes = res.locals.event.get('status_theme')
-  if (forms.isId(statusThemes)) {
-    res.locals.themesPost = await postService.findPostById(statusThemes)
-  } else if (statusThemes !== 'on') {
+  if (statusThemes === 'disabled' || statusThemes === 'off') {
     res.errorPage(404)
-    return
-  }
+  } else {
+    let context = {}
 
-  res.render('event/view-event-themes')
+    if (forms.isId(statusThemes)) {
+      context.themesPost = await postService.findPostById(statusThemes)
+    } else {
+      if (req.method === 'POST') {
+        // Gather ideas data
+        let {fields} = await req.parseForm()
+        let ideas = []
+        for (let i = 0; i < 3; i++) {
+          ideas.push({
+            id: fields['idea-id[' + i + ']'],
+            title: fields['idea-title[' + i + ']']
+          })
+        }
+
+        // Update theme ideas
+        await eventThemeService.saveThemeIdeas(res.locals.user, res.locals.event, ideas)
+      }
+
+      let userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, res.locals.event)
+      context.userThemes = userThemesCollection.models
+    }
+
+    res.render('event/view-event-themes', context)
+  }
 }
 
 /**

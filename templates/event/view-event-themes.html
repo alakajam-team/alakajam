@@ -12,47 +12,48 @@
       </div>
     {% else %}
       <div class="col-md-4">
-        <div>
-        <h2>Theme ideas
-          <input type="submit" class="btn btn-primary" value="Manage" /></h2>
-        <div class="panel themes__ideas">
-          <div class="themes__idea">
-            <div class="themes__idea-label">Evolution</div>
-            <p><span class="label">Out</span> after 5 votes</span></p>
+        <div id="js-view-themes">
+          <h2>Theme ideas
+              <input type="submit" class="btn btn-primary js-manage-themes-button" value="Manage" /></h2>
+          <div class="panel themes__ideas">
+            {% for userTheme in userThemes %}
+              <div class="themes__idea">
+                <div class="themes__idea-label">
+                  {{ userTheme.get('title') }}
+                </div>
+                <p>
+                <!-- TODO label-default label-success -->
+                  <span class="label">{{ userTheme.get('status') }}</span> after {{ userTheme.get('notes') }} votes</span>
+                </p>
+              </div>
+            {% endfor %}
+            {% if userThemes.length === 0 %}
+              <div class="themes__idea">
+                <p>None yet. You can submit up to 3 ideas.</p>
+              </div>
+            {% endif %}
           </div>
-          <div class="themes__idea">
-            <div class="themes__idea-label">Evolution</div>
-            <p><span class="label label-default">Active</span> after 5 votes</span></p>
-          </div>
-          <div class="themes__idea">
-            <div class="themes__idea-label">Evolution</div>
-            <p><span class="label label-success">Qualified for shortlist!</span> after 5 votes</span></p>
-          </div>
-          <p style="display: none">You didn't submit any idea yet!</p>
-        </div>
         </div>
         
-        <form method="post" style="display: none">
+        <form id="js-manage-themes" method="post" style="display: none">
           <h2>Theme ideas 
               <input type="submit" class="btn btn-primary" value="Save" />
-              <input type="submit" class="btn btn-default" value="Cancel" /></h2>
+              <input type="button" class="btn btn-default js-manage-themes-button" value="Cancel" /></h2>
           <div class="panel themes__ideas">
-            <div class="form-group themes__idea">
-              <input type="text" class="form-control input-lg" disabled="disabled" placeholder="Idea #1" value="Evolution" />
-              <p><span class="label">Out</span> after 5 votes</span></p>
-            </div>
-            <div class="form-group themes__idea">
-              <input type="text" class="form-control input-lg" placeholder="Idea #2" maxlength="60" />
-              <p><span class="label label-default">Active</span> after 5 votes</span></p>
-            </div>
-            <div class="form-group themes__idea">
-              <input type="text" class="form-control input-lg" disabled="disabled" placeholder="Idea #1" value="Evolution" />
-              <p><span class="label label-success">Qualified for shortlist!</span> after 5 votes</span></p>
-            </div>
+            {% for index in range(0, 3) %} 
+              {% set userTheme = userThemes[index] if userThemes.length > index %}
+              <div class="form-group themes__idea">
+                <input type="text" name="idea-title[{{ index }}]" class="form-control input-lg" {{ 'disabled="disabled"' if userTheme and userTheme.get('status') !== 'active' }} placeholder="Idea #{{ index + 1 }}" value="{{ userTheme.get('title') if userTheme }}" />
+                <input type="hidden" name="idea-id[{{ index }}]" value="{{ userTheme.get('id') if userTheme }}" />
+                {% if userTheme %}
+                <p><span class="label">{{ userTheme.get('status') }}</span> after {{ userTheme.get('notes') }} votes</span></p>
+                {% endif %}
+              </div>
+            {% endfor %}
           </div>
         </form>
         
-        <div class="themes__stats">
+        <div class="themes__stats" style="display: none">
           <h2>Stats</h2>
           <div>
             <ul>
@@ -108,7 +109,7 @@
           </form>
         </div>
         
-        <div class="themes__voting">
+        <div class="themes__voting" style="display: none">
           <h2>Theme voting</h2>
           <div class="panel theme-vote">
             <table>
@@ -148,10 +149,19 @@
 {% block scripts %}
 <script type="text/javascript" src="/static/js/sortable.min.js"></script>
 <script type="text/javascript">
+// Toggle managing theme ideas
+$('.js-manage-themes-button').click(function () {
+  $('#js-view-themes').toggle()
+  $('#js-manage-themes').toggle()
+})
+
+// Shortlist
 var list = document.getElementById('js-shortlist')
 Sortable.create(list, {
   animation: 100
 })
+
+
 </script>
 {% endblock %}
 

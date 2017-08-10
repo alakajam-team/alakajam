@@ -319,6 +319,7 @@ module.exports.EntryDetails = bookshelf.model('EntryDetails', {
  * | increments | id | Primary key
  * | integer | event_id | Event ID
  * | integer | user_id | User ID
+ * | string | title | (max size: 100)
  * | integer | score |
  * | integer | notes |
  * | integer | reports |
