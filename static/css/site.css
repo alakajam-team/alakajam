@@ -924,6 +924,7 @@ input.date-picker {
   height: 250px;
   margin-bottom: 20px;
   text-align: left;
+  position: relative;
 
   &__picture {
     display: block;
@@ -986,6 +987,18 @@ input.date-picker {
     
     & span {
       font-size: 1.2rem;
+    }
+  }
+
+  &__platforms {
+    position: absolute;
+    text-align: right;
+    bottom: 10px;
+    right: 10px;
+    color: var(--text-light);
+
+    & span {
+      margin-left: 3px;
     }
   }
 }
