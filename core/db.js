@@ -154,7 +154,7 @@ The initiative was launched by [@wan](/user/wan), author of the [Feedback Friend
       published_at: new Date()
     })
     await post.save()
-  
+
     post = await postService.createPost(adminUser)
     post.set({
       title: 'Feedback Fortnight!',
@@ -173,8 +173,7 @@ There will be no judging or ranking or the game, but instead as a reward, videos
       published_at: new Date()
     })
     await post.save()
-    
-    
+
     post = await postService.createPost(adminUser)
     post.set({
       title: 'Feedback & Bugs reports',
@@ -190,7 +189,7 @@ There will be no judging or ranking or the game, but instead as a reward, videos
       published_at: new Date()
     })
     await post.save()
-    
+
     // 1st event
 
     let event1 = new models.Event({

@@ -98,8 +98,8 @@ async function adminSettings (req, res) {
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
     if (constants.EDITABLE_SETTINGS.indexOf(fields.key) !== -1) {
-      if(constants.JSON_EDIT_SETTINGS.indexOf(fields.key) !== -1){
-        try{
+      if (constants.JSON_EDIT_SETTINGS.indexOf(fields.key) !== -1) {
+        try {
           fields.value = JSON.stringify(JSON.parse(fields.value))
         } catch (e) {
           // We re-send the user to the edit page with an error message
@@ -125,7 +125,7 @@ async function adminSettings (req, res) {
       key,
       value: await settingService.find(key)
     })
-    if(!currentEditValue && req.query.edit && key == req.query.edit){
+    if (!currentEditValue && req.query.edit && key === req.query.edit) {
       currentEditValue = settings[settings.length - 1]['value']
     }
   }
@@ -134,11 +134,11 @@ async function adminSettings (req, res) {
   let editSetting
   if (req.query.edit && forms.isSlug(req.query.edit)) {
     let jsonSetting = constants.JSON_EDIT_SETTINGS.indexOf(req.query.edit) !== -1
-    if(jsonSetting){
-      try{
-        currentEditValue = JSON.stringify(JSON.parse(currentEditValue),null, 4)
+    if (jsonSetting) {
+      try {
+        currentEditValue = JSON.stringify(JSON.parse(currentEditValue), null, 4)
       } catch (e) {
-        console.log("Field "+req.query.edit+" is not a valid JSON")
+        console.log('Field ' + req.query.edit + ' is not a valid JSON')
       }
     }
 

@@ -107,7 +107,7 @@ async function posts (req, res) {
 async function article (req, res) {
   // postName context variable is used to add a relevant "create article" mod button
   res.locals.postName = forms.sanitizeString(req.params.name)
-  
+
   // Find featured post
   let findPostTask = postService.findPost({
     name: res.locals.postName,
@@ -116,18 +116,18 @@ async function article (req, res) {
   }).then(async function (post) {
     res.locals.post = post
   })
-  
+
   let settingArticlesTask = settingService.find(constants.SETTING_FEATURED_ARTICLE_LINKS)
     .then(async function (sidebar) {
       if (sidebar) {
-        try{
-          res.locals.sidebar = JSON.parse(sidebar);
+        try {
+          res.locals.sidebar = JSON.parse(sidebar)
         } catch (e) {
-          console.log("Malformed JSON. Can't load articles links");
+          console.log("Malformed JSON. Can't load articles links")
         }
       }
     })
-  
+
   await Promise.all([findPostTask, settingArticlesTask]) // Parallelize fetching everything
 
   if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||

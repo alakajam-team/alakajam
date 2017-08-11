@@ -280,7 +280,7 @@ module.exports.Post = bookshelf.model('Post', {
       this.trigger('titleChanged')
     })
     this.on('titleChanged', function () {
-      if(this.get('special_post_type') != 'article'){
+      if (this.get('special_post_type') !== 'article') {
         this.set('name', slug(this.get('title') || '').toLowerCase())
       }
     })
