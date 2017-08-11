@@ -66,6 +66,7 @@ module.exports = {
   ],
 
   // Entries
-  ENTRIES_LINKS_TYPES: ['Windows', 'Linux', 'Mac', 'Web', 'Sources', 'Soundtrack']
+  ENTRIES_LINKS_TYPES: ['Windows', 'Linux', 'Mac', 'Web', 'Sources', 'Soundtrack'],
+  ENTRIES_LINKS_ICONS: ['fa-windows', 'fa-linux', 'fa-apple', 'fa-chrome', 'fa-bitbucket', 'fa-volume-up']
 
 }

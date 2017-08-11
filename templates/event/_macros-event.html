@@ -40,6 +40,11 @@
        </a>
       {% endfor %}
       </div>
+      <div class="plateforms">
+        {% for link in entry.get('links') %}
+          {{ entryLinkThumb(link) }}
+        {% endfor %}
+      </div>
     </div>
   {% else %}
     <div class="text-center"><h4 style="padding-top: 18px">{{ options.customMessage or 'No entry' }}</h4></div>
@@ -168,3 +173,13 @@
 </a>{% endif %}<!--
 
 -->{% endmacro %}
+
+{% macro entryLinkThumb(link) %}
+  {% set linkTypeIndex = constants.ENTRIES_LINKS_TYPES.indexOf(link.label) %}
+  {% if (linkTypeIndex != -1) %}
+    <span class="fa {{ constants.ENTRIES_LINKS_ICONS[linkTypeIndex] }}"></span>
+  {% else %}          
+    <span class="fa fa-download"></span>
+  {% endif %}
+{% endmacro %}
+
