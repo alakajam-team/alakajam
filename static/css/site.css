@@ -116,6 +116,10 @@ textarea.simplemde-editor {
   resize: vertical;
   height: 300px;
 }
+textarea.form-control.jsonSetting {
+  resize: vertical;
+  height: 400px;
+}
 
 a {
   color: var(--alt);

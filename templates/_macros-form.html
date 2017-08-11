@@ -30,7 +30,27 @@
   </script>
 {% endmacro %}
 
+{# ======== CODEMIRROR EDITOR ========= #}
 
+{% macro codeMirrorStyles() %}
+  <link rel="stylesheet" type="text/css" href="/static/css/codemirror.css" />
+{% endmacro %}
+
+{% macro codeMirrorScripts(options = {}) %}
+  <script type="text/javascript" src="/static/js/codemirror.min.js"></script>
+  <script type="text/javascript" src="/static/js/matchbrackets.min.js"></script>
+  <script type="text/javascript" src="/static/js/closebrackets.min.js"></script>
+  <script type="text/javascript" src="/static/js/codemirror-jsonconf.min.js"></script>
+    <script>
+      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        mode: "application/ld+json",
+        lineWrapping: true
+      });
+    </script>
+
+{% endmacro %}
 {# ======== PICTURES ========= #}
 
 {% macro pictureInput(name, value, defaultValue = null) %}

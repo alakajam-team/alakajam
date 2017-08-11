@@ -15,7 +15,7 @@ let modelPrototype = bookshelf.Model.prototype
 
 /**
   table.string('key').primary()
-  table.string('value')
+  table.string('value', 10000)
   table.timestamps()
  */
 module.exports.Setting = bookshelf.model('Setting', {
@@ -280,7 +280,9 @@ module.exports.Post = bookshelf.model('Post', {
       this.trigger('titleChanged')
     })
     this.on('titleChanged', function () {
-      this.set('name', slug(this.get('title') || '').toLowerCase())
+      if(this.get('special_post_type') != 'article'){
+        this.set('name', slug(this.get('title') || '').toLowerCase())
+      }
     })
     return attrs
   },

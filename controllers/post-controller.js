@@ -13,6 +13,7 @@ const cache = require('../core/cache')
 const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
+const settingService = require('../services/setting-service')
 const templating = require('./templating')
 
 module.exports = {
@@ -106,11 +107,28 @@ async function posts (req, res) {
 async function article (req, res) {
   // postName context variable is used to add a relevant "create article" mod button
   res.locals.postName = forms.sanitizeString(req.params.name)
-  res.locals.post = await postService.findPost({
+  
+  // Find featured post
+  let findPostTask = postService.findPost({
     name: res.locals.postName,
     specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
     allowDrafts: true
+  }).then(async function (post) {
+    res.locals.post = post
   })
+  
+  let settingArticlesTask = settingService.find(constants.SETTING_FEATURED_ARTICLE_LINKS)
+    .then(async function (sidebar) {
+      if (sidebar) {
+        try{
+          res.locals.sidebar = JSON.parse(sidebar);
+        } catch (e) {
+          console.log("Malformed JSON. Can't load articles links");
+        }
+      }
+    })
+  
+  await Promise.all([findPostTask, settingArticlesTask]) // Parallelize fetching everything
 
   if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {

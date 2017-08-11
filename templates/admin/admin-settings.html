@@ -1,9 +1,13 @@
 {% extends "admin/_page-admin.html" %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block styles %}
+  {{ formMacros.codeMirrorStyles() }}
+{% endblock %}
 
 {% block adminBody %}
 
 <h1>Settings</h1>
-
 {% if editSetting %}
 <form action="/admin/settings" method="post">
   <div class="form-group">
@@ -13,7 +17,7 @@
   </div>
   <div class="form-group">
     <label for="value">Value</label>
-    <textarea name="value" class="form-control">{{ editSetting.value }}</textarea>
+    <textarea {{ 'id=code' if editSetting.jsonSetting }} name="value" class="form-control {{ 'jsonSetting' if editSetting.jsonSetting }}">{{ editSetting.value }}</textarea>
   </div>
   <div class="form-group">
     <input type="submit" class="btn btn-primary" value="Save" />
@@ -37,4 +41,8 @@
 </tbody>
 </table>
 
+{% endblock %}
+
+{% block scripts %} 
+  {{ formMacros.codeMirrorScripts() }}
 {% endblock %}
