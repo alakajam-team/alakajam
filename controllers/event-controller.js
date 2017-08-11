@@ -114,22 +114,40 @@ async function viewEventThemes (req, res) {
       context.themesPost = await postService.findPostById(statusThemes)
     } else {
       if (req.method === 'POST') {
-        // Gather ideas data
         let {fields} = await req.parseForm()
-        let ideas = []
-        for (let i = 0; i < 3; i++) {
-          ideas.push({
-            id: fields['idea-id[' + i + ']'],
-            title: fields['idea-title[' + i + ']']
-          })
-        }
 
-        // Update theme ideas
-        await eventThemeService.saveThemeIdeas(res.locals.user, res.locals.event, ideas)
+        if (fields.action === 'ideas') {
+          // Gather ideas data
+          let ideas = []
+          for (let i = 0; i < 3; i++) {
+            let idField = fields['idea-id[' + i + ']']
+            if (forms.isId(idField)) {
+              ideas.push({
+                id: idField,
+                title: forms.sanitizeString(fields['idea-title[' + i + ']'])
+              })
+            }
+          }
+          // Update theme ideas
+          await eventThemeService.saveThemeIdeas(res.locals.user, res.locals.event, ideas)
+        } else if (fields.action === 'vote') {
+          if (forms.isId(fields['theme-id']) && forms.isInt(fields['theme-score'])) {
+            await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['theme-id']), parseInt(fields['theme-score']))
+          }
+        }
       }
 
+      // Gather info for display
       let userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, res.locals.event)
       context.userThemes = userThemesCollection.models
+
+      let nextThemesCollection = await eventThemeService.findThemesToVoteOn(res.locals.user, res.locals.event)
+      if (nextThemesCollection.length > 0) {
+        context.nextTheme = nextThemesCollection.at(0) // TODO Use AJAX to send a whole list when needed
+      }
+
+      let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, res.locals.event)
+      context.votesHistory = votesHistoryCollection.models
     }
 
     res.render('event/view-event-themes', context)

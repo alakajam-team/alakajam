@@ -29,6 +29,7 @@ module.exports = {
   isURL,
   isUsername,
   isId,
+  isInt,
   isSlug,
   isIn,
   isLengthValid,
@@ -136,6 +137,15 @@ function isSlug (string) {
  */
 function isIn (string, values) {
   return string && validator.isIn(string, values)
+}
+
+/**
+ * Checks whether the string is in an integer
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isInt (string) {
+  return string && validator.isInt(string)
 }
 
 /**

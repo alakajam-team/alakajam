@@ -37,6 +37,7 @@
         
         <form id="js-manage-themes" method="post" style="display: none">
           <h2>Theme ideas 
+              <input type="hidden" name="action" value="ideas" />
               <input type="submit" class="btn btn-primary" value="Save" />
               <input type="button" class="btn btn-default js-manage-themes-button" value="Cancel" /></h2>
           <div class="panel themes__ideas">
@@ -73,21 +74,42 @@
       </div>
       
       <div class="col-md-8">
-        <div class="themes__results" style="display: none">
-          <h2>Shortlist results</h2>
-          <div class="well">
-            <p>
-              <span class="pull-right">Your picks</span>
-              Final rankings of the theme shortlist
-            </p>
-            <ol>
-              {% for i in range(0, 10) %}
-              <li class="theme-shortlist-line">
-                <span class="theme-shortlist-line__label">Evolution {{ i }}</span>
-                <span class="theme-shortlist-line__ranking pull-right label label-default">{{ [i, 1] | sum | ordinal }}</span>
-              </li>
-              {% endfor %}
-            </ol>
+        <div class="themes__voting">
+          <h2>Theme voting</h2>
+          <div class="panel theme-vote">
+            {% if nextTheme %}
+            <form id="js-vote-form" method="post">
+              <input type="hidden" name="action" value="vote" />
+              <input type="hidden" name="theme-id" value="{{ nextTheme.get('id') }}" />
+              <input type="hidden" name="theme-score" id="js-vote-score" />
+              <table>
+              <tr><td class="theme-vote__buttons">
+                <button data-score="1" class="btn btn-default js-vote-button"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                <button data-score="-1" class="btn btn-default js-vote-button"><span class="glyphicon glyphicon-arrow-down"></span></button>
+              </td><td class="theme-vote__label">
+                {{ nextTheme.get('title') }}
+                {{ nextTheme | prettyDump | safe }}
+              </td></tr>
+              </table>
+            </form>
+            {% endif %}
+          </div>
+          <div class="horizontal-bar">Votes history</div>
+          <div class="row" style="display: none">
+            {% for vote in votesHistory %}
+            <div class="col-sm-6">
+              <div class="theme-past">
+                <table>
+                <tr><td class="theme-past__buttons">
+                  <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                  <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                </td><td class="theme-past__label">
+                  {{ vote.related('theme').get('title') }}
+                </td></tr>
+                </table>
+              </div>
+            </div>
+            {% endfor %}
           </div>
         </div>
         
@@ -109,34 +131,21 @@
           </form>
         </div>
         
-        <div class="themes__voting" style="display: none">
-          <h2>Theme voting</h2>
-          <div class="panel theme-vote">
-            <table>
-            <tr><td class="theme-vote__buttons">
-              <button class="btn btn-default"><span class="glyphicon glyphicon-arrow-up"></span></button>
-              <button class="btn btn-default"><span class="glyphicon glyphicon-arrow-down"></span></button>
-            </td><td class="theme-vote__label">
-              Evolution
-            </td></tr>
-            </table>
-          </div>
-          <div class="horizontal-bar">Votes history</div>
-          <div class="row">
-            {% for i in range(0, 10) %}
-            <div class="col-sm-6">
-              <div class="theme-past">
-                <table>
-                <tr><td class="theme-past__buttons">
-                  <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
-                  <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
-                </td><td class="theme-past__label">
-                  Evolution
-                </td></tr>
-                </table>
-              </div>
-            </div>
-            {% endfor %}
+        <div class="themes__results" style="display: none">
+          <h2>Shortlist results</h2>
+          <div class="well">
+            <p>
+              <span class="pull-right">Your picks</span>
+              Final rankings of the theme shortlist
+            </p>
+            <ol>
+              {% for i in range(0, 10) %}
+              <li class="theme-shortlist-line">
+                <span class="theme-shortlist-line__label">Evolution {{ i }}</span>
+                <span class="theme-shortlist-line__ranking pull-right label label-default">{{ [i, 1] | sum | ordinal }}</span>
+              </li>
+              {% endfor %}
+            </ol>
           </div>
         </div>
       </div>
@@ -153,6 +162,12 @@
 $('.js-manage-themes-button').click(function () {
   $('#js-view-themes').toggle()
   $('#js-manage-themes').toggle()
+})
+
+// Theme voting form
+$('.js-vote-button').click(function (e) {
+  $('#js-vote-score').val($(this).attr('data-score'))
+  console.log($('#js-vote-score').val())
 })
 
 // Shortlist

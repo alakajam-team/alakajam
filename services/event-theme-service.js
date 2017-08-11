@@ -12,7 +12,11 @@ const log = require('../core/log')
 
 module.exports = {
   findThemeIdeasByUser,
-  saveThemeIdeas
+  saveThemeIdeas,
+
+  findThemeVotesHistory,
+  findThemesToVoteOn,
+  saveVote
 }
 
 /**
@@ -44,7 +48,7 @@ async function saveThemeIdeas (user, event, ideas) {
 
   // Run through all existing themes for that event/user combination
   let existingThemes = await findThemeIdeasByUser(user, event)
-  let keptThemes = []
+  let handledThemes = []
   for (let idea of ideas) {
     if (idea.id) {
       let existingTheme = existingThemes.findWhere({'id': parseInt(idea.id)})
@@ -60,11 +64,11 @@ async function saveThemeIdeas (user, event, ideas) {
             'reports': 0
           })
           tasks.push(existingTheme.save())
-          keptThemes.push(existingTheme)
         } else {
           // Delete existing theme
           tasks.push(existingTheme.destroy())
         }
+        handledThemes.push(existingTheme)
       } else {
         log.warn('Invalid theme ID for user ' + user.get('name') + ': ' + idea.id)
         idea.id = null
@@ -84,7 +88,7 @@ async function saveThemeIdeas (user, event, ideas) {
   }
 
   // Destroy any theme not among the ideas
-  let missingThemes = existingThemes.difference(keptThemes)
+  let missingThemes = existingThemes.difference(handledThemes)
   if (missingThemes.length > 0) {
     log.warn('Theme ID were not given among the parameters for user ' + user.get('name') + ':')
     for (let missingTheme of missingThemes) {
@@ -94,4 +98,79 @@ async function saveThemeIdeas (user, event, ideas) {
   }
 
   await Promise.all(tasks)
+}
+
+/**
+ * Returns the 30 latest votes by the user
+ * @param user {User} user model
+ * @param event {Event} event model
+ */
+async function findThemeVotesHistory (user, event) {
+  return models.ThemeVote.where({
+    event_id: event.get('id'),
+    user_id: user.get('id')
+  })
+      .fetchPage({
+        pageSize: 30,
+        withRelated: ['theme']
+      })
+}
+
+/**
+ * Returns a page of 10 themes that a user can vote on
+ * @param user {User} user model
+ * @param event {Event} event model
+ */
+async function findThemesToVoteOn (user, event) {
+  return models.Theme.query(function (qb) {
+    qb.leftOuterJoin('theme_vote', function () {
+      this.on('theme.id', '=', 'theme_vote.theme_id')
+      this.andOn('theme_vote.user_id', '=', user.get('id'))
+    })
+  })
+      .where({
+        status: constants.THEME_STATUS_ACTIVE,
+        'theme.event_id': event.get('id'),
+        'theme_vote.user_id': null
+      })
+     // .where('user_id', '<>', user.get('id')) // DEBUG
+      .orderBy('notes', 'DESC')
+      .fetchPage({ pageSize: 10 })
+}
+
+/**
+ * Saves a theme vote
+ * @param user {User} user model
+ * @param event {Event} event model
+ * @param themeId {integer}
+ * @param score {integer}
+ */
+async function saveVote (user, event, themeId, score) {
+  // TODO Refine theme statuses
+  if (event.get('status_theme') === 'on' && [-1, 1].indexOf(score) !== -1) {
+    let theme = await models.Theme.where('id', themeId).fetch()
+    let vote = await models.ThemeVote.where({
+      user_id: user.get('id'),
+      event_id: event.get('id'),
+      theme_id: themeId
+    })
+
+    if (vote) {
+      theme.set('score', theme.get('score') + score - (vote.get('score') || 0))
+      vote.set('score', score)
+    } else {
+      theme.set({
+        'score': theme.get('score') + score,
+        'notes': theme.get('notes') + 1
+      })
+      vote = new models.ThemeVote({
+        theme_id: themeId,
+        user_id: user.get('id'),
+        event_id: event.get('id'),
+        score: score
+      })
+    }
+    console.log(theme, vote)
+    await Promise.all([theme.save(), vote.save()])
+  }
 }
