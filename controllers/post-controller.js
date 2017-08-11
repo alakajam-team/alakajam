@@ -339,50 +339,68 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
   }
 
   if (securityService.canUserWrite(currentUser, comment, { allowMods: true })) {
+    let nodeType = comment.get('node_type')
+    let userId = comment.get('user_id')
+
     if (fields.delete) {
       // Delete comment
       await comment.destroy()
     } else {
       // Update comment
       comment.set('body', forms.sanitizeMarkdown(fields.body))
-      await eventService.refreshCommentScore(comment)
       await comment.save()
+    }
 
-      // Refresh feedback score on both the giver & receiver entries
-      if (comment.get('node_type') === 'entry') {
-        let currentEntry = currentNode
-        let userEntry = await eventService.findUserEntryForEvent(
-          currentUser, currentEntry.get('event_id'))
-
-        // (No need to await, it's okay if the score is a bit late)
-        // XXXXXXXXXXXXX
-        await eventService.refreshEntryScore(currentEntry)
-        if (userEntry) {
-          await eventService.refreshEntryScore(userEntry)
+    if (nodeType === 'entry') {
+      if (isNewComment) {
+        await eventService.refreshCommentScore(comment)
+        await comment.save()
+      } else {
+        // We need to save the updated comment before reloading all comments and save them
+        if (!fields.delete) {
+          comment.save()
         }
+        // We need to recalculate the number of comments and the other user comments score
+        await eventService.adjustUserCommentScore(userId, currentNode)
       }
 
-      // we need to update the comment feed and unread notifications of users associated with the post/entry
-      let node = comment.related('node')
-      let userRoles = node.related('userRoles')
-      userRoles.forEach(function (userRole) {
-        let userCache = cache.user(userRole.get('user_name'))
-        userCache.del('toUserCollection')
-        userCache.del('unreadNotifications')
-      })
+      // Refresh feedback score on both the giver & receiver entries
 
-      // and also any users @mentioned in the comment
-      let body = comment.get('body')
-      body.split(' ').forEach(function (word) {
-        if (word.length > 0 && word[0] === '@') {
-          let userCache = cache.user(word.slice(1))
+      let currentEntry = currentNode
+      let userEntry = await eventService.findUserEntryForEvent(
+        currentUser, currentEntry.get('event_id'))
+
+      // (No need to await, it's okay if the score is a bit late)
+      // XXXXXXXXXXXXX
+      await eventService.refreshEntryScore(currentEntry)
+      if (userEntry) {
+        await eventService.refreshEntryScore(userEntry)
+      }
+
+      if (!fields.delete) {
+        // we need to update the comment feed and unread notifications of users associated with the post/entry
+        let node = comment.related('node')
+        let userRoles = node.related('userRoles')
+        userRoles.forEach(function (userRole) {
+          let userCache = cache.user(userRole.get('user_name'))
           userCache.del('toUserCollection')
           userCache.del('unreadNotifications')
-        }
-      })
+        })
 
-      redirectUrl += templating.buildUrl(comment, 'comment')
+        // and also any users @mentioned in the comment
+        let body = comment.get('body')
+        body.split(' ').forEach(function (word) {
+          if (word.length > 0 && word[0] === '@') {
+            let userCache = cache.user(word.slice(1))
+            userCache.del('toUserCollection')
+            userCache.del('unreadNotifications')
+          }
+        })
+
+        redirectUrl += templating.buildUrl(comment, 'comment')
+      }
     }
+
     cache.user(currentUser.get('name')).del('byUserCollection')
 
     // Refresh node comment count

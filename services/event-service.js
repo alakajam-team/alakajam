@@ -28,6 +28,7 @@ module.exports = {
 
   refreshEntryScore,
   refreshCommentScore,
+  adjustUserCommentScore,
 
   areSubmissionsAllowed
 }
@@ -249,6 +250,40 @@ async function refreshCommentScore (comment) {
   }
 
   comment.set('feedback_score', adjustedScore)
+}
+
+/**
+ * Adjust the value of each comments of a user after a deletion
+ * @param {integer} userId The user id of the modified comment
+ * @param {Post|Entry} node The current node model
+ */
+async function adjustUserCommentScore (userId, entry) {
+  await entry.load(['comments', 'userRoles'])
+  let isTeamMember = 0
+
+  let entryUserRoles = entry.related('userRoles')
+  for (let userRole of entryUserRoles.models) {
+    if (userRole.get('user_id') === userId) {
+      isTeamMember = true
+      break
+    }
+  }
+  if (!isTeamMember) {
+    let previousCommentsScore = 0
+    let entryComments = entry.related('comments')
+    for (let comment of entryComments.models) {
+      if (comment.get('user_id') === userId) {
+        let adjustedScore = 0
+        if (previousCommentsScore < 3) {
+          let rawScore = _computeRawCommentScore(comment)
+          adjustedScore = Math.max(0, Math.min(rawScore, 3 - previousCommentsScore))
+          previousCommentsScore += adjustedScore
+        }
+        comment.set('feedback_score', adjustedScore)
+        await comment.save()
+      }
+    }
+  }
 }
 
 function _computeRawCommentScore (comment) {
