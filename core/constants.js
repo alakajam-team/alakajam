@@ -63,6 +63,9 @@ module.exports = {
     'image/png',
     'image/jpeg',
     'image/gif'
-  ]
+  ],
+
+  // Entries
+  ENTRIES_LINKS_TYPES: ['Windows', 'Linux', 'Mac', 'Web', 'Sources', 'Soundtrack']
 
 }

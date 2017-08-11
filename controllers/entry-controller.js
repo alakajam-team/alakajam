@@ -122,6 +122,10 @@ async function saveEntry (req, res) {
     while (fields['url' + i]) {
       let label = forms.sanitizeString(fields['label' + i])
       let url = fields['url' + i]
+      if (label === 'other') {
+        label = forms.sanitizeString(fields['customlabel' + i])
+      }
+
       if (!forms.isURL(url) || !label) {
         errorMessage = 'Link #' + i + ' is invalid'
         break
