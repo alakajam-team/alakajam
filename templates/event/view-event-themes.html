@@ -78,31 +78,35 @@
           <h2>Theme voting</h2>
           <div class="panel theme-vote">
             {% if nextTheme %}
-            <form id="js-vote-form" method="post">
-              <input type="hidden" name="action" value="vote" />
-              <input type="hidden" name="theme-id" value="{{ nextTheme.get('id') }}" />
-              <input type="hidden" name="theme-score" id="js-vote-score" />
-              <table>
-              <tr><td class="theme-vote__buttons">
-                <button data-score="1" class="btn btn-default js-vote-button"><span class="glyphicon glyphicon-arrow-up"></span></button>
-                <button data-score="-1" class="btn btn-default js-vote-button"><span class="glyphicon glyphicon-arrow-down"></span></button>
-              </td><td class="theme-vote__label">
-                {{ nextTheme.get('title') }}
-                {{ nextTheme | prettyDump | safe }}
-              </td></tr>
-              </table>
-            </form>
+            <table>
+            <tr><td class="theme-vote__buttons">
+              <form method="post">
+                <input type="hidden" name="action" value="vote" />
+                <input type="hidden" name="theme-id" value="{{ nextTheme.get('id') }}" />
+                <button name="upvote" class="btn btn-default js-vote-button"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                <button name="downvote" class="btn btn-default js-vote-button"><span class="glyphicon glyphicon-arrow-down"></span></button>
+              </form>
+            </td><td class="theme-vote__label">
+              {{ nextTheme.get('title') }}
+            </td></tr>
+            </table>
+            {% else %}
+              No more themes to vote on, try again later!
             {% endif %}
           </div>
           <div class="horizontal-bar">Votes history</div>
-          <div class="row" style="display: none">
+          <div class="row">
             {% for vote in votesHistory %}
             <div class="col-sm-6">
               <div class="theme-past">
                 <table>
                 <tr><td class="theme-past__buttons">
-                  <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
-                  <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                  <form method="post">
+                    <input type="hidden" name="action" value="vote" />
+                    <input type="hidden" name="theme-id" value="{{ vote.get('theme_id') }}" />
+                    <button name="upvote" class="btn {{ 'btn-success' if vote.get('score') > 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                    <button name="downvote" class="btn {{ 'btn-danger' if vote.get('score') < 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                  </form>
                 </td><td class="theme-past__label">
                   {{ vote.related('theme').get('title') }}
                 </td></tr>
@@ -162,12 +166,6 @@
 $('.js-manage-themes-button').click(function () {
   $('#js-view-themes').toggle()
   $('#js-manage-themes').toggle()
-})
-
-// Theme voting form
-$('.js-vote-button').click(function (e) {
-  $('#js-vote-score').val($(this).attr('data-score'))
-  console.log($('#js-vote-score').val())
 })
 
 // Shortlist

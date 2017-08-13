@@ -1,0 +1,36 @@
+{% extends "_page.html" %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4 col-md-3">
+      <div class="list-group">
+        <div class="list-group-item">
+          <h4 style="margin: 0">{{ event.get('title') | default('Event') }}</h4>
+        </div>
+        {{ editEventLink(event, 'edit', 'General') }}
+        {{ editEventLink(event, 'edit-themes', 'Themes') }}
+      </div>
+    </div>
+    <div class="col-sm-8 col-md-9">
+      {% if infoMessage %}
+        <div class="alert alert-info">{{ infoMessage }}</div>
+      {% endif %}
+      {% if errorMessage %}
+        <div class="alert alert-warning">{{ errorMessage }}</div>
+      {% endif %}
+
+      {% block editEventBody %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% macro editEventLink(event, page, label) %}
+  {% set url = buildUrl(event, 'event', page) %}
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} 
+    {{ 'list-group-item-primary' if path === url}}">{{ label }}</a>
+{% endmacro %}

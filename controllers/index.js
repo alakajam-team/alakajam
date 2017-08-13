@@ -66,7 +66,7 @@ module.exports = {
     router.all('/admin/dev', adminController.adminDev)
     router.all('/admin/status', adminController.adminStatus)
 
-    // Events & Entries
+    // Entries & Events
 
     router.get('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.createEntry)
     router.post('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.saveEntry)
@@ -82,8 +82,8 @@ module.exports = {
     router.all('/:eventName([^/]{0,}-[^/]{0,})/themes', eventController.viewEventThemes)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/games', eventController.viewEventGames)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/results', eventController.viewEventResults)
-    router.get('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
-    router.post('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/edit-themes', eventController.editEventThemes)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/delete', eventController.deleteEvent)
 
     // Posts

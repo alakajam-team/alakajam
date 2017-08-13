@@ -183,3 +183,8 @@
   {% endif %}
 {% endmacro %}
 
+{% macro eventThemeStatus (event) %}
+  <span class="label {{ 'label-success' if event.get('status') == 'shortlist' }} 
+      {{ 'label-default' if event.get('status') == 'active' }}">
+    {{ (event.get('status') | capitalize) if event.get('status') != 'banned' else 'Out' }}</span>
+{% endmacro %}

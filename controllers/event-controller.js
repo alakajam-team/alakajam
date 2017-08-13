@@ -23,6 +23,7 @@ module.exports = {
   viewEventResults,
 
   editEvent,
+  editEventThemes,
   deleteEvent
 }
 
@@ -121,7 +122,7 @@ async function viewEventThemes (req, res) {
           let ideas = []
           for (let i = 0; i < 3; i++) {
             let idField = fields['idea-id[' + i + ']']
-            if (forms.isId(idField)) {
+            if (forms.isId(idField) || !idField) {
               ideas.push({
                 id: idField,
                 title: forms.sanitizeString(fields['idea-title[' + i + ']'])
@@ -131,8 +132,9 @@ async function viewEventThemes (req, res) {
           // Update theme ideas
           await eventThemeService.saveThemeIdeas(res.locals.user, res.locals.event, ideas)
         } else if (fields.action === 'vote') {
-          if (forms.isId(fields['theme-id']) && forms.isInt(fields['theme-score'])) {
-            await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['theme-id']), parseInt(fields['theme-score']))
+          if (forms.isId(fields['theme-id']) && (fields['upvote'] !== undefined || fields['downvote'] !== undefined)) {
+            let score = (fields['upvote'] !== undefined) ? 1 : -1
+            await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['theme-id']), score)
           }
         }
       }
@@ -277,6 +279,16 @@ async function editEvent (req, res) {
       errorMessage
     })
   }
+}
+
+/**
+ * Manage the event's submitted themes
+ */
+async function editEventThemes (req, res) {
+  let themesCollection = await eventThemeService.findBestThemes(res.locals.event, { fetchAll: true })
+  res.render('event/edit-event-themes', {
+    themes: themesCollection.models
+  })
 }
 
 /**

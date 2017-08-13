@@ -16,7 +16,9 @@ module.exports = {
 
   findThemeVotesHistory,
   findThemesToVoteOn,
-  saveVote
+  saveVote,
+  
+  findBestThemes
 }
 
 /**
@@ -123,17 +125,17 @@ async function findThemeVotesHistory (user, event) {
  */
 async function findThemesToVoteOn (user, event) {
   return models.Theme.query(function (qb) {
-    qb.leftOuterJoin('theme_vote', function () {
-      this.on('theme.id', '=', 'theme_vote.theme_id')
-      this.andOn('theme_vote.user_id', '=', user.get('id'))
+      qb.leftOuterJoin('theme_vote', function () {
+        this.on('theme.id', '=', 'theme_vote.theme_id')
+        this.andOn('theme_vote.user_id', '=', user.get('id'))
+      })
     })
-  })
       .where({
         status: constants.THEME_STATUS_ACTIVE,
         'theme.event_id': event.get('id'),
         'theme_vote.user_id': null
       })
-     // .where('user_id', '<>', user.get('id')) // DEBUG
+      .where('theme.user_id', '<>', user.get('id'))
       .orderBy('notes', 'DESC')
       .fetchPage({ pageSize: 10 })
 }
@@ -153,7 +155,7 @@ async function saveVote (user, event, themeId, score) {
       user_id: user.get('id'),
       event_id: event.get('id'),
       theme_id: themeId
-    })
+    }).fetch()
 
     if (vote) {
       theme.set('score', theme.get('score') + score - (vote.get('score') || 0))
@@ -170,7 +172,18 @@ async function saveVote (user, event, themeId, score) {
         score: score
       })
     }
-    console.log(theme, vote)
+    
     await Promise.all([theme.save(), vote.save()])
+  }
+}
+
+async function findBestThemes (event, options) {
+  let query =  models.Theme.where({
+    event_id: event.get('id')
+  }).orderBy('score', 'DESC')
+  if (options.fetchAll) {
+    return query.fetchAll()
+  } else {
+    return query.fetchPage({ pageSize: 10 })
   }
 }
