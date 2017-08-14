@@ -112,6 +112,7 @@ async function findThemeVotesHistory (user, event) {
     event_id: event.get('id'),
     user_id: user.get('id')
   })
+      .orderBy('id', 'DESC')
       .fetchPage({
         pageSize: 30,
         withRelated: ['theme']

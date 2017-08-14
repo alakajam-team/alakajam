@@ -24,7 +24,10 @@ module.exports = {
 
   editEvent,
   editEventThemes,
-  deleteEvent
+  deleteEvent,
+  
+  ajaxFindThemes,
+  ajaxSaveVote
 }
 
 /**
@@ -302,4 +305,31 @@ async function deleteEvent (req, res) {
 
   await res.locals.event.destroy()
   res.redirect('/events')
+}
+
+/**
+ * AJAX API: Find themes to vote on
+ */
+async function ajaxFindThemes (req, res) {
+  let themesCollection = await eventThemeService.findThemesToVoteOn(res.locals.user, res.locals.event)
+  let json = []
+  for (let theme of themesCollection.models) {
+    json.push({
+      id: theme.get('id'),
+      title: theme.get('title')
+    })
+  }
+  res.end(JSON.stringify(json))
+}
+
+/**
+ * AJAX API: Save a vote
+ */
+async function ajaxSaveVote (req, res) {
+  let {fields} = await req.parseForm()
+  if (forms.isId(fields['id']) && (fields['upvote'] !== undefined || fields['downvote'] !== undefined)) {
+    let score = (fields['upvote'] !== undefined) ? 1 : -1
+    await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['id']), score)
+  }
+  res.end('')
 }

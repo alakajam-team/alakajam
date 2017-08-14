@@ -77,25 +77,10 @@
         <div class="themes__voting">
           <h2>Theme voting</h2>
           <div class="panel theme-vote">
-            {% if nextTheme %}
-            <table>
-            <tr><td class="theme-vote__buttons">
-              <form method="post">
-                <input type="hidden" name="action" value="vote" />
-                <input type="hidden" name="theme-id" value="{{ nextTheme.get('id') }}" />
-                <button name="upvote" class="btn btn-default js-vote-button"><span class="glyphicon glyphicon-arrow-up"></span></button>
-                <button name="downvote" class="btn btn-default js-vote-button"><span class="glyphicon glyphicon-arrow-down"></span></button>
-              </form>
-            </td><td class="theme-vote__label">
-              {{ nextTheme.get('title') }}
-            </td></tr>
-            </table>
-            {% else %}
-              No more themes to vote on, try again later!
-            {% endif %}
+            <div id="js-theme-vote"></div>
           </div>
           <div class="horizontal-bar">Votes history</div>
-          <div class="row">
+          <div id="js-theme-history" class="row">
             {% for vote in votesHistory %}
             <div class="col-sm-6">
               <div class="theme-past">
@@ -157,6 +142,44 @@
   </div>
 </div>
 
+<script id="js-theme-vote-template" class="text/template">
+  <% if (theme) { %>
+  <table>
+  <tr><td class="theme-vote__buttons">
+    <form id="js-vote-form" method="post">
+      <input type="hidden" name="action" value="vote" />
+      <input type="hidden" name="theme-id" id="js-theme-id" value="<%= theme.id %>" />
+      <button id="js-upvote" name="upvote" class="btn btn-default"><span class="glyphicon glyphicon-arrow-up"></span></button>
+      <button id="js-downvote" name="downvote" class="btn btn-default"><span class="glyphicon glyphicon-arrow-down"></span></button>
+    </form>
+  </td><td id="js-theme-title" class="theme-vote__label">
+    <%= theme.title %>
+  </td></tr>
+  </table>
+  <% } else { %>
+   No more themes to vote on, try again later!
+  <% } %>
+</script>
+
+<script id="js-theme-vote-history-template" class="text/template">
+  <div class="col-sm-6">
+    <div class="theme-past">
+      <table class="js-theme-vote-history-block" style="display: none">
+      <tr><td class="theme-past__buttons">
+        <form method="post">
+          <input type="hidden" name="action" value="vote" />
+          <input type="hidden" name="theme-id" value="<%= theme.id %>" />
+          <button name="upvote" class="btn <%= theme.upvote ? 'btn-success' : 'btn-default' %> btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
+          <button name="downvote" class="btn <%= theme.downvote ? 'btn-danger' : 'btn-default' %> btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
+        </form>
+      </td><td class="theme-past__label">
+        <%= theme.title %>
+      </td></tr>
+      </table>
+    </div>
+  </div>
+</script>
+
 {% endblock %}
 
 {% block scripts %}
@@ -174,6 +197,59 @@ Sortable.create(list, {
   animation: 100
 })
 
+// Manage theme votes
+
+var themeBuffer = []
+
+nextTheme()
+
+function nextTheme () {
+  if (themeBuffer.length === 0) {
+    $.getJSON('./ajax-find-themes', function (data) {
+      themeBuffer = data
+      renderTheme(themeBuffer.length > 0 ? themeBuffer.shift() : null)
+    })
+  } else {
+    renderTheme(themeBuffer.shift())
+  }
+}
+
+function renderTheme (themeInfo) {
+  var template = _.template($('#js-theme-vote-template').html())
+  $('#js-theme-vote').html(template({ theme: themeInfo }))
+  $('#js-theme-vote').fadeIn(300)
+  
+  $('#js-vote-form').submit(function (e) {
+    e.preventDefault()
+  })
+  $('#js-upvote').click(function (e) {
+    saveVote($('#js-theme-id').val(), true, nextTheme)
+  })
+  $('#js-downvote').click(function () {
+    saveVote($('#js-theme-id').val(), false, nextTheme)
+  })
+}
+
+function saveVote (id, upvote, callback) {
+  $('#js-theme-vote').hide()
+
+  var themeInfo = {
+    id: id,
+    title: $('#js-theme-title').text()
+  }
+  if (upvote) {
+    themeInfo.upvote = true
+  } else {
+    themeInfo.downvote = true
+  }
+
+  var template = _.template($('#js-theme-vote-history-template').html())
+  var historyBlock = template({ theme: themeInfo })
+  $('#js-theme-history').prepend(historyBlock)
+  $('.js-theme-vote-history-block').fadeIn(800)
+  
+  $.post('./ajax-save-vote', themeInfo, callback)
+}
 
 </script>
 {% endblock %}

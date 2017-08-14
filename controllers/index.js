@@ -80,6 +80,8 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewEventPosts)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/announcements', eventController.viewEventAnnouncements)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/themes', eventController.viewEventThemes)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/ajax-find-themes', eventController.ajaxFindThemes)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/ajax-save-vote', eventController.ajaxSaveVote)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/games', eventController.viewEventGames)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/results', eventController.viewEventResults)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
