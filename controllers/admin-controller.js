@@ -98,20 +98,23 @@ async function adminSettings (req, res) {
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
     if (constants.EDITABLE_SETTINGS.indexOf(fields.key) !== -1) {
+      let save = true
       if (constants.JSON_EDIT_SETTINGS.indexOf(fields.key) !== -1) {
         try {
+          // Minimize JSON
           fields.value = JSON.stringify(JSON.parse(fields.value))
         } catch (e) {
           // We re-send the user to the edit page with an error message
+          save = false
           req.query.edit = fields.key
           currentEditValue = fields.value
           res.locals.errorMessage = 'This setting field needs to be a valid JSON field'
         }
-        currentEditValue = forms.sanitizeString(fields.value, 10000)
-      } else {
-        currentEditValue = forms.sanitizeString(fields.value)
       }
-      await settingService.save(fields.key, currentEditValue)
+      if (save) {
+        currentEditValue = forms.sanitizeString(fields.value, 10000)
+        await settingService.save(fields.key, currentEditValue)
+      }
     } else {
       res.errorPage(403, 'Tried to edit a non-editable setting')
       return
@@ -130,7 +133,7 @@ async function adminSettings (req, res) {
     }
   }
 
-  // Fetch setting to edit
+  // Fetch setting to edit (and make JSON pretty)
   let editSetting
   if (req.query.edit && forms.isSlug(req.query.edit)) {
     let jsonSetting = constants.JSON_EDIT_SETTINGS.indexOf(req.query.edit) !== -1

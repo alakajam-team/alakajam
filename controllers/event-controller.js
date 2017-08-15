@@ -25,7 +25,7 @@ module.exports = {
   editEvent,
   editEventThemes,
   deleteEvent,
-  
+
   ajaxFindThemes,
   ajaxSaveVote
 }

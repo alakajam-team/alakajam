@@ -117,11 +117,11 @@ async function article (req, res) {
     res.locals.post = post
   })
 
-  let settingArticlesTask = settingService.find(constants.SETTING_FEATURED_ARTICLE_LINKS)
-    .then(async function (sidebar) {
-      if (sidebar) {
+  let settingArticlesTask = settingService.find(constants.SETTING_ARTICLE_SIDEBAR)
+    .then(async function (sidebarData) {
+      if (sidebarData) {
         try {
-          res.locals.sidebar = JSON.parse(sidebar)
+          res.locals.sidebar = JSON.parse(sidebarData).sidebar
         } catch (e) {
           console.log("Malformed JSON. Can't load articles links")
         }

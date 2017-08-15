@@ -17,7 +17,7 @@
   </div>
   <div class="form-group">
     <label for="value">Value</label>
-    <textarea {{ 'id=code' if editSetting.jsonSetting }} name="value" class="form-control {{ 'jsonSetting' if editSetting.jsonSetting }}">{{ editSetting.value }}</textarea>
+    <textarea {{ 'id=code' if editSetting.jsonSetting }} name="value" class="form-control {{ 'jsonSetting' if editSetting.isJsonSetting }}">{{ editSetting.value }}</textarea>
   </div>
   <div class="form-group">
     <input type="submit" class="btn btn-primary" value="Save" />
@@ -34,7 +34,15 @@
   {% for setting in settings %}
   <tr>
     <td>{{ setting.key }}</td>
-    <td>{{ setting.value }}</td>
+    <td>
+      {% if constants.JSON_EDIT_SETTINGS.indexOf(setting.key) !== -1 %}
+        <pre>{{ setting.value }}</pre>
+      {% elseif setting.value %}
+        <code>{{ setting.value }}</code>
+      {% else %}
+        <i>(empty)</i>
+      {% endif %}
+    </td>
     <td><a class="btn btn-primary btn-sm" href="?edit={{ setting.key }}">Edit</a></td>
   </tr>
   {% endfor %}

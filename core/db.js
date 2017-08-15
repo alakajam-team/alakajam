@@ -139,18 +139,12 @@ async function insertInitialData (samples) {
     }).save()
 
     // Articles
+
     let post = await postService.createPost(adminUser)
     post.set({
       title: 'About Alakajam',
       name: 'help',
-      body: `*Alakajam!* is a brand new gamedev community created by [Ludum Dare](http://ldjam.com/) veterans. Because the world always needs more game jams, we're launching this site with the goal to host:
-* **Alakajam!** competitions, taking place over a week-end, with start/end times suited to Europan timezones.
-* **Kajam!** month-long events, inviting people to learn and experiment around a specific topic.
-* And finally **Feedback Fortnights**, to show off projects made outside of game jams.
-
-The initiative was launched by [@wan](/user/wan), author of the [Feedback Friends](http://feedback.ld.intricati.com/) mini-site. If you want to give a hand to this brand new community: spread the word, [give feedback](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform?usp=sf_link) and why not [join us on Github](https://github.com/mkalam-alami/alakajam)!
-
-![](https://i.imgur.com/cpkZjfr.pnghttp://)`,
+      body: '*Alakajam!* is a cool gamedev community!',
       special_post_type: 'article',
       published_at: new Date()
     })
@@ -158,34 +152,9 @@ The initiative was launched by [@wan](/user/wan), author of the [Feedback Friend
 
     post = await postService.createPost(adminUser)
     post.set({
-      title: 'Feedback Fortnight!',
-      name: 'feedback-fortnight',
-      body: `## Before the event
-Until the event starts, all you can do is create blog posts. Feel free to introduce yourself or the game you plan to make/submit.
-## Submitting a game
-Once the event starts, you can submit **any game you worked on this year**. You can use this event as a game jam, making and submitting a game especially for it, though there is no particular "theme" to follow.
-It's okay if the game is unfinished, closed-source, made as a team, we don't mind either if the game was started before 2017. The only requirements are that the game must be yours.
-## Exchanging feedback
-Any comment you post on another entry will count towards increasing your *Feedback Score*. That score is used to determine in which order games are listed on the event. You will get notifications if someone wrote a comment on your entry or answered your comments using @-based mentions.
-## After the event
-Newcomers will no longer be able to submit games, but you can still exchange feedback after the event ends.
-There will be no judging or ranking or the game, but instead as a reward, videos will be made of all the entries and posted on YouTube.`,
-      special_post_type: 'article',
-      published_at: new Date()
-    })
-    await post.save()
-
-    post = await postService.createPost(adminUser)
-    post.set({
-      title: 'Feedback & Bugs reports',
-      name: 'feedback',
-      body: `This site just launched, so you will most probably encounter bugs. Please report them there:  
-#### **[Support form](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform)**
-## Contacting us
-
-* [AlakajamBang](https://twitter.com/AlakajamBang) on Twitter
-* contact *[[at]]* alakajam *[[dot]]* com
-`,
+      title: 'Support',
+      name: 'support',
+      body: 'Did you find a bug? It seems like you are in a development server, so... go fix it :D',
       special_post_type: 'article',
       published_at: new Date()
     })
@@ -227,8 +196,24 @@ There will be no judging or ranking or the game, but instead as a reward, videos
     await event2.save()
 
     await settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
-    await settingService.save(constants.SETTING_FEATURED_ARTICLE_LINKS, '{"links":[{"title":"About us","url":"/article/help","subLinks":[{"title":"Feedback & Bugs reports","url":"/article/feedback"}]},{"title":"Feedback Fortnight!","url":"/article/feedback-fortnight"}],"external_links":[{"title":"Github","url":"https://github.com/mkalam-alami/alakajam"},{"title":"Twitter","url":"https://twitter.com/AlakajamBang"}]}')
-    
+    await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, `{
+    "sidebar": [
+        {
+            "title": "General",
+            "links": [
+                {
+                    "title": "About Alakajam!",
+                    "url": "/article/help"
+                },
+                {
+                    "title": "Support",
+                    "url": "/article/support"
+                }
+            ]
+        }
+    ]
+}`)
+
     eventThemeService.saveThemeIdeas(entrantUser, event2, [
       {title: 'Alone'},
       {title: 'Evolution'},

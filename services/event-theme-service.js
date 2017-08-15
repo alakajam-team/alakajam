@@ -18,7 +18,7 @@ module.exports = {
   findThemeVotesHistory,
   findThemesToVoteOn,
   saveVote,
-  
+
   findBestThemes
 }
 
@@ -56,8 +56,8 @@ async function saveThemeIdeas (user, event, ideas) {
     if (idea.id) {
       let existingTheme = existingThemes.findWhere({'id': parseInt(idea.id)})
       // We can only delete/update themes if they're active or cancelled because they're duplicates
-      if (existingTheme && (existingTheme.get('status') === constants.THEME_STATUS_ACTIVE
-          || existingTheme.get('status') === constants.THEME_STATUS_DUPLICATE)) {
+      if (existingTheme && (existingTheme.get('status') === constants.THEME_STATUS_ACTIVE ||
+          existingTheme.get('status') === constants.THEME_STATUS_DUPLICATE)) {
         if (idea.title) {
           // Update existing theme if needed
           if (idea.title !== existingTheme.get('title')) {
@@ -113,7 +113,7 @@ async function saveThemeIdeas (user, event, ideas) {
  */
 async function handleDuplicates (theme) {
   theme.set('slug', forms.slug(theme.get('title')))
-  
+
   let query = models.Theme.where({
     slug: theme.get('slug'),
     event_id: theme.get('event_id')
@@ -150,11 +150,11 @@ async function findThemeVotesHistory (user, event) {
  */
 async function findThemesToVoteOn (user, event) {
   return models.Theme.query(function (qb) {
-      qb.leftOuterJoin('theme_vote', function () {
-        this.on('theme.id', '=', 'theme_vote.theme_id')
-        this.andOn('theme_vote.user_id', '=', user.get('id'))
-      })
+    qb.leftOuterJoin('theme_vote', function () {
+      this.on('theme.id', '=', 'theme_vote.theme_id')
+      this.andOn('theme_vote.user_id', '=', user.get('id'))
     })
+  })
       .where({
         status: constants.THEME_STATUS_ACTIVE,
         'theme.event_id': event.get('id'),
@@ -197,13 +197,13 @@ async function saveVote (user, event, themeId, score) {
         score: score
       })
     }
-    
+
     await Promise.all([theme.save(), vote.save()])
   }
 }
 
 async function findBestThemes (event, options) {
-  let query =  models.Theme.where({
+  let query = models.Theme.where({
     event_id: event.get('id')
   }).orderBy('score', 'DESC')
   if (options.fetchAll) {

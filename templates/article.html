@@ -7,8 +7,9 @@
   <div class="row">
     {% if sidebar %}
     <div class="col-sm-4 col-md-3">
-      {{ sideBarLinks('Links', sidebar.links) }}
-      {{ sideBarLinks('External Links', sidebar.external_links) }}
+      {% for sidebarGroup in sidebar %}
+        {{ sideBarLinks(sidebarGroup.title, sidebarGroup.links) }}
+      {% endfor %}
     </div>
   {% endif %}
     <div class="col-sm-8 col-md-9">
