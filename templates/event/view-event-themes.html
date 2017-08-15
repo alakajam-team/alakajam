@@ -21,10 +21,10 @@
                 <div class="themes__idea-label">
                   {{ userTheme.get('title') }}
                 </div>
-                <p>
-                <!-- TODO label-default label-success -->
-                  <span class="label">{{ userTheme.get('status') }}</span> after {{ userTheme.get('notes') }} votes</span>
-                </p>
+                <p>{{ eventMacros.eventThemeStatus(userTheme) }}
+                  {% if userTheme.get('status') !== 'duplicate' %}
+                    after {{ userTheme.get('notes') }} votes
+                  {% endif %}</p>
               </div>
             {% endfor %}
             {% if userThemes.length === 0 %}
@@ -44,10 +44,15 @@
             {% for index in range(0, 3) %} 
               {% set userTheme = userThemes[index] if userThemes.length > index %}
               <div class="form-group themes__idea">
-                <input type="text" name="idea-title[{{ index }}]" class="form-control input-lg" {{ 'disabled="disabled"' if userTheme and userTheme.get('status') !== 'active' }} placeholder="Idea #{{ index + 1 }}" value="{{ userTheme.get('title') if userTheme }}" />
+                <input type="text" name="idea-title[{{ index }}]" class="form-control input-lg" 
+                  {{ 'disabled="disabled"' if userTheme and userTheme.get('status') !== 'active' and userTheme.get('status') !== 'duplicate' }} 
+                  placeholder="Idea #{{ index + 1 }}" value="{{ userTheme.get('title') if userTheme }}" />
                 <input type="hidden" name="idea-id[{{ index }}]" value="{{ userTheme.get('id') if userTheme }}" />
                 {% if userTheme %}
-                <p><span class="label">{{ userTheme.get('status') }}</span> after {{ userTheme.get('notes') }} votes</span></p>
+                <p>{{ eventMacros.eventThemeStatus(userTheme) }}
+                  {% if userTheme.get('status') !== 'duplicate' %}
+                    after {{ userTheme.get('notes') }} votes
+                  {% endif %}</p>
                 {% endif %}
               </div>
             {% endfor %}
@@ -223,11 +228,21 @@ function renderTheme (themeInfo) {
     e.preventDefault()
   })
   $('#js-upvote').click(function (e) {
-    saveVote($('#js-theme-id').val(), true, nextTheme)
+    onVoteClick(true)
   })
   $('#js-downvote').click(function () {
-    saveVote($('#js-theme-id').val(), false, nextTheme)
+    onVoteClick(false)
   })
+}
+
+function onVoteClick (upvote) {
+  if (themeBuffer.length > 0) {
+    // Don't wait for save to make the next theme show fast
+    saveVote($('#js-theme-id').val(), upvote)
+    nextTheme()
+  } else {
+    saveVote($('#js-theme-id').val(), upvote, nextTheme)
+  }
 }
 
 function saveVote (id, upvote, callback) {

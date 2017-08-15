@@ -9,6 +9,7 @@
 const models = require('../core/models')
 const constants = require('../core/constants')
 const log = require('../core/log')
+const forms = require('../core/forms')
 
 module.exports = {
   findThemeIdeasByUser,
@@ -54,18 +55,22 @@ async function saveThemeIdeas (user, event, ideas) {
   for (let idea of ideas) {
     if (idea.id) {
       let existingTheme = existingThemes.findWhere({'id': parseInt(idea.id)})
-      // We can only delete/update themes while they're active
-      if (existingTheme && existingTheme.get('status') === constants.THEME_STATUS_ACTIVE) {
+      // We can only delete/update themes if they're active or cancelled because they're duplicates
+      if (existingTheme && (existingTheme.get('status') === constants.THEME_STATUS_ACTIVE
+          || existingTheme.get('status') === constants.THEME_STATUS_DUPLICATE)) {
         if (idea.title) {
-          // Update existing theme
-          existingTheme.set({
-            'title': idea.title,
-            'status': constants.THEME_STATUS_ACTIVE,
-            'score': 0,
-            'notes': 0,
-            'reports': 0
-          })
-          tasks.push(existingTheme.save())
+          // Update existing theme if needed
+          if (idea.title !== existingTheme.get('title')) {
+            existingTheme.set({
+              title: idea.title,
+              status: constants.THEME_STATUS_ACTIVE,
+              score: 0,
+              notes: 0,
+              reports: 0
+            })
+            await handleDuplicates(existingTheme)
+            tasks.push(existingTheme.save())
+          }
         } else {
           // Delete existing theme
           tasks.push(existingTheme.destroy())
@@ -85,6 +90,7 @@ async function saveThemeIdeas (user, event, ideas) {
         title: idea.title,
         status: constants.THEME_STATUS_ACTIVE
       })
+      await handleDuplicates(theme)
       tasks.push(theme.save())
     }
   }
@@ -100,6 +106,24 @@ async function saveThemeIdeas (user, event, ideas) {
   }
 
   await Promise.all(tasks)
+}
+
+/**
+ * Sets the theme status to "duplicate" if another theme is identical
+ */
+async function handleDuplicates (theme) {
+  theme.set('slug', forms.slug(theme.get('title')))
+  
+  let query = models.Theme.where({
+    slug: theme.get('slug'),
+    event_id: theme.get('event_id')
+  })
+  if (theme.get('id')) {
+    query = query.where('id', '<>', theme.get('id'))
+  }
+  if ((await query.fetch()) !== null) {
+    theme.set('status', constants.THEME_STATUS_DUPLICATE)
+  }
 }
 
 /**

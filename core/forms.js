@@ -23,7 +23,7 @@ module.exports = {
   sanitizeMarkdown,
 
   capitalize: new nunjucks.Environment().filters.capitalize,
-  slug: slug,
+  slug: _slug,
 
   isEmail,
   isURL,
@@ -82,6 +82,13 @@ function sanitizeMarkdown (markdown, maxLength = 10000) {
   })
     .replace(/&gt;/g, '>') // ">"s are used in quote blocks
     .slice(0, maxLength)
+}
+
+/**
+ * Turns a string into a slug suitable for URLs.
+ */
+function _slug (string) {
+  return slug(string).toLowerCase()
 }
 
 /**

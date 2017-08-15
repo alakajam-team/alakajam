@@ -108,6 +108,7 @@ async function insertInitialData (samples) {
   const models = require('../core/models')
   const userService = require('../services/user-service')
   const eventService = require('../services/event-service')
+  const eventThemeService = require('../services/event-theme-service')
   const postService = require('../services/post-service')
   const settingService = require('../services/setting-service')
 
@@ -215,11 +216,11 @@ There will be no judging or ranking or the game, but instead as a reward, videos
       status: 'open',
       display_dates: 'Januember 29 - 31, 2017',
       display_theme: 'You are not alone',
-      status_theme: 'disabled',
+      status_theme: 'on',
       status_entry: 'on',
-      status_results: 'off',
+      status_results: 'on',
       countdown_config: {
-        phrase: 'starts in',
+        phrase: 'starts Janumeber 29',
         date: moment().add(1, 'days').toDate()
       }
     })
@@ -227,8 +228,14 @@ There will be no judging or ranking or the game, but instead as a reward, videos
 
     await settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
     await settingService.save(constants.SETTING_FEATURED_ARTICLE_LINKS, '{"links":[{"title":"About us","url":"/article/help","subLinks":[{"title":"Feedback & Bugs reports","url":"/article/feedback"}]},{"title":"Feedback Fortnight!","url":"/article/feedback-fortnight"}],"external_links":[{"title":"Github","url":"https://github.com/mkalam-alami/alakajam"},{"title":"Twitter","url":"https://twitter.com/AlakajamBang"}]}')
+    
+    eventThemeService.saveThemeIdeas(entrantUser, event2, [
+      {title: 'Alone'},
+      {title: 'Evolution'},
+      {title: 'Two buttons'}
+    ])
 
-    let adminEntry = await eventService.createEntry(adminUser, event1)
+    let adminEntry = await eventService.createEntry(adminUser, event2)
     adminEntry.set('title', 'Super Game')
     await adminEntry.save()
     userEntry = await eventService.createEntry(entrantUser, event2)
