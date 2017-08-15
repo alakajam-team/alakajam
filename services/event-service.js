@@ -26,6 +26,7 @@ module.exports = {
   findUserEntries,
   findUserEntryForEvent,
 
+  refreshEntryPlatforms,
   refreshEntryScore,
   refreshCommentScore,
   adjustUserCommentScore,
@@ -193,6 +194,25 @@ async function findUserEntryForEvent (user, eventId) {
         'user_role.node_type': 'entry'
       })
   }).fetch({ withRelated: ['userRoles'] })
+}
+
+async function refreshEntryPlatforms (entry) {
+  let tasks = []
+  await entry.load('platforms')
+  entry.related('platforms').each(async function (entry) {
+    tasks.push(entry.destroy())
+  })
+  let platformStrings = entry.get('platforms')
+  if (platformStrings) {
+    for (let platformString of platformStrings) {
+      let platform = new models.EntryPlatform({
+        entry_id: entry.get('id'),
+        platform: platformString
+      })
+      tasks.push(platform.save())
+    }
+  }
+  await Promise.all(tasks)
 }
 
 async function refreshEntryScore (entry) {

@@ -116,14 +116,18 @@ async function saveEntry (req, res) {
   } else if (!res.headersSent) { // FIXME Why?
     let errorMessage = null
 
-    // Links parsing and validation
+    // Links/platform parsing and validation
     let links = []
+    let platforms = []
     let i = 0
     while (fields['url' + i]) {
       let label = forms.sanitizeString(fields['label' + i])
       let url = fields['url' + i]
       if (label === 'other') {
         label = forms.sanitizeString(fields['customlabel' + i])
+        platforms.push('other')
+      } else {
+        platforms.push(label)
       }
 
       if (!forms.isURL(url) || !label) {
@@ -156,6 +160,7 @@ async function saveEntry (req, res) {
       entry.set('title', forms.sanitizeString(fields.title))
       entry.set('description', forms.sanitizeString(fields.description))
       entry.set('links', links)
+      entry.set('platforms', platforms)
       if (fields['picture-delete'] && entry.get('pictures').length > 0) {
         await fileStorage.remove(entry.get('pictures')[0])
         entry.set('pictures', [])
@@ -167,12 +172,15 @@ async function saveEntry (req, res) {
       let entryDetails = entry.related('details')
       entryDetails.set('body', forms.sanitizeMarkdown(fields.body))
 
+      if (entry.hasChanged('platforms')) {
+        await eventService.refreshEntryPlatforms(entry)
+      }
       await entryDetails.save()
       await entry.save()
-      await entry.related('userRoles').fetch()
 
       cache.user(res.locals.user).del('latestEntries')
-
+      
+      await entry.related('userRoles').fetch()
       res.redirect(templating.buildUrl(entry, 'entry'))
     } else {
       if (!res.locals.entry) {

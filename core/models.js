@@ -231,8 +231,9 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | string | event_name | Name (used in the URL)
  * | string | name |
  * | string | title |
- * | string | description', 2000)
+ * | string | descriptio (max size: 2000)
  * | string | links | JSON Array : [{url, title}]
+ * | string | platforms | JSON Array : [platform]
  * | string | pictures | JSON Array : [path]
  * | string | category | "solo"/"team"
  * | integer | feedback_score | (defaults to 100)
@@ -260,6 +261,9 @@ module.exports.Entry = bookshelf.model('Entry', {
   comments: function () {
     return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
   },
+  platforms: function () {
+    return this.hasMany('EntryPlatform', 'entry_id')
+  },
 
   // Listeners
 
@@ -271,22 +275,25 @@ module.exports.Entry = bookshelf.model('Entry', {
     attrs = attrs || {}
     attrs.links = attrs.links || []
     attrs.pictures = attrs.pictures || []
+    attrs.platforms = attrs.platforms || []
     return attrs
   },
   parse: function parse (attrs) {
     if (attrs.links) attrs.links = JSON.parse(attrs.links)
     if (attrs.pictures) attrs.pictures = JSON.parse(attrs.pictures)
+    if (attrs.platforms) attrs.platforms = JSON.parse(attrs.platforms)
     return attrs
   },
   format: function format (attrs) {
     if (attrs && attrs.links) attrs.links = JSON.stringify(attrs.links)
     if (attrs && attrs.pictures) attrs.pictures = JSON.stringify(attrs.pictures)
+    if (attrs && attrs.platforms) attrs.platforms = JSON.stringify(attrs.platforms)
     return attrs
   }
 
 }, {
   // Cascading
-  dependents: ['userRoles', 'details', 'comments']
+  dependents: ['userRoles', 'details', 'comments', 'platforms']
 })
 
 /**
@@ -304,6 +311,41 @@ module.exports.EntryDetails = bookshelf.model('EntryDetails', {
 
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
+  }
+})
+
+/**
+ * Entry Platform model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | entry_id | Entry ID
+ * | string | platform | Platform (max size: 50)
+ */
+module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
+  tableName: 'entry_platform',
+  idAttribute: 'id',
+
+  entry: function () {
+    return this.belongsTo('Entry', 'entry_id')
+  },
+
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs.platforms = attrs.platforms || []
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs.platforms) attrs.platforms = JSON.parse(attrs.platforms)
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs && attrs.platforms) attrs.platforms = JSON.stringify(attrs.platforms)
+    return attrs
   }
 })
 
