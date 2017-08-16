@@ -5,6 +5,38 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 # Changelog
 
+## August 15th
+
+* Basic theme voting system
+
+## August 11th
+
+* The help section now has a sidebar (configurable through an admin setting)
+* Entry links now let you choose platforms
+
+## August 3rd
+
+* Site header now looks better on mobile & tablets
+
+## July 27th
+
+* Multiple SEO improvements
+
+## July 19th
+
+* Notification system
+* Small performance improvements through caching
+
+## July 17th
+
+* Revamped home page
+
+## July 11th
+
+* Set up Feedback Score for sorting entries
+* Reorganized personal dashboard
+* Alakajam! links now look pretty when shared on Twitter
+
 ### June 25th
 
 * Added support for embeds & tables in Markdown
