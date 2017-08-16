@@ -33,7 +33,7 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 ### July 11th
 
-* Set up Feedback Score for sorting entries
+* Feedback Score system for sorting entries
 * Reorganized personal dashboard
 * Alakajam! links now look pretty when shared on Twitter
 
