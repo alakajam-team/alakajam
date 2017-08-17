@@ -145,23 +145,28 @@ async function findThemeVotesHistory (user, event) {
 
 /**
  * Returns a page of 10 themes that a user can vote on
- * @param user {User} user model
+ * @param user {User} (optional) user model
  * @param event {Event} event model
  */
 async function findThemesToVoteOn (user, event) {
-  return models.Theme.query(function (qb) {
-    qb.leftOuterJoin('theme_vote', function () {
-      this.on('theme.id', '=', 'theme_vote.theme_id')
-      this.andOn('theme_vote.user_id', '=', user.get('id'))
-    })
-  })
-      .where({
-        status: constants.THEME_STATUS_ACTIVE,
-        'theme.event_id': event.get('id'),
-        'theme_vote.user_id': null
+  let query = models.Theme
+  if (user) {
+    query = query.query(function (qb) {
+      qb.leftOuterJoin('theme_vote', function () {
+        this.on('theme.id', '=', 'theme_vote.theme_id')
+        this.andOn('theme_vote.user_id', '=', user.get('id'))
       })
-      .where('theme.user_id', '<>', user.get('id'))
-      .orderBy('notes', 'DESC')
+    })
+        .where({
+          status: constants.THEME_STATUS_ACTIVE,
+          'theme.event_id': event.get('id'),
+          'theme_vote.user_id': null
+        })
+        .where('theme.user_id', '<>', user.get('id'))
+  } else {
+    query = query.where('event_id', event.get('id'))
+  }
+  return query.orderBy('notes', 'DESC')
       .fetchPage({ pageSize: 10 })
 }
 

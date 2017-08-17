@@ -143,16 +143,16 @@ async function viewEventThemes (req, res) {
       }
 
       // Gather info for display
-      let userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, res.locals.event)
-      context.userThemes = userThemesCollection.models
+      if (res.locals.user) {
+        let userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, res.locals.event)
+        context.userThemes = userThemesCollection.models
 
-      let nextThemesCollection = await eventThemeService.findThemesToVoteOn(res.locals.user, res.locals.event)
-      if (nextThemesCollection.length > 0) {
-        context.nextTheme = nextThemesCollection.at(0) // TODO Use AJAX to send a whole list when needed
+        let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, res.locals.event)
+        context.votesHistory = votesHistoryCollection.models
+      } else {
+        let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, res.locals.event)
+        context.sampleThemes = sampleThemesCollection.models
       }
-
-      let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, res.locals.event)
-      context.votesHistory = votesHistoryCollection.models
     }
 
     res.render('event/view-event-themes', context)

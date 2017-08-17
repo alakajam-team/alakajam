@@ -179,7 +179,7 @@ async function saveEntry (req, res) {
       await entry.save()
 
       cache.user(res.locals.user).del('latestEntries')
-      
+
       await entry.related('userRoles').fetch()
       res.redirect(templating.buildUrl(entry, 'entry'))
     } else {

@@ -14,7 +14,10 @@
       <div class="col-md-4">
         <div id="js-view-themes">
           <h2>Theme ideas
-              <input type="submit" class="btn btn-primary js-manage-themes-button" value="Manage" /></h2>
+            {% if user %}
+              <input type="submit" class="btn btn-primary js-manage-themes-button" value="Manage" />
+            {% endif %}
+          </h2>
           <div class="panel themes__ideas">
             {% for userTheme in userThemes %}
               <div class="themes__idea">
@@ -27,9 +30,12 @@
                   {% endif %}</p>
               </div>
             {% endfor %}
-            {% if userThemes.length === 0 %}
+            {% if not userThemes or userThemes.length === 0 %}
               <div class="themes__idea">
                 <p>None yet. You can submit up to 3 ideas.</p>
+                {% if not user %}
+                  <p><a href="/login" class="btn btn-primary">Login to submit ideas</a></p>
+                {% endif %}
               </div>
             {% endif %}
           </div>
@@ -81,30 +87,38 @@
       <div class="col-md-8">
         <div class="themes__voting">
           <h2>Theme voting</h2>
-          <div class="panel theme-vote">
-            <div id="js-theme-vote"></div>
-          </div>
-          <div class="horizontal-bar">Votes history</div>
-          <div id="js-theme-history" class="row">
-            {% for vote in votesHistory %}
-            <div class="col-sm-6">
-              <div class="theme-past">
-                <table>
-                <tr><td class="theme-past__buttons">
-                  <form method="post">
-                    <input type="hidden" name="action" value="vote" />
-                    <input type="hidden" name="theme-id" value="{{ vote.get('theme_id') }}" />
-                    <button name="upvote" class="btn {{ 'btn-success' if vote.get('score') > 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
-                    <button name="downvote" class="btn {{ 'btn-danger' if vote.get('score') < 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
-                  </form>
-                </td><td class="theme-past__label">
-                  {{ vote.related('theme').get('title') }}
-                </td></tr>
-                </table>
-              </div>
+
+          {% if user %}
+            <div class="panel theme-vote">
+              <div id="js-theme-vote"></div>
             </div>
+            <div class="horizontal-bar">Votes history</div>
+            <div id="js-theme-history" class="row">
+              {% for vote in votesHistory %}
+              <div class="col-sm-6">
+                <div class="theme-past">
+                  <table>
+                  <tr><td class="theme-past__buttons">
+                    <form method="post">
+                      <input type="hidden" name="action" value="vote" />
+                      <input type="hidden" name="theme-id" value="{{ vote.get('theme_id') }}" />
+                      <button name="upvote" class="btn {{ 'btn-success' if vote.get('score') > 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                      <button name="downvote" class="btn {{ 'btn-danger' if vote.get('score') < 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                    </form>
+                  </td><td class="theme-past__label">
+                    {{ vote.related('theme').get('title') }}
+                  </td></tr>
+                  </table>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p>Here are some of the ideas submitted to the event. <a href="/login" class="btn btn-primary">Login to vote</a></p>
+            {% for theme in sampleThemes %}
+              <div class="panel theme-vote theme-vote__label">{{ theme.get('title') }}</div>
             {% endfor %}
-          </div>
+          {% endif %}
         </div>
         
         <div class="themes__shortlist" style="display: none">
