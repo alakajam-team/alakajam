@@ -259,7 +259,8 @@ async function editEvent (req, res) {
         status_results: fields['status-results'],
         countdown_config: {
           date: forms.parseDateTime(fields['countdown-date']),
-          phrase: forms.sanitizeString(fields['countdown-phrase'])
+          phrase: forms.sanitizeString(fields['countdown-phrase']),
+          enabled: fields['countdown-enabled'] === 'on'
         }
       })
 
