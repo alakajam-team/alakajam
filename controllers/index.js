@@ -38,6 +38,7 @@ module.exports = {
     router.get('/', mainController.index)
     router.get('/events', mainController.events)
     router.get('/people', mainController.people)
+    router.get('/user', mainController.people)
     router.get('/chat', mainController.chat)
 
     // Users
@@ -49,7 +50,7 @@ module.exports = {
     router.get('/logout', userController.doLogout)
 
     router.use('/dashboard*', userController.dashboardMiddleware)
-    router.all('/dashboard/feed', userController.dashboardFeed)
+    router.all('/dashboard(/feed)?', userController.dashboardFeed)
     router.all('/dashboard/posts', userController.dashboardPosts)
     router.all('/dashboard/invite', userController.dashboardInvite)
     router.all('/dashboard/settings', userController.dashboardSettings)
@@ -90,7 +91,8 @@ module.exports = {
 
     // Posts
 
-    router.get('/posts', postController.posts)
+    // Matches both post and posts
+    router.get('/posts?', postController.posts)
     router.get('/article/:name', postController.article)
 
     router.get('/post/create', postController.editPost)
