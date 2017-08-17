@@ -224,7 +224,7 @@ nextTheme()
 
 function nextTheme () {
   if (themeBuffer.length === 0) {
-    $.getJSON('./ajax-find-themes', function (data) {
+    $.getJSON("{{ buildUrl(event, 'event', 'ajax-find-themes') }}", function (data) {
       themeBuffer = data
       renderTheme(themeBuffer.length > 0 ? themeBuffer.shift() : null)
     })
