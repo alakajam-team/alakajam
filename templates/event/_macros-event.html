@@ -168,7 +168,7 @@
 
 {% macro eventLink (event, statusField, targetPath, label, icon, currentPath) %}<!--
 
--->{% if not statusField or event.get(statusField) !== 'disabled' %}<a href="{{ buildUrl(event, 'event', targetPath) }}" class="event-header__link {{ 'active' if currentPath == buildUrl(event, 'event', targetPath) }} {{ 'disabled' if statusField and event.get(statusField) === 'off' }}">
+-->{% if not statusField or event.get(statusField) !== 'disabled' %}<a href="{{ buildUrl(event, 'event', targetPath) }}" class="event-header__link {{ 'active' if currentPath == buildUrl(event, 'event', targetPath) or currentPath == buildUrl(event, 'event', targetPath) + '/' }} {{ 'disabled' if statusField and event.get(statusField) === 'off' }}">
   <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="event-header__link-label">{{ label }}</span>
 </a>{% endif %}<!--
 
