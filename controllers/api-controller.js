@@ -58,7 +58,14 @@ async function event (req, res) {
     await event.load('entries')
     json.entries = []
     for (let entry of event.related('entries').models) {
-      json.entries.push(_getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY))
+      let entryJson = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY)
+
+      await entry.load('userRoles.user')
+      entryJson.users = []
+      for (let user of entry.related('userRoles').models) {
+        entryJson.users.push(_getAttributes(user.related('user'), PUBLIC_ATTRIBUTES_USER))
+      }
+      json.entries.push(entryJson)
     }
   } else {
     json = { error: 'Event not found' }
@@ -82,6 +89,12 @@ async function entry (req, res) {
       json.comments = []
       for (let comment of entry.related('comments').models) {
         json.comments.push(_getAttributes(comment, PUBLIC_ATTRIBUTES_COMMENT))
+      }
+
+      await entry.load('userRoles.user')
+      json.users = []
+      for (let user of entry.related('userRoles').models) {
+        json.users.push(_getAttributes(user.related('user'), PUBLIC_ATTRIBUTES_USER))
       }
     } else {
       json = { error: 'Entry not found' }
@@ -108,6 +121,11 @@ async function user (req, res) {
 
   if (user) {
     json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
+    
+    json.entries = []
+    for (let entry of await eventService.findUserEntries(user)) {
+      json.entries.push(_getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY))
+    }
   } else {
     json = { error: 'User not found' }
   }
