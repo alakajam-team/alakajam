@@ -8,7 +8,7 @@
     <div class="col-sm-4 col-md-3">
       <div class="list-group">
         <div class="list-group-item">
-          <h4 style="margin: 0">{{ event.get('title') | default('Event') }}</h4>
+          <h4 style="margin: 0">{{ event.get('title') if event else 'Event' }}</h4>
         </div>
         {{ editEventLink(event, 'edit', 'General') }}
         {{ editEventLink(event, 'edit-themes', 'Themes') }}
@@ -31,6 +31,8 @@
 
 {% macro editEventLink(event, page, label) %}
   {% set url = buildUrl(event, 'event', page) %}
-  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} 
-    {{ 'list-group-item-primary' if path === url}}">{{ label }}</a>
+  <a href="{{ url }}" class="list-group-item 
+    {{ 'active' if path === url and event}} 
+    {{ 'list-group-item-primary' if path === url and event}}
+    {{ 'disabled' if not event }}">{{ label }}</a>
 {% endmacro %}

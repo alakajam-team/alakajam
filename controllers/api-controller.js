@@ -6,11 +6,12 @@
  * @module controllers/api-controller
  */
 
+const moment = require('moment')
 const forms = require('../core/forms')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 
-const PUBLIC_ATTRIBUTES_EVENT = ['id', 'name', 'title', 'display_dates', 'display_theme', 'status', 'status_theme', 'status_entry', 'status_results']
+const PUBLIC_ATTRIBUTES_EVENT = ['id', 'name', 'title', 'display_dates', 'display_theme', 'status', 'status_theme', 'status_entry', 'status_results', 'countdown_config']
 const PUBLIC_ATTRIBUTES_ENTRY = ['id', 'event_id', 'event_name', 'name', 'title', 'description', 'links', 'pictures', 'category', 'comment_count', 'feedback_score']
 const PUBLIC_ATTRIBUTES_USER = ['id', 'name', 'title', 'avatar', 'is_mod', 'is_admin']
 const PUBLIC_ATTRIBUTES_COMMENT = ['id', 'user_id', 'parent_id', 'body', 'created_at', 'updated_at']
@@ -54,6 +55,11 @@ async function event (req, res) {
 
   if (event) {
     json = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT)
+    if (json.countdown_config.date) {
+      json.countdown_formatted = json.title + ' ' +
+        json.countdown_config.phrase + ' ' +
+        moment(json.countdown_config.date).fromNow() + '!'
+    }
 
     await event.load('entries')
     json.entries = []

@@ -180,7 +180,7 @@ function isLengthValid (input, maxLength = 255) {
  * which can be stored in a model
  */
 function parseDateTime (string) {
-  let momentDate = moment(string, constants.PICKER_DATE_TIME_FORMAT)
+  let momentDate = moment.utc(string, constants.PICKER_DATE_TIME_FORMAT)
   if (momentDate.isValid()) {
     return momentDate.toDate()
   } else {

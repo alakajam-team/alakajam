@@ -43,7 +43,7 @@
                 <div class="home-jumbo__sidebar">
                   <div class="home-jumbo__details panel">
                     {% if featuredEvent.get('countdown_config').phrase %}
-                      <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }}<br />
+                      <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime }}<br />
                     {% endif %}
                     {% if featuredEvent.get('display_theme') %}
                       <span class="glyphicon glyphicon-apple"></span> 
@@ -170,7 +170,7 @@
   {% set countdownEvent = featuredEvent %}
 {% endif %}
 
-{% if countdownEvent and countdownEvent.get('countdown_config').date %}
+{% if countdownEvent and countdownEvent.get('countdown_config').enabled %}
   <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
   <script type="text/javascript">
   var diffMs = Math.max(0, Date.parse('{{ countdownEvent.get('countdown_config').date }}') - Date.now())

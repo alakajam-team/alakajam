@@ -87,27 +87,34 @@ async function configure (app) {
   })
   nunjucks.env.addFilter('date', function (date) {
     if (date) {
-      return moment(date).format(constants.DATE_FORMAT)
+      return moment(date).utc().format(constants.DATE_FORMAT)
     } else {
       return ''
     }
   })
   nunjucks.env.addFilter('dateTime', function (date) {
     if (date) {
-      return moment(date).format(constants.DATE_TIME_FORMAT)
+      return moment(date).utc().format(constants.DATE_TIME_FORMAT) + ' UTC'
+    } else {
+      return ''
+    }
+  })
+  nunjucks.env.addFilter('featuredEventDateTime', function (date) {
+    if (date) {
+      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT)
     } else {
       return ''
     }
   })
   nunjucks.env.addFilter('pickerDateTime', function (date) {
     if (date) {
-      return moment(date).format(constants.PICKER_DATE_TIME_FORMAT)
+      return moment(date).utc().format(constants.PICKER_DATE_TIME_FORMAT)
     } else {
       return ''
     }
   })
   nunjucks.env.addFilter('relativeTime', function (date) {
-    return moment(date).fromNow()
+    return moment(date).utc().fromNow()
   })
   nunjucks.env.addFilter('ordinal', function (n) {
     // source: https://stackoverflow.com/a/12487454

@@ -6,30 +6,28 @@
 <form action="{{ buildUrl(event, 'event', 'edit') }}" method="post" enctype="multipart/form-data">
 
   <h1 id="js-title-display"></h1>
-      
-  {% if errorMessage %}
-    <div class="alert alert-warning">{{ errorMessage }}</div>
-  {% endif %}
-  
+
   <div class="form-group input-group-lg">
     <label for="title">Title</label>
     <input type="text" class="form-control" id="js-title" name="title" value="{{ event.get('title') if event }}" required="required" />
   </div>
   <div class="form-group">
-    <label for="title">Slug</label>
+    <label for="name">Slug</label>
     <input type="text" class="form-control" id="js-name" name="name" value="{{ event.get('name') if event }}" required="required" />
   </div>
   <div class="form-group">
-    <label for="title">Displayed dates</label>
+    <label for="display-dates">Displayed dates</label>
     <input type="text" class="form-control" name="display-dates" value="{{ event.get('display_dates') if event }}" />
   </div>
   <div class="form-group">
-    <label for="title">Countdown</label>
+    <label>Next deadline</label>
     <div class="form-inline">
-    Countdown phrase {{ formMacros.tooltip('For instance: "ends in", "voting starts in"...') }} 
+    Phrase {{ formMacros.tooltip('For instance: "ends", "voting starts"... or directly "starts January 31st" if the date is not set.') }} 
     <input type="text" class="form-control" name="countdown-phrase" value="{{ event.get('countdown_config').phrase if event }}" />
-    Target date
+    Date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)
     {{ formMacros.dateTimePicker('countdown-date', event.get('countdown_config').date if event) }}
+    <label><input type="checkbox" class="form-control" name="countdown-enabled" {{ 'checked="checked"' if event and event.get('countdown_config').enabled }}" />
+    Animated countdown</label>
     </div>
   </div>
   <div class="form-group">
