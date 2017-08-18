@@ -41,15 +41,17 @@
   <script type="text/javascript" src="/static/js/matchbrackets.min.js"></script>
   <script type="text/javascript" src="/static/js/closebrackets.min.js"></script>
   <script type="text/javascript" src="/static/js/codemirror-jsonconf.min.js"></script>
-    <script>
-      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+  <script>
+    $('.codemirror').each(function () {
+      CodeMirror.fromTextArea(this, {
         matchBrackets: true,
         autoCloseBrackets: true,
         mode: "application/ld+json",
-        lineWrapping: true
-      });
-    </script>
-
+        lineWrapping: true,
+        readOnly: !!$(this).attr('readonly')
+      })
+    })
+  </script>
 {% endmacro %}
 {# ======== PICTURES ========= #}
 

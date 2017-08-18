@@ -17,7 +17,7 @@
   </div>
   <div class="form-group">
     <label for="value">Value</label>
-    <textarea {{ 'id=code' if editSetting.jsonSetting }} name="value" class="form-control {{ 'json-setting' if editSetting.isJsonSetting }}">{{ editSetting.value }}</textarea>
+    <textarea name="value" class="form-control {{ 'json-setting codemirror' if editSetting.jsonSetting }}">{{ editSetting.value }}</textarea>
   </div>
   <div class="form-group">
     <input type="submit" class="btn btn-primary" value="Save" />
@@ -36,9 +36,9 @@
     <td>{{ setting.key }}</td>
     <td>
       {% if constants.JSON_EDIT_SETTINGS.indexOf(setting.key) !== -1 %}
-        <pre>{{ setting.value }}</pre>
+        <textarea class="codemirror" readonly>{{ setting.value }}</textarea>
       {% elseif setting.value %}
-        <code>{{ setting.value }}</code>
+        <code style="max-width: 500px">{{ setting.value }}</code>
       {% else %}
         <i>(empty)</i>
       {% endif %}

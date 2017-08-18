@@ -152,6 +152,10 @@ img.no-border:hover, a:hover img.no-border {
   margin-top: 20px;
 }
 
+.CodeMirror {
+  height: auto;
+}
+
 .editor-toolbar.fullscreen, .CodeMirror-fullscreen, .editor-preview-side { 
   z-index: 2000;
 }
