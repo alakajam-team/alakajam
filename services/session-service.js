@@ -31,7 +31,7 @@ function restoreSessionIfNeeded (req, res) {
   req.session = {}
 
   // TODO refresh cookies if they're getting close to expiry
-  let sessionCookie = req.cookies.get('session')
+  let sessionCookie = req.cookies.get('session', {signed: true})
   if (sessionCookie) {
     try {
       req.session = JSON.parse(sessionCookie)
