@@ -2,6 +2,11 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### August 18th
+
+* JSON API
+* HTTP calls are now throttled to 1 per second (except static resources)
+
 ### August 15th
 
 * Basic theme voting system
