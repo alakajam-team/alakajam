@@ -116,9 +116,10 @@ textarea.simplemde-editor {
   resize: vertical;
   height: 300px;
 }
-textarea.form-control.jsonSetting {
+textarea.json-setting {
   resize: vertical;
   height: 400px;
+  max-width: 500px;
 }
 
 a {
