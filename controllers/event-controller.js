@@ -225,12 +225,12 @@ async function editEvent (req, res) {
     } else if (!forms.isIn(fields['status-rules'], ['disabled', 'off']) &&
         !forms.isId(fields['status-rules'])) {
       errorMessage = 'Invalid welcome/rules post status'
-    } else if (!forms.isIn(fields['status-theme'], ['disabled', 'off', 'on']) &&
+    } else if (!forms.isIn(fields['status-theme'], ['disabled', 'off', 'voting', 'shortlist', 'results']) &&
         !forms.isId(fields['status-theme'])) {
       errorMessage = 'Invalid theme status'
-    } else if (!forms.isIn(fields['status-entry'], ['disabled', 'off', 'on'])) {
+    } else if (!forms.isIn(fields['status-entry'], ['off', 'open', 'open_unranked', 'closed'])) {
       errorMessage = 'Invalid entry status'
-    } else if (!forms.isIn(fields['status-results'], ['disabled', 'off', 'on']) &&
+    } else if (!forms.isIn(fields['status-results'], ['disabled', 'off', 'voting', 'results']) &&
         !forms.isId(fields['status-results'])) {
       errorMessage = 'Invalid results status'
     } else if (event) {

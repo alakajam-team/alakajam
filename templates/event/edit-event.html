@@ -34,26 +34,32 @@
     <label for="title">Displayed theme</label>
     <input type="text" class="form-control" name="display-theme" value="{{ event.get('display_theme') if event }}" />
   </div>
-  <div class="form-group">
-    <label for="status">Global status</label>
-    <div>
-    {{ formMacros.radio('status', 'pending', 'Pending', 
-      event.get('status') if event else 'pending') }}
-    {{ formMacros.radio('status', 'open', 'Open', 
-      event.get('status') if event) }}
-    {{ formMacros.radio('status', 'closed', 'Closed', 
-      event.get('status') if event) }}
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="form-group">
+        <label for="status">Global status</label>
+        <div>
+        {{ formMacros.radio('status', 'pending', 'Pending', 
+          event.get('status') if event else 'pending') }}
+        {{ formMacros.radio('status', 'open', 'Open', 
+          event.get('status') if event) }}
+        {{ formMacros.radio('status', 'closed', 'Closed', 
+          event.get('status') if event) }}
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="status-rules">Welcome/Rules post status</label>
-    <div>
-    {{ formMacros.radio('status-rules', 'disabled', 'Disabled',
-      event.get('status_rules') if event else 'disabled') }}
-    {{ formMacros.radio('status-rules', 'off', 'Off',
-      event.get('status_rules') if event) }}
-    {{ formMacros.radio('status-rules', '', '', 
-      event.get('status_rules') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_rules')) if event}) }}
+    <div class="col-lg-6">
+      <div class="form-group">
+        <label for="status-rules">Welcome/Rules post status</label>
+        <div>
+        {{ formMacros.radio('status-rules', 'disabled', 'Disabled',
+          event.get('status_rules') if event else 'disabled') }}
+        {{ formMacros.radio('status-rules', 'off', 'Off',
+          event.get('status_rules') if event) }}
+        {{ formMacros.radio('status-rules', '', '', 
+          event.get('status_rules') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_rules')) if event}) }}
+        </div>
+      </div>
     </div>
   </div>
   <div class="form-group">
@@ -63,7 +69,11 @@
       event.get('status_theme') if event else 'disabled') }}
     {{ formMacros.radio('status-theme', 'off', 'Off', 
       event.get('status_theme') if event) }}
-    {{ formMacros.radio('status-theme', 'on', 'On', 
+    {{ formMacros.radio('status-theme', 'voting', 'Voting', 
+      event.get('status_theme') if event) }}
+    {{ formMacros.radio('status-theme', 'shortlist', 'Shortlist', 
+      event.get('status_theme') if event) }}
+    {{ formMacros.radio('status-theme', 'results', 'Results', 
       event.get('status_theme') if event) }}
     {{ formMacros.radio('status-theme', '', '', 
       event.get('status_theme') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_theme')) if event }) }}
@@ -72,11 +82,13 @@
   <div class="form-group">
     <label for="status-entry">Entry submission status</label>
     <div>
-    {{ formMacros.radio('status-entry', 'disabled', 'Disabled', 
-      event.get('status_entry') if event else 'disabled') }}
     {{ formMacros.radio('status-entry', 'off', 'Off', 
       event.get('status_entry') if event) }}
-    {{ formMacros.radio('status-entry', 'on', 'On', 
+    {{ formMacros.radio('status-entry', 'open', 'Open',
+      event.get('status_entry') if event) }}
+    {{ formMacros.radio('status-entry', 'open_unranked', 'Open (unranked only)',
+      event.get('status_entry') if event) }}
+    {{ formMacros.radio('status-entry', 'closed', 'Closed',
       event.get('status_entry') if event) }}
     </div>
   </div>
@@ -87,7 +99,9 @@
       event.get('status_results') if event else 'disabled') }}
     {{ formMacros.radio('status-results', 'off', 'Off',
       event.get('status_results') if event) }}
-    {{ formMacros.radio('status-results', 'on', 'On', 
+    {{ formMacros.radio('status-results', 'voting', 'Voting', 
+      event.get('status_results') if event) }}
+    {{ formMacros.radio('status-results', 'results', 'Results', 
       event.get('status_results') if event) }}
     {{ formMacros.radio('status-results', '', '', 
       event.get('status_results') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_results')) if event}) }}

@@ -151,11 +151,11 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | display_dates | The event dates, for display only
  * | string | display_theme | The event theme, for display only
  * | string | status | General status: 'pending', 'open' or 'closed'
- * | string | status_rules | Event rules status: 'off', 'disabled', or a post ID
- * | string | status_theme | Theme voting status: 'on', 'off', 'disabled', or a post ID
- * | string | status_entry | Entry submission status: 'on', 'off', 'disabled'
- * | string | status_results | Event results status: 'on', 'off', 'disabled', or a post ID
- * | string | coutdown_config | Home page countdown JSON: `{date, phrase}`
+ * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID
+ * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'results', or a post ID
+ * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed'
+ * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID
+ * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | date | published_at | Publication date. If empty, the event is a draft.
  * | date | created_at | Creation time
  * | date | modified_at | Last modification time
