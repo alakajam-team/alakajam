@@ -24,6 +24,7 @@
     "bookshelf-cascade-delete": "^2.0.1",
     "cookies": "^0.7.0",
     "express": "^4.14.0",
+    "express-brute": "^1.0.1",
     "express-nunjucks": "^2.1.2",
     "express-promise-router": "^1.1.1",
     "formidable": "^1.1.1",
