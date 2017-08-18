@@ -8,6 +8,7 @@
 
 const promisify = require('promisify-node')
 const fs = promisify('fs')
+const path = promisify('path')
 const forms = require('../core/forms')
 const constants = require('../core/constants')
 const eventService = require('../services/event-service')
@@ -172,7 +173,7 @@ async function chat (req, res) {
  * Changelog
  */
 async function changes (req, res) {
-  res.locals.changes = (await fs.readFile('CHANGES.md')).toString()
+  res.locals.changes = (await fs.readFile(path.join(__dirname, '../CHANGES.md'))).toString()
 
   res.render('changes')
 }
