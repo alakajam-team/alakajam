@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: services/user-service</title>
+    <title>JSDoc: Module: services/event-theme-service</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: services/user-service</h1>
+    <h1 class="page-title">Module: services/event-theme-service</h1>
 
     
 
@@ -38,7 +38,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>models.User service</p></div>
+            <div class="description"><p>Service for managing theme voting.</p></div>
         
 
         
@@ -87,7 +87,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line3">line 3</a>
+        <a href="services_event-theme-service.js.html">services/event-theme-service.js</a>, <a href="services_event-theme-service.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -137,589 +137,14 @@
 
     
 
-    <h4 class="name" id="~authenticate"><span class="type-signature">(inner) </span>authenticate<span class="signature">(name, password)</span><span class="type-signature"> &rarr; {User}</span></h4>
+    <h4 class="name" id="~findThemeIdeasByUser"><span class="type-signature">(inner) </span>findThemeIdeasByUser<span class="signature">(user, event, ideas)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Authenticates against a user name and password, and updates the session accordingly</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>name</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>password</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>clear password (will be hashed &amp; compared to the DB entry)</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line112">line 112</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>The models.User, or false if the authentication failed</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">User</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~findAll"><span class="type-signature">(inner) </span>findAll<span class="signature">()</span><span class="type-signature"> &rarr; {Collection(User)}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Fetches all users</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line35">line 35</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Collection(User)</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~findById"><span class="type-signature">(inner) </span>findById<span class="signature">(id)</span><span class="type-signature"> &rarr; {User}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Fetches a user</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">id</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>ID</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line44">line 44</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">User</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~findByName"><span class="type-signature">(inner) </span>findByName<span class="signature">(name)</span><span class="type-signature"> &rarr; {User}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Fetches a user</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">name</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>name</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line53">line 53</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">User</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~refreshUserReferences"><span class="type-signature">(inner) </span>refreshUserReferences<span class="signature">(user)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Refreshes various models that cache user name and/or title.
-Call this after changing the name or title of an user.</p>
+    <p>Saves the theme ideas of an user for an event</p>
 </div>
 
 
@@ -771,7 +196,53 @@ Call this after changing the name or title of an user.</p>
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>user model</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>event model</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ideas</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array(object)</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An array of exactly 3 ideas (all fields optional): [{label, id}]</p></td>
         </tr>
 
     
@@ -812,7 +283,7 @@ Call this after changing the name or title of an user.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line166">line 166</a>
+        <a href="services_event-theme-service.js.html">services/event-theme-service.js</a>, <a href="services_event-theme-service.js.html#line31">line 31</a>
     </li></ul></dd>
     
 
@@ -843,216 +314,14 @@ Call this after changing the name or title of an user.</p>
 
     
 
-    <h4 class="name" id="~register"><span class="type-signature">(inner) </span>register<span class="signature">(email, name, password)</span><span class="type-signature"> &rarr; {boolean|string}</span></h4>
+    <h4 class="name" id="~findThemesToVoteOn"><span class="type-signature">(inner) </span>findThemesToVoteOn<span class="signature">(user, event)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Registers a new user</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>email</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>email</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>name</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>password</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>unencrypted password (will be hashed before storage)</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line69">line 69</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>true, or an error message</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-|
-
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~setPassword"><span class="type-signature">(inner) </span>setPassword<span class="signature">(user, password)</span><span class="type-signature"> &rarr; {boolean|string}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Sets a password to a User</p>
+    <p>Returns a page of 10 themes that a user can vote on</p>
 </div>
 
 
@@ -1104,20 +373,20 @@ Call this after changing the name or title of an user.</p>
 
             
 
-            <td class="description last"><p>User model</p></td>
+            <td class="description last"><p>(optional) user model</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>password</code></td>
+                <td class="name"><code>event</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Event</span>
 
 
             
@@ -1127,7 +396,7 @@ Call this after changing the name or title of an user.</p>
 
             
 
-            <td class="description last"><p>New password, in clear form</p></td>
+            <td class="description last"><p>event model</p></td>
         </tr>
 
     
@@ -1168,7 +437,7 @@ Call this after changing the name or title of an user.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line131">line 131</a>
+        <a href="services_event-theme-service.js.html">services/event-theme-service.js</a>, <a href="services_event-theme-service.js.html#line151">line 151</a>
     </li></ul></dd>
     
 
@@ -1191,31 +460,6 @@ Call this after changing the name or title of an user.</p>
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>true, or an error message</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-|
-
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -1224,14 +468,14 @@ Call this after changing the name or title of an user.</p>
 
     
 
-    <h4 class="name" id="~validatePassword"><span class="type-signature">(inner) </span>validatePassword<span class="signature">(password)</span><span class="type-signature"> &rarr; {boolean|string}</span></h4>
+    <h4 class="name" id="~findThemeVotesHistory"><span class="type-signature">(inner) </span>findThemeVotesHistory<span class="signature">(user, event)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Validates the given password</p>
+    <p>Returns the 30 latest votes by the user</p>
 </div>
 
 
@@ -1267,13 +511,496 @@ Call this after changing the name or title of an user.</p>
 
         <tr>
             
-                <td class="name"><code>password</code></td>
+                <td class="name"><code>user</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">User</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>user model</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>event model</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_event-theme-service.js.html">services/event-theme-service.js</a>, <a href="services_event-theme-service.js.html#line134">line 134</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~handleDuplicates"><span class="type-signature">(inner) </span>handleDuplicates<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Sets the theme status to &quot;duplicate&quot; if another theme is identical</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_event-theme-service.js.html">services/event-theme-service.js</a>, <a href="services_event-theme-service.js.html#line114">line 114</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~saveThemeIdeas"><span class="type-signature">(inner) </span>saveThemeIdeas<span class="signature">(user, event, ideas)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Saves the theme ideas of an user for an event</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">User</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>user model</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>event model</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ideas</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array(object)</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An array of exactly 3 ideas: [{title, id}]. Not filling the title
+deletes the idea, not filling the ID creates one instead of updating it.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_event-theme-service.js.html">services/event-theme-service.js</a>, <a href="services_event-theme-service.js.html#line45">line 45</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~saveVote"><span class="type-signature">(inner) </span>saveVote<span class="signature">(user, event, themeId, score)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Saves a theme vote</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">User</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>user model</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>event model</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>themeId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>score</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
 
 
             
@@ -1324,7 +1051,7 @@ Call this after changing the name or title of an user.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line149">line 149</a>
+        <a href="services_event-theme-service.js.html">services/event-theme-service.js</a>, <a href="services_event-theme-service.js.html#line180">line 180</a>
     </li></ul></dd>
     
 
@@ -1347,31 +1074,6 @@ Call this after changing the name or title of an user.</p>
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>true, or an error message</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-|
-
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 

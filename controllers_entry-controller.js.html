@@ -144,12 +144,20 @@ async function saveEntry (req, res) {
   } else if (!res.headersSent) { // FIXME Why?
     let errorMessage = null
 
-    // Links parsing and validation
+    // Links/platform parsing and validation
     let links = []
+    let platforms = []
     let i = 0
     while (fields['url' + i]) {
       let label = forms.sanitizeString(fields['label' + i])
       let url = fields['url' + i]
+      if (label === 'other') {
+        label = forms.sanitizeString(fields['customlabel' + i])
+        platforms.push('other')
+      } else {
+        platforms.push(label)
+      }
+
       if (!forms.isURL(url) || !label) {
         errorMessage = 'Link #' + i + ' is invalid'
         break
@@ -180,6 +188,7 @@ async function saveEntry (req, res) {
       entry.set('title', forms.sanitizeString(fields.title))
       entry.set('description', forms.sanitizeString(fields.description))
       entry.set('links', links)
+      entry.set('platforms', platforms)
       if (fields['picture-delete'] &amp;&amp; entry.get('pictures').length > 0) {
         await fileStorage.remove(entry.get('pictures')[0])
         entry.set('pictures', [])
@@ -191,12 +200,15 @@ async function saveEntry (req, res) {
       let entryDetails = entry.related('details')
       entryDetails.set('body', forms.sanitizeMarkdown(fields.body))
 
+      if (entry.hasChanged('platforms')) {
+        await eventService.refreshEntryPlatforms(entry)
+      }
       await entryDetails.save()
       await entry.save()
-      await entry.related('userRoles').fetch()
 
       cache.user(res.locals.user).del('latestEntries')
 
+      await entry.related('userRoles').fetch()
       res.redirect(templating.buildUrl(entry, 'entry'))
     } else {
       if (!res.locals.entry) {
@@ -229,13 +241,13 @@ async function deleteEntry (req, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 11:59:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

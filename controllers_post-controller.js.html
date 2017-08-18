@@ -41,6 +41,7 @@ const cache = require('../core/cache')
 const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
+const settingService = require('../services/setting-service')
 const templating = require('./templating')
 
 module.exports = {
@@ -134,11 +135,28 @@ async function posts (req, res) {
 async function article (req, res) {
   // postName context variable is used to add a relevant "create article" mod button
   res.locals.postName = forms.sanitizeString(req.params.name)
-  res.locals.post = await postService.findPost({
+
+  // Find featured post
+  let findPostTask = postService.findPost({
     name: res.locals.postName,
     specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
     allowDrafts: true
+  }).then(async function (post) {
+    res.locals.post = post
   })
+
+  let settingArticlesTask = settingService.find(constants.SETTING_ARTICLE_SIDEBAR)
+    .then(async function (sidebarData) {
+      if (sidebarData) {
+        try {
+          res.locals.sidebar = JSON.parse(sidebarData).sidebar
+        } catch (e) {
+          console.log("Malformed JSON. Can't load articles links")
+        }
+      }
+    })
+
+  await Promise.all([findPostTask, settingArticlesTask]) // Parallelize fetching everything
 
   if (res.locals.post &amp;&amp; (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {
@@ -349,50 +367,68 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
   }
 
   if (securityService.canUserWrite(currentUser, comment, { allowMods: true })) {
+    let nodeType = comment.get('node_type')
+    let userId = comment.get('user_id')
+
     if (fields.delete) {
       // Delete comment
       await comment.destroy()
     } else {
       // Update comment
       comment.set('body', forms.sanitizeMarkdown(fields.body))
-      await eventService.refreshCommentScore(comment)
       await comment.save()
+    }
 
-      // Refresh feedback score on both the giver &amp; receiver entries
-      if (comment.get('node_type') === 'entry') {
-        let currentEntry = currentNode
-        let userEntry = await eventService.findUserEntryForEvent(
-          currentUser, currentEntry.get('event_id'))
-
-        // (No need to await, it's okay if the score is a bit late)
-        // XXXXXXXXXXXXX
-        await eventService.refreshEntryScore(currentEntry)
-        if (userEntry) {
-          await eventService.refreshEntryScore(userEntry)
+    if (nodeType === 'entry') {
+      if (isNewComment) {
+        await eventService.refreshCommentScore(comment)
+        await comment.save()
+      } else {
+        // We need to save the updated comment before reloading all comments and save them
+        if (!fields.delete) {
+          comment.save()
         }
+        // We need to recalculate the number of comments and the other user comments score
+        await eventService.adjustUserCommentScore(userId, currentNode)
       }
 
-      // we need to update the comment feed and unread notifications of users associated with the post/entry
-      let node = comment.related('node')
-      let userRoles = node.related('userRoles')
-      userRoles.forEach(function (userRole) {
-        let userCache = cache.user(userRole.get('user_name'))
-        userCache.del('toUserCollection')
-        userCache.del('unreadNotifications')
-      })
+      // Refresh feedback score on both the giver &amp; receiver entries
 
-      // and also any users @mentioned in the comment
-      let body = comment.get('body')
-      body.split(' ').forEach(function (word) {
-        if (word.length > 0 &amp;&amp; word[0] === '@') {
-          let userCache = cache.user(word.slice(1))
+      let currentEntry = currentNode
+      let userEntry = await eventService.findUserEntryForEvent(
+        currentUser, currentEntry.get('event_id'))
+
+      // (No need to await, it's okay if the score is a bit late)
+      // XXXXXXXXXXXXX
+      await eventService.refreshEntryScore(currentEntry)
+      if (userEntry) {
+        await eventService.refreshEntryScore(userEntry)
+      }
+
+      if (!fields.delete) {
+        // we need to update the comment feed and unread notifications of users associated with the post/entry
+        let node = comment.related('node')
+        let userRoles = node.related('userRoles')
+        userRoles.forEach(function (userRole) {
+          let userCache = cache.user(userRole.get('user_name'))
           userCache.del('toUserCollection')
           userCache.del('unreadNotifications')
-        }
-      })
+        })
 
-      redirectUrl += templating.buildUrl(comment, 'comment')
+        // and also any users @mentioned in the comment
+        let body = comment.get('body')
+        body.split(' ').forEach(function (word) {
+          if (word.length > 0 &amp;&amp; word[0] === '@') {
+            let userCache = cache.user(word.slice(1))
+            userCache.del('toUserCollection')
+            userCache.del('unreadNotifications')
+          }
+        })
+
+        redirectUrl += templating.buildUrl(comment, 'comment')
+      }
     }
+
     cache.user(currentUser.get('name')).del('byUserCollection')
 
     // Refresh node comment count
@@ -413,13 +449,13 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 11:59:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

@@ -54,8 +54,10 @@ module.exports = {
   findUserEntries,
   findUserEntryForEvent,
 
+  refreshEntryPlatforms,
   refreshEntryScore,
   refreshCommentScore,
+  adjustUserCommentScore,
 
   areSubmissionsAllowed
 }
@@ -222,6 +224,25 @@ async function findUserEntryForEvent (user, eventId) {
   }).fetch({ withRelated: ['userRoles'] })
 }
 
+async function refreshEntryPlatforms (entry) {
+  let tasks = []
+  await entry.load('platforms')
+  entry.related('platforms').each(async function (entry) {
+    tasks.push(entry.destroy())
+  })
+  let platformStrings = entry.get('platforms')
+  if (platformStrings) {
+    for (let platformString of platformStrings) {
+      let platform = new models.EntryPlatform({
+        entry_id: entry.get('id'),
+        platform: platformString
+      })
+      tasks.push(platform.save())
+    }
+  }
+  await Promise.all(tasks)
+}
+
 async function refreshEntryScore (entry) {
   await entry.load(['comments', 'userRoles'])
 
@@ -279,6 +300,40 @@ async function refreshCommentScore (comment) {
   comment.set('feedback_score', adjustedScore)
 }
 
+/**
+ * Adjust the value of each comments of a user after a deletion
+ * @param {integer} userId The user id of the modified comment
+ * @param {Post|Entry} node The current node model
+ */
+async function adjustUserCommentScore (userId, entry) {
+  await entry.load(['comments', 'userRoles'])
+  let isTeamMember = 0
+
+  let entryUserRoles = entry.related('userRoles')
+  for (let userRole of entryUserRoles.models) {
+    if (userRole.get('user_id') === userId) {
+      isTeamMember = true
+      break
+    }
+  }
+  if (!isTeamMember) {
+    let previousCommentsScore = 0
+    let entryComments = entry.related('comments')
+    for (let comment of entryComments.models) {
+      if (comment.get('user_id') === userId) {
+        let adjustedScore = 0
+        if (previousCommentsScore &lt; 3) {
+          let rawScore = _computeRawCommentScore(comment)
+          adjustedScore = Math.max(0, Math.min(rawScore, 3 - previousCommentsScore))
+          previousCommentsScore += adjustedScore
+        }
+        comment.set('feedback_score', adjustedScore)
+        await comment.save()
+      }
+    }
+  }
+}
+
 function _computeRawCommentScore (comment) {
   let commentLength = comment.get('body').length
   if (commentLength > 300) { // Elaborate comments
@@ -303,13 +358,13 @@ function areSubmissionsAllowed (event) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 11:59:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

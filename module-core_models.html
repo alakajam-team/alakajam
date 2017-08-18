@@ -132,13 +132,69 @@
 
         
             
-<h4 class="name" id=".Event"><span class="type-signature">(static) </span>Event<span class="type-signature"></span></h4>
+<h4 class="name" id=".Comment"><span class="type-signature">(static) </span>Comment<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    <h2>Table columns</h2>
+    <p>Comment model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>node_id</td>
+<td>ID of the target node</td>
+</tr>
+<tr>
+<td>string</td>
+<td>node_type</td>
+<td>Type of the target node ('entry' or 'post')</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>user_id</td>
+<td>Author user ID</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>parent_id</td>
+<td>Parent comment ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>body</td>
+<td>Comment body (max size: 10000)</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>feedback_score</td>
+<td>Feedback score gained through this comment (between 1 &amp; 3)</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -176,7 +232,710 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line144">line 144</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line500">line 500</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".Entry"><span class="type-signature">(static) </span>Entry<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Entry model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>event_id</td>
+<td>Event ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>event_name</td>
+<td>Name (used in the URL)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>name</td>
+</tr>
+<tr>
+<td>string</td>
+<td>title</td>
+</tr>
+<tr>
+<td>string</td>
+<td>descriptio (max size: 2000)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>links</td>
+<td>JSON Array : [{url, title}]</td>
+</tr>
+<tr>
+<td>string</td>
+<td>platforms</td>
+<td>JSON Array : [platform]</td>
+</tr>
+<tr>
+<td>string</td>
+<td>pictures</td>
+<td>JSON Array : [path]</td>
+</tr>
+<tr>
+<td>string</td>
+<td>category</td>
+<td>&quot;solo&quot;/&quot;team&quot;</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>feedback_score</td>
+<td>(defaults to 100)</td>
+</tr>
+<tr>
+<td>dateTime</td>
+<td>published_at</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>comment_count</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line245">line 245</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".EntryDetails"><span class="type-signature">(static) </span>EntryDetails<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Entry Details model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>entry_id</td>
+<td>Entry ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>body</td>
+<td>Entry details (max size: 10000)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line308">line 308</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".EntryPlatform"><span class="type-signature">(static) </span>EntryPlatform<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Entry Platform model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>entry_id</td>
+<td>Entry ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>platform</td>
+<td>Platform (max size: 50)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line326">line 326</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".Event"><span class="type-signature">(static) </span>Event<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Event model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>integer</td>
+<td>id</td>
+<td>ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>name</td>
+<td>Name (used in the URL). Must have a hyphen to prevent clashing other root URLs.</td>
+</tr>
+<tr>
+<td>string</td>
+<td>title</td>
+<td>Title</td>
+</tr>
+<tr>
+<td>string</td>
+<td>display_dates</td>
+<td>The event dates, for display only</td>
+</tr>
+<tr>
+<td>string</td>
+<td>display_theme</td>
+<td>The event theme, for display only</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status</td>
+<td>General status: 'pending', 'open' or 'closed'</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status_rules</td>
+<td>Event rules status: 'off', 'disabled', or a post ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status_theme</td>
+<td>Theme voting status: 'on', 'off', 'disabled', or a post ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status_entry</td>
+<td>Entry submission status: 'on', 'off', 'disabled'</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status_results</td>
+<td>Event results status: 'on', 'off', 'disabled', or a post ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>coutdown_config</td>
+<td>Home page countdown JSON: <code>{date, phrase}</code></td>
+</tr>
+<tr>
+<td>date</td>
+<td>published_at</td>
+<td>Publication date. If empty, the event is a draft.</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line163">line 163</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".EventDetails"><span class="type-signature">(static) </span>EventDetails<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Event Details model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>event_id</td>
+<td>Event ID</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>theme_count</td>
+<td>Number of theme ideas submitted</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>active_theme_count</td>
+<td>Number of active themes</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>theme_vote_count</td>
+<td>Number of theme votes</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line214">line 214</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".Post"><span class="type-signature">(static) </span>Post<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Post model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>author_user_id</td>
+<td>Author user ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>name</td>
+<td>Name (used in the URL)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>title</td>
+<td>Title</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>entry_id</td>
+<td>Entry ID</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>event_id</td>
+<td>Event ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>body</td>
+<td>Post body (max size: 10000)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>special_post_type</td>
+<td>'article', 'announcement' or empty</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>comment_count</td>
+<td>Number of comments made on this post</td>
+</tr>
+<tr>
+<td>dateTime</td>
+<td>published_at</td>
+<td>Publication time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line448">line 448</a>
     </li></ul></dd>
     
 
@@ -200,9 +959,38 @@
 
 
 <div class="description">
-    <p>table.string('key').primary()
-  table.string('value')
-  table.timestamps()</p>
+    <p>Setting model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td>key</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>string</td>
+<td>value</td>
+<td>Setting value (max size: 10000)</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -240,7 +1028,234 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line21">line 21</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line26">line 26</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".Theme"><span class="type-signature">(static) </span>Theme<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Theme model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>event_id</td>
+<td>Event ID</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>user_id</td>
+<td>User ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>title</td>
+<td>(max size: 100)</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>score</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>notes</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>reports</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status</td>
+<td>'active', 'out', 'banned', 'shortlist'</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line372">line 372</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".ThemeVote"><span class="type-signature">(static) </span>ThemeVote<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Theme Vote model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>theme_id</td>
+<td>Theme ID</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>event_id</td>
+<td>Event ID</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>user_id</td>
+<td>User ID</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>score</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line407">line 407</a>
     </li></ul></dd>
     
 
@@ -264,17 +1279,70 @@
 
 
 <div class="description">
-    <p>table.increments('id').primary()
-  table.string('name').unique()
-  table.string('title')
-  table.string('email')
-  table.string('avatar')
-  table.string('is_mod')
-  table.string('is_admin')
-  table.string('password')
-  table.string('password_salt')
-  table.dateTime('notifications_last_read')
-  table.timestamps()</p>
+    <p>User model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>string</td>
+<td>name</td>
+<td>User name (must be unique)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>title</td>
+</tr>
+<tr>
+<td>string</td>
+<td>email</td>
+</tr>
+<tr>
+<td>string</td>
+<td>avatar</td>
+</tr>
+<tr>
+<td>string</td>
+<td>is_mod</td>
+</tr>
+<tr>
+<td>string</td>
+<td>is_admin</td>
+</tr>
+<tr>
+<td>string</td>
+<td>password</td>
+</tr>
+<tr>
+<td>string</td>
+<td>password_salt</td>
+</tr>
+<tr>
+<td>dateTime</td>
+<td>notifications_last_read</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -312,7 +1380,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line44">line 44</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line54">line 54</a>
     </li></ul></dd>
     
 
@@ -336,10 +1404,38 @@
 
 
 <div class="description">
-    <p>table.increments('id').primary()
-  table.integer('user_id').references('user.id').unique()
-  table.string('body', 10000)
-  table.string('social_links', 1000)</p>
+    <p>User Details model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>user_id</td>
+<td>User ID (must be unique)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>body</td>
+<td>User bio (max size : 10000)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>social_links</td>
+<td>Social links JSON <code>{website, twitter}</code> (max size : 1000)</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -377,7 +1473,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line69">line 69</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line83">line 83</a>
     </li></ul></dd>
     
 
@@ -401,14 +1497,63 @@
 
 
 <div class="description">
-    <p>table.increments('id').primary()
-  table.integer('user_id').references('user.id')
-  table.string('user_name')
-  table.string('user_title')
-  table.integer('node_id')
-  table.string('node_type')
-  table.string('permission') // allowed: owner
-  table.timestamps()</p>
+    <p>User Role model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>integer (increments)</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>user_id</td>
+<td>User ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>user_name</td>
+<td>Local copy of the user name</td>
+</tr>
+<tr>
+<td>string</td>
+<td>user_title</td>
+<td>Local copy of the user title</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>node_id</td>
+<td>ID of the target node</td>
+</tr>
+<tr>
+<td>string</td>
+<td>node_type</td>
+<td>Type of the target node ('entry' or 'post')</td>
+</tr>
+<tr>
+<td>string</td>
+<td>permission</td>
+<td>Permission: 'read', 'write', 'manage'</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -446,7 +1591,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line107">line 107</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -480,13 +1625,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 11:59:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

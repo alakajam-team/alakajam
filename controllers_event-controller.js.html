@@ -37,6 +37,7 @@
 const forms = require('../core/forms')
 const templating = require('../controllers/templating')
 const eventService = require('../services/event-service')
+const eventThemeService = require('../services/event-theme-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 
@@ -50,7 +51,11 @@ module.exports = {
   viewEventResults,
 
   editEvent,
-  deleteEvent
+  editEventThemes,
+  deleteEvent,
+
+  ajaxFindThemes,
+  ajaxSaveVote
 }
 
 /**
@@ -132,14 +137,54 @@ async function viewEventThemes (req, res) {
   res.locals.pageTitle += ' | Themes'
 
   let statusThemes = res.locals.event.get('status_theme')
-  if (forms.isId(statusThemes)) {
-    res.locals.themesPost = await postService.findPostById(statusThemes)
-  } else if (statusThemes !== 'on') {
+  if (statusThemes === 'disabled' || statusThemes === 'off') {
     res.errorPage(404)
-    return
-  }
+  } else {
+    let context = {}
 
-  res.render('event/view-event-themes')
+    if (forms.isId(statusThemes)) {
+      context.themesPost = await postService.findPostById(statusThemes)
+    } else {
+      if (req.method === 'POST') {
+        let {fields} = await req.parseForm()
+
+        if (fields.action === 'ideas') {
+          // Gather ideas data
+          let ideas = []
+          for (let i = 0; i &lt; 3; i++) {
+            let idField = fields['idea-id[' + i + ']']
+            if (forms.isId(idField) || !idField) {
+              ideas.push({
+                id: idField,
+                title: forms.sanitizeString(fields['idea-title[' + i + ']'])
+              })
+            }
+          }
+          // Update theme ideas
+          await eventThemeService.saveThemeIdeas(res.locals.user, res.locals.event, ideas)
+        } else if (fields.action === 'vote') {
+          if (forms.isId(fields['theme-id']) &amp;&amp; (fields['upvote'] !== undefined || fields['downvote'] !== undefined)) {
+            let score = (fields['upvote'] !== undefined) ? 1 : -1
+            await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['theme-id']), score)
+          }
+        }
+      }
+
+      // Gather info for display
+      if (res.locals.user) {
+        let userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, res.locals.event)
+        context.userThemes = userThemesCollection.models
+
+        let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, res.locals.event)
+        context.votesHistory = votesHistoryCollection.models
+      } else {
+        let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, res.locals.event)
+        context.sampleThemes = sampleThemesCollection.models
+      }
+    }
+
+    res.render('event/view-event-themes', context)
+  }
 }
 
 /**
@@ -242,7 +287,8 @@ async function editEvent (req, res) {
         status_results: fields['status-results'],
         countdown_config: {
           date: forms.parseDateTime(fields['countdown-date']),
-          phrase: forms.sanitizeString(fields['countdown-phrase'])
+          phrase: forms.sanitizeString(fields['countdown-phrase']),
+          enabled: fields['countdown-enabled'] === 'on'
         }
       })
 
@@ -268,6 +314,16 @@ async function editEvent (req, res) {
 }
 
 /**
+ * Manage the event's submitted themes
+ */
+async function editEventThemes (req, res) {
+  let themesCollection = await eventThemeService.findBestThemes(res.locals.event, { fetchAll: true })
+  res.render('event/edit-event-themes', {
+    themes: themesCollection.models
+  })
+}
+
+/**
  * Delete an event
  */
 async function deleteEvent (req, res) {
@@ -279,6 +335,33 @@ async function deleteEvent (req, res) {
   await res.locals.event.destroy()
   res.redirect('/events')
 }
+
+/**
+ * AJAX API: Find themes to vote on
+ */
+async function ajaxFindThemes (req, res) {
+  let themesCollection = await eventThemeService.findThemesToVoteOn(res.locals.user, res.locals.event)
+  let json = []
+  for (let theme of themesCollection.models) {
+    json.push({
+      id: theme.get('id'),
+      title: theme.get('title')
+    })
+  }
+  res.end(JSON.stringify(json))
+}
+
+/**
+ * AJAX API: Save a vote
+ */
+async function ajaxSaveVote (req, res) {
+  let {fields} = await req.parseForm()
+  if (forms.isId(fields['id']) &amp;&amp; (fields['upvote'] !== undefined || fields['downvote'] !== undefined)) {
+    let score = (fields['upvote'] !== undefined) ? 1 : -1
+    await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['id']), score)
+  }
+  res.end('')
+}
 </code></pre>
         </article>
     </section>
@@ -289,13 +372,13 @@ async function deleteEvent (req, res) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 11:59:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

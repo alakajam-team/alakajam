@@ -34,11 +34,12 @@
  * @module controllers/api-controller
  */
 
+const moment = require('moment')
 const forms = require('../core/forms')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 
-const PUBLIC_ATTRIBUTES_EVENT = ['id', 'name', 'title', 'display_dates', 'display_theme', 'status', 'status_theme', 'status_entry', 'status_results']
+const PUBLIC_ATTRIBUTES_EVENT = ['id', 'name', 'title', 'display_dates', 'display_theme', 'status', 'status_theme', 'status_entry', 'status_results', 'countdown_config']
 const PUBLIC_ATTRIBUTES_ENTRY = ['id', 'event_id', 'event_name', 'name', 'title', 'description', 'links', 'pictures', 'category', 'comment_count', 'feedback_score']
 const PUBLIC_ATTRIBUTES_USER = ['id', 'name', 'title', 'avatar', 'is_mod', 'is_admin']
 const PUBLIC_ATTRIBUTES_COMMENT = ['id', 'user_id', 'parent_id', 'body', 'created_at', 'updated_at']
@@ -82,11 +83,23 @@ async function event (req, res) {
 
   if (event) {
     json = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT)
+    if (json.countdown_config.date) {
+      json.countdown_formatted = json.title + ' ' +
+        json.countdown_config.phrase + ' ' +
+        moment(json.countdown_config.date).fromNow() + '!'
+    }
 
     await event.load('entries')
     json.entries = []
     for (let entry of event.related('entries').models) {
-      json.entries.push(_getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY))
+      let entryJson = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY)
+
+      await entry.load('userRoles.user')
+      entryJson.users = []
+      for (let user of entry.related('userRoles').models) {
+        entryJson.users.push(_getAttributes(user.related('user'), PUBLIC_ATTRIBUTES_USER))
+      }
+      json.entries.push(entryJson)
     }
   } else {
     json = { error: 'Event not found' }
@@ -110,6 +123,12 @@ async function entry (req, res) {
       json.comments = []
       for (let comment of entry.related('comments').models) {
         json.comments.push(_getAttributes(comment, PUBLIC_ATTRIBUTES_COMMENT))
+      }
+
+      await entry.load('userRoles.user')
+      json.users = []
+      for (let user of entry.related('userRoles').models) {
+        json.users.push(_getAttributes(user.related('user'), PUBLIC_ATTRIBUTES_USER))
       }
     } else {
       json = { error: 'Entry not found' }
@@ -136,6 +155,11 @@ async function user (req, res) {
 
   if (user) {
     json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
+
+    json.entries = []
+    for (let entry of await eventService.findUserEntries(user)) {
+      json.entries.push(_getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY))
+    }
   } else {
     json = { error: 'User not found' }
   }
@@ -168,13 +192,13 @@ function _getAttributes (model, whiteList) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers.html">controllers</a></li><li><a href="module-controllers_api-controller.html">controllers/api-controller</a></li><li><a href="module-controllers_entry-controller.html">controllers/entry-controller</a></li><li><a href="module-controllers_event-controller.html">controllers/event-controller</a></li><li><a href="module-controllers_main-controller.html">controllers/main-controller</a></li><li><a href="module-controllers_post-controller.html">controllers/post-controller</a></li><li><a href="module-controllers_templating.html">controllers/templating</a></li><li><a href="module-controllers_user-controller.html">controllers/user-controller</a></li><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-server.html">server</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 08 2017 14:04:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 11:59:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>
