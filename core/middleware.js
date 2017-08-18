@@ -57,6 +57,18 @@ async function configure (app) {
   }))
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
+  // Request throttling
+  let store = new ExpressBrute.MemoryStore() // TODO use brute-knex
+  let bruteforce = new ExpressBrute(store, {
+    freeRetries: 5,
+    minWait: 100, // ms
+    lifetime: 1, // seconds
+    failCallback: function (req, res, next, nextValidRequestDate) {
+      res.end('ERROR: Too many requests. Fair use is 1req/s.')
+    }
+  })
+  app.use(bruteforce.prevent)
+
   // Templating
   app.set('views', path.join(ROOT_PATH, '/templates'))
   let nunjucks = expressNunjucks(app, {
@@ -166,18 +178,6 @@ async function configure (app) {
     res.on('close', cleanupFormFilesCallback(req, res))
     next()
   })
-
-  // Request throttling
-  let store = new ExpressBrute.MemoryStore() // TODO use brute-knex
-  let bruteforce = new ExpressBrute(store, {
-    freeRetries: 5,
-    minWait: 100, // ms
-    lifetime: 2, // seconds
-    failCallback: function (req, res, next, nextValidRequestDate) {
-      res.end('ERROR: Too many requests. Fair use is 1 every 2 seconds.')
-    }
-  })
-  app.use(bruteforce.prevent)
 
   // Routing: Views
   controllers.initRoutes(app)
