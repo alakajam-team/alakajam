@@ -40,6 +40,7 @@ module.exports = {
     router.get('/people', mainController.people)
     router.get('/user', mainController.people)
     router.get('/chat', mainController.chat)
+    router.get('/changes', mainController.changes)
 
     // Users
 

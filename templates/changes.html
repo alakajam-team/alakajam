@@ -1,0 +1,13 @@
+{% extends "_page.html" %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      {{ changes | markdown | safe }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

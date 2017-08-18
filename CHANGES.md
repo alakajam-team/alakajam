@@ -1,9 +1,6 @@
-Welcome to the **Alakajam!** nightly (reset and updated every night). Look around and try the latest features as we code them! You can log in as `administrator/administrator` or `entrant/entrant`.
+# Site changelog
 
-#### Post bug reports and suggestions on [Google Forms](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform?usp=sf_link) or [Github](https://github.com/mkalam-alami/wejam/issues)!
-&nbsp;
-
-# Changelog
+> You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
 ### August 15th
 
@@ -31,6 +28,8 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 
 * Revamped home page
 
+## [June 11th: 1st Feedback Fortnight launch](https://alakajam.com/post/5/introducing-feedback-fortnight)
+
 ### July 11th
 
 * Feedback Score system for sorting entries
@@ -43,6 +42,8 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 * Let the users set to which event a post should be attached
 * Added pagination to blog posts
 * Theme looks better on mobile
+
+## [June 22th: Site launch](https://alakajam.com/post/2/welcome-to-alakajam)
 
 ### June 20th
 
@@ -83,3 +84,5 @@ Welcome to the **Alakajam!** nightly (reset and updated every night). Look aroun
 * Mods can edit any post or any game thanks to a special toolbar
 * Form data is now sanitized
 * URLs are now pretty
+
+## [June 3rd: Nightly site launch](http://nightly.alakajam.com)

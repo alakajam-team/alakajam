@@ -208,6 +208,10 @@ async function insertInitialData (samples) {
                 {
                     "title": "Support",
                     "url": "/article/support"
+                },
+                {
+                    "title": "Site changelog",
+                    "url": "/changes"
                 }
             ]
         }
@@ -246,10 +250,11 @@ async function insertInitialData (samples) {
       published_at: new Date()
     })
     if (samples === 'nightly') {
-      let changesBuffer = await fs.readFile(path.join(__dirname, '../tests/nightly/CHANGES.md'))
+      let nightlyPostBuffer = await fs.readFile(path.join(__dirname, '../tests/nightly/POST.md'))
+      let changesBuffer = await fs.readFile(path.join(__dirname, '../CHANGES.md'))
       post.set({
         title: 'Nightly: ' + moment().format('MMMM Do YYYY'),
-        body: changesBuffer.toString()
+        body: nightlyPostBuffer.toString() + changesBuffer.toString()
       })
     }
     await post.save()
