@@ -189,8 +189,9 @@ async function insertInitialData (samples) {
       status_entry: 'on',
       status_results: 'on',
       countdown_config: {
-        phrase: 'starts Janumeber 29',
-        date: moment().add(1, 'days').toDate()
+        phrase: 'starts',
+        date: moment().add(1, 'days').toDate(),
+        enabled: false
       }
     })
     await event2.save()
