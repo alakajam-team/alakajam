@@ -205,6 +205,7 @@ module.exports.Event = bookshelf.model('Event', {
  * |--    |--    |--
  * | increments | id | Primary key
  * | integer | event_id | Event ID
+ * | integer | category_titles | Category names (JSON: [name])
  * | integer | theme_count | Number of theme ideas submitted
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
@@ -215,6 +216,23 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
   tableName: 'event_details',
   idAttribute: 'id',
   hasTimestamps: true,
+
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs['category_titles'] = attrs['category_titles'] || []
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['category_titles']) attrs['category_titles'] = JSON.parse(attrs['category_titles'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs && attrs['category_titles']) attrs['category_titles'] = JSON.stringify(attrs['category_titles'])
+    return attrs
+  },
 
   event: function () {
     return this.belongsTo('Event', 'event_id')
@@ -231,12 +249,12 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | string | event_name | Name (used in the URL)
  * | string | name |
  * | string | title |
- * | string | descriptio (max size: 2000)
+ * | string | description | (max size: 2000)
  * | string | links | JSON Array : [{url, title}]
  * | string | platforms | JSON Array : [platform]
  * | string | pictures | JSON Array : [path]
- * | string | category | "solo"/"team"
- * | integer | feedback_score | (defaults to 100)
+ * | string | class | "solo"/"team"/"ranked"
+ * | decimal | feedback_score | ([-999.999;999.999], defaults to 100)
  * | dateTime | published_at |
  * | integer | comment_count |
  * | date | created_at | Creation time
@@ -303,11 +321,17 @@ module.exports.Entry = bookshelf.model('Entry', {
  * |--    |--    |--
  * | increments | id | Primary key
  * | integer | entry_id | Entry ID
- * | string | body | Entry details (max size: 10000)
+ * | string | body | Detailed description (max size: 10000)
+ * | string | optouts | Opted-out categories (JSON: [ids])
+ * | decimal | rating_1 .. 4 | Rating for categories 1 to 4 ([-99.999,99.999])
+ * | integer | ranking_1 .. 4 | Ranking for categories 1 to 4 (max: 100000)
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
  */
 module.exports.EntryDetails = bookshelf.model('EntryDetails', {
   tableName: 'entry_details',
   idAttribute: 'id',
+  hasTimestamps: true,
 
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
@@ -346,6 +370,35 @@ module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
   format: function format (attrs) {
     if (attrs && attrs.platforms) attrs.platforms = JSON.stringify(attrs.platforms)
     return attrs
+  }
+})
+
+/**
+ * Entry Vote model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | entry_id | Entry ID
+ * | integer | event_id | Event ID
+ * | integer | user_id | User ID
+ * | integer | vote_1 .. 4 | Vote for categories 1 to 4 ([-999.99,999.99])
+ * | date | created_at | Creation time
+ * | date | modified_at | Last modification time
+ */
+module.exports.EntryVote = bookshelf.model('EntryVote', {
+  tableName: 'entry_vote',
+  idAttribute: 'id',
+  hasTimestamps: true,
+
+  entry: function () {
+    return this.belongsTo('Entry', 'entry_id')
+  },
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  },
+  user: function () {
+    return this.belongsTo('User', 'user_id')
   }
 })
 
