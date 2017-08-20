@@ -48,23 +48,42 @@
           <h2 class="entry-voting__header">Game voting</h2>
           <div class="entry-voting__body">
             {% if entry.get('class') === 'unranked' %}
-              This game is unranked. Please provide feedback instead.
+              <p>This game is an <strong>Unranked</strong> entry.</p>
+              <p style="margin-bottom: 0">Voting is disabled, please provide feedback instead.</p>
             {% else %}
-              This game is a <strong>{{ entry.get('class') | capitalize }}</strong> entry.
-
+              <p style="margin-bottom: -10px">This game is a <strong>{{ entry.get('class') | capitalize }}</strong> entry.</p>
               <form method="post">
-                {% for categoryTitle in event.related('details').get('category_titles') %}
+                <input type="hidden" name="action" value="vote" />
+                <p class="form-group">
+                  {% for categoryTitle in event.related('details').get('category_titles') %}
+                  {% set categoryIndex = loop.index %}
+                  {% set categoryRating = vote.get('rating_' + index) if vote else 0 %}
                   <div class="entry-voting__category">
                     <div class="entry-voting__category-title">{{ categoryTitle }}</div>
                     <div class="entry-voting__category-stars">
-                      {% for i in range(0, 10) %}
-                        <span class="fa fa-star-o fa-lg"></span>
+                      <input type="hidden" id="rating-{{ categoryIndex }}" name="rating-{{ categoryIndex }}" value="{{ categoryRating }}" />
+                      {% for i in range(1, 11) %}
+                        <span data-category="{{ categoryIndex }}" data-rating="{{ i }}" class="js-star fa fa-lg {{ 'fa-star confirmed' if i <= categoryRating else 'fa-star-o' }}"></span>
                       {% endfor %}
                     </div>
                   </div>
                 {% endfor %}
+                </p>
+                <p class="form-group">
+                  <input type="submit" class="btn btn-primary" value="Save changes" />
+                </p>
               </form>
             {% endif %}
+          </div>
+        </div>
+        <!-- TODO -->
+        <div style="margin-bottom: -10px">&nbsp;</div>
+        <div class="entry-voting__score" style="display: none">
+          <div class="row">
+            <div class="col-md-6 entry-voting__score-title">Feedback points</div>
+            <div class="col-xs-4 col-md-2 text-center">Commenting<br /><span class="entry-voting__score-number zero">0</span></div>
+            <div class="col-xs-4 col-md-2 text-center">Voting<br /><span class="entry-voting__score-number zero">N.A.</span></div>
+            <div class="col-xs-4 col-md-2 text-center"><strong>Gained</strong> {{ formMacros.tooltip('The points gained are the biggest number between comment and rating points.') }}<br /><span class="entry-voting__score-big-number zero">0</span></div>
           </div>
         </div>
       {% endif %}
@@ -113,5 +132,70 @@
 {% endblock %}
 
 {% block scripts %}
-  {{ formMacros.editorScripts() }}
+{{ formMacros.editorScripts() }}
+<script type="text/javascript">
+
+// Voting stars
+
+$stars = $('.js-star')
+var $starsArray = []
+$stars.each(function () {
+  $starsArray.push($(this))
+})
+
+$stars.mouseenter(function () {
+  $this = $(this)
+  var category = $this.attr('data-category')
+  var rating = parseInt($this.attr('data-rating'))
+  setCurrentCategory(category)
+  setRating(category, rating, false)
+})
+
+$stars.mouseleave(function () {
+  setCurrentCategory(null)
+})
+
+$stars.click(function () {
+  $this = $(this)
+  var category = $this.attr('data-category')
+  var rating = parseInt($this.attr('data-rating'))
+  setRating(category, rating, true)
+})
+
+var currentCategory = null
+
+function setCurrentCategory (category) {
+  if (currentCategory !== category) {
+    if (currentCategory !== null) {
+      var confirmedRating = parseInt($('#rating-' + currentCategory).val() || 0)
+      setRating(currentCategory, confirmedRating, true)
+    }
+    currentCategory = category
+  }
+}
+
+function setRating (category, rating, confirmed) {
+  $starsArray.forEach(function($star) {
+    if ($star.attr('data-category') === category) {
+      if (parseInt($star.attr('data-rating')) > rating) {
+        $star.removeClass('fa-star')
+        $star.removeClass('confirmed')
+        $star.addClass('fa-star-o')
+      } else {
+        $star.removeClass('fa-star-o')
+        $star.addClass('fa-star')
+        if (confirmed) {
+          $star.addClass('confirmed')
+        } else {
+          $star.removeClass('confirmed')
+        }
+      }
+    }
+  })
+  if (confirmed) {
+    $('#rating-' + category).val(rating)
+  }
+}
+
+</script>
 {% endblock %}
