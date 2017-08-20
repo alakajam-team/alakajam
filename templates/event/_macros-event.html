@@ -162,16 +162,16 @@
 {{ eventLink(event, null, 'posts', 'Posts', 'globe', path) }}<!--
 -->{{ eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) }}<!--
 -->{{ eventLink(event, 'status_entry', 'games', 'Games', 'tower', path) }}<!--
--->{{ eventLink(event, 'status_results', 'results', 'Results', 'th-list', path) }}
+-->{{ eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: 'results' }) }}
 
 {% endmacro %}
 
-{% macro eventLink (event, statusField, targetPath, label, icon, currentPath) %}<!--
+{% macro eventLink (event, statusField, targetPath, label, icon, currentPath, options = {}) %}<!--
 
 -->{% if not statusField or event.get(statusField) !== 'disabled' %}<!--
   -->{% set targetUrl = buildUrl(event, 'event', targetPath)%}<!--
     --><a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath == targetUrl or currentPath == targetUrl + '/' }} 
-           {{ 'disabled' if statusField and event.get(statusField) === 'off' }}">
+           {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and event.get(statusField) != options.requiredValue )}}">
          <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="event-header__link-label">{{ label }}</span>
 </a>{% endif %}<!--
 

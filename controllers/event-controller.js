@@ -165,7 +165,7 @@ async function viewEventThemes (req, res) {
 async function viewEventGames (req, res) {
   res.locals.pageTitle += ' | Games'
 
-  if (res.locals.event.get('status_entry') !== 'on') {
+  if (res.locals.event.get('status_entry') === 'off') {
     res.errorPage(404)
     return
   }
@@ -189,7 +189,7 @@ async function viewEventResults (req, res) {
   let statusResults = res.locals.event.get('status_results')
   if (forms.isId(statusResults)) {
     res.locals.resultsPost = await postService.findPostById(statusResults)
-  } else if (statusResults !== 'on') {
+  } else if (statusResults !== 'results') {
     res.errorPage(404)
     return
   }
@@ -241,6 +241,13 @@ async function editEvent (req, res) {
         }
       }
     }
+    if (!errorMessage) {
+      try {
+        fields['category-titles'] = JSON.parse(fields['category-titles'])
+      } catch (e) {
+        errorMessage = 'Invalid rating category JSON'
+      }
+    }
 
     if (!errorMessage) {
       if (creation) {
@@ -269,6 +276,12 @@ async function editEvent (req, res) {
       if (nameChanged) {
         await eventService.refreshEventReferences(event)
       }
+
+      let eventDetails = event.related('details')
+      eventDetails.set({
+        category_titles: fields['category-titles']
+      })
+      await eventDetails.save()
 
       if (creation) {
         res.redirect(templating.buildUrl(event, 'event', 'edit'))

@@ -1106,6 +1106,37 @@ input.date-picker {
 
 }
 
+.entry-voting {
+  @apply --shadow;
+  background-color: var(--borders);
+  margin-bottom: 20px;
+
+  &__header {
+    padding: 10px;
+    background-color: var(--alt);
+    color: white;
+  }
+
+  &__body {
+    padding: 10px;
+    padding-top: 0;
+  }
+
+  &__category {
+    padding-top: 5px;
+    font-size: 1.2rem;
+  }
+
+  &__category-title {
+    display: inline-block;
+    width: 120px;
+  }
+
+  &__category-stars {
+    display: inline-block;
+  }
+}
+
 /* Themes page */
 
 .themes {

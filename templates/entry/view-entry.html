@@ -43,6 +43,32 @@
       {% endfor %}
       {% endif %}
 
+      {% if event.get('status_results') === 'voting' %}
+        <div class="entry-voting">
+          <h2 class="entry-voting__header">Game voting</h2>
+          <div class="entry-voting__body">
+            {% if entry.get('class') === 'unranked' %}
+              This game is unranked. Please provide feedback instead.
+            {% else %}
+              This game is a <strong>{{ entry.get('class') | capitalize }}</strong> entry.
+
+              <form method="post">
+                {% for categoryTitle in event.related('details').get('category_titles') %}
+                  <div class="entry-voting__category">
+                    <div class="entry-voting__category-title">{{ categoryTitle }}</div>
+                    <div class="entry-voting__category-stars">
+                      {% for i in range(0, 10) %}
+                        <span class="fa fa-star-o fa-lg"></span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
       <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
       {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
 

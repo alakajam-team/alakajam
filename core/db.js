@@ -185,9 +185,9 @@ async function insertInitialData (samples) {
       status: 'open',
       display_dates: 'Januember 29 - 31, 2017',
       display_theme: 'You are not alone',
-      status_theme: 'on',
-      status_entry: 'on',
-      status_results: 'on',
+      status_theme: 'voting',
+      status_entry: 'open',
+      status_results: 'voting',
       countdown_config: {
         phrase: 'starts',
         date: moment().add(1, 'days').toDate(),
@@ -195,6 +195,10 @@ async function insertInitialData (samples) {
       }
     })
     await event2.save()
+    let event2Details = event2.related('details')
+    event2Details.set({
+      category_titles: ['Overall', 'Graphics', 'Sound', 'Innovation', 'Theme']
+    })
 
     await settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
     await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, `{

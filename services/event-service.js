@@ -66,7 +66,7 @@ async function refreshEventReferences (event) {
  */
 async function findEventById (id) {
   return models.Event.where('id', id)
-    .fetch({ withRelated: ['entries', 'entries.userRoles'] })
+    .fetch({ withRelated: ['details', 'entries', 'entries.userRoles'] })
 }
 
 /**
@@ -76,7 +76,7 @@ async function findEventById (id) {
  */
 async function findEventByName (name) {
   return models.Event.where('name', name)
-    .fetch({ withRelated: ['entries', 'entries.userRoles'] })
+    .fetch({ withRelated: ['details', 'entries', 'entries.userRoles'] })
 }
 
 /**

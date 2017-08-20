@@ -85,7 +85,7 @@
       </div>
       
       <div class="col-md-8">
-        <div class="themes__voting">
+        <div class="themes__voting" style="display: none">
           <h2>Theme voting</h2>
 
           {% if user %}
@@ -121,7 +121,7 @@
           {% endif %}
         </div>
         
-        <div class="themes__shortlist" style="display: none">
+        <div class="themes__shortlist">
           <h2>Shortlist ranking
             <input type="submit" class="btn btn-primary disabled" disabled="disabled" value="Save changes" /></h2>        
           <form method="post">
@@ -139,7 +139,7 @@
           </form>
         </div>
         
-        <div class="themes__results" style="display: none">
+        <div class="themes__results"  style="display: none">
           <h2>Shortlist results</h2>
           <div class="well">
             <p>

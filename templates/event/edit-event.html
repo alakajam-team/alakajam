@@ -1,6 +1,10 @@
 {% extends "event/_page-edit-event.html" %}
 {% import "_macros-form.html" as formMacros %}
 
+{% block styles %}
+{{ formMacros.codeMirrorStyles() }}
+{% endblock %}
+
 {% block editEventBody %}
 
 <form action="{{ buildUrl(event, 'event', 'edit') }}" method="post" enctype="multipart/form-data">
@@ -93,6 +97,10 @@
     </div>
   </div>
   <div class="form-group">
+    <label for="category-titles">Entry rating categories {{ formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]') }}</label>
+    <textarea name="category-titles" class="codemirror">{{ event.related('details').get('category_titles') | dump }}</textarea>
+  </div>
+  <div class="form-group">
     <label for="status-results">Event results status</label>
     <div>
     {{ formMacros.radio('status-results', 'disabled', 'Disabled',
@@ -133,6 +141,7 @@
 {% block scripts %} 
 {{ formMacros.radioScripts() }}
 {{ formMacros.dateTimePickerScripts() }}
+{{ formMacros.codeMirrorScripts() }}
 <script src="/static/js/slug.min.js"></script>
 <script>
 
