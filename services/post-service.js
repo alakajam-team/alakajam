@@ -216,19 +216,24 @@ async function findCommentsToUser (user, options = {}) {
 /**
  * Creates and persists a new post, initializing the owner UserRole.
  * @param  {User} user
+ * @param  {number} [eventId] the optional ID of an event to associate with.
  * @return {Post}
  */
-async function createPost (user) {
+async function createPost (user, eventId) {
   // TODO Better use of Bookshelf API
   let post = new models.Post()
   post.set('author_user_id', user.get('id'))
   await post.save() // otherwise the user role won't have a node_id
-  await post.userRoles().create({
+  const attributes = {
     user_id: user.get('id'),
     user_name: user.get('name'),
     user_title: user.get('title'),
     permission: constants.PERMISSION_MANAGE
-  })
+  }
+  if (eventId) {
+    attributes.event_id = eventId
+  }
+  await post.userRoles().create(attributes)
   return post
 }
 

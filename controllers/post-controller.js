@@ -226,9 +226,14 @@ async function savePost (req, res) {
     }
 
     if (!errorMessage) {
+      const eventIdIsValid = forms.isId(fields['event-id'])
+
       // Create new post if needed
       if (!post) {
-        post = await postService.createPost(res.locals.user)
+        post = await postService.createPost(
+          res.locals.user,
+          eventIdIsValid ? fields['event-id'] : undefined
+        )
         let specialPostType = req.query['special_post_type']
         if (specialPostType) {
           validateSpecialPostType(specialPostType, res.locals.user)
@@ -239,7 +244,7 @@ async function savePost (req, res) {
       // Fill post from form info
       post.set('title', forms.sanitizeString(fields.title))
       post.set('body', forms.sanitizeMarkdown(fields.body))
-      if (forms.isId(fields['event-id'])) {
+      if (eventIdIsValid) {
         post.set('event_id', fields['event-id'])
         if (!post.get('special_post_type')) {
           if (post.hasChanged('event_id')) {
