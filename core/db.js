@@ -231,7 +231,7 @@ async function insertInitialData (samples) {
     userEntry.set('title', 'Awesome Game')
     await userEntry.save()
 
-    post = await postService.createPost(entrantUser)
+    post = await postService.createPost(entrantUser, event2.get('id'))
     post.set({
       title: "I'm in!",
       body: "This is my second game and I'm really excited.",
@@ -241,7 +241,7 @@ async function insertInitialData (samples) {
     })
     await post.save()
 
-    post = await postService.createPost(adminUser)
+    post = await postService.createPost(adminUser, event2.get('id'))
     post.set({
       title: 'Event started!',
       body: 'The theme is `You are not alone`. Have fun!',

@@ -246,14 +246,24 @@ async function savePost (req, res) {
       post.set('body', forms.sanitizeMarkdown(fields.body))
       if (eventIdIsValid) {
         post.set('event_id', fields['event-id'])
-        if (!post.get('special_post_type')) {
-          if (post.hasChanged('event_id')) {
+        if (post.hasChanged('event_id') || post.hasChanged('special_post_type')) {
+          if (!post.get('special_post_type')) {
+            await post.load(['userRoles', 'author'])
+
+            // Update event ID on all roles
+            for (let userRole of post.related('userRoles').models) {
+              userRole.set('event_id', post.get('event_id'))
+              await userRole.save()
+            }
+
+            // Figure out related entry from event + user
             let relatedEntry = await eventService.findUserEntryForEvent(
-              res.locals.user, post.get('event_id'))
+              post.related('author'), post.get('event_id'))
             post.set('entry_id', relatedEntry ? relatedEntry.get('id') : null)
+          } else {
+            // Clear entry on special posts
+            post.set('entry_id', null)
           }
-        } else {
-          post.set('entry_id', null)
         }
       } else {
         post.set('event_id', null)
