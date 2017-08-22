@@ -1392,6 +1392,7 @@ input.date-picker {
 
     &.disabled, &.disabled:hover {
       color: var(--text-lighter);
+      cursor: default;
     } 
 
     & .glyphicon {
