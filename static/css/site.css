@@ -1142,11 +1142,28 @@ input.date-picker {
       width: 1.8rem;
     }
 
-    & .fa-star.confirmed {
+    & .fa-circle-o {
+      font-size: 0.8rem;
+      display: inline-block;
+    }
+
+    & .fa.confirmed {
       color: var(--alt-dark);
     }
   }
 
+  &__category-rating {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    vertical-align: middle;
+    width: 2rem;
+    
+    &.confirmed {
+      color: var(--alt-dark);
+    }
+  }
+  
   &__score {
     background-color: var(--borders);
     padding: 5px 10px;

@@ -60,8 +60,10 @@
                   {% set categoryRating = vote.get('rating_' + index) if vote else 0 %}
                   <div class="entry-voting__category">
                     <div class="entry-voting__category-title">{{ categoryTitle }}</div>
+                    <div id="js-rating-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ categoryRating if categoryRating !== 0 }}</div>
                     <div class="entry-voting__category-stars">
-                      <input type="hidden" id="rating-{{ categoryIndex }}" name="rating-{{ categoryIndex }}" value="{{ categoryRating }}" />
+                      <input type="hidden" id="js-rating-{{ categoryIndex }}" name="rating-{{ categoryIndex }}" value="{{ categoryRating }}" />
+                      <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if categoryRating === 0 }}"></span>
                       {% for i in range(1, 11) %}
                         <span data-category="{{ categoryIndex }}" data-rating="{{ i }}" class="js-star fa fa-lg {{ 'fa-star confirmed' if i <= categoryRating else 'fa-star-o' }}"></span>
                       {% endfor %}
@@ -167,7 +169,7 @@ var currentCategory = null
 function setCurrentCategory (category) {
   if (currentCategory !== category) {
     if (currentCategory !== null) {
-      var confirmedRating = parseInt($('#rating-' + currentCategory).val() || 0)
+      var confirmedRating = parseInt($('#js-rating-' + currentCategory).val() || 0)
       setRating(currentCategory, confirmedRating, true)
     }
     currentCategory = category
@@ -177,13 +179,20 @@ function setCurrentCategory (category) {
 function setRating (category, rating, confirmed) {
   $starsArray.forEach(function($star) {
     if ($star.attr('data-category') === category) {
-      if (parseInt($star.attr('data-rating')) > rating) {
-        $star.removeClass('fa-star')
+      var starRating = parseInt($star.attr('data-rating')) 
+      if (starRating !== 0 && starRating > rating
+          || starRating === 0 && rating !== 0) {
+        if (!$star.hasClass('fa-circle-o')) {
+          $star.removeClass('fa-star')
+          $star.addClass('fa-star-o')
+        }
         $star.removeClass('confirmed')
-        $star.addClass('fa-star-o')
+
       } else {
-        $star.removeClass('fa-star-o')
-        $star.addClass('fa-star')
+        if (!$star.hasClass('fa-circle-o')) {
+          $star.removeClass('fa-star-o')
+          $star.addClass('fa-star')
+        }
         if (confirmed) {
           $star.addClass('confirmed')
         } else {
@@ -192,8 +201,14 @@ function setRating (category, rating, confirmed) {
       }
     }
   })
+
+  var $ratingLabel = $('#js-rating-label-' + category)
+  $ratingLabel.text(rating !== 0 ? rating : '\xa0') // &nbsp;
   if (confirmed) {
-    $('#rating-' + category).val(rating)
+    $('#js-rating-' + category).val(rating)
+    $ratingLabel.addClass('confirmed')
+  } else {
+    $ratingLabel.removeClass('confirmed')
   }
 }
 

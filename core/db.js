@@ -199,6 +199,7 @@ async function insertInitialData (samples) {
     event2Details.set({
       category_titles: ['Overall', 'Graphics', 'Sound', 'Innovation', 'Theme']
     })
+    await event2Details.save()
 
     await settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
     await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, `{
