@@ -1132,6 +1132,19 @@ input.date-picker {
     width: 120px;
   }
 
+  &__category-rating {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    vertical-align: middle;
+    width: 2rem;
+    text-align: right;
+    
+    &.confirmed {
+      color: var(--alt-dark);
+    }
+  }
+
   &__category-stars {
     display: inline-block;
     cursor: pointer;
@@ -1145,21 +1158,10 @@ input.date-picker {
     & .fa-circle-o {
       font-size: 0.8rem;
       display: inline-block;
+      margin-left: 15px;
     }
 
     & .fa.confirmed {
-      color: var(--alt-dark);
-    }
-  }
-
-  &__category-rating {
-    display: inline-block;
-    font-size: 1.5rem;
-    font-weight: bold;
-    vertical-align: middle;
-    width: 2rem;
-    
-    &.confirmed {
       color: var(--alt-dark);
     }
   }

@@ -168,7 +168,7 @@
 {% set user = comment.related('user') if comment and comment.related('user') else readingUser %}
 {% if user %}
 <form method="post" action="{{ buildUrl(comment, 'comment', 'edit') }}" class="comment">
-  <input type="hidden" name="is-comment-form" value="true" />
+  <input type="hidden" name="action" value="comment" />
   <input type="hidden" name="id" value="{{ comment.id if comment }}" />
   <a class="comment__anchor" name="c{{ comment.id if comment }}"></a>
   <div class="row">

@@ -10,6 +10,7 @@ const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const models = require('../core/models')
 const eventService = require('../services/event-service')
+const eventRatingService = require('../services/event-rating-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const templating = require('./templating')
@@ -57,11 +58,21 @@ async function viewEntry (req, res) {
   // Let the template display user thumbs
   await res.locals.entry.load('userRoles.user')
 
+  // Fetch vote on someone else's entry
+  let vote
+  let canVote = false
+  if (res.locals.user && !securityService.canUserWrite(res.locals.user, res.locals.entry)) {
+    vote = await eventRatingService.findEntryVote(res.locals.user, res.locals.entry)
+    canVote = res.locals.event.get('status_results') === 'voting'
+  }
+
   res.render('entry/view-entry', {
     sortedComments: await postService.findCommentsSortedForDisplay(res.locals.entry),
     posts: await postService.findPosts({
       entryId: res.locals.entry.get('id')
-    })
+    }),
+    vote,
+    canVote
   })
 }
 
@@ -105,11 +116,26 @@ function editEntry (req, res) {
 async function saveEntry (req, res) {
   let {fields, files} = await req.parseForm()
 
-  if (fields['is-comment-form']) {
+  if (fields['action'] === 'comment') {
     // Handle comment form
     let redirectUrl = await postController.handleSaveComment(fields,
       res.locals.user, res.locals.entry, templating.buildUrl(res.locals.entry, 'entry'))
     res.redirect(redirectUrl)
+  } else if (fields['action'] === 'vote') {
+    // Handle vote on entry
+    let i = 1
+    let votes = []
+    while (fields['vote-' + i] !== undefined) {
+      let vote = fields['vote-' + i]
+      if (!vote || forms.isFloat(vote)) {
+        votes.push(vote)
+      } else {
+        break
+      }
+      i++
+    }
+    await eventRatingService.saveEntryVote(res.locals.user, res.locals.entry, votes)
+    viewEntry(req, res)
   } else if (!res.locals.user || (res.locals.entry &&
       !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true }))) {
     res.errorPage(403)

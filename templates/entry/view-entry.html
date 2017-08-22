@@ -43,7 +43,7 @@
       {% endfor %}
       {% endif %}
 
-      {% if event.get('status_results') === 'voting' %}
+      {% if canVote %}
         <div class="entry-voting">
           <h2 class="entry-voting__header">Game voting</h2>
           <div class="entry-voting__body">
@@ -57,13 +57,13 @@
                 <p class="form-group">
                   {% for categoryTitle in event.related('details').get('category_titles') %}
                   {% set categoryIndex = loop.index %}
-                  {% set categoryRating = vote.get('rating_' + index) if vote else 0 %}
+                  {% set categoryRating = vote.get('vote_' + categoryIndex) if vote %}
                   <div class="entry-voting__category">
+                    <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ categoryRating | default('0') }}" />
                     <div class="entry-voting__category-title">{{ categoryTitle }}</div>
-                    <div id="js-rating-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ categoryRating if categoryRating !== 0 }}</div>
+                    <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ categoryRating if categoryRating !== 0 }}</div>
                     <div class="entry-voting__category-stars">
-                      <input type="hidden" id="js-rating-{{ categoryIndex }}" name="rating-{{ categoryIndex }}" value="{{ categoryRating }}" />
-                      <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if categoryRating === 0 }}"></span>
+                      <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if not categoryRating }}"></span>
                       {% for i in range(1, 11) %}
                         <span data-category="{{ categoryIndex }}" data-rating="{{ i }}" class="js-star fa fa-lg {{ 'fa-star confirmed' if i <= categoryRating else 'fa-star-o' }}"></span>
                       {% endfor %}
@@ -169,7 +169,7 @@ var currentCategory = null
 function setCurrentCategory (category) {
   if (currentCategory !== category) {
     if (currentCategory !== null) {
-      var confirmedRating = parseInt($('#js-rating-' + currentCategory).val() || 0)
+      var confirmedRating = parseInt($('#js-vote-' + currentCategory).val() || 0)
       setRating(currentCategory, confirmedRating, true)
     }
     currentCategory = category
@@ -202,10 +202,10 @@ function setRating (category, rating, confirmed) {
     }
   })
 
-  var $ratingLabel = $('#js-rating-label-' + category)
+  var $ratingLabel = $('#js-vote-label-' + category)
   $ratingLabel.text(rating !== 0 ? rating : '\xa0') // &nbsp;
   if (confirmed) {
-    $('#js-rating-' + category).val(rating)
+    $('#js-vote-' + category).val(rating)
     $ratingLabel.addClass('confirmed')
   } else {
     $ratingLabel.removeClass('confirmed')

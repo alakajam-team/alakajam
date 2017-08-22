@@ -30,6 +30,7 @@ module.exports = {
   isUsername,
   isId,
   isInt,
+  isFloat,
   isSlug,
   isIn,
   isLengthValid,
@@ -153,6 +154,15 @@ function isIn (string, values) {
  */
 function isInt (string) {
   return string && validator.isInt(string)
+}
+
+/**
+ * Checks whether the string is in a float
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isFloat (string) {
+  return string && validator.isFloat(string)
 }
 
 /**

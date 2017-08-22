@@ -282,6 +282,9 @@ module.exports.Entry = bookshelf.model('Entry', {
   platforms: function () {
     return this.hasMany('EntryPlatform', 'entry_id')
   },
+  votes: function () {
+    return this.hasMany('EntryVote', 'entry_id')
+  },
 
   // Listeners
 
@@ -311,7 +314,7 @@ module.exports.Entry = bookshelf.model('Entry', {
 
 }, {
   // Cascading
-  dependents: ['details', 'comments', 'platforms'] // 'userRoles' removed because of issue #93
+  dependents: ['details', 'comments', 'platforms', 'votes'] // 'userRoles' removed because of issue #93
 })
 
 /**
