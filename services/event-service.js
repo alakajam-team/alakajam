@@ -113,19 +113,21 @@ async function findEventByStatus (status) {
  * @return {Entry}
  */
 async function createEntry (user, event) {
-  if (await findUserEntryForEvent(user, event.get('id'))) {
+  const eventId = event.get('id')
+  if (await findUserEntryForEvent(user, eventId)) {
     throw new Error('User already has an entry for this event')
   }
 
   // TODO Better use of Bookshelf API
   let entry = new models.Entry()
   await entry.save() // otherwise the user role won't have a node_id
-  entry.set('event_id', event.get('id'))
+  entry.set('event_id', eventId)
   entry.set('event_name', event.get('name'))
   await entry.userRoles().create({
     user_id: user.get('id'),
     user_name: user.get('name'),
     user_title: user.get('title'),
+    event_id: eventId,
     permission: constants.PERMISSION_MANAGE
   })
 
