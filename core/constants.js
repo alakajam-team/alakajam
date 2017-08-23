@@ -5,6 +5,7 @@
  *
  * @module core/constants
  */
+const config = require('../config')
 
 const PERMISSION_READ = 'read'
 const PERMISSION_WRITE = 'write'
@@ -44,6 +45,9 @@ module.exports = {
   PERMISSION_WRITE,
   PERMISSION_MANAGE,
   ORDERED_PERMISSIONS,
+
+  // Database
+  DB_ILIKE: config.DB_TYPE.startsWith('sqlite') ? 'LIKE' : 'ILIKE',
 
   // Themes
   THEME_STATUS_OUT,
