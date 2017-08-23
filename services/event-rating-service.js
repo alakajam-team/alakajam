@@ -27,8 +27,12 @@ module.exports = {
  * @return {void}
  */
 async function canVoteOnEntry (user, entry) {
-  let userEntry = await eventService.findUserEntryForEvent(user, entry.get('event_id'))
-  return userEntry && userEntry.get('id') !== entry.get('id')
+  if (entry.related('event').get('status_results') === 'voting') {
+    let userEntry = await eventService.findUserEntryForEvent(user, entry.get('event_id'))
+    return userEntry && userEntry.get('id') !== entry.get('id')
+  } else {
+    return false
+  }
 }
 
 /**
@@ -52,10 +56,6 @@ async function findEntryVote (user, entry) {
  * @return {void}
  */
 async function saveEntryVote (user, entry, voteData) {
-  if (!(await canVoteOnEntry(user, entry))) {
-    throw new Error('user cannot vote on this entry')
-  }
-
   await entry.load('event.details')
   let event = entry.related('event')
   let eventDetails = event.related('details')

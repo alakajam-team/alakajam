@@ -62,8 +62,10 @@ async function viewEntry (req, res) {
   let vote
   let canVote = false
   if (res.locals.user && !securityService.canUserWrite(res.locals.user, res.locals.entry)) {
-    vote = await eventRatingService.findEntryVote(res.locals.user, res.locals.entry)
-    canVote = res.locals.event.get('status_results') === 'voting'
+    canVote = await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)
+    if (canVote) {
+      vote = await eventRatingService.findEntryVote(res.locals.user, res.locals.entry)
+    }
   }
 
   res.render('entry/view-entry', {
@@ -134,7 +136,9 @@ async function saveEntry (req, res) {
       }
       i++
     }
-    await eventRatingService.saveEntryVote(res.locals.user, res.locals.entry, votes)
+    if (await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)) {
+      await eventRatingService.saveEntryVote(res.locals.user, res.locals.entry, votes)
+    }
     viewEntry(req, res)
   } else if (!res.locals.user || (res.locals.entry &&
       !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true }))) {

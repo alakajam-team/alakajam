@@ -7,17 +7,28 @@
 <div class="container">
   <div class="row">
     <h1>Ratings</h1>
+    <ul class="nav nav-tabs">
+      {% for rankedVoteHistory in rankedVoteHistories %}
+        <li id="js-tab-container-{{ rankedVoteHistory.title }}" role="presentation" class="js-tab-container {{ 'active' if loop.index === 1 }}">
+          <a class="js-tab-button" data-tab="{{ rankedVoteHistory.title }}" href="#">{{ rankedVoteHistory.title }} <span class="count">({{ rankedVoteHistory.votes.length }})</span></a>
+        </li>
+      {% endfor %}
+    </ul>
     {% for rankedVoteHistory in rankedVoteHistories %}
       {% set categoryIndex = loop.index %}
-      <div class="col-md-6" style="margin-bottom: 20px">
-        <h2>{{ rankedVoteHistory.title }}</h2>
+      <div id="js-tab-{{ rankedVoteHistory.title }}" class="js-tab" style="background-color: white; padding: 10px; {{ 'display: none' if categoryIndex > 1 }}">
+        <div class="row">
+          <div class="col-xs-offset-1 col-xs-10">
+            <h2>{{ rankedVoteHistory.title }}</h2>
+          </div>
+        </div>
         <div class="row">
         {% for vote in rankedVoteHistory.votes %}
           <div class="col-xs-1">
-            <h3>{{ vote.get('vote_' + categoryIndex) }}</h3>
+            <h3 class="pull-right">{{ vote.get('vote_' + categoryIndex) }}</h3>
           </div>
           <div class="col-xs-11" style="margin-bottom: 5px">
-            {{ eventMacros.entrySmallThumb(vote.related('entry')) }}
+            {{ eventMacros.entrySmallThumb(vote.related('entry'), { noShadow: true }) }}
           </div>
         {% endfor %}
         </div>
@@ -26,4 +37,18 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$('.js-tab-button').click(function () {
+  var $this = $(this)
+  var tabToShow = $this.attr('data-tab')
+  
+  $('.js-tab-container').removeClass('active')
+  $('#js-tab-container-' + tabToShow).addClass('active')
+  $('.js-tab').hide()
+  $('#js-tab-' + tabToShow).show()
+})
+</script>
 {% endblock %}

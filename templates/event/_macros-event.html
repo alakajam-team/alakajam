@@ -28,7 +28,7 @@
 {% endmacro %}
 
 {% macro entrySmallThumb(entry, options = {}) %}
-<div class="entry-small-thumb">
+<div class="entry-small-thumb" style="{{ 'box-shadow: none' if options.noShadow }}">
   {% if entry and entry.get('id') %}
     {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
     <div class="entry-small-thumb__details">
