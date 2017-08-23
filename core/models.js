@@ -293,7 +293,7 @@ module.exports.Entry = bookshelf.model('Entry', {
 
 }, {
   // Cascading
-  dependents: ['userRoles', 'details', 'comments', 'platforms']
+  dependents: ['details', 'comments', 'platforms'] // 'userRoles' removed because of issue #93
 })
 
 /**
@@ -479,7 +479,7 @@ module.exports.Post = bookshelf.model('Post', {
   }
 }, {
   // Cascading
-  dependents: ['userRoles', 'comments']
+  dependents: ['comments'] // 'userRoles' removed because of issue #93
 })
 
 /**
