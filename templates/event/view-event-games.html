@@ -7,19 +7,36 @@
 
 <div class="container">
   <div class="row">
-    <div class="horizontal-bar">{{ sortedEntries.length }} {{ 'entries' if sortedEntries.length !== 1 else 'entry' }} sorted by Feedback Score {{ formMacros.tooltip('Comment on other games to increase your score and get featured higher on the list!') }}</div>
-    {% for entry in sortedEntries %}
-      <div class="col-sm-4 col-md-3">
-        {{ eventMacros.entryThumb(entry) }}
-        <div class="entry-thumb__score">
-          <span class="pull-right">{{ entry.get('feedback_score') }}</span>
-          Feedback Score
+    <div class="col-sm-3">
+      <h2>Recently rated</h2>
+      <p><a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>
+      {% for vote in voteHistory %}
+        <p>
+          {{ eventMacros.entrySmallThumb(vote.related('entry')) }}
+        </p>
+      {% endfor %}
+      {% if voteHistory.length === 0 %}
+        <div class="well">You didn't rate entries yet.</div>
+      {% endif %}
+    </div>
+    <div class="col-sm-9">
+      <div class="horizontal-bar">{{ sortedEntries.length }} {{ 'entries' if sortedEntries.length !== 1 else 'entry' }} sorted by Feedback Score {{ formMacros.tooltip('Comment on other games to increase your score and get featured higher on the list!') }}</div>
+      
+      <div class="row">
+      {% for entry in sortedEntries %}
+        <div class="col-sm-6 col-md-4">
+          {{ eventMacros.entryThumb(entry) }}
+          <div class="entry-thumb__score">
+            <span class="pull-right">{{ entry.get('feedback_score') }}</span>
+            Feedback Score
+          </div>
         </div>
+      {% endfor %}
+      {% if entries.length === 0 %}
+        <div class="well">The event has no entries yet.</div>
+      {% endif %}
       </div>
-    {% endfor %}
-    {% if entries.length === 0 %}
-      <div class="well">The event has no entries yet.</div>
-    {% endif %}
+    </div>
   </div>
 </div>
 

@@ -10,6 +10,7 @@ const forms = require('../core/forms')
 const templating = require('../controllers/templating')
 const eventService = require('../services/event-service')
 const eventThemeService = require('../services/event-theme-service')
+const eventRatingService = require('../services/event-rating-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 
@@ -20,6 +21,7 @@ module.exports = {
   viewEventPosts,
   viewEventThemes,
   viewEventGames,
+  viewEventRatings,
   viewEventResults,
 
   editEvent,
@@ -170,14 +172,62 @@ async function viewEventGames (req, res) {
     return
   }
 
+  // Fetch entries
   let sortedEntries = res.locals.event.related('entries')
     .sortBy(function (entry) {
       return -1 * entry.get('feedback_score')
     })
 
+  // Fetch vote history
+  let eventResultsStatus = res.locals.event.get('status_results')
+  let voteHistory = []
+  if (res.locals.user && (eventResultsStatus === 'voting' || eventResultsStatus === 'results')) {
+    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user, res.locals.event, { pageSize: 5 })
+    voteHistory = voteHistoryCollection.models
+  }
+
   res.render('event/view-event-games', {
-    sortedEntries
+    sortedEntries,
+    voteHistory
   })
+}
+
+/**
+ * Browse ratings by own user
+ */
+async function viewEventRatings (req, res) {
+  res.locals.pageTitle += ' | Ratings'
+
+  let eventResultsStatus = res.locals.event.get('status_results')
+  if (res.locals.user && (eventResultsStatus === 'voting' || eventResultsStatus === 'results')) {
+    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user, res.locals.event,
+      { pageSize: null, withRelated: ['entry.details', 'entry.userRoles'] })
+    let categoryTitles = res.locals.event.related('details').get('category_titles')
+
+    let rankedVoteHistories = []
+    for (let i in categoryTitles) {
+      let categoryIndex = parseInt(i) + 1
+
+      let validVotes = voteHistoryCollection.filter(function (vote) {
+        return vote.get('vote_' + categoryIndex) > 0
+      })
+      validVotes.sort(function (vote, vote2) {
+        return vote2.get('vote_' + categoryIndex) - vote.get('vote_' + categoryIndex)
+      })
+
+      rankedVoteHistories.push({
+        title: categoryTitles[i],
+        votes: validVotes
+      })
+    }
+
+    res.render('event/view-event-ratings', {
+      rankedVoteHistories
+    })
+  } else {
+    res.errorPage(404)
+    return
+  }
 }
 
 /**

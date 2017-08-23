@@ -339,5 +339,6 @@ function _computeRawCommentScore (comment) {
 }
 
 function areSubmissionsAllowed (event) {
-  return event && event.get('status') === 'open' && event.get('status_entry') === 'on'
+  return event && event.get('status') === 'open' &&
+      (event.get('status_entry') === 'open' || event.get('status_entry') === 'open_unranked')
 }

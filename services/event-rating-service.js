@@ -12,9 +12,10 @@ const eventService = require('../services/event-service')
 
 module.exports = {
   canVoteOnEntry,
-
   findEntryVote,
   saveEntryVote,
+
+  findVoteHistory,
 
   refreshEntryRatings
 }
@@ -31,7 +32,7 @@ async function canVoteOnEntry (user, entry) {
 }
 
 /**
- * Find the votes an user cast on an entry
+ * Finds the votes an user cast on an entry
  * @param  {User} user
  * @param  {Entry} entry
  * @return {void}
@@ -79,6 +80,25 @@ async function saveEntryVote (user, entry, voteData) {
   await vote.save()
 
   await refreshEntryRatings(entry)
+}
+
+/**
+ * Finds the votes a user cast during an event (max: 50)
+ * @param  {User} user
+ * @param  {Event} event
+ * @param  {object} options allowed: pageSize withRelated
+ * @return {void}
+ */
+async function findVoteHistory (user, event, options = {}) {
+  return models.EntryVote.where({
+    user_id: user.get('id'),
+    event_id: event.get('id')
+  })
+    .orderBy('updated_at', 'DESC')
+    .fetchPage({
+      pageSize: options.pageSize || 50,
+      withRelated: options.withRelated || ['entry.userRoles']
+    })
 }
 
 /**

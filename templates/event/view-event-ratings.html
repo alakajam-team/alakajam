@@ -1,0 +1,29 @@
+{% extends "event/_page-event.html" %}
+{% import "event/_macros-event.html" as eventMacros %}
+
+{% block body %}
+{{ super() }}
+
+<div class="container">
+  <div class="row">
+    <h1>Ratings</h1>
+    {% for rankedVoteHistory in rankedVoteHistories %}
+      {% set categoryIndex = loop.index %}
+      <div class="col-md-6" style="margin-bottom: 20px">
+        <h2>{{ rankedVoteHistory.title }}</h2>
+        <div class="row">
+        {% for vote in rankedVoteHistory.votes %}
+          <div class="col-xs-1">
+            <h3>{{ vote.get('vote_' + categoryIndex) }}</h3>
+          </div>
+          <div class="col-xs-11" style="margin-bottom: 5px">
+            {{ eventMacros.entrySmallThumb(vote.related('entry')) }}
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

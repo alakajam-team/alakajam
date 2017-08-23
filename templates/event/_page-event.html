@@ -11,7 +11,7 @@
        <div>
          {% if userEntry %}
            <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-alt pull-right">Edit entry</a>
-         {% elseif event.get('status') !== 'open' or event.get('status_entry') !== 'on' %}
+         {% elseif event.get('status') !== 'open' or (event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked') %}
            <div class="pull-right">
              <a href="#"class="btn btn-sm btn-default disabled">Create entry</a>
            </div>
@@ -24,7 +24,7 @@
       </div>
       {% if event.get('status') === 'closed' %}
         {% set customMessage = "Entry submissions are closed" %}
-      {% elseif event.get('status_entry') !== 'on' %}
+      {% elseif event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
         {% set customMessage = "Entry submissions are not open yet" %}
       {% endif %}
       {{ eventMacros.entrySmallThumb(userEntry, { customMessage: customMessage }) }}
