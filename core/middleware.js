@@ -135,6 +135,9 @@ async function configure (app) {
     let v = n % 100
     return n + (s[(v - 20) % 10] || s[v] || s[0])
   })
+  nunjucks.env.addFilter('digits', function (number, digits) {
+    return number.toFixed(digits)
+  })
 
   // Templating: rendering context
   app.use(function templateTooling (req, res, next) {

@@ -18,11 +18,11 @@
       <h1>{{ event.get('title') }}: {{ categoryTitles[sortedBy - 1] }} rankings</h1>
       
       <div class="row">
-        <div class="col-sm-{{ 12 - categoryTitles.length }}" style="margin-bottom: 30px">&nbsp;</div>
+        <div class="col-sm-{{ 12 - categoryTitles.length }}" style="margin-bottom: 20px">&nbsp;</div>
         {% for title in categoryTitles %}
-          <div class="col-sm-1">
+          <div class="col-sm-1 text-center">
             <a href="?sortBy={{ loop.index }}" type="button" 
-                class="btn btn-default {{ 'disabled' if sortedBy === loop.index }}">
+                class="btn btn-default btn-sm {{ 'disabled' if sortedBy === loop.index }}">
               {{ categoryTitles[loop.index - 1] }}
             </a>
           </div>
@@ -42,8 +42,8 @@
             {{ eventMacros.entrySmallThumb(entry) }}
           </div>
           {% for title in categoryTitles %}
-            <div class="col-sm-1">
-              <h4>{{ entry.related('details').get('rating_' + loop.index) or 'N.A.' }}</h4>
+            <div class="col-sm-1 text-center" style="{{ 'background-color: #FAFAFA;' if loop.index === sortedBy }}">
+              <h4 style="line-height: 50px; vertical-align middle;">{{ entry.related('details').get('rating_' + loop.index) | digits(3) or 'N.A.' }}</h4>
             </div>
           {% endfor %}
         </div>
