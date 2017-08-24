@@ -9,9 +9,11 @@ const fs = promisify('fs')
 const rimraf = promisify('rimraf')
 const path = require('path')
 
-let initialized = false
+module.exports = {
+  init
+}
 
-before(init)
+let initialized = false
 
 async function init () {
   if (!initialized) {
