@@ -1,8 +1,9 @@
 'use strict'
 
-require('./support/test-server.js')
-
+const testServer = require('./support/test-server.js')
 const assert = require('assert')
+
+before(testServer.init)
 
 describe('userService', async function () {
   describe('#register()', function () {
