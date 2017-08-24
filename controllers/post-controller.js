@@ -371,22 +371,17 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
         await eventService.refreshCommentScore(comment)
         await comment.save()
       } else {
-        // We need to save the updated comment before reloading all comments and save them
+        // This change might impact the feedback score of other comments, refresh them
+        // (but save the comment first)
         if (!fields.delete) {
-          comment.save()
+          await comment.save()
         }
-        // We need to recalculate the number of comments and the other user comments score
-        await eventService.adjustUserCommentScore(userId, currentNode)
+        await eventService.refreshUserCommentScoresOnNode(currentNode, userId)
       }
 
       // Refresh feedback score on both the giver & receiver entries
-
       let currentEntry = currentNode
-      let userEntry = await eventService.findUserEntryForEvent(
-        currentUser, currentEntry.get('event_id'))
-
-      // (No need to await, it's okay if the score is a bit late)
-      // XXXXXXXXXXXXX
+      let userEntry = await eventService.findUserEntryForEvent(currentUser, currentEntry.get('event_id'))
       await eventService.refreshEntryScore(currentEntry)
       if (userEntry) {
         await eventService.refreshEntryScore(userEntry)

@@ -30,7 +30,7 @@ module.exports = {
   refreshEntryPlatforms,
   refreshEntryScore,
   refreshCommentScore,
-  adjustUserCommentScore,
+  refreshUserCommentScoresOnNode,
 
   areSubmissionsAllowed
 }
@@ -294,24 +294,26 @@ async function refreshCommentScore (comment) {
 }
 
 /**
- * Adjust the value of each comments of a user after a deletion
+ * Refreshes the scores of all the comments written by an user on an entry.
+ * Useful to detect side-effects of a user modifying or deleting a comment.
  * @param {integer} userId The user id of the modified comment
- * @param {Post|Entry} node The current node model
+ * @param {Post|Entry} node
  */
-async function adjustUserCommentScore (userId, entry) {
-  await entry.load(['comments', 'userRoles'])
+async function refreshUserCommentScoresOnNode (node, userId) {
+  await node.load(['comments', 'userRoles'])
   let isTeamMember = 0
 
-  let entryUserRoles = entry.related('userRoles')
+  let entryUserRoles = node.related('userRoles')
   for (let userRole of entryUserRoles.models) {
     if (userRole.get('user_id') === userId) {
       isTeamMember = true
       break
     }
   }
+
   if (!isTeamMember) {
     let previousCommentsScore = 0
-    let entryComments = entry.related('comments')
+    let entryComments = node.related('comments')
     for (let comment of entryComments.models) {
       if (comment.get('user_id') === userId) {
         let adjustedScore = 0
