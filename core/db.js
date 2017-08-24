@@ -197,7 +197,7 @@ async function insertInitialData (samples) {
     await event2.save()
     let event2Details = event2.related('details')
     event2Details.set({
-      category_titles: ['Overall', 'Graphics', 'Sound', 'Innovation', 'Theme']
+      category_titles: ['Overall', 'Graphics', 'Audio', 'Gameplay', 'Originality', 'Theme']
     })
     await event2Details.save()
 
