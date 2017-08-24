@@ -1,5 +1,6 @@
 {% extends "event/_page-event.html" %}
 {% import "post/_macros-post.html" as postMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
 
 {% block body %}
 {{ super() }}
@@ -11,7 +12,43 @@
         {{ postMacros.post(resultsPost, user) }}
       </div>
     {% else %} 
-      <div class="alert alert-warning">Game rating system not implemented yet.</div>
+      
+      {% set categoryTitles = event.related('details').get('category_titles') %}
+      
+      <h1>{{ event.get('title') }}: {{ categoryTitles[sortedBy - 1] }} rankings</h1>
+      
+      <div class="row">
+        <div class="col-sm-{{ 12 - categoryTitles.length }}" style="margin-bottom: 30px">&nbsp;</div>
+        {% for title in categoryTitles %}
+          <div class="col-sm-1">
+            <a href="?sortBy={{ loop.index }}" type="button" 
+                class="btn btn-default {{ 'disabled' if sortedBy === loop.index }}">
+              {{ categoryTitles[loop.index - 1] }}
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+      
+      {% for entry in rankings %}
+        <div class="row">
+          <div class="col-xs-1 text-right">
+            {% if not currentRating or currentRating !== entry.related('details').get('rating_' + sortedBy) %}
+              {% set currentRanking = loop.index %}
+              {% set currentRating = entry.related('details').get('rating_' + sortedBy) %}
+              <h2>{{ currentRanking | ordinal }}</h2>
+            {% endif %}
+          </div>
+          <div class="col-sm-{{ 11 - categoryTitles.length }}" style="margin-bottom: 5px">
+            {{ eventMacros.entrySmallThumb(entry) }}
+          </div>
+          {% for title in categoryTitles %}
+            <div class="col-sm-1">
+              <h4>{{ entry.related('details').get('rating_' + loop.index) or 'N.A.' }}</h4>
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      
     {% endif %}
   </div>
 </div>

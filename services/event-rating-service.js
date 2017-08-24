@@ -16,6 +16,7 @@ module.exports = {
   saveEntryVote,
 
   findVoteHistory,
+  findEntryRankings,
 
   refreshEntryRatings
 }
@@ -99,6 +100,24 @@ async function findVoteHistory (user, event, options = {}) {
       pageSize: options.pageSize || 50,
       withRelated: options.withRelated || ['entry.userRoles']
     })
+}
+
+/**
+ *
+ * @param  {Event} event
+ * @param  {number} categoryIndex
+ * @return {Collection(Entry)}
+ */
+async function findEntryRankings (event, categoryIndex) {
+  if (categoryIndex > 0 && categoryIndex <= constants.MAX_CATEGORY_COUNT) {
+    return models.Entry.query(function (qb) {
+      return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
+        .where('entry.event_id', event.get('id'))
+        .orderBy('entry_details.rating_' + categoryIndex, 'desc')
+    }).fetchAll({ withRelated: ['userRoles', 'details'] })
+  } else {
+    throw new Error('Invalid category index: ' + categoryIndex)
+  }
 }
 
 /**

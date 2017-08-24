@@ -6,6 +6,7 @@
  * @module controllers/event-controller
  */
 
+const constants = require('../core/constants')
 const forms = require('../core/forms')
 const templating = require('../controllers/templating')
 const eventService = require('../services/event-service')
@@ -244,7 +245,18 @@ async function viewEventResults (req, res) {
     return
   }
 
-  res.render('event/view-event-results')
+  let sortedBy = 1
+  if (forms.isInt(req.query.sortBy) && req.query.sortBy > 0 && req.query.sortBy <= constants.MAX_CATEGORY_COUNT) {
+    sortedBy = parseInt(req.query.sortBy)
+  }
+
+  let rankingsCollection = await eventRatingService.findEntryRankings(res.locals.event, sortedBy)
+  let rankings = rankingsCollection.models
+
+  res.render('event/view-event-results', {
+    rankings,
+    sortedBy
+  })
 }
 
 /**
@@ -294,6 +306,9 @@ async function editEvent (req, res) {
     if (!errorMessage) {
       try {
         fields['category-titles'] = JSON.parse(fields['category-titles'])
+        if (fields['category-titles'].length > constants.MAX_CATEGORY_COUNT) {
+          errorMessage = 'Events cannot have more than ' + constants.MAX_CATEGORY_COUNT + ' rating categories'
+        }
       } catch (e) {
         errorMessage = 'Invalid rating category JSON'
       }

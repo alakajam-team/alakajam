@@ -233,9 +233,18 @@ async function insertInitialData (samples) {
     let adminEntry = await eventService.createEntry(adminUser, event2)
     adminEntry.set('title', 'Super Game')
     await adminEntry.save()
+
     userEntry = await eventService.createEntry(entrantUser, event2)
-    userEntry.set('title', 'Awesome Game')
+    userEntry.set('title', 'Game 1')
     await userEntry.save()
+
+    for (let i = 2; i <= 5; i++) {
+      await userService.register('entrant@example.com', 'entrant' + i, 'entrant' + i)
+      let otherUser = await userService.findByName('entrant' + i)
+      let otherEntry = await eventService.createEntry(otherUser, event2)
+      otherEntry.set('title', 'Game ' + i)
+      await otherEntry.save()
+    }
 
     post = await postService.createPost(entrantUser, event2.get('id'))
     post.set({
