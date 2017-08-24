@@ -21,7 +21,8 @@ module.exports = {
   featuredEvent,
   event,
   entry,
-  user
+  user,
+  userLatestEntry
 }
 
 async function index (req, res) {
@@ -132,6 +133,27 @@ async function user (req, res) {
     for (let entry of await eventService.findUserEntries(user)) {
       json.entries.push(_getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY))
     }
+  } else {
+    json = { error: 'User not found' }
+  }
+
+  _renderJson(req, res, json)
+}
+
+async function userLatestEntry (req, res) {
+  let json = {}
+
+  let user
+  if (forms.isId(req.params.user)) {
+    user = await userService.findById(req.params.user)
+  } else {
+    user = await userService.findByName(req.params.user)
+  }
+
+  if (user) {
+    json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
+
+    json.latest_entry = _getAttributes(await eventService.findLatestUserEntry(user), PUBLIC_ATTRIBUTES_ENTRY)
   } else {
     json = { error: 'User not found' }
   }

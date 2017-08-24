@@ -112,6 +112,7 @@ module.exports = {
     router.get('/api/event/:event', apiController.event)
     router.get('/api/entry/:entry', apiController.entry)
     router.get('/api/user/:user', apiController.user)
+    router.get('/api/user/:user/latestEntry', apiController.userLatestEntry)
   }
 
 }
