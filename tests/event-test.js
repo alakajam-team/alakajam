@@ -1,6 +1,8 @@
 'use strict'
 
-require('./support/test-server.js')
+const testServer = require('./support/test-server.js')
+
+before(testServer.init)
 
 describe('events', async function () {
   it('should let us manage the team of an entry', async function () {
