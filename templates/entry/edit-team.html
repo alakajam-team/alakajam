@@ -62,7 +62,9 @@ form .select2.select2-container {
         </div>
 
         <div class="form-group">
-          <button id="save-team" disabled="disabled" type="submit" class="btn btn-submit">Save changes</button>
+          <button id="save-team" disabled="disabled" type="submit" class="btn btn-submit dirtiable">Save changes</button>
+
+          <button id="revert-changes" disabled="disabled" type="button" class="btn dirtiable">Revert changes</button>
         </div>
       </form>
     </div>
@@ -81,8 +83,10 @@ $(function() {(function(members, url) {
       eResultMsg = $('#result-msg'),
       eResultBox = $('#result-box'),
       eForm = $('#edit-team'),
-      savingCls = 'saving',
-      savedMemberNames = $.map(members, toId).sort()
+      eDirtiable = $('.dirtiable')
+      eSelect = $('#search-members'),
+      eRevert = $('#revert-changes')
+      savingCls = 'saving'
 
   function toId (obj) {
     return obj.id
@@ -105,10 +109,16 @@ $(function() {(function(members, url) {
     eAddedMsg.toggle(!!opt.added).text('(' + opt.added + ' ' + plural('user', 'users', opt.added) + ' added)')
   }
 
+  function onRevert () {
+    eDirtiable.prop('disabled', true)
+    eSelect.select2('val', $.map(members, toId))
+  }
+
   function onSaveSuccess (data) {
-    eSaveBtn.prop('disabled', true).removeClass(savingCls).text('Save changes')
+    eDirtiable.prop('disabled', true)
+    eSaveBtn.removeClass(savingCls).text('Save changes')
     var hasConflicts = data.conflicts.length > 0
-    savedMemberNames = $.map(data.members, toId)
+    members = data.members
     result({
       message: hasConflicts ? 'Some users have already entered:' : 'Team saved successfully!',
       conflicts: data.conflicts,
@@ -141,6 +151,10 @@ $(function() {(function(members, url) {
     return ['<div class="member"><img class="avatar" src="', avatarUrl, '" alt="', user.text, '" /><span class="username">', user.text, '</span></div>'].join('')
   }
 
+  function isDirty () {
+    return arraysEqual(members.map(toId).sort(), eSelect.select2('val').sort())
+  }
+
   function arraysEqual (a, b) {
     var len = a.length, i
     if (len !== b.length) {
@@ -156,7 +170,8 @@ $(function() {(function(members, url) {
     return true
   }
 
-  $('#search-members').select2({
+  eRevert.click(onRevert)
+  eSelect.select2({
     multiple: true,
     ajax: {
       url: url,
@@ -196,8 +211,7 @@ $(function() {(function(members, url) {
   })
   .select2('val', members)
   .on('change', function(ev) {
-    eSaveBtn.prop('disabled', arraysEqual(
-      $('#search-members').select2('val').sort(), savedMemberNames))
+    eDirtiable.prop('disabled', isDirty())
   })
 })(
   {{ members | dump | safe }},
