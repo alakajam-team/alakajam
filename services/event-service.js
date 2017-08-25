@@ -22,6 +22,7 @@ module.exports = {
 
   createEntry,
   searchForTeamMembers,
+  setTeamMembers,
 
   findLatestEntries,
   findEntryById,
@@ -178,6 +179,75 @@ function searchForTeamMembers ({nameFragment, eventId}) {
     .from('user')
     .leftJoin(alreadyEntered.as('entered'), 'user.id', '=', 'entered.user_id')
     .where('name', 'ILIKE', `%${nameFragment}%`)
+}
+
+/**
+ * @typedef UserEntryData
+ * @prop {string} user_name the user's username.
+ * @prop {string} user_title the user's title.
+ * @prop {number} node_id the ID of the user's entry.
+ */
+/**
+ * @typedef SetTeamMembersResult
+ * @property {number} numRemoved the number of removed user roles.
+ * @property {number} numAdded the number of added user roles.
+ * @property {UserEntryData[]} alreadyEntered details of users already entered.
+ */
+/**
+ * Sets the team members of an entry.
+ * @param {Bookshelf.Model} entry the entry model.
+ * @param {Bookshelf.Model} event the event model.
+ * @param {string[]} names the member user names.
+ * @returns {Promise<SetTeamMembersResult>} the result of this operation.
+ */
+function setTeamMembers ({entry, event, names}) {
+  return db.transaction(async function (transaction) {
+    // Remove users not in names list.
+    const numRemoved = await transaction('user_role')
+      .whereNotIn('user_name', names)
+      .andWhere({
+        node_type: 'entry',
+        node_id: entry.id
+      })
+      .del()
+
+    // List users from `names` who entered the event in this or another team.
+    const alreadyEntered = await transaction('user_role')
+      .select('user_name', 'user_title', 'node_id')
+      .whereIn('user_name', names)
+      .andWhere({
+        node_type: 'entry',
+        event_id: event.id
+      })
+
+    // Remove names of users who are already entered.
+    const enteredNames = alreadyEntered.map(obj => obj.user_name)
+    names = names.filter(name => !enteredNames.includes(name))
+
+    // Create new roles for all remaining named users.
+    const toCreateUserData = await transaction('user')
+      .select('id', 'name', 'title')
+      .whereIn('name', names)
+    const now = transaction.fn.now()
+    const newRoles = toCreateUserData.map(user => ({
+      user_id: user.id,
+      user_name: user.name,
+      user_title: user.title,
+      node_id: entry.id,
+      node_type: 'entry',
+      permission: constants.PERMISSION_WRITE,  // The owner already has a role.
+      created_at: now,
+      updated_at: now,
+      event_id: event.id
+    }))
+    await transaction('user_role').insert(newRoles)
+
+    return {
+      numRemoved,
+      numAdded: newRoles.length,
+      alreadyEntered
+    }
+  })
 }
 
 /**
