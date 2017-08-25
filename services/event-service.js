@@ -6,6 +6,7 @@
  * @module services/event-service
  */
 
+const db = require('../core/db')
 const models = require('../core/models')
 const constants = require('../core/constants')
 const postService = require('./post-service')
@@ -20,6 +21,7 @@ module.exports = {
   findEvents,
 
   createEntry,
+  searchForTeamMembers,
 
   findLatestEntries,
   findEntryById,
@@ -139,6 +141,43 @@ async function createEntry (user, event) {
   await entry.load('details')
 
   return entry
+}
+
+/**
+ * @typedef TeamMemberSearchResult
+ * @prop {string} name the user's name.
+ * @prop {string} title the user's title.
+ * @prop {number|null} node_id the entry ID if entered; otherwise `null`.
+ * @prop {number|null} event_id the event ID if entered; otherwise `null`.
+ */
+/**
+ * Search for potential team members by name.
+ * @param {Object} options
+ * @param {string} options.nameFragment the name search string.
+ * @param {number} options.eventId the event ID.
+ * @returns {TeamMemberSearchResult[]}
+ */
+function searchForTeamMembers ({nameFragment, eventId}) {
+  // As SQL:
+  // SELECT "user".name, "user".title, entered.event_id
+  // FROM "user"
+  // LEFT JOIN (
+  //   SELECT user_id, event_id, node_type FROM user_role
+  //   WHERE node_type = 'entry' AND event_id = ${eventId}
+  // ) entered
+  // ON "user".id = entered.user_id;
+  const alreadyEntered = db.knex('user_role')
+    .select('user_id', 'event_id', 'node_type', 'node_id')
+    .where({  // entered in this event...
+      node_type: 'entry',
+      event_id: eventId
+    })
+
+  return db.knex
+    .select('user.name', 'user.title', 'entered.event_id', 'entered.node_id')
+    .from('user')
+    .leftJoin(alreadyEntered.as('entered'), 'user.id', '=', 'entered.user_id')
+    .where('name', 'ILIKE', `%${nameFragment}%`)
 }
 
 /**
