@@ -72,7 +72,6 @@ async function findByName (name) {
  */
 async function searchByName (fragment, options = {}) {
   const comparator = options.caseSensitive ? 'LIKE' : constants.DB_ILIKE
-  console.log('searchByName', comparator, `%${fragment}%`)
   return models.User.where('name', comparator, `%${fragment}%`).fetchAll({
     withRelated: options.related
   })
