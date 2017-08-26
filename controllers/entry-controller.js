@@ -175,8 +175,9 @@ async function saveEntry (req, res) {
     } else if (!res.locals.entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
-      console.log(files.picture.path)
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
+    } else if (['solo', 'team', 'unranked'].indexOf(fields['class']) === -1) {
+      errorMessage = 'Invalid competition class'
     }
 
     // Entry update
@@ -187,10 +188,14 @@ async function saveEntry (req, res) {
       let entry = res.locals.entry
 
       let picturePath = '/entry/' + entry.get('id')
-      entry.set('title', forms.sanitizeString(fields.title))
-      entry.set('description', forms.sanitizeString(fields.description))
-      entry.set('links', links)
-      entry.set('platforms', platforms)
+      entry.set({
+        'title': forms.sanitizeString(fields.title),
+        'description': forms.sanitizeString(fields.description),
+        'class': fields['class'],
+        'links': links,
+        'platforms': platforms
+      })
+
       if (fields['picture-delete'] && entry.get('pictures').length > 0) {
         await fileStorage.remove(entry.get('pictures')[0])
         entry.set('pictures', [])

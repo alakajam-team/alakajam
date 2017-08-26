@@ -31,6 +31,17 @@
           <textarea class="form-control" name="description">{{ entry.get('description') }}</textarea>
         </div>
         <div class="form-group">
+          <label for="title">Competition</label>
+          <div>
+          {{ formMacros.radio('class', 'solo', 'Solo', 
+            entry.get('class') if entry else 'solo') }}
+          {{ formMacros.radio('class', 'team', 'Team', 
+            entry.get('class') if entry) }}
+          {{ formMacros.radio('class', 'unranked', 'Unranked', 
+            entry.get('class') if entry) }}
+          </div>
+        </div>
+        <div class="form-group">
           <label for="title">Links</label>
           <div class="js-links"></div>
         </div>
