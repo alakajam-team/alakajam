@@ -108,6 +108,7 @@ async function insertInitialData (samples) {
   const models = require('../core/models')
   const userService = require('../services/user-service')
   const eventService = require('../services/event-service')
+  const eventThemeService = require('../services/event-theme-service')
   const postService = require('../services/post-service')
   const settingService = require('../services/setting-service')
 
@@ -141,10 +142,19 @@ async function insertInitialData (samples) {
 
     let post = await postService.createPost(adminUser)
     post.set({
-      title: 'help',
-      body: `There is a Google Form to gather any issues or suggestions you have. Click the link below to access it:
-## [Feedback and support form](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform?usp=sf_link)
-Alternately, you can contact us on <a href="https://github.com/mkalam-alami/wejam">Github</a> and <a href="https://twitter.com/AlakajamBang">Twitter</a>.`,
+      title: 'About Alakajam',
+      name: 'help',
+      body: '*Alakajam!* is a cool gamedev community!',
+      special_post_type: 'article',
+      published_at: new Date()
+    })
+    await post.save()
+
+    post = await postService.createPost(adminUser)
+    post.set({
+      title: 'Support',
+      name: 'support',
+      body: 'Did you find a bug? It seems like you are in a development server, so... go fix it :D',
       special_post_type: 'article',
       published_at: new Date()
     })
@@ -175,26 +185,53 @@ Alternately, you can contact us on <a href="https://github.com/mkalam-alami/weja
       status: 'open',
       display_dates: 'Januember 29 - 31, 2017',
       display_theme: 'You are not alone',
-      status_theme: 'disabled',
+      status_theme: 'on',
       status_entry: 'on',
-      status_results: 'off',
+      status_results: 'on',
       countdown_config: {
-        phrase: 'starts in',
+        phrase: 'starts Janumeber 29',
         date: moment().add(1, 'days').toDate()
       }
     })
     await event2.save()
 
-    settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
+    await settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
+    await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, `{
+    "sidebar": [
+        {
+            "title": "General",
+            "links": [
+                {
+                    "title": "About Alakajam!",
+                    "url": "/article/help"
+                },
+                {
+                    "title": "Support",
+                    "url": "/article/support"
+                },
+                {
+                    "title": "Site changelog",
+                    "url": "/changes"
+                }
+            ]
+        }
+    ]
+}`)
 
-    let adminEntry = await eventService.createEntry(adminUser, event1)
+    eventThemeService.saveThemeIdeas(entrantUser, event2, [
+      {title: 'Alone'},
+      {title: 'Evolution'},
+      {title: 'Two buttons'}
+    ])
+
+    let adminEntry = await eventService.createEntry(adminUser, event2)
     adminEntry.set('title', 'Super Game')
     await adminEntry.save()
     userEntry = await eventService.createEntry(entrantUser, event2)
     userEntry.set('title', 'Awesome Game')
     await userEntry.save()
 
-    post = await postService.createPost(entrantUser)
+    post = await postService.createPost(entrantUser, event2.get('id'))
     post.set({
       title: "I'm in!",
       body: "This is my second game and I'm really excited.",
@@ -204,7 +241,7 @@ Alternately, you can contact us on <a href="https://github.com/mkalam-alami/weja
     })
     await post.save()
 
-    post = await postService.createPost(adminUser)
+    post = await postService.createPost(adminUser, event2.get('id'))
     post.set({
       title: 'Event started!',
       body: 'The theme is `You are not alone`. Have fun!',
@@ -213,10 +250,11 @@ Alternately, you can contact us on <a href="https://github.com/mkalam-alami/weja
       published_at: new Date()
     })
     if (samples === 'nightly') {
-      let changesBuffer = await fs.readFile(path.join(__dirname, '../tests/nightly/CHANGES.md'))
+      let nightlyPostBuffer = await fs.readFile(path.join(__dirname, '../tests/nightly/POST.md'))
+      let changesBuffer = await fs.readFile(path.join(__dirname, '../CHANGES.md'))
       post.set({
         title: 'Nightly: ' + moment().format('MMMM Do YYYY'),
-        body: changesBuffer.toString()
+        body: nightlyPostBuffer.toString() + changesBuffer.toString()
       })
     }
     await post.save()

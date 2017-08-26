@@ -1,9 +1,13 @@
 {% extends "admin/_page-admin.html" %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block styles %}
+  {{ formMacros.codeMirrorStyles() }}
+{% endblock %}
 
 {% block adminBody %}
 
 <h1>Settings</h1>
-
 {% if editSetting %}
 <form action="/admin/settings" method="post">
   <div class="form-group">
@@ -13,7 +17,7 @@
   </div>
   <div class="form-group">
     <label for="value">Value</label>
-    <textarea name="value" class="form-control">{{ editSetting.value }}</textarea>
+    <textarea name="value" class="form-control {{ 'json-setting codemirror' if editSetting.jsonSetting }}">{{ editSetting.value }}</textarea>
   </div>
   <div class="form-group">
     <input type="submit" class="btn btn-primary" value="Save" />
@@ -30,11 +34,23 @@
   {% for setting in settings %}
   <tr>
     <td>{{ setting.key }}</td>
-    <td>{{ setting.value }}</td>
+    <td>
+      {% if constants.JSON_EDIT_SETTINGS.indexOf(setting.key) !== -1 %}
+        <textarea class="codemirror" readonly>{{ setting.value }}</textarea>
+      {% elseif setting.value %}
+        <code style="max-width: 500px">{{ setting.value }}</code>
+      {% else %}
+        <i>(empty)</i>
+      {% endif %}
+    </td>
     <td><a class="btn btn-primary btn-sm" href="?edit={{ setting.key }}">Edit</a></td>
   </tr>
   {% endfor %}
 </tbody>
 </table>
 
+{% endblock %}
+
+{% block scripts %} 
+  {{ formMacros.codeMirrorScripts() }}
 {% endblock %}

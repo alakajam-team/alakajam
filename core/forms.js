@@ -23,12 +23,13 @@ module.exports = {
   sanitizeMarkdown,
 
   capitalize: new nunjucks.Environment().filters.capitalize,
-  slug: slug,
+  slug: _slug,
 
   isEmail,
   isURL,
   isUsername,
   isId,
+  isInt,
   isSlug,
   isIn,
   isLengthValid,
@@ -84,6 +85,13 @@ function sanitizeMarkdown (markdown, maxLength = 10000) {
 }
 
 /**
+ * Turns a string into a slug suitable for URLs.
+ */
+function _slug (string) {
+  return slug(string).toLowerCase()
+}
+
+/**
  * Checks whether the string is a valid email. If so, additional sanitizing is not needed.
  * @param  {string} string
  * @return {Boolean}
@@ -111,12 +119,12 @@ function isUsername (string) {
 }
 
 /**
- * Checks whether the string is a valid ID. If so, additional sanitizing is not needed.
- * @param  {string} string
+ * Checks whether the value is a valid ID. If so, additional sanitizing is not needed.
+ * @param  {string|number} value
  * @return {Boolean}
  */
-function isId (string) {
-  return string && validator.isInt(string, { min: 1 })
+function isId (value) {
+  return value && ((typeof value === 'number' && value % 1 === 0) || validator.isInt(value, { min: 1 }))
 }
 
 /**
@@ -139,12 +147,21 @@ function isIn (string, values) {
 }
 
 /**
+ * Checks whether the string is in an integer
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isInt (string) {
+  return string && validator.isInt(string)
+}
+
+/**
  * Checks whether the string is not longer than the specified length.
  * (Note: not checking this does not trigger crashes on the developer
  * H2 database, instead strings are just truncated)
- * @param  {[type]}  input     [description]
- * @param  {Number}  maxLength [description]
- * @return {Boolean}           [description]
+ * @param  {any}  input
+ * @param  {Number}  maxLength
+ * @return {Boolean}
  */
 function isLengthValid (input, maxLength = 255) {
   if (!input) {
@@ -163,7 +180,7 @@ function isLengthValid (input, maxLength = 255) {
  * which can be stored in a model
  */
 function parseDateTime (string) {
-  let momentDate = moment(string, constants.PICKER_DATE_TIME_FORMAT)
+  let momentDate = moment.utc(string, constants.PICKER_DATE_TIME_FORMAT)
   if (momentDate.isValid()) {
     return momentDate.toDate()
   } else {

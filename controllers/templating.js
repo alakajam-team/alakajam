@@ -48,11 +48,13 @@ function buildUrl (model, type, page = null, options = {}) {
       }
     } else if (type === 'entry') {
       // Entry model
-      if (model && model.id) {
-        return '/' + model.get('event_name') + '/' + model.id + '/' + model.get('name') + pagePath
+      const array = ['', model.get('event_name')]
+      if (model.id) {
+        array.push(model.get('id'), model.get('name'), page)
       } else {
-        return '/' + model.get('event_name') + '/create-entry'
+        array.push('create-entry')
       }
+      return array.join('/')
     } else if (type === 'user') {
       // User Role model / User model
       if (DASHBOARD_PAGES.indexOf(page) !== -1) {

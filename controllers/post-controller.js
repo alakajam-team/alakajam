@@ -13,6 +13,7 @@ const cache = require('../core/cache')
 const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
+const settingService = require('../services/setting-service')
 const templating = require('./templating')
 
 module.exports = {
@@ -106,11 +107,28 @@ async function posts (req, res) {
 async function article (req, res) {
   // postName context variable is used to add a relevant "create article" mod button
   res.locals.postName = forms.sanitizeString(req.params.name)
-  res.locals.post = await postService.findPost({
+
+  // Find featured post
+  let findPostTask = postService.findPost({
     name: res.locals.postName,
     specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
     allowDrafts: true
+  }).then(async function (post) {
+    res.locals.post = post
   })
+
+  let settingArticlesTask = settingService.find(constants.SETTING_ARTICLE_SIDEBAR)
+    .then(async function (sidebarData) {
+      if (sidebarData) {
+        try {
+          res.locals.sidebar = JSON.parse(sidebarData).sidebar
+        } catch (e) {
+          console.log("Malformed JSON. Can't load articles links")
+        }
+      }
+    })
+
+  await Promise.all([findPostTask, settingArticlesTask]) // Parallelize fetching everything
 
   if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {
@@ -208,9 +226,14 @@ async function savePost (req, res) {
     }
 
     if (!errorMessage) {
+      const eventIdIsValid = forms.isId(fields['event-id'])
+
       // Create new post if needed
       if (!post) {
-        post = await postService.createPost(res.locals.user)
+        post = await postService.createPost(
+          res.locals.user,
+          eventIdIsValid ? fields['event-id'] : undefined
+        )
         let specialPostType = req.query['special_post_type']
         if (specialPostType) {
           validateSpecialPostType(specialPostType, res.locals.user)
@@ -221,16 +244,26 @@ async function savePost (req, res) {
       // Fill post from form info
       post.set('title', forms.sanitizeString(fields.title))
       post.set('body', forms.sanitizeMarkdown(fields.body))
-      if (forms.isId(fields['event-id'])) {
+      if (eventIdIsValid) {
         post.set('event_id', fields['event-id'])
-        if (!post.get('special_post_type')) {
-          if (post.hasChanged('event_id')) {
+        if (post.hasChanged('event_id') || post.hasChanged('special_post_type')) {
+          if (!post.get('special_post_type')) {
+            await post.load(['userRoles', 'author'])
+
+            // Update event ID on all roles
+            for (let userRole of post.related('userRoles').models) {
+              userRole.set('event_id', post.get('event_id'))
+              await userRole.save()
+            }
+
+            // Figure out related entry from event + user
             let relatedEntry = await eventService.findUserEntryForEvent(
-              res.locals.user, post.get('event_id'))
+              post.related('author'), post.get('event_id'))
             post.set('entry_id', relatedEntry ? relatedEntry.get('id') : null)
+          } else {
+            // Clear entry on special posts
+            post.set('entry_id', null)
           }
-        } else {
-          post.set('entry_id', null)
         }
       } else {
         post.set('event_id', null)
@@ -321,50 +354,68 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
   }
 
   if (securityService.canUserWrite(currentUser, comment, { allowMods: true })) {
+    let nodeType = comment.get('node_type')
+    let userId = comment.get('user_id')
+
     if (fields.delete) {
       // Delete comment
       await comment.destroy()
     } else {
       // Update comment
       comment.set('body', forms.sanitizeMarkdown(fields.body))
-      await eventService.refreshCommentScore(comment)
       await comment.save()
+    }
 
-      // Refresh feedback score on both the giver & receiver entries
-      if (comment.get('node_type') === 'entry') {
-        let currentEntry = currentNode
-        let userEntry = await eventService.findUserEntryForEvent(
-          currentUser, currentEntry.get('event_id'))
-
-        // (No need to await, it's okay if the score is a bit late)
-        // XXXXXXXXXXXXX
-        await eventService.refreshEntryScore(currentEntry)
-        if (userEntry) {
-          await eventService.refreshEntryScore(userEntry)
+    if (nodeType === 'entry') {
+      if (isNewComment) {
+        await eventService.refreshCommentScore(comment)
+        await comment.save()
+      } else {
+        // We need to save the updated comment before reloading all comments and save them
+        if (!fields.delete) {
+          comment.save()
         }
+        // We need to recalculate the number of comments and the other user comments score
+        await eventService.adjustUserCommentScore(userId, currentNode)
       }
 
-      // we need to update the comment feed and unread notifications of users associated with the post/entry
-      let node = comment.related('node')
-      let userRoles = node.related('userRoles')
-      userRoles.forEach(function (userRole) {
-        let userCache = cache.user(userRole.get('user_name'))
-        userCache.del('toUserCollection')
-        userCache.del('unreadNotifications')
-      })
+      // Refresh feedback score on both the giver & receiver entries
 
-      // and also any users @mentioned in the comment
-      let body = comment.get('body')
-      body.split(' ').forEach(function (word) {
-        if (word.length > 0 && word[0] === '@') {
-          let userCache = cache.user(word.slice(1))
+      let currentEntry = currentNode
+      let userEntry = await eventService.findUserEntryForEvent(
+        currentUser, currentEntry.get('event_id'))
+
+      // (No need to await, it's okay if the score is a bit late)
+      // XXXXXXXXXXXXX
+      await eventService.refreshEntryScore(currentEntry)
+      if (userEntry) {
+        await eventService.refreshEntryScore(userEntry)
+      }
+
+      if (!fields.delete) {
+        // we need to update the comment feed and unread notifications of users associated with the post/entry
+        let node = comment.related('node')
+        let userRoles = node.related('userRoles')
+        userRoles.forEach(function (userRole) {
+          let userCache = cache.user(userRole.get('user_name'))
           userCache.del('toUserCollection')
           userCache.del('unreadNotifications')
-        }
-      })
+        })
 
-      redirectUrl += templating.buildUrl(comment, 'comment')
+        // and also any users @mentioned in the comment
+        let body = comment.get('body')
+        body.split(' ').forEach(function (word) {
+          if (word.length > 0 && word[0] === '@') {
+            let userCache = cache.user(word.slice(1))
+            userCache.del('toUserCollection')
+            userCache.del('unreadNotifications')
+          }
+        })
+
+        redirectUrl += templating.buildUrl(comment, 'comment')
+      }
     }
+
     cache.user(currentUser.get('name')).del('byUserCollection')
 
     // Refresh node comment count

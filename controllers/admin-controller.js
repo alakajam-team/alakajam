@@ -94,12 +94,29 @@ async function adminEvents (req, res) {
  */
 async function adminSettings (req, res) {
   // Save changed setting
+  let currentEditValue
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
     if (constants.EDITABLE_SETTINGS.indexOf(fields.key) !== -1) {
-      await settingService.save(fields.key, forms.sanitizeString(fields.value))
+      let save = true
+      if (constants.JSON_EDIT_SETTINGS.indexOf(fields.key) !== -1) {
+        try {
+          // Minimize JSON
+          fields.value = JSON.stringify(JSON.parse(fields.value))
+        } catch (e) {
+          // We re-send the user to the edit page with an error message
+          save = false
+          req.query.edit = fields.key
+          currentEditValue = fields.value
+          res.locals.errorMessage = 'This setting field needs to be a valid JSON field'
+        }
+      }
+      if (save) {
+        currentEditValue = forms.sanitizeString(fields.value, 10000)
+        await settingService.save(fields.key, currentEditValue)
+      }
     } else {
-      req.errorPage(403, 'Tried to edit a non-editable setting')
+      res.errorPage(403, 'Tried to edit a non-editable setting')
       return
     }
   }
@@ -111,14 +128,27 @@ async function adminSettings (req, res) {
       key,
       value: await settingService.find(key)
     })
+    if (!currentEditValue && req.query.edit && key === req.query.edit) {
+      currentEditValue = settings[settings.length - 1]['value']
+    }
   }
 
-  // Fetch setting to edit
+  // Fetch setting to edit (and make JSON pretty)
   let editSetting
   if (req.query.edit && forms.isSlug(req.query.edit)) {
+    let jsonSetting = constants.JSON_EDIT_SETTINGS.indexOf(req.query.edit) !== -1
+    if (jsonSetting) {
+      try {
+        currentEditValue = JSON.stringify(JSON.parse(currentEditValue), null, 4)
+      } catch (e) {
+        console.log('Field ' + req.query.edit + ' is not a valid JSON')
+      }
+    }
+
     editSetting = {
       key: req.query.edit,
-      value: await settingService.find(req.query.edit)
+      value: currentEditValue,
+      jsonSetting: jsonSetting
     }
   }
 
@@ -133,8 +163,9 @@ async function adminSettings (req, res) {
  */
 async function adminUsers (req, res) {
   let users = await userService.findAll()
+  let sortedUsers = users.sortBy((user) => user.get('title'))
   res.render('admin/admin-users', {
-    users: users.sortBy((user) => user.get('title').toLowerCase())
+    users: sortedUsers
   })
 }
 

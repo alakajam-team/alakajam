@@ -6,6 +6,9 @@
  * @module controllers/main-controller
  */
 
+const promisify = require('promisify-node')
+const fs = promisify('fs')
+const path = promisify('path')
 const forms = require('../core/forms')
 const constants = require('../core/constants')
 const eventService = require('../services/event-service')
@@ -22,7 +25,8 @@ module.exports = {
   index,
   events,
   people,
-  chat
+  chat,
+  changes
 }
 
 async function anyPageMiddleware (req, res, next) {
@@ -163,4 +167,13 @@ async function chat (req, res) {
   res.locals.pageTitle = 'Chat'
 
   res.render('chat')
+}
+
+/**
+ * Changelog
+ */
+async function changes (req, res) {
+  res.locals.changes = (await fs.readFile(path.join(__dirname, '../CHANGES.md'))).toString()
+
+  res.render('changes')
 }

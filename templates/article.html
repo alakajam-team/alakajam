@@ -5,8 +5,15 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-      <h1>{{ post.get('title') | capitalize }}</h1>
+    {% if sidebar %}
+    <div class="col-sm-4 col-md-3">
+      {% for sidebarGroup in sidebar %}
+        {{ sideBarLinks(sidebarGroup.title, sidebarGroup.links) }}
+      {% endfor %}
+    </div>
+  {% endif %}
+    <div class="col-sm-8 col-md-9">
+      <h1>{{ post.get('title') }}</h1>
       {% if not post.get('published_at') %}
         <div class="alert alert-warning"><strong>Draft article</strong> Other users can't see it until it is published.</div>
       {% endif %}
@@ -17,5 +24,32 @@
       </div>
   </div>
 </div>
-
 {% endblock %}
+
+{% macro sideBarLinks(title, sidebarLinks) %}
+  {% if sidebarLinks %}
+    <div class="list-group">
+      <div class="list-group-item">
+        <h3 style="margin: 0">{{ title }}</h3>
+      </div>
+      {% for link in sidebarLinks %}
+        {{ helpLink(link.title, link.url) }}
+        {% for subLink in link.subLinks %}
+          {{ helpSubLink(subLink.title, subLink.url) }}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro helpLink(label, url) %}
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">
+    <h4 style="margin: 0">{{ label }}</h4>
+  </a>
+{% endmacro %}
+
+{% macro helpSubLink(label, url) %}
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">
+    <span style="margin-left: 15px">{{ label }}</span>
+  </a>
+{% endmacro %}

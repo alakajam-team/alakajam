@@ -1,8 +1,9 @@
 'use strict'
 
-require('./support/test-server.js')
-
+const testServer = require('./support/test-server.js')
 const assert = require('assert')
+
+before(testServer.init)
 
 describe('inviteService', async function () {
   it('should accept generated keys', async function () {

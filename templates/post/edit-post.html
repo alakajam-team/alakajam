@@ -69,7 +69,7 @@
       </div>
       <div class="col-xs-8 post__schedule text-right form-inline">
         <div class="form-group">
-          <label for="published-at">Publication date</label>
+          <label for="published-at">Publication date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)</label>
           {{ formMacros.dateTimePicker('published-at', post.get('published_at')) }}
         </div>
         <div class="form-group">
@@ -120,10 +120,10 @@ function refreshTitleDisplay () {
 
 // Article slug
 $('#name').change(function () {
-  $(this).val(slug($(this).val()))
+  $(this).val(slug($(this).val()).toLowerCase())
 })
-$('#title').keydown(function () {
-  $('#name').val(slug($(this).val()))
+$('#title').keyup(function () {
+  $('#name').val(slug($(this).val()).toLowerCase())
 })
 
 </script>

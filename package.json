@@ -1,6 +1,6 @@
 {
   "name": "alakajam",
-  "version": "0.2.1-dev",
+  "version": "0.9.0-dev",
   "description": "Game jam system",
   "main": "server.js",
   "scripts": {
@@ -8,12 +8,12 @@
     "debug": "node-debug server.js",
     "watch": "browser-refresh server.js",
     "migrate": "knex migrate:latest",
-    "docs": "rm -r docs && jsdoc -c jsdoc.json -d docs -R README.md -r core models services controllers server.js",
-    "test": "mocha tests/"
+    "docs": "rm -r docs && jsdoc -c jsdoc.json -d docs -R README.md -r core services",
+    "test": "mocha -t 10000 tests/"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mkalam-alami/we-jam.git"
+    "url": "https://github.com/mkalam-alami/alakajam.git"
   },
   "license": "MIT",
   "bugs": {
@@ -24,12 +24,15 @@
     "bookshelf-cascade-delete": "^2.0.1",
     "cookies": "^0.7.0",
     "express": "^4.14.0",
+    "express-brute": "^1.0.1",
     "express-nunjucks": "^2.1.2",
     "express-promise-router": "^1.1.1",
     "formidable": "^1.1.1",
     "knex": "^0.12.6",
+    "mime-types": "^2.1.16",
     "mkdirp": "^0.5.1",
     "moment": "^2.17.1",
+    "moment-timezone": "^0.5.13",
     "node-cache": "^4.1.1",
     "nunjucks": "^3.0.0",
     "pg": "^6.1.2",

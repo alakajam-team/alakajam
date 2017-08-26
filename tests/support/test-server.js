@@ -9,9 +9,11 @@ const fs = promisify('fs')
 const rimraf = promisify('rimraf')
 const path = require('path')
 
-let initialized = false
+module.exports = {
+  init
+}
 
-before(init)
+let initialized = false
 
 async function init () {
   if (!initialized) {
@@ -70,7 +72,7 @@ async function initFilesLayout () {
   const fileStorage = require('../../core/file-storage')
 
   // Delete/recreate folders
-  await rimraf(config.DATA_PATH)
+  await rimraf(config.DB_SQLITE_FILENAME)
   await rimraf(config.UPLOADS_PATH)
   await fileStorage.createFolderIfMissing(path.join(config.DATA_PATH, '/tmp'))
   await fileStorage.createFolderIfMissing(config.UPLOADS_PATH)
@@ -78,5 +80,5 @@ async function initFilesLayout () {
 
 async function initDatabase () {
   const db = require('../../core/db')
-  await db.upgradeTables(true)
+  await db.initDatabase(true)
 }

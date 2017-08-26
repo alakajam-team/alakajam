@@ -1,0 +1,26 @@
+{% extends "event/_page-edit-event.html" %}
+{% import "_macros-form.html" as formMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
+
+{% block editEventBody %}
+
+<h1>{{ event.get('title') }} themes <span class="count">({{ themes.length }})</span></h1>
+
+<table class="table">
+<tr>
+<th>Theme<th>
+<th>Votes</th>
+<th>Status</th>
+<th>Score</th>
+</tr>
+{% for theme in themes %}
+  <tr>
+  <td>{{ theme.get('title') }}<td>
+  <td>{{ theme.get('notes') }}</td>
+  <td>{{ eventMacros.eventThemeStatus(theme) }}</td>
+  <td><strong>{{ theme.get('score') }}</strong></td>
+  </tr>
+{% endfor %}
+</table>
+
+{% endblock %}

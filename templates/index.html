@@ -43,7 +43,7 @@
                 <div class="home-jumbo__sidebar">
                   <div class="home-jumbo__details panel">
                     {% if featuredEvent.get('countdown_config').phrase %}
-                      <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }}<br />
+                      <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime }}<br />
                     {% endif %}
                     {% if featuredEvent.get('display_theme') %}
                       <span class="glyphicon glyphicon-apple"></span> 
@@ -57,7 +57,7 @@
                   </div>
                   {{ jumboLink(featuredEvent, 'status_rules', buildUrl(featuredEvent.get('status_rules'), 'post'), 'Welcome/Rules', 'info-sign', { absoluteUrl: true }) }}
                   {{ jumboLink(featuredEvent, null, 'posts', 'Posts', 'globe') }}
-                  {{ jumboLink(featuredEvent, 'status_theme', 'theme', 'Theme', 'apple') }}
+                  {{ jumboLink(featuredEvent, 'status_theme', 'themes', 'Themes', 'apple') }}
                   {{ jumboLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower') }}
                   {{ jumboLink(featuredEvent, 'status_results', 'results', 'Results', 'th-list') }}
                   <div class="home-jumbo__social">
@@ -159,7 +159,7 @@
 
 <script type="text/javascript">
   // Announcement height limit and expand/collapse button
-  let maxAnnouncementHeight = Math.max(280, $('.home-jumbo__sidebar').height() - 50)
+  var maxAnnouncementHeight = Math.max(280, $('.home-jumbo__sidebar').height() - 50)
   $('.home-jumbo__announcement').attr('style', 'max-height: ' + maxAnnouncementHeight + 'px')
   $('.home-jumbo__announcement-expand-bar').click(function () {
     $('.home-jumbo__announcement').toggleClass('expanded')
@@ -170,11 +170,11 @@
   {% set countdownEvent = featuredEvent %}
 {% endif %}
 
-{% if countdownEvent and countdownEvent.get('countdown_config').date %}
+{% if countdownEvent and countdownEvent.get('countdown_config').enabled %}
   <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
   <script type="text/javascript">
-  let diffMs = Math.max(0, Date.parse('{{ countdownEvent.get('countdown_config').date }}') - Date.now())
-  let $jsCountdown = $('.js-countdown')
+  var diffMs = Math.max(0, Date.parse('{{ countdownEvent.get('countdown_config').date }}') - Date.now())
+  var $jsCountdown = $('.js-countdown')
   $('.js-countdown').show()
   $('.js-countdown').FlipClock(diffMs / 1000, { 
     clockFace: 'DailyCounter',

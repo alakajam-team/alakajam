@@ -81,10 +81,22 @@
 </div>
 
 <script id="js-links-template" type="text/template">
-  <% for (var i in links) { %>
+  <% for (var i in links) { 
+    var linkTypeFound = false; %>
     <div class="row" style="margin-bottom: 5px">
       <div class="col-xs-3">
-        <input type="text" class="js-link-label form-control" data-row="<%= i %>" name="label<%= i %>" placeholder="Label" value="<%= links[i].label %>">
+        <select class="js-link-label form-control" data-row="<%= i %>" name="label<%= i %>" placeholder="Label">
+          {% for label in constants.ENTRIES_LINKS_TYPES %}
+            <% if(links[i].label == "{{ label }}"){ 
+              linkTypeFound = true;%>
+              <option value="{{ label }}" selected>{{ label }}</option>
+            <% } else { %>
+              <option value="{{ label }}">{{ label }}</option>
+            <% } %>
+          {% endfor %}
+          <option value="other" <%= linkTypeFound ? "" : "selected" %>>Other</option> 
+        </select>
+        <input type="text" <%= linkTypeFound ? "style=\"display:none;\"" : "" %> class="js-link-customlabel form-control"  data-row="<%= i %>" name="customlabel<%= i %>" placeholder="Custom Label" value="<%= !linkTypeFound ? links[i].label : ""%>">
       </div>
       <div class="col-xs-8">
         <input type="url" class="js-link-url form-control"  data-row="<%= i %>" name="url<%= i %>" placeholder="URL" value="<%= links[i].url %>">
@@ -127,7 +139,7 @@ if (!links) {
 refreshLinksView()
 
 function refreshLinksView () {
-  $('.js-links').html(linksTemplate({ links: links }))
+  $('.js-links').html(linksTemplate({ links: links }));
   $('.js-add-link').click(function () {
     refreshLinksModel()
     links.push({})
@@ -140,6 +152,13 @@ function refreshLinksView () {
       links.push({})
     }
     refreshLinksView()
+  })
+  $('.js-link-label').change(function () {
+    if("other" == $( this ).val()){
+      $( this ).next(".js-link-customlabel").show();
+    } else {
+      $( this ).next(".js-link-customlabel").hide();
+    }
   })
 }
 function refreshLinksModel () {
@@ -155,7 +174,7 @@ function refreshLinksModel () {
 
 
 // Team toggle behaviour.
-var category = "{{ entry.get('category') | default('team') }}"
+var category = "{{ entry.get('category') }}" || "solo"
 $('.team-toggle label').each(function(i, el) {
   el = $(el)
   var input = el.find('input')

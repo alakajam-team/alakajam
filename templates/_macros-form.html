@@ -30,7 +30,29 @@
   </script>
 {% endmacro %}
 
+{# ======== CODEMIRROR EDITOR ========= #}
 
+{% macro codeMirrorStyles() %}
+  <link rel="stylesheet" type="text/css" href="/static/css/codemirror.css" />
+{% endmacro %}
+
+{% macro codeMirrorScripts(options = {}) %}
+  <script type="text/javascript" src="/static/js/codemirror.min.js"></script>
+  <script type="text/javascript" src="/static/js/matchbrackets.min.js"></script>
+  <script type="text/javascript" src="/static/js/closebrackets.min.js"></script>
+  <script type="text/javascript" src="/static/js/codemirror-jsonconf.min.js"></script>
+  <script>
+    $('.codemirror').each(function () {
+      CodeMirror.fromTextArea(this, {
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        mode: "application/ld+json",
+        lineWrapping: true,
+        readOnly: !!$(this).attr('readonly')
+      })
+    })
+  </script>
+{% endmacro %}
 {# ======== PICTURES ========= #}
 
 {% macro pictureInput(name, value, defaultValue = null) %}
@@ -92,7 +114,7 @@
 
   // Initialize text field with value if enabled
   $textFields.each(function () {
-    let textField = this
+    var textField = this
     refreshTextField(textField)
     getRadio(textField).on('ifChanged', function() {
       refreshTextField(textField)
@@ -109,14 +131,14 @@
   }
 
   function refreshRadio (textField) {
-    let $textField = $(textField)
-    let $radio = getRadio(textField)
+    var $textField = $(textField)
+    var $radio = getRadio(textField)
     $radio.val($textField.val())
   }
 
   function refreshTextField (textField) {
-    let $textField = $(textField)
-    let $radio = getRadio(textField)
+    var $textField = $(textField)
+    var $radio = getRadio(textField)
     if ($radio.get(0).checked) {
       $textField.val($radio.val())
       $textField.removeAttr('disabled')

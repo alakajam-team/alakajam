@@ -193,14 +193,15 @@ async function findCommentsToUser (user, options = {}) {
     notificationsLastRead = new Date(user.get('notifications_last_read'))
   }
   return models.Comment.query(function (qb) {
-    qb.leftJoin('user_role', function () {
+    qb = qb.leftJoin('user_role', function () {
       this.on('comment.node_id', '=', 'user_role.node_id')
         .andOn('comment.node_type', '=', 'user_role.node_type')
     })
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '<>', user.id)
       .andWhere('comment.updated_at', '>', notificationsLastRead)
-      .orWhere('body', (config.DB_TYPE === 'sqlite3' ? 'like' : 'ilike'), '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
+      .orWhere('body', (config.DB_TYPE === 'sqlite3' ? 'like' : 'ilike'),
+        '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
   })
     .where('comment.updated_at', '>', notificationsLastRead)
     .orderBy('created_at', 'DESC')
@@ -210,9 +211,10 @@ async function findCommentsToUser (user, options = {}) {
 /**
  * Creates and persists a new post, initializing the owner UserRole.
  * @param  {User} user
+ * @param  {number} eventId the optional ID of an event to associate with.
  * @return {Post}
  */
-async function createPost (user) {
+async function createPost (user, eventId) {
   // TODO Better use of Bookshelf API
   let post = new models.Post()
   post.set('author_user_id', user.get('id'))
@@ -221,6 +223,7 @@ async function createPost (user) {
     user_id: user.get('id'),
     user_name: user.get('name'),
     user_title: user.get('title'),
+    event_id: eventId,
     permission: constants.PERMISSION_MANAGE
   })
   return post

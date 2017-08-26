@@ -15,6 +15,7 @@
 const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
+const ExpressBrute = require('express-brute')
 const cookies = require('cookies')
 const postCss = require('postcss-middleware')
 const formidable = require('formidable')
@@ -56,6 +57,18 @@ async function configure (app) {
   }))
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
+  // Request throttling
+  let store = new ExpressBrute.MemoryStore() // TODO use brute-knex
+  let bruteforce = new ExpressBrute(store, {
+    freeRetries: 5,
+    minWait: 100, // ms
+    lifetime: 1, // seconds
+    failCallback: function (req, res, next, nextValidRequestDate) {
+      res.end('ERROR: Too many requests. Fair use is 1req/s.')
+    }
+  })
+  app.use(bruteforce.prevent)
+
   // Templating
   app.set('views', path.join(ROOT_PATH, '/templates'))
   let nunjucks = expressNunjucks(app, {
@@ -87,27 +100,40 @@ async function configure (app) {
   })
   nunjucks.env.addFilter('date', function (date) {
     if (date) {
-      return moment(date).format(constants.DATE_FORMAT)
+      return moment(date).utc().format(constants.DATE_FORMAT)
     } else {
       return ''
     }
   })
   nunjucks.env.addFilter('dateTime', function (date) {
     if (date) {
-      return moment(date).format(constants.DATE_TIME_FORMAT)
+      return moment(date).utc().format(constants.DATE_TIME_FORMAT) + ' UTC'
+    } else {
+      return ''
+    }
+  })
+  nunjucks.env.addFilter('featuredEventDateTime', function (date) {
+    if (date) {
+      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT)
     } else {
       return ''
     }
   })
   nunjucks.env.addFilter('pickerDateTime', function (date) {
     if (date) {
-      return moment(date).format(constants.PICKER_DATE_TIME_FORMAT)
+      return moment(date).utc().format(constants.PICKER_DATE_TIME_FORMAT)
     } else {
       return ''
     }
   })
   nunjucks.env.addFilter('relativeTime', function (date) {
-    return moment(date).fromNow()
+    return moment(date).utc().fromNow()
+  })
+  nunjucks.env.addFilter('ordinal', function (n) {
+    // source: https://stackoverflow.com/a/12487454
+    let s = ['th', 'st', 'nd', 'rd']
+    let v = n % 100
+    return n + (s[(v - 20) % 10] || s[v] || s[0])
   })
 
   // Templating: rendering context

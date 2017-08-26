@@ -1,6 +1,7 @@
 {% extends "_page.html" %}
 {% import "post/_macros-post.html" as postMacros %}
 {% import "user/_macros-user.html" as userMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
 {% import "_macros-form.html" as formMacros %}
 
 {% block styles %}
@@ -66,6 +67,7 @@
       <div class="entry__links">
         {% for link in entry.get('links') %}
            <a class="btn btn-primary" href="{{ link.url }}">
+           {{ eventMacros.entryLinkThumb(link) }} 
            {{ link.label }}
            </a>
         {% endfor %}
@@ -76,7 +78,7 @@
         <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
 
         {% if entry.get('category') === 'team' %}
-        <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'manage-team') }}">Manage team</a>
+        <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit-team') }}">Manage team</a>
         {% endif %}
         {% endif %}
       </div>

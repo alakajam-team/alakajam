@@ -9,6 +9,7 @@
 const crypto = require('crypto')
 const randomKey = require('random-key')
 const config = require('../config')
+const constants = require('../core/constants')
 const forms = require('../core/forms')
 const models = require('../core/models')
 
@@ -61,16 +62,19 @@ async function findByName (name) {
 }
 
 /**
- * Search for a user by name.
- * @param {string} fragment a contigious part of the user's title
- * @returns {Promise(Bookshelf.Collection(User))} the collection of matching users.
+ * Search users by name
+ * @param {string} fragment a fragment of the user name.
+ * @param {string|Object|mixed[]} [options.related] any related data to fetch.
+ * @param {boolean} [options.caseSensitive=false] use case-sensitive search.
+ * @returns {Bookshelf.Collection} the users with names matching the query.
+ *
+ * Note: all searches will be case-sensitive if developing with SQLite.
  */
-async function searchByName (search) {
-  return User.where(
-    'title',
-    config.DB_TYPE === 'postgresql' ? 'ILIKE' : 'LIKE',
-    `%${search}%`
-  ).fetchAll()
+async function searchByName (fragment, options = {}) {
+  const comparator = options.caseSensitive ? 'LIKE' : constants.DB_ILIKE
+  return models.User.where('name', comparator, `%${fragment}%`).fetchAll({
+    withRelated: options.related
+  })
 }
 
 /**

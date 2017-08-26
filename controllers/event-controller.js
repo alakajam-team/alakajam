@@ -9,6 +9,7 @@
 const forms = require('../core/forms')
 const templating = require('../controllers/templating')
 const eventService = require('../services/event-service')
+const eventThemeService = require('../services/event-theme-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 
@@ -22,7 +23,11 @@ module.exports = {
   viewEventResults,
 
   editEvent,
-  deleteEvent
+  editEventThemes,
+  deleteEvent,
+
+  ajaxFindThemes,
+  ajaxSaveVote
 }
 
 /**
@@ -104,14 +109,54 @@ async function viewEventThemes (req, res) {
   res.locals.pageTitle += ' | Themes'
 
   let statusThemes = res.locals.event.get('status_theme')
-  if (forms.isId(statusThemes)) {
-    res.locals.themesPost = await postService.findPostById(statusThemes)
-  } else if (statusThemes !== 'on') {
+  if (statusThemes === 'disabled' || statusThemes === 'off') {
     res.errorPage(404)
-    return
-  }
+  } else {
+    let context = {}
 
-  res.render('event/view-event-themes')
+    if (forms.isId(statusThemes)) {
+      context.themesPost = await postService.findPostById(statusThemes)
+    } else {
+      if (req.method === 'POST') {
+        let {fields} = await req.parseForm()
+
+        if (fields.action === 'ideas') {
+          // Gather ideas data
+          let ideas = []
+          for (let i = 0; i < 3; i++) {
+            let idField = fields['idea-id[' + i + ']']
+            if (forms.isId(idField) || !idField) {
+              ideas.push({
+                id: idField,
+                title: forms.sanitizeString(fields['idea-title[' + i + ']'])
+              })
+            }
+          }
+          // Update theme ideas
+          await eventThemeService.saveThemeIdeas(res.locals.user, res.locals.event, ideas)
+        } else if (fields.action === 'vote') {
+          if (forms.isId(fields['theme-id']) && (fields['upvote'] !== undefined || fields['downvote'] !== undefined)) {
+            let score = (fields['upvote'] !== undefined) ? 1 : -1
+            await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['theme-id']), score)
+          }
+        }
+      }
+
+      // Gather info for display
+      if (res.locals.user) {
+        let userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, res.locals.event)
+        context.userThemes = userThemesCollection.models
+
+        let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, res.locals.event)
+        context.votesHistory = votesHistoryCollection.models
+      } else {
+        let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, res.locals.event)
+        context.sampleThemes = sampleThemesCollection.models
+      }
+    }
+
+    res.render('event/view-event-themes', context)
+  }
 }
 
 /**
@@ -214,7 +259,8 @@ async function editEvent (req, res) {
         status_results: fields['status-results'],
         countdown_config: {
           date: forms.parseDateTime(fields['countdown-date']),
-          phrase: forms.sanitizeString(fields['countdown-phrase'])
+          phrase: forms.sanitizeString(fields['countdown-phrase']),
+          enabled: fields['countdown-enabled'] === 'on'
         }
       })
 
@@ -240,6 +286,16 @@ async function editEvent (req, res) {
 }
 
 /**
+ * Manage the event's submitted themes
+ */
+async function editEventThemes (req, res) {
+  let themesCollection = await eventThemeService.findBestThemes(res.locals.event, { fetchAll: true })
+  res.render('event/edit-event-themes', {
+    themes: themesCollection.models
+  })
+}
+
+/**
  * Delete an event
  */
 async function deleteEvent (req, res) {
@@ -250,4 +306,31 @@ async function deleteEvent (req, res) {
 
   await res.locals.event.destroy()
   res.redirect('/events')
+}
+
+/**
+ * AJAX API: Find themes to vote on
+ */
+async function ajaxFindThemes (req, res) {
+  let themesCollection = await eventThemeService.findThemesToVoteOn(res.locals.user, res.locals.event)
+  let json = []
+  for (let theme of themesCollection.models) {
+    json.push({
+      id: theme.get('id'),
+      title: theme.get('title')
+    })
+  }
+  res.end(JSON.stringify(json))
+}
+
+/**
+ * AJAX API: Save a vote
+ */
+async function ajaxSaveVote (req, res) {
+  let {fields} = await req.parseForm()
+  if (forms.isId(fields['id']) && (fields['upvote'] !== undefined || fields['downvote'] !== undefined)) {
+    let score = (fields['upvote'] !== undefined) ? 1 : -1
+    await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['id']), score)
+  }
+  res.end('')
 }

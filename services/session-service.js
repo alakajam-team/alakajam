@@ -31,25 +31,25 @@ function restoreSessionIfNeeded (req, res) {
   req.session = {}
 
   // TODO refresh cookies if they're getting close to expiry
-  let sessionCookie = req.cookies.get('session')
+  let sessionCookie = req.cookies.get('session', {signed: true})
   if (sessionCookie) {
     try {
       req.session = JSON.parse(sessionCookie)
     } catch (e) {
-      req.cookies.set('session') // clear session cookie
+      req.cookies.set('session', '', {signed: true}) // clear session cookie
       sessionCookie = null
     }
   }
 
   if (!sessionCookie) {
-    let rememberMeCookie = req.cookies.get('rememberMe')
+    let rememberMeCookie = req.cookies.get('rememberMe', {signed: true})
     if (rememberMeCookie) {
       let sessionCache = res.app.locals.sessionCache
       let sessionInfo = sessionCache[hash(rememberMeCookie)]
       if (sessionInfo) {
         req.session = {userId: sessionInfo.userId}
       } else {
-        req.cookies.set('rememberMe') // clear remember me cookie
+        req.cookies.set('rememberMe', '', {signed: true}) // clear remember me cookie
       }
     }
   }
@@ -69,14 +69,14 @@ async function loadSessionCache () {
 }
 
 function invalidateSession (req, res) {
-  let rememberMeCookie = req.cookies.get('rememberMe')
+  let rememberMeCookie = req.cookies.get('rememberMe', {signed: true})
   if (rememberMeCookie) {
     let sessionCache = res.app.locals.sessionCache
     delete sessionCache[hash(rememberMeCookie)]
   }
 
-  req.cookies.set('rememberMe')
-  req.cookies.set('session')
+  req.cookies.set('rememberMe', '', {signed: true})
+  req.cookies.set('session', '', {signed: true})
   req.session = null
   res.locals.user = null
 }

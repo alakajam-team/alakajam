@@ -1,7 +1,5 @@
 ![Alakajam!](https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/brand.png)
 
-> Current progress: An alpha website with support for events, games and posts/comments. No voting system yet.
-
 ## Initial setup
 
 Requirement: NodeJS 7.6+
@@ -30,7 +28,14 @@ Prerequisite: `npm install -g knex standard browser-refresh node-inspector jsdoc
 
 See also [the wiki](https://github.com/mkalam-alami/wejam/wiki) for additional developer documentation.
 
-#### Enabling picture resizing
+## How do I...
+
+#### ...Reset the data
+
+* With SQLite, all you have to do is delete the `data/` folder.
+* PostgreSQL requires you additionally to empty your database.
+
+#### ...Enable picture resizing
 
 If the `sharp` dependency failed to install in the initial setup, your picture uploads won't be resized. If you want to fix that:
 
