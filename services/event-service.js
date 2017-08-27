@@ -6,6 +6,7 @@
  * @module services/event-service
  */
 
+const config = require('../config')
 const db = require('../core/db')
 const models = require('../core/models')
 const constants = require('../core/constants')
@@ -178,7 +179,7 @@ function searchForTeamMembers ({nameFragment, eventId}) {
     .select('user.name', 'user.title', 'entered.event_id', 'entered.node_id')
     .from('user')
     .leftJoin(alreadyEntered.as('entered'), 'user.id', '=', 'entered.user_id')
-    .where('name', 'ILIKE', `%${nameFragment}%`)
+    .where('name', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${nameFragment}%`)
 }
 
 /**
@@ -200,7 +201,7 @@ function searchForTeamMembers ({nameFragment, eventId}) {
  * @param {string[]} names the member user names.
  * @returns {Promise<SetTeamMembersResult>} the result of this operation.
  */
-function setTeamMembers ({entry, event, names}) {
+function setTeamMembers (entry, event, names) {
   return db.transaction(async function (transaction) {
     // Remove users not in names list.
     const numRemoved = await transaction('user_role')
@@ -240,7 +241,9 @@ function setTeamMembers ({entry, event, names}) {
       updated_at: now,
       event_id: event.id
     }))
-    await transaction('user_role').insert(newRoles)
+    if (newRoles.length > 0) {
+      await transaction('user_role').insert(newRoles)
+    }
 
     return {
       numRemoved,

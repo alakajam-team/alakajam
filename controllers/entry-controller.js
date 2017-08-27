@@ -15,6 +15,7 @@ const securityService = require('../services/security-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
+const constants = require('../core/constants')
 
 module.exports = {
   entryMiddleware,
@@ -219,11 +220,14 @@ async function manageTeam (req, res) {
     return
   }
 
-  const roles = res.locals.entry.related('userRoles')
-    .sortBy(role => role.get('user_name'))
-  res.render('entry/manage-team', {
-    roles
-  })
+  const members = res.locals.entry.related('userRoles')
+    .sortBy('user_name')
+    .map(role => ({
+      id: role.get('user_name'),
+      text: role.get('user_title'),
+      locked: role.get('permission') === constants.PERMISSION_MANAGE
+    }))
+  res.render('entry/edit-team', { members })
 }
 
 /**
@@ -251,7 +255,7 @@ async function saveTeam (req, res) {
   }
 
   const entryId = res.locals.entry.id
-  const result = await eventService.setTeamMembers({ entry, event, names })
+  const result = await eventService.setTeamMembers(entry, event, names)
   const members = []
   const conflicts = []
   for (let role of result.alreadyEntered) {

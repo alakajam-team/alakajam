@@ -71,7 +71,7 @@ async function findByName (name) {
  * Note: all searches will be case-sensitive if developing with SQLite.
  */
 async function searchByName (fragment, options = {}) {
-  const comparator = options.caseSensitive ? 'LIKE' : constants.DB_ILIKE
+  const comparator = (options.caseSensitive || config.DB_TYPE !== 'postgresql') ? 'LIKE' : constants.DB_ILIKE
   return models.User.where('name', comparator, `%${fragment}%`).fetchAll({
     withRelated: options.related
   })
