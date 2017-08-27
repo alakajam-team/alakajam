@@ -200,13 +200,8 @@ async function findCommentsToUser (user, options = {}) {
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '<>', user.id)
       .andWhere('comment.updated_at', '>', notificationsLastRead)
-
-    // TODO Use special mention/notification table filled on write
-    if (config.DB_TYPE === 'postgresql') {
-      qb.orWhere('body', 'ilike', '%@' + user.get('name') + '%')
-    } else {
-      qb.orWhere('body', 'like', '%@' + user.get('name') + '%')
-    }
+      .orWhere('body', (config.DB_TYPE === 'sqlite3' ? 'like' : 'ilike'),
+        '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
   })
     .where('comment.updated_at', '>', notificationsLastRead)
     .orderBy('created_at', 'DESC')

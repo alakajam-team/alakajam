@@ -47,7 +47,15 @@
       {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
 
     </div>
-    <div class="col-md-4">
+
+    <div class="col-md-4 user-contents">
+      {% if entry.has('category') %}
+      <h3>Category</h3>
+      <div class="well entry__category">
+        {{ entry.get('category') | capitalize }}
+      </div>
+      {% endif %}
+
       {% if entry.get('description') %}
       <h3>Description</h3>
       <div class="well entry__description">
@@ -65,6 +73,13 @@
         {% endfor %}
         {% if entry.get('links').length === 0 or not entry.get('links')[0].url %}
           <div class="well">No links yet.</div>
+        {% endif %}
+        {% if canUserWrite(user, entry) %}
+        <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
+
+        {% if entry.get('category') === 'team' %}
+        <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit-team') }}">Manage team</a>
+        {% endif %}
         {% endif %}
       </div>
 

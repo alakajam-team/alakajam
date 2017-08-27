@@ -6,6 +6,8 @@
  * @module services/event-service
  */
 
+const config = require('../config')
+const db = require('../core/db')
 const models = require('../core/models')
 const constants = require('../core/constants')
 const postService = require('./post-service')
@@ -20,6 +22,8 @@ module.exports = {
   findEvents,
 
   createEntry,
+  searchForTeamMembers,
+  setTeamMembers,
 
   findLatestEntries,
   findEntryById,
@@ -139,6 +143,114 @@ async function createEntry (user, event) {
   await entry.load('details')
 
   return entry
+}
+
+/**
+ * @typedef TeamMemberSearchResult
+ * @prop {string} name the user's name.
+ * @prop {string} title the user's title.
+ * @prop {number|null} node_id the entry ID if entered; otherwise `null`.
+ * @prop {number|null} event_id the event ID if entered; otherwise `null`.
+ */
+/**
+ * Search for potential team members by name.
+ * @param {Object} options
+ * @param {string} options.nameFragment the name search string.
+ * @param {number} options.eventId the event ID.
+ * @returns {TeamMemberSearchResult[]}
+ */
+function searchForTeamMembers ({nameFragment, eventId}) {
+  // As SQL:
+  // SELECT "user".name, "user".title, entered.event_id
+  // FROM "user"
+  // LEFT JOIN (
+  //   SELECT user_id, event_id, node_type FROM user_role
+  //   WHERE node_type = 'entry' AND event_id = ${eventId}
+  // ) entered
+  // ON "user".id = entered.user_id;
+  const alreadyEntered = db.knex('user_role')
+    .select('user_id', 'event_id', 'node_type', 'node_id')
+    .where({  // entered in this event...
+      node_type: 'entry',
+      event_id: eventId
+    })
+
+  return db.knex
+    .select('user.name', 'user.title', 'entered.event_id', 'entered.node_id')
+    .from('user')
+    .leftJoin(alreadyEntered.as('entered'), 'user.id', '=', 'entered.user_id')
+    .where('name', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${nameFragment}%`)
+}
+
+/**
+ * @typedef UserEntryData
+ * @prop {string} user_name the user's username.
+ * @prop {string} user_title the user's title.
+ * @prop {number} node_id the ID of the user's entry.
+ */
+/**
+ * @typedef SetTeamMembersResult
+ * @property {number} numRemoved the number of removed user roles.
+ * @property {number} numAdded the number of added user roles.
+ * @property {UserEntryData[]} alreadyEntered details of users already entered.
+ */
+/**
+ * Sets the team members of an entry.
+ * @param {Bookshelf.Model} entry the entry model.
+ * @param {Bookshelf.Model} event the event model.
+ * @param {string[]} names the member user names.
+ * @returns {Promise<SetTeamMembersResult>} the result of this operation.
+ */
+function setTeamMembers (entry, event, names) {
+  return db.transaction(async function (transaction) {
+    // Remove users not in names list.
+    const numRemoved = await transaction('user_role')
+      .whereNotIn('user_name', names)
+      .andWhere({
+        node_type: 'entry',
+        node_id: entry.id
+      })
+      .del()
+
+    // List users from `names` who entered the event in this or another team.
+    const alreadyEntered = await transaction('user_role')
+      .select('user_name', 'user_title', 'node_id')
+      .whereIn('user_name', names)
+      .andWhere({
+        node_type: 'entry',
+        event_id: event.id
+      })
+
+    // Remove names of users who are already entered.
+    const enteredNames = alreadyEntered.map(obj => obj.user_name)
+    names = names.filter(name => !enteredNames.includes(name))
+
+    // Create new roles for all remaining named users.
+    const toCreateUserData = await transaction('user')
+      .select('id', 'name', 'title')
+      .whereIn('name', names)
+    const now = transaction.fn.now()
+    const newRoles = toCreateUserData.map(user => ({
+      user_id: user.id,
+      user_name: user.name,
+      user_title: user.title,
+      node_id: entry.id,
+      node_type: 'entry',
+      permission: constants.PERMISSION_WRITE,  // The owner already has a role.
+      created_at: now,
+      updated_at: now,
+      event_id: event.id
+    }))
+    if (newRoles.length > 0) {
+      await transaction('user_role').insert(newRoles)
+    }
+
+    return {
+      numRemoved,
+      numAdded: newRoles.length,
+      alreadyEntered
+    }
+  })
 }
 
 /**
