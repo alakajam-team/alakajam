@@ -4,7 +4,7 @@
 
 ### August 27th
 
-* Team support: users can add other people to their entries, granting them access to the entry and listing them as team members
+* Team support: users can add other people to their games, granting access rights and listing those people as team members
 
 ### August 24th
 
