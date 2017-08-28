@@ -156,8 +156,14 @@ async function saveEntry (req, res) {
       errorMessage = 'Invalid members'
     }
 
-    // Make sure the entry owner is not removed
-    const teamMembers = fields.members.split(',').map(s => forms.sanitizeString(s))
+    let teamMembers
+    if (res.locals.entry) {
+      teamMembers = fields.members.split(',').map(s => forms.sanitizeString(s))
+    } else {
+      teamMembers = [res.locals.user.get('name')]
+    }
+
+    // Make sure the entry owner is not removed))
     if (res.locals.entry) {
       let ownerName = res.locals.entry.related('userRoles')
         .findWhere({ permission: constants.PERMISSION_MANAGE })
