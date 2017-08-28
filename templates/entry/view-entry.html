@@ -76,10 +76,6 @@
         {% endif %}
         {% if canUserWrite(user, entry) %}
         <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
-
-        {% if entry.get('category') === 'team' %}
-        <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit-team') }}">Manage team</a>
-        {% endif %}
         {% endif %}
       </div>
 

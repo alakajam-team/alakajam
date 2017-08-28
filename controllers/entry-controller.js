@@ -26,8 +26,6 @@ module.exports = {
   saveEntry,
   deleteEntry,
 
-  manageTeam,
-  saveTeam,
   searchForTeamMate
 }
 
@@ -97,11 +95,13 @@ async function createEntry (req, res) {
 /**
  * Edit entry
  */
-function editEntry (req, res) {
+async function editEntry (req, res) {
   if (!res.locals.user || !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true })) {
     res.errorPage(403)
   } else {
-    res.render('entry/edit-entry')
+    res.render('entry/edit-entry', {
+      members: await _loadMembers(res.locals.entry)
+    })
   }
 }
 
@@ -151,8 +151,20 @@ async function saveEntry (req, res) {
     } else if (!res.locals.entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
-      console.log(files.picture.path)
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
+    } else if (typeof fields.members !== 'string') {
+      errorMessage = 'Invalid members'
+    }
+
+    // Make sure the entry owner is not removed
+    const teamMembers = fields.members.split(',').map(s => forms.sanitizeString(s))
+    if (res.locals.entry) {
+      let ownerName = res.locals.entry.related('userRoles')
+        .findWhere({ permission: constants.PERMISSION_MANAGE })
+        .get('user_name')
+      if (!teamMembers.includes(ownerName)) {
+        errorMessage = 'Can\'t remove owner from team entry'
+      }
     }
 
     // Entry update
@@ -184,6 +196,7 @@ async function saveEntry (req, res) {
       }
       await entryDetails.save()
       await entry.save()
+      await eventService.setTeamMembers(entry, res.locals.event, teamMembers)
 
       cache.user(res.locals.user).del('latestEntries')
 
@@ -199,77 +212,41 @@ async function saveEntry (req, res) {
       }
 
       res.render('entry/edit-entry', {
-        errorMessage
+        errorMessage,
+        members: await _loadMembers(res.locals.entry)
       })
     }
   }
 }
 
-async function deleteEntry (req, res) {
-  await res.locals.entry.destroy()
-  cache.user(res.locals.user).del('latestEntries')
-  res.redirect(templating.buildUrl(res.locals.event, 'event'))
-}
-
-/**
- * Manage entry team
- */
-async function manageTeam (req, res) {
-  if (!res.locals.user || !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true })) {
-    res.errorPage(403)
-    return
-  }
-
-  const members = res.locals.entry.related('userRoles')
+async function _loadMembers (entry) {
+  return entry.related('userRoles')
     .sortBy('user_name')
     .map(role => ({
       id: role.get('user_name'),
       text: role.get('user_title'),
       locked: role.get('permission') === constants.PERMISSION_MANAGE
     }))
-  res.render('entry/edit-team', { members })
 }
 
 /**
- * Save team members to entry
+ * Deletes an entry
  */
-async function saveTeam (req, res) {
-  const {user, entry, event} = res.locals
-  if (
-    !user || !entry || !event ||
-    !securityService.canUserWrite(user, entry, { allowMods: true })
-  ) {
-    res.errorPage(400, `Invalid arguments: ${user}, ${entry}, ${event}`)
-    return
-  }
+async function deleteEntry (req, res) {
+  let entry = res.locals.entry
 
-  const {fields} = await req.parseForm()
-  if (typeof fields.members !== 'string') {
-    res.errorPage(400, 'Invalid members')
-    return
-  }
-  const names = fields.members.split(',').map(s => forms.sanitizeString(s))
-  if (!names.includes(user.get('name'))) {
-    res.errorPage(400, 'Can\'t remove owner from team entry')
-    return
-  }
-
-  const entryId = res.locals.entry.id
-  const result = await eventService.setTeamMembers(entry, event, names)
-  const members = []
-  const conflicts = []
-  for (let role of result.alreadyEntered) {
-    (role.node_id === entryId ? members : conflicts).push({
-      id: role.user_name,
-      text: role.user_title
+  if (res.locals.user && entry && securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+    // Delete user roles manually (no cascading)
+    await entry.load('userRoles')
+    entry.related('userRoles').each(function (userRole) {
+      userRole.destroy()
     })
+
+    await entry.destroy()
+    cache.user(res.locals.user).del('latestEntries')
   }
-  res.json({
-    numRemoved: result.numRemoved,
-    numAdded: result.numAdded,
-    members,
-    conflicts
-  })
+
+  res.redirect(templating.buildUrl(res.locals.event, 'event'))
 }
 
 /**
