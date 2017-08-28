@@ -41,7 +41,8 @@
     <div class="form-group">
       <label>Related event</label>
       <div class="form-inline">
-        {{ formMacros.select('event-id', allEvents, relatedEvent.get('id') if relatedEvent, { nullable: true }) }}
+        {% set featuredEventId = featuredEvent.get('id') if featuredEvent %}
+        {{ formMacros.select('event-id', allEvents, relatedEvent.get('id') if relatedEvent else featuredEventId, { nullable: true }) }}
       </div>
     </div>
 
