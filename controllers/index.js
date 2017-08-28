@@ -77,6 +77,7 @@ module.exports = {
     router.post('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?', entryController.saveEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit', entryController.editEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete', entryController.deleteEntry)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/leave', entryController.leaveEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/find-team-mate', entryController.searchForTeamMate)
 
     router.get('/create-event', eventController.editEvent)

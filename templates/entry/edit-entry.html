@@ -65,16 +65,25 @@ form .select2.select2-container {
           <label for="title">Game title</label>
           <input type="text" id="js-title" class="form-control" name="title" value="{{ entry.get('title') }}" required="required">
         </div>
-        <label for="category">Entry type</label>
+
+        {% set isEntryOwner = canUserManage(user, entry) %}
+
+        <label for="category">Entry type {{ formMacros.tooltip('Only the entry owner can change this setting.') if not isEntryOwner }}</label>
         <div>
-          <div class="form-group btn-group toggle team-toggle" data-toggle="buttons">
-            <label class="btn btn-primary active">
-              <input type="radio" name="category" value="solo" autocomplete="off" checked>Solo
-            </label>
-            <label class="btn btn-primary">
-              <input type="radio" name="category" value="team" autocomplete="off">Team
-            </label>
-          </div>
+          {% if isEntryOwner %}
+            <div class="form-group btn-group toggle team-toggle" data-toggle="buttons">
+              <label class="btn btn-default active">
+                <input type="radio" name="category" value="solo" autocomplete="off" checked>Solo
+              </label>
+              <label class="btn btn-default">
+                <input type="radio" name="category" value="team" autocomplete="off">Team
+              </label>
+            </div>
+          {% else %}
+            <div class="form-group">
+              <button class="btn btn-default" disabled>{{ entry.get('category') | capitalize }}</button> 
+            </div>
+          {% endif %}
           <div id="edit-team" class="{{ 'hidden' if entry.get('category') !== 'team' }}">
             <div id="result-box" class="form-group" style="display:none;">
               <h3 id="result-msg"></h3>
@@ -84,8 +93,8 @@ form .select2.select2-container {
             </div>
 
             <div class="form-group">
-              <label for="members">Team members</label>
-              <input type="hidden" name="members" class="bigdrop" id="search-members" multiple="multiple" />
+              <label for="members">Team members {{ formMacros.tooltip('Only the entry owner can change this setting. You can leave the team at the bottom of this form.') if not isEntryOwner }}</label>
+              <input type="hidden" name="members" class="bigdrop" id="search-members" multiple="multiple" {{ 'readonly' if not isEntryOwner }} />
             </div>
           </div>
         </div>
@@ -107,7 +116,11 @@ form .select2.select2-container {
           <div class="row">
             <div class="col-xs-6">
               {% if entry.has('id') %}
-              <a class="btn btn-default" onclick="return confirm('Delete the entry? This cannot be reverted!')" href="{{ buildUrl(entry, 'entry', 'delete') }}">Delete</a> 
+                {% if isEntryOwner %}
+                  <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'delete') }}" onclick="return confirm('Delete the entry? This cannot be reverted!')">Delete</a> 
+                {% else %}
+                  <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'leave') }}" onclick="return confirm('Leave the team? This cannot be reverted, unless the team owner takes you back!')">Leave the team</a>
+                {% endif %}
               {% endif %}
             </div>
             <div class="col-xs-6 text-right">
@@ -362,6 +375,7 @@ $(function() {(function(members, url) {
     formatSelection: format
   })
   .select2('val', members)
+  .select2('readonly', eSelect.attr('readonly'))
 })(
   {{ members | dump | safe }},
   "{{ buildUrl(entry, 'entry', 'find-team-mate') }}"

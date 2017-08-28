@@ -25,6 +25,7 @@ module.exports = {
   editEntry,
   saveEntry,
   deleteEntry,
+  leaveEntry,
 
   searchForTeamMate
 }
@@ -110,14 +111,14 @@ async function editEntry (req, res) {
  */
 async function saveEntry (req, res) {
   let {fields, files} = await req.parseForm()
+  let entry = res.locals.entry
 
   if (fields['is-comment-form']) {
     // Handle comment form
     let redirectUrl = await postController.handleSaveComment(fields,
-      res.locals.user, res.locals.entry, templating.buildUrl(res.locals.entry, 'entry'))
+      res.locals.user, entry, templating.buildUrl(entry, 'entry'))
     res.redirect(redirectUrl)
-  } else if (!res.locals.user || (res.locals.entry &&
-      !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true }))) {
+  } else if (!res.locals.user || (entry && !securityService.canUserWrite(res.locals.user, entry, { allowMods: true }))) {
     res.errorPage(403)
   } else if (!res.headersSent) { // FIXME Why?
     let errorMessage = null
@@ -148,7 +149,7 @@ async function saveEntry (req, res) {
     }
     if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
-    } else if (!res.locals.entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
+    } else if (!entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
@@ -157,15 +158,15 @@ async function saveEntry (req, res) {
     }
 
     let teamMembers
-    if (res.locals.entry) {
+    if (entry) {
       teamMembers = fields.members.split(',').map(s => forms.sanitizeString(s))
     } else {
       teamMembers = [res.locals.user.get('name')]
     }
 
     // Make sure the entry owner is not removed))
-    if (res.locals.entry) {
-      let ownerName = res.locals.entry.related('userRoles')
+    if (entry) {
+      let ownerName = entry.related('userRoles')
         .findWhere({ permission: constants.PERMISSION_MANAGE })
         .get('user_name')
       if (!teamMembers.includes(ownerName)) {
@@ -175,10 +176,10 @@ async function saveEntry (req, res) {
 
     // Entry update
     if (!errorMessage) {
-      if (!res.locals.entry) {
+      if (!entry) {
         res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
       }
-      let entry = res.locals.entry
+      entry = res.locals.entry
 
       let picturePath = '/entry/' + entry.get('id')
       entry.set('title', forms.sanitizeString(fields.title))
@@ -202,14 +203,16 @@ async function saveEntry (req, res) {
       }
       await entryDetails.save()
       await entry.save()
-      await eventService.setTeamMembers(entry, res.locals.event, teamMembers)
+      if (securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+        await eventService.setTeamMembers(entry, res.locals.event, teamMembers)
+      }
 
       cache.user(res.locals.user).del('latestEntries')
 
       await entry.related('userRoles').fetch()
       res.redirect(templating.buildUrl(entry, 'entry'))
     } else {
-      if (!res.locals.entry) {
+      if (!entry) {
         // Creation form
         res.locals.entry = new models.Entry({
           event_id: res.locals.event.get('id'),
@@ -243,6 +246,29 @@ async function deleteEntry (req, res) {
   if (res.locals.user && entry && securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
     await eventService.deleteEntry(entry)
     cache.user(res.locals.user).del('latestEntries')
+  }
+
+  res.redirect(templating.buildUrl(res.locals.event, 'event'))
+}
+
+/**
+ * Leaves the team of an entry
+ */
+async function leaveEntry (req, res) {
+  let entry = res.locals.entry
+  let user = res.locals.user
+
+  if (user && entry) {
+    // Remove requesting user from the team
+    let newTeamMembers = []
+    entry.related('userRoles').each(function (userRole) {
+      if (userRole.get('user_id') !== user.get('id')) {
+        newTeamMembers.push(userRole.get('user_name'))
+      }
+    })
+    await eventService.setTeamMembers(entry, res.locals.event, newTeamMembers)
+
+    cache.user(user).del('latestEntries')
   }
 
   res.redirect(templating.buildUrl(res.locals.event, 'event'))
