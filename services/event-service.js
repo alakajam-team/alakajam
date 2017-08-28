@@ -70,7 +70,7 @@ async function refreshEventReferences (event) {
  */
 async function findEventById (id) {
   return models.Event.where('id', id)
-    .fetch({ withRelated: ['entries', 'entries.userRoles'] })
+    .fetch({ withRelated: ['entries.userRoles'] })
 }
 
 /**
@@ -80,7 +80,7 @@ async function findEventById (id) {
  */
 async function findEventByName (name) {
   return models.Event.where('name', name)
-    .fetch({ withRelated: ['entries', 'entries.userRoles'] })
+    .fetch({ withRelated: ['entries.userRoles'] })
 }
 
 /**
@@ -203,51 +203,67 @@ function searchForTeamMembers ({nameFragment, eventId}) {
  */
 function setTeamMembers (entry, event, names) {
   return db.transaction(async function (transaction) {
-    // Remove users not in names list.
-    const numRemoved = await transaction('user_role')
-      .whereNotIn('user_name', names)
-      .andWhere({
-        node_type: 'entry',
-        node_id: entry.id
-      })
-      .del()
+    let numRemoved = 0
+    let numAdded = 0
+    let alreadyEntered = []
 
-    // List users from `names` who entered the event in this or another team.
-    const alreadyEntered = await transaction('user_role')
-      .select('user_name', 'user_title', 'node_id')
-      .whereIn('user_name', names)
-      .andWhere({
+    if (entry.get('category') === 'solo') {
+      // Force only keeping the owner role
+      numRemoved = await transaction('user_role')
+        .whereNot('permission', constants.PERMISSION_MANAGE)
+        .andWhere({
+          node_type: 'entry',
+          node_id: entry.id
+        })
+        .del()
+    } else {
+      // Remove users not in names list.
+      numRemoved = await transaction('user_role')
+        .whereNotIn('user_name', names)
+        .andWhere({
+          node_type: 'entry',
+          node_id: entry.id
+        })
+        .del()
+
+      // List users from `names` who entered the event in this or another team.
+      alreadyEntered = await transaction('user_role')
+        .select('user_name', 'user_title', 'node_id')
+        .whereIn('user_name', names)
+        .andWhere({
+          node_type: 'entry',
+          event_id: event.id
+        })
+
+      // Remove names of users who are already entered.
+      const enteredNames = alreadyEntered.map(obj => obj.user_name)
+      names = names.filter(name => !enteredNames.includes(name))
+
+      // Create new roles for all remaining named users.
+      const toCreateUserData = await transaction('user')
+        .select('id', 'name', 'title')
+        .whereIn('name', names)
+      const now = transaction.fn.now()
+      const newRoles = toCreateUserData.map(user => ({
+        user_id: user.id,
+        user_name: user.name,
+        user_title: user.title,
+        node_id: entry.id,
         node_type: 'entry',
+        permission: constants.PERMISSION_WRITE,  // The owner already has a role.
+        created_at: now,
+        updated_at: now,
         event_id: event.id
-      })
-
-    // Remove names of users who are already entered.
-    const enteredNames = alreadyEntered.map(obj => obj.user_name)
-    names = names.filter(name => !enteredNames.includes(name))
-
-    // Create new roles for all remaining named users.
-    const toCreateUserData = await transaction('user')
-      .select('id', 'name', 'title')
-      .whereIn('name', names)
-    const now = transaction.fn.now()
-    const newRoles = toCreateUserData.map(user => ({
-      user_id: user.id,
-      user_name: user.name,
-      user_title: user.title,
-      node_id: entry.id,
-      node_type: 'entry',
-      permission: constants.PERMISSION_WRITE,  // The owner already has a role.
-      created_at: now,
-      updated_at: now,
-      event_id: event.id
-    }))
-    if (newRoles.length > 0) {
-      await transaction('user_role').insert(newRoles)
+      }))
+      if (newRoles.length > 0) {
+        numAdded = newRoles.length
+        await transaction('user_role').insert(newRoles)
+      }
     }
 
     return {
       numRemoved,
-      numAdded: newRoles.length,
+      numAdded,
       alreadyEntered
     }
   })
