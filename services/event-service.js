@@ -24,6 +24,7 @@ module.exports = {
   createEntry,
   searchForTeamMembers,
   setTeamMembers,
+  deleteEntry,
 
   findLatestEntries,
   findEntryById,
@@ -266,6 +267,26 @@ function setTeamMembers (entry, event, names) {
       numAdded,
       alreadyEntered
     }
+  })
+}
+
+async function deleteEntry (entry) {
+  return db.transaction(async function (t) {
+    // Delete user roles manually (no cascading)
+    await entry.load('userRoles')
+    entry.related('userRoles').each(function (userRole) {
+      userRole.destroy({ transacting: t })
+    })
+
+    // Unlink posts
+    let posts = await postService.findPosts({ entryId: entry.get('id') })
+    posts.each(function (post) {
+      post.set('entry_id', null)
+      post.save({ transacting: t })
+    })
+
+    // Delete entry
+    entry.destroy({ transacting: t })
   })
 }
 

@@ -48,7 +48,7 @@
 
     </div>
 
-    <div class="col-md-4 user-contents">
+    <div class="col-md-4">
       {% if entry.has('category') %}
       <h3>Category</h3>
       <div class="well entry__category">
@@ -58,7 +58,7 @@
 
       {% if entry.get('description') %}
       <h3>Description</h3>
-      <div class="well entry__description">
+      <div class="well entry__description user-contents">
         {{ entry.get('description') }}
       </div>
       {% endif %}

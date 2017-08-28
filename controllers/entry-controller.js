@@ -240,15 +240,8 @@ async function _loadMembers (entry) {
  */
 async function deleteEntry (req, res) {
   let entry = res.locals.entry
-
   if (res.locals.user && entry && securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
-    // Delete user roles manually (no cascading)
-    await entry.load('userRoles')
-    entry.related('userRoles').each(function (userRole) {
-      userRole.destroy()
-    })
-
-    await entry.destroy()
+    await eventService.deleteEntry(entry)
     cache.user(res.locals.user).del('latestEntries')
   }
 
