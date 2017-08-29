@@ -236,7 +236,7 @@ async function saveEntry (req, res) {
         'platforms': platforms
       })
 
-      if (fields['external-entry']) {
+      if (fields['external-event']) {
         entry.set({
           event_id: null,
           event_name: null,
