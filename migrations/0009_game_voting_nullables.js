@@ -1,5 +1,5 @@
 /**
- * Entry platforms storage  + not-null constraints
+ * Game voting + not-null constraints
  *
  * NOTE: Entry feedback scores will be lost until recomputed by commenting
  */
