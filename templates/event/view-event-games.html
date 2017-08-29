@@ -7,6 +7,9 @@
 
 <div class="container">
   <div class="row">
+    {% set showSidebar = event.get('status_results') === 'voting' or event.get('status_results') === 'results' %}
+    
+    {% if showSidebar %}
     <div class="col-sm-3">
       <h2>Recently rated</h2>
       <p><a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>
@@ -19,12 +22,14 @@
         <div class="well">You didn't rate entries yet.</div>
       {% endif %}
     </div>
-    <div class="col-sm-9">
+    {% endif %}
+    
+    <div class="{{ 'col-sm-9' if showSidebar else 'col-xs-12' }}">
       <div class="horizontal-bar">{{ sortedEntries.length }} {{ 'entries' if sortedEntries.length !== 1 else 'entry' }} sorted by Feedback Score {{ formMacros.tooltip('Comment on other games to increase your score and get featured higher on the list!') }}</div>
       
       <div class="row">
       {% for entry in sortedEntries %}
-        <div class="col-sm-6 col-md-4">
+        <div class="{{ 'col-sm-6 col-md-4' if showSidebar else 'col-sm-4 col-md-3' }}">
           {{ eventMacros.entryThumb(entry) }}
           <div class="entry-thumb__score">
             <span class="pull-right">{{ entry.get('feedback_score') }}</span>
