@@ -47,7 +47,7 @@ async function entryMiddleware (req, res, next) {
     res.locals.pageImage = entry.get('pictures')[0]
   }
 
-  if (req.params.eventName !== 'external-event' &&
+  if (req.params.eventName !== 'external-entry' &&
       (req.params.eventName !== entry.get('event_name') || req.params.entryName !== entry.get('name'))) {
     res.redirect(templating.buildUrl(entry, 'entry', req.params.rest))
     return
@@ -167,7 +167,7 @@ async function saveEntry (req, res) {
     let errorMessage = null
 
     // Links/platform parsing and validation
-    let isExternalEvent = fields['external-event'] !== undefined
+    let isExternalEvent = fields['external-entry'] !== undefined
     let links = []
     let platforms = []
     let i = 0
@@ -236,11 +236,11 @@ async function saveEntry (req, res) {
         'platforms': platforms
       })
 
-      if (fields['external-event']) {
+      if (fields['external-entry']) {
         entry.set({
           event_id: null,
           event_name: null,
-          external_event: forms.sanitizeString(fields['external-event'])
+          external_event: forms.sanitizeString(fields['external-entry'])
         })
       }
 

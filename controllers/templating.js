@@ -44,13 +44,13 @@ function buildUrl (model, type, page = null, options = {}) {
         }
         return '/' + model.get('name') + pagePath
       } else if (page === 'find-team-mate') {
-        return '/external-event/find-team-mate'
+        return '/external-entry/find-team-mate'
       } else {
         return '/create-event'
       }
     } else if (type === 'entry') {
       // Entry model
-      const array = ['', model.get('event_name') || 'external-event']
+      const array = ['', model.get('event_name') || 'external-entry']
       if (model.id) {
         array.push(model.get('id'), model.get('name'), page)
       } else {

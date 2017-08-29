@@ -37,7 +37,7 @@ module.exports = {
  * Fetches the event & optionally the user's entry
  */
 async function eventMiddleware (req, res, next) {
-  if (req.params.eventName !== 'create-event' && req.baseUrl.indexOf('/external-event') !== 0) {
+  if (req.params.eventName !== 'create-event' && req.baseUrl.indexOf('/external-entry') !== 0) {
     let event = await eventService.findEventByName(req.params.eventName)
     res.locals.event = event
     if (!event) {
