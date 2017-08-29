@@ -289,6 +289,19 @@ module.exports.Entry = bookshelf.model('Entry', {
     if (attrs && attrs.pictures) attrs.pictures = JSON.stringify(attrs.pictures)
     if (attrs && attrs.platforms) attrs.platforms = JSON.stringify(attrs.platforms)
     return attrs
+  },
+
+  // Helpers
+
+  sortedUserRoles: function () {
+    return this.related('userRoles').sortBy(function (userRole) {
+      // List owners first, otherwise sort alphabetically
+      if (userRole.get('permission') === 'manage') {
+        return ' ' + userRole.get('user_title')
+      } else {
+        return userRole.get('user_title')
+      }
+    })
   }
 
 }, {

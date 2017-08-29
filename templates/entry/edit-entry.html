@@ -19,6 +19,9 @@ form .select2.select2-container {
 .select2-search-choice {
   padding-bottom: 2px !important;
 }
+.select2-result {
+  height: 42px;
+}
 
 .member {
   font-size: 16px;
@@ -27,15 +30,34 @@ form .select2.select2-container {
 }
 .member>.avatar {
   width: 36px;
-  border: 4px solid #3bafda;
   border-radius: 6px;
   vertical-align: middle;
   text-align: center;
   margin-right: 8px;
   margin-left: 2px;
+  float: left;
 }
-.member>.username {
+.member > .username {
+  display: inline-block;
+  margin-top: 8px;
   margin-right: 2px;
+}
+.select2-result .member .username {
+  margin-top: 4px;
+}
+.member .owner-tag {
+  display: block;
+  font-size: 10px;
+  color: #666;
+}
+.member .unavailable-tag {
+  display: none;
+  font-size: 10px;
+  color: #666;
+}
+.select2-result-unselectable .member .unavailable-tag {
+  display: block;
+  margin-top: -5px;
 }
 
 #result-msg.error {
@@ -66,7 +88,7 @@ form .select2.select2-container {
           <input type="text" id="js-title" class="form-control" name="title" value="{{ entry.get('title') }}" required="required">
         </div>
 
-        {% set isEntryOwner = canUserManage(user, entry) %}
+        {% set isEntryOwner = not entry.get('id') or canUserManage(user, entry) %}
 
         <label for="category">Entry type {{ formMacros.tooltip('Only the entry owner can change this setting.') if not isEntryOwner }}</label>
         <div>
@@ -323,7 +345,13 @@ $(function() {(function(members, url) {
 
   function format (user) {
     const avatarUrl = user.avatar || '/static/images/default-avatar.png'
-    return ['<div class="member"><img class="avatar" src="', avatarUrl, '" alt="', user.text, '" /><span class="username">', user.text, '</span></div>'].join('')
+    return ['<div class="member">',
+          '<img class="avatar" src="', avatarUrl, '" alt="', user.text, '" />', 
+          '<span class="username">', user.text, '</span>',
+          user.locked ? '<span class="owner-tag">Owner</span>' : '',
+          '<span class="unavailable-tag">Has a game already</span>',
+        '</div>']
+      .join('')
   }
 
   function isDirty () {
@@ -353,7 +381,7 @@ $(function() {(function(members, url) {
       delay: 300,
       data: function(term) {
         return {
-          name: term,
+          name: term
         }
       },
       processResults: function (data, params) {
@@ -387,7 +415,7 @@ $(function() {(function(members, url) {
   .select2('readonly', eSelect.attr('readonly'))
 })(
   {{ members | dump | safe }},
-  "{{ buildUrl(entry, 'entry', 'find-team-mate') }}"
+  "{{ buildUrl(event, 'event', 'find-team-mate') }}"
 ) })
 
 </script>

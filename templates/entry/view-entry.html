@@ -82,7 +82,7 @@
       <h3 style="margin-top: 10px">Author{{ 's' if entry.related('userRoles').models.length > 1 }}</h3>
 
       <div class="row">
-        {% for userRole in entry.related('userRoles').models %}
+        {% for userRole in entry.sortedUserRoles() %}
           {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}
         {% endfor %}
       </div>

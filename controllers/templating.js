@@ -52,7 +52,7 @@ function buildUrl (model, type, page = null, options = {}) {
       if (model.id) {
         array.push(model.get('id'), model.get('name'), page)
       } else {
-        array.push('create-entry')
+        array.push(page || 'create-entry')
       }
       return array.join('/')
     } else if (type === 'user') {

@@ -87,7 +87,8 @@ async function createEntry (req, res) {
         entry: new models.Entry({
           event_id: res.locals.event.get('id'),
           event_name: res.locals.event.get('name')
-        })
+        }),
+        members: _getMembers(null, res.locals.user)
       })
     }
   }
@@ -101,7 +102,7 @@ async function editEntry (req, res) {
     res.errorPage(403)
   } else {
     res.render('entry/edit-entry', {
-      members: await _loadMembers(res.locals.entry)
+      members: _getMembers(res.locals.entry)
     })
   }
 }
@@ -223,20 +224,28 @@ async function saveEntry (req, res) {
 
       res.render('entry/edit-entry', {
         errorMessage,
-        members: await _loadMembers(res.locals.entry)
+        members: _getMembers(res.locals.entry)
       })
     }
   }
 }
 
-async function _loadMembers (entry) {
-  return entry.related('userRoles')
-    .sortBy('user_name')
-    .map(role => ({
-      id: role.get('user_name'),
-      text: role.get('user_title'),
-      locked: role.get('permission') === constants.PERMISSION_MANAGE
-    }))
+function _getMembers (entry, user = null) {
+  if (entry) {
+    return entry.sortedUserRoles()
+      .map(role => ({
+        id: role.get('user_name'),
+        text: role.get('user_title'),
+        locked: role.get('permission') === constants.PERMISSION_MANAGE
+      }))
+  } else {
+    // New entry: only the current user is a member
+    return [{
+      id: user.get('name'),
+      text: user.get('title'),
+      locked: true
+    }]
+  }
 }
 
 /**
@@ -295,7 +304,7 @@ async function searchForTeamMate (req, res) {
     eventId: res.locals.event.id
   })
 
-  const entryId = res.locals.entry.id
+  const entryId = res.locals.entry ? res.locals.entry.id : -1
   const getStatus = (match) => {
     switch (match.node_id) {
       case null: return 'available'
