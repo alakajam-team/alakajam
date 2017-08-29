@@ -271,22 +271,22 @@ function setTeamMembers (entry, event, names) {
 }
 
 async function deleteEntry (entry) {
+  // Unlink posts (not in transaction to prevent foreign key errors)
+  let posts = await postService.findPosts({ entryId: entry.get('id') })
+  posts.each(async function (post) {
+    post.set('entry_id', null)
+    await post.save()
+  })
+
   return db.transaction(async function (t) {
-    // Delete user roles manually (no cascading)
+    // Delete user roles manually (because no cascading)
     await entry.load('userRoles')
     entry.related('userRoles').each(function (userRole) {
       userRole.destroy({ transacting: t })
     })
 
-    // Unlink posts
-    let posts = await postService.findPosts({ entryId: entry.get('id') })
-    posts.each(function (post) {
-      post.set('entry_id', null)
-      post.save({ transacting: t })
-    })
-
     // Delete entry
-    entry.destroy({ transacting: t })
+    await entry.destroy({ transacting: t })
   })
 }
 
