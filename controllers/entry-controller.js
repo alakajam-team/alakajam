@@ -183,7 +183,6 @@ async function saveEntry (req, res) {
 
       let picturePath = '/entry/' + entry.get('id')
       entry.set('title', forms.sanitizeString(fields.title))
-      entry.set('category', forms.sanitizeString(fields.category) || 'solo')
       entry.set('description', forms.sanitizeString(fields.description))
       entry.set('links', links)
       entry.set('platforms', platforms)
@@ -198,14 +197,16 @@ async function saveEntry (req, res) {
       let entryDetails = entry.related('details')
       entryDetails.set('body', forms.sanitizeMarkdown(fields.body))
 
+      if (securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+        entry.set('category', forms.sanitizeString(fields.category) || 'solo')
+        await eventService.setTeamMembers(entry, res.locals.event, teamMembers)
+      }
+
       if (entry.hasChanged('platforms')) {
         await eventService.refreshEntryPlatforms(entry)
       }
       await entryDetails.save()
       await entry.save()
-      if (securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
-        await eventService.setTeamMembers(entry, res.locals.event, teamMembers)
-      }
 
       cache.user(res.locals.user).del('latestEntries')
 

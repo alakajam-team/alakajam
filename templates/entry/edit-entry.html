@@ -47,7 +47,7 @@ form .select2.select2-container {
 {% block body %}
 
 <div class="container">
-  <form action="{{ buildUrl(entry, 'entry') }}" method="post" enctype="multipart/form-data">
+  <form id="js-form" action="{{ buildUrl(entry, 'entry') }}" method="post" enctype="multipart/form-data">
 
     <div class="row">
       <div class="col-md-12">
@@ -240,16 +240,25 @@ function refreshLinksModel () {
 
 // Team toggle behaviour
 
-var category = "{{ entry.get('category') }}" || "solo"
+var initialCategory = "{{ entry.get('category') }}" || "solo"
 $('.team-toggle label').each(function(i, el) {
   el = $(el)
   var input = el.find('input')
-  var active = input.val() === category
+  var active = input.val() === initialCategory
   input.prop('checked', active)
   el.toggleClass('active', active)
 })
 $('.toggle label').click(function(ev) {
   $('#edit-team').toggleClass('hidden', $(this).find('input').val() !== 'team')
+})
+
+// Show warning upon not being a team entry anymore
+
+$('#js-form').submit(function (ev) {
+  if (initialCategory === 'team' && $('input[name=category]:checked').val() !== 'team'
+      && !confirm('You are about to switch to a Solo entry. All team members will be removed. Continue?')) {
+    ev.preventDefault()
+  }
 })
 
 // Team management
