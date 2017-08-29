@@ -61,7 +61,7 @@ exports.up = async function (knex, Promise) {
         'user_role.user_id', 'user_role.user_name', 'user_role.node_id', 'user_role.node_type', 'user_role.permission',
         'event.name', 'event.title', 'event.status', 'event.status_theme', 'event.status_entry', 'event.status_results', 'event.status_rules',
         'event_details.event_id',
-        'entry.event_id', 'entry.event_name', 'entry.name', 'entry.title', 'entry.comment_count',
+        'entry.name', 'entry.title', 'entry.comment_count',
         'entry_details.entry_id',
         'entry_platform.entry_id',
         'theme.event_id', 'theme.user_id', 'theme.title', 'theme.slug', 'theme.score', 'theme.notes', 'theme.reports', 'theme.status',

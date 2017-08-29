@@ -43,18 +43,20 @@ function buildUrl (model, type, page = null, options = {}) {
           pagePath = ''
         }
         return '/' + model.get('name') + pagePath
+      } else if (page === 'find-team-mate') {
+        return '/external-event/find-team-mate'
       } else {
         return '/create-event'
       }
     } else if (type === 'entry') {
       // Entry model
-      const array = ['', model.get('event_name')]
+      const array = ['', model.get('event_name') || 'external-event']
       if (model.id) {
         array.push(model.get('id'), model.get('name'), page)
       } else {
         array.push(page || 'create-entry')
       }
-      return array.join('/')
+      return array.join('/').replace('//', '/')
     } else if (type === 'user') {
       // User Role model / User model
       if (DASHBOARD_PAGES.indexOf(page) !== -1) {

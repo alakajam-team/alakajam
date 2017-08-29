@@ -124,25 +124,29 @@ async function findEventByStatus (status) {
  * @return {Entry}
  */
 async function createEntry (user, event) {
-  const eventId = event.get('id')
-  if (await findUserEntryForEvent(user, eventId)) {
-    throw new Error('User already has an entry for this event')
-  }
-
-  // TODO Better use of Bookshelf API
   let entry = new models.Entry({
-    'event_id': event.get('id'),
-    'event_name': event.get('name'),
     'name': '',
     'title': '',
     'comment_count': 0
   })
+
+  if (event) {
+    const eventId = event.get('id')
+    if (await findUserEntryForEvent(user, eventId)) {
+      throw new Error('User already has an entry for this event')
+    }
+    entry.set({
+      'event_id': eventId,
+      'event_name': event.get('name')
+    })
+  }
+
   await entry.save() // otherwise the user role won't have a node_id
   await entry.userRoles().create({
     user_id: user.get('id'),
     user_name: user.get('name'),
     user_title: user.get('title'),
-    event_id: eventId,
+    event_id: event ? event.get('id') : null,
     permission: constants.PERMISSION_MANAGE
   })
 
@@ -169,7 +173,7 @@ async function createEntry (user, event) {
  * @param {number} options.eventId the event ID.
  * @returns {TeamMemberSearchResult[]}
  */
-function searchForTeamMembers ({nameFragment, eventId}) {
+function searchForTeamMembers (nameFragment, eventId) {
   // As SQL:
   // SELECT "user".name, "user".title, entered.event_id
   // FROM "user"
@@ -237,13 +241,20 @@ function setTeamMembers (entry, event, names) {
         .del()
 
       // List users from `names` who entered the event in this or another team.
-      alreadyEntered = await transaction('user_role')
-        .select('user_name', 'user_title', 'node_id')
-        .whereIn('user_name', names)
-        .andWhere({
+      let existingRolesQuery = transaction('user_role')
+          .select('user_name', 'user_title', 'node_id')
+          .whereIn('user_name', names)
+      if (event) {
+        alreadyEntered = await existingRolesQuery.andWhere({
           node_type: 'entry',
           event_id: event.id
         })
+      } else {
+        alreadyEntered = await existingRolesQuery.andWhere({
+          node_type: 'entry',
+          node_id: entry.id
+        })
+      }
 
       // Remove names of users who are already entered.
       const enteredNames = alreadyEntered.map(obj => obj.user_name)
@@ -263,7 +274,7 @@ function setTeamMembers (entry, event, names) {
         permission: constants.PERMISSION_WRITE,  // The owner already has a role.
         created_at: now,
         updated_at: now,
-        event_id: event.id
+        event_id: event ? event.id : null
       }))
       if (newRoles.length > 0) {
         numAdded = newRoles.length

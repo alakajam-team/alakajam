@@ -67,8 +67,8 @@ exports.up = async function (knex, Promise) {
 
     await knex.schema.createTableIfNotExists('entry', function (table) {
       table.increments('id').primary()
-      table.integer('event_id').references('event.id').notNullable()
-      table.string('event_name').notNullable()
+      table.integer('event_id').references('event.id')
+      table.string('event_name')
       table.string('name').notNullable()
       table.string('title').notNullable()
       table.string('description', 2000)

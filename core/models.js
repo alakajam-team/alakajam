@@ -245,8 +245,9 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | event_id | Event ID (not null)
- * | string | event_name | Name (used in the URL, not null)
+ * | integer | event_id | Event ID (can be null in case of an external entry)
+ * | string | event_name | Name (used in the URL, can be null in case of an external entry)
+ * | string | external_event | External event title (if not an Alakajam! game, ie. event_id is null)
  * | string | name | (not null)
  * | string | title | (not null)
  * | string | description | (max size: 2000)

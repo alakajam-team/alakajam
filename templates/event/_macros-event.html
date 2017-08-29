@@ -21,7 +21,12 @@
   </div>
   {% if options.showEvent %}
     <div class="entry-thumb__event" >
-      on <a href="{{ buildUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
+      on 
+      {% if entry.get('event_id') %}
+        <a href="{{ buildUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
+      {% else %}
+        {{ entry.get('external_event') }}
+      {% endif %}
     </div>
   {% endif %}
 </div>

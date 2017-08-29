@@ -16,7 +16,13 @@
       <h1>
         {{ entry.get('title') }} 
         {% if canUserWrite(user, entry) %}
-        <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit</a>
+          <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit</a>
+        {% endif %}
+        {% if external %}
+          <h2 style="margin-top: -5px; margin-bottom: 20px">
+            <span class="label label-xs label-primary">External entry</span>
+            Made for <i>{{ entry.get('external_event') }}</i>
+          </h2>
         {% endif %}
       </h1>
     </div>
@@ -127,6 +133,7 @@
         {% endfor %}
       </div>
 
+      {% if not external %}
       <div class="entry__score">
         <span class="pull-right">{{ entry.get('class') | capitalize }}</span>
         Entry type
@@ -135,6 +142,7 @@
         <span class="pull-right">{{ entry.get('feedback_score') }}</span>
         Feedback Score
       </div>
+      {% endif %}
     </div>
   </div>
 </div>

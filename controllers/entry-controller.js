@@ -47,8 +47,8 @@ async function entryMiddleware (req, res, next) {
     res.locals.pageImage = entry.get('pictures')[0]
   }
 
-  if (req.params.eventName !== entry.get('event_name') ||
-      req.params.entryName !== entry.get('name')) {
+  if (req.params.eventName !== 'external-event' &&
+      (req.params.eventName !== entry.get('event_name') || req.params.entryName !== entry.get('name'))) {
     res.redirect(templating.buildUrl(entry, 'entry', req.params.rest))
     return
   }
@@ -79,32 +79,42 @@ async function viewEntry (req, res) {
       entryId: res.locals.entry.get('id')
     }),
     vote,
-    canVote
+    canVote,
+    external: !res.locals.event
   })
 }
 
 /**
- * Edit entry
+ * Creates an entry, including one for an external event (res.locals.event not set).
  */
 async function createEntry (req, res) {
   if (!res.locals.user) {
     res.errorPage(403)
-  } else if (!eventService.areSubmissionsAllowed(res.locals.event)) {
+    return
+  } else if (res.locals.event && !eventService.areSubmissionsAllowed(res.locals.event)) {
     res.errorPage(403, 'Submissions are closed for this event')
-  } else {
+    return
+  } else if (res.locals.event) {
     let existingEntry = await eventService.findUserEntryForEvent(res.locals.user, res.locals.event.id)
     if (existingEntry) {
       res.redirect(templating.buildUrl(existingEntry, 'entry', 'edit'))
-    } else {
-      res.render('entry/edit-entry', {
-        entry: new models.Entry({
-          event_id: res.locals.event.get('id'),
-          event_name: res.locals.event.get('name')
-        }),
-        members: _getMembers(null, res.locals.user)
-      })
+      return
     }
   }
+
+  let entry = new models.Entry()
+  if (res.locals.event) {
+    entry.set({
+      event_id: res.locals.event ? res.locals.event.get('id') : null,
+      event_name: res.locals.event.get('name')
+    })
+  }
+
+  res.render('entry/edit-entry', {
+    entry,
+    members: _getMembers(null, res.locals.user),
+    external: !res.locals.event
+  })
 }
 
 /**
@@ -115,7 +125,8 @@ async function editEntry (req, res) {
     res.errorPage(403)
   } else {
     res.render('entry/edit-entry', {
-      members: _getMembers(res.locals.entry)
+      members: _getMembers(res.locals.entry),
+      external: !res.locals.event
     })
   }
 }
@@ -156,6 +167,7 @@ async function saveEntry (req, res) {
     let errorMessage = null
 
     // Links/platform parsing and validation
+    let isExternalEvent = fields['external-event'] !== undefined
     let links = []
     let platforms = []
     let i = 0
@@ -181,7 +193,7 @@ async function saveEntry (req, res) {
     }
     if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
-    } else if (!entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
+    } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(res.locals.event)) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
@@ -224,6 +236,14 @@ async function saveEntry (req, res) {
         'platforms': platforms
       })
 
+      if (fields['external-event']) {
+        entry.set({
+          event_id: null,
+          event_name: null,
+          external_event: forms.sanitizeString(fields['external-event'])
+        })
+      }
+
       if (fields['picture-delete'] && entry.get('pictures').length > 0) {
         await fileStorage.remove(entry.get('pictures')[0])
         entry.set('pictures', [])
@@ -253,22 +273,26 @@ async function saveEntry (req, res) {
     } else {
       if (!entry) {
         // Creation form
-        res.locals.entry = new models.Entry({
-          event_id: res.locals.event.get('id'),
-          event_name: res.locals.event.get('name')
-        })
+        res.locals.entry = new models.Entry()
+        if (res.locals.event) {
+          entry.set({
+            event_id: res.locals.event ? res.locals.event.get('id') : null,
+            event_name: res.locals.event.get('name')
+          })
+        }
       }
 
       res.render('entry/edit-entry', {
         errorMessage,
-        members: _getMembers(res.locals.entry)
+        members: _getMembers(res.locals.entry, res.locals.user),
+        external: !res.locals.event
       })
     }
   }
 }
 
 function _getMembers (entry, user = null) {
-  if (entry) {
+  if (entry && entry.get('id')) {
     return entry.sortedUserRoles()
       .map(role => ({
         id: role.get('user_name'),
@@ -318,7 +342,11 @@ async function leaveEntry (req, res) {
     cache.user(user).del('latestEntry')
   }
 
-  res.redirect(templating.buildUrl(res.locals.event, 'event'))
+  if (res.locals.event) {
+    res.redirect(templating.buildUrl(res.locals.event, 'event'))
+  } else {
+    res.redirect(templating.buildUrl(res.locals.user, 'user', 'entries'))
+  }
 }
 
 /**
@@ -336,10 +364,8 @@ async function searchForTeamMate (req, res) {
     return
   }
 
-  const matches = await eventService.searchForTeamMembers({
-    nameFragment,
-    eventId: res.locals.event.id
-  })
+  const matches = await eventService.searchForTeamMembers(nameFragment,
+    res.locals.event ? res.locals.event.id : null)
 
   const entryId = res.locals.entry ? res.locals.entry.id : -1
   const getStatus = (match) => {
