@@ -6,7 +6,7 @@
 
 * Entry voting system, with the ability to view past votes
 * Event results page
-* Team support members can now leave the entry
+* Team members can now leave the entry
 
 ### August 27th
 
