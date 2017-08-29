@@ -7,7 +7,7 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
-      {% for post in posts.models %}
+      {% for post in posts %}
         <div class="expandable">
           {{ postMacros.post(post, user) }}
           {{ formMacros.expandCollapse() }}

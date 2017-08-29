@@ -18,6 +18,7 @@
 <ul class="dropdown-menu">
   <li><a href="{{ buildUrl(user, 'user', 'feed') }}">Dashboard</a></li>
   <li><a href="{{ buildUrl(user, 'user') }}">Public profile</a></li>
+  <li><a href="{{ buildUrl(user, 'user', 'entries') }}">Manage entries</a></li>
    <li class="divider"></li> 
   <li><a href="{{ buildUrl(null, 'post', 'create') }}">Create post</a></li>
   <li><a href="{{ buildUrl(user, 'user', 'posts') }}">Manage posts</a></li>
@@ -82,7 +83,8 @@
         {% if user %}
         <div class="visible-xs pull-right navbar-profile-mobile">
           {{ userMenu(user, unreadNotifications) }}
-        </div>
+        </div>
+
         {% endif %}
       </div>
       

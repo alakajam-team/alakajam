@@ -92,11 +92,14 @@ async function viewEventAnnouncements (req, res) {
 async function viewEventPosts (req, res) {
   res.locals.pageTitle += ' | Posts'
 
+  let postsCollection = await postService.findPosts({
+    eventId: res.locals.event.get('id'),
+    specialPostType: null
+  })
+  await postsCollection.load(['entry', 'event'])
+
   res.render('event/view-event-posts', {
-    posts: await postService.findPosts({
-      eventId: res.locals.event.get('id'),
-      specialPostType: null
-    }),
+    posts: postsCollection.models,
     pageCount: await postService.findPosts({
       eventId: res.locals.event.get('id'),
       specialPostType: null,
@@ -227,7 +230,6 @@ async function viewEventRatings (req, res) {
     })
   } else {
     res.errorPage(404)
-    return
   }
 }
 

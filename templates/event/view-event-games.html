@@ -32,7 +32,7 @@
         <div class="{{ 'col-sm-6 col-md-4' if showSidebar else 'col-sm-4 col-md-3' }}">
           {{ eventMacros.entryThumb(entry) }}
           <div class="entry-thumb__score">
-            <span class="pull-right">{{ entry.get('feedback_score') }}</span>
+            <span class="pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
             Feedback Score
           </div>
         </div>

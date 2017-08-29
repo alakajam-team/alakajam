@@ -139,7 +139,7 @@
         Entry type
       </div>
       <div class="entry__score">
-        <span class="pull-right">{{ entry.get('feedback_score') }}</span>
+        <span class="pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
         Feedback Score
       </div>
       {% endif %}

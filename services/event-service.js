@@ -221,7 +221,7 @@ function setTeamMembers (entry, event, names) {
     let numAdded = 0
     let alreadyEntered = []
 
-    if (entry.get('category') === 'solo') {
+    if (entry.get('class') === 'solo') {
       // Force only keeping the owner role
       numRemoved = await transaction('user_role')
         .whereNot('permission', constants.PERMISSION_MANAGE)
@@ -316,7 +316,9 @@ async function deleteEntry (entry) {
  * @returns {Entry}
  */
 async function findLatestEntries () {
-  return models.Entry.forge()
+  return models.Entry.query((qb) => {
+    return qb.whereNotNull('event_id')
+  })
     .orderBy('created_at', 'DESC')
     .fetchPage({
       pageSize: 4,
@@ -340,7 +342,7 @@ async function findEntryById (id) {
  * @return {array(Entry)|null}
  */
 async function findUserEntries (user) {
-  return await models.Entry.query((qb) => {
+  return models.Entry.query((qb) => {
     qb.distinct()
       .innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .where({
@@ -359,6 +361,7 @@ async function findLatestUserEntry (user) {
   let entryCollection = await models.Entry.query((qb) => {
     qb.distinct()
       .innerJoin('user_role', 'entry.id', 'user_role.node_id')
+      .whereNotNull('entry.event_id')
       .where({
         'user_role.user_id': user.get('id'),
         'user_role.node_type': 'entry'
