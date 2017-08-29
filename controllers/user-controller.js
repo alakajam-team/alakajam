@@ -25,6 +25,7 @@ module.exports = {
 
   dashboardFeed,
   dashboardPosts,
+  dashboardEntries,
   dashboardInvite,
   dashboardSettings,
   dashboardPassword,
@@ -64,7 +65,7 @@ async function viewUserProfile (req, res) {
     res.locals.pageTitle = profileUser.get('title')
     res.locals.pageDescription = forms.markdownToText(profileUser.related('details').get('body'))
 
-    let [entries, postsCollection] = await Promise.all([
+    let [entriesCollection, postsCollection] = await Promise.all([
       eventService.findUserEntries(profileUser),
       postService.findPosts({userId: profileUser.get('id')}),
       profileUser.load('details')
@@ -72,7 +73,7 @@ async function viewUserProfile (req, res) {
 
     res.render('user/profile', {
       profileUser,
-      entries,
+      entries: entriesCollection.models,
       posts: postsCollection.filter(function (post) {
         return post.get('special_post_type') !== constants.SPECIAL_POST_TYPE_ARTICLE
       })
@@ -92,7 +93,7 @@ async function dashboardFeed (req, res) {
   let userCache = cache.user(dashboardUser)
   let byUserCollection = userCache.get('byUserCollection')
   let toUserCollection = userCache.get('toUserCollection')
-  let latestEntries = userCache.get('latestEntries')
+  let latestEntry = userCache.get('latestEntry')
   let latestPostsCollection = userCache.get('latestPostsCollection')
 
   if (!byUserCollection) {
@@ -103,9 +104,9 @@ async function dashboardFeed (req, res) {
     toUserCollection = await postService.findCommentsToUser(dashboardUser)
     userCache.set('toUserCollection', toUserCollection)
   }
-  if (!latestEntries) {
-    latestEntries = await eventService.findUserEntries(dashboardUser)
-    userCache.set('latestEntries', latestEntries)
+  if (!latestEntry) {
+    latestEntry = await eventService.findLatestUserEntry(dashboardUser)
+    userCache.set('latestEntry', latestEntry)
   }
   if (!latestPostsCollection) {
     latestPostsCollection = await postService.findPosts({
@@ -124,7 +125,7 @@ async function dashboardFeed (req, res) {
   res.render('user/dashboard-feed', {
     byUser: byUserCollection.take(20),
     toUser: toUserCollection.take(20),
-    latestEntry: latestEntries.length > 0 ? latestEntries[0] : null,
+    latestEntry,
     latestPosts: latestPostsCollection.take(3),
     notificationsLastRead
   })
@@ -148,6 +149,16 @@ async function dashboardPosts (req, res) {
     publishedPosts: allPostsCollection.difference(draftPosts),
     draftPosts,
     newPostEvent
+  })
+}
+
+/**
+ * Manage user entries
+ */
+async function dashboardEntries (req, res) {
+  let entryCollection = await eventService.findUserEntries(res.locals.user)
+  res.render('user/dashboard-entries', {
+    entries: entryCollection.models
   })
 }
 

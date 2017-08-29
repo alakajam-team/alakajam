@@ -130,7 +130,7 @@ async function user (req, res) {
     json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
 
     json.entries = []
-    for (let entry of await eventService.findUserEntries(user)) {
+    for (let entry of (await eventService.findUserEntries(user)).models) {
       json.entries.push(_getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY))
     }
   } else {

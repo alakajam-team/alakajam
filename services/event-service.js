@@ -329,7 +329,7 @@ async function findEntryById (id) {
  * @return {array(Entry)|null}
  */
 async function findUserEntries (user) {
-  let entryCollection = await models.Entry.query((qb) => {
+  return await models.Entry.query((qb) => {
     qb.distinct()
       .innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .where({
@@ -337,7 +337,6 @@ async function findUserEntries (user) {
         'user_role.node_type': 'entry'
       })
   }).fetchAll({ withRelated: ['userRoles', 'event'] })
-  return entryCollection.models
 }
 
 /**

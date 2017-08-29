@@ -246,7 +246,7 @@ async function saveEntry (req, res) {
       await entryDetails.save()
       await entry.save()
 
-      cache.user(res.locals.user).del('latestEntries')
+      cache.user(res.locals.user).del('latestEntry')
 
       await entry.related('userRoles').fetch()
       res.redirect(templating.buildUrl(entry, 'entry'))
@@ -292,7 +292,7 @@ async function deleteEntry (req, res) {
   let entry = res.locals.entry
   if (res.locals.user && entry && securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
     await eventService.deleteEntry(entry)
-    cache.user(res.locals.user).del('latestEntries')
+    cache.user(res.locals.user).del('latestEntry')
   }
 
   res.redirect(templating.buildUrl(res.locals.event, 'event'))
@@ -315,7 +315,7 @@ async function leaveEntry (req, res) {
     })
     await eventService.setTeamMembers(entry, res.locals.event, newTeamMembers)
 
-    cache.user(user).del('latestEntries')
+    cache.user(user).del('latestEntry')
   }
 
   res.redirect(templating.buildUrl(res.locals.event, 'event'))

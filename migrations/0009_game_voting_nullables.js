@@ -17,6 +17,7 @@ exports.up = async function (knex, Promise) {
       table.dropColumn('feedback_score')
       table.dropColumn('category') // changing the column name to "class"
       table.string('class').notNullable().defaultTo('solo').index()
+      table.string('external_event').index()
     })
     await knex.schema.table('entry', function (table) {
       // different transaction than the column removal

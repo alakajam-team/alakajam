@@ -1,0 +1,27 @@
+{% extends "user/_page-dashboard.html" %}
+{% import "event/_macros-event.html" as eventMacros %}
+
+{% block dashboardBody %}
+
+<h1>Entries</h1>
+
+<div class="form-group">
+  <!--<a href="{{ buildUrl(user, 'user', 'create-external-entry') }}" class="btn btn-primary">Add entry from a non-Alakajam! event</a>-->
+</div>
+
+<div class="row">
+  {% for entry in entries %}
+    <div class="col-sm-6 col-md-4">
+      {{ eventMacros.entryThumb(entry) }}
+      <div class="text-right" style="margin-top: -10px">
+        <a href="{{ buildUrl(entry, 'entry', 'edit') }}"class="btn btn-default">Edit</a>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+{% if entries.length === 0 %}
+  <div class="well">No entries yet.</div>
+{% endif %}
+
+{% endblock %}

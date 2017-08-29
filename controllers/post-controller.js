@@ -36,11 +36,13 @@ async function postMiddleware (req, res, next) {
   if (req.params.postId && req.params.postId !== 'create') {
     if (forms.isId(req.params.postId)) {
       res.locals.post = await postService.findPostById(req.params.postId)
-      res.locals.event = res.locals.post.related('event')
-      if (res.locals.event) {
-        res.locals.latestEventAnnouncement = await postService.findLatestAnnouncement({
-          eventId: res.locals.event.get('id')
-        })
+      if (res.locals.post) {
+        res.locals.event = res.locals.post.related('event')
+        if (res.locals.event) {
+          res.locals.latestEventAnnouncement = await postService.findLatestAnnouncement({
+            eventId: res.locals.event.get('id')
+          })
+        }
       }
     }
 

@@ -53,6 +53,7 @@ module.exports = {
     router.use('/dashboard*', userController.dashboardMiddleware)
     router.all('/dashboard(/feed)?', userController.dashboardFeed)
     router.all('/dashboard/posts', userController.dashboardPosts)
+    router.all('/dashboard/entries', userController.dashboardEntries)
     router.all('/dashboard/invite', userController.dashboardInvite)
     router.all('/dashboard/settings', userController.dashboardSettings)
     router.all('/dashboard/password', userController.dashboardPassword)
