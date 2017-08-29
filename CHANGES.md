@@ -6,7 +6,7 @@
 
 * Entry voting system, with the ability to view past votes
 * Event results page
-* People can now add games made in other jams
+* Users can now add games made in external jams
 * Team members can now leave the entry
 
 ### August 27th
