@@ -104,6 +104,19 @@ async function editEntry (req, res) {
     } else if (!eventService.areSubmissionsAllowed(event)) {
       res.errorPage(403, 'Submissions are closed for this event')
       return
+    } else {
+      res.render('entry/edit-entry', {
+        entry: new models.Entry({
+          event_id: res.locals.event.get('id'),
+          event_name: res.locals.event.get('name')
+        }),
+        platforms: await platformService.loadAll(),
+        members: [{  // Ensure the owner is supplied as a (locked) member.
+          id: res.locals.user.get('name'),
+          text: res.locals.user.get('title'),
+          locked: true
+        }]
+      })
     }
   }
   if (entry && !securityService.canUserWrite(user, entry, { allowMods: true })) {
