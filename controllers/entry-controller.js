@@ -167,7 +167,7 @@ async function saveEntry (req, res) {
     let errorMessage = null
 
     // Links/platform parsing and validation
-    let isExternalEvent = fields['external-entry'] !== undefined
+    let isExternalEvent = fields['external-event'] !== undefined
     let links = []
     let platforms = []
     let i = 0
@@ -240,7 +240,7 @@ async function saveEntry (req, res) {
         entry.set({
           event_id: null,
           event_name: null,
-          external_event: forms.sanitizeString(fields['external-entry'])
+          external_event: forms.sanitizeString(fields['external-event'])
         })
       }
 
