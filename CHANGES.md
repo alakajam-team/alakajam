@@ -2,6 +2,12 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### August 29th
+
+* Entry voting system, with the ability to view past votes
+* Event results page
+* Team support members can now leave the entry
+
 ### August 27th
 
 * Team support: users can add other people to their games, granting access rights and listing those people as team members
