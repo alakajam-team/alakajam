@@ -158,29 +158,30 @@ async function saveEntry (req, res) {
       errorMessage = 'Invalid members'
     }
 
-    let teamMembers
+    // Make sure the entry owner is not removed
+    let teamMembers = fields.members.split(',').map(s => forms.sanitizeString(s))
+    let ownerName
     if (entry) {
-      teamMembers = fields.members.split(',').map(s => forms.sanitizeString(s))
-    } else {
-      teamMembers = [res.locals.user.get('name')]
-    }
-
-    // Make sure the entry owner is not removed))
-    if (entry) {
-      let ownerName = entry.related('userRoles')
+      ownerName = entry.related('userRoles')
         .findWhere({ permission: constants.PERMISSION_MANAGE })
         .get('user_name')
-      if (!teamMembers.includes(ownerName)) {
-        errorMessage = 'Can\'t remove owner from team entry'
-      }
+    } else {
+      ownerName = res.locals.user.get('name')
+    }
+    if (!teamMembers.includes(ownerName)) {
+      errorMessage = 'Can\'t remove owner from team entry'
     }
 
     // Entry update
     if (!errorMessage) {
+      let isCreation
       if (!entry) {
+        isCreation = true
         res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
+        entry = res.locals.entry
+      } else {
+        isCreation = false
       }
-      entry = res.locals.entry
 
       let picturePath = '/entry/' + entry.get('id')
       entry.set('title', forms.sanitizeString(fields.title))
@@ -198,7 +199,7 @@ async function saveEntry (req, res) {
       let entryDetails = entry.related('details')
       entryDetails.set('body', forms.sanitizeMarkdown(fields.body))
 
-      if (securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+      if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
         entry.set('category', forms.sanitizeString(fields.category) || 'solo')
         await eventService.setTeamMembers(entry, res.locals.event, teamMembers)
       }
