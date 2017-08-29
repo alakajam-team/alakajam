@@ -1,6 +1,7 @@
 {% extends "_page.html" %}
 {% import "event/_macros-event.html" as eventMacros %}
 {% import "post/_macros-post.html" as postMacros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block styles %}
 <link rel="stylesheet" href="/static/css/flipclock-custom.css" />
@@ -71,20 +72,9 @@
               </div>
               <div class="col-md-7 col-lg-8">
                 {% if homeAnnouncement %}
-                  <div class="home-jumbo__announcement">
+                  <div class="home-jumbo__announcement expandable">
                     {{ postMacros.post(homeAnnouncement, user, { hideSpecialLabels: true }) }}
-                    <div class="home-jumbo__announcement-expand-bar">
-                      <span class="home-jumbo__announcement-expand">
-                        <span class="glyphicon glyphicon-arrow-down"></span> 
-                        Expand
-                        <span class="glyphicon glyphicon-arrow-down"></span> 
-                      </span>
-                      <span class="home-jumbo__announcement-collapse">
-                        <span class="glyphicon glyphicon-arrow-up"></span> 
-                        Collapse
-                        <span class="glyphicon glyphicon-arrow-up"></span> 
-                      </span>
-                    </div>
+                    {{ formMacros.expandCollapse({ manualScripting: true }) }}
                   </div>
                 {% endif %}
                 <div class="home-jumbo__footer">
@@ -124,7 +114,10 @@
       {% if posts.length > 0 %}
         <div class="horizontal-bar">Latest posts</div>
         {% for post in posts %}
-          {{ postMacros.post(post, user) }}
+          <div class="expandable">
+            {{ postMacros.post(post, user) }}
+            {{ formMacros.expandCollapse() }}
+          </div>
         {% endfor %}
         
         {{ postMacros.pagination(1, pageCount, '/posts') }}
@@ -156,12 +149,13 @@
 
 
 {% block scripts %}
+{{ formMacros.expandCollapseScripts() }}
 
 <script type="text/javascript">
-  // Announcement height limit and expand/collapse button
+  // Custom announcement height limit and expand/collapse button
   var maxAnnouncementHeight = Math.max(280, $('.home-jumbo__sidebar').height() - 50)
   $('.home-jumbo__announcement').attr('style', 'max-height: ' + maxAnnouncementHeight + 'px')
-  $('.home-jumbo__announcement-expand-bar').click(function () {
+  $('.home-jumbo__announcement .expand-bar').click(function () {
     $('.home-jumbo__announcement').toggleClass('expanded')
   })
 </script>

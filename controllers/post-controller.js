@@ -313,8 +313,19 @@ function validateSpecialPostType (specialPostType, user) {
 }
 
 async function deletePost (req, res) {
-  await res.locals.post.destroy()
-  cache.user(res.locals.user).del('latestPostsCollection')
+  let post = res.locals.post
+
+  if (res.locals.user && post && securityService.canUserManage(res.locals.user, post, { allowMods: true })) {
+    // Delete user roles manually (no cascading)
+    let post = res.locals.post
+    await post.load('userRoles')
+    post.related('userRoles').each(function (userRole) {
+      userRole.destroy()
+    })
+
+    await post.destroy()
+    cache.user(res.locals.user).del('latestPostsCollection')
+  }
   res.redirect('/')
 }
 
@@ -353,7 +364,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
     comment = await postService.createComment(currentUser, currentNode)
   }
 
-  if (securityService.canUserWrite(currentUser, comment, { allowMods: true })) {
+  if (securityService.canUserManage(currentUser, comment, { allowMods: true })) {
     let nodeType = comment.get('node_type')
     let userId = comment.get('user_id')
 

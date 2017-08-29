@@ -79,7 +79,7 @@ function canUser (user, model, permission, options = {}) {
       user_id: user.get('id')
     })
     for (let userRole of userRoles) {
-      if (acceptPermissions.indexOf(userRole.get('permission'))) {
+      if (acceptPermissions.includes(userRole.get('permission'))) {
         return true
       }
     }

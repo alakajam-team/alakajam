@@ -2,6 +2,14 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### August 27th
+
+* Team support: users can add other people to their games, granting access rights and listing those people as team members
+
+### August 24th
+
+* JSON API: new "latestEntry" endpoint
+
 ### August 18th
 
 * JSON API

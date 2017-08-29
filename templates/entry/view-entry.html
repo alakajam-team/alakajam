@@ -94,10 +94,11 @@
       {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
 
     </div>
+
     <div class="col-md-4">
       {% if entry.get('description') %}
       <h3>Description</h3>
-      <div class="well entry__description">
+      <div class="well entry__description user-contents">
         {{ entry.get('description') }}
       </div>
       {% endif %}
@@ -113,16 +114,23 @@
         {% if entry.get('links').length === 0 or not entry.get('links')[0].url %}
           <div class="well">No links yet.</div>
         {% endif %}
+        {% if canUserWrite(user, entry) %}
+        <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
+        {% endif %}
       </div>
 
       <h3 style="margin-top: 10px">Author{{ 's' if entry.related('userRoles').models.length > 1 }}</h3>
 
       <div class="row">
-        {% for userRole in entry.related('userRoles').models %}
+        {% for userRole in entry.sortedUserRoles() %}
           {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}
         {% endfor %}
       </div>
 
+      <div class="entry__score">
+        <span class="pull-right">{{ entry.get('class') | capitalize }}</span>
+        Entry type
+      </div>
       <div class="entry__score">
         <span class="pull-right">{{ entry.get('feedback_score') }}</span>
         Feedback Score

@@ -15,6 +15,7 @@ const DASHBOARD_PAGES = ['feed', 'posts', 'invite', 'settings', 'password']
 
 module.exports = {
   buildUrl,
+  buildApiUrl,
 
   min: Math.min,
   max: Math.max,
@@ -47,11 +48,13 @@ function buildUrl (model, type, page = null, options = {}) {
       }
     } else if (type === 'entry') {
       // Entry model
-      if (model && model.id) {
-        return '/' + model.get('event_name') + '/' + model.id + '/' + model.get('name') + pagePath
+      const array = ['', model.get('event_name')]
+      if (model.id) {
+        array.push(model.get('id'), model.get('name'), page)
       } else {
-        return '/' + model.get('event_name') + '/create-entry'
+        array.push(page || 'create-entry')
       }
+      return array.join('/')
     } else if (type === 'user') {
       // User Role model / User model
       if (DASHBOARD_PAGES.indexOf(page) !== -1) {
@@ -91,5 +94,14 @@ function buildUrl (model, type, page = null, options = {}) {
     }
   } catch (e) {
     throw new Error('Failed to build URL for model "' + model + '" of type "' + type + '": ' + e.message)
+  }
+}
+
+function buildApiUrl (id, options) {
+  switch (id) {
+    case 'userSearch':
+      return options && options.query ? `/search/user/?search=${options.query}` : '/search/user'
+    default:
+      throw new Error(`Failed to build API URL '${id}'`)
   }
 }

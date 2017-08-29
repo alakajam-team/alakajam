@@ -16,14 +16,19 @@ const securityService = require('../services/security-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
+const constants = require('../core/constants')
 
 module.exports = {
   entryMiddleware,
-  createEntry,
-  saveEntry,
+
   viewEntry,
+  createEntry,
   editEntry,
-  deleteEntry
+  saveEntry,
+  deleteEntry,
+  leaveEntry,
+
+  searchForTeamMate
 }
 
 /**
@@ -95,7 +100,8 @@ async function createEntry (req, res) {
         entry: new models.Entry({
           event_id: res.locals.event.get('id'),
           event_name: res.locals.event.get('name')
-        })
+        }),
+        members: _getMembers(null, res.locals.user)
       })
     }
   }
@@ -104,11 +110,13 @@ async function createEntry (req, res) {
 /**
  * Edit entry
  */
-function editEntry (req, res) {
+async function editEntry (req, res) {
   if (!res.locals.user || !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true })) {
     res.errorPage(403)
   } else {
-    res.render('entry/edit-entry')
+    res.render('entry/edit-entry', {
+      members: _getMembers(res.locals.entry)
+    })
   }
 }
 
@@ -117,11 +125,12 @@ function editEntry (req, res) {
  */
 async function saveEntry (req, res) {
   let {fields, files} = await req.parseForm()
+  let entry = res.locals.entry
 
   if (fields['action'] === 'comment') {
     // Handle comment form
     let redirectUrl = await postController.handleSaveComment(fields,
-      res.locals.user, res.locals.entry, templating.buildUrl(res.locals.entry, 'entry'))
+      res.locals.user, entry, templating.buildUrl(entry, 'entry'))
     res.redirect(redirectUrl)
   } else if (fields['action'] === 'vote') {
     // Handle vote on entry
@@ -172,26 +181,45 @@ async function saveEntry (req, res) {
     }
     if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
-    } else if (!res.locals.entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
+    } else if (!entry && !eventService.areSubmissionsAllowed(res.locals.event)) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
     } else if (['solo', 'team', 'unranked'].indexOf(fields['class']) === -1) {
       errorMessage = 'Invalid competition class'
+    } else if (typeof fields.members !== 'string') {
+      errorMessage = 'Invalid members'
+    }
+
+    // Make sure the entry owner is not removed
+    let teamMembers = fields.members.split(',').map(s => forms.sanitizeString(s))
+    let ownerName
+    if (entry) {
+      ownerName = entry.related('userRoles')
+        .findWhere({ permission: constants.PERMISSION_MANAGE })
+        .get('user_name')
+    } else {
+      ownerName = res.locals.user.get('name')
+    }
+    if (!teamMembers.includes(ownerName)) {
+      errorMessage = 'Can\'t remove owner from team entry'
     }
 
     // Entry update
     if (!errorMessage) {
-      if (!res.locals.entry) {
+      let isCreation
+      if (!entry) {
+        isCreation = true
         res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
+        entry = res.locals.entry
+      } else {
+        isCreation = false
       }
-      let entry = res.locals.entry
 
       let picturePath = '/entry/' + entry.get('id')
       entry.set({
         'title': forms.sanitizeString(fields.title),
         'description': forms.sanitizeString(fields.description),
-        'class': fields['class'],
         'links': links,
         'platforms': platforms
       })
@@ -207,6 +235,11 @@ async function saveEntry (req, res) {
       let entryDetails = entry.related('details')
       entryDetails.set('body', forms.sanitizeMarkdown(fields.body))
 
+      if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+        entry.set('class', fields['class'])
+        await eventService.setTeamMembers(entry, res.locals.event, teamMembers)
+      }
+
       if (entry.hasChanged('platforms')) {
         await eventService.refreshEntryPlatforms(entry)
       }
@@ -218,7 +251,7 @@ async function saveEntry (req, res) {
       await entry.related('userRoles').fetch()
       res.redirect(templating.buildUrl(entry, 'entry'))
     } else {
-      if (!res.locals.entry) {
+      if (!entry) {
         // Creation form
         res.locals.entry = new models.Entry({
           event_id: res.locals.event.get('id'),
@@ -227,14 +260,102 @@ async function saveEntry (req, res) {
       }
 
       res.render('entry/edit-entry', {
-        errorMessage
+        errorMessage,
+        members: _getMembers(res.locals.entry)
       })
     }
   }
 }
 
+function _getMembers (entry, user = null) {
+  if (entry) {
+    return entry.sortedUserRoles()
+      .map(role => ({
+        id: role.get('user_name'),
+        text: role.get('user_title'),
+        locked: role.get('permission') === constants.PERMISSION_MANAGE
+      }))
+  } else {
+    // New entry: only the current user is a member
+    return [{
+      id: user.get('name'),
+      text: user.get('title'),
+      locked: true
+    }]
+  }
+}
+
+/**
+ * Deletes an entry
+ */
 async function deleteEntry (req, res) {
-  await res.locals.entry.destroy()
-  cache.user(res.locals.user).del('latestEntries')
+  let entry = res.locals.entry
+  if (res.locals.user && entry && securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+    await eventService.deleteEntry(entry)
+    cache.user(res.locals.user).del('latestEntries')
+  }
+
   res.redirect(templating.buildUrl(res.locals.event, 'event'))
+}
+
+/**
+ * Leaves the team of an entry
+ */
+async function leaveEntry (req, res) {
+  let entry = res.locals.entry
+  let user = res.locals.user
+
+  if (user && entry) {
+    // Remove requesting user from the team
+    let newTeamMembers = []
+    entry.related('userRoles').each(function (userRole) {
+      if (userRole.get('user_id') !== user.get('id')) {
+        newTeamMembers.push(userRole.get('user_name'))
+      }
+    })
+    await eventService.setTeamMembers(entry, res.locals.event, newTeamMembers)
+
+    cache.user(user).del('latestEntries')
+  }
+
+  res.redirect(templating.buildUrl(res.locals.event, 'event'))
+}
+
+/**
+ * Search for team mates with usernames matching a string
+ * @param {string} req.query.name a string to search user names with.
+ */
+async function searchForTeamMate (req, res) {
+  if (!req.query || !req.query.name) {
+    res.errorPage(400, 'No search parameter')
+    return
+  }
+  const nameFragment = forms.sanitizeString(req.query.name)
+  if (!nameFragment || nameFragment.length < 3) {
+    res.errorPage(400, `Invalid name fragment: '${req.query.name}'`)
+    return
+  }
+
+  const matches = await eventService.searchForTeamMembers({
+    nameFragment,
+    eventId: res.locals.event.id
+  })
+
+  const entryId = res.locals.entry ? res.locals.entry.id : -1
+  const getStatus = (match) => {
+    switch (match.node_id) {
+      case null: return 'available'
+      case entryId: return 'member'
+      default: return 'unavailable'
+    }
+  }
+
+  const responseData = {
+    matches: matches.map(match => ({
+      id: match.name,
+      text: match.title,
+      status: getStatus(match)
+    }))
+  }
+  res.json(responseData)
 }

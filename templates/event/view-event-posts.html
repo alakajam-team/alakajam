@@ -8,7 +8,10 @@
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
       {% for post in posts.models %}
-        {{ postMacros.post(post, user) }}
+        <div class="expandable">
+          {{ postMacros.post(post, user) }}
+          {{ formMacros.expandCollapse() }}
+        </div>
       {% endfor %}
 
       {% if posts.models.length > 0 %}
@@ -22,4 +25,8 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+{{ formMacros.expandCollapseScripts() }}
 {% endblock %}
