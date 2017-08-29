@@ -186,3 +186,44 @@ $.fn.datetimepicker.dates['en'].today = 'Now'
   {% endfor %}
 </select>
 {% endmacro %}
+
+{# ======== EXPAND/COLLAPSE BAR ========= #}
+
+{# This bar must be added just after the block to expand, and have a common parent div with class="expandable".
+   - options.manualScripting: lets the user implement the JS (mostly used on the home page)
+   - options.maxHeight: customizes the maximum height before enabling the expand/collapse bar
+#}
+{% macro expandCollapse(options = {}) %}
+<div class="expand-bar" data-manual-scripting="{{ options.manualScripting or 'false' }}" data-max-height="{{ options.maxHeight or 600 }}">
+  <span class="expand">
+    <span class="glyphicon glyphicon-arrow-down"></span> 
+    Expand
+    <span class="glyphicon glyphicon-arrow-down"></span> 
+  </span>
+  <span class="collapse">
+    <span class="glyphicon glyphicon-arrow-up"></span> 
+    Collapse
+    <span class="glyphicon glyphicon-arrow-up"></span> 
+  </span>
+</div>
+{% endmacro %}
+
+{% macro expandCollapseScripts() %}
+<script type="text/javascript">
+$('.expand-bar').each(function () {
+  var $this = $(this)
+  if ($this.attr('data-manual-scripting') !== 'true') {
+    var maxHeight = parseInt($this.attr('data-max-height'))
+    var $parent = $this.parent()
+    if ($parent.height() > maxHeight) {
+      $parent.attr('style', 'max-height: ' + (maxHeight * 0.8) + 'px') // limit the size while preventing cropping just a single line
+      $this.click(function () {
+        $parent.toggleClass('expanded')
+      })
+    } else {
+      $this.remove()
+    }
+  }
+})
+</script>
+{% endmacro %}
