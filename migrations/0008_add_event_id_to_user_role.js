@@ -1,8 +1,9 @@
-const config = require('../config')
-
 /**
  * Add `event_id` field to `user_role` table.
  */
+
+const config = require('../config')
+
 exports.up = async function (knex, Promise) {
   await knex.schema.table('user_role', function (table) {
     table.integer('event_id').references('event.id')

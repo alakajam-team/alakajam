@@ -41,6 +41,11 @@ module.exports = {
  */
 function createEvent () {
   return new models.Event({
+    'status': 'pending',
+    'status_rules': 'disabled',
+    'status_theme': 'disabled',
+    'status_entry': 'off',
+    'status_results': 'disabled',
     'published_at': new Date() // TODO Let admins choose when to publish
   })
 }
@@ -120,10 +125,14 @@ async function createEntry (user, event) {
   }
 
   // TODO Better use of Bookshelf API
-  let entry = new models.Entry()
+  let entry = new models.Entry({
+    'event_id': event.get('id'),
+    'event_name': event.get('name'),
+    'name': '',
+    'title': '',
+    'comment_count': 0
+  })
   await entry.save() // otherwise the user role won't have a node_id
-  entry.set('event_id', eventId)
-  entry.set('event_name', event.get('name'))
   await entry.userRoles().create({
     user_id: user.get('id'),
     user_name: user.get('name'),

@@ -1,8 +1,11 @@
 /**
- * Entry platforms storage
+ * Entry platforms storage  + not-null constraints
+ *
+ * NOTE: Entry feedback scores will be lost until recomputed by commenting
  */
 
-// const config = require('../config')
+const log = require('../core/log')
+const config = require('../config')
 
 exports.up = async function (knex, Promise) {
   try {
@@ -11,12 +14,13 @@ exports.up = async function (knex, Promise) {
     })
 
     await knex.schema.table('entry', function (table) {
-      table.dropColumn('feedback_score') // XXX Scores will be lost until recomputed by commenting
+      table.dropColumn('feedback_score')
       table.dropColumn('category') // changing the column name to "class"
-      table.string('class').defaultTo('solo').index()
+      table.string('class').notNullable().defaultTo('solo').index()
     })
     await knex.schema.table('entry', function (table) {
-      table.decimal('feedback_score', 6, 3).defaultTo(100)
+      // different transaction than the column removal
+      table.decimal('feedback_score', 6, 3).notNullable().defaultTo(100)
     })
 
     await knex.schema.table('entry_details', function (table) {
@@ -38,9 +42,9 @@ exports.up = async function (knex, Promise) {
 
     await knex.schema.createTableIfNotExists('entry_vote', function (table) {
       table.increments('id').primary()
-      table.integer('entry_id').references('entry.id')
-      table.integer('event_id').references('event.id')
-      table.integer('user_id').references('user.id')
+      table.integer('entry_id').references('entry.id').notNullable()
+      table.integer('event_id').references('event.id').notNullable()
+      table.integer('user_id').references('user.id').notNullable()
       table.decimal('vote_1', 5, 2)
       table.decimal('vote_2', 5, 2)
       table.decimal('vote_3', 5, 2)
@@ -50,8 +54,30 @@ exports.up = async function (knex, Promise) {
       table.timestamps()
     })
 
+    if (config.DB_TYPE === 'postgresql') {
+      const notNullColumns = [
+        'user.name', 'user.email', 'user.password', 'user.password_salt',
+        'user_role.user_id', 'user_role.user_name', 'user_role.node_id', 'user_role.node_type', 'user_role.permission',
+        'event.name', 'event.title', 'event.status', 'event.status_theme', 'event.status_entry', 'event.status_results', 'event.status_rules',
+        'event_details.event_id',
+        'entry.event_id', 'entry.event_name', 'entry.name', 'entry.title', 'entry.comment_count',
+        'entry_details.entry_id',
+        'entry_platform.entry_id',
+        'theme.event_id', 'theme.user_id', 'theme.title', 'theme.slug', 'theme.score', 'theme.notes', 'theme.reports', 'theme.status',
+        'theme_vote.theme_id', 'theme_vote.event_id', 'theme_vote.user_id', 'theme_vote.score',
+        'post.author_user_id', 'post.name', 'post.title',
+        'comment.node_id', 'comment.node_type', 'comment.user_id', 'comment.feedback_score'
+      ]
+
+      for (let column of notNullColumns) {
+        let columnInfo = column.split('.')
+        await knex.raw('ALTER TABLE "' + columnInfo[0] + '" ALTER COLUMN ' + columnInfo[1] + ' SET NOT NULL')
+      }
+    }
+
     Promise.resolve()
   } catch (e) {
+    log.error(e.message)
     Promise.reject(e)
   }
 }

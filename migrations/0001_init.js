@@ -1,5 +1,8 @@
 /**
  * DB Initialization
+ *
+ * NOTE: "notNullable" constraints were only introduced with migration 0009
+ * and have been backported for better SQLite support.
  */
 
 exports.up = async function (knex, Promise) {
@@ -14,14 +17,14 @@ exports.up = async function (knex, Promise) {
 
     await knex.schema.createTableIfNotExists('user', function (table) {
       table.increments('id').primary()
-      table.string('name').unique()
+      table.string('name').unique().notNullable()
       table.string('title')
-      table.string('email')
+      table.string('email').notNullable()
       table.string('avatar')
       table.string('is_mod')
       table.string('is_admin')
-      table.string('password')
-      table.string('password_salt')
+      table.string('password').notNullable()
+      table.string('password_salt').notNullable()
       table.timestamps()
     })
 
@@ -34,12 +37,12 @@ exports.up = async function (knex, Promise) {
 
     await knex.schema.createTableIfNotExists('user_role', function (table) {
       table.increments('id').primary()
-      table.integer('user_id').references('user.id')
-      table.string('user_name')
+      table.integer('user_id').references('user.id').notNullable()
+      table.string('user_name').notNullable()
       table.string('user_title')
-      table.integer('node_id')
-      table.string('node_type')
-      table.string('permission') // allowed: owner
+      table.integer('node_id').notNullable()
+      table.string('node_type').notNullable()
+      table.string('permission').notNullable() // allowed: owner
       table.timestamps()
 
       table.index(['node_id', 'node_type'])
@@ -49,14 +52,14 @@ exports.up = async function (knex, Promise) {
 
     await knex.schema.createTableIfNotExists('event', function (table) {
       table.increments('id').primary()
-      table.string('name').unique()
-      table.string('title')
+      table.string('name').unique().notNullable()
+      table.string('title').notNullable()
       table.string('display_dates')
       table.string('display_theme')
-      table.string('status').index()
-      table.string('status_theme')
-      table.string('status_entry')
-      table.string('status_results')
+      table.string('status').index().notNullable()
+      table.string('status_theme').notNullable()
+      table.string('status_entry').notNullable()
+      table.string('status_results').notNullable()
       table.string('countdown_config') // JSON Object : {phrase, date}
       table.dateTime('published_at').index()
       table.timestamps()
@@ -64,22 +67,22 @@ exports.up = async function (knex, Promise) {
 
     await knex.schema.createTableIfNotExists('entry', function (table) {
       table.increments('id').primary()
-      table.integer('event_id').references('event.id')
-      table.string('event_name')
-      table.string('name')
-      table.string('title')
+      table.integer('event_id').references('event.id').notNullable()
+      table.string('event_name').notNullable()
+      table.string('name').notNullable()
+      table.string('title').notNullable()
       table.string('description', 2000)
       table.string('links') // JSON Array : [{url, title}]
       table.string('pictures') // JSON Array : [path]
       table.string('category') // "solo"/"team"
       table.dateTime('published_at')
-      table.integer('comment_count')
+      table.integer('comment_count').notNullable()
       table.timestamps()
     })
 
     await knex.schema.createTableIfNotExists('entry_details', function (table) {
       table.increments('id').primary()
-      table.integer('entry_id').references('entry.id').unique()
+      table.integer('entry_id').references('entry.id').unique().notNullable()
       table.string('body', 10000)
     })
 
@@ -87,9 +90,9 @@ exports.up = async function (knex, Promise) {
 
     await knex.schema.createTableIfNotExists('post', function (table) {
       table.increments('id').primary()
-      table.integer('author_user_id').references('user.id')
-      table.string('name')
-      table.string('title')
+      table.integer('author_user_id').references('user.id').notNullable()
+      table.string('name').notNullable()
+      table.string('title').notNullable()
       table.integer('entry_id').references('entry.id')
       table.integer('event_id').references('event.id')
       table.string('body', 10000)
@@ -101,9 +104,9 @@ exports.up = async function (knex, Promise) {
 
     await knex.schema.createTableIfNotExists('comment', function (table) {
       table.increments('id').primary()
-      table.integer('node_id')
-      table.string('node_type')
-      table.integer('user_id').references('user.id')
+      table.integer('node_id').notNullable()
+      table.string('node_type').notNullable()
+      table.integer('user_id').references('user.id').notNullable()
       table.integer('parent_id').references('comment.id')
       table.string('body', 10000)
       table.timestamps()

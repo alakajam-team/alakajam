@@ -1,34 +1,37 @@
 /**
  * Theme voting tables
+ *
+ * NOTE: "notNullable" constraints were only introduced with migration 0009
+ * and have been backported for better SQLite support.
  */
 
 exports.up = async function (knex, Promise) {
   try {
     await knex.schema.createTableIfNotExists('theme', function (table) {
       table.increments('id').primary()
-      table.integer('event_id').references('event.id')
-      table.integer('user_id').references('user.id')
-      table.string('title', 100)
-      table.string('slug', 100).index()
-      table.integer('score').defaultTo(0).index()
-      table.integer('notes').defaultTo(0).index()
-      table.integer('reports').defaultTo(0)
-      table.string('status').index()
+      table.integer('event_id').references('event.id').notNullable()
+      table.integer('user_id').references('user.id').notNullable()
+      table.string('title', 100).notNullable()
+      table.string('slug', 100).index().notNullable()
+      table.integer('score').defaultTo(0).index().notNullable()
+      table.integer('notes').defaultTo(0).index().notNullable()
+      table.integer('reports').defaultTo(0).notNullable()
+      table.string('status').index().notNullable()
       table.timestamps()
     })
 
     await knex.schema.createTableIfNotExists('theme_vote', function (table) {
       table.increments('id').primary()
-      table.integer('theme_id').references('theme.id')
-      table.integer('event_id').references('event.id')
-      table.integer('user_id').references('user.id')
-      table.integer('score')
+      table.integer('theme_id').references('theme.id').notNullable()
+      table.integer('event_id').references('event.id').notNullable()
+      table.integer('user_id').references('user.id').notNullable()
+      table.integer('score').notNullable()
       table.timestamps()
     })
 
     await knex.schema.createTableIfNotExists('event_details', function (table) {
       table.increments('id').primary()
-      table.integer('event_id').references('event.id').unique()
+      table.integer('event_id').references('event.id').unique().notNullable()
       table.integer('theme_count')
       table.integer('active_theme_count')
       table.integer('theme_vote_count')

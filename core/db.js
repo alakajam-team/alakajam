@@ -105,7 +105,6 @@ function createBookshelfInstance (knex) {
  * @returns {void}
  */
 async function insertInitialData (samples) {
-  const models = require('../core/models')
   const userService = require('../services/user-service')
   const eventService = require('../services/event-service')
   const eventThemeService = require('../services/event-theme-service')
@@ -162,7 +161,8 @@ async function insertInitialData (samples) {
 
     // 1st event
 
-    let event1 = new models.Event({
+    let event1 = eventService.createEvent()
+    event1.set({
       title: '1st Alakajam',
       name: '1st-alakajam',
       status: 'closed',
@@ -179,7 +179,8 @@ async function insertInitialData (samples) {
 
     // 2nd event
 
-    let event2 = new models.Event({
+    let event2 = eventService.createEvent()
+    event2.set({
       title: '2nd Alakajam',
       name: '2nd-alakajam',
       status: 'open',
@@ -281,7 +282,8 @@ async function insertInitialData (samples) {
 
     // Planned 3rd event
 
-    let event3 = new models.Event({
+    let event3 = eventService.createEvent()
+    event3.set({
       title: '3rd Alakajam',
       name: '3rd-alakajam',
       status: 'pending',

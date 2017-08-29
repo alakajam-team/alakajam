@@ -1,5 +1,8 @@
 /**
  * Event rules shortcut + Bigger links/pictures fields for entries
+ *
+ * NOTE: "notNullable" constraints were only introduced with migration 0009
+ * and have been backported for better SQLite support.
  */
 
 const config = require('../config')
@@ -7,7 +10,7 @@ const config = require('../config')
 exports.up = async function (knex, Promise) {
   try {
     await knex.schema.table('event', function (table) {
-      table.string('status_rules')
+      table.string('status_rules').notNullable()
     })
     if (config.DB_TYPE === 'postgres') {
       await knex.raw('alter table entry alter column links type varchar(1000)')

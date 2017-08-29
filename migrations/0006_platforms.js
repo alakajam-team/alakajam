@@ -1,5 +1,8 @@
 /**
  * Entry platforms storage
+ *
+ * NOTE: "notNullable" constraints were only introduced with migration 0009
+ * and have been backported for better SQLite support.
  */
 
 exports.up = async function (knex, Promise) {
@@ -9,7 +12,7 @@ exports.up = async function (knex, Promise) {
     })
     await knex.schema.createTableIfNotExists('entry_platform', function (table) {
       table.increments('id').primary()
-      table.integer('entry_id').references('entry.id')
+      table.integer('entry_id').references('entry.id').notNullable()
       table.string('platform', 50).index()
     })
     Promise.resolve()

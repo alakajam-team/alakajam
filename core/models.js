@@ -20,8 +20,8 @@ let modelPrototype = bookshelf.Model.prototype
  * |--    |--    |--
  * | string | key | Primary key
  * | string | value | Setting value (max size: 10000)
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Setting = bookshelf.model('Setting', {
   tableName: 'setting',
@@ -39,17 +39,17 @@ module.exports.Setting = bookshelf.model('Setting', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | string | name | User name (must be unique)
+ * | string | name | User name (must be unique, not null)
  * | string | title |
- * | string | email |
+ * | string | email | (not null)
  * | string | avatar |
  * | string | is_mod |
  * | string | is_admin |
- * | string | password |
- * | string | password_salt |
+ * | string | password | (not null)
+ * | string | password_salt | (not null)
  * | dateTime | notifications_last_read |
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.User = bookshelf.model('User', {
   tableName: 'user',
@@ -114,14 +114,14 @@ module.exports.UserDetails = bookshelf.model('UserDetails', {
  * | type | name | description
  * |--    |--    |--
  * | integer (increments) | id | Primary key
- * | integer | user_id | User ID
- * | string | user_name | Local copy of the user name
+ * | integer | user_id | User ID (not null)
+ * | string | user_name | Local copy of the user name (not null)
  * | string | user_title | Local copy of the user title
- * | integer | node_id | ID of the target node
- * | string | node_type | Type of the target node ('entry' or 'post')
- * | string | permission | Permission: 'read', 'write', 'manage'
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | node_id | ID of the target node (not null)
+ * | string | node_type | Type of the target node ('entry' or 'post', not null)
+ * | string | permission | Permission: 'read', 'write', 'manage' (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.UserRole = bookshelf.model('UserRole', {
   tableName: 'user_role',
@@ -146,19 +146,19 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | type | name | description
  * |--    |--    |--
  * | integer | id | ID
- * | string | name | Name (used in the URL). Must have a hyphen to prevent clashing other root URLs.
- * | string | title | Title
+ * | string | name | Name (used in the URL, not null). Must have a hyphen to prevent clashing other root URLs.
+ * | string | title | Title (not null)
  * | string | display_dates | The event dates, for display only
  * | string | display_theme | The event theme, for display only
- * | string | status | General status: 'pending', 'open' or 'closed'
- * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID
- * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'results', or a post ID
- * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed'
- * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID
+ * | string | status | General status: 'pending', 'open' or 'closed' (not null)
+ * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID (not null)
+ * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'results', or a post ID (not null)
+ * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
+ * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | date | published_at | Publication date. If empty, the event is a draft.
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Event = bookshelf.model('Event', {
   tableName: 'event',
@@ -204,13 +204,13 @@ module.exports.Event = bookshelf.model('Event', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | event_id | Event ID
+ * | integer | event_id | Event ID (not null)
  * | integer | category_titles | Category names (JSON: [name])
  * | integer | theme_count | Number of theme ideas submitted
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.EventDetails = bookshelf.model('EventDetails', {
   tableName: 'event_details',
@@ -245,20 +245,20 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | event_id | Event ID
- * | string | event_name | Name (used in the URL)
- * | string | name |
- * | string | title |
+ * | integer | event_id | Event ID (not null)
+ * | string | event_name | Name (used in the URL, not null)
+ * | string | name | (not null)
+ * | string | title | (not null)
  * | string | description | (max size: 2000)
  * | string | links | JSON Array : [{url, title}]
  * | string | platforms | JSON Array : [platform]
  * | string | pictures | JSON Array : [path]
- * | string | class | "solo"/"team"/"ranked"
- * | decimal | feedback_score | ([-999.999;999.999], defaults to 100)
+ * | string | class | "solo"/"team"/"ranked" (not null)
+ * | decimal | feedback_score | ([-999.999;999.999], defaults to 100, not null)
  * | dateTime | published_at |
- * | integer | comment_count |
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | comment_count | (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Entry = bookshelf.model('Entry', {
   tableName: 'entry',
@@ -323,13 +323,13 @@ module.exports.Entry = bookshelf.model('Entry', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | entry_id | Entry ID
+ * | integer | entry_id | Entry ID (not null)
  * | string | body | Detailed description (max size: 10000)
  * | string | optouts | Opted-out categories (JSON: [ids])
  * | decimal | rating_1 .. 4 | Rating for categories 1 to 4 ([-99.999,99.999])
  * | integer | ranking_1 .. 4 | Ranking for categories 1 to 4 (max: 100000)
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.EntryDetails = bookshelf.model('EntryDetails', {
   tableName: 'entry_details',
@@ -347,7 +347,7 @@ module.exports.EntryDetails = bookshelf.model('EntryDetails', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | entry_id | Entry ID
+ * | integer | entry_id | Entry ID (not null)
  * | string | platform | Platform (max size: 50)
  */
 module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
@@ -382,12 +382,12 @@ module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | entry_id | Entry ID
- * | integer | event_id | Event ID
- * | integer | user_id | User ID
+ * | integer | entry_id | Entry ID (not null)
+ * | integer | event_id | Event ID (not null)
+ * | integer | user_id | User ID (not null)
  * | integer | vote_1 .. 4 | Vote for categories 1 to 4 ([-999.99,999.99])
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.EntryVote = bookshelf.model('EntryVote', {
   tableName: 'entry_vote',
@@ -415,15 +415,16 @@ module.exports.EntryVote = bookshelf.model('EntryVote', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | event_id | Event ID
- * | integer | user_id | User ID
- * | string | title | (max size: 100)
- * | integer | score |
- * | integer | notes |
- * | integer | reports |
- * | string | status | 'active', 'out', 'banned', 'shortlist'
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | event_id | Event ID (not null)
+ * | integer | user_id | User ID (not null)
+ * | string | title | (max size: 100, not null)
+ * | string | slug | Used for detecting duplicate themes (not null)
+ * | integer | score | (defaults to 0, not null)
+ * | integer | notes | (defaults to 0, not null)
+ * | integer | reports | (defaults to 0, not null)
+ * | string | status | 'active', 'out', 'banned', 'shortlist' (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Theme = bookshelf.model('Theme', {
   tableName: 'theme',
@@ -453,12 +454,12 @@ module.exports.Theme = bookshelf.model('Theme', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | theme_id | Theme ID
- * | integer | event_id | Event ID
- * | integer | user_id | User ID
- * | integer | score |
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | theme_id | Theme ID (not null)
+ * | integer | event_id | Event ID (not null)
+ * | integer | user_id | User ID (not null)
+ * | integer | score | (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.ThemeVote = bookshelf.model('ThemeVote', {
   tableName: 'theme_vote',
@@ -489,17 +490,17 @@ module.exports.ThemeVote = bookshelf.model('ThemeVote', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | author_user_id | Author user ID
- * | string | name | Name (used in the URL)
- * | string | title | Title
+ * | integer | author_user_id | Author user ID (not null)
+ * | string | name | Name (used in the URL, not null)
+ * | string | title | Title (not null)
  * | integer | entry_id | Entry ID
  * | integer | event_id | Event ID
  * | string | body | Post body (max size: 10000)
  * | string | special_post_type | 'article', 'announcement' or empty
  * | integer | comment_count | Number of comments made on this post
  * | dateTime | published_at | Publication time
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Post = bookshelf.model('Post', {
   tableName: 'post',
@@ -544,14 +545,14 @@ module.exports.Post = bookshelf.model('Post', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | node_id | ID of the target node
- * | string | node_type | Type of the target node ('entry' or 'post')
- * | integer | user_id | Author user ID
+ * | integer | node_id | ID of the target node (not null)
+ * | string | node_type | Type of the target node ('entry' or 'post', not null)
+ * | integer | user_id | Author user ID (not null)
  * | integer | parent_id | Parent comment ID
  * | string | body | Comment body (max size: 10000)
- * | integer | feedback_score | Feedback score gained through this comment (between 1 & 3)
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | feedback_score | Feedback score gained through this comment (between 1 & 3, not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Comment = bookshelf.model('Comment', {
   tableName: 'comment',

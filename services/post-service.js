@@ -222,7 +222,11 @@ async function findCommentsToUser (user, options = {}) {
 async function createPost (user, eventId) {
   // TODO Better use of Bookshelf API
   let post = new models.Post()
-  post.set('author_user_id', user.get('id'))
+  post.set({
+    'author_user_id': user.get('id'),
+    'name': '',
+    'title': ''
+  })
   await post.save() // otherwise the user role won't have a node_id
   await post.userRoles().create({
     user_id: user.get('id'),
