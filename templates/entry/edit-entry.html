@@ -6,20 +6,20 @@
 <link rel="stylesheet" href="/static/css/select2.min.css" />
 <link rel="stylesheet" href="/static/css/select2-bootstrap.min.css" />
 <style type="text/css">
-form .select2.select2-container {
+#edit-team .select2.select2-container {
   width: 200px;
 }
-.select2-selection__choice.owner .select2-selection__choice__remove {
+#edit-team .select2-selection__choice.owner .select2-selection__choice__remove {
   display: none;
 }
-.select2-search-choice-close {
+#edit-team .select2-search-choice-close {
   left: 6px !important;
   top: 14px;
 }
-.select2-search-choice {
+#edit-team .select2-search-choice {
   padding-bottom: 2px !important;
 }
-.select2-result {
+.edit-team-dropdown .select2-result {
   height: 42px;
 }
 
@@ -417,7 +417,8 @@ $(function() {(function(members, url) {
     allowClear: false,
     minimumInputLength: 3,
     formatResult: format,
-    formatSelection: format
+    formatSelection: format,
+    dropdownCssClass: 'edit-team-dropdown'
   })
   .select2('val', members)
   .select2('readonly', eSelect.attr('readonly'))
@@ -428,39 +429,48 @@ $(function() {(function(members, url) {
 
 // External event name auto-completion
 
-$('#external-event').select2({
-  ajax: {
-    url: '/events/ajax-find-external-event',
-    dataType: 'json',
-    delay: 500,
-    data: function (term) {
-      return {
-        name: term
-      }
+var $externalEventInput = $('#external-event')
+
+if ($externalEventInput.length > 0) {
+  $externalEventInput.select2({
+    ajax: {
+      url: '/events/ajax-find-external-event',
+      dataType: 'json',
+      delay: 500,
+      data: function (term) {
+        return {
+          name: term
+        }
+      },
+      results: function (data, params) {
+        var results = []
+        data.forEach(function (string) {
+          results.push({ id: string, text: string })
+        })
+        return {
+          results: results
+        }
+      },
+      cache: true
     },
-    results: function (data, params) {
-      let results = []
-      data.forEach(function (string) {
-        results.push({ id: string, text: string })
+    minimumInputLength: 3,
+    maximumInputLength: 255,
+    allowClear: true,
+    placeholder: 'Select an event name',
+    createSearchChoice: function(term, data) {
+      // allow manually entered text in drop down
+      var matchingResults = $(data).filter(function() {
+        return this.text.toLowerCase().localeCompare(term.trim().toLowerCase()) === 0;
       })
-      return {
-        results: results
+      if (matchingResults.length===0) {
+        return { id: term, text: term };
       }
     },
-    cache: true
-  },
-  minimumInputLength: 3,
-  maximumInputLength: 255,
-  createSearchChoice: function(term, data) {
-    // allow manually entered text in drop down
-    let matchingResults = $(data).filter(function() {
-      return this.text.toLowerCase().localeCompare(term.trim().toLowerCase()) === 0;
-    })
-    if (matchingResults.length===0) {
-      return { id: term, text: term };
-    }
-  }
-})
+    initSelection: function(elem, cb) {
+      cb({id: elem.val(), text: elem.val()})
+    },
+  })
+}
 
 </script>
 {% endblock %}
