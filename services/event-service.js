@@ -168,29 +168,39 @@ async function createEntry (user, event) {
  */
 /**
  * Search for potential team members by name.
- * @param {Object} options
- * @param {string} options.nameFragment the name search string.
- * @param {number} options.eventId the event ID.
+ * @param {string} nameFragment the name search string.
+ * @param {number} eventId the event ID (optional, null if an external event).
+ * @param {Entry} entry the entry model (optional, null if we're in a creation).
  * @returns {TeamMemberSearchResult[]}
  */
-function searchForTeamMembers (nameFragment, eventId) {
+function searchForTeamMembers (nameFragment, eventId, entry) {
   // As SQL:
-  // SELECT "user".name, "user".title, entered.event_id
+  // SELECT "user".name, "user".title, entered.node_id
   // FROM "user"
   // LEFT JOIN (
   //   SELECT user_id, event_id, node_type FROM user_role
   //   WHERE node_type = 'entry' AND event_id = ${eventId}
   // ) entered
   // ON "user".id = entered.user_id;
+
+  let alreadyEnteredWhereClause = {
+    node_type: 'entry'
+  }
+  if (eventId) {
+    // general case: detect people who entered in the same event
+    alreadyEnteredWhereClause.event_id = eventId
+  } else {
+    // external entries: detect people in the same entry
+    // (or everyone if the entry is not created yet)
+    alreadyEnteredWhereClause.node_id = entry ? entry.get('id') : -1
+  }
+
   const alreadyEntered = db.knex('user_role')
-    .select('user_id', 'event_id', 'node_type', 'node_id')
-    .where({  // entered in this event...
-      node_type: 'entry',
-      event_id: eventId
-    })
+    .select('user_id', 'event_id', 'node_id')
+    .where(alreadyEnteredWhereClause)
 
   return db.knex
-    .select('user.name', 'user.title', 'entered.event_id', 'entered.node_id')
+    .select('user.name', 'user.title', 'entered.node_id')
     .from('user')
     .leftJoin(alreadyEntered.as('entered'), 'user.id', '=', 'entered.user_id')
     .where('name', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${nameFragment}%`)

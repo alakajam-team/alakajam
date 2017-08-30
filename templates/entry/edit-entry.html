@@ -388,7 +388,8 @@ $(function() {(function(members, url) {
       delay: 300,
       data: function(term) {
         return {
-          name: term
+          name: term,
+          entryId: {{ entry.get('id') or '' }}
         }
       },
       processResults: function (data, params) {

@@ -354,34 +354,44 @@ async function leaveEntry (req, res) {
  * @param {string} req.query.name a string to search user names with.
  */
 async function searchForTeamMate (req, res) {
+  let errorMessage
   if (!req.query || !req.query.name) {
-    res.errorPage(400, 'No search parameter')
-    return
+    errorMessage = 'No search parameter'
   }
   const nameFragment = forms.sanitizeString(req.query.name)
   if (!nameFragment || nameFragment.length < 3) {
-    res.errorPage(400, `Invalid name fragment: '${req.query.name}'`)
-    return
+    errorMessage = `Invalid name fragment: '${req.query.name}'`
+  } else if (req.query.entryId && !forms.isId(req.query.entryId)) {
+    errorMessage = 'Invalid entry ID'
   }
 
-  const matches = await eventService.searchForTeamMembers(nameFragment,
-    res.locals.event ? res.locals.event.id : null)
-
-  const entryId = res.locals.entry ? res.locals.entry.id : -1
-  const getStatus = (match) => {
-    switch (match.node_id) {
-      case null: return 'available'
-      case entryId: return 'member'
-      default: return 'unavailable'
+  if (!errorMessage) {
+    let entry = null
+    if (req.query.entryId) {
+      entry = await eventService.findEntryById(req.query.entryId)
     }
-  }
 
-  const responseData = {
-    matches: matches.map(match => ({
-      id: match.name,
-      text: match.title,
-      status: getStatus(match)
-    }))
+    const matches = await eventService.searchForTeamMembers(nameFragment,
+      res.locals.event ? res.locals.event.id : null, entry)
+
+    const entryId = entry ? entry.get('id') : -1
+    const getStatus = (match) => {
+      switch (match.node_id) {
+        case null: return 'available'
+        case entryId: return 'member'
+        default: return 'unavailable'
+      }
+    }
+
+    const responseData = {
+      matches: matches.map(match => ({
+        id: match.name,
+        text: match.title,
+        status: getStatus(match)
+      }))
+    }
+    res.json(responseData)
+  } else {
+    res.json(400, { error: errorMessage })
   }
-  res.json(responseData)
 }
