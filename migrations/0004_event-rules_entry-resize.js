@@ -12,7 +12,7 @@ exports.up = async function (knex, Promise) {
     await knex.schema.table('event', function (table) {
       table.string('status_rules').notNullable()
     })
-    if (config.DB_TYPE === 'postgres') {
+    if (config.DB_TYPE === 'postgresql') {
       await knex.raw('alter table entry alter column links type varchar(1000)')
       await knex.raw('alter table entry alter column pictures type varchar(1000)')
     }
@@ -27,7 +27,7 @@ exports.down = async function (knex, Promise) {
     await knex.schema.table('event', function (table) {
       table.dropColumn('status_rules')
     })
-    if (config.DB_TYPE === 'postgres') {
+    if (config.DB_TYPE === 'postgresql') {
       await knex.raw('alter table entry alter column links type varchar(255)')
       await knex.raw('alter table entry alter column pictures type varchar(255)')
     }

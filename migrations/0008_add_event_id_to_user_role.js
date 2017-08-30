@@ -14,7 +14,7 @@ exports.up = async function (knex, Promise) {
 
   // It gets a bit complicated at this point, and SQLite lacks the syntax to
   // simplify (with or without knex).
-  if (config.DB_TYPE !== 'postgres') {
+  if (config.DB_TYPE !== 'postgresql') {
     return
   }
 
