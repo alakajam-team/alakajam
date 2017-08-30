@@ -62,9 +62,9 @@ async function configure (app) {
   let bruteforce = new ExpressBrute(store, {
     freeRetries: 5,
     minWait: 100, // ms
-    lifetime: 1, // seconds
+    lifetime: 0.5, // seconds
     failCallback: function (req, res, next, nextValidRequestDate) {
-      res.end('ERROR: Too many requests. Fair use is 1req/s.')
+      res.end('ERROR: Too many requests. Fair use is 2req/s.')
     }
   })
   app.use(bruteforce.prevent)

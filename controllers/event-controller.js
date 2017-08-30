@@ -307,7 +307,7 @@ async function editEvent (req, res) {
     }
     if (!errorMessage) {
       try {
-        fields['category-titles'] = JSON.parse(fields['category-titles'])
+        fields['category-titles'] = JSON.parse(fields['category-titles'] || '[]')
         if (fields['category-titles'].length > constants.MAX_CATEGORY_COUNT) {
           errorMessage = 'Events cannot have more than ' + constants.MAX_CATEGORY_COUNT + ' rating categories'
         }

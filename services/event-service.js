@@ -24,6 +24,7 @@ module.exports = {
   createEntry,
   searchForTeamMembers,
   setTeamMembers,
+  searchForExternalEvents,
   deleteEntry,
 
   findLatestEntries,
@@ -125,7 +126,7 @@ async function findEventByStatus (status) {
  */
 async function createEntry (user, event) {
   let entry = new models.Entry({
-    'name': '',
+    'name': 'untitled',
     'title': '',
     'comment_count': 0
   })
@@ -300,6 +301,24 @@ function setTeamMembers (entry, event, names) {
   })
 }
 
+/**
+ * Searches for any external event name already submitted
+ * @param  {string} nameFragment
+ * @return {array(string)} external event names
+ */
+async function searchForExternalEvents (nameFragment) {
+  let results = await db.knex('entry')
+    .distinct()
+    .select('external_event')
+    .where('external_event', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${nameFragment}%`)
+
+  let formattedResults = []
+  for (let result of results) {
+    formattedResults.push(result.external_event)
+  }
+  return formattedResults
+}
+
 async function deleteEntry (entry) {
   // Unlink posts (not in transaction to prevent foreign key errors)
   let posts = await postService.findPosts({ entryId: entry.get('id') })
@@ -352,7 +371,7 @@ async function findEntryById (id) {
  * @return {array(Entry)|null}
  */
 async function findUserEntries (user) {
-  return models.Entry.query((qb) => {
+  let entriesCollection = await models.Entry.query((qb) => {
     qb.distinct()
       .innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .where({
@@ -360,6 +379,26 @@ async function findUserEntries (user) {
         'user_role.node_type': 'entry'
       })
   }).fetchAll({ withRelated: ['userRoles', 'event'] })
+
+  entriesCollection.models.sort(function (a, b) {
+    // Sort by most recent event first, then external entries sorted by event name
+    // TODO Sort by publication date
+    if (a.get('event_id')) {
+      if (b.get('event_id')) {
+        return a.get('created_at') - b.get('created_at')
+      } else {
+        return -1
+      }
+    } else {
+      if (b.get('event_id')) {
+        return 1
+      } else {
+        return (b.get('external_event') || '').localeCompare(a.get('external_event'))
+      }
+    }
+  })
+
+  return entriesCollection
 }
 
 /**

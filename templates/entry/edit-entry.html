@@ -91,7 +91,7 @@ form .select2.select2-container {
         {% if external %}
         <div class="form-group">
           <label for="title">External event name</label>
-          <input type="text" class="form-control" name="external-event" value="{{ entry.get('external_event') }}" />
+          <input id="external-event" type="text" class="form-control" name="external-event" value="{{ entry.get('external_event') }}" />
         </div>
         {% endif %}
 
@@ -385,11 +385,11 @@ $(function() {(function(members, url) {
     ajax: {
       url: url,
       dataType: 'json',
-      delay: 300,
-      data: function(term) {
+      delay: 500,
+      data: function (term) {
         return {
           name: term,
-          entryId: {{ entry.get('id') or '' }}
+          entryId: {{ entry.get('id') or "''" | safe }}
         }
       },
       processResults: function (data, params) {
@@ -423,8 +423,44 @@ $(function() {(function(members, url) {
   .select2('readonly', eSelect.attr('readonly'))
 })(
   {{ members | dump | safe }},
-  "{{ buildUrl(event, 'event', 'find-team-mate') }}"
+  "{{ buildUrl(event, 'event', 'ajax-find-team-mate') }}"
 ) })
+
+// External event name auto-completion
+
+$('#external-event').select2({
+  ajax: {
+    url: '/events/ajax-find-external-event',
+    dataType: 'json',
+    delay: 500,
+    data: function (term) {
+      return {
+        name: term
+      }
+    },
+    results: function (data, params) {
+      let results = []
+      data.forEach(function (string) {
+        results.push({ id: string, text: string })
+      })
+      return {
+        results: results
+      }
+    },
+    cache: true
+  },
+  minimumInputLength: 3,
+  maximumInputLength: 255,
+  createSearchChoice: function(term, data) {
+    // allow manually entered text in drop down
+    let matchingResults = $(data).filter(function() {
+      return this.text.toLowerCase().localeCompare(term.trim().toLowerCase()) === 0;
+    })
+    if (matchingResults.length===0) {
+      return { id: term, text: term };
+    }
+  }
+})
 
 </script>
 {% endblock %}

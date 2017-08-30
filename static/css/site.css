@@ -1118,12 +1118,15 @@ input.date-picker {
     @apply --shadow;
     margin-bottom: 20px;
     text-align: center;
-    background-color: var(--main-dark);
-    border-radius: 4px;
+    background-color: var(--text);
+
+    &.empty {
+      background-color: var(--main-dark);
+    }
 
     & img {
       max-width: 100%;
-      max-height: 400px;
+      max-height: 500px;
     }
   }
 

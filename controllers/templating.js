@@ -43,8 +43,8 @@ function buildUrl (model, type, page = null, options = {}) {
           pagePath = ''
         }
         return '/' + model.get('name') + pagePath
-      } else if (page === 'find-team-mate') {
-        return '/external-entry/find-team-mate'
+      } else if (page === 'ajax-find-team-mate') {
+        return '/external-entry/ajax-find-team-mate'
       } else {
         return '/create-event'
       }

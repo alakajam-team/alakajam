@@ -28,7 +28,8 @@ module.exports = {
   deleteEntry,
   leaveEntry,
 
-  searchForTeamMate
+  searchForTeamMate,
+  searchForExternalEvents
 }
 
 /**
@@ -214,7 +215,7 @@ async function saveEntry (req, res) {
       ownerName = res.locals.user.get('name')
     }
     if (!teamMembers.includes(ownerName)) {
-      errorMessage = 'Can\'t remove owner from team entry'
+      teamMembers.push(ownerName)
     }
 
     // Entry update
@@ -319,7 +320,11 @@ async function deleteEntry (req, res) {
     cache.user(res.locals.user).del('latestEntry')
   }
 
-  res.redirect(templating.buildUrl(res.locals.event, 'event'))
+  if (res.locals.event) {
+    res.redirect(templating.buildUrl(res.locals.event, 'event'))
+  } else {
+    res.redirect(templating.buildUrl(res.locals.user, 'user', 'entries'))
+  }
 }
 
 /**
@@ -391,6 +396,28 @@ async function searchForTeamMate (req, res) {
       }))
     }
     res.json(responseData)
+  } else {
+    res.json(400, { error: errorMessage })
+  }
+}
+
+/**
+ * AJAX endpoint : Finds external event names
+ */
+async function searchForExternalEvents (req, res) {
+  let errorMessage
+
+  if (!req.query || !req.query.name) {
+    errorMessage = 'No search parameter'
+  }
+  const nameFragment = forms.sanitizeString(req.query.name)
+  if (!nameFragment || nameFragment.length < 3) {
+    errorMessage = `Invalid name fragment: '${req.query.name}'`
+  }
+
+  if (!errorMessage) {
+    let results = await eventService.searchForExternalEvents(nameFragment)
+    res.json(results)
   } else {
     res.json(400, { error: errorMessage })
   }

@@ -58,7 +58,6 @@ module.exports = {
     router.all('/dashboard/settings', userController.dashboardSettings)
     router.all('/dashboard/password', userController.dashboardPassword)
     router.get('/user/:name', userController.viewUserProfile)
-    router.get('/search/user', userController.searchUsers)
 
     // Mod dashboard
 
@@ -72,9 +71,10 @@ module.exports = {
 
     // Entries & Events
 
+    router.get('/events/ajax-find-external-event', entryController.searchForExternalEvents)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.createEntry)
     router.post('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.saveEntry)
-    router.get('/:eventName([^/]{0,}-[^/]{0,})/find-team-mate', entryController.searchForTeamMate)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/ajax-find-team-mate', entryController.searchForTeamMate)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?', entryController.viewEntry)
     router.post('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?', entryController.saveEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit', entryController.editEntry)
