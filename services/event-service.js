@@ -316,6 +316,9 @@ async function searchForExternalEvents (nameFragment) {
   for (let result of results) {
     formattedResults.push(result.external_event)
   }
+  formattedResults.sort(function (a, b) {
+    return a.localeCompare(b)
+  })
   return formattedResults
 }
 
