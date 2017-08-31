@@ -13,6 +13,10 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
+      {% if infoMessage %}
+        <div class="alert alert-info">{{ infoMessage }}</div>
+      {% endif %}
+      
       <h1>
         {{ entry.get('title') }} 
         {% if canUserWrite(user, entry) %}
@@ -136,8 +140,8 @@
 
       {% if not external %}
       <div class="entry__score">
-        <span class="pull-right">{{ entry.get('class') | capitalize }}</span>
-        Entry type
+        <span class="pull-right">{{ entry.get('division') | capitalize }}</span>
+        Division
       </div>
       <div class="entry__score">
         <span class="pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>

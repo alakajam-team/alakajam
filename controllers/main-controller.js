@@ -17,7 +17,7 @@ const sessionService = require('../services/session-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
-const cache = require('../core/cache')
+const notificationService = require('../services/notification-service')
 
 module.exports = {
   anyPageMiddleware,
@@ -66,13 +66,7 @@ async function anyPageMiddleware (req, res, next) {
 
   // Update unread notifications, from cache if possible
   if (res.locals.user && res.locals.path !== '/dashboard/feed') {
-    let userCache = cache.user(res.locals.user)
-    res.locals.unreadNotifications = userCache.get('unreadNotifications')
-    if (!res.locals.unreadNotifications) {
-      let commentsCollection = await postService.findCommentsToUser(res.locals.user, { notificationsLastRead: true })
-      res.locals.unreadNotifications = commentsCollection.length
-      userCache.set('unreadNotifications', res.locals.unreadNotifications)
-    }
+    res.locals.unreadNotifications = await notificationService.countUnreadNotifications(res.locals.user)
   }
 
   next()

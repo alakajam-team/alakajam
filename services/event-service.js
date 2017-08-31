@@ -10,7 +10,9 @@ const config = require('../config')
 const db = require('../core/db')
 const models = require('../core/models')
 const constants = require('../core/constants')
+const cache = require('../core/cache')
 const postService = require('./post-service')
+const securityService = require('./security-service')
 
 module.exports = {
   createEvent,
@@ -23,7 +25,10 @@ module.exports = {
 
   createEntry,
   searchForTeamMembers,
+  findTeamMembers,
   setTeamMembers,
+  acceptInvite,
+  deleteInvite,
   searchForExternalEvents,
   deleteEntry,
 
@@ -32,6 +37,7 @@ module.exports = {
   findLatestUserEntry,
   findUserEntries,
   findUserEntryForEvent,
+  findEntryInvitesForUser,
 
   refreshEntryPlatforms,
   refreshEntryScore,
@@ -96,7 +102,7 @@ async function findEventByName (name) {
  * @returns {array(Event)}
  */
 async function findEvents (options = {}) {
-  let query = await new models.Event()
+  let query = await models.Event()
   query.orderBy('published_at', options.sortDatesAscending ? 'ASC' : 'DESC')
   if (options.status) query = query.where('status', options.status)
   if (options.name) query = query.where('name', options.name)
@@ -162,7 +168,7 @@ async function createEntry (user, event) {
 
 /**
  * @typedef TeamMemberSearchResult
- * @prop {string} name the user's name.
+ * @prop {number} id user's id.
  * @prop {string} title the user's title.
  * @prop {number|null} node_id the entry ID if entered; otherwise `null`.
  * @prop {number|null} event_id the event ID if entered; otherwise `null`.
@@ -201,15 +207,46 @@ function searchForTeamMembers (nameFragment, eventId, entry) {
     .where(alreadyEnteredWhereClause)
 
   return db.knex
-    .select('user.name', 'user.title', 'entered.node_id')
+    .select('user.id', 'user.title', 'entered.node_id')
     .from('user')
     .leftJoin(alreadyEntered.as('entered'), 'user.id', '=', 'entered.user_id')
     .where('name', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${nameFragment}%`)
 }
 
+async function findTeamMembers (entry, user = null) {
+  if (entry && entry.get('id')) {
+    let members = entry.sortedUserRoles()
+      .map(role => ({
+        id: role.get('user_id'),
+        text: role.get('user_title') || role.get('user_name'),
+        locked: role.get('permission') === constants.PERMISSION_MANAGE,
+        invite: false
+      }))
+
+    await entry.load('invites')
+    entry.related('invites').each(invite => {
+      members.push({
+        id: invite.get('invited_user_id'),
+        text: invite.get('invited_user_title'),
+        locked: false,
+        invite: true
+      })
+    })
+    return members
+  } else {
+    // New entry: only the current user is a member
+    return [{
+      id: user.get('id'),
+      text: user.get('title'),
+      locked: true,
+      invite: false
+    }]
+  }
+}
+
 /**
  * @typedef UserEntryData
- * @prop {string} user_name the user's username.
+ * @prop {string} user_id the user ID.
  * @prop {string} user_title the user's title.
  * @prop {number} node_id the ID of the user's entry.
  */
@@ -221,12 +258,12 @@ function searchForTeamMembers (nameFragment, eventId, entry) {
  */
 /**
  * Sets the team members of an entry.
+ * @param {Bookshelf.Model} currentUser the current user model.
  * @param {Bookshelf.Model} entry the entry model.
- * @param {Bookshelf.Model} event the event model.
- * @param {string[]} names the member user names.
+ * @param {string[]} userIds the desired member user IDs.
  * @returns {Promise<SetTeamMembersResult>} the result of this operation.
  */
-function setTeamMembers (entry, event, names) {
+function setTeamMembers (currentUser, entry, userIds) {
   return db.transaction(async function (transaction) {
     let numRemoved = 0
     let numAdded = 0
@@ -242,23 +279,29 @@ function setTeamMembers (entry, event, names) {
         })
         .del()
     } else {
-      // Remove users not in names list.
+      // Remove users not in team list.
       numRemoved = await transaction('user_role')
-        .whereNotIn('user_name', names)
+        .whereNotIn('user_id', userIds)
         .andWhere({
           node_type: 'entry',
           node_id: entry.id
         })
         .del()
 
-      // List users from `names` who entered the event in this or another team.
+      // Remove invites not in team list
+      numRemoved += await transaction('entry_invite')
+        .whereNotIn('invited_user_id', userIds)
+        .andWhere('entry_id', entry.id)
+        .del()
+
+      // List users who entered the event in this or another team, or already have an invite.
       let existingRolesQuery = transaction('user_role')
-          .select('user_name', 'user_title', 'node_id')
-          .whereIn('user_name', names)
-      if (event) {
+          .select('user_id', 'user_title', 'node_id')
+          .whereIn('user_id', userIds)
+      if (entry.get('event_id')) {
         alreadyEntered = await existingRolesQuery.andWhere({
           node_type: 'entry',
-          event_id: event.id
+          event_id: entry.get('event_id')
         })
       } else {
         alreadyEntered = await existingRolesQuery.andWhere({
@@ -266,30 +309,44 @@ function setTeamMembers (entry, event, names) {
           node_id: entry.id
         })
       }
+      if (entry.get('id')) {
+        let pendingInvites = await transaction('entry_invite')
+            .select('invited_user_id', 'invited_user_title')
+            .whereIn('invited_user_id', userIds)
+            .where('entry_id', entry.get('id'))
+        pendingInvites.map(pendingInvite => {
+          alreadyEntered.push({
+            user_id: pendingInvite.invited_user_id,
+            user_title: pendingInvite.invited_user_title,
+            node_id: entry.get('id')
+          })
+        })
+      }
 
       // Remove names of users who are already entered.
-      const enteredNames = alreadyEntered.map(obj => obj.user_name)
-      names = names.filter(name => !enteredNames.includes(name))
+      const enteredUserIds = alreadyEntered.map(obj => obj.user_id)
+      userIds = userIds.filter(userId => !enteredUserIds.includes(userId))
 
-      // Create new roles for all remaining named users.
+      // Create invites for all remaining named users.
+      // (accept it directly if we're setting the current user)
       const toCreateUserData = await transaction('user')
         .select('id', 'name', 'title')
-        .whereIn('name', names)
-      const now = transaction.fn.now()
-      const newRoles = toCreateUserData.map(user => ({
-        user_id: user.id,
-        user_name: user.name,
-        user_title: user.title,
-        node_id: entry.id,
-        node_type: 'entry',
-        permission: constants.PERMISSION_WRITE,  // The owner already has a role.
-        created_at: now,
-        updated_at: now,
-        event_id: event ? event.id : null
-      }))
-      if (newRoles.length > 0) {
-        numAdded = newRoles.length
-        await transaction('user_role').insert(newRoles)
+        .whereIn('id', userIds)
+      for (let toCreateUserRow of toCreateUserData) {
+        let invite = new models.EntryInvite({
+          entry_id: entry.id,
+          invited_user_id: toCreateUserRow.id,
+          invited_user_title: toCreateUserRow.title || toCreateUserRow.name,
+          permission: constants.PERMISSION_WRITE
+        })
+        await invite.save()
+
+        if (toCreateUserRow.id === currentUser.get('id')) {
+          acceptInvite(currentUser, entry)
+        } else {
+          numAdded++
+          cache.user(toCreateUserRow.name).del('unreadNotifications')
+        }
       }
     }
 
@@ -299,6 +356,72 @@ function setTeamMembers (entry, event, names) {
       alreadyEntered
     }
   })
+}
+
+async function acceptInvite (user, entry) {
+  await db.transaction(async function (transaction) {
+    // Check that the invite exists
+    let invite = await models.EntryInvite.where({
+      entry_id: entry.get('id'),
+      invited_user_id: user.get('id')
+    }).fetch()
+
+    if (invite) {
+      // Check if the user role exists yet
+      let userRole = await models.UserRole.where({
+        node_id: entry.get('id'),
+        node_type: 'entry',
+        user_id: user.get('id')
+      }).fetch()
+
+      // Create or promote role
+      if (userRole) {
+        let isInviteForHigherPermission = securityService.getPermissionsEqualOrAbove(userRole.get('permission'))
+          .includes(invite.get('permission'))
+        if (isInviteForHigherPermission) {
+          userRole.set('permission', invite.get('permission'))
+        }
+      } else {
+        // Clear any other invites from the same event
+        if (entry.get('event_id')) {
+          let inviteIds = await transaction('entry_invite')
+            .select('entry_invite.id')
+            .leftJoin('entry', 'entry.id', 'entry_invite.entry_id')
+            .where({
+              'entry_invite.invited_user_id': user.get('id'),
+              'entry.event_id': entry.get('event_id')
+            })
+          await transaction('entry_invite')
+            .whereIn('id', inviteIds.map(row => row.id))
+            .del()
+        }
+
+        userRole = new models.UserRole({
+          user_id: user.get('id'),
+          user_name: user.get('name'),
+          user_title: user.get('title'),
+          node_id: entry.get('id'),
+          node_type: 'entry',
+          permission: invite.get('permission')
+        })
+      }
+
+      await userRole.save(null, { transacting: transaction })
+      await deleteInvite(user, entry, { transacting: transaction })
+    }
+  })
+}
+
+async function deleteInvite (user, entry, options) {
+  let query = db.knex('entry_invite')
+  if (options.transacting) {
+    query = query.transacting(options.transacting)
+  }
+  await query.where({
+    entry_id: entry.get('id'),
+    invited_user_id: user.get('id')
+  })
+    .del()
 }
 
 /**
@@ -440,6 +563,18 @@ async function findUserEntryForEvent (user, eventId) {
   }).fetch({ withRelated: ['userRoles'] })
 }
 
+async function findEntryInvitesForUser (user, options) {
+  let notificationsLastRead = new Date(0)
+  if (options.notificationsLastRead && user.get('notifications_last_read') !== undefined) {
+    notificationsLastRead = new Date(user.get('notifications_last_read'))
+  }
+
+  return models.EntryInvite
+    .where('invited_user_id', user.get('id'))
+    .where('created_at', '>', notificationsLastRead)
+    .fetchAll(options)
+}
+
 async function refreshEntryPlatforms (entry) {
   let tasks = []
   await entry.load('platforms')
@@ -459,6 +594,11 @@ async function refreshEntryPlatforms (entry) {
   await Promise.all(tasks)
 }
 
+/**
+ *
+ * @param  {Entry} entry
+ * @return {void}
+ */
 async function refreshEntryScore (entry) {
   await entry.load(['comments', 'userRoles'])
 

@@ -5,10 +5,12 @@
 exports.up = async function (knex, Promise) {
   try {
     await knex.schema.createTableIfNotExists('entry_invite', function (table) {
+      table.increments('id').primary()
       table.integer('entry_id').references('entry.id').notNullable()
-      table.integer('manager_user_id').references('user.id').notNullable()
       table.integer('invited_user_id').references('user.id').notNullable()
+      table.string('invited_user_title').notNullable()
       table.string('permission').notNullable()
+      table.timestamps()
     })
 
     await knex.schema.table('entry', function (table) {
@@ -25,6 +27,7 @@ exports.up = async function (knex, Promise) {
 
     Promise.resolve()
   } catch (e) {
+    console.log(e.message)
     Promise.reject(e)
   }
 }

@@ -29,6 +29,5 @@ module.exports = {
   DEBUG_INSERT_SAMPLES: true, // Inserts sample data upon DB init (false/true/'nightly')
   DEBUG_SQL: false, // Traces all SQL calls
   DEBUG_REFRESH_BROWSER: true, // Refreshes the browser automatically upon code changes
-  DEBUG_ADMIN: false, // Lets you access the "/admin" URL even when logged out
-  DEBUG_ENABLE_INVITE_SYSTEM: false // Enables the now abandoned Steam-like key system for creating accounts
+  DEBUG_ADMIN: false // Lets you access the "/admin" URL even when logged out
 }

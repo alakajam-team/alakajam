@@ -54,7 +54,6 @@ module.exports = {
     router.all('/dashboard(/feed)?', userController.dashboardFeed)
     router.all('/dashboard/posts', userController.dashboardPosts)
     router.all('/dashboard/entries', userController.dashboardEntries)
-    router.all('/dashboard/invite', userController.dashboardInvite)
     router.all('/dashboard/settings', userController.dashboardSettings)
     router.all('/dashboard/password', userController.dashboardPassword)
     router.get('/user/:name', userController.viewUserProfile)
@@ -80,6 +79,8 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit', entryController.editEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete', entryController.deleteEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/leave', entryController.leaveEntry)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/accept-invite', entryController.acceptInvite)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/decline-invite', entryController.declineInvite)
 
     router.get('/create-event', eventController.editEvent)
     router.post('/create-event', eventController.editEvent)

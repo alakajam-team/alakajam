@@ -286,6 +286,9 @@ module.exports.Entry = bookshelf.model('Entry', {
   votes: function () {
     return this.hasMany('EntryVote', 'entry_id')
   },
+  invites: function () {
+    return this.hasMany('EntryInvite', 'entry_id')
+  },
 
   // Listeners
 
@@ -328,7 +331,7 @@ module.exports.Entry = bookshelf.model('Entry', {
 
 }, {
   // Cascading
-  dependents: ['details', 'comments', 'platforms', 'votes'] // 'userRoles' removed because of issue #93
+  dependents: ['details', 'comments', 'platforms', 'votes', 'invites'] // 'userRoles' removed because of issue #93
 })
 
 /**
@@ -426,19 +429,17 @@ module.exports.EntryVote = bookshelf.model('EntryVote', {
  * |--    |--    |--
  * | increments | id | Primary key
  * | integer | entry_id | Target entry ID (not null)
- * | integer | manager_user_id | User ID of the person who sent the invite (not null)
  * | integer | invited_user_id | User ID of the person invited (not null)
+ * | integer | invited_user_title | User title of the person invited (not null)
  * | string | permission | The offered permission (not null)
  */
 module.exports.EntryInvite = bookshelf.model('EntryInvite', {
   tableName: 'entry_invite',
   idAttribute: 'id',
+  hasTimestamps: true,
 
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
-  },
-  manager: function () {
-    return this.belongsTo('User', 'manager_user_id')
   },
   invited: function () {
     return this.belongsTo('User', 'invited_user_id')

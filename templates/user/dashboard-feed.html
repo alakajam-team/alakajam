@@ -11,6 +11,32 @@
 <div class="row">
   <div class="col-md-7">
     <h1>Notifications <span class="glyphicon glyphicon-info-sign has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="This feed lists all comments people wrote on your entries and posts, plus any comments mentioning &quot;@{{ user.get('name') }}&quot;." style="font-size: 1rem"></span></h1>
+
+    {% for invite in invites %}
+    <div class="well">
+      {% set inviteEntry = invite.related('entry') %}
+      <h3>
+        {% if inviteEntry.get('event_id') %}
+          <a href="{{ buildUrl(inviteEntry.related('event'), 'event') }}">{{ inviteEntry.related('event').get('title') }}</a>
+        {% else %}
+          <strong>{{ inviteEntry.get('external_event') }}</strong>
+        {% endif %}
+      </h3>
+      <p>You have been invited to join a team.  
+        
+      </p>
+      <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+          {{ eventMacros.entrySmallThumb(inviteEntry) }}
+          <div class="text-right spacing">
+            <a href="{{ buildUrl(inviteEntry, 'entry', 'accept-invite') }}" class="btn btn-primary">Accept</a>
+            <a href="{{ buildUrl(inviteEntry, 'entry', 'decline-invite') }}" class="btn btn-default">Decline</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
     {{ postMacros.comments(toUser, user, { readOnly: true, linkToNode: true, highlightNewerThan: notificationsLastRead }) }}
   </div>
   <div class="col-md-5">

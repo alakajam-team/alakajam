@@ -32,7 +32,7 @@ function initializeLogging () {
     },
     formatter: function (options) {
       // Figure out the logging caller location
-      // XXX slow and hacky approach, not thoroughly & cross-platformly tested
+      // XXX slow and hacky approach
       let location = '?'
       let lines = new Error().stack.split('\n')
       for (let line of lines) {

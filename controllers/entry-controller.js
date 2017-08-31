@@ -28,6 +28,9 @@ module.exports = {
   deleteEntry,
   leaveEntry,
 
+  acceptInvite,
+  declineInvite,
+
   searchForTeamMate,
   searchForExternalEvents
 }
@@ -113,7 +116,7 @@ async function createEntry (req, res) {
 
   res.render('entry/edit-entry', {
     entry,
-    members: _getMembers(null, res.locals.user),
+    members: await eventService.findTeamMembers(null, res.locals.user),
     external: !res.locals.event
   })
 }
@@ -126,7 +129,7 @@ async function editEntry (req, res) {
     res.errorPage(403)
   } else {
     res.render('entry/edit-entry', {
-      members: _getMembers(res.locals.entry),
+      members: await eventService.findTeamMembers(res.locals.entry, res.locals.user),
       external: !res.locals.event
     })
   }
@@ -205,17 +208,17 @@ async function saveEntry (req, res) {
     }
 
     // Make sure the entry owner is not removed
-    let teamMembers = fields.members.split(',').map(s => forms.sanitizeString(s))
-    let ownerName
+    let teamMembers = fields.members.split(',').map(s => parseInt(s))
+    let ownerId
     if (entry) {
-      ownerName = entry.related('userRoles')
+      ownerId = entry.related('userRoles')
         .findWhere({ permission: constants.PERMISSION_MANAGE })
-        .get('user_name')
+        .get('user_id')
     } else {
-      ownerName = res.locals.user.get('name')
+      ownerId = res.locals.user.get('id')
     }
-    if (!teamMembers.includes(ownerName)) {
-      teamMembers.push(ownerName)
+    if (!teamMembers.includes(ownerId)) {
+      teamMembers.push(ownerId)
     }
 
     // Entry update
@@ -258,7 +261,14 @@ async function saveEntry (req, res) {
 
       if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
         entry.set('division', fields['division'])
-        await eventService.setTeamMembers(entry, res.locals.event, teamMembers)
+        let teamChanges = await eventService.setTeamMembers(res.locals.user, entry, teamMembers)
+        res.locals.infoMessage = ''
+        if (teamChanges.numAdded > 0) {
+          res.locals.infoMessage += teamChanges.numAdded + ' user(s) have been sent an invite to join your team. '
+        }
+        if (teamChanges.numRemoved > 0) {
+          res.locals.infoMessage += teamChanges.numRemoved + ' user(s) have been removed from the team.'
+        }
       }
 
       if (entry.hasChanged('platforms')) {
@@ -269,8 +279,9 @@ async function saveEntry (req, res) {
 
       cache.user(res.locals.user).del('latestEntry')
 
-      await entry.related('userRoles').fetch()
-      res.redirect(templating.buildUrl(entry, 'entry'))
+      await entry.load(['userRoles.user', 'comments'])
+
+      viewEntry(req, res)
     } else {
       if (!entry) {
         // Creation form
@@ -285,28 +296,10 @@ async function saveEntry (req, res) {
 
       res.render('entry/edit-entry', {
         errorMessage,
-        members: _getMembers(res.locals.entry, res.locals.user),
+        members: await eventService.findTeamMembers(res.locals.entry, res.locals.user),
         external: !res.locals.event
       })
     }
-  }
-}
-
-function _getMembers (entry, user = null) {
-  if (entry && entry.get('id')) {
-    return entry.sortedUserRoles()
-      .map(role => ({
-        id: role.get('user_name'),
-        text: role.get('user_title'),
-        locked: role.get('permission') === constants.PERMISSION_MANAGE
-      }))
-  } else {
-    // New entry: only the current user is a member
-    return [{
-      id: user.get('name'),
-      text: user.get('title'),
-      locked: true
-    }]
   }
 }
 
@@ -339,10 +332,10 @@ async function leaveEntry (req, res) {
     let newTeamMembers = []
     entry.related('userRoles').each(function (userRole) {
       if (userRole.get('user_id') !== user.get('id')) {
-        newTeamMembers.push(userRole.get('user_name'))
+        newTeamMembers.push(userRole.get('user_id'))
       }
     })
-    await eventService.setTeamMembers(entry, res.locals.event, newTeamMembers)
+    await eventService.setTeamMembers(user, entry, newTeamMembers)
 
     cache.user(user).del('latestEntry')
   }
@@ -352,6 +345,22 @@ async function leaveEntry (req, res) {
   } else {
     res.redirect(templating.buildUrl(res.locals.user, 'user', 'entries'))
   }
+}
+
+/**
+ * Accept an invite to join an entry's team
+ */
+async function acceptInvite (req, res) {
+  await eventService.acceptInvite(res.locals.user, res.locals.entry)
+  res.redirect(templating.buildUrl(res.locals.entry, 'entry'))
+}
+
+/**
+ * Decline an invite to join an entry's team
+ */
+async function declineInvite (req, res) {
+  await eventService.deleteInvite(res.locals.user, res.locals.entry)
+  res.redirect(templating.buildUrl(res.locals.user, 'user', 'feed'))
 }
 
 /**
@@ -390,7 +399,7 @@ async function searchForTeamMate (req, res) {
 
     const responseData = {
       matches: matches.map(match => ({
-        id: match.name,
+        id: match.id,
         text: match.title,
         status: getStatus(match)
       }))

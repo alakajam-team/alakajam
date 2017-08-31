@@ -45,15 +45,13 @@
 .select2-result .member .username {
   margin-top: 4px;
 }
-.member .owner-tag {
+.member .tag {
   display: block;
   font-size: 10px;
   color: #666;
 }
 .member .unavailable-tag {
   display: none;
-  font-size: 10px;
-  color: #666;
 }
 .select2-result-unselectable .member .unavailable-tag {
   display: block;
@@ -99,7 +97,7 @@
 
         <label for="division">Division {{ formMacros.tooltip('Only the entry owner can change this setting.') if not isEntryOwner }}</label>
         <div>
-          {% if isEntryOwner %}
+          {% if isEntryOwner or isMod(user) %}
             <div class="form-group btn-group toggle team-toggle" data-toggle="buttons">
               <label class="btn btn-default active">
                 <input type="radio" name="division" value="solo" autocomplete="off" checked>Solo
@@ -145,9 +143,10 @@
           <div class="row">
             <div class="col-xs-6">
               {% if entry.has('id') %}
-                {% if isEntryOwner %}
+                {% if isEntryOwner or isMod(user) %}
                   <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'delete') }}" onclick="return confirm('Delete the entry? This cannot be reverted!')">Delete</a> 
-                {% else %}
+                {% endif %}
+                {% if not isEntryOwner %}
                   <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'leave') }}" onclick="return confirm('Leave the team? This cannot be reverted, unless the team owner takes you back!')">Leave the team</a>
                 {% endif %}
               {% endif %}
@@ -284,7 +283,7 @@ $('.toggle label').click(function(ev) {
 // Show warning upon not being a team entry anymore
 
 $('#js-form').submit(function (ev) {
-  if (initialDivision === 'team' && $('input[name=class]:checked').val() !== 'team'
+  if (initialDivision === 'team' && $('input[name="division"]:checked').val() !== 'team'
       && !confirm('You are about to switch to a Solo entry. All team members will be removed. Continue?')) {
     ev.preventDefault()
   }
@@ -328,35 +327,14 @@ $(function() {(function(members, url) {
     eSelect.select2('val', $.map(members, toId))
   }
 
-  function onSaveSuccess (data) {
-    eDirtiable.prop('disabled', true)
-    eSaveBtn.removeClass(savingCls).text('Save changes')
-    var hasConflicts = data.conflicts.length > 0
-    members = data.members
-    result({
-      message: hasConflicts ? 'Some users have already entered:' : 'Team saved successfully!',
-      conflicts: data.conflicts,
-      removed: data.numRemoved,
-      added: data.numAdded,
-      error: hasConflicts
-    })
-  }
-
-  function onSaveFailure (e) {
-    result({
-      message: 'Save failed! Please try again later or alert an admin.',
-      error: true
-    })
-    eSaveBtn.text('Save changes').removeClass(savingCls)
-  }
-
   function format (user) {
     const avatarUrl = user.avatar || '/static/images/default-avatar.png'
     return ['<div class="member">',
           '<img class="avatar" src="', avatarUrl, '" alt="', user.text, '" />', 
           '<span class="username">', user.text, '</span>',
-          user.locked ? '<span class="owner-tag">Owner</span>' : '',
-          '<span class="unavailable-tag">Has a game already</span>',
+          user.locked ? '<span class="tag owner-tag">Owner</span>' : '',
+          user.invite ? '<span class="tag">Pending invite</span>' : '',
+          '<span class="tag unavailable-tag">Has a game already</span>',
         '</div>']
       .join('')
   }

@@ -6,7 +6,6 @@
  * @module controllers/user-controller
  */
 
-const config = require('../config')
 const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
@@ -15,8 +14,8 @@ const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
-const inviteService = require('../services/invite-service')
 const securityService = require('../services/security-service')
+const notificationService = require('../services/notification-service')
 
 module.exports = {
   dashboardMiddleware,
@@ -26,7 +25,6 @@ module.exports = {
   dashboardFeed,
   dashboardPosts,
   dashboardEntries,
-  dashboardInvite,
   dashboardSettings,
   dashboardPassword,
 
@@ -85,7 +83,7 @@ async function viewUserProfile (req, res) {
  * View comment feed
  */
 async function dashboardFeed (req, res) {
-  let dashboardUser = res.locals.user
+  let dashboardUser = res.locals.dashboardUser
 
   // if an entry is not in the cache it will return undefined
   let userCache = cache.user(dashboardUser)
@@ -112,12 +110,17 @@ async function dashboardFeed (req, res) {
     })
     userCache.set('latestPostsCollection', latestPostsCollection)
   }
+  let invitesCollection = await eventService.findEntryInvitesForUser(dashboardUser, {
+    withRelated: ['entry.event', 'entry.userRoles', 'invited']
+  })
 
   let notificationsLastRead = dashboardUser.get('notifications_last_read')
-  dashboardUser.set('notifications_last_read', new Date())
-  await dashboardUser.save()
-  userCache.del('unreadNotifications')
-  res.locals.unreadNotifications = 0
+  if (!res.locals.dashboardAdminMode) {
+    dashboardUser.set('notifications_last_read', new Date())
+    await dashboardUser.save()
+    userCache.del('unreadNotifications')
+    res.locals.unreadNotifications = 0
+  }
 
   // TODO Limit at the SQL-level
   res.render('user/dashboard-feed', {
@@ -125,6 +128,7 @@ async function dashboardFeed (req, res) {
     toUser: toUserCollection.take(20),
     latestEntry,
     latestPosts: latestPostsCollection.take(3),
+    invites: invitesCollection.models,
     notificationsLastRead
   })
 }
@@ -157,15 +161,6 @@ async function dashboardEntries (req, res) {
   let entryCollection = await eventService.findUserEntries(res.locals.user)
   res.render('user/dashboard-entries', {
     entries: entryCollection.models
-  })
-}
-
-/**
- * Generate invite keys
- */
-async function dashboardInvite (req, res) {
-  res.render('user/dashboard-invite', {
-    inviteKey: await inviteService.generateKey()
   })
 }
 
@@ -293,9 +288,7 @@ async function doRegister (req, res) {
 
   let {fields} = await req.parseForm()
   let errorMessage = null
-  if (config.DEBUG_ENABLE_INVITE_SYSTEM && !await inviteService.validateKey(fields.invite)) {
-    errorMessage = 'Invalid invite key'
-  } else if (!(fields.name && fields.password && fields.email)) {
+  if (!(fields.name && fields.password && fields.email)) {
     errorMessage = 'A field is missing'
   } else if (!forms.isUsername(fields.name)) {
     errorMessage = 'Your usename is too weird (either too short, or has special chars other than "_" or "-", or starts with a number)'
@@ -341,9 +334,7 @@ async function doLogin (req, res) {
       sessionService.openSession(req, res, user, !!fields['remember-me'])
 
       // Force notification count update
-      let commentsCollection = await postService.findCommentsToUser(res.locals.user, { notificationsLastRead: true })
-      context.unreadNotifications = commentsCollection.length
-      cache.user(user).set('unreadNotifications', context.unreadNotifications)
+      context.unreadNotifications = await notificationService.countUnreadNotifications(res.locals.user)
     } else {
       context.errorMessage = 'Authentication failed'
     }
