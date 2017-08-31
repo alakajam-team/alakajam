@@ -232,7 +232,7 @@ function setTeamMembers (entry, event, names) {
     let numAdded = 0
     let alreadyEntered = []
 
-    if (entry.get('class') === 'solo') {
+    if (entry.get('division') === 'solo') {
       // Force only keeping the owner role
       numRemoved = await transaction('user_role')
         .whereNot('permission', constants.PERMISSION_MANAGE)

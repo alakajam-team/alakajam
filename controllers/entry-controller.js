@@ -198,8 +198,8 @@ async function saveEntry (req, res) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
-    } else if (['solo', 'team', 'unranked'].indexOf(fields['class']) === -1) {
-      errorMessage = 'Invalid competition class'
+    } else if (['solo', 'team', 'unranked'].indexOf(fields['division']) === -1) {
+      errorMessage = 'Invalid division'
     } else if (typeof fields.members !== 'string') {
       errorMessage = 'Invalid members'
     }
@@ -257,7 +257,7 @@ async function saveEntry (req, res) {
       entryDetails.set('body', forms.sanitizeMarkdown(fields.body))
 
       if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
-        entry.set('class', fields['class'])
+        entry.set('division', fields['division'])
         await eventService.setTeamMembers(entry, res.locals.event, teamMembers)
       }
 

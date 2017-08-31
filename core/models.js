@@ -254,7 +254,7 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | string | links | JSON Array : [{url, title}]
  * | string | platforms | JSON Array : [platform]
  * | string | pictures | JSON Array : [path]
- * | string | class | "solo"/"team"/"ranked" (not null)
+ * | string | division | "solo"/"team"/"ranked" (not null)
  * | decimal | feedback_score | ([-999.999;999.999], defaults to 100, not null)
  * | dateTime | published_at |
  * | integer | comment_count | (not null)
@@ -416,6 +416,32 @@ module.exports.EntryVote = bookshelf.model('EntryVote', {
   },
   user: function () {
     return this.belongsTo('User', 'user_id')
+  }
+})
+
+/**
+ * Entry Invite model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | entry_id | Target entry ID (not null)
+ * | integer | manager_user_id | User ID of the person who sent the invite (not null)
+ * | integer | invited_user_id | User ID of the person invited (not null)
+ * | string | permission | The offered permission (not null)
+ */
+module.exports.EntryInvite = bookshelf.model('EntryInvite', {
+  tableName: 'entry_invite',
+  idAttribute: 'id',
+
+  entry: function () {
+    return this.belongsTo('Entry', 'entry_id')
+  },
+  manager: function () {
+    return this.belongsTo('User', 'manager_user_id')
+  },
+  invited: function () {
+    return this.belongsTo('User', 'invited_user_id')
   }
 })
 

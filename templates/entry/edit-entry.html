@@ -97,23 +97,23 @@
 
         {% set isEntryOwner = not entry.get('id') or canUserManage(user, entry) %}
 
-        <label for="class">Entry type {{ formMacros.tooltip('Only the entry owner can change this setting.') if not isEntryOwner }}</label>
+        <label for="division">Division {{ formMacros.tooltip('Only the entry owner can change this setting.') if not isEntryOwner }}</label>
         <div>
           {% if isEntryOwner %}
             <div class="form-group btn-group toggle team-toggle" data-toggle="buttons">
               <label class="btn btn-default active">
-                <input type="radio" name="class" value="solo" autocomplete="off" checked>Solo
+                <input type="radio" name="division" value="solo" autocomplete="off" checked>Solo
               </label>
               <label class="btn btn-default">
-                <input type="radio" name="class" value="team" autocomplete="off">Team
+                <input type="radio" name="division" value="team" autocomplete="off">Team
               </label>
             </div>
           {% else %}
             <div class="form-group">
-              <button class="btn btn-default" disabled>{{ entry.get('class') | capitalize }}</button> 
+              <button class="btn btn-default" disabled>{{ entry.get('division') | capitalize }}</button> 
             </div>
           {% endif %}
-          <div id="edit-team" class="{{ 'hidden' if entry.get('class') !== 'team' }}">
+          <div id="edit-team" class="{{ 'hidden' if entry.get('division') !== 'team' }}">
             <div id="result-box" class="form-group" style="display:none;">
               <h3 id="result-msg"></h3>
               <ul id="conflict-list" style="display:none;"></ul>
@@ -269,11 +269,11 @@ function refreshLinksModel () {
 
 // Team toggle behaviour
 
-var initialClass = "{{ entry.get('class') }}" || "solo"
+var initialDivision = "{{ entry.get('division') }}" || "solo"
 $('.team-toggle label').each(function(i, el) {
   el = $(el)
   var input = el.find('input')
-  var active = input.val() === initialClass
+  var active = input.val() === initialDivision
   input.prop('checked', active)
   el.toggleClass('active', active)
 })
@@ -284,7 +284,7 @@ $('.toggle label').click(function(ev) {
 // Show warning upon not being a team entry anymore
 
 $('#js-form').submit(function (ev) {
-  if (initialClass === 'team' && $('input[name=class]:checked').val() !== 'team'
+  if (initialDivision === 'team' && $('input[name=class]:checked').val() !== 'team'
       && !confirm('You are about to switch to a Solo entry. All team members will be removed. Continue?')) {
     ev.preventDefault()
   }
