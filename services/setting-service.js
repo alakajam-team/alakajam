@@ -7,6 +7,7 @@
  */
 
 const models = require('../core/models')
+const cache = require('../core/cache')
 
 module.exports = {
   find,
@@ -21,9 +22,13 @@ module.exports = {
  * @returns {void}
  */
 async function find (key, defaultValue = null) {
-  let settingModel = await models.Setting.where('key', key).fetch()
-  if (settingModel) {
-    return settingModel.get('value')
+  if (!cache.settings.get(key)) {
+    let settingModel = await models.Setting.where('key', key).fetch()
+    cache.settings.set(key, settingModel ? settingModel.get('value') : undefined)
+  }
+  let value = cache.settings.get(key)
+  if (value) {
+    return value
   } else if (typeof defaultValue === 'function') {
     return defaultValue()
   } else {
@@ -46,4 +51,5 @@ async function save (key, value) {
   }
   settingModel.set('value', value)
   await settingModel.save(null, {method: method})
+  cache.settings.del(key)
 }

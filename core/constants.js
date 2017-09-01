@@ -45,6 +45,7 @@ module.exports = {
   PERMISSION_WRITE,
   PERMISSION_MANAGE,
   ORDERED_PERMISSIONS,
+  CONFIDENTIAL_CACHE_KEYS: [SETTING_SESSION_KEY],
 
   // Database
   DB_ILIKE: config.DB_TYPE.startsWith('sqlite') ? 'LIKE' : 'ILIKE',

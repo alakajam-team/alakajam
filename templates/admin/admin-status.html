@@ -50,14 +50,18 @@
       <td>{{ key }}</td>
       <td>{{ cache.getTtl(key) | dateTime }}</td>
       <td style="max-width: 500px; overflow: auto">
-        {% set value = cache.get(key) | prettyDump %}
-        {% if value.length > 100 %}
-          <input type="button" class="btn btn-sm btn-default" value="Toggle" onclick="$('#{{ key }}').toggle()" />
-          <div id="{{ key }}" style="display: none">
+        {% if not constants.CONFIDENTIAL_CACHE_KEYS.includes(key) %}
+          {% set value = cache.get(key) | prettyDump %}
+          {% if value.length > 100 %}
+            <input type="button" class="btn btn-sm btn-default" value="Toggle" onclick="$('#{{ key }}').toggle()" />
+            <div id="{{ key }}" style="display: none">
+              {{ value | safe }}
+            </div>
+          {% else %}
             {{ value | safe }}
-          </div>
+          {% endif %}
         {% else %}
-          {{ value | safe }}
+          <span class="label">TOP SECRET</span>
         {% endif %}
       </td>
     </tr>
