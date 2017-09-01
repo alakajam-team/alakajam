@@ -13,13 +13,20 @@ const NodeCache = require('node-cache')
  * stdTTL: (default: 0) the standard ttl as number in seconds for every generated cache element. 0 = unlimited
  * checkperiod: (default: 600) The period in seconds, as a number, used for the automatic delete check interval. 0 = no periodic check.
  */
-const usersTtlInMins = 10
+const usersTtl = 10 * 60 // 10 minutes
+const eventsTtl = 24 * 60 * 60 // one day
+
 const cacheMap = {
-  users: new NodeCache({ stdTTL: usersTtlInMins * 60, checkperiod: usersTtlInMins * 60 })
+  users: new NodeCache({ stdTTL: usersTtl, checkperiod: usersTtl }),
+  eventsById: new NodeCache({ stdTTL: eventsTtl, checkperiod: eventsTtl }),
+  eventsByName: new NodeCache({ stdTTL: eventsTtl, checkperiod: eventsTtl })
 }
 
 module.exports = {
   user,
+  eventsById: cacheMap.eventsById,
+  eventsByName: cacheMap.eventsByName,
+
   cacheMap
 }
 

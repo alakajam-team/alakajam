@@ -8,6 +8,7 @@
 
 const constants = require('../core/constants')
 const forms = require('../core/forms')
+const cache = require('../core/cache')
 const templating = require('../controllers/templating')
 const eventService = require('../services/event-service')
 const eventThemeService = require('../services/event-theme-service')
@@ -177,16 +178,18 @@ async function viewEventGames (req, res) {
   }
 
   // Fetch entries
-  let sortedEntries = res.locals.event.related('entries')
+  let event = res.locals.event
+  await event.load('entries.userRoles')
+  let sortedEntries = event.related('entries')
     .sortBy(function (entry) {
       return -1 * entry.get('feedback_score')
     })
 
   // Fetch vote history
-  let eventResultsStatus = res.locals.event.get('status_results')
+  let eventResultsStatus = event.get('status_results')
   let voteHistory = []
   if (res.locals.user && (eventResultsStatus === 'voting' || eventResultsStatus === 'results')) {
-    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user, res.locals.event, { pageSize: 5 })
+    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user, event, { pageSize: 5 })
     voteHistory = voteHistoryCollection.models
   }
 
@@ -321,6 +324,7 @@ async function editEvent (req, res) {
         event = eventService.createEvent()
       }
 
+      let previousName = event.get('name')
       event.set({
         title: forms.sanitizeString(fields.title),
         name: fields.name,
@@ -340,8 +344,10 @@ async function editEvent (req, res) {
 
       let nameChanged = event.hasChanged('name')
       event = await event.save()
+      cache.eventsById.del(event.get('id'))
       if (nameChanged) {
         await eventService.refreshEventReferences(event)
+        cache.eventsByName.del(previousName)
       }
 
       let eventDetails = event.related('details')

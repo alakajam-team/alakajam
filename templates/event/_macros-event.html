@@ -67,7 +67,7 @@
               {% if event.get('status') === 'pending' %}
                 <span class="label label-default event-table__status">Upcoming</span>
               {% elseif event.get('status') === 'open' %}
-                <span class="label label-danger event-table__status">Live!</span>
+                <span class="label label-danger event-table__status">On now!</span>
               {% endif %}
             {% endif %}
             {{ event.get('title') }}
@@ -87,11 +87,11 @@
               </div>
             </div>
             {% endif %}
-            {% if event.related('entries').length > 0 %}
+            {% if options.entryCount and options.entryCount > 0 %}
             <div class="col-sm-3">
               <div class="event-table__detail">
                 <span class="glyphicon glyphicon-tower"></span>
-                {{ event.related('entries').length }} game{{ 's' if event.related('entries').length > 1 }}
+                {{ options.entryCount }} game{{ 's' if options.entryCount > 1 }}
               </div>
             </div>
             {% endif %}
@@ -131,7 +131,7 @@
             {% if event.get('status') === 'pending' %}
               <span class="label label-default event-table__status">Upcoming</span>
             {% elseif event.get('status') === 'open' %}
-              <span class="label label-danger event-table__status">Live!</span>
+              <span class="label label-danger event-table__status">On now!</span>
             {% endif %}
           {% endif %}
           {{ event.get('title') }}

@@ -173,8 +173,8 @@ async function adminUsers (req, res) {
  * Admin only: server status
  */
 async function adminStatus (req, res) {
-  if (req.query.clearCache) {
-    cache.cacheMap.users.flushAll()
+  if (req.query.clearCache && cache.cacheMap[req.query.clearCache]) {
+    cache.cacheMap[req.query.clearCache].flushAll()
   }
 
   let pictureResizeEnabled = false
@@ -188,7 +188,7 @@ async function adminStatus (req, res) {
   res.render('admin/admin-status', {
     devMode: !!res.app.locals.devMode,
     pictureResizeEnabled,
-    cache: cache.cacheMap.users
+    caches: cache.cacheMap
   })
 }
 

@@ -27,7 +27,7 @@
                 <a class="event-table__header" href="{{ buildUrl(featuredEvent, 'event') }}">
                   <h2>
                     {% if featuredEvent.get('status') === 'open' %}
-                      <span class="label label-danger event-table__status">Live!</span>
+                      <span class="label label-danger event-table__status">On now!</span>
                     {% elseif featuredEvent.get('status') === 'pending' %}
                       <span class="label label-default event-table__status">Up next!</span>
                     {% else %}

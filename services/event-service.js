@@ -38,6 +38,7 @@ module.exports = {
   findUserEntries,
   findUserEntryForEvent,
   findEntryInvitesForUser,
+  countEntriesByEvent,
 
   refreshEntryPlatforms,
   refreshEntryScore,
@@ -82,8 +83,12 @@ async function refreshEventReferences (event) {
  * @returns {Event}
  */
 async function findEventById (id) {
-  return models.Event.where('id', id)
-    .fetch({ withRelated: ['details', 'entries.userRoles'] })
+  if (!cache.eventsById.get(id)) {
+    let event = await models.Event.where('id', id)
+        .fetch({ withRelated: ['details'] })
+    cache.eventsById.set(id, event)
+  }
+  return cache.eventsById.get(id)
 }
 
 /**
@@ -92,8 +97,12 @@ async function findEventById (id) {
  * @returns {Event}
  */
 async function findEventByName (name) {
-  return models.Event.where('name', name)
-    .fetch({ withRelated: ['details', 'entries.userRoles'] })
+  if (!cache.eventsByName.get(name)) {
+    let event = await models.Event.where('name', name)
+        .fetch({ withRelated: ['details'] })
+    cache.eventsByName.set(name, event)
+  }
+  return cache.eventsByName.get(name)
 }
 
 /**
@@ -102,11 +111,11 @@ async function findEventByName (name) {
  * @returns {array(Event)}
  */
 async function findEvents (options = {}) {
-  let query = await models.Event()
-  query.orderBy('published_at', options.sortDatesAscending ? 'ASC' : 'DESC')
+  let query = models.Event.forge()
+    .orderBy('published_at', options.sortDatesAscending ? 'ASC' : 'DESC')
   if (options.status) query = query.where('status', options.status)
   if (options.name) query = query.where('name', options.name)
-  return query.fetchAll({ withRelated: ['entries'] })
+  return query.fetchAll()
 }
 
 /**
@@ -573,6 +582,13 @@ async function findEntryInvitesForUser (user, options) {
     .where('invited_user_id', user.get('id'))
     .where('created_at', '>', notificationsLastRead)
     .fetchAll(options)
+}
+
+async function countEntriesByEvent (event) {
+  let count = await models.Entry
+    .where('event_id', event.get('id'))
+    .count()
+  return parseInt(count)
 }
 
 async function refreshEntryPlatforms (entry) {

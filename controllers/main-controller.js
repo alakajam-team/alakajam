@@ -130,15 +130,33 @@ async function index (req, res) {
 async function events (req, res) {
   res.locals.pageTitle = 'Events'
 
-  let [pendingCollection, openCollection, closedCollection] = await Promise.all([
-    await eventService.findEvents({status: 'pending', sortDatesAscending: true}),
-    await eventService.findEvents({status: 'open'}),
-    await eventService.findEvents({status: 'closed'})
-  ])
+  let pending = []
+  let open = []
+  let closed = []
+
+  let allEventsCollection = await eventService.findEvents()
+
+  // Group entries by status, and compute their entry counts
+  let entryCounts = {}
+  allEventsCollection.each(async function (event) {
+    entryCounts[event.get('id')] = await eventService.countEntriesByEvent(event)
+    switch (event.get('status')) {
+      case 'pending':
+        pending.unshift(event) // sort by ascending dates
+        break
+      case 'open':
+        open.push(event)
+        break
+      default:
+        closed.push(event)
+    }
+  })
+
   res.render('events', {
-    pending: pendingCollection.models,
-    open: openCollection.models,
-    closed: closedCollection.models
+    pending,
+    open,
+    closed,
+    entryCounts
   })
 }
 

@@ -11,7 +11,7 @@
       <div class="events-block events-block__live">
         <h4>On now!</h4>
         {% for event in open %}
-          {{ eventMacros.eventTable(event, true, 3, { neutralStatus: true }) }}
+          {{ eventMacros.eventTable(event, { neutralStatus: true, entryCount: entryCounts[event.get('id')] }) }}
         {% endfor %}
       </div>
       {% endif %}
@@ -20,7 +20,7 @@
       <div class="events-block events-block__pending">
         <h4>Upcoming events</h4>
         {% for event in pending %}
-          {{ eventMacros.eventTable(event, true, 3, { neutralStatus: true }) }}
+          {{ eventMacros.eventTable(event, { neutralStatus: true, entryCount: entryCounts[event.get('id')] }) }}
         {% endfor %}
       </div>
       {% endif %}
@@ -29,7 +29,7 @@
       <div class="events-block events-block__closed">
         <h4>Past events</h4>
         {% for event in closed %}
-          {{ eventMacros.eventTable(event, true, 3, { neutralStatus: true }) }}
+          {{ eventMacros.eventTable(event, { neutralStatus: true, entryCount: entryCounts[event.get('id')] }) }}
         {% endfor %}
       </div>
       {% endif %}

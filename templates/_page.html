@@ -103,7 +103,7 @@
             <a href="{{ buildUrl(featuredEvent, 'event') }}">
               <div class="live__icon">
                 {% if featuredEvent.get('status') === 'open' %}
-                <span class="label">Live!</span>
+                <span class="label">On now!</span>
                 {% elseif featuredEvent.get('status') === 'pending' %}
                 <span class="label">Up next!</span>
                 {% else %}

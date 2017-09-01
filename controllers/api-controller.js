@@ -62,12 +62,11 @@ async function event (req, res) {
         moment(json.countdown_config.date).fromNow() + '!'
     }
 
-    await event.load('entries')
+    await event.load('entries.userRoles.user')
     json.entries = []
     for (let entry of event.related('entries').models) {
       let entryJson = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY)
 
-      await entry.load('userRoles.user')
       entryJson.users = []
       for (let user of entry.related('userRoles').models) {
         entryJson.users.push(_getAttributes(user.related('user'), PUBLIC_ATTRIBUTES_USER))
