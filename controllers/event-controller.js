@@ -345,6 +345,7 @@ async function editEvent (req, res) {
       let nameChanged = event.hasChanged('name')
       event = await event.save()
       cache.eventsById.del(event.get('id'))
+      cache.eventsByName.del(event.get('name'))
       if (nameChanged) {
         await eventService.refreshEventReferences(event)
         cache.eventsByName.del(previousName)
