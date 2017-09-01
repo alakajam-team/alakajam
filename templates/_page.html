@@ -44,6 +44,10 @@
   <meta name="twitter:title" content="{{ pageTitle if pageTitle else 'Alakajam!' }}" />
   <meta name="twitter:description" content="{{ pageDescription | truncate(160) }}" />
   <meta name="twitter:image" content="{{ rootUrl }}{{ pageImage if pageImage else '/static/images/logo.png' }}" />
+  <meta property="og:title" content="{{ pageTitle if pageTitle else 'Alakajam!' }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ rootUrl }}{{ path }}" />
+  <meta property="og:image" content="{{ rootUrl }}{{ pageImage if pageImage else '/static/images/logo.png' }}" />
   <meta name="description" content="{{ pageDescription | truncate(160) }}" />
 
   <link rel="shortcut icon" type="image/png" href="/static/images/favicon.png" />
