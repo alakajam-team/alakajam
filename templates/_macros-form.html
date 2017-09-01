@@ -13,7 +13,7 @@
   <script>
   // Markdown editor
   $('.simplemde-editor').each(function () {
-    new SimpleMDE({
+    var simplemde = new SimpleMDE({
       element: this,
       showIcons: ["code", "table"],
       spellChecker: false,
@@ -26,7 +26,22 @@
         uniqueId: '{{ options.autoSaveId }}'
       }
     })
+
+    // Bind exit alert on change
+    simplemde.codemirror.on('change', function() {
+      if (!window.onbeforeunload) {
+        window.onbeforeunload = function() {
+          return 'You have unsaved changes. Exit anyway?'
+        }
+      }
+    })
   })
+
+  // Unbind exit alert on actual save
+  $('form').submit(function () {
+    window.onbeforeunload = undefined
+  })
+
   </script>
 {% endmacro %}
 
