@@ -58,11 +58,11 @@
         <div class="entry-voting">
           <h2 class="entry-voting__header">Game voting</h2>
           <div class="entry-voting__body">
-            {% if entry.get('class') === 'unranked' %}
+            {% if entry.get('division') === 'unranked' %}
               <p>This game is an <strong>Unranked</strong> entry.</p>
               <p style="margin-bottom: 0">Voting is disabled, please provide feedback instead.</p>
             {% else %}
-              <p style="margin-bottom: -10px">This game is a <strong>{{ entry.get('class') | capitalize }}</strong> entry.</p>
+              <p style="margin-bottom: -10px">This game is a <strong>{{ entry.get('division') | capitalize }}</strong> entry.</p>
               <form method="post">
                 <input type="hidden" name="action" value="vote" />
                 <p class="form-group">

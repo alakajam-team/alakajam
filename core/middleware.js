@@ -136,10 +136,14 @@ async function configure (app) {
     return n + (s[(v - 20) % 10] || s[v] || s[0])
   })
   nunjucks.env.addFilter('digits', function (number, digits) {
-    if (typeof number === 'string') {
-      number = parseFloat(number)
+    if (number) {
+      if (typeof number === 'string') {
+        number = parseFloat(number)
+      }
+      return number.toFixed(digits)
+    } else {
+      return null
     }
-    return number.toFixed(digits)
   })
 
   // Templating: rendering context

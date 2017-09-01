@@ -279,7 +279,7 @@ async function saveEntry (req, res) {
 
       cache.user(res.locals.user).del('latestEntry')
 
-      await entry.load(['userRoles.user', 'comments'])
+      await entry.load(['userRoles.user', 'comments', 'details'])
 
       viewEntry(req, res)
     } else {
