@@ -10,7 +10,7 @@ const config = require('../config')
 exports.up = async function (knex, Promise) {
   try {
     await knex.schema.table('event', function (table) {
-      table.string('status_rules').notNullable()
+      table.string('status_rules').defaultTo('disabled').notNullable()
     })
     if (config.DB_TYPE === 'postgresql') {
       await knex.raw('alter table entry alter column links type varchar(1000)')
