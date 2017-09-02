@@ -239,6 +239,9 @@ function errorPage (req, res, code, error, devMode) {
       break
     case 500:
       title = 'Internal error'
+      if (!devMode) {
+        message = 'Something went wrong, sorry about that.'
+      }
       break
     default:
       title = 'Error'
