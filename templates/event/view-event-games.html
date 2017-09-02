@@ -7,7 +7,7 @@
 
 <div class="container">
   <div class="row">
-    {% set showSidebar = event.get('status_results') === 'voting' or event.get('status_results') === 'results' %}
+    {% set showSidebar = user and (event.get('status_results') === 'voting' or event.get('status_results') === 'results') %}
     
     {% if showSidebar %}
     <div class="col-sm-3">
