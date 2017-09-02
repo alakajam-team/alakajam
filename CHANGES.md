@@ -2,6 +2,12 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### September 1st
+
+* Adding people to a team now sends them an invite, that they have to accept or decline
+* Browsers now make you confirm before closing the tab if you have pending changes in a post
+* Alakajam! links now look pretty when shared on Facebook
+
 ### August 29th
 
 * Entry voting system, with the ability to view past votes
