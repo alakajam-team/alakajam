@@ -12,13 +12,27 @@
 <th>Votes</th>
 <th>Status</th>
 <th>Score</th>
+<th>Actions</th>
 </tr>
 {% for theme in themes %}
   <tr>
-  <td>{{ theme.get('title') }}<td>
+  <td>
+    {% if theme.get('status') !== 'banned' %}
+      {{ theme.get('title') }}
+    {% else %}
+      <span style="text-decoration: line-through">{{ theme.get('title') }}</span>
+    {% endif %}
+  <td>
   <td>{{ theme.get('notes') }}</td>
-  <td>{{ eventMacros.eventThemeStatus(theme) }}</td>
+  <td>{{ eventMacros.eventThemeStatus(theme, {uncensored: true}) }}</td>
   <td><strong>{{ theme.get('score') }}</strong></td>
+  <td>
+    {% if theme.get('status') !== 'banned' %}
+      <a href="?ban={{ theme.get('id') }}" class="btn btn-xs btn-default">Ban</a>
+    {% else %}
+      <a href="?unban={{ theme.get('id') }}" class="btn btn-xs btn-default">Unban</a>
+    {% endif %}
+  </td>
   </tr>
 {% endfor %}
 </table>

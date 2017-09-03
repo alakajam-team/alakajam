@@ -15,6 +15,8 @@ const cache = require('../core/cache')
 const settingService = require('./setting-service')
 
 module.exports = {
+  findThemeById,
+
   findThemeIdeasByUser,
   saveThemeIdeas,
 
@@ -28,6 +30,10 @@ module.exports = {
   findBestThemes,
   findShortlist,
   computeShortlist
+}
+
+async function findThemeById (id) {
+  return models.Theme.where('id', id).fetch()
 }
 
 /**
@@ -311,8 +317,9 @@ async function saveShortlistVotes (user, event, ids) {
 
 async function findAllThemes (event, options = {}) {
   let query = models.Theme.where('event_id', event.get('id'))
-  if (options.statusNot) {
-    query = query.where('stauts', '<>', options.statusNot)
+  if (options.shortlistEligible) {
+    query = query.where('status', '<>', 'out')
+      .where('status', '<>', 'banned')
   }
   return query.orderBy('score', 'DESC')
     .orderBy('created_at')
@@ -323,6 +330,7 @@ async function findBestThemes (event) {
   return models.Theme.where({
     event_id: event.get('id')
   })
+    .where('status', '<>', 'banned')
     .orderBy('score', 'DESC')
     .orderBy('created_at')
     .fetchPage({ pageSize: 10 })
@@ -337,7 +345,7 @@ async function findShortlist (event) {
 
 async function computeShortlist (event) {
   // Mark all themes as out
-  let allThemesCollection = await findAllThemes(event, {statusNot: 'out'})
+  let allThemesCollection = await findAllThemes(event, {shortlistEligible: true})
   await db.transaction(async function (t) {
     allThemesCollection.each(function (theme) {
       theme.set('status', 'out')

@@ -432,6 +432,25 @@ async function editEvent (req, res) {
  * Manage the event's submitted themes
  */
 async function editEventThemes (req, res) {
+  if (!securityService.isAdmin(res.locals.user)) {
+    res.errorPage(403)
+    return
+  }
+
+  if (forms.isId(req.query.ban)) {
+    let theme = await eventThemeService.findThemeById(req.query.ban)
+    if (theme) {
+      theme.set('status', 'banned')
+      await theme.save()
+    }
+  } else if (forms.isId(req.query.unban)) {
+    let theme = await eventThemeService.findThemeById(req.query.unban)
+    if (theme) {
+      theme.set('status', (res.locals.event.get('status_theme') === 'voting') ? 'active' : 'out')
+      await theme.save()
+    }
+  }
+
   let themesCollection = await eventThemeService.findAllThemes(res.locals.event)
   res.render('event/edit-event-themes', {
     themes: themesCollection.models
