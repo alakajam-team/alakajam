@@ -409,4 +409,8 @@ async function _refreshEventThemeStats (event) {
       }).count())
     eventDetails.save()
   }
+
+  if (!(await isThemeVotingAllowed(event))) {
+    cache.general.del(event.get('name') + '_event_voting_allowed_')
+  }
 }
