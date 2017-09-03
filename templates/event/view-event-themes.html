@@ -77,7 +77,7 @@
           <h2>Stats</h2>
           <div>
             <p>
-              <b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li><br />
+              {% if user %}<b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li><br />{% endif %}
               <b>Everyone:</b> {{ event.related('details').get('theme_count') }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') }}</span> votes
             </p>
             <div class="progress">
