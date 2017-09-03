@@ -8,6 +8,7 @@
 
 const models = require('../core/models')
 const constants = require('../core/constants')
+const settingService = require('../services/setting-service')
 const eventService = require('../services/event-service')
 
 module.exports = {
@@ -152,9 +153,10 @@ async function refreshEntryRatings (entry) {
   })
 
   let entryDetails = entry.related('details')
+  let requiredRatings = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '1'))
   for (let categoryIndex of categoryIndexes) {
     let averageRating
-    if (ratingCount[categoryIndex] >= constants.MINIMUM_REQUIRED_RATINGS) {
+    if (ratingCount[categoryIndex] >= requiredRatings) {
       averageRating = 1.0 * ratingSum[categoryIndex] / ratingCount[categoryIndex]
     } else {
       averageRating = null

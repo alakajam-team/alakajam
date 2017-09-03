@@ -10,6 +10,8 @@ const models = require('../core/models')
 const constants = require('../core/constants')
 const log = require('../core/log')
 const forms = require('../core/forms')
+const cache = require('../core/cache')
+const settingService = require('./setting-service')
 
 module.exports = {
   findThemeIdeasByUser,
@@ -184,35 +186,76 @@ async function findThemesToVoteOn (user, event) {
  * @param score {integer}
  */
 async function saveVote (user, event, themeId, score) {
-  // TODO Refine theme statuses
-  let isValidScore = (event.get('status_theme') === 'voting' && [-1, 1].indexOf(score) !== -1) ||
-    (event.get('status_theme') === 'shortlist' && score >= 1 && score <= 10)
-  if (isValidScore) {
-    let theme = await models.Theme.where('id', themeId).fetch()
-    let vote = await models.ThemeVote.where({
-      user_id: user.get('id'),
-      event_id: event.get('id'),
-      theme_id: themeId
-    }).fetch()
+  let voteCreated = false
+  let expectedStatus = null
 
-    if (vote) {
-      theme.set('score', theme.get('score') + score - (vote.get('score') || 0))
-      vote.set('score', score)
-    } else {
-      theme.set({
-        'score': theme.get('score') + score,
-        'notes': theme.get('notes') + 1
-      })
-      vote = new models.ThemeVote({
-        theme_id: themeId,
+  if (event.get('status_theme') === 'voting' && [-1, 1].indexOf(score) !== -1) {
+    expectedStatus = 'active'
+  } else if (event.get('status_theme') === 'shortlist' && score >= 1 && score <= 10) {
+    expectedStatus = 'shortlist'
+  }
+
+  if (expectedStatus) {
+    let theme = await models.Theme.where('id', themeId).fetch()
+
+    if (theme.get('status') === expectedStatus) {
+      let vote = await models.ThemeVote.where({
         user_id: user.get('id'),
         event_id: event.get('id'),
-        score: score
-      })
-    }
+        theme_id: themeId
+      }).fetch()
 
-    await Promise.all([theme.save(), vote.save()])
-    _refreshEventThemeStats(event)
+      if (vote) {
+        theme.set('score', theme.get('score') + score - (vote.get('score') || 0))
+        vote.set('score', score)
+      } else {
+        theme.set({
+          'score': theme.get('score') + score,
+          'notes': theme.get('notes') + 1
+        })
+        vote = new models.ThemeVote({
+          theme_id: themeId,
+          user_id: user.get('id'),
+          event_id: event.get('id'),
+          score: score
+        })
+        voteCreated = true
+      }
+
+      await Promise.all([theme.save(), vote.save()])
+      _refreshEventThemeStats(event)
+    }
+  }
+
+  if (voteCreated) {
+    // Eliminate a theme every x votes. No need for DB transactions, just count in-memory
+    let eliminationThreshold = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, '10'))
+    let uptimeVotes = cache.general.get('uptime_votes') || 0
+    uptimeVotes++
+    if (uptimeVotes % eliminationThreshold === 0) {
+      _eliminateLowestTheme(event)
+    }
+    cache.general.set('uptime_votes', uptimeVotes)
+  }
+}
+
+async function _eliminateLowestTheme (event) {
+  let eliminationMinNotes = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5'))
+
+  let battleReadyThemesQuery = await models.Theme.where({
+    event_id: event.get('id'),
+    status: 'active'
+  })
+    .where('notes', '>=', eliminationMinNotes)
+
+  // Make sure we have at least enough themes to fill our shortlist before removing one
+  if (await battleReadyThemesQuery.count() > 10) {
+    let loserTheme = await battleReadyThemesQuery
+      .orderBy('score')
+      .orderBy('created_at')
+      .fetch()
+    loserTheme.set('status', 'out')
+    await loserTheme.save()
   }
 }
 

@@ -111,7 +111,7 @@ async function insertInitialData (samples) {
   const postService = require('../services/post-service')
   const settingService = require('../services/setting-service')
 
-  // Mandatory admin account
+  // Mandatory admin account & important settings
 
   await userService.register('administrator@example.com', 'administrator', 'administrator')
   let adminUser = await userService.findByName('administrator')
@@ -120,6 +120,23 @@ async function insertInitialData (samples) {
     is_admin: true
   })
   await adminUser.save()
+
+  await settingService.save(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1)
+  await settingService.save(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 5)
+  await settingService.save(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 1)
+  await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, `{
+    "sidebar": [
+        {
+            "title": "General",
+            "links": [
+                {
+                    "title": "About Alakajam!",
+                    "url": "/article/help"
+                }
+            ]
+        }
+    ]
+}`)
 
   // Samples
 
