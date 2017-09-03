@@ -115,7 +115,9 @@ async function viewEventPosts (req, res) {
 async function viewEventThemes (req, res) {
   res.locals.pageTitle += ' | Themes'
 
-  let statusThemes = res.locals.event.get('status_theme')
+  let event = res.locals.event
+
+  let statusThemes = event.get('status_theme')
   if (statusThemes === 'disabled' || statusThemes === 'off') {
     res.errorPage(404)
   } else {
@@ -140,32 +142,41 @@ async function viewEventThemes (req, res) {
             }
           }
           // Update theme ideas
-          await eventThemeService.saveThemeIdeas(res.locals.user, res.locals.event, ideas)
+          await eventThemeService.saveThemeIdeas(res.locals.user, event, ideas)
         } else if (fields.action === 'vote') {
           if (forms.isId(fields['theme-id']) && (fields['upvote'] !== undefined || fields['downvote'] !== undefined)) {
             let score = (fields['upvote'] !== undefined) ? 1 : -1
-            await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['theme-id']), score)
+            await eventThemeService.saveVote(res.locals.user, event, parseInt(fields['theme-id']), score)
           }
         }
       }
 
       // Gather info for display
       if (res.locals.user) {
-        let userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, res.locals.event)
+        let userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, event)
         context.userThemes = userThemesCollection.models
 
-        let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, res.locals.event)
-        context.votesHistory = votesHistoryCollection.models
-
         context.voteCount = await eventThemeService.findThemeVotesHistory(
-          res.locals.user, res.locals.event, { count: true })
+          res.locals.user, event, { count: true })
+
+        if (event.get('status_theme') === 'voting') {
+          let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, event)
+          context.votesHistory = votesHistoryCollection.models
+        } else if (event.get('status_theme') === 'results') {
+          let shortlistCollection = await eventThemeService.findShortlist(event)
+          if (shortlistCollection.length === 0) {
+            // In case the shortlist phase has been skipped
+            shortlistCollection = await eventThemeService.findBestThemes(event)
+          }
+          context.shortlist = shortlistCollection.sortBy(theme => -theme.get('score'))
+        }
       } else {
-        let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, res.locals.event)
+        let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, event)
         context.sampleThemes = sampleThemesCollection.models
       }
     }
 
-    await res.locals.event.load('details')
+    await event.load('details')
 
     res.render('event/view-event-themes', context)
   }
@@ -280,7 +291,7 @@ async function editEvent (req, res) {
 
   let { fields } = await req.parseForm()
   let errorMessage = null
-  let infoMessage = null
+  let infoMessage = ''
   let redirected = false
 
   if (fields && fields.name && fields.title) {
@@ -349,6 +360,12 @@ async function editEvent (req, res) {
         }
       })
 
+      // Triggers
+      if (event.hasChanged('status_theme') && event.get('status_theme') === 'shortlist') {
+        await eventThemeService.computeShortlist(event)
+        infoMessage = 'Theme shortlist computed. '
+      }
+
       let nameChanged = event.hasChanged('name')
       event = await event.save()
       cache.eventsById.del(event.get('id'))
@@ -383,7 +400,7 @@ async function editEvent (req, res) {
  * Manage the event's submitted themes
  */
 async function editEventThemes (req, res) {
-  let themesCollection = await eventThemeService.findBestThemes(res.locals.event, { fetchAll: true })
+  let themesCollection = await eventThemeService.findAllThemes(res.locals.event)
   res.render('event/edit-event-themes', {
     themes: themesCollection.models
   })

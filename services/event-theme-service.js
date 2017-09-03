@@ -8,6 +8,7 @@
 
 const models = require('../core/models')
 const constants = require('../core/constants')
+const db = require('../core/db')
 const log = require('../core/log')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
@@ -19,9 +20,13 @@ module.exports = {
 
   findThemeVotesHistory,
   findThemesToVoteOn,
+  findThemeShortlistVotes,
   saveVote,
 
-  findBestThemes
+  findAllThemes,
+  findBestThemes,
+  findShortlist,
+  computeShortlist
 }
 
 /**
@@ -178,6 +183,17 @@ async function findThemesToVoteOn (user, event) {
       .fetchPage({ pageSize: 10 })
 }
 
+async function findThemeShortlistVotes (user, event) {
+  let shortlistCollection = await findShortlist(event)
+  let shortlistIds = []
+  shortlistCollection.each(theme => shortlistIds.push(theme.get('id')))
+  return models.ThemeVote.where({
+    user_id: user.get('id')
+  })
+    .where('theme_id', 'IN', shortlistIds)
+    .fetchAll()
+}
+
 /**
  * Saves a theme vote
  * @param user {User} user model
@@ -259,15 +275,50 @@ async function _eliminateLowestTheme (event) {
   }
 }
 
-async function findBestThemes (event, options) {
-  let query = models.Theme.where({
+async function findAllThemes (event) {
+  return models.Theme.where({
     event_id: event.get('id')
-  }).orderBy('score', 'DESC')
-  if (options.fetchAll) {
-    return query.fetchAll()
-  } else {
-    return query.fetchPage({ pageSize: 10 })
-  }
+  })
+    .orderBy('score', 'DESC')
+    .orderBy('created_at')
+    .fetchAll()
+}
+
+async function findBestThemes (event) {
+  return models.Theme.where({
+    event_id: event.get('id'),
+    status: 'active'
+  })
+    .orderBy('score', 'DESC')
+    .orderBy('created_at')
+    .fetchPage({ pageSize: 10 })
+}
+
+async function findShortlist (event) {
+  return models.Theme.where({
+    event_id: event.get('id'),
+    status: 'shortlist'
+  }).fetchAll()
+}
+
+async function computeShortlist (event) {
+  // Mark all themes as out
+  let allThemesCollection = await findAllThemes(event)
+  await db.transaction(async function (t) {
+    allThemesCollection.each(function (theme) {
+      theme.set('status', 'out')
+      theme.save(null, { transacting: t })
+    })
+  })
+
+  // Compute new shortlist
+  let bestThemeCollection = await findBestThemes(event)
+  await db.transaction(async function (t) {
+    bestThemeCollection.each(function (theme) {
+      theme.set('status', 'shortlist')
+      theme.save(null, { transacting: t })
+    })
+  })
 }
 
 async function _refreshEventThemeStats (event) {

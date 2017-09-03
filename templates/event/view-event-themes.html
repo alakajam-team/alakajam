@@ -40,7 +40,7 @@
             {% endif %}
           </div>
         </div>
-        
+
         <form id="js-manage-themes" method="post" style="display: none">
           <h2>Theme ideas 
               <input type="hidden" name="action" value="ideas" />
@@ -84,6 +84,7 @@
       </div>
       
       <div class="col-md-8">
+        {% if event.get('status_theme') === 'voting' %}
         <div class="themes__voting">
           <h2>Theme voting</h2>
 
@@ -119,8 +120,10 @@
             {% endfor %}
           {% endif %}
         </div>
+        {% endif %}
         
-        <div class="themes__shortlist" style="display: none">
+        {% if event.get('status_theme') === 'shortlist' %}
+        <div class="themes__shortlist">
           <h2>Shortlist ranking
             <input type="submit" class="btn btn-primary disabled" disabled="disabled" value="Save changes" /></h2>        
           <form method="post">
@@ -137,24 +140,28 @@
             </div>
           </form>
         </div>
+        {% endif %}
         
-        <div class="themes__results" style="display: none">
+        {% if event.get('status_theme') === 'results' %}
+        <div class="themes__results">
           <h2>Shortlist results</h2>
           <div class="well">
-            <p>
-              <span class="pull-right">Your picks</span>
+              <!-- TODO <span class="pull-right">Your picks</span>-->
               Final rankings of the theme shortlist
+              <span style="width: 100px" class="pull-right text-right">Score</span>
             </p>
             <ol>
-              {% for i in range(0, 10) %}
-              <li class="theme-shortlist-line">
-                <span class="theme-shortlist-line__label">Evolution {{ i }}</span>
-                <span class="theme-shortlist-line__ranking pull-right label label-default">{{ [i, 1] | sum | ordinal }}</span>
+              {% for theme in shortlist %}
+              <li class="theme-shortlist-line"> 
+                <span class="theme-shortlist-line__label">{{ theme.get('title') }}</span>
+                <span style="width: 100px" class="pull-right text-right">{{ '+' if theme.get('score') > 0 }}{{ theme.get('score') }}</span>
+               <!--  TODO <span class="theme-shortlist-line__ranking pull-right label label-default">{{ [i, 1] | sum | ordinal }}</span>-->
               </li>
               {% endfor %}
             </ol>
           </div>
         </div>
+        {% endif %}
       </div>
     {% endif %}
   </div>
