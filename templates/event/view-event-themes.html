@@ -26,7 +26,7 @@
                 </div>
                 <p>{{ eventMacros.eventThemeStatus(userTheme) }}
                   {% if userTheme.get('status') !== 'duplicate' %}
-                    after {{ userTheme.get('notes') }} votes
+                    after {{ userTheme.get('notes') }} vote{{ 's' if userTheme.get('notes') !== 1 }}
                   {% endif %}</p>
               </div>
             {% endfor %}
@@ -57,7 +57,7 @@
                 {% if userTheme %}
                 <p>{{ eventMacros.eventThemeStatus(userTheme) }}
                   {% if userTheme.get('status') !== 'duplicate' %}
-                    after {{ userTheme.get('notes') }} votes
+                    after {{ userTheme.get('notes') }} vote{{ 's' if userTheme.get('notes') !== 1 }}
                   {% endif %}</p>
                 {% endif %}
               </div>
@@ -65,18 +65,17 @@
           </div>
         </form>
         
-        <div class="themes__stats" style="display: none">
+        <div class="themes__stats">
           <h2>Stats</h2>
           <div>
             <ul>
-              <li><b>You:</b> 3 ideas, 35 votes</li>
-              <li><b>Global:</b> 50 ideas, 258 votes</li>
+              <li><b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li>
+              <li><b>Everyone:</b> {{ event.related('details').get('theme_count') }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') }}</span> votes</li>
             </ul>
              <div class="progress">
-              <div class="progress-bar progress-bar-default" role="progressbar" style="width: 60%">30 Active</div>
-              <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: 40%">20 Out</div>
-               <!--<div class="progress-bar progress-bar-success" role="progressbar" style="width: 10%">10 Shortlisted</div>
-              <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: 90%">40 Out</div>-->
+             {% set activePercentage = (100 * event.related('details').get('active_theme_count') / event.related('details').get('theme_count') or 100) | digits(0) %}
+              <div class="progress-bar progress-bar-default" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('active_theme_count') }} Active</div>
+              <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('theme_count') - event.related('details').get('active_theme_count') }} Out</div>
              </div>
              The lowest-ranking theme is eliminated every <b>10</b> votes (assuming it got at least <b>5</b> votes).
             </p>
@@ -257,6 +256,8 @@ function onVoteClick (upvote) {
   } else {
     saveVote($('#js-theme-id').val(), upvote, nextTheme)
   }
+  $('#js-user-votes').text(parseInt($('#js-user-votes').text()) + 1)
+  $('#js-total-votes').text(parseInt($('#js-total-votes').text()) + 1)
 }
 
 function saveVote (id, upvote, callback) {

@@ -106,6 +106,7 @@ async function saveThemeIdeas (user, event, ideas) {
   }
 
   await Promise.all(tasks)
+  _refreshEventThemeStats(event)
 }
 
 /**
@@ -130,17 +131,22 @@ async function handleDuplicates (theme) {
  * Returns the 30 latest votes by the user
  * @param user {User} user model
  * @param event {Event} event model
+ * @param options {object} (optional) count
  */
-async function findThemeVotesHistory (user, event) {
-  return models.ThemeVote.where({
+async function findThemeVotesHistory (user, event, options = {}) {
+  let query = models.ThemeVote.where({
     event_id: event.get('id'),
     user_id: user.get('id')
   })
-      .orderBy('id', 'DESC')
+  if (options.count) {
+    return query.count()
+  } else {
+    return query.orderBy('id', 'DESC')
       .fetchPage({
         pageSize: 30,
         withRelated: ['theme']
       })
+  }
 }
 
 /**
@@ -157,16 +163,16 @@ async function findThemesToVoteOn (user, event) {
         this.andOn('theme_vote.user_id', '=', user.get('id'))
       })
     })
-        .where({
-          status: constants.THEME_STATUS_ACTIVE,
-          'theme.event_id': event.get('id'),
-          'theme_vote.user_id': null
-        })
-        .where('theme.user_id', '<>', user.get('id'))
+    .where({
+      status: constants.THEME_STATUS_ACTIVE,
+      'theme.event_id': event.get('id'),
+      'theme_vote.user_id': null
+    })
+    .where('theme.user_id', '<>', user.get('id'))
   } else {
     query = query.where('event_id', event.get('id'))
   }
-  return query.orderBy('notes', 'DESC')
+  return query.orderBy('notes')
       .fetchPage({ pageSize: 10 })
 }
 
@@ -179,7 +185,9 @@ async function findThemesToVoteOn (user, event) {
  */
 async function saveVote (user, event, themeId, score) {
   // TODO Refine theme statuses
-  if (event.get('status_theme') === 'on' && [-1, 1].indexOf(score) !== -1) {
+  let isValidScore = (event.get('status_theme') === 'voting' && [-1, 1].indexOf(score) !== -1) ||
+    (event.get('status_theme') === 'shortlist' && score >= 1 && score <= 10)
+  if (isValidScore) {
     let theme = await models.Theme.where('id', themeId).fetch()
     let vote = await models.ThemeVote.where({
       user_id: user.get('id'),
@@ -204,6 +212,7 @@ async function saveVote (user, event, themeId, score) {
     }
 
     await Promise.all([theme.save(), vote.save()])
+    _refreshEventThemeStats(event)
   }
 }
 
@@ -215,5 +224,28 @@ async function findBestThemes (event, options) {
     return query.fetchAll()
   } else {
     return query.fetchPage({ pageSize: 10 })
+  }
+}
+
+async function _refreshEventThemeStats (event) {
+  await event.load('details')
+  let eventDetails = event.related('details')
+
+  // Throttled: updates every 5 seconds max
+  if (eventDetails.get('updated_at') < new Date().getTime() - 5000) {
+    eventDetails.set('theme_count',
+      await models.Theme.where({
+        event_id: event.get('id')
+      }).count())
+    eventDetails.set('active_theme_count',
+      await models.Theme.where({
+        event_id: event.get('id'),
+        status: 'active'
+      }).count())
+    eventDetails.set('theme_vote_count',
+      await models.ThemeVote.where({
+        event_id: event.get('id')
+      }).count())
+    eventDetails.save()
   }
 }

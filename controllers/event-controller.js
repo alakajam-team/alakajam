@@ -156,11 +156,16 @@ async function viewEventThemes (req, res) {
 
         let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, res.locals.event)
         context.votesHistory = votesHistoryCollection.models
+
+        context.voteCount = await eventThemeService.findThemeVotesHistory(
+          res.locals.user, res.locals.event, { count: true })
       } else {
         let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, res.locals.event)
         context.sampleThemes = sampleThemesCollection.models
       }
     }
+
+    await res.locals.event.load('details')
 
     res.render('event/view-event-themes', context)
   }
