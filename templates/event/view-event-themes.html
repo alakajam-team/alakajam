@@ -106,21 +106,23 @@
             <div class="horizontal-bar">Votes history</div>
             <div id="js-theme-history" class="row">
               {% for vote in votesHistory %}
-              <div class="col-sm-6">
-                <div class="theme-past">
-                  <table>
-                  <tr><td class="theme-past__buttons">
-                    <form method="post">
-                      <input type="hidden" name="action" value="vote" />
-                      <input type="hidden" name="theme-id" value="{{ vote.get('theme_id') }}" />
-                      <button name="upvote" class="btn {{ 'btn-success' if vote.get('score') > 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
-                      <button name="downvote" class="btn {{ 'btn-danger' if vote.get('score') < 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
-                    </form>
-                  </td><td class="theme-past__label">
-                    {{ vote.related('theme').get('title') }}
-                  </td></tr>
-                  </table>
-                </div>
+                {% if vote.related('theme').get('status') !== 'banned' %}
+                  <div class="col-sm-6">
+                    <div class="theme-past">
+                      <table>
+                      <tr><td class="theme-past__buttons">
+                        <form method="post">
+                          <input type="hidden" name="action" value="vote" />
+                          <input type="hidden" name="theme-id" value="{{ vote.get('theme_id') }}" />
+                          <button name="upvote" class="btn {{ 'btn-success' if vote.get('score') > 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                          <button name="downvote" class="btn {{ 'btn-danger' if vote.get('score') < 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                        </form>
+                      </td><td class="theme-past__label">
+                        {{ vote.related('theme').get('title') }}
+                      </td></tr>
+                      </table>
+                    </div>
+                  {% endif %}
               </div>
               {% endfor %}
             </div>
