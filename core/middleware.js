@@ -58,16 +58,18 @@ async function configure (app) {
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
   // Request throttling
-  let store = new ExpressBrute.MemoryStore() // TODO use brute-knex
-  let bruteforce = new ExpressBrute(store, {
-    freeRetries: 5,
-    minWait: 100, // ms
-    lifetime: 0.5, // seconds
-    failCallback: function (req, res, next, nextValidRequestDate) {
-      res.end('ERROR: Too many requests. Fair use is 2req/s.')
-    }
-  })
-  app.use(bruteforce.prevent)
+  if (!app.locals.devMode) {
+    let store = new ExpressBrute.MemoryStore() // TODO use brute-knex
+    let bruteforce = new ExpressBrute(store, {
+      freeRetries: 5,
+      minWait: 100, // ms
+      lifetime: 0.5, // seconds
+      failCallback: function (req, res, next, nextValidRequestDate) {
+        res.end('ERROR: Too many requests. Fair use is 2req/s.')
+      }
+    })
+    app.use(bruteforce.prevent)
+  }
 
   // Templating
   app.set('views', path.join(ROOT_PATH, '/templates'))

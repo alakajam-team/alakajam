@@ -154,6 +154,9 @@ img.no-border:hover, a:hover img.no-border {
 
 .CodeMirror {
   height: auto;
+  border: 1px solid #aab2bd;
+  border-radius: 4px;
+  padding: 3px 0;
 }
 
 .editor-toolbar.fullscreen, .CodeMirror-fullscreen, .editor-preview-side { 
@@ -1494,6 +1497,17 @@ input.date-picker {
 
 /* ============================== Home page ============================== */
 
+@keyframes anim-call-to-action {
+  0% { border-color: #da4453; }
+  50% { border-color: color(var(--alt-dark)); }
+  100% { border-color: #da4453; }
+}
+@keyframes anim-call-to-action-text {
+  0% { color: #da4453; }
+  50% { color: color(var(--alt-dark)); }
+  100% { color: #da4453; }
+}
+
 .home-jumbo {
   background-color: var(--borders);
   
@@ -1528,18 +1542,39 @@ input.date-picker {
       padding: 0 10px;
     }
   }
-  
+
   &__details {
+    animation-name: anim-call-to-action;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 10px;
     padding: 10px;
+
+    &.call {
+      border-left: 10px #da4453 solid;
+    }
+  }
+
+  &__call {
+    @apply --alt-font;
+    animation-name: anim-call-to-action-text;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    display: block;
+    font-size: 2rem;
+    font-weight: normal;
+    line-height: 1.9rem;
+    padding-bottom: 10px;
   }
   
   &__link {
     transition: 0.3s;
     font-size: 2.0rem;
-    line-height: 30px;
+    line-height: 22px;
 
     &.disabled, &.disabled:hover {
       color: var(--text-lighter);
@@ -1548,7 +1583,7 @@ input.date-picker {
 
     & .glyphicon {
       vertical-align: middle;
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       margin-top: -3px;
     }
   }
@@ -1571,7 +1606,7 @@ input.date-picker {
   }
   
   &__link-border {
-    height: 50px;
+    height: 44px;
     margin-bottom: 10px;
     padding: 7px 10px;
   }
@@ -1602,7 +1637,7 @@ input.date-picker {
 
   &__countdown {
     display: none;
-    margin: 10px auto 20px auto;
+    margin: 10px auto 20px -3px;
     width: 332px;
     
     & .flip .inn {

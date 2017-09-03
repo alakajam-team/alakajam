@@ -11,6 +11,9 @@
 
   <h1 id="js-title-display"></h1>
 
+  <div class="horizontal-bar">
+    General
+  </div>
   <div class="form-group input-group-lg">
     <label for="title">Title</label>
     <input type="text" class="form-control" id="js-title" name="title" value="{{ event.get('title') if event }}" required="required" />
@@ -19,9 +22,36 @@
     <label for="name">Slug</label>
     <input type="text" class="form-control" id="js-name" name="name" value="{{ event.get('name') if event }}" required="required" />
   </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="display-dates">Displayed dates</label>
+        <input type="text" class="form-control" name="display-dates" value="{{ event.get('display_dates') if event }}" />
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="title">Displayed theme</label>
+        <input type="text" class="form-control" name="display-theme" value="{{ event.get('display_theme') if event }}" />
+      </div>
+    </div>
+  </div>
   <div class="form-group">
-    <label for="display-dates">Displayed dates</label>
-    <input type="text" class="form-control" name="display-dates" value="{{ event.get('display_dates') if event }}" />
+    <label for="category-titles">Rating categories {{ formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]') }}</label>
+    <textarea name="category-titles" class="codemirror">{{ event.related('details').get('category_titles') | dump }}</textarea>
+  </div>
+
+  <div class="horizontal-bar">
+    Home page
+  </div>
+  <div class="form-group">
+    <label>Call to action</label>
+    <div class="form-inline">
+    Message
+    <input type="text" class="form-control" style="min-width: 250px" name="countdown-message" value="{{ event.get('countdown_config').message if event }}" />
+    Link page {{ formMacros.tooltip('Among "themes", "posts", "games", "results"')}}
+    <input type="text" class="form-control" name="countdown-link" value="{{ event.get('countdown_config').link if event }}" />
+    </div>
   </div>
   <div class="form-group">
     <label>Next deadline</label>
@@ -34,9 +64,9 @@
     Animated countdown</label>
     </div>
   </div>
-  <div class="form-group">
-    <label for="title">Displayed theme</label>
-    <input type="text" class="form-control" name="display-theme" value="{{ event.get('display_theme') if event }}" />
+
+  <div class="horizontal-bar">
+    Status toggles
   </div>
   <div class="row">
     <div class="col-lg-6">
@@ -95,10 +125,6 @@
     {{ formMacros.radio('status-entry', 'closed', 'Closed',
       event.get('status_entry') if event) }}
     </div>
-  </div>
-  <div class="form-group">
-    <label for="category-titles">Entry rating categories {{ formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]') }}</label>
-    <textarea name="category-titles" class="codemirror">{{ event.related('details').get('category_titles') | dump }}</textarea>
   </div>
   <div class="form-group">
     <label for="status-results">Event results status</label>

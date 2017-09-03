@@ -336,6 +336,8 @@ async function editEvent (req, res) {
         status_entry: fields['status-entry'],
         status_results: fields['status-results'],
         countdown_config: {
+          message: forms.sanitizeString(fields['countdown-message']),
+          link: forms.sanitizeString(fields['countdown-link']),
           date: forms.parseDateTime(fields['countdown-date']),
           phrase: forms.sanitizeString(fields['countdown-phrase']),
           enabled: fields['countdown-enabled'] === 'on'
