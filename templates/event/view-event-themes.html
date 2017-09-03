@@ -14,7 +14,7 @@
       <div class="col-md-4">
         <div id="js-view-themes">
           <h2>Theme ideas
-            {% if user %}
+            {% if user and event.get('status_theme') === 'voting' %}
               <input type="submit" class="btn btn-primary js-manage-themes-button" value="Manage" />
             {% endif %}
           </h2>
@@ -32,9 +32,17 @@
             {% endfor %}
             {% if not userThemes or userThemes.length === 0 %}
               <div class="themes__idea">
-                <p>None yet. You can submit up to 3 ideas.</p>
-                {% if not user %}
-                  <p style="margin-top: 10px"><a href="/login" class="btn btn-primary">Login to submit ideas</a></p>
+                {% if event.get('status_theme') === 'voting' %}
+                  <p>None yet. You can submit up to 3 ideas.</p>
+                  {% if not user %}
+                    <p style="margin-top: 10px"><a href="/login" class="btn btn-primary">Login to submit ideas</a></p>
+                  {% endif %}
+                {% else %}
+                  {% if user %}
+                    You didn't submit theme ideas.
+                  {% else %}
+                    <p><a href="/login" class="btn btn-primary">Login to view your ideas</a></p>
+                  {% endif %}
                 {% endif %}
               </div>
             {% endif %}
@@ -125,17 +133,21 @@
         <div class="themes__shortlist">
           <form method="post">
             <h2>Shortlist ranking
-              <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
+              {% if user %}
+                <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
+              {% endif %}
             </h2> 
             <input type="hidden" name="action" value="shortlist" />
             <input id="js-shortlist-votes" type="hidden" name="shortlist-votes" />
           </form>       
           <div class="well">
-            <p>These are the top 10 suggested ideas! Rank them by preference order.</p>
-            <ol id="js-shortlist">
+            <p>These are the top 10 suggested ideas! {{ 'Rank them by preference order.' if user }}</p>
+            <ol id="{{ 'js-shortlist' if user }}">
               {% for theme in shortlist %}
-              <li class="theme-shortlist-line draggable" data-theme-id="{{ theme.get('id') }}">
-                <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
+              <li class="theme-shortlist-line {{ 'draggable' if user }}" data-theme-id="{{ theme.get('id') }}">
+                {% if user %}
+                  <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
+                {% endif %}
                 <span class="theme-shortlist-line__label">{{ theme.get('title') }}</span>
               </li>
               {% endfor %}

@@ -126,7 +126,7 @@ async function viewEventThemes (req, res) {
     if (forms.isId(statusThemes)) {
       context.themesPost = await postService.findPostById(statusThemes)
     } else {
-      if (req.method === 'POST') {
+      if (req.method === 'POST' && res.locals.user) {
         let {fields} = await req.parseForm()
 
         if (fields.action === 'ideas') {
@@ -186,21 +186,29 @@ async function viewEventThemes (req, res) {
           } else {
             context.shortlist = shortlistCollection.shuffle()
           }
-        } else if (event.get('status_theme') === 'results') {
-          let shortlistCollection = await eventThemeService.findShortlist(event)
-          if (shortlistCollection.length === 0) {
-            // In case the shortlist phase has been skipped
-            shortlistCollection = await eventThemeService.findBestThemes(event)
-          }
-          context.shortlist = shortlistCollection.sortBy(theme => -theme.get('score'))
         }
       } else {
-        let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, event)
-        context.sampleThemes = sampleThemesCollection.models
+        if (event.get('status_theme') === 'voting') {
+          let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, event)
+          context.sampleThemes = sampleThemesCollection.models
+        } else if (event.get('status_theme') === 'shortlist') {
+          let shortlistCollection = await eventThemeService.findShortlist(event)
+          context.shortlist = shortlistCollection.shuffle()
+        }
       }
-    }
 
-    await event.load('details')
+      if (event.get('status_theme') === 'results') {
+        let shortlistCollection = await eventThemeService.findShortlist(event)
+        if (shortlistCollection.length === 0) {
+          // In case the shortlist phase has been skipped
+          shortlistCollection = await eventThemeService.findBestThemes(event)
+        }
+
+        context.shortlist = shortlistCollection.sortBy(theme => -theme.get('score'))
+      }
+
+      await event.load('details')
+    }
 
     res.render('event/view-event-themes', context)
   }
