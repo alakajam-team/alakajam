@@ -1297,6 +1297,7 @@ input.date-picker {
   
   & .progress {
     border: 1px solid var(--neutral-light);
+    margin-bottom: 10px;
     
     & .progress-bar-default {
       background-color: white;
@@ -1321,7 +1322,7 @@ input.date-picker {
     &:last-child {
       border-bottom: 0;
     }
-    &.draggable:hover {
+    &.draggable.sortable-chosen {
       background-color: var(--borders);
     } 
     &.draggable {

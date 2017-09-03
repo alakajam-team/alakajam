@@ -34,7 +34,7 @@
               <div class="themes__idea">
                 <p>None yet. You can submit up to 3 ideas.</p>
                 {% if not user %}
-                  <p><a href="/login" class="btn btn-primary">Login to submit ideas</a></p>
+                  <p style="margin-top: 10px"><a href="/login" class="btn btn-primary">Login to submit ideas</a></p>
                 {% endif %}
               </div>
             {% endif %}
@@ -68,17 +68,16 @@
         <div class="themes__stats">
           <h2>Stats</h2>
           <div>
-            <ul>
-              <li><b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li>
-              <li><b>Everyone:</b> {{ event.related('details').get('theme_count') }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') }}</span> votes</li>
-            </ul>
-             <div class="progress">
-             {% set activePercentage = (100 * event.related('details').get('active_theme_count') / event.related('details').get('theme_count') or 100) | digits(0) %}
+            <p>
+              <b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li><br />
+              <b>Everyone:</b> {{ event.related('details').get('theme_count') }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') }}</span> votes
+            </p>
+            <div class="progress">
+              {% set activePercentage = (100 * event.related('details').get('active_theme_count') / event.related('details').get('theme_count') or 100) | digits(0) %}
               <div class="progress-bar progress-bar-default" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('active_theme_count') }} Active</div>
               <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('theme_count') - event.related('details').get('active_theme_count') }} Out</div>
-             </div>
-             The lowest-ranking theme is eliminated regularly. The longer the theme stands before elimination, the better it is!
-            </p>
+            </div>
+            <p>The lowest-ranking theme is eliminated regularly. The longer the theme stands before elimination, the better it is!</p>
           </div>
         </div>
       </div>
@@ -124,21 +123,24 @@
         
         {% if event.get('status_theme') === 'shortlist' %}
         <div class="themes__shortlist">
-          <h2>Shortlist ranking
-            <input type="submit" class="btn btn-primary disabled" disabled="disabled" value="Save changes" /></h2>        
           <form method="post">
-            <div class="well">
-              <p>These are the top 10 suggested ideas! Rank them by preference order.</p>
-              <ol id="js-shortlist">
-                {% for i in range(0, 10) %}
-                <li class="theme-shortlist-line draggable">
-                  <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
-                  <span class="theme-shortlist-line__label">Evolution {{ i }}</span>
-                </li>
-                {% endfor %}
-              </ol>
-            </div>
-          </form>
+            <h2>Shortlist ranking
+              <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
+            </h2> 
+            <input type="hidden" name="action" value="shortlist" />
+            <input id="js-shortlist-votes" type="hidden" name="shortlist-votes" />
+          </form>       
+          <div class="well">
+            <p>These are the top 10 suggested ideas! Rank them by preference order.</p>
+            <ol id="js-shortlist">
+              {% for theme in shortlist %}
+              <li class="theme-shortlist-line draggable" data-theme-id="{{ theme.get('id') }}">
+                <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
+                <span class="theme-shortlist-line__label">{{ theme.get('title') }}</span>
+              </li>
+              {% endfor %}
+            </ol>
+          </div>
         </div>
         {% endif %}
         
@@ -219,7 +221,16 @@ $('.js-manage-themes-button').click(function () {
 // Shortlist
 var list = document.getElementById('js-shortlist')
 Sortable.create(list, {
-  animation: 100
+  animation: 100,
+  onUpdate: function() {
+    var votes = []
+    $('#js-shortlist li').each(function () {
+      votes.push($(this).attr('data-theme-id'))
+    })
+    $('#js-shortlist-votes').val(votes)
+    $('#js-shortlist-submit').removeClass('disabled')
+    $('#js-shortlist-submit').removeAttr('disabled')
+  }
 })
 
 // Manage theme votes

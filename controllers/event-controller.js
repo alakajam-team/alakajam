@@ -148,6 +148,17 @@ async function viewEventThemes (req, res) {
             let score = (fields['upvote'] !== undefined) ? 1 : -1
             await eventThemeService.saveVote(res.locals.user, event, parseInt(fields['theme-id']), score)
           }
+        } else if (fields.action === 'shortlist' && fields['shortlist-votes']) {
+          let ids = fields['shortlist-votes'].split(',').map(id => parseInt(id))
+          let validIds = true
+          for (let id of ids) {
+            if (!forms.isId(id)) {
+              validIds = false
+            }
+          }
+          if (validIds) {
+            await eventThemeService.saveShortlistVotes(res.locals.user, event, ids)
+          }
         }
       }
 
@@ -162,6 +173,19 @@ async function viewEventThemes (req, res) {
         if (event.get('status_theme') === 'voting') {
           let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, event)
           context.votesHistory = votesHistoryCollection.models
+        } else if (event.get('status_theme') === 'shortlist') {
+          let shortlistCollection = await eventThemeService.findShortlist(event)
+          let shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(res.locals.user, event)
+
+          if (shortlistVotesCollection.length === shortlistCollection.length) {
+            let scoreByTheme = {}
+            shortlistVotesCollection.each(function (vote) {
+              scoreByTheme[vote.get('theme_id')] = vote.get('score')
+            })
+            context.shortlist = shortlistCollection.sortBy(theme => -scoreByTheme[theme.get('id')] || 0)
+          } else {
+            context.shortlist = shortlistCollection.shuffle()
+          }
         } else if (event.get('status_theme') === 'results') {
           let shortlistCollection = await eventThemeService.findShortlist(event)
           if (shortlistCollection.length === 0) {

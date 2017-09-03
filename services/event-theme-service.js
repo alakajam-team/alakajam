@@ -22,6 +22,7 @@ module.exports = {
   findThemesToVoteOn,
   findThemeShortlistVotes,
   saveVote,
+  saveShortlistVotes,
 
   findAllThemes,
   findBestThemes,
@@ -200,10 +201,12 @@ async function findThemeShortlistVotes (user, event) {
  * @param event {Event} event model
  * @param themeId {integer}
  * @param score {integer}
+ * @param options {object} doNotSave
  */
-async function saveVote (user, event, themeId, score) {
+async function saveVote (user, event, themeId, score, options = {}) {
   let voteCreated = false
   let expectedStatus = null
+  let result = {}
 
   if (event.get('status_theme') === 'voting' && [-1, 1].indexOf(score) !== -1) {
     expectedStatus = 'active'
@@ -238,13 +241,20 @@ async function saveVote (user, event, themeId, score) {
         voteCreated = true
       }
 
-      await Promise.all([theme.save(), vote.save()])
-      _refreshEventThemeStats(event)
+      result = {
+        theme,
+        vote
+      }
+      if (!options.doNotSave) {
+        await Promise.all([theme.save(), vote.save()])
+      }
     }
   }
 
-  if (voteCreated) {
-    // Eliminate a theme every x votes. No need for DB transactions, just count in-memory
+  if (expectedStatus === 'voting' && voteCreated) {
+    _refreshEventThemeStats(event)
+
+    // Eliminate a theme every x votes. No need for DB calls, just count in-memory
     let eliminationThreshold = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, '10'))
     let uptimeVotes = cache.general.get('uptime_votes') || 0
     uptimeVotes++
@@ -253,6 +263,8 @@ async function saveVote (user, event, themeId, score) {
     }
     cache.general.set('uptime_votes', uptimeVotes)
   }
+
+  return result
 }
 
 async function _eliminateLowestTheme (event) {
@@ -275,19 +287,41 @@ async function _eliminateLowestTheme (event) {
   }
 }
 
-async function findAllThemes (event) {
-  return models.Theme.where({
-    event_id: event.get('id')
+async function saveShortlistVotes (user, event, ids) {
+  let shortlistCollection = await findShortlist(event)
+  let sortedShortlist = shortlistCollection.sortBy(theme => {
+    return ids.indexOf(theme.get('id'))
   })
-    .orderBy('score', 'DESC')
+
+  let score = 10
+  let results = []
+  for (let theme of sortedShortlist) {
+    results.push(await saveVote(user, event, theme.get('id'), score, {doNotSave: true}))
+    score--
+  }
+
+  await db.transaction(async function (t) {
+    let saveOptions = { transacting: t }
+    for (let result of results) {
+      if (result.theme) result.theme.save(null, saveOptions)
+      if (result.vote) result.vote.save(null, saveOptions)
+    }
+  })
+}
+
+async function findAllThemes (event, options = {}) {
+  let query = models.Theme.where('event_id', event.get('id'))
+  if (options.statusNot) {
+    query = query.where('stauts', '<>', options.statusNot)
+  }
+  return query.orderBy('score', 'DESC')
     .orderBy('created_at')
     .fetchAll()
 }
 
 async function findBestThemes (event) {
   return models.Theme.where({
-    event_id: event.get('id'),
-    status: 'active'
+    event_id: event.get('id')
   })
     .orderBy('score', 'DESC')
     .orderBy('created_at')
@@ -303,7 +337,7 @@ async function findShortlist (event) {
 
 async function computeShortlist (event) {
   // Mark all themes as out
-  let allThemesCollection = await findAllThemes(event)
+  let allThemesCollection = await findAllThemes(event, {statusNot: 'out'})
   await db.transaction(async function (t) {
     allThemesCollection.each(function (theme) {
       theme.set('status', 'out')
