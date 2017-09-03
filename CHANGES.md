@@ -2,6 +2,12 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### September 3st
+
+* Theme voting system is completed (stats, theme elimination, appearance to anonymous users)
+* Theme voting supports a "shortlist ranking" phase
+* Admins can enable an event-related "call to action" block on the home page
+
 ### September 1st
 
 * Adding people to a team now sends them an invite, that they have to accept or decline
