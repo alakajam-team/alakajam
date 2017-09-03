@@ -2,7 +2,7 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
-### September 3st
+### September 3rd
 
 * Theme voting system is completed (stats, theme elimination, appearance to anonymous users)
 * Theme voting supports a "shortlist ranking" phase
