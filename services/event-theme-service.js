@@ -15,8 +15,9 @@ const cache = require('../core/cache')
 const settingService = require('./setting-service')
 
 module.exports = {
-  findThemeById,
+  isThemeVotingAllowed,
 
+  findThemeById,
   findThemeIdeasByUser,
   saveThemeIdeas,
 
@@ -30,6 +31,22 @@ module.exports = {
   findBestThemes,
   findShortlist,
   computeShortlist
+}
+
+async function isThemeVotingAllowed (event) {
+  if (event.get('status') === 'open' && event.get('status_theme') === 'voting') {
+    let votingAllowedCacheKey = event.get('name') + '_event_voting_allowed_'
+    if (cache.general.get(votingAllowedCacheKey) === undefined) {
+      let themeIdeasRequired = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10'))
+      let themeIdeaCount = await models.Theme.where({
+        event_id: event.get('id')
+      }).count()
+      cache.general.set(votingAllowedCacheKey, themeIdeaCount >= themeIdeasRequired)
+    }
+    return cache.general.get(votingAllowedCacheKey)
+  } else {
+    return false
+  }
 }
 
 async function findThemeById (id) {
@@ -186,8 +203,16 @@ async function findThemesToVoteOn (user, event) {
   } else {
     query = query.where('event_id', event.get('id'))
   }
-  return query.orderBy('notes')
-      .fetchPage({ pageSize: 10 })
+
+  // Grab the 20 oldest theme ideas, then just keep the 10 with the least notes.
+  // This helps new themes catch up with the pack fast, while being much better randomized
+  // than just showing the themes with the least notes.
+  let themesCollection = await query.orderBy('updated_at')
+      .fetchPage({ pageSize: 20 })
+  let sortedThemes = themesCollection.sortBy(theme => theme.get('notes'))
+  let themesToVoteOn = sortedThemes.splice(0, 10)
+  let shuffledThemes = new db.Collection(themesToVoteOn).shuffle()
+  return new db.Collection(shuffledThemes)
 }
 
 async function findThemeShortlistVotes (user, event) {

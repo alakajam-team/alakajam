@@ -124,6 +124,7 @@ async function insertInitialData (samples) {
   await settingService.save(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1)
   await settingService.save(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 5)
   await settingService.save(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 1)
+  await settingService.save(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, 5)
   await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, `{
     "sidebar": [
         {

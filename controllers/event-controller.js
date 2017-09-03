@@ -15,6 +15,7 @@ const eventThemeService = require('../services/event-theme-service')
 const eventRatingService = require('../services/event-rating-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
+const settingService = require('../services/setting-service')
 
 module.exports = {
   eventMiddleware,
@@ -171,8 +172,14 @@ async function viewEventThemes (req, res) {
           res.locals.user, event, { count: true })
 
         if (event.get('status_theme') === 'voting') {
-          let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, event)
-          context.votesHistory = votesHistoryCollection.models
+          if (await eventThemeService.isThemeVotingAllowed(event)) {
+            let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, event)
+            context.votesHistory = votesHistoryCollection.models
+            context.votingAllowed = true
+          } else {
+            context.ideasRequired = await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10')
+            context.votingAllowed = false
+          }
         } else if (event.get('status_theme') === 'shortlist') {
           let shortlistCollection = await eventThemeService.findShortlist(event)
           let shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(res.locals.user, event)
@@ -189,8 +196,13 @@ async function viewEventThemes (req, res) {
         }
       } else {
         if (event.get('status_theme') === 'voting') {
-          let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, event)
-          context.sampleThemes = sampleThemesCollection.models
+          if (await eventThemeService.isThemeVotingAllowed(event)) {
+            let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, event)
+            context.sampleThemes = sampleThemesCollection.models
+          } else {
+            context.ideasRequired = await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10')
+            context.votingAllowed = false
+          }
         } else if (event.get('status_theme') === 'shortlist') {
           let shortlistCollection = await eventThemeService.findShortlist(event)
           context.shortlist = shortlistCollection.shuffle()
