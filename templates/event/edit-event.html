@@ -49,7 +49,7 @@
     <div class="form-inline">
     Message
     <input type="text" class="form-control" style="min-width: 250px" name="countdown-message" value="{{ event.get('countdown_config').message if event }}" />
-    Link page {{ formMacros.tooltip('Among "themes", "posts", "games", "results"')}}
+    Link page {{ formMacros.tooltip('Among "themes", "posts", "games", "results", or an absolute path like "/post/create"')}}
     <input type="text" class="form-control" name="countdown-link" value="{{ event.get('countdown_config').link if event }}" />
     </div>
   </div>

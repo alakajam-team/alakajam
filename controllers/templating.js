@@ -39,9 +39,6 @@ function buildUrl (model, type, page = null, options = {}) {
     if (type === 'event') {
       // Event model
       if (model && model.id) {
-        if (page === 'posts') {
-          pagePath = ''
-        }
         return '/' + model.get('name') + pagePath
       } else if (page === 'ajax-find-team-mate') {
         return '/external-entry/ajax-find-team-mate'

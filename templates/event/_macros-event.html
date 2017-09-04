@@ -175,7 +175,7 @@
 
 -->{% if not statusField or event.get(statusField) !== 'disabled' %}<!--
   -->{% set targetUrl = buildUrl(event, 'event', targetPath)%}<!--
-    --><a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath == targetUrl or currentPath == targetUrl + '/' }} 
+    --><a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
            {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and event.get(statusField) != options.requiredValue )}}">
          <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="event-header__link-label">{{ label }}</span>
 </a>{% endif %}<!--

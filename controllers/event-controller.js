@@ -20,6 +20,7 @@ const settingService = require('../services/setting-service')
 module.exports = {
   eventMiddleware,
 
+  viewDefaultPage,
   viewEventAnnouncements,
   viewEventPosts,
   viewEventThemes,
@@ -72,6 +73,13 @@ async function eventMiddleware (req, res, next) {
     }
   }
   next()
+}
+
+/**
+ * Root event page, redirects to its entries
+ */
+async function viewDefaultPage (req, res) {
+  res.redirect(templating.buildUrl(res.locals.event, 'event', 'games'))
 }
 
 /**

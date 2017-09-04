@@ -44,7 +44,8 @@
                 <div class="home-jumbo__sidebar">
                   <div class="home-jumbo__details panel {{ 'call' if featuredEvent.get('countdown_config').message }}">
                     {% if featuredEvent.get('countdown_config').message %}
-                      <a class="home-jumbo__call" href="{{ buildUrl(featuredEvent, 'event', featuredEvent.get('countdown_config').link) }}">
+                      {% set messageLink = featuredEvent.get('countdown_config').link %}
+                      <a class="home-jumbo__call" href="{{ messageLink if messageLink.indexOf('/') !== -1 else buildUrl(featuredEvent, 'event', messageLink) }}">
                         {{ featuredEvent.get('countdown_config').message }}
                       </a>
                     {% endif %}

@@ -85,8 +85,9 @@ module.exports = {
 
     router.get('/create-event', eventController.editEvent)
     router.post('/create-event', eventController.editEvent)
-    router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewEventPosts)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewDefaultPage)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/announcements', eventController.viewEventAnnouncements)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/posts', eventController.viewEventPosts)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/themes', eventController.viewEventThemes)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/ajax-find-themes', eventController.ajaxFindThemes)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/ajax-save-vote', eventController.ajaxSaveVote)

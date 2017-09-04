@@ -121,7 +121,7 @@
           {% endif %}
 
           <li class="{{ 'active' if path == '/events' }}"><a href="/events">Events</a></li>
-          <li class="{{ 'active' if path == '/games' }}"><a href="/games">Games</a></li>
+          <li class="{{ 'active' if path.indexOf('/games') === 0 }}"><a href="/games">Games</a></li>
           <li class="{{ 'active' if path == '/people' }}"><a href="/people">People</a></li>
           <li class="hidden-sm {{ 'active' if path == '/chat' }}"><a href="/chat">Chat</a></li>
           <li class="{{ 'active' if path == '/article/help' }}"><a href="/article/help">Help</a></li>
