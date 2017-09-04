@@ -604,7 +604,7 @@ async function findGames (options = {}) {
   if (options.search) {
     query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
   }
-  if (options.eventId) {
+  if (options.eventId !== undefined) {
     query = query.where('event_id', options.eventId)
   }
   if (options.platforms) {

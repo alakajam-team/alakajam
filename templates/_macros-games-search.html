@@ -1,0 +1,65 @@
+{% macro searchFormStyles() %}
+<link rel="stylesheet" href="/static/css/select2.min.css" />
+<link rel="stylesheet" href="/static/css/select2-bootstrap.min.css" />
+{% endmacro %}
+
+{% macro searchForm(context, options = {}) %}
+  <div class="list-group">
+    <div class="list-group-item">
+      <h4 style="margin: 0">Search filters</h4>
+    </div>
+    <form method="get" class="list-group-item">
+      <div class="form-group">
+        <label for="search">Title search</label>
+        <input name="search" type="text" class="form-control" value="{{ context.searchOptions.search }}" />
+      </div>
+      <div class="form-group">
+        <label for="search">Platforms</label>
+        <select id="js-platforms" name="platforms" class="form-control" multiple="multiple">
+          {% for platform in context.constants.ENTRIES_LINKS_TYPES %}
+            <option value="{{ platform }}" {{ 'selected' if context.searchOptions.platforms and context.searchOptions.platforms.includes(platform) }}>{{ platform }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% if not options.fixedEvent %}
+      <div class="form-group">
+        <label for="search">Event</label>
+        <select id="js-event" name="eventId" class="form-control">
+          <option value="" {{ 'selected' if not context.searchOptions.eventId }}></option>
+          {% for event in context.events %}
+            <option value="{{ event.get('id') }}" {{ 'selected' if event.get('id') == context.searchOptions.eventId }}>{{ event.get('title') }}</option>
+          {% endfor %}
+          <option value="none" {{ 'selected' if context.searchOptions.eventId|dump === 'null' }}>(External events)</option>
+        </select>
+      </div>
+      {% endif %}
+      <div class="form-group">
+        <input type="submit" class="btn btn-primary" value="Apply" />
+        <a href="?" class="btn btn-default">Clear</a>
+      </div>
+    </form>
+  </div>
+{% endmacro %}
+
+{% macro searchDescription(searchOptions, searchedEvent, options) %}
+  {% if searchOptions.search or searchOptions.eventId !== undefined %}
+    <div class="count" style="font-size: 1rem"><!-- TODO rename CSS class to "legend" -->
+      {% if not options.fixedEvent %}
+        {{ 'in ' + searchedEvent.get('title') if searchedEvent }}
+        {{ 'in external events' if searchOptions.eventId|dump === 'null' }}
+      {% endif %}
+      {{ ('on platform' + ('s' if searchOptions.platforms.length > 1) +' "' + searchOptions.platforms + '"') if searchOptions.platforms }}
+      {{ 'matching "' + searchOptions.search + '"' if searchOptions.search }}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro searchFormScripts() %}
+<script type="text/javascript" src="/static/js/select2.min.js"></script>
+<script type="text/javascript">
+$('#js-event').select2({
+  allowClear: true
+})
+$('#js-platforms').select2()
+</script>
+{% endmacro %}

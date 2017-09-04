@@ -165,11 +165,15 @@ async function events (req, res) {
  * Game browser
  */
 async function games (req, res) {
-  res.locals.pageTitle = 'People'
+  res.locals.pageTitle = 'Games'
 
   let searchOptions = {}
-  searchOptions.eventId = forms.isId(req.query.eventId) ? req.query.eventId : undefined
   searchOptions.search = forms.sanitizeString(req.query.search)
+  if (req.query.eventId === 'none') {
+    searchOptions.eventId = null
+  } else {
+    searchOptions.eventId = forms.isId(req.query.eventId) ? req.query.eventId : undefined
+  }
   if (req.query.platforms) {
     if (typeof req.query.platforms === 'object') {
       searchOptions.platforms = req.query.platforms.map(str => forms.sanitizeString(str))

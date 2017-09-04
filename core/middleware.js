@@ -85,6 +85,8 @@ async function configure (app) {
   nunjucks.env.addGlobal('context', function () {
     // lets devs display the whole templating context with
     // {{ context() | prettyDump | safe }}
+    this.ctx.constants = constants
+    this.ctx.devMode = app.locals.devMode
     return this.ctx
   })
   for (var functionName in templating) {

@@ -1,35 +1,52 @@
 {% extends "event/_page-event.html" %}
 {% import "event/_macros-event.html" as eventMacros %}
 {% import "_macros-form.html" as formMacros %}
+{% import "_macros-games-search.html" as gamesSearchMacros %}
+
+{% block styles %}
+{{ gamesSearchMacros.searchFormStyles() }}
+{% endblock %}
 
 {% block body %}
 {{ super() }}
 
 <div class="container">
   <div class="row">
-    {% set showSidebar = user and (event.get('status_results') === 'voting' or event.get('status_results') === 'results') %}
     
-    {% if showSidebar %}
     <div class="col-sm-3">
-      <h2>Recently rated</h2>
-      <p><a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>
-      {% for vote in voteHistory %}
-        <p>
-          {{ eventMacros.entrySmallThumb(vote.related('entry')) }}
-        </p>
-      {% endfor %}
-      {% if voteHistory.length === 0 %}
-        <div class="well">You didn't rate entries yet.</div>
+       {{ gamesSearchMacros.searchForm(context(), {fixedEvent: true}) }}
+    
+      {% if user and (event.get('status_results') === 'voting' or event.get('status_results') === 'results') %}
+        <div class="list-group">
+          <div class="list-group-item">
+            <h4 style="margin: 0">Recently rated</h4>
+          </div>
+          <div class="list-group-item">
+            <p><a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>
+            {% for vote in voteHistory %}
+              <p>
+                {{ eventMacros.entrySmallThumb(vote.related('entry')) }}
+              </p>
+            {% endfor %}
+            {% if voteHistory.length === 0 %}
+              You didn't rate entries yet.
+            {% endif %}
+          </div>
+        </div>
       {% endif %}
     </div>
-    {% endif %}
     
-    <div class="{{ 'col-sm-9' if showSidebar else 'col-xs-12' }}">
+    <div class="col-sm-9">
+      <h1>
+        Entries
+        {{ gamesSearchMacros.searchDescription(searchOptions, null, {fixedEvent: true}) }}
+      </h1>
+        
       <div class="horizontal-bar">{{ sortedEntries.length }} {{ 'entries' if sortedEntries.length !== 1 else 'entry' }} sorted by Feedback Score {{ formMacros.tooltip('Comment on other games to increase your score and get featured higher on the list!') }}</div>
       
       <div class="row">
       {% for entry in sortedEntries %}
-        <div class="{{ 'col-sm-6 col-md-4' if showSidebar else 'col-sm-4 col-md-3' }}">
+        <div class="col-sm-6 col-md-4">
           {{ eventMacros.entryThumb(entry) }}
           <div class="entry-thumb__score">
             <span class="pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
@@ -45,4 +62,8 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+{{ gamesSearchMacros.searchFormScripts() }}
 {% endblock %}
