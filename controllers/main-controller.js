@@ -24,6 +24,7 @@ module.exports = {
 
   index,
   events,
+  games,
   people,
   chat,
   changes
@@ -157,6 +158,38 @@ async function events (req, res) {
     open,
     closed,
     entryCounts
+  })
+}
+
+/**
+ * Game browser
+ */
+async function games (req, res) {
+  res.locals.pageTitle = 'People'
+
+  let searchOptions = {}
+  searchOptions.eventId = forms.isId(req.query.eventId) ? req.query.eventId : undefined
+  searchOptions.search = forms.sanitizeString(req.query.search)
+  if (req.query.platforms) {
+    if (typeof req.query.platforms === 'object') {
+      searchOptions.platforms = req.query.platforms.map(str => forms.sanitizeString(str))
+    } else {
+      searchOptions.platforms = [forms.sanitizeString(req.query.platforms)]
+    }
+  }
+
+  let entriesCollection = await eventService.findGames(searchOptions)
+  let eventsCollection = await eventService.findEvents()
+  let searchedEvent = null
+  if (searchOptions.eventId) {
+    searchedEvent = eventsCollection.findWhere({'id': parseInt(searchOptions.eventId)})
+  }
+
+  res.render('games', {
+    entries: entriesCollection.models,
+    events: eventsCollection.models,
+    searchOptions,
+    searchedEvent
   })
 }
 

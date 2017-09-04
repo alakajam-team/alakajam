@@ -37,6 +37,7 @@ module.exports = {
 
     router.get('/', mainController.index)
     router.get('/events', mainController.events)
+    router.get('/games', mainController.games)
     router.get('/people', mainController.people)
     router.get('/user', mainController.people)
     router.get('/chat', mainController.chat)

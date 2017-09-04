@@ -17,6 +17,7 @@ const securityService = require('./security-service')
 module.exports = {
   createEvent,
   refreshEventReferences,
+  areSubmissionsAllowed,
 
   findEventById,
   findEventByName,
@@ -39,13 +40,12 @@ module.exports = {
   findUserEntryForEvent,
   findEntryInvitesForUser,
   countEntriesByEvent,
+  findGames,
 
   refreshEntryPlatforms,
   refreshEntryScore,
   refreshCommentScore,
-  refreshUserCommentScoresOnNode,
-
-  areSubmissionsAllowed
+  refreshUserCommentScoresOnNode
 }
 
 /**
@@ -75,6 +75,11 @@ async function refreshEventReferences (event) {
     entry.set('event_name', event.get('name'))
     await entry.save()
   }
+}
+
+function areSubmissionsAllowed (event) {
+  return event && event.get('status') === 'open' &&
+      (event.get('status_entry') === 'open' || event.get('status_entry') === 'open_unranked')
 }
 
 /**
@@ -591,6 +596,28 @@ async function countEntriesByEvent (event) {
   return parseInt(count)
 }
 
+/**
+ * @param options {object} nameFragment eventId platforms pageSize page withRelated
+ */
+async function findGames (options = {}) {
+  let query = models.Entry.forge().orderBy('created_at', 'DESC')
+  if (options.search) {
+    query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
+  }
+  if (options.eventId) {
+    query = query.where('event_id', options.eventId)
+  }
+  if (options.platforms) {
+    query = query.query(function (qb) {
+      return qb.leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
+        .whereIn('entry_platform.platform', options.platforms)
+    })
+  }
+  options.pageSize = options.pageSize || 30
+  options.withRelated = options.withRelated || ['event', 'userRoles']
+  return query.fetchPage(options)
+}
+
 async function refreshEntryPlatforms (entry) {
   let tasks = []
   await entry.load('platforms')
@@ -717,9 +744,4 @@ function _computeRawCommentScore (comment) {
   } else { // Short comments
     return 1
   }
-}
-
-function areSubmissionsAllowed (event) {
-  return event && event.get('status') === 'open' &&
-      (event.get('status_entry') === 'open' || event.get('status_entry') === 'open_unranked')
 }

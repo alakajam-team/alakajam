@@ -13,7 +13,7 @@
       {{ unreadNotifications }}
     </div>
   </a>
-  <span class="navbar-profile hidden-xs">{{ user.get('title') }}</span> <span class="caret hidden-xs"></span>
+  <span class="navbar-profile hidden-xs hidden-sm hidden-md">{{ user.get('title') }}</span> <span class="caret hidden-xs"></span>
 </div>
 <ul class="dropdown-menu">
   <li><a href="{{ buildUrl(user, 'user', 'feed') }}">Dashboard</a></li>
@@ -121,6 +121,7 @@
           {% endif %}
 
           <li class="{{ 'active' if path == '/events' }}"><a href="/events">Events</a></li>
+          <li class="{{ 'active' if path == '/games' }}"><a href="/games">Games</a></li>
           <li class="{{ 'active' if path == '/people' }}"><a href="/people">People</a></li>
           <li class="hidden-sm {{ 'active' if path == '/chat' }}"><a href="/chat">Chat</a></li>
           <li class="{{ 'active' if path == '/article/help' }}"><a href="/article/help">Help</a></li>
