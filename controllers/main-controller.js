@@ -139,7 +139,7 @@ async function events (req, res) {
 
   // Group entries by status, and compute their entry counts
   let entryCounts = {}
-  allEventsCollection.each(async function (event) {
+  for (let event of allEventsCollection.models) {
     entryCounts[event.get('id')] = await eventService.countEntriesByEvent(event)
     switch (event.get('status')) {
       case 'pending':
@@ -151,7 +151,7 @@ async function events (req, res) {
       default:
         closed.push(event)
     }
-  })
+  }
 
   res.render('events', {
     pending,
