@@ -79,7 +79,11 @@ async function eventMiddleware (req, res, next) {
  * Root event page, redirects to its entries
  */
 async function viewDefaultPage (req, res) {
-  res.redirect(templating.buildUrl(res.locals.event, 'event', 'games'))
+  if (res.locals.event.get('status_entry') !== 'off') {
+    res.redirect(templating.buildUrl(res.locals.event, 'event', 'games'))
+  } else {
+    res.redirect(templating.buildUrl(res.locals.event, 'event', 'posts'))
+  }
 }
 
 /**
@@ -103,8 +107,7 @@ async function viewEventPosts (req, res) {
   res.locals.pageTitle += ' | Posts'
 
   let postsCollection = await postService.findPosts({
-    eventId: res.locals.event.get('id'),
-    specialPostType: null
+    eventId: res.locals.event.get('id')
   })
   await postsCollection.load(['entry', 'event'])
 
