@@ -10,6 +10,7 @@ const moment = require('moment')
 const forms = require('../core/forms')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
+const settingService = require('../services/setting-service')
 
 const PUBLIC_ATTRIBUTES_EVENT = ['id', 'name', 'title', 'display_dates', 'display_theme', 'status', 'status_theme', 'status_entry', 'status_results', 'countdown_config']
 const PUBLIC_ATTRIBUTES_ENTRY = ['id', 'event_id', 'event_name', 'name', 'title', 'description', 'links', 'pictures', 'category', 'comment_count', 'feedback_score']
@@ -26,7 +27,9 @@ module.exports = {
 }
 
 async function index (req, res) {
-  res.render('api/index')
+  res.render('api/index', {
+    sidebar: await settingService.findArticlesSidebar()
+  })
 }
 
 /**

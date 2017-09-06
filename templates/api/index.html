@@ -1,4 +1,5 @@
 {% extends "../_page.html" %}
+{% import "_macros-sidebar.html" as sidebarMacros %}
 
 {% block styles %}
 <style type="text/css">
@@ -23,59 +24,65 @@
 {% block body %}
 
 <div class="container">
+  {% if sidebar %}
+    <div class="col-sm-4 col-md-3">
+      {{ sidebarMacros.sidebar(sidebar, path) }}
+    </div>
+  {% endif %}
+  <div class="col-sm-8 col-md-9">
+    <h1>JSON API</h1>
 
-<h1>JSON API</h1>
+    <h2>General tips</h2>
 
-<h2>General tips</h2>
+    <ul>
+      <li><p>Append <code>?pretty=true</code> to get a human-readable output of the data.</p></li>
+      <li>If something goes wrong, the response will always have the format: <code>{ "error": "..." }</code></li>
+    </ul>
 
-<ul>
-  <li><p>Append <code>?pretty=true</code> to get a human-readable output of the data.</p></li>
-  <li>If something goes wrong, the response will always have the format: <code>{ "error": "..." }</code></li>
-</ul>
+    <h2>Endpoints</h2>
 
-<h2>Endpoints</h2>
+    <table class="table">
+    <tr>
+      <th style="width: 250px">Endpoint</th>
+      <th style="width: 250px">Parameters</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td><pre><a href="/api/featuredEvent?pretty=true">/api/featuredEvent</a></pre></td>
+      <td></td>
+      <td>Fetches the currently featured event (the one that currently appears in the header, usually the current or upcoming event), and its entries.</td>
+    </tr>
+    <tr>
+      <td><pre><a href="/api/event/1?pretty=true">/api/event/:event</a></pre></td>
+      <td>{{ parameterTable({
+        event: 'An event ID, or its name (as visible in its URL)'
+      }) }}</td>
+      <td>Fetches an event and its entries.</td>
+    </tr>
+    <tr>
+      <td><pre><a href="/api/entry/1?pretty=true">/api/entry/:entry</a></pre></td>
+      <td>{{ parameterTable({
+        entry: 'An entry ID'
+      }) }}</td>
+      <td>Fetches an entry and its comments.</td>
+    </tr>
+    <tr>
+      <td><pre><a href="/api/user/administrator?pretty=true">/api/user/:user</a></pre></td>
+      <td>{{ parameterTable({
+        user: 'An user ID, or its name'
+      }) }}</td>
+      <td>Fetches a specific user.</td>
+    </tr>
+    <tr>
+      <td><pre><a href="/api/user/administrator/latestEntry?pretty=true">/api/user/:user/latestEntry</a></pre></td>
+      <td>{{ parameterTable({
+        user: 'An user ID, or its name'
+      }) }}</td>
+      <td>Fetches a specific user's latest entry <td>
+    </tr>
+    </table>
 
-<table class="table">
-<tr>
-  <th style="width: 250px">Endpoint</th>
-  <th style="width: 250px">Parameters</th>
-  <th>Description</th>
-</tr>
-<tr>
-  <td><pre><a href="/api/featuredEvent?pretty=true">/api/featuredEvent</a></pre></td>
-  <td></td>
-  <td>Fetches the currently featured event (the one that currently appears in the header, usually the current or upcoming event), and its entries.</td>
-</tr>
-<tr>
-  <td><pre><a href="/api/event/1?pretty=true">/api/event/:event</a></pre></td>
-  <td>{{ parameterTable({
-    event: 'An event ID, or its name (as visible in its URL)'
-  }) }}</td>
-  <td>Fetches an event and its entries.</td>
-</tr>
-<tr>
-  <td><pre><a href="/api/entry/1?pretty=true">/api/entry/:entry</a></pre></td>
-  <td>{{ parameterTable({
-    entry: 'An entry ID'
-  }) }}</td>
-  <td>Fetches an entry and its comments.</td>
-</tr>
-<tr>
-  <td><pre><a href="/api/user/administrator?pretty=true">/api/user/:user</a></pre></td>
-  <td>{{ parameterTable({
-    user: 'An user ID, or its name'
-  }) }}</td>
-  <td>Fetches a specific user.</td>
-</tr>
-<tr>
-  <td><pre><a href="/api/user/administrator/latestEntry?pretty=true">/api/user/:user/latestEntry</a></pre></td>
-  <td>{{ parameterTable({
-    user: 'An user ID, or its name'
-  }) }}</td>
-  <td>Fetches a specific user's latest entry <td>
-</tr>
-</table>
-
+  </div>
 </div>
 
 {% endblock %}

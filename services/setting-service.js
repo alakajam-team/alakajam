@@ -6,11 +6,13 @@
  * @module services/setting-service
  */
 
+const constants = require('../core/constants')
 const models = require('../core/models')
 const cache = require('../core/cache')
 
 module.exports = {
   find,
+  findArticlesSidebar,
   save
 }
 
@@ -36,6 +38,18 @@ async function find (key, defaultValue = null) {
   }
 }
 
+async function findArticlesSidebar (key, defaultValue = null) {
+  let articlesSidebar = await find(constants.SETTING_ARTICLE_SIDEBAR)
+  if (articlesSidebar) {
+    try {
+      return JSON.parse(articlesSidebar).sidebar
+    } catch (e) {
+      console.log("Malformed JSON. Can't load articles links")
+    }
+  }
+  return null
+}
+
 /**
  * Sets a Setting value.
  * @param key {id} Key
@@ -53,3 +67,4 @@ async function save (key, value) {
   await settingModel.save(null, {method: method})
   cache.settings.del(key)
 }
+

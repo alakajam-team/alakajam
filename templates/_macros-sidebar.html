@@ -1,0 +1,33 @@
+{% macro sidebar(sidebar, path) %}
+  {% for sidebarGroup in sidebar %}
+    {{ sidebarLinks(sidebarGroup.title, sidebarGroup.links, path) }}
+  {% endfor %}
+{% endmacro %}
+
+{% macro sidebarLinks(title, sidebarLinks, path) %}
+  {% if sidebarLinks %}
+    <div class="list-group">
+      <div class="list-group-item">
+        <h3 style="margin: 0">{{ title }}</h3>
+      </div>
+      {% for link in sidebarLinks %}
+        {{ sidebarLink(link.title, link.url, path) }}
+        {% for subLink in link.subLinks %}
+          {{ sidebarSubLink(subLink.title, subLink.url, path) }}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro sidebarLink(label, url, path) %}
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url }} {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">
+    <h4 style="margin: 0">{{ label }}</h4>
+  </a>
+{% endmacro %}
+
+{% macro sidebarSubLink(label, url, path) %}
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url }} {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">
+    <span style="margin-left: 15px">{{ label }}</span>
+  </a>
+{% endmacro %}

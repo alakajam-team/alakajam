@@ -224,5 +224,7 @@ async function chat (req, res) {
 async function changes (req, res) {
   res.locals.changes = (await fs.readFile(path.join(__dirname, '../CHANGES.md'))).toString()
 
-  res.render('changes')
+  res.render('changes', {
+    sidebar: await settingService.findArticlesSidebar()
+  })
 }

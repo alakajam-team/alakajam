@@ -237,6 +237,10 @@ async function insertInitialData (samples) {
                 {
                     "title": "Site changelog",
                     "url": "/changes"
+                },
+                {
+                    "title": "JSON API",
+                    "url": "/api"
                 }
             ]
         }
