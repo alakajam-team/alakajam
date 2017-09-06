@@ -192,6 +192,11 @@ input.date-picker {
   @apply --main-font
 }
 
+.pagination {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
 .horizontal-bar {
   width: 100%;
   margin: 20px 0;

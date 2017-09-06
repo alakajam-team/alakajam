@@ -162,7 +162,7 @@ async function adminSettings (req, res) {
  * Admin only: users management
  */
 async function adminUsers (req, res) {
-  let users = await userService.findAll()
+  let users = await userService.findUsers()
   let sortedUsers = users.sortBy((user) => user.get('title'))
   res.render('admin/admin-users', {
     users: sortedUsers

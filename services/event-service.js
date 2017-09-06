@@ -601,15 +601,9 @@ async function countEntriesByEvent (event) {
  */
 async function findGames (options = {}) {
   let query = models.Entry.forge()
-  if (!options.count) {
-    query = query.orderBy('created_at', 'DESC')
-  }
-  if (options.search) {
-    query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
-  }
-  if (options.eventId !== undefined) {
-    query = query.where('event_id', options.eventId)
-  }
+  if (!options.count) query = query.orderBy('created_at', 'DESC')
+  if (options.search) query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
+  if (options.eventId !== undefined) query = query.where('event_id', options.eventId)
   if (options.platforms) {
     query = query.query(function (qb) {
       return qb.leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')

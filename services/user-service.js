@@ -14,7 +14,7 @@ const forms = require('../core/forms')
 const models = require('../core/models')
 
 module.exports = {
-  findAll,
+  findUsers,
   findById,
   findByName,
   searchByName,
@@ -31,18 +31,29 @@ const USERNAME_MIN_LENGTH = 3
 const PASSWORD_MIN_LENGTH = 6
 
 /**
- * Fetches all users
+ * Fetches users
  * @returns {Collection(User)}
  */
-async function findAll (options = {}) {
+async function findUsers (options = {}) {
+  let query = models.User.forge()
+  if (options.search) {
+    query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', '%' + options.search + '%')
+  }
+  if (options.eventId) {
+    query = query.query(function (qb) {
+      qb.distinct()
+        .leftJoin('user_role', 'user_role.user_id', 'user.id')
+        .where('user_role.event_id', options.eventId)
+    })
+  }
+
   if (options.count) {
-    return models.User.count(options)
+    return query.count(options)
   } else if (options.page) {
-    return models.User.forge()
-      .orderBy('created_at', 'DESC')
+    return query.orderBy('created_at', 'DESC')
       .fetchPage(options)
   } else {
-    return models.User.forge().fetchAll(options)
+    return query.fetchAll(options)
   }
 }
 

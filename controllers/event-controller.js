@@ -243,14 +243,24 @@ async function viewEventThemes (req, res) {
 async function viewEventGames (req, res) {
   res.locals.pageTitle += ' | Games'
 
+  const PAGE_SIZE = 20
+
   let event = res.locals.event
   if (event.get('status_entry') === 'off') {
     res.errorPage(404)
     return
   }
 
-  // Search form
-  let searchOptions = {eventId: event.get('id')}
+  // Search form & pagination
+  let currentPage = 1
+  if (forms.isId(req.query.p)) {
+    currentPage = parseInt(req.query.p)
+  }
+  let searchOptions = {
+    pageSize: PAGE_SIZE,
+    page: currentPage,
+    eventId: event.get('id')
+  }
   searchOptions.search = forms.sanitizeString(req.query.search)
   if (req.query.platforms) {
     if (typeof req.query.platforms === 'object') {
@@ -265,6 +275,8 @@ async function viewEventGames (req, res) {
   let sortedEntries = entriesCollection.sortBy(function (entry) {
     return -1 * entry.get('feedback_score')
   })
+  searchOptions.count = true
+  let entryCount = await eventService.findGames(searchOptions)
 
   // Fetch vote history
   let eventResultsStatus = event.get('status_results')
@@ -277,7 +289,10 @@ async function viewEventGames (req, res) {
   res.render('event/view-event-games', {
     sortedEntries,
     voteHistory,
-    searchOptions
+    searchOptions,
+    entryCount,
+    currentPage,
+    pageCount: Math.ceil(entryCount / PAGE_SIZE)
   })
 }
 

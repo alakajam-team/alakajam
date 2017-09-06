@@ -169,11 +169,11 @@ async function games (req, res) {
 
   const PAGE_SIZE = 20
 
+  // Parse query
   let currentPage = 1
   if (forms.isId(req.query.p)) {
     currentPage = parseInt(req.query.p)
   }
-
   let searchOptions = {
     pageSize: PAGE_SIZE,
     page: currentPage
@@ -192,6 +192,7 @@ async function games (req, res) {
     }
   }
 
+  // Fetch info
   let entriesCollection = await eventService.findGames(searchOptions)
   searchOptions.count = true
   let entryCount = await eventService.findGames(searchOptions)
@@ -205,7 +206,7 @@ async function games (req, res) {
     searchOptions,
     searchedEvent,
     currentPage,
-    pageCount: Math.floor(entryCount / PAGE_SIZE),
+    pageCount: Math.ceil(entryCount / PAGE_SIZE),
     entries: entriesCollection.models,
     entryCount,
     events: eventsCollection.models
@@ -220,19 +221,40 @@ async function people (req, res) {
 
   const PAGE_SIZE = 30
 
+  // Parse query
   let currentPage = 1
   if (forms.isId(req.query.p)) {
     currentPage = parseInt(req.query.p)
   }
+  let searchOptions = {
+    pageSize: PAGE_SIZE,
+    page: currentPage
+  }
+  searchOptions.search = forms.sanitizeString(req.query.search)
+  if (req.query.eventId === 'none') {
+    searchOptions.eventId = null
+  } else {
+    searchOptions.eventId = forms.isId(req.query.eventId) ? req.query.eventId : undefined
+  }
 
-  let userCount = await userService.findAll({ count: true })
-  let usersCollection = await userService.findAll({ pageSize: PAGE_SIZE, page: currentPage })
+  // Fetch info
+  let usersCollection = await userService.findUsers(searchOptions)
+  searchOptions.count = true
+  let userCount = await userService.findUsers(searchOptions)
+  let eventsCollection = await eventService.findEvents()
+  let searchedEvent = null
+  if (searchOptions.eventId) {
+    searchedEvent = eventsCollection.findWhere({'id': parseInt(searchOptions.eventId)})
+  }
 
   res.render('people', {
+    searchOptions,
+    searchedEvent,
     users: usersCollection.sortBy((user) => -user.get('id')),
     userCount,
-    pageCount: userCount / PAGE_SIZE,
-    currentPage
+    pageCount: Math.ceil(userCount / PAGE_SIZE),
+    currentPage,
+    events: eventsCollection.models
   })
 }
 

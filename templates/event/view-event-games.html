@@ -14,7 +14,7 @@
   <div class="row">
     
     <div class="col-sm-3">
-       {{ gamesSearchMacros.searchForm(context(), {fixedEvent: true}) }}
+      {{ gamesSearchMacros.searchForm(context(), {fixedEvent: true}) }}
     
       {% if user and (event.get('status_results') === 'voting' or event.get('status_results') === 'results') %}
         <div class="list-group">
@@ -43,6 +43,8 @@
       </h1>
         
       <div class="horizontal-bar">{{ sortedEntries.length }} {{ 'entries' if sortedEntries.length !== 1 else 'entry' }} sorted by Feedback Score {{ formMacros.tooltip('Comment on other games to increase your score and get featured higher on the list!') }}</div>
+   
+      {{ formMacros.pagination(currentPage, pageCount, path) }}
       
       <div class="row">
       {% for entry in sortedEntries %}
