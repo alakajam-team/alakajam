@@ -162,10 +162,14 @@
 <script type="text/javascript">
   // Custom announcement height limit and expand/collapse button
   var maxAnnouncementHeight = Math.max(280, $('.home-jumbo__sidebar').height() - 50)
-  $('.home-jumbo__announcement').attr('style', 'max-height: ' + maxAnnouncementHeight + 'px')
-  $('.home-jumbo__announcement .expand-bar').click(function () {
-    $('.home-jumbo__announcement').toggleClass('expanded')
-  })
+  if ($('.home-jumbo__announcement').height() > maxAnnouncementHeight) {
+    $('.home-jumbo__announcement').attr('style', 'max-height: ' + maxAnnouncementHeight + 'px')
+    $('.home-jumbo__announcement .expand-bar').click(function () {
+      $('.home-jumbo__announcement').toggleClass('expanded')
+    })
+  } else {
+    $('.home-jumbo__announcement .expand-bar').remove()
+  }
 </script>
 
 {% if featuredEvent %}

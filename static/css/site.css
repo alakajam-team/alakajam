@@ -279,7 +279,10 @@ input.date-picker {
     max-height: none !important;
     
     & .expand-bar {
+      background-color: transparent;
+      bottom: 20px;
       box-shadow: none;
+      border-top: none;
     }
     & .expand {
       display: none;
@@ -656,8 +659,9 @@ input.date-picker {
     border-bottom: 1px solid var(--borders);
     line-height: 36px;
     font-weight: bold;
+    padding-right: 10px;
 
-    & a {
+    & a.btn {
       margin-top: -6px;
       margin-right: 5px;
     }
@@ -702,6 +706,12 @@ input.date-picker {
     max-width: 100%;
   }
 
+  &__footer {
+    font-weight: bold;
+    border-top: 1px solid var(--borders);
+    text-align: right;
+    padding: 5px 10px;
+  }
 }
 
 .comment {

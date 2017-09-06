@@ -41,19 +41,6 @@
       </a>
 
       <div class="post__related">
-        {% set relatedEvent = post.related('event') if post.related('event') %}
-        {% set relatedEntry = post.related('entry') %}
-        {% if relatedEvent.get('id') %}
-          on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
-        {% endif %}
-        {% if relatedEntry.get('id') %}
-          entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">
-            {% if relatedEntry.get('pictures').length > 0 %}
-              <img src="{{ relatedEntry.get('pictures')[0] }}" class="no-border" style="max-height: 22px" />
-            {% endif %}
-            {{ relatedEntry.get('title') }}
-          </a>
-        {% endif %}
       </div>
     </{{h}}>
   {% endif %}
@@ -69,36 +56,37 @@
         {% endif %}
         {{ author.get('title') }}
       </a>
-      • {% if isPast(post.get('published_at')) %}
-          <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('published_at') | dateTime }}">{{ post.get('published_at') | relativeTime }}</span>
-        {% elseif post.get('published_at') %}
-          <span class="badge">Scheduled</span> for {{ post.get('published_at') | dateTime }}
-        {% else %}
-          <span class="badge">Draft</span>
+      {% set relatedEvent = post.related('event') if post.related('event') %}
+        {% set relatedEntry = post.related('entry') %}
+        {% if relatedEvent.get('id') %}
+         • on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
         {% endif %}
-      • <a href="{{ buildUrl(post, 'post', '#comments') }}">{{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}</a>
+        {% if relatedEntry.get('id') %}
+          entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">
+            {% if relatedEntry.get('pictures').length > 0 %}
+              <img src="{{ relatedEntry.get('pictures')[0] }}" class="no-border" style="max-height: 22px" />
+            {% endif %}
+            {{ relatedEntry.get('title') }}
+          </a>
+        {% endif %}
+      <!--<a href="{{ buildUrl(post, 'post', '#comments') }}" class="pull-right"><span class="fa fa-comments"></span> {{ post.get('comment_count') or 0 }}</a>-->
     </div>
     
     {% if not options.hideBody %}
     <div class="post__body panel-body user-contents">
       {{ post.get('body') | markdown | safe }}
     </div>
-    {% endif %}
-  </div>
-  {% endif %}
-  
-  {% if options.showRelatedBar %}
-  <div class="post__related">
-    <div class="row">
-      <div class="col-md-4">
-        {{ eventMacros.entrySmallThumb(post.related('entry')) }}
-      </div>
-      {% if post.related('event').get('id') %}
-        <div class="col-md-8">
-          {{ eventMacros.eventSmallTable(post.related('event')) }}
-        </div>
+    <div class="post__footer">
+      {% if isPast(post.get('published_at')) %}
+        <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('published_at') | dateTime }}">published {{ post.get('published_at') | relativeTime }}</span>
+      {% elseif post.get('published_at') %}
+        <span class="badge">Scheduled</span> for {{ post.get('published_at') | dateTime }}
+      {% else %}
+        <span class="badge">Draft</span>
       {% endif %}
+       • <a href="{{ buildUrl(post, 'post', '#comments') }}">{{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}</a>
     </div>
+    {% endif %}
   </div>
   {% endif %}
 </div>
