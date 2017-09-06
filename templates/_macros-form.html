@@ -72,16 +72,22 @@
 {# ======== PICTURES ========= #}
 
 {% macro pictureInput(name, value, defaultValue = null) %}
-  <input type="file" name="{{ name }}" class="btn" />
+<div class="well">
+  <p>
+    <input type="file" name="{{ name }}" class="btn"/>
+    <input type="hidden" name="{{ name }}" value="{{ value }}"/>
+  </p>
+  <p>
+    {% if value  %}
+    <img src="{{ value }}" style="max-width: 100%" />
+    {% elseif defaultValue %}
+    <img src="{{ defaultValue }}" style="max-width: 100%" />
+    {% endif %}
+  </p>
   {% if value %}
   <label><input type="checkbox" name="{{ name }}-delete" /> Delete picture</label>
   {% endif %}
-  <br />
-  {% if value  %}
-  <img src="{{ value }}" style="width: 100%; max-width: 150px" />
-  {% elseif defaultValue %}
-  <img src="{{ defaultValue }}" style="width: 100%; max-width: 150px" />
-  {% endif %}
+</div>
 {% endmacro %}
 
 

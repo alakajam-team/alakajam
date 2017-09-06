@@ -295,7 +295,7 @@ module.exports.Entry = bookshelf.model('Entry', {
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
     this.on('saving', function (model, attrs, options) {
-      model.set('name', slug(model.get('title') || '').toLowerCase())
+      model.set('name', slug(model.get('title') || '').toLowerCase() || 'unnamed')
     })
     attrs = attrs || {}
     attrs.links = attrs.links || []

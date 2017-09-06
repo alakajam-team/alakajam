@@ -22,9 +22,7 @@ module.exports = {
   entryMiddleware,
 
   viewEntry,
-  createEntry,
   editEntry,
-  saveEntry,
   deleteEntry,
   leaveEntry,
 
@@ -88,218 +86,192 @@ async function viewEntry (req, res) {
   })
 }
 
-/**
- * Creates an entry, including one for an external event (res.locals.event not set).
- */
-async function createEntry (req, res) {
-  if (!res.locals.user) {
+async function editEntry (req, res) {
+  let {entry, event, user} = res.locals
+
+  // Security checks
+  if (!user) {
     res.errorPage(403)
     return
-  } else if (res.locals.event && !eventService.areSubmissionsAllowed(res.locals.event)) {
-    res.errorPage(403, 'Submissions are closed for this event')
-    return
-  } else if (res.locals.event) {
-    let existingEntry = await eventService.findUserEntryForEvent(res.locals.user, res.locals.event.id)
+  } else if (!entry && event) {
+    let existingEntry = await eventService.findUserEntryForEvent(user, event.id)
     if (existingEntry) {
+      // User with an entry went to the creation URL, redirect him
       res.redirect(templating.buildUrl(existingEntry, 'entry', 'edit'))
+      return
+    } else if (!eventService.areSubmissionsAllowed(event)) {
+      res.errorPage(403, 'Submissions are closed for this event')
       return
     }
   }
-
-  let entry = new models.Entry()
-  if (res.locals.event) {
-    entry.set({
-      event_id: res.locals.event ? res.locals.event.get('id') : null,
-      event_name: res.locals.event.get('name')
-    })
+  if (entry && !securityService.canUserWrite(user, entry, { allowMods: true })) {
+    res.errorPage(403)
+    return
   }
 
-  res.render('entry/edit-entry', {
-    entry,
-    members: await eventService.findTeamMembers(null, res.locals.user),
-    external: !res.locals.event
-  })
-}
-
-/**
- * Edit entry
- */
-async function editEntry (req, res) {
-  if (!res.locals.user || !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true })) {
-    res.errorPage(403)
-  } else {
-    res.render('entry/edit-entry', {
-      members: await eventService.findTeamMembers(res.locals.entry, res.locals.user),
-      external: !res.locals.event
-    })
-  }
-}
-
-/**
- * Save entry
- */
-async function saveEntry (req, res) {
-  let {fields, files} = await req.parseForm()
-  let entry = res.locals.entry
-
-  if (fields['action'] === 'comment') {
-    // Handle comment form
-    let redirectUrl = await postController.handleSaveComment(fields,
-      res.locals.user, entry, templating.buildUrl(entry, 'entry'))
-    res.redirect(redirectUrl)
-  } else if (fields['action'] === 'vote') {
-    // Handle vote on entry
-    let i = 1
-    let votes = []
-    while (fields['vote-' + i] !== undefined) {
-      let vote = fields['vote-' + i]
-      if (!vote || forms.isFloat(vote)) {
-        votes.push(vote)
-      } else {
-        break
-      }
-      i++
-    }
-    if (await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)) {
-      await eventRatingService.saveEntryVote(res.locals.user, res.locals.entry, votes)
-    }
-    viewEntry(req, res)
-  } else if (!res.locals.user || (res.locals.entry &&
-      !securityService.canUserWrite(res.locals.user, res.locals.entry, { allowMods: true }))) {
-    res.errorPage(403)
-  } else if (!res.headersSent) { // FIXME Why?
-    let errorMessage = null
-
-    // Links/platform parsing and validation
-    let isExternalEvent = fields['external-event'] !== undefined
-    let links = []
-    let platforms = []
-    let i = 0
-    while (fields['url' + i]) {
-      let label = forms.sanitizeString(fields['label' + i])
-      let url = fields['url' + i]
-      if (label === 'other') {
-        label = forms.sanitizeString(fields['customlabel' + i])
-        platforms.push('other')
-      } else {
-        platforms.push(label)
-      }
-
-      if (!forms.isURL(url) || !label) {
-        errorMessage = 'Link #' + i + ' is invalid'
-        break
-      }
-      links.push({
-        label,
-        url
+  // Creation
+  if (!entry) {
+    entry = new models.Entry()
+    if (event) {
+      entry.set({
+        event_id: event.get('id'),
+        event_name: event.get('name')
       })
-      i++
     }
-    if (!forms.isLengthValid(links, 1000)) {
-      errorMessage = 'Too many links (max allowed: around 7)'
-    } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(res.locals.event)) {
-      errorMessage = 'Submissions are closed for this event'
-    } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
-      errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
-    } else if (['solo', 'team', 'unranked'].indexOf(fields['division']) === -1) {
-      errorMessage = 'Invalid division'
-    } else if (typeof fields.members !== 'string') {
-      errorMessage = 'Invalid members'
-    }
+  }
 
-    // Make sure the entry owner is not removed
-    let teamMembers = fields.members.split(',').map(s => parseInt(s))
-    let ownerId
-    if (entry) {
-      ownerId = entry.related('userRoles')
-        .findWhere({ permission: constants.PERMISSION_MANAGE })
-        .get('user_id')
+  let errorMessage = null
+  if (req.method === 'POST') {
+    let {fields, files} = await req.parseForm()
+
+    if (fields['action'] === 'comment') {
+      // Save comment
+      let redirectUrl = await postController.handleSaveComment(fields,
+        res.locals.user, entry, templating.buildUrl(entry, 'entry'))
+      res.redirect(redirectUrl)
+    } else if (fields['action'] === 'vote') {
+       // Save vote
+      let i = 1
+      let votes = []
+      while (fields['vote-' + i] !== undefined) {
+        let vote = fields['vote-' + i]
+        if (!vote || forms.isFloat(vote)) {
+          votes.push(vote)
+        } else {
+          break
+        }
+        i++
+      }
+      if (await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)) {
+        await eventRatingService.saveEntryVote(res.locals.user, res.locals.entry, votes)
+      }
+      viewEntry(req, res)
     } else {
-      ownerId = res.locals.user.get('id')
-    }
-    if (!teamMembers.includes(ownerId)) {
-      teamMembers.push(ownerId)
-    }
+      // Save entry: Parse form data
+      let isExternalEvent = fields['external-event'] !== undefined
+      let links = []
+      let platforms = []
+      let i = 0
+      while (fields['url' + i]) {
+        let label = forms.sanitizeString(fields['label' + i])
+        let url = fields['url' + i]
+        if (label === 'other') {
+          label = forms.sanitizeString(fields['customlabel' + i])
+          platforms.push('other')
+        } else {
+          platforms.push(label)
+        }
+        links.push({
+          label,
+          url
+        })
+        i++
+      }
 
-    // Entry update
-    if (!errorMessage) {
+      // Save entry: Update model (even if validation fails, to prevent losing what the user filled)
       let isCreation
-      if (!entry) {
+      if (!entry.get('id')) {
+        entry = await eventService.createEntry(res.locals.user, res.locals.event)
         isCreation = true
-        res.locals.entry = await eventService.createEntry(res.locals.user, res.locals.event)
-        entry = res.locals.entry
       } else {
         isCreation = false
       }
 
-      let picturePath = '/entry/' + entry.get('id')
       entry.set({
         'title': forms.sanitizeString(fields.title),
         'description': forms.sanitizeString(fields.description),
         'links': links,
-        'platforms': platforms
+        'platforms': platforms,
+        'published_at': new Date()
       })
-
-      if (fields['external-event']) {
+      if (isExternalEvent) {
         entry.set({
           event_id: null,
           event_name: null,
           external_event: forms.sanitizeString(fields['external-event'])
         })
       }
-
+      let picturePath = '/entry/' + entry.get('id')
       if (fields['picture-delete'] && entry.get('pictures').length > 0) {
         await fileStorage.remove(entry.get('pictures')[0])
         entry.set('pictures', [])
-      } else if (files.picture.size > 0) { // TODO Formidable shouldn't create an empty file
+      } else if (files.picture.size > 0 && fileStorage.isValidPicture(files.picture.path)) { // TODO Formidable shouldn't create an empty file
         let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
         entry.set('pictures', [finalPath])
+      } else if (fields.picture) {
+        entry.set('pictures', [forms.sanitizeString(fields.picture)])
       }
 
       let entryDetails = entry.related('details')
       entryDetails.set('body', forms.sanitizeMarkdown(fields.body))
 
-      if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
-        entry.set('division', fields['division'])
-        let teamChanges = await eventService.setTeamMembers(res.locals.user, entry, teamMembers)
-        res.locals.infoMessage = ''
-        if (teamChanges.numAdded > 0) {
-          res.locals.infoMessage += teamChanges.numAdded + ' user(s) have been sent an invite to join your team. '
-        }
-        if (teamChanges.numRemoved > 0) {
-          res.locals.infoMessage += teamChanges.numRemoved + ' user(s) have been removed from the team.'
+      // Save entry: Validate form data
+      for (let link of links) {
+        if (!forms.isURL(link.url) || !link.label) {
+          errorMessage = 'Link #' + i + ' is invalid'
+          break
         }
       }
-
-      if (entry.hasChanged('platforms')) {
-        await eventService.refreshEntryPlatforms(entry)
+      if (!forms.isLengthValid(links, 1000)) {
+        errorMessage = 'Too many links (max allowed: around 7)'
+      } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(res.locals.event)) {
+        errorMessage = 'Submissions are closed for this event'
+      } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
+        errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
+      } else if (['solo', 'team', 'unranked'].indexOf(fields['division']) === -1) {
+        errorMessage = 'Invalid division'
+      } else if (typeof fields.members !== 'string') {
+        errorMessage = 'Invalid members'
       }
-      await entryDetails.save()
-      await entry.save()
 
-      cache.user(res.locals.user).del('latestEntry')
-
-      await entry.load(['userRoles.user', 'comments', 'details'])
-      viewEntry(req, res)
-    } else {
-      if (!entry) {
-        // Creation form
-        res.locals.entry = new models.Entry()
-        if (res.locals.event) {
-          entry.set({
-            event_id: res.locals.event ? res.locals.event.get('id') : null,
-            event_name: res.locals.event.get('name')
-          })
+      if (!errorMessage) {
+        // Save entry: Apply team changes
+        let teamMembers = fields.members.split(',').map(s => parseInt(s))
+        let ownerId
+        if (!isCreation) {
+          ownerId = entry.related('userRoles')
+            .findWhere({ permission: constants.PERMISSION_MANAGE })
+            .get('user_id')
+        } else {
+          ownerId = res.locals.user.get('id')
         }
-      }
+        if (!teamMembers.includes(ownerId)) {
+          teamMembers.push(ownerId)
+        }
+        if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+          entry.set('division', fields['division'])
+          let teamChanges = await eventService.setTeamMembers(res.locals.user, entry, teamMembers)
+          res.locals.infoMessage = ''
+          if (teamChanges.numAdded > 0) {
+            res.locals.infoMessage += teamChanges.numAdded + ' user(s) have been sent an invite to join your team. '
+          }
+          if (teamChanges.numRemoved > 0) {
+            res.locals.infoMessage += teamChanges.numRemoved + ' user(s) have been removed from the team.'
+          }
+        }
 
-      res.render('entry/edit-entry', {
-        errorMessage,
-        members: await eventService.findTeamMembers(res.locals.entry, res.locals.user),
-        external: !res.locals.event
-      })
+        // Save entry: Persist changes and side effects
+        if (entry.hasChanged('platforms')) {
+          await eventService.refreshEntryPlatforms(entry)
+        }
+        await entryDetails.save()
+        await entry.save()
+        cache.user(res.locals.user).del('latestEntry')
+        await entry.load(['userRoles.user', 'comments', 'details'])
+
+        // Save entry: Redirect to view upon success
+        res.redirect(templating.buildUrl(entry, 'entry'))
+        return
+      }
     }
   }
+
+  res.render('entry/edit-entry', {
+    entry,
+    members: await eventService.findTeamMembers(entry, res.locals.user),
+    external: !res.locals.event,
+    errorMessage
+  })
 }
 
 /**
