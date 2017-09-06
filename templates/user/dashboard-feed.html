@@ -9,7 +9,7 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-md-7">
+  <div class="col-md-7 col-lg-6">
     <h1>Notifications <span class="glyphicon glyphicon-info-sign has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="This feed lists all comments people wrote on your entries and posts, plus any comments mentioning &quot;@{{ user.get('name') }}&quot;." style="font-size: 1rem"></span></h1>
 
     {% for invite in invites %}
@@ -39,32 +39,44 @@
 
     {{ postMacros.comments(toUser, user, { readOnly: true, linkToNode: true, highlightNewerThan: notificationsLastRead }) }}
   </div>
-  <div class="col-md-5">
+  <div class="col-md-5 col-lg-6">
     <h1>Shortcuts</h1>
     
-    <h4>Latest entry</h4>
+    <div class="horizontal-bar">Latest entry</div>
+    
     {% if latestEntry %}
-      {{ eventMacros.entryThumb(latestEntry, { showEvent: true }) if latestEntry }}
+      <div class="row">
+        <div class="col-lg-8" style="margin-bottom: -10px">
+        {{ eventMacros.entryThumb(latestEntry, { showEvent: true }) if latestEntry }}
+        </div>
+      </div>
     {% else %}
       <div class="well">No entry yet.</div>
     {% endif %}
-    <div style="margin-top: -10px; margin-bottom: 20px">
+    <div style="margin-bottom: 20px; clear: both">
       <a href="{{ buildUrl(dashboardUser, 'user', 'entries') }}" class="btn btn-default">All entries</a>
     </div>
     
-    <h4>Latest posts</h4>
+    <div class="horizontal-bar">Latest posts</div>
+    
+    <div class="list-group">
     {% for post in latestPosts %}
-      {{ postMacros.post(post, user, { hideDetails: true, hideSpecialLabels: true }) }}
+      <div class="list-group-item" style="margin-bottom: -10px">
+        {{ postMacros.post(post, user, { hideDetails: true, hideSpecialLabels: true }) }}
+      </div>
     {% endfor %}
+    </div>
+    
     {% if latestPosts.length === 0 %}
     <div class="well">No posts yet.</div>
     {% endif %}
-    <div style="margin-bottom: 20px">
+    <div style="margin-top: -10px; margin-bottom: 10px">
       <a href="{{ buildUrl(dashboardUser, 'user', 'posts') }}" class="btn btn-default">All posts</a>
       <a href="{{ buildUrl(null, 'post', 'create') }}" class="btn btn-primary">Create post</a>
     </div>
     
-    <h4>Latest comments</h4>
+    <div class="horizontal-bar">Latest comments</div>
+    
     {{ postMacros.comments(byUser, user, { readOnly: true, linkToNode: true }) }}
   </div>
 </div>

@@ -1,29 +1,46 @@
 {% extends "user/_page-dashboard.html" %}
 {% import "post/_macros-post.html" as postMacros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block dashboardBody %}
 
 <h1>Posts</h1>
 
-<div class="form-group">
-  <a href="{{ buildUrl(null, 'post', 'create', {eventId: newPostEvent.get('id')}) if newPostEvent }}" class="btn btn-primary">Create post</a>
-</div>
+<div class="row">
+  <div class="col-lg-10">
 
-{% if draftPosts.length > 0 %}
-  <h2>Drafts</h2>
-  {% for post in draftPosts %}
-    {{ postMacros.post(post, user, {hideBody: true, allowMods: true}) }}
+  <div class="form-group">
+    <a href="{{ buildUrl(null, 'post', 'create', {eventId: newPostEvent.get('id')}) if newPostEvent }}" class="btn btn-primary">Create post</a>
+  </div>
+
+  {% if draftPosts.length > 0 %}
+    <h2>Drafts</h2>
+    {% for post in draftPosts %}
+      <div class="expandable">
+        {{ postMacros.post(post, user, { allowMods: true }) }}
+        {{ formMacros.expandCollapse() }}
+      </div>
+    {% endfor %}
+
+    <h2>Published</h2>
+  {% endif %}
+
+  {% for post in publishedPosts %}
+    <div class="expandable">
+      {{ postMacros.post(post, user, { allowMods: true }) }}
+      {{ formMacros.expandCollapse() }}
+    </div>
   {% endfor %}
 
-  <h2>Published</h2>
-{% endif %}
+  {% if publishedPosts.length === 0 %}
+    <div class="well">No posts yet.</div>
+  {% endif %}
 
-{% for post in publishedPosts %}
-  {{ postMacros.post(post, user, {hideBody: true, allowMods: true}) }}
-{% endfor %}
+  </div>
+</div>
 
-{% if publishedPosts.length === 0 %}
-  <div class="well">No posts yet.</div>
-{% endif %}
+{% endblock %}
 
+{% block scripts %}
+{{ formMacros.expandCollapseScripts() }}
 {% endblock %}
