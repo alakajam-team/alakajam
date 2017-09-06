@@ -203,9 +203,21 @@ async function games (req, res) {
 async function people (req, res) {
   res.locals.pageTitle = 'People'
 
-  let usersCollection = await userService.findAll()
+  const PAGE_SIZE = 30
+
+  let currentPage = 1
+  if (forms.isId(req.query.p)) {
+    currentPage = parseInt(req.query.p)
+  }
+
+  let userCount = await userService.findAll({ count: true })
+  let usersCollection = await userService.findAll({ pageSize: PAGE_SIZE, page: currentPage })
+
   res.render('people', {
-    users: usersCollection.sortBy((user) => -user.get('id'))
+    users: usersCollection.sortBy((user) => -user.get('id')),
+    userCount,
+    pageCount: userCount / PAGE_SIZE,
+    currentPage
   })
 }
 

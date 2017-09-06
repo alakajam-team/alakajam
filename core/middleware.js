@@ -149,6 +149,13 @@ async function configure (app) {
       return null
     }
   })
+  nunjucks.env.addFilter('paginationBasePath', function (path) {
+    let basePath = path.replace(/[?&]p=[^&]*/g, '')
+    if (!basePath.includes('?')) {
+      basePath += '?'
+    }
+    return basePath
+  })
 
   // Templating: rendering context
   app.use(function templateTooling (req, res, next) {

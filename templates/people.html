@@ -1,12 +1,14 @@
 {% extends "_page.html" %}
 {% import "user/_macros-user.html" as userMacros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block body %}
 
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <h1>People <span class="count">({{ users.length }})</h1>
+      <h1>People <span class="count">({{ userCount }})</h1>
+      {{ formMacros.pagination(currentPage, pageCount, path) }}
     </div>
   </div>
   <div class="row">

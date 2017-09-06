@@ -34,8 +34,16 @@ const PASSWORD_MIN_LENGTH = 6
  * Fetches all users
  * @returns {Collection(User)}
  */
-async function findAll () {
-  return models.User.fetchAll()
+async function findAll (options = {}) {
+  if (options.count) {
+    return models.User.count(options)
+  } else if (options.page) {
+    return models.User.forge()
+      .orderBy('created_at', 'DESC')
+      .fetchPage(options)
+  } else {
+    return models.User.forge().fetchAll(options)
+  }
 }
 
 /**

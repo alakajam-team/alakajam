@@ -1,5 +1,6 @@
 {% extends "event/_page-event.html" %}
 {% import "post/_macros-post.html" as postMacros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block body %}
 {{ super() }}
@@ -15,7 +16,7 @@
       {% endfor %}
 
       {% if posts.models.length > 0 %}
-        {{ postMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
+        {{ formMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
       {% else %}
         <div class="well">
           No posts yet.
