@@ -758,8 +758,15 @@ input.date-picker {
   overflow: hidden;
 
   & h1 {
-    margin-top: 20px;
-    font-size: 1.9rem;
+    @apply --main-font;
+    font-weight: bold;
+    display: inline-block;
+    clear: both;
+    margin-top: 25px;
+    padding-bottom: 3px;
+    margin-bottom: 15px;
+    font-size: 2.0rem;
+    border-bottom: 1px solid var(--neutral-light);
 
     &:first-child {
       margin-top: 0;
@@ -767,6 +774,7 @@ input.date-picker {
   }
   & h2 {
     margin-top: 20px;
+    margin-bottom: 10px;
     font-size: 1.5rem;
 
     &:first-child {
@@ -774,8 +782,10 @@ input.date-picker {
     }
   }
   & h3 {
-    margin-top: 10px;
-    font-size: 1.3rem;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    font-weight: normal;
     color: var(--text-light);
     
     &:first-child {
@@ -783,8 +793,16 @@ input.date-picker {
     }
   }
   & h4 {
-    font-size: 1.2rem;
+    margin-top: 10px;
+    margin-bottom: 7px;
+    font-size: 1.1rem;
     font-weight: normal;
+    color: var(--text-light);
+  }
+  
+  & blockquote {
+    padding: 5px 10px;
+    font-size: 1rem;
     color: var(--text-light);
   }
 

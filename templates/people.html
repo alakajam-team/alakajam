@@ -41,8 +41,7 @@
       <h1>People <span class="count">({{ userCount }})</h1>
       {% if searchOptions.search or searchOptions.eventId !== undefined %}
         <div class="count" style="font-size: 1rem; margin-top: -15px; margin-bottom: 20px"><!-- TODO rename CSS class to "legend" -->
-          {{ 'in ' + searchedEvent.get('title') if searchedEvent }}
-          {{ 'in external events' if searchOptions.eventId|dump === 'null' }}
+          {{ 'who joined ' + searchedEvent.get('title') if searchedEvent }}
           {{ 'matching "' + searchOptions.search + '"' if searchOptions.search }}
         </div>
       {% endif %}
