@@ -205,7 +205,7 @@ async function games (req, res) {
     searchOptions,
     searchedEvent,
     currentPage,
-    pageCount: entryCount / PAGE_SIZE,
+    pageCount: Math.floor(entryCount / PAGE_SIZE),
     entries: entriesCollection.models,
     entryCount,
     events: eventsCollection.models
