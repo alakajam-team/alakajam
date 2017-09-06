@@ -600,7 +600,10 @@ async function countEntriesByEvent (event) {
  * @param options {object} nameFragment eventId platforms pageSize page withRelated
  */
 async function findGames (options = {}) {
-  let query = models.Entry.forge().orderBy('created_at', 'DESC')
+  let query = models.Entry.forge()
+  if (!options.count) {
+    query = query.orderBy('created_at', 'DESC')
+  }
   if (options.search) {
     query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
   }
@@ -615,7 +618,11 @@ async function findGames (options = {}) {
   }
   options.pageSize = options.pageSize || 30
   options.withRelated = options.withRelated || ['event', 'userRoles']
-  return query.fetchPage(options)
+  if (options.count) {
+    return query.count()
+  } else {
+    return query.fetchPage(options)
+  }
 }
 
 async function refreshEntryPlatforms (entry) {

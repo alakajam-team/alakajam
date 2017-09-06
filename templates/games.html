@@ -16,9 +16,12 @@
     </div>
     <div class="col-sm-8 col-md-9">
       <h1>
-        Games
+        Games <span class="count">({{ entryCount }})</span>
         {{ gamesSearchMacros.searchDescription(searchOptions, searchedEvent) }}
       </h1>
+      
+      {{ formMacros.pagination(currentPage, pageCount, path) }}
+      
       <div class="row">
       {% for entry in entries %}
         <div class="col-sm-6 col-md-4 col-lg-3">

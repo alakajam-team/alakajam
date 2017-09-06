@@ -167,7 +167,17 @@ async function events (req, res) {
 async function games (req, res) {
   res.locals.pageTitle = 'Games'
 
-  let searchOptions = {}
+  const PAGE_SIZE = 20
+
+  let currentPage = 1
+  if (forms.isId(req.query.p)) {
+    currentPage = parseInt(req.query.p)
+  }
+
+  let searchOptions = {
+    pageSize: PAGE_SIZE,
+    page: currentPage
+  }
   searchOptions.search = forms.sanitizeString(req.query.search)
   if (req.query.eventId === 'none') {
     searchOptions.eventId = null
@@ -183,6 +193,8 @@ async function games (req, res) {
   }
 
   let entriesCollection = await eventService.findGames(searchOptions)
+  searchOptions.count = true
+  let entryCount = await eventService.findGames(searchOptions)
   let eventsCollection = await eventService.findEvents()
   let searchedEvent = null
   if (searchOptions.eventId) {
@@ -190,10 +202,13 @@ async function games (req, res) {
   }
 
   res.render('games', {
-    entries: entriesCollection.models,
-    events: eventsCollection.models,
     searchOptions,
-    searchedEvent
+    searchedEvent,
+    currentPage,
+    pageCount: entryCount / PAGE_SIZE,
+    entries: entriesCollection.models,
+    entryCount,
+    events: eventsCollection.models
   })
 }
 
