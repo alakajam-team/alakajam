@@ -67,4 +67,3 @@ async function save (key, value) {
   await settingModel.save(null, {method: method})
   cache.settings.del(key)
 }
-

@@ -11,8 +11,26 @@
 <div class="row">
 <div class="col-lg-offset-1 col-lg-10">
 
-  <h1 id="title-display"></h1>
-
+  <div class="row">
+    <div class="{{ 'col-xs-10 col-sm-8 col-md-9' if specialPostType else 'col-xs-12' }}">
+      <h1 id="title-display"></h1>
+    </div>
+    {% if specialPostType %}
+    <div class="col-xs-2 col-sm-4 col-md-3">
+      <div class="post__special-type">
+        <span class="post__special-type-label">
+          <span class="hidden-xs visible-sm visible-md visible-lg">
+            {{ specialPostType | upper }}
+          </span>
+          <span class="visible-xs hidden-sm">
+            <span class="glyphicon glyphicon-pushpin"></span>
+          </span>
+        </span>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  
   <form method="post">
         
     {% if errorMessage %}
@@ -31,20 +49,14 @@
     </div>
     {% endif %}
 
-    {% if specialPostType %}
-    <div class="form-group">
-      <label>Special post type</label>
-      <h2><span class="label label-warning">{{ specialPostType }}</span></h2>
-    </div>
-    {% endif %}
-
+    {% if specialPostType !== 'article' %}
     <div class="form-group">
       <label>Related event</label>
       <div class="form-inline">
-        {% set featuredEventId = featuredEvent.get('id') if featuredEvent %}
-        {{ formMacros.select('event-id', allEvents, relatedEvent.get('id') if relatedEvent else featuredEventId, { nullable: true }) }}
+        {{ formMacros.select('event-id', allEvents, relatedEvent.get('id') if relatedEvent, { nullable: true }) }}
       </div>
     </div>
+    {% endif %}
 
     <div class="form-group">
       <label for="body">Body</label>

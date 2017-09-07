@@ -36,7 +36,7 @@ async function postMiddleware (req, res, next) {
   if (req.params.postId && req.params.postId !== 'create') {
     if (forms.isId(req.params.postId)) {
       res.locals.post = await postService.findPostById(req.params.postId)
-      if (res.locals.post) {
+      if (res.locals.post && res.locals.post.get('event_id')) {
         res.locals.event = res.locals.post.related('event')
         if (res.locals.event) {
           res.locals.latestEventAnnouncement = await postService.findLatestAnnouncement({
@@ -166,14 +166,18 @@ async function editPost (req, res) {
   if (createMode || securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
     if (createMode) {
       let post = new models.Post()
-      if (forms.isId(req.query.eventId)) {
-        post.set('event_id', req.query.eventId)
-      }
-      if (forms.isId(req.query.entryId)) {
-        post.set('entry_id', req.query.entryId)
-      }
       post.set('special_post_type', forms.sanitizeString(req.query['special_post_type']))
       post.set('title', forms.sanitizeString(req.query.title))
+      if (post.get('special_post_type') !== constants.SPECIAL_POST_TYPE_ARTICLE) {
+        if (forms.isId(req.query.eventId)) {
+          post.set('event_id', req.query.eventId)
+        } else if (res.locals.featuredEvent) {
+          post.set('event_id', res.locals.featuredEvent.get('id'))
+        }
+        if (forms.isId(req.query.entryId)) {
+          post.set('entry_id', req.query.entryId)
+        }
+      }
 
       // Check whether we're trying to create an existing article
       if (post.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE && post.get('name')) {
