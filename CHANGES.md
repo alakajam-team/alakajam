@@ -2,9 +2,13 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### September 7th
+
+* Markdown editor has new formatting options (text/images alignment)
+
 ### September 6th
 
-* People page  now has a search form
+* People page now has a search form
 * Pagination added to various pages
 * Changes are no longer lost when there's a validation error upon saving an entry
 * Some pages like the game browser & the user dashboard are now full-width
