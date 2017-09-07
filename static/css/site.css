@@ -643,7 +643,7 @@ input.date-picker {
 /* ============================== Blog posts ============================== */
 
 .post {
-  &__heading {
+  &__title {
     margin: 0;
     padding-bottom: 5px;
     color: var(--text);
@@ -651,6 +651,10 @@ input.date-picker {
     &:hover {
       color: var(--alt-dark);
     }
+  }
+
+  &__comment-count {
+    font-size: 1.5rem;
   }
   
   &__related {

@@ -12,35 +12,35 @@
   {% if not options.hideHeading %}
     {% set h = 'h3' if options.hideBody or options.hideDetails else 'h1' %}
     <{{h}}>
-      <a class="post__heading" href="{{ buildUrl(post, 'post') }}">
-        <div class="row">
-          <div class="{{ 'col-xs-10 col-sm-8 col-md-9' if not options.hideSpecialLabels and post.get('special_post_type') else 'col-xs-12' }}">
+      <div class="row">
+        <div class="{{ 'col-xs-10 col-sm-8 col-md-9' if not options.hideSpecialLabels and post.get('special_post_type') else 'col-xs-12' }}">
+          <a href="{{ buildUrl(post, 'post') }}" class="post__title">
             {{ post.get('title') }}
-            {% if canUserWrite(readingUser, post, options) %}
-              <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
-            {% endif %}
-            {% if options.showId %}
-              <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
-            {% endif %}
-          </div>
-          {% if not options.hideSpecialLabels and post.get('special_post_type') %}
-          <div class="col-xs-2 col-sm-4 col-md-3">
-            <div class="post__special-type">
-              <span class="post__special-type-label">
-                <span class="hidden-xs visible-sm visible-md visible-lg">
-                  {{ post.get('special_post_type') | upper }}
-                </span>
-                <span class="visible-xs hidden-sm">
-                  <span class="glyphicon glyphicon-pushpin"></span>
-                </span>
-              </span>
-            </div>
-          </div>
+          </a>
+          <a href="{{ buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
+            <span class="fa fa-comments"></span> {{ post.get('comment_count') or 0 }}
+          </a>
+          {% if canUserWrite(readingUser, post, options) %}
+            <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
+          {% endif %}
+          {% if options.showId %}
+            <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
           {% endif %}
         </div>
-      </a>
-
-      <div class="post__related">
+        {% if not options.hideSpecialLabels and post.get('special_post_type') %}
+        <div class="col-xs-2 col-sm-4 col-md-3">
+          <div class="post__special-type">
+            <span class="post__special-type-label">
+              <span class="hidden-xs visible-sm visible-md visible-lg">
+                {{ post.get('special_post_type') | upper }}
+              </span>
+              <span class="visible-xs hidden-sm">
+                <span class="glyphicon glyphicon-pushpin"></span>
+              </span>
+            </span>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </{{h}}>
   {% endif %}
@@ -69,7 +69,6 @@
             {{ relatedEntry.get('title') }}
           </a>
         {% endif %}
-      <!--<a href="{{ buildUrl(post, 'post', '#comments') }}" class="pull-right"><span class="fa fa-comments"></span> {{ post.get('comment_count') or 0 }}</a>-->
     </div>
     
     {% if not options.hideBody %}
@@ -84,7 +83,10 @@
       {% else %}
         <span class="badge">Draft</span>
       {% endif %}
-       • <a href="{{ buildUrl(post, 'post', '#comments') }}">{{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}</a>
+      <a href="{{ buildUrl(post, 'post', '#comments') }}" style="margin-left: 10px">
+         <span class="fa fa-comments"></span>
+         {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
+      </a>
     </div>
     {% endif %}
   </div>
