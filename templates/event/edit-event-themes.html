@@ -15,9 +15,12 @@
 <th>Actions</th>
 </tr>
 {% for theme in themes %}
+{% set shortlistVotingLock = event.get('status_theme') === 'shortlist' and theme.get('status') === 'shortlist' %}
   <tr>
   <td>
-    {% if theme.get('status') !== 'banned' %}
+    {% if shortlistVotingLock %}
+      <span class="label">R E D A C T E D</span>
+    {% elseif theme.get('status') !== 'banned' %}
       {{ theme.get('title') }}
     {% else %}
       <span style="text-decoration: line-through">{{ theme.get('title') }}</span>
@@ -27,10 +30,12 @@
   <td>{{ eventMacros.eventThemeStatus(theme, {uncensored: true}) }}</td>
   <td><strong>{{ theme.get('score') }}</strong></td>
   <td>
-    {% if theme.get('status') !== 'banned' %}
-      <a href="?ban={{ theme.get('id') }}" class="btn btn-xs btn-default">Ban</a>
-    {% else %}
-      <a href="?unban={{ theme.get('id') }}" class="btn btn-xs btn-default">Unban</a>
+    {% if not shortlistVotingLock %}
+      {% if theme.get('status') !== 'banned' %}
+        <a href="?ban={{ theme.get('id') }}" class="btn btn-xs btn-default">Ban</a>
+      {% else %}
+        <a href="?unban={{ theme.get('id') }}" class="btn btn-xs btn-default">Unban</a>
+      {% endif %}
     {% endif %}
   </td>
   </tr>
