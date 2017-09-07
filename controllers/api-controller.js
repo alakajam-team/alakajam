@@ -157,7 +157,10 @@ async function userLatestEntry (req, res) {
   if (user) {
     json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
 
-    json.latest_entry = _getAttributes(await eventService.findLatestUserEntry(user), PUBLIC_ATTRIBUTES_ENTRY)
+    let entry = await eventService.findLatestUserEntry(user)
+    if (entry) {
+      json.latest_entry = _getAttributes(await eventService.findLatestUserEntry(user), PUBLIC_ATTRIBUTES_ENTRY)
+    }
   } else {
     json = { error: 'User not found' }
   }
