@@ -1338,6 +1338,7 @@ input.date-picker {
     letter-spacing: 1px;
     margin-bottom: 0;
     font-size: 24px;
+    overflow-wrap: break-word;
   }
 
   &__stats {
@@ -1411,6 +1412,7 @@ input.date-picker {
     &__label {
       @apply --alt-font;
       font-size: 2rem;
+      overflow-wrap: break-word;
     }
   }
   
