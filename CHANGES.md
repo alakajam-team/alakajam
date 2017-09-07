@@ -127,3 +127,15 @@
 * URLs are now pretty
 
 ## [June 3rd: Nightly site launch](http://nightly.alakajam.com)
+
+### June 1st
+
+* Project is renamed to *Alakajam!*
+
+### May 2nd
+
+* Actual development starts
+
+### January 14th, 2017
+
+* First commit for a jam site prototype named *WeJam*
