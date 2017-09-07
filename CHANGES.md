@@ -11,6 +11,10 @@
 * Posts styling and layout have been tweaked
 * Changelog & JSON API pages now integrate the Help sidebar
 
+### September 4th
+
+* Game browser added as a global tab
+
 ### September 3rd
 
 * Theme voting system is completed (stats, theme elimination, appearance to anonymous users)
