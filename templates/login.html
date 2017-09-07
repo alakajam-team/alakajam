@@ -33,8 +33,11 @@
                 </label>
               </div>
             </div>
-            <p class="pull-right" style="padding-top: 10px;"><a href="/article/password-recovery">I forgot my password</a></p>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <div class="pull-right">
+              <a href="/register" class="btn btn-sm btn-default">I don't have an account</a>
+              <a href="/article/password-recovery" class="btn btn-sm btn-default">I forgot my password</a>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </form>
           {% else %}
           <p>You are logged in as <b>{{ user.get('name') }}.</b></p>

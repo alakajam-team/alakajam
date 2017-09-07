@@ -18,14 +18,8 @@
           <h1>Register</h1>
 
           <form method="post" action="/register">
-            {% if config.config.DEBUG_ENABLE_INVITE_SYSTEM %}
             <div class="form-group">
-              <label for="username">Invite key {{ formMacros.tooltip('Alakajam! is an invite-only community. You must obtain a key from a member to join!', { placement: 'right' }) }}</label>
-              <input type="text" class="form-control code" id="invite" name="invite" placeholder="XXXX-XXXX-XXXX-XXXX" value="{{ invite }}" required="required" />
-            </div>
-            {% endif %}
-            <div class="form-group">
-              <label for="username">Email address {{ formMacros.tooltip('Only used for password recovery. Any upcoming feature involving emails will be opt-in.', { placement: 'right' }) }}</label>
+              <label for="username">Email address {{ formMacros.tooltip('Only used for password recovery or other exceptional circumstances. Any upcoming feature involving emails will be opt-in.', { placement: 'right' }) }}</label>
               <input type="email" class="form-control" id="email" name="email" value="{{ email }}" required="required" />
             </div>
             <div class="form-group">
@@ -47,7 +41,7 @@
                 </label>
               </div>
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </div>
       </div>
