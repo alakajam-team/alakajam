@@ -73,12 +73,14 @@ module.exports = {
   SPECIAL_POST_TYPE_ARTICLE,
   SPECIAL_POST_TYPES,
   REQUIRED_ARTICLES: ['help'],
-  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img'],
+  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img', 'p'],
   ALLOWED_POST_ATTRIBUTES: {
-    'a': ['href'],
-    'iframe': ['src', 'width', 'height', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
-    'img': ['src', 'width', 'height']
+    'p': ['class'],
+    'a': ['href', 'class'],
+    'iframe': ['src', 'width', 'height', 'class', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
+    'img': ['src', 'width', 'height', 'class']
   },
+  ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right'],
   ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com'],
 
   // Dates

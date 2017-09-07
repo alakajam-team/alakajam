@@ -27,6 +27,8 @@ module.exports = {
 }
 
 async function index (req, res) {
+  res.locals.pageTitle = 'API'
+
   res.render('api/index', {
     sidebar: await settingService.findArticlesSidebar()
   })
@@ -165,6 +167,7 @@ async function userLatestEntry (req, res) {
 
 function _renderJson (req, res, json) {
   if (req.query.pretty) {
+    res.locals.pageTitle = 'API Preview for ' + req.path
     res.render('api/pretty', { apiPath: req.path, json })
   } else {
     res.end(JSON.stringify(json))

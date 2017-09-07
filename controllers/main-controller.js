@@ -271,6 +271,8 @@ async function chat (req, res) {
  * Changelog
  */
 async function changes (req, res) {
+  res.locals.pageTitle = 'Site changes'
+
   res.locals.changes = (await fs.readFile(path.join(__dirname, '../CHANGES.md'))).toString()
 
   res.render('changes', {

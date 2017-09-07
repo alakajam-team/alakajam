@@ -15,10 +15,34 @@
   $('.simplemde-editor').each(function () {
     var simplemde = new SimpleMDE({
       element: this,
-      showIcons: ["code", "table"],
       spellChecker: false,
       {% if options.toolbar === false %}
       toolbar: false,
+      {% else %}
+      toolbar: ['bold', 'italic', 'heading', '|', 
+        {
+          name: 'float-left',
+          action: _alignText('pull-left'),
+          className: 'fa fa-align-left',
+          title: 'Float left',
+        },
+        {
+          name: 'align-center',
+          action: _alignText('text-center'),
+          className: 'fa fa-align-center',
+          title: 'Align center',
+        },
+        {
+          name: 'float-right',
+          action: _alignText('pull-right'),
+          className: 'fa fa-align-right',
+          title: 'Float right',
+        },
+        '|',
+        'code', 'quote', 'unordered-list', 'ordered-list', '|',
+        'link', 'image', 'table', 'horizontal-rule', '|',
+        'preview', 'side-by-side', 'fullscreen', '|',
+        'guide'],
       {% endif %}
       status: false,
       autosave: {
@@ -36,6 +60,14 @@
       }
     })
   })
+  
+  function _alignText(className) {
+    return function (editor) {
+      var cm = editor.codemirror
+      var text = cm.getSelection()
+      cm.replaceSelection('<p class="' + className + '">' + text + '</p>')
+    }
+  }
 
   // Unbind exit alert on actual save
   $('form').submit(function () {

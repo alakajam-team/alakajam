@@ -47,8 +47,26 @@ const showdownConverter = new showdown.Converter({
   tables: true
 })
 const customXss = new xss.FilterXSS({
-  whiteList: Object.assign(constants.ALLOWED_POST_ATTRIBUTES, xss.whiteList)
+  whiteList: Object.assign({}, xss.whiteList, constants.ALLOWED_POST_ATTRIBUTES)
 })
+const sanitizeHtmlOptions = {
+  allowedTags: constants.ALLOWED_POST_TAGS,
+  allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
+  allowedClasses: {}, // see below
+  exclusiveFilter: function (frame) {
+    if (frame.tag === 'iframe') {
+      let srcUrl = url.parse(frame.attribs.src)
+      return constants.ALLOWED_IFRAME_HOSTS.indexOf(srcUrl.host) === -1
+    } else {
+      return false
+    }
+  }
+}
+for (let allowedTag in constants.ALLOWED_POST_ATTRIBUTES) {
+  if (constants.ALLOWED_POST_ATTRIBUTES[allowedTag].includes('class')) {
+    sanitizeHtmlOptions.allowedClasses[allowedTag] = constants.ALLOWED_POST_CLASSES
+  }
+}
 
 /**
  * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
@@ -69,18 +87,7 @@ function sanitizeString (string, maxLength = 255) {
  * @return {string}
  */
 function sanitizeMarkdown (markdown, maxLength = 10000) {
-  return sanitizeHtml(markdown, {
-    allowedTags: constants.ALLOWED_POST_TAGS,
-    allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
-    exclusiveFilter: function (frame) {
-      if (frame.tag === 'iframe') {
-        let srcUrl = url.parse(frame.attribs.src)
-        return constants.ALLOWED_IFRAME_HOSTS.indexOf(srcUrl.host) === -1
-      } else {
-        return false
-      }
-    }
-  })
+  return sanitizeHtml(markdown, sanitizeHtmlOptions)
     .replace(/&gt;/g, '>') // ">"s are used in quote blocks
     .slice(0, maxLength)
 }
