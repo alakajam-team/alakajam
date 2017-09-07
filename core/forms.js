@@ -41,6 +41,8 @@ module.exports = {
   markdownToText
 }
 
+const MAX_POSTGRESQL_INTEGER = 2147483647
+
 // Libs init
 
 const showdownConverter = new showdown.Converter({
@@ -132,7 +134,8 @@ function isUsername (string) {
  * @return {Boolean}
  */
 function isId (value) {
-  return value && ((typeof value === 'number' && value % 1 === 0) || validator.isInt(value, { min: 1 }))
+  return value && ((typeof value === 'number' && value % 1 === 0 && value > 0 && value < MAX_POSTGRESQL_INTEGER) ||
+      validator.isInt(value, { min: 1, max: MAX_POSTGRESQL_INTEGER }))
 }
 
 /**
