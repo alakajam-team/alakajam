@@ -100,7 +100,7 @@ async function configure (app) {
     return forms.markdownToHtml(str)
   })
   nunjucks.env.addFilter('markdownUnescape', function (str) {
-    return str ? str.replace(/&amp;/g, '&') : null
+    return str ? str.replace(/&amp;/g, '&').replace(/&quot;/g, '"') : null
   })
   nunjucks.env.addFilter('date', function (date) {
     if (date) {
