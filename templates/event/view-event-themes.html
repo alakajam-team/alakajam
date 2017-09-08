@@ -127,10 +127,14 @@
               {% endfor %}
             </div>
           {% else %}
-            <p>Here are some of the ideas submitted to the event. <a href="/login" class="btn btn-primary">Login to vote</a></p>
-            {% for theme in sampleThemes %}
-              <div class="panel theme-vote theme-vote__label">{{ theme.get('title') }}</div>
-            {% endfor %}
+            {% if votingAllowed %}
+              <p>Here are some of the ideas submitted to the event. <a href="/login" class="btn btn-primary">Login to vote</a></p>
+              {% for theme in sampleThemes %}
+                <div class="panel theme-vote theme-vote__label">{{ theme.get('title') }}</div>
+              {% endfor %}
+            {% else %}
+              Voting will start when at least {{ ideasRequired }} ideas are submitted.
+            {% endif %}
           {% endif %}
         </div>
         {% endif %}
