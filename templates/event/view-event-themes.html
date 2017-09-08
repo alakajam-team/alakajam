@@ -71,6 +71,9 @@
               <input type="hidden" name="action" value="ideas" />
               <input type="submit" class="btn btn-primary" value="Save" />
               <input type="button" class="btn btn-default js-manage-themes-button" value="Cancel" />
+              {% if userThemes and userThemes.length > 0 %}
+              <p style="margin-top: 5px">Note: if you change the name of a theme, it will be reset to 0 votes.</p>
+              {% endif %}
             </div>
           </div>
         </form>
@@ -288,9 +291,11 @@ function renderTheme (themeInfo) {
   })
   $('#js-upvote').click(function (e) {
     onVoteClick(true)
+    e.preventDefault()
   })
-  $('#js-downvote').click(function () {
+  $('#js-downvote').click(function (e) {
     onVoteClick(false)
+    e.preventDefault()
   })
 }
 
