@@ -240,7 +240,7 @@ async function saveVote (user, event, themeId, score, options = {}) {
   let result = {}
 
   if (event.get('status_theme') === 'voting' && [-1, 1].indexOf(score) !== -1) {
-    expectedStatus = 'active'
+    expectedStatus = 'voting'
   } else if (event.get('status_theme') === 'shortlist' && score >= 1 && score <= 10) {
     expectedStatus = 'shortlist'
   }
