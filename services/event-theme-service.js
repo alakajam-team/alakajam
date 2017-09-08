@@ -240,7 +240,7 @@ async function saveVote (user, event, themeId, score, options = {}) {
   let result = {}
 
   if (event.get('status_theme') === 'voting' && [-1, 1].indexOf(score) !== -1) {
-    expectedStatus = 'voting'
+    expectedStatus = 'active'
   } else if (event.get('status_theme') === 'shortlist' && score >= 1 && score <= 10) {
     expectedStatus = 'shortlist'
   }
@@ -282,7 +282,7 @@ async function saveVote (user, event, themeId, score, options = {}) {
     }
   }
 
-  if (expectedStatus === 'voting' && voteCreated) {
+  if (expectedStatus === 'active' && voteCreated) {
     _refreshEventThemeStats(event)
 
     // Eliminate a theme every x votes. No need for DB calls, just count in-memory
