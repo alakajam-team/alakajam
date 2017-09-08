@@ -23,7 +23,7 @@
                 </div>
                 <p>{{ eventMacros.eventThemeStatus(userTheme) }}
                   {% if userTheme.get('status') !== 'duplicate' %}
-                    after {{ userTheme.get('notes') }} vote{{ 's' if userTheme.get('notes') !== 1 }}
+                    Rated {{ userTheme.get('notes') }} time{{ 's' if userTheme.get('notes') !== 1 }}
                   {% endif %}</p>
               </div>
             {% endfor %}
@@ -62,7 +62,7 @@
                 {% if userTheme %}
                 <p>{{ eventMacros.eventThemeStatus(userTheme) }}
                   {% if userTheme.get('status') !== 'duplicate' %}
-                    after {{ userTheme.get('notes') }} vote{{ 's' if userTheme.get('notes') !== 1 }}
+                    Rated {{ userTheme.get('notes') }} time{{ 's' if userTheme.get('notes') !== 1 }}
                   {% endif %}</p>
                 {% endif %}
               </div>
