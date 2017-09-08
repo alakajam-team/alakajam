@@ -111,14 +111,15 @@ async function configure (app) {
   })
   nunjucks.env.addFilter('dateTime', function (date) {
     if (date) {
-      return moment(date).utc().format(constants.DATE_TIME_FORMAT) + ' UTC'
+      return moment(date).utc().format(constants.DATE_TIME_FORMAT)
     } else {
       return ''
     }
   })
   nunjucks.env.addFilter('featuredEventDateTime', function (date) {
     if (date) {
-      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT)
+      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) +
+        ' <a href="https://www.timeanddate.com/worldclock/timezone/utc">UTC</a>'
     } else {
       return ''
     }

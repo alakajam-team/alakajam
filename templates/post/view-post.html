@@ -18,7 +18,7 @@
         <div class="alert alert-warning"><strong>Pending post</strong> Other users can't see it until {{ post.get('published_at') | relativeTime }}.</div>
       {% endif %}
       
-      {{ postMacros.post(post, user) }}
+      {{ postMacros.post(post, user, { commentsAnchorLinks: true }) }}
     </div>
   </div>
   {% if post.get('special_post_type') !== 'article' %}

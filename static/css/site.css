@@ -1707,7 +1707,6 @@ input.date-picker {
     text-align: left;
     margin-right: 10px;
     margin-bottom: 0;
-    display: none; /* will be shown in JS */
     
     & h1 > a {
       color: var(--text);

@@ -26,6 +26,8 @@ module.exports = {
   deleteEntry,
   leaveEntry,
 
+  saveComment,
+
   acceptInvite,
   declineInvite,
 
@@ -315,6 +317,27 @@ async function leaveEntry (req, res) {
     res.redirect(templating.buildUrl(res.locals.event, 'event'))
   } else {
     res.redirect(templating.buildUrl(res.locals.user, 'user', 'entries'))
+  }
+}
+
+/**
+ * Saves a comment made to an entry
+ */
+async function saveComment (req, res) {
+  let {entry, user} = res.locals
+
+  // Security checks
+  if (!user) {
+    res.errorPage(403)
+    return
+  }
+
+  let {fields} = await req.parseForm()
+  if (fields['action'] === 'comment') {
+    // Save comment
+    let redirectUrl = await postController.handleSaveComment(fields,
+      res.locals.user, entry, templating.buildUrl(entry, 'entry'))
+    res.redirect(redirectUrl)
   }
 }
 

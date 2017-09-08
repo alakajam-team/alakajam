@@ -42,12 +42,12 @@
         {{ gamesSearchMacros.searchDescription(searchOptions, null, {fixedEvent: true}) }}
       </h1>
         
-      <div class="horizontal-bar">{{ sortedEntries.length }} {{ 'entries' if sortedEntries.length !== 1 else 'entry' }} sorted by Feedback Score {{ formMacros.tooltip('Comment on other games to increase your score and get featured higher on the list!') }}</div>
+      <div class="horizontal-bar">{{ entries.length }} {{ 'entries' if entries.length !== 1 else 'entry' }} sorted by Feedback Score {{ formMacros.tooltip('Rate and comment other games to increase your score, so you are featured higher on the list!') }}</div>
    
       {{ formMacros.pagination(currentPage, pageCount, path) }}
       
       <div class="row">
-      {% for entry in sortedEntries %}
+      {% for entry in entries %}
         <div class="col-sm-6 col-md-4 col-lg-3">
           {{ eventMacros.entryThumb(entry) }}
           <div class="entry-thumb__score">

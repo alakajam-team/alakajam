@@ -95,11 +95,17 @@ async function index (req, res) {
       context.previousEvent = previousEvent
     })
 
-  // Gather any entries
-  let latestEntriesTask = eventService.findLatestEntries()
-    .then(function (latestEntries) {
-      context.latestEntries = latestEntries.models
+  // Gather featured entries
+  let suggestedEntriesTask = null
+  if (res.locals.featuredEvent && res.locals.featuredEvent.get('status_results') === 'voting') {
+    suggestedEntriesTask = eventService.findGames({
+      eventId: res.locals.featuredEvent.get('id'),
+      sortByScore: true,
+      pageSize: 4
+    }).then(function (suggestedEntriesCollection) {
+      context.suggestedEntries = suggestedEntriesCollection.models
     })
+  }
 
   // Gather any user posts
   let postsTask = postService.findPosts({specialPostType: null})
@@ -120,7 +126,7 @@ async function index (req, res) {
       }
     })
 
-  await Promise.all([featuredEventTask, previousEventTask, latestEntriesTask, postsTask, featuredPostTask]) // Parallelize fetching everything
+  await Promise.all([featuredEventTask, previousEventTask, suggestedEntriesTask, postsTask, featuredPostTask]) // Parallelize fetching everything
 
   res.render('index', context)
 }

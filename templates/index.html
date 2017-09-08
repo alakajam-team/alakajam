@@ -51,7 +51,7 @@
                     {% endif %}
 
                     {% if featuredEvent.get('countdown_config').phrase %}
-                      <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime }}<br />
+                      <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime | safe }}<br />
                     {% endif %}
                     {% if featuredEvent.get('display_theme') %}
                       <span class="glyphicon glyphicon-apple"></span> 
@@ -83,6 +83,31 @@
                     {{ postMacros.post(homeAnnouncement, user, { hideSpecialLabels: true }) }}
                     {{ formMacros.expandCollapse({ manualScripting: true }) }}
                   </div>
+                  <script type="text/javascript">
+                    // Custom announcement height limit and expand/collapse button
+                    // Script inlined for fast loading
+                    
+                    var maxAnnouncementHeight = Math.max(280, findByClass('home-jumbo__sidebar').offsetHeight  - 50)
+                    var announcementEl = findByClass('home-jumbo__announcement')
+                    if (announcementEl.offsetHeight > maxAnnouncementHeight) {
+                      announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
+                      findByClass('expand-bar', 'home-jumbo__announcement').onclick = function () {
+                        if (announcementEl.className.indexOf('expanded') !== -1) {
+                          announcementEl.className = announcementEl.className.replace(' expanded', '')
+                        } else {
+                          announcementEl.className += ' expanded'
+                        }
+                      }
+                    } else {
+                      findByClass('expand-bar', 'home-jumbo__announcement').remove()
+                    }
+                    
+                    function findByClass(className, parentClassName) {
+                      var parent = parentClassName ? findByClass(parentClassName) : document
+                      var elements = parent.getElementsByClassName(className)
+                      return (elements.length > 0) ? elements[0] : null
+                    }
+                  </script>
                 {% endif %}
                 <div class="home-jumbo__footer">
                   <a href="{{ buildUrl(featuredEvent, 'event', 'announcements') }}" class="home-jumbo__news-link pull-right">
@@ -101,20 +126,22 @@
     </div>
   </div>
   
+  {% if suggestedEntries and suggestedEntries.length > 0 %}
   <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-      {% if latestEntries.length > 0 %}
-        <div class="horizontal-bar">Latest entries</div>
-        <div class="row">
-        {% for entry in latestEntries %}
-          <div class="home-entry col-sm-4 col-md-3">
-          {{ eventMacros.entrySmallThumb(entry) }}
-          </div>
-        {% endfor %}
+    <div class="col-xs-12">
+      <div class="horizontal-bar">
+        Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your Feedback Score. The Top 4 are featured on the front page!') }}
+      </div>
+      <div class="row">
+      {% for entry in suggestedEntries %}
+        <div class="home-entry col-sm-4 col-md-3">
+        {{ eventMacros.entryThumb(entry) }}
         </div>
-      {% endif %}
+      {% endfor %}
+      </div>
     </div>
-  </div>
+  </div>
+  {% endif %}
     
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
@@ -158,20 +185,6 @@
 
 {% block scripts %}
 {{ formMacros.expandCollapseScripts() }}
-
-<script type="text/javascript">
-  // Custom announcement height limit and expand/collapse button
-  var maxAnnouncementHeight = Math.max(280, $('.home-jumbo__sidebar').height() - 50)
-  if ($('.home-jumbo__announcement').height() > maxAnnouncementHeight) {
-    $('.home-jumbo__announcement').attr('style', 'max-height: ' + maxAnnouncementHeight + 'px')
-    $('.home-jumbo__announcement .expand-bar').click(function () {
-      $('.home-jumbo__announcement').toggleClass('expanded')
-    })
-  } else {
-    $('.home-jumbo__announcement .expand-bar').remove()
-  }
-  $('.home-jumbo__announcement').show()
-</script>
 
 {% if featuredEvent %}
   {% set countdownEvent = featuredEvent %}

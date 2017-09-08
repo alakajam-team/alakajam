@@ -1,7 +1,7 @@
 {% import "_macros-form.html" as formMacros %}
 {% import "event/_macros-event.html" as eventMacros %}
 
-{# Allowed options: hideHeading hideBody hideDetails hideSpecialLabels showId showComments allowMods #}
+{# Allowed options: hideHeading hideBody hideDetails hideSpecialLabels showId allowMods commentsAnchorLinks #}
 {% macro post(post, readingUser, options = {}) %}
 
 <div class="post">
@@ -17,7 +17,7 @@
           <a href="{{ buildUrl(post, 'post') }}" class="post__title">
             {{ post.get('title') }}
           </a>
-          <a href="{{ buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
+          <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
             <span class="fa fa-comments"></span> {{ post.get('comment_count') or 0 }}
           </a>
           {% if canUserWrite(readingUser, post, options) %}
@@ -83,10 +83,12 @@
       {% else %}
         <span class="badge">Draft</span>
       {% endif %}
+      {% if not options.commentsAnchorLinks %}
       <a href="{{ buildUrl(post, 'post', '#comments') }}" style="margin-left: 10px">
          <span class="fa fa-comments"></span>
          {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
       </a>
+      {% endif %}
     </div>
     {% endif %}
   </div>
@@ -179,13 +181,13 @@
         <div class="row comment__actions">
           <div class="col-xs-4">
             {% if comment and comment.id %}
-            <input type="submit" name="delete" class="btn btn-default btn-sm" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"/>
+            <input type="submit" name="delete" class="btn btn-default" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"/>
             {% endif %}
           </div>
           <div class="col-xs-8 text-right">
-            <input type="submit" name="save" class="btn btn-primary btn-sm" value="Publish" />
+            <input type="submit" name="save" class="btn btn-primary" value="Save" />
             {% if comment and comment.id %}
-              <a href="{{ buildUrl(comment, 'comment') }}" class="btn btn-default btn-sm">Cancel</a>
+              <a href="{{ buildUrl(comment, 'comment') }}" class="btn btn-default">Cancel</a>
             {% endif %}
           </div>
         </div>

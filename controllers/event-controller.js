@@ -259,7 +259,8 @@ async function viewEventGames (req, res) {
   let searchOptions = {
     pageSize: PAGE_SIZE,
     page: currentPage,
-    eventId: event.get('id')
+    eventId: event.get('id'),
+    sortByScore: true
   }
   searchOptions.search = forms.sanitizeString(req.query.search)
   if (req.query.platforms) {
@@ -272,9 +273,6 @@ async function viewEventGames (req, res) {
 
   // Search entries
   let entriesCollection = await eventService.findGames(searchOptions)
-  let sortedEntries = entriesCollection.sortBy(function (entry) {
-    return -1 * entry.get('feedback_score')
-  })
   searchOptions.count = true
   let entryCount = await eventService.findGames(searchOptions)
 
@@ -287,7 +285,7 @@ async function viewEventGames (req, res) {
   }
 
   res.render('event/view-event-games', {
-    sortedEntries,
+    entries: entriesCollection.models,
     voteHistory,
     searchOptions,
     entryCount,
