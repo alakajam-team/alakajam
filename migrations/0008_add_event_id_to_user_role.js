@@ -53,7 +53,7 @@ exports.up = async function (knex, Promise) {
   await knex.raw(`
     UPDATE user_role
     SET event_id = 1
-    WHERE user_role.type = 'entry'
+    WHERE user_role.node_type = 'entry'
       AND user_role.event_id IS NULL`)
 }
 
