@@ -42,7 +42,7 @@ async function featuredEvent (req, res) {
     req.params.event = res.locals.featuredEvent.get('id')
     return event(req, res)
   } else {
-    _renderJson(req, res, { error: 'No featured event' })
+    _renderJson(req, res, 404, { error: 'No featured event' })
   }
 }
 
@@ -51,6 +51,7 @@ async function featuredEvent (req, res) {
  */
 async function event (req, res) {
   let json = {}
+  let status = 200
 
   let event
   if (req.params.event && forms.isId(req.params.event)) {
@@ -80,9 +81,10 @@ async function event (req, res) {
     }
   } else {
     json = { error: 'Event not found' }
+    status = 404
   }
 
-  _renderJson(req, res, json)
+  _renderJson(req, res, status, json)
 }
 
 /**
@@ -90,6 +92,7 @@ async function event (req, res) {
  */
 async function entry (req, res) {
   let json = {}
+  let status = 200
 
   if (forms.isId(req.params.entry)) {
     let entry = await eventService.findEntryById(req.params.entry)
@@ -109,12 +112,14 @@ async function entry (req, res) {
       }
     } else {
       json = { error: 'Entry not found' }
+      status = 404
     }
   } else {
     json = { error: 'Invalid entry ID' }
+    status = 400
   }
 
-  _renderJson(req, res, json)
+  _renderJson(req, res, status, json)
 }
 
 /**
@@ -122,6 +127,7 @@ async function entry (req, res) {
  */
 async function user (req, res) {
   let json = {}
+  let status = 200
 
   let user
   if (forms.isId(req.params.user)) {
@@ -139,13 +145,15 @@ async function user (req, res) {
     }
   } else {
     json = { error: 'User not found' }
+    status = 404
   }
 
-  _renderJson(req, res, json)
+  _renderJson(req, res, status, json)
 }
 
 async function userLatestEntry (req, res) {
   let json = {}
+  let status = 200
 
   let user
   if (forms.isId(req.params.user)) {
@@ -163,12 +171,14 @@ async function userLatestEntry (req, res) {
     }
   } else {
     json = { error: 'User not found' }
+    status = 404
   }
 
-  _renderJson(req, res, json)
+  _renderJson(req, res, status, json)
 }
 
-function _renderJson (req, res, json) {
+function _renderJson (req, res, statusCode, json) {
+  res.status(statusCode)
   if (req.query.pretty) {
     res.locals.pageTitle = 'API Preview for ' + req.path
     res.render('api/pretty', { apiPath: req.path, json })
