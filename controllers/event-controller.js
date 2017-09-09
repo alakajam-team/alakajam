@@ -502,7 +502,8 @@ async function editEventThemes (req, res) {
 
   let themesCollection = await eventThemeService.findAllThemes(res.locals.event)
   res.render('event/edit-event-themes', {
-    themes: themesCollection.models
+    themes: themesCollection.models,
+    eliminationMinNotes: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5'))
   })
 }
 

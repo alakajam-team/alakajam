@@ -263,6 +263,7 @@ async function saveVote (user, event, themeId, score, options = {}) {
           'score': theme.get('score') + score,
           'notes': theme.get('notes') + 1
         })
+        theme.set('normalized_score', 1.0 * theme.get('score') / theme.get('notes'))
         vote = new models.ThemeVote({
           theme_id: themeId,
           user_id: user.get('id'),
@@ -310,7 +311,7 @@ async function _eliminateLowestTheme (event) {
   // Make sure we have at least enough themes to fill our shortlist before removing one
   if (await battleReadyThemesQuery.count() > 10) {
     let loserTheme = await battleReadyThemesQuery
-      .orderBy('score')
+      .orderBy('normalized_score')
       .orderBy('created_at')
       .fetch()
     loserTheme.set('status', 'out')
@@ -346,17 +347,19 @@ async function findAllThemes (event, options = {}) {
     query = query.where('status', '<>', 'out')
       .where('status', '<>', 'banned')
   }
-  return query.orderBy('score', 'DESC')
+  return query.orderBy('normalized_score', 'DESC')
     .orderBy('created_at')
     .fetchAll()
 }
 
 async function findBestThemes (event) {
+  let eliminationMinNotes = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5'))
   return models.Theme.where({
     event_id: event.get('id')
   })
     .where('status', '<>', 'banned')
-    .orderBy('score', 'DESC')
+    .where('notes', '>=', eliminationMinNotes)
+    .orderBy('normalized_score', 'DESC')
     .orderBy('created_at')
     .fetchPage({ pageSize: 10 })
 }

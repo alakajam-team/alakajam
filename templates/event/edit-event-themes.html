@@ -9,9 +9,10 @@
 <table class="table">
 <tr>
 <th>Theme<th>
-<th>Votes</th>
 <th>Status</th>
+<th>Notes</th>
 <th>Score</th>
+<th>Normalized  {{ formMacros.tooltip('Computed by evaluating "Score / Notes". "New" means the theme does not have enough notes yet.') }}</th>
 <th>Actions</th>
 </tr>
 {% for theme in themes %}
@@ -26,9 +27,17 @@
       <span style="text-decoration: line-through">{{ theme.get('title') }}</span>
     {% endif %}
   <td>
+  <td>
+    {{ eventMacros.eventThemeStatus(theme, {uncensored: true}) }}
+  </td>
   <td>{{ theme.get('notes') }}</td>
-  <td>{{ eventMacros.eventThemeStatus(theme, {uncensored: true}) }}</td>
-  <td><strong>{{ theme.get('score') }}</strong></td>
+  <td>{{ theme.get('score') }}</td>
+  <td>
+    {% if theme.get('notes') < eliminationMinNotes %}
+      <div class="label">New</div>
+    {% else %}
+      <strong>{{ theme.get('normalized_score') }}</strong>
+    {% endif %}</td>
   <td>
     {% if not shortlistVotingLock %}
       {% if theme.get('status') !== 'banned' %}
