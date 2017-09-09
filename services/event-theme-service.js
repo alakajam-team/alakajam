@@ -297,7 +297,11 @@ async function _eliminateLowestTheme (event) {
 
   // Make sure we have at least enough themes to fill our shortlist before removing one
   if (await battleReadyThemesQuery.count() > 10) {
-    let loserTheme = await battleReadyThemesQuery
+    let loserTheme = await models.Theme.where({
+      event_id: event.get('id'),
+      status: 'active'
+    })
+      .where('notes', '>=', eliminationMinNotes)
       .orderBy('normalized_score')
       .orderBy('created_at')
       .fetch()
