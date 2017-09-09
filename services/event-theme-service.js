@@ -63,7 +63,9 @@ async function findThemeIdeasByUser (user, event) {
   return models.Theme.where({
     user_id: user.get('id'),
     event_id: event.get('id')
-  }).fetchAll()
+  })
+    .orderBy('id')
+    .fetchAll()
 }
 
 /**
@@ -77,32 +79,23 @@ async function saveThemeIdeas (user, event, ideas) {
   let maxThemeSuggestions = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, '3'))
   let tasks = []
   let ideasSubmitted = 0
+  let ideasToCreate = []
 
-  // Run through all existing themes for that event/user combination
+  // Detect changes by running through all the user's theme ideas
   let existingThemes = await findThemeIdeasByUser(user, event)
   let handledThemes = []
   for (let idea of ideas) {
     if (idea.id) {
       let existingTheme = existingThemes.findWhere({'id': parseInt(idea.id)})
-      // We can only delete/update themes if they're active or cancelled because they're duplicates
+
+      // We can only delete themes while they're active, or marked as duplicates
       if (existingTheme && (existingTheme.get('status') === constants.THEME_STATUS_ACTIVE ||
           existingTheme.get('status') === constants.THEME_STATUS_DUPLICATE)) {
-        if (idea.title) {
-          // Update existing theme if needed
-          if (idea.title !== existingTheme.get('title')) {
-            existingTheme.set({
-              title: idea.title,
-              status: constants.THEME_STATUS_ACTIVE,
-              score: 0,
-              notes: 0,
-              reports: 0
-            })
-            await handleDuplicates(existingTheme)
-            tasks.push(existingTheme.save())
-          }
-        } else {
-          // Delete existing theme
+        if (!idea.title || idea.title !== existingTheme.get('title')) {
           tasks.push(existingTheme.destroy())
+          if (idea.title) {
+            ideasToCreate.push(idea)
+          }
         }
         handledThemes.push(existingTheme)
       } else {
@@ -112,15 +105,7 @@ async function saveThemeIdeas (user, event, ideas) {
     }
 
     if (!idea.id && idea.title && ideasSubmitted < maxThemeSuggestions) {
-      // Create theme
-      let theme = new models.Theme({
-        user_id: user.get('id'),
-        event_id: event.get('id'),
-        title: idea.title,
-        status: constants.THEME_STATUS_ACTIVE
-      })
-      await handleDuplicates(theme)
-      tasks.push(theme.save())
+      ideasToCreate.push(idea)
     }
 
     if (idea.title) {
@@ -128,12 +113,29 @@ async function saveThemeIdeas (user, event, ideas) {
     }
   }
 
-  // Destroy any theme not among the ideas
+  // Destroy any theme not among the ideas submitted
   let missingThemes = existingThemes.difference(handledThemes)
   if (missingThemes.length > 0) {
     for (let missingTheme of missingThemes) {
       tasks.push(missingTheme.destroy())
     }
+  }
+
+  // Apply deletions before creations to prevent false positives for duplicates
+  // (corner case: "F5"-based theme re-submission)
+  await Promise.all(tasks)
+
+  // Create missing themes
+  tasks = []
+  for (let idea of ideasToCreate) {
+    let theme = new models.Theme({
+      user_id: user.get('id'),
+      event_id: event.get('id'),
+      title: idea.title,
+      status: constants.THEME_STATUS_ACTIVE
+    })
+    await handleDuplicates(theme)
+    tasks.push(theme.save())
   }
 
   await Promise.all(tasks)
