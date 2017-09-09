@@ -213,7 +213,13 @@
   </td></tr>
   </table>
   <% } else { %>
-   No more themes to vote on, try again later!
+   <p>No more themes to vote on!</p>
+   <p>If you leave this page open, it will refresh every five minutes.</p>
+   <p><i>(Last checked: 
+      <% var date = new Date()
+        var hours = ('0' + date.getHours()).slice(-2)
+        var minutes = ('0' + date.getMinutes()).slice(-2)
+        print(hours + ':' + minutes) %>)</i></p>
   <% } %>
 </script>
 
@@ -278,6 +284,7 @@ if (list) {
 // Manage theme votes
 
 var themeBuffer = []
+var refreshInterval = null
 
 if ($('#js-theme-vote').length > 0) {
   nextTheme()
@@ -298,6 +305,15 @@ function renderTheme (themeInfo) {
   var template = _.template($('#js-theme-vote-template').html())
   $('#js-theme-vote').html(template({ theme: themeInfo }))
   $('#js-theme-vote').fadeIn(300)
+
+  if (!themeInfo) {
+    if (!refreshInterval) {
+      refreshInterval = setInterval(nextTheme, 5 * 60000)
+    }
+  } else if (refreshInterval) {
+    clearInterval(refreshInterval)
+    refreshInterval = null
+  }
   
   $('#js-vote-form').submit(function (e) {
     e.preventDefault()

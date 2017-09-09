@@ -276,10 +276,10 @@ async function saveVote (user, event, themeId, score, options = {}) {
     // Eliminate a theme every x votes. No need for DB calls, just count in-memory
     let eliminationThreshold = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, '10'))
     let uptimeVotes = cache.general.get('uptime_votes') || 0
-    uptimeVotes++
     if (uptimeVotes % eliminationThreshold === 0) {
       _eliminateLowestTheme(event)
     }
+    uptimeVotes++
     cache.general.set('uptime_votes', uptimeVotes)
   }
 
