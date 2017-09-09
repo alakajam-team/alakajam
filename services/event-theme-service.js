@@ -74,11 +74,9 @@ async function findThemeIdeasByUser (user, event) {
  * deletes the idea, not filling the ID creates one instead of updating it.
  */
 async function saveThemeIdeas (user, event, ideas) {
-  if (ideas.length !== 3) {
-    throw new Error('there must be information for exactly 3 theme ideas')
-  }
-
+  let maxThemeSuggestions = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, '3'))
   let tasks = []
+  let ideasSubmitted = 0
 
   // Run through all existing themes for that event/user combination
   let existingThemes = await findThemeIdeasByUser(user, event)
@@ -113,7 +111,7 @@ async function saveThemeIdeas (user, event, ideas) {
       }
     }
 
-    if (!idea.id && idea.title) {
+    if (!idea.id && idea.title && ideasSubmitted < maxThemeSuggestions) {
       // Create theme
       let theme = new models.Theme({
         user_id: user.get('id'),
@@ -124,14 +122,16 @@ async function saveThemeIdeas (user, event, ideas) {
       await handleDuplicates(theme)
       tasks.push(theme.save())
     }
+
+    if (idea.title) {
+      ideasSubmitted++
+    }
   }
 
   // Destroy any theme not among the ideas
   let missingThemes = existingThemes.difference(handledThemes)
   if (missingThemes.length > 0) {
-    log.warn('Theme ID were not given among the parameters for user ' + user.get('name') + ':')
     for (let missingTheme of missingThemes) {
-      log.warn(' - ' + missingTheme.get('id'))
       tasks.push(missingTheme.destroy())
     }
   }

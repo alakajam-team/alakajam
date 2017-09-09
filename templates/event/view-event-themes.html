@@ -30,7 +30,7 @@
             <div class="themes__idea">
               {% if not userThemes or userThemes.length === 0 %}
                   {% if event.get('status_theme') === 'voting' %}
-                    <p style="margin-bottom: 10px">None yet. You can submit up to 3 ideas.</p>
+                    <p style="margin-bottom: 10px">None yet. You can submit up to {{ maxThemeSuggestions }} ideas.</p>
                     {% if not user %}
                       <p><a href="/login" class="btn btn-primary">Login to submit ideas</a></p>
                     {% endif %}
@@ -52,7 +52,8 @@
         <form id="js-manage-themes" method="post" style="display: none">
           <h2>Theme ideas </h2>
           <div class="panel themes__ideas">
-            {% for index in range(0, 3) %} 
+            {% set ideaRows = max(userThemes.length, maxThemeSuggestions) %}
+            {% for index in range(0, ideaRows) %} 
               {% set userTheme = userThemes[index] if userThemes.length > index %}
               <div class="form-group themes__idea">
                 <input type="text" name="idea-title[{{ index }}]" class="form-control input-lg" 
@@ -69,6 +70,7 @@
             {% endfor %}
             <div class="form-group themes__idea" style="margin-top: -15px">
               <input type="hidden" name="action" value="ideas" />
+              <input type="hidden" name="idea-rows" value="{{ ideaRows }}" />
               <input type="submit" class="btn btn-primary" value="Save" />
               <input type="button" class="btn btn-default js-manage-themes-button" value="Cancel" />
               {% if userThemes and userThemes.length > 0 %}

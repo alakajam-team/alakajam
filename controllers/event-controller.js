@@ -133,7 +133,9 @@ async function viewEventThemes (req, res) {
   if (statusThemes === 'disabled' || statusThemes === 'off') {
     res.errorPage(404)
   } else {
-    let context = {}
+    let context = {
+      maxThemeSuggestions: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, '3'))
+    }
 
     if (forms.isId(statusThemes)) {
       context.themesPost = await postService.findPostById(statusThemes)
@@ -144,7 +146,7 @@ async function viewEventThemes (req, res) {
         if (fields.action === 'ideas') {
           // Gather ideas data
           let ideas = []
-          for (let i = 0; i < 3; i++) {
+          for (let i = 0; i < parseInt(fields['idea-rows']); i++) {
             let idField = fields['idea-id[' + i + ']']
             if (forms.isId(idField) || !idField) {
               ideas.push({
