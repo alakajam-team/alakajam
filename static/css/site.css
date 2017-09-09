@@ -1320,7 +1320,7 @@ input.date-picker {
   &__idea {
     border-bottom: 1px solid var(--borders);
     padding: 10px 10px 15px 10px;
-    
+
     & p {
       margin-bottom: 0;
       color: var(--text-light);
@@ -1331,6 +1331,14 @@ input.date-picker {
     & input[type=text] {
       @apply --alt-font;
       letter-spacing: 1px;
+    }
+    &.form-inline input[type=text] {
+      width: 90%;
+    }
+    & .themes__idea-delete {
+      width: 8%;
+      text-align: center;
+      padding: 6px 0;
     }
   }
   &__idea-label {

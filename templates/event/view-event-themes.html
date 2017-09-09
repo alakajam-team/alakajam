@@ -55,10 +55,13 @@
             {% set ideaRows = max(userThemes.length, maxThemeSuggestions) %}
             {% for index in range(0, ideaRows) %} 
               {% set userTheme = userThemes[index] if userThemes.length > index %}
-              <div class="form-group themes__idea">
-                <input type="text" name="idea-title[{{ index }}]" class="form-control input-lg" 
-                  {{ 'disabled="disabled"' if userTheme and userTheme.get('status') !== 'active' and userTheme.get('status') !== 'duplicate' }} 
+              <div class="themes__idea form-group {{ 'form-inline' if userTheme }}">
+                <input type="text" id="idea-title-{{ index }}" name="idea-title[{{ index }}]" 
+                  class="form-control input-lg" {{ 'readonly="readonly"' if userTheme }} 
                   placeholder="Idea #{{ index + 1 }}" value="{{ userTheme.get('title') if userTheme }}" />
+                {% if userTheme %}
+                <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-default"><span class="fa fa-remove"></span></button>
+                {% endif %}
                 <input type="hidden" name="idea-id[{{ index }}]" value="{{ userTheme.get('id') if userTheme }}" />
                 {% if userTheme %}
                 <p>{{ eventMacros.eventThemeStatus(userTheme) }}
@@ -72,10 +75,7 @@
               <input type="hidden" name="action" value="ideas" />
               <input type="hidden" name="idea-rows" value="{{ ideaRows }}" />
               <input type="submit" class="btn btn-primary" value="Save" />
-              <input type="button" class="btn btn-default js-manage-themes-button" value="Cancel" />
-              {% if userThemes and userThemes.length > 0 %}
-              <p style="margin-top: 5px">Note: if you change the name of a theme, it will be reset to 0 votes.</p>
-              {% endif %}
+              <a href="{{ buildUrl(event, 'event', 'themes') }}" class="btn btn-default">Cancel</a>
             </div>
           </div>
         </form>
@@ -241,10 +241,21 @@
 {% block scripts %}
 <script type="text/javascript" src="/static/js/sortable.min.js"></script>
 <script type="text/javascript">
-// Toggle managing theme ideas
+// Theme ideas management
 $('.js-manage-themes-button').click(function () {
   $('#js-view-themes').toggle()
   $('#js-manage-themes').toggle()
+})
+$('.js-idea-delete').click(function (e) {
+  var $this = $(this)
+  var $parent = $this.parent()
+  var $target = $('input[type=text]', $parent)
+  $target.removeAttr('readonly')
+  $target.val('')
+  $this.hide()
+  $parent.removeClass('form-inline')
+  $('p', $parent).hide()
+  e.preventDefault()
 })
 
 // Shortlist

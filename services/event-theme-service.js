@@ -9,7 +9,6 @@
 const models = require('../core/models')
 const constants = require('../core/constants')
 const db = require('../core/db')
-const log = require('../core/log')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
 const settingService = require('./setting-service')
@@ -76,76 +75,62 @@ async function findThemeIdeasByUser (user, event) {
  * deletes the idea, not filling the ID creates one instead of updating it.
  */
 async function saveThemeIdeas (user, event, ideas) {
-  let maxThemeSuggestions = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, '3'))
-  let tasks = []
-  let ideasSubmitted = 0
+  let ideasToKeep = []
   let ideasToCreate = []
+  let themesToDelete = []
 
-  // Detect changes by running through all the user's theme ideas
+  // Compare form with the existing user themes
   let existingThemes = await findThemeIdeasByUser(user, event)
-  let handledThemes = []
-  for (let idea of ideas) {
-    if (idea.id) {
-      let existingTheme = existingThemes.findWhere({'id': parseInt(idea.id)})
-
-      // We can only delete themes while they're active, or marked as duplicates
-      if (existingTheme && (existingTheme.get('status') === constants.THEME_STATUS_ACTIVE ||
-          existingTheme.get('status') === constants.THEME_STATUS_DUPLICATE)) {
-        if (!idea.title || idea.title !== existingTheme.get('title')) {
-          tasks.push(existingTheme.destroy())
-          if (idea.title) {
-            ideasToCreate.push(idea)
-          }
-        }
-        handledThemes.push(existingTheme)
-      } else {
-        log.warn('Invalid theme ID for user ' + user.get('name') + ': ' + idea.id)
-        idea.id = null
+  for (let existingTheme of existingThemes.models) {
+    let ideaFound = ideas.find(idea => parseInt(idea.id) === existingTheme.get('id'))
+    if (!ideaFound || ideaFound.title !== existingTheme.get('title')) {
+      if (existingTheme.get('status') === constants.THEME_STATUS_ACTIVE ||
+          existingTheme.get('status') === constants.THEME_STATUS_DUPLICATE) {
+        themesToDelete.push(existingTheme)
       }
+    } else {
+      ideasToKeep.push(ideaFound)
     }
-
-    if (!idea.id && idea.title && ideasSubmitted < maxThemeSuggestions) {
+  }
+  for (let idea of ideas) {
+    if (!ideasToKeep.includes(idea) && idea.title) {
       ideasToCreate.push(idea)
     }
-
-    if (idea.title) {
-      ideasSubmitted++
-    }
   }
 
-  // Destroy any theme not among the ideas submitted
-  let missingThemes = existingThemes.difference(handledThemes)
-  if (missingThemes.length > 0) {
-    for (let missingTheme of missingThemes) {
-      tasks.push(missingTheme.destroy())
-    }
+  // Delete obsolete themes
+  let tasks = []
+  let ideasSubmitted = existingThemes.models.length - themesToDelete.length
+  for (let themeToDelete of themesToDelete) {
+    tasks.push(themeToDelete.destroy())
   }
-
-  // Apply deletions before creations to prevent false positives for duplicates
-  // (corner case: "F5"-based theme re-submission)
   await Promise.all(tasks)
 
-  // Create missing themes
-  tasks = []
+  // Create themes
+  let maxThemeSuggestions = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, '3'))
   for (let idea of ideasToCreate) {
-    let theme = new models.Theme({
-      user_id: user.get('id'),
-      event_id: event.get('id'),
-      title: idea.title,
-      status: constants.THEME_STATUS_ACTIVE
-    })
-    await handleDuplicates(theme)
-    tasks.push(theme.save())
+    if (ideasSubmitted < maxThemeSuggestions) {
+      let theme = new models.Theme({
+        user_id: user.get('id'),
+        event_id: event.get('id'),
+        title: idea.title,
+        status: constants.THEME_STATUS_ACTIVE
+      })
+      await _handleDuplicates(theme)
+      await theme.save()
+      ideasSubmitted++
+    } else {
+      break
+    }
   }
 
-  await Promise.all(tasks)
   _refreshEventThemeStats(event)
 }
 
 /**
  * Sets the theme status to "duplicate" if another theme is identical
  */
-async function handleDuplicates (theme) {
+async function _handleDuplicates (theme) {
   theme.set('slug', forms.slug(theme.get('title')))
 
   let query = models.Theme.where({
