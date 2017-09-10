@@ -1,0 +1,89 @@
+const constants = require('../core/constants')
+const models = require('../core/models')
+const db = require('../core/db')
+
+module.exports = {
+  searchPlatforms,
+  fetchAllNames,
+  fetchAll,
+  fetchMultipleNamed,
+  setEntryPlatforms
+}
+
+/**
+ * Search for a platform by name.
+ *
+ * @param {string} nameFragment a fragment of the name.
+ * @returns {Bookshelf.Collection} platforms matching the search.
+ */
+function searchPlatforms (nameFragment) {
+  return models.Platform.where('name', constants.DB_ILIKE, `%${nameFragment}%`)
+}
+
+/**
+ * Fetch platforms by name (case-insensitive except in SQLite).
+ *
+ * @param {string[]} names the platform names to fetch by.
+ */
+function fetchMultipleNamed (names) {
+  return models.Platform.query(qb => qb.whereIn('name', names)).fetchAll()
+}
+
+/**
+ * Load all platform names.
+ *
+ * @returns {Promise<string[]>} a promise which resolves with the names.
+ */
+async function fetchAllNames () {
+  return (await db.knex('platform').select('name')).map(({name}) => name)
+}
+
+/** Fetch all platform instances. */
+function fetchAll () {
+  return new models.Platform().fetchAll()
+}
+
+/**
+ * Set the platforms of an entry.
+ *
+ * @param {models.Entry} entry the entry instance.
+ * @param {models.Platform[]} platforms the platforms to set.
+ * @returns {Promise} a promise which resolves when complete.
+ */
+async function setEntryPlatforms (entry, platforms, { updateEntry = true }) {
+  const entryId = entry.get('id')
+  const nameList = JSON.stringify(platforms.map(p => p.get('name')))
+  const platformIds = platforms.map(p => p.id)
+  return db.knex.transaction(async function (transaction) {
+    const existingIds = (
+      await transaction('entry_platform')
+        .select('platform_id')
+        .where('entry_id', entryId)
+    ).map(({platform_id}) => platform_id) // eslint-disable-line camelcase
+    const toRemoveIds = existingIds.filter(id => !platformIds.includes(id))
+    const toAdd = platforms
+      .filter(p => !existingIds.includes(p.id))
+      .map(p => ({
+        entry_id: entryId,
+        platform_id: p.id,
+        platform_name: p.get('name')
+      }))
+
+    const promises = []
+    if (updateEntry) {
+      promises.push(entry.save('platforms', nameList, {transaction}))
+    }
+    if (toAdd.length > 0) { // Insert new entry_platform records.
+      promises.push(transaction('entry_platform').insert(toAdd))
+    }
+    if (toRemoveIds.length > 0) { // Remove old entry_platform records.
+      promises.push(
+        transaction('entry_platform')
+          .whereIn('platform_id', toRemoveIds)
+          .andWhere('entry_id', '=', entryId)
+          .del()
+      )
+    }
+    await Promise.all(promises)
+  })
+}

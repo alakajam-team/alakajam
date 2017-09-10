@@ -13,6 +13,7 @@ const eventService = require('../services/event-service')
 const eventRatingService = require('../services/event-rating-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
+const platformService = require('../services/platform-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
@@ -64,24 +65,28 @@ async function entryMiddleware (req, res, next) {
  * Browse entry
  */
 async function viewEntry (req, res) {
+  const entry = res.locals.entry
   // Let the template display user thumbs
-  await res.locals.entry.load('userRoles.user')
+  await entry.load('userRoles.user')
 
   // Fetch vote on someone else's entry
   let vote
   let canVote = false
-  if (res.locals.user && !securityService.canUserWrite(res.locals.user, res.locals.entry)) {
-    canVote = await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)
+  if (res.locals.user && !securityService.canUserWrite(res.locals.user, entry)) {
+    canVote = await eventRatingService.canVoteOnEntry(res.locals.user, entry)
     if (canVote) {
-      vote = await eventRatingService.findEntryVote(res.locals.user, res.locals.entry)
+      vote = await eventRatingService.findEntryVote(res.locals.user, entry)
     }
   }
 
+  const platformNameJson = entry.get('platforms')
+  const platformNames = platformNameJson ? JSON.parse(platformNameJson) : null
   res.render('entry/view-entry', {
-    sortedComments: await postService.findCommentsSortedForDisplay(res.locals.entry),
+    sortedComments: await postService.findCommentsSortedForDisplay(entry),
     posts: await postService.findPosts({
-      entryId: res.locals.entry.get('id')
+      entryId: entry.get('id')
     }),
+    entryPlatformNames: platformNames,
     vote,
     canVote,
     external: !res.locals.event
@@ -110,7 +115,7 @@ async function editEntry (req, res) {
           event_id: res.locals.event.get('id'),
           event_name: res.locals.event.get('name')
         }),
-        platforms: await platformService.loadAll(),
+        allPlatforms: await platformService.fetchAllNames(),
         members: [{  // Ensure the owner is supplied as a (locked) member.
           id: res.locals.user.get('name'),
           text: res.locals.user.get('title'),
@@ -165,22 +170,31 @@ async function editEntry (req, res) {
       // Save entry: Parse form data
       let isExternalEvent = fields['external-event'] !== undefined
       let links = []
-      let platforms = []
       let i = 0
       while (fields['url' + i]) {
         let label = forms.sanitizeString(fields['label' + i])
         let url = fields['url' + i]
         if (label === 'other') {
           label = forms.sanitizeString(fields['customlabel' + i])
-          platforms.push('other')
-        } else {
-          platforms.push(label)
         }
         links.push({
           label,
           url
         })
         i++
+      }
+
+      let platforms = null
+      if (fields.platforms) {
+        // Ensure the requested platforms (if any) are valid before proceeding.
+        const str = forms.sanitizeString(fields.platforms)
+        const names = str ? str.split(',') : null
+        platforms = await platformService.fetchMultipleNamed(names)
+        if (platforms.length < names.length) {
+          errorMessage = 'One or more platforms are invalid'
+        } else {
+          entry.set('platforms', platforms.map(p => p.get('name')))
+        }
       }
 
       // Save entry: Update model (even if validation fails, to prevent losing what the user filled)
@@ -196,7 +210,6 @@ async function editEntry (req, res) {
         'title': forms.sanitizeString(fields.title),
         'description': forms.sanitizeString(fields.description),
         'links': links,
-        'platforms': platforms,
         'published_at': new Date()
       })
       if (isExternalEvent) {
@@ -266,11 +279,12 @@ async function editEntry (req, res) {
         }
 
         // Save entry: Persist changes and side effects
-        if (entry.hasChanged('platforms')) {
-          await eventService.refreshEntryPlatforms(entry)
-        }
         await entryDetails.save()
         await entry.save()
+        // Set or remove platforms.
+        platformService.setEntryPlatforms(entry, platforms || [], {
+          udpateEntry: false
+        })
         cache.user(res.locals.user).del('latestEntry')
         await entry.load(['userRoles.user', 'comments', 'details'])
 
@@ -284,6 +298,8 @@ async function editEntry (req, res) {
   res.render('entry/edit-entry', {
     entry,
     members: await eventService.findTeamMembers(entry, res.locals.user),
+    allPlatforms: await platformService.fetchAllNames(),
+    entryPlatforms: entry.get('platforms'),
     external: !res.locals.event,
     errorMessage
   })

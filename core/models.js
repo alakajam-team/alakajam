@@ -280,7 +280,7 @@ module.exports.Entry = bookshelf.model('Entry', {
   comments: function () {
     return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
   },
-  platforms: function () {
+  entryPlatforms: function () {
     return this.hasMany('EntryPlatform', 'entry_id')
   },
   votes: function () {
@@ -359,13 +359,26 @@ module.exports.EntryDetails = bookshelf.model('EntryDetails', {
 })
 
 /**
+ * Platform model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | string | name | Platform name
+ */
+module.exports.Platform = bookshelf.model('Platform', {
+  tableName: 'platform',
+  idAttribute: 'id'
+})
+
+/**
  * Entry Platform model
  *
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
  * | integer | entry_id | Entry ID (not null)
- * | string | platform | Platform (max size: 50)
+ * | string | platform_name | Platform name (max size: 50)
  */
 module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
   tableName: 'entry_platform',
@@ -375,20 +388,15 @@ module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
     return this.belongsTo('Entry', 'entry_id')
   },
 
+  platform () {
+    return this.belongsTo('Platform', 'platform_id')
+  },
+
   // Listeners
 
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
     attrs = attrs || {}
-    attrs.platforms = attrs.platforms || []
-    return attrs
-  },
-  parse: function parse (attrs) {
-    if (attrs.platforms) attrs.platforms = JSON.parse(attrs.platforms)
-    return attrs
-  },
-  format: function format (attrs) {
-    if (attrs && attrs.platforms) attrs.platforms = JSON.stringify(attrs.platforms)
     return attrs
   }
 })
