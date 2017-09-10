@@ -60,12 +60,15 @@
                   class="form-control input-lg" {{ 'readonly="readonly"' if userTheme }} 
                   placeholder="Idea #{{ index + 1 }}" value="{{ userTheme.get('title') if userTheme }}" />
                 {% if userTheme %}
-                <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-default"><span class="fa fa-remove"></span></button>
+                  {% set themeStatus = userTheme.get('status') %}
+                  {% if themeStatus === 'duplicate' or themeStatus === 'active' %}
+                    <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-default"><span class="fa fa-remove"></span></button>
+                  {% endif %}
                 {% endif %}
                 <input type="hidden" name="idea-id[{{ index }}]" value="{{ userTheme.get('id') if userTheme }}" />
                 {% if userTheme %}
                 <p>{{ eventMacros.eventThemeStatus(userTheme) }}
-                  {% if userTheme.get('status') !== 'duplicate' %}
+                  {% if themeStatus !== 'duplicate' %}
                     Rated {{ userTheme.get('notes') }} time{{ 's' if userTheme.get('notes') !== 1 }}
                   {% endif %}</p>
                 {% endif %}
