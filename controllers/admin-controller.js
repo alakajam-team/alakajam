@@ -128,6 +128,7 @@ async function adminPlatforms (req, res) {
         })
         if (!isDuplicate) {
           await platform.save()
+          cache.general.del('platforms')
         } else {
           errorMessage = 'Duplicate platform'
         }

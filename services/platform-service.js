@@ -1,6 +1,7 @@
 const constants = require('../core/constants')
 const models = require('../core/models')
 const db = require('../core/db')
+const cache = require('../core/cache')
 
 module.exports = {
   searchPlatforms,
@@ -55,9 +56,13 @@ async function fetchAllNames () {
 
 /** Fetch all platform instances. */
 async function fetchAll () {
-  return models.Platform.forge()
-    .orderBy('name')
-    .fetchAll()
+  if (!cache.general.get('platforms')) {
+    cache.general.set('platforms',
+      await models.Platform.forge()
+        .orderBy('name')
+        .fetchAll())
+  }
+  return cache.general.get('platforms')
 }
 
 /**
