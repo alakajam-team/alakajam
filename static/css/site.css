@@ -1223,7 +1223,7 @@ input.date-picker {
   }
   &__platform {
     font-size: 1.2rem;
-    margin-right: 5px;
+    margin-right: 15px;
     margin-bottom: 5px;
   }
 }
