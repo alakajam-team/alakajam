@@ -1222,6 +1222,7 @@ input.date-picker {
     margin-bottom: 20px;
   }
   &__platform {
+    display: inline-block;
     font-size: 1.2rem;
     margin-right: 15px;
     margin-bottom: 5px;

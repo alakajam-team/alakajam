@@ -133,7 +133,7 @@
       {% if entry.get('platforms').length > 0 %}
       <div class="entry__platforms">
         {% for name in entry.get('platforms') -%}
-          <span class="entry__platform">{{ eventMacros.entryPlatformIcon(name) }}</span>
+          <div class="entry__platform">{{ eventMacros.entryPlatformIcon(name) }}</div>
         {%- endfor %}
       </div>
       {% endif %}
