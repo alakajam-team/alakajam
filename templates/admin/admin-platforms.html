@@ -1,5 +1,6 @@
 {% extends "admin/_page-admin.html" %}
 {% import "_macros-form.html" as formMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
 
 {% block adminBody %}
 
@@ -36,7 +37,7 @@
   {% for platform in platforms %}
   <tr>
     <td>{{ platform.get('id') }}</td>
-    <td>{{ platform.get('name') }}</td>
+    <td>{{ eventMacros.entryPlatformIcon(platform.get('name')) }}</td>
     <td>{{ entryCount[platform.get('id')] }}</td>
     <td>
       <a class="btn btn-primary btn-sm" href="?edit={{ platform.get('id') }}">Edit</a>
