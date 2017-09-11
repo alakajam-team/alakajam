@@ -100,7 +100,7 @@ module.exports = {
   ],
 
   // Entries
-  ENTRY_PLATFORM_DEFAULT_ICON: 'fa-unknown',
+  ENTRY_PLATFORM_DEFAULT_ICON: 'fa-file-o',
   ENTRY_PLATFORM_ICONS: {
     'Windows': 'fa-windows',
     'Linux': 'fa-linux',
