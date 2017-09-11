@@ -2,6 +2,15 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### September 11th
+
+* Platform management is now distinct from links
+
+### September 9th
+
+* Reworked theme submission UI
+* Alakajam! now supports allowing more than 3 themes ideas
+
 ### September 7th
 
 * Markdown editor has new formatting options (text/images alignment)
