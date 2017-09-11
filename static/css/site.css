@@ -1491,10 +1491,21 @@ input.date-picker {
 
   &__social-link {
     line-height: 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
 
-    & img {
-      height: 20px;
+    & img, & span {
       vertical-align: middle;
+    }
+    
+    & img {
+      height: 32px;
+    }
+    & span {
+      font-size: 32px;
+      margin-left: 3px;
+      margin-right: 2px;
     }
   }
 

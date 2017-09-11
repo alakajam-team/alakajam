@@ -9,6 +9,7 @@
 const constants = require('../core/constants')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
+const log = require('../core/log')
 const templating = require('../controllers/templating')
 const eventService = require('../services/event-service')
 const eventThemeService = require('../services/event-theme-service')
@@ -16,6 +17,7 @@ const eventRatingService = require('../services/event-rating-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
+const platformService = require('../services/platform-service')
 
 module.exports = {
   eventMiddleware,
@@ -267,9 +269,13 @@ async function viewEventGames (req, res) {
   searchOptions.search = forms.sanitizeString(req.query.search)
   if (req.query.platforms) {
     if (typeof req.query.platforms === 'object') {
-      searchOptions.platforms = req.query.platforms.map(str => forms.sanitizeString(str))
+      searchOptions.platforms = req.query.platforms.map(str => parseInt(str))
     } else {
-      searchOptions.platforms = [forms.sanitizeString(req.query.platforms)]
+      searchOptions.platforms = [parseInt(req.query.platforms)]
+    }
+    if (searchOptions.platforms.includes(NaN)) {
+      searchOptions.platforms = []
+      log.error('Invalid platform query: ' + req.query.platforms)
     }
   }
 
@@ -277,6 +283,7 @@ async function viewEventGames (req, res) {
   let entriesCollection = await eventService.findGames(searchOptions)
   searchOptions.count = true
   let entryCount = await eventService.findGames(searchOptions)
+  let platformCollection = await platformService.fetchAll()
 
   // Fetch vote history
   let eventResultsStatus = event.get('status_results')
@@ -292,7 +299,8 @@ async function viewEventGames (req, res) {
     searchOptions,
     entryCount,
     currentPage,
-    pageCount: Math.ceil(entryCount / PAGE_SIZE)
+    pageCount: Math.ceil(entryCount / PAGE_SIZE),
+    platforms: platformCollection.models
   })
 }
 

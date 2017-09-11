@@ -45,18 +45,18 @@
       <div class="spacing">
         {% set socialLinks = profileUser.related('details').get('social_links') %}
         {% if socialLinks.website %}
-        <div class="profile__social-link">
-          <a href="{{ socialLinks.website }}">
-            <span class="glyphicon glyphicon-globe" style="color: #444; font-size: 20px; top: 4px"></span> Website
-          </a>
-        </div>
+          <div class="profile__social-link">
+            <a href="{{ socialLinks.website }}">
+              <span class="fa fa-globe" style="color: black; font-size: 32px"></span> Website
+            </a>
+          </div>
         {% endif %}
         {% if socialLinks.twitter %}
-        <div class="profile__social-link">
-          <a href="https://www.twitter.com/{{ socialLinks.twitter }}">
-            <img src="/static/images/twitter.svg" class="no-border" alt="Github" /> Twitter
-          </a>
-        </div>
+          <div class="profile__social-link">
+            <a href="https://www.twitter.com/{{ socialLinks.twitter }}">
+              <img src="/static/images/social/twitter.svg" class="no-border" style="width: 32px" /> Twitter
+            </a>
+          </div>
         {% endif %}
       </div>
     </div>
