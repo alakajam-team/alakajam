@@ -16,6 +16,7 @@ const securityService = require('../services/security-service')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const settingService = require('../services/setting-service')
+const platformService = require('../services/platform-service')
 
 module.exports = {
   adminMiddleware,
@@ -24,6 +25,7 @@ module.exports = {
   adminArticles,
 
   adminEvents,
+  adminPlatforms,
   adminSettings,
   adminUsers,
   adminStatus,
@@ -83,6 +85,10 @@ async function adminArticles (req, res) {
  * Admin only: events management
  */
 async function adminEvents (req, res) {
+  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+    res.errorPage(403)
+  }
+
   let events = await eventService.findEvents()
   res.render('admin/admin-events', {
     events: events.models
@@ -90,9 +96,88 @@ async function adminEvents (req, res) {
 }
 
 /**
+ * Admin only: Platforms management
+ */
+async function adminPlatforms (req, res) {
+  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+    res.errorPage(403)
+  }
+
+  let errorMessage = null
+
+  // Save changed platform
+  if (req.method === 'POST') {
+    let {fields} = await req.parseForm()
+
+    let name = forms.sanitizeString(fields.name)
+    if (name) {
+      let platform = null
+
+      if (forms.isId(fields.id)) {
+        platform = await platformService.fetchById(fields.id)
+        platform.set('name', name)
+      } else {
+        platform = platformService.createPlatform(forms.sanitizeString(fields.name))
+      }
+
+      if (platform) {
+        let duplicateCollection = await platformService.fetchMultipleNamed(platform.get('name'))
+        let isDuplicate = false
+        duplicateCollection.each(function (potentialDuplicate) {
+          isDuplicate = isDuplicate || platform.get('id') !== potentialDuplicate.get('id')
+        })
+        if (!isDuplicate) {
+          await platform.save()
+        } else {
+          errorMessage = 'Duplicate platform'
+        }
+      }
+    }
+  }
+
+  if (forms.isId(req.query.delete)) {
+    let platform = await platformService.fetchById(req.query.delete)
+    if (platform) {
+      let entryCount = await platformService.countEntriesByPlatform(platform)
+      if (entryCount === 0) {
+        await platform.destroy()
+      }
+    } else {
+      errorMessage = 'Platform to delete not found'
+    }
+  }
+
+  // Fetch platform to edit
+  let editPlatform
+  if (forms.isId(req.query.edit)) {
+    editPlatform = await platformService.fetchById(req.query.edit)
+  } else if (req.query.create) {
+    editPlatform = platformService.createPlatform('')
+  }
+
+  // Count entries by platform
+  let platformCollection = await platformService.fetchAll()
+  let entryCount = {}
+  for (let platform of platformCollection.models) {
+    entryCount[platform.get('id')] = await platformService.countEntriesByPlatform(platform)
+  }
+
+  res.render('admin/admin-platforms', {
+    platforms: platformCollection.models,
+    entryCount,
+    editPlatform,
+    errorMessage
+  })
+}
+
+/**
  * Admin only: settings management
  */
 async function adminSettings (req, res) {
+  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+    res.errorPage(403)
+  }
+
   // Save changed setting
   let currentEditValue
   if (req.method === 'POST') {
@@ -162,6 +247,10 @@ async function adminSettings (req, res) {
  * Admin only: users management
  */
 async function adminUsers (req, res) {
+  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+    res.errorPage(403)
+  }
+
   let users = await userService.findUsers()
   let sortedUsers = users.sortBy((user) => user.get('title'))
   res.render('admin/admin-users', {
@@ -173,6 +262,10 @@ async function adminUsers (req, res) {
  * Admin only: server status
  */
 async function adminStatus (req, res) {
+  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+    res.errorPage(403)
+  }
+
   if (req.query.clearCache && cache.cacheMap[req.query.clearCache]) {
     cache.cacheMap[req.query.clearCache].flushAll()
   }
@@ -196,7 +289,7 @@ async function adminStatus (req, res) {
  * Admin only: developer tools
  */
 async function adminDev (req, res) {
-  if (res.app.locals.devMode) {
+  if (res.app.locals.devMode && (config.DEBUG_ADMIN || securityService.isAdmin(res.locals.user))) {
     let infoMessage = ''
     let errorMessage = ''
     if (req.method === 'POST') {

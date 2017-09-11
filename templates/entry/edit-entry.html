@@ -16,7 +16,6 @@
   left: 6px !important;
   top: 14px;
 }
-#edit-team .select2-search-choice {
 .member .select2-search-choice-close {
   left: 6px !important;
   top: 14px;
@@ -89,7 +88,7 @@
     </div>
 
     <div class="row entry">
-      <div class="col-md-8">
+      <div class="col-lg-8 col-md-7">
         <div class="form-group input-group-lg">
           <label for="title">Game title</label>
           <input type="text" id="js-title" class="form-control" name="title" value="{{ entry.get('title') }}" required="required" />
@@ -144,7 +143,7 @@
         </div>
         <div class="form-group">
           <label for="platforms">Platforms</label>
-          <input type="hidden" name="platforms" class="bigdrop" id="set-platforms" multiple="multiple" />
+          <input type="hidden" name="platforms" class="bigdro" id="set-platforms" multiple="multiple" />
         </div>
         <div class="form-group">
           <label for="title">Details</label>
@@ -152,27 +151,9 @@
             {{ formMacros.editor('body', entry.related('details').get('body')) }}
           </div>
         </div>
-        <div class="form-group">
-          <div class="row">
-            <div class="col-xs-6">
-              {% if entry.has('id') %}
-                {% if isEntryOwner or isMod(user) %}
-                  <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'delete') }}" onclick="return confirm('Delete the entry? This cannot be reverted!')">Delete</a> 
-                {% endif %}
-                {% if not isEntryOwner %}
-                  <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'leave') }}" onclick="return confirm('Leave the team? This cannot be reverted, unless the team owner takes you back!')">Leave the team</a>
-                {% endif %}
-              {% endif %}
-            </div>
-            <div class="col-xs-6 text-right">
-              <input type="submit" class="btn btn-primary" value="Save changes" />
-              <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
-            </div>
-          </div>
-        </div>
       </div>
       
-      <div class="col-md-4">
+      <div class="col-lg-4 col-md-5">
         <div class="form-group">
           <label for="title">Picture</label>
           {% if entry.has('pictures') and entry.get('pictures').length > 0 %}
@@ -183,26 +164,34 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-lg-8 col-md-7">
+        <div class="row">
+          <div class="col-xs-6">
+            {% if entry.has('id') %}
+              {% if isEntryOwner or isMod(user) %}
+                <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'delete') }}" onclick="return confirm('Delete the entry? This cannot be reverted!')">Delete</a> 
+              {% endif %}
+              {% if not isEntryOwner %}
+                <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'leave') }}" onclick="return confirm('Leave the team? This cannot be reverted, unless the team owner takes you back!')">Leave the team</a>
+              {% endif %}
+            {% endif %}
+          </div>
+          <div class="col-xs-6 text-right">
+            <input type="submit" class="btn btn-primary" value="Save changes" />
+            <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
+          </div>
+        </div>
+      </div>
+    </div>
   </form>
 </div>
 
 <script id="js-links-template" type="text/template">
-  <% for (var i in links) { 
-    var linkTypeFound = false; %>
+  <% for (var i in links) { %>
     <div class="row" style="margin-bottom: 5px">
       <div class="col-xs-3">
-        <select class="js-link-label form-control" data-row="<%= i %>" name="label<%= i %>" placeholder="Label">
-          {% for label in constants.ENTRIES_LINKS_TYPES %}
-            <% if(links[i].label == "{{ label }}"){ 
-              linkTypeFound = true;%>
-              <option value="{{ label }}" selected>{{ label }}</option>
-            <% } else { %>
-              <option value="{{ label }}">{{ label }}</option>
-            <% } %>
-          {% endfor %}
-          <option value="other" <%= linkTypeFound ? "" : "selected" %>>Other</option> 
-        </select>
-        <input type="text" <%= linkTypeFound ? "style=\"display:none;\"" : "" %> class="js-link-customlabel form-control"  data-row="<%= i %>" name="customlabel<%= i %>" placeholder="Custom Label" value="<%= !linkTypeFound ? links[i].label : ""%>">
+        <input type="text" name="label<%= i %>" class="form-control" placeholder="Label" value="<%= links[i].label %>" />
       </div>
       <div class="col-xs-8">
         <input type="url" class="js-link-url form-control"  data-row="<%= i %>" name="url<%= i %>" placeholder="URL" value="<%= links[i].url %>">
@@ -290,7 +279,7 @@ function sortSelect2Results (results) {
 }
 
 $(function() {
-  var current = {{ entry.get('platforms') | default([]) | safe }}
+  var current = {{ entry.get('platforms') | default([]) | dump | safe }}
   var platforms = $.map({{ allPlatforms | dump | safe }}, toValue)
 
   function toValue (name) {

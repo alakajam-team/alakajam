@@ -79,14 +79,11 @@ async function viewEntry (req, res) {
     }
   }
 
-  const platformNameJson = entry.get('platforms')
-  const platformNames = platformNameJson ? JSON.parse(platformNameJson) : null
   res.render('entry/view-entry', {
     sortedComments: await postService.findCommentsSortedForDisplay(entry),
     posts: await postService.findPosts({
       entryId: entry.get('id')
     }),
-    entryPlatformNames: platformNames,
     vote,
     canVote,
     external: !res.locals.event
@@ -282,9 +279,7 @@ async function editEntry (req, res) {
         await entryDetails.save()
         await entry.save()
         // Set or remove platforms.
-        platformService.setEntryPlatforms(entry, platforms || [], {
-          udpateEntry: false
-        })
+        platformService.setEntryPlatforms(entry, platforms || [], { updateEntry: false })
         cache.user(res.locals.user).del('latestEntry')
         await entry.load(['userRoles.user', 'comments', 'details'])
 

@@ -16,8 +16,8 @@
       <div class="form-group">
         <label for="search">Platforms</label>
         <select id="js-platforms" name="platforms" class="form-control" multiple="multiple">
-          {% for platform in context.constants.ENTRIES_LINKS_TYPES %}
-            <option value="{{ platform }}" {{ 'selected' if context.searchOptions.platforms and context.searchOptions.platforms.includes(platform) }}>{{ platform }}</option>
+          {% for platform in context.platforms %}
+            <option value="{{ platform.get('id') }}" {{ 'selected' if context.searchOptions.platforms and context.searchOptions.platforms.includes(platform.get('id')) }}>{{ platform.get('name') }}</option>
           {% endfor %}
         </select>
       </div>

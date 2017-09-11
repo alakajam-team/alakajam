@@ -1217,6 +1217,15 @@ input.date-picker {
       font-size: 1.2rem;
     }
   }
+
+  &__platforms {
+    margin-bottom: 20px;
+  }
+  &__platform {
+    font-size: 1.2rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
 }
 
 .entry-voting {

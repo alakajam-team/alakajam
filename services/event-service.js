@@ -612,7 +612,7 @@ async function findGames (options = {}) {
   if (options.platforms) {
     query = query.query(function (qb) {
       return qb.leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
-        .whereIn('entry_platform.platform', options.platforms)
+        .whereIn('entry_platform.platform_id', options.platforms)
     })
   }
   options.pageSize = options.pageSize || 30

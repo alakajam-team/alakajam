@@ -6,14 +6,6 @@
 
 {% block styles %}
   {{ formMacros.editorStyles() }}
-  <style>
-.entry__platform {
-  border: 1px solid grey;
-  border-radius: 4px;
-  margin: 4px;
-  box-shadow: 2px 2px grey;
-}
-  </style>
 {% endblock %}
 
 {% block body %}
@@ -125,10 +117,9 @@
       <h3>Links</h3>
       <div class="entry__links">
         {% for link in entry.get('links') %}
-           <a class="btn btn-primary" href="{{ link.url }}">
-           {{ eventMacros.entryLinkThumb(link) }} 
-           {{ link.label }}
-           </a>
+          <a class="btn btn-primary" href="{{ link.url }}">
+            {{ link.label }}
+          </a>
         {% endfor %}
         {% if entry.get('links').length === 0 or not entry.get('links')[0].url %}
           <div class="well">No links yet.</div>
@@ -139,17 +130,13 @@
       </div>
 
       <h3>Platforms</h3>
+      {% if entry.get('platforms').length > 0 %}
       <div class="entry__platforms">
-        <div class="well">
-          <ul class="list-unstyled list-inline">
-          {%- for name in entryPlatformNames -%}
-            <li class="entry__platform">{{name}}</li>
-          {%- else -%}
-            <li>No platforms yet.</li>
-          {%- endfor -%}
-          </ul>
-        </div>
+        {% for name in entry.get('platforms') -%}
+          <span class="entry__platform">{{ eventMacros.entryPlatformIcon(name) }}</span>
+        {%- endfor %}
       </div>
+      {% endif %}
 
       <div class="well">
 

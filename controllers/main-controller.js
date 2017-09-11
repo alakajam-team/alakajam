@@ -9,6 +9,7 @@
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = promisify('path')
+const log = require('../core/log')
 const forms = require('../core/forms')
 const constants = require('../core/constants')
 const eventService = require('../services/event-service')
@@ -18,6 +19,7 @@ const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
 const notificationService = require('../services/notification-service')
+const platformService = require('../services/platform-service')
 
 module.exports = {
   anyPageMiddleware,
@@ -192,13 +194,19 @@ async function games (req, res) {
   }
   if (req.query.platforms) {
     if (typeof req.query.platforms === 'object') {
-      searchOptions.platforms = req.query.platforms.map(str => forms.sanitizeString(str))
+      searchOptions.platforms = req.query.platforms.map(str => parseInt(str))
     } else {
-      searchOptions.platforms = [forms.sanitizeString(req.query.platforms)]
+      searchOptions.platforms = [parseInt(req.query.platforms)]
+    }
+    if (searchOptions.platforms.includes(NaN)) {
+      searchOptions.platforms = []
+      log.error('Invalid platform query: ' + req.query.platforms)
     }
   }
 
   // Fetch info
+  // TODO Parallelize tasks
+  let platformCollection = await platformService.fetchAll()
   let entriesCollection = await eventService.findGames(searchOptions)
   searchOptions.count = true
   let entryCount = await eventService.findGames(searchOptions)
@@ -215,7 +223,8 @@ async function games (req, res) {
     pageCount: Math.ceil(entryCount / PAGE_SIZE),
     entries: entriesCollection.models,
     entryCount,
-    events: eventsCollection.models
+    events: eventsCollection.models,
+    platforms: platformCollection.models
   })
 }
 

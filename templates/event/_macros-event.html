@@ -15,8 +15,8 @@
     {% endfor %}
   </div>
   <div class="entry-thumb__platforms">
-    {% for link in entry.get('links') %}
-      {{ entryLinkThumb(link) }}
+    {% for platform in entry.get('platforms') %}
+      {{ entryPlatformIcon(platform, { hideLabel: true }) }}
     {% endfor %}
   </div>
   {% if options.showEvent %}
@@ -182,11 +182,9 @@
 
 -->{% endmacro %}
 
-{% macro entryLinkThumb(link) %}
-  {% set linkTypeIndex = constants.ENTRIES_LINKS_TYPES.indexOf(link.label) %}
-  {% if (linkTypeIndex !== -1) %}
-    <span class="fa {{ constants.ENTRIES_LINKS_ICONS[linkTypeIndex] }}"></span>
-  {% endif %}
+{% macro entryPlatformIcon(platform, options = {}) %}
+  {% set icon = constants.ENTRY_PLATFORM_ICONS[platform] or constants.ENTRY_PLATFORM_DEFAULT_ICON %}
+  <span class="fa {{ icon }}"></span> {{ platform if not options.hideLabel }}
 {% endmacro %}
 
 {% macro eventThemeStatus (event, options = {}) %}

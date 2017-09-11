@@ -93,7 +93,7 @@
             <div class="progress">
               {% set activePercentage = (100 * event.related('details').get('active_theme_count') / event.related('details').get('theme_count') or 100) | digits(0) %}
               <div class="progress-bar progress-bar-default" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('active_theme_count') }} Active</div>
-              <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('theme_count') - event.related('details').get('active_theme_count') }} Out</div>
+              <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: {{ 100 -  activePercentage }}%">{{ event.related('details').get('theme_count') - event.related('details').get('active_theme_count') }} Out</div>
             </div>
             <p>The lowest-ranking theme is eliminated regularly. The longer the theme stands before elimination, the better it is!</p>
           </div>

@@ -4,9 +4,13 @@ const db = require('../core/db')
 
 module.exports = {
   searchPlatforms,
+  fetchById,
   fetchAllNames,
   fetchAll,
   fetchMultipleNamed,
+  countEntriesByPlatform,
+
+  createPlatform,
   setEntryPlatforms
 }
 
@@ -18,6 +22,15 @@ module.exports = {
  */
 function searchPlatforms (nameFragment) {
   return models.Platform.where('name', constants.DB_ILIKE, `%${nameFragment}%`)
+}
+
+/**
+ * Fetch platform by ID
+ *
+ * @param {number} id
+ */
+async function fetchById (id) {
+  return models.Platform.where({ id }).fetch()
 }
 
 /**
@@ -35,12 +48,38 @@ function fetchMultipleNamed (names) {
  * @returns {Promise<string[]>} a promise which resolves with the names.
  */
 async function fetchAllNames () {
-  return (await db.knex('platform').select('name')).map(({name}) => name)
+  let names = (await db.knex('platform').select('name')).map(({name}) => name)
+  names.sort()
+  return names
 }
 
 /** Fetch all platform instances. */
-function fetchAll () {
-  return new models.Platform().fetchAll()
+async function fetchAll () {
+  return models.Platform.forge()
+    .orderBy('name')
+    .fetchAll()
+}
+
+/**
+ * Counts the number of entries using a given platform
+ *
+ * @param  {Platform} platform
+ * @return {number}
+ */
+async function countEntriesByPlatform (platform) {
+  let count = await models.EntryPlatform
+    .where('platform_id', platform.get('id'))
+    .count()
+  return parseInt(count)
+}
+
+/**
+ * Creates a platform
+ * @param  {string} name
+ * @return {Platform}
+ */
+function createPlatform (name) {
+  return new models.Platform({ name })
 }
 
 /**

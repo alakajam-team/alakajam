@@ -100,8 +100,15 @@ module.exports = {
   ],
 
   // Entries
-  ENTRIES_LINKS_TYPES: ['Windows', 'Linux', 'Mac', 'Web', 'Sources', 'Soundtrack'],
-  ENTRIES_LINKS_ICONS: ['fa-windows', 'fa-linux', 'fa-apple', 'fa-chrome', 'fa-bitbucket', 'fa-volume-up'],
+  ENTRY_PLATFORM_DEFAULT_ICON: 'fa-unknown',
+  ENTRY_PLATFORM_ICONS: {
+    'Windows': 'fa-windows',
+    'Linux': 'fa-linux',
+    'Mac': 'fa-apple',
+    'Web': 'fa-globe',
+    'Mobile': 'fa-mobile',
+    'Retro': 'fa-gamepad'
+  },
 
   // Events
   MAX_CATEGORY_COUNT: 6,
