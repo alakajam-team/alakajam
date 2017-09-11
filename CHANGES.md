@@ -9,7 +9,7 @@
 ### September 9th
 
 * Reworked theme submission UI
-* Alakajam! now supports allowing more than 3 themes ideas
+* Added support for allowing more than 3 themes ideas
 
 ### September 7th
 
