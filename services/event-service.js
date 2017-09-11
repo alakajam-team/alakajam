@@ -42,9 +42,9 @@ module.exports = {
   countEntriesByEvent,
   findGames,
 
-  refreshEntryPlatforms,
   refreshEntryScore,
   refreshCommentScore,
+  refreshEntryPlatforms,
   refreshUserCommentScoresOnNode
 }
 

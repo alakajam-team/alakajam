@@ -39,7 +39,7 @@ function initBookshelf () {
       log.info('Database is already at version ' + newVersion)
     }
     if (previousVersion === 'none') {
-      await insertInitialData(withSamples)
+      await insertInitialData(knex, withSamples)
     }
     return newVersion
   }
@@ -100,11 +100,11 @@ function createBookshelfInstance (knex) {
 
 /**
  * Inserts sample data in the database.
- * @param {Bookshelf} bookshelf
+ * @param {knex} knex
  * @param {bool|string} samples true to add samples, 'nightly' to add the special nighly post
  * @returns {void}
  */
-async function insertInitialData (samples) {
+async function insertInitialData (knex, samples) {
   const userService = require('../services/user-service')
   const eventService = require('../services/event-service')
   const eventThemeService = require('../services/event-theme-service')
@@ -315,6 +315,22 @@ async function insertInitialData (samples) {
       status_results: 'off'
     })
     await event3.save()
+
+    // Platforms
+    const platformNames = [
+      'Linux',
+      'Mac',
+      'Windows',
+      'Web',
+      'Mobile',
+      'Retro'
+    ]
+    const now = knex.fn.now()
+    await knex('platform').insert(platformNames.map(name => ({
+      name,
+      created_at: now,
+      updated_at: now
+    })))
 
     log.info('Samples inserted')
   }
