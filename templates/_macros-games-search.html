@@ -48,7 +48,7 @@
         {{ 'in ' + searchedEvent.get('title') if searchedEvent }}
         {{ 'in external events' if searchOptions.eventId|dump === 'null' }}
       {% endif %}
-      {{ ('on platform' + ('s' if searchOptions.platforms.length > 1) +' "' + searchOptions.platforms + '"') if searchOptions.platforms }}
+      {{ 'on restricted platforms' if searchOptions.platforms.length > 0 }}
       {{ 'matching "' + searchOptions.search + '"' if searchOptions.search }}
     </div>
   {% endif %}
