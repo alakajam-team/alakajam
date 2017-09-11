@@ -113,13 +113,18 @@
               <label class="btn btn-default">
                 <input type="radio" name="division" value="team" autocomplete="off">Team
               </label>
+              {% if not external %}
+              <label class="btn btn-default">
+                <input type="radio" name="division" value="unranked" autocomplete="off">Unranked
+              </label>
+              {% endif %}
             </div>
           {% else %}
             <div class="form-group">
               <button class="btn btn-default" disabled>{{ entry.get('division') | capitalize }}</button> 
             </div>
           {% endif %}
-          <div id="edit-team" class="{{ 'hidden' if entry.get('division') !== 'team' }}">
+          <div id="edit-team" class="{{ 'hidden' if entry.get('division') === 'solo' }}">
             <div id="result-box" class="form-group" style="display:none;">
               <h3 id="result-msg"></h3>
               <ul id="conflict-list" style="display:none;"></ul>
@@ -317,13 +322,13 @@ $('.team-toggle label').each(function(i, el) {
   el.toggleClass('active', active)
 })
 $('.toggle label').click(function(ev) {
-  $('#edit-team').toggleClass('hidden', $(this).find('input').val() !== 'team')
+  $('#edit-team').toggleClass('hidden', $(this).find('input').val() === 'solo')
 })
 
 // Show warning upon not being a team entry anymore
 
 $('#js-form').submit(function (ev) {
-  if (initialDivision === 'team' && $('input[name="division"]:checked').val() !== 'team'
+  if (initialDivision !== 'solo' && $('input[name="division"]:checked').val() === 'solo'
       && !confirm('You are about to switch to a Solo entry. All team members will be removed. Continue?')) {
     ev.preventDefault()
   }
