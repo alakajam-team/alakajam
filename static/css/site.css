@@ -1737,12 +1737,14 @@ input.date-picker {
   }
   
   &__social {
-    padding: 10px 10px 10px 0;
-    opacity: 0.7;
+    padding: 10px 0 10px 0;
     
-    & img {
-      height: 24px;
+    & a {
       margin-right: 2px;
+
+      & img {
+        height: 32px;
+      }
     }
   }
   @media (max-width: 991px) {

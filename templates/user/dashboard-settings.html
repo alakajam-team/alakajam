@@ -33,7 +33,7 @@
 <h2>Account info</h2>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-6 col-lg-7">
     <div class="form-group">
       <label for="title">Display name</label>
       <input type="text" class="form-control input-lg" id="password" name="title" placeholder="Display name" value="{{ dashboardUser.get('title') }}">
@@ -61,7 +61,7 @@
     </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-6 col-lg-5">
     <div class="form-group">
       <label for="name">Avatar</label>
       {{ formMacros.pictureInput('avatar', dashboardUser.get('avatar')) }}
