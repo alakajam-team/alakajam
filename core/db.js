@@ -228,7 +228,7 @@ async function insertInitialData (knex, samples) {
             "links": [
                 {
                     "title": "About Alakajam!",
-                    "url": "/article/help"
+                    "url": "/article/docs"
                 },
                 {
                     "title": "Support",
