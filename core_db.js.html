@@ -67,7 +67,7 @@ function initBookshelf () {
       log.info('Database is already at version ' + newVersion)
     }
     if (previousVersion === 'none') {
-      await insertInitialData(withSamples)
+      await insertInitialData(knex, withSamples)
     }
     return newVersion
   }
@@ -128,19 +128,18 @@ function createBookshelfInstance (knex) {
 
 /**
  * Inserts sample data in the database.
- * @param {Bookshelf} bookshelf
+ * @param {knex} knex
  * @param {bool|string} samples true to add samples, 'nightly' to add the special nighly post
  * @returns {void}
  */
-async function insertInitialData (samples) {
-  const models = require('../core/models')
+async function insertInitialData (knex, samples) {
   const userService = require('../services/user-service')
   const eventService = require('../services/event-service')
   const eventThemeService = require('../services/event-theme-service')
   const postService = require('../services/post-service')
   const settingService = require('../services/setting-service')
 
-  // Mandatory admin account
+  // Mandatory admin account &amp; important settings
 
   await userService.register('administrator@example.com', 'administrator', 'administrator')
   let adminUser = await userService.findByName('administrator')
@@ -149,6 +148,24 @@ async function insertInitialData (samples) {
     is_admin: true
   })
   await adminUser.save()
+
+  await settingService.save(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1)
+  await settingService.save(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 5)
+  await settingService.save(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 1)
+  await settingService.save(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, 5)
+  await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, `{
+    "sidebar": [
+        {
+            "title": "General",
+            "links": [
+                {
+                    "title": "About Alakajam!",
+                    "url": "/article/help"
+                }
+            ]
+        }
+    ]
+}`)
 
   // Samples
 
@@ -190,7 +207,8 @@ async function insertInitialData (samples) {
 
     // 1st event
 
-    let event1 = new models.Event({
+    let event1 = eventService.createEvent()
+    event1.set({
       title: '1st Alakajam',
       name: '1st-alakajam',
       status: 'closed',
@@ -207,21 +225,28 @@ async function insertInitialData (samples) {
 
     // 2nd event
 
-    let event2 = new models.Event({
+    let event2 = eventService.createEvent()
+    event2.set({
       title: '2nd Alakajam',
       name: '2nd-alakajam',
       status: 'open',
       display_dates: 'Januember 29 - 31, 2017',
       display_theme: 'You are not alone',
-      status_theme: 'on',
-      status_entry: 'on',
-      status_results: 'on',
+      status_theme: 'voting',
+      status_entry: 'open',
+      status_results: 'voting',
       countdown_config: {
-        phrase: 'starts Janumeber 29',
-        date: moment().add(1, 'days').toDate()
+        phrase: 'starts',
+        date: moment().add(1, 'days').toDate(),
+        enabled: false
       }
     })
     await event2.save()
+    let event2Details = event2.related('details')
+    event2Details.set({
+      category_titles: ['Overall', 'Graphics', 'Audio', 'Gameplay', 'Originality', 'Theme']
+    })
+    await event2Details.save()
 
     await settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
     await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, `{
@@ -231,11 +256,19 @@ async function insertInitialData (samples) {
             "links": [
                 {
                     "title": "About Alakajam!",
-                    "url": "/article/help"
+                    "url": "/article/docs"
                 },
                 {
                     "title": "Support",
                     "url": "/article/support"
+                },
+                {
+                    "title": "Site changelog",
+                    "url": "/changes"
+                },
+                {
+                    "title": "JSON API",
+                    "url": "/api"
                 }
             ]
         }
@@ -251,11 +284,20 @@ async function insertInitialData (samples) {
     let adminEntry = await eventService.createEntry(adminUser, event2)
     adminEntry.set('title', 'Super Game')
     await adminEntry.save()
+
     userEntry = await eventService.createEntry(entrantUser, event2)
-    userEntry.set('title', 'Awesome Game')
+    userEntry.set('title', 'Game 1')
     await userEntry.save()
 
-    post = await postService.createPost(entrantUser)
+    for (let i = 2; i &lt;= 5; i++) {
+      await userService.register('entrant@example.com', 'entrant' + i, 'entrant' + i)
+      let otherUser = await userService.findByName('entrant' + i)
+      let otherEntry = await eventService.createEntry(otherUser, event2)
+      otherEntry.set('title', 'Game ' + i)
+      await otherEntry.save()
+    }
+
+    post = await postService.createPost(entrantUser, event2.get('id'))
     post.set({
       title: "I'm in!",
       body: "This is my second game and I'm really excited.",
@@ -265,7 +307,7 @@ async function insertInitialData (samples) {
     })
     await post.save()
 
-    post = await postService.createPost(adminUser)
+    post = await postService.createPost(adminUser, event2.get('id'))
     post.set({
       title: 'Event started!',
       body: 'The theme is `You are not alone`. Have fun!',
@@ -274,10 +316,11 @@ async function insertInitialData (samples) {
       published_at: new Date()
     })
     if (samples === 'nightly') {
-      let changesBuffer = await fs.readFile(path.join(__dirname, '../tests/nightly/CHANGES.md'))
+      let nightlyPostBuffer = await fs.readFile(path.join(__dirname, '../tests/nightly/POST.md'))
+      let changesBuffer = await fs.readFile(path.join(__dirname, '../CHANGES.md'))
       post.set({
         title: 'Nightly: ' + moment().format('MMMM Do YYYY'),
-        body: changesBuffer.toString()
+        body: nightlyPostBuffer.toString() + changesBuffer.toString()
       })
     }
     await post.save()
@@ -289,7 +332,8 @@ async function insertInitialData (samples) {
 
     // Planned 3rd event
 
-    let event3 = new models.Event({
+    let event3 = eventService.createEvent()
+    event3.set({
       title: '3rd Alakajam',
       name: '3rd-alakajam',
       status: 'pending',
@@ -299,6 +343,22 @@ async function insertInitialData (samples) {
       status_results: 'off'
     })
     await event3.save()
+
+    // Platforms
+    const platformNames = [
+      'Linux',
+      'Mac',
+      'Windows',
+      'Web',
+      'Mobile',
+      'Retro'
+    ]
+    const now = knex.fn.now()
+    await knex('platform').insert(platformNames.map(name => ({
+      name,
+      created_at: now,
+      updated_at: now
+    })))
 
     log.info('Samples inserted')
   }
@@ -313,13 +373,13 @@ async function insertInitialData (samples) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 12:01:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

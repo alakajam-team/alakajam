@@ -43,6 +43,7 @@
 const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
+const ExpressBrute = require('express-brute')
 const cookies = require('cookies')
 const postCss = require('postcss-middleware')
 const formidable = require('formidable')
@@ -84,6 +85,20 @@ async function configure (app) {
   }))
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
+  // Request throttling
+  if (!app.locals.devMode) {
+    let store = new ExpressBrute.MemoryStore() // TODO use brute-knex
+    let bruteforce = new ExpressBrute(store, {
+      freeRetries: 5,
+      minWait: 100, // ms
+      lifetime: 0.5, // seconds
+      failCallback: function (req, res, next, nextValidRequestDate) {
+        res.end('ERROR: Too many requests. Fair use is 2req/s.')
+      }
+    })
+    app.use(bruteforce.prevent)
+  }
+
   // Templating
   app.set('views', path.join(ROOT_PATH, '/templates'))
   let nunjucks = expressNunjucks(app, {
@@ -98,6 +113,8 @@ async function configure (app) {
   nunjucks.env.addGlobal('context', function () {
     // lets devs display the whole templating context with
     // {{ context() | prettyDump | safe }}
+    this.ctx.constants = constants
+    this.ctx.devMode = app.locals.devMode
     return this.ctx
   })
   for (var functionName in templating) {
@@ -111,7 +128,7 @@ async function configure (app) {
     return forms.markdownToHtml(str)
   })
   nunjucks.env.addFilter('markdownUnescape', function (str) {
-    return str ? str.replace(/&amp;amp;/g, '&amp;') : null
+    return str ? str.replace(/&amp;amp;/g, '&amp;').replace(/&amp;quot;/g, '"') : null
   })
   nunjucks.env.addFilter('date', function (date) {
     if (date) {
@@ -122,14 +139,15 @@ async function configure (app) {
   })
   nunjucks.env.addFilter('dateTime', function (date) {
     if (date) {
-      return moment(date).utc().format(constants.DATE_TIME_FORMAT) + ' UTC'
+      return moment(date).utc().format(constants.DATE_TIME_FORMAT)
     } else {
       return ''
     }
   })
   nunjucks.env.addFilter('featuredEventDateTime', function (date) {
     if (date) {
-      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT)
+      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) +
+        ' &lt;a href="https://www.timeanddate.com/worldclock/timezone/utc">UTC&lt;/a>'
     } else {
       return ''
     }
@@ -149,6 +167,23 @@ async function configure (app) {
     let s = ['th', 'st', 'nd', 'rd']
     let v = n % 100
     return n + (s[(v - 20) % 10] || s[v] || s[0])
+  })
+  nunjucks.env.addFilter('digits', function (number, digits) {
+    if (number) {
+      if (typeof number === 'string') {
+        number = parseFloat(number)
+      }
+      return number.toFixed(digits)
+    } else {
+      return null
+    }
+  })
+  nunjucks.env.addFilter('paginationBasePath', function (path) {
+    let basePath = path.replace(/[?&amp;]p=[^&amp;]*/g, '')
+    if (!basePath.includes('?')) {
+      basePath += '?'
+    }
+    return basePath
   })
 
   // Templating: rendering context
@@ -244,6 +279,9 @@ function errorPage (req, res, code, error, devMode) {
       break
     case 500:
       title = 'Internal error'
+      if (!devMode) {
+        message = 'Something went wrong, sorry about that.'
+      }
       break
     default:
       title = 'Error'
@@ -273,13 +311,13 @@ function errorPage (req, res, code, error, devMode) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 12:01:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

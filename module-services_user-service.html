@@ -260,7 +260,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line112">line 112</a>
+        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line149">line 149</a>
     </li></ul></dd>
     
 
@@ -299,106 +299,6 @@
     <dd>
         
 <span class="param-type">User</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~findAll"><span class="type-signature">(inner) </span>findAll<span class="signature">()</span><span class="type-signature"> &rarr; {Collection(User)}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Fetches all users</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line35">line 35</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Collection(User)</span>
 
 
     </dd>
@@ -513,7 +413,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line44">line 44</a>
+        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line65">line 65</a>
     </li></ul></dd>
     
 
@@ -662,7 +562,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line53">line 53</a>
+        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line74">line 74</a>
     </li></ul></dd>
     
 
@@ -697,6 +597,106 @@
     <dd>
         
 <span class="param-type">User</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~findUsers"><span class="type-signature">(inner) </span>findUsers<span class="signature">()</span><span class="type-signature"> &rarr; {Collection(User)}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Fetches users</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line37">line 37</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Collection(User)</span>
 
 
     </dd>
@@ -812,7 +812,7 @@ Call this after changing the name or title of an user.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line166">line 166</a>
+        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line203">line 203</a>
     </li></ul></dd>
     
 
@@ -989,7 +989,7 @@ Call this after changing the name or title of an user.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line69">line 69</a>
+        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line106">line 106</a>
     </li></ul></dd>
     
 
@@ -1031,6 +1031,258 @@ Call this after changing the name or title of an user.</p>
 |
 
 <span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~searchByName"><span class="type-signature">(inner) </span>searchByName<span class="signature">(fragment)</span><span class="type-signature"> &rarr; {Bookshelf.Collection}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Search users by name</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fragment</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>a fragment of the user name.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.related</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Array.&lt;mixed></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>any related data to fetch.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.caseSensitive</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>use case-sensitive search.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line92">line 92</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>the users with names matching the query.</p>
+<p>Note: all searches will be case-sensitive if developing with SQLite.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Bookshelf.Collection</span>
 
 
     </dd>
@@ -1168,7 +1420,7 @@ Call this after changing the name or title of an user.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line131">line 131</a>
+        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line168">line 168</a>
     </li></ul></dd>
     
 
@@ -1324,7 +1576,7 @@ Call this after changing the name or title of an user.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line149">line 149</a>
+        <a href="services_user-service.js.html">services/user-service.js</a>, <a href="services_user-service.js.html#line186">line 186</a>
     </li></ul></dd>
     
 
@@ -1391,13 +1643,13 @@ Call this after changing the name or title of an user.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 12:01:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

@@ -36,18 +36,48 @@
 
 const models = require('../core/models')
 const constants = require('../core/constants')
-const log = require('../core/log')
+const db = require('../core/db')
 const forms = require('../core/forms')
+const cache = require('../core/cache')
+const settingService = require('./setting-service')
 
 module.exports = {
+  isThemeVotingAllowed,
+
+  findThemeById,
   findThemeIdeasByUser,
   saveThemeIdeas,
 
   findThemeVotesHistory,
   findThemesToVoteOn,
+  findThemeShortlistVotes,
   saveVote,
+  saveShortlistVotes,
 
-  findBestThemes
+  findAllThemes,
+  findBestThemes,
+  findShortlist,
+  computeShortlist
+}
+
+async function isThemeVotingAllowed (event) {
+  if (event.get('status') === 'open' &amp;&amp; event.get('status_theme') === 'voting') {
+    let votingAllowedCacheKey = event.get('name') + '_event_voting_allowed_'
+    if (cache.general.get(votingAllowedCacheKey) === undefined) {
+      let themeIdeasRequired = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10'))
+      let themeIdeaCount = await models.Theme.where({
+        event_id: event.get('id')
+      }).count()
+      cache.general.set(votingAllowedCacheKey, themeIdeaCount >= themeIdeasRequired)
+    }
+    return cache.general.get(votingAllowedCacheKey)
+  } else {
+    return false
+  }
+}
+
+async function findThemeById (id) {
+  return models.Theme.where('id', id).fetch()
 }
 
 /**
@@ -60,7 +90,9 @@ async function findThemeIdeasByUser (user, event) {
   return models.Theme.where({
     user_id: user.get('id'),
     event_id: event.get('id')
-  }).fetchAll()
+  })
+    .orderBy('id')
+    .fetchAll()
 }
 
 /**
@@ -71,75 +103,62 @@ async function findThemeIdeasByUser (user, event) {
  * deletes the idea, not filling the ID creates one instead of updating it.
  */
 async function saveThemeIdeas (user, event, ideas) {
-  if (ideas.length !== 3) {
-    throw new Error('there must be information for exactly 3 theme ideas')
+  let ideasToKeep = []
+  let ideasToCreate = []
+  let themesToDelete = []
+
+  // Compare form with the existing user themes
+  let existingThemes = await findThemeIdeasByUser(user, event)
+  for (let existingTheme of existingThemes.models) {
+    let ideaFound = ideas.find(idea => parseInt(idea.id) === existingTheme.get('id'))
+    if (!ideaFound || ideaFound.title !== existingTheme.get('title')) {
+      if (existingTheme.get('status') === constants.THEME_STATUS_ACTIVE ||
+          existingTheme.get('status') === constants.THEME_STATUS_DUPLICATE) {
+        themesToDelete.push(existingTheme)
+      }
+    } else {
+      ideasToKeep.push(ideaFound)
+    }
+  }
+  for (let idea of ideas) {
+    if (!ideasToKeep.includes(idea) &amp;&amp; idea.title) {
+      ideasToCreate.push(idea)
+    }
   }
 
+  // Delete obsolete themes
   let tasks = []
+  let ideasSubmitted = existingThemes.models.length - themesToDelete.length
+  for (let themeToDelete of themesToDelete) {
+    tasks.push(themeToDelete.destroy())
+  }
+  await Promise.all(tasks)
 
-  // Run through all existing themes for that event/user combination
-  let existingThemes = await findThemeIdeasByUser(user, event)
-  let handledThemes = []
-  for (let idea of ideas) {
-    if (idea.id) {
-      let existingTheme = existingThemes.findWhere({'id': parseInt(idea.id)})
-      // We can only delete/update themes if they're active or cancelled because they're duplicates
-      if (existingTheme &amp;&amp; (existingTheme.get('status') === constants.THEME_STATUS_ACTIVE ||
-          existingTheme.get('status') === constants.THEME_STATUS_DUPLICATE)) {
-        if (idea.title) {
-          // Update existing theme if needed
-          if (idea.title !== existingTheme.get('title')) {
-            existingTheme.set({
-              title: idea.title,
-              status: constants.THEME_STATUS_ACTIVE,
-              score: 0,
-              notes: 0,
-              reports: 0
-            })
-            await handleDuplicates(existingTheme)
-            tasks.push(existingTheme.save())
-          }
-        } else {
-          // Delete existing theme
-          tasks.push(existingTheme.destroy())
-        }
-        handledThemes.push(existingTheme)
-      } else {
-        log.warn('Invalid theme ID for user ' + user.get('name') + ': ' + idea.id)
-        idea.id = null
-      }
-    }
-
-    if (!idea.id &amp;&amp; idea.title) {
-      // Create theme
+  // Create themes
+  let maxThemeSuggestions = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, '3'))
+  for (let idea of ideasToCreate) {
+    if (ideasSubmitted &lt; maxThemeSuggestions) {
       let theme = new models.Theme({
         user_id: user.get('id'),
         event_id: event.get('id'),
         title: idea.title,
         status: constants.THEME_STATUS_ACTIVE
       })
-      await handleDuplicates(theme)
-      tasks.push(theme.save())
+      await _handleDuplicates(theme)
+      await theme.save()
+      ideasSubmitted++
+    } else {
+      break
     }
   }
 
-  // Destroy any theme not among the ideas
-  let missingThemes = existingThemes.difference(handledThemes)
-  if (missingThemes.length > 0) {
-    log.warn('Theme ID were not given among the parameters for user ' + user.get('name') + ':')
-    for (let missingTheme of missingThemes) {
-      log.warn(' - ' + missingTheme.get('id'))
-      tasks.push(missingTheme.destroy())
-    }
-  }
-
-  await Promise.all(tasks)
+  _refreshEventThemeStats(event)
 }
 
 /**
  * Sets the theme status to "duplicate" if another theme is identical
  */
-async function handleDuplicates (theme) {
+async function _handleDuplicates (theme) {
   theme.set('slug', forms.slug(theme.get('title')))
 
   let query = models.Theme.where({
@@ -158,17 +177,22 @@ async function handleDuplicates (theme) {
  * Returns the 30 latest votes by the user
  * @param user {User} user model
  * @param event {Event} event model
+ * @param options {object} (optional) count
  */
-async function findThemeVotesHistory (user, event) {
-  return models.ThemeVote.where({
+async function findThemeVotesHistory (user, event, options = {}) {
+  let query = models.ThemeVote.where({
     event_id: event.get('id'),
     user_id: user.get('id')
   })
-      .orderBy('id', 'DESC')
+  if (options.count) {
+    return query.count()
+  } else {
+    return query.orderBy('id', 'DESC')
       .fetchPage({
         pageSize: 30,
         withRelated: ['theme']
       })
+  }
 }
 
 /**
@@ -185,17 +209,37 @@ async function findThemesToVoteOn (user, event) {
         this.andOn('theme_vote.user_id', '=', user.get('id'))
       })
     })
-        .where({
-          status: constants.THEME_STATUS_ACTIVE,
-          'theme.event_id': event.get('id'),
-          'theme_vote.user_id': null
-        })
-        .where('theme.user_id', '&lt;>', user.get('id'))
+    .where({
+      status: constants.THEME_STATUS_ACTIVE,
+      'theme.event_id': event.get('id'),
+      'theme_vote.user_id': null
+    })
+    .where('theme.user_id', '&lt;>', user.get('id'))
   } else {
     query = query.where('event_id', event.get('id'))
+      .where('status', '&lt;>', constants.THEME_STATUS_BANNED)
   }
-  return query.orderBy('notes', 'DESC')
-      .fetchPage({ pageSize: 10 })
+
+  // Grab the 20 oldest theme ideas, then just keep the 10 with the least notes.
+  // This helps new themes catch up with the pack fast, while being much better randomized
+  // than just showing the themes with the least notes.
+  let themesCollection = await query.orderBy('updated_at')
+      .fetchPage({ pageSize: 20 })
+  let sortedThemes = themesCollection.sortBy(theme => theme.get('notes'))
+  let themesToVoteOn = sortedThemes.splice(0, 10)
+  let shuffledThemes = new db.Collection(themesToVoteOn).shuffle()
+  return new db.Collection(shuffledThemes)
+}
+
+async function findThemeShortlistVotes (user, event) {
+  let shortlistCollection = await findShortlist(event)
+  let shortlistIds = []
+  shortlistCollection.each(theme => shortlistIds.push(theme.get('id')))
+  return models.ThemeVote.where({
+    user_id: user.get('id')
+  })
+    .where('theme_id', 'IN', shortlistIds)
+    .fetchAll()
 }
 
 /**
@@ -204,45 +248,193 @@ async function findThemesToVoteOn (user, event) {
  * @param event {Event} event model
  * @param themeId {integer}
  * @param score {integer}
+ * @param options {object} doNotSave
  */
-async function saveVote (user, event, themeId, score) {
-  // TODO Refine theme statuses
-  if (event.get('status_theme') === 'on' &amp;&amp; [-1, 1].indexOf(score) !== -1) {
-    let theme = await models.Theme.where('id', themeId).fetch()
-    let vote = await models.ThemeVote.where({
-      user_id: user.get('id'),
-      event_id: event.get('id'),
-      theme_id: themeId
-    }).fetch()
+async function saveVote (user, event, themeId, score, options = {}) {
+  let voteCreated = false
+  let expectedStatus = null
+  let result = {}
 
-    if (vote) {
-      theme.set('score', theme.get('score') + score - (vote.get('score') || 0))
-      vote.set('score', score)
-    } else {
-      theme.set({
-        'score': theme.get('score') + score,
-        'notes': theme.get('notes') + 1
-      })
-      vote = new models.ThemeVote({
-        theme_id: themeId,
+  if (event.get('status_theme') === 'voting' &amp;&amp; [-1, 1].indexOf(score) !== -1) {
+    expectedStatus = 'active'
+  } else if (event.get('status_theme') === 'shortlist' &amp;&amp; score >= 1 &amp;&amp; score &lt;= 10) {
+    expectedStatus = 'shortlist'
+  }
+
+  if (expectedStatus) {
+    let theme = await models.Theme.where('id', themeId).fetch()
+
+    if (theme.get('status') === expectedStatus) {
+      let vote = await models.ThemeVote.where({
         user_id: user.get('id'),
         event_id: event.get('id'),
-        score: score
-      })
-    }
+        theme_id: themeId
+      }).fetch()
 
-    await Promise.all([theme.save(), vote.save()])
+      if (vote) {
+        theme.set('score', theme.get('score') + score - (vote.get('score') || 0))
+        vote.set('score', score)
+      } else {
+        theme.set({
+          'score': theme.get('score') + score,
+          'notes': theme.get('notes') + 1
+        })
+        theme.set('normalized_score', 1.0 * theme.get('score') / theme.get('notes'))
+        vote = new models.ThemeVote({
+          theme_id: themeId,
+          user_id: user.get('id'),
+          event_id: event.get('id'),
+          score: score
+        })
+        voteCreated = true
+      }
+
+      result = {
+        theme,
+        vote
+      }
+      if (!options.doNotSave) {
+        await Promise.all([theme.save(), vote.save()])
+      }
+    }
+  }
+
+  if (expectedStatus === 'active' &amp;&amp; voteCreated) {
+    _refreshEventThemeStats(event)
+
+    // Eliminate a theme every x votes. No need for DB calls, just count in-memory
+    let eliminationThreshold = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, '10'))
+    let uptimeVotes = cache.general.get('uptime_votes') || 0
+    if (uptimeVotes % eliminationThreshold === 0) {
+      _eliminateLowestTheme(event)
+    }
+    uptimeVotes++
+    cache.general.set('uptime_votes', uptimeVotes)
+  }
+
+  return result
+}
+
+async function _eliminateLowestTheme (event) {
+  let eliminationMinNotes = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5'))
+
+  let battleReadyThemesQuery = await models.Theme.where({
+    event_id: event.get('id'),
+    status: 'active'
+  })
+    .where('notes', '>=', eliminationMinNotes)
+
+  // Make sure we have at least enough themes to fill our shortlist before removing one
+  if (await battleReadyThemesQuery.count() > 10) {
+    let loserTheme = await models.Theme.where({
+      event_id: event.get('id'),
+      status: 'active'
+    })
+      .where('notes', '>=', eliminationMinNotes)
+      .orderBy('normalized_score')
+      .orderBy('created_at')
+      .fetch()
+    loserTheme.set('status', 'out')
+    await loserTheme.save()
   }
 }
 
-async function findBestThemes (event, options) {
-  let query = models.Theme.where({
+async function saveShortlistVotes (user, event, ids) {
+  let shortlistCollection = await findShortlist(event)
+  let sortedShortlist = shortlistCollection.sortBy(theme => {
+    return ids.indexOf(theme.get('id'))
+  })
+
+  let score = 10
+  let results = []
+  for (let theme of sortedShortlist) {
+    results.push(await saveVote(user, event, theme.get('id'), score, {doNotSave: true}))
+    score--
+  }
+
+  await db.transaction(async function (t) {
+    let saveOptions = { transacting: t }
+    for (let result of results) {
+      if (result.theme) result.theme.save(null, saveOptions)
+      if (result.vote) result.vote.save(null, saveOptions)
+    }
+  })
+}
+
+async function findAllThemes (event, options = {}) {
+  let query = models.Theme.where('event_id', event.get('id'))
+  if (options.shortlistEligible) {
+    query = query.where('status', '&lt;>', 'out')
+      .where('status', '&lt;>', 'banned')
+  }
+  return query.orderBy('normalized_score', 'DESC')
+    .orderBy('created_at')
+    .fetchAll()
+}
+
+async function findBestThemes (event) {
+  let eliminationMinNotes = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5'))
+  return models.Theme.where({
     event_id: event.get('id')
-  }).orderBy('score', 'DESC')
-  if (options.fetchAll) {
-    return query.fetchAll()
-  } else {
-    return query.fetchPage({ pageSize: 10 })
+  })
+    .where('status', '&lt;>', 'banned')
+    .where('notes', '>=', eliminationMinNotes)
+    .orderBy('normalized_score', 'DESC')
+    .orderBy('created_at')
+    .fetchPage({ pageSize: 10 })
+}
+
+async function findShortlist (event) {
+  return models.Theme.where({
+    event_id: event.get('id'),
+    status: 'shortlist'
+  }).fetchAll()
+}
+
+async function computeShortlist (event) {
+  // Mark all themes as out
+  let allThemesCollection = await findAllThemes(event, {shortlistEligible: true})
+  await db.transaction(async function (t) {
+    allThemesCollection.each(function (theme) {
+      theme.set('status', 'out')
+      theme.save(null, { transacting: t })
+    })
+  })
+
+  // Compute new shortlist
+  let bestThemeCollection = await findBestThemes(event)
+  await db.transaction(async function (t) {
+    bestThemeCollection.each(function (theme) {
+      theme.set('status', 'shortlist')
+      theme.save(null, { transacting: t })
+    })
+  })
+}
+
+async function _refreshEventThemeStats (event) {
+  await event.load('details')
+  let eventDetails = event.related('details')
+
+  // Throttled: updates every 5 seconds max
+  if (eventDetails.get('updated_at') &lt; new Date().getTime() - 5000) {
+    eventDetails.set('theme_count',
+      await models.Theme.where({
+        event_id: event.get('id')
+      }).count())
+    eventDetails.set('active_theme_count',
+      await models.Theme.where({
+        event_id: event.get('id'),
+        status: 'active'
+      }).count())
+    eventDetails.set('theme_vote_count',
+      await models.ThemeVote.where({
+        event_id: event.get('id')
+      }).count())
+    eventDetails.save()
+  }
+
+  if (!(await isThemeVotingAllowed(event))) {
+    cache.general.del(event.get('name') + '_event_voting_allowed_')
   }
 }
 </code></pre>
@@ -255,13 +447,13 @@ async function findBestThemes (event, options) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 12:01:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

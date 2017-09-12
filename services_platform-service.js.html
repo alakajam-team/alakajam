@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/platform-service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/platform-service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const constants = require('../core/constants')
+const models = require('../core/models')
+const db = require('../core/db')
+const cache = require('../core/cache')
+
+module.exports = {
+  searchPlatforms,
+  fetchById,
+  fetchAllNames,
+  fetchAll,
+  fetchMultipleNamed,
+  countEntriesByPlatform,
+
+  createPlatform,
+  setEntryPlatforms
+}
+
+/**
+ * Search for a platform by name.
+ *
+ * @param {string} nameFragment a fragment of the name.
+ * @returns {Bookshelf.Collection} platforms matching the search.
+ */
+function searchPlatforms (nameFragment) {
+  return models.Platform.where('name', constants.DB_ILIKE, `%${nameFragment}%`)
+}
+
+/**
+ * Fetch platform by ID
+ *
+ * @param {number} id
+ */
+async function fetchById (id) {
+  return models.Platform.where({ id }).fetch()
+}
+
+/**
+ * Fetch platforms by name (case-insensitive except in SQLite).
+ *
+ * @param {string[]} names the platform names to fetch by.
+ */
+function fetchMultipleNamed (names) {
+  return models.Platform.query(qb => qb.whereIn('name', names)).fetchAll()
+}
+
+/**
+ * Load all platform names.
+ *
+ * @returns {Promise&lt;string[]>} a promise which resolves with the names.
+ */
+async function fetchAllNames () {
+  let names = (await db.knex('platform').select('name')).map(({name}) => name)
+  names.sort()
+  return names
+}
+
+/** Fetch all platform instances. */
+async function fetchAll () {
+  if (!cache.general.get('platforms')) {
+    cache.general.set('platforms',
+      await models.Platform.forge()
+        .orderBy('name')
+        .fetchAll())
+  }
+  return cache.general.get('platforms')
+}
+
+/**
+ * Counts the number of entries using a given platform
+ *
+ * @param  {Platform} platform
+ * @return {number}
+ */
+async function countEntriesByPlatform (platform) {
+  let count = await models.EntryPlatform
+    .where('platform_id', platform.get('id'))
+    .count()
+  return parseInt(count)
+}
+
+/**
+ * Creates a platform
+ * @param  {string} name
+ * @return {Platform}
+ */
+function createPlatform (name) {
+  return new models.Platform({ name })
+}
+
+/**
+ * Set the platforms of an entry.
+ *
+ * @param {models.Entry} entry the entry instance.
+ * @param {models.Platform[]} platforms the platforms to set.
+ * @returns {Promise} a promise which resolves when complete.
+ */
+async function setEntryPlatforms (entry, platforms, { updateEntry = true }) {
+  const entryId = entry.get('id')
+  const nameList = JSON.stringify(platforms.map(p => p.get('name')))
+  const platformIds = platforms.map(p => p.id)
+  return db.knex.transaction(async function (transaction) {
+    const existingIds = (
+      await transaction('entry_platform')
+        .select('platform_id')
+        .where('entry_id', entryId)
+    ).map(({platform_id}) => platform_id) // eslint-disable-line camelcase
+    const toRemoveIds = existingIds.filter(id => !platformIds.includes(id))
+    const toAdd = platforms
+      .filter(p => !existingIds.includes(p.id))
+      .map(p => ({
+        entry_id: entryId,
+        platform_id: p.id,
+        platform_name: p.get('name')
+      }))
+
+    const promises = []
+    if (updateEntry) {
+      promises.push(entry.save('platforms', nameList, {transaction}))
+    }
+    if (toAdd.length > 0) { // Insert new entry_platform records.
+      promises.push(transaction('entry_platform').insert(toAdd))
+    }
+    if (toRemoveIds.length > 0) { // Remove old entry_platform records.
+      promises.push(
+        transaction('entry_platform')
+          .whereIn('platform_id', toRemoveIds)
+          .andWhere('entry_id', '=', entryId)
+          .del()
+      )
+    }
+    await Promise.all(promises)
+  })
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

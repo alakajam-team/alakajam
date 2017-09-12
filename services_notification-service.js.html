@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: services/notification-service.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,64 +17,45 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: services/notification-service.js</h1>
 
     
 
 
 
     
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
     <section>
-        <article><p><img src="https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/brand.png" alt="Alakajam!"></p>
-<h2>Initial setup</h2><p>Requirement: NodeJS 7.6+</p>
-<ul>
-<li><code>npm install</code></li>
-<li><code>node server.js</code></li>
-<li>Browse to <code>http://localhost:8000</code></li>
-</ul>
-<p>There is a default admin user (<code>administrator</code>/<code>administrator</code>).</p>
-<h2>Developer tools</h2><p>Prerequisite: <code>npm install -g knex standard browser-refresh node-inspector jsdoc mocha</code></p>
-<h3>Recommended</h3><ul>
-<li><code>browser-refresh server.js</code>: Launches the app, and makes the server and browser refresh when needed upon file changes.</li>
-<li><code>standard</code>: Validates the code style. Run <code>githooks/install.sh</code> to trigger validation automatically before committing.</li>
-</ul>
-<h3>Other</h3><ul>
-<li><code>node-debug server.js</code>: Launches the app in debug mode.</li>
-<li><code>npm run-script docs</code>: Generates the JS documentation in the <code>docs/</code> folder.</li>
-<li><code>mocha tests/</code>: Runs unit tests.</li>
-<li><code>DEBUG=express:*</code>: Enables debugging of routes &amp; performance (must be set before launching the server)</li>
-</ul>
-<p>See also <a href="https://github.com/mkalam-alami/wejam/wiki">the wiki</a> for additional developer documentation.</p>
-<h2>How do I...</h2><h4>...Reset the data</h4><ul>
-<li>With SQLite, all you have to do is delete the <code>data/</code> folder.</li>
-<li>PostgreSQL requires you additionally to empty your database.</li>
-</ul>
-<h4>...Enable picture resizing</h4><p>If the <code>sharp</code> dependency failed to install in the initial setup, your picture uploads won't be resized. If you want to fix that:</p>
-<ul>
-<li>Follow the instructions to install the <a href="http://sharp.dimens.io/en/stable/install/">sharp dependencies</a></li>
-<li>Run <code>nom install</code> again</li>
-</ul></article>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+/**
+ * Notification service.
+ *
+ * @module services/notification-service
+ */
+
+const cache = require('../core/cache')
+const eventService = require('../services/event-service')
+const postService = require('../services/post-service')
+
+module.exports = {
+  countUnreadNotifications
+}
+
+async function countUnreadNotifications (user) {
+  let userCache = cache.user(user)
+  let unreadNotifications = userCache.get('unreadNotifications')
+  if (unreadNotifications === undefined) {
+    let commentsCollection = await postService.findCommentsToUser(user, { notificationsLastRead: true })
+    let invitesCollection = await eventService.findEntryInvitesForUser(user, { notificationsLastRead: true })
+    unreadNotifications = commentsCollection.length + invitesCollection.length
+    userCache.set('unreadNotifications', unreadNotifications)
+  }
+  return unreadNotifications
+}
+</code></pre>
+        </article>
     </section>
-
-
 
 
 

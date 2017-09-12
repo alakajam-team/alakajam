@@ -33,6 +33,7 @@
  *
  * @module core/constants
  */
+const config = require('../config')
 
 const PERMISSION_READ = 'read'
 const PERMISSION_WRITE = 'write'
@@ -49,6 +50,11 @@ const SETTING_ARTICLE_SIDEBAR = 'article_sidebar'
 const SETTING_SESSION_KEY = 'session_key'
 const SETTING_INVITE_PASSWORD = 'invite_password'
 const SETTING_INVITE_PEPPER = 'invite_pepper'
+const SETTING_EVENT_REQUIRED_ENTRY_VOTES = 'event_required_entry_votes'
+const SETTING_EVENT_THEME_IDEAS_REQUIRED = 'event_theme_ideas_required'
+const SETTING_EVENT_THEME_ELIMINATION_MODULO = 'event_theme_elimination_modulo'
+const SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES = 'event_theme_elimination_min_notes'
+const SETTING_EVENT_THEME_SUGGESTIONS = 'event_theme_suggestions'
 
 const THEME_STATUS_OUT = 'out'
 const THEME_STATUS_ACTIVE = 'active'
@@ -64,7 +70,13 @@ module.exports = {
   SETTING_SESSION_KEY,
   SETTING_INVITE_PASSWORD,
   SETTING_INVITE_PEPPER,
-  EDITABLE_SETTINGS: [SETTING_FEATURED_EVENT_NAME, SETTING_FEATURED_POST_ID, SETTING_ARTICLE_SIDEBAR],
+  SETTING_EVENT_REQUIRED_ENTRY_VOTES,
+  SETTING_EVENT_THEME_IDEAS_REQUIRED,
+  SETTING_EVENT_THEME_ELIMINATION_MODULO,
+  SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
+  SETTING_EVENT_THEME_SUGGESTIONS,
+  EDITABLE_SETTINGS: [SETTING_FEATURED_EVENT_NAME, SETTING_FEATURED_POST_ID, SETTING_ARTICLE_SIDEBAR, SETTING_EVENT_REQUIRED_ENTRY_VOTES,
+    SETTING_EVENT_THEME_IDEAS_REQUIRED, SETTING_EVENT_THEME_ELIMINATION_MODULO, SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_SUGGESTIONS],
   JSON_EDIT_SETTINGS: [SETTING_ARTICLE_SIDEBAR],
 
   // Security
@@ -72,6 +84,10 @@ module.exports = {
   PERMISSION_WRITE,
   PERMISSION_MANAGE,
   ORDERED_PERMISSIONS,
+  CONFIDENTIAL_CACHE_KEYS: [SETTING_SESSION_KEY],
+
+  // Database
+  DB_ILIKE: config.DB_TYPE.startsWith('sqlite') ? 'LIKE' : 'ILIKE',
 
   // Themes
   THEME_STATUS_OUT,
@@ -87,12 +103,14 @@ module.exports = {
   SPECIAL_POST_TYPE_ARTICLE,
   SPECIAL_POST_TYPES,
   REQUIRED_ARTICLES: ['help'],
-  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img'],
+  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img', 'p'],
   ALLOWED_POST_ATTRIBUTES: {
-    'a': ['href'],
-    'iframe': ['src', 'width', 'height', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
-    'img': ['src', 'width', 'height']
+    'p': ['class'],
+    'a': ['href', 'class'],
+    'iframe': ['src', 'width', 'height', 'class', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
+    'img': ['src', 'width', 'height', 'class']
   },
+  ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right'],
   ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com'],
 
   // Dates
@@ -100,7 +118,7 @@ module.exports = {
   DATE_TIME_FORMAT: 'MMMM Do YYYY, h:mma',
   PICKER_DATE_TIME_FORMAT: 'YYYY-MM-DD HH:mm',
   PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii',
-  FEATURED_EVENT_DATE_FORMAT: 'MMM. Do, ha [UTC]',
+  FEATURED_EVENT_DATE_FORMAT: 'MMM. Do, ha',
 
   // Misc
   ALLOWED_PICTURE_MIMETYPES: [
@@ -110,8 +128,19 @@ module.exports = {
   ],
 
   // Entries
-  ENTRIES_LINKS_TYPES: ['Windows', 'Linux', 'Mac', 'Web', 'Sources', 'Soundtrack'],
-  ENTRIES_LINKS_ICONS: ['fa-windows', 'fa-linux', 'fa-apple', 'fa-chrome', 'fa-bitbucket', 'fa-volume-up']
+  ENTRY_PLATFORM_DEFAULT_ICON: 'fa-file-o',
+  ENTRY_PLATFORM_ICONS: {
+    'Windows': 'fa-windows',
+    'Linux': 'fa-linux',
+    'Mac': 'fa-apple',
+    'Web': 'fa-globe',
+    'Mobile': 'fa-mobile',
+    'Retro': 'fa-gamepad'
+  },
+
+  // Events
+  MAX_CATEGORY_COUNT: 6,
+  MINIMUM_REQUIRED_RATINGS: 1 // TODO Set reasonable value
 
 }
 </code></pre>
@@ -124,13 +153,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 12:01:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

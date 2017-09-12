@@ -48,8 +48,8 @@ let modelPrototype = bookshelf.Model.prototype
  * |--    |--    |--
  * | string | key | Primary key
  * | string | value | Setting value (max size: 10000)
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Setting = bookshelf.model('Setting', {
   tableName: 'setting',
@@ -67,17 +67,17 @@ module.exports.Setting = bookshelf.model('Setting', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | string | name | User name (must be unique)
+ * | string | name | User name (must be unique, not null)
  * | string | title |
- * | string | email |
+ * | string | email | (not null)
  * | string | avatar |
  * | string | is_mod |
  * | string | is_admin |
- * | string | password |
- * | string | password_salt |
+ * | string | password | (not null)
+ * | string | password_salt | (not null)
  * | dateTime | notifications_last_read |
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.User = bookshelf.model('User', {
   tableName: 'user',
@@ -142,14 +142,14 @@ module.exports.UserDetails = bookshelf.model('UserDetails', {
  * | type | name | description
  * |--    |--    |--
  * | integer (increments) | id | Primary key
- * | integer | user_id | User ID
- * | string | user_name | Local copy of the user name
+ * | integer | user_id | User ID (not null)
+ * | string | user_name | Local copy of the user name (not null)
  * | string | user_title | Local copy of the user title
- * | integer | node_id | ID of the target node
- * | string | node_type | Type of the target node ('entry' or 'post')
- * | string | permission | Permission: 'read', 'write', 'manage'
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | node_id | ID of the target node (not null)
+ * | string | node_type | Type of the target node ('entry' or 'post', not null)
+ * | string | permission | Permission: 'read', 'write', 'manage' (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.UserRole = bookshelf.model('UserRole', {
   tableName: 'user_role',
@@ -174,19 +174,19 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | type | name | description
  * |--    |--    |--
  * | integer | id | ID
- * | string | name | Name (used in the URL). Must have a hyphen to prevent clashing other root URLs.
- * | string | title | Title
+ * | string | name | Name (used in the URL, not null). Must have a hyphen to prevent clashing other root URLs.
+ * | string | title | Title (not null)
  * | string | display_dates | The event dates, for display only
  * | string | display_theme | The event theme, for display only
- * | string | status | General status: 'pending', 'open' or 'closed'
- * | string | status_rules | Event rules status: 'off', 'disabled', or a post ID
- * | string | status_theme | Theme voting status: 'on', 'off', 'disabled', or a post ID
- * | string | status_entry | Entry submission status: 'on', 'off', 'disabled'
- * | string | status_results | Event results status: 'on', 'off', 'disabled', or a post ID
- * | string | coutdown_config | Home page countdown JSON: `{date, phrase}`
+ * | string | status | General status: 'pending', 'open' or 'closed' (not null)
+ * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID (not null)
+ * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'results', or a post ID (not null)
+ * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
+ * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)
+ * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | date | published_at | Publication date. If empty, the event is a draft.
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Event = bookshelf.model('Event', {
   tableName: 'event',
@@ -232,17 +232,35 @@ module.exports.Event = bookshelf.model('Event', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | event_id | Event ID
+ * | integer | event_id | Event ID (not null)
+ * | integer | category_titles | Category names (JSON: [name])
  * | integer | theme_count | Number of theme ideas submitted
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.EventDetails = bookshelf.model('EventDetails', {
   tableName: 'event_details',
   idAttribute: 'id',
   hasTimestamps: true,
+
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs['category_titles'] = attrs['category_titles'] || []
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['category_titles']) attrs['category_titles'] = JSON.parse(attrs['category_titles'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs &amp;&amp; attrs['category_titles']) attrs['category_titles'] = JSON.stringify(attrs['category_titles'])
+    return attrs
+  },
 
   event: function () {
     return this.belongsTo('Event', 'event_id')
@@ -255,20 +273,21 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | event_id | Event ID
- * | string | event_name | Name (used in the URL)
- * | string | name |
- * | string | title |
- * | string | descriptio (max size: 2000)
+ * | integer | event_id | Event ID (can be null in case of an external entry)
+ * | string | event_name | Name (used in the URL, can be null in case of an external entry)
+ * | string | external_event | External event title (if not an Alakajam! game, ie. event_id is null)
+ * | string | name | (not null)
+ * | string | title | (not null)
+ * | string | description | (max size: 2000)
  * | string | links | JSON Array : [{url, title}]
  * | string | platforms | JSON Array : [platform]
  * | string | pictures | JSON Array : [path]
- * | string | category | "solo"/"team"
- * | integer | feedback_score | (defaults to 100)
+ * | string | division | "solo"/"team"/"ranked" (not null)
+ * | decimal | feedback_score | ([-999.999;999.999], defaults to 100, not null)
  * | dateTime | published_at |
- * | integer | comment_count |
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | comment_count | (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Entry = bookshelf.model('Entry', {
   tableName: 'entry',
@@ -289,8 +308,14 @@ module.exports.Entry = bookshelf.model('Entry', {
   comments: function () {
     return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
   },
-  platforms: function () {
+  entryPlatforms: function () {
     return this.hasMany('EntryPlatform', 'entry_id')
+  },
+  votes: function () {
+    return this.hasMany('EntryVote', 'entry_id')
+  },
+  invites: function () {
+    return this.hasMany('EntryInvite', 'entry_id')
   },
 
   // Listeners
@@ -298,7 +323,7 @@ module.exports.Entry = bookshelf.model('Entry', {
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
     this.on('saving', function (model, attrs, options) {
-      model.set('name', slug(model.get('title') || '').toLowerCase())
+      model.set('name', slug(model.get('title') || '').toLowerCase() || 'unnamed')
     })
     attrs = attrs || {}
     attrs.links = attrs.links || []
@@ -317,11 +342,24 @@ module.exports.Entry = bookshelf.model('Entry', {
     if (attrs &amp;&amp; attrs.pictures) attrs.pictures = JSON.stringify(attrs.pictures)
     if (attrs &amp;&amp; attrs.platforms) attrs.platforms = JSON.stringify(attrs.platforms)
     return attrs
+  },
+
+  // Helpers
+
+  sortedUserRoles: function () {
+    return this.related('userRoles').sortBy(function (userRole) {
+      // List owners first, otherwise sort alphabetically
+      if (userRole.get('permission') === 'manage') {
+        return ' ' + userRole.get('user_title')
+      } else {
+        return userRole.get('user_title')
+      }
+    })
   }
 
 }, {
   // Cascading
-  dependents: ['userRoles', 'details', 'comments', 'platforms']
+  dependents: ['details', 'comments', 'platforms', 'votes', 'invites'] // 'userRoles' removed because of issue #93
 })
 
 /**
@@ -330,16 +368,35 @@ module.exports.Entry = bookshelf.model('Entry', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | entry_id | Entry ID
- * | string | body | Entry details (max size: 10000)
+ * | integer | entry_id | Entry ID (not null)
+ * | string | body | Detailed description (max size: 10000)
+ * | string | optouts | Opted-out categories (JSON: [ids])
+ * | decimal | rating_1 .. 4 | Rating for categories 1 to 4 ([-99.999,99.999])
+ * | integer | ranking_1 .. 4 | Ranking for categories 1 to 4 (max: 100000)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.EntryDetails = bookshelf.model('EntryDetails', {
   tableName: 'entry_details',
   idAttribute: 'id',
+  hasTimestamps: true,
 
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
   }
+})
+
+/**
+ * Platform model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | string | name | Platform name
+ */
+module.exports.Platform = bookshelf.model('Platform', {
+  tableName: 'platform',
+  idAttribute: 'id'
 })
 
 /**
@@ -348,8 +405,8 @@ module.exports.EntryDetails = bookshelf.model('EntryDetails', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | entry_id | Entry ID
- * | string | platform | Platform (max size: 50)
+ * | integer | entry_id | Entry ID (not null)
+ * | string | platform_name | Platform name (max size: 50)
  */
 module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
   tableName: 'entry_platform',
@@ -359,21 +416,69 @@ module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
     return this.belongsTo('Entry', 'entry_id')
   },
 
+  platform () {
+    return this.belongsTo('Platform', 'platform_id')
+  },
+
   // Listeners
 
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
     attrs = attrs || {}
-    attrs.platforms = attrs.platforms || []
     return attrs
+  }
+})
+
+/**
+ * Entry Vote model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | entry_id | Entry ID (not null)
+ * | integer | event_id | Event ID (not null)
+ * | integer | user_id | User ID (not null)
+ * | integer | vote_1 .. 4 | Vote for categories 1 to 4 ([-999.99,999.99])
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
+ */
+module.exports.EntryVote = bookshelf.model('EntryVote', {
+  tableName: 'entry_vote',
+  idAttribute: 'id',
+  hasTimestamps: true,
+
+  entry: function () {
+    return this.belongsTo('Entry', 'entry_id')
   },
-  parse: function parse (attrs) {
-    if (attrs.platforms) attrs.platforms = JSON.parse(attrs.platforms)
-    return attrs
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
   },
-  format: function format (attrs) {
-    if (attrs &amp;&amp; attrs.platforms) attrs.platforms = JSON.stringify(attrs.platforms)
-    return attrs
+  user: function () {
+    return this.belongsTo('User', 'user_id')
+  }
+})
+
+/**
+ * Entry Invite model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | entry_id | Target entry ID (not null)
+ * | integer | invited_user_id | User ID of the person invited (not null)
+ * | integer | invited_user_title | User title of the person invited (not null)
+ * | string | permission | The offered permission (not null)
+ */
+module.exports.EntryInvite = bookshelf.model('EntryInvite', {
+  tableName: 'entry_invite',
+  idAttribute: 'id',
+  hasTimestamps: true,
+
+  entry: function () {
+    return this.belongsTo('Entry', 'entry_id')
+  },
+  invited: function () {
+    return this.belongsTo('User', 'invited_user_id')
   }
 })
 
@@ -387,15 +492,16 @@ module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | event_id | Event ID
- * | integer | user_id | User ID
- * | string | title | (max size: 100)
- * | integer | score |
- * | integer | notes |
- * | integer | reports |
- * | string | status | 'active', 'out', 'banned', 'shortlist'
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | event_id | Event ID (not null)
+ * | integer | user_id | User ID (not null)
+ * | string | title | (max size: 100, not null)
+ * | string | slug | Used for detecting duplicate themes (not null)
+ * | integer | score | (defaults to 0, not null)
+ * | integer | notes | (defaults to 0, not null)
+ * | integer | reports | (defaults to 0, not null)
+ * | string | status | 'active', 'out', 'banned', 'shortlist' (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Theme = bookshelf.model('Theme', {
   tableName: 'theme',
@@ -425,12 +531,12 @@ module.exports.Theme = bookshelf.model('Theme', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | theme_id | Theme ID
- * | integer | event_id | Event ID
- * | integer | user_id | User ID
- * | integer | score |
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | theme_id | Theme ID (not null)
+ * | integer | event_id | Event ID (not null)
+ * | integer | user_id | User ID (not null)
+ * | integer | score | (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.ThemeVote = bookshelf.model('ThemeVote', {
   tableName: 'theme_vote',
@@ -461,17 +567,17 @@ module.exports.ThemeVote = bookshelf.model('ThemeVote', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | author_user_id | Author user ID
- * | string | name | Name (used in the URL)
- * | string | title | Title
+ * | integer | author_user_id | Author user ID (not null)
+ * | string | name | Name (used in the URL, not null)
+ * | string | title | Title (not null)
  * | integer | entry_id | Entry ID
  * | integer | event_id | Event ID
  * | string | body | Post body (max size: 10000)
  * | string | special_post_type | 'article', 'announcement' or empty
  * | integer | comment_count | Number of comments made on this post
  * | dateTime | published_at | Publication time
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Post = bookshelf.model('Post', {
   tableName: 'post',
@@ -507,7 +613,7 @@ module.exports.Post = bookshelf.model('Post', {
   }
 }, {
   // Cascading
-  dependents: ['userRoles', 'comments']
+  dependents: ['comments'] // 'userRoles' removed because of issue #93
 })
 
 /**
@@ -516,14 +622,14 @@ module.exports.Post = bookshelf.model('Post', {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | node_id | ID of the target node
- * | string | node_type | Type of the target node ('entry' or 'post')
- * | integer | user_id | Author user ID
+ * | integer | node_id | ID of the target node (not null)
+ * | string | node_type | Type of the target node ('entry' or 'post', not null)
+ * | integer | user_id | Author user ID (not null)
  * | integer | parent_id | Parent comment ID
  * | string | body | Comment body (max size: 10000)
- * | integer | feedback_score | Feedback score gained through this comment (between 1 &amp; 3)
- * | date | created_at | Creation time
- * | date | modified_at | Last modification time
+ * | integer | feedback_score | Feedback score gained through this comment (between 1 &amp; 3, not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
  */
 module.exports.Comment = bookshelf.model('Comment', {
   tableName: 'comment',
@@ -549,13 +655,13 @@ module.exports.Comment = bookshelf.model('Comment', {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 12:01:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

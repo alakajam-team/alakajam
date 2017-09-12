@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: services/security-service</title>
+    <title>JSDoc: Module: services/event-rating-service</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: services/security-service</h1>
+    <h1 class="page-title">Module: services/event-rating-service</h1>
 
     
 
@@ -38,7 +38,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>Security service. Helps with checking permissions.</p></div>
+            <div class="description"><p>Service for managing games ratings &amp; rankings.</p></div>
         
 
         
@@ -87,7 +87,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line3">line 3</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -137,215 +137,14 @@
 
     
 
-    <h4 class="name" id="~canUserManage"><span class="type-signature">(inner) </span>canUserManage<span class="signature">((optional), (optional), options)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="~canVoteOnEntry"><span class="type-signature">(inner) </span>canVoteOnEntry<span class="signature">(user, entry)</span><span class="type-signature"> &rarr; {void}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Checks if a user can manage the given model. Always returns false if no model is given.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>(optional)</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">User</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>user</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>(optional)</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Entry</span>
-|
-
-<span class="param-type">Post</span>
-|
-
-<span class="param-type">Comment</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>model</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>(optional) allowMods allowAdmins</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line50">line 50</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~canUserRead"><span class="type-signature">(inner) </span>canUserRead<span class="signature">(user, model, options)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Checks if a user can read the given model</p>
+    <p>Checks whether a user can vote on an entry</p>
 </div>
 
 
@@ -397,26 +196,20 @@
 
             
 
-            <td class="description last"><p>(optional)</p></td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>model</code></td>
+                <td class="name"><code>entry</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">Entry</span>
-|
-
-<span class="param-type">Post</span>
-|
-
-<span class="param-type">Comment</span>
 
 
             
@@ -427,29 +220,6 @@
             
 
             <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>(optional) allowMods allowAdmins</p></td>
         </tr>
 
     
@@ -490,7 +260,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line28">line 28</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line31">line 31</a>
     </li></ul></dd>
     
 
@@ -524,7 +294,7 @@
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">void</span>
 
 
     </dd>
@@ -539,14 +309,182 @@
 
     
 
-    <h4 class="name" id="~canUserWrite"><span class="type-signature">(inner) </span>canUserWrite<span class="signature">(user, model, options)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="~findEntryRankings"><span class="type-signature">(inner) </span>findEntryRankings<span class="signature">(event, categoryIndex)</span><span class="type-signature"> &rarr; {Collection(Entry)}</span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>categoryIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line112">line 112</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Collection(Entry)</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~findEntryVote"><span class="type-signature">(inner) </span>findEntryVote<span class="signature">(user, entry)</span><span class="type-signature"> &rarr; {void}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Checks if a user can write in the given model</p>
+    <p>Finds the votes an user cast on an entry</p>
 </div>
 
 
@@ -598,26 +536,192 @@
 
             
 
-            <td class="description last"><p>(optional)</p></td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>model</code></td>
+                <td class="name"><code>entry</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">Entry</span>
-|
 
-<span class="param-type">Post</span>
-|
 
-<span class="param-type">Comment</span>
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line46">line 46</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~findVoteHistory"><span class="type-signature">(inner) </span>findVoteHistory<span class="signature">(user, event, options)</span><span class="type-signature"> &rarr; {void}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Finds the votes a user cast during an event (max: 50)</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">User</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
 
 
             
@@ -650,7 +754,7 @@
 
             
 
-            <td class="description last"><p>(optional) allowMods allowAdmins</p></td>
+            <td class="description last"><p>allowed: pageSize withRelated</p></td>
         </tr>
 
     
@@ -691,7 +795,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line39">line 39</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -725,7 +829,7 @@
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">void</span>
 
 
     </dd>
@@ -740,11 +844,15 @@
 
     
 
-    <h4 class="name" id="~getPermissionsEqualOrAbove"><span class="type-signature">(inner) </span>getPermissionsEqualOrAbove<span class="signature">(permission)</span><span class="type-signature"> &rarr; {array(string)}</span></h4>
+    <h4 class="name" id="~refreshEntryRatings"><span class="type-signature">(inner) </span>refreshEntryRatings<span class="signature">(entry)</span><span class="type-signature"> &rarr; {void}</span></h4>
 
     
 
 
+
+<div class="description">
+    <p>Refreshes the average ratings for a given entry</p>
+</div>
 
 
 
@@ -779,13 +887,13 @@
 
         <tr>
             
-                <td class="name"><code>permission</code></td>
+                <td class="name"><code>entry</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Entry</span>
 
 
             
@@ -836,7 +944,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line110">line 110</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line129">line 129</a>
     </li></ul></dd>
     
 
@@ -870,7 +978,7 @@
     </dt>
     <dd>
         
-<span class="param-type">array(string)</span>
+<span class="param-type">void</span>
 
 
     </dd>
@@ -885,156 +993,15 @@
 
     
 
-    <h4 class="name" id="~isAdmin"><span class="type-signature">(inner) </span>isAdmin<span class="signature">(user)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="~saveEntryVote"><span class="type-signature">(inner) </span>saveEntryVote<span class="signature">(user, entry, voteData)</span><span class="type-signature"> &rarr; {void}</span></h4>
 
     
 
 
 
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>user</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">User</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line102">line 102</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~isMod"><span class="type-signature">(inner) </span>isMod<span class="signature">(user)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-
-    
-
-
+<div class="description">
+    <p>Saves the votes on an entry</p>
+</div>
 
 
 
@@ -1089,6 +1056,52 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>entry</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Entry</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>voteData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array(number)</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -1126,7 +1139,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line94">line 94</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line60">line 60</a>
     </li></ul></dd>
     
 
@@ -1160,7 +1173,7 @@
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">void</span>
 
 
     </dd>

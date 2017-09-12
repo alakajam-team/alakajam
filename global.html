@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: services/security-service</title>
+    <title>JSDoc: Global</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: services/security-service</h1>
+    <h1 class="page-title">Global</h1>
 
     
 
@@ -28,8 +28,7 @@
 
 <header>
     
-        
-            
+        <h2></h2>
         
     
 </header>
@@ -38,24 +37,8 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>Security service. Helps with checking permissions.</p></div>
-        
 
         
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <dl class="details">
@@ -85,11 +68,6 @@
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
 
     
 
@@ -97,20 +75,6 @@
 
     
 </dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         
@@ -137,14 +101,14 @@
 
     
 
-    <h4 class="name" id="~canUserManage"><span class="type-signature">(inner) </span>canUserManage<span class="signature">((optional), (optional), options)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="countEntriesByPlatform"><span class="type-signature"></span>countEntriesByPlatform<span class="signature">(platform)</span><span class="type-signature"> &rarr; {number}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Checks if a user can manage the given model. Always returns false if no model is given.</p>
+    <p>Counts the number of entries using a given platform</p>
 </div>
 
 
@@ -180,243 +144,13 @@
 
         <tr>
             
-                <td class="name"><code>(optional)</code></td>
+                <td class="name"><code>platform</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">User</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>user</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>(optional)</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Entry</span>
-|
-
-<span class="param-type">Post</span>
-|
-
-<span class="param-type">Comment</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>model</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>(optional) allowMods allowAdmins</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line50">line 50</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~canUserRead"><span class="type-signature">(inner) </span>canUserRead<span class="signature">(user, model, options)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Checks if a user can read the given model</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>user</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">User</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>(optional)</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>model</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Entry</span>
-|
-
-<span class="param-type">Post</span>
-|
-
-<span class="param-type">Comment</span>
+<span class="param-type">Platform</span>
 
 
             
@@ -430,29 +164,6 @@
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>(optional) allowMods allowAdmins</p></td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -490,7 +201,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line28">line 28</a>
+        <a href="services_platform-service.js.html">services/platform-service.js</a>, <a href="services_platform-service.js.html#line74">line 74</a>
     </li></ul></dd>
     
 
@@ -524,7 +235,7 @@
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">number</span>
 
 
     </dd>
@@ -539,14 +250,14 @@
 
     
 
-    <h4 class="name" id="~canUserWrite"><span class="type-signature">(inner) </span>canUserWrite<span class="signature">(user, model, options)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="createPlatform"><span class="type-signature"></span>createPlatform<span class="signature">(name)</span><span class="type-signature"> &rarr; {Platform}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Checks if a user can write in the given model</p>
+    <p>Creates a platform</p>
 </div>
 
 
@@ -582,204 +293,7 @@
 
         <tr>
             
-                <td class="name"><code>user</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">User</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>(optional)</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>model</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Entry</span>
-|
-
-<span class="param-type">Post</span>
-|
-
-<span class="param-type">Comment</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>(optional) allowMods allowAdmins</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line39">line 39</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~getPermissionsEqualOrAbove"><span class="type-signature">(inner) </span>getPermissionsEqualOrAbove<span class="signature">(permission)</span><span class="type-signature"> &rarr; {array(string)}</span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>permission</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
@@ -836,7 +350,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line110">line 110</a>
+        <a href="services_platform-service.js.html">services/platform-service.js</a>, <a href="services_platform-service.js.html#line86">line 86</a>
     </li></ul></dd>
     
 
@@ -870,7 +384,7 @@
     </dt>
     <dd>
         
-<span class="param-type">array(string)</span>
+<span class="param-type">Platform</span>
 
 
     </dd>
@@ -885,11 +399,201 @@
 
     
 
-    <h4 class="name" id="~isAdmin"><span class="type-signature">(inner) </span>isAdmin<span class="signature">(user)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="fetchAll"><span class="type-signature"></span>fetchAll<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
+
+<div class="description">
+    <p>Fetch all platform instances.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_platform-service.js.html">services/platform-service.js</a>, <a href="services_platform-service.js.html#line58">line 58</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="fetchAllNames"><span class="type-signature"></span>fetchAllNames<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;Array.&lt;string>>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Load all platform names.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_platform-service.js.html">services/platform-service.js</a>, <a href="services_platform-service.js.html#line51">line 51</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>a promise which resolves with the names.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Array.&lt;string>></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="fetchById"><span class="type-signature"></span>fetchById<span class="signature">(id)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Fetch platform by ID</p>
+</div>
 
 
 
@@ -924,13 +628,13 @@
 
         <tr>
             
-                <td class="name"><code>user</code></td>
+                <td class="name"><code>id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">User</span>
+<span class="param-type">number</span>
 
 
             
@@ -981,7 +685,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line102">line 102</a>
+        <a href="services_platform-service.js.html">services/platform-service.js</a>, <a href="services_platform-service.js.html#line33">line 33</a>
     </li></ul></dd>
     
 
@@ -1004,24 +708,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -1030,11 +716,15 @@
 
     
 
-    <h4 class="name" id="~isMod"><span class="type-signature">(inner) </span>isMod<span class="signature">(user)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="fetchMultipleNamed"><span class="type-signature"></span>fetchMultipleNamed<span class="signature">(names)</span><span class="type-signature"></span></h4>
 
     
 
 
+
+<div class="description">
+    <p>Fetch platforms by name (case-insensitive except in SQLite).</p>
+</div>
 
 
 
@@ -1069,13 +759,13 @@
 
         <tr>
             
-                <td class="name"><code>user</code></td>
+                <td class="name"><code>names</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">User</span>
+<span class="param-type">Array.&lt;string></span>
 
 
             
@@ -1085,7 +775,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>the platform names to fetch by.</p></td>
         </tr>
 
     
@@ -1126,7 +816,138 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_security-service.js.html">services/security-service.js</a>, <a href="services_security-service.js.html#line94">line 94</a>
+        <a href="services_platform-service.js.html">services/platform-service.js</a>, <a href="services_platform-service.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="searchPlatforms"><span class="type-signature"></span>searchPlatforms<span class="signature">(nameFragment)</span><span class="type-signature"> &rarr; {Bookshelf.Collection}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Search for a platform by name.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>nameFragment</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a fragment of the name.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_platform-service.js.html">services/platform-service.js</a>, <a href="services_platform-service.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -1152,6 +973,10 @@
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    <p>platforms matching the search.</p>
+</div>
+
 
 
 <dl>
@@ -1160,7 +985,183 @@
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">Bookshelf.Collection</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setEntryPlatforms"><span class="type-signature"></span>setEntryPlatforms<span class="signature">(entry, platforms)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Set the platforms of an entry.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>entry</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">models.Entry</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the entry instance.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>platforms</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;models.Platform></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the platforms to set.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_platform-service.js.html">services/platform-service.js</a>, <a href="services_platform-service.js.html#line97">line 97</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>a promise which resolves when complete.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
 
 
     </dd>

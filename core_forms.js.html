@@ -58,6 +58,7 @@ module.exports = {
   isUsername,
   isId,
   isInt,
+  isFloat,
   isSlug,
   isIn,
   isLengthValid,
@@ -68,14 +69,34 @@ module.exports = {
   markdownToText
 }
 
+const MAX_POSTGRESQL_INTEGER = 2147483647
+
 // Libs init
 
 const showdownConverter = new showdown.Converter({
   tables: true
 })
 const customXss = new xss.FilterXSS({
-  whiteList: Object.assign(constants.ALLOWED_POST_ATTRIBUTES, xss.whiteList)
+  whiteList: Object.assign({}, xss.whiteList, constants.ALLOWED_POST_ATTRIBUTES)
 })
+const sanitizeHtmlOptions = {
+  allowedTags: constants.ALLOWED_POST_TAGS,
+  allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
+  allowedClasses: {}, // see below
+  exclusiveFilter: function (frame) {
+    if (frame.tag === 'iframe') {
+      let srcUrl = url.parse(frame.attribs.src)
+      return constants.ALLOWED_IFRAME_HOSTS.indexOf(srcUrl.host) === -1
+    } else {
+      return false
+    }
+  }
+}
+for (let allowedTag in constants.ALLOWED_POST_ATTRIBUTES) {
+  if (constants.ALLOWED_POST_ATTRIBUTES[allowedTag].includes('class')) {
+    sanitizeHtmlOptions.allowedClasses[allowedTag] = constants.ALLOWED_POST_CLASSES
+  }
+}
 
 /**
  * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
@@ -96,18 +117,7 @@ function sanitizeString (string, maxLength = 255) {
  * @return {string}
  */
 function sanitizeMarkdown (markdown, maxLength = 10000) {
-  return sanitizeHtml(markdown, {
-    allowedTags: constants.ALLOWED_POST_TAGS,
-    allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
-    exclusiveFilter: function (frame) {
-      if (frame.tag === 'iframe') {
-        let srcUrl = url.parse(frame.attribs.src)
-        return constants.ALLOWED_IFRAME_HOSTS.indexOf(srcUrl.host) === -1
-      } else {
-        return false
-      }
-    }
-  })
+  return sanitizeHtml(markdown, sanitizeHtmlOptions)
     .replace(/&amp;gt;/g, '>') // ">"s are used in quote blocks
     .slice(0, maxLength)
 }
@@ -152,7 +162,8 @@ function isUsername (string) {
  * @return {Boolean}
  */
 function isId (value) {
-  return value &amp;&amp; ((typeof value === 'number' &amp;&amp; value % 1 === 0) || validator.isInt(value, { min: 1 }))
+  return value &amp;&amp; ((typeof value === 'number' &amp;&amp; value % 1 === 0 &amp;&amp; value > 0 &amp;&amp; value &lt; MAX_POSTGRESQL_INTEGER) ||
+      validator.isInt(value, { min: 1, max: MAX_POSTGRESQL_INTEGER }))
 }
 
 /**
@@ -181,6 +192,15 @@ function isIn (string, values) {
  */
 function isInt (string) {
   return string &amp;&amp; validator.isInt(string)
+}
+
+/**
+ * Checks whether the string is in a float
+ * @param  {string} string
+ * @return {Boolean}
+ */
+function isFloat (string) {
+  return string &amp;&amp; validator.isFloat(string)
 }
 
 /**
@@ -255,13 +275,13 @@ function markdownToText (markdown) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 12:01:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

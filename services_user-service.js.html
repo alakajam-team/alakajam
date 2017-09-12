@@ -37,13 +37,15 @@
 const crypto = require('crypto')
 const randomKey = require('random-key')
 const config = require('../config')
+const constants = require('../core/constants')
 const forms = require('../core/forms')
 const models = require('../core/models')
 
 module.exports = {
-  findAll,
+  findUsers,
   findById,
   findByName,
+  searchByName,
 
   register,
   authenticate,
@@ -57,11 +59,30 @@ const USERNAME_MIN_LENGTH = 3
 const PASSWORD_MIN_LENGTH = 6
 
 /**
- * Fetches all users
+ * Fetches users
  * @returns {Collection(User)}
  */
-async function findAll () {
-  return models.User.fetchAll()
+async function findUsers (options = {}) {
+  let query = models.User.forge()
+  if (options.search) {
+    query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', '%' + options.search + '%')
+  }
+  if (options.eventId) {
+    query = query.query(function (qb) {
+      qb.distinct()
+        .leftJoin('user_role', 'user_role.user_id', 'user.id')
+        .where('user_role.event_id', options.eventId)
+    })
+  }
+
+  if (options.count) {
+    return query.count(options)
+  } else if (options.page) {
+    return query.orderBy('created_at', 'DESC')
+      .fetchPage(options)
+  } else {
+    return query.fetchAll(options)
+  }
 }
 
 /**
@@ -85,6 +106,22 @@ async function findByName (name) {
   } else {
     return models.User.where('name', 'LIKE', name).fetch({ withRelated: 'details' })
   }
+}
+
+/**
+ * Search users by name
+ * @param {string} fragment a fragment of the user name.
+ * @param {string|Object|mixed[]} [options.related] any related data to fetch.
+ * @param {boolean} [options.caseSensitive=false] use case-sensitive search.
+ * @returns {Bookshelf.Collection} the users with names matching the query.
+ *
+ * Note: all searches will be case-sensitive if developing with SQLite.
+ */
+async function searchByName (fragment, options = {}) {
+  const comparator = (options.caseSensitive || config.DB_TYPE !== 'postgresql') ? 'LIKE' : constants.DB_ILIKE
+  return models.User.where('name', comparator, `%${fragment}%`).fetchAll({
+    withRelated: options.related
+  })
 }
 
 /**
@@ -210,13 +247,13 @@ async function refreshUserReferences (user) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_invite-service.html">services/invite-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Aug 18 2017 12:01:54 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>
