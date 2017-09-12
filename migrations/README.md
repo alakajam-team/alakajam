@@ -34,5 +34,5 @@ It will be run automatically the next time the server is started.
 
 ## Tips
 
-* Make sure the `browser-refresh` is **stopped** when working on migrations, otherwise it might run them sooner than you wanted!
+* Make sure  `browser-refresh` is **stopped** when working on migrations, otherwise it might run them sooner than you wanted!
 * If an update must be undone, you can rollback the database state with `knex migrate:rollback` (assuming you installed it: `npm i -g knex`)
