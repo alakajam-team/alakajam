@@ -13,6 +13,12 @@
   <div class="row">
     <div class="col-sm-4 col-md-3">
        {{ gamesSearchMacros.searchForm(context()) }}
+       
+       <div class="hidden-xs">
+         <h3>Adding games</h3>
+         <p>Users can submit entries made during any game jam. You can add your own <a href="{{ buildUrl(user, 'user', 'entries') if user else '/login' }}">from your Dashboard</a>.
+        </div>
+       </p>
     </div>
     <div class="col-sm-8 col-md-9">
       <h1>
