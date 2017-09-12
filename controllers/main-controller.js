@@ -114,10 +114,7 @@ async function index (req, res) {
     .then(async function (postsCollection) {
       await postsCollection.load(['entry', 'event', 'entry.userRoles'])
       context.posts = postsCollection.models
-      context.pageCount = await postService.findPosts({
-        specialPostType: null,
-        pageCount: true
-      })
+      context.pageCount = postsCollection.pagination.pageCount
     })
 
   // Find featured post
@@ -208,8 +205,7 @@ async function games (req, res) {
   // TODO Parallelize tasks
   let platformCollection = await platformService.fetchAll()
   let entriesCollection = await eventService.findGames(searchOptions)
-  searchOptions.count = true
-  let entryCount = await eventService.findGames(searchOptions)
+
   let eventsCollection = await eventService.findEvents()
   let searchedEvent = null
   if (searchOptions.eventId) {
@@ -220,9 +216,9 @@ async function games (req, res) {
     searchOptions,
     searchedEvent,
     currentPage,
-    pageCount: Math.ceil(entryCount / PAGE_SIZE),
+    entryCount: entriesCollection.pagination.rowCount,
+    pageCount: entriesCollection.pagination.pageCount,
     entries: entriesCollection.models,
-    entryCount,
     events: eventsCollection.models,
     platforms: platformCollection.models
   })
@@ -254,8 +250,6 @@ async function people (req, res) {
 
   // Fetch info
   let usersCollection = await userService.findUsers(searchOptions)
-  searchOptions.count = true
-  let userCount = await userService.findUsers(searchOptions)
   let eventsCollection = await eventService.findEvents()
   let searchedEvent = null
   if (searchOptions.eventId) {
@@ -266,8 +260,8 @@ async function people (req, res) {
     searchOptions,
     searchedEvent,
     users: usersCollection.sortBy((user) => -user.get('id')),
-    userCount,
-    pageCount: Math.ceil(userCount / PAGE_SIZE),
+    userCount: usersCollection.pagination.rowCount,
+    pageCount: usersCollection.pagination.pageCount,
     currentPage,
     events: eventsCollection.models
   })

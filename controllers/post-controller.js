@@ -72,11 +72,6 @@ async function posts (req, res) {
     page: currentPage
   })
   await posts.load(['event', 'entry'])
-  let pageCount = await postService.findPosts({
-    specialPostType,
-    eventId,
-    pageCount: true
-  })
 
   // Determine title
   let title = 'Posts'
@@ -98,7 +93,7 @@ async function posts (req, res) {
     posts: posts.models,
     title,
     currentPage,
-    pageCount,
+    pageCount: posts.pagination.pageCount,
     paginationBaseUrl
   })
 }

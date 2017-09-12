@@ -68,30 +68,15 @@ async function findPosts (options = {}) {
           .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
     }
     if (!options.allowDrafts) qb = qb.where('published_at', '<=', new Date())
-    if (options.pageCount) {
-      qb = qb.count('*')
-        .groupBy('id', 'published_at') // PostgreSQL compat.
-    }
     return qb
   })
   postCollection.orderBy('published_at', 'DESC')
 
-  if (options.pageCount) {
-    return postCollection.fetch()
-        .then(function (results) {
-          if (results && results.get('count')) {
-            return Math.max(1, results.get('count') / 10)
-          } else {
-            return 0
-          }
-        })
-  } else {
-    return postCollection.fetchPage({
-      pageSize: options.count ? undefined : 10,
-      page: options.page,
-      withRelated: ['author', 'userRoles']
-    })
-  }
+  return postCollection.fetchPage({
+    pageSize: 10,
+    page: options.page,
+    withRelated: ['author', 'userRoles']
+  })
 }
 
 async function findPostById (postId) {

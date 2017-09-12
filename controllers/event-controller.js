@@ -115,11 +115,7 @@ async function viewEventPosts (req, res) {
 
   res.render('event/view-event-posts', {
     posts: postsCollection.models,
-    pageCount: await postService.findPosts({
-      eventId: res.locals.event.get('id'),
-      specialPostType: null,
-      pageCount: true
-    })
+    pageCount: postsCollection.pagination.pageCount
   })
 }
 
@@ -282,8 +278,6 @@ async function viewEventGames (req, res) {
 
   // Search entries
   let entriesCollection = await eventService.findGames(searchOptions)
-  searchOptions.count = true
-  let entryCount = await eventService.findGames(searchOptions)
   let platformCollection = await platformService.fetchAll()
 
   // Fetch vote history
@@ -298,9 +292,9 @@ async function viewEventGames (req, res) {
     entries: entriesCollection.models,
     voteHistory,
     searchOptions,
-    entryCount,
+    entryCount: entriesCollection.pagination.rowCount,
     currentPage,
-    pageCount: Math.ceil(entryCount / PAGE_SIZE),
+    pageCount: entriesCollection.pagination.pageCount,
     platforms: platformCollection.models
   })
 }

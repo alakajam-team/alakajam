@@ -47,9 +47,7 @@ async function findUsers (options = {}) {
     })
   }
 
-  if (options.count) {
-    return query.count(options)
-  } else if (options.page) {
+  if (options.page) {
     return query.orderBy('created_at', 'DESC')
       .fetchPage(options)
   } else {
