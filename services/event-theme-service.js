@@ -189,6 +189,7 @@ async function findThemesToVoteOn (user, event) {
     .where('theme.user_id', '<>', user.get('id'))
   } else {
     query = query.where('event_id', event.get('id'))
+      .where('status', '<>', constants.THEME_STATUS_BANNED)
   }
 
   // Grab the 20 oldest theme ideas, then just keep the 10 with the least notes.
