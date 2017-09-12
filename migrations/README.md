@@ -2,7 +2,7 @@
 
 ## Howto
 
-Every time you need to change the database model, add an new file using the format `<incremental ID>_<feature>.js` using the same structure:
+Every time you need to change the database model, add a new file using the `<incremental ID>_<feature>.js` format, using the same structure:
 
 ```
 /**
@@ -30,7 +30,7 @@ exports.down = async function (knex, Promise) {
 }
 ```
 
-It will be run the next time the server is started.
+It will be run automatically the next time the server is started.
 
 ## Tips
 
