@@ -214,8 +214,9 @@ async function viewEventThemes (req, res) {
           if (await eventThemeService.isThemeVotingAllowed(event)) {
             let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, event)
             context.sampleThemes = sampleThemesCollection.models
+            context.votingAllowed = true
           } else {
-            context.ideasRequired = await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10')
+            context.ideasRequired = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10'))
             context.votingAllowed = false
           }
         } else if (event.get('status_theme') === 'shortlist') {
