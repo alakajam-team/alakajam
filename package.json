@@ -8,7 +8,7 @@
     "debug": "node-debug server.js",
     "watch": "browser-refresh server.js",
     "migrate": "knex migrate:latest",
-    "docs": "rm -r docs && jsdoc -c jsdoc.json -d docs -R README.md -r core services",
+    "docs": "rm -rf docs && jsdoc -c jsdoc.json -d docs -R README.md -r core services",
     "test": "mocha -t 10000 tests/",
     "lint": "standard controllers/*.js services/*.js core/*.js migrations/*.js server.js; if [ $? != 0 ]; then echo 'Linting errors were found'; else echo 'Code is lint free! Good job.'; fi",
     "fixlint": "standard --fix controllers/*.js services/*.js core/*.js migrations/*.js server.js"

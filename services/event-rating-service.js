@@ -54,7 +54,7 @@ async function findEntryVote (user, entry) {
  * Saves the votes on an entry
  * @param  {User} user
  * @param  {Entry} entry
- * @param  {array[number]} voteData
+ * @param  {array(number)} voteData
  * @return {void}
  */
 async function saveEntryVote (user, entry, voteData) {
