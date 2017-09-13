@@ -2,6 +2,11 @@
 <div class="entry-thumb">
   {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
   <a href="{{ buildUrl(entry, 'entry') }}">
+    {% if entry.get('description') %}
+    <div class="entry-thumb__description-container">
+      <div class="entry-thumb__description">{{ entry.get('description') }}</div>
+    </div>
+    {% endif %}
     <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
       <div class="entry-thumb__picture-gradient"></div>
     </div>
@@ -108,15 +113,6 @@
         </div>
       </div>
     </div>
-    <!--
-    {% if options.withEntries %}
-    <div class="row">
-      {% for entry in event.related('entries').models %}
-        {{ entrySmallThumb(entry, options.entryCols) }}
-      {% endfor %}
-    </div>
-    {% endif %}
-    -->
   </div>
 {% endmacro %}
 

@@ -93,6 +93,10 @@
           <label for="title">Game title</label>
           <input type="text" id="js-title" class="form-control" name="title" value="{{ entry.get('title') }}" required="required" />
         </div>
+        <div class="form-group">
+          <label for="title">Short description</label>
+          <input type="text" class="form-control" name="description" value="{{ entry.get('description') }}" />
+        </div>
         
         {% if external %}
         <div class="form-group">
@@ -103,19 +107,27 @@
 
         {% set isEntryOwner = not entry.get('id') or canUserManage(user, entry) %}
 
-        <label for="division">Division {{ formMacros.tooltip('Only the entry owner can change this setting.') if not isEntryOwner }}</label>
+        <label for="division">Division {{ formMacros.tooltip(
+          'Check the Docs section for the detailed rules on each division. '
+          + ('Only the entry owner can change this setting.' if not isEntryOwner))  }}</label>
         <div>
           {% if isEntryOwner or isMod(user) %}
-            <div class="form-group btn-group toggle team-toggle" data-toggle="buttons">
-              <label class="btn btn-default active">
+            <div id="js-entry-divisions" class="entry__divisions toggle" data-toggle="buttons">
+              <label class="btn entry-division active">
+                <div class="fa fa-user"></div>
                 <input type="radio" name="division" value="solo" autocomplete="off" checked>Solo
+                <div class="entry-division__legend hidden-xs hidden-sm">48 hours<br />Everything from scratch</div>
               </label>
-              <label class="btn btn-default">
+              <label class="btn entry-division">
+                <div class="fa fa-users"></div>
                 <input type="radio" name="division" value="team" autocomplete="off">Team
+                <div class="entry-division__legend hidden-xs hidden-sm">48 hours<br />Everything from scratch</div>
               </label>
               {% if not external %}
-              <label class="btn btn-default">
+              <label class="btn entry-division">
+                <div class="fa fa-hand-peace-o"></div>
                 <input type="radio" name="division" value="unranked" autocomplete="off">Unranked
+                <div class="entry-division__legend hidden-xs hidden-sm">72 hours<br />No rankings, just feedback</div>
               </label>
               {% endif %}
             </div>
@@ -138,10 +150,9 @@
             </div>
           </div>
         </div>
-        <div class="form-group">
-          <label for="title">Short description</label>
-          <textarea class="form-control" name="description">{{ entry.get('description') }}</textarea>
-        </div>
+
+        <div class="horizontal-bar" style="margin-top: 40px">Details</div>
+
         <div class="form-group">
           <label for="title">Links</label>
           <div class="js-links"></div>
@@ -151,7 +162,7 @@
           <input type="hidden" name="platforms" class="bigdro" id="set-platforms" multiple="multiple" />
         </div>
         <div class="form-group">
-          <label for="title">Details</label>
+          <label for="title">Detailed description</label>
           <div class="user-contents user-contents__editor">
             {{ formMacros.editor('body', entry.related('details').get('body')) }}
           </div>
@@ -314,7 +325,7 @@ $(function() {
 // Team toggle behaviour
 
 var initialDivision = "{{ entry.get('division') }}" || "solo"
-$('.team-toggle label').each(function(i, el) {
+$('#js-entry-divisions label').each(function(i, el) {
   el = $(el)
   var input = el.find('input')
   var active = input.val() === initialDivision

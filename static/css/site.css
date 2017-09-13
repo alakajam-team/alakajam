@@ -1056,6 +1056,30 @@ input.date-picker {
     transition: 0.1s;
   }
 
+  &__description-container {
+    position: relative;
+    height: 150px;
+    width: 100%;
+    float: left;
+  }
+  &__description {
+    width: 100%;
+    max-height: 150px;
+    position: absolute;
+    bottom: 0;
+    padding: 10px;
+    vertical-align: bottom;
+    color: transparent;
+    background-color: transparent;
+    overflow: hidden;
+    transition: 0.1s;
+  }
+  &__description-container:hover &__description {
+    color: white;
+    background-color: var(--alt);
+    transition: 0.3s;
+  }
+
   &__picture-gradient {
     height: 100%;
     width: 100%;
@@ -1226,6 +1250,42 @@ input.date-picker {
     font-size: 1.2rem;
     margin-right: 15px;
     margin-bottom: 5px;
+  }
+
+  &__divisions {
+    height: auto;
+  }
+}
+
+.entry-division {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background-color: white;
+  border: 1px solid var(--borders);
+  padding: 10px 0;
+  margin-bottom: 10px;
+  color: var(--text);
+  width: 176px;
+
+  & .fa {
+    display: block;
+    font-size: 2rem;
+  }
+
+  &__legend {
+    font-size: 0.85rem;
+    font-weight: normal;
+    color: var(--text-light);
+  }
+  &.active &__legend {
+    color: white;
+  }
+
+}
+@media(max-width: 991px) {
+  .entry-division {
+    width: 130px;
   }
 }
 
