@@ -315,7 +315,9 @@ async function doRegister (req, res) {
 async function loginForm (req, res) {
   res.locals.pageTitle = 'Login'
 
-  res.render('login')
+  res.render('login', {
+    redirect: forms.sanitizeString(req.query.redirect)
+  })
 }
 
 /**
@@ -324,8 +326,10 @@ async function loginForm (req, res) {
 async function doLogin (req, res) {
   res.locals.pageTitle = 'Login'
 
-  let context = {}
   let {fields} = await req.parseForm()
+  let context = {
+    redirect: forms.sanitizeString(fields.redirect)
+  }
   if (fields.name && fields.password) {
     let user = await userService.authenticate(fields.name, fields.password)
     if (user) {
@@ -342,7 +346,11 @@ async function doLogin (req, res) {
     context.errorMessage = 'Username or password missing'
   }
 
-  res.render('login', context)
+  if (!context.errorMessage && context.redirect) {
+    res.redirect(context.redirect)
+  } else {
+    res.render('login', context)
+  }
 }
 
 /**

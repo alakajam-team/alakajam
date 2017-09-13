@@ -59,10 +59,15 @@ function buildUrl (model, type, page = null, options = {}) {
         if (options.dashboardAdminMode) {
           page += '?user=' + model.get('name')
         }
-        return '/dashboard/' + page
+        let fullPath = '/dashboard/' + page
+        if (model) {
+          return fullPath
+        } else {
+          return '/login?redirect=' + fullPath
+        }
       } else {
-        let userId = model.get('name') || model.get('user_name')
-        return '/user/' + userId + pagePath
+        let userName = model.get('name') || model.get('user_name')
+        return '/user/' + userName + pagePath
       }
     } else if (type === 'post') {
       // Post model

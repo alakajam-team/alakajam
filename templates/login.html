@@ -17,7 +17,7 @@
           <h1>Login</h1>
 
           {% if not user %}
-          <form method="post" action="/login">
+          <form method="post" action="{{ path }}">
             <div class="form-group">
               <label for="username">Username</label>
               <input type="text" class="form-control" id="name" name="name" required="required" />
@@ -37,6 +37,7 @@
               <a href="/register" class="btn btn-sm btn-default">I don't have an account</a>
               <a href="/article/password-recovery" class="btn btn-sm btn-default">I forgot my password</a>
             </div>
+            <input type="hidden" name="redirect" value="{{ redirect }}" />
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
           {% else %}
