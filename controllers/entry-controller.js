@@ -107,17 +107,10 @@ async function editEntry (req, res) {
       res.errorPage(403, 'Submissions are closed for this event')
       return
     } else {
-      res.render('entry/edit-entry', {
-        entry: new models.Entry({
-          event_id: res.locals.event.get('id'),
-          event_name: res.locals.event.get('name')
-        }),
-        allPlatforms: await platformService.fetchAllNames(),
-        members: [{  // Ensure the owner is supplied as a (locked) member.
-          id: res.locals.user.get('name'),
-          text: res.locals.user.get('title'),
-          locked: true
-        }]
+      entry = new models.Entry({
+        event_id: res.locals.event.get('id'),
+        event_name: res.locals.event.get('name'),
+        division: 'solo'
       })
     }
   }
