@@ -78,7 +78,7 @@ module.exports = {
   ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img', 'p'],
   ALLOWED_POST_ATTRIBUTES: {
     'p': ['class'],
-    'a': ['href', 'class'],
+    'a': ['href', 'class', 'name'],
     'iframe': ['src', 'width', 'height', 'class', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
     'img': ['src', 'width', 'height', 'class']
   },
