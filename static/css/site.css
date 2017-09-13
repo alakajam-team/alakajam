@@ -179,7 +179,7 @@ a.has-tooltip {
   cursor: pointer;
 }
 
-.radio-label {
+.radio-label, .checkbox-label {
   margin: 0 10px 0 2px;
   font-weight: normal;
 }
