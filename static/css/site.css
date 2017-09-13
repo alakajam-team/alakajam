@@ -184,6 +184,11 @@ a.has-tooltip {
   font-weight: normal;
 }
 
+a[name] {
+  position: absolute;
+  margin-top: -75px;
+}
+
 input.date-picker {
   width: 200px;
 }
