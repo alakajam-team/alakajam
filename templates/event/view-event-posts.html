@@ -15,7 +15,7 @@
         </div>
       {% endfor %}
 
-      {% if posts.models.length > 0 %}
+      {% if posts.length > 0 %}
         {{ formMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
       {% else %}
         <div class="well">
