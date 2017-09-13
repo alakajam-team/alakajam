@@ -2,6 +2,10 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### September 13th
+
+* Make logging in redirect to the previous page
+
 ### September 11th
 
 * Platform management is now distinct from links
