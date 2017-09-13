@@ -184,11 +184,6 @@ a.has-tooltip {
   font-weight: normal;
 }
 
-a[name] {
-  position: absolute;
-  margin-top: -75px;
-}
-
 input.date-picker {
   width: 200px;
 }
@@ -821,7 +816,12 @@ input.date-picker {
     font-weight: normal;
     color: var(--text-light);
   }
-  
+    
+  & a[name] {
+    position: absolute;
+    margin-top: -75px;
+  }
+
   & blockquote {
     padding: 5px 10px;
     font-size: 1rem;
