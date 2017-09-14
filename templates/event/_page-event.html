@@ -32,9 +32,9 @@
     <div class="col-md-5 action-banner">
       <div class="pull-right">
         {% if userPost %}
-        <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">Edit this post</a>
+        <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">Edit</a>
         {% endif %}
-        <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-alt">Create post</a>
+        <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-alt">Create</a>
         <a href="{{ buildUrl(user, 'user', 'posts') }}" class="btn btn-alt">My posts</a>
       </div>
       <div class="action-banner__title">

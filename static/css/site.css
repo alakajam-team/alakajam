@@ -481,12 +481,12 @@ input.date-picker {
 }
 
 .event-header {
-  display: flex;
   box-sizing: border-box;
   width: 100%;
   background-color: white;
   color: var(--alt);
   height: var(--eventbar-height);
+  position: relative;
 
   &__info {
     display: inline-block;
@@ -520,11 +520,45 @@ input.date-picker {
     color: var(--text-light);
     line-height: .8rem;
   }
-
+  
   &__links {
     vertical-align: top;
     display: inline-block;
     line-height: var(--eventbar-height);
+  }
+  @media (max-width: 768px) {
+    &__links {
+      float: right;
+      
+      & .navbar-toggle, & .navbar-toggle:hover, & .navbar-toggle:focus {
+        margin-right: -1px;
+        margin-top: 10px;
+        border-color: var(--alt);
+        
+        & .icon-bar {
+          background-color: var(--alt);
+        }
+      }
+      & .navbar-toggle:hover .icon-bar {
+        background-color: var(--alt-dark);
+      }
+      
+      & .navbar {
+        margin-bottom: 0;
+        position: inherit;
+        text-align: center;
+      
+        & .navbar-collapse {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 50px;
+          background-color: white;
+          border: 0;
+          width: 100%;
+        }
+      }
+    }
   }
 
   &__link {
@@ -558,11 +592,7 @@ input.date-picker {
   }
     
   &__link-label {
-    display: none;
-    
-    @media (min-width: 768px) {
-      display: inline;
-    }
+    color: red;
   }
   
   &__announcement {

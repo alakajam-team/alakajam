@@ -104,9 +104,7 @@
           {% if not options.hideLinks %}
           <div class="row">
             <div class="col-xs-12">
-              <div class="event-table__links">
-                {{ eventLinks(event, options.latestEventAnnouncement, options.path) }}
-              </div>
+              {{ eventLinks(event, options.latestEventAnnouncement, options.path) }}
             </div>
           </div>
           {% endif %}
@@ -148,35 +146,47 @@
 
 
 {% macro eventLinks (event, latestEventAnnouncement, path) %}
-
-{% if latestEventAnnouncement %}
-  <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs hidden-sm event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
-    <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
-    <span class="event-header__announcement-info">
-      Announcement • {{ latestEventAnnouncement.get('created_at') | relativeTime }}
-    </span>
-  </a><!--
-  --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-md hidden-lg event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
-    <span class="glyphicon glyphicon-pushpin"></span>
-  </a>
-{% endif %}
-{{ eventLink(event, null, 'posts', 'Posts', 'globe', path) }}<!--
--->{{ eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) }}<!--
--->{{ eventLink(event, 'status_entry', 'games', 'Games', 'tower', path) }}<!--
--->{{ eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: 'results' }) }}
-
+<nav class="navbar">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-event-{{ event.get('id') }}" aria-expanded="false">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="navbar-event-{{ event.get('id') }}">
+    <div class="nav">
+      {% if latestEventAnnouncement %}
+        <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs hidden-sm event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
+          <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
+          <span class="event-header__announcement-info">
+            Announcement • {{ latestEventAnnouncement.get('created_at') | relativeTime }}
+          </span>
+        </a><!--
+        --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-md hidden-lg event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
+          <span class="glyphicon glyphicon-pushpin"></span>
+        </a>
+      {% endif %}
+      {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
+      {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) -}}
+      {{- eventLink(event, 'status_entry', 'games', 'Games', 'tower', path) -}}
+      {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: 'results' }) -}}
+    </div>
+  </div>
+</div>
 {% endmacro %}
 
-{% macro eventLink (event, statusField, targetPath, label, icon, currentPath, options = {}) %}<!--
-
--->{% if not statusField or event.get(statusField) !== 'disabled' %}<!--
-  -->{% set targetUrl = buildUrl(event, 'event', targetPath)%}<!--
-    --><a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
-           {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and event.get(statusField) != options.requiredValue )}}">
-         <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="event-header__link-label">{{ label }}</span>
-</a>{% endif %}<!--
-
--->{% endmacro %}
+{% macro eventLink (event, statusField, targetPath, label, icon, currentPath, options = {}) %}
+{%- if not statusField or event.get(statusField) !== 'disabled' -%}
+  {%- set targetUrl = buildUrl(event, 'event', targetPath) -%}
+  <a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
+      {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and event.get(statusField) != options.requiredValue )}}">
+    <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="hidden-xs">{{ label }}</span>
+  </a>
+{%- endif -%}
+{% endmacro %}
 
 {% macro entryPlatformIcon(platform, options = {}) %}
   {% set icon = constants.ENTRY_PLATFORM_ICONS[platform] or constants.ENTRY_PLATFORM_DEFAULT_ICON %}
