@@ -529,35 +529,6 @@ input.date-picker {
   @media (max-width: 768px) {
     &__links {
       float: right;
-      
-      & .navbar-toggle, & .navbar-toggle:hover, & .navbar-toggle:focus {
-        margin-right: -1px;
-        margin-top: 10px;
-        border-color: var(--alt);
-        
-        & .icon-bar {
-          background-color: var(--alt);
-        }
-      }
-      & .navbar-toggle:hover .icon-bar {
-        background-color: var(--alt-dark);
-      }
-      
-      & .navbar {
-        margin-bottom: 0;
-        position: inherit;
-        text-align: center;
-      
-        & .navbar-collapse {
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 50px;
-          background-color: white;
-          border: 0;
-          width: 100%;
-        }
-      }
     }
   }
 
@@ -569,6 +540,7 @@ input.date-picker {
     margin: 0;
     height: var(--eventbar-height);
     font-size: 1.2rem;
+    line-height: 60px;
     
     @media (min-width: 768px) {
       font-size: 1rem;
@@ -608,6 +580,40 @@ input.date-picker {
     color: var(--text-light);
   }
 
+}
+
+.event-navbar {
+  position: relative;
+  margin-bottom: 0;
+  position: inherit;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    & .navbar-collapse {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border: 0;
+      width: 100%;
+      
+      &.collapsing, &.in {
+        background-color: white;
+      }
+    }
+  }
+  
+  & .navbar-toggle, & .navbar-toggle:hover, & .navbar-toggle:focus {
+    margin-right: -1px;
+    margin-top: 10px;
+    border-color: var(--alt);
+    
+    & .icon-bar {
+      background-color: var(--alt);
+    }
+  }
+  & .navbar-toggle:hover .icon-bar {
+    background-color: var(--alt-dark);
+  }
 }
 
 .moderation-bar {
@@ -1017,7 +1023,7 @@ input.date-picker {
   &__details {
     @apply --shadow;
     margin-top: -20px;
-    padding: 10px;
+    padding: 10px 10px 0 10px;
     border-radius: 0;
     background-color: white;
     width: 100%;
@@ -1601,6 +1607,10 @@ input.date-picker {
       font-size: 32px;
       margin-left: 3px;
       margin-right: 2px;
+    }
+    
+    &:last-child {
+      margin-bottom: 20px;
     }
   }
 

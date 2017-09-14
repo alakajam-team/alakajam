@@ -104,7 +104,9 @@
           {% if not options.hideLinks %}
           <div class="row">
             <div class="col-xs-12">
-              {{ eventLinks(event, options.latestEventAnnouncement, options.path) }}
+              <div class="event-table__links">
+                {{ eventLinks(event, options.latestEventAnnouncement, options.path) }}
+              </div>
             </div>
           </div>
           {% endif %}
@@ -145,8 +147,9 @@
 {% endmacro %}
 
 
-{% macro eventLinks (event, latestEventAnnouncement, path) %}
-<nav class="navbar">
+{% macro eventLinks (event, latestEventAnnouncement, path, options = {}) %}
+{% if options.collapse %}
+<nav class="event-navbar navbar">
   <div class="navbar-header">
     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-event-{{ event.get('id') }}" aria-expanded="false">
       <span class="sr-only">Toggle navigation</span>
@@ -157,6 +160,8 @@
   </div>
   
   <div class="collapse navbar-collapse" id="navbar-event-{{ event.get('id') }}">
+  {% endif %}
+  
     <div class="nav">
       {% if latestEventAnnouncement %}
         <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs hidden-sm event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
@@ -174,8 +179,11 @@
       {{- eventLink(event, 'status_entry', 'games', 'Games', 'tower', path) -}}
       {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: 'results' }) -}}
     </div>
+    
+  {% if options.collapse %}
   </div>
-</div>
+</nav>
+{% endif %}
 {% endmacro %}
 
 {% macro eventLink (event, statusField, targetPath, label, icon, currentPath, options = {}) %}
