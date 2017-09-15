@@ -576,6 +576,7 @@ input.date-picker {
     padding-top: calc(var(--eventbar-height) / 2 - 1.2rem);
     line-height: 1.0rem;
     margin-right: 20px;
+    text-align: left;
   }
   
   &__announcement-info {

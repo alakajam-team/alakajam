@@ -11,7 +11,7 @@
         {{ postMacros.post(themesPost, user) }}
       </div>
     {% else %}
-      <div class="col-md-4">
+        <div class="col-md-4">
         <div id="js-view-themes">
           <h2>Theme ideas
           </h2>
@@ -92,6 +92,10 @@
       </div>
       
       <div class="col-md-8">
+        {% if infoMessage %}
+          <div class="alert alert-info">{{ infoMessage }}</div>
+        {% endif %}
+
         {% if event.get('status_theme') === 'voting' %}
         <div class="themes__voting">
           <h2>Theme voting</h2>
@@ -147,7 +151,13 @@
             <input type="hidden" name="action" value="shortlist" />
             <input id="js-shortlist-votes" type="hidden" name="shortlist-votes" />
             <div class="well">
-              <p>These are the top 10 suggested ideas! {{ 'Drag the themes to sort them by preference order (best = first).' if user }}</p>
+              <p>
+                {% if randomizedShortlist %}
+                  These are the top 10 submitted ideas, in random order. {{ "Rank them from best (first) to worst (last) by using drag'n'drop." if user }}
+                {% else %}
+                  Here are the top 10 submitted ideas as you ranked them. You can still drag'n'drop them to change the order.
+                {% endif %}
+              </p>
               <p>
                 {% if user %}
                   <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />

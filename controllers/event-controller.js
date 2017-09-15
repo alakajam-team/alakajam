@@ -132,7 +132,8 @@ async function viewEventThemes (req, res) {
     res.errorPage(404)
   } else {
     let context = {
-      maxThemeSuggestions: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, '3'))
+      maxThemeSuggestions: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, '3')),
+      infoMessage: null
     }
 
     if (forms.isId(statusThemes)) {
@@ -170,6 +171,7 @@ async function viewEventThemes (req, res) {
           }
           if (validIds) {
             await eventThemeService.saveShortlistVotes(res.locals.user, event, ids)
+            context.infoMessage = 'Ranking changes saved.'
           }
         }
       }
@@ -201,8 +203,10 @@ async function viewEventThemes (req, res) {
               scoreByTheme[vote.get('theme_id')] = vote.get('score')
             })
             context.shortlist = shortlistCollection.sortBy(theme => -scoreByTheme[theme.get('id')] || 0)
+            context.randomizedShortlist = false
           } else {
             context.shortlist = shortlistCollection.shuffle()
+            context.randomizedShortlist = true
           }
         }
       } else {
@@ -218,6 +222,7 @@ async function viewEventThemes (req, res) {
         } else if (event.get('status_theme') === 'shortlist') {
           let shortlistCollection = await eventThemeService.findShortlist(event)
           context.shortlist = shortlistCollection.shuffle()
+          context.randomizedShortlist = true
         }
       }
 
