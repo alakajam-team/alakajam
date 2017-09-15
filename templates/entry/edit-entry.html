@@ -110,12 +110,12 @@
 
         <label for="division">Division {{ formMacros.tooltip(
           'Check the Docs section for the detailed rules on each division. '
-          + ('Only the entry owner can change this setting.' if not isEntryOwner))  }}</label>
+          + ('Only the entry owner can change this setting.' if not isEntryOwner)) if not external }}</label>
         <div>
           
           <div id="js-entry-divisions" class="entry__divisions toggle" data-toggle="buttons">
-            {{ divisionButton('Solo', '48 hours<br />Everything from scratch', 'user', 'solo', entry.get('division'), canEditDivision) }}
-            {{ divisionButton('Team', '48 hours<br />Everything from scratch', 'users', 'team', entry.get('division'), canEditDivision) }}
+            {{ divisionButton('Solo', '48 hours<br />Everything from scratch' if not external, 'user', 'solo', entry.get('division'), canEditDivision) }}
+            {{ divisionButton('Team', '48 hours<br />Everything from scratch' if not external, 'users', 'team', entry.get('division'), canEditDivision) }}
             {% if not external %}
               {{ divisionButton('Unranked', '72 hours<br />No rankings, just feedback', 'hand-peace-o', 'unranked', entry.get('division'), canEditDivision) }}
             {% endif %}
