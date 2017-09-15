@@ -12,7 +12,7 @@
   --main-light: color(var(--main) lightness(46%));
   --main-lighter: color(var(--main) alpha(25%));
   --main-lightest: color(var(--main) alpha(10%));
-  --main-dark: color(var(--main) lightness(22%));
+  --main-dark: #005770;
   --main-transparent: color(var(--main) alpha(10%));
   
   --alt: #f2536d;
@@ -1299,6 +1299,7 @@ input.date-picker {
 }
 
 .entry-division {
+  display: inline-block;
   text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
@@ -1308,7 +1309,7 @@ input.date-picker {
   margin-bottom: 10px;
   color: var(--text);
   width: 176px;
-
+  
   & .fa {
     display: block;
     font-size: 2rem;
@@ -1323,6 +1324,11 @@ input.date-picker {
     color: white;
   }
 
+}
+.entry__divisions .entry-division.active {
+  background-color: var(--main-dark);
+  border-color: var(--main-dark);
+  color: white;
 }
 @media(max-width: 991px) {
   .entry-division {

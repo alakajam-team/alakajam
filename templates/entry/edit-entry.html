@@ -106,36 +106,21 @@
         {% endif %}
 
         {% set isEntryOwner = not entry.get('id') or canUserManage(user, entry) %}
+        {% set canEditDivision = isEntryOwner or isMod(user) %}
 
         <label for="division">Division {{ formMacros.tooltip(
           'Check the Docs section for the detailed rules on each division. '
           + ('Only the entry owner can change this setting.' if not isEntryOwner))  }}</label>
         <div>
-          {% if isEntryOwner or isMod(user) %}
-            <div id="js-entry-divisions" class="entry__divisions toggle" data-toggle="buttons">
-              <label class="btn entry-division active">
-                <div class="fa fa-user"></div>
-                <input type="radio" name="division" value="solo" autocomplete="off" checked>Solo
-                <div class="entry-division__legend hidden-xs hidden-sm">48 hours<br />Everything from scratch</div>
-              </label>
-              <label class="btn entry-division">
-                <div class="fa fa-users"></div>
-                <input type="radio" name="division" value="team" autocomplete="off">Team
-                <div class="entry-division__legend hidden-xs hidden-sm">48 hours<br />Everything from scratch</div>
-              </label>
-              {% if not external %}
-              <label class="btn entry-division">
-                <div class="fa fa-hand-peace-o"></div>
-                <input type="radio" name="division" value="unranked" autocomplete="off">Unranked
-                <div class="entry-division__legend hidden-xs hidden-sm">72 hours<br />No rankings, just feedback</div>
-              </label>
-              {% endif %}
-            </div>
-          {% else %}
-            <div class="form-group">
-              <button class="btn btn-default" disabled>{{ entry.get('division') | capitalize }}</button> 
-            </div>
-          {% endif %}
+          
+          <div id="js-entry-divisions" class="entry__divisions toggle" data-toggle="buttons">
+            {{ divisionButton('Solo', '48 hours<br />Everything from scratch', 'user', 'solo', entry.get('division'), canEditDivision) }}
+            {{ divisionButton('Team', '48 hours<br />Everything from scratch', 'users', 'team', entry.get('division'), canEditDivision) }}
+            {% if not external %}
+              {{ divisionButton('Unranked', '72 hours<br />No rankings, just feedback', 'hand-peace-o', 'unranked', entry.get('division'), canEditDivision) }}
+            {% endif %}
+          </div>
+          
           <div id="edit-team" class="{{ 'hidden' if entry.get('division') === 'solo' }}">
             <div id="result-box" class="form-group" style="display:none;">
               <h3 id="result-msg"></h3>
@@ -145,8 +130,9 @@
             </div>
 
             <div class="form-group">
-              <label for="members">Team members {{ formMacros.tooltip('Only the entry owner can change this setting. You can leave the team at the bottom of this form.') if not isEntryOwner }}</label>
-              <input type="hidden" name="members" class="bigdrop" id="search-members" multiple="multiple" {{ 'readonly' if not isEntryOwner }} />
+              <label for="members">Team members {{ formMacros.tooltip('You can leave the team at the bottom of this form.') if not isEntryOwner }}</label>
+              <input type="hidden" name="members" class="bigdrop" id="search-members" multiple="multiple" {{ 'readonly' if not isEntryOwner }}
+                title="{{ 'Only the entry owner can change this setting' if not isEntryOwner }}" />
             </div>
           </div>
         </div>
@@ -222,6 +208,23 @@
 
 {% endblock %}
 
+{% macro divisionButton(title, legend, icon, value, currentValue, canEditDivision) %}
+  {% if canEditDivision %}
+    <label class="btn entry-division {{ 'active' if value === currentValue }}">
+      <div class="fa fa-{{ icon }}"></div>
+      <input type="radio" name="division" value="{{ value }}" autocomplete="off" {{ 'checked' if value === currentValue }}>
+      {{ title }}
+      <div class="entry-division__legend hidden-xs hidden-sm">{{ legend | safe }}</div>
+    </label>
+  {% else %}
+    <div class="btn entry-division {{ 'active' if value === currentValue else 'disabled' }}" title="Only the entry owner can change this setting">
+      <div class="fa fa-{{ icon }}"></div>
+      {{ title }}
+      <div class="entry-division__legend hidden-xs hidden-sm">{{ legend | safe }}</div>
+    </div>
+  {% endif %}
+{% endmacro %}
+            
 {% block scripts %} 
 {{ formMacros.editorScripts({autoSaveId: entry.get('id')}) }}
 <script type="text/javascript" src="/static/js/select2.min.js"></script>

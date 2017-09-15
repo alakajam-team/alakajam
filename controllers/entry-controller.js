@@ -236,7 +236,7 @@ async function editEntry (req, res) {
         errorMessage = 'Submissions are closed for this event'
       } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
         errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
-      } else if (['solo', 'team', 'unranked'].indexOf(fields['division']) === -1) {
+      } else if (fields.division && ['solo', 'team', 'unranked'].indexOf(fields.division) === -1) {
         errorMessage = 'Invalid division'
       } else if (typeof fields.members !== 'string') {
         errorMessage = 'Invalid members'
@@ -257,7 +257,7 @@ async function editEntry (req, res) {
           teamMembers.push(ownerId)
         }
         if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
-          entry.set('division', fields['division'])
+          entry.set('division', fields['division'] || 'solo')
           let teamChanges = await eventService.setTeamMembers(res.locals.user, entry, teamMembers)
           res.locals.infoMessage = ''
           if (teamChanges.numAdded > 0) {
