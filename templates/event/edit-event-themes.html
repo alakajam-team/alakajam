@@ -6,6 +6,33 @@
 
 <h1>{{ event.get('title') }} themes <span class="count">({{ themes.length }})</span></h1>
 
+{% if event.get('status_theme') === 'shortlist' or event.get('status_theme') === 'results' %}
+<h3>Shortlist</h3>
+<table class="table">
+<tr>
+<th>Theme<th>
+<th>Notes</th>
+<th>Score</th>
+<th>Average</th>
+</tr>
+{% for theme in shortlist %}
+  <tr>
+  <td>
+    {% if event.get('status_theme') === 'shortlist' %}
+      <span class="label">R E D A C T E D</span>
+    {% else %}
+      {{ theme.get('title') }}
+    {% endif %}
+  <td>
+    <td>{{ theme.get('notes') }}</td>
+    <td><strong>{{ theme.get('score') }}</strong></td>
+    <td>{{ (theme.get('score') / theme.get('notes')) | digits(2) }}</td>
+  </tr>
+{% endfor %}
+</table>
+<h3>Other themes</h3>
+{% endif %}
+
 <table class="table">
 <tr>
 <th>Theme<th>
@@ -16,12 +43,10 @@
 <th>Actions</th>
 </tr>
 {% for theme in themes %}
-{% set shortlistVotingLock = event.get('status_theme') === 'shortlist' and theme.get('status') === 'shortlist' %}
+  {% if theme.get('status') !== 'shortlist' %}
   <tr>
   <td>
-    {% if shortlistVotingLock %}
-      <span class="label">R E D A C T E D</span>
-    {% elseif theme.get('status') !== 'banned' %}
+    {% if theme.get('status') !== 'banned' %}
       {{ theme.get('title') }}
     {% else %}
       <span style="text-decoration: line-through">{{ theme.get('title') }}</span>
@@ -40,15 +65,14 @@
     {% endif %}
   </td>
   <td>
-    {% if not shortlistVotingLock %}
-      {% if theme.get('status') !== 'banned' %}
-        <a href="?ban={{ theme.get('id') }}" class="btn btn-xs btn-default">Ban</a>
-      {% else %}
-        <a href="?unban={{ theme.get('id') }}" class="btn btn-xs btn-default">Unban</a>
-      {% endif %}
+    {% if theme.get('status') !== 'banned' %}
+      <a href="?ban={{ theme.get('id') }}" class="btn btn-xs btn-default">Ban</a>
+    {% else %}
+      <a href="?unban={{ theme.get('id') }}" class="btn btn-xs btn-default">Unban</a>
     {% endif %}
   </td>
   </tr>
+  {% endif %}
 {% endfor %}
 </table>
 

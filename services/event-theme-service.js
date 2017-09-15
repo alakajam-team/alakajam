@@ -371,7 +371,9 @@ async function findShortlist (event) {
   return models.Theme.where({
     event_id: event.get('id'),
     status: 'shortlist'
-  }).fetchAll()
+  })
+    .orderBy('score', 'DESC')
+    .fetchAll()
 }
 
 async function computeShortlist (event) {

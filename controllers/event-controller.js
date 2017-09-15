@@ -509,9 +509,12 @@ async function editEventThemes (req, res) {
   }
 
   let themesCollection = await eventThemeService.findAllThemes(res.locals.event)
+  let shortlistCollection = await eventThemeService.findShortlist(res.locals.event)
+
   res.render('event/edit-event-themes', {
     themes: themesCollection.models,
-    eliminationMinNotes: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5'))
+    eliminationMinNotes: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5')),
+    shortlist: shortlistCollection.models
   })
 }
 
