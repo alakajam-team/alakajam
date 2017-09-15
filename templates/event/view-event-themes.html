@@ -156,7 +156,7 @@
                 <a href="/login?redirect={{ path }}" class="btn btn-primary">Log in to rank the shortlist</a>
               {% endif %}
             </p>
-            <ol id="{{ 'js-shortlist' if user }}">
+            <ol id="{{ 'js-shortlist' if user }}" class="{{ 'use-hover' if user }}">
               {% for theme in shortlist %}
               <li class="theme-shortlist-line {{ 'draggable' if user }}" data-theme-id="{{ theme.get('id') }}">
                 {% if user %}
@@ -288,6 +288,12 @@ if (list) {
       $('#js-shortlist-votes').val(votes)
       $('#js-shortlist-submit').removeClass('disabled')
       $('#js-shortlist-submit').removeAttr('disabled')
+    },
+    onStart: function () {
+      this.el.classList.remove('use-hover');
+    },
+    onEnd: function () {
+      this.el.classList.add('use-hover');
     }
   })
 }

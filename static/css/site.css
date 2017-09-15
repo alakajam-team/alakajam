@@ -1518,7 +1518,7 @@ input.date-picker {
     border-bottom: 1px solid var(--borders);
     font-weight: bold;
     color: var(--text-light);
-   
+
     &:last-child {
       border-bottom: 0;
     }
@@ -1550,6 +1550,9 @@ input.date-picker {
       font-size: 1.1rem;
       margin-top: 2px;
     }
+  }
+  & .use-hover .theme-shortlist-line.draggable:hover {
+    background-color: #EEE;
   }
   
   & .theme-vote {
