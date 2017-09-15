@@ -17,6 +17,7 @@ const nunjucks = require('nunjucks')
 const removeMarkdown = require('remove-markdown')
 const url = require('url')
 const constants = require('../core/constants')
+const config = require('../config')
 
 module.exports = {
   sanitizeString,
@@ -46,7 +47,12 @@ const MAX_POSTGRESQL_INTEGER = 2147483647
 // Libs init
 
 const showdownConverter = new showdown.Converter({
-  tables: true
+  tables: true,
+  simplifiedAutoLink: true,
+  strikethrough: true,
+  simpleLineBreaks: true,
+  ghMentions: true,
+  ghMentionsLink: config.ROOT_URL + '/user/{u}'
 })
 const customXss = new xss.FilterXSS({
   whiteList: Object.assign({}, xss.whiteList, constants.ALLOWED_POST_ATTRIBUTES)
@@ -215,17 +221,7 @@ function parseDateTime (string) {
  */
 function markdownToHtml (markdown) {
   let html = showdownConverter.makeHtml(markdown)
-
-  // Convert @mentions to links, unless we are already in a link
-  let htmlSplitByLinks = html.split(/(<a .*>.*<\/a>)/g)
-  let indexOutsideLinks = html.indexOf('<a ') === 0 ? 1 : 0
-  while (indexOutsideLinks < htmlSplitByLinks.length) {
-    htmlSplitByLinks[indexOutsideLinks] = htmlSplitByLinks[indexOutsideLinks].replace(/@([a-z\d_]+)/ig, '<a href="/user/$1">@$1</a>')
-    indexOutsideLinks += 2
-  }
-
-  let htmlWithMentions = htmlSplitByLinks.join('')
-  let safeHtml = customXss.process(htmlWithMentions)
+  let safeHtml = customXss.process(html)
   return safeHtml
 }
 
