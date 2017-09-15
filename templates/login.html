@@ -17,7 +17,7 @@
           <h1>Login</h1>
 
           {% if not user %}
-          <form method="post" action="{{ path }}">
+          <form method="post" action="{{ path if path !== '/logout' else '/login' }}">
             <div class="form-group">
               <label for="username">Username</label>
               <input type="text" class="form-control" id="name" name="name" required="required" />
