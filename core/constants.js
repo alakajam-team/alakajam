@@ -74,7 +74,7 @@ module.exports = {
   SPECIAL_POST_TYPE_ANNOUNCEMENT,
   SPECIAL_POST_TYPE_ARTICLE,
   SPECIAL_POST_TYPES,
-  REQUIRED_ARTICLES: ['help'],
+  REQUIRED_ARTICLES: ['docs'],
   ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img', 'p'],
   ALLOWED_POST_ATTRIBUTES: {
     'p': ['class'],
