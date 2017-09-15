@@ -146,27 +146,27 @@
             <h2>Shortlist ranking</h2> 
             <input type="hidden" name="action" value="shortlist" />
             <input id="js-shortlist-votes" type="hidden" name="shortlist-votes" />
-          </form>       
-          <div class="well">
-            <p>These are the top 10 suggested ideas! {{ 'Drag the themes to sort them by preference order (best = first).' if user }}</p>
-            <p>
-              {% if user %}
-                <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
-              {% else %}
-                <a href="/login?redirect={{ path }}" class="btn btn-primary">Log in to rank the shortlist</a>
-              {% endif %}
-            </p>
-            <ol id="{{ 'js-shortlist' if user }}" class="{{ 'use-hover' if user }}">
-              {% for theme in shortlist %}
-              <li class="theme-shortlist-line {{ 'draggable' if user }}" data-theme-id="{{ theme.get('id') }}">
+            <div class="well">
+              <p>These are the top 10 suggested ideas! {{ 'Drag the themes to sort them by preference order (best = first).' if user }}</p>
+              <p>
                 {% if user %}
-                  <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
+                  <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
+                {% else %}
+                  <a href="/login?redirect={{ path }}" class="btn btn-primary">Log in to rank the shortlist</a>
                 {% endif %}
-                <span class="theme-shortlist-line__label">{{ theme.get('title') }}</span>
-              </li>
-              {% endfor %}
-            </ol>
-          </div>
+              </p>
+              <ol id="{{ 'js-shortlist' if user }}" class="{{ 'use-hover' if user }}">
+                {% for theme in shortlist %}
+                <li class="theme-shortlist-line {{ 'draggable' if user }}" data-theme-id="{{ theme.get('id') }}">
+                  {% if user %}
+                    <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
+                  {% endif %}
+                  <span class="theme-shortlist-line__label">{{ theme.get('title') }}</span>
+                </li>
+                {% endfor %}
+              </ol>
+            </div>
+          </form>       
         </div>
         {% endif %}
         
