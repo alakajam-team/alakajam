@@ -33,11 +33,9 @@
   <td>{{ theme.get('notes') }}</td>
   <td>{{ theme.get('score') }}</td>
   <td>
-    {% if theme.get('notes') < eliminationMinNotes %}
-      <div class="label">New</div>
-    {% else %}
-      <strong>{{ theme.get('normalized_score') }}</strong>
-    {% endif %}</td>
+      <strong style="{{ 'color: #999' if theme.get('status') === 'out' }}">{{ (50 + (theme.get('normalized_score') or 0) * 50.0) | digits(1) }}%</strong>
+    
+  </td>
   <td>
     {% if not shortlistVotingLock %}
       {% if theme.get('status') !== 'banned' %}
