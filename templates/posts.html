@@ -10,6 +10,7 @@
       <h2>{{ title }}</h2>
       
       {{ formMacros.pagination(currentPage, pageCount, paginationBaseUrl) }}
+      
       {% for post in posts %}
         <div class="expandable">
           {{ postMacros.post(post, user, { allowMods: true }) }}
@@ -21,6 +22,8 @@
           No posts yet.
         </div>
       {% endif %}
+      
+      {{ formMacros.pagination(currentPage, pageCount, paginationBaseUrl) }}
 
   </div>
 </div>
