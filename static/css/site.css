@@ -426,6 +426,11 @@ input.date-picker {
           padding: 0 5px;
         }
       }
+      @media (max-width: 768px) {
+        &.nav-login {
+          padding-left: 5px;
+        }
+      }
 
       & a img:hover {
         border: 4px solid white;
@@ -528,7 +533,7 @@ input.date-picker {
   }
   @media (max-width: 768px) {
     &__links {
-      float: right;
+      float: left;
     }
   }
 
@@ -581,12 +586,18 @@ input.date-picker {
   }
 
 }
+@media (max-width: 768px) {
+  .event-header {
+    box-shadow: 0px 5px 3px -3px rgba(0, 0, 0, 0.3);
+  }
+}
 
 .event-navbar {
   position: relative;
   margin-bottom: 0;
   position: inherit;
   text-align: center;
+  height: 50px;
 
   @media (max-width: 768px) {
     & .navbar-collapse {
@@ -602,17 +613,31 @@ input.date-picker {
     }
   }
   
+  &__dropdown {
+    margin: 10px 15px 0 0;
+    padding: 5px 10px;
+    font-size: 1.5rem;
+    line-height: 0;
+  }
+  
   & .navbar-toggle, & .navbar-toggle:hover, & .navbar-toggle:focus {
-    margin-right: -1px;
-    margin-top: 10px;
     border-color: var(--alt);
     
     & .icon-bar {
       background-color: var(--alt);
     }
   }
+  & .navbar-toggle:hover {
+    color: var(--alt-dark);
+  }
   & .navbar-toggle:hover .icon-bar {
     background-color: var(--alt-dark);
+  }
+  
+  @media (max-width: 768px) {
+    & .navbar-collapse {
+      box-shadow: 0px 5px 3px -3px rgba(0, 0, 0, 0.3);
+    }
   }
 }
 

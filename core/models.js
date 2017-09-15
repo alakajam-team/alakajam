@@ -410,7 +410,7 @@ module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
  * | integer | entry_id | Entry ID (not null)
  * | integer | event_id | Event ID (not null)
  * | integer | user_id | User ID (not null)
- * | integer | vote_1 .. 4 | Vote for categories 1 to 4 ([-999.99,999.99])
+ * | decimal | vote_1 .. 4 | Vote for categories 1 to 4 ([-999.99,999.99])
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -469,6 +469,8 @@ module.exports.EntryInvite = bookshelf.model('EntryInvite', {
  * | string | title | (max size: 100, not null)
  * | string | slug | Used for detecting duplicate themes (not null)
  * | integer | score | (defaults to 0, not null)
+ * | decimal | normalized_score | (defaults to 0, not null, [-9.999;9.999])
+ * | decimal | ranking | rough ranking in percentage ([-9.999;9.999])
  * | integer | notes | (defaults to 0, not null)
  * | integer | reports | (defaults to 0, not null)
  * | string | status | 'active', 'out', 'banned', 'shortlist' (not null)

@@ -306,7 +306,18 @@ async function _eliminateLowestTheme (event) {
       .orderBy('normalized_score')
       .orderBy('created_at')
       .fetch()
-    loserTheme.set('status', 'out')
+
+    let betterThemeCount = await models.Theme.where({
+      event_id: event.get('id')
+    })
+      .where('normalized_score', '>', loserTheme.get('normalized_score'))
+      .count()
+
+    await event.load('details')
+    loserTheme.set({
+      'status': 'out',
+      'ranking': 1.0 * betterThemeCount / (event.related('details').get('theme_count') || 1)
+    })
     await loserTheme.save()
   }
 }

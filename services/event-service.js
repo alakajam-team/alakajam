@@ -416,7 +416,8 @@ async function acceptInvite (user, entry) {
           user_title: user.get('title'),
           node_id: entry.get('id'),
           node_type: 'entry',
-          permission: invite.get('permission')
+          permission: invite.get('permission'),
+          event_id: entry.get('event_id')
         })
       }
 
@@ -426,7 +427,7 @@ async function acceptInvite (user, entry) {
   })
 }
 
-async function deleteInvite (user, entry, options) {
+async function deleteInvite (user, entry, options = {}) {
   let query = db.knex('entry_invite')
   if (options.transacting) {
     query = query.transacting(options.transacting)
