@@ -2,6 +2,15 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### September 15th
+
+* Raw URLs put inside posts are now converted to links automatically
+* Eliminated themes can now see how successful they were %-wise
+
+### September 14th
+
+* Better display of the event navbar on thin mobile screens
+
 ### September 13th
 
 * Make logging in redirect to the previous page
