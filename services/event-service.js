@@ -611,7 +611,8 @@ async function findGames (options = {}) {
   if (options.eventId !== undefined) query = query.where('event_id', options.eventId)
   if (options.platforms) {
     query = query.query(function (qb) {
-      return qb.leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
+      return qb.distinct()
+        .leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
         .whereIn('entry_platform.platform_id', options.platforms)
     })
   }
