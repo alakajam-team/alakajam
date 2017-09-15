@@ -143,16 +143,19 @@
         {% if event.get('status_theme') === 'shortlist' %}
         <div class="themes__shortlist">
           <form method="post">
-            <h2>Shortlist ranking
-              {% if user %}
-                <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
-              {% endif %}
-            </h2> 
+            <h2>Shortlist ranking</h2> 
             <input type="hidden" name="action" value="shortlist" />
             <input id="js-shortlist-votes" type="hidden" name="shortlist-votes" />
           </form>       
           <div class="well">
             <p>These are the top 10 suggested ideas! {{ 'Rank them by preference order.' if user }}</p>
+            <p>
+              {% if user %}
+                <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
+              {% else %}
+                <a href="/login?redirect={{ path }}" class="btn btn-primary">Log in to rank the shortlist</a>
+              {% endif %}
+            </p>
             <ol id="{{ 'js-shortlist' if user }}">
               {% for theme in shortlist %}
               <li class="theme-shortlist-line {{ 'draggable' if user }}" data-theme-id="{{ theme.get('id') }}">
