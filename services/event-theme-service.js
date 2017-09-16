@@ -354,7 +354,7 @@ async function countShortlistVotes (event) {
           'score': 9
         })
         .count()
-    })
+    }, 10 * 60 /* 10 min TTL */)
 }
 
 async function findAllThemes (event, options = {}) {

@@ -19,7 +19,7 @@ const eventsTtl = 24 * 60 * 60 // one day
 const settingsTtl = 24 * 60 * 60 // one day
 
 const cacheMap = {
-  general: new NodeCache({ stdTTL: generalTtl, checkperiod: generalTtl }),
+  general: new NodeCache({ stdTTL: generalTtl, checkperiod: 10 * 60 }),
   users: new NodeCache({ stdTTL: usersTtl, checkperiod: usersTtl }),
   settings: new NodeCache({ stdTTL: settingsTtl, checkperiod: settingsTtl }),
   eventsById: new NodeCache({ stdTTL: eventsTtl, checkperiod: eventsTtl }),
