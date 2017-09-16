@@ -25,6 +25,7 @@ module.exports = {
   findThemeShortlistVotes,
   saveVote,
   saveShortlistVotes,
+  countShortlistVotes,
 
   findAllThemes,
   findBestThemes,
@@ -342,6 +343,18 @@ async function saveShortlistVotes (user, event, ids) {
       if (result.vote) result.vote.save(null, saveOptions)
     }
   })
+}
+
+async function countShortlistVotes (event) {
+  return cache.getOrFetch(cache.general, 'shortlist_votes_' + event.get('name'),
+    async function () {
+      return models.ThemeVote
+        .where({
+          'event_id': event.get('id'),
+          'score': 9
+        })
+        .count()
+    })
 }
 
 async function findAllThemes (event, options = {}) {

@@ -80,6 +80,7 @@
             <p>
               {% if user %}<b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li><br />{% endif %}
               <b>Everyone:</b> {{ event.related('details').get('theme_count') }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') }}</span> votes
+              {{- ', ' + shortlistVotes + ' shortlist votes' if shortlistVotes }}
             </p>
             <div class="progress">
               {% set activePercentage = (100 * event.related('details').get('active_theme_count') / event.related('details').get('theme_count') or 100) | digits(0) %}

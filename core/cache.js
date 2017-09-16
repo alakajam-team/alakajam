@@ -33,6 +33,8 @@ module.exports = {
   eventsById: cacheMap.eventsById,
   eventsByName: cacheMap.eventsByName,
 
+  getOrFetch,
+
   cacheMap
 }
 
@@ -59,4 +61,12 @@ class PrefixedNodeCache {
   del (key) {
     return this.cache.del(this.fullPrefix + key)
   }
+}
+
+async function getOrFetch (cache, key, asyncFetch, ttl = undefined) {
+  if (!cache.get(key)) {
+    let result = await asyncFetch()
+    cache.set(key, result, ttl)
+  }
+  return cache.get(key)
 }

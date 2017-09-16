@@ -226,7 +226,12 @@ async function viewEventThemes (req, res) {
         }
       }
 
-      if (event.get('status_theme') === 'results') {
+      // State-specific data
+      let statusTheme = event.get('status_theme')
+      if (statusTheme === 'shortlist' || statusThemes === 'results') {
+        context.shortlistVotes = await eventThemeService.countShortlistVotes(event)
+      }
+      if (statusTheme === 'results') {
         let shortlistCollection = await eventThemeService.findShortlist(event)
         if (shortlistCollection.length === 0) {
           // In case the shortlist phase has been skipped
