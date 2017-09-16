@@ -24,25 +24,27 @@
                 {{ themeDetails(userTheme) if userTheme }}
               </div>
             {% endfor %}
-            <div class="themes__idea">
-              {% if not userThemes or userThemes.length === 0 %}
-                  {% if event.get('status_theme') === 'voting' %}
-                    <p style="margin-bottom: 10px">None yet. You can submit up to {{ maxThemeSuggestions }} ideas.</p>
-                    {% if not user %}
-                      <p><a href="/login?redirect={{ path }}" class="btn btn-primary">Login to submit ideas</a></p>
-                    {% endif %}
-                  {% else %}
-                    {% if user %}
-                      You didn't submit theme ideas.
-                    {% else %}
-                      <p><a href="/login?redirect={{ path }}" class="btn btn-primary">Login to view your ideas</a></p>
-                    {% endif %}
-                  {% endif %}
+            {% if not userThemes or userThemes.length === 0 %}
+              <div class="themes__idea">
+              {% if event.get('status_theme') === 'voting' %}
+                <p style="margin-bottom: 10px">None yet. You can submit up to {{ maxThemeSuggestions }} ideas.</p>
+                {% if not user %}
+                  <p><a href="/login?redirect={{ path }}" class="btn btn-primary">Login to submit ideas</a></p>
+                {% endif %}
+              {% else %}
+                {% if user %}
+                  You didn't submit theme ideas.
+                {% else %}
+                  <p><a href="/login?redirect={{ path }}" class="btn btn-primary">Login to view your ideas</a></p>
+                {% endif %}
               {% endif %}
-              {% if user and event.get('status_theme') === 'voting' %}
+              </div>
+            {% endif %}
+            {% if user and event.get('status_theme') === 'voting' %}
+              <div class="themes__idea">
                 <p><input type="submit" class="btn btn-primary js-manage-themes-button" value="Manage theme ideas" /></p>
-              {% endif %}
-            </div>
+              </div>
+            {% endif %}
           </div>
         </div>
 
@@ -82,12 +84,14 @@
               <b>Everyone:</b> {{ event.related('details').get('theme_count') }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') }}</span> votes
               {{- ', ' + shortlistVotes + ' shortlist votes' if shortlistVotes }}
             </p>
-            <div class="progress">
-              {% set activePercentage = (100 * event.related('details').get('active_theme_count') / event.related('details').get('theme_count') or 100) | digits(0) %}
-              <div class="progress-bar progress-bar-default" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('active_theme_count') }} Active</div>
-              <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: {{ 100 -  activePercentage }}%">{{ event.related('details').get('theme_count') - event.related('details').get('active_theme_count') }} Out</div>
-            </div>
-            <p>The lowest-ranking theme is eliminated regularly. The longer the theme stands before elimination, the better it is!</p>
+            {% if event.get('status_theme') === 'voting' %}
+              <div class="progress">
+                {% set activePercentage = (100 * event.related('details').get('active_theme_count') / event.related('details').get('theme_count') or 100) | digits(0) %}
+                <div class="progress-bar progress-bar-default" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('active_theme_count') }} Active</div>
+                <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: {{ 100 -  activePercentage }}%">{{ event.related('details').get('theme_count') - event.related('details').get('active_theme_count') }} Out</div>
+              </div>
+              <p>The lowest-ranking theme is eliminated regularly. The longer the theme stands before elimination, the better it is!</p>
+            {% endif %}
           </div>
         </div>
       </div>
