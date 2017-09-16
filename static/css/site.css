@@ -990,13 +990,6 @@ input.date-picker {
 
 /* Event table */
 
-
-@keyframes anim-live-event {
-  0% { background-color: #da4453; }
-  50% { background-color: color(var(--alt-dark)); }
-  100% { background-color: #da4453; }
-}
-
 .event-table {
   margin-bottom: 20px;
 
@@ -1038,12 +1031,6 @@ input.date-picker {
     @apply --main-font;
     font-size: 0.8rem;
     vertical-align: middle;
-  }
-  &.live &__status {
-    animation-name: anim-live-event;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
   }
   
   &__details {
@@ -1718,17 +1705,6 @@ input.date-picker {
 
 /* ============================== Home page ============================== */
 
-@keyframes anim-call-to-action {
-  0% { border-color: #da4453; }
-  50% { border-color: color(var(--alt-dark)); }
-  100% { border-color: #da4453; }
-}
-@keyframes anim-call-to-action-text {
-  0% { color: #da4453; }
-  50% { color: color(var(--alt-dark)); }
-  100% { color: #da4453; }
-}
-
 .home-jumbo {
   background-color: var(--borders);
   
@@ -1769,10 +1745,6 @@ input.date-picker {
   }
 
   &__details {
-    animation-name: anim-call-to-action;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 10px;
@@ -1785,10 +1757,6 @@ input.date-picker {
 
   &__call {
     @apply --alt-font;
-    animation-name: anim-call-to-action-text;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
     display: block;
     font-size: 2rem;
     font-weight: normal;
