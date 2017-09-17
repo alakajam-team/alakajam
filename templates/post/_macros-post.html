@@ -149,7 +149,7 @@
           {% if wasEdited(comment) %}
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
           {% endif %}
-          {% if comment %}
+          {% if comment and not options.linkToNode %}
           • <a href="#c{{ comment.id }}"><i class="fa fa-link" aria-hidden="true"></i></a>
           {% endif %}
           {% if not options.readOnly and (canUserWrite(readingUser, comment, options) or isOwnAnonComment)  %}
