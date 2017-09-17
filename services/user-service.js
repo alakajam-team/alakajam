@@ -47,6 +47,10 @@ async function findUsers (options = {}) {
     })
   }
 
+  query = query.query(function (qb) {
+    qb.where('name', '!=', 'anonymous');
+  })
+
   if (options.count) {
     return query.count(options)
   } else if (options.page) {
