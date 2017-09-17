@@ -185,6 +185,8 @@ async function dashboardSettings (req, res) {
         errorMessage = 'Invalid URL'
       } else if (!res.locals.dashboardAdminMode && fields['special-permissions']) {
         errorMessage = 'Not allowed to change special permissions on this user'
+      } else if (!res.locals.dashboardAdminMode && fields['disallow-anonymous']) {
+        errorMessage = 'Not allows to change anonymous comments settings on this user'
       } else if (newAvatar && !fileStorage.isValidPicture(files.avatar.path)) {
         errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
       }
@@ -201,6 +203,12 @@ async function dashboardSettings (req, res) {
             'is_admin': isAdmin ? 'true' : ''
           })
         }
+
+        console.log(fields);
+        if (res.locals.dashboardAdminMode) {
+          dashboardUser.set('disallow_anonymous', fields['disallow-anonymous'] == 'on')
+        }
+
         let dashboardUserDetails = dashboardUser.related('details')
         dashboardUserDetails.set('social_links', {
           website: fields.website,
