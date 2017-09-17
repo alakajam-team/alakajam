@@ -15,6 +15,7 @@ const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
 const templating = require('./templating')
+const db = require('../core/db')
 
 module.exports = {
   handleSaveComment,
@@ -370,6 +371,12 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
 
     if (fields.delete) {
       // Delete comment
+
+      // In case it was an anonymous comment, delete the associated user link
+      await db.knex('anonymous_comment_user')
+        .where('comment_id', comment.get('id'))
+        .del();
+
       await comment.destroy()
     } else {
       // Update comment
@@ -379,8 +386,16 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
 
     if (nodeType === 'entry') {
       if (isNewComment) {
+        if(!currentUser.get('disallow_anonymous') && fields['comment-anonymously'] && currentNode.get('allow_anonymous')) {
+          comment.set('user_id', -1);
+          await db.knex('anonymous_comment_user').insert({
+            'comment_id': comment.get('id'),
+            'user_id':    userId
+          })
+        }
         await eventService.refreshCommentScore(comment)
         await comment.save()
+
       } else {
         // This change might impact the feedback score of other comments, refresh them
         // (but save the comment first)
