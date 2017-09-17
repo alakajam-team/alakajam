@@ -149,12 +149,11 @@
   </label>
 {% endmacro %}
 
-{% macro check(name, value, label, modelProperty, options = {}) %}
-  {% set value = modelProperty if options.textFieldEnabled else value %}
-  <label for="{{ name }}-{{ value }}">
-    <input type="checkbox" id="{{ name }}-{{ value }}" name="{{ name }}" value="{{ value }}" {{ 'checked="checked"' if value and modelProperty === value }} />
+{% macro check(name, label, value, options = {}) %}
+  <label for="{{ name }}">
+    <input type="checkbox" id="{{ name }}" name="{{ name }}" {{ ('checked="true"' if value) | safe }} />
     {% if options.textField %}
-      <input type="text" class="js-checkbox-text-field" data-target="{{ name }}-{{ value }}" placeholder="{{ options.placeholder }}" />
+      <input type="text" class="js-checkbox-text-field" data-target="{{ name }}" placeholder="{{ options.placeholder }}" />
     {% else %}
     <span class="checkbox-label">{{ label }}</span>
     {% endif %}

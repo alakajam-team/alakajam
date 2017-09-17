@@ -50,6 +50,7 @@ module.exports.Setting = bookshelf.model('Setting', {
  * | dateTime | notifications_last_read |
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
+ * | boolean | disallow_anonymous | Disallow this user to post anonymous comments
  */
 module.exports.User = bookshelf.model('User', {
   tableName: 'user',
@@ -260,6 +261,7 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | integer | comment_count | (not null)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
+ * | boolean | allow_anonymous | Are anonymous comments allowed on this entry?
  */
 module.exports.Entry = bookshelf.model('Entry', {
   tableName: 'entry',
