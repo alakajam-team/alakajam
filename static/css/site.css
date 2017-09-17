@@ -265,11 +265,6 @@ input.date-picker {
       color: var(--alt-dark);
     }
   }
-  @media (max-width: 991px) {
-    & .expand-bar {
-      display: none;
-    }
-  }
 
   & .collapse {
     display: none;
@@ -1856,11 +1851,19 @@ input.date-picker {
   @media (max-width: 991px) {
     &__announcement {
       text-align: left;
-      max-height: none !important;
       padding-left: 10px;
 
       & .panel {
         margin-bottom: 0;
+      }
+
+      & .expand-bar {
+        margin-left: 10px;
+
+        & .collapse {
+          display: inline-block;
+          margin-top: 20px;
+        }
       }
     }
   }
