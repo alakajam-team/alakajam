@@ -355,7 +355,25 @@ module.exports.EntryDetails = bookshelf.model('EntryDetails', {
 
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
+  },
+
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs.optouts = attrs.optouts || []
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs.optouts) attrs.optouts = JSON.parse(attrs.optouts)
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs && attrs.optouts) attrs.optouts = JSON.stringify(attrs.optouts)
+    return attrs
   }
+
 })
 
 /**

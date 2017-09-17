@@ -76,7 +76,7 @@
       {{ post.get('body') | markdown | safe }}
     </div>
     <div class="post__footer">
-      <div class="hidden-xs">
+      <span class="hidden-xs">
         {% if isPast(post.get('published_at')) %}
           <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('published_at') | dateTime }}">published {{ post.get('published_at') | relativeTime }}</span>
         {% elseif post.get('published_at') %}
@@ -84,7 +84,7 @@
         {% else %}
           <span class="badge">Draft</span>
         {% endif %}
-      </div>
+      </span>
       {% if not options.commentsAnchorLinks %}
       <a href="{{ buildUrl(post, 'post', '#comments') }}" style="margin-left: 10px">
          <span class="fa fa-comments"></span>

@@ -258,6 +258,12 @@ async function editEntry (req, res) {
         }
         if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
           entry.set('division', fields['division'] || 'solo')
+
+          let optouts = []
+          if (fields['optout-graphics']) optouts.push('Graphics')
+          if (fields['optout-audio']) optouts.push('Audio')
+          entryDetails.set('optouts', optouts)
+
           let teamChanges = await eventService.setTeamMembers(res.locals.user, entry, teamMembers)
           res.locals.infoMessage = ''
           if (teamChanges.numAdded > 0) {

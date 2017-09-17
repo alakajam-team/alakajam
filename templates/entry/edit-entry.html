@@ -132,9 +132,35 @@
             <div class="form-group">
               <label for="members">Team members {{ formMacros.tooltip('You can leave the team at the bottom of this form.') if not isEntryOwner }}</label>
               <input type="hidden" name="members" class="bigdrop" id="search-members" multiple="multiple" {{ 'readonly' if not isEntryOwner }}
-                title="{{ 'Only the entry owner can change this setting' if not isEntryOwner }}" />
+                title="{{ 'Only the entry owner can change this setting. You can leave the team at the bottom of this form.' if not isEntryOwner }}" />
             </div>
           </div>
+          {% if not external
+              and event.related('details').get('category_titles')
+              and event.related('details').get('category_titles').includes('Graphics') %}
+            {% set optouts = entry.related('details').get('optouts') %}
+            <div id="edit-optouts" class="{{ 'hidden' if entry.get('division') === 'unranked' }}">
+              <div class="form-group" title="{{ 'Only the entry owner can change this setting' if not isEntryOwner }}">
+                <label>Opt-outs (<a href="/article/alakajam-competition-rules#optouts" target="_blank">help</a>)</label>
+                <div>
+                  <label style="font-weight: normal">
+                    <input type="checkbox" name="optout-graphics" {{ 'readonly' if not isEntryOwner }}
+                    {{ 'checked="checked"' if optouts and optouts.includes('Graphics') }} 
+                    {{ 'disabled' if not isEntryOwner }} />
+                    Disable ratings for graphics
+                  </label>
+                </div>
+                <div>
+                  <label style="font-weight: normal">
+                    <input type="checkbox" name="optout-audio" {{ 'readonly' if not isEntryOwner }}
+                    {{ 'checked="checked"' if optouts and optouts.includes('Audio') }}
+                    {{ 'disabled' if not isEntryOwner }} />
+                    Disable ratings for audio
+                  </label>
+                </div>
+              </div>
+            </div>
+          {% endif %}
         </div>
 
         <div class="horizontal-bar" style="margin-top: 40px">Details</div>
@@ -337,6 +363,7 @@ $('#js-entry-divisions label').each(function(i, el) {
 })
 $('.toggle label').click(function(ev) {
   $('#edit-team').toggleClass('hidden', $(this).find('input').val() === 'solo')
+  $('#edit-optouts').toggleClass('hidden', $(this).find('input').val() === 'unranked')
 })
 
 // Show warning upon not being a team entry anymore
