@@ -79,8 +79,14 @@ async function viewEntry (req, res) {
     }
   }
 
+  let editableAnonComments = null
+  if (res.locals.user && entry.get('allow_anonymous')) {
+    editableAnonComments = await postService.findOwnAnonymousCommentIds(res.locals.user, entry.get('id'), 'entry')
+  }
+
   res.render('entry/view-entry', {
     sortedComments: await postService.findCommentsSortedForDisplay(entry),
+    editableAnonComments,
     posts: await postService.findPosts({
       entryId: entry.get('id')
     }),

@@ -360,7 +360,8 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
     comment = await postService.createComment(currentUser, currentNode)
   }
 
-  if (securityService.canUserManage(currentUser, comment, { allowMods: true })) {
+  if (securityService.canUserManage(currentUser, comment, { allowMods: true }) ||
+      await postService.isOwnAnonymousComment(comment, currentUser)) {
     let nodeType = comment.get('node_type')
     let userId = comment.get('user_id')
 

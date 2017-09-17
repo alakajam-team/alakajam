@@ -8,6 +8,7 @@
 
 const models = require('../core/models')
 const constants = require('../core/constants')
+const db = require('../core/db')
 const securityService = require('../services/security-service')
 const config = require('../config')
 
@@ -24,6 +25,8 @@ module.exports = {
   findCommentsByUser,
   findCommentsByUserAndEvent,
   findCommentsToUser,
+  findOwnAnonymousCommentIds,
+  isOwnAnonymousComment,
 
   createPost,
   refreshCommentCount,
@@ -191,6 +194,47 @@ async function findCommentsToUser (user, options = {}) {
     .where('comment.updated_at', '>', notificationsLastRead)
     .orderBy('created_at', 'DESC')
     .fetchAll({withRelated: ['user', 'node']})
+}
+
+/**
+ * Retrieves an array of anonmous comment IDs a user wrote on a node
+ * @param  {User} user
+ * @param  {number} nodeId
+ * @param  {string} nodeType
+ * @return {array(number)}
+ */
+async function findOwnAnonymousCommentIds (user, nodeId, nodeType) {
+  let results = db.knex()
+    .select('anonymous_comment_user.comment_id')
+    .from('anonymous_comment_user')
+    .leftJoin('comment', 'comment.id', 'anonymous_comment_user.comment_id')
+    .where({
+      'anonymous_comment_user.user_id': user.get('id'),
+      'comment.node_id': nodeId,
+      'comment.node_type': nodeType
+    })
+  return results.map(row => row.comment_id)
+}
+
+/**
+ * Checks whether an anonymous comment belongs to an user
+ * @param  {Comment}  comment
+ * @param  {User}  user
+ * @return {boolean}
+ */
+async function isOwnAnonymousComment (comment, user) {
+  if (comment.get('user_id') === constants.ANONYMOUS_USER_ID) {
+    let result = await db.knex()
+      .count()
+      .from('anonymous_comment_user')
+      .where({
+        comment_id: comment.get('id'),
+        user_id: user.get('id')
+      })
+    return parseInt(result[0].count) > 0
+  } else {
+    return false
+  }
 }
 
 /**

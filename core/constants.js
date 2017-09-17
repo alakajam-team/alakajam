@@ -84,6 +84,7 @@ module.exports = {
   },
   ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right'],
   ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com'],
+  ANONYMOUS_USER_ID: -1,
 
   // Dates
   DATE_FORMAT: 'MMMM Do YYYY',
