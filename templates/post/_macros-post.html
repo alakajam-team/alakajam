@@ -191,12 +191,9 @@
             {% if comment and comment.id %}
             <input type="submit" name="delete" class="btn btn-default" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"/>
             {% endif %}
-            {% if showAnon %}
-              {% if user.get('disallow_anonymous') %}
-                You are not allowed to post anonymously.
-              {% else %}
-                {{ formMacros.check('comment-anonymously', 'Comment anonymously') }}
-              {% endif %}
+            {% if showAnon and not user.get('disallow_anonymous') %}
+              {{ formMacros.check('comment-anonymously', 'Comment anonymously', null, { noMargin: true }) }}
+              (<a href="/article/faq#anon-comment" target="_blank">about</a>)
             {% endif %}
           </div>
           <div class="col-xs-4 text-right">
@@ -206,28 +203,6 @@
             {% endif %}
           </div>
         </div>
-        {% if showAnon %}
-          <div class="row">
-            <div class="col-xs-12">
-              <div id="anonymous-message" class="warning-box hidden">
-                <h4>Note about anonymous comments</h4>
-                <p>
-                While no user can see who posted an anonymous comment, the comment will still be linked to your user
-                account. This feature was added specifically to allow users who like that, a way to receive very honest
-                feedback.
-                You may criticize the game very hashly, but the admins will not tolerate any form of hateful, offensive or
-                insulting comments. That means: Say what you want to say, but watch your tone. Violation of this simple
-                rule may require us to revoke your right to comment anonymously.</p>
-                <p>
-                Also, be aware that while nobody can see who posted an anonymous comment, your way of writing or other
-                clues may tell the receiver of the comment who you are.</p>
-                <p>
-                Anonymous comments do not count towards your feedback score.
-                </p>
-              </div>
-            </div>
-          </div>
-        {% endif %}
       </div>
     </div>
   </div>

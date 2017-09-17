@@ -155,7 +155,7 @@
     {% if options.textField %}
       <input type="text" class="js-checkbox-text-field" data-target="{{ name }}" placeholder="{{ options.placeholder }}" />
     {% else %}
-    <span class="checkbox-label">{{ label }}</span>
+    <span class="checkbox-label" style="{{ 'margin-right: 0' if options.noMargin }}">{{ label }}</span>
     {% endif %}
   </label>
 {% endmacro %}

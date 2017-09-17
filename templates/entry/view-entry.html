@@ -101,6 +101,9 @@
         </div>
       {% endif %}
 
+      {% if entry.get('allow_anonymous') and not user.get('disallow_anonymous') %}
+        <p class="pull-right" style="line-height: 30px">This entry welcomes anonymous comments (<a href="/article/faq#anon-comment" target="_blank">about</a>)</p>
+      {% endif %}
       <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
       {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment, allowAnonymous: entry.get('allow_anonymous') }) }}
 
@@ -243,11 +246,6 @@ function setRating (category, rating, confirmed) {
     $ratingLabel.removeClass('confirmed')
   }
 }
-
-$('#comment-anonymously').on('ifChanged', function() {
-  $('#anonymous-message').toggleClass('hidden', !$('#comment-anonymously').prop('checked'));
-
-});
 
 </script>
 {% endblock %}
