@@ -204,7 +204,6 @@ async function dashboardSettings (req, res) {
           })
         }
 
-        console.log(fields);
         if (res.locals.dashboardAdminMode) {
           dashboardUser.set('disallow_anonymous', fields['disallow-anonymous'] == 'on')
         }
