@@ -179,8 +179,28 @@
             {{ formMacros.editor('body', entry.related('details').get('body')) }}
           </div>
         </div>
+
+        <div class="form-group">
+          <label for="status">Comment options</label>
+          <div>
+            {{ formMacros.check('anonymous-enabled', 'Allow anonymous feedback', entry.get('allow_anonymous')) }}
+
+            <div class="warning-box {{ 'hidden' if not entry.get('allow_anonymous') }}" id="anonymous-warning-message">
+              <h4>Enabling this option allows all users to post anonymous comments on your entry.</h4>
+              Be aware that people can be extremely impolite and harsh when they are posting anonymously. While we will
+              not tolerate any form of insults, there may be very strong opinions about your game as a whole or parts of
+              it.
+              By enabling this option, you agree to live with the consequences. If you are only doing Alakajam to
+              have some fun, we <strong>strongly</strong> advice you to keep this option disabled.
+              You may change your mind later, but comments posted anonymously will remain anonymous, even if you opt-out
+              later.
+            </div>
+          </div>
+        </div>
       </div>
+
       
+
       <div class="col-lg-4 col-md-5">
         <div class="form-group">
           <label for="title">Picture</label>
@@ -253,6 +273,7 @@
             
 {% block scripts %} 
 {{ formMacros.editorScripts({autoSaveId: entry.get('id')}) }}
+{{ formMacros.radioScripts() }}
 <script type="text/javascript" src="/static/js/select2.min.js"></script>
 <script type="text/javascript">
 
@@ -529,6 +550,11 @@ if ($externalEventInput.length > 0) {
     },
   })
 }
+
+
+$("#anonymous-enabled").on('ifChanged', function() {
+  $('#anonymous-warning-message').toggleClass('hidden', !$('#anonymous-enabled').prop('checked'));
+});
 
 </script>
 {% endblock %}

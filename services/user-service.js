@@ -36,6 +36,7 @@ const PASSWORD_MIN_LENGTH = 6
  */
 async function findUsers (options = {}) {
   let query = models.User.forge()
+    .where('name', '!=', 'anonymous')
   if (options.search) {
     query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', '%' + options.search + '%')
   }
@@ -47,7 +48,9 @@ async function findUsers (options = {}) {
     })
   }
 
-  if (options.page) {
+  if (options.count) {
+    return query.count(options)
+  } else if (options.page) {
     return query.orderBy('created_at', 'DESC')
       .fetchPage(options)
   } else {

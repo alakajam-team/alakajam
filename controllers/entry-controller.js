@@ -257,7 +257,10 @@ async function editEntry (req, res) {
           teamMembers.push(ownerId)
         }
         if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
-          entry.set('division', fields['division'] || 'solo')
+          entry.set({
+            'division': fields['division'] || 'solo',
+            'allow_anonymous': fields['anonymous-enabled'] === 'on'
+          })
 
           let optouts = []
           if (fields['optout-graphics']) optouts.push('Graphics')
