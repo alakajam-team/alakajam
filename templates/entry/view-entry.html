@@ -102,7 +102,7 @@
       {% endif %}
 
       <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
-      {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
+      {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment, allowAnonymous: entry.get('allow_anonymous') }) }}
 
     </div>
 
@@ -166,6 +166,7 @@
 
 {% block scripts %}
 {{ formMacros.editorScripts() }}
+{{ formMacros.radioScripts() }}
 <script type="text/javascript">
 
 // Voting stars
@@ -242,6 +243,11 @@ function setRating (category, rating, confirmed) {
     $ratingLabel.removeClass('confirmed')
   }
 }
+
+$('#comment-anonymously').on('ifChanged', function() {
+  $('#anonymous-message').toggleClass('hidden', !$('#comment-anonymously').prop('checked'));
+
+});
 
 </script>
 {% endblock %}
