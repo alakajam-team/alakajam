@@ -48,6 +48,11 @@
   --shadow: {
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
   };
+  --header-shadow: {
+    box-shadow: 0px 8px 4px -6px rgba(0, 0, 0, 0.15);
+  };
+
+
 
   /* UI elements */
   
@@ -294,9 +299,14 @@ input.date-picker {
 /* ============================== Navigation ============================== */
 
 .navbar-default {
+  @apply --header-shadow;
   background-color: var(--main);
   border: none;
   font-size: 2rem;
+
+  &.has-moderation-bar, &.has-event-header {
+    box-shadow: none;
+  }
 
   /* Nav logo */
 
@@ -481,12 +491,17 @@ input.date-picker {
 }
 
 .event-header {
+  @apply --header-shadow;
   box-sizing: border-box;
   width: 100%;
   background-color: white;
   color: var(--alt);
   height: var(--eventbar-height);
   position: relative;
+
+  &.has-moderation-bar {
+    box-shadow: none;
+  }
 
   &__info {
     display: inline-block;
@@ -582,11 +597,6 @@ input.date-picker {
   }
 
 }
-@media (max-width: 768px) {
-  .event-header {
-    box-shadow: 0px 5px 3px -3px rgba(0, 0, 0, 0.3);
-  }
-}
 
 .event-navbar {
   position: relative;
@@ -638,6 +648,7 @@ input.date-picker {
 }
 
 .moderation-bar {
+  @apply --header-shadow;
   margin: -21px 0 20px 0;
   width: 100%;
   background-color: var(--moderation-light);

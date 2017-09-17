@@ -73,8 +73,9 @@
   </script>
 </head>
 <body {{ 'class=in-event' if event }}>
+  {% set showModerationBar = user and (user.get('is_mod') or user.get('is_admin')) %}
 
-  <nav class="navbar navbar-default navbar-fixed-top">
+  <nav class="navbar navbar-default navbar-fixed-top {{ 'has-moderation-bar' if showModerationBar }} {{ 'has-event-header' if event }}">
     <div class="container">
       {# ==== Main header (mobile) ==== #}
       <div class="navbar-header">
@@ -141,7 +142,7 @@
 
     {# ==== Event header ==== #}
     {% if (event) %}
-      <div class="event-header">
+      <div class="event-header {{ 'has-moderation-bar' if showModerationBar }}">
         <div class="container">
           <div class="event-header__info">
             <a href="{{ buildUrl(event, 'event') }}" class="event-header__name">
@@ -164,7 +165,7 @@
     {% endif %}
   </nav>
 
-  {% if user and (user.get('is_mod') or user.get('is_admin')) %}
+  {% if showModerationBar %}
     {{ adminMacros.moderationBar(context(), user.get('is_admin')) }}
   {% endif %}
 
