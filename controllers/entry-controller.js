@@ -265,6 +265,7 @@ async function editEntry (req, res) {
         }
         if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
           entry.set('division', fields['division'])
+          entry.set('allow_anonymous', fields['anonymous-enabled'] === "on")
           let teamChanges = await eventService.setTeamMembers(res.locals.user, entry, teamMembers)
           res.locals.infoMessage = ''
           if (teamChanges.numAdded > 0) {
