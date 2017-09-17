@@ -920,6 +920,15 @@ input.date-picker {
   }
 }
 
+/* Warning box */
+
+.warning-box {
+  @apply --shadow;
+  padding: 10px;
+  background-color: var(--moderation);
+  color: var(--moderation-text);
+  border-radius: 4px;
+}
 
 /* Event table */
 
