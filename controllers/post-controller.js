@@ -124,7 +124,7 @@ async function article (req, res) {
 
   if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {
-    res.locals.pageTitle = forms.capitalize(res.locals.post.get('title'))
+    res.locals.pageTitle = res.locals.post.get('title')
     res.locals.pageDescription = forms.markdownToText(res.locals.post.get('body'))
     res.render('article')
   } else {
