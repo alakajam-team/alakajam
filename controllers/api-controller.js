@@ -7,7 +7,7 @@
  */
 
 const moment = require('moment')
-const path = require('path')
+const urllib = require('url')
 const config = require('../config')
 const forms = require('../core/forms')
 const eventService = require('../services/event-service')
@@ -171,7 +171,7 @@ async function userLatestEntry (req, res) {
     const entry = await eventService.findLatestUserEntry(user)
     if (entry) {
       json.latest_entry = _getAttributes(await eventService.findLatestUserEntry(user), PUBLIC_ATTRIBUTES_ENTRY)
-      json.latest_entry.url = path.join(config.ROOT_URL, buildUrl(entry, 'entry'))
+      json.latest_entry.url = urllib.resolve(config.ROOT_URL, buildUrl(entry, 'entry'))
     }
   } else {
     json = { error: 'User not found' }
