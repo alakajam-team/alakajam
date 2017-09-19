@@ -1916,6 +1916,7 @@ input.date-picker {
 
       & .expand-bar {
         margin-left: 10px;
+        display: none; /* will be enabled with JS */
 
         & .collapse {
           display: inline-block;

@@ -18,7 +18,7 @@
             {{ post.get('title') }}
           </a>
           <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
-            <span class="fa fa-comments"></span> {{ post.get('comment_count') or 0 }}
+            <span class="fa fa-comments"></span>&nbsp;{{ post.get('comment_count') or 0 }}
           </a>
           {% if canUserWrite(readingUser, post, options) %}
             <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
@@ -76,6 +76,7 @@
       {{ post.get('body') | markdown | safe }}
     </div>
     <div class="post__footer">
+      {% if not options.hideDate %}
       <span class="hidden-xs">
         {% if isPast(post.get('published_at')) %}
           <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('published_at') | dateTime }}">published {{ post.get('published_at') | relativeTime }}</span>
@@ -85,6 +86,7 @@
           <span class="badge">Draft</span>
         {% endif %}
       </span>
+      {% endif %}
       {% if not options.commentsAnchorLinks %}
       <a href="{{ buildUrl(post, 'post', '#comments') }}" style="margin-left: 10px">
          <span class="fa fa-comments"></span>
