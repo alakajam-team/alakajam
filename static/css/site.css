@@ -1718,6 +1718,45 @@ input.date-picker {
 
 /* ============================== Home page ============================== */
 
+.home-welcome {
+  @apply --shadow;
+  position: relative;
+  padding: 10px;
+  padding-left: 100px;
+  margin: 10px 15px 30px 15px;
+  background-color: var(--main-lighter);
+  border-left: 10px solid var(--main-dark);
+  font-size: 1.2rem;
+
+  &__icon {
+    position: absolute;
+    left: 0;
+    top: -15px;
+  }
+
+  &__title {
+    font-weight: bold;
+  }
+
+  &__brand {
+    @apply --alt-font;
+    display: inline;
+    letter-spacing: 0px;
+  }
+
+  &__more {
+    color: var(--main-dark);
+    font-weight: bold;
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--text);
+      text-decoration: underline;
+    }
+  }
+
+}
+
 .home-jumbo {
   background-color: var(--borders);
   

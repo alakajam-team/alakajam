@@ -13,6 +13,15 @@
 <div class="container">
   <div class="row">
   
+    {% if not user %}
+    <div class="home-welcome">
+      <img class="home-welcome__icon" src="/static/images/welcome.png" />
+      <div class="home-welcome__title">New website unlocked</div>
+       Welcome to <div class="home-welcome__brand">Alakajam!</div>, a game development community. We host informal game jams!
+       <a class="home-welcome__more" href="/article/docs">Learn more</a>
+    </div>
+    {% endif %}
+    
     {% if featuredPost %}
     <div class="col-lg-offset-1 col-lg-10">
       {{ postMacros.post(featuredPost, user) }}
