@@ -38,7 +38,7 @@
   </div>
   <div class="form-group">
     <label for="category-titles">Rating categories {{ formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]') }}</label>
-    <textarea name="category-titles" class="codemirror">{{ event.related('details').get('category_titles') | dump }}</textarea>
+    <textarea name="category-titles" class="codemirror">{{ event.related('details').get('category_titles') if event else [] | dump }}</textarea>
   </div>
 
   <div class="horizontal-bar">
@@ -117,7 +117,7 @@
     <label for="status-entry">Entry submission status</label>
     <div>
     {{ formMacros.radio('status-entry', 'off', 'Off', 
-      event.get('status_entry') if event) }}
+      event.get('status_entry') if event else 'off') }}
     {{ formMacros.radio('status-entry', 'open', 'Open',
       event.get('status_entry') if event) }}
     {{ formMacros.radio('status-entry', 'open_unranked', 'Open (unranked only)',
