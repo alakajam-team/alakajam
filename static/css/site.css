@@ -952,15 +952,11 @@ input.date-picker {
 /* Events page */
 
 .events-block {
-  padding: 10px;
-  margin-bottom: 20px;
-  
-  & > div {
-    padding: 10px;
-  }
+  padding: 20px;
+  margin-bottom: 15px;
 
   & > h4 {
-    margin: -10px;
+    margin: -15px;
     margin-bottom: 0;
     padding: 10px;
     color: white;
@@ -1004,15 +1000,9 @@ input.date-picker {
 /* Event table */
 
 .event-table {
-  margin-bottom: 20px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
   &__header {
     display: block;
-    padding: 10px 0 ;
+    padding: 10px 0;
     margin-bottom: 20px;
     
     & h2 {
