@@ -66,9 +66,34 @@ async function event (req, res) {
   if (event) {
     json = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT)
     if (json.countdown_config.date) {
-      json.countdown_formatted = json.title + ' ' +
-        json.countdown_config.phrase + ' ' +
-        moment(json.countdown_config.date).fromNow() + '!'
+      let result = json.title + ' ' + json.countdown_config.phrase
+
+      let countdownMs = moment(json.countdown_config.date).valueOf() - Date.now()
+      if (countdownMs > 0) {
+        let days = Math.floor(countdownMs / (24 * 3600000))
+        countdownMs -= days * (24 * 3600000)
+        let hours = Math.floor(countdownMs / 3600000)
+        countdownMs -= hours * 3600000
+        let minutes = Math.floor(countdownMs / 60000)
+        countdownMs -= minutes * 60000
+        let seconds = Math.floor(countdownMs / 1000)
+
+        result += ' in '
+        if (minutes > 0) {
+          if (hours > 0) {
+            if (days > 0) {
+              result += days + ' day' + (seconds !== 1 ? 's' : '') + ', '
+            }
+            result += hours + ' hour' + (hours !== 1 ? 's' : '') + ', '
+          }
+          result += minutes + ' minute' + (minutes !== 1 ? 's' : '') + ' and '
+        }
+        result += seconds + ' second' + (seconds !== 1 ? 's' : '')
+      } else {
+        result += ' now!'
+      }
+
+      json.countdown_formatted = result
     }
 
     await event.load('entries.userRoles.user')
