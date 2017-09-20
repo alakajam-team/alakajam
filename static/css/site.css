@@ -952,8 +952,8 @@ input.date-picker {
 /* Events page */
 
 .events-block {
-  padding: 20px;
-  margin-bottom: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
 
   & > h4 {
     margin: -15px;
