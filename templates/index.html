@@ -100,7 +100,6 @@
                     var maxAnnouncementHeight = Math.max(280, findByClass('home-jumbo__sidebar').offsetHeight  - 50)
                     var announcementEl = findByClass('home-jumbo__announcement')
                     if (announcementEl.offsetHeight > maxAnnouncementHeight) {
-                      console.log(maxAnnouncementHeight)
                       announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
                       findByClass('expand-bar', 'home-jumbo__announcement').onclick = function () {
                         if (announcementEl.className.indexOf('expanded') !== -1) {
