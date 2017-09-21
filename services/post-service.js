@@ -63,7 +63,7 @@ async function findPosts (options = {}) {
     if (!options.allowHidden) {
       qb.where(function (qb) {
         qb = qb.where('special_post_type', '<>', 'hidden')
-        if (options.specialPostType === undefined) {
+        if (!options.specialPostType) {
           qb.orWhere('special_post_type', null)
         }
       })
