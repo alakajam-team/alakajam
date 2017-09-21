@@ -10,6 +10,7 @@
     <a href="{{ buildUrl(null, 'post', 'create', { eventId: featuredEvent.id, specialPostType: 'announcement' }) }}" class="btn btn-warning">Create (on featured <b>{{ featuredEvent.get('title') }}</b>)</a>
   {% endif %}
   <a href="{{ buildUrl(null, 'post', 'create', { specialPostType: 'announcement' }) }}" class="btn btn-warning">Create (no event)</a>
+  <a href="{{ buildUrl(null, 'post', 'create', { specialPostType: 'hidden' }) }}" class="btn btn-warning">Create hidden post</a>
 </div>
 
 {% if draftPosts.length > 0 %}

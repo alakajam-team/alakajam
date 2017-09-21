@@ -303,8 +303,8 @@ function validateSpecialPostType (specialPostType, user) {
   if (constants.SPECIAL_POST_TYPES.indexOf(specialPostType) === -1) {
     throw new Error('invalid special post type: ' + specialPostType)
   }
-  if (specialPostType === 'announcement' && !securityService.isMod(user)) {
-    throw new Error('non-mod ' + user.get('name') + ' attempted to create an announcement')
+  if (specialPostType && !securityService.isMod(user)) {
+    throw new Error('non-mod ' + user.get('name') + ' attempted to create a ' + specialPostType + ' post')
   }
 }
 
