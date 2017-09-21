@@ -11,6 +11,7 @@ const fs = promisify('fs')
 const path = promisify('path')
 const log = require('../core/log')
 const forms = require('../core/forms')
+const cache = require('../core/cache')
 const constants = require('../core/constants')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
@@ -80,53 +81,69 @@ async function anyPageMiddleware (req, res, next) {
  * Home page
  */
 async function index (req, res) {
-  let context = {}
+  let context = cache.general.get('home_page')
 
-  let featuredEventTask
-  if (res.locals.featuredEvent) {
-    // Find live event and its latest announcement
-    featuredEventTask = res.locals.featuredEvent.load(['entries', 'entries.userRoles'])
-      .then(async function () {
-        context.featuredEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
-        context.homeAnnouncement = context.featuredEventAnnouncement
+  if (!context) {
+    context = {}
+
+    let featuredEventTask
+    if (res.locals.featuredEvent) {
+      // Find live event and its latest announcement
+      featuredEventTask = res.locals.featuredEvent.load(['entries', 'entries.userRoles'])
+        .then(async function () {
+          context.featuredEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
+          context.homeAnnouncement = context.featuredEventAnnouncement
+        })
+    }
+
+    // Find previous event
+    let previousEventTask = await eventService.findEventByStatus('closed')
+      .then(function (previousEvent) {
+        context.previousEvent = previousEvent
       })
+
+    // Gather featured entries
+    let suggestedEntriesTask = null
+    if (res.locals.featuredEvent && res.locals.featuredEvent.get('status_results') === 'voting') {
+      suggestedEntriesTask = eventService.findGames({
+        eventId: res.locals.featuredEvent.get('id'),
+        sortByScore: true,
+        pageSize: 4
+      }).then(function (suggestedEntriesCollection) {
+        context.suggestedEntries = suggestedEntriesCollection.models
+      })
+    }
+
+    // Gather any user posts
+    let postsTask = postService.findPosts({specialPostType: null})
+      .then(async function (postsCollection) {
+        await postsCollection.load(['entry', 'event', 'entry.userRoles'])
+        context.posts = postsCollection.models
+        context.pageCount = postsCollection.pagination.pageCount
+      })
+
+    // Find featured post
+    let featuredPostTask = settingService.find(constants.SETTING_FEATURED_POST_ID)
+      .then(async function (featuredPostId) {
+        if (featuredPostId) {
+          context.featuredPost = await postService.findPostById(featuredPostId)
+        }
+      })
+
+    // Find featured links data
+    let featuredLinksTask = settingService.find(constants.SETTING_FEATURED_LINKS)
+      .then(function (featuredLinks) {
+        if (featuredLinks) {
+          let data = JSON.parse(featuredLinks)
+          context.featuredLinks = data.featured
+        }
+      })
+
+    await Promise.all([featuredEventTask, previousEventTask, suggestedEntriesTask,
+      postsTask, featuredPostTask, featuredLinksTask]) // Parallelize fetching everything
+
+    cache.general.set('home_page', context, 10 /* 10 seconds */)
   }
-
-  // Find previous event
-  let previousEventTask = await eventService.findEventByStatus('closed')
-    .then(function (previousEvent) {
-      context.previousEvent = previousEvent
-    })
-
-  // Gather featured entries
-  let suggestedEntriesTask = null
-  if (res.locals.featuredEvent && res.locals.featuredEvent.get('status_results') === 'voting') {
-    suggestedEntriesTask = eventService.findGames({
-      eventId: res.locals.featuredEvent.get('id'),
-      sortByScore: true,
-      pageSize: 4
-    }).then(function (suggestedEntriesCollection) {
-      context.suggestedEntries = suggestedEntriesCollection.models
-    })
-  }
-
-  // Gather any user posts
-  let postsTask = postService.findPosts({specialPostType: null})
-    .then(async function (postsCollection) {
-      await postsCollection.load(['entry', 'event', 'entry.userRoles'])
-      context.posts = postsCollection.models
-      context.pageCount = postsCollection.pagination.pageCount
-    })
-
-  // Find featured post
-  let featuredPostTask = settingService.find(constants.SETTING_FEATURED_POST_ID)
-    .then(async function (featuredPostId) {
-      if (featuredPostId) {
-        context.featuredPost = await postService.findPostById(featuredPostId)
-      }
-    })
-
-  await Promise.all([featuredEventTask, previousEventTask, suggestedEntriesTask, postsTask, featuredPostTask]) // Parallelize fetching everything
 
   res.render('index', context)
 }

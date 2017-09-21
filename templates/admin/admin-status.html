@@ -21,58 +21,63 @@
 
 <h2>Caches</h2>
 
-{% for cacheName, cache in caches %}
-<h4>{{ cacheName }}</h4>
+{% if config.DEBUG_DISABLE_CACHE %}
+  Caching disabled in <code>config.js</code>.
+{% else %}
 
-<div class="well">
-  <div class="pull-right">
-    <a href="/admin/status?clearCache={{ cacheName }}" class="btn btn-danger">Clear</a>
-  </div>
+  {% for cacheName, cache in caches %}
+  <h4>{{ cacheName }}</h4>
 
-  <ul>
-    {% set cacheStats = cache.getStats() %}
-    <li>Key count: <b>{{ cacheStats.keys }}</b></li>
-    <li>Hits: <b>{{ cacheStats.hits }}</b></li>
-    <li>Misses: <b>{{ cacheStats.misses }}</b></li>
-    <li>Keys size: <b>{{ cacheStats.ksize }}</b></li>
-    <li>Values size: <b>{{ cacheStats.vsize }}</b></li>
-  </ul>
+  <div class="well">
+    <div class="pull-right">
+      <a href="/admin/status?clearCache={{ cacheName }}" class="btn btn-danger">Clear</a>
+    </div>
 
-  <table class="table" style="max-width: 300px">
-  <tbody>
-    <tr>
-      <th>Key</th>
-      <th style="min-width: 180px">TTL</th>
-      <th>Value</th>
-    </tr>
-    {% for key in cache.keys() %}
-    <tr>
-      <td>{{ key }}</td>
-      <td>{{ cache.getTtl(key) | dateTime }}</td>
-      <td style="max-width: 500px; overflow: auto">
-        {% if not constants.CONFIDENTIAL_CACHE_KEYS.includes(key) %}
-          {% set value = cache.get(key) | prettyDump %}
-          {% if value.length > 100 %}
-            <input type="button" class="btn btn-sm btn-default" value="Toggle" onclick="$('#{{ key }}').toggle()" />
-            <div id="{{ key }}" style="display: none">
+    <ul>
+      {% set cacheStats = cache.getStats() %}
+      <li>Key count: <b>{{ cacheStats.keys }}</b></li>
+      <li>Hits: <b>{{ cacheStats.hits }}</b></li>
+      <li>Misses: <b>{{ cacheStats.misses }}</b></li>
+      <li>Keys size: <b>{{ cacheStats.ksize }}</b></li>
+      <li>Values size: <b>{{ cacheStats.vsize }}</b></li>
+    </ul>
+
+    <table class="table" style="max-width: 300px">
+    <tbody>
+      <tr>
+        <th>Key</th>
+        <th style="min-width: 180px">TTL</th>
+        <th>Value</th>
+      </tr>
+      {% for key in cache.keys() %}
+      <tr>
+        <td>{{ key }}</td>
+        <td>{{ cache.getTtl(key) | dateTime }}</td>
+        <td style="max-width: 500px; overflow: auto">
+          {% if not constants.CONFIDENTIAL_CACHE_KEYS.includes(key) %}
+            {% set value = cache.get(key) | prettyDump %}
+            {% if value.length > 100 %}
+              <input type="button" class="btn btn-sm btn-default" value="Toggle" onclick="$('#{{ key }}').toggle()" />
+              <div id="{{ key }}" style="display: none">
+                {{ value | safe }}
+              </div>
+            {% else %}
               {{ value | safe }}
-            </div>
+            {% endif %}
           {% else %}
-            {{ value | safe }}
+            <span class="label">TOP SECRET</span>
           {% endif %}
-        {% else %}
-          <span class="label">TOP SECRET</span>
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-</div>
-{% if not loop.last %}
-  <div class="horizontal-bar"></div>
+  </div>
+  {% if not loop.last %}
+    <div class="horizontal-bar"></div>
+  {% endif %}
+  {% endfor %}
 {% endif %}
-{% endfor %}
 
 {% endblock %}

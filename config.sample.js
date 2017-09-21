@@ -27,6 +27,7 @@ module.exports = {
 
   // Debug options
   DEBUG_INSERT_SAMPLES: true, // Inserts sample data upon DB init (false/true/'nightly')
+  DEBUG_DISABLE_CACHE: true, // Prevents caching pages for performance optimisation
   DEBUG_SQL: false, // Traces all SQL calls
   DEBUG_REFRESH_BROWSER: true, // Refreshes the browser automatically upon code changes
   DEBUG_ADMIN: false // Lets you access the "/admin" URL even when logged out
