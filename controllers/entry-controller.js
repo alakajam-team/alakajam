@@ -120,7 +120,7 @@ async function editEntry (req, res) {
       })
     }
   }
-  if (entry && !securityService.canUserWrite(user, entry, { allowMods: true })) {
+  if (entry.get('id') && !securityService.canUserWrite(user, entry, { allowMods: true })) {
     res.errorPage(403)
     return
   }
