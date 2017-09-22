@@ -333,7 +333,7 @@ module.exports.Entry = bookshelf.model('Entry', {
 
 }, {
   // Cascading
-  dependents: ['details', 'comments', 'platforms', 'votes', 'invites'] // 'userRoles' removed because of issue #93
+  dependents: ['details', 'comments', 'entryPlatforms', 'votes', 'invites'] // 'userRoles' removed because of issue #93
 })
 
 /**
