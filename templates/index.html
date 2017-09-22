@@ -97,9 +97,9 @@
                     // Custom announcement height limit and expand/collapse button
                     // Script inlined for fast loading
                     
-                    var maxAnnouncementHeight = Math.max(280, findByClass('home-jumbo__sidebar').offsetHeight  - 50)
+                    var maxAnnouncementHeight = Math.max(280, findByClass('home-jumbo__sidebar').offsetHeight - 50)
                     var announcementEl = findByClass('home-jumbo__announcement')
-                    if (announcementEl.offsetHeight > maxAnnouncementHeight) {
+                    if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
                       announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
                       findByClass('expand-bar', 'home-jumbo__announcement').onclick = function () {
                         if (announcementEl.className.indexOf('expanded') !== -1) {
@@ -139,7 +139,6 @@
   {% if featuredLinks %}
     <div class="row">
       <div class="col-lg-10 col-lg-offset-1">
-        <div class="horizontal-bar">Featured pages</div>
         <div class="home-featured-links">
         {% for featuredLink in featuredLinks %}
           <a class="panel home-featured-link" href="{{ featuredLink.link }}">
