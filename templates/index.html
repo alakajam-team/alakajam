@@ -97,7 +97,7 @@
                     // Custom announcement height limit and expand/collapse button
                     // Script inlined for fast loading
                     
-                    var maxAnnouncementHeight = Math.max(280, findByClass('home-jumbo__sidebar').offsetHeight - 50)
+                    var maxAnnouncementHeight = Math.max(280, findByClass('home-jumbo__sidebar').offsetHeight)
                     var announcementEl = findByClass('home-jumbo__announcement')
                     if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
                       announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
