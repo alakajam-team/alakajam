@@ -12,13 +12,10 @@
       </div>
     {% endif %}
     <div class="col-sm-8 col-md-9">
-      <h1>{{ post.get('title') }}</h1>
-      {% if not post.get('published_at') %}
-        <div class="alert alert-warning"><strong>Draft article</strong> Other users can't see it until it is published.</div>
-      {% endif %}
+      <h1>{{ articleName }}</h1>
       <div class="post panel">
         <div class="post__body panel-body user-contents">
-          {{ post.get('body') | markdown | safe }}
+          {{ articleBody | markdown | safe }}
         </div>
       </div>
   </div>

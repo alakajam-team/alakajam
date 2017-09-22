@@ -13,7 +13,6 @@ const cache = require('../core/cache')
 const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
 const securityService = require('../services/security-service')
-const settingService = require('../services/setting-service')
 const templating = require('./templating')
 const db = require('../core/db')
 
@@ -23,7 +22,6 @@ module.exports = {
   postMiddleware,
 
   posts,
-  article,
 
   editPost,
   savePost,
@@ -99,39 +97,6 @@ async function posts (req, res) {
   })
 }
 
-/**
- * Articles
- */
-async function article (req, res) {
-  // postName context variable is used to add a relevant "create article" mod button
-  res.locals.postName = forms.sanitizeString(req.params.name)
-
-  // Find featured post
-  let findPostTask = postService.findPost({
-    name: res.locals.postName,
-    specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
-    allowDrafts: true
-  }).then(async function (post) {
-    res.locals.post = post
-  })
-
-  let settingArticlesTask = settingService.findArticlesSidebar()
-    .then(function (sidebar) {
-      res.locals.sidebar = sidebar
-    })
-
-  await Promise.all([findPostTask, settingArticlesTask]) // Parallelize fetching everything
-
-  if (res.locals.post && (postService.isPast(res.locals.post.get('published_at')) ||
-      securityService.canUserRead(res.locals.user, res.locals.post, { allowMods: true }))) {
-    res.locals.pageTitle = res.locals.post.get('title')
-    res.locals.pageDescription = forms.markdownToText(res.locals.post.get('body'))
-    res.render('article')
-  } else {
-    res.errorPage(404)
-  }
-}
-
 async function viewPost (req, res) {
   // Check permissions
   let post = res.locals.post
@@ -164,28 +129,13 @@ async function editPost (req, res) {
       let post = new models.Post()
       post.set('special_post_type', forms.sanitizeString(req.query['special_post_type']))
       post.set('title', forms.sanitizeString(req.query.title))
-      if (post.get('special_post_type') !== constants.SPECIAL_POST_TYPE_ARTICLE) {
-        if (forms.isId(req.query.eventId)) {
-          post.set('event_id', req.query.eventId)
-        } else if (res.locals.featuredEvent) {
-          post.set('event_id', res.locals.featuredEvent.get('id'))
-        }
-        if (forms.isId(req.query.entryId)) {
-          post.set('entry_id', req.query.entryId)
-        }
+      if (forms.isId(req.query.eventId)) {
+        post.set('event_id', req.query.eventId)
+      } else if (res.locals.featuredEvent) {
+        post.set('event_id', res.locals.featuredEvent.get('id'))
       }
-
-      // Check whether we're trying to create an existing article
-      if (post.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE && post.get('name')) {
-        post.trigger('titleChanged')
-        let existingPost = await postService.findPost({
-          name: post.get('name'),
-          specialPostType: constants.SPECIAL_POST_TYPE_ARTICLE,
-          allowDrafts: true
-        })
-        if (existingPost) {
-          post = existingPost
-        }
+      if (forms.isId(req.query.entryId)) {
+        post.set('entry_id', req.query.entryId)
       }
 
       res.locals.post = post
@@ -264,9 +214,6 @@ async function savePost (req, res) {
       } else {
         post.set('event_id', null)
         post.set('entry_id', null)
-      }
-      if (post.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE) {
-        post.set('name', forms.slug(fields.name || fields.title))
       }
 
       // Publication & redirection strategy

@@ -70,9 +70,7 @@ async function viewUserProfile (req, res) {
     res.render('user/profile', {
       profileUser,
       entries: entriesCollection.models,
-      posts: postsCollection.filter(function (post) {
-        return post.get('special_post_type') !== constants.SPECIAL_POST_TYPE_ARTICLE
-      })
+      posts: postsCollection.models
     })
   } else {
     res.errorPage(400, 'No user exists with name ' + req.params.name)

@@ -42,21 +42,12 @@
       <input type="text" class="form-control" id="title" name="title" value="{{ post.get('title') }}" required="required">
     </div>
 
-    {% if specialPostType === 'article' %}
-    <div class="form-group">
-      <label for="name">Article name {{ formMacros.tooltip('Will be used in the URL') }}</label>
-      <input type="text" class="form-control" id="name" name="name" value="{{ post.get('name') }}" required="required">
-    </div>
-    {% endif %}
-
-    {% if specialPostType !== 'article' %}
     <div class="form-group">
       <label>Related event</label>
       <div class="form-inline">
         {{ formMacros.select('event-id', allEvents, relatedEvent.get('id') if relatedEvent, { nullable: true }) }}
       </div>
     </div>
-    {% endif %}
 
     <div class="form-group">
       <label for="body">Body</label>

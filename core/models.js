@@ -567,7 +567,7 @@ module.exports.ThemeVote = bookshelf.model('ThemeVote', {
  * | integer | entry_id | Entry ID
  * | integer | event_id | Event ID
  * | string | body | Post body (max size: 10000)
- * | string | special_post_type | 'article', 'announcement' or empty
+ * | string | special_post_type | 'announcement' or empty
  * | integer | comment_count | Number of comments made on this post
  * | dateTime | published_at | Publication time
  * | date | created_at | Creation time (not null)
@@ -583,9 +583,7 @@ module.exports.Post = bookshelf.model('Post', {
       this.trigger('titleChanged')
     })
     this.on('titleChanged', function () {
-      if (this.get('special_post_type') !== 'article') {
-        this.set('name', slug(this.get('title') || '').toLowerCase())
-      }
+      this.set('name', slug(this.get('title') || '').toLowerCase())
     })
     return attrs
   },
