@@ -237,8 +237,17 @@ async function viewEventThemes (req, res) {
           // In case the shortlist phase has been skipped
           shortlistCollection = await eventThemeService.findBestThemes(event)
         }
-
         context.shortlist = shortlistCollection.sortBy(theme => -theme.get('score'))
+
+        if (res.locals.user) {
+          let shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(res.locals.user, event)
+          if (shortlistVotesCollection.length === shortlistCollection.length) {
+            context.userRanks = {}
+            shortlistVotesCollection.each(function (vote) {
+              context.userRanks[vote.get('theme_id')] = 11 - parseInt(vote.get('score'))
+            })
+          }
+        }
       }
 
       await event.load('details')

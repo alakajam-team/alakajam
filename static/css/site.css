@@ -1539,10 +1539,13 @@ input.date-picker {
       font-weight: normal;
       font-size: 1.4rem;
     }
-    
-    &__ranking {
+
+    &__score, &__ranking {
+      float: right;
+      text-align: right;
       font-size: 1.1rem;
       margin-top: 2px;
+      width: 100px;
     }
   }
   & .use-hover .theme-shortlist-line.draggable:hover {
@@ -1916,6 +1919,10 @@ input.date-picker {
           margin-top: 20px;
         }
       }
+    }
+
+    &__countdown {
+      margin-left: auto;
     }
   }
   

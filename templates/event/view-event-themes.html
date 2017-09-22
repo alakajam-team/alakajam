@@ -189,16 +189,20 @@
         <div class="themes__results">
           <h2>Shortlist results</h2>
           <div class="well">
-              <!-- TODO <span class="pull-right">Your picks</span>-->
+              {% if userRanks %}
+                <span class="theme-shortlist-line__score">Your picks</span>
+              {% endif %}
+              <span class="theme-shortlist-line__score">Score</span>
               Final rankings of the theme shortlist
-              <span style="width: 100px" class="pull-right text-right">Score</span>
             </p>
             <ol>
               {% for theme in shortlist %}
               <li class="theme-shortlist-line"> 
                 <span class="theme-shortlist-line__label">{{ theme.get('title') }}</span>
-                <span style="width: 100px" class="pull-right text-right">{{ '+' if theme.get('score') > 0 }}{{ theme.get('score') }}</span>
-               <!--  TODO <span class="theme-shortlist-line__ranking pull-right label label-default">{{ [i, 1] | sum | ordinal }}</span>-->
+                {% if userRanks %}
+                  <span class="theme-shortlist-line__ranking">{{ userRanks[theme.get('id')] | ordinal }}</span>
+                {% endif %}
+                <span class="theme-shortlist-line__score">{{ '+' if theme.get('score') > 0 }}{{ theme.get('score') }}</span>
               </li>
               {% endfor %}
             </ol>
