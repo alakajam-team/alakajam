@@ -47,6 +47,7 @@ async function adminMiddleware (req, res, next) {
 async function adminHome (req, res) {
   let allPostsCollection = await postService.findPosts({
     specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
+    allowHidden: true,
     allowDrafts: true
   })
   let draftPosts = allPostsCollection.where({'published_at': null})

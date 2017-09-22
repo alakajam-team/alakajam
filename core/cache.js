@@ -6,6 +6,7 @@
  * @module core/cache
  */
 
+const config = require('../config')
 const NodeCache = require('node-cache')
 
 /*
@@ -13,17 +14,30 @@ const NodeCache = require('node-cache')
  * stdTTL: (default: 0) the standard ttl as number in seconds for every generated cache element. 0 = unlimited
  * checkperiod: (default: 600) The period in seconds, as a number, used for the automatic delete check interval. 0 = no periodic check.
  */
-const generalTtl = 24 * 60 * 60 // one day
+const generalTtl = 24 * 60 * 3600 // one day
 const usersTtl = 10 * 60 // 10 minutes
-const eventsTtl = 24 * 60 * 60 // one day
-const settingsTtl = 24 * 60 * 60 // one day
+const eventsTtl = 24 * 60 * 3600 // one day
+const settingsTtl = 24 * 60 * 3600 // one day
+
+let Cache = NodeCache
+if (config.DEBUG_DISABLE_CACHE) {
+  Cache = function () {
+    let fastExpiryCache = new NodeCache({stdTTL: 1, checkperiod: 0})
+
+    this.get = key => fastExpiryCache.get(key)
+    this.set = (key, value) => fastExpiryCache.set(key, value) // Ignore any custom TTL
+    this.del = key => fastExpiryCache.del(key)
+    this.keys = function () {}
+    this.getStats = function () {}
+  }
+}
 
 const cacheMap = {
-  general: new NodeCache({ stdTTL: generalTtl, checkperiod: 10 * 60 }),
-  users: new NodeCache({ stdTTL: usersTtl, checkperiod: usersTtl }),
-  settings: new NodeCache({ stdTTL: settingsTtl, checkperiod: settingsTtl }),
-  eventsById: new NodeCache({ stdTTL: eventsTtl, checkperiod: eventsTtl }),
-  eventsByName: new NodeCache({ stdTTL: eventsTtl, checkperiod: eventsTtl })
+  general: new Cache({ stdTTL: generalTtl, checkperiod: 10 * 60 }),
+  users: new Cache({ stdTTL: usersTtl, checkperiod: usersTtl }),
+  settings: new Cache({ stdTTL: settingsTtl, checkperiod: settingsTtl }),
+  eventsById: new Cache({ stdTTL: eventsTtl, checkperiod: eventsTtl }),
+  eventsByName: new Cache({ stdTTL: eventsTtl, checkperiod: eventsTtl })
 }
 
 module.exports = {

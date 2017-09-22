@@ -745,7 +745,8 @@ input.date-picker {
   }
 
   &__avatar {
-    width: 36px;
+    max-width: 36px;
+    max-height: 36px;
     margin-right: 5px;
     vertical-align: top;
   }
@@ -808,9 +809,11 @@ input.date-picker {
     position: absolute;
     left: calc(-8.33333333% + 10px);
     top: 0;
+    text-align: center;
     
     & img {
-      width: 100%;
+      max-width: 100%;
+      max-height: 70px;
       margin-bottom: 5px;
     }
   }
@@ -1939,6 +1942,38 @@ input.date-picker {
     padding: 10px;
     color: var(--text-lighter);
   }
+}
+
+.home-featured-links {
+  text-align: center;
+  margin-bottom: -10px;
+}
+.home-featured-link {
+  position: relative;
+  display: inline-block;
+  padding: 10px;
+  padding-left: 55px;
+  margin-right: 15px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  top: 0px;
+  transition: 0.1s;
+
+  & .fa {
+    font-size: 2.3rem;
+    position: absolute;
+    left: 10px;
+    top: 7px;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &:hover {
+    top: -5px;
+  }
+
 }
 
 .home-entry {

@@ -25,6 +25,9 @@ module.exports = {
  */
 async function find (key, defaultValue = null) {
   if (!cache.settings.get(key)) {
+    if (!key) {
+      throw new Error('Undefined key, you might have forgotten to declare a constant')
+    }
     let settingModel = await models.Setting.where('key', key).fetch()
     cache.settings.set(key, settingModel ? settingModel.get('value') : undefined)
   }

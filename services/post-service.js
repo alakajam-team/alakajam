@@ -53,13 +53,24 @@ function wasEdited (model) {
 
 /**
  * Finds all posts from a feed (specified through options)
- * @param  {object} options among "specialPostType allowDrafts eventId entryId userId"
+ * @param  {object} options among "specialPostType allowHidden allowDrafts eventId entryId userId"
  * @return {array(Post)}
  */
 async function findPosts (options = {}) {
   let postCollection = await models.Post
   postCollection = postCollection.query(function (qb) {
     if (options.specialPostType !== undefined) qb = qb.where('special_post_type', options.specialPostType)
+    if (!options.allowHidden) {
+      qb.where(function (qb) {
+        qb = qb.where('special_post_type', '<>', 'hidden')
+        if (!options.specialPostType) {
+          qb.orWhere('special_post_type', null)
+        }
+      })
+    } else {
+      qb.orWhere('special_post_type', 'hidden')
+    }
+
     if (options.eventId) qb = qb.where('event_id', options.eventId)
     if (options.entryId) qb = qb.where('entry_id', options.entryId)
     if (options.userId) {
@@ -70,6 +81,7 @@ async function findPosts (options = {}) {
           })
           .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
     }
+
     if (!options.allowDrafts) qb = qb.where('published_at', '<=', new Date())
     return qb
   })
