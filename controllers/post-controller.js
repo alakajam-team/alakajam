@@ -12,6 +12,7 @@ const models = require('../core/models')
 const cache = require('../core/cache')
 const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
+const eventRatingService = require('../services/event-rating-service')
 const securityService = require('../services/security-service')
 const templating = require('./templating')
 const db = require('../core/db')
@@ -288,9 +289,10 @@ async function saveComment (req, res) {
  * @param {User} user The current user
  * @param {Post|Entry} node The current node model
  * @param {string} baseUrl The view URL for the current node
+ * @param {Event} currentEvent The current event, if the node is an entry
  * @return {string} A URL to redirect to
  */
-async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
+async function handleSaveComment (fields, currentUser, currentNode, baseUrl, currentEvent) {
   let redirectUrl = baseUrl
 
   // Find or create comment
@@ -350,9 +352,9 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl) {
       // Refresh feedback score on both the giver & receiver entries
       let currentEntry = currentNode
       let userEntry = await eventService.findUserEntryForEvent(currentUser, currentEntry.get('event_id'))
-      await eventService.refreshEntryScore(currentEntry)
+      await eventRatingService.refreshEntryScore(currentEntry, currentEvent)
       if (userEntry) {
-        await eventService.refreshEntryScore(userEntry)
+        await eventRatingService.refreshEntryScore(userEntry, currentEvent)
       }
 
       if (!fields.delete) {

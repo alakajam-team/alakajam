@@ -42,7 +42,6 @@ module.exports = {
   countEntriesByEvent,
   findGames,
 
-  refreshEntryScore,
   refreshCommentScore,
   refreshEntryPlatforms,
   refreshUserCommentScoresOnNode
@@ -643,38 +642,6 @@ async function refreshEntryPlatforms (entry) {
     }
   }
   await Promise.all(tasks)
-}
-
-/**
- *
- * @param  {Entry} entry
- * @return {void}
- */
-async function refreshEntryScore (entry) {
-  await entry.load(['comments', 'userRoles'])
-
-  let received = 0
-  let comments = entry.related('comments')
-  for (let comment of comments.models) {
-    received += comment.get('feedback_score')
-  }
-
-  let given = 0
-  let userRoles = entry.related('userRoles')
-  for (let userRole of userRoles.models) {
-    let givenComments = await postService.findCommentsByUserAndEvent(userRole.get('user_id'), entry.get('event_id'))
-    for (let givenComment of givenComments.models) {
-      given += givenComment.get('feedback_score')
-    }
-  }
-
-  // This formula boosts a little bit low scores (< 30) to ensure everybody gets at least some comments,
-  // and to reward people for posting their first comments. It also nerfs & caps very active commenters to prevent
-  // them from trusting the front page. Finally, negative scores are not cool so we use 100 as the origin.
-  // NB. It is inspired by the actual LD sorting equation: D = 50 + R - 5*sqrt(min(C,100))
-  // (except that here, higher is better)
-  entry.set('feedback_score', Math.floor(Math.max(0, 74 + 8.5 * Math.sqrt(10 + Math.min(given, 100)) - received)))
-  await entry.save()
 }
 
 async function refreshCommentScore (comment) {

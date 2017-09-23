@@ -303,7 +303,7 @@ async function viewEventGames (req, res) {
   let eventResultsStatus = event.get('status_results')
   let voteHistory = []
   if (res.locals.user && (eventResultsStatus === 'voting' || eventResultsStatus === 'results')) {
-    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user, event, { pageSize: 5 })
+    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), event, { pageSize: 5 })
     voteHistory = voteHistoryCollection.models
   }
 
@@ -326,8 +326,8 @@ async function viewEventRatings (req, res) {
 
   let eventResultsStatus = res.locals.event.get('status_results')
   if (res.locals.user && (eventResultsStatus === 'voting' || eventResultsStatus === 'results')) {
-    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user, res.locals.event,
-      { pageSize: null, withRelated: ['entry.details', 'entry.userRoles'] })
+    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), res.locals.event,
+      { withRelated: ['entry.details', 'entry.userRoles'] })
     let categoryTitles = res.locals.event.related('details').get('category_titles')
 
     let rankedVoteHistories = []

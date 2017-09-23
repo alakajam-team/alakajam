@@ -47,13 +47,6 @@
       </div>
       {% endif %}
 
-      {% if posts.models.length > 0 %}
-      <h2>Latest posts</h2>
-      {% for post in posts.models %}
-        {{ postMacros.post(post, user, {hideBody: true}) }}
-      {% endfor %}
-      {% endif %}
-
       {% if canVote %}
         <div class="entry-voting">
           <h2 class="entry-voting__header">Game voting</h2>
@@ -72,7 +65,7 @@
                   <div class="entry-voting__category">
                     <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ categoryRating | default('0') }}" />
                     <div class="entry-voting__category-title">{{ categoryTitle }}</div>
-                    <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ categoryRating if categoryRating !== 0 }}</div>
+                    <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ categoryRating | digits(0) if categoryRating !== 0 }}</div>
                     <div class="entry-voting__category-stars">
                       <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if not categoryRating }}"></span>
                       {% for i in range(1, 11) %}
@@ -99,6 +92,13 @@
             <div class="col-xs-4 col-md-2 text-center"><strong>Gained</strong> {{ formMacros.tooltip('The points gained are the biggest number between comment and rating points.') }}<br /><span class="entry-voting__score-big-number zero">0</span></div>
           </div>
         </div>
+      {% endif %}
+
+      {% if posts.models.length > 0 %}
+      <h2>Latest posts</h2>
+      {% for post in posts.models %}
+        {{ postMacros.post(post, user, {hideBody: true}) }}
+      {% endfor %}
       {% endif %}
 
       {% if entry.get('allow_anonymous') and user and not user.get('disallow_anonymous') %}
