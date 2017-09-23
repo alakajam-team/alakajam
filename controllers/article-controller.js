@@ -9,7 +9,6 @@
 const slug = require('slug')
 const settingService = require('../services/setting-service')
 const articleService = require('../services/article-service')
-const templating = require('./templating')
 
 module.exports = {
   article

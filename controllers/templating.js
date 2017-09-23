@@ -6,7 +6,6 @@
  * @module controllers/templating
  */
 
-const constants = require('../core/constants')
 const forms = require('../core/forms')
 const securityService = require('../services/security-service')
 const postService = require('../services/post-service')

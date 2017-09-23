@@ -6,7 +6,6 @@
  * @module controllers/user-controller
  */
 
-const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const cache = require('../core/cache')

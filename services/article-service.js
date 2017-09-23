@@ -6,10 +6,8 @@
  * @module services/post-service
  */
 
-const config = require('../config')
 const constants = require('../core/constants')
 const log = require('../core/log')
-const fileStorage = require('../core/file-storage')
 const cache = require('../core/cache')
 const requestPromise = require('request-promise-native')
 
