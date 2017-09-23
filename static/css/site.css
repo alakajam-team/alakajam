@@ -249,11 +249,13 @@ input.date-picker {
   margin-bottom: 20px;
   
   & .expand-bar {
+    display: none; /* will be enabled with JS */
     cursor: pointer;
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 100;
     height: 30px;
     border-top: 1px solid var(--borders);
     background-color: white;
@@ -1912,12 +1914,10 @@ input.date-picker {
 
       & .expand-bar {
         margin-left: 10px;
-        display: none; /* will be enabled with JS */
-
-        & .collapse {
-          display: inline-block;
-          margin-top: 20px;
-        }
+      }
+      &.expanded .collapse {
+        margin-top: 20px;
+        display: inline-block;
       }
     }
 

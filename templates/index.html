@@ -102,12 +102,16 @@
                     var announcementEl = findByClass('home-jumbo__announcement')
                     if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
                       announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
-                      findByClass('expand-bar', 'home-jumbo__announcement').onclick = function () {
+                      var expandBarEl = findByClass('expand-bar', 'home-jumbo__announcement')
+                      expandBarEl.setAttribute('style', 'display: block')
+                      expandBarEl.onclick = function (e) {
                         if (announcementEl.className.indexOf('expanded') !== -1) {
                           announcementEl.className = announcementEl.className.replace(' expanded', '')
                         } else {
                           announcementEl.className += ' expanded'
                         }
+                        e.preventDefault()
+                        return false
                       }
                     } else {
                       findByClass('expand-bar', 'home-jumbo__announcement').remove()
