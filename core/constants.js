@@ -96,13 +96,6 @@ module.exports = {
   PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii',
   FEATURED_EVENT_DATE_FORMAT: 'MMM. Do, ha',
 
-  // Misc
-  ALLOWED_PICTURE_MIMETYPES: [
-    'image/png',
-    'image/jpeg',
-    'image/gif'
-  ],
-
   // Entries
   ENTRY_PLATFORM_DEFAULT_ICON: 'fa-file-o',
   ENTRY_PLATFORM_ICONS: {
@@ -116,6 +109,14 @@ module.exports = {
 
   // Events
   MAX_CATEGORY_COUNT: 6,
-  MINIMUM_REQUIRED_RATINGS: 1 // TODO Set reasonable value
+  MINIMUM_REQUIRED_RATINGS: 1, // TODO Set reasonable value
+
+  // Misc
+  ARTICLES_ROOT_URL: 'https://raw.githubusercontent.com/alakajam-team/alakajam/master/articles/',
+  ALLOWED_PICTURE_MIMETYPES: [
+    'image/png',
+    'image/jpeg',
+    'image/gif'
+  ]
 
 }

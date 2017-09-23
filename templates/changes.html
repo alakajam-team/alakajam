@@ -7,7 +7,7 @@
   <div class="row">
     {% if sidebar %}
       <div class="col-sm-4 col-md-3">
-        {{ sidebarMacros.sidebar(sidebar, path) }}
+        {{ sidebarMacros.sidebar(sidebar, path, { class: 'articles-sidebar' }) }}
       </div>
     {% endif %}
     <div class="col-sm-8 col-md-9">

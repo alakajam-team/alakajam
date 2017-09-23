@@ -7,7 +7,11 @@
  */
 
 const config = require('../config')
+const constants = require('../core/constants')
+const log = require('../core/log')
 const fileStorage = require('../core/file-storage')
+const cache = require('../core/cache')
+const requestPromise = require('request-promise-native')
 
 module.exports = {
   findArticle
@@ -19,11 +23,13 @@ module.exports = {
  * @return {string} markdown content
  */
 async function findArticle (articleName) {
-  let path = 'articles/' + articleName + '.md'
-  let exists = await fileStorage.exists(path)
-  if (exists) {
-    return fileStorage.read(path)
-  } else {
-    return null
-  }
+  return cache.getOrFetch(cache.articles, articleName, async function () {
+    let result = null
+    try {
+      result = await requestPromise(constants.ARTICLES_ROOT_URL + articleName + '.md')
+    } catch (e) {
+      log.warn('Article not found: ' + articleName)
+    }
+    return result
+  })
 }

@@ -25,9 +25,11 @@ async function article (req, res) {
   let findArticleTask = articleService.findArticle(
     res.locals.articleName
   ).then(async function (article) {
-    let lines = article.split('\n')
-    res.locals.articleName = lines.shift()
-    res.locals.articleBody = lines.join('\n')
+    if (article) {
+      let lines = article.split('\n')
+      res.locals.articleName = lines.shift()
+      res.locals.articleBody = lines.join('\n')
+    }
   })
 
   let settingArticlesTask = settingService.findArticlesSidebar()

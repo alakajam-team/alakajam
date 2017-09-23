@@ -145,12 +145,25 @@ async function insertInitialData (knex, samples) {
             ]
         },
         {
-            "title": "Game jam tips",
+            "title": "Events rules",
             "links": [
                 {
-                    "title": "Tips",
-                    "url": "/article/gjt-tips"
+                    "title": "Alakajam!",
+                    "url": "/article/alakajam-competition-rules"
                 },
+                {
+                    "title": "Kajam",
+                    "url": "/article/kajam-rules"
+                },
+                {
+                    "title": "Feedback Fortnight",
+                    "url": "/article/feedback-fortnight-rules"
+                }
+            ]
+        },
+        {
+            "title": "Game jam tips",
+            "links": [
                 {
                     "title": "Managing scope",
                     "url": "/article/gjt-scope"
@@ -166,23 +179,6 @@ async function insertInitialData (knex, samples) {
                 {
                     "title": "Timelapses",
                     "url": "/article/gjt-timelapses"
-                }
-            ]
-        },
-        {
-            "title": "Events rules",
-            "links": [
-                {
-                    "title": "Alakajam!",
-                    "url": "/article/alakajam-competition-rules"
-                },
-                {
-                    "title": "Kajam",
-                    "url": "/article/kajam-rules"
-                },
-                {
-                    "title": "Feedback Fortnight",
-                    "url": "/article/feedback-fortnight-rules"
                 }
             ]
         },

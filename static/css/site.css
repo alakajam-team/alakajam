@@ -296,6 +296,15 @@ input.date-picker {
   }
 }
 
+.sidebar {
+  & h3 {
+    margin: 0
+  }
+}
+.articles-sidebar .sidebar__link {
+  padding: 5px 15px;
+}
+
 /* ============================== Navigation ============================== */
 
 .navbar-default {

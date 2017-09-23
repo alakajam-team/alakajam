@@ -43,6 +43,8 @@
     "promisify-node": "^0.4.0",
     "random-key": "^0.3.2",
     "remove-markdown": "^0.2.0",
+    "request": "^2.82.0",
+    "request-promise-native": "^1.0.5",
     "sanitize-html": "^1.14.1",
     "showdown": "^1.6.4",
     "slug": "^0.9.1",

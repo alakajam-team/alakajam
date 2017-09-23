@@ -18,6 +18,7 @@ const generalTtl = 24 * 60 * 3600 // one day
 const usersTtl = 10 * 60 // 10 minutes
 const eventsTtl = 24 * 60 * 3600 // one day
 const settingsTtl = 24 * 60 * 3600 // one day
+const articlesTtl = 24 * 60 * 3600 // one day
 
 let Cache = NodeCache
 if (config.DEBUG_DISABLE_CACHE) {
@@ -37,7 +38,8 @@ const cacheMap = {
   users: new Cache({ stdTTL: usersTtl, checkperiod: usersTtl }),
   settings: new Cache({ stdTTL: settingsTtl, checkperiod: settingsTtl }),
   eventsById: new Cache({ stdTTL: eventsTtl, checkperiod: eventsTtl }),
-  eventsByName: new Cache({ stdTTL: eventsTtl, checkperiod: eventsTtl })
+  eventsByName: new Cache({ stdTTL: eventsTtl, checkperiod: eventsTtl }),
+  articles: new Cache({ stdTTL: articlesTtl, checkperiod: articlesTtl })
 }
 
 module.exports = {
@@ -46,6 +48,7 @@ module.exports = {
   settings: cacheMap.settings,
   eventsById: cacheMap.eventsById,
   eventsByName: cacheMap.eventsByName,
+  articles: cacheMap.articles,
 
   getOrFetch,
 
