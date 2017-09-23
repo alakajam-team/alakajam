@@ -79,11 +79,12 @@
                   {{ jumboLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower', ['off']) }}
                   {{ jumboLink(featuredEvent, 'status_results', 'results', 'Results', 'th-list', ['off', 'voting']) }}
                   <div class="home-jumbo__social">
-                    {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter') }}
-                    {{ socialLink('IRC', '/chat', 'irc') }}
-                    {{ socialLink('YouTube', 'https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos', 'youtube') }}
-                    {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit') }}
-                    {{ socialLink('Github', 'https://github.com/alakajam-team', 'github') }}
+                    {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
+                    {{ socialLink('Twitch', 'https://www.twitch.tv/communities/alakajam', 'twitch.png') }}
+                    {{ socialLink('IRC', '/chat', 'irc.svg') }}
+                    {{ socialLink('YouTube', 'https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos', 'youtube.svg') }}
+                    {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
+                    {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
                   </div>
                 </div>
               </div>
@@ -204,7 +205,7 @@
 
 {% macro socialLink (title, url, iconName) %}
   <a href="{{ url }}" class="footer__link has-tooltip" data-toggle="tooltip" data-original-title="{{ title }}">
-    <img src="/static/images/social/{{ iconName }}.svg" class="footer__icon no-border" /> 
+    <img src="/static/images/social/{{ iconName }}" class="footer__icon no-border" /> 
   </a>
 {% endmacro %}
 
