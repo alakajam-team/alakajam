@@ -82,7 +82,7 @@ async function event (req, res) {
         if (minutes > 0 || hours > 0 || days > 0) {
           if (hours > 0 || days > 0) {
             if (days > 0) {
-              result += days + ' day' + (seconds !== 1 ? 's' : '') + ', '
+              result += days + ' day' + (days !== 1 ? 's' : '') + ', '
             }
             result += hours + ' hour' + (hours !== 1 ? 's' : '') + ', '
           }
