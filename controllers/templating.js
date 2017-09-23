@@ -79,11 +79,7 @@ function buildUrl (model, type, page = null, options = {}) {
         if (options.title) pagePath += '&title=' + options.title
         return '/post' + pagePath
       } else if (model && typeof model === 'object') {
-        if (model.get('special_post_type') === constants.SPECIAL_POST_TYPE_ARTICLE && !page) {
-          return '/article/' + model.get('name')
-        } else {
-          return '/post/' + model.id + '/' + (model.get('name') || 'untitled') + pagePath
-        }
+        return '/post/' + model.id + '/' + (model.get('name') || 'untitled') + pagePath
       } else {
         return '/post/' + model
       }

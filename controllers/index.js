@@ -22,6 +22,7 @@ module.exports = {
     const postController = require('./post-controller.js')
     const userController = require('./user-controller.js')
     const apiController = require('./api-controller.js')
+    const articleController = require('./article-controller.js')
 
     // Run all middleware before any actual route handlers
 
@@ -62,7 +63,6 @@ module.exports = {
     // Mod dashboard
 
     router.get('/admin', adminController.adminHome)
-    router.get('/admin/articles', adminController.adminArticles)
     router.get('/admin/events', adminController.adminEvents)
     router.all('/admin/platforms', adminController.adminPlatforms)
     router.all('/admin/settings', adminController.adminSettings)
@@ -102,7 +102,6 @@ module.exports = {
 
     // Matches both post and posts
     router.get('/posts?', postController.posts)
-    router.get('/article/:name', postController.article)
 
     router.get('/post/create', postController.editPost)
     router.post('/post/create', postController.savePost)
@@ -112,6 +111,10 @@ module.exports = {
     router.post('/post/:postId(\\d+)/:postName/edit', postController.savePost)
     router.get('/post/:postId(\\d+)/:postName/edit', postController.editPost)
     router.get('/post/:postId(\\d+)/:postName/delete', postController.deletePost)
+
+    // Articles
+
+    router.get('/article/:name', articleController.article)
 
     // JSON API
 

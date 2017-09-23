@@ -131,8 +131,71 @@ async function insertInitialData (knex, samples) {
             "title": "General",
             "links": [
                 {
-                    "title": "About Alakajam!",
-                    "url": "/article/help"
+                    "title": "Welcome",
+                    "url": "/article/docs"
+                },
+                {
+                    "title": "Resources",
+                    "url": "/article/resources"
+                },
+                {
+                    "title": "F.A.Q.",
+                    "url": "/article/faq"
+                }
+            ]
+        },
+        {
+            "title": "Game jam tips",
+            "links": [
+                {
+                    "title": "Tips",
+                    "url": "/article/gjt-tips"
+                },
+                {
+                    "title": "Managing scope",
+                    "url": "/article/gjt-scope"
+                },
+                {
+                    "title": "Skills",
+                    "url": "/article/gjt-skills"
+                },
+                {
+                    "title": "Social media",
+                    "url": "/article/gjt-social"
+                },
+                {
+                    "title": "Timelapses",
+                    "url": "/article/gjt-timelapses"
+                }
+            ]
+        },
+        {
+            "title": "Events rules",
+            "links": [
+                {
+                    "title": "Alakajam!",
+                    "url": "/article/alakajam-competition-rules"
+                },
+                {
+                    "title": "Kajam",
+                    "url": "/article/kajam-rules"
+                },
+                {
+                    "title": "Feedback Fortnight",
+                    "url": "/article/feedback-fortnight-rules"
+                }
+            ]
+        },
+        {
+            "title": "Behind the scenes",
+            "links": [
+                {
+                    "title": "Site changelog",
+                    "url": "/changes"
+                },
+                {
+                    "title": "JSON API",
+                    "url": "/api"
                 }
             ]
         }
@@ -154,28 +217,6 @@ async function insertInitialData (knex, samples) {
     await entrantUser.related('details').set({
       'body': 'I am definitely **not** a robot.'
     }).save()
-
-    // Articles
-
-    let post = await postService.createPost(adminUser)
-    post.set({
-      title: 'About Alakajam',
-      name: 'help',
-      body: '*Alakajam!* is a cool gamedev community!',
-      special_post_type: 'article',
-      published_at: new Date()
-    })
-    await post.save()
-
-    post = await postService.createPost(adminUser)
-    post.set({
-      title: 'Support',
-      name: 'support',
-      body: 'Did you find a bug? It seems like you are in a development server, so... go fix it :D',
-      special_post_type: 'article',
-      published_at: new Date()
-    })
-    await post.save()
 
     // 1st event
 
@@ -221,31 +262,6 @@ async function insertInitialData (knex, samples) {
     await event2Details.save()
 
     await settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
-    await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, `{
-    "sidebar": [
-        {
-            "title": "General",
-            "links": [
-                {
-                    "title": "About Alakajam!",
-                    "url": "/article/docs"
-                },
-                {
-                    "title": "Support",
-                    "url": "/article/support"
-                },
-                {
-                    "title": "Site changelog",
-                    "url": "/changes"
-                },
-                {
-                    "title": "JSON API",
-                    "url": "/api"
-                }
-            ]
-        }
-    ]
-}`)
 
     eventThemeService.saveThemeIdeas(entrantUser, event2, [
       {title: 'Alone'},
@@ -269,7 +285,7 @@ async function insertInitialData (knex, samples) {
       await otherEntry.save()
     }
 
-    post = await postService.createPost(entrantUser, event2.get('id'))
+    let post = await postService.createPost(entrantUser, event2.get('id'))
     post.set({
       title: "I'm in!",
       body: "This is my second game and I'm really excited.",

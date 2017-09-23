@@ -21,15 +21,13 @@
       {{ postMacros.post(post, user, { commentsAnchorLinks: true }) }}
     </div>
   </div>
-  {% if post.get('special_post_type') !== 'article' %}
-    <div class="row">
-      <div class="col-lg-offset-1 col-lg-10">
-        <a class="comment__anchor" name="comments"></a>
-        <h2>Comments</h2>
-        {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
-      </div>
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10">
+      <a class="comment__anchor" name="comments"></a>
+      <h2>Comments</h2>
+      {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
     </div>
-  {% endif %}
+  </div>
 </div>
 
 {% endblock %}
