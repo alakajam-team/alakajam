@@ -196,7 +196,7 @@ async function editEntry (req, res) {
     if (fields['picture-delete'] && entry.get('pictures').length > 0) {
       await fileStorage.remove(entry.get('pictures')[0])
       entry.set('pictures', [])
-    } else if (files.picture.size > 0 && fileStorage.isValidPicture(files.picture.path)) { // TODO Formidable shouldn't create an empty file
+    } else if (files.picture && files.picture.size > 0 && fileStorage.isValidPicture(files.picture.path)) { // TODO Formidable shouldn't create an empty file
       let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
       entry.set('pictures', [finalPath])
     } else if (fields.picture) {
@@ -229,7 +229,7 @@ async function editEntry (req, res) {
       // Save entry: Apply team changes
       let teamMembers = null
       if (fields.members) { // XXX Requires JavaScript/loaded page
-        fields.members.split(',').map(s => parseInt(s))
+        teamMembers = fields.members.split(',').map(s => parseInt(s))
         let ownerId
         if (!isCreation) {
           ownerId = entry.related('userRoles')
