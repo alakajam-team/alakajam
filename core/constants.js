@@ -86,7 +86,7 @@ module.exports = {
     'img': ['src', 'width', 'height', 'class']
   },
   ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right'],
-  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com'],
+  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com'],
   ANONYMOUS_USER_ID: -1,
 
   // Dates
