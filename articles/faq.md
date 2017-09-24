@@ -19,3 +19,14 @@ When entering the Solo or Team division, you can opt-out of certain rating categ
 * **Audio**: Opting out is recommended if the game has no sound. You can also do so if the audio is so terrible you think it's not worth rating it.
 
 People who opt out of a category still have to follow the same rules regarding third-party assets.
+
+## <a name="feedback"></a>How is the Feedback Score calculated?
+
+Alakajam's Feedback Score uses a secret recipe transmitted from father to son since 50 generations! Its details are kept vague on purpose, you might want to know that:
+
+* Both ratings & comments make you gain points
+* Unranked entries are worth **as much points** as Solo/Team ones, despite the lack of ratings.
+* Each team member gains points independently. That means two team members can rate the same game, and both of them will make the feedback score increase.
+* Very short, effortless comments gain less points.
+
+The general rule being: don't overthink it, just spend a nice time playing & reviewing games!
