@@ -11,6 +11,7 @@ const forms = require('../core/forms')
 const cache = require('../core/cache')
 const log = require('../core/log')
 const templating = require('../controllers/templating')
+const userService = require('../services/user-service')
 const eventService = require('../services/event-service')
 const eventThemeService = require('../services/event-theme-service')
 const eventRatingService = require('../services/event-rating-service')
@@ -32,6 +33,7 @@ module.exports = {
 
   editEvent,
   editEventThemes,
+  editEventEntries,
   deleteEvent,
 
   ajaxFindThemes,
@@ -361,6 +363,7 @@ async function viewEventRatings (req, res) {
 async function viewEventResults (req, res) {
   res.locals.pageTitle += ' | Results'
 
+  // Permission checks & special post case
   let statusResults = res.locals.event.get('status_results')
   if (forms.isId(statusResults)) {
     res.locals.resultsPost = await postService.findPostById(statusResults)
@@ -369,18 +372,28 @@ async function viewEventResults (req, res) {
     return
   }
 
+  // Parse query
   let sortedBy = 1
+  let division = 'solo'
   if (forms.isInt(req.query.sortBy) && req.query.sortBy > 0 && req.query.sortBy <= constants.MAX_CATEGORY_COUNT) {
     sortedBy = parseInt(req.query.sortBy)
   }
+  if (['solo', 'team'].includes(req.query.division)) {
+    division = req.query.division
+  }
 
-  let rankingsCollection = await eventRatingService.findEntryRankings(res.locals.event, sortedBy)
-  let rankings = rankingsCollection.models
-
-  res.render('event/view-event-results', {
-    rankings,
-    sortedBy
+  // Gather entries rankings
+  let cacheKey = 'results_' + division + '_' + sortedBy
+  let context = await cache.getOrFetch(cache.general, cacheKey, async function () {
+    let rankingsCollection = await eventRatingService.findEntryRankings(res.locals.event, division, sortedBy)
+    return {
+      rankings: rankingsCollection.models,
+      sortedBy,
+      division
+    }
   })
+
+  res.render('event/view-event-results', context)
 }
 
 /**
@@ -529,6 +542,49 @@ async function editEventThemes (req, res) {
     themes: themesCollection.models,
     eliminationMinNotes: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5')),
     shortlist: shortlistCollection.models
+  })
+}
+
+/**
+ * Browse event entries
+ */
+async function editEventEntries (req, res) {
+  res.locals.pageTitle += ' | Entries'
+
+  let event = res.locals.event
+
+  let entriesCollection = await eventService.findGames({
+    eventId: event.get('id'),
+    pageSize: null,
+    withRelated: []
+  })
+
+  let entriesById = {}
+  entriesCollection.each(function (entry) {
+    entriesById[entry.get('id')] = entry
+  })
+  
+  let detailedEntryInfo = {}
+  let usersById = {}
+  if (forms.isId(req.query.entryDetails) && entriesById[req.query.entryDetails]) {
+    let eventUsersCollection = await userService.findUsers({ eventId: event.get('id') })
+    eventUsersCollection.each(function (user) {
+      usersById[user.get('id')] = user
+    })
+
+    let entry = entriesById[req.query.entryDetails]
+    await entry.load(['comments', 'userRoles', 'votes'])
+    detailedEntryInfo.id = req.query.entryDetails
+    detailedEntryInfo.given = await eventRatingService.computeScoreGivenByUserAndEntry(entry, event)
+    detailedEntryInfo.received = await eventRatingService.computeScoreReceivedByUser(entry, event)
+    detailedEntryInfo.total = eventRatingService.computeFeedbackScore(detailedEntryInfo.received.total, detailedEntryInfo.given.total)
+  }
+
+  res.render('event/edit-event-entries', {
+    entries: entriesCollection.models,
+    entriesById,
+    usersById,
+    detailedEntryInfo
   })
 }
 

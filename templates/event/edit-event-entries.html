@@ -1,0 +1,78 @@
+{% extends "event/_page-edit-event.html" %}
+{% import "_macros-form.html" as formMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
+
+{% macro userTitle(usersById, userId) %}
+  {% if usersById[userId] %}
+    {{ usersById[userId].get('title') or usersById[userId].get('name') }}
+  {% else %}
+   non-entrant of ID {{ userId }}
+  {% endif %} 
+{% endmacro %}
+
+{% block editEventBody %}
+
+<h1>{{ event.get('title') }} entries <span class="count">({{ entries.length }})</span></h1>
+
+{% if detailedEntryInfo.id %}
+  {% set entry = entriesById[detailedEntryInfo.id] %}
+  <h2>Feedback details: {{ entry.get('title') }}</h2>
+
+  <p>Feedback score: <strong>{{ detailedEntryInfo.total }}</strong></p>
+
+  <h4>Given <span class="count">(+{{ detailedEntryInfo.given.total }})</span></h4>
+
+  <ul>
+  {% for key, data in detailedEntryInfo.given.givenByUserAndEntry %}
+    <li>
+    {% if data.commentScore > 0 %}
+      <strong>+ {{ data.commentScore or '0' }}</strong> with comments by {{ userTitle(usersById, data.userId) }}
+        on {{ entriesById[data.entryId].get('title') }}
+    {% endif %}
+    {{ ' or ' if data.commentScore and data.voteScore }}
+    {% if data.voteScore > 0 %}
+      <strong>+ {{ data.voteScore or '0' }}</strong> with votes by {{ userTitle(usersById, data.userId) }}
+        on {{ entriesById[data.entryId].get('title') }}
+    {% endif %}
+  {% endfor %}
+  </ul>
+
+  <h4>Received <span class="count">(-{{ detailedEntryInfo.received.total }})</span></h4>
+
+  <ul>
+  {% for userId, data in detailedEntryInfo.received.receivedByUser %}
+    <li>
+    {% if data.commentScore > 0 %}
+      <strong>- {{ data.commentScore or '0' }}</strong> with comments by {{ userTitle(usersById, userId) }}
+    {% endif %}
+    {{ ' or ' if data.commentScore and data.voteScore }}
+    {% if data.voteScore > 0 %}
+      <strong>- {{ data.voteScore or '0' }}</strong> with votes by {{ userTitle(usersById, userId) }}
+    {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+<table class="table">
+<tr>
+<th>Title</th>
+<th>Division</th>
+<th>Score</th>
+<th>Actions</th>
+</tr>
+{% for entry in entries %}
+  <tr>
+    <td>
+      <a href="{{ buildUrl(entry, 'entry') }}">
+        {{ entry.get('title') }}
+      </a>
+    </td>
+    <td>{{ entry.get('division') | capitalize }}</td>
+    <td><strong>{{ detailedEntryInfo.total }}</strong></td>
+    <td><a href="?entryDetails={{ entry.get('id') }}" class="btn btn-default">Feedback details</a></td>
+  </tr>
+{% endfor %}
+</table>
+
+{% endblock %}

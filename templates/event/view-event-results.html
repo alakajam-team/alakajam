@@ -12,37 +12,52 @@
         {{ postMacros.post(resultsPost, user) }}
       </div>
     {% else %} 
-        
-      {% set categoryTitles = event.related('details').get('category_titles') %}
-      
+
       <div class="text-center">
-      {% for title in categoryTitles %}
-        <a href="?sortBy={{ loop.index }}" type="button" 
-            class="btn btn-default {{ 'disabled' if sortedBy === loop.index }}">
-          {{ categoryTitles[loop.index - 1] }}
-        </a>
-      {% endfor %}
+        <span class="btn-group" style="margin-right: 20px">
+          {% for title in ['solo','team'] %}
+            <a href="?sortBy={{ sortBy }}&division={{ title }}" type="button" 
+                class="btn btn-primary btn-lg {{ 'disabled' if division === title }}">
+              {{ title | capitalize }}
+            </a>
+          {% endfor %}
+        </span>
+        {% set categoryTitles = event.related('details').get('category_titles') %}
+        <span class="btn-group">
+          {% for title in categoryTitles %}
+            <a href="?sortBy={{ loop.index }}&division={{ division }}" type="button" 
+                class="btn btn-default {{ 'disabled' if sortedBy === loop.index }}">
+              {{ categoryTitles[loop.index - 1] }}
+            </a>
+          {% endfor %}
+        </span>
       </div>
       
       <div style="background-color: #DDD; margin: 20px 0">
         <h1 class="text-center" style="padding-top: 10px; margin-bottom: 0">{{ event.get('title') }} results</h1>
-        <h2 class="text-center">{{ categoryTitles[sortedBy - 1] }} rankings</h1>
+        <h2 class="text-center">{{ division | capitalize }}: {{ categoryTitles[sortedBy - 1] }} rankings</h1>
       
         <div class="row">
           <div class="col-md-offset-1 col-md-10 col-xs-12">
             <div class="row">
+              {% if rankings.length >= 2 %}
               <div class="col-xs-4" style="margin-top: 20px; margin-bottom: 10px; transform: perspective(400px) rotateY(10deg)">
-                {{ eventMacros.entryThumb(rankings[1]) if rankings.length >= 2 }}
+                {{ eventMacros.entryThumb(rankings[1]) }}
                 <h1 style="position: absolute; right: 25px; top: 5px; color: #EEE; text-shadow: 0 2px 3px black">2nd</h1>
               </div>
+              {% endif %}
+              {% if rankings.length >= 1 %}
               <div class="col-xs-4">
-                {{ eventMacros.entryThumb(rankings[0]) if rankings.length >= 1 }}
+                {{ eventMacros.entryThumb(rankings[0]) }}
                 <h1 style="position: absolute; right: 25px; top: 5px; color: #FF6; text-shadow: 0 2px 3px black">1st</h1>
               </div>
+              {% endif %}
+              {% if rankings.length >= 3 %}
               <div class="col-xs-4" style="margin-top: 20px; margin-bottom: 10px; transform: perspective(400px) rotateY(-10deg)">
-                {{ eventMacros.entryThumb(rankings[2]) if rankings.length >= 3 }}
+                {{ eventMacros.entryThumb(rankings[2]) }}
                 <h1 style="position: absolute; right: 25px; top: 5px; color: #EA8; text-shadow: 0 2px 3px black">3rd</h1>
               </div>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -52,10 +67,7 @@
         <div class="col-sm-{{ 12 - categoryTitles.length }}" style="margin-bottom: 20px">&nbsp;</div>
         {% for title in categoryTitles %}
           <div class="col-sm-1 text-center">
-            <a href="?sortBy={{ loop.index }}" type="button" 
-                class="btn btn-default btn-sm {{ 'disabled' if sortedBy === loop.index }}">
-              {{ categoryTitles[loop.index - 1] }}
-            </a>
+            <span style="font-weight: bold">{{ categoryTitles[loop.index - 1] }}</span>
           </div>
         {% endfor %}
       </div>
@@ -74,7 +86,10 @@
           </div>
           {% for title in categoryTitles %}
             <div class="col-sm-1 text-center" style="{{ 'background-color: #FAFAFA;' if loop.index === sortedBy }}">
-              <h4 style="line-height: 50px; vertical-align middle;">{{ entry.related('details').get('rating_' + loop.index) | digits(3) or 'N.A.' }}</h4>
+              <h4 style="line-height: 50px; vertical-align middle;">
+                {% set rating = entry.related('details').get('rating_' + loop.index) %}
+                {{ rating | digits(3) if rating > 0 else 'N.A.' }}
+              </h4>
             </div>
           {% endfor %}
         </div>

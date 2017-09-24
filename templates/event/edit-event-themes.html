@@ -17,13 +17,13 @@
 </tr>
 {% for theme in shortlist %}
   <tr>
-  <td>
-    {% if event.get('status_theme') === 'shortlist' and loop.index <= 5 %}
-      <span class="label">R E D A C T E D</span>
-    {% else %}
-      {{ theme.get('title') }}
-    {% endif %}
-  <td>
+    <td>
+      {% if event.get('status_theme') === 'shortlist' and loop.index <= 5 %}
+        <span class="label">R E D A C T E D</span>
+      {% else %}
+        {{ theme.get('title') }}
+      {% endif %}
+    </td>
     <td>{{ theme.get('notes') }}</td>
     <td><strong>{{ theme.get('score') }}</strong></td>
     <td>{{ (theme.get('score') / theme.get('notes')) | digits(2) }}</td>

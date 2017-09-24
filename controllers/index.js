@@ -96,6 +96,7 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/results', eventController.viewEventResults)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/edit-themes', eventController.editEventThemes)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/edit-entries', eventController.editEventEntries)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/delete', eventController.deleteEvent)
 
     // Posts

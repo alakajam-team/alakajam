@@ -144,17 +144,17 @@
                 <label>Opt-outs (<a href="/article/faq#optouts" target="_blank">help</a>)</label>
                 <div>
                   <label style="font-weight: normal">
-                    <input type="checkbox" name="optout-graphics" {{ 'readonly' if not isEntryOwner }}
+                    <input type="checkbox" name="optout-graphics" {{ 'readonly' if not canEditDivision }}
                     {{ 'checked="checked"' if optouts and optouts.includes('Graphics') }} 
-                    {{ 'disabled' if not isEntryOwner }} />
+                    {{ 'disabled' if not canEditDivision }} />
                     Disable ratings for graphics
                   </label>
                 </div>
                 <div>
                   <label style="font-weight: normal">
-                    <input type="checkbox" name="optout-audio" {{ 'readonly' if not isEntryOwner }}
+                    <input type="checkbox" name="optout-audio" {{ 'readonly' if not canEditDivision }}
                     {{ 'checked="checked"' if optouts and optouts.includes('Audio') }}
-                    {{ 'disabled' if not isEntryOwner }} />
+                    {{ 'disabled' if not canEditDivision }} />
                     Disable ratings for audio
                   </label>
                 </div>

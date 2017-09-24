@@ -21,7 +21,10 @@ module.exports = {
   findEntryRankings,
 
   refreshEntryRatings,
-  refreshEntryScore
+  refreshEntryScore,
+  computeScoreReceivedByUser,
+  computeScoreGivenByUserAndEntry,
+  computeFeedbackScore
 }
 
 /**
@@ -61,7 +64,7 @@ async function findEntryVote (user, entry) {
  * @return {void}
  */
 async function saveEntryVote (user, entry, event, voteData) {
-  await entry.load('event.details')
+  await entry.load(['details', 'event.details'])
   let eventDetails = event.related('details')
 
   let expectedVoteCount = eventDetails.get('category_titles').length
@@ -77,14 +80,29 @@ async function saveEntryVote (user, entry, event, voteData) {
       event_id: event.get('id')
     })
   }
+
+  let hasActualVote = false
+  let optouts = entry.related('details').get('optouts') || []
   for (let i in voteData) {
     let categoryIndex = (parseInt(i) + 1)
+    if (optouts.includes(eventDetails.get('category_titles')[categoryIndex - 1])) {
+      console.log("optout! "+ i)
+      voteData[i] = 0
+    }
     vote.set('vote_' + categoryIndex, voteData[i] || 0)
+    hasActualVote = hasActualVote || voteData[i] > 0
   }
-  await vote.save()
 
+  if (hasActualVote) {
+    if (!vote.get('id')) {
+      refreshEntryScore(entry, event)
+    }
+    await vote.save()
+  } else if (vote.get('id')) {
+    await vote.destroy()
+  }
+ 
   await refreshEntryRatings(entry)
-  refreshEntryScore(entry, event)
 }
 
 /**
@@ -119,11 +137,15 @@ async function findVoteHistory (userId, event, options = {}) {
  * @param  {number} categoryIndex
  * @return {Collection(Entry)}
  */
-async function findEntryRankings (event, categoryIndex) {
+async function findEntryRankings (event, division, categoryIndex) {
   if (categoryIndex > 0 && categoryIndex <= constants.MAX_CATEGORY_COUNT) {
     return models.Entry.query(function (qb) {
       return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
-        .where('entry.event_id', event.get('id'))
+        .where({
+          'event_id': event.get('id'),
+          'division': division
+        })
+        .where('entry_details.rating_' + categoryIndex, '>', 0)
         .orderBy('entry_details.rating_' + categoryIndex, 'desc')
     }).fetchAll({ withRelated: ['userRoles', 'details'] })
   } else {
@@ -184,15 +206,24 @@ function _range (from, to) {
  *
  * @param  {Entry} entry
  * @param  {Event} event
+ * @param  {object} options (optional) force
  * @return {void}
  */
-async function refreshEntryScore (entry, event) {
- // if (entry.get('updated_at') > ) TODO Prevent too much spam. Ideally use async worker
+async function refreshEntryScore (entry, event, options = {}) {
+  // Refresh at most every minute
+  if (new Date().getTime() - entry.get('updated_at').getTime() > 60000 || options.force) {
 
-  await entry.load(['comments', 'userRoles', 'votes'])
+    await entry.load(['comments', 'userRoles', 'votes'])
+    let received = (await computeScoreReceivedByUser(entry, event)).total
+    let given = (await computeScoreGivenByUserAndEntry(entry, event)).total
 
-  // Compute received score
-  let received = 0
+    entry.set('feedback_score', computeFeedbackScore(received, given))
+    await entry.save()
+  }
+}
+
+/* Compute received score */
+async function computeScoreReceivedByUser (entry, event) {
   let receivedByUser = {}
   for (let comment of entry.related('comments').models) {
     // Earn up to 3 points per user from comments
@@ -206,42 +237,66 @@ async function refreshEntryScore (entry, event) {
     receivedByUser[userId] = receivedByUser[userId] || {}
     receivedByUser[userId].voteScore = 2
   }
+
+  let result = {
+    receivedByUser,
+    total: 0
+  }
   for (let userId in receivedByUser) {
     // Pick the highest score among comments & votes on each user
-    received += Math.max(receivedByUser[userId].commentScore || 0, receivedByUser[userId].voteScore || 0)
+    result.total += Math.max(receivedByUser[userId].commentScore || 0, receivedByUser[userId].voteScore || 0)
   }
+  return result
+}
 
-  // Compute given score using comments & votes from all the team
-  let given = 0
+/* Compute given score using comments & votes from all the team */
+async function computeScoreGivenByUserAndEntry (entry, event) {
   let givenByUserAndEntry = {}
   let userRoles = entry.related('userRoles')
   for (let userRole of userRoles.models) {
     // Earn up to 3 points per user from comments
-    let givenComments = await postService.findCommentsByUserAndEvent(userRole.get('user_id'), event.get('id'))
+    let userId = userRole.get('user_id')
+    let givenComments = await postService.findCommentsByUserAndEvent(userId, event.get('id'))
     for (let givenComment of givenComments.models) {
-      let entryId = givenComment.get('node_id')
-      givenByUserAndEntry[entryId] = givenByUserAndEntry[entryId] || { commentScore: 0 }
-      givenByUserAndEntry[entryId].commentScore += givenComment.get('feedback_score')
+      let key = userId + '_to_' + givenComment.get('node_id')
+      givenByUserAndEntry[key] = givenByUserAndEntry[key] || { 
+        commentScore: 0,
+        userId: userId,
+        entryId: givenComment.get('node_id')
+      }
+      givenByUserAndEntry[key].commentScore += givenComment.get('feedback_score')
     }
 
     // Earn 2 points per user from votes
     let votes = await findVoteHistory(userRole.get('user_id'), event)
     for (let vote of votes.models) {
-      let entryId = vote.get('entry_id')
-      givenByUserAndEntry[entryId] = givenByUserAndEntry[entryId] || { commentScore: 0 }
-      givenByUserAndEntry[entryId].voteScore = 2
+      let key = vote.get('user_id') + '_to_' + vote.get('entry_id')
+      givenByUserAndEntry[key] = givenByUserAndEntry[key] || {
+        commentScore: 0,
+        userId: vote.get('user_id'),
+        entryId: vote.get('entry_id')
+      }
+      givenByUserAndEntry[key].voteScore = 2
     }
   }
-  for (let entryId in givenByUserAndEntry) {
+
+  let result = {
+    givenByUserAndEntry,
+    total: 0
+  }
+  for (let key in givenByUserAndEntry) {
     // Pick the highest score among comments & votes on each user
-    given += Math.max(givenByUserAndEntry[entryId].commentScore || 0, givenByUserAndEntry[entryId] || 0)
+    result.total += Math.max(givenByUserAndEntry[key].commentScore || 0, givenByUserAndEntry[key].voteScore || 0)
   }
 
+  return result
+}
+
+function computeFeedbackScore(received, given) {
   // This formula boosts a little bit low scores (< 30) to ensure everybody gets at least some comments,
   // and to reward people for posting their first comments. It also nerfs & caps very active commenters to prevent
   // them from trusting the front page. Finally, negative scores are not cool so we use 100 as the origin.
   // NB. It is inspired by the actual LD sorting equation: D = 50 + R - 5*sqrt(min(C,100))
   // (except that here, higher is better)
-  entry.set('feedback_score', Math.floor(Math.max(0, 74 + 8.5 * Math.sqrt(10 + Math.min(given, 100)) - received)))
-  await entry.save()
+  return Math.floor(Math.max(0, 74 + 8.5 * Math.sqrt(10 + Math.min(given, 100)) - received))
 }

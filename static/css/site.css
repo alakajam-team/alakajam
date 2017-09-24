@@ -1407,10 +1407,10 @@ input.date-picker {
 
   &__category-stars {
     display: inline-block;
-    cursor: pointer;
-    font-size: 0;
+    font-size: 1rem;
 
     & .fa {
+      cursor: pointer;
       font-size: 1.4rem;
       width: 1.8rem;
     }
@@ -1521,6 +1521,7 @@ input.date-picker {
     position: relative;
     padding: 3px 0;
     border-bottom: 1px solid var(--borders);
+    font-size: 1.4rem;
     font-weight: bold;
     color: var(--text-light);
 
@@ -1554,7 +1555,7 @@ input.date-picker {
     &__score, &__ranking {
       float: right;
       text-align: right;
-      font-size: 1.1rem;
+      font-size: 1rem;
       margin-top: 2px;
       width: 100px;
     }

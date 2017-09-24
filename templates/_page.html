@@ -126,7 +126,7 @@
           <li class="{{ 'active' if path == '/events' }}"><a href="/events">Events</a></li>
           <li class="{{ 'active' if path.indexOf('/games') === 0 }}"><a href="/games">Games</a></li>
           <li class="{{ 'active' if path.indexOf('/people') === 0 }}"><a href="/people">People</a></li>
-          <li class="hidden-xs hidden-sm {{ 'active' if path == '/chat' }}"><a href="/chat">Chat</a></li>
+          <li class="hidden-xs {{ 'active' if path == '/chat' }}"><a href="/chat">Chat</a></li>
           <li class="{{ 'active' if path.indexOf('/article') === 0 or path === '/changes' or path.indexOf('/api') === 0 }}"><a href="/article/docs">Docs</a></li>
           {% if user %}
             <li class="visible-xs {{ 'active' if path == '/logout' }}"><a href="/logout">Logout</a></li>
