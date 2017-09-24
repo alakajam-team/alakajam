@@ -19,7 +19,7 @@
             {{ post.get('title') }}
           </a>
           <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
-            <span class="fa fa-comments"></span>&nbsp;{{ post.get('comment_count') or 0 }}
+            <span class="fa fa-comments"></span> {{ post.get('comment_count') or 0 }}
           </a>
           {% if canUserWrite(readingUser, post, options) %}
             <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>

@@ -14,6 +14,7 @@ const eventRatingService = require('../services/event-rating-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const platformService = require('../services/platform-service')
+const settingService = require('../services/setting-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
@@ -78,6 +79,14 @@ async function viewEntry (req, res) {
       vote = await eventRatingService.findEntryVote(res.locals.user, entry)
     }
   }
+  
+  // Count votes
+  let entryVotes = null
+  let minEntryVotes = null
+  if (res.locals.user && securityService.canUserWrite(res.locals.user, entry)) {
+    entryVotes = await eventRatingService.countEntryVotes(entry)
+    minEntryVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
+  }
 
   let editableAnonComments = null
   if (res.locals.user && entry.get('allow_anonymous')) {
@@ -90,6 +99,8 @@ async function viewEntry (req, res) {
     posts: await postService.findPosts({
       entryId: entry.get('id')
     }),
+    entryVotes,
+    minEntryVotes,
     vote,
     canVote,
     external: !res.locals.event

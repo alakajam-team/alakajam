@@ -47,7 +47,7 @@
       </div>
       {% endif %}
 
-      {% if canVote %}
+      {% if canVote or entryVotes %}
         <div class="entry-voting">
           <h2 class="entry-voting__header">Game voting</h2>
           <div class="entry-voting__body">
@@ -96,6 +96,16 @@
             <div class="col-xs-4 col-md-2 text-center">Commenting<br /><span class="entry-voting__score-number zero">0</span></div>
             <div class="col-xs-4 col-md-2 text-center">Voting<br /><span class="entry-voting__score-number zero">N.A.</span></div>
             <div class="col-xs-4 col-md-2 text-center"><strong>Gained</strong> {{ formMacros.tooltip('The points gained are the biggest number between comment and rating points.') }}<br /><span class="entry-voting__score-big-number zero">0</span></div>
+          </div>
+        </div>
+      {% elseif entryVotes !== null and entry.get('division') !== 'unranked' %}
+        <div class="entry-voting">
+          <h2 class="entry-voting__header">Game voting</h2>
+          <div class="entry-voting__body">
+            <p>You have received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }}{{ ' so far' if event.get('status_results') === 'voting' }}.</p>
+            {% if entryVotes < minEntryVotes %}
+              <p>You need at least <strong>{{ minEntryVotes }}</strong> votes for your game to receive rankings.</p>
+            {% endif %}
           </div>
         </div>
       {% endif %}

@@ -14,6 +14,7 @@ const postService = require('../services/post-service')
 
 module.exports = {
   canVoteOnEntry,
+  countEntryVotes,
   findEntryVote,
   saveEntryVote,
 
@@ -40,6 +41,13 @@ async function canVoteOnEntry (user, entry) {
   } else {
     return false
   }
+}
+
+async function countEntryVotes (entry) {
+  let result = await models.EntryVote
+      .where('entry_id', entry.get('id'))
+      .count()
+  return parseInt(result)
 }
 
 /**
@@ -93,9 +101,10 @@ async function saveEntryVote (user, entry, event, voteData) {
     hasActualVote = hasActualVote || voteData[i] > 0
   }
 
+  let refreshRequired = true
   if (hasActualVote) {
-    if (!vote.get('id')) {
-      refreshEntryScore(entry, event)
+    if (vote.get('id')) {
+      refreshRequired = false
     }
     await vote.save()
   } else if (vote.get('id')) {
@@ -103,6 +112,9 @@ async function saveEntryVote (user, entry, event, voteData) {
   }
 
   await refreshEntryRatings(entry)
+  if (refreshRequired) {
+    refreshEntryScore(entry, event)
+  }
 }
 
 /**
@@ -211,14 +223,13 @@ function _range (from, to) {
  */
 async function refreshEntryScore (entry, event, options = {}) {
   // Refresh at most every minute
-  if (new Date().getTime() - entry.get('updated_at').getTime() > 60000 || options.force) {
-    await entry.load(['comments', 'userRoles', 'votes'])
-    let received = (await computeScoreReceivedByUser(entry, event)).total
-    let given = (await computeScoreGivenByUserAndEntry(entry, event)).total
-
-    entry.set('feedback_score', computeFeedbackScore(received, given))
-    await entry.save()
-  }
+  //if (new Date().getTime() - entry.get('updated_at').getTime() > 60000 || options.force) {
+  await entry.load(['comments', 'userRoles', 'votes'])
+  let received = (await computeScoreReceivedByUser(entry, event)).total
+  let given = (await computeScoreGivenByUserAndEntry(entry, event)).total
+  entry.set('feedback_score', computeFeedbackScore(received, given))
+  await entry.save()
+ // }
 }
 
 /* Compute received score */

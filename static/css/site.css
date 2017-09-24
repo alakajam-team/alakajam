@@ -732,6 +732,7 @@ input.date-picker {
 
   &__comment-count {
     font-size: 1.5rem;
+    white-space: nowrap;
   }
   
   &__related {
