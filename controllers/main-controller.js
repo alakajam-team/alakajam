@@ -201,11 +201,14 @@ async function games (req, res) {
     pageSize: PAGE_SIZE,
     page: currentPage
   }
+  // TODO Refactor (shared with eventController
   searchOptions.search = forms.sanitizeString(req.query.search)
-  if (req.query.eventId === 'none') {
-    searchOptions.eventId = null
-  } else {
-    searchOptions.eventId = forms.isId(req.query.eventId) ? req.query.eventId : undefined
+  if (req.query.divisions) {
+    if (typeof req.query.divisions === 'object') {
+      searchOptions.divisions = req.query.divisions
+    } else {
+      searchOptions.divisions = [req.query.divisions]
+    }
   }
   if (req.query.platforms) {
     if (typeof req.query.platforms === 'object') {
@@ -217,6 +220,11 @@ async function games (req, res) {
       searchOptions.platforms = []
       log.error('Invalid platform query: ' + req.query.platforms)
     }
+  }
+  if (req.query.eventId === 'none') {
+    searchOptions.eventId = null
+  } else {
+    searchOptions.eventId = forms.isId(req.query.eventId) ? req.query.eventId : undefined
   }
 
   // Fetch info

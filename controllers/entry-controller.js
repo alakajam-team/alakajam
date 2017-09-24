@@ -113,27 +113,17 @@ async function editEntry (req, res) {
       res.errorPage(403, 'Submissions are closed for this event')
       return
     } else {
+      // Creation
       entry = new models.Entry({
         event_id: res.locals.event.get('id'),
         event_name: res.locals.event.get('name'),
-        division: 'solo'
+        division: event.get('status_entry') === 'open_unranked' ? 'unranked' : 'solo'
       })
     }
   }
   if (entry.get('id') && !securityService.canUserWrite(user, entry, { allowMods: true })) {
     res.errorPage(403)
     return
-  }
-
-  // Creation
-  if (!entry) {
-    entry = new models.Entry()
-    if (event) {
-      entry.set({
-        event_id: event.get('id'),
-        event_name: event.get('name')
-      })
-    }
   }
 
   let errorMessage = null
@@ -244,8 +234,19 @@ async function editEntry (req, res) {
       }
 
       if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+        let division = fields['division'] || 'solo'
+        if (event.get('status_entry') === 'open_unranked') {
+          if (!entry.has('division')) {
+            // New entries are all unranked
+            division = 'unranked'
+          } else {
+            // Existing entries cannot change division
+            division = entry.get('division')
+          }
+        }
+
         entry.set({
-          'division': fields['division'] || 'solo',
+          'division': division,
           'allow_anonymous': fields['anonymous-enabled'] === 'on'
         })
 

@@ -14,10 +14,18 @@
         <input name="search" type="text" class="form-control" value="{{ context.searchOptions.search }}" />
       </div>
       <div class="form-group">
-        <label for="search">Platforms</label>
+        <label for="platforms">Platforms</label>
         <select id="js-platforms" name="platforms" class="form-control" multiple="multiple">
           {% for platform in context.platforms %}
             <option value="{{ platform.get('id') }}" {{ 'selected' if context.searchOptions.platforms and context.searchOptions.platforms.includes(platform.get('id')) }}>{{ platform.get('name') }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="divisions">Divisions</label>
+        <select id="js-divisions" name="divisions" class="form-control" multiple="multiple">
+          {% for division in ['solo', 'team', 'unranked'] %}
+            <option value="{{ division }}" {{ 'selected' if context.searchOptions.divisions and context.searchOptions.divisions.includes(division) }}>{{ division | capitalize }}</option>
           {% endfor %}
         </select>
       </div>
@@ -49,6 +57,7 @@
         {{ 'in external events' if searchOptions.eventId|dump === 'null' }}
       {% endif %}
       {{ 'on restricted platforms' if searchOptions.platforms.length > 0 }}
+      {{ 'in division' + ('s' if searchOptions.divisions.length > 1) + ' "' + searchOptions.divisions + '"' if searchOptions.divisions }}
       {{ 'matching "' + searchOptions.search + '"' if searchOptions.search }}
     </div>
   {% endif %}
@@ -60,6 +69,6 @@
 $('#js-event').select2({
   allowClear: true
 })
-$('#js-platforms').select2()
+$('#js-platforms, #js-divisions').select2()
 </script>
 {% endmacro %}

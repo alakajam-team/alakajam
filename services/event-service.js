@@ -616,6 +616,9 @@ async function findGames (options = {}) {
         .whereIn('entry_platform.platform_id', options.platforms)
     })
   }
+  if (options.divisions) {
+    query = query.where('division', 'in', options.divisions)
+  }
   options.pageSize = options.pageSize || 30
   options.withRelated = options.withRelated || ['event', 'userRoles']
   if (options.count) {

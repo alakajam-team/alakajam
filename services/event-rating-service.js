@@ -86,7 +86,7 @@ async function saveEntryVote (user, entry, event, voteData) {
   for (let i in voteData) {
     let categoryIndex = (parseInt(i) + 1)
     if (optouts.includes(eventDetails.get('category_titles')[categoryIndex - 1])) {
-      console.log("optout! "+ i)
+      console.log('optout! ' + i)
       voteData[i] = 0
     }
     vote.set('vote_' + categoryIndex, voteData[i] || 0)
@@ -101,7 +101,7 @@ async function saveEntryVote (user, entry, event, voteData) {
   } else if (vote.get('id')) {
     await vote.destroy()
   }
- 
+
   await refreshEntryRatings(entry)
 }
 
@@ -212,7 +212,6 @@ function _range (from, to) {
 async function refreshEntryScore (entry, event, options = {}) {
   // Refresh at most every minute
   if (new Date().getTime() - entry.get('updated_at').getTime() > 60000 || options.force) {
-
     await entry.load(['comments', 'userRoles', 'votes'])
     let received = (await computeScoreReceivedByUser(entry, event)).total
     let given = (await computeScoreGivenByUserAndEntry(entry, event)).total
@@ -259,7 +258,7 @@ async function computeScoreGivenByUserAndEntry (entry, event) {
     let givenComments = await postService.findCommentsByUserAndEvent(userId, event.get('id'))
     for (let givenComment of givenComments.models) {
       let key = userId + '_to_' + givenComment.get('node_id')
-      givenByUserAndEntry[key] = givenByUserAndEntry[key] || { 
+      givenByUserAndEntry[key] = givenByUserAndEntry[key] || {
         commentScore: 0,
         userId: userId,
         entryId: givenComment.get('node_id')
@@ -292,7 +291,7 @@ async function computeScoreGivenByUserAndEntry (entry, event) {
   return result
 }
 
-function computeFeedbackScore(received, given) {
+function computeFeedbackScore (received, given) {
   // This formula boosts a little bit low scores (< 30) to ensure everybody gets at least some comments,
   // and to reward people for posting their first comments. It also nerfs & caps very active commenters to prevent
   // them from trusting the front page. Finally, negative scores are not cool so we use 100 as the origin.

@@ -23,6 +23,7 @@
     {% for platform in entry.get('platforms') %}
       {{ entryPlatformIcon(platform, { hideLabel: true }) }}
     {% endfor %}
+    <span class="label label-default label-xs">{{ entry.get('division') | capitalize }}</span>
   </div>
   {% if options.showEvent %}
     <div class="entry-thumb__event" >

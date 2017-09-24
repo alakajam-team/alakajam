@@ -22,7 +22,7 @@
       <div class="action-banner__title">
         Your entry
       </div>
-      {% if event.get('status') === 'closed' %}
+      {% if event.get('status_entry') === 'closed' %}
         {% set customMessage = "Entry submissions are closed" %}
       {% elseif event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
         {% set customMessage = "Entry submissions are not open yet" %}
