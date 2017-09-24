@@ -49,7 +49,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Open Game Art](https://opengameart.org)  | The main reference for finding graphics & audio to reuse with permissive licenses. |
 | [Free Music Archive](http://freemusicarchive.org)  | A large database of permissive music (mostly Creative Commons), featuring a wide range of styles. |
 | [FreeSound](http://freesound.org/)  | A huge database of sound effects. |
-| [Universal LPC Sprite Sheet Generator](http://gaurav.munjal.us/Universal-LPC-Spritesheet-Character-Generator/) | Character sprite sheet generator. |  
+| [Universal LPC Sprite Sheet Generator](http://gaurav.munjal.us/Universal-LPC-Spritesheet-Character-Generator/) | Customizable character sprite sheets assembled from open art. |  
 
 
 ## Miscellaneous
