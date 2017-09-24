@@ -22,7 +22,7 @@ People who opt out of a category still have to follow the same rules regarding t
 
 ## <a name="feedback"></a>How is the Feedback Score calculated?
 
-Alakajam's Feedback Score uses a secret recipe transmitted from father to son since 50 generations! Its details are kept vague on purpose, you might want to know that:
+Alakajam's Feedback Score uses a secret recipe transmitted from father to son since 50 generations! Its details are kept vague on purpose, but you might want to know that:
 
 * Both ratings & comments make you gain points
 * Unranked entries are worth **as much points** as Solo/Team ones, despite the lack of ratings.
