@@ -112,7 +112,9 @@ async function findPost (options = {}) {
   if (options.userId) query = query.where('author_user_id', options.userId)
   if (options.specialPostType !== undefined) query = query.where('special_post_type', options.specialPostType)
   if (!options.allowDrafts) query = query.where('published_at', '<=', new Date())
-  return query.fetch({withRelated: ['author', 'userRoles']})
+  return query
+    .orderBy('published_at', 'desc')
+    .fetch({withRelated: ['author', 'userRoles']})
 }
 
 /**
