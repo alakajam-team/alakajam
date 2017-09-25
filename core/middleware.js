@@ -5,6 +5,7 @@
  *
  * @description Sets up:
  * - CSS processing (cssnext)
+ * - JS processing (browserify)
  * - Templating (nunjucks)
  * - Form parsing / file upload (formidable)
  * - Error pages
@@ -55,6 +56,15 @@ async function configure (app) {
     src: () => path.join(ROOT_PATH, '/static/css/site.css'),
     plugins: [require('postcss-cssnext')]
   }))
+  if (app.get('env') === 'development') {
+    const expressBrowserify = require('express-browserify')
+    app.use('/static/js/site.js', expressBrowserify(
+      path.join(ROOT_PATH, '/client/site.js'),
+      {
+        watch: true
+      },
+      function (browserify) {}))
+  }
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
   // Request throttling
