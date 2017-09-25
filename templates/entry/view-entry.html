@@ -112,13 +112,6 @@
         {% endif %}
       {% endif %}
 
-      {% if posts.models.length > 0 %}
-      <h2>Latest posts</h2>
-      {% for post in posts.models %}
-        {{ postMacros.post(post, user, {hideBody: true}) }}
-      {% endfor %}
-      {% endif %}
-
       {% if entry.get('allow_anonymous') and user and not user.get('disallow_anonymous') %}
         <p class="pull-right" style="line-height: 30px">This entry welcomes anonymous comments (<a href="/article/faq#anon-comment" target="_blank">help</a>)</p>
       {% endif %}
@@ -128,14 +121,35 @@
     </div>
 
     <div class="col-md-4">
+      <h3>General</h3>
+
       {% if entry.get('description') %}
-      <h3>Description</h3>
       <div class="well entry__description user-contents">
         {{ entry.get('description') }}
       </div>
       {% endif %}
 
-      <h3>Links</h3>
+      {% if not external %}
+      <div class="entry__info">
+        <span class="pull-right">{{ entry.get('division') | capitalize }}</span>
+        Division
+      </div>
+      <div class="entry__info">
+        <span class="pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
+        Feedback Score
+      </div>
+      {% endif %}
+      <div class="entry__info">
+        <div class="pull-right">
+          {% for name in entry.get('platforms') -%}
+            <div class="entry__platform">{{ eventMacros.entryPlatformIcon(name, { hideLabel: true }) }}</div>
+          {%- endfor %}
+        </div>
+        Platforms
+      </div>
+
+      <h3 style="margin-top: 20px">Links</h3>
+
       <div class="entry__links">
         {% for link in entry.get('links') %}
           <a class="btn btn-primary" href="{{ link.url }}">
@@ -150,38 +164,27 @@
         {% endif %}
       </div>
 
-      <h3>Platforms</h3>
-      <div class="entry__platforms">
-        {% if entry.get('platforms').length > 0 %}
-          {% for name in entry.get('platforms') -%}
-            <div class="entry__platform">{{ eventMacros.entryPlatformIcon(name) }}</div>
-          {%- endfor %}
-        {% else %}
-          {{ eventMacros.entryPlatformIcon('Unknown') }}
-        {% endif %}
+      <h3 style="margin-top: 20px">Author{{ 's' if entry.related('userRoles').models.length > 1 }}</h3>
+
+      <div class="well" style="padding-bottom: 5px">
+        <div class="row">
+          {% for userRole in entry.sortedUserRoles() %}
+            {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}
+          {% endfor %}
+        </div>
       </div>
 
-      <div class="well">
-
-      <h3 style="margin-top: 10px">Author{{ 's' if entry.related('userRoles').models.length > 1 }}</h3>
-
-      <div class="row">
-        {% for userRole in entry.sortedUserRoles() %}
-          {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}
+      {% if posts.models.length > 0 %}
+        <h3>Related posts</h3>
+        <div class="list-group">
+        {% for post in posts.models %}
+          <div class="list-group-item" style="margin-bottom: -10px">
+            {{ postMacros.post(post, user, { hideDetails: true, hideSpecialLabels: true }) }}
+          </div>
         {% endfor %}
-      </div>
-
-      {% if not external %}
-      <div class="entry__score">
-        <span class="pull-right">{{ entry.get('division') | capitalize }}</span>
-        Division
-      </div>
-      <div class="entry__score">
-        <span class="pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
-        Feedback Score
-      </div>
+        </div>
       {% endif %}
-    </div>
+
   </div>
 </div>
 

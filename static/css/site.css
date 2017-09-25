@@ -1292,6 +1292,7 @@ input.date-picker {
     font-size: 1.05rem;
     font-weight: bold;
     padding: 15px;
+    margin-bottom: 10px;
   }
 
   &__links {
@@ -1304,7 +1305,7 @@ input.date-picker {
     }
   }
 
-  &__score {
+  &__info {
     margin-top: 10px;
     color: var(--text-light);
     font-weight: bold;
@@ -1314,14 +1315,10 @@ input.date-picker {
     }
   }
 
-  &__platforms {
-    margin-bottom: 20px;
-  }
   &__platform {
     display: inline-block;
     font-size: 1.2rem;
-    margin-right: 15px;
-    margin-bottom: 5px;
+    margin-left: 5px;
   }
 
   &__divisions {
