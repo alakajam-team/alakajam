@@ -198,6 +198,11 @@ input.date-picker {
 .pagination {
   margin-top: 0;
   margin-bottom: 10px;
+
+  & .disabled a, & .disabled a:hover {
+    background-color: var(--borders);
+    color: var(--neutral);
+  }
 }
 
 .horizontal-bar {
