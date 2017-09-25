@@ -66,6 +66,7 @@
     "jsdoc-strip-async-await": "^0.1.0",
     "mocha": "^3.3.0",
     "rimraf": "^2.6.1",
+    "uglifyify": "^4.0.4",
     "watchify": "^3.9.0"
   },
   "standard": {
@@ -77,7 +78,8 @@
   },
   "browserify": {
     "transform": [
-      "babelify"
+      "babelify",
+      "uglifyify"
     ]
   },
   "babel": {
