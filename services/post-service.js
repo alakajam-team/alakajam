@@ -195,10 +195,11 @@ async function findCommentsToUser (user, options = {}) {
     notificationsLastRead = new Date(user.get('notifications_last_read'))
   }
   return models.Comment.query(function (qb) {
-    qb = qb.leftJoin('user_role', function () {
-      this.on('comment.node_id', '=', 'user_role.node_id')
-        .andOn('comment.node_type', '=', 'user_role.node_type')
-    })
+    qb = qb.distinct()
+        .leftJoin('user_role', function () {
+          this.on('comment.node_id', '=', 'user_role.node_id')
+          .andOn('comment.node_type', '=', 'user_role.node_type')
+        })
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '<>', user.id)
       .andWhere('comment.updated_at', '>', notificationsLastRead)
