@@ -106,10 +106,11 @@
         {% endif %}
 
         {% set isEntryOwner = not entry.get('id') or canUserManage(user, entry) %}
-        {% set canEditDivision = (isEntryOwner or isMod(user)) and event.get('status_entry') === 'open' %}
+        {% set canEditDivision = not event or ((isEntryOwner or isMod(user)) and event.get('status_entry') === 'open') %}
         {% set divisionTooltip = 'Check the Docs section for the detailed rules on each division. '
           + ('Divisions can no longer be changed.' if event.get('status_entry') !== 'open')
-          + ('Only the entry owner can change this setting.' if not isEntryOwner and event.get('status_entry') === 'open') %}
+          + ('Only the entry owner can change this setting.' if not isEntryOwner and event.get('status_entry') === 'open')
+            if event %}
 
         <label for="division">Division {{ formMacros.tooltip(divisionTooltip) if not external }}</label>
         <div>

@@ -223,7 +223,7 @@ function _range (from, to) {
  */
 async function refreshEntryScore (entry, event, options = {}) {
   // Refresh at most every minute
-  //if (new Date().getTime() - entry.get('updated_at').getTime() > 60000 || options.force) {
+  // if (new Date().getTime() - entry.get('updated_at').getTime() > 60000 || options.force) {
   await entry.load(['comments', 'userRoles', 'votes'])
   let received = (await computeScoreReceivedByUser(entry, event)).total
   let given = (await computeScoreGivenByUserAndEntry(entry, event)).total

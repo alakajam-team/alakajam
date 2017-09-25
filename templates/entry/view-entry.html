@@ -47,67 +47,69 @@
       </div>
       {% endif %}
 
-      {% if canVote %}
-        <div class="entry-voting">
-          <h2 class="entry-voting__header">Game voting</h2>
-          <div class="entry-voting__body">
-            {% if entry.get('division') === 'unranked' %}
-              <p>This game is an <strong>Unranked</strong> entry.</p>
-              <p>Voting is disabled, please provide feedback instead.</p>
-              <p style="margin-bottom: 0"><i>Note: The Feedback Score formula grants you as much points on this entry than on Solo/Team ones. <a href="/article/faq#feedback">Learn more</a></i></p>
-            {% else %}
-              <p style="margin-bottom: -10px">This game is a <strong>{{ entry.get('division') | capitalize }}</strong> entry.</p>
-              <form method="post">
-                <input type="hidden" name="action" value="vote" />
-                <p class="form-group">
-                  {% set optouts = entry.related('details').get('optouts') or [] %}
-                  {% for categoryTitle in event.related('details').get('category_titles') %}
-                  {% set categoryIndex = loop.index %}
-                  {% set categoryRating = vote.get('vote_' + categoryIndex) if vote %}
-                  <div class="entry-voting__category">
-                    <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ categoryRating | default('0') }}" />
-                    <div class="entry-voting__category-title">{{ categoryTitle }}</div>
-                    <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ (categoryRating | digits(0)) if categoryRating > 0 }}</div>
-                      <div class="entry-voting__category-stars">
-                        <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if not categoryRating }}"></span>
-                        {% if optouts.includes(categoryTitle) %}
-                          Opted out (<a href="/article/faq#optouts">help</a>)
-                        {% else %}
-                          {%- for i in range(1, 11) -%}
-                            <span data-category="{{ categoryIndex }}" data-rating="{{ i }}" class="js-star fa fa-lg {{ 'fa-star confirmed' if i <= categoryRating else 'fa-star-o' }}"></span>
-                          {%- endfor -%}
-                        {% endif %}
-                      </div>
-                  </div>
-                {% endfor %}
-                </p>
-                <p class="form-group">
-                  <input type="submit" class="btn btn-primary" value="Save changes" />
-                </p>
-              </form>
-            {% endif %}
+      {% if user and event %}
+        {% if canVote %}
+          <div class="entry-voting">
+            <h2 class="entry-voting__header">Game voting</h2>
+            <div class="entry-voting__body">
+              {% if entry.get('division') === 'unranked' %}
+                <p>This game is an <strong>Unranked</strong> entry.</p>
+                <p>Voting is disabled, please provide feedback instead.</p>
+                <p style="margin-bottom: 0"><i>Note: The Feedback Score formula grants you as much points on this entry than on Solo/Team ones. <a href="/article/faq#feedback">Learn more</a></i></p>
+              {% else %}
+                <p style="margin-bottom: -10px">This game is a <strong>{{ entry.get('division') | capitalize }}</strong> entry.</p>
+                <form method="post">
+                  <input type="hidden" name="action" value="vote" />
+                  <p class="form-group">
+                    {% set optouts = entry.related('details').get('optouts') or [] %}
+                    {% for categoryTitle in event.related('details').get('category_titles') %}
+                    {% set categoryIndex = loop.index %}
+                    {% set categoryRating = vote.get('vote_' + categoryIndex) if vote %}
+                    <div class="entry-voting__category">
+                      <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ categoryRating | default('0') }}" />
+                      <div class="entry-voting__category-title">{{ categoryTitle }}</div>
+                      <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ (categoryRating | digits(0)) if categoryRating > 0 }}</div>
+                        <div class="entry-voting__category-stars">
+                          <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if not categoryRating }}"></span>
+                          {% if optouts.includes(categoryTitle) %}
+                            Opted out (<a href="/article/faq#optouts">help</a>)
+                          {% else %}
+                            {%- for i in range(1, 11) -%}
+                              <span data-category="{{ categoryIndex }}" data-rating="{{ i }}" class="js-star fa fa-lg {{ 'fa-star confirmed' if i <= categoryRating else 'fa-star-o' }}"></span>
+                            {%- endfor -%}
+                          {% endif %}
+                        </div>
+                    </div>
+                  {% endfor %}
+                  </p>
+                  <p class="form-group">
+                    <input type="submit" class="btn btn-primary" value="Save changes" />
+                  </p>
+                </form>
+              {% endif %}
+            </div>
           </div>
-        </div>
-        <!-- TODO -->
-        <div style="margin-bottom: -10px">&nbsp;</div>
-        <div class="entry-voting__score" style="display: none">
-          <div class="row">
-            <div class="col-md-6 entry-voting__score-title">Feedback points</div>
-            <div class="col-xs-4 col-md-2 text-center">Commenting<br /><span class="entry-voting__score-number zero">0</span></div>
-            <div class="col-xs-4 col-md-2 text-center">Voting<br /><span class="entry-voting__score-number zero">N.A.</span></div>
-            <div class="col-xs-4 col-md-2 text-center"><strong>Gained</strong> {{ formMacros.tooltip('The points gained are the biggest number between comment and rating points.') }}<br /><span class="entry-voting__score-big-number zero">0</span></div>
+          <!-- TODO -->
+          <div style="margin-bottom: -10px">&nbsp;</div>
+          <div class="entry-voting__score" style="display: none">
+            <div class="row">
+              <div class="col-md-6 entry-voting__score-title">Feedback points</div>
+              <div class="col-xs-4 col-md-2 text-center">Commenting<br /><span class="entry-voting__score-number zero">0</span></div>
+              <div class="col-xs-4 col-md-2 text-center">Voting<br /><span class="entry-voting__score-number zero">N.A.</span></div>
+              <div class="col-xs-4 col-md-2 text-center"><strong>Gained</strong> {{ formMacros.tooltip('The points gained are the biggest number between comment and rating points.') }}<br /><span class="entry-voting__score-big-number zero">0</span></div>
+            </div>
           </div>
-        </div>
-      {% elseif entryVotes !== null and entry.get('division') !== 'unranked' %}
-        <div class="entry-voting">
-          <h2 class="entry-voting__header">Game voting</h2>
-          <div class="entry-voting__body">
-            <p>You have received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }}{{ ' so far' if event.get('status_results') === 'voting' }}.</p>
-            {% if entryVotes < minEntryVotes %}
-              <p>You need at least <strong>{{ minEntryVotes }}</strong> votes for your game to receive rankings.</p>
-            {% endif %}
+        {% elseif entryVotes !== null and entry.get('division') !== 'unranked' %}
+          <div class="entry-voting">
+            <h2 class="entry-voting__header">Game voting</h2>
+            <div class="entry-voting__body">
+              <p>You have received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }}{{ ' so far' if event.get('status_results') === 'voting' }}.</p>
+              {% if entryVotes < minEntryVotes %}
+                <p>You need at least <strong>{{ minEntryVotes }}</strong> votes for your game to receive rankings.</p>
+              {% endif %}
+            </div>
           </div>
-        </div>
+        {% endif %}
       {% endif %}
 
       {% if posts.models.length > 0 %}

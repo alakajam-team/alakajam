@@ -79,7 +79,7 @@ async function viewEntry (req, res) {
       vote = await eventRatingService.findEntryVote(res.locals.user, entry)
     }
   }
-  
+
   // Count votes
   let entryVotes = null
   let minEntryVotes = null
@@ -124,14 +124,20 @@ async function editEntry (req, res) {
       res.errorPage(403, 'Submissions are closed for this event')
       return
     } else {
-      // Creation
+      // Creation (in event)
       entry = new models.Entry({
         event_id: res.locals.event.get('id'),
         event_name: res.locals.event.get('name'),
         division: event.get('status_entry') === 'open_unranked' ? 'unranked' : 'solo'
       })
     }
+  } else if (!entry) {
+    // Creation (external event)
+    entry = new models.Entry({
+      division: 'solo'
+    })
   }
+
   if (entry.get('id') && !securityService.canUserWrite(user, entry, { allowMods: true })) {
     res.errorPage(403)
     return
@@ -246,7 +252,7 @@ async function editEntry (req, res) {
 
       if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
         let division = fields['division'] || 'solo'
-        if (event.get('status_entry') === 'open_unranked') {
+        if (event && event.get('status_entry') === 'open_unranked') {
           if (!entry.has('division')) {
             // New entries are all unranked
             division = 'unranked'
