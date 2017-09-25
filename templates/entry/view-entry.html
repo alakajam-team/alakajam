@@ -83,7 +83,7 @@
                   {% endfor %}
                   </p>
                   <p class="form-group">
-                    <input type="submit" class="btn btn-primary" value="Save changes" />
+                    <input type="submit" class="btn btn-primary js-save-vote" value="Save changes" />
                   </p>
                 </form>
               {% endif %}
@@ -217,6 +217,7 @@ $stars.click(function () {
   var category = $this.attr('data-category')
   var rating = parseInt($this.attr('data-rating'))
   setRating(category, rating, true)
+  setUnsavedChanges(true)
 })
 
 var currentCategory = null
@@ -266,6 +267,28 @@ function setRating (category, rating, confirmed) {
     $ratingLabel.removeClass('confirmed')
   }
 }
+
+var unsavedChanges = false
+
+function setUnsavedChanges(value) {
+  if (unsavedChanges == value) {
+    return
+  }
+  unsavedChanges = value
+  if (unsavedChanges) {
+    $(window).on('beforeunload', confirmNavigation)
+  } else {
+    $(window).off('beforeunload', confirmNavigation)
+  }
+}
+
+function confirmNavigation() {
+  return 'You have unsaved changes. Do you really want to leave this page?'
+}
+
+$('.js-save-vote').on('click', function () {
+  setUnsavedChanges(false)
+})
 
 </script>
 {% endblock %}
