@@ -57,7 +57,7 @@ async function configure (app) {
     src: () => path.join(ROOT_PATH, '/static/css/site.css'),
     plugins: [require('postcss-cssnext')]
   }))
-  app.use('/static/js/site.js', browserifyMiddleware(path.join(ROOT_PATH, '/client/site.js')))
+  app.use('/static/js/site.js', browserifyMiddleware(path.join(ROOT_PATH, '/static/js/site.js')))
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
   // Request throttling
