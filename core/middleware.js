@@ -18,7 +18,7 @@ const expressNunjucks = require('express-nunjucks')
 // const ExpressBrute = require('express-brute')
 const cookies = require('cookies')
 const postCss = require('postcss-middleware')
-const formidable = require('formidable')
+const multer = require('multer')
 const promisify = require('promisify-node')
 const moment = require('moment')
 const randomKey = require('random-key')
@@ -176,16 +176,47 @@ async function configure (app) {
     next()
   })
 
-  // Formidable (form parsing/file upload)
-  let form = new formidable.IncomingForm()
-  form.uploadDir = path.join(__dirname, '..', config.DATA_PATH, 'tmp')
-  form.maxFieldsSize = 2 * MB
-  form.keepExtensions = true
-  let parseRequest = promisify(function (req, res, callback) {
+  // Multer (form parsing/file upload)
+  let uploadStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join(__dirname, '..', config.DATA_PATH, 'tmp'))
+    },
+    filename: function (req, file, cb) {
+      file.filename = randomKey.generate() + '-' + file.originalname
+      cb(null, file.filename)
+    }
+  })
+  let upload = multer({
+    storage: uploadStorage,
+    limits: {
+      fields: 1000,
+      fileSize: 2 * MB,
+      files: 20,
+      parts: 20
+    }
+  })
+  let doParseForm = promisify(function (req, res, uploadInfo, callback) {
     if (!res.locals.form) {
-      form.parse(req, function (error, fields, files) {
-        res.locals.form = {fields, files}
-        callback(error, res.locals.form)
+      // uploadInfo must contain either the name of the file field,
+      // or an array looking like: [{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }]
+      let uploadFunction
+      if (typeof uploadInfo === 'string') {
+        uploadFunction = upload.single(uploadInfo)
+      } else {
+        uploadFunction = upload.fields(uploadInfo)
+      }
+
+      uploadFunction(req, res, function () {
+        let files = req.files
+        if (!files) {
+          files = {}
+          files[uploadInfo] = req.file
+        }
+        res.locals.form = {
+          fields: req.body,
+          files
+        }
+        callback(null, res.locals.form)
       })
     } else {
       callback(null, res.locals.form)
@@ -193,8 +224,8 @@ async function configure (app) {
   })
   app.use(function (req, res, next) {
     // usage: let {fields, files} = await req.parseForm()
-    req.parseForm = async function () {
-      return parseRequest(req, res)
+    req.parseForm = async function (uploadInfo) {
+      return doParseForm(req, res, uploadInfo)
     }
     res.on('finish', cleanupFormFilesCallback(req, res))
     res.on('close', cleanupFormFilesCallback(req, res))
@@ -215,9 +246,13 @@ async function configure (app) {
 
 function cleanupFormFilesCallback (req, res) {
   return async function cleanupFormFiles () {
-    let {files} = await req.parseForm()
-    for (let key in files) {
-      fileStorage.remove(files[key].path)
+    if (res.locals.form) {
+      for (let key in res.locals.form.files) {
+        let fileInfo = res.locals.form.files[key]
+        if (fileInfo) {
+          fileStorage.remove(fileInfo.path)
+        }
+      }
     }
     res.removeAllListeners('finish')
     res.removeAllListeners('close')

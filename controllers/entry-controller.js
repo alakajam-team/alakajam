@@ -145,7 +145,7 @@ async function editEntry (req, res) {
 
   let errorMessage = null
   if (req.method === 'POST') {
-    let {fields, files} = await req.parseForm()
+    let {fields, files} = await req.parseForm('picture')
 
     // Parse form data
     let isExternalEvent = fields['external-event'] !== undefined
@@ -224,7 +224,7 @@ async function editEntry (req, res) {
       errorMessage = 'Too many links (max allowed: around 7)'
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(res.locals.event)) {
       errorMessage = 'Submissions are closed for this event'
-    } else if (files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
+    } else if (files.picture && files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
     } else if (fields.division && ['solo', 'team', 'unranked'].indexOf(fields.division) === -1) {
       errorMessage = 'Invalid division'
