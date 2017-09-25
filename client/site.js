@@ -7,4 +7,6 @@
 $(function domReady () {
   require('./disabled-links').init()
   require('./tooltips').init()
+
+  require('./post/edit-post').init()
 })
