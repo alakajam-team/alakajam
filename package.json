@@ -62,7 +62,7 @@
     "babelify": "^7.3.0",
     "browser-refresh-client": "^1.1.4",
     "browserify": "^14.4.0",
-    "express-browserify": "^1.0.2",
+    "browserify-middleware": "^7.1.0",
     "jsdoc-strip-async-await": "^0.1.0",
     "mocha": "^3.3.0",
     "rimraf": "^2.6.1",

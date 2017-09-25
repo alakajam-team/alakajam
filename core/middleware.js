@@ -57,13 +57,8 @@ async function configure (app) {
     plugins: [require('postcss-cssnext')]
   }))
   if (app.get('env') === 'development') {
-    const expressBrowserify = require('express-browserify')
-    app.use('/static/js/site.js', expressBrowserify(
-      path.join(ROOT_PATH, '/client/site.js'),
-      {
-        watch: true
-      },
-      function (browserify) {}))
+    const browserifyMiddleware = require('browserify-middleware')
+    app.use('/static/js/site.js', browserifyMiddleware(path.join(ROOT_PATH, '/client/site.js')))
   }
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
