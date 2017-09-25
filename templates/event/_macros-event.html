@@ -211,3 +211,53 @@
     -->{% endif %}<!--
   --></span>
 {% endmacro %}
+
+{% macro eventUserShortcuts(user, event, userEntry, userPost) %}
+  {% if user %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-offset-1 col-md-5 action-banner">
+         <div>
+           {% if userEntry %}
+             <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-alt pull-right">Edit entry</a>
+           {% elseif event.get('status') !== 'open' or (event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked') %}
+             <div class="pull-right">
+               <a href="#"class="btn btn-sm btn-default disabled">Create entry</a>
+             </div>
+           {% else %}
+             <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-alt pull-right">Create entry</a>
+           {% endif %}
+        </div>
+        <div class="action-banner__title">
+          Your entry
+        </div>
+        {% if event.get('status_entry') === 'closed' %}
+          {% set customMessage = "Entry submissions are closed" %}
+        {% elseif event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
+          {% set customMessage = "Entry submissions are not open yet" %}
+        {% endif %}
+        {{ entrySmallThumb(userEntry, { customMessage: customMessage }) }}
+      </div>
+      <div class="col-md-5 action-banner">
+        <div class="pull-right">
+          {% if userPost %}
+          <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">Edit</a>
+          {% endif %}
+          <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-alt">Create</a>
+          <a href="{{ buildUrl(user, 'user', 'posts') }}" class="btn btn-alt">My posts</a>
+        </div>
+        <div class="action-banner__title">
+          Your latest post
+        </div>
+        <div class="panel action-banner__post">
+          {% if userPost %}
+            <a href="{{ buildUrl(userPost, 'post') }}">{{ userPost.get('title') }}</a>
+          {% else %}
+            <div class="text-center"><h4 style="padding-top: 13px">No post</h4></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+{% endmacro %}

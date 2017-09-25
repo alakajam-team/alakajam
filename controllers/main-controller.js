@@ -21,6 +21,7 @@ const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
 const notificationService = require('../services/notification-service')
 const platformService = require('../services/platform-service')
+const eventController = require('./event-controller')
 
 module.exports = {
   anyPageMiddleware,
@@ -144,6 +145,8 @@ async function index (req, res) {
 
     cache.general.set('home_page', context, 10 /* 10 seconds */)
   }
+
+  await eventController.handleEventUserShortcuts(res, res.locals.featuredEvent)
 
   res.render('index', context)
 }

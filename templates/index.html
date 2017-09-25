@@ -20,6 +20,8 @@
        Welcome to <div class="home-welcome__brand">Alakajam!</div>, a game development community. We host informal game jams!
        <a class="home-welcome__more" href="/article/docs">Learn&nbsp;more</a>
     </div>
+    {% elseif featuredEvent and featuredEvent.get('status') !== 'pending' %}
+      {{ eventMacros.eventUserShortcuts(user, featuredEvent, userEntry, userPost) }}
     {% endif %}
     
     {% if featuredPost %}

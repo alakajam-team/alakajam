@@ -21,6 +21,8 @@ const settingService = require('../services/setting-service')
 const platformService = require('../services/platform-service')
 
 module.exports = {
+  handleEventUserShortcuts,
+
   eventMiddleware,
 
   viewDefaultPage,
@@ -61,22 +63,29 @@ async function eventMiddleware (req, res, next) {
 
       let announcementTask = postService.findLatestAnnouncement({ eventId: event.id })
           .then((announcement) => { res.locals.latestEventAnnouncement = announcement })
+      let userShortcutTasks = handleEventUserShortcuts(res, res.locals.event)
 
-      let entryTask = true
-      let userPostTask = true
-      if (res.locals.user) {
-        entryTask = eventService.findUserEntryForEvent(res.locals.user, event.get('id'))
-            .then(userEntry => { res.locals.userEntry = userEntry })
-        userPostTask = postService.findPost({
-          userId: res.locals.user.id,
-          eventId: res.locals.event.id,
-          specialPostType: null
-        }).then(userPost => { res.locals.userPost = userPost })
-      }
-      await Promise.all([announcementTask, entryTask, userPostTask])
+      await Promise.all([announcementTask, userShortcutTasks])
     }
   }
   next()
+}
+
+async function handleEventUserShortcuts (res, targetEvent) {
+  if (targetEvent && res.locals.user) {
+    let entryTask = true
+    let userPostTask = true
+
+    entryTask = eventService.findUserEntryForEvent(res.locals.user, targetEvent.get('id'))
+        .then(userEntry => { res.locals.userEntry = userEntry })
+    userPostTask = postService.findPost({
+      userId: res.locals.user.id,
+      eventId: targetEvent.id,
+      specialPostType: null
+    }).then(userPost => { res.locals.userPost = userPost })
+
+    return Promise.all([entryTask, userPostTask])
+  }
 }
 
 /**
