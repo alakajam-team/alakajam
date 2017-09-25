@@ -284,7 +284,7 @@ async function viewEventGames (req, res) {
     eventId: event.get('id'),
     sortByScore: true
   }
-  // TODO Refactor (shared with mainController
+  // TODO Refactor (shared with mainController)
   searchOptions.search = forms.sanitizeString(req.query.search)
   if (req.query.divisions) {
     if (typeof req.query.divisions === 'object') {
@@ -318,12 +318,10 @@ async function viewEventGames (req, res) {
   }
 
   res.render('event/view-event-games', {
-    entries: entriesCollection.models,
+    entriesCollection,
     voteHistory,
     searchOptions,
-    entryCount: entriesCollection.pagination.rowCount,
     currentPage,
-    pageCount: entriesCollection.pagination.pageCount,
     platforms: platformCollection.models
   })
 }
