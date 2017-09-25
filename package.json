@@ -78,8 +78,13 @@
   },
   "browserify": {
     "transform": [
-      "babelify",
-      "uglifyify"
+      [
+        "uglifyify",
+        {
+          "sourceMap": true
+        }
+      ],
+      "babelify"
     ]
   },
   "babel": {
