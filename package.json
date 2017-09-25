@@ -22,6 +22,7 @@
     "url": "https://github.com/mkalam-alami/issues"
   },
   "dependencies": {
+    "body-parser": "^1.18.2",
     "bookshelf": "^0.10.2",
     "bookshelf-cascade-delete": "^2.0.1",
     "cookies": "^0.7.0",

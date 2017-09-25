@@ -19,6 +19,7 @@ const expressNunjucks = require('express-nunjucks')
 const cookies = require('cookies')
 const postCss = require('postcss-middleware')
 const multer = require('multer')
+const bodyParser = require('body-parser')
 const promisify = require('promisify-node')
 const moment = require('moment')
 const randomKey = require('random-key')
@@ -177,6 +178,7 @@ async function configure (app) {
   })
 
   // Multer (form parsing/file upload)
+  app.use(bodyParser.urlencoded({ extended: false }))
   let uploadStorage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, path.join(__dirname, '..', config.DATA_PATH, 'tmp'))
@@ -202,8 +204,10 @@ async function configure (app) {
       let uploadFunction
       if (typeof uploadInfo === 'string') {
         uploadFunction = upload.single(uploadInfo)
-      } else {
+      } else if (typeof uploadInfo === 'object') {
         uploadFunction = upload.fields(uploadInfo)
+      } else {
+        uploadFunction = upload.array()
       }
 
       uploadFunction(req, res, function () {
