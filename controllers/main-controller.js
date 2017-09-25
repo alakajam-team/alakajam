@@ -202,7 +202,8 @@ async function games (req, res) {
   }
   let searchOptions = {
     pageSize: PAGE_SIZE,
-    page: currentPage
+    page: currentPage,
+    sortByScore: true
   }
   // TODO Refactor (shared with eventController
   searchOptions.search = forms.sanitizeString(req.query.search)
@@ -226,8 +227,10 @@ async function games (req, res) {
   }
   if (req.query.eventId === 'none') {
     searchOptions.eventId = null
-  } else {
-    searchOptions.eventId = forms.isId(req.query.eventId) ? req.query.eventId : undefined
+  } else if (forms.isId(req.query.eventId)) {
+    searchOptions.eventId = req.query.eventId
+  } else if (res.locals.featuredEvent) {
+    searchOptions.eventId = res.locals.featuredEvent.get('id')
   }
 
   // Fetch info
@@ -279,7 +282,7 @@ async function people (req, res) {
 
   // Fetch info
   let usersCollection = await userService.findUsers(searchOptions)
-  let eventsCollection = await eventService.findEvents()
+  let eventsCollection = await eventService.findEvents({ statusNot: 'pending' })
   let searchedEvent = null
   if (searchOptions.eventId) {
     searchedEvent = eventsCollection.findWhere({'id': parseInt(searchOptions.eventId)})

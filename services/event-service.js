@@ -118,6 +118,7 @@ async function findEvents (options = {}) {
   let query = models.Event.forge()
     .orderBy('published_at', options.sortDatesAscending ? 'ASC' : 'DESC')
   if (options.status) query = query.where('status', options.status)
+  if (options.statusNot) query = query.where('status', '<>', options.statusNot)
   if (options.name) query = query.where('name', options.name)
   return query.fetchAll()
 }

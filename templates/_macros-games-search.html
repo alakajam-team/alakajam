@@ -9,6 +9,18 @@
       <h4 style="margin: 0">Search filters</h4>
     </div>
     <form method="get" class="list-group-item">
+      {% if not options.fixedEvent %}
+      <div class="form-group">
+        <label for="search">Event</label>
+        <select id="js-event" name="eventId" class="form-control">
+          <option value="" {{ 'selected' if not context.searchOptions.eventId }}></option>
+          {% for event in context.events %}
+            <option value="{{ event.get('id') }}" {{ 'selected' if event.get('id') == context.searchOptions.eventId }}>{{ event.get('title') }}</option>
+          {% endfor %}
+          <option value="none" {{ 'selected' if context.searchOptions.eventId|dump === 'null' }}>(External events)</option>
+        </select>
+      </div>
+      {% endif %}
       <div class="form-group">
         <label for="search">Title search</label>
         <input name="search" type="text" class="form-control" value="{{ context.searchOptions.search }}" />
@@ -29,18 +41,6 @@
           {% endfor %}
         </select>
       </div>
-      {% if not options.fixedEvent %}
-      <div class="form-group">
-        <label for="search">Event</label>
-        <select id="js-event" name="eventId" class="form-control">
-          <option value="" {{ 'selected' if not context.searchOptions.eventId }}></option>
-          {% for event in context.events %}
-            <option value="{{ event.get('id') }}" {{ 'selected' if event.get('id') == context.searchOptions.eventId }}>{{ event.get('title') }}</option>
-          {% endfor %}
-          <option value="none" {{ 'selected' if context.searchOptions.eventId|dump === 'null' }}>(External events)</option>
-        </select>
-      </div>
-      {% endif %}
       <div class="form-group">
         <input type="submit" class="btn btn-primary" value="Apply" />
         <a href="?" class="btn btn-default">Clear</a>
