@@ -94,6 +94,9 @@ async function index (req, res) {
         .then(async function () {
           context.featuredEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
           context.homeAnnouncement = context.featuredEventAnnouncement
+          if (res.locals.featuredEvent.get('status_entry') !== 'off') {
+            res.locals.featuredEventCount = await eventService.countEntriesByEvent(res.locals.featuredEvent)
+          }
         })
     }
 

@@ -78,7 +78,7 @@
                   {{ jumboLink(featuredEvent, 'status_rules', buildUrl(featuredEvent.get('status_rules'), 'post'), 'Welcome/Rules', 'info-sign', ['disabled'], { absoluteUrl: true }) }}
                   {{ jumboLink(featuredEvent, null, 'posts', 'Posts', 'globe') }}
                   {{ jumboLink(featuredEvent, 'status_theme', 'themes', 'Themes', 'apple', ['off']) }}
-                  {{ jumboLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower', ['off']) }}
+                  {{ jumboLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower', ['off'], { count: featuredEventCount }) }}
                   {{ jumboLink(featuredEvent, 'status_results', 'results', 'Results', 'th-list', ['off', 'voting']) }}
                   <div class="home-jumbo__social">
                     {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
@@ -202,7 +202,7 @@
       class="home-jumbo__link {{ 'disabled' if statusField and closedValues.includes(event.get(statusField)) else 'active' }}">
     <div class="panel home-jumbo__link-border">
       <span class="glyphicon glyphicon-{{ icon }}"></span> 
-      <span class="home-jumbo__link-label">{{ label }}</span>
+      <span class="home-jumbo__link-label">{{ label }}{% if options.count %}<span class="count"> ({{ options.count }})</span>{% endif %}</span>
     </div>
   </a>
 {% endif %}

@@ -42,7 +42,7 @@
         {% endif %}
       </div>
       {% if entry.related('details').get('body') %}
-      <div class="well post">
+      <div class="well post user-contents">
         {{ entry.related('details').get('body') | markdown | safe }}
       </div>
       {% endif %}

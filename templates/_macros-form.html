@@ -302,13 +302,19 @@ $('.expand-bar').each(function () {
 {% set pagesToEnd = pageCount - currentPage %}
 {% set from = max(1, currentPage - max(5, 11 - pagesToEnd)) %}
 {% set to = min(pageCount, currentPage + max(5, 11 - currentPage)) %}
+{# TODO: make a way to reach first / last page when there are many pages #}
+{# class="{{ 'active' if currentPage === pageCount }}" #}
 {% if pageCount > 1 %}
 <ul class="pagination">
-  <li class="{{ 'active' if currentPage === 1 }}"><a href="{{ baseUrlQS + '&p=1' }}">First page</a></li>
+  {% if currentPage > 1 %}
+  <li><a href="{{ baseUrlQS + '&p=' + (currentPage - 1) }}">Previous page</a></li>
+  {% endif %}
   {% for page in range(from, to + 1) %}
   <li class="{{ 'active' if currentPage === page }}"><a href="{{ baseUrlQS + '&p=' + page }}">{{ page }}</a></li>
   {% endfor %}
-  <li class="{{ 'active' if currentPage === pageCount }}"><a href="{{ baseUrlQS + '&p=' + pageCount }}">Last page</a></li>
+  {% if currentPage < pageCount %}
+  <li><a href="{{ baseUrlQS + '&p=' + (currentPage + 1) }}">Next page</a></li>
+  {% endif %}
 </ul>
 {% endif %}
 {% endmacro %}
