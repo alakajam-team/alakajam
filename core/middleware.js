@@ -19,6 +19,7 @@ const expressNunjucks = require('express-nunjucks')
 // const ExpressBrute = require('express-brute')
 const cookies = require('cookies')
 const postCss = require('postcss-middleware')
+const browserifyMiddleware = require('browserify-middleware')
 const formidable = require('formidable')
 const promisify = require('promisify-node')
 const moment = require('moment')
@@ -56,10 +57,7 @@ async function configure (app) {
     src: () => path.join(ROOT_PATH, '/static/css/site.css'),
     plugins: [require('postcss-cssnext')]
   }))
-  if (app.get('env') === 'development') {
-    const browserifyMiddleware = require('browserify-middleware')
-    app.use('/static/js/site.js', browserifyMiddleware(path.join(ROOT_PATH, '/client/site.js')))
-  }
+  app.use('/static/js/site.js', browserifyMiddleware(path.join(ROOT_PATH, '/client/site.js')))
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
   // Request throttling

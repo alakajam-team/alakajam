@@ -22,8 +22,11 @@
     "url": "https://github.com/mkalam-alami/issues"
   },
   "dependencies": {
+    "babel-preset-env": "^1.6.0",
+    "babelify": "^7.3.0",
     "bookshelf": "^0.10.2",
     "bookshelf-cascade-delete": "^2.0.1",
+    "browserify-middleware": "^7.1.0",
     "cookies": "^0.7.0",
     "express": "^4.14.0",
     "express-brute": "^1.0.1",
@@ -50,6 +53,7 @@
     "slug": "^0.9.1",
     "sqlite3": "^3.1.8",
     "striptags": "^3.0.1",
+    "uglify-js": "^3.1.2",
     "validator": "^7.0.0",
     "winston": "^2.3.0",
     "xss": "^0.3.3"
@@ -58,15 +62,10 @@
     "sharp": "^0.17.3"
   },
   "devDependencies": {
-    "babel-preset-env": "^1.6.0",
-    "babelify": "^7.3.0",
     "browser-refresh-client": "^1.1.4",
-    "browserify": "^14.4.0",
-    "browserify-middleware": "^7.1.0",
     "jsdoc-strip-async-await": "^0.1.0",
     "mocha": "^3.3.0",
     "rimraf": "^2.6.1",
-    "uglifyify": "^4.0.4",
     "watchify": "^3.9.0"
   },
   "standard": {
@@ -78,12 +77,6 @@
   },
   "browserify": {
     "transform": [
-      [
-        "uglifyify",
-        {
-          "sourceMap": true
-        }
-      ],
       "babelify"
     ]
   },
