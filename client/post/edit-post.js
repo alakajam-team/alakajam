@@ -18,7 +18,7 @@ function init () {
   // Sync H1 with title input
   const $titleInput = $('#title')
   const $titleDisplay = $('#title-display')
-  const defaultText = "{{ specialPostType | capitalize if specialPostType else 'Blog post' }}"
+  const defaultText = $titleDisplay.attr('data-default-text')
   $titleInput.on('change keyup', refreshTitleDisplay)
   refreshTitleDisplay()
 
