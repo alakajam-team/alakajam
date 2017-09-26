@@ -252,7 +252,7 @@ async function editEntry (req, res) {
 
       if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
         let division = fields['division'] || 'solo'
-        if (event && event.get('status_entry') === 'open_unranked') {
+        if (event && (event.get('status_entry') === 'open_unranked' || event.get('status_entry') === 'closed')) {
           if (!entry.has('division')) {
             // New entries are all unranked
             division = 'unranked'
@@ -261,6 +261,7 @@ async function editEntry (req, res) {
             division = entry.get('division')
           }
         }
+        console.log(division)
 
         entry.set({
           'division': division,
