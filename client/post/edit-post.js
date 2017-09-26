@@ -16,7 +16,7 @@ function toggleShowHide (showButtonSelector, hideButtonSelector, showSelector, h
   })
 }
 
-function syncTitle(inputSelector, displaySelector, defaultText) {
+function syncTitle (inputSelector, displaySelector, defaultText) {
   const $input = $(inputSelector)
   const $display = $(displaySelector)
 

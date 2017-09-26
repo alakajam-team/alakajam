@@ -80,7 +80,8 @@
   "browserify": {
     "transform": [
       "babelify"
-    ]
+    ],
+    "standalone": "alakajam"
   },
   "babel": {
     "presets": [

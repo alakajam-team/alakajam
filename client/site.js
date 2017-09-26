@@ -9,8 +9,10 @@
 // see: https://babeljs.io/docs/plugins/preset-env#optionsuse-built-ins
 require('babel-polyfill')
 
-window.alakajam = {
-  editPost: require('./post/edit-post')
+module.exports = {
+  post: {
+    editPost: require('./post/edit-post')
+  }
 }
 
 $(function domReady () {
