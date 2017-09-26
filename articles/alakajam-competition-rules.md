@@ -46,7 +46,7 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
     * Fix bugs ;
     * Fix balance issues or annoyances *but only* if they're so terrible that people can't properly finish your game.
 
-All third-party assets listed above are allowed as long as you have the license to use them. Check the licensing terms and in doubt, consult the author.
+Those third-party assets exceptions are only allowed as long as you have the license to use them. Please check the licensing terms and in doubt, consult the author.
 
 ### Unranked division
 
