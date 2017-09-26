@@ -66,6 +66,9 @@
         <div class="well">The event has no entries yet.</div>
       {% endif %}
       </div>
+
+      {{ formMacros.pagination(currentPage, entriesCollection.pagination.pageCount, path) }}
+      
     </div>
   </div>
 </div>
