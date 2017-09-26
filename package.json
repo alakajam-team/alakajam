@@ -10,7 +10,7 @@
     "migrate": "knex migrate:latest",
     "docs": "rm -rf docs && jsdoc -c jsdoc.json -d docs -R README.md -r core services",
     "test": "mocha -t 10000 tests/",
-    "lint": "standard controllers/*.js services/*.js core/*.js migrations/*.js server.js client/*.js client/*/*.js; if [ $? != 0 ]; then echo 'Linting errors were found'; else echo 'Code is lint free! Good job.'; fi",
+    "lint": "standard controllers/*.js services/*.js core/*.js migrations/*.js server.js client/*.js client/*/*.js; if [ $? != 0 ]; then echo -e '\\033[1;31mLinting errors were found\\033[0m'; else echo -e '\\033[1;32mCode is lint free! Good job.\\033[0m'; fi",
     "fixlint": "standard --fix controllers/*.js services/*.js core/*.js migrations/*.js server.js client/*.js client/*/*.js"
   },
   "repository": {
