@@ -1,32 +1,33 @@
 /* eslint-env jquery */
 
-function init () {
+function toggleShowHide (showButtonSelector, hideButtonSelector, showSelector, hideSelector) {
   // Schedule actions
-  const $scheduleShowButton = $('#schedule-show')
-  const $scheduleHideButton = $('#schedule-hide')
-  const $scheduleBlock = $('.post__schedule')
-  const $actionsBlock = $('.post__actions')
-  $scheduleShowButton.click(function () {
-    $scheduleBlock.show()
-    $actionsBlock.hide()
+  const $showButton = $(showButtonSelector)
+  const $hideButton = $(hideButtonSelector)
+  const $show = $(showSelector)
+  const $hide = $(hideSelector)
+  $showButton.click(function () {
+    $show.show()
+    $hide.hide()
   })
-  $scheduleHideButton.click(function () {
-    $scheduleBlock.hide()
-    $actionsBlock.show()
+  $hideButton.click(function () {
+    $show.hide()
+    $hide.show()
   })
+}
 
-  // Sync H1 with title input
-  const $titleInput = $('#title')
-  const $titleDisplay = $('#title-display')
-  const defaultText = $titleDisplay.attr('data-default-text')
-  $titleInput.on('change keyup', refreshTitleDisplay)
-  refreshTitleDisplay()
+function syncTitle(inputSelector, displaySelector, defaultText) {
+  const $input = $(inputSelector)
+  const $display = $(displaySelector)
 
-  function refreshTitleDisplay () {
-    $titleDisplay.text($titleInput.val() || defaultText)
+  function refreshDisplay () {
+    $display.text($input.val() || defaultText)
   }
+  $input.on('change keyup', refreshDisplay)
+  refreshDisplay()
 }
 
 module.exports = {
-  init
+  toggleShowHide,
+  syncTitle
 }

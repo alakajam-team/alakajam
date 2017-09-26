@@ -13,7 +13,7 @@
 
   <div class="row">
     <div class="{{ 'col-xs-10 col-sm-8 col-md-9' if specialPostType else 'col-xs-12' }}">
-      <h1 id="title-display" data-default-text="{{ specialPostType | capitalize if specialPostType else 'Blog post' }}"></h1>
+      <h1 id="title-display"></h1>
     </div>
     {% if specialPostType %}
     <div class="col-xs-2 col-sm-4 col-md-3">
@@ -94,4 +94,9 @@
 {% block scripts %} 
 {{ formMacros.editorScripts() }}
 {{ formMacros.dateTimePickerScripts() }}
+<script>
+  // TODO proper escaping here for use in strings in JS in HTML
+  alakajam.editPost.toggleShowHide('#schedule-show', '#schedule-hide', '.post__schedule', '.post__actions');
+  alakajam.editPost.syncTitle('#title', '#title-display', '{{ specialPostType | capitalize if specialPostType else 'Blog post' }}');
+</script>
 {% endblock %}

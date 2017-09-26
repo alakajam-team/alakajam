@@ -9,9 +9,11 @@
 // see: https://babeljs.io/docs/plugins/preset-env#optionsuse-built-ins
 require('babel-polyfill')
 
+window.alakajam = {
+  editPost: require('./post/edit-post')
+}
+
 $(function domReady () {
   require('./disabled-links').init()
   require('./tooltips').init()
-
-  require('./post/edit-post').init()
 })
