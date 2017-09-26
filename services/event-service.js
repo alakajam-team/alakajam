@@ -620,12 +620,16 @@ async function findGames (options = {}) {
   if (options.divisions) {
     query = query.where('division', 'in', options.divisions)
   }
-  options.pageSize = options.pageSize || 30
-  options.withRelated = options.withRelated || ['event', 'userRoles']
+
+  if (options.pageSize === undefined) options.pageSize = 30
+  if (options.withRelated === undefined) options.withRelated = ['event', 'userRoles']
+
   if (options.count) {
     return query.count()
-  } else {
+  } else if (options.pageSize) {
     return query.fetchPage(options)
+  } else {
+    return query.fetchAll()
   }
 }
 
