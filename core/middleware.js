@@ -24,6 +24,7 @@ const multer = require('multer')
 const bodyParser = require('body-parser')
 const promisify = require('promisify-node')
 const moment = require('moment')
+const nunjucks = require('nunjucks')
 const randomKey = require('random-key')
 const log = require('./log')
 const config = require('../config')
@@ -81,16 +82,16 @@ async function configure (app) {
 
   // Templating
   app.set('views', path.join(ROOT_PATH, '/templates'))
-  let nunjucks = expressNunjucks(app, {
+  let nj = expressNunjucks(app, {
     watch: app.locals.devMode,
     noCache: app.locals.devMode
   })
 
   // Templating: custom filters
-  nunjucks.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
-  nunjucks.env.addGlobal('constants', constants)
-  nunjucks.env.addGlobal('devMode', app.locals.devMode)
-  nunjucks.env.addGlobal('context', function () {
+  nj.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
+  nj.env.addGlobal('constants', constants)
+  nj.env.addGlobal('devMode', app.locals.devMode)
+  nj.env.addGlobal('context', function () {
     // lets devs display the whole templating context with
     // {{ context() | prettyDump | safe }}
     this.ctx.constants = constants
@@ -98,33 +99,33 @@ async function configure (app) {
     return this.ctx
   })
   for (var functionName in templating) {
-    nunjucks.env.addGlobal(functionName, templating[functionName])
+    nj.env.addGlobal(functionName, templating[functionName])
   }
 
-  nunjucks.env.addFilter('prettyDump', function (obj) {
+  nj.env.addFilter('prettyDump', function (obj) {
     return '<pre>' + JSON.stringify(obj, null, 2) + '</pre>'
   })
-  nunjucks.env.addFilter('markdown', function (str) {
+  nj.env.addFilter('markdown', function (str) {
     return forms.markdownToHtml(str)
   })
-  nunjucks.env.addFilter('markdownUnescape', function (str) {
+  nj.env.addFilter('markdownUnescape', function (str) {
     return str ? str.replace(/&amp;/g, '&').replace(/&quot;/g, '"') : null
   })
-  nunjucks.env.addFilter('date', function (date) {
+  nj.env.addFilter('date', function (date) {
     if (date) {
       return moment(date).utc().format(constants.DATE_FORMAT)
     } else {
       return ''
     }
   })
-  nunjucks.env.addFilter('dateTime', function (date) {
+  nj.env.addFilter('dateTime', function (date) {
     if (date) {
       return moment(date).utc().format(constants.DATE_TIME_FORMAT)
     } else {
       return ''
     }
   })
-  nunjucks.env.addFilter('featuredEventDateTime', function (date) {
+  nj.env.addFilter('featuredEventDateTime', function (date) {
     if (date) {
       return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) +
         ' <a href="https://www.timeanddate.com/worldclock/timezone/utc">UTC</a>'
@@ -132,23 +133,23 @@ async function configure (app) {
       return ''
     }
   })
-  nunjucks.env.addFilter('pickerDateTime', function (date) {
+  nj.env.addFilter('pickerDateTime', function (date) {
     if (date) {
       return moment(date).utc().format(constants.PICKER_DATE_TIME_FORMAT)
     } else {
       return ''
     }
   })
-  nunjucks.env.addFilter('relativeTime', function (date) {
+  nj.env.addFilter('relativeTime', function (date) {
     return moment(date).utc().fromNow()
   })
-  nunjucks.env.addFilter('ordinal', function (n) {
+  nj.env.addFilter('ordinal', function (n) {
     // source: https://stackoverflow.com/a/12487454
     let s = ['th', 'st', 'nd', 'rd']
     let v = n % 100
     return n + (s[(v - 20) % 10] || s[v] || s[0])
   })
-  nunjucks.env.addFilter('digits', function (number, digits) {
+  nj.env.addFilter('digits', function (number, digits) {
     if (typeof number === 'string') {
       number = parseFloat(number)
     }
@@ -158,12 +159,27 @@ async function configure (app) {
       return null
     }
   })
-  nunjucks.env.addFilter('paginationBasePath', function (path) {
+  nj.env.addFilter('paginationBasePath', function (path) {
     let basePath = path.replace(/[?&]p=[^&]*/g, '')
     if (!basePath.includes('?')) {
       basePath += '?'
     }
     return basePath
+  })
+  /**
+   * Returns a JSON stringified version of the value, safe for inclusion in an
+   * inline <script> tag. The optional argument 'spaces' can be used for
+   * pretty-printing.
+   *
+   * Output is NOT safe for inclusion in HTML! If that's what you need, use the
+   * built-in 'dump' filter instead.
+   */
+  nj.env.addFilter('json', function (value, spaces) {
+    if (value instanceof nunjucks.runtime.SafeString) {
+      value = value.toString()
+    }
+    const jsonString = JSON.stringify(value, null, spaces).replace(/</g, '\\u003c')
+    return nunjucks.runtime.markSafe(jsonString)
   })
 
   // Templating: rendering context
