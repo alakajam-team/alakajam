@@ -5,6 +5,7 @@
  *
  * @description Sets up:
  * - CSS processing (cssnext)
+ * - JS processing (browserify)
  * - Templating (nunjucks)
  * - Form parsing / file upload (formidable)
  * - Error pages
@@ -18,6 +19,7 @@ const expressNunjucks = require('express-nunjucks')
 // const ExpressBrute = require('express-brute')
 const cookies = require('cookies')
 const postCss = require('postcss-middleware')
+const browserifyMiddleware = require('browserify-middleware')
 const multer = require('multer')
 const bodyParser = require('body-parser')
 const promisify = require('promisify-node')
@@ -56,6 +58,7 @@ async function configure (app) {
     src: () => path.join(ROOT_PATH, '/static/css/site.css'),
     plugins: [require('postcss-cssnext')]
   }))
+  app.use('/static/js/site.js', browserifyMiddleware(path.join(ROOT_PATH, '/static/js/site.js')))
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
   // Request throttling

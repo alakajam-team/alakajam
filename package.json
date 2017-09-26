@@ -10,8 +10,8 @@
     "migrate": "knex migrate:latest",
     "docs": "rm -rf docs && jsdoc -c jsdoc.json -d docs -R README.md -r core services",
     "test": "mocha -t 10000 tests/",
-    "lint": "standard controllers/*.js services/*.js core/*.js migrations/*.js server.js; if [ $? != 0 ]; then echo 'Linting errors were found'; else echo 'Code is lint free! Good job.'; fi",
-    "fixlint": "standard --fix controllers/*.js services/*.js core/*.js migrations/*.js server.js"
+    "lint": "standard controllers/*.js services/*.js core/*.js migrations/*.js server.js client/*.js client/*/*.js; if [ $? != 0 ]; then echo 'Linting errors were found'; else echo 'Code is lint free! Good job.'; fi",
+    "fixlint": "standard --fix controllers/*.js services/*.js core/*.js migrations/*.js server.js client/*.js client/*/*.js"
   },
   "repository": {
     "type": "git",
@@ -22,9 +22,12 @@
     "url": "https://github.com/mkalam-alami/issues"
   },
   "dependencies": {
+    "babel-preset-env": "^1.6.0",
+    "babelify": "^7.3.0",
     "body-parser": "^1.18.2",
     "bookshelf": "^0.10.2",
     "bookshelf-cascade-delete": "^2.0.1",
+    "browserify-middleware": "^7.1.0",
     "cookies": "^0.7.0",
     "express": "^4.14.0",
     "express-brute": "^1.0.1",
@@ -51,6 +54,7 @@
     "slug": "^0.9.1",
     "sqlite3": "^3.1.8",
     "striptags": "^3.0.1",
+    "uglify-js": "^3.1.2",
     "validator": "^7.0.0",
     "winston": "^2.3.0",
     "xss": "^0.3.3"
@@ -62,13 +66,33 @@
     "browser-refresh-client": "^1.1.4",
     "jsdoc-strip-async-await": "^0.1.0",
     "mocha": "^3.3.0",
-    "rimraf": "^2.6.1"
+    "rimraf": "^2.6.1",
+    "watchify": "^3.9.0"
   },
   "standard": {
     "globals": [
       "describe",
       "it",
       "before"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "browsers": [
+              "last 2 versions"
+            ]
+          }
+        }
+      ]
     ]
   }
 }

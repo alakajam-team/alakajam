@@ -94,41 +94,4 @@
 {% block scripts %} 
 {{ formMacros.editorScripts() }}
 {{ formMacros.dateTimePickerScripts() }}
-<script src="/static/js/slug.min.js"></script>
-<script>
-
-// Schedule actions
-$scheduleShowButton = $('#schedule-show')
-$scheduleHideButton = $('#schedule-hide')
-$scheduleBlock = $('.post__schedule')
-$actionsBlock = $('.post__actions')
-$scheduleShowButton.click(function () {
-  $scheduleBlock.show()
-  $actionsBlock.hide()
-});
-$scheduleHideButton.click(function () {
-  $scheduleBlock.hide()
-  $actionsBlock.show()
-})
-
-// Sync H1 with title input
-var $titleInput = $('#title')
-var $titleDisplay = $('#title-display')
-var defaultText = "{{ specialPostType | capitalize if specialPostType else 'Blog post' }}"
-$titleInput.on('change keyup', refreshTitleDisplay)
-refreshTitleDisplay()
-
-function refreshTitleDisplay () {
-  $titleDisplay.text($titleInput.val() || defaultText)
-}
-
-// Article slug
-$('#name').change(function () {
-  $(this).val(slug($(this).val()).toLowerCase())
-})
-$('#title').keyup(function () {
-  $('#name').val(slug($(this).val()).toLowerCase())
-})
-
-</script>
 {% endblock %}
