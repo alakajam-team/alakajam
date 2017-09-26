@@ -21,6 +21,7 @@ const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
 const notificationService = require('../services/notification-service')
 const platformService = require('../services/platform-service')
+const eventController = require('./event-controller')
 
 module.exports = {
   anyPageMiddleware,
@@ -93,6 +94,9 @@ async function index (req, res) {
         .then(async function () {
           context.featuredEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
           context.homeAnnouncement = context.featuredEventAnnouncement
+          if (res.locals.featuredEvent.get('status_entry') !== 'off') {
+            res.locals.featuredEventCount = await eventService.countEntriesByEvent(res.locals.featuredEvent)
+          }
         })
     }
 
@@ -144,6 +148,8 @@ async function index (req, res) {
 
     cache.general.set('home_page', context, 10 /* 10 seconds */)
   }
+
+  await eventController.handleEventUserShortcuts(res, res.locals.featuredEvent)
 
   res.render('index', context)
 }
@@ -199,7 +205,8 @@ async function games (req, res) {
   }
   let searchOptions = {
     pageSize: PAGE_SIZE,
-    page: currentPage
+    page: currentPage,
+    sortByScore: true
   }
   // TODO Refactor (shared with eventController
   searchOptions.search = forms.sanitizeString(req.query.search)
@@ -223,8 +230,10 @@ async function games (req, res) {
   }
   if (req.query.eventId === 'none') {
     searchOptions.eventId = null
-  } else {
-    searchOptions.eventId = forms.isId(req.query.eventId) ? req.query.eventId : undefined
+  } else if (forms.isId(req.query.eventId)) {
+    searchOptions.eventId = req.query.eventId
+  } else if (res.locals.featuredEvent) {
+    searchOptions.eventId = res.locals.featuredEvent.get('id')
   }
 
   // Fetch info
@@ -276,7 +285,7 @@ async function people (req, res) {
 
   // Fetch info
   let usersCollection = await userService.findUsers(searchOptions)
-  let eventsCollection = await eventService.findEvents()
+  let eventsCollection = await eventService.findEvents({ statusNot: 'pending' })
   let searchedEvent = null
   if (searchOptions.eventId) {
     searchedEvent = eventsCollection.findWhere({'id': parseInt(searchOptions.eventId)})

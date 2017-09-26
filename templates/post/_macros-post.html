@@ -10,7 +10,7 @@
   {% set postUrl = buildUrl(post, 'post') %}
 
   {% if not options.hideHeading %}
-    {% set h = 'h3' if options.hideBody or options.hideDetails else 'h1' %}
+    {% set h = 'h4' if options.hideBody or options.hideDetails else 'h1' %}
     {% set specialPostType = post.get('special_post_type') %}
     <{{h}}>
       <div class="row">

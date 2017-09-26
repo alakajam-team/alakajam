@@ -27,12 +27,12 @@
     <li>
     {% if data.commentScore > 0 %}
       <strong>+ {{ data.commentScore or '0' }}</strong> with comments by {{ userTitle(usersById, data.userId) }}
-        on {{ entriesById[data.entryId].get('title') }}
+        on {{ entriesById[data.entryId].get('title') if entriesById[data.entryId] else '???' }}
     {% endif %}
     {{ ' or ' if data.commentScore and data.voteScore }}
     {% if data.voteScore > 0 %}
       <strong>+ {{ data.voteScore or '0' }}</strong> with votes by {{ userTitle(usersById, data.userId) }}
-        on {{ entriesById[data.entryId].get('title') }}
+        on {{ entriesById[data.entryId].get('title') if entriesById[data.entryId] else '???' }}
     {% endif %}
   {% endfor %}
   </ul>

@@ -171,7 +171,7 @@ async function dashboardSettings (req, res) {
   let infoMessage = ''
 
   if (req.method === 'POST') {
-    let {fields, files} = await req.parseForm()
+    let {fields, files} = await req.parseForm('avatar')
     if (!res.headersSent) { // FIXME Why?
       let dashboardUser = res.locals.dashboardUser
       let newAvatar = files.avatar && files.avatar.size > 0

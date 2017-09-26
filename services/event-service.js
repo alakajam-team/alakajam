@@ -118,6 +118,7 @@ async function findEvents (options = {}) {
   let query = models.Event.forge()
     .orderBy('published_at', options.sortDatesAscending ? 'ASC' : 'DESC')
   if (options.status) query = query.where('status', options.status)
+  if (options.statusNot) query = query.where('status', '<>', options.statusNot)
   if (options.name) query = query.where('name', options.name)
   return query.fetchAll()
 }
@@ -619,12 +620,16 @@ async function findGames (options = {}) {
   if (options.divisions) {
     query = query.where('division', 'in', options.divisions)
   }
-  options.pageSize = options.pageSize || 30
-  options.withRelated = options.withRelated || ['event', 'userRoles']
+
+  if (options.pageSize === undefined) options.pageSize = 30
+  if (options.withRelated === undefined) options.withRelated = ['event', 'userRoles']
+
   if (options.count) {
     return query.count()
-  } else {
+  } else if (options.pageSize) {
     return query.fetchPage(options)
+  } else {
+    return query.fetchAll()
   }
 }
 

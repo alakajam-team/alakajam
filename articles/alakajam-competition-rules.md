@@ -38,7 +38,7 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
     * Your engine's default appearance for UI elements ;
     * Pre-made game author & engine splash screens.
 * **Audio asset reuse:** You must make all your audio assets during the event. However, you are *allowed* to use:
-    * Any existing sounds for SFX or as short samples for music, including drums and other sampled instruments ;
+    * Any existing sounds for SFX or as *short* samples for music, including drums and other sampled instruments (reusing full music tracks is not allowed);
     * Assets created from sound generation or speech synthesis tools.
 * **Post-jam changes:** From the minute the jam ends, you are not allowed to add any features, assets or contents to your game. While you're supposed to have properly tested your game, stuff happens, so we do allow to:
     * Package or improve the packaging of your game ;
@@ -46,7 +46,7 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
     * Fix bugs ;
     * Fix balance issues or annoyances *but only* if they're so terrible that people can't properly finish your game.
 
-All third-party assets listed above are allowed as long as you have the license to use them. Check the licensing terms and in doubt, consult the author.
+Those third-party assets exceptions are only allowed as long as you have the license to use them. Please check the licensing terms and in doubt, consult the author.
 
 ### Unranked division
 

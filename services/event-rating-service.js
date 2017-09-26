@@ -94,7 +94,6 @@ async function saveEntryVote (user, entry, event, voteData) {
   for (let i in voteData) {
     let categoryIndex = (parseInt(i) + 1)
     if (optouts.includes(eventDetails.get('category_titles')[categoryIndex - 1])) {
-      console.log('optout! ' + i)
       voteData[i] = 0
     }
     vote.set('vote_' + categoryIndex, voteData[i] || 0)
