@@ -7,7 +7,7 @@
 
 {% block editEventBody %}
 
-<form action="{{ buildUrl(event, 'event', 'edit') }}" method="post" enctype="multipart/form-data">
+<form action="{{ buildUrl(event, 'event', 'edit') }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
 
   <h1 id="js-title-display"></h1>
 

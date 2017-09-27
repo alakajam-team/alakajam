@@ -187,7 +187,7 @@
 {% set showAnon = options.allowAnonymous and not comment %}
 {% if user %}
 
-<form method="post" action="{{ buildUrl(comment, 'comment', 'edit') }}" class="comment">
+<form method="post" action="{{ buildUrl(comment, 'comment', 'edit') }}" class="comment js-warn-on-unsaved-changes">
   <input type="hidden" name="action" value="comment" />
   <input type="hidden" name="id" value="{{ comment.id if comment }}" />
   <a class="comment__anchor" name="c{{ comment.id if comment }}"></a>

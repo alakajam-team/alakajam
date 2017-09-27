@@ -48,7 +48,7 @@
           </div>
         </div>
 
-        <form id="js-manage-themes" method="post" style="display: none">
+        <form id="js-manage-themes" method="post" style="display: none" class="js-warn-on-unsaved-changes">
           <h2>Theme ideas </h2>
           <div class="panel themes__ideas">
             {% set ideaRows = max(userThemes.length, maxThemeSuggestions) %}
@@ -151,7 +151,7 @@
         
         {% if event.get('status_theme') === 'shortlist' %}
         <div class="themes__shortlist">
-          <form method="post">
+          <form method="post" class="js-warn-on-unsaved-changes">
             <h2>Shortlist ranking</h2> 
             <input type="hidden" name="action" value="shortlist" />
             <input id="js-shortlist-votes" type="hidden" name="shortlist-votes" />

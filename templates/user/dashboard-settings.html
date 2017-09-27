@@ -9,7 +9,7 @@
 
 <h1>Settings</h1>
 
-<form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}" method="post" enctype="multipart/form-data">
+<form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
 
 {% if dashboardAdminMode %}
 <div class="alert alert-danger">

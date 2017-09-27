@@ -50,15 +50,6 @@
         uniqueId: '{{ options.autoSaveId }}'
       }
     })
-
-    // Bind exit alert on change
-    simplemde.codemirror.on('change', function() {
-      if (!window.onbeforeunload) {
-        window.onbeforeunload = function() {
-          return 'You have unsaved changes. Exit anyway?'
-        }
-      }
-    })
   })
   
   function _alignText(className) {
@@ -68,11 +59,6 @@
       cm.replaceSelection('<p class="' + className + '">' + text + '</p>')
     }
   }
-
-  // Unbind exit alert on actual save
-  $('form').submit(function () {
-    window.onbeforeunload = undefined
-  })
 
   </script>
 {% endmacro %}
