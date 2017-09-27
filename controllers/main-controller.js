@@ -232,7 +232,7 @@ async function games (req, res) {
     searchOptions.eventId = null
   } else if (forms.isId(req.query.eventId)) {
     searchOptions.eventId = req.query.eventId
-  } else if (res.locals.featuredEvent) {
+  } else if (req.query.eventId === undefined && res.locals.featuredEvent) {
     searchOptions.eventId = res.locals.featuredEvent.get('id')
   }
 
