@@ -167,9 +167,13 @@ async function savePost (req, res) {
     let redirectToView = false
     let {fields} = await req.parseForm()
     let title = forms.sanitizeString(fields.title)
+    let body = forms.sanitizeMarkdown(fields.body)
     let errorMessage = null
     if (!title) {
       errorMessage = 'Title is mandatory'
+    }
+    if (!fields.body) {
+      errorMessage = 'Empty posts are not allowed'
     }
 
     if (!errorMessage) {
@@ -189,8 +193,8 @@ async function savePost (req, res) {
       }
 
       // Fill post from form info
-      post.set('title', forms.sanitizeString(fields.title))
-      post.set('body', forms.sanitizeMarkdown(fields.body))
+      post.set('title', title)
+      post.set('body', body)
       if (eventIdIsValid) {
         post.set('event_id', fields['event-id'])
         if (post.hasChanged('event_id') || post.hasChanged('special_post_type')) {
