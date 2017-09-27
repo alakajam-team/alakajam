@@ -10,6 +10,9 @@
 require('babel-polyfill')
 
 module.exports = {
+  common: {
+    tabs: require('./common/tabs')
+  },
   post: {
     editPost: require('./post/edit-post')
   },

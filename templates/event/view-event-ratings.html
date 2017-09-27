@@ -10,7 +10,7 @@
     <ul class="nav nav-tabs">
       {% for rankedVoteHistory in rankedVoteHistories %}
         <li id="js-tab-container-{{ rankedVoteHistory.title }}" role="presentation" class="js-tab-container {{ 'active' if loop.index === 1 }}">
-          <a class="js-tab-button" data-tab="{{ rankedVoteHistory.title }}" href="#">{{ rankedVoteHistory.title }} <span class="count">({{ rankedVoteHistory.votes.length }})</span></a>
+          <a class="js-tab-button" data-tab-selector="#js-tab-{{ rankedVoteHistory.title }}" href="#">{{ rankedVoteHistory.title }} <span class="count">({{ rankedVoteHistory.votes.length }})</span></a>
         </li>
       {% endfor %}
     </ul>
@@ -41,14 +41,10 @@
 
 {% block scripts %}
 <script type="text/javascript">
-$('.js-tab-button').click(function () {
-  var $this = $(this)
-  var tabToShow = $this.attr('data-tab')
-  
-  $('.js-tab-container').removeClass('active')
-  $('#js-tab-container-' + tabToShow).addClass('active')
-  $('.js-tab').hide()
-  $('#js-tab-' + tabToShow).show()
-})
+  alakajam.common.tabs.init({
+    buttonContainerSelector: '.js-tab-container',
+    buttonSelector: '.js-tab-button',
+    tabSelector: '.js-tab'
+  });
 </script>
 {% endblock %}
