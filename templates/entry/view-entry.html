@@ -58,7 +58,7 @@
                 <p style="margin-bottom: 0"><i>Note: The Feedback Score formula grants you as much points on this entry than on Solo/Team ones. <a href="/article/faq#feedback">Learn more</a></i></p>
               {% else %}
                 <p style="margin-bottom: -10px">This game is a <strong>{{ entry.get('division') | capitalize }}</strong> entry.</p>
-                <form method="post">
+                <form id="vote-form" method="post">
                   <input type="hidden" name="action" value="vote" />
                   <p class="form-group">
                     {% set optouts = entry.related('details').get('optouts') or [] %}
@@ -220,7 +220,7 @@ $stars.click(function () {
   var category = $this.attr('data-category')
   var rating = parseInt($this.attr('data-rating'))
   setRating(category, rating, true)
-  setUnsavedChanges(true)
+  $this.trigger('change')
 })
 
 var currentCategory = null
@@ -271,27 +271,7 @@ function setRating (category, rating, confirmed) {
   }
 }
 
-var unsavedChanges = false
-
-function setUnsavedChanges(value) {
-  if (unsavedChanges == value) {
-    return
-  }
-  unsavedChanges = value
-  if (unsavedChanges) {
-    $(window).on('beforeunload', confirmNavigation)
-  } else {
-    $(window).off('beforeunload', confirmNavigation)
-  }
-}
-
-function confirmNavigation() {
-  return 'You have unsaved changes. Do you really want to leave this page?'
-}
-
-$('.js-save-vote').on('click', function () {
-  setUnsavedChanges(false)
-})
+alakajam.common.warnOnUnsavedChanges('#vote-form', 'Your votes have not been saved. Do you really want to leave this page?');
 
 </script>
 {% endblock %}

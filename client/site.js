@@ -13,7 +13,8 @@ module.exports = {
   common: {
     tabs: require('./common/tabs'),
     syncSlug: require('./common/sync-slug'),
-    syncText: require('./common/sync-text')
+    syncText: require('./common/sync-text'),
+    warnOnUnsavedChanges: require('./common/warn-on-unsaved-changes')
   },
   post: {
     editPost: require('./post/edit-post')
