@@ -170,23 +170,7 @@
 {{ formMacros.codeMirrorScripts() }}
 <script src="/static/js/slug.min.js"></script>
 <script>
-
-// Sync H1 with title input + suggest slug
-var $titleInput = $('#js-title')
-var $titleDisplay = $('#js-title-display')
-var $nameInput = $('#js-name')
-
-var defaultText = "My event"
-$titleInput.on('change keyup', function () {
-  refreshTitleDisplay()
-  $nameInput.val(slug($titleInput.val()).toLowerCase())
-})
-
-refreshTitleDisplay()
-
-function refreshTitleDisplay () {
-  $titleDisplay.text($titleInput.val() || defaultText)
-}
-
+  alakajam.common.syncText('#js-title', '#js-title-display', 'My event');
+  alakajam.common.syncSlug('#js-title', '#js-name');
 </script>
 {% endblock %}

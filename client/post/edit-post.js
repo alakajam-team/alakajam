@@ -16,18 +16,6 @@ function toggleShowHide (showButtonSelector, hideButtonSelector, showSelector, h
   })
 }
 
-function syncTitle (inputSelector, displaySelector, defaultText) {
-  const $input = $(inputSelector)
-  const $display = $(displaySelector)
-
-  function refreshDisplay () {
-    $display.text($input.val() || defaultText)
-  }
-  $input.on('change keyup', refreshDisplay)
-  refreshDisplay()
-}
-
 module.exports = {
-  toggleShowHide,
-  syncTitle
+  toggleShowHide
 }

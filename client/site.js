@@ -11,7 +11,9 @@ require('babel-polyfill')
 
 module.exports = {
   common: {
-    tabs: require('./common/tabs')
+    tabs: require('./common/tabs'),
+    syncSlug: require('./common/sync-slug'),
+    syncText: require('./common/sync-text')
   },
   post: {
     editPost: require('./post/edit-post')
