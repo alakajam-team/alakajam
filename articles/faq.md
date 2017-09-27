@@ -20,6 +20,12 @@ When entering the Solo or Team division, you can opt-out of certain rating categ
 
 People who opt out of a category still have to follow the same rules regarding third-party assets.
 
+## <a name="feedback-intro"></a>What is the Feedback Score?
+
+The Feedback Score is a score attached to your game, calculated to decide who appears first in the search results. The more ratings & comments you give, the higher your score! The more ratings & comments you receive, the lower it gets. The goal is simply to help reward the people who are active during the ratings phase.
+
+If you are entering a competitive division, make sure to rate & comment enough games, or your entry might stay hidden in the results and you might not get enough ratings for an official ranking.
+
 ## <a name="feedback"></a>How is the Feedback Score calculated?
 
 Alakajam's Feedback Score uses a secret recipe transmitted from father to son since 50 generations! Its details are kept vague on purpose, but you might want to know that:
