@@ -1,6 +1,6 @@
 /* eslint-env jquery */
 
-function show (selector, endDateString) {
+module.exports = function countdown (selector, endDateString) {
   const diffMs = Math.max(0, Date.parse(endDateString) - Date.now())
   const $jsCountdown = $(selector)
   $jsCountdown.show()
@@ -8,8 +8,4 @@ function show (selector, endDateString) {
     clockFace: 'DailyCounter',
     countdown: true
   })
-}
-
-module.exports = {
-  show
 }

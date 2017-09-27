@@ -22,7 +22,7 @@ module.exports = {
 }
 
 $(function domReady () {
-  require('./disabled-links').init()
-  require('./tooltips').init()
+  require('./common/disabled-links')('a.disabled')
+  require('./common/tooltips')('.has-tooltip')
   require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes')
 })
