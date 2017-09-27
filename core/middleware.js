@@ -54,16 +54,16 @@ async function configure (app) {
   let sessionKey = await findOrCreateSessionKey()
   app.use(cookies.express([sessionKey]))
 
-  // Routing: static files (including NextCSS filter)
+  // CSS files
   app.use('/static/css/site.css', postCss({
     src: () => path.join(ROOT_PATH, '/static/css/site.css'),
     plugins: [require('postcss-cssnext')]
   }))
-  app.use('/static/js/site.js', browserifyMiddleware(
-    path.join(ROOT_PATH, '/client/site.js'),
-    {
-      'standalone': 'alakajam'
-    }))
+
+  // JavaScript files
+  app.use('/static/js/site.js', bundleJs(app.locals.devMode))
+
+  // Remaining static files
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
   // Request throttling
@@ -335,4 +335,25 @@ function errorPage (req, res, code, error, devMode) {
     stack,
     path: req.originalUrl // Needed by _page.html, normally added by anyPageMiddleware
   })
+}
+
+/**
+ * Returns a middleware rendering the JavaScript bundle.
+ */
+function bundleJs (devMode) {
+  const bundleJsMiddleware = browserifyMiddleware(
+      path.join(ROOT_PATH, '/client/site.js'),
+      { 'standalone': 'alakajam' })
+  if (devMode) {
+    return function (req, res, next) {
+      bundleJsMiddleware(req, res, function error (err) {
+        const errorString = '"Error during JavaScript server-side bundling: ' + err.toString().replace('"', '\\"').replace('\\', '\\\\') + '"'
+        const script = 'console.error(' + errorString + ');\ndocument.head.innerHTML = "";\ndocument.body.innerHTML = "<pre style=\\"white-space: pre-wrap\\">" + ' + errorString + ' + "</pre>";\n'
+        res.set('Content-Type', 'text/javascript')
+        res.send(script)
+      })
+    }
+  } else {
+    return bundleJsMiddleware
+  }
 }
