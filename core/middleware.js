@@ -174,7 +174,7 @@ async function configure (app) {
    * Output is NOT safe for inclusion in HTML! If that's what you need, use the
    * built-in 'dump' filter instead.
    */
-  nj.env.addFilter('json', function (value, spaces) {
+  nj.env.addFilter('jsonInsideScriptTag', function (value, spaces) {
     if (value instanceof nunjucks.runtime.SafeString) {
       value = value.toString()
     }

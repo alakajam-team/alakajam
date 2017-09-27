@@ -226,7 +226,7 @@
 {% if countdownEvent and countdownEvent.get('countdown_config').enabled %}
   <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
   <script type="text/javascript">
-    alakajam.countdown.show('.js-countdown', {{ countdownEvent.get('countdown_config').date | json }});
+    alakajam.countdown.show('.js-countdown', {{ countdownEvent.get('countdown_config').date | jsonInsideScriptTag }});
   </script>
 {% endif %}
 
