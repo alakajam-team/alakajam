@@ -172,7 +172,7 @@ async function savePost (req, res) {
     if (!title) {
       errorMessage = 'Title is mandatory'
     }
-    if (!fields.body) {
+    if (!body) {
       errorMessage = 'Empty posts are not allowed'
     }
 
