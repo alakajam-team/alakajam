@@ -93,7 +93,6 @@ module.exports = {
   DATE_FORMAT: 'MMMM Do YYYY',
   DATE_TIME_FORMAT: 'MMMM Do YYYY, h:mma',
   PICKER_DATE_TIME_FORMAT: 'YYYY-MM-DD HH:mm',
-  PICKER_CLIENT_DATE_TIME_FORMAT: 'yyyy-mm-dd hh:ii',
   FEATURED_EVENT_DATE_FORMAT: 'MMM. Do, ha',
 
   // Entries

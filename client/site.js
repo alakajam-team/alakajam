@@ -11,6 +11,7 @@ require('babel-polyfill')
 
 module.exports = {
   common: {
+    datePicker: require('./common/date-picker'),
     tabs: require('./common/tabs'),
     syncSlug: require('./common/sync-slug'),
     syncText: require('./common/sync-text')
@@ -22,6 +23,7 @@ module.exports = {
 }
 
 $(function domReady () {
+  require('./common/date-picker')('.js-date-picker')
   require('./common/disabled-links')('a.disabled')
   require('./common/tooltips')('.has-tooltip')
   require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes')

@@ -211,18 +211,6 @@
   <input type="datetime" name="{{ name }}" class="form-control date-picker js-date-picker" value="{{ value | pickerDateTime }}" />
 {% endmacro %}
 
-{% macro dateTimePickerScripts() %}
-<script type="text/javascript">
-$(".js-date-picker").datetimepicker({
-  format: '{{ constants.PICKER_CLIENT_DATE_TIME_FORMAT }}',
-  autoClose: true,
-  todayBtn: true,
-  pickerPosition: "top-left"
-})
-$.fn.datetimepicker.dates['en'].today = 'Now'
-</script>
-{% endmacro %}
-
 
 {# ======== SELECT ========= #}
 

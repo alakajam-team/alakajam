@@ -93,7 +93,6 @@
 
 {% block scripts %} 
 {{ formMacros.editorScripts() }}
-{{ formMacros.dateTimePickerScripts() }}
 <script>
   alakajam.post.editPost.toggleShowHide('#schedule-show', '#schedule-hide', '.post__schedule', '.post__actions');
   alakajam.common.syncText('#title', '#title-display', {{ ( specialPostType | capitalize if specialPostType else 'Blog post' ) | jsonInsideScriptTag }});
