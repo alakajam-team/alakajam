@@ -332,6 +332,7 @@ function errorPage (req, res, code, error, devMode) {
     code,
     title,
     message,
-    stack
+    stack,
+    path: req.originalUrl // Needed by _page.html, normally added by anyPageMiddleware
   })
 }
