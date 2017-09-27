@@ -30,7 +30,7 @@ module.exports = function warnOnUnsavedChanges (formSelector, message) {
     }
   }
 
-  $form.on('change', function () {
+  $form.on('change input', function () {
     setUnsavedChanges(true)
   })
   $form.on('submit', function () {
