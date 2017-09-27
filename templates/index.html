@@ -226,13 +226,7 @@
 {% if countdownEvent and countdownEvent.get('countdown_config').enabled %}
   <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
   <script type="text/javascript">
-  var diffMs = Math.max(0, Date.parse('{{ countdownEvent.get('countdown_config').date }}') - Date.now())
-  var $jsCountdown = $('.js-countdown')
-  $('.js-countdown').show()
-  $('.js-countdown').FlipClock(diffMs / 1000, { 
-    clockFace: 'DailyCounter',
-    countdown: true
-  })
+    alakajam.countdown.show('.js-countdown', {{ countdownEvent.get('countdown_config').date | json }});
   </script>
 {% endif %}
 

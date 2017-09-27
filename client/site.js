@@ -12,7 +12,8 @@ require('babel-polyfill')
 module.exports = {
   post: {
     editPost: require('./post/edit-post')
-  }
+  },
+  countdown: require('./countdown')
 }
 
 $(function domReady () {
