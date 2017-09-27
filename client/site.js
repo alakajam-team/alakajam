@@ -13,8 +13,7 @@ module.exports = {
   common: {
     tabs: require('./common/tabs'),
     syncSlug: require('./common/sync-slug'),
-    syncText: require('./common/sync-text'),
-    warnOnUnsavedChanges: require('./common/warn-on-unsaved-changes')
+    syncText: require('./common/sync-text')
   },
   post: {
     editPost: require('./post/edit-post')
@@ -25,4 +24,5 @@ module.exports = {
 $(function domReady () {
   require('./disabled-links').init()
   require('./tooltips').init()
+  require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes')
 })

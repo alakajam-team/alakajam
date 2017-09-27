@@ -58,7 +58,7 @@
                 <p style="margin-bottom: 0"><i>Note: The Feedback Score formula grants you as much points on this entry than on Solo/Team ones. <a href="/article/faq#feedback">Learn more</a></i></p>
               {% else %}
                 <p style="margin-bottom: -10px">This game is a <strong>{{ entry.get('division') | capitalize }}</strong> entry.</p>
-                <form id="vote-form" method="post">
+                <form method="post" class="js-warn-on-unsaved-changes">
                   <input type="hidden" name="action" value="vote" />
                   <p class="form-group">
                     {% set optouts = entry.related('details').get('optouts') or [] %}
@@ -270,8 +270,6 @@ function setRating (category, rating, confirmed) {
     $ratingLabel.removeClass('confirmed')
   }
 }
-
-alakajam.common.warnOnUnsavedChanges('#vote-form', 'Your votes have not been saved. Do you really want to leave this page?');
 
 </script>
 {% endblock %}
