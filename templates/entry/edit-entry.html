@@ -140,26 +140,28 @@
                 title="{{ 'Only the entry owner can change this setting. You can leave the team at the bottom of this form.' if not isEntryOwner }}" />
             </div>
           </div>
+          
           {% if not external
               and event.related('details').get('category_titles')
               and event.related('details').get('category_titles').includes('Graphics') %}
+            {% set canEditOptouts = isEntryOwner or isMod(user) %}
             {% set optouts = entry.related('details').get('optouts') %}
             <div id="edit-optouts" class="{{ 'hidden' if entry.get('division') === 'unranked' }}">
-              <div class="form-group" title="{{ 'Only the entry owner can change this setting' if not isEntryOwner }}">
+              <div class="form-group" title="{{ 'Only the entry owner can change this setting' if not canEditOptouts }}">
                 <label>Opt-outs (<a href="/article/faq#optouts" target="_blank">help</a>)</label>
                 <div>
                   <label style="font-weight: normal">
-                    <input type="checkbox" name="optout-graphics" {{ 'readonly' if not canEditDivision }}
+                    <input type="checkbox" name="optout-graphics" {{ 'readonly' if not canEditOptouts }}
                     {{ 'checked="checked"' if optouts and optouts.includes('Graphics') }} 
-                    {{ 'disabled' if not canEditDivision }} />
+                    {{ 'disabled' if not canEditOptouts }} />
                     Disable ratings for graphics
                   </label>
                 </div>
                 <div>
                   <label style="font-weight: normal">
-                    <input type="checkbox" name="optout-audio" {{ 'readonly' if not canEditDivision }}
+                    <input type="checkbox" name="optout-audio" {{ 'readonly' if not canEditOptouts }}
                     {{ 'checked="checked"' if optouts and optouts.includes('Audio') }}
-                    {{ 'disabled' if not canEditDivision }} />
+                    {{ 'disabled' if not canEditOptouts }} />
                     Disable ratings for audio
                   </label>
                 </div>
