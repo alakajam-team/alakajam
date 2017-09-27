@@ -101,6 +101,14 @@
               <div class="col-xs-4 col-md-2 text-center"><strong>Gained</strong> {{ formMacros.tooltip('The points gained are the biggest number between comment and rating points.') }}<br /><span class="entry-voting__score-big-number zero">0</span></div>
             </div>
           </div>
+        {% elseif not canUserWrite(user, entry) %}
+          <div class="entry-voting">
+            <h2 class="entry-voting__header">Game voting</h2>
+            <div class="entry-voting__body">
+              <p>Because you didn't enter the event, you cannot vote on this game.</p>
+              <p>You can still provide feedback using comments!</p>
+            </div>
+          </div>
         {% elseif entryVotes !== null and entry.get('division') !== 'unranked' %}
           <div class="entry-voting">
             <h2 class="entry-voting__header">Game voting</h2>
