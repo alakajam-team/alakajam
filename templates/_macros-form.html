@@ -1,66 +1,15 @@
 {# ======== MARKDOWN EDITOR ========= #}
 
-{% macro editor(editorName, editorContents) %}
-  <textarea class="form-control simplemde-editor" name="{{ editorName }}">{{ editorContents | markdownUnescape }}</textarea>
+{% macro editor(editorName, editorContents, autosaveId = '') %}
+<textarea class="form-control simplemde-editor" name="{{ editorName }}" data-autosave-id="{{ autosaveId }}">{{ editorContents | markdownUnescape }}</textarea>
 {% endmacro %}
 
 {% macro editorStyles() %}
   <link rel="stylesheet" type="text/css" href="/static/css/simplemde.min.css" />
 {% endmacro %}
 
-{% macro editorScripts(options = {}) %}
+{% macro editorScripts() %}
   <script type="text/javascript" src="/static/js/simplemde.min.js"></script>
-  <script>
-  // Markdown editor
-  $('.simplemde-editor').each(function () {
-    var simplemde = new SimpleMDE({
-      element: this,
-      spellChecker: false,
-      {% if options.toolbar === false %}
-      toolbar: false,
-      {% else %}
-      toolbar: ['bold', 'italic', 'heading', '|', 
-        {
-          name: 'float-left',
-          action: _alignText('pull-left'),
-          className: 'fa fa-align-left',
-          title: 'Float left',
-        },
-        {
-          name: 'align-center',
-          action: _alignText('text-center'),
-          className: 'fa fa-align-center',
-          title: 'Align center',
-        },
-        {
-          name: 'float-right',
-          action: _alignText('pull-right'),
-          className: 'fa fa-align-right',
-          title: 'Float right',
-        },
-        '|',
-        'code', 'quote', 'unordered-list', 'ordered-list', '|',
-        'link', 'image', 'table', 'horizontal-rule', '|',
-        'preview', 'side-by-side', 'fullscreen', '|',
-        'guide'],
-      {% endif %}
-      status: false,
-      autosave: {
-        enabled: {{ 'true' if options.autoSaveId else 'false' }},
-        uniqueId: '{{ options.autoSaveId }}'
-      }
-    })
-  })
-  
-  function _alignText(className) {
-    return function (editor) {
-      var cm = editor.codemirror
-      var text = cm.getSelection()
-      cm.replaceSelection('<p class="' + className + '">' + text + '</p>')
-    }
-  }
-
-  </script>
 {% endmacro %}
 
 {# ======== CODEMIRROR EDITOR ========= #}

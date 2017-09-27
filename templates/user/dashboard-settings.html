@@ -78,7 +78,7 @@
 <h2 class="spacing">Bio</h2>
 
 <div class="form-group">
-  {{ formMacros.editor('body', dashboardUser.related('details').get('body')) }}
+  {{ formMacros.editor('body', dashboardUser.related('details').get('body'), 'user-details-' + dashboardUser.get('id')) }}
   <input type="submit" class="btn btn-primary" value="Save changes" />
   <a href="/user/{{ dashboardUser.get('name') }}" class="btn btn-default">View profile</a>
 </div>
@@ -88,6 +88,6 @@
 {% endblock %}
 
 {% block scripts %} 
-  {{ formMacros.editorScripts(dashboardUser.get('id')) }}
+  {{ formMacros.editorScripts() }}
   {{ formMacros.radioScripts() }}
 {% endblock %}

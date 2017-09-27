@@ -181,7 +181,7 @@
         <div class="form-group">
           <label for="title">Detailed description</label>
           <div class="user-contents user-contents__editor">
-            {{ formMacros.editor('body', entry.related('details').get('body')) }}
+            {{ formMacros.editor('body', entry.related('details').get('body'), 'entry-details-' + entry.get('id')) }}
           </div>
         </div>
 
@@ -268,7 +268,7 @@
 {% endmacro %}
             
 {% block scripts %} 
-{{ formMacros.editorScripts({autoSaveId: entry.get('id')}) }}
+{{ formMacros.editorScripts() }}
 {{ formMacros.radioScripts() }}
 <script type="text/javascript" src="/static/js/select2.min.js"></script>
 <script type="text/javascript">
