@@ -18,6 +18,7 @@ module.exports = {
   createEvent,
   refreshEventReferences,
   areSubmissionsAllowed,
+  areVotesAllowed,
 
   findEventById,
   findEventByName,
@@ -79,6 +80,10 @@ async function refreshEventReferences (event) {
 function areSubmissionsAllowed (event) {
   return event && event.get('status') === 'open' &&
       (event.get('status_entry') === 'open' || event.get('status_entry') === 'open_unranked')
+}
+
+function areVotesAllowed (event) {
+  return event && event.get('status_results') === 'voting'
 }
 
 /**

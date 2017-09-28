@@ -70,10 +70,14 @@ async function viewEntry (req, res) {
   // Let the template display user thumbs
   await entry.load('userRoles.user')
 
+  // Check voting phase
+  let eventVote = eventService.areVotesAllowed(res.locals.event)
+
   // Fetch vote on someone else's entry
   let vote
   let canVote = false
-  if (res.locals.user && !securityService.canUserWrite(res.locals.user, entry)) {
+  if (res.locals.user && eventVote &&
+      !securityService.canUserWrite(res.locals.user, entry)) {
     canVote = await eventRatingService.canVoteOnEntry(res.locals.user, entry)
     if (canVote) {
       vote = await eventRatingService.findEntryVote(res.locals.user, entry)
@@ -103,6 +107,7 @@ async function viewEntry (req, res) {
     minEntryVotes,
     vote,
     canVote,
+    eventVote,
     external: !res.locals.event
   })
 }
