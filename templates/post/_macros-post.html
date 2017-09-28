@@ -55,7 +55,7 @@
         {% else %}
         <img src="/static/images/default-avatar.png" class="post__avatar" /> 
         {% endif %}
-        {{ author.get('title') }}
+        {{ author.get('title') }} (@{{ author.get('name') }})
       </a>
       {% set relatedEvent = post.related('event') if post.related('event') %}
         {% set relatedEntry = post.related('entry') %}
@@ -143,7 +143,7 @@
                 <img src="/static/images/default-avatar.png" />
                 {% endif %}
               </div>
-              {{ author.get('title') }}
+              {{ author.get('title') }} (@{{ author.get('name') }})
           {% endif %}
           {% if author.get('name') != 'anonymous' %}
            </a>
