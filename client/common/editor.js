@@ -35,7 +35,14 @@ module.exports = function editor (selector) {
         'code', 'quote', 'unordered-list', 'ordered-list', '|',
         'link', 'image', 'table', 'horizontal-rule', '|',
         'preview', 'side-by-side', 'fullscreen', '|',
-        'guide'],
+        {
+          name: 'guide',
+          action: function () {
+            window.open('/article/markdown', '_blank')
+          },
+          className: 'fa fa-question-circle',
+          title: 'Markdown guide'
+        }],
       status: false,
       autosave: {
         enabled: !!autosaveId,
