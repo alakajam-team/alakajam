@@ -57,7 +57,6 @@
         {% endif %}
         {{ author.get('title') }} 
       </a>
-      {{ '(@' + author.get('name') + ')' if author.get('name') !== author.get('title') }}
       {% set relatedEvent = post.related('event') if post.related('event') %}
         {% set relatedEntry = post.related('entry') %}
         {% if relatedEvent.get('id') %}
@@ -149,7 +148,7 @@
           {% if author.get('name') != 'anonymous' %}
            </a>
           {% endif %}
-          {{ '(@' + author.get('name') + ')' if author.get('name') !== author.get('title') }}
+          {{ '(@' + author.get('name') + ')' if author.get('name').toLowerCase() !== author.get('title').toLowerCase() }}
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime }}">{{ comment.get('created_at') | relativeTime }}</span>
           {% if wasEdited(comment) %}
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
