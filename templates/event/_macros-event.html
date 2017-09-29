@@ -1,5 +1,5 @@
 {% macro entryThumb(entry, options = {}) %}
-<div class="entry-thumb">
+<div class="entry-thumb {{ 'large-team' if entry.related('userRoles').length > 2 }}">
   {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
   <a href="{{ buildUrl(entry, 'entry') }}">
     {% if entry.get('description') %}
@@ -13,11 +13,11 @@
     <div class="entry-thumb__title">{{ entry.get('title') }}</div>
   </a>
   <div class="entry-thumb__author" >by 
-    {% for userRole in entry.sortedUserRoles() %}
+    {% for userRole in entry.sortedUserRoles() -%}
      <a href="{{ buildUrl(userRole, 'user') }}">
-      {{ userRole.get('user_title') }} (@{{ userRole.get('user_name') }})
-     </a>{{ ', ' if not loop.last }}
-    {% endfor %}
+      {{- userRole.get('user_title') -}}
+     </a>{{- ', ' if not loop.last -}}
+    {%- endfor %}
   </div>
   <div class="entry-thumb__platforms">
     {% for platform in entry.get('platforms') %}
@@ -52,7 +52,7 @@
       <div class="entry-small-thumb__author" >by 
       {% for userRole in entry.sortedUserRoles() %}
        <a href="{{ buildUrl(userRole, 'user') }}">
-        {{ userRole.get('user_title') }} (@{{ userRole.get('user_name') }})
+        {{ userRole.get('user_title') }}
        </a>{{ ', ' if not loop.last }}
       {% endfor %}
       </div>

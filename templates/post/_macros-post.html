@@ -55,8 +55,9 @@
         {% else %}
         <img src="/static/images/default-avatar.png" class="post__avatar" /> 
         {% endif %}
-        {{ author.get('title') }} (@{{ author.get('name') }})
+        {{ author.get('title') }} 
       </a>
+      {{ '(@' + author.get('name') + ')' if author.get('name') !== author.get('title') }}
       {% set relatedEvent = post.related('event') if post.related('event') %}
         {% set relatedEntry = post.related('entry') %}
         {% if relatedEvent.get('id') %}
@@ -143,11 +144,12 @@
                 <img src="/static/images/default-avatar.png" />
                 {% endif %}
               </div>
-              {{ author.get('title') }} (@{{ author.get('name') }})
+              {{ author.get('title') }}
           {% endif %}
           {% if author.get('name') != 'anonymous' %}
            </a>
           {% endif %}
+          {{ '(@' + author.get('name') + ')' if author.get('name') !== author.get('title') }}
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime }}">{{ comment.get('created_at') | relativeTime }}</span>
           {% if wasEdited(comment) %}
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>

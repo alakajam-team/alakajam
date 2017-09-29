@@ -1196,10 +1196,17 @@ input.date-picker {
     font-size: 1.1rem;
     font-weight: bold;
   }
+  &.large-team &__title {
+    padding-bottom: 4px;
+    line-height: 1.1rem;
+  }
 
   &__author {
     padding-left: 10px;
     color: var(--text);
+  }
+  &.large-team &__author {
+    line-height: 1.0rem;
   }
   
   &__event {
