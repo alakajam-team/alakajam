@@ -260,7 +260,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line31">line 31</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line37">line 37</a>
     </li></ul></dd>
     
 
@@ -428,7 +428,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line112">line 112</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line151">line 151</a>
     </li></ul></dd>
     
 
@@ -600,7 +600,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line46">line 46</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line59">line 59</a>
     </li></ul></dd>
     
 
@@ -649,14 +649,14 @@
 
     
 
-    <h4 class="name" id="~findVoteHistory"><span class="type-signature">(inner) </span>findVoteHistory<span class="signature">(user, event, options)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    <h4 class="name" id="~findVoteHistory"><span class="type-signature">(inner) </span>findVoteHistory<span class="signature">(userId, event, options)</span><span class="type-signature"> &rarr; {void}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Finds the votes a user cast during an event (max: 50)</p>
+    <p>Finds the votes a user cast during an event</p>
 </div>
 
 
@@ -692,13 +692,13 @@
 
         <tr>
             
-                <td class="name"><code>user</code></td>
+                <td class="name"><code>userId</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">User</span>
+<span class="param-type">integer</span>
 
 
             
@@ -795,7 +795,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line94">line 94</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -944,7 +944,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line129">line 129</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -993,7 +993,198 @@
 
     
 
-    <h4 class="name" id="~saveEntryVote"><span class="type-signature">(inner) </span>saveEntryVote<span class="signature">(user, entry, voteData)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    <h4 class="name" id="~refreshEntryScore"><span class="type-signature">(inner) </span>refreshEntryScore<span class="signature">(entry, event, options)</span><span class="type-signature"> &rarr; {void}</span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>entry</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Entry</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>(optional) force</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line223">line 223</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~saveEntryVote"><span class="type-signature">(inner) </span>saveEntryVote<span class="signature">(user, entry, event, voteData)</span><span class="type-signature"> &rarr; {void}</span></h4>
 
     
 
@@ -1082,6 +1273,29 @@
 
         <tr>
             
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>voteData</code></td>
             
 
@@ -1139,7 +1353,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line60">line 60</a>
+        <a href="services_event-rating-service.js.html">services/event-rating-service.js</a>, <a href="services_event-rating-service.js.html#line74">line 74</a>
     </li></ul></dd>
     
 
@@ -1205,7 +1419,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

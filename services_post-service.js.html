@@ -36,6 +36,7 @@
 
 const models = require('../core/models')
 const constants = require('../core/constants')
+const db = require('../core/db')
 const securityService = require('../services/security-service')
 const config = require('../config')
 
@@ -52,6 +53,8 @@ module.exports = {
   findCommentsByUser,
   findCommentsByUserAndEvent,
   findCommentsToUser,
+  findOwnAnonymousCommentIds,
+  isOwnAnonymousComment,
 
   createPost,
   refreshCommentCount,
@@ -78,13 +81,24 @@ function wasEdited (model) {
 
 /**
  * Finds all posts from a feed (specified through options)
- * @param  {object} options among "specialPostType allowDrafts eventId entryId userId"
+ * @param  {object} options among "specialPostType allowHidden allowDrafts eventId entryId userId"
  * @return {array(Post)}
  */
 async function findPosts (options = {}) {
   let postCollection = await models.Post
   postCollection = postCollection.query(function (qb) {
     if (options.specialPostType !== undefined) qb = qb.where('special_post_type', options.specialPostType)
+    if (!options.allowHidden) {
+      qb.where(function (qb) {
+        qb = qb.where('special_post_type', '&lt;>', 'hidden')
+        if (!options.specialPostType) {
+          qb.orWhere('special_post_type', null)
+        }
+      })
+    } else {
+      qb.orWhere('special_post_type', 'hidden')
+    }
+
     if (options.eventId) qb = qb.where('event_id', options.eventId)
     if (options.entryId) qb = qb.where('entry_id', options.entryId)
     if (options.userId) {
@@ -95,31 +109,17 @@ async function findPosts (options = {}) {
           })
           .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
     }
+
     if (!options.allowDrafts) qb = qb.where('published_at', '&lt;=', new Date())
-    if (options.pageCount) {
-      qb = qb.count('*')
-        .groupBy('id', 'published_at') // PostgreSQL compat.
-    }
     return qb
   })
   postCollection.orderBy('published_at', 'DESC')
 
-  if (options.pageCount) {
-    return postCollection.fetch()
-        .then(function (results) {
-          if (results &amp;&amp; results.get('count')) {
-            return Math.max(1, results.get('count') / 10)
-          } else {
-            return 0
-          }
-        })
-  } else {
-    return postCollection.fetchPage({
-      pageSize: options.count ? undefined : 10,
-      page: options.page,
-      withRelated: ['author', 'userRoles']
-    })
-  }
+  return postCollection.fetchPage({
+    pageSize: 10,
+    page: options.page,
+    withRelated: ['author', 'userRoles']
+  })
 }
 
 async function findPostById (postId) {
@@ -140,7 +140,9 @@ async function findPost (options = {}) {
   if (options.userId) query = query.where('author_user_id', options.userId)
   if (options.specialPostType !== undefined) query = query.where('special_post_type', options.specialPostType)
   if (!options.allowDrafts) query = query.where('published_at', '&lt;=', new Date())
-  return query.fetch({withRelated: ['author', 'userRoles']})
+  return query
+    .orderBy('published_at', 'desc')
+    .fetch({withRelated: ['author', 'userRoles']})
 }
 
 /**
@@ -221,10 +223,11 @@ async function findCommentsToUser (user, options = {}) {
     notificationsLastRead = new Date(user.get('notifications_last_read'))
   }
   return models.Comment.query(function (qb) {
-    qb = qb.leftJoin('user_role', function () {
-      this.on('comment.node_id', '=', 'user_role.node_id')
-        .andOn('comment.node_type', '=', 'user_role.node_type')
-    })
+    qb = qb.distinct()
+        .leftJoin('user_role', function () {
+          this.on('comment.node_id', '=', 'user_role.node_id')
+          .andOn('comment.node_type', '=', 'user_role.node_type')
+        })
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '&lt;>', user.id)
       .andWhere('comment.updated_at', '>', notificationsLastRead)
@@ -234,6 +237,47 @@ async function findCommentsToUser (user, options = {}) {
     .where('comment.updated_at', '>', notificationsLastRead)
     .orderBy('created_at', 'DESC')
     .fetchAll({withRelated: ['user', 'node']})
+}
+
+/**
+ * Retrieves an array of anonmous comment IDs a user wrote on a node
+ * @param  {User} user
+ * @param  {number} nodeId
+ * @param  {string} nodeType
+ * @return {array(number)}
+ */
+async function findOwnAnonymousCommentIds (user, nodeId, nodeType) {
+  let results = db.knex()
+    .select('anonymous_comment_user.comment_id')
+    .from('anonymous_comment_user')
+    .leftJoin('comment', 'comment.id', 'anonymous_comment_user.comment_id')
+    .where({
+      'anonymous_comment_user.user_id': user.get('id'),
+      'comment.node_id': nodeId,
+      'comment.node_type': nodeType
+    })
+  return results.map(row => row.comment_id)
+}
+
+/**
+ * Checks whether an anonymous comment belongs to an user
+ * @param  {Comment}  comment
+ * @param  {User}  user
+ * @return {boolean}
+ */
+async function isOwnAnonymousComment (comment, user) {
+  if (comment.get('user_id') === constants.ANONYMOUS_USER_ID) {
+    let result = await db.knex()
+      .count()
+      .from('anonymous_comment_user')
+      .where({
+        comment_id: comment.get('id'),
+        user_id: user.get('id')
+      })
+    return parseInt(result[0].count) > 0
+  } else {
+    return false
+  }
 }
 
 /**
@@ -302,7 +346,7 @@ async function refreshCommentCount (node) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Sep 12 2017 21:19:21 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>
