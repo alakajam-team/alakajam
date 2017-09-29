@@ -94,7 +94,7 @@ function sanitizeString (string, maxLength = 255) {
  * @param  {string} markdown
  * @return {string}
  */
-function sanitizeMarkdown (markdown, maxLength = 10000) {
+function sanitizeMarkdown (markdown, maxLength = constants.MAX_BODY_COMMENT) {
   return sanitizeHtml(markdown, sanitizeHtmlOptions)
     .replace(/&gt;/g, '>') // ">"s are used in quote blocks
     .slice(0, maxLength)
@@ -231,5 +231,5 @@ function markdownToHtml (markdown) {
  * @return {string}
  */
 function markdownToText (markdown) {
-  return removeMarkdown(sanitizeMarkdown(markdown)).replace(/\n\r/g, ' ')
+  return removeMarkdown(sanitizeMarkdown(markdown, constants.MAX_BODY_ANY)).replace(/\n\r/g, ' ')
 }

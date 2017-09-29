@@ -6,6 +6,7 @@
  * @module controllers/user-controller
  */
 
+const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
@@ -210,7 +211,7 @@ async function dashboardSettings (req, res) {
           website: fields.website,
           twitter: forms.sanitizeString(fields.twitter.replace('@', ''))
         })
-        dashboardUserDetails.set('body', forms.sanitizeMarkdown(fields.body))
+        dashboardUserDetails.set('body', forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_USER_DETAILS))
         await dashboardUserDetails.save()
 
         if (dashboardUser.hasChanged('title')) {

@@ -216,7 +216,7 @@ async function editEntry (req, res) {
     }
 
     let entryDetails = entry.related('details')
-    entryDetails.set('body', forms.sanitizeMarkdown(fields.body))
+    entryDetails.set('body', forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_ENTRY_DETAILS))
 
     // Save entry: Validate form data
     for (let link of links) {

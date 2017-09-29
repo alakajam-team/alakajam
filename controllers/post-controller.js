@@ -167,7 +167,7 @@ async function savePost (req, res) {
     let redirectToView = false
     let {fields} = await req.parseForm()
     let title = forms.sanitizeString(fields.title)
-    let body = forms.sanitizeMarkdown(fields.body)
+    let body = forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_POST)
     let errorMessage = null
     if (!title) {
       errorMessage = 'Title is mandatory'
@@ -329,7 +329,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
       await comment.destroy()
     } else {
       // Update comment
-      comment.set('body', forms.sanitizeMarkdown(fields.body))
+      comment.set('body', forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_COMMENT))
       await comment.save()
     }
 

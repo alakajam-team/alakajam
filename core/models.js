@@ -78,7 +78,7 @@ module.exports.User = bookshelf.model('User', {
  * |--    |--    |--
  * | increments | id | Primary key
  * | integer | user_id | User ID (must be unique)
- * | string | body | User bio (max size : 10000)
+ * | string | body | User bio (max size : 100000)
  * | string | social_links | Social links JSON `{website, twitter}` (max size : 1000)
  */
 module.exports.UserDetails = bookshelf.model('UserDetails', {
@@ -343,7 +343,7 @@ module.exports.Entry = bookshelf.model('Entry', {
  * |--    |--    |--
  * | increments | id | Primary key
  * | integer | entry_id | Entry ID (not null)
- * | string | body | Detailed description (max size: 10000)
+ * | string | body | Detailed description (max size: 100000)
  * | string | optouts | Opted-out categories (JSON: [category_title])
  * | decimal | rating_1 .. 4 | Rating for categories 1 to 4 ([-99.999,99.999])
  * | integer | ranking_1 .. 4 | Ranking for categories 1 to 4 (max: 100000)
@@ -566,7 +566,7 @@ module.exports.ThemeVote = bookshelf.model('ThemeVote', {
  * | string | title | Title (not null)
  * | integer | entry_id | Entry ID
  * | integer | event_id | Event ID
- * | string | body | Post body (max size: 10000)
+ * | string | body | Post body (max size: 100000)
  * | string | special_post_type | 'announcement' or empty
  * | integer | comment_count | Number of comments made on this post
  * | dateTime | published_at | Publication time

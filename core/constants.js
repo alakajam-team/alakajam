@@ -116,6 +116,13 @@ module.exports = {
     'image/png',
     'image/jpeg',
     'image/gif'
-  ]
+  ],
+  
+  // Limits
+  MAX_BODY_ANY: 100000,
+  MAX_BODY_POST: 100000,
+  MAX_BODY_USER_DETAILS: 100000,
+  MAX_BODY_ENTRY_DETAILS: 100000,
+  MAX_BODY_COMMENT: 10000
 
 }
