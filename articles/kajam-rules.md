@@ -1,5 +1,5 @@
 Kajam rules
-*Kajam* are month-long competitions in which people make a video game from scratch, focusing each time on a different, specific aspect of game making. They are perfect to learn, experiment and improve your gamedev skills.
+*Kajam* are month-long competitions in which people make a video game from scratch, focusing each time on a different, specific aspect of game making chosen by its host. They are perfect to learn, experiment and improve your gamedev skills.
 
 ## Divisions
 
@@ -13,7 +13,7 @@ Everyone has around three weeks to submit their games.
 
 ## Rankings
 
-After the jam, Solo and Team divisions will be ranked separately through community voting: any person who entered the event will be able to play, rate and comment other people's games for one week, until the final results are released. On each game you play, you will get to rate a **single aspect of game development**, which is different every time!
+After the jam, Solo and Team divisions will be ranked separately through community voting: any person who entered the event will be able to play, rate and comment other people's games for one week, until the final results are released. On each game you play, you will get to rate **a single aspect of the game, which is the theme of the month**.
 
 Unranked games won't get ratings but can expect as much plays & feedback as the others.
 
