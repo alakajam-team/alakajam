@@ -21,20 +21,12 @@ const PUBLIC_ATTRIBUTES_USER = ['id', 'name', 'title', 'avatar', 'is_mod', 'is_a
 const PUBLIC_ATTRIBUTES_COMMENT = ['id', 'user_id', 'parent_id', 'body', 'created_at', 'updated_at']
 
 module.exports = {
-  index,
   featuredEvent,
   event,
   entry,
   user,
-  userLatestEntry
-}
-
-async function index (req, res) {
-  res.locals.pageTitle = 'API'
-
-  res.render('api/index', {
-    sidebar: await settingService.findArticlesSidebar()
-  })
+  userLatestEntry,
+  userSearch
 }
 
 /**
@@ -197,6 +189,26 @@ async function userLatestEntry (req, res) {
     if (entry) {
       json.latest_entry = _getAttributes(await eventService.findLatestUserEntry(user), PUBLIC_ATTRIBUTES_ENTRY)
       json.latest_entry.url = urllib.resolve(config.ROOT_URL, buildUrl(entry, 'entry'))
+    }
+  } else {
+    json = { error: 'User not found' }
+    status = 404
+  }
+
+  _renderJson(req, res, status, json)
+}
+
+async function userSearch (req, res) {
+  let json = {}
+  let status = 200
+
+  let users = await userService.findUsers({
+    search: req.query.title
+  })
+  if (users.length > 0) {
+    json.users = []
+    for (let user of users.models) {
+      json.users.push(_getAttributes(user, PUBLIC_ATTRIBUTES_USER))
     }
   } else {
     json = { error: 'User not found' }

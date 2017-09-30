@@ -11,14 +11,23 @@ const settingService = require('../services/setting-service')
 const articleService = require('../services/article-service')
 
 module.exports = {
+  api,
   article
 }
 
 /**
  * Articles
  */
+async function api (req, res) {
+  _renderArticle('api', res)
+}
+
 async function article (req, res) {
-  res.locals.articleName = slug(req.params.name)
+  _renderArticle(slug(req.params.name), res)
+}
+
+async function _renderArticle (name, res) {
+  res.locals.articleName = name
 
   // Find featured article
   let findArticleTask = articleService.findArticle(

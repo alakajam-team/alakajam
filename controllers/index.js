@@ -119,10 +119,11 @@ module.exports = {
 
     // JSON API
 
-    router.get('/api', apiController.index)
+    router.get('/api', articleController.api)
     router.get('/api/featuredEvent', apiController.featuredEvent)
     router.get('/api/event/:event', apiController.event)
     router.get('/api/entry/:entry', apiController.entry)
+    router.get('/api/user', apiController.userSearch)
     router.get('/api/user/:user', apiController.user)
     router.get('/api/user/:user/latestEntry', apiController.userLatestEntry)
   }
