@@ -56,7 +56,7 @@
               {% if entry.get('division') === 'unranked' %}
                 <p>This game is an <strong>Unranked</strong> entry.</p>
                 <p>Voting is disabled, please provide feedback instead.</p>
-                <p style="margin-bottom: 0"><i>Note: The Feedback Score formula grants you as much points on this entry than on Solo/Team ones. <a href="/article/faq#feedback">Learn more</a></i></p>
+                <p style="margin-bottom: 0"><i>Note: The Feedback Score formula grants you as many points on this entry as on Solo/Team ones. <a href="/article/faq#feedback">Learn more</a></i></p>
               {% else %}
                 <p style="margin-bottom: -10px">This game is a <strong>{{ entry.get('division') | capitalize }}</strong> entry.</p>
                 <form method="post" class="js-warn-on-unsaved-changes" action="?#ratings">
