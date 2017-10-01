@@ -44,6 +44,7 @@ module.exports = function editor (selector) {
           title: 'Markdown guide'
         }],
       status: false,
+      forceSync: true, // Save all changes immediately to underlying textarea. Needed for warnOnUnsavedChanges.
       autosave: {
         enabled: !!autosaveId,
         uniqueId: autosaveId

@@ -230,7 +230,6 @@ $stars.click(function () {
   var category = $this.attr('data-category')
   var rating = parseInt($this.attr('data-rating'))
   setRating(category, rating, true)
-  $this.trigger('change')
 })
 
 var currentCategory = null
