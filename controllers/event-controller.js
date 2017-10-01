@@ -571,7 +571,7 @@ async function editEventEntries (req, res) {
   let entriesCollection = await eventService.findGames({
     eventId: event.get('id'),
     pageSize: null,
-    withRelated: []
+    withRelated: ['userRoles', 'votes']
   })
 
   let entriesById = {}
@@ -588,7 +588,7 @@ async function editEventEntries (req, res) {
     })
 
     let entry = entriesById[req.query.entryDetails]
-    await entry.load(['comments', 'userRoles', 'votes'])
+    await entry.load(['comments'])
     detailedEntryInfo.id = req.query.entryDetails
     detailedEntryInfo.given = await eventRatingService.computeScoreGivenByUserAndEntry(entry, event)
     detailedEntryInfo.received = await eventRatingService.computeScoreReceivedByUser(entry, event)

@@ -56,20 +56,22 @@
 
 <table class="table">
 <tr>
-<th>Title</th>
+<th></th>
 <th>Division</th>
 <th>Score</th>
+<th>Votes</th>
 <th>Actions</th>
 </tr>
 {% for entry in entries %}
   <tr>
     <td>
       <a href="{{ buildUrl(entry, 'entry') }}">
-        {{ entry.get('title') }}
+        {{ eventMacros.entrySmallThumb(entry) }}
       </a>
     </td>
     <td>{{ entry.get('division') | capitalize }}</td>
-    <td><strong>{{ detailedEntryInfo.total }}</strong></td>
+    <td><strong>{{ entry.get('feedback_score') }}</strong></td>
+    <td>{{ entry.related('votes').length if entry.get('division') !== 'unranked' else 'N.A.' }}</td>
     <td><a href="?entryDetails={{ entry.get('id') }}" class="btn btn-default">Feedback details</a></td>
   </tr>
 {% endfor %}

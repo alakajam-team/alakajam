@@ -628,13 +628,12 @@ async function findGames (options = {}) {
 
   if (options.pageSize === undefined) options.pageSize = 30
   if (options.withRelated === undefined) options.withRelated = ['event', 'userRoles']
-
   if (options.count) {
     return query.count()
   } else if (options.pageSize) {
     return query.fetchPage(options)
   } else {
-    return query.fetchAll()
+    return query.fetchAll(options)
   }
 }
 
