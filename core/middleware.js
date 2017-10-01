@@ -347,7 +347,7 @@ function bundleJs (devMode) {
   if (devMode) {
     return function (req, res, next) {
       bundleJsMiddleware(req, res, function error (err) {
-        const errorString = '"Error during JavaScript server-side bundling: ' + err.toString().replace('"', '\\"').replace('\\', '\\\\') + '"'
+        const errorString = '"Error during JavaScript server-side bundling:\\n' + err.toString().replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"'
         const script = 'console.error(' + errorString + ');\ndocument.head.innerHTML = "";\ndocument.body.innerHTML = "<pre style=\\"white-space: pre-wrap\\">" + ' + errorString + ' + "</pre>";\n'
         res.set('Content-Type', 'text/javascript')
         res.send(script)
