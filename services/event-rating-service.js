@@ -14,7 +14,10 @@ const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 
 module.exports = {
+  areVotesAllowed,
+  canVoteInEvent,
   canVoteOnEntry,
+
   countEntryVotes,
   findEntryVote,
   saveEntryVote,
@@ -29,6 +32,19 @@ module.exports = {
   computeFeedbackScore
 }
 
+function areVotesAllowed (event) {
+  return event
+    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get('status_results'))
+}
+
+async function canVoteInEvent (user, event) {
+  if (user && areVotesAllowed(event)) {
+    return !!(await eventService.findUserEntryForEvent(user, event.get('id')))
+  } else {
+    return false
+  }
+}
+
 /**
  * Checks whether a user can vote on an entry
  * @param  {User} user
@@ -36,7 +52,7 @@ module.exports = {
  * @return {void}
  */
 async function canVoteOnEntry (user, entry) {
-  if (entry.related('event').get('status_results') === enums.EVENT.STATUS_RESULTS.VOTING) {
+  if (user && areVotesAllowed(entry.related('event'))) {
     let userEntry = await eventService.findUserEntryForEvent(user, entry.get('event_id'))
     return userEntry && userEntry.get('id') !== entry.get('id')
   } else {
@@ -222,14 +238,16 @@ function _range (from, to) {
  * @return {void}
  */
 async function refreshEntryScore (entry, event, options = {}) {
-  // Refresh at most every minute
-  // if (new Date().getTime() - entry.get('updated_at').getTime() > 60000 || options.force) {
-  await entry.load(['comments', 'userRoles', 'votes'])
+  await entry.load(['details', 'comments', 'userRoles', 'votes'])
   let received = (await computeScoreReceivedByUser(entry, event)).total
   let given = (await computeScoreGivenByUserAndEntry(entry, event)).total
+
   entry.set('feedback_score', computeFeedbackScore(received, given))
   await entry.save()
- // }
+
+  let entryDetails = entry.related('details')
+  entryDetails.set('rating_count', entry.related('votes').length)
+  await entryDetails.save()
 }
 
 /* Compute received score */

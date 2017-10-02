@@ -8,7 +8,7 @@
       <a href="{{ buildUrl(user, 'user') }}">
         <div class="user-thumb__avatar">
           {% if user.get('avatar') %}
-            <img src="{{ user.get('avatar') }}" />
+            <img src="{{ pictureUrl(user.get('avatar'), user) }}" />
           {% else %}
             <img src="/static/images/default-avatar.png" />
           {% endif %}

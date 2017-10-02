@@ -51,7 +51,7 @@
     <div class="post__details">
       <a href="{{ buildUrl(author, 'user') }}">
         {% if author.get('avatar') %}
-        <img src="{{ author.get('avatar') }}" class="post__avatar" /> 
+        <img src="{{ pictureUrl(author.get('avatar'), author) }}" class="post__avatar" /> 
         {% else %}
         <img src="/static/images/default-avatar.png" class="post__avatar" /> 
         {% endif %}
@@ -125,7 +125,7 @@
             <a href="{{ buildUrl(readingUser, 'user') }}">
               <div class="comment__avatar-container">
                 {% if readingUser.get('avatar') %}
-                <img src="{{ readingUser.get('avatar') }}" /> 
+                <img src="{{ pictureUrl(readingUser.get('avatar'), readingUser) }}" /> 
                 {% else %}
                 <img src="/static/images/default-avatar.png" />
                 {% endif %}
@@ -138,7 +138,7 @@
             {% endif %}
               <div class="comment__avatar-container">
                 {% if author.get('avatar') %}
-                <img src="{{ author.get('avatar') }}" /> 
+                <img src="{{ pictureUrl(author.get('avatar'), author) }}" /> 
                 {% else %}
                 <img src="/static/images/default-avatar.png" />
                 {% endif %}

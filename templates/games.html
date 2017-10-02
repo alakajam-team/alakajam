@@ -27,6 +27,23 @@
         {{ gamesSearchMacros.searchDescription(searchOptions, searchedEvent) }}
       </h1>
       
+      {% if rescueEntries.length > 0 %}
+      <div class="entries-rescue">
+        <h3>Rescue these games by rating them!</h3>
+        <div class="row">
+          {% for entry in rescueEntries %}
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            {{ eventMacros.entryThumb(entry) }}
+            <div class="entry-thumb__score">
+              <span class="pull-right">{{ requiredVotes - entry.related('details').get('rating_count') }}</span>
+              Missing votes
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
       {{ formMacros.pagination(currentPage, pageCount, path) }}
       
       <div class="row">

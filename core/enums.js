@@ -35,6 +35,7 @@ module.exports = {
       DISABLED: 'disabled',
       OFF: 'off',
       VOTING: 'voting',
+      VOTING_RESCUE: 'voting_rescue',
       RESULTS: 'results'
     }
   },

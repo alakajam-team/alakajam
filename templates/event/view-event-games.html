@@ -12,27 +12,27 @@
 
 <div class="container-fluid">
   <div class="row">
-    
+
     <div class="col-sm-3">
       {{ gamesSearchMacros.searchForm(context(), {fixedEvent: true}) }}
-    
-      {% if user and (event.get('status_results') === 'voting' or event.get('status_results') === 'results') %}
-        <div class="list-group">
-          <div class="list-group-item">
-            <h4 style="margin: 0">Recently rated</h4>
-          </div>
-          <div class="list-group-item">
-            <p><a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>
-            {% for vote in voteHistory %}
-              <p>
-                {{ eventMacros.entrySmallThumb(vote.related('entry')) }}
-              </p>
-            {% endfor %}
-            {% if voteHistory.length === 0 %}
-              You didn't rate entries yet.
-            {% endif %}
-          </div>
+
+      {% if user and ['voting', 'voting_rescue', 'results'].includes(event.get('status_results')) %}
+      <div class="list-group">
+        <div class="list-group-item">
+          <h4 style="margin: 0">Recently rated</h4>
         </div>
+        <div class="list-group-item">
+          <p><a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>
+          {% for vote in voteHistory %}
+          <p>
+            {{ eventMacros.entrySmallThumb(vote.related('entry')) }}
+          </p>
+          {% endfor %}
+          {% if voteHistory.length === 0 %}
+          You didn't rate entries yet.
+          {% endif %}
+        </div>
+      </div>
       {% endif %}
     </div>
     
@@ -42,39 +42,57 @@
         <span class="count">({{ entriesCollection.pagination.rowCount }})</span>
         {{ gamesSearchMacros.searchDescription(searchOptions, null, {fixedEvent: true}) }}
       </h1>
+      
+      {% if rescueEntries.length > 0 %}
+      <div class="entries-rescue">
+      <h3>Rescue these games by rating them!</h3>
+        <div class="row">
+          {% for entry in rescueEntries %}
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            {{ eventMacros.entryThumb(entry) }}
+            <div class="entry-thumb__score">
+              <span class="pull-right">{{ requiredVotes - entry.related('details').get('rating_count') }}</span>
+              Missing votes
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
       <div class="horizontal-bar"> 
         Items 
         {% if entriesCollection.pagination.rowCount > entriesCollection.length %}
-          {% set firstItemIndex = 1 + (entriesCollection.pagination.page - 1) * entriesCollection.pagination.pageSize %}
-          {{ firstItemIndex }} - {{ firstItemIndex + entriesCollection.length - 1 }}
+        {% set firstItemIndex = 1 + (entriesCollection.pagination.page - 1) * entriesCollection.pagination.pageSize %}
+        {{ firstItemIndex }} - {{ firstItemIndex + entriesCollection.length - 1 }}
         {% endif %}
         sorted by Feedback Score {{ formMacros.tooltip('Rate and comment other games to increase your score, so you are featured higher on the list!') }}</div>
-   
-      {{ formMacros.pagination(currentPage, entriesCollection.pagination.pageCount, path) }}
-      
-      <div class="row">
-      {% for entry in entriesCollection.models %}
-        <div class="col-sm-6 col-md-4 col-lg-3">
-          {{ eventMacros.entryThumb(entry) }}
-          <div class="entry-thumb__score">
-            <span class="pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
-            Feedback Score
-          </div>
-        </div>
-      {% endfor %}
-      {% if entriesCollection.length === 0 %}
-        <div class="well">The event has no entries yet.</div>
-      {% endif %}
-      </div>
 
-      {{ formMacros.pagination(currentPage, entriesCollection.pagination.pageCount, path) }}
-      
+        {{ formMacros.pagination(currentPage, entriesCollection.pagination.pageCount, path) }}
+
+        <div class="row">
+          {% for entry in entriesCollection.models %}
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            {{ eventMacros.entryThumb(entry) }}
+            <div class="entry-thumb__score">
+              <span class="pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
+              Feedback Score
+            </div>
+          </div>
+          {% endfor %}
+          {% if entriesCollection.length === 0 %}
+          <div class="well">The event has no entries yet.</div>
+          {% endif %}
+        </div>
+
+        {{ formMacros.pagination(currentPage, entriesCollection.pagination.pageCount, path) }}
+
+      </div>
     </div>
   </div>
-</div>
 
-{% endblock %}
+  {% endblock %}
 
-{% block scripts %}
-{{ gamesSearchMacros.searchFormScripts() }}
-{% endblock %}
+  {% block scripts %}
+  {{ gamesSearchMacros.searchFormScripts() }}
+  {% endblock %}

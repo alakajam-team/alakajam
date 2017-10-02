@@ -15,6 +15,7 @@ const cache = require('../core/cache')
 const constants = require('../core/constants')
 const enums = require('../core/enums')
 const eventService = require('../services/event-service')
+const eventRatingService = require('../services/event-rating-service')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
 const postService = require('../services/post-service')
@@ -109,10 +110,10 @@ async function index (req, res) {
 
     // Gather featured entries
     let suggestedEntriesTask = null
-    if (res.locals.featuredEvent && res.locals.featuredEvent.get('status_results') === enums.EVENT.STATUS_RESULTS.VOTING) {
+    if (res.locals.featuredEvent
+      && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(res.locals.featuredEvent.get('status_results'))) {
       suggestedEntriesTask = eventService.findGames({
         eventId: res.locals.featuredEvent.get('id'),
-        sortByScore: true,
         pageSize: 4
       }).then(function (suggestedEntriesCollection) {
         context.suggestedEntries = suggestedEntriesCollection.models
@@ -199,6 +200,8 @@ async function games (req, res) {
 
   const PAGE_SIZE = 20
 
+  let {user, featuredEvent} = res.locals
+
   // Parse query
   let currentPage = 1
   if (forms.isId(req.query.p)) {
@@ -206,8 +209,7 @@ async function games (req, res) {
   }
   let searchOptions = {
     pageSize: PAGE_SIZE,
-    page: currentPage,
-    sortByScore: true
+    page: currentPage
   }
   // TODO Refactor (shared with eventController
   searchOptions.search = forms.sanitizeString(req.query.search)
@@ -233,14 +235,23 @@ async function games (req, res) {
     searchOptions.eventId = null
   } else if (forms.isId(req.query.eventId)) {
     searchOptions.eventId = req.query.eventId
-  } else if (req.query.eventId === undefined && res.locals.featuredEvent) {
-    searchOptions.eventId = res.locals.featuredEvent.get('id')
+  } else if (req.query.eventId === undefined && featuredEvent) {
+    searchOptions.eventId = featuredEvent.get('id')
   }
 
   // Fetch info
   // TODO Parallelize tasks
-  let platformCollection = await platformService.fetchAll()
+  let rescueEntries = []
+  let requiredVotes = null
+  if (featuredEvent) {
+    let canVoteInEvent = await eventRatingService.canVoteInEvent(user, featuredEvent)
+    if (canVoteInEvent && featuredEvent.get('status_results') === 'voting_rescue') {
+      rescueEntries = (await eventService.findRescueEntries(featuredEvent)).models
+      requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
+    }
+  }
   let entriesCollection = await eventService.findGames(searchOptions)
+  let platformCollection = await platformService.fetchAll()
 
   let eventsCollection = await eventService.findEvents()
   let searchedEvent = null
@@ -254,6 +265,8 @@ async function games (req, res) {
     currentPage,
     entryCount: entriesCollection.pagination.rowCount,
     pageCount: entriesCollection.pagination.pageCount,
+    rescueEntries,
+    requiredVotes,
     entries: entriesCollection.models,
     events: eventsCollection.models,
     platforms: platformCollection.models

@@ -2,6 +2,55 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### October 2nd
+
+* Game rescue block added
+* Ratings management: team & solo entries are split into two columns
+* Non-visible work on back end: tweak asset URLs to support CloudFlare
+
+### September 29th
+
+* Custom Markdown guide added (click "?" in the editor toolbar)
+* User names now appear next to display names if they differ, to aid mentions
+* Posts and comments can now be much longer than before
+
+### September 26th
+
+* Non-visible work on back end: reorganize client-side JS to make development easier
+* Games page features pagination
+
+### September 25th
+
+* Reorganized entry sidebar
+* Games page displays entries from the current event by default, sorted by Feedback Score
+* Non-visible work on back end: form parsing library replaced to fix various major bugs
+
+### September 24th
+
+* Feedback Score takes votes in account
+* Support for Unranked division
+* Users can see the voting count progress on their own entry
+
+### September 23th
+
+* Articles now fetch their Markdown directly from Github, so they can update without re-reploying the server
+
+### September 22th
+
+* Rewritten article system with Markdown files as the backend, to let anyone contribute
+* Theme results page: people can see again how they ranked their shortlist
+
+## [September 22th: 1st Alakajam! launch](https://alakajam.com/post/23)
+
+### September 21th
+
+* Add support for featured links & hidden posts (to be used temporarily for wallpapers, streamers etc.)
+
+### September 17th
+
+* Support for anonymous comments
+* Entries can opt-out of graphics/audio
+
 ### September 15th
 
 * Raw URLs put inside posts are now converted to links automatically

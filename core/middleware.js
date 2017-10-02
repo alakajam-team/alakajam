@@ -42,6 +42,7 @@ module.exports = {
 
 const ROOT_PATH = path.join(__dirname, '..')
 const MB = 1024 * 1024
+const LAUNCH_TIME = new Date().getTime()
 
 /*
  * Setup app middleware
@@ -91,6 +92,7 @@ async function configure (app) {
   nj.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
   nj.env.addGlobal('constants', constants)
   nj.env.addGlobal('devMode', app.locals.devMode)
+  nj.env.addGlobal('launchTime', LAUNCH_TIME)
   nj.env.addGlobal('context', function () {
     // lets devs display the whole templating context with
     // {{ context() | prettyDump | safe }}

@@ -15,6 +15,7 @@
 <h1>{{ event.get('title') }} entries <span class="count">({{ entries.length }})</span></h1>
 
 {% if detailedEntryInfo.id %}
+<div class="well">
   {% set entry = entriesById[detailedEntryInfo.id] %}
   <h2>Feedback details: {{ entry.get('title') }}</h2>
 
@@ -34,6 +35,7 @@
       <strong>+ {{ data.voteScore or '0' }}</strong> with votes by {{ userTitle(usersById, data.userId) }}
         on {{ entriesById[data.entryId].get('title') if entriesById[data.entryId] else '???' }}
     {% endif %}
+    </li>
   {% endfor %}
   </ul>
 
@@ -52,27 +54,39 @@
     </li>
   {% endfor %}
   </ul>
+</div>
 {% endif %}
 
+<p>
+  <a href="?orderBy=score" class="btn btn-default">Order by Feedback Score</a>
+  <a href="?orderBy=ratingCount" class="btn btn-default">Order by rating count</a>
+</p>
+
+<ol>
 <table class="table">
 <tr>
-<th>Title</th>
+<th></th>
+<th>Game</th>
 <th>Division</th>
 <th>Score</th>
+<th>Votes</th>
 <th>Actions</th>
 </tr>
 {% for entry in entries %}
   <tr>
     <td>
-      <a href="{{ buildUrl(entry, 'entry') }}">
-        {{ entry.get('title') }}
-      </a>
+      <li></li>
+    </td>
+    <td>
+      {{ eventMacros.entrySmallThumb(entry) }}
     </td>
     <td>{{ entry.get('division') | capitalize }}</td>
-    <td><strong>{{ detailedEntryInfo.total }}</strong></td>
-    <td><a href="?entryDetails={{ entry.get('id') }}" class="btn btn-default">Feedback details</a></td>
+    <td>{{ entry.get('feedback_score') }}</td>
+    <td>{{ entry.related('details').get('rating_count') if entry.get('division') !== 'unranked' else 'N.A.' }}</td>
+    <td><a href="?entryDetails={{ entry.get('id') }}&amp;orderBy={{ orderBy }}" class="btn btn-default">Details</a></td>
   </tr>
 {% endfor %}
 </table>
+</ol>
 
 {% endblock %}

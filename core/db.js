@@ -274,7 +274,7 @@ async function insertInitialData (knex, samples) {
     userEntry.set('title', 'Game 1')
     await userEntry.save()
 
-    for (let i = 2; i <= 50; i++) {
+    for (let i = 2; i <= 5; i++) {
       await userService.register('entrant@example.com', 'entrant' + i, 'entrant' + i)
       let otherUser = await userService.findByName('entrant' + i)
       let otherEntry = await eventService.createEntry(otherUser, event2)

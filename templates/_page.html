@@ -5,7 +5,7 @@
 <div href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
   <a class="navbar-avatar-wrapper" href="{{ buildUrl(user, 'user', 'feed') }}" onclick="arguments[0].stopPropagation()">
     {% if user.get('avatar') %}
-    <img src="{{ user.get('avatar') }}" class="navbar-avatar" />
+    <img src="{{ pictureUrl(user.get('avatar'), user) }}" class="navbar-avatar" />
     {% else %}
     <img src="/static/images/default-avatar.png" class="navbar-avatar" />
     {% endif %}
@@ -59,7 +59,7 @@
   <link rel="stylesheet" type="text/css" href="/static/css/bootflat-custom.css" />
   <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
   {% block styles %}{% endblock %}
-  <link rel="stylesheet" type="text/css" href="/static/css/site.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/site.css?{{ launchTime }}" />
   <script type="text/javascript">
     // Google Analytics
     {% if config.GOOGLE_ANALYTICS_ID %}
@@ -211,7 +211,7 @@
   <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
   <script type="text/javascript" src="/static/js/lodash.min.js"></script>
   <script src="{{ browserRefreshUrl }}"></script>
-  <script type="text/javascript" src="/static/js/site.js"></script>
+  <script type="text/javascript" src="/static/js/site.js?{{ launchTime }}"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

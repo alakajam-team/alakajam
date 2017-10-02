@@ -277,7 +277,7 @@ async function viewEventGames (req, res) {
 
   const PAGE_SIZE = 20
 
-  let event = res.locals.event
+  let {user, event} = res.locals
   if (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OFF) {
     res.errorPage(404)
     return
@@ -291,8 +291,7 @@ async function viewEventGames (req, res) {
   let searchOptions = {
     pageSize: PAGE_SIZE,
     page: currentPage,
-    eventId: event.get('id'),
-    sortByScore: true
+    eventId: event.get('id')
   }
   // TODO Refactor (shared with mainController)
   searchOptions.search = forms.sanitizeString(req.query.search)
@@ -316,19 +315,27 @@ async function viewEventGames (req, res) {
   }
 
   // Search entries
+  let rescueEntries = []
+  let canVoteInEvent = await eventRatingService.canVoteInEvent(user, event)
+  if (canVoteInEvent && event.get('status_results') === 'voting_rescue') {
+    rescueEntries = (await eventService.findRescueEntries(event)).models
+  }
+  let requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
   let entriesCollection = await eventService.findGames(searchOptions)
   let platformCollection = await platformService.fetchAll()
 
   // Fetch vote history
-  let eventResultsStatus = event.get('status_results')
   let voteHistory = []
-  if (res.locals.user
-    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.RESULTS].includes(eventResultsStatus)) {
-    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), event, { pageSize: 5 })
+  if (user
+    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
+      enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get('status_results'))) {
+    let voteHistoryCollection = await eventRatingService.findVoteHistory(user.get('id'), event, { pageSize: 5 })
     voteHistory = voteHistoryCollection.models
   }
 
   res.render('event/view-event-games', {
+    rescueEntries,
+    requiredVotes,
     entriesCollection,
     voteHistory,
     searchOptions,
@@ -343,9 +350,9 @@ async function viewEventGames (req, res) {
 async function viewEventRatings (req, res) {
   res.locals.pageTitle += ' | Ratings'
 
-  let eventResultsStatus = res.locals.event.get('status_results')
   if (res.locals.user
-    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.RESULTS].includes(eventResultsStatus)) {
+    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
+      enums.EVENT.STATUS_RESULTS.RESULTS].includes(res.locals.event.get('status_results'))) {
     let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), res.locals.event,
       { withRelated: ['entry.details', 'entry.userRoles'] })
     let categoryTitles = res.locals.event.related('details').get('category_titles')
@@ -353,22 +360,30 @@ async function viewEventRatings (req, res) {
     let rankedVoteHistories = []
     for (let i in categoryTitles) {
       let categoryIndex = parseInt(i) + 1
-
-      let validVotes = voteHistoryCollection.filter(function (vote) {
-        return vote.get('vote_' + categoryIndex) > 0
-      })
-      validVotes.sort(function (vote, vote2) {
+      let voteFilter = function (division) {
+        return function (vote, vote2) {
+          return vote.get('vote_' + categoryIndex) > 0 && vote.related('entry').get('division') === division
+        }
+      }
+      let voteSorter = function (vote, vote2) {
         return vote2.get('vote_' + categoryIndex) - vote.get('vote_' + categoryIndex)
-      })
+      }
+
+      let validVotesSolo = voteHistoryCollection.filter(voteFilter('solo'))
+      let validVotesTeam = voteHistoryCollection.filter(voteFilter('team'))
+      validVotesSolo.sort(voteSorter)
+      validVotesTeam.sort(voteSorter)
 
       rankedVoteHistories.push({
         title: categoryTitles[i],
-        votes: validVotes
+        votesSolo: validVotesSolo,
+        votesTeam: validVotesTeam
       })
     }
 
     res.render('event/view-event-ratings', {
-      rankedVoteHistories
+      rankedVoteHistories,
+      ratingCount: voteHistoryCollection.length
     })
   } else {
     res.errorPage(404)
@@ -572,17 +587,22 @@ async function editEventEntries (req, res) {
 
   let event = res.locals.event
 
-  let entriesCollection = await eventService.findGames({
+  // Find all entries
+  let findGameOptions = {
     eventId: event.get('id'),
     pageSize: null,
-    withRelated: []
-  })
+    withRelated: ['userRoles', 'details']
+  }
+  if (req.query.orderBy === 'ratingCount') {
+    findGameOptions.sortByRatingCount = true
+  }
+  let entriesCollection = await eventService.findGames(findGameOptions)
 
+  // Gather info for feedback details
   let entriesById = {}
   entriesCollection.each(function (entry) {
     entriesById[entry.get('id')] = entry
   })
-
   let detailedEntryInfo = {}
   let usersById = {}
   if (forms.isId(req.query.entryDetails) && entriesById[req.query.entryDetails]) {
@@ -592,7 +612,7 @@ async function editEventEntries (req, res) {
     })
 
     let entry = entriesById[req.query.entryDetails]
-    await entry.load(['comments', 'userRoles', 'votes'])
+    await entry.load(['comments', 'votes'])
     detailedEntryInfo.id = req.query.entryDetails
     detailedEntryInfo.given = await eventRatingService.computeScoreGivenByUserAndEntry(entry, event)
     detailedEntryInfo.received = await eventRatingService.computeScoreReceivedByUser(entry, event)
