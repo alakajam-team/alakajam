@@ -63,6 +63,7 @@ async function savePictureUpload (sourcePath, targetPath, options = {}) {
   if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
     actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath)
   }
+  console.log(actualTargetPath)
   let sourcePathExtension = path.extname(sourcePath)
   if (!targetPath.endsWith(sourcePathExtension)) {
     // TODO replace extension rather than just append

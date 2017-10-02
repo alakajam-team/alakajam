@@ -7,7 +7,7 @@
       <div class="entry-thumb__description">{{ entry.get('description') }}</div>
     </div>
     {% endif %}
-    <div class="entry-thumb__picture" style="background-image: url('{{ picturePath }}')">
+    <div class="entry-thumb__picture" style="background-image: url('{{ pictureUrl(picturePath, entry) }}')">
       <div class="entry-thumb__picture-gradient"></div>
     </div>
     <div class="entry-thumb__title">{{ entry.get('title') }}</div>
@@ -44,7 +44,7 @@
     {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
     <div class="entry-small-thumb__details">
       <a href="{{ buildUrl(entry, 'entry') }}">
-        <div class="entry-small-thumb__picture" style="background-image: url('{{ picturePath }}')"></div>
+        <div class="entry-small-thumb__picture" style="background-image: url('{{ pictureUrl(picturePath, entry) }}')"></div>
         <div class="entry-small-thumb__title"  href="{{ buildUrl(entry, 'entry') }}">
           {{ entry.get('title') }}
         </div>

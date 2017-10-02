@@ -14,6 +14,7 @@ const DASHBOARD_PAGES = ['feed', 'posts', 'entries', 'invite', 'settings', 'pass
 
 module.exports = {
   buildUrl,
+  pictureUrl,
 
   min: Math.min,
   max: Math.max,
@@ -93,4 +94,8 @@ function buildUrl (model, type, page = null, options = {}) {
   } catch (e) {
     throw new Error('Failed to build URL for model "' + model + '" of type "' + type + '": ' + e.message)
   }
+}
+
+function pictureUrl (picturePath, model) {
+  return picturePath + '?' + model.get('updated_at').getTime()
 }

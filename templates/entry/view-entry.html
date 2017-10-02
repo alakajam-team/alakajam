@@ -36,7 +36,7 @@
       {% set hasPictures = entry.has('pictures') and entry.get('pictures').length > 0 %}
       <div class="entry__picture {{ 'empty' if not hasPictures }}">
         {% if hasPictures %}
-        <img src="{{ entry.get('pictures')[0] }}"/>
+        <img src="{{ pictureUrl(entry.get('pictures')[0], entry) }}"/>
         {% else %}
         <img src="/static/images/default-entry.png" style="padding: 20px" />
         {% endif %}
