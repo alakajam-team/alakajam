@@ -599,7 +599,7 @@ async function editEventEntries (req, res) {
     })
 
     let entry = entriesById[req.query.entryDetails]
-    await entry.load(['comments'])
+    await entry.load(['comments', 'votes'])
     detailedEntryInfo.id = req.query.entryDetails
     detailedEntryInfo.given = await eventRatingService.computeScoreGivenByUserAndEntry(entry, event)
     detailedEntryInfo.received = await eventRatingService.computeScoreReceivedByUser(entry, event)
