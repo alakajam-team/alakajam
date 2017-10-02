@@ -643,7 +643,7 @@ async function findRescueEntries (event, options = {}) {
   })
     .query(function (qb) {
       return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
-        .where('entry_details.rating_count', '>', Math.floor(minRatings / 2)) // do not rescue those who really didn't participate
+        .where('entry_details.rating_count', '>', Math.floor(minRatings / 4)) // do not rescue those who really didn't participate
         .where('entry_details.rating_count', '<', minRatings)
     })
     .orderBy('entry_details.rating_count', 'desc')
