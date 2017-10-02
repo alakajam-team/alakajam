@@ -1304,6 +1304,7 @@ input.date-picker {
 .entries-rescue {
   padding: 15px;
   padding-bottom: 0;
+  margin-bottom: 10px;
   background-color: var(--borders);
 }
 

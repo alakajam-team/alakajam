@@ -13,7 +13,10 @@ const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 
 module.exports = {
+  areVotesAllowed,
+  canVoteInEvent,
   canVoteOnEntry,
+
   countEntryVotes,
   findEntryVote,
   saveEntryVote,
@@ -28,6 +31,18 @@ module.exports = {
   computeFeedbackScore
 }
 
+function areVotesAllowed (event) {
+  return event && (event.get('status_results') === 'voting' || event.get('status_results') === 'voting_rescue')
+}
+
+async function canVoteInEvent (user, event) {
+  if (user && areVotesAllowed(event)) {
+    return !!(await eventService.findUserEntryForEvent(user, event.get('id')))
+  } else {
+    return false
+  }
+}
+
 /**
  * Checks whether a user can vote on an entry
  * @param  {User} user
@@ -35,8 +50,7 @@ module.exports = {
  * @return {void}
  */
 async function canVoteOnEntry (user, entry) {
-  let statusResults = entry.related('event').get('status_results')
-  if (statusResults === 'voting' || statusResults === 'voting_rescue') {
+  if (user && areVotesAllowed(entry.related('event'))) {
     let userEntry = await eventService.findUserEntryForEvent(user, entry.get('event_id'))
     return userEntry && userEntry.get('id') !== entry.get('id')
   } else {

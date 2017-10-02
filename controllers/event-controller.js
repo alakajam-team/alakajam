@@ -276,7 +276,8 @@ async function viewEventGames (req, res) {
 
   const PAGE_SIZE = 20
 
-  let event = res.locals.event
+  let {user, event} = res.locals
+
   if (event.get('status_entry') === 'off') {
     res.errorPage(404)
     return
@@ -315,7 +316,8 @@ async function viewEventGames (req, res) {
 
   // Search entries
   let rescueEntries = []
-  if (event.get('status_results') === 'voting_rescue') {
+  let canVoteInEvent = await eventRatingService.canVoteInEvent(user, event)
+  if (canVoteInEvent && event.get('status_results') === 'voting_rescue') {
     rescueEntries = (await eventService.findRescueEntries(event)).models
   }
   let requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
@@ -324,8 +326,8 @@ async function viewEventGames (req, res) {
 
   // Fetch vote history
   let voteHistory = []
-  if (res.locals.user && ['voting', 'voting_rescue', 'results'].includes(event.get('status_results'))) {
-    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), event, { pageSize: 5 })
+  if (user && ['voting', 'voting_rescue', 'results'].includes(event.get('status_results'))) {
+    let voteHistoryCollection = await eventRatingService.findVoteHistory(user.get('id'), event, { pageSize: 5 })
     voteHistory = voteHistoryCollection.models
   }
 

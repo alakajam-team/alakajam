@@ -71,7 +71,7 @@ async function viewEntry (req, res) {
   await entry.load('userRoles.user')
 
   // Check voting phase
-  let eventVote = eventService.areVotesAllowed(res.locals.event)
+  let eventVote = eventRatingService.areVotesAllowed(res.locals.event)
 
   // Fetch vote on someone else's entry
   let vote
