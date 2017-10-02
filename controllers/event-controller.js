@@ -356,17 +356,24 @@ async function viewEventRatings (req, res) {
     let rankedVoteHistories = []
     for (let i in categoryTitles) {
       let categoryIndex = parseInt(i) + 1
-
-      let validVotes = voteHistoryCollection.filter(function (vote) {
-        return vote.get('vote_' + categoryIndex) > 0
-      })
-      validVotes.sort(function (vote, vote2) {
+      let voteFilter = function (division) {
+        return function (vote, vote2) {
+          return vote.get('vote_' + categoryIndex) > 0 && vote.related('entry').get('division') === division
+        }
+      }
+      let voteSorter = function (vote, vote2) {
         return vote2.get('vote_' + categoryIndex) - vote.get('vote_' + categoryIndex)
-      })
+      }
+
+      let validVotesSolo = voteHistoryCollection.filter(voteFilter('solo'))
+      let validVotesTeam = voteHistoryCollection.filter(voteFilter('team'))
+      validVotesSolo.sort(voteSorter)
+      validVotesTeam.sort(voteSorter)
 
       rankedVoteHistories.push({
         title: categoryTitles[i],
-        votes: validVotes
+        votesSolo: validVotesSolo,
+        votesTeam: validVotesTeam
       })
     }
 
