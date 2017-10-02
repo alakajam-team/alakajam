@@ -6,7 +6,7 @@
 
 <div class="container">
   <div class="row">
-    <h1>Ratings</h1>
+    <h1>Ratings <span class="count">({{ ratingCount }})</span></h1>
     <ul class="nav nav-tabs">
       {% for rankedVoteHistory in rankedVoteHistories %}
         <li id="js-tab-container-{{ rankedVoteHistory.title }}" role="presentation" class="js-tab-container {{ 'active' if loop.index === 1 }}">

@@ -378,7 +378,8 @@ async function viewEventRatings (req, res) {
     }
 
     res.render('event/view-event-ratings', {
-      rankedVoteHistories
+      rankedVoteHistories,
+      ratingCount: voteHistoryCollection.length
     })
   } else {
     res.errorPage(404)
