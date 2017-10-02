@@ -290,8 +290,7 @@ async function viewEventGames (req, res) {
   let searchOptions = {
     pageSize: PAGE_SIZE,
     page: currentPage,
-    eventId: event.get('id'),
-    sortByScore: true
+    eventId: event.get('id')
   }
   // TODO Refactor (shared with mainController)
   searchOptions.search = forms.sanitizeString(req.query.search)
@@ -315,18 +314,24 @@ async function viewEventGames (req, res) {
   }
 
   // Search entries
+  let rescueEntries = []
+  if (event.get('status_results') === 'voting_rescue') {
+    rescueEntries = (await eventService.findRescueEntries(event)).models
+  }
+  let requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
   let entriesCollection = await eventService.findGames(searchOptions)
   let platformCollection = await platformService.fetchAll()
 
   // Fetch vote history
-  let eventResultsStatus = event.get('status_results')
   let voteHistory = []
-  if (res.locals.user && (eventResultsStatus === 'voting' || eventResultsStatus === 'results')) {
+  if (res.locals.user && ['voting', 'voting_rescue', 'results'].includes(event.get('status_results'))) {
     let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), event, { pageSize: 5 })
     voteHistory = voteHistoryCollection.models
   }
 
   res.render('event/view-event-games', {
+    rescueEntries,
+    requiredVotes,
     entriesCollection,
     voteHistory,
     searchOptions,
@@ -341,8 +346,7 @@ async function viewEventGames (req, res) {
 async function viewEventRatings (req, res) {
   res.locals.pageTitle += ' | Ratings'
 
-  let eventResultsStatus = res.locals.event.get('status_results')
-  if (res.locals.user && (eventResultsStatus === 'voting' || eventResultsStatus === 'results')) {
+  if (res.locals.user && ['voting', 'voting_rescue', 'results'].includes(res.locals.event.get('status_results'))) {
     let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), res.locals.event,
       { withRelated: ['entry.details', 'entry.userRoles'] })
     let categoryTitles = res.locals.event.related('details').get('category_titles')
@@ -444,7 +448,7 @@ async function editEvent (req, res) {
       errorMessage = 'Invalid theme status'
     } else if (!forms.isIn(fields['status-entry'], ['off', 'open', 'open_unranked', 'closed'])) {
       errorMessage = 'Invalid entry status'
-    } else if (!forms.isIn(fields['status-results'], ['disabled', 'off', 'voting', 'results']) &&
+    } else if (!forms.isIn(fields['status-results'], ['disabled', 'off', 'voting', 'voting_rescue', 'results']) &&
         !forms.isId(fields['status-results'])) {
       errorMessage = 'Invalid results status'
     } else if (event) {
@@ -568,17 +572,22 @@ async function editEventEntries (req, res) {
 
   let event = res.locals.event
 
-  let entriesCollection = await eventService.findGames({
+  // Find all entries
+  let findGameOptions = {
     eventId: event.get('id'),
     pageSize: null,
-    withRelated: ['userRoles', 'votes']
-  })
+    withRelated: ['userRoles', 'details']
+  }
+  if (req.query.orderBy === 'ratingCount') {
+    findGameOptions.sortByRatingCount = true
+  }
+  let entriesCollection = await eventService.findGames(findGameOptions)
 
+  // Gather info for feedback details
   let entriesById = {}
   entriesCollection.each(function (entry) {
     entriesById[entry.get('id')] = entry
   })
-
   let detailedEntryInfo = {}
   let usersById = {}
   if (forms.isId(req.query.entryDetails) && entriesById[req.query.entryDetails]) {

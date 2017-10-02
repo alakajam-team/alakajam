@@ -1301,6 +1301,12 @@ input.date-picker {
   }
 }
 
+.entries-rescue {
+  padding: 15px;
+  padding-bottom: 0;
+  background-color: var(--borders);
+}
+
 /* Entry page */
 
 .entry {

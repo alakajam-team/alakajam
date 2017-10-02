@@ -85,10 +85,9 @@ async function viewEntry (req, res) {
   }
 
   // Count votes
-  let entryVotes = null
+  let entryVotes = await eventRatingService.countEntryVotes(entry)
   let minEntryVotes = null
   if (res.locals.user && securityService.canUserWrite(res.locals.user, entry)) {
-    entryVotes = await eventRatingService.countEntryVotes(entry)
     minEntryVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
   }
 

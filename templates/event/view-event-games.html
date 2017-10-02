@@ -16,7 +16,7 @@
     <div class="col-sm-3">
       {{ gamesSearchMacros.searchForm(context(), {fixedEvent: true}) }}
     
-      {% if user and (event.get('status_results') === 'voting' or event.get('status_results') === 'results') %}
+      {% if user and ['voting', 'voting_rescue', 'results'].includes(event.get('status_results')) %}
         <div class="list-group">
           <div class="list-group-item">
             <h4 style="margin: 0">Recently rated</h4>
@@ -42,6 +42,24 @@
         <span class="count">({{ entriesCollection.pagination.rowCount }})</span>
         {{ gamesSearchMacros.searchDescription(searchOptions, null, {fixedEvent: true}) }}
       </h1>
+      
+      {% if rescueEntries.length > 0 %}
+      <div class="entries-rescue">
+        <h3>Rescue these games!</h3>
+        <div class="row">
+        {% for entry in rescueEntries %}
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            {{ eventMacros.entryThumb(entry) }}
+            <div class="entry-thumb__score">
+              <span class="pull-right">{{ requiredVotes - entry.related('details').get('rating_count') }}</span>
+              Missing votes
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
       <div class="horizontal-bar"> 
         Items 
         {% if entriesCollection.pagination.rowCount > entriesCollection.length %}

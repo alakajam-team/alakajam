@@ -58,7 +58,7 @@
                 <p>Voting is disabled, please provide feedback instead.</p>
                 <p style="margin-bottom: 0"><i>Note: The Feedback Score formula grants you as many points on this entry as on Solo/Team ones. <a href="/article/faq#feedback">Learn more</a></i></p>
               {% else %}
-                <p style="margin-bottom: -10px">This game is a <strong>{{ entry.get('division') | capitalize }}</strong> entry.</p>
+                <p style="margin-bottom: -10px">This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
                 <form method="post" class="js-warn-on-unsaved-changes" action="?#ratings">
                   <input type="hidden" name="action" value="vote" />
                   <p class="form-group">
@@ -113,7 +113,7 @@
           <div class="entry-voting">
             <h2 class="entry-voting__header">Game voting</h2>
             <div class="entry-voting__body">
-              <p>You have received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }}{{ ' so far' if event.get('status_results') === 'voting' }}.</p>
+              <p>You have received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
               {% if entryVotes < minEntryVotes %}
                 <p>You need at least <strong>{{ minEntryVotes }}</strong> votes for your game to receive rankings.</p>
               {% endif %}

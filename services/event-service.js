@@ -13,6 +13,7 @@ const constants = require('../core/constants')
 const cache = require('../core/cache')
 const postService = require('./post-service')
 const securityService = require('./security-service')
+const settingService = require('./setting-service')
 
 module.exports = {
   createEvent,
@@ -34,14 +35,15 @@ module.exports = {
   searchForExternalEvents,
   deleteEntry,
 
+  findGames,
   findLatestEntries,
   findEntryById,
   findLatestUserEntry,
   findUserEntries,
   findUserEntryForEvent,
   findEntryInvitesForUser,
+  findRescueEntries,
   countEntriesByEvent,
-  findGames,
 
   refreshCommentScore,
   refreshEntryPlatforms,
@@ -83,7 +85,7 @@ function areSubmissionsAllowed (event) {
 }
 
 function areVotesAllowed (event) {
-  return event && event.get('status_results') === 'voting'
+  return event && (event.get('status_results') === 'voting' || event.get('status_results') === 'voting_rescue')
 }
 
 /**
@@ -486,6 +488,46 @@ async function deleteEntry (entry) {
 }
 
 /**
+ * @param options {object} nameFragment eventId platforms pageSize page withRelated
+ */
+async function findGames (options = {}) {
+  let query = models.Entry.forge()
+  if (!options.count) {
+    if (options.sortByRatingCount) {
+      query = query.query(function (qb) {
+        return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
+          .orderBy('entry_details.rating_count')
+      })
+    } else {
+      query = query.orderBy('feedback_score', 'DESC')
+    }
+    query = query.orderBy('created_at', 'DESC')
+  }
+  if (options.search) query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
+  if (options.eventId !== undefined) query = query.where('event_id', options.eventId)
+  if (options.platforms) {
+    query = query.query(function (qb) {
+      return qb.distinct()
+        .leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
+        .whereIn('entry_platform.platform_id', options.platforms)
+    })
+  }
+  if (options.divisions) {
+    query = query.where('division', 'in', options.divisions)
+  }
+
+  if (options.pageSize === undefined) options.pageSize = 30
+  if (options.withRelated === undefined) options.withRelated = ['event', 'userRoles']
+  if (options.count) {
+    return query.count()
+  } else if (options.pageSize) {
+    return query.fetchPage(options)
+  } else {
+    return query.fetchAll(options)
+  }
+}
+
+/**
  * Fetches the latest entries of any event
  * @param id {id} models.Entry ID
  * @returns {Entry}
@@ -595,46 +637,29 @@ async function findEntryInvitesForUser (user, options) {
     .fetchAll(options)
 }
 
+async function findRescueEntries (event, options = {}) {
+  let minRatings = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
+
+  if (options.pageSize === undefined) options.pageSize = 4
+  if (options.withRelated === undefined) options.withRelated = ['details', 'userRoles']
+
+  return models.Entry.where({
+    event_id: event.get('id')
+  })
+    .query(function (qb) {
+      return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
+        .where('entry_details.rating_count', '>', Math.floor(minRatings / 2)) // do not rescue those who really didn't participate
+        .where('entry_details.rating_count', '<', minRatings)
+    })
+    .orderBy('entry_details.rating_count', 'desc')
+    .fetchPage(options)
+}
+
 async function countEntriesByEvent (event) {
   let count = await models.Entry
     .where('event_id', event.get('id'))
     .count()
   return parseInt(count)
-}
-
-/**
- * @param options {object} nameFragment eventId platforms pageSize page withRelated
- */
-async function findGames (options = {}) {
-  let query = models.Entry.forge()
-  if (!options.count) {
-    if (options.sortByScore) {
-      query = query.orderBy('feedback_score', 'DESC')
-    }
-    query = query.orderBy('created_at', 'DESC')
-  }
-  if (options.search) query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
-  if (options.eventId !== undefined) query = query.where('event_id', options.eventId)
-  if (options.platforms) {
-    query = query.query(function (qb) {
-      return qb.distinct()
-        .leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
-        .whereIn('entry_platform.platform_id', options.platforms)
-    })
-  }
-  if (options.divisions) {
-    query = query.where('division', 'in', options.divisions)
-  }
-
-  if (options.pageSize === undefined) options.pageSize = 30
-  if (options.withRelated === undefined) options.withRelated = ['event', 'userRoles']
-  if (options.count) {
-    return query.count()
-  } else if (options.pageSize) {
-    return query.fetchPage(options)
-  } else {
-    return query.fetchAll(options)
-  }
 }
 
 async function refreshEntryPlatforms (entry) {

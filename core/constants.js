@@ -117,7 +117,7 @@ module.exports = {
     'image/jpeg',
     'image/gif'
   ],
-  
+
   // Limits
   MAX_BODY_ANY: 100000,
   MAX_BODY_POST: 100000,

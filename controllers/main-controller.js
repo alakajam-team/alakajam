@@ -108,10 +108,9 @@ async function index (req, res) {
 
     // Gather featured entries
     let suggestedEntriesTask = null
-    if (res.locals.featuredEvent && res.locals.featuredEvent.get('status_results') === 'voting') {
+    if (res.locals.featuredEvent && ['voting', 'voting_rescue'].includes(res.locals.featuredEvent.get('status_results'))) {
       suggestedEntriesTask = eventService.findGames({
         eventId: res.locals.featuredEvent.get('id'),
-        sortByScore: true,
         pageSize: 4
       }).then(function (suggestedEntriesCollection) {
         context.suggestedEntries = suggestedEntriesCollection.models
@@ -205,8 +204,7 @@ async function games (req, res) {
   }
   let searchOptions = {
     pageSize: PAGE_SIZE,
-    page: currentPage,
-    sortByScore: true
+    page: currentPage
   }
   // TODO Refactor (shared with eventController
   searchOptions.search = forms.sanitizeString(req.query.search)

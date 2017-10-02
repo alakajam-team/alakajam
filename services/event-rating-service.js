@@ -35,7 +35,8 @@ module.exports = {
  * @return {void}
  */
 async function canVoteOnEntry (user, entry) {
-  if (entry.related('event').get('status_results') === 'voting') {
+  let statusResults = entry.related('event').get('status_results')
+  if (statusResults === 'voting' || statusResults === 'voting_rescue') {
     let userEntry = await eventService.findUserEntryForEvent(user, entry.get('event_id'))
     return userEntry && userEntry.get('id') !== entry.get('id')
   } else {
@@ -221,14 +222,16 @@ function _range (from, to) {
  * @return {void}
  */
 async function refreshEntryScore (entry, event, options = {}) {
-  // Refresh at most every minute
-  // if (new Date().getTime() - entry.get('updated_at').getTime() > 60000 || options.force) {
-  await entry.load(['comments', 'userRoles', 'votes'])
+  await entry.load(['details', 'comments', 'userRoles', 'votes'])
   let received = (await computeScoreReceivedByUser(entry, event)).total
   let given = (await computeScoreGivenByUserAndEntry(entry, event)).total
+
   entry.set('feedback_score', computeFeedbackScore(received, given))
   await entry.save()
- // }
+
+  let entryDetails = entry.related('details')
+  entryDetails.set('rating_count', entry.related('votes').length)
+  await entryDetails.save()
 }
 
 /* Compute received score */

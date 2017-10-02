@@ -12,7 +12,6 @@ const config = require('../config')
 const forms = require('../core/forms')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
-const settingService = require('../services/setting-service')
 const buildUrl = require('./templating').buildUrl
 
 const PUBLIC_ATTRIBUTES_EVENT = ['id', 'name', 'title', 'display_dates', 'display_theme', 'status', 'status_theme', 'status_entry', 'status_results', 'countdown_config']
