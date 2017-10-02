@@ -156,10 +156,13 @@ function isSlug (string) {
 /**
  * Checks whether the string is in an array of allowed values
  * @param  {string} string
- * @param  {array(string)} values
+ * @param  {array(string)|object} values
  * @return {Boolean}
  */
 function isIn (string, values) {
+  if (typeof values === 'object') {
+    return string && validator.isIn(string, Object.values(values))
+  }
   return string && validator.isIn(string, values)
 }
 

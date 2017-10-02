@@ -8,6 +8,7 @@
 
 const models = require('../core/models')
 const constants = require('../core/constants')
+const enums = require('../core/enums')
 const settingService = require('../services/setting-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
@@ -35,7 +36,7 @@ module.exports = {
  * @return {void}
  */
 async function canVoteOnEntry (user, entry) {
-  if (entry.related('event').get('status_results') === 'voting') {
+  if (entry.related('event').get('status_results') === enums.EVENT.STATUS_RESULTS.VOTING) {
     let userEntry = await eventService.findUserEntryForEvent(user, entry.get('event_id'))
     return userEntry && userEntry.get('id') !== entry.get('id')
   } else {

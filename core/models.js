@@ -153,7 +153,7 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | display_theme | The event theme, for display only
  * | string | status | General status: 'pending', 'open' or 'closed' (not null)
  * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID (not null)
- * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'results', or a post ID (not null)
+ * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'closed', 'results', or a post ID (not null)
  * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
  * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
@@ -255,7 +255,7 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | string | links | JSON Array : [{url, title}]
  * | string | platforms | JSON Array : [platform]
  * | string | pictures | JSON Array : [path]
- * | string | division | "solo"/"team"/"ranked" (not null)
+ * | string | division | "solo"/"team"/"unranked" (not null)
  * | decimal | feedback_score | ([-999.999;999.999], defaults to 100, not null)
  * | dateTime | published_at |
  * | integer | comment_count | (not null)

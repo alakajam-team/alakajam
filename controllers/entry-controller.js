@@ -19,6 +19,7 @@ const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
 const constants = require('../core/constants')
+const enums = require('../core/enums')
 
 module.exports = {
   entryMiddleware,
@@ -133,7 +134,8 @@ async function editEntry (req, res) {
       entry = new models.Entry({
         event_id: res.locals.event.get('id'),
         event_name: res.locals.event.get('name'),
-        division: event.get('status_entry') === 'open_unranked' ? 'unranked' : 'solo'
+        division: event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED
+          ? enums.DIVISION.UNRANKED : enums.DIVISION.SOLO
       })
     }
   } else if (!entry) {
@@ -231,7 +233,7 @@ async function editEntry (req, res) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture && files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
-    } else if (fields.division && ['solo', 'team', 'unranked'].indexOf(fields.division) === -1) {
+    } else if (fields.division && !forms.isIn(enums.DIVISION)) {
       errorMessage = 'Invalid division'
     } else if (typeof fields.members !== 'string') {
       errorMessage = 'Invalid members'
@@ -257,10 +259,11 @@ async function editEntry (req, res) {
 
       if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
         let division = fields['division'] || 'solo'
-        if (event && (event.get('status_entry') === 'open_unranked' || event.get('status_entry') === 'closed')) {
+        if (event
+          && (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED || event.get('status_entry') === enums.EVENT.STATUS_ENTRY.CLOSED)) {
           if (!entry.has('division')) {
             // New entries are all unranked
-            division = 'unranked'
+            division = enums.DIVISION.UNRANKED
           } else {
             // Existing entries cannot change division
             division = entry.get('division')

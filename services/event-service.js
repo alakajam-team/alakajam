@@ -7,6 +7,7 @@
  */
 
 const config = require('../config')
+const enums = require('../core/enums')
 const db = require('../core/db')
 const models = require('../core/models')
 const constants = require('../core/constants')
@@ -54,11 +55,11 @@ module.exports = {
  */
 function createEvent () {
   return new models.Event({
-    'status': 'pending',
-    'status_rules': 'disabled',
-    'status_theme': 'disabled',
-    'status_entry': 'off',
-    'status_results': 'disabled',
+    'status': enums.EVENT.STATUS.PENDING,
+    'status_rules': enums.EVENT.STATUS_RULES.DISABLED,
+    'status_theme': enums.EVENT.STATUS_THEME.DISABLED,
+    'status_entry': enums.EVENT.STATUS_ENTRY.OFF,
+    'status_results': enums.EVENT.STATUS_RESULTS.DISABLED,
     'published_at': new Date() // TODO Let admins choose when to publish
   })
 }
@@ -78,12 +79,12 @@ async function refreshEventReferences (event) {
 }
 
 function areSubmissionsAllowed (event) {
-  return event && event.get('status') === 'open' &&
-      (event.get('status_entry') === 'open' || event.get('status_entry') === 'open_unranked')
+  return event && event.get('status') === enums.EVENT.STATUS.OPEN &&
+      ([enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get('status_entry')))
 }
 
 function areVotesAllowed (event) {
-  return event && event.get('status_results') === 'voting'
+  return event && event.get('status_results') === enums.EVENT.STATUS_RESULTS.VOTING
 }
 
 /**
@@ -135,7 +136,7 @@ async function findEvents (options = {}) {
  */
 async function findEventByStatus (status) {
   let sortOrder = 'ASC'
-  if (status === 'closed') {
+  if (status === enums.EVENT.STATUS.CLOSED) {
     sortOrder = 'DESC'
   }
   return models.Event.where('status', status)
@@ -288,7 +289,7 @@ function setTeamMembers (currentUser, entry, userIds) {
     let numAdded = 0
     let alreadyEntered = []
 
-    if (entry.get('division') === 'solo') {
+    if (entry.get('division') === enums.DIVISION.SOLO) {
       // Force only keeping the owner role
       numRemoved = await transaction('user_role')
         .whereNot('permission', constants.PERMISSION_MANAGE)

@@ -13,6 +13,7 @@ const log = require('../core/log')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
 const constants = require('../core/constants')
+const enums = require('../core/enums')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const sessionService = require('../services/session-service')
@@ -94,7 +95,7 @@ async function index (req, res) {
         .then(async function () {
           context.featuredEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
           context.homeAnnouncement = context.featuredEventAnnouncement
-          if (res.locals.featuredEvent.get('status_entry') !== 'off') {
+          if (res.locals.featuredEvent.get('status_entry') !== enums.EVENT.STATUS_ENTRY.OFF) {
             res.locals.featuredEventCount = await eventService.countEntriesByEvent(res.locals.featuredEvent)
           }
         })
@@ -108,7 +109,7 @@ async function index (req, res) {
 
     // Gather featured entries
     let suggestedEntriesTask = null
-    if (res.locals.featuredEvent && res.locals.featuredEvent.get('status_results') === 'voting') {
+    if (res.locals.featuredEvent && res.locals.featuredEvent.get('status_results') === enums.EVENT.STATUS_RESULTS.VOTING) {
       suggestedEntriesTask = eventService.findGames({
         eventId: res.locals.featuredEvent.get('id'),
         sortByScore: true,
@@ -171,10 +172,10 @@ async function events (req, res) {
   for (let event of allEventsCollection.models) {
     entryCounts[event.get('id')] = await eventService.countEntriesByEvent(event)
     switch (event.get('status')) {
-      case 'pending':
+      case enums.EVENT.STATUS.PENDING:
         pending.unshift(event) // sort by ascending dates
         break
-      case 'open':
+      case enums.EVENT.STATUS.OPEN:
         open.push(event)
         break
       default:
@@ -285,7 +286,7 @@ async function people (req, res) {
 
   // Fetch info
   let usersCollection = await userService.findUsers(searchOptions)
-  let eventsCollection = await eventService.findEvents({ statusNot: 'pending' })
+  let eventsCollection = await eventService.findEvents({ statusNot: enums.EVENT.STATUS.PENDING })
   let searchedEvent = null
   if (searchOptions.eventId) {
     searchedEvent = eventsCollection.findWhere({'id': parseInt(searchOptions.eventId)})

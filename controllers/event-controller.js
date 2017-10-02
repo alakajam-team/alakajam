@@ -7,6 +7,7 @@
  */
 
 const constants = require('../core/constants')
+const enums = require('../core/enums')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
 const log = require('../core/log')
@@ -92,7 +93,7 @@ async function handleEventUserShortcuts (res, targetEvent) {
  * Root event page, redirects to its entries
  */
 async function viewDefaultPage (req, res) {
-  if (res.locals.event.get('status_entry') !== 'off') {
+  if (res.locals.event.get('status_entry') !== enums.EVENT.STATUS_ENTRY.OFF) {
     res.redirect(templating.buildUrl(res.locals.event, 'event', 'games'))
   } else {
     res.redirect(templating.buildUrl(res.locals.event, 'event', 'posts'))
@@ -139,7 +140,7 @@ async function viewEventThemes (req, res) {
   let event = res.locals.event
 
   let statusThemes = event.get('status_theme')
-  if (statusThemes === 'disabled' || statusThemes === 'off') {
+  if ([enums.EVENT.STATUS_THEME.DISABLED, enums.EVENT.STATUS_THEME.OFF].includes(statusThemes)) {
     res.errorPage(404)
   } else {
     let context = {
@@ -195,7 +196,7 @@ async function viewEventThemes (req, res) {
         context.voteCount = await eventThemeService.findThemeVotesHistory(
           res.locals.user, event, { count: true })
 
-        if (event.get('status_theme') === 'voting') {
+        if (event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING) {
           if (await eventThemeService.isThemeVotingAllowed(event)) {
             let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, event)
             context.votesHistory = votesHistoryCollection.models
@@ -204,7 +205,7 @@ async function viewEventThemes (req, res) {
             context.ideasRequired = await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10')
             context.votingAllowed = false
           }
-        } else if (event.get('status_theme') === 'shortlist') {
+        } else if (event.get('status_theme') === enums.EVENT.STATUS_THEME.SHORTLIST) {
           let shortlistCollection = await eventThemeService.findShortlist(event)
           let shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(res.locals.user, event)
 
@@ -221,7 +222,7 @@ async function viewEventThemes (req, res) {
           }
         }
       } else {
-        if (event.get('status_theme') === 'voting') {
+        if (event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING) {
           if (await eventThemeService.isThemeVotingAllowed(event)) {
             let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, event)
             context.sampleThemes = sampleThemesCollection.models
@@ -230,7 +231,7 @@ async function viewEventThemes (req, res) {
             context.ideasRequired = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10'))
             context.votingAllowed = false
           }
-        } else if (event.get('status_theme') === 'shortlist') {
+        } else if (event.get('status_theme') === enums.EVENT.STATUS_THEME.SHORTLIST) {
           let shortlistCollection = await eventThemeService.findShortlist(event)
           context.shortlist = shortlistCollection.shuffle()
           context.randomizedShortlist = true
@@ -239,10 +240,10 @@ async function viewEventThemes (req, res) {
 
       // State-specific data
       let statusTheme = event.get('status_theme')
-      if (statusTheme === 'shortlist' || statusThemes === 'results') {
+      if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
         context.shortlistVotes = await eventThemeService.countShortlistVotes(event)
       }
-      if (statusTheme === 'results') {
+      if (statusTheme === enums.EVENT.STATUS_THEME.RESULTS) {
         let shortlistCollection = await eventThemeService.findShortlist(event)
         if (shortlistCollection.length === 0) {
           // In case the shortlist phase has been skipped
@@ -277,7 +278,7 @@ async function viewEventGames (req, res) {
   const PAGE_SIZE = 20
 
   let event = res.locals.event
-  if (event.get('status_entry') === 'off') {
+  if (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OFF) {
     res.errorPage(404)
     return
   }
@@ -321,7 +322,8 @@ async function viewEventGames (req, res) {
   // Fetch vote history
   let eventResultsStatus = event.get('status_results')
   let voteHistory = []
-  if (res.locals.user && (eventResultsStatus === 'voting' || eventResultsStatus === 'results')) {
+  if (res.locals.user
+    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.RESULTS].includes(eventResultsStatus)) {
     let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), event, { pageSize: 5 })
     voteHistory = voteHistoryCollection.models
   }
@@ -342,7 +344,8 @@ async function viewEventRatings (req, res) {
   res.locals.pageTitle += ' | Ratings'
 
   let eventResultsStatus = res.locals.event.get('status_results')
-  if (res.locals.user && (eventResultsStatus === 'voting' || eventResultsStatus === 'results')) {
+  if (res.locals.user
+    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.RESULTS].includes(eventResultsStatus)) {
     let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), res.locals.event,
       { withRelated: ['entry.details', 'entry.userRoles'] })
     let categoryTitles = res.locals.event.related('details').get('category_titles')
@@ -382,18 +385,18 @@ async function viewEventResults (req, res) {
   let statusResults = res.locals.event.get('status_results')
   if (forms.isId(statusResults)) {
     res.locals.resultsPost = await postService.findPostById(statusResults)
-  } else if (statusResults !== 'results') {
+  } else if (statusResults !== enums.EVENT.STATUS_RESULTS.RESULTS) {
     res.errorPage(404)
     return
   }
 
   // Parse query
   let sortedBy = 1
-  let division = 'solo'
+  let division = enums.DIVISION.SOLO
   if (forms.isInt(req.query.sortBy) && req.query.sortBy > 0 && req.query.sortBy <= constants.MAX_CATEGORY_COUNT) {
     sortedBy = parseInt(req.query.sortBy)
   }
-  if (['solo', 'team'].includes(req.query.division)) {
+  if ([enums.DIVISION.SOLO, enums.DIVISION.TEAM].includes(req.query.division)) {
     division = req.query.division
   }
 
@@ -434,17 +437,17 @@ async function editEvent (req, res) {
       errorMessage = 'Name is not a valid slug'
     } else if (fields.name.indexOf('-') === -1) {
       errorMessage = 'Name must contain at least one hyphen (-)'
-    } else if (!forms.isIn(fields.status, ['pending', 'open', 'closed'])) {
+    } else if (!forms.isIn(fields.status, enums.EVENT.STATUS)) {
       errorMessage = 'Invalid status'
-    } else if (!forms.isIn(fields['status-rules'], ['disabled', 'off']) &&
+    } else if (!forms.isIn(fields['status-rules'], enums.EVENT.STATUS_RULES) &&
         !forms.isId(fields['status-rules'])) {
       errorMessage = 'Invalid welcome/rules post status'
-    } else if (!forms.isIn(fields['status-theme'], ['disabled', 'off', 'voting', 'shortlist', 'results']) &&
+    } else if (!forms.isIn(fields['status-theme'], enums.EVENT.STATUS_THEME) &&
         !forms.isId(fields['status-theme'])) {
       errorMessage = 'Invalid theme status'
-    } else if (!forms.isIn(fields['status-entry'], ['off', 'open', 'open_unranked', 'closed'])) {
+    } else if (!forms.isIn(fields['status-entry'], enums.EVENT.STATUS_ENTRY)) {
       errorMessage = 'Invalid entry status'
-    } else if (!forms.isIn(fields['status-results'], ['disabled', 'off', 'voting', 'results']) &&
+    } else if (!forms.isIn(fields['status-results'], enums.EVENT.STATUS_RESULTS) &&
         !forms.isId(fields['status-results'])) {
       errorMessage = 'Invalid results status'
     } else if (event) {
@@ -492,7 +495,7 @@ async function editEvent (req, res) {
       })
 
       // Triggers
-      if (event.hasChanged('status_theme') && event.get('status_theme') === 'shortlist') {
+      if (event.hasChanged('status_theme') && event.get('status_theme') === enums.EVENT.STATUS_THEME.SHORTLIST) {
         await eventThemeService.computeShortlist(event)
         infoMessage = 'Theme shortlist computed. '
       }
@@ -539,13 +542,14 @@ async function editEventThemes (req, res) {
   if (forms.isId(req.query.ban)) {
     let theme = await eventThemeService.findThemeById(req.query.ban)
     if (theme) {
-      theme.set('status', 'banned')
+      theme.set('status', enums.THEME.STATUS.BANNED)
       await theme.save()
     }
   } else if (forms.isId(req.query.unban)) {
     let theme = await eventThemeService.findThemeById(req.query.unban)
     if (theme) {
-      theme.set('status', (res.locals.event.get('status_theme') === 'voting') ? 'active' : 'out')
+      theme.set('status', (res.locals.event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING)
+        ? enums.THEME.STATUS.ACTIVE : enums.THEME.STATUS.OUT)
       await theme.save()
     }
   }

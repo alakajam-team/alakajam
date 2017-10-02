@@ -29,12 +29,6 @@ const SETTING_EVENT_THEME_ELIMINATION_MODULO = 'event_theme_elimination_modulo'
 const SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES = 'event_theme_elimination_min_notes'
 const SETTING_EVENT_THEME_SUGGESTIONS = 'event_theme_suggestions'
 
-const THEME_STATUS_OUT = 'out'
-const THEME_STATUS_ACTIVE = 'active'
-const THEME_STATUS_BANNED = 'banned'
-const THEME_STATUS_SHORTLIST = 'shortlist'
-const THEME_STATUS_DUPLICATE = 'duplicate'
-
 module.exports = {
   // Settings
   SETTING_FEATURED_EVENT_NAME,
@@ -63,15 +57,6 @@ module.exports = {
 
   // Database
   DB_ILIKE: config.DB_TYPE.startsWith('sqlite') ? 'LIKE' : 'ILIKE',
-
-  // Themes
-  THEME_STATUS_OUT,
-  THEME_STATUS_ACTIVE,
-  THEME_STATUS_BANNED,
-  THEME_STATUS_SHORTLIST,
-  THEME_STATUS_DUPLICATE,
-  THEME_STATUS_LIST: [THEME_STATUS_OUT, THEME_STATUS_ACTIVE, THEME_STATUS_BANNED,
-    THEME_STATUS_SHORTLIST, THEME_STATUS_DUPLICATE],
 
   // Posts
   SPECIAL_POST_TYPE_ANNOUNCEMENT,
@@ -117,7 +102,7 @@ module.exports = {
     'image/jpeg',
     'image/gif'
   ],
-  
+
   // Limits
   MAX_BODY_ANY: 100000,
   MAX_BODY_POST: 100000,

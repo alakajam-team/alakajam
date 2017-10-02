@@ -8,6 +8,7 @@
 
 const models = require('../core/models')
 const constants = require('../core/constants')
+const enums = require('../core/enums')
 const db = require('../core/db')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
@@ -34,7 +35,8 @@ module.exports = {
 }
 
 async function isThemeVotingAllowed (event) {
-  if (event.get('status') === 'open' && event.get('status_theme') === 'voting') {
+  if (event.get('status') === enums.EVENT.STATUS.OPEN
+    && event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING) {
     let votingAllowedCacheKey = event.get('name') + '_event_voting_allowed_'
     if (cache.general.get(votingAllowedCacheKey) === undefined) {
       let themeIdeasRequired = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10'))
@@ -85,8 +87,8 @@ async function saveThemeIdeas (user, event, ideas) {
   for (let existingTheme of existingThemes.models) {
     let ideaFound = ideas.find(idea => parseInt(idea.id) === existingTheme.get('id'))
     if (!ideaFound || ideaFound.title !== existingTheme.get('title')) {
-      if (existingTheme.get('status') === constants.THEME_STATUS_ACTIVE ||
-          existingTheme.get('status') === constants.THEME_STATUS_DUPLICATE) {
+      if (existingTheme.get('status') === enums.THEME.STATUS.ACTIVE ||
+          existingTheme.get('status') === enums.THEME.STATUS.DUPLICATE) {
         themesToDelete.push(existingTheme)
       }
     } else {
@@ -115,7 +117,7 @@ async function saveThemeIdeas (user, event, ideas) {
         user_id: user.get('id'),
         event_id: event.get('id'),
         title: idea.title,
-        status: constants.THEME_STATUS_ACTIVE
+        status: enums.THEME.STATUS.ACTIVE
       })
       await _handleDuplicates(theme)
       await theme.save()
@@ -142,7 +144,7 @@ async function _handleDuplicates (theme) {
     query = query.where('id', '<>', theme.get('id'))
   }
   if ((await query.fetch()) !== null) {
-    theme.set('status', constants.THEME_STATUS_DUPLICATE)
+    theme.set('status', enums.THEME.STATUS.DUPLICATE)
   }
 }
 
@@ -183,14 +185,14 @@ async function findThemesToVoteOn (user, event) {
       })
     })
     .where({
-      status: constants.THEME_STATUS_ACTIVE,
+      status: enums.THEME.STATUS.ACTIVE,
       'theme.event_id': event.get('id'),
       'theme_vote.user_id': null
     })
     .where('theme.user_id', '<>', user.get('id'))
   } else {
     query = query.where('event_id', event.get('id'))
-      .where('status', 'IN', [constants.THEME_STATUS_ACTIVE, constants.THEME_STATUS_SHORTLIST])
+      .where('status', 'IN', [enums.THEME.STATUS.ACTIVE, enums.THEME.STATUS.SHORTLIST])
   }
 
   // Grab the 20 oldest theme ideas, then just keep the 10 with the least notes.
@@ -228,10 +230,10 @@ async function saveVote (user, event, themeId, score, options = {}) {
   let expectedStatus = null
   let result = {}
 
-  if (event.get('status_theme') === 'voting' && [-1, 1].indexOf(score) !== -1) {
-    expectedStatus = 'active'
-  } else if (event.get('status_theme') === 'shortlist' && score >= 1 && score <= 10) {
-    expectedStatus = 'shortlist'
+  if (event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING && [-1, 1].indexOf(score) !== -1) {
+    expectedStatus = enums.THEME.STATUS.ACTIVE
+  } else if (event.get('status_theme') === enums.EVENT.STATUS_THEME.SHORTLIST && score >= 1 && score <= 10) {
+    expectedStatus = enums.THEME.STATUS.SHORTLIST
   }
 
   if (expectedStatus) {
@@ -272,7 +274,7 @@ async function saveVote (user, event, themeId, score, options = {}) {
     }
   }
 
-  if (expectedStatus === 'active' && voteCreated) {
+  if (expectedStatus === enums.THEME.STATUS.ACTIVE && voteCreated) {
     _refreshEventThemeStats(event)
 
     // Eliminate a theme every x votes. No need for DB calls, just count in-memory
@@ -293,7 +295,7 @@ async function _eliminateLowestTheme (event) {
 
   let battleReadyThemesQuery = await models.Theme.where({
     event_id: event.get('id'),
-    status: 'active'
+    status: enums.THEME.STATUS.ACTIVE
   })
     .where('notes', '>=', eliminationMinNotes)
 
@@ -316,7 +318,7 @@ async function _eliminateLowestTheme (event) {
 
     await event.load('details')
     loserTheme.set({
-      'status': 'out',
+      'status': enums.THEME.STATUS.OUT,
       'ranking': 1.0 * betterThemeCount / (event.related('details').get('theme_count') || 1)
     })
     await loserTheme.save()
@@ -360,8 +362,8 @@ async function countShortlistVotes (event) {
 async function findAllThemes (event, options = {}) {
   let query = models.Theme.where('event_id', event.get('id'))
   if (options.shortlistEligible) {
-    query = query.where('status', '<>', 'out')
-      .where('status', '<>', 'banned')
+    query = query.where('status', '<>', enums.THEME.STATUS.OUT)
+      .where('status', '<>', enums.THEME.STATUS.BANNED)
   }
   return query.orderBy('normalized_score', 'DESC')
     .orderBy('created_at')
@@ -373,7 +375,7 @@ async function findBestThemes (event) {
   return models.Theme.where({
     event_id: event.get('id')
   })
-    .where('status', '<>', 'banned')
+    .where('status', '<>', enums.THEME.STATUS.BANNED)
     .where('notes', '>=', eliminationMinNotes)
     .orderBy('normalized_score', 'DESC')
     .orderBy('created_at')
@@ -394,7 +396,7 @@ async function computeShortlist (event) {
   let allThemesCollection = await findAllThemes(event, {shortlistEligible: true})
   await db.transaction(async function (t) {
     allThemesCollection.each(function (theme) {
-      theme.set('status', 'out')
+      theme.set('status', enums.THEME.STATUS.OUT)
       theme.save(null, { transacting: t })
     })
   })
@@ -403,7 +405,7 @@ async function computeShortlist (event) {
   let bestThemeCollection = await findBestThemes(event)
   await db.transaction(async function (t) {
     bestThemeCollection.each(function (theme) {
-      theme.set('status', 'shortlist')
+      theme.set('status', enums.THEME.STATUS.SHORTLIST)
       theme.save(null, { transacting: t })
     })
   })

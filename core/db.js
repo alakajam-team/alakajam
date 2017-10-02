@@ -14,6 +14,7 @@ const path = require('path')
 const config = require('../config')
 const knexfile = require('../knexfile')
 const constants = require('../core/constants')
+const enums = require('../core/enums')
 const log = require('../core/log')
 
 module.exports = initBookshelf()
@@ -220,12 +221,12 @@ async function insertInitialData (knex, samples) {
     event1.set({
       title: '1st Alakajam',
       name: '1st-alakajam',
-      status: 'closed',
+      status: enums.EVENT.STATUS.CLOSED,
       display_dates: 'Novembary 17 - 20, 2016',
       display_theme: 'Make a website',
-      status_theme: 'disabled',
-      status_entry: 'on',
-      status_results: 'disabled'
+      status_theme: enums.EVENT.STATUS_THEME.DISABLED,
+      status_entry: enums.EVENT.STATUS_ENTRY.ON,
+      status_results: enums.EVENT.STATUS_RESULTS.DISABLED
     })
     await event1.save()
     let userEntry = await eventService.createEntry(entrantUser, event1)
@@ -238,12 +239,12 @@ async function insertInitialData (knex, samples) {
     event2.set({
       title: '2nd Alakajam',
       name: '2nd-alakajam',
-      status: 'open',
+      status: enums.EVENT.STATUS.OPEN,
       display_dates: 'Januember 29 - 31, 2017',
       display_theme: 'You are not alone',
-      status_theme: 'voting',
-      status_entry: 'open',
-      status_results: 'voting',
+      status_theme: enums.EVENT.STATUS_THEME.VOTING,
+      status_entry: enums.EVENT.STATUS_ENTRY.OPEN,
+      status_results: enums.EVENT.STATUS_RESULTS.VOTING,
       countdown_config: {
         phrase: 'starts',
         date: moment().add(1, 'days').toDate(),
@@ -320,11 +321,11 @@ async function insertInitialData (knex, samples) {
     event3.set({
       title: '3rd Alakajam',
       name: '3rd-alakajam',
-      status: 'pending',
+      status: enums.EVENT.STATUS.PENDING,
       display_dates: 'Marchpril 5 - 8, 2017',
-      status_theme: 'off',
-      status_entry: 'off',
-      status_results: 'off'
+      status_theme: enums.EVENT.STATUS_THEME.OFF,
+      status_entry: enums.EVENT.STATUS_ENTRY.OFF,
+      status_results: enums.EVENT.STATUS_RESULTS.OFF
     })
     await event3.save()
 

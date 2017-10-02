@@ -149,7 +149,8 @@
         </div>
         {% endif %}
         
-        {% if event.get('status_theme') === 'shortlist' %}
+        {% if event.get('status_theme') === 'shortlist' or event.get('status_theme') === 'closed' %}
+        {% set shortlistVote = (user and event.get('status_theme') === 'shortlist') %}
         <div class="themes__shortlist">
           <form method="post" class="js-warn-on-unsaved-changes">
             <h2>Shortlist ranking</h2> 
@@ -159,21 +160,23 @@
               <p>
                 {% if randomizedShortlist %}
                   These are the top 10 submitted ideas, in random order. {{ "Rank them from best (first) to worst (last) by using drag'n'drop." if user }}
-                {% else %}
+                {% elseif shortlistVote %}
                   Here are the top 10 submitted ideas as you ranked them. You can still drag'n'drop them to change the order.
+                {% else %}
+                  Here are the top 10 submitted ideas as you ranked them. You can no longer change your vote.
                 {% endif %}
               </p>
               <p>
-                {% if user %}
+                {% if shortlistVote %}
                   <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
-                {% else %}
+                {% elseif event.get('status_theme') === 'shortlist' %}
                   <a href="/login?redirect={{ path }}" class="btn btn-primary">Log in to rank the shortlist</a>
                 {% endif %}
               </p>
-              <ol id="{{ 'js-shortlist' if user }}" class="{{ 'use-hover' if user }}">
+              <ol id="{{ 'js-shortlist' if shortlistVote }}" class="{{ 'use-hover' if shortlistVote }}">
                 {% for theme in shortlist %}
-                <li class="theme-shortlist-line {{ 'draggable' if user }}" data-theme-id="{{ theme.get('id') }}">
-                  {% if user %}
+                <li class="theme-shortlist-line {{ 'draggable' if shortlistVote }}" data-theme-id="{{ theme.get('id') }}">
+                  {% if shortlistVote %}
                     <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
                   {% endif %}
                   <span class="theme-shortlist-line__label">{{ theme.get('title') }}</span>

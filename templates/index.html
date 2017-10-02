@@ -66,9 +66,9 @@
                       <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime | safe }}<br />
                     {% endif %}
                     {% if featuredEvent.get('display_theme') %}
-                      <span class="glyphicon glyphicon-apple"></span> 
+                      <span class="glyphicon glyphicon-apple"></span>
                       {% if featuredEvent.get('status_theme') !== 'off' and featuredEvent.get('status_theme') !== 'disabled' %}
-                        Theme: <a href="{{ buildUrl(featuredEvent, 'event', 'themes') }}">{{ featuredEvent.get('display_theme') }}</a></h1>
+                        Theme: <a href="{{ buildUrl(featuredEvent, 'event', 'themes') }}">{{ featuredEvent.get('display_theme') }}</a>
                       {% else %}
                         Theme: {{ featuredEvent.get('display_theme') }}
                       {% endif %}

@@ -107,6 +107,8 @@
       event.get('status_theme') if event) }}
     {{ formMacros.radio('status-theme', 'shortlist', 'Shortlist', 
       event.get('status_theme') if event) }}
+    {{ formMacros.radio('status-theme', 'closed', 'Closed', 
+      event.get('status_theme') if event) }}
     {{ formMacros.radio('status-theme', 'results', 'Results', 
       event.get('status_theme') if event) }}
     {{ formMacros.radio('status-theme', '', '', 
