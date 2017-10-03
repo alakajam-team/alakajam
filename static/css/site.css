@@ -1529,6 +1529,10 @@ input.date-picker {
     width: 4rem;
     text-align: right;
     margin-right: 15px;
+
+    & img {
+      max-height: 32px;
+    }
   }
 
   &__category-rating {
@@ -1743,6 +1747,37 @@ input.date-picker {
         background-color: var(--alt-dark);
       }
     }
+  }
+
+  &__step {
+    margin-top: 20px;
+    margin-bottom: 10px;
+
+    &.first {
+      margin-top: 10px;
+    }
+    &.second {
+      transform: perspective(400px) rotateY(10deg)
+    }
+    &.third {
+      transform: perspective(400px) rotateY(-10deg);
+    }
+  }
+
+  &__trophy {
+    position: absolute;
+    right: 25px;
+    top: 5px;
+    text-shadow: 0 2px 3px var(--text)
+  }
+  & .first &__trophy {
+    color: #ffeab7;
+  }
+  & .second &__trophy {
+    color: #ddd;
+  }
+  & .third &__trophy {
+    color: #efa790;
   }
 }
 

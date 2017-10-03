@@ -128,7 +128,11 @@
                 <div class="entry-results__category-title">{{ categoryTitle }}</div>
                 <div class="entry-results__category-ranking">
                   <a href="{{ buildUrl(event, 'event', 'results') }}?sortBy={{ categoryIndex }}&amp;division={{ entry.get('division') }}">
-                    {{ ranking | ordinal }}
+                    {% if ranking > 3 %}
+                      {{ ranking | ordinal }}
+                    {% else %}
+                      <img src="/static/images/trophy_{{ ranking }}.png" class="no-border" />
+                    {% endif %}
                   </a>
                 </div>
                 <div class="entry-results__category-rating">{{ rating | digits(3) }}</div>

@@ -115,21 +115,27 @@
     <div class="col-md-offset-1 col-md-10 col-xs-12">
       <div class="row">
         {% if rankings.length >= 2 %}
-        <div class="col-xs-4" style="margin-top: 20px; margin-bottom: 10px; transform: perspective(400px) rotateY(10deg)">
+        <div class="col-xs-4 results-podium__step second">
           {{ eventMacros.entryThumb(rankings[1]) }}
-          <h1 style="position: absolute; right: 25px; top: 5px; color: #EEE; text-shadow: 0 2px 3px black">2nd</h1>
+          <h1 class="results-podium__trophy">
+            <img src="/static/images/trophy_2.png" />2nd
+          </h1>
         </div>
         {% endif %}
         {% if rankings.length >= 1 %}
-        <div class="col-xs-4">
+        <div class="col-xs-4 results-podium__step first">
           {{ eventMacros.entryThumb(rankings[0]) }}
-          <h1 style="position: absolute; right: 25px; top: 5px; color: #FF6; text-shadow: 0 2px 3px black">1st</h1>
+          <h1 class="results-podium__trophy">
+            <img src="/static/images/trophy_1.png" />1st
+          </h1>
         </div>
         {% endif %}
         {% if rankings.length >= 3 %}
-        <div class="col-xs-4" style="margin-top: 20px; margin-bottom: 10px; transform: perspective(400px) rotateY(-10deg)">
+        <div class="col-xs-4 results-podium__step third">
           {{ eventMacros.entryThumb(rankings[2]) }}
-          <h1 style="position: absolute; right: 25px; top: 5px; color: #EA8; text-shadow: 0 2px 3px black">3rd</h1>
+          <h1 class="results-podium__trophy">
+            <img src="/static/images/trophy_3.png" />3rd
+          </h1>
         </div>
         {% endif %}
       </div>
