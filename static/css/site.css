@@ -1526,7 +1526,7 @@ input.date-picker {
     font-size: 1.5rem;
     font-weight: bold;
     vertical-align: middle;
-    width: 4rem;
+    width: 7rem;
     text-align: right;
     margin-right: 15px;
 
@@ -1542,7 +1542,7 @@ input.date-picker {
     vertical-align: middle;
     width: 4rem;
     text-align: right;
-    margin-right: 15px;
+    margin-right: 12px;
   }
 
   &__category-stars {
