@@ -225,7 +225,7 @@ async function insertInitialData (knex, samples) {
       display_dates: 'Novembary 17 - 20, 2016',
       display_theme: 'Make a website',
       status_theme: enums.EVENT.STATUS_THEME.DISABLED,
-      status_entry: enums.EVENT.STATUS_ENTRY.ON,
+      status_entry: enums.EVENT.STATUS_ENTRY.OFF,
       status_results: enums.EVENT.STATUS_RESULTS.DISABLED
     })
     await event1.save()
