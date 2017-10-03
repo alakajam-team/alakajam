@@ -73,7 +73,7 @@
                         <div class="entry-voting__category-stars">
                           <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if not categoryRating }}"></span>
                           {% if optouts.includes(categoryTitle) %}
-                            Opted out (<a href="/article/faq#optouts">help</a>)
+                            Opted out (<a href="/article/faq#optouts">about</a>)
                           {% else %}
                             {%- for i in range(1, 11) -%}
                               <span data-category="{{ categoryIndex }}" data-rating="{{ i }}" class="js-star fa fa-lg {{ 'fa-star confirmed' if i <= categoryRating else 'fa-star-o' }}"></span>
@@ -110,6 +110,41 @@
             </div>
           </div>
         {% endif %}
+      {% endif %}
+
+      {% if event.get('status_results') === 'results' and entry.get('division') !== 'unranked' %}
+      <div class="entry-results">
+        <h2 class="entry-results__header">Voting results</h2>
+        <div class="entry-results__body">
+          {% set hasRatings = false %}
+          {% set details = entry.related('details') %}
+          {% for categoryTitle in event.related('details').get('category_titles') %}
+            {% set categoryIndex = loop.index %}
+            {% set ranking = details.get('ranking_' + categoryIndex) %}
+            {% set rating = details.get('rating_' + categoryIndex) %}
+            {% if ranking %}
+              {% set hasRatings = true %}
+              <div class="entry-results__category">
+                <div class="entry-results__category-title">{{ categoryTitle }}</div>
+                <div class="entry-results__category-ranking">
+                  <a href="{{ buildUrl(event, 'event', 'results') }}?sortBy={{ categoryIndex }}&amp;division={{ entry.get('division') }}">
+                    {{ ranking | ordinal }}
+                  </a>
+                </div>
+                <div class="entry-results__category-rating">{{ rating | digits(3) }}</div>
+                <div class="entry-results__category-stars">
+                  {%- for i in range(1, 11) -%}
+                    <span class="fa fa-lg {{ 'fa-star' if i <= rating|round(0) else 'fa-star-o' }}"></span>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+          {% if not hasRatings %}
+            This entry did not get enough ratings to be ranked.
+          {% endif %}
+        </div>
+      </div>
       {% endif %}
 
       {% if entry.get('allow_anonymous') and user and not user.get('disallow_anonymous') %}

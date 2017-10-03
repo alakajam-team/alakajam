@@ -1408,7 +1408,7 @@ input.date-picker {
 .entry-voting {
   @apply --shadow;
   background-color: var(--borders);
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 
   &__header {
     padding: 10px;
@@ -1492,6 +1492,63 @@ input.date-picker {
   &__score-big-number {
     font-size: 1.3rem;
     font-weight: bold;
+  }
+}
+
+.entry-results {
+  @apply --shadow;
+  background-color: var(--borders);
+  margin-bottom: 20px;
+
+  &__header {
+    padding: 10px;
+    background-color: var(--main);
+    color: white;
+  }
+
+  &__body {
+    padding: 10px;
+    padding-top: 0;
+  }
+
+  &__category {
+    padding-top: 5px;
+    font-size: 1.2rem;
+  }
+
+  &__category-title {
+    display: inline-block;
+    width: 120px;
+  }
+
+  &__category-ranking {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    vertical-align: middle;
+    width: 4rem;
+    text-align: right;
+    margin-right: 15px;
+  }
+
+  &__category-rating {
+    display: inline-block;
+    font-size: 1.3rem;
+    font-weight: bold;
+    vertical-align: middle;
+    width: 4rem;
+    text-align: right;
+    margin-right: 15px;
+  }
+
+  &__category-stars {
+    display: inline-block;
+    font-size: 1rem;
+
+    & .fa {
+      font-size: 1.4rem;
+      width: 1.8rem;
+    }
   }
 }
 
