@@ -110,8 +110,8 @@ async function index (req, res) {
 
     // Gather featured entries
     let suggestedEntriesTask = null
-    if (res.locals.featuredEvent
-      && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(res.locals.featuredEvent.get('status_results'))) {
+    if (res.locals.featuredEvent &&
+      [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(res.locals.featuredEvent.get('status_results'))) {
       suggestedEntriesTask = eventService.findGames({
         eventId: res.locals.featuredEvent.get('id'),
         pageSize: 4

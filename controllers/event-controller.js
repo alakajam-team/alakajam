@@ -326,9 +326,8 @@ async function viewEventGames (req, res) {
 
   // Fetch vote history
   let voteHistory = []
-  if (user
-    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
-      enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get('status_results'))) {
+  if (user && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
+    enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get('status_results'))) {
     let voteHistoryCollection = await eventRatingService.findVoteHistory(user.get('id'), event, { pageSize: 5 })
     voteHistory = voteHistoryCollection.models
   }
@@ -350,8 +349,8 @@ async function viewEventGames (req, res) {
 async function viewEventRatings (req, res) {
   res.locals.pageTitle += ' | Ratings'
 
-  if (res.locals.user
-    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
+  if (res.locals.user &&
+    [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
       enums.EVENT.STATUS_RESULTS.RESULTS].includes(res.locals.event.get('status_results'))) {
     let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), res.locals.event,
       { withRelated: ['entry.details', 'entry.userRoles'] })

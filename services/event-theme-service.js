@@ -35,8 +35,8 @@ module.exports = {
 }
 
 async function isThemeVotingAllowed (event) {
-  if (event.get('status') === enums.EVENT.STATUS.OPEN
-    && event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING) {
+  if (event.get('status') === enums.EVENT.STATUS.OPEN &&
+    event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING) {
     let votingAllowedCacheKey = event.get('name') + '_event_voting_allowed_'
     if (cache.general.get(votingAllowedCacheKey) === undefined) {
       let themeIdeasRequired = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10'))

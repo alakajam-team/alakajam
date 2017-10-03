@@ -258,8 +258,8 @@ async function editEntry (req, res) {
 
       if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
         let division = fields['division'] || 'solo'
-        if (event
-          && (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED || event.get('status_entry') === enums.EVENT.STATUS_ENTRY.CLOSED)) {
+        if (event &&
+          (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED || event.get('status_entry') === enums.EVENT.STATUS_ENTRY.CLOSED)) {
           if (!entry.has('division')) {
             // New entries are all unranked
             division = enums.DIVISION.UNRANKED

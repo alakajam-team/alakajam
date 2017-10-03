@@ -33,8 +33,8 @@ module.exports = {
 }
 
 function areVotesAllowed (event) {
-  return event
-    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get('status_results'))
+  return event &&
+    [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get('status_results'))
 }
 
 async function canVoteInEvent (user, event) {

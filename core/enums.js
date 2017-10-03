@@ -48,7 +48,7 @@ module.exports = {
       DUPLICATE: 'duplicate'
     }
   },
-  DIVISON: {
+  DIVISION: {
     SOLO: 'solo',
     TEAM: 'team',
     UNRANKED: 'unranked'
