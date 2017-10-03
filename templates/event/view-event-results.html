@@ -26,13 +26,12 @@
           </div>
         {% endfor %}
       </div>
-      
+
       {% for entry in rankings %}
         <div class="row">
           <div class="col-xs-1 text-right">
-            {% if not currentRating or currentRating !== entry.related('details').get('rating_' + sortedBy) %}
-              {% set currentRanking = loop.index %}
-              {% set currentRating = entry.related('details').get('rating_' + sortedBy) %}
+            {% if not currentRanking or currentRanking !== entry.related('details').get('ranking_' + sortedBy) %}
+              {% set currentRanking = entry.related('details').get('ranking_' + sortedBy) %}
               <h2>{{ currentRanking | ordinal }}</h2>
             {% endif %}
           </div>

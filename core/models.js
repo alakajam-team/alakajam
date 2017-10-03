@@ -345,8 +345,8 @@ module.exports.Entry = bookshelf.model('Entry', {
  * | integer | entry_id | Entry ID (not null)
  * | string | body | Detailed description (max size: 100000)
  * | string | optouts | Opted-out categories (JSON: [category_title])
- * | decimal | rating_1 .. 4 | Rating for categories 1 to 4 ([-99.999,99.999])
- * | integer | ranking_1 .. 4 | Ranking for categories 1 to 4 (max: 100000)
+ * | decimal | rating_1 .. 6 | Rating for categories 1 to 6 ([-99.999,99.999])
+ * | integer | ranking_1 .. 6 | Ranking for categories 1 to 6 (max: 100000)
  * | integer | rating_count | Received rating count
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
