@@ -1659,6 +1659,11 @@ input.date-picker {
       margin-top: 2px;
       width: 100px;
     }
+    @media (max-width: 768px) {
+      & &__score, &__ranking {
+        width: 50px;
+      }
+    }
   }
   & .use-hover .theme-shortlist-line.draggable:hover {
     background-color: #EEE;
