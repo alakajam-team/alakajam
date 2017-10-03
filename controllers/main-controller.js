@@ -92,10 +92,9 @@ async function index (req, res) {
     let featuredEventTask
     if (res.locals.featuredEvent) {
       // Find live event and its latest announcement
-      featuredEventTask = res.locals.featuredEvent.load(['entries', 'entries.userRoles'])
-        .then(async function () {
-          context.featuredEventAnnouncement = await postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
-          context.homeAnnouncement = context.featuredEventAnnouncement
+      featuredEventTask = postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
+        .then(async function (announcement) {
+          context.featuredEventAnnouncement = announcement 
           if (res.locals.featuredEvent.get('status_entry') !== enums.EVENT.STATUS_ENTRY.OFF) {
             res.locals.featuredEventCount = await eventService.countEntriesByEvent(res.locals.featuredEvent)
           }
