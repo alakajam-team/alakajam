@@ -1408,7 +1408,7 @@ input.date-picker {
 .entry-voting {
   @apply --shadow;
   background-color: var(--borders);
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 
   &__header {
     padding: 10px;
@@ -1492,6 +1492,67 @@ input.date-picker {
   &__score-big-number {
     font-size: 1.3rem;
     font-weight: bold;
+  }
+}
+
+.entry-results {
+  @apply --shadow;
+  background-color: var(--borders);
+  margin-bottom: 20px;
+
+  &__header {
+    padding: 10px;
+    background-color: var(--main);
+    color: white;
+  }
+
+  &__body {
+    padding: 10px;
+    padding-top: 0;
+  }
+
+  &__category {
+    padding-top: 5px;
+    font-size: 1.2rem;
+  }
+
+  &__category-title {
+    display: inline-block;
+    width: 120px;
+  }
+
+  &__category-ranking {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    vertical-align: middle;
+    width: 7rem;
+    text-align: right;
+    margin-right: 15px;
+
+    & img {
+      max-height: 32px;
+    }
+  }
+
+  &__category-rating {
+    display: inline-block;
+    font-size: 1.3rem;
+    font-weight: bold;
+    vertical-align: middle;
+    width: 4rem;
+    text-align: right;
+    margin-right: 12px;
+  }
+
+  &__category-stars {
+    display: inline-block;
+    font-size: 1rem;
+
+    & .fa {
+      font-size: 1.4rem;
+      width: 1.8rem;
+    }
   }
 }
 
@@ -1598,6 +1659,11 @@ input.date-picker {
       margin-top: 2px;
       width: 100px;
     }
+    @media (max-width: 768px) {
+      & &__score, &__ranking {
+        width: 50px;
+      }
+    }
   }
   & .use-hover .theme-shortlist-line.draggable:hover {
     background-color: #EEE;
@@ -1634,6 +1700,91 @@ input.date-picker {
   }
 }
 
+/* Results page */
+
+.results-links {
+  margin: 20px 0;
+
+  &__division {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 8px 30px;
+    background-color: var(--main);
+  }
+
+  &__category {
+    font-size: 1.2rem;
+    padding: 8px 15px;
+    background-color: var(--main);
+  }
+}
+
+.results-podium {
+  @apply --shadow;
+  background-color: #DDD;
+
+  &__event-name {
+    font-size: 1.3rem;
+    text-align: center;
+    background-color: white;
+    padding: 5px;
+    margin: 0;
+  }
+
+  &__title {
+    @apply --alt-font;
+    font-weight: normal;
+    font-size: 2.0rem;
+    text-align: center;
+    background-color: var(--alt);
+    color: white;
+    padding: 10px;
+
+    & .dropdown {
+      display: inline-block;
+    }
+    & .dropdown-toggle {
+      background: none;
+      border: none;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: var(--alt-dark);
+      }
+    }
+  }
+
+  &__step {
+    margin-top: 20px;
+    margin-bottom: 10px;
+
+    &.first {
+      margin-top: 10px;
+    }
+    &.second {
+      transform: perspective(400px) rotateY(10deg)
+    }
+    &.third {
+      transform: perspective(400px) rotateY(-10deg);
+    }
+  }
+
+  &__trophy {
+    position: absolute;
+    right: 25px;
+    top: 5px;
+    text-shadow: 0 2px 3px var(--text)
+  }
+  & .first &__trophy {
+    color: #ffeab7;
+  }
+  & .second &__trophy {
+    color: #ddd;
+  }
+  & .third &__trophy {
+    color: #efa790;
+  }
+}
 
 /* ============================== User pages ============================== */
 

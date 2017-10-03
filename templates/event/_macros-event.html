@@ -1,13 +1,13 @@
 {% macro entryThumb(entry, options = {}) %}
 <div class="entry-thumb {{ 'large-team' if entry.related('userRoles').length > 2 }}">
-  {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else '/static/images/default-entry.png' %}
   <a href="{{ buildUrl(entry, 'entry') }}">
     {% if entry.get('description') %}
     <div class="entry-thumb__description-container">
       <div class="entry-thumb__description">{{ entry.get('description') }}</div>
     </div>
     {% endif %}
-    <div class="entry-thumb__picture" style="background-image: url('{{ pictureUrl(picturePath, entry) }}')">
+    {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 %}
+    <div class="entry-thumb__picture" style="background-image: url('{{ pictureUrl(picturePath, entry) if picturePath else '/static/images/default-entry.png' }}')">
       <div class="entry-thumb__picture-gradient"></div>
     </div>
     <div class="entry-thumb__title">{{ entry.get('title') }}</div>

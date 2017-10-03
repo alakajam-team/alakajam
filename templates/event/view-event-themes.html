@@ -195,7 +195,7 @@
               {% if userRanks %}
                 <span class="theme-shortlist-line__score">Your picks</span>
               {% endif %}
-              <span class="theme-shortlist-line__score">Score</span>
+              <span class="theme-shortlist-line__score hidden-xs">Score</span>
               Final rankings of the theme shortlist
             </p>
             <ol>
@@ -205,7 +205,7 @@
                 {% if userRanks %}
                   <span class="theme-shortlist-line__ranking">{{ userRanks[theme.get('id')] | ordinal }}</span>
                 {% endif %}
-                <span class="theme-shortlist-line__score">{{ '+' if theme.get('score') > 0 }}{{ theme.get('score') }}</span>
+                <span class="theme-shortlist-line__score hidden-xs">{{ '+' if theme.get('score') > 0 }}{{ theme.get('score') }}</span>
               </li>
               {% endfor %}
             </ol>

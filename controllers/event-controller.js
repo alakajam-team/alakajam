@@ -326,9 +326,8 @@ async function viewEventGames (req, res) {
 
   // Fetch vote history
   let voteHistory = []
-  if (user
-    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
-      enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get('status_results'))) {
+  if (user && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
+    enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get('status_results'))) {
     let voteHistoryCollection = await eventRatingService.findVoteHistory(user.get('id'), event, { pageSize: 5 })
     voteHistory = voteHistoryCollection.models
   }
@@ -350,8 +349,8 @@ async function viewEventGames (req, res) {
 async function viewEventRatings (req, res) {
   res.locals.pageTitle += ' | Ratings'
 
-  if (res.locals.user
-    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
+  if (res.locals.user &&
+    [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
       enums.EVENT.STATUS_RESULTS.RESULTS].includes(res.locals.event.get('status_results'))) {
     let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), res.locals.event,
       { withRelated: ['entry.details', 'entry.userRoles'] })
@@ -512,7 +511,16 @@ async function editEvent (req, res) {
       // Triggers
       if (event.hasChanged('status_theme') && event.get('status_theme') === enums.EVENT.STATUS_THEME.SHORTLIST) {
         await eventThemeService.computeShortlist(event)
-        infoMessage = 'Theme shortlist computed. '
+        infoMessage = 'Theme shortlist computed.'
+      }
+      if (event.hasChanged('status_results')) {
+        if (event.get('status_results') === enums.EVENT.STATUS_RESULTS.RESULTS) {
+          await eventRatingService.computeRankings(event)
+          infoMessage = 'Event results computed.'
+        } else if (event.previous('status_results') === enums.EVENT.STATUS_RESULTS.RESULTS) {
+          await eventRatingService.clearRankings(event)
+          infoMessage = 'Event results cleared.'
+        }
       }
 
       let nameChanged = event.hasChanged('name')

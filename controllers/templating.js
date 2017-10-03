@@ -97,5 +97,7 @@ function buildUrl (model, type, page = null, options = {}) {
 }
 
 function pictureUrl (picturePath, model) {
-  return picturePath + '?' + model.get('updated_at').getTime()
+  let rawUpdatedAt = model.get('updated_at')
+  let timestamp = (typeof rawUpdatedAt === 'number') ? rawUpdatedAt : rawUpdatedAt.getTime() // SQlite/PostgreSQL inconsistency
+  return picturePath + '?' + timestamp
 }

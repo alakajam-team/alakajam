@@ -9,6 +9,7 @@
 const models = require('../core/models')
 const constants = require('../core/constants')
 const enums = require('../core/enums')
+const db = require('../core/db')
 const settingService = require('../services/setting-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
@@ -29,12 +30,15 @@ module.exports = {
   refreshEntryScore,
   computeScoreReceivedByUser,
   computeScoreGivenByUserAndEntry,
-  computeFeedbackScore
+  computeFeedbackScore,
+
+  computeRankings,
+  clearRankings
 }
 
 function areVotesAllowed (event) {
-  return event
-    && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get('status_results'))
+  return event &&
+    [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get('status_results'))
 }
 
 async function canVoteInEvent (user, event) {
@@ -173,8 +177,9 @@ async function findEntryRankings (event, division, categoryIndex) {
           'event_id': event.get('id'),
           'division': division
         })
-        .where('entry_details.rating_' + categoryIndex, '>', 0)
-        .orderBy('entry_details.rating_' + categoryIndex, 'desc')
+        .whereNotNull('entry_details.ranking_' + categoryIndex)
+        .orderBy('entry_details.ranking_' + categoryIndex)
+        .orderBy('entry.id', 'desc')
     }).fetchAll({ withRelated: ['userRoles', 'details'] })
   } else {
     throw new Error('Invalid category index: ' + categoryIndex)
@@ -212,8 +217,9 @@ async function refreshEntryRatings (entry) {
     }
   })
 
+  // Only give a rating if the entry has enough votes (tolerate being a bit under the minimum)
   let entryDetails = entry.related('details')
-  let requiredRatings = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '1'))
+  let requiredRatings = Math.floor(0.8 * parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '1')))
   for (let categoryIndex of categoryIndexes) {
     let averageRating
     if (ratingCount[categoryIndex] >= requiredRatings) {
@@ -327,4 +333,74 @@ function computeFeedbackScore (received, given) {
   // NB. It is inspired by the actual LD sorting equation: D = 50 + R - 5*sqrt(min(C,100))
   // (except that here, higher is better)
   return Math.floor(Math.max(0, 74 + 8.5 * Math.sqrt(10 + Math.min(given, 100)) - received))
+}
+
+async function computeRankings (event) {
+  let rankedDivisions = [enums.DIVISION.SOLO, enums.DIVISION.TEAM]
+  let rankedEntries = await models.Entry
+    .where('event_id', event.get('id'))
+    .where('division', '<>', enums.DIVISION.UNRANKED)
+    .fetchAll({
+      withRelated: ['details', 'votes']
+    })
+
+  // For each ranking category...
+  let categoryCount = event.related('details').get('category_titles').length
+  let categoryIndexes = _range(1, categoryCount)
+  for (let categoryIndex of categoryIndexes) {
+    let sortedEntries = rankedEntries.sortBy(entry => -entry.related('details').get('rating_' + categoryIndex))
+
+    // For each division...
+    for (let division of rankedDivisions) {
+      let rank = 1
+      let previousDetails = null
+
+      // For each entry, best to worst...
+      let divisionEntries = sortedEntries.filter(entry => entry.get('division') === division)
+      for (let entry of divisionEntries) {
+        let details = entry.related('details')
+
+        // Rank it, if it has an average rating if the given category
+        if (details.get('rating_' + categoryIndex)) {
+          let tie = previousDetails &&
+            previousDetails.get('rating_' + categoryIndex) === details.get('rating_' + categoryIndex)
+          if (tie) {
+            details.set('ranking_' + categoryIndex, previousDetails.get('ranking_' + categoryIndex))
+          } else {
+            details.set('ranking_' + categoryIndex, rank)
+            previousDetails = details
+          }
+          rank++
+        }
+      }
+    }
+  }
+
+  return db.transaction(async function (transaction) {
+    for (let entry of rankedEntries.models) {
+      await entry.related('details').save(null, { transacting: transaction })
+    }
+  })
+}
+
+async function clearRankings (event) {
+  let entries = await models.Entry
+    .where('entry.event_id', event.get('id'))
+    .where('entry.division', '<>', enums.DIVISION.UNRANKED)
+    .fetchAll({
+      withRelated: ['details', 'votes']
+    })
+
+  let categoryCount = event.related('details').get('category_titles').length
+  let categoryIndexes = _range(1, categoryCount)
+
+  return db.transaction(async function (transaction) {
+    for (let entry of entries.models) {
+      let entryDetails = entry.related('details')
+      for (let categoryIndex of categoryIndexes) {
+        entryDetails.set('ranking_' + categoryIndex, null)
+      }
+      await entryDetails.save(null, { transacting: transaction })
+    }
+  })
 }

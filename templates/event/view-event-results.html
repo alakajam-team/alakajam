@@ -12,57 +12,12 @@
         {{ postMacros.post(resultsPost, user) }}
       </div>
     {% else %} 
+      {% set categoryTitles = event.related('details').get('category_titles') %}
 
-      <div class="text-center">
-        <span class="btn-group" style="margin-right: 20px">
-          {% for title in ['solo','team'] %}
-            <a href="?sortBy={{ sortBy }}&division={{ title }}" type="button" 
-                class="btn btn-primary btn-lg {{ 'disabled' if division === title }}">
-              {{ title | capitalize }}
-            </a>
-          {% endfor %}
-        </span>
-        {% set categoryTitles = event.related('details').get('category_titles') %}
-        <span class="btn-group">
-          {% for title in categoryTitles %}
-            <a href="?sortBy={{ loop.index }}&division={{ division }}" type="button" 
-                class="btn btn-default {{ 'disabled' if sortedBy === loop.index }}">
-              {{ categoryTitles[loop.index - 1] }}
-            </a>
-          {% endfor %}
-        </span>
-      </div>
-      
-      <div style="background-color: #DDD; margin: 20px 0">
-        <h1 class="text-center" style="padding-top: 10px; margin-bottom: 0">{{ event.get('title') }} results</h1>
-        <h2 class="text-center">{{ division | capitalize }}: {{ categoryTitles[sortedBy - 1] }} rankings</h1>
-      
-        <div class="row">
-          <div class="col-md-offset-1 col-md-10 col-xs-12">
-            <div class="row">
-              {% if rankings.length >= 2 %}
-              <div class="col-xs-4" style="margin-top: 20px; margin-bottom: 10px; transform: perspective(400px) rotateY(10deg)">
-                {{ eventMacros.entryThumb(rankings[1]) }}
-                <h1 style="position: absolute; right: 25px; top: 5px; color: #EEE; text-shadow: 0 2px 3px black">2nd</h1>
-              </div>
-              {% endif %}
-              {% if rankings.length >= 1 %}
-              <div class="col-xs-4">
-                {{ eventMacros.entryThumb(rankings[0]) }}
-                <h1 style="position: absolute; right: 25px; top: 5px; color: #FF6; text-shadow: 0 2px 3px black">1st</h1>
-              </div>
-              {% endif %}
-              {% if rankings.length >= 3 %}
-              <div class="col-xs-4" style="margin-top: 20px; margin-bottom: 10px; transform: perspective(400px) rotateY(-10deg)">
-                {{ eventMacros.entryThumb(rankings[2]) }}
-                <h1 style="position: absolute; right: 25px; top: 5px; color: #EA8; text-shadow: 0 2px 3px black">3rd</h1>
-              </div>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-      </div>
-      
+      {{ podium(rankings, event, categoryTitles, division, sortedBy) }}
+
+      {{ pageLinks(categoryTitles, division, sortedBy) }}
+
       <div class="row">
         <div class="col-sm-{{ 12 - categoryTitles.length }}" style="margin-bottom: 20px">&nbsp;</div>
         {% for title in categoryTitles %}
@@ -71,13 +26,12 @@
           </div>
         {% endfor %}
       </div>
-      
+
       {% for entry in rankings %}
         <div class="row">
           <div class="col-xs-1 text-right">
-            {% if not currentRating or currentRating !== entry.related('details').get('rating_' + sortedBy) %}
-              {% set currentRanking = loop.index %}
-              {% set currentRating = entry.related('details').get('rating_' + sortedBy) %}
+            {% if not currentRanking or currentRanking !== entry.related('details').get('ranking_' + sortedBy) %}
+              {% set currentRanking = entry.related('details').get('ranking_' + sortedBy) %}
               <h2>{{ currentRanking | ordinal }}</h2>
             {% endif %}
           </div>
@@ -94,9 +48,99 @@
           {% endfor %}
         </div>
       {% endfor %}
-      
+
+      {{ pageLinks(categoryTitles, division, sortedBy) }}
+
     {% endif %}
   </div>
 </div>
 
 {% endblock %}
+
+{% macro pageLinks(categoryTitles, selectedDivision, selectedCategoryIndex) %}
+
+<div class="text-center results-links">
+  <span class="btn-group" style="margin-right: 20px">
+    {% for division in ['solo','team'] %}
+      <a href="?sortBy={{ sortBy }}&amp;division={{ division }}" type="button" 
+          class="btn btn-primary results-links__division {{ 'disabled' if selectedDivision === division }}">
+        <span class="fa fa-user{{ 's' if division === 'team' }}"></span>
+        {{ division | capitalize }}
+      </a>
+    {% endfor %}
+  </span>
+  <span class="btn-group">
+    {% for title in categoryTitles %}
+      <a href="?sortBy={{ loop.index }}&amp;division={{ division }}" type="button" 
+          class="btn btn-primary results-links__category {{ 'disabled' if selectedCategoryIndex === loop.index }}">
+        {{ categoryTitles[loop.index - 1] }}
+      </a>
+    {% endfor %}
+  </span>
+</div>
+{% endmacro %}
+
+{% macro podium(rankings, event, categoryTitles, division, sortedBy) %}
+
+<div class="results-podium">
+  <h1 class="results-podium__event-name">{{ event.get('title') }} results</h1>
+  <h2 class="results-podium__title">
+    <div class="dropdown">
+      <button class="dropdown-toggle" type="button" data-toggle="dropdown">
+        <span class="fa fa-user{{ 's' if division === 'team' }}"></span>
+        {{ division | capitalize }} division:
+      </button>
+      <ul class="dropdown-menu">
+        {% for title in ['solo','team'] %}
+          <li><a href="?sortBy={{ sortBy }}&amp;division={{ title }}">
+            {{ title | capitalize }} division
+          </a></li>
+        {% endfor %}
+      </ul>
+    </div><!--
+    --><div class="dropdown">
+      <button class="dropdown-toggle" type="button" data-toggle="dropdown">  {{ categoryTitles[sortedBy - 1] }}
+      </button>
+      <ul class="dropdown-menu">
+        {% for title in categoryTitles %}
+          <li><a href="?sortBy={{ loop.index }}&division={{ division }}">
+            {{ categoryTitles[loop.index - 1] }}
+          </a></li>
+        {% endfor %}
+      </ul>
+    </div>rankings
+  </h1>
+
+  <div class="row">
+    <div class="col-md-offset-1 col-md-10 col-xs-12">
+      <div class="row">
+        {% if rankings.length >= 2 %}
+        <div class="col-xs-4 results-podium__step second">
+          {{ eventMacros.entryThumb(rankings[1]) }}
+          <h1 class="results-podium__trophy">
+            <img src="/static/images/trophy_2.png" />2nd
+          </h1>
+        </div>
+        {% endif %}
+        {% if rankings.length >= 1 %}
+        <div class="col-xs-4 results-podium__step first">
+          {{ eventMacros.entryThumb(rankings[0]) }}
+          <h1 class="results-podium__trophy">
+            <img src="/static/images/trophy_1.png" />1st
+          </h1>
+        </div>
+        {% endif %}
+        {% if rankings.length >= 3 %}
+        <div class="col-xs-4 results-podium__step third">
+          {{ eventMacros.entryThumb(rankings[2]) }}
+          <h1 class="results-podium__trophy">
+            <img src="/static/images/trophy_3.png" />3rd
+          </h1>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endmacro %}
