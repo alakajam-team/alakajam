@@ -157,17 +157,22 @@ async function editEntry (req, res) {
     let isExternalEvent = fields['external-event'] !== undefined
     let links = []
     let i = 0
-    while (fields['url' + i]) {
-      let label = forms.sanitizeString(fields['label' + i])
-      let url = fields['url' + i]
-      if (label === 'other') {
-        label = forms.sanitizeString(fields['customlabel' + i])
+    if (fields['submit-links']) {
+      while (fields['url' + i]) {
+        let label = forms.sanitizeString(fields['label' + i])
+        let url = fields['url' + i]
+        if (label === 'other') {
+          label = forms.sanitizeString(fields['customlabel' + i])
+        }
+        links.push({
+          label,
+          url
+        })
+        i++
       }
-      links.push({
-        label,
-        url
-      })
-      i++
+    } else {
+      // If the client-side JS didn't have the time to load, don't change the links
+      links = entry.get('links')
     }
 
     let platforms = null
@@ -268,7 +273,6 @@ async function editEntry (req, res) {
             division = entry.get('division')
           }
         }
-        console.log(division)
 
         entry.set({
           'division': division,
