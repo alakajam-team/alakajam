@@ -33,6 +33,7 @@ const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const settingService = require('../services/setting-service')
 const sessionService = require('../services/session-service')
+const userService = require('../services/user-service')
 const controllers = require('../controllers/index')
 const templating = require('../controllers/templating')
 
@@ -50,8 +51,11 @@ const LAUNCH_TIME = new Date().getTime()
 async function configure (app) {
   app.locals.config = config
 
+  // In-memory data
+  await userService.loadPasswordRecoveryCache(app)
+  await sessionService.loadSessionCache(app)
+
   // Session management
-  app.locals.sessionCache = await sessionService.loadSessionCache()
   let sessionKey = await findOrCreateSessionKey()
   app.use(cookies.express([sessionKey]))
 

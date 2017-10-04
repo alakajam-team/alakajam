@@ -22,6 +22,12 @@ module.exports = {
   DB_PASSWORD: '',
   DB_NAME: 'alakajam', */
 
+  // Emails
+  /* SMTP_HOST: 'smtp.example.com',
+  SMTP_PORT: 465,
+  SMTP_USERNAME: 'webmaster@example.com',
+  SMTP_PASSWORD: '', */
+
   // Misc
   // GOOGLE_ANALYTICS_ID: '',
 
@@ -30,5 +36,6 @@ module.exports = {
   DEBUG_DISABLE_CACHE: true, // Prevents caching pages for performance optimisation
   DEBUG_SQL: false, // Traces all SQL calls
   DEBUG_REFRESH_BROWSER: true, // Refreshes the browser automatically upon code changes
-  DEBUG_ADMIN: false // Lets you access the "/admin" URL even when logged out
+  DEBUG_ADMIN: false,  // Lets you access the "/admin" URL even when logged out
+  DEBUG_TEST_MAILER: true // Uses a test mailer requiring no SMTP config, might not work
 }

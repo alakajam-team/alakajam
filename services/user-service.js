@@ -1,17 +1,20 @@
 'use strict'
 
 /**
- * models.User service
+ * User service
  *
  * @module services/user-service
  */
 
 const crypto = require('crypto')
 const randomKey = require('random-key')
+const path = require('path')
 const config = require('../config')
 const constants = require('../core/constants')
 const forms = require('../core/forms')
 const models = require('../core/models')
+const fileStorage = require('../core/file-storage')
+const mailService = require('../services/mail-service')
 
 module.exports = {
   findUsers,
@@ -23,12 +26,18 @@ module.exports = {
   authenticate,
 
   setPassword,
-  refreshUserReferences
+  refreshUserReferences,
+
+  loadPasswordRecoveryCache,
+  sendPasswordRecoveryEmail,
+  validatePasswordRecoveryToken,
+  setPasswordUsingToken
 }
 
 const USERNAME_VALIDATION_REGEX = /^[a-zA-Z][-\w]+$/g
 const USERNAME_MIN_LENGTH = 3
 const PASSWORD_MIN_LENGTH = 6
+const PASSWORD_RECOVERY_TOKENS_FILE = path.join(config.DATA_PATH, 'password-recovery.json')
 
 /**
  * Fetches users
@@ -208,5 +217,52 @@ async function refreshUserReferences (user) {
     userRole.set('user_name', user.get('name'))
     userRole.set('user_title', user.get('title'))
     await userRole.save()
+  }
+}
+
+async function loadPasswordRecoveryCache (app) {
+  if (await fileStorage.exists(PASSWORD_RECOVERY_TOKENS_FILE)) {
+    let rawFile = await fileStorage.read(PASSWORD_RECOVERY_TOKENS_FILE)
+    app.locals.passwordRecoveryTokens = JSON.parse(rawFile)
+  } else {
+    app.locals.passwordRecoveryTokens = {}
+  }
+}
+
+async function sendPasswordRecoveryEmail (app, email) {
+  let user = await models.User.where('email', email).fetch()
+  if (user) {
+    let token = randomKey.generate(32)
+    app.locals.passwordRecoveryTokens[token] = user.get('name')
+    fileStorage.write(PASSWORD_RECOVERY_TOKENS_FILE, app.locals.passwordRecoveryTokens)
+
+    let context = {
+      user,
+      token
+    }
+
+    await mailService.sendMail(app, user, 'Your password recovery link', 'password-recovery', context)
+  } else {
+    throw new Error('This email does not match an user.')
+  }
+}
+
+function validatePasswordRecoveryToken (app, token) {
+  return !!app.locals.passwordRecoveryTokens[token]
+}
+
+async function setPasswordUsingToken (app, token, password) {
+  if (validatePasswordRecoveryToken(app, token)) {
+    let userName = app.locals.passwordRecoveryTokens[token]
+    let user = await findByName(userName)
+    let success = setPassword(user, password)
+    if (success) {
+      await user.save()
+      delete app.locals.passwordRecoveryTokens[token]
+      fileStorage.write(PASSWORD_RECOVERY_TOKENS_FILE, app.locals.passwordRecoveryTokens)
+    }
+    return success
+  } else {
+    throw new Error('Invalid password recovery token')
   }
 }

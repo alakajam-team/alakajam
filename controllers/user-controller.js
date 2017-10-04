@@ -32,7 +32,10 @@ module.exports = {
   doRegister,
   loginForm,
   doLogin,
-  doLogout
+  doLogout,
+
+  passwordRecoveryRequest,
+  passwordRecovery
 }
 
 async function dashboardMiddleware (req, res, next) {
@@ -367,5 +370,72 @@ async function doLogout (req, res) {
   sessionService.invalidateSession(req, res)
   res.render('login', {
     infoMessage: 'Logout successful.'
+  })
+}
+
+async function passwordRecoveryRequest (req, res) {
+  let errorMessage = null
+
+  if (res.locals.user) {
+    res.redirect('/')
+    return
+  }
+
+  if (req.method === 'POST') {
+    let {fields} = await req.parseForm()
+
+    if (!forms.isEmail(fields.email)) {
+      errorMessage = 'Invalid email address'
+    }
+
+    if (!errorMessage) {
+      try {
+        userService.sendPasswordRecoveryEmail(res.app, fields.email)
+        res.locals.success = true
+      } catch (err) {
+        errorMessage = err.message
+      }
+    }
+  }
+
+  res.render('password-recovery-request', {
+    errorMessage
+  })
+}
+
+/**
+ * Password change page, following the click on a password recovery link.
+ */
+async function passwordRecovery (req, res) {
+  let errorMessage = null
+
+  if (res.locals.user) {
+    res.redirect('/')
+    return
+  }
+
+  if (userService.validatePasswordRecoveryToken(res.app, req.query.token)) {
+    res.locals.token = true
+
+    if (req.method === 'POST') {
+      let {fields} = await req.parseForm()
+
+      if (!fields['new-password']) {
+        errorMessage = 'You must enter a new password'
+      } else if (fields['new-password'] !== fields['new-password-bis']) {
+        errorMessage = 'New passwords do not match'
+      } else {
+        let result = await userService.setPasswordUsingToken(res.app, req.query.token, fields['new-password'])
+        if (result === true) {
+          res.locals.success = true
+        } else {
+          errorMessage = result
+        }
+      }
+    }
+  }
+
+  res.render('password-recovery', {
+    errorMessage
   })
 }

@@ -16,6 +16,7 @@ const slug = require('slug')
 const nunjucks = require('nunjucks')
 const removeMarkdown = require('remove-markdown')
 const url = require('url')
+const htmlToText = require('html-to-text')
 const constants = require('../core/constants')
 const config = require('../config')
 
@@ -39,7 +40,8 @@ module.exports = {
   parseDateTime,
 
   markdownToHtml,
-  markdownToText
+  markdownToText,
+  htmlToText: htmlToText.fromString
 }
 
 const MAX_POSTGRESQL_INTEGER = 2147483647

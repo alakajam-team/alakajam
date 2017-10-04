@@ -59,12 +59,12 @@ function restoreSessionIfNeeded (req, res) {
  * Loads the session cache from the persisted sessions file.
  * @return {Object} Session cache object
  */
-async function loadSessionCache () {
+async function loadSessionCache (app) {
   if (await fileStorage.exists(SESSIONS_FILE)) {
     let rawFile = await fileStorage.read(SESSIONS_FILE)
-    return JSON.parse(rawFile)
+    app.locals.sessionCache = JSON.parse(rawFile)
   } else {
-    return {}
+    app.locals.sessionCache = {}
   }
 }
 
