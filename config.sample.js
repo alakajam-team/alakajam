@@ -37,5 +37,5 @@ module.exports = {
   DEBUG_SQL: false, // Traces all SQL calls
   DEBUG_REFRESH_BROWSER: true, // Refreshes the browser automatically upon code changes
   DEBUG_ADMIN: false,  // Lets you access the "/admin" URL even when logged out
-  DEBUG_TEST_MAILER: true // Uses a test mailer requiring no SMTP config, might not work
+  DEBUG_TEST_MAILER: true // Uses a mailer requiring no config (might not work but emails are logged)
 }

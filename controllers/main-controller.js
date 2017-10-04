@@ -40,7 +40,7 @@ async function anyPageMiddleware (req, res, next) {
   res.locals.path = req.originalUrl
 
   // Fetch current user
-  sessionService.restoreSessionIfNeeded(req, res)
+  await sessionService.restoreSessionIfNeeded(req, res)
   let userTask = null
   if (req.session.userId) {
     userTask = userService.findById(req.session.userId).then(function (user) {

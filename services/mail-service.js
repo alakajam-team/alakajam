@@ -85,12 +85,14 @@ async function sendMail (app, user, subject, template, context = {}) {
 
         mailTransporter.sendMail(mailOptions, function (err, info) {
           if (!err) {
-            log.info('===============')
-            log.info('mail sent')
-            log.info('to: ' + (user.get('title') || user.get('name')))
-            log.info('subject: ' + subject)
-            log.info('body: \n' + textVersion)
-            log.info('===============')
+            if (config.DEBUG_TEST_MAILER) {
+              log.info('===============')
+              log.info('mail sent')
+              log.info('to: ' + (user.get('title') || user.get('name')))
+              log.info('subject: ' + subject)
+              log.info('body: \n' + textVersion)
+              log.info('===============')
+            }
             resolve()
           } else {
             reject(new Error('Failed to send mail: ' + err.message))

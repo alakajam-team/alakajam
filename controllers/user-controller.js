@@ -343,7 +343,7 @@ async function doLogin (req, res) {
     if (user) {
       context.user = user
       context.infoMessage = 'Authentication successful'
-      sessionService.openSession(req, res, user, !!fields['remember-me'])
+      await sessionService.openSession(req, res, user.get('id'), !!fields['remember-me'])
 
       // Force notification count update
       context.unreadNotifications = await notificationService.countUnreadNotifications(res.locals.user)
@@ -390,7 +390,7 @@ async function passwordRecoveryRequest (req, res) {
 
     if (!errorMessage) {
       try {
-        userService.sendPasswordRecoveryEmail(res.app, fields.email)
+        await userService.sendPasswordRecoveryEmail(res.app, fields.email)
         res.locals.success = true
       } catch (err) {
         errorMessage = err.message
