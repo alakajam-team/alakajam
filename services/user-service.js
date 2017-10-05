@@ -1,17 +1,20 @@
 'use strict'
 
 /**
- * models.User service
+ * User service
  *
  * @module services/user-service
  */
 
 const crypto = require('crypto')
 const randomKey = require('random-key')
+const path = require('path')
 const config = require('../config')
 const constants = require('../core/constants')
 const forms = require('../core/forms')
 const models = require('../core/models')
+const fileStorage = require('../core/file-storage')
+const mailService = require('../services/mail-service')
 
 module.exports = {
   findUsers,
@@ -23,12 +26,19 @@ module.exports = {
   authenticate,
 
   setPassword,
-  refreshUserReferences
+  refreshUserReferences,
+
+  loadPasswordRecoveryCache,
+  sendPasswordRecoveryEmail,
+  validatePasswordRecoveryToken,
+  setPasswordUsingToken
 }
 
 const USERNAME_VALIDATION_REGEX = /^[a-zA-Z][-\w]+$/g
 const USERNAME_MIN_LENGTH = 3
 const PASSWORD_MIN_LENGTH = 6
+const PASSWORD_RECOVERY_TOKENS_FILE = path.join(config.DATA_PATH, 'password-recovery.json')
+const PASSWORD_RECOVERY_LINK_MAX_AGE = 24 * 3600000 /* 1 day */
 
 /**
  * Fetches users
@@ -208,5 +218,76 @@ async function refreshUserReferences (user) {
     userRole.set('user_name', user.get('name'))
     userRole.set('user_title', user.get('title'))
     await userRole.save()
+  }
+}
+
+async function loadPasswordRecoveryCache (app) {
+  if (await fileStorage.exists(PASSWORD_RECOVERY_TOKENS_FILE)) {
+    let rawFile = await fileStorage.read(PASSWORD_RECOVERY_TOKENS_FILE)
+    app.locals.passwordRecoveryTokens = JSON.parse(rawFile)
+  } else {
+    app.locals.passwordRecoveryTokens = {}
+  }
+}
+
+async function sendPasswordRecoveryEmail (app, email) {
+  // Make sure the user exists
+  let user = await models.User.where('email', email).fetch()
+  if (user) {
+    // Routine work: clear expired tokens
+    let passwordRecoveryTokens = app.locals.passwordRecoveryTokens
+    let now = Date.now()
+    for (let token in passwordRecoveryTokens) {
+      if (passwordRecoveryTokens[token].expires < now) {
+        delete passwordRecoveryTokens[token]
+      }
+    }
+
+    // Create token
+    let token = randomKey.generate(32)
+    passwordRecoveryTokens[token] = {
+      userId: user.get('id'),
+      expires: Date.now() + PASSWORD_RECOVERY_LINK_MAX_AGE
+    }
+    fileStorage.write(PASSWORD_RECOVERY_TOKENS_FILE, passwordRecoveryTokens)
+
+    // Send email
+    let context = {
+      user,
+      token
+    }
+    await mailService.sendMail(app, user, 'Your password recovery link', 'password-recovery', context)
+  }
+}
+
+function validatePasswordRecoveryToken (app, token) {
+  return app.locals.passwordRecoveryTokens[token] &&
+    app.locals.passwordRecoveryTokens[token].expires > Date.now()
+}
+
+/**
+ *
+ * @param {Express app} app
+ * @param {string} token
+ * @param {string} password
+ * @returns {boolean|string} true or an error message
+ */
+async function setPasswordUsingToken (app, token, password) {
+  if (validatePasswordRecoveryToken(app, token)) {
+    let userId = app.locals.passwordRecoveryTokens[token].userId
+    let user = await findById(userId)
+    if (user) {
+      let success = setPassword(user, password)
+      if (success) {
+        await user.save()
+        delete app.locals.passwordRecoveryTokens[token]
+        fileStorage.write(PASSWORD_RECOVERY_TOKENS_FILE, app.locals.passwordRecoveryTokens)
+      }
+      return success
+    } else {
+      return 'This user does not exist'
+    }
+  } else {
+    return 'Invalid password recovery token'
   }
 }

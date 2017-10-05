@@ -13,6 +13,7 @@ const randomKey = require('random-key')
 const config = require('../config')
 const log = require('../core/log')
 const fileStorage = require('../core/file-storage')
+const userService = require('./user-service')
 
 module.exports = {
   loadSessionCache,
@@ -22,34 +23,45 @@ module.exports = {
 }
 
 const SESSIONS_FILE = path.join(config.DATA_PATH, 'sessions.json')
+const REMEMBER_ME_MAX_AGE = 30 * 24 * 3600000 /* 30 days */
+const COOKIE_DEFAULT_OPTIONS = { signed: true }
 
 /**
  * (Sync) Checks whether a user session is valid
  * @returns {boolean} true if valid, false if invalid (usually because expired)
  */
-function restoreSessionIfNeeded (req, res) {
+async function restoreSessionIfNeeded (req, res) {
   req.session = {}
 
-  // TODO refresh cookies if they're getting close to expiry
-  let sessionCookie = req.cookies.get('session', {signed: true})
+  // Look for active session
+  let sessionCookie = req.cookies.get('session', COOKIE_DEFAULT_OPTIONS)
   if (sessionCookie) {
     try {
       req.session = JSON.parse(sessionCookie)
     } catch (e) {
-      req.cookies.set('session', '', {signed: true}) // clear session cookie
+      req.cookies.set('session', '', COOKIE_DEFAULT_OPTIONS) // clear session cookie
       sessionCookie = null
     }
   }
 
+  // If no session, look for remember me cookie
   if (!sessionCookie) {
-    let rememberMeCookie = req.cookies.get('rememberMe', {signed: true})
+    let rememberMeCookie = req.cookies.get('rememberMe', COOKIE_DEFAULT_OPTIONS)
     if (rememberMeCookie) {
+      let now = Date.now()
       let sessionCache = res.app.locals.sessionCache
       let sessionInfo = sessionCache[hash(rememberMeCookie)]
-      if (sessionInfo) {
-        req.session = {userId: sessionInfo.userId}
+
+      if (sessionInfo && sessionInfo.expires > now) {
+        // Recreate session cookie
+        await _writeSessionCookie(req, res, sessionInfo.userId)
+
+        // Renew cookie if we're halfway through expiry
+        if (sessionInfo.expires - now < REMEMBER_ME_MAX_AGE / 2) {
+          _writeRememberMeCookie(req, sessionCache, sessionInfo.userId)
+        }
       } else {
-        req.cookies.set('rememberMe', '', {signed: true}) // clear remember me cookie
+        req.cookies.set('rememberMe', '', COOKIE_DEFAULT_OPTIONS) // clear remember me cookie
       }
     }
   }
@@ -59,24 +71,24 @@ function restoreSessionIfNeeded (req, res) {
  * Loads the session cache from the persisted sessions file.
  * @return {Object} Session cache object
  */
-async function loadSessionCache () {
+async function loadSessionCache (app) {
   if (await fileStorage.exists(SESSIONS_FILE)) {
     let rawFile = await fileStorage.read(SESSIONS_FILE)
-    return JSON.parse(rawFile)
+    app.locals.sessionCache = JSON.parse(rawFile)
   } else {
-    return {}
+    app.locals.sessionCache = {}
   }
 }
 
 function invalidateSession (req, res) {
-  let rememberMeCookie = req.cookies.get('rememberMe', {signed: true})
+  let rememberMeCookie = req.cookies.get('rememberMe', COOKIE_DEFAULT_OPTIONS)
   if (rememberMeCookie) {
     let sessionCache = res.app.locals.sessionCache
     delete sessionCache[hash(rememberMeCookie)]
   }
 
-  req.cookies.set('rememberMe', '', {signed: true})
-  req.cookies.set('session', '', {signed: true})
+  req.cookies.set('rememberMe', '', COOKIE_DEFAULT_OPTIONS)
+  req.cookies.set('session', '', COOKIE_DEFAULT_OPTIONS)
   req.session = null
   res.locals.user = null
 }
@@ -84,7 +96,7 @@ function invalidateSession (req, res) {
 /**
  * Opens or refreshes a user session
  */
-function openSession (req, res, user, rememberMe) {
+async function openSession (req, res, userId, rememberMe) {
   invalidateSession(req, res)
 
   // Clean expired sessions
@@ -96,30 +108,10 @@ function openSession (req, res, user, rememberMe) {
     }
   }
 
-  // Write session cookie
-  req.session = {userId: user.get('id')}
-  req.cookies.set('session', JSON.stringify(req.session), {
-    httpOnly: true,
-    signed: true
-  })
-  res.locals.user = user
-
-  // Write remember me cookie & store token hash
-  // TODO Use better hashing than MD5
+  // Write cookie(s)
+  await _writeSessionCookie(req, res, userId)
   if (rememberMe) {
-    let token = randomKey.generate()
-    let maxAge = 30 * 24 * 3600000
-    let tokenExpires = now + maxAge
-    sessionCache[hash(token)] = {
-      userId: user.get('id'),
-      expires: tokenExpires
-    }
-    req.cookies.set('rememberMe', token, {
-      maxAge: maxAge,
-      expires: new Date(tokenExpires),
-      httpOnly: true,
-      signed: true
-    })
+    _writeRememberMeCookie(req, sessionCache, userId)
   }
 
   // Persist cache (no need to await)
@@ -129,4 +121,35 @@ function openSession (req, res, user, rememberMe) {
 
 function hash (token) {
   return crypto.createHash('sha256').update(token).digest('hex')
+}
+
+/**
+ * Write session cookie
+ */
+async function _writeSessionCookie (req, res, userId) {
+  req.session = { userId }
+  req.cookies.set('session', JSON.stringify(req.session), {
+    httpOnly: true,
+    signed: true
+  })
+  res.locals.user = await userService.findById(userId)
+}
+
+/**
+ * Write remember me cookie & store token hash
+ */
+function _writeRememberMeCookie (req, sessionCache, userId) {
+  let now = Date.now()
+  let token = randomKey.generate()
+  let tokenExpires = now + REMEMBER_ME_MAX_AGE
+  sessionCache[hash(token)] = {
+    userId,
+    expires: tokenExpires
+  }
+  req.cookies.set('rememberMe', token, {
+    maxAge: REMEMBER_ME_MAX_AGE,
+    expires: new Date(tokenExpires),
+    httpOnly: true,
+    signed: true
+  })
 }

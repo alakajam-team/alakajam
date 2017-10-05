@@ -51,6 +51,8 @@ module.exports = {
     router.get('/login', userController.loginForm)
     router.post('/login', userController.doLogin)
     router.get('/logout', userController.doLogout)
+    router.all('/passwordRecoveryRequest', userController.passwordRecoveryRequest)
+    router.all('/passwordRecovery', userController.passwordRecovery)
 
     router.use('/dashboard*', userController.dashboardMiddleware)
     router.all('/dashboard(/feed)?', userController.dashboardFeed)
