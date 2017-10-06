@@ -13,6 +13,7 @@ const db = require('../core/db')
 const settingService = require('../services/setting-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
+const forms = require('../core/forms')
 
 module.exports = {
   areVotesAllowed,
@@ -114,9 +115,11 @@ async function saveEntryVote (user, entry, event, voteData) {
   let optouts = entry.related('details').get('optouts') || []
   for (let i in voteData) {
     let categoryIndex = (parseInt(i) + 1)
-    if (optouts.includes(eventDetails.get('category_titles')[categoryIndex - 1])) {
+    if (!forms.isFloat(voteData[i], {min: 0, max: 10}) ||
+        optouts.includes(eventDetails.get('category_titles')[categoryIndex - 1])) {
       voteData[i] = 0
     }
+
     vote.set('vote_' + categoryIndex, voteData[i] || 0)
     hasActualVote = hasActualVote || voteData[i] > 0
   }

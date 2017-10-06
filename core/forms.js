@@ -171,19 +171,21 @@ function isIn (string, values) {
 /**
  * Checks whether the string is in an integer
  * @param  {string} string
+ * @param  {object} options (optional) min max lt gt
  * @return {Boolean}
  */
-function isInt (string) {
-  return string && validator.isInt(string)
+function isInt (string, options = {}) {
+  return string && validator.isInt(string, options)
 }
 
 /**
  * Checks whether the string is in a float
  * @param  {string} string
+ * @param  {object} options (optional) min max lt gt
  * @return {Boolean}
  */
-function isFloat (string) {
-  return string && validator.isFloat(string)
+function isFloat (string, options = {}) {
+  return string && validator.isFloat(string, options)
 }
 
 /**

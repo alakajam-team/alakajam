@@ -387,12 +387,7 @@ async function saveCommentOrVote (req, res) {
     let i = 1
     let votes = []
     while (fields['vote-' + i] !== undefined) {
-      let vote = fields['vote-' + i]
-      if (!vote || forms.isFloat(vote)) {
-        votes.push(vote)
-      } else {
-        break
-      }
+      votes.push(fields['vote-' + i])
       i++
     }
     if (await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)) {
