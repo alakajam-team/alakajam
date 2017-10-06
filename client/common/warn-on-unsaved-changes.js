@@ -40,6 +40,11 @@ function storeInitialValues (form) {
 function containsInitialValues (form) {
   const $form = $(form)
   const initialValues = getInitialValues(form)
+  console.log('=================')
+  console.log($form.serialize())
+  console.log('===')
+  console.log(initialValues)
+  console.log('=================')
   return $form.serialize() === initialValues
 }
 
