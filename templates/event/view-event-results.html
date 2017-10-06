@@ -117,25 +117,16 @@
         {% if rankings.length >= 2 %}
         <div class="col-xs-4 results-podium__step second">
           {{ eventMacros.entryThumb(rankings[1]) }}
-          <h1 class="results-podium__trophy">
-            <img src="/static/images/trophy_2.png" />2nd
-          </h1>
         </div>
         {% endif %}
         {% if rankings.length >= 1 %}
         <div class="col-xs-4 results-podium__step first">
           {{ eventMacros.entryThumb(rankings[0]) }}
-          <h1 class="results-podium__trophy">
-            <img src="/static/images/trophy_1.png" />1st
-          </h1>
         </div>
         {% endif %}
         {% if rankings.length >= 3 %}
         <div class="col-xs-4 results-podium__step third">
           {{ eventMacros.entryThumb(rankings[2]) }}
-          <h1 class="results-podium__trophy">
-            <img src="/static/images/trophy_3.png" />3rd
-          </h1>
         </div>
         {% endif %}
       </div>

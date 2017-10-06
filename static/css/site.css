@@ -51,6 +51,16 @@
   --header-shadow: {
     box-shadow: 0px 8px 4px -6px rgba(0, 0, 0, 0.15);
   };
+  --sprite2: {
+    background: url('/static/images/spritesheet2.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+  };
+  --sprite4: {
+    background: url('/static/images/spritesheet4.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+  };
 
   /* UI elements */
   
@@ -1525,13 +1535,29 @@ input.date-picker {
     display: inline-block;
     font-size: 1.5rem;
     font-weight: bold;
+    position: relative;
     vertical-align: middle;
     width: 7rem;
     text-align: right;
     margin-right: 15px;
+  }
 
-    & img {
-      max-height: 32px;
+  &__category-medal {
+    @apply --sprite2;
+    display: inline-block;
+    height: 32px;
+    position: absolute;
+    right: 40px;
+    top: 0;
+    width: 32px;
+    &.medal1 {
+      background-position: -64px -112px;
+    }
+    &.medal2 {
+      background-position: -64px -144px;
+    }
+    &.medal3 {
+      background-position: -64px -176px;
     }
   }
 
@@ -1755,34 +1781,32 @@ input.date-picker {
   }
 
   &__step {
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin: 30px 0 80px 0;
+    &::after {
+      @apply --sprite4;
+      background-position: -256px -64px;
+      content: '';
+      display: block;
+      filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+      height: 128px;
+      margin: -44px 0 0 -80px;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      width: 160px;
+    }
 
     &.first {
       margin-top: 10px;
     }
-    &.second {
-      transform: perspective(400px) rotateY(10deg)
+    &.second::after {
+      margin-top: -64px;
+      background-position: -256px -192px;
     }
-    &.third {
-      transform: perspective(400px) rotateY(-10deg);
+    &.third::after {
+      margin-top: -64px;
+      background-position: -256px -320px;
     }
-  }
-
-  &__trophy {
-    position: absolute;
-    right: 25px;
-    top: 5px;
-    text-shadow: 0 2px 3px var(--text)
-  }
-  & .first &__trophy {
-    color: #ffeab7;
-  }
-  & .second &__trophy {
-    color: #ddd;
-  }
-  & .third &__trophy {
-    color: #efa790;
   }
 }
 

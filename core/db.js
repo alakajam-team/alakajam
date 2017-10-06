@@ -108,6 +108,7 @@ function createBookshelfInstance (knex) {
 async function insertInitialData (knex, samples) {
   const userService = require('../services/user-service')
   const eventService = require('../services/event-service')
+  const eventRatingService = require('../services/event-rating-service')
   const eventThemeService = require('../services/event-theme-service')
   const postService = require('../services/post-service')
   const settingService = require('../services/setting-service')
@@ -274,12 +275,28 @@ async function insertInitialData (knex, samples) {
     userEntry.set('title', 'Game 1')
     await userEntry.save()
 
-    for (let i = 2; i <= 5; i++) {
+    for (let i = 2; i <= 30; i++) {
       await userService.register('entrant@example.com', 'entrant' + i, 'entrant' + i)
       let otherUser = await userService.findByName('entrant' + i)
       let otherEntry = await eventService.createEntry(otherUser, event2)
       otherEntry.set('title', 'Game ' + i)
       await otherEntry.save()
+    }
+    for (let i = 2; i <= 30; i++) {
+      let userA = await userService.findByName('entrant' + i)
+      for (let j = 1; j <= 10; j++) {
+        let ji = (i + j) % 31
+        if (ji < 2) {
+          ji = 2
+        }
+        let userB = await userService.findByName('entrant' + ji)
+        let entryB = await eventService.findUserEntryForEvent(userB, event2.get('id'))
+        let votes = []
+        for (let k = 0; k < 6; k++) {
+          votes[k] = 3 + Math.floor(Math.random() * 4)
+        }
+        await eventRatingService.saveEntryVote(userA, entryB, event2, votes)
+      }
     }
 
     let post = await postService.createPost(entrantUser, event2.get('id'))
