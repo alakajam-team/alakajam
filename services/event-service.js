@@ -642,6 +642,7 @@ async function findRescueEntries (event, options = {}) {
   return models.Entry.where({
     event_id: event.get('id')
   })
+    .where('division', '<>', enums.DIVISION.UNRANKED)
     .query(function (qb) {
       return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
         .where('entry_details.rating_count', '>', Math.floor(minRatings / 4)) // do not rescue those who really didn't participate
