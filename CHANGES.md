@@ -2,6 +2,11 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### October 3rd
+
+* Reworked competition results page, with pretty trophy pictures
+* Final rankings and ratings have been added to the entry page
+
 ### October 2nd
 
 * Game rescue block added
