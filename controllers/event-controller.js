@@ -313,12 +313,15 @@ async function viewEventGames (req, res) {
       log.error('Invalid platform query: ' + req.query.platforms)
     }
   }
+  if (req.query.hideReviewed && user) {
+    searchOptions.notReviewedById = user.get('id')
+  }
 
   // Search entries
   let rescueEntries = []
   let canVoteInEvent = await eventRatingService.canVoteInEvent(user, event)
   if (canVoteInEvent && event.get('status_results') === 'voting_rescue') {
-    rescueEntries = (await eventService.findRescueEntries(event)).models
+    rescueEntries = (await eventService.findRescueEntries(event, user)).models
   }
   let requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
   let entriesCollection = await eventService.findGames(searchOptions)

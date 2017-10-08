@@ -484,7 +484,7 @@ async function deleteEntry (entry) {
 }
 
 /**
- * @param options {object} nameFragment eventId platforms pageSize page withRelated
+ * @param options {object} nameFragment eventId platforms pageSize page withRelated notReviewedBy
  */
 async function findGames (options = {}) {
   let query = models.Entry.forge()
@@ -495,12 +495,12 @@ async function findGames (options = {}) {
           .orderBy('entry_details.rating_count')
       })
     } else {
-      query = query.orderBy('feedback_score', 'DESC')
+      query = query.orderBy('entry.feedback_score', 'DESC')
     }
-    query = query.orderBy('created_at', 'DESC')
+    query = query.orderBy('entry.created_at', 'DESC')
   }
-  if (options.search) query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
-  if (options.eventId !== undefined) query = query.where('event_id', options.eventId)
+  if (options.search) query = query.where('entry.title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
+  if (options.eventId !== undefined) query = query.where('entry.event_id', options.eventId)
   if (options.platforms) {
     query = query.query(function (qb) {
       return qb.distinct()
@@ -511,7 +511,24 @@ async function findGames (options = {}) {
   if (options.divisions) {
     query = query.where('division', 'in', options.divisions)
   }
-
+  if (options.notReviewedById) {
+    query = query.query(function (qb) {
+      return qb.distinct()
+        // Hide rated
+        .leftJoin('entry_vote', function () {
+          this.on('entry_vote.entry_id', '=', 'entry.id')
+            .andOn('entry_vote.user_id', '=', options.notReviewedById)
+        })
+        .whereNull('entry_vote.id')
+        // Hide commented
+        .where('entry.id', 'NOT IN', db.knex('comment')
+            .where({
+              'user_id': options.notReviewedById,
+              'node_type': 'entry'
+            })
+            .select('node_id'))
+    })
+  }
   if (options.pageSize === undefined) options.pageSize = 30
   if (options.withRelated === undefined) options.withRelated = ['event', 'userRoles']
   if (options.count) {
@@ -633,20 +650,23 @@ async function findEntryInvitesForUser (user, options) {
     .fetchAll(options)
 }
 
-async function findRescueEntries (event, options = {}) {
+async function findRescueEntries (event, user, options = {}) {
   let minRatings = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
 
   if (options.pageSize === undefined) options.pageSize = 4
   if (options.withRelated === undefined) options.withRelated = ['details', 'userRoles']
 
-  return models.Entry.where({
-    event_id: event.get('id')
-  })
+  return models.Entry.where('entry.event_id', event.get('id'))
     .where('division', '<>', enums.DIVISION.UNRANKED)
     .query(function (qb) {
       return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
         .where('entry_details.rating_count', '>', Math.floor(minRatings / 4)) // do not rescue those who really didn't participate
         .where('entry_details.rating_count', '<', minRatings)
+        .leftJoin('entry_vote', function () {
+          this.on('entry_vote.entry_id', '=', 'entry.id')
+            .andOn('entry_vote.user_id', '=', user.get('id'))
+        })
+        .whereNull('entry_vote.id') // hide rated games
     })
     .orderBy('entry_details.rating_count', 'desc')
     .fetchPage(options)

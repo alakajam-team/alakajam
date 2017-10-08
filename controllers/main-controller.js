@@ -237,6 +237,9 @@ async function games (req, res) {
   } else if (req.query.eventId === undefined && featuredEvent) {
     searchOptions.eventId = featuredEvent.get('id')
   }
+  if (req.query.hideReviewed && user) {
+    searchOptions.notReviewedById = user.get('id')
+  }
 
   // Fetch info
   // TODO Parallelize tasks
@@ -245,7 +248,7 @@ async function games (req, res) {
   if (featuredEvent) {
     let canVoteInEvent = await eventRatingService.canVoteInEvent(user, featuredEvent)
     if (canVoteInEvent && featuredEvent.get('status_results') === 'voting_rescue') {
-      rescueEntries = (await eventService.findRescueEntries(featuredEvent)).models
+      rescueEntries = (await eventService.findRescueEntries(featuredEvent, user)).models
       requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
     }
   }
