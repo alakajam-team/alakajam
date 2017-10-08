@@ -1,4 +1,7 @@
 Kajam rules
+
+> This is a draft. Rules might change by the start of the 1st Kajam.
+
 *Kajam* are month-long competitions in which people make a video game from scratch, focusing each time on a different, specific aspect of game making chosen by its host. They are perfect to learn, experiment and improve your gamedev skills.
 
 ## Divisions
