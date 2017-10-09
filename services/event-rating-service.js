@@ -212,10 +212,10 @@ async function refreshEntryRatings (entry) {
 
   votes.each(function (vote) {
     for (let categoryIndex of categoryIndexes) {
-      let rating = vote.get('vote_' + categoryIndex)
+      let rating = parseFloat(vote.get('vote_' + categoryIndex) || 0)
       if (rating !== 0) {
         ratingCount[categoryIndex]++
-        ratingSum[categoryIndex] += parseFloat(rating)
+        ratingSum[categoryIndex] += rating
       }
     }
   })
