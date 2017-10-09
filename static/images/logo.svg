@@ -1,1 +1,153 @@
-<?xml version="1.0" ?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg height="100%" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.41421;" version="1.1" viewBox="0 0 110 110" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><circle cx="55" cy="55" id="circle6" r="55" style="fill:#f2536d;"/><g id="g4190"><path d="M78.2675,25.1972C69.6902,22.6565 66.9967,27.4704 55,27.4704C43.0033,27.4704 40.3098,22.6373 31.7325,25.1972C23.1552,27.7379 18.8761,36.7354 14.8263,53.6225C10.7764,70.5287 11.5215,82.7355 16.2972,85.0088C21.073,87.2821 26.46,82.0669 31.5988,75.6292C35.7632,70.586 37.8455,70.2612 55,70.2612C72.1354,70.2612 73.912,70.395 78.4012,75.6292C83.54,82.0669 88.927,87.2821 93.7028,85.0088C98.4785,82.7355 99.2235,70.5287 95.1737,53.6225C91.1239,36.7354 86.8257,27.757 78.2675,25.1972ZM30.5863,56.4497C26.4409,56.4497 23.0788,53.0685 23.0788,48.8849C23.0788,44.7205 26.4409,41.3201 30.5863,41.3201C34.7317,41.3201 38.0938,44.7205 38.0938,48.8849C38.0938,53.0494 34.7317,56.4497 30.5863,56.4497ZM65.2583,52.61C63.2334,52.61 61.5714,50.9481 61.5714,48.904C61.5714,46.86 63.2334,45.198 65.2583,45.198C67.3024,45.198 68.9643,46.86 68.9643,48.904C68.9452,50.9481 67.3024,52.61 65.2583,52.61ZM73.3198,60.7097C71.2949,60.7097 69.6329,59.0478 69.6329,57.0037C69.6329,54.9406 71.2949,53.2977 73.3198,53.2977C75.3638,53.2977 77.0258,54.9597 77.0258,57.0037C77.0258,59.0669 75.3638,60.7097 73.3198,60.7097ZM73.3198,44.4912C71.2949,44.4912 69.6329,42.8293 69.6329,40.7852C69.6329,38.7412 71.2949,37.0793 73.3198,37.0793C75.3638,37.0793 77.0258,38.7412 77.0258,40.7852C77.0258,42.8293 75.3638,44.4912 73.3198,44.4912ZM81.4004,52.61C79.3564,52.61 77.7135,50.9481 77.7135,48.904C77.7135,46.86 79.3755,45.198 81.4004,45.198C83.4253,45.198 85.0873,46.86 85.0873,48.904C85.0873,50.9481 83.4444,52.61 81.4004,52.61L81.4004,52.61Z" id="path3" style="fill:rgb(255,249,249);fill-rule:nonzero;"/><g id="g4175"><circle cx="66.5253" cy="49.5158" id="path4167" r="4.69392" style="fill:rgb(76,144,195);stroke-width:0.22px;stroke:rgb(10,124,222);"/><circle cx="80.8229" cy="49.5158" id="circle4169" r="4.69392" style="fill:rgb(216,149,58);stroke-width:0.22px;stroke:rgb(184,118,22);"/><circle cx="73.5392" cy="41.5847" id="circle4171" r="4.69392" style="fill:rgb(194,68,78);stroke-width:0.22px;stroke:rgb(184,32,22);"/><circle cx="73.5932" cy="57.1232" id="circle4173" r="4.69392" style="fill:rgb(82,197,87);stroke-width:0.22px;stroke:rgb(22,184,53);"/></g><g id="g4161"><circle cx="30.991" cy="48.849" id="path4157" r="7.58858" style="fill:rgb(110,120,114);"/><circle cx="30.991" cy="48.849" id="circle4159" r="6.64381" style="fill:rgb(74,75,75);"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="256"
+   height="256"
+   viewBox="0 0 67.733331 67.733331"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="D:\Dev\alakajam\static\images\logo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#00b1d5"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="310.47155"
+     inkscape:cy="166.99446"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1018"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     units="px"
+     inkscape:pagecheckerboard="true" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-229.26668)">
+    <rect
+       style="fill:#00b1d5;fill-opacity:1;stroke-width:0.24410048"
+       id="rect3755"
+       width="67.73333"
+       height="67.73333"
+       x="1.7801921e-006"
+       y="229.26668" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#005b6c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="8.3891239"
+       y="286.01797"
+       id="text3723-4"><tspan
+         sodipodi:role="line"
+         id="tspan3721-5"
+         x="8.3891239"
+         y="286.01797"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Fredoka One';-inkscape-font-specification:'Fredoka One';fill:#005b6c;fill-opacity:1;stroke-width:0.26458332">Alakajam!</tspan></text>
+    <image
+       y="238.10826"
+       x="18.178858"
+       id="image3718"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAAHzCAYAAABvx2l6AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJ
+bWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdp
+bj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6
+eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0
+NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJo
+dHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlw
+dGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAv
+IiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RS
+ZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpD
+cmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNl
+SUQ9InhtcC5paWQ6Q0MxMzk1QzBBQ0Q5MTFFNzlBMDlFMDA3REY3RDcyNzIiIHhtcE1NOkRvY3Vt
+ZW50SUQ9InhtcC5kaWQ6Q0MxMzk1QzFBQ0Q5MTFFNzlBMDlFMDA3REY3RDcyNzIiPiA8eG1wTU06
+RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpDQzEzOTVCRUFDRDkxMUU3OUEw
+OUUwMDdERjdENzI3MiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpDQzEzOTVCRkFDRDkxMUU3
+OUEwOUUwMDdERjdENzI3MiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1w
+bWV0YT4gPD94cGFja2V0IGVuZD0iciI/PjNz0KMAAAgrSURBVHja7Nexat1mGMdhK5Jvo0Pxlivw
+4LnSVgiEA5m0GoEHT72IDIaDO2oynBQK2Y7mpBDo3s2+kQZJnbx6ED3/CPl5buBFr76j3/mKMwD+
+Px+6eXPP9LAvEmPeOD0ArIEgASBIACBIAAgSAAgSAIIEAIIEgCABgCABIEgAIEgACBIACBIAggQA
+ggSAIAGAIAEgSAAgSAAIEgAIEgCCBACCBIAgAcCpVVbAs3bXzbZAWn/YF5FBHzLne76tI49TPP2c
+fE2R3bkhAbAKggSAIAGAIAEgSAAgSAAIEgAIEgCCBACCBIAgAYAgASBIACBIAAgSAAgSAIIEAIIE
+gCABgCABIEgAIEgACBIACBIAggQAggTAq1BYwfq1u25OzKnHzHFoJu907Y7Bv6pDGTneZ30ZeqBf
+rzPfhT/vY+8otTs3JABWQZAAECQAECQABAkABAkAQQIAQQJAkABAkAAQJAAQJAAECQAECQBBAgBB
+AkCQAECQABAkABAkAAQJAAQJAEECAEECQJAA4NQKK1iu3XVzYk49Zl5TM3mn5B1Df4uHMvJzPevf
+XW/vJX2+d0MC4PUQJAAECQAECQBBAgBBAkCQAECQABAkABAkAAQJAAQJAEECAEECQJAAQJAAECQA
+ECQABAkABAkAQQIAQQJAkABAkAAQJAA4tWJrD9Tuujk1qx4z62smB3Wpm/PMcejLjf2Oxtysu++Z
+39Ex9Pd7KDd45h72kZfkhgTAKggSAIIEAIIEgCABgCABIEgAIEgACBIACBIAggQAggSAIAGAIAEg
+SAAgSAAIEgAIEgCCBACCBIAgAYAgASBIACBIAAgSAJxalRrU7ro5Macei9jymskBWuLmfI7N6kv7
+Xv/eMuch+W3ADQkAQQIAQQJAkABAkAAQJAAQJAAECQAECQBBAgBBAkCQAECQABAkABAkAAQJAAQJ
+AEECAEECAEECQJAAQJAAECQAECQABAkABAmAdau29kDN5KWuXV9u75na0Xtd+3movSM3JAAQJAAE
+CQAECQBBAgBBAkCQAECQABAkABAkAAQJAAQJAEECAEECQJAAQJAAECQAECQABAkABAkAQQIAQQJA
+kABAkAAQJCsAYA2qdtfNiUH1WGxueTfnkdXFdtdMmb19+jd3FoYy845uLy98TZb69mgHuCEBIEgA
+IEgACBIACBIAggQAggSAIAGAIAEgSAAgSAAIEgAIEgCCBACCBIAgAYAgASBIACBIAAgSAAgSAIIE
+AIIEgCABgCAB8HpUqUHNlJlz3GBi3//2S2TOP18fMw/011Nsd7eXF5E5b68uzljm7suTbwNuSAAI
+EgAIEgCCBACCBIAgAYAgASBIACBIAAgSAAgSAIIEAIIEgCABgCABIEgAIEgACBIACBIAggQAggSA
+IAGAIAEgSAAgSAC8HtXWHmgo59iseiycoJX76ctTZtDVhWUvdAz9LU59G24vM2eh//vRDQkABAkA
+QQIAQQJAkABAkAAQJAAQJAAECQAECQBBAgBBAkCQrAAAQQIAQQJAkABAkAAQJAAQJAAECQAECQBB
+AgBBAkCQAECQABAkAFioSA1qd92cmNMf9pt7Jparx8xxaCa7XurmPPMzur28iMx5e5WZU3wcci/p
+IfNddUMCYBUECQBBAgBBAkCQAECQABAkABAkAAQJAAQJAEECAEECQJAAQJAAECQAECQABAkABAkA
+QQIAQQJAkABAkAAQJAAQJAAECQBOrUoN6g/7wrqXqcfM6oZytuyFjv7ard7Hb4+ZQak5pRsSAAgS
+AIIEAIIEgCABgCABIEgAIEgACBIACBIAggQAggQAggSAIAGAIAEgSAAgSAAIEgAIEgCCBACCBIAg
+AYAgASBIACBIAAgSAAgSAIIEAIIEgCABgCABIEgAIEgACBIACBIAggQAggSAIAGAIAEgSAAgSAAI
+EgAIEgCCBACCBACCBIAgAYAgASBIACBIAAgSALygsoLl+sO+iAzadfOW9laPRWxWM2XmHP21W//v
+9d11ZM6nP37PPE85b+4d+RkBIEgAIEgACBIACBIAggQAggSAIAGAIAEgSAAgSAAIEgAIEgCCBACC
+BIAgAYAgASBIACBIAAgSAAgSAIIEAIIEgCABgCABIEgAkFJZAc/qsYjMaabt7S71TEd/IZf7fB8Z
+M5RW7YYEgCABgCABIEgAIEgACBIACBIAggQAggSAIAGAIAEgSAAgSAAIEgAIEgCCBACCBIAgAYAg
+AYAgASBIACBIAAgSAAgSAIIEAC+orIBnzZSZc3yzvWdKGco5Mqcei82d73bMzOlL3xI3JAAECQAE
+CQBBAgBBAkCQAECQABAkABAkAAQJAAQJAEECAEECQJAAQJAAECQAECQABAkABAkABAkAQQIAQQJA
+kABAkAAQJAB4QWUFy7W7bk7MqcfCstms1Pkeytmy3ZAAQJAAECQAECQABAkABAkAQQIAQQJAkABA
+kAAQJAAQJAAECQAECQBBAgBBAkCQAECQABAkABAkAAQJAAQJAEECAEECQJAA4MerrGD9hnIOzck8
+z933YnPv6Bj6a1ePxabOHLghASBIACBIAAgSAAgSAIIEAIIEgCABgCABIEgAIEgACBIACBIAggQA
+ggSAIAGAIAEgSAAgSAAIEgAIEgCCBACCBIAgAYAgASBIAPAjFFZAWrvrZltYt/6w923ADQkAQQIA
+QQJAkABAkABAkAAQJAAQJAAECQAECQBBAgBBAkCQAECQABAkABAkAAQJAAQJAEECAEECQJAAQJAA
+ECQAECQABAkATuE/AQYAsvqpYe4C6k0AAAAASUVORK5CYII=
+"
+       preserveAspectRatio="none"
+       height="35.970734"
+       width="30.275969" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="8.3891239"
+       y="285.28561"
+       id="text3723"><tspan
+         sodipodi:role="line"
+         id="tspan3721"
+         x="8.3891239"
+         y="285.28561"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Fredoka One';-inkscape-font-specification:'Fredoka One';fill:#ffffff;stroke-width:0.26458332">Alakajam!</tspan></text>
+  </g>
+</svg>

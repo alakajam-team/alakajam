@@ -347,14 +347,14 @@ input.date-picker {
       margin-top: 3px;
       width: 220px;
       height: 50px;
-      background: url('/static/images/brand.png');
+      background: url('/static/images/brand.svg');
       padding: 0;
     }
       
     & .navbar-brand__hover {
       width: 1px; /* force preload */
       height: 1px;
-      background: url('/static/images/brand_hover.png');
+      background: url('/static/images/brand_hover.svg');
     }
     
     & .navbar-brand:hover .navbar-brand__hover {
