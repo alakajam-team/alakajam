@@ -1,4 +1,4 @@
-![Alakajam!](https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/brand.png)
+![Alakajam!](https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/logo.png)
 
 ## Initial setup
 
