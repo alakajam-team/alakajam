@@ -16,7 +16,6 @@
 const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
-// const ExpressBrute = require('express-brute')
 const cookies = require('cookies')
 const postCss = require('postcss-middleware')
 const browserifyMiddleware = require('browserify-middleware')
@@ -70,20 +69,6 @@ async function configure (app) {
 
   // Remaining static files
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
-
-  // Request throttling
-  if (!app.locals.devMode) {
-   // let store = new ExpressBrute.MemoryStore() // TODO use brute-knex
-  /*  let bruteforce = new ExpressBrute(store, {
-      freeRetries: 10,
-      minWait: 100, // ms
-      lifetime: 0.2, // seconds
-      failCallback: function (req, res, next, nextValidRequestDate) {
-        res.end('ERROR: Too many requests. Fair use is 5req/s.')
-      }
-    }) */
-    // app.use(bruteforce.prevent)
-  }
 
   // Templating
   app.set('views', path.join(ROOT_PATH, '/templates'))
