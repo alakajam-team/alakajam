@@ -219,9 +219,8 @@ async function findCommentsToUser (user, options = {}) {
  * @return {array(number)}
  */
 async function findOwnAnonymousCommentIds (user, nodeId, nodeType) {
-  let results = db.knex()
+  let results = db.knex('anonymous_comment_user')
     .select('anonymous_comment_user.comment_id')
-    .from('anonymous_comment_user')
     .leftJoin('comment', 'comment.id', 'anonymous_comment_user.comment_id')
     .where({
       'anonymous_comment_user.user_id': user.get('id'),
@@ -239,9 +238,8 @@ async function findOwnAnonymousCommentIds (user, nodeId, nodeType) {
  */
 async function isOwnAnonymousComment (comment, user) {
   if (comment.get('user_id') === constants.ANONYMOUS_USER_ID) {
-    let result = await db.knex()
+    let result = await db.knex('anonymous_comment_user')
       .count()
-      .from('anonymous_comment_user')
       .where({
         comment_id: comment.get('id'),
         user_id: user.get('id')
