@@ -10,14 +10,19 @@ const moment = require('moment')
 const urllib = require('url')
 const config = require('../config')
 const forms = require('../core/forms')
+const enums = require('../core/enums')
 const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const buildUrl = require('./templating').buildUrl
 
 const PUBLIC_ATTRIBUTES_EVENT = ['id', 'name', 'title', 'display_dates', 'display_theme', 'status', 'status_theme', 'status_entry', 'status_results', 'countdown_config']
 const PUBLIC_ATTRIBUTES_ENTRY = ['id', 'event_id', 'event_name', 'name', 'title', 'description', 'links', 'pictures', 'category', 'comment_count', 'feedback_score']
+const PUBLIC_ATTRIBUTES_ENTRY_DETAILS = ['body', 'optouts', 'rating_count']
+const PUBLIC_ATTRIBUTES_ENTRY_DETAILS_RESULTS = ['rating_1', 'rating_2', 'rating_3', 'rating_4', 'rating_5', 'rating_6', 'ranking_1', 'ranking_2', 'ranking_3', 'ranking_4', 'ranking_5', 'ranking_6']
 const PUBLIC_ATTRIBUTES_USER = ['id', 'name', 'title', 'avatar', 'is_mod', 'is_admin']
 const PUBLIC_ATTRIBUTES_COMMENT = ['id', 'user_id', 'parent_id', 'body', 'created_at', 'updated_at']
+
+const DETAILED_ENTRY_OPTIONS = { withRelated: ['comments', 'details', 'userRoles.user', 'event'] }
 
 module.exports = {
   featuredEvent,
@@ -114,21 +119,10 @@ async function entry (req, res) {
   let status = 200
 
   if (forms.isId(req.params.entry)) {
-    let entry = await eventService.findEntryById(req.params.entry)
+    let entry = await eventService.findEntryById(req.params.entry, DETAILED_ENTRY_OPTIONS)
+
     if (entry) {
-      json = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY)
-
-      await entry.load('comments')
-      json.comments = []
-      for (let comment of entry.related('comments').models) {
-        json.comments.push(_getAttributes(comment, PUBLIC_ATTRIBUTES_COMMENT))
-      }
-
-      await entry.load('userRoles.user')
-      json.users = []
-      for (let user of entry.related('userRoles').models) {
-        json.users.push(_getAttributes(user.related('user'), PUBLIC_ATTRIBUTES_USER))
-      }
+      json = _getDetailedEntryJson(entry)
     } else {
       json = { error: 'Entry not found' }
       status = 404
@@ -139,6 +133,35 @@ async function entry (req, res) {
   }
 
   _renderJson(req, res, status, json)
+}
+
+/**
+ * Transforms an entry model into detailed JSON info
+ * @param  {Entry} entry must be fetched with DETAILED_ENTRY_OPTIONS
+ * @return {object} json
+ */
+function _getDetailedEntryJson (entry) {
+  let json = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY)
+
+  let entryDetails = entry.related('details')
+  Object.assign(json, _getAttributes(entryDetails, PUBLIC_ATTRIBUTES_ENTRY_DETAILS))
+
+  let event = entry.related('event')
+  if (event.get('status_results') === enums.EVENT.STATUS_RESULTS.RESULTS) {
+    json.results = _getAttributes(entryDetails, PUBLIC_ATTRIBUTES_ENTRY_DETAILS_RESULTS)
+  }
+
+  json.comments = []
+  for (let comment of entry.related('comments').models) {
+    json.comments.push(_getAttributes(comment, PUBLIC_ATTRIBUTES_COMMENT))
+  }
+
+  json.users = []
+  for (let user of entry.related('userRoles').models) {
+    json.users.push(_getAttributes(user.related('user'), PUBLIC_ATTRIBUTES_USER))
+  }
+
+  return json
 }
 
 /**
@@ -186,7 +209,7 @@ async function userLatestEntry (req, res) {
 
     const entry = await eventService.findLatestUserEntry(user)
     if (entry) {
-      json.latest_entry = _getAttributes(await eventService.findLatestUserEntry(user), PUBLIC_ATTRIBUTES_ENTRY)
+      json.latest_entry = _getDetailedEntryJson(await eventService.findLatestUserEntry(user, DETAILED_ENTRY_OPTIONS))
       json.latest_entry.url = urllib.resolve(config.ROOT_URL, buildUrl(entry, 'entry'))
     }
   } else {
