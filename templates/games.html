@@ -44,7 +44,7 @@
       </div>
       {% endif %}
 
-      {{ formMacros.pagination(currentPage, pageCount, path) }}
+      {{ formMacros.pagination(searchOptions.currentPage, pageCount, path) }}
       
       <div class="row">
       {% for entry in entries %}
@@ -54,7 +54,7 @@
       {% endfor %}
       </div>
       
-      {{ formMacros.pagination(currentPage, pageCount, path) }}
+      {{ formMacros.pagination(searchOptions.currentPage, pageCount, path) }}
     </div>
   </div>
 </div>

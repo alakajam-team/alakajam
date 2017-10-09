@@ -23,6 +23,7 @@ const platformService = require('../services/platform-service')
 
 module.exports = {
   handleEventUserShortcuts,
+  handleGameSearch,
 
   eventMiddleware,
 
@@ -87,6 +88,63 @@ async function handleEventUserShortcuts (res, targetEvent) {
 
     return Promise.all([entryTask, userPostTask])
   }
+}
+
+/**
+ * Fills a searchOptions object according to the request GET parameters
+ * @param  {Request} req
+ * @param  {object} searchOptions initial search options
+ * @return {object} search options
+ */
+function handleGameSearch (req, res, searchOptions = {}) {
+  // Pagination
+  searchOptions.pageSize = 20
+  searchOptions.currentPage = 1
+  if (forms.isId(req.query.p)) {
+    searchOptions.currentPage = parseInt(req.query.p)
+  }
+
+  // Text search
+  searchOptions.search = forms.sanitizeString(req.query.search)
+
+  // Division
+  for (let key in enums.DIVISION) {
+    let division = enums.DIVISION[key]
+    let fieldName = 'division-' + division
+    if (req.query[fieldName]) {
+      searchOptions.divisions = searchOptions.divisions || []
+      searchOptions.divisions.push(division)
+    }
+  }
+
+  // Platforms
+  if (req.query.platforms) {
+    if (typeof req.query.platforms === 'object') {
+      searchOptions.platforms = req.query.platforms.map(str => parseInt(str))
+    } else {
+      searchOptions.platforms = [parseInt(req.query.platforms)]
+    }
+    if (searchOptions.platforms.includes(NaN)) {
+      searchOptions.platforms = []
+      log.error('Invalid platform query: ' + req.query.platforms)
+    }
+  }
+
+  // Event
+  if (req.query.eventId === 'none') {
+    searchOptions.eventId = null
+  } else if (forms.isId(req.query.eventId)) {
+    searchOptions.eventId = req.query.eventId
+  } else if (req.query.eventId === undefined && res.locals.featuredEvent) {
+    searchOptions.eventId = res.locals.featuredEvent.get('id')
+  }
+
+  // Hide rated/commented
+  if (req.query.hideReviewed && res.locals.user) {
+    searchOptions.notReviewedById = res.locals.user.get('id')
+  }
+
+  return searchOptions
 }
 
 /**
@@ -275,8 +333,6 @@ async function viewEventThemes (req, res) {
 async function viewEventGames (req, res) {
   res.locals.pageTitle += ' | Games'
 
-  const PAGE_SIZE = 20
-
   let {user, event} = res.locals
   if (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OFF) {
     res.errorPage(404)
@@ -284,38 +340,9 @@ async function viewEventGames (req, res) {
   }
 
   // Search form & pagination
-  let currentPage = 1
-  if (forms.isId(req.query.p)) {
-    currentPage = parseInt(req.query.p)
-  }
-  let searchOptions = {
-    pageSize: PAGE_SIZE,
-    page: currentPage,
+  let searchOptions = handleGameSearch(req, res, {
     eventId: event.get('id')
-  }
-  // TODO Refactor (shared with mainController)
-  searchOptions.search = forms.sanitizeString(req.query.search)
-  if (req.query.divisions) {
-    if (typeof req.query.divisions === 'object') {
-      searchOptions.divisions = req.query.divisions
-    } else {
-      searchOptions.divisions = [req.query.divisions]
-    }
-  }
-  if (req.query.platforms) {
-    if (typeof req.query.platforms === 'object') {
-      searchOptions.platforms = req.query.platforms.map(str => parseInt(str))
-    } else {
-      searchOptions.platforms = [parseInt(req.query.platforms)]
-    }
-    if (searchOptions.platforms.includes(NaN)) {
-      searchOptions.platforms = []
-      log.error('Invalid platform query: ' + req.query.platforms)
-    }
-  }
-  if (req.query.hideReviewed && user) {
-    searchOptions.notReviewedById = user.get('id')
-  }
+  })
 
   // Search entries
   let rescueEntries = []
@@ -341,7 +368,6 @@ async function viewEventGames (req, res) {
     entriesCollection,
     voteHistory,
     searchOptions,
-    currentPage,
     platforms: platformCollection.models
   })
 }

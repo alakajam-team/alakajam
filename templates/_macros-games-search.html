@@ -35,15 +35,20 @@
       </div>
       <div class="form-group">
         <label for="divisions">Divisions</label>
-        <select id="js-divisions" name="divisions" class="form-control" multiple="multiple">
+        <div class="btn-group" data-toggle="buttons">
           {% for division in ['solo', 'team', 'unranked'] %}
-            <option value="{{ division }}" {{ 'selected' if context.searchOptions.divisions and context.searchOptions.divisions.includes(division) }}>{{ division | capitalize }}</option>
+            {% set active = not context.searchOptions.divisions or context.searchOptions.divisions.includes(division) %}
+            <label class="btn btn-default {{ 'active' if active }}">
+              <input type="checkbox" name="division-{{ division }}" {{ 'checked="checked"' if active }} autocomplete="off"> {{ division | capitalize }}
+            </label>
           {% endfor %}
-        </select>
+        </div>
       </div>
+      {% if user %}
       <div class="form-group">
         <p><label><input type="checkbox" name="hideReviewed" {{ 'checked="checked"' if context.searchOptions.notReviewedById }}> Hide rated or commented</label></label>
       </div>
+      {% endif %}
       <div class="form-group">
         <input type="submit" class="btn btn-primary" value="Apply" />
         <a href="?" class="btn btn-default">Clear</a>
@@ -72,6 +77,6 @@
 $('#js-event').select2({
   allowClear: true
 })
-$('#js-platforms, #js-divisions').select2()
+$('#js-platforms').select2()
 </script>
 {% endmacro %}

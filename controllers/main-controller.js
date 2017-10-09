@@ -9,7 +9,6 @@
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = promisify('path')
-const log = require('../core/log')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
 const constants = require('../core/constants')
@@ -197,49 +196,10 @@ async function events (req, res) {
 async function games (req, res) {
   res.locals.pageTitle = 'Games'
 
-  const PAGE_SIZE = 20
-
   let {user, featuredEvent} = res.locals
 
   // Parse query
-  let currentPage = 1
-  if (forms.isId(req.query.p)) {
-    currentPage = parseInt(req.query.p)
-  }
-  let searchOptions = {
-    pageSize: PAGE_SIZE,
-    page: currentPage
-  }
-  // TODO Refactor (shared with eventController
-  searchOptions.search = forms.sanitizeString(req.query.search)
-  if (req.query.divisions) {
-    if (typeof req.query.divisions === 'object') {
-      searchOptions.divisions = req.query.divisions
-    } else {
-      searchOptions.divisions = [req.query.divisions]
-    }
-  }
-  if (req.query.platforms) {
-    if (typeof req.query.platforms === 'object') {
-      searchOptions.platforms = req.query.platforms.map(str => parseInt(str))
-    } else {
-      searchOptions.platforms = [parseInt(req.query.platforms)]
-    }
-    if (searchOptions.platforms.includes(NaN)) {
-      searchOptions.platforms = []
-      log.error('Invalid platform query: ' + req.query.platforms)
-    }
-  }
-  if (req.query.eventId === 'none') {
-    searchOptions.eventId = null
-  } else if (forms.isId(req.query.eventId)) {
-    searchOptions.eventId = req.query.eventId
-  } else if (req.query.eventId === undefined && featuredEvent) {
-    searchOptions.eventId = featuredEvent.get('id')
-  }
-  if (req.query.hideReviewed && user) {
-    searchOptions.notReviewedById = user.get('id')
-  }
+  let searchOptions = eventController.handleGameSearch(req, res)
 
   // Fetch info
   // TODO Parallelize tasks
@@ -264,7 +224,6 @@ async function games (req, res) {
   res.render('games', {
     searchOptions,
     searchedEvent,
-    currentPage,
     entryCount: entriesCollection.pagination.rowCount,
     pageCount: entriesCollection.pagination.pageCount,
     rescueEntries,
