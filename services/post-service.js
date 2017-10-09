@@ -126,9 +126,7 @@ async function findPost (options = {}) {
 async function findLatestAnnouncement (options = {}) {
   let query = models.Post
     .where('special_post_type', constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
-    .query(function (qb) {
-      qb.whereNotNull('published_at')
-    })
+    .where('published_at', '<=', new Date())
   if (options.eventId) {
     query = query.where('event_id', options.eventId)
   }
