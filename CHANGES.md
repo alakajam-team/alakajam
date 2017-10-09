@@ -7,9 +7,16 @@
 * Reworked logo
 * Expose ratings & rankings in the REST API
 
-### October 3rd
+### October 8th
+
+* Let people filter out the games they rated/commented on
+
+### October 6th
 
 * Reworked competition results page, with pretty trophy pictures
+
+### October 3th
+
 * Final rankings and ratings have been added to the entry page
 
 ### October 2nd
