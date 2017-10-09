@@ -1,7 +1,7 @@
 JSON API
 ## General tips ##
 
-* Append `?pretty=true` to get a human-readable output of the data.
+* Append `?pretty=true` to get a human-readable output of the data
 * If something goes wrong, the response will always have the format: `{ "error": "..." }`
 
 ## Endpoints ##
