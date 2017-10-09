@@ -484,21 +484,31 @@ async function deleteEntry (entry) {
 }
 
 /**
- * @param options {object} nameFragment eventId platforms pageSize page withRelated notReviewedBy
+ * @param options {object} nameFragment eventId platforms pageSize page withRelated notReviewedBy sortByRatingCount sortByRating
  */
 async function findGames (options = {}) {
   let query = models.Entry.forge()
+
+  // Sorting
   if (!options.count) {
     if (options.sortByRatingCount) {
       query = query.query(function (qb) {
         return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
           .orderBy('entry_details.rating_count')
       })
-    } else {
+    } else if (options.sortByRating) {
+      query = query.query(function (qb) {
+        return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
+          .orderBy('entry_details.rating_1', 'desc')
+          .where('entry_details.rating_1', '>', 0)
+      })
+    } else if (options.eventId !== null) {
       query = query.orderBy('entry.feedback_score', 'DESC')
     }
     query = query.orderBy('entry.created_at', 'DESC')
   }
+
+  // Filters
   if (options.search) query = query.where('entry.title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
   if (options.eventId !== undefined) query = query.where('entry.event_id', options.eventId)
   if (options.platforms) {
@@ -529,8 +539,12 @@ async function findGames (options = {}) {
             .select('node_id'))
     })
   }
+
+  // Pagination settings
   if (options.pageSize === undefined) options.pageSize = 30
   if (options.withRelated === undefined) options.withRelated = ['event', 'userRoles']
+
+  // Fetch
   if (options.count) {
     return query.count()
   } else if (options.pageSize) {

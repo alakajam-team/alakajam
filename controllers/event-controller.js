@@ -137,6 +137,8 @@ function handleGameSearch (req, res, searchOptions = {}) {
     searchOptions.eventId = req.query.eventId
   } else if (req.query.eventId === undefined && res.locals.featuredEvent) {
     searchOptions.eventId = res.locals.featuredEvent.get('id')
+  } else {
+    searchOptions.sortByRating = true
   }
 
   // Hide rated/commented
