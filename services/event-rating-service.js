@@ -364,7 +364,7 @@ async function computeRankings (event) {
         let details = entry.related('details')
 
         // Rank it, if it has an average rating if the given category
-        if (details.get('rating_' + categoryIndex)) {
+        if (details.get('rating_' + categoryIndex) >= 1) {
           let tie = previousDetails &&
             previousDetails.get('rating_' + categoryIndex) === details.get('rating_' + categoryIndex)
           if (tie) {

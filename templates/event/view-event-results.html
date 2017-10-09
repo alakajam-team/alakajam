@@ -62,7 +62,7 @@
 <div class="text-center results-links">
   <span class="btn-group" style="margin-right: 20px">
     {% for division in ['solo','team'] %}
-      <a href="?sortBy={{ sortBy }}&amp;division={{ division }}" type="button" 
+      <a href="?sortBy={{ selectedCategoryIndex }}&amp;division={{ division }}" type="button" 
           class="btn btn-primary results-links__division {{ 'disabled' if selectedDivision === division }}">
         <span class="fa fa-user{{ 's' if division === 'team' }}"></span>
         {{ division | capitalize }}
