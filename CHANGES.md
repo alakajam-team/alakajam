@@ -2,6 +2,11 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### October 9th
+
+* Reworked logo
+* Expose ratings & rankings in the REST API
+
 ### October 3rd
 
 * Reworked competition results page, with pretty trophy pictures
