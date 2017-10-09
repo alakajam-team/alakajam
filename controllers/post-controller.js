@@ -299,42 +299,49 @@ async function saveComment (req, res) {
 async function handleSaveComment (fields, currentUser, currentNode, baseUrl, currentEvent) {
   let redirectUrl = baseUrl
 
-  // Find or create comment
+  // Validate comment body
+  let body = forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_COMMENT)
+  if (!body) {
+    return redirectUrl
+  }
+
+  // Check permissions, then update/create/delete comment
   let comment = null
-  let isNewComment = false
+  let isCreation = false
+  let isDeletion = fields.delete
+  let hasWritePermissions = false
   if (fields.id) {
     if (forms.isId(fields.id)) {
       comment = await postService.findCommentById(fields.id)
+      hasWritePermissions = securityService.canUserManage(currentUser, comment, { allowMods: true }) ||
+          await postService.isOwnAnonymousComment(comment, currentUser)
+    }
+
+    if (hasWritePermissions) {
+      if (isDeletion) {
+        // Delete comment
+        await postService.deleteComment(comment)
+      } else {
+        // Update comment
+        comment.set('body', body)
+        await comment.save()
+      }
     } else {
       return redirectUrl
     }
   } else {
-    isNewComment = true
-    comment = await postService.createComment(currentUser, currentNode)
+    isCreation = true
+    hasWritePermissions = true
+    comment = await postService.createComment(currentUser, currentNode, body, fields['comment-anonymously'])
   }
 
-  if (securityService.canUserManage(currentUser, comment, { allowMods: true }) ||
-      await postService.isOwnAnonymousComment(comment, currentUser)) {
+  // Comment repercussions
+  if (hasWritePermissions) {
     let nodeType = comment.get('node_type')
     let userId = comment.get('user_id')
 
-    if (fields.delete) {
-      // Delete comment
-
-      // In case it was an anonymous comment, delete the associated user link
-      await db.knex('anonymous_comment_user')
-        .where('comment_id', comment.get('id'))
-        .del()
-
-      await comment.destroy()
-    } else {
-      // Update comment
-      comment.set('body', forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_COMMENT))
-      await comment.save()
-    }
-
     if (nodeType === 'entry') {
-      if (isNewComment) {
+      if (isCreation) {
         if (!currentUser.get('disallow_anonymous') && fields['comment-anonymously'] && currentNode.get('allow_anonymous')) {
           comment.set('user_id', -1)
           await db.knex('anonymous_comment_user').insert({
@@ -346,10 +353,6 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
         await comment.save()
       } else {
         // This change might impact the feedback score of other comments, refresh them
-        // (but save the comment first)
-        if (!fields.delete) {
-          await comment.save()
-        }
         await eventService.refreshUserCommentScoresOnNode(currentNode, userId)
       }
 
@@ -361,8 +364,9 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
         await eventRatingService.refreshEntryScore(userEntry, currentEvent)
       }
 
-      if (!fields.delete) {
-        // we need to update the comment feed and unread notifications of users associated with the post/entry
+      // Cache invalidation
+      if (!isDeletion) {
+        // Comment feed and unread notifications of users associated with the post/entry
         let node = comment.related('node')
         let userRoles = node.related('userRoles')
         userRoles.forEach(function (userRole) {
@@ -371,7 +375,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
           userCache.del('unreadNotifications')
         })
 
-        // and also any users @mentioned in the comment
+        // Users @mentioned in the comment
         let body = comment.get('body')
         body.split(' ').forEach(function (word) {
           if (word.length > 0 && word[0] === '@') {
@@ -385,10 +389,11 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
       }
     }
 
+    // Cache invalidation: user's own comment history
     cache.user(currentUser.get('name')).del('byUserCollection')
 
     // Refresh node comment count
-    if (fields.delete || isNewComment) {
+    if (isDeletion || isCreation) {
       await postService.refreshCommentCount(currentNode)
     }
   }

@@ -30,7 +30,8 @@ module.exports = {
 
   createPost,
   refreshCommentCount,
-  createComment
+  createComment,
+  deleteComment
 }
 
 /**
@@ -276,17 +277,30 @@ async function createPost (user, eventId) {
 }
 
 /**
- * Creates a new comment.
+ * Creates and persists a new comment.
  * @param  {User} user
  * @param  {Post|Entry} node
  * @param  {string} (optional) comment body
+ * @param  {Boolean} requestAnonymous (optional)
  * @return {Comment}
  */
-async function createComment (user, node, body) {
+async function createComment (user, node, body, requestAnonymous = false) {
   let comment = await node.comments().create({
     user_id: user.get('id'),
     body: body
   })
+
+  if (requestAnonymous && !user.get('disallow_anonymous') && node.get('allow_anonymous')) {
+    comment.set('user_id', -1)
+    await comment.save() // save the comment now to get an ID
+    await db.knex('anonymous_comment_user').insert({
+      'comment_id': comment.get('id'),
+      'user_id': user.get('id')
+    })
+  } else {
+    await comment.save()
+  }
+
   return comment
 }
 
@@ -299,4 +313,18 @@ async function refreshCommentCount (node) {
   let commentCount = node.related('comments').size()
   node.set('comment_count', commentCount)
   await node.save()
+}
+
+/**
+ * Deletes the given comment
+ * @param  {Comment} comment
+ * @return {void}
+ */
+async function deleteComment (comment) {
+  // In case it was an anonymous comment, delete the associated user link
+  await db.knex('anonymous_comment_user')
+    .where('comment_id', comment.get('id'))
+    .del()
+
+  await comment.destroy()
 }

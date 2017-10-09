@@ -1547,7 +1547,7 @@ input.date-picker {
     display: inline-block;
     height: 32px;
     position: absolute;
-    right: 40px;
+    right: 50px;
     top: 0;
     width: 32px;
     &.medal1 {
