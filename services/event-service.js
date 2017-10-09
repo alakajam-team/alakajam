@@ -602,7 +602,7 @@ async function findUserEntries (user) {
     // TODO Sort by publication date
     if (a.get('event_id')) {
       if (b.get('event_id')) {
-        return a.get('created_at') - b.get('created_at')
+        return b.get('created_at') - a.get('created_at')
       } else {
         return -1
       }
