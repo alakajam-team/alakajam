@@ -1,0 +1,279 @@
+/**
+ * Home page
+ */
+
+.home-welcome {
+  @apply --shadow;
+  position: relative;
+  padding: 10px;
+  padding-left: 100px;
+  margin: 10px 15px 30px 15px;
+  background-color: var(--main-lighter);
+  border-left: 10px solid var(--main-dark);
+  font-size: 1.2rem;
+
+  &__icon {
+    position: absolute;
+    left: 0;
+    top: -15px;
+  }
+
+  &__title {
+    font-weight: bold;
+  }
+
+  &__brand {
+    @apply --alt-font;
+    display: inline;
+    letter-spacing: 0px;
+  }
+
+  &__more {
+    color: var(--main-dark);
+    font-weight: bold;
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--text);
+      text-decoration: underline;
+    }
+  }
+
+}
+
+.home-jumbo {
+  background-color: var(--borders);
+  
+  @media (max-width: 991px) {
+    & {
+      text-align: center;
+    }
+  }
+
+  & .event-table__header {
+    margin-bottom: 10px;
+  }
+  
+  & .event-table.not-live .event-table__header {
+    @apply --shadow;
+    padding: 10px;
+    background-color: var(--main);
+    color: white;
+    text-align: left;
+
+    & h2 {
+      color: white;
+    }
+
+    &:hover {
+      background-color: var(--main-light);
+    }
+  }
+  
+  &__sidebar {
+    padding-left: 10px;
+    font-size: 0;
+  }
+  @media (max-width: 991px) {
+    &__sidebar {
+      padding: 0 10px;
+    }
+  }
+
+  &__details {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 10px;
+
+    &.call {
+      border-left: 10px #da4453 solid;
+    }
+  }
+
+  &__call {
+    @apply --alt-font;
+    display: block;
+    font-size: 2rem;
+    font-weight: normal;
+    line-height: 1.9rem;
+    padding-bottom: 10px;
+  }
+  
+  &__link {
+    transition: 0.3s;
+    font-size: 2.0rem;
+    line-height: 22px;
+
+    &.disabled, &.disabled:hover {
+      color: var(--text-lighter);
+      cursor: default;
+    } 
+
+    & .glyphicon {
+      vertical-align: middle;
+      font-size: 1.5rem;
+      margin-top: -3px;
+    }
+  }
+  
+  &__news-link {
+    @apply --shadow;
+    background-color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+
+    &.disabled, &.disabled:hover {
+      color: var(--text-lighter);
+    } 
+  }
+  &__news-link:hover {
+    color: var(--alt-dark);
+    border: 4px solid var(--alt-dark);
+    transition: 0.1s;
+    padding: 2px 7px;
+  }
+  
+  &__link-border {
+    height: 38px;
+    margin-bottom: 5px;
+    padding: 4px 10px;
+  }
+  &__link.active:hover &__link-border {
+    color: var(--alt-dark);
+    margin-left: 10px;
+    transition: 0.1s;
+  }
+  @media (max-width: 991px) {
+    &__link {
+      line-height: 22px;
+    }
+    
+    &__link-border {
+      height: 45px;
+      margin-bottom: 4px;
+    }
+  }
+  
+  &__link-label {
+    display: inline-block;
+    line-height: 1.8px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 0;
+  }
+
+  &__countdown {
+    display: none;
+    margin: 10px auto 20px -3px;
+    width: 332px;
+    
+    & .flip .inn {
+      background-color: var(--text)
+    }
+    & .flip-clock-label {
+      color: var(--text-light)
+    }
+  }
+
+  &__announcement {
+    text-align: left;
+    margin-right: 10px;
+    margin-bottom: 0;
+    
+    & h1 > a {
+      color: var(--text);
+      
+      &:hover {
+        color: var(--alt-dark);
+      }
+    }
+  }
+  @media (max-width: 991px) {
+    &__announcement {
+      text-align: left;
+      padding-left: 10px;
+
+      & .panel {
+        margin-bottom: 0;
+      }
+
+      & .expand-bar {
+        margin-left: 10px;
+      }
+      &.expanded .collapse {
+        margin-top: 20px;
+        display: inline-block;
+      }
+    }
+
+    &__countdown {
+      margin-left: auto;
+    }
+  }
+  
+  &__social {
+    padding: 10px 0 10px 0;
+    
+    & a {
+      margin-right: 2px;
+
+      & img {
+        height: 32px;
+      }
+    }
+  }
+  @media (max-width: 991px) {
+    &__social {
+      margin-bottom: 20px;
+      padding-left: 20px;
+    }
+  }
+
+  &__footer {
+    height: 50px;
+    padding: 10px;
+    color: var(--text-lighter);
+  }
+}
+
+.home-featured-links {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: -10px;
+}
+.home-featured-link {
+  position: relative;
+  display: inline-block;
+  padding: 10px;
+  padding-left: 55px;
+  margin-right: 15px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  top: 0px;
+  transition: 0.1s;
+
+  & .fa {
+    font-size: 2.3rem;
+    position: absolute;
+    left: 10px;
+    top: 7px;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &:hover {
+    top: -5px;
+  }
+
+}
+
+.home-entry {
+  @media (max-width: 991px) {
+    & {
+      padding-bottom: 10px;
+    }
+  }
+}

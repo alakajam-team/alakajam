@@ -4,19 +4,11 @@
 <textarea class="form-control simplemde-editor" name="{{ editorName }}" data-autosave-id="{{ autosaveId }}">{{ editorContents | markdownUnescape }}</textarea>
 {% endmacro %}
 
-{% macro editorStyles() %}
-  <link rel="stylesheet" type="text/css" href="/static/css/simplemde.min.css" />
-{% endmacro %}
-
 {% macro editorScripts() %}
   <script type="text/javascript" src="/static/js/simplemde.min.js"></script>
 {% endmacro %}
 
 {# ======== CODEMIRROR EDITOR ========= #}
-
-{% macro codeMirrorStyles() %}
-  <link rel="stylesheet" type="text/css" href="/static/css/codemirror.css" />
-{% endmacro %}
 
 {% macro codeMirrorScripts(options = {}) %}
   <script type="text/javascript" src="/static/js/codemirror.min.js"></script>
@@ -67,10 +59,6 @@
 
 
 {# ======== RADIO AND CHECK BUTTONS ========= #}
-
-{% macro radioStyles() %}
-  <link rel="stylesheet" type="text/css" href="/static/css/icheck-skin.css" />
-{% endmacro %}
 
 {% macro radio(name, value, label, modelProperty, options = {}) %}
   {% set value = modelProperty if options.textFieldEnabled else value %}

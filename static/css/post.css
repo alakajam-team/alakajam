@@ -1,0 +1,260 @@
+/**
+ * Blog posts, comments & Markdown content in general
+ */
+
+.post {
+  &__title {
+    margin: 0;
+    padding-bottom: 5px;
+    color: var(--text);
+      
+    &:hover {
+      color: var(--alt-dark);
+    }
+  }
+
+  &__comment-count {
+    font-size: 1.5rem;
+    white-space: nowrap;
+  }
+  
+  &__related {
+    margin-top: 2px;
+    font-size: 1.2rem;
+  }
+
+  &__details {
+    border-bottom: 1px solid var(--borders);
+    line-height: 36px;
+    font-weight: bold;
+    padding-right: 10px;
+
+    & a.btn {
+      margin-top: -6px;
+      margin-right: 5px;
+    }
+  }
+
+  &__date {
+    color: var(--text-lighter);
+  }
+
+  &__avatar {
+    max-width: 36px;
+    max-height: 36px;
+    margin-right: 5px;
+    vertical-align: top;
+  }
+
+  &__schedule {
+    display: none;
+  }
+
+  &__special-type {
+    @apply --main-font;
+    display: block;
+    font-weight: bold;
+    background-color: var(--moderation-dark);
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  &__special-type-label {
+    display: block;
+    font-size: 1.2rem;
+    color: white;
+    line-height: 36px;
+  }
+
+  & h1 {
+    font-weight: normal;
+    font-size: 2.2rem;
+  }
+
+  & img {
+    max-width: 100%;
+  }
+
+  &__footer {
+    font-weight: bold;
+    border-top: 1px solid var(--borders);
+    text-align: right;
+    padding: 5px 10px;
+  }
+}
+
+.comment {
+  position: relative;
+
+  &.unread {
+    background-color: var(--alt-lightest);
+    border: 1px solid var(--alt-lighter);
+    padding-top: 10px;
+    margin-bottom: 5px;
+  }
+  
+  &__anchor {
+    top: 0 !important;
+  }
+
+  &__avatar-container {
+    padding-right: 0;
+    width: calc(8.333% - 5px);
+    position: absolute;
+    left: calc(-8.33333333% + 10px);
+    top: 0;
+    text-align: center;
+    
+    & img {
+      max-width: 100%;
+      max-height: 70px;
+      margin-bottom: 5px;
+    }
+  }
+  
+  &__details {
+    padding-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  &__body {
+    padding: 10px;
+  }
+  
+  &__actions {
+    margin-top: 10px;
+  }
+
+}
+.in-event .comment__anchor {
+  position: absolute;
+  top: calc(-60px - var(--eventbar-height));
+}
+
+/* User contents */
+
+.user-contents {
+  word-wrap: break-word;
+  overflow: hidden;
+
+  & h1 {
+    @apply --main-font;
+    font-weight: bold;
+    display: inline-block;
+    clear: both;
+    margin-top: 25px;
+    padding-bottom: 3px;
+    margin-bottom: 15px;
+    font-size: 2.0rem;
+    border-bottom: 1px solid var(--neutral-light);
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  & h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  & h3 {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: var(--text-light);
+    
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  & h4 {
+    margin-top: 10px;
+    margin-bottom: 7px;
+    font-size: 1.1rem;
+    font-weight: normal;
+    color: var(--text-light);
+  }
+
+  & blockquote {
+    padding: 5px 10px;
+    font-size: 1rem;
+    color: var(--text-light);
+  }
+  
+  & .spoiler {
+    border-left: 3px solid var(--borders);
+    color: color(var(--text-light) alpha(0%));
+    font-size: 1rem;
+    padding: 5px 10px;
+    transition: color 0.3s;
+    &::before {
+      color: var(--alt-lighter);
+      content: 'Spoiler';
+      display: block;
+    }
+    &:hover {
+      color: color(var(--text-light));
+    }
+  }
+  
+  & .indent {
+    text-indent: 1rem;
+  }
+
+  &__editor {
+    border: 1px solid #aab2bd;
+    border-radius: 4px;
+
+    & .editor-toolbar {
+      border: none;
+      border-bottom: 1px solid #aab2bd;
+    }
+
+    & .CodeMirror {
+      border: none;
+
+      & .CodeMirror-code .cm-header-1 {
+        line-height: 100%;
+      }
+    }
+  }
+
+  & iframe, & img {
+    max-width: 100% !important;
+    max-height: 350px !important;
+  }
+
+  & table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+    border-spacing: 0;
+
+    & td, & th {
+      border: 1px solid var(--borders);
+      padding: 6px;
+    }
+
+    & th {
+      padding-top: 11px;
+      padding-bottom: 11px;
+      background-color: var(--main-light);
+      color: white;
+    }
+  }
+  
+  & .pull-left {
+    margin: 15px;
+    margin-left: 0;
+  }
+  & .pull-right {
+    margin: 15px;
+    margin-right: 0;
+  }
+}
+

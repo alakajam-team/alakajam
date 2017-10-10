@@ -1,0 +1,85 @@
+/**
+ * Event results page
+ */
+
+.results-links {
+  margin: 20px 0;
+
+  &__division {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 8px 30px;
+    background-color: var(--main);
+  }
+
+  &__category {
+    font-size: 1.2rem;
+    padding: 8px 15px;
+    background-color: var(--main);
+  }
+}
+
+.results-podium {
+  @apply --shadow;
+  background-color: #DDD;
+
+  &__event-name {
+    font-size: 1.3rem;
+    text-align: center;
+    background-color: white;
+    padding: 5px;
+    margin: 0;
+  }
+
+  &__title {
+    @apply --alt-font;
+    font-weight: normal;
+    font-size: 2.0rem;
+    text-align: center;
+    background-color: var(--alt);
+    color: white;
+    padding: 10px;
+
+    & .dropdown {
+      display: inline-block;
+    }
+    & .dropdown-toggle {
+      background: none;
+      border: none;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: var(--alt-dark);
+      }
+    }
+  }
+
+  &__step {
+    margin: 30px 0 80px 0;
+    &::after {
+      @apply --sprite4;
+      background-position: -256px -64px;
+      content: '';
+      display: block;
+      filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+      height: 128px;
+      margin: -44px 0 0 -80px;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      width: 160px;
+    }
+
+    &.first {
+      margin-top: 10px;
+    }
+    &.second::after {
+      margin-top: -64px;
+      background-position: -256px -192px;
+    }
+    &.third::after {
+      margin-top: -64px;
+      background-position: -256px -320px;
+    }
+  }
+}

@@ -1,0 +1,281 @@
+/**
+ * Main tags customization, reusable classes & other general stuff.
+ */
+
+::selection {
+  background: var(--text-lighter);
+  color: white;
+}
+
+body, p {
+  @apply --main-font;
+}
+
+html {
+  height: 100%;
+  font-size: 15px;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  height: 100%;
+  padding-top: calc(var(--navbar-height) + 20px);
+}
+body.in-event {
+  padding-top: calc(var(--navbar-height) + var(--eventbar-height) + 20px);
+}
+
+div {
+  box-sizing: border-box;
+}
+
+h1 {
+  @apply --alt-font;
+  margin: 0 0 15px 0;
+  font-size: 2.2rem;
+  font-weight: normal;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+h2 {
+  font-weight: bold;
+  font-size: 1.6rem;
+  margin: 0 0 10px 0;
+}
+h3 {
+  font-size: 1.4rem;
+  margin: 0 0 10px 0;
+}
+h4 {
+  font-size: 1.2rem;
+  margin: 0 0 10px 0;
+  color: var(--text-light);
+}
+
+textarea.form-control {
+  resize: none;
+  height: 70px;
+}
+textarea.simplemde-editor {
+  resize: vertical;
+  height: 300px;
+}
+textarea.json-setting {
+  resize: vertical;
+  height: 400px;
+  max-width: 500px;
+}
+
+a {
+  color: var(--alt);
+  
+  & img {
+    border: 0;
+  }
+  
+  &:hover {
+    color: var(--alt-dark);
+    text-decoration: none;
+    
+    & img {
+      border: 4px solid var(--alt);
+      transition: 0.1s;
+    }
+  }
+}
+a[name] {
+  position: absolute;
+  margin-top: -75px;
+}
+.in-event a[name] {
+  position: absolute;
+  margin-top: -135px;
+}
+
+img.preview {
+  max-width: 100%;
+  max-height: 150px;
+}
+img.no-border:hover, a:hover img.no-border {
+  border: 0;
+}
+
+.spacing {
+  margin-top: 20px;
+}
+
+.CodeMirror {
+  height: auto;
+  border: 1px solid #aab2bd;
+  border-radius: 4px;
+  padding: 3px 0;
+}
+
+.editor-toolbar.fullscreen, .CodeMirror-fullscreen, .editor-preview-side { 
+  z-index: 2000;
+}
+
+.datetimepicker {
+  background-color: white;
+}
+
+.code {
+  font-family: Consolas, Lucida Console, monospace;
+  font-weight: bold;
+}
+
+.has-tooltip {
+  cursor: help;
+}
+a.has-tooltip {
+  cursor: pointer;
+}
+
+.radio-label, .checkbox-label {
+  margin: 0 10px 0 2px;
+  font-weight: normal;
+}
+
+input.date-picker {
+  width: 200px;
+}
+
+.btn {
+  @apply --main-font
+}
+
+.pagination {
+  margin-top: 0;
+  margin-bottom: 10px;
+
+  & .disabled a, & .disabled a:hover {
+    background-color: var(--borders);
+    color: var(--neutral);
+  }
+}
+
+.horizontal-bar {
+  width: 100%;
+  margin: 20px 0;
+  font-weight: bold;
+  color: var(--text-lighter);
+  border-bottom: 1px solid var(--text-lighter);
+}
+
+.featured {
+  background-color: var(--neutral-lightest);
+  border: 1px solid var(--neutral-lighter);
+  box-shadow: 1px 1px 2px var(--neutral-lighter);
+  padding: 20px;
+  margin-bottom: 20px;
+
+  &.live {
+    background-color: var(--alt-lightest);
+    border: 1px solid var(--alt-lighter);
+    box-shadow: 1px 1px 2px var(--alt-lighter);
+  }
+}
+
+.btn-alt {
+  background-color: var(--alt);
+  border: 0;
+
+  &:hover, &:active {
+    background-color: var(--alt-dark);
+  }
+}
+
+.count {
+  @apply --main-font;
+  color: var(--text-light);
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.toggle label.active {
+  background-color: #286090;
+  border-color: #204d74;
+}
+
+.expandable {
+  position: relative; 
+  overflow: hidden;
+  margin-bottom: 20px;
+  
+  & .expand-bar {
+    display: none; /* will be enabled with JS */
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: 30px;
+    border-top: 1px solid var(--borders);
+    background-color: white;
+    text-align: center;
+    line-height: 30px;
+    vertical-align: middle;
+    font-weight: bold;
+    color: var(--alt);
+    box-shadow: 0px -3px 8px rgba(0, 0, 0, 0.15);
+    
+    &:hover {
+      color: var(--alt-dark);
+    }
+  }
+
+  & .collapse {
+    display: none;
+  }
+
+  &.expanded {
+    max-height: none !important;
+    
+    & .expand-bar {
+      background-color: transparent;
+      bottom: 20px;
+      box-shadow: none;
+      border-top: none;
+      display: inline-block;
+      width: 150px;
+      margin: auto;
+    }
+    & .expand {
+      display: none;
+    }
+    & .collapse {
+      display: inline;
+    }
+  }
+}
+
+.sidebar {
+  & h3 {
+    margin: 0
+  }
+}
+.articles-sidebar .sidebar__link {
+  padding: 5px 15px;
+}
+
+.footer {
+  &__link {
+    margin-right: 10px;
+    display: inline-block;
+  }
+  &__icon {
+    height: 16px;
+  }
+}
+
+/* Warning box */
+
+.warning-box {
+  @apply --shadow;
+  padding: 10px;
+  background-color: var(--moderation);
+  color: var(--moderation-text);
+  border-radius: 4px;
+}

@@ -17,7 +17,6 @@ const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
 const cookies = require('cookies')
-const postCss = require('postcss-middleware')
 const browserifyMiddleware = require('browserify-middleware')
 const multer = require('multer')
 const bodyParser = require('body-parser')
@@ -57,12 +56,6 @@ async function configure (app) {
   // Session management
   let sessionKey = await findOrCreateSessionKey()
   app.use(cookies.express([sessionKey]))
-
-  // CSS files
-  app.use('/static/css/site.css', postCss({
-    src: () => path.join(ROOT_PATH, '/static/css/site.css'),
-    plugins: [require('postcss-cssnext')]
-  }))
 
   // JavaScript files
   app.use('/static/js/site.js', bundleJs(app.locals.devMode))

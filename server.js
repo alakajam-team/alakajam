@@ -19,9 +19,35 @@ try {
   process.exit(1)
 }
 
+/**
+ * Local constants
+ */
+
+const DEV_ENVIRONMENT = process.env.NODE_ENV !== 'production'
+const CSS_INDEX_SRC = './static/css/index.css'
+const CSS_INDEX_DEST_FOLDER = './static/build/'
+const CSS_INDEX_DEST = CSS_INDEX_DEST_FOLDER + 'index.css'
+const CSS_INDEX_URL = '/static/build/index.css'
+const CSS_PLUGINS = [
+  require('postcss-import'),
+  require('postcss-cssnext')
+]
+
+/**
+ * Initial dependencies
+ */
+
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
+
+const postcssWatch = require('postcss-watch')
+const postcss = require('postcss')
+const postcssProcessor = postcss(CSS_PLUGINS)
+
+/**
+ * App launch!
+ */
 
 createApp()
 
@@ -43,7 +69,7 @@ async function createApp () {
   // Check whether 'development' is on, rather than whether 'production' is
   // off, so we don't leak stack traces in case production is ever
   // misconfigured to leave this undefined.
-  app.locals.devMode = app.get('env') === 'development'
+  app.locals.devMode = DEV_ENVIRONMENT
   await db.initDatabase(app.locals.devMode && config.DEBUG_INSERT_SAMPLES)
   await middleware.configure(app)
   app.listen(config.SERVER_PORT, configureBrowserRefresh)
@@ -108,6 +134,11 @@ async function initFilesLayout () {
   const fileStorage = require('./core/file-storage')
   await fileStorage.createFolderIfMissing(path.join(__dirname, config.DATA_PATH, '/tmp'))
   await fileStorage.createFolderIfMissing(path.join(__dirname, config.UPLOADS_PATH))
+
+  // Run CSS build in production (in dev, postcssWatch will handle it)
+  if (!DEV_ENVIRONMENT) {
+    await buildCSS()
+  }
 }
 
 /*
@@ -120,8 +151,33 @@ function configureBrowserRefresh () {
   if (process.send && config.DEBUG_REFRESH_BROWSER) {
     process.send('online')
     browserRefreshClient
-      .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg',
-        { autoRefresh: false })
-      .onFileModified(() => browserRefreshClient.refreshPage())
+      .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg', { autoRefresh: false })
+      .onFileModified(async function (path) {
+        if (path.endsWith('.css') && path !== CSS_INDEX_URL) {
+          await buildCSS()
+        }
+        browserRefreshClient.refreshPage()
+      })
+  } else if (DEV_ENVIRONMENT) {
+    postcssWatch({
+      input: CSS_INDEX_SRC,
+      output: CSS_INDEX_DEST,
+      plugins: CSS_PLUGINS,
+      log: true
+    })
+  }
+}
+
+async function buildCSS () {
+  const fileStorage = require('./core/file-storage')
+
+  try {
+    log.info('Building CSS...')
+    let indexCss = await fileStorage.read(CSS_INDEX_SRC)
+    let result = await postcssProcessor.process(indexCss, { from: CSS_INDEX_SRC, to: CSS_INDEX_DEST })
+    await fileStorage.createFolderIfMissing(CSS_INDEX_DEST_FOLDER)
+    await fileStorage.write(CSS_INDEX_DEST, result.css)
+  } catch (e) {
+    log.error('Failed to rebuild CSS: ' + e.message)
   }
 }

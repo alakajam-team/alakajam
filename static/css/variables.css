@@ -1,0 +1,73 @@
+/**
+ * CSS Variables
+ */
+
+:root {
+  /* Main colors */
+  
+  --bg: #eee;
+  --borders: #dadada;
+  --text: #1f3038;
+  --text-light: color(var(--text) alpha(70%));
+  --text-lighter: color(var(--text) alpha(40%));
+  --text-lightest: color(var(--text) alpha(30%));
+  
+  --main: #00abd6;
+  --main-light: color(var(--main) lightness(46%));
+  --main-lighter: color(var(--main) alpha(25%));
+  --main-lightest: color(var(--main) alpha(10%));
+  --main-dark: #005770;
+  --main-transparent: color(var(--main) alpha(10%));
+  
+  --alt: #f2536d;
+  --alt-light: #f47171;
+  --alt-lighter: color(var(--alt) alpha(25%));
+  --alt-lightest: #ffded6;
+  --alt-dark: color(var(--alt) lightness(42%));
+  --alt-transparent: color(var(--alt) alpha(10%));
+
+  --neutral: #888;
+  --neutral-light: color(var(--neutral) alpha(70%));
+  --neutral-lighter: color(var(--neutral) alpha(25%));
+  --neutral-lightest: color(var(--neutral) alpha(10%));
+  
+  /* Mod / Admin colors (based on 'warning' and 'danger' colors from the Bootstrap theme) */
+  
+  --moderation: #ffce54;
+  --moderation-light: #ffe198;
+  --moderation-lightest: color(var(--moderation-light) alpha(30%));
+  --moderation-dark: #f6bb42;
+  --moderation-text: #876000;
+
+  /* Fonts */
+  
+  --main-font: {
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    letter-spacing: 0;
+  };
+  --alt-font: {
+    font-family: 'Fredoka One', cursive;
+    letter-spacing: 2px;
+  };
+  --shadow: {
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+  };
+  --header-shadow: {
+    box-shadow: 0px 8px 4px -6px rgba(0, 0, 0, 0.15);
+  };
+  --sprite2: {
+    background: url('/static/images/spritesheet2.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+  };
+  --sprite4: {
+    background: url('/static/images/spritesheet4.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+  };
+
+  /* UI elements */
+  
+  --navbar-height: 60px;
+  --eventbar-height: 60px;
+}

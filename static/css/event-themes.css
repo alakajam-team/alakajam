@@ -1,0 +1,145 @@
+/**
+ * Event themes page
+ */
+
+.themes {
+
+  &__ideas {
+    margin-bottom: 10px;
+  }
+  
+  &__idea {
+    border-bottom: 1px solid var(--borders);
+    padding: 10px 10px 15px 10px;
+
+    & p {
+      margin-bottom: 0;
+      color: var(--text-light);
+    }
+    & .form-control {
+      margin-bottom: 5px;
+    }
+    & input[type=text] {
+      @apply --alt-font;
+      letter-spacing: 1px;
+    }
+    &.form-inline input[type=text] {
+      width: 90%;
+    }
+    & .themes__idea-delete {
+      width: 8%;
+      text-align: center;
+      padding: 6px 0;
+    }
+  }
+  &__idea-label {
+    @apply --alt-font;
+    letter-spacing: 1px;
+    margin-bottom: 0;
+    font-size: 24px;
+    overflow-wrap: break-word;
+  }
+
+  &__stats {
+   margin-top: 30px;
+  }
+  
+  & .progress {
+    border: 1px solid var(--neutral-light);
+    margin-bottom: 10px;
+    
+    & .progress-bar-default {
+      background-color: white;
+      color: var(--neutral);
+    }
+  }
+  &__progress-bar-out {
+      background-color: rgba(31, 48, 56, 0.4);
+  }
+  
+  &__shortlist ol, &__results ol {
+    padding-left: 0;
+    list-style-position: inside;
+  }
+  & .theme-shortlist-line {
+    position: relative;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--borders);
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--text-light);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+    &.draggable.sortable-chosen {
+      background-color: var(--borders);
+    } 
+    &.draggable {
+      padding-left: 30px;
+      cursor: default;
+    }
+    
+    &__handle {
+      position: absolute;
+      left: 0;
+      top: 10px;
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+    
+    &__label {
+      @apply --alt-font;
+      color: var(--text);
+      padding-left: 10px;
+      font-weight: normal;
+      font-size: 1.4rem;
+    }
+
+    &__score, &__ranking {
+      float: right;
+      text-align: right;
+      font-size: 1rem;
+      margin-top: 2px;
+      width: 100px;
+    }
+    @media (max-width: 768px) {
+      & &__score, &__ranking {
+        width: 50px;
+      }
+    }
+  }
+  & .use-hover .theme-shortlist-line.draggable:hover {
+    background-color: #EEE;
+  }
+  
+  & .theme-vote {
+    padding: 20px;
+    
+    &__buttons {
+      width: 100px;
+    }
+    
+    &__label {
+      @apply --alt-font;
+      font-size: 2rem;
+      overflow-wrap: break-word;
+    }
+  }
+  
+  & .theme-past {
+    margin-bottom: 10px;
+    height: 25px;
+    
+    &__buttons {
+      width: 60px;
+      vertical-align: top;
+    }
+    
+    &__label {
+      @apply --alt-font;
+      letter-spacing: 0;
+      line-height: 0.9rem;
+    }
+  }
+}

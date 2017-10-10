@@ -1,5 +1,6 @@
 # Local files
 node_modules/
+build/
 config.js
 
 # Docs
