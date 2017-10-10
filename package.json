@@ -46,7 +46,6 @@
     "pg": "^6.1.2",
     "postcss-cssnext": "^2.9.0",
     "postcss-import": "^9.1.0",
-    "postcss-middleware": "^1.1.2",
     "postcss-watch": "^0.1.1",
     "promisify-node": "^0.4.0",
     "random-key": "^0.3.2",

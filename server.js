@@ -24,9 +24,8 @@ try {
  */
 
 const DEV_ENVIRONMENT = process.env.NODE_ENV !== 'production'
-const CSS_INDEX_SRC = './static/css/index.css'
+const CSS_INDEX_SRC_FOLDER = './static/css/'
 const CSS_INDEX_DEST_FOLDER = './static/build/'
-const CSS_INDEX_DEST = CSS_INDEX_DEST_FOLDER + 'index.css'
 const CSS_INDEX_URL = '/static/build/index.css'
 const CSS_PLUGINS = [
   require('postcss-import'),
@@ -40,10 +39,7 @@ const CSS_PLUGINS = [
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
-
 const postcssWatch = require('postcss-watch')
-const postcss = require('postcss')
-const postcssProcessor = postcss(CSS_PLUGINS)
 
 /**
  * App launch!
@@ -136,9 +132,7 @@ async function initFilesLayout () {
   await fileStorage.createFolderIfMissing(path.join(__dirname, config.UPLOADS_PATH))
 
   // Run CSS build in production (in dev, postcssWatch will handle it)
-  if (!DEV_ENVIRONMENT) {
-    await buildCSS()
-  }
+  await buildCSS()
 }
 
 /*
@@ -154,30 +148,31 @@ function configureBrowserRefresh () {
       .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg', { autoRefresh: false })
       .onFileModified(async function (path) {
         if (path.endsWith('.css') && path !== CSS_INDEX_URL) {
-          await buildCSS()
+          await buildCSS(true)
         }
         browserRefreshClient.refreshPage()
       })
-  } else if (DEV_ENVIRONMENT) {
-    postcssWatch({
-      input: CSS_INDEX_SRC,
-      output: CSS_INDEX_DEST,
-      plugins: CSS_PLUGINS,
-      log: true
-    })
   }
 }
 
-async function buildCSS () {
-  const fileStorage = require('./core/file-storage')
+async function buildCSS (forceBuildOnce = false) {
+  const fileStorage = require('./core/file-storage.js')
 
-  try {
+  await fileStorage.createFolderIfMissing(path.join(__dirname, CSS_INDEX_DEST_FOLDER))
+
+  let watch = DEV_ENVIRONMENT && !forceBuildOnce
+  if (watch) {
+    log.info('Setting up automatic CSS build...')
+  } else {
     log.info('Building CSS...')
-    let indexCss = await fileStorage.read(CSS_INDEX_SRC)
-    let result = await postcssProcessor.process(indexCss, { from: CSS_INDEX_SRC, to: CSS_INDEX_DEST })
-    await fileStorage.createFolderIfMissing(CSS_INDEX_DEST_FOLDER)
-    await fileStorage.write(CSS_INDEX_DEST, result.css)
-  } catch (e) {
-    log.error('Failed to rebuild CSS: ' + e.message)
   }
+
+  postcssWatch({
+    input: CSS_INDEX_SRC_FOLDER,
+    output: CSS_INDEX_DEST_FOLDER,
+    plugins: CSS_PLUGINS,
+    copyAssets: ['png'],
+    log: DEV_ENVIRONMENT,
+    watch
+  })
 }
