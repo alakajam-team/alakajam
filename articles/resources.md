@@ -50,6 +50,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Open Game Art](https://opengameart.org)  | The main reference for finding graphics & audio to reuse with permissive licenses. |
 | [Free Music Archive](http://freemusicarchive.org)  | A large database of permissive music (mostly Creative Commons), featuring a wide range of styles. |
 | [FreeSound](http://freesound.org/)  | A huge database of sound effects. |
+| [Soniss GDC 2017 Bundle](https://sonniss.com/gameaudiogdc2017/) | Massive 20GB pack of game-related royalty-free sounds. |
 | [Universal LPC Sprite Sheet Generator](http://gaurav.munjal.us/Universal-LPC-Spritesheet-Character-Generator/) | Customizable character sprite sheets assembled from open art. |  
 
 
