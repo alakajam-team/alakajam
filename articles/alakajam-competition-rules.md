@@ -7,7 +7,7 @@ Anyone can enter in any of the following divisions:
 
 * **Solo**, in which you make a whole game alone in 48 hours ;
 * **Team**, in which any number of persons can gather to make a game in 48 hours ;
-* **Unranked**, a more open division which grants about 72 hours to finish the game. Useful for those not interested in the competitive aspect of the event, or feel like the rules are too restrictve for them, or simply did not finish their game in time.
+* **Unranked**, a more open division which grants about 72 hours to finish the game. Useful for those not interested in the competitive aspect of the event, or feel like the rules are too restrictive for them, or simply did not finish their game in time.
 
 The jam always starts on a Friday, 7pm [UTC](https://www.timeanddate.com/worldclock/timezone/utc).
 
