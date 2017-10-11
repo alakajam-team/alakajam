@@ -64,87 +64,25 @@
 {% endmacro %}
 
 {% macro eventTable(event, options = {}) %}
-  <div class="event-table {{ 'live' if not options.neutralStatus and event.get('status') === 'open' }}">
-    <div class="row">
-      <div class="col-md-12">
-        <a class="event-table__header" href="{{ buildUrl(event, 'event') }}">
-          <h2>
-            {% if not options.neutralStatus %}
-              {% if event.get('status') === 'pending' %}
-                <span class="label label-default event-table__status">Upcoming</span>
-              {% elseif event.get('status') === 'open' %}
-                <span class="label label-danger event-table__status">On now!</span>
-              {% endif %}
-            {% endif %}
-            {{ event.get('title') }}
-          </h2>
-        </a>
-        <div class="event-table__details">
-          <div class="row">
-            <div class="col-sm-5">
-              <div class="event-table__detail">
-                <span class="glyphicon glyphicon-calendar"></span> {{ event.get('display_dates') or '(dates unknown)' }}
-              </div>
-            </div>
-            {% if event.get('display_theme') %}
-            <div class="col-sm-4">
-              <div class="event-table__detail">
-                <span class="glyphicon glyphicon-apple"></span> {{ event.get('display_theme') }}
-              </div>
-            </div>
-            {% endif %}
-            {% if options.entryCount and options.entryCount > 0 %}
-            <div class="col-sm-3">
-              <div class="event-table__detail">
-                <span class="glyphicon glyphicon-tower"></span>
-                {{ options.entryCount }} game{{ 's' if options.entryCount > 1 }}
-              </div>
-            </div>
-            {% endif %}
-          </div>
-          {% if not options.hideLinks %}
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="event-table__links">
-                {{ eventLinks(event, options.latestEventAnnouncement, options.path) }}
-              </div>
-            </div>
-          </div>
-          {% endif %}
-        </div>
+  <div class="event-table {{ event.get('status') if not options.neutral }}">
+    <a href="{{ buildUrl(event, 'event') }}" class="event-table__title">
+      {{ event.get('title') }}
+      <div class="event-table__dates">
+        {{ event.get('display_dates') or '(dates unknown)' }}
       </div>
+    </a>
+    {%- if not options.hideLinks -%}
+      <div class="event-table__links">
+        {{ eventLinks(event, options.latestEventAnnouncement, options.path, options) }}
+      </div>
+    {%- endif -%}
+    {% if event.get('display_theme') %}
+    <div class="event-table__theme">
+      <span class="event-table__theme-label">Theme</span>
+      {{ event.get('display_theme') }}
     </div>
+    {% endif %}
   </div>
-{% endmacro %}
-
-
-{% macro eventSmallTable(event) %}
-<div class="panel event-small-table">
-  <div class="row">
-    <div class="col-xs-12">
-      <a class="event-small-table__header" href="{{ buildUrl(event, 'event') }}">
-        <h2>
-          {% if not options.neutralStatus %}
-            {% if event.get('status') === 'pending' %}
-              <span class="label label-default event-table__status">Upcoming</span>
-            {% elseif event.get('status') === 'open' %}
-              <span class="label label-danger event-table__status">On now!</span>
-            {% endif %}
-          {% endif %}
-          {{ event.get('title') }}
-        </h2>
-      </a>
-    </div>
-  </div>
-  <div class="row event-small-table__details">
-    <div class="col-xs-12">
-      <span class="glyphicon glyphicon-calendar"></span> {{ event.get('display_dates') or '(dates unknown)' }}
-      {% if event.get('display_theme') %}
-      &nbsp;<span class="glyphicon glyphicon-apple"></span> {{ event.get('display_theme') }}
-      {% endif %}
-    </div>
-  </div>
-</div>
 {% endmacro %}
 
 
@@ -168,13 +106,16 @@
             Announcement • {{ latestEventAnnouncement.get('created_at') | relativeTime }}
           </span>
         </a><!--
-        --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-md hidden-lg event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
+        --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="event-header__link  
+      hidden-md hidden-lg {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
           <span class="glyphicon glyphicon-pushpin"></span>
         </a>
-      {% endif %}
+      {%- endif -%}
+
+      {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post'), 'Rules', 'info-sign', path) -}}
       {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
       {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) -}}
-      {{- eventLink(event, 'status_entry', 'games', 'Games', 'tower', path) -}}
+      {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + options.entryCount +')</span>' if options.entryCount), 'tower', path) -}}
       {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: 'results' }) -}}
     </div>
     
@@ -186,10 +127,10 @@
 
 {% macro eventLink (event, statusField, targetPath, label, icon, currentPath, options = {}) %}
 {%- if not statusField or event.get(statusField) !== 'disabled' -%}
-  {%- set targetUrl = buildUrl(event, 'event', targetPath) -%}
+  {%- set targetUrl = targetPath if targetPath.includes('/') else buildUrl(event, 'event', targetPath) -%}
   <a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
       {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and event.get(statusField) != options.requiredValue )}}">
-    <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="hidden-xs">{{ label }}</span>
+    <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="hidden-xs">{{ label | safe }}</span>
   </a>
 {%- endif -%}
 {% endmacro %}
@@ -212,52 +153,49 @@
   --></span>
 {% endmacro %}
 
-{% macro eventUserShortcuts(user, event, userEntry, userPost) %}
-  {% if user %}
-  <div class="container">
-    <div class="row">
-      <div class="col-md-offset-1 col-md-5 action-banner">
-         <div>
-           {% if userEntry %}
-             <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-alt pull-right">Edit entry</a>
-           {% elseif event.get('status') !== 'open' or (event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked') %}
-             <div class="pull-right">
-               <a href="#"class="btn btn-sm btn-default disabled">Create entry</a>
-             </div>
-           {% else %}
-             <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-alt pull-right">Create entry</a>
-           {% endif %}
-        </div>
-        <div class="action-banner__title">
-          Your entry
-        </div>
-        {% if event.get('status_entry') === 'closed' %}
-          {% set customMessage = "Entry submissions are closed" %}
-        {% elseif event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
-          {% set customMessage = "Entry submissions are not open yet" %}
-        {% endif %}
-        {{ entrySmallThumb(userEntry, { customMessage: customMessage }) }}
-      </div>
-      <div class="col-md-5 action-banner">
-        <div class="pull-right">
-          {% if userPost %}
-          <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">Edit</a>
-          {% endif %}
-          <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-alt">Create</a>
-          <a href="{{ buildUrl(user, 'user', 'posts') }}" class="btn btn-alt">My posts</a>
-        </div>
-        <div class="action-banner__title">
-          Your latest post
-        </div>
-        <div class="panel action-banner__post">
-          {% if userPost %}
-            <a href="{{ buildUrl(userPost, 'post') }}">{{ userPost.get('title') }}</a>
-          {% else %}
-            <div class="text-center"><h4 style="padding-top: 13px">No post</h4></div>
-          {% endif %}
-        </div>
-      </div>
+{% macro eventShortcutMyEntry(user, event, userEntry) %}
+  <div class="action-banner">
+     <div>
+       {% if userEntry %}
+         <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-alt pull-right">Edit entry</a>
+       {% elseif event.get('status') !== 'open' or (event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked') %}
+         <div class="pull-right">
+           <a href="#"class="btn btn-sm btn-default disabled">Create entry</a>
+         </div>
+       {% else %}
+         <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-alt pull-right">Create entry</a>
+       {% endif %}
+    </div>
+    <div class="action-banner__title">
+      Your entry
+    </div>
+    {% if event.get('status_entry') === 'closed' %}
+      {% set customMessage = "Entry submissions are closed" %}
+    {% elseif event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
+      {% set customMessage = "Entry submissions are not open yet" %}
+    {% endif %}
+    {{ entrySmallThumb(userEntry, { customMessage: customMessage }) }}
+  </div>
+{% endmacro %}
+
+{% macro eventShortcutMyPost(user, event, userPost) %}
+  <div class="action-banner">
+    <div class="pull-right">
+      {% if userPost %}
+      <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">Edit</a>
+      {% endif %}
+      <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-alt">Create</a>
+      <a href="{{ buildUrl(user, 'user', 'posts') }}" class="btn btn-alt">My posts</a>
+    </div>
+    <div class="action-banner__title">
+      Your latest post
+    </div>
+    <div class="panel action-banner__post">
+      {% if userPost %}
+        <a href="{{ buildUrl(userPost, 'post') }}">{{ userPost.get('title') }}</a>
+      {% else %}
+        <div class="text-center"><h4 style="padding-top: 13px">No post</h4></div>
+      {% endif %}
     </div>
   </div>
-  {% endif %}
 {% endmacro %}

@@ -92,28 +92,18 @@
       </div>
       
       {# ==== Main header (desktop) ==== #}
-      {% if event and featuredEvent and event.get('id') == featuredEvent.get('id') %}
-        {% set isFeaturedEvent = true %}
-      {% endif %}
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav">
-          {% if featuredEvent %}
-          <li class="hidden-sm hidden-xs live {{ 'active' if isLiveEvent }}">
-            <a href="{{ buildUrl(featuredEvent, 'event') }}">
-              <div class="live__icon">
-                {% if featuredEvent.get('status') === 'open' %}
-                <span class="label">On now!</span>
-                {% elseif featuredEvent.get('status') === 'pending' %}
-                <span class="label">Up next!</span>
-                {% else %}
-                <span class="label">Closed</span>
-                {% endif %}
-              </div>
+          {% set shortcutEvent = event or featuredEvent %}
+          {% set eventActive = event and shortcutEvent.get('id') === event.get('id') %}
+          {% if shortcutEvent %}
+          <li class="hidden-sm hidden-xs live {{ 'active' if eventActive }}">
+            <a href="{{ buildUrl(shortcutEvent, 'event') }}">
               <div class="live__event">
-                {{ featuredEvent.get('title') }}
-                <span class="live__theme">
-                  {{ featuredEvent.get('display_theme') or '(Theme unknown)' }}
-                </span>
+                {{ shortcutEvent.get('title') }}
+                <div class="live__dates">
+                  {{ shortcutEvent.get('display_dates') }}
+                </div>
               </div>
             </a>
           </li>
@@ -140,7 +130,7 @@
     {% if (event) %}
       <div class="event-header {{ 'has-moderation-bar' if showModerationBar }}">
         <div class="container">
-          <div class="event-header__info">
+          <div class="event-header__info hidden-md hidden-lg">
             <a href="{{ buildUrl(event, 'event') }}" class="event-header__name">
               {{ event.get('title') }}
             </a>

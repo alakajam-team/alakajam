@@ -114,7 +114,7 @@ async function findEventByName (name) {
 
 /**
  * Fetches all models.Events and their Entries.
- * @param {object} options Allowed: status name
+ * @param {object} options Allowed: status name sortDatesAscending
  * @returns {array(Event)}
  */
 async function findEvents (options = {}) {
@@ -123,7 +123,11 @@ async function findEvents (options = {}) {
   if (options.status) query = query.where('status', options.status)
   if (options.statusNot) query = query.where('status', '<>', options.statusNot)
   if (options.name) query = query.where('name', options.name)
-  return query.fetchAll()
+  if (options.pageSize) {
+    return query.fetchPage(options)
+  } else {
+    return query.fetchAll(options)
+  }
 }
 
 /**

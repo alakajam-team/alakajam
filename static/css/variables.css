@@ -11,12 +11,14 @@
   --text-light: color(var(--text) alpha(70%));
   --text-lighter: color(var(--text) alpha(40%));
   --text-lightest: color(var(--text) alpha(30%));
+
+  --white-lighter: color(white alpha(90%));
   
   --main: #00abd6;
   --main-light: color(var(--main) lightness(46%));
   --main-lighter: color(var(--main) alpha(25%));
   --main-lightest: color(var(--main) alpha(10%));
-  --main-dark: #005770;
+  --main-dark: color(var(--main) lightness(32%));
   --main-transparent: color(var(--main) alpha(10%));
   
   --alt: #f2536d;
@@ -26,7 +28,8 @@
   --alt-dark: color(var(--alt) lightness(42%));
   --alt-transparent: color(var(--alt) alpha(10%));
 
-  --neutral: #888;
+  --neutral: #999;
+  --neutral-dark: color(var(--neutral) lightness(40%));
   --neutral-light: color(var(--neutral) alpha(70%));
   --neutral-lighter: color(var(--neutral) alpha(25%));
   --neutral-lightest: color(var(--neutral) alpha(10%));
@@ -47,7 +50,7 @@
   };
   --alt-font: {
     font-family: 'Fredoka One', cursive;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
   };
   --shadow: {
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);

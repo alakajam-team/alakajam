@@ -9,7 +9,7 @@
       <h1>Events <span class="count">({{ open.length + pending.length + closed.length }})</span></h1>
       {% if open.length > 0 %}
       <div class="events-block events-block__live">
-        <h4>On now!</h4>
+        <h3>On now!</h3>
         {% for event in open %}
           {{ eventMacros.eventTable(event, { neutralStatus: true, entryCount: entryCounts[event.get('id')] }) }}
         {% endfor %}
@@ -18,7 +18,7 @@
       
       {% if pending.length > 0 %}
       <div class="events-block events-block__pending">
-        <h4>Upcoming events</h4>
+        <h3>Upcoming events</h3>
         {% for event in pending %}
           {{ eventMacros.eventTable(event, { neutralStatus: true, entryCount: entryCounts[event.get('id')] }) }}
         {% endfor %}
@@ -27,7 +27,7 @@
 
       {% if closed.length > 0 %}
       <div class="events-block events-block__closed">
-        <h4>Past events</h4>
+        <h3>Past events</h3>
         {% for event in closed %}
           {{ eventMacros.eventTable(event, { neutralStatus: true, entryCount: entryCounts[event.get('id')] }) }}
         {% endfor %}

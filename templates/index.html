@@ -8,7 +8,6 @@
 
 <div class="container">
   <div class="row">
-  
     {% if not user %}
     <div class="home-welcome">
       <img class="home-welcome__icon" src="/static/images/welcome.png" />
@@ -16,126 +15,133 @@
        Welcome to <div class="home-welcome__brand">Alakajam!</div>, a game development community. We host informal game jams!
        <a class="home-welcome__more" href="/article/docs">Learn&nbsp;more</a>
     </div>
-    {% elseif featuredEvent and featuredEvent.get('status') !== 'pending' %}
-      {{ eventMacros.eventUserShortcuts(user, featuredEvent, userEntry, userPost) }}
     {% endif %}
-    
+
     {% if featuredPost %}
     <div class="col-lg-offset-1 col-lg-10">
       {{ postMacros.post(featuredPost, user) }}
     </div>
     {% endif %}
-    
-    <div class="col-lg-12">
-      {% if featuredEvent %}
-      <div class="home-jumbo">
-          <div class="event-table {{ 'live' if featuredEvent.get('status') === 'open' else 'not-live' }}">
-            <div class="row">
-              <div class="col-md-12">
-                <a class="event-table__header" href="{{ buildUrl(featuredEvent, 'event') }}">
-                  <h2>
-                    {% if featuredEvent.get('status') === 'open' %}
-                      <span class="label label-danger event-table__status">On now!</span>
-                    {% elseif featuredEvent.get('status') === 'pending' %}
-                      <span class="label label-default event-table__status">Up next!</span>
-                    {% else %}
-                      <span class="label label-default event-table__status">Closed</span>
-                    {% endif %}
-                    {{ featuredEvent.get('title') }}
-                  </h2>
-                </a>
-              </div>
-            </div>
-            
-            <div class="row">
-              <div class="col-md-5 col-lg-4">
-                <div class="home-jumbo__sidebar">
-                  <div class="home-jumbo__details panel {{ 'call' if featuredEvent.get('countdown_config').message }}">
-                    {% if featuredEvent.get('countdown_config').message %}
-                      {% set messageLink = featuredEvent.get('countdown_config').link %}
-                      <a class="home-jumbo__call" href="{{ messageLink if messageLink.indexOf('/') !== -1 else buildUrl(featuredEvent, 'event', messageLink) }}">
-                        {{ featuredEvent.get('countdown_config').message }}
-                      </a>
-                    {% endif %}
+  </div>
 
-                    {% if featuredEvent.get('countdown_config').phrase %}
-                      <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime | safe }}<br />
-                    {% endif %}
-                    {% if featuredEvent.get('display_theme') %}
-                      <span class="glyphicon glyphicon-apple"></span>
-                      {% if featuredEvent.get('status_theme') !== 'off' and featuredEvent.get('status_theme') !== 'disabled' %}
-                        Theme: <a href="{{ buildUrl(featuredEvent, 'event', 'themes') }}">{{ featuredEvent.get('display_theme') }}</a>
-                      {% else %}
-                        Theme: {{ featuredEvent.get('display_theme') }}
-                      {% endif %}
-                    {% endif %}
-                    <div class="home-jumbo__countdown js-countdown"></div>
-                  </div>
-                  {{ jumboLink(featuredEvent, 'status_rules', buildUrl(featuredEvent.get('status_rules'), 'post'), 'Welcome/Rules', 'info-sign', ['disabled'], { absoluteUrl: true }) }}
-                  {{ jumboLink(featuredEvent, null, 'posts', 'Posts', 'globe') }}
-                  {{ jumboLink(featuredEvent, 'status_theme', 'themes', 'Themes', 'apple', ['off']) }}
-                  {{ jumboLink(featuredEvent, 'status_entry', 'games', 'Games', 'tower', ['off'], { count: featuredEventCount }) }}
-                  {{ jumboLink(featuredEvent, 'status_results', 'results', 'Results', 'th-list', ['off', 'voting', 'voting_rescue']) }}
-                  <div class="home-jumbo__social">
-                    {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
-                    {{ socialLink('Twitch', 'https://www.twitch.tv/communities/alakajam', 'twitch.png') }}
-                    {{ socialLink('IRC', '/chat', 'irc.svg') }}
-                    {{ socialLink('YouTube', 'https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos', 'youtube.svg') }}
-                    {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
-                    {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-7 col-lg-8">
-                {% if featuredEventAnnouncement %}
-                  <div class="home-jumbo__announcement expandable">
-                    {{ postMacros.post(featuredEventAnnouncement, user, { hideSpecialLabels: true, hideDate: true }) }}
-                    {{ formMacros.expandCollapse({ manualScripting: true }) }}
-                  </div>
-                  <script type="text/javascript">
-                    // Custom announcement height limit and expand/collapse button
-                    // Script inlined for fast loading
-                    
-                    var maxAnnouncementHeight = Math.max(280, findByClass('home-jumbo__sidebar').offsetHeight)
-                    var announcementEl = findByClass('home-jumbo__announcement')
-                    if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
-                      announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
-                      var expandBarEl = findByClass('expand-bar', 'home-jumbo__announcement')
-                      expandBarEl.setAttribute('style', 'display: block')
-                      expandBarEl.onclick = function (e) {
-                        if (announcementEl.className.indexOf('expanded') !== -1) {
-                          announcementEl.className = announcementEl.className.replace(' expanded', '')
-                        } else {
-                          announcementEl.className += ' expanded'
-                        }
-                        e.preventDefault()
-                        return false
-                      }
-                    } else {
-                      findByClass('expand-bar', 'home-jumbo__announcement').remove()
-                    }
-                    
-                    function findByClass(className, parentClassName) {
-                      var parent = parentClassName ? findByClass(parentClassName) : document
-                      var elements = parent.getElementsByClassName(className)
-                      return (elements.length > 0) ? elements[0] : null
-                    }
-                  </script>
-                {% endif %}
-                <div class="home-jumbo__footer">
-                  <a href="{{ buildUrl(featuredEvent, 'event', 'announcements') }}" class="home-jumbo__news-link pull-right">
-                      <span class="glyphicon glyphicon-pushpin"></span> All announcements
-                  </a>
-                </div>
-              </div>
+  <div class="row">
+    <div class="col-md-9">
+      {% if featuredEvent %}
+      <div class="home-jumbo {{ featuredEvent.get('status') }}">
+        <div class="event-table">
+          <a href="{{ buildUrl(featuredEvent, 'event') }}" class="event-table__title">
+            {{ featuredEvent.get('title') }}
+            <div class="event-table__dates">
+              {{ featuredEvent.get('display_dates') or '(dates unknown)' }}
             </div>
+          </a>
+          {% if featuredEvent.get('display_theme') %}
+          <div class="event-table__theme">
+            <span class="event-table__theme-label">Theme</span>
+            {{ featuredEvent.get('display_theme') }}
           </div>
+          {% endif %}
+        </div>
+        <div class="home-jumbo__links">
+          {{ eventMacros.eventLinks(featuredEvent, null, path, { entryCount: featuredEventCount }) }}
+        </div>
+        
+        {% set rawHypeLink = featuredEvent.get('countdown_config').link %}
+        {% if rawHypeLink %}
+          {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else buildUrl(featuredEvent, 'event', rawHypeLink) %}
+          <a class="home-jumbo__call" href="{{ hypeLink }}">
+            <span class="home-jumbo__countdown js-countdown"></span>
+            {{ featuredEvent.get('countdown_config').message }}
+          </a>
+          <div class="home-jumbo__details">
+            {% if featuredEvent.get('countdown_config').phrase %}
+              <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime | safe }}
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <div class="row">
+          <div class="col-sm-6" style="padding-right: 0">
+            {{ eventMacros.eventShortcutMyEntry(user, featuredEvent, userEntry) }}
+          </div>
+          <div class="col-sm-6" style="padding-left: 0">
+            {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="home-jumbo__contents">
+        {% if featuredEventAnnouncement %}
+          <div class="home-jumbo__announcement expandable">
+            {{ postMacros.post(featuredEventAnnouncement, user, { hideSpecialLabels: true, hideDate: true }) }}
+            {{ formMacros.expandCollapse({ manualScripting: true }) }}
+          </div>
+          <script type="text/javascript">
+            // Custom announcement height limit and expand/collapse button
+            // Script inlined for fast loading
+            var maxAnnouncementHeight = 280
+            var announcementEl = findByClass('home-jumbo__announcement')
+            if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
+              announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
+              var expandBarEl = findByClass('expand-bar', 'home-jumbo__announcement')
+              expandBarEl.setAttribute('style', 'display: block')
+              expandBarEl.onclick = function (e) {
+                if (announcementEl.className.indexOf('expanded') !== -1) {
+                  announcementEl.className = announcementEl.className.replace(' expanded', '')
+                } else {
+                  announcementEl.className += ' expanded'
+                }
+                e.preventDefault()
+                return false
+              }
+            } else {
+              findByClass('expand-bar', 'home-jumbo__announcement').remove()
+            }
+            
+            function findByClass(className, parentClassName) {
+              var parent = parentClassName ? findByClass(parentClassName) : document
+              var elements = parent.getElementsByClassName(className)
+              return (elements.length > 0) ? elements[0] : null
+            }
+          </script>
+        {% endif %}
       </div>
       {% endif %}
-      
+
       {% if not featuredEvent and not featuredPost %}
         <h1 class="text-center">Next event not announced yet.</h1>
       {% endif %}
+    </div>
+    <div class="col-md-3 visible-md visible-lg">
+      <div class="horizontal-bar" style="margin-top: 0px">Event calendar</div>
+
+      {% for event in eventSchedule %}
+        <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }}">
+          <div class="home-scheduled-event__arrow"></div>
+          <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event') }}">
+            {{ event.get('title') }}
+          </a>
+          <div class="home-scheduled-event__dates">
+            {{ event.get('display_dates') }}
+          </div>
+          <div class="home-scheduled-event__label">
+            {% if event.get('status') === 'open' %}
+              <span class="label label-danger">On now!</span>
+            {% elseif event.get('status') === 'pending' %}
+              <span class="label label-default">Up next!</span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+      
+      <div class="home-jumbo__social">
+        {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
+        {{ socialLink('Twitch', 'https://www.twitch.tv/communities/alakajam', 'twitch.png') }}
+        {{ socialLink('IRC', '/chat', 'irc.svg') }}
+        {{ socialLink('YouTube', 'https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos', 'youtube.svg') }}
+        {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
+        {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
+      </div>
     </div>
   </div>
 

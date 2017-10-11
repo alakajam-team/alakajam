@@ -100,10 +100,13 @@ async function index (req, res) {
         })
     }
 
-    // Find previous event
-    let previousEventTask = await eventService.findEventByStatus('closed')
-      .then(function (previousEvent) {
-        context.previousEvent = previousEvent
+    // Fetch event schedule
+    let eventScheduleTask = await eventService.findEvents({
+      sortDatesAscending: true,
+      pageSize: 5
+    })
+      .then(function (eventScheduleCollection) {
+        context.eventSchedule = eventScheduleCollection.models
       })
 
     // Gather featured entries
@@ -119,7 +122,7 @@ async function index (req, res) {
     }
 
     // Gather any user posts
-    let postsTask = postService.findPosts({specialPostType: null})
+    let postsTask = postService.findPosts({ specialPostType: null })
       .then(async function (postsCollection) {
         await postsCollection.load(['entry', 'event', 'entry.userRoles'])
         context.posts = postsCollection.models
@@ -143,7 +146,7 @@ async function index (req, res) {
         }
       })
 
-    await Promise.all([featuredEventTask, previousEventTask, suggestedEntriesTask,
+    await Promise.all([featuredEventTask, eventScheduleTask, suggestedEntriesTask,
       postsTask, featuredPostTask, featuredLinksTask]) // Parallelize fetching everything
 
     cache.general.set('home_page', context, 10 /* 10 seconds */)

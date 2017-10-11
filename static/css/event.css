@@ -6,9 +6,9 @@
 
 .action-banner {
   padding: 5px;
-  margin-bottom: 20px;
   background-color: var(--borders);
   height: 110px;
+  max-width: 945px;
   
   &__info {
     padding-right: 10px;
@@ -35,107 +35,112 @@
 /* Events page */
 
 .events-block {
-  padding: 15px;
   margin-bottom: 20px;
 
-  & > h4 {
-    margin: -15px;
-    margin-bottom: 0;
+  & > h3 {
     padding: 10px;
-    color: white;
+    padding-bottom: 0;
+    margin-bottom: 0;
   }
 
-  &__live {
-    background-color: var(--alt-lightest);
-
-    & > h4 {
-      background-color: var(--alt-light);
-    }
+  &__live > h3 {
+    color: var(--alt-dark);
+    font-weight: bold;
   }
 
   &__pending {
-    background-color: var(--main-lightest);
-
-    & > h4 {
-      background-color: var(--main-light);
-    }
   }
 
   &__closed {
-    background-color: var(--neutral-lightest);
-
-    & > h4 {
-      background-color: var(--neutral-light);
-    }
   }
 }
 
 .event-table {
-  &__header {
-    display: block;
-    padding: 10px 0;
-    margin-bottom: 20px;
-    
-    & h2 {
-      color: var(--text);
-      margin: 0;
+  @apply --shadow;
+  margin-top: 10px;
+  display: flex;
+  width: 100%;
+  background-color: white;
+  line-height: 60px;
 
-      &:hover {
-        color: var(--alt-dark);
-      }
-    }
+  &__title {
+    @apply --alt-font;
+    display: inline-block;
+    line-height: 42px;
+    font-size: 1.7rem;
+    padding: 0 10px 0 10px;
   }
-  &.live &__header {
-    @apply --shadow;
-    padding: 10px;
-    background-color: var(--alt);
+  &.pending &__title {
+    background-color: var(--main);
     color: white;
-    text-align: left;
-
-    & h2 {
-      color: white;
-    }
 
     &:hover {
-      background-color: var(--alt-light);
+      background-color: var(--main-dark);
     }
   }
+  &.open &__title {
+    background-color: var(--alt);
+    color: white;
+
+    &:hover {
+      background-color: var(--alt-dark);
+    }
+  }
+  &.closed &__title {
+    background-color: var(--neutral);
+    color: white;
+
+    &:hover {
+      background-color: var(--neutral-dark);
+    }
+  }
+
+  &__theme {
+    float: right;
+    text-align: right;
+    line-height: normal;
+    padding: 3px 15px;
+    height: 48px;
+    margin-top: 6px;
+    font-size: 1.4rem;
+  }
+  &__theme-label {
+    font-size: 0.8rem;
+    font-weight: normal;
+    display: block;
+    margin-bottom: -5px;
+  }
   
+  &__links {
+    flex: 1;
+  }
+
   &__status {
     @apply --main-font;
     font-size: 0.8rem;
     vertical-align: middle;
   }
   
-  &__details {
-    @apply --shadow;
-    margin-top: -20px;
-    padding: 10px 10px 0 10px;
+  &__dates {
+    @apply --main-font;
+    font-weight: normal;
+    font-size: 0.8rem;
+    color: var(--text);
+    line-height: 1rem;
+    margin-top: -5px;
     border-radius: 0;
-    background-color: white;
     width: 100%;
   }
-  &__details > div:first-child { /* info row */
-    padding-bottom: 10px;
+  &.pending &__dates, &.open &__dates, &.closed &__dates {
+    color: var(--white-lighter);
   }
-  
-  &__detail {
-    font-size: 1.0rem;
+
+  &__theme {
+    float: right;
+    font-size: 1.5rem;
     font-weight: bold;
   }
 
-  &__links {
-    background-color: white;
-    border-top: 1px solid var(--borders);
-
-    & a {
-      line-height: 60px;
-
-      &.event-header__announcement {
-        line-height: 15px;
-      }
-    }
-  }
 }
 
 .event-small-table {

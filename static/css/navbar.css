@@ -18,7 +18,10 @@
   /* Nav logo */
 
   & .navbar-header {
+    height: 60px;
+
     & .navbar-brand {
+      float: left;
       margin-top: 3px;
       width: 220px;
       height: 50px;
@@ -79,52 +82,36 @@
       &.live a {
         background-color: var(--main-light);
         line-height: calc(var(--navbar-height) / 3);
+        padding: 0 15px;
         padding-top: calc(var(--navbar-height) / 6);
         font-size: 1rem;
         margin-right: 20px;
 
         &:hover {
           background-color: white;
-          color: var(--alt);
-
-          & .live__icon span {
-            background-color: var(--alt);
-            color: white;
-          }
+          color: var(--alt-dark);
         }
 
-        & .live__icon {
-          display: inline-block;
-          margin-right: 2px;
-          height: 100%;
-
-          & span {
-            background-color: white;
-            color: var(--main);
-          }
-        }
         & .live__event {
+          @apply --alt-font;
           vertical-align: middle;
           display: inline-block;
-          margin-top: -2px;
-          margin-bottom: 4px; 
-          font-size: 1.2rem;
+          margin: 2px 0 4px 0;
+          font-size: 1.4rem;
           white-space: nowrap;
         }
-        & .live__theme {
-          display: block;
-          font-style: italic;
-          font-size: 1.05rem;
+        & .live__dates {
+          @apply --main-font;
+          font-size: 0.8rem;
         }
       }
 
       &.live.active a {
         background-color: white;
-        color: var(--text-light);
+        color: var(--alt);
 
-        & .live__icon span {
-          background-color: var(--text-lighter);
-          color: white;
+        & .live__dates {
+          color: var(--text-light);
         }
       }
 
@@ -292,6 +279,7 @@
   &__announcement {
     padding-top: calc(var(--eventbar-height) / 2 - 1.2rem);
     line-height: 1.0rem;
+    margin-left: -20px;
     margin-right: 20px;
     text-align: left;
   }
@@ -309,16 +297,17 @@
   position: relative;
   margin-bottom: 0;
   position: inherit;
-  text-align: center;
   height: 50px;
 
   @media (max-width: 768px) {
     & .navbar-collapse {
       position: absolute;
+      top: 60px;
       left: 0;
       right: 0;
       border: 0;
       width: 100%;
+      border-top: 1px solid var(--borders);
       
       &.collapsing, &.in {
         background-color: white;

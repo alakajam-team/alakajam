@@ -4,7 +4,14 @@
 {% import "_macros-games-search.html" as gamesSearchMacros %}
 
 {% block body %}
-{{ super() }}
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10 spacing">
+      {{ eventMacros.eventShortcutMyEntry(user, event, userEntry) if user }}
+    </div>
+  </div>
+</div>
 
 <div class="container-fluid">
   <div class="row">
@@ -34,7 +41,7 @@
     
     <div class="col-sm-9">
       <h1>
-        Entries
+        Games
         <span class="count">({{ entriesCollection.pagination.rowCount }})</span>
         {{ gamesSearchMacros.searchDescription(searchOptions, null, {fixedEvent: true}) }}
       </h1>

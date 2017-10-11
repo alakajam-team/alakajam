@@ -148,8 +148,9 @@ function configureBrowserRefresh () {
       .onFileModified(async function (path) {
         if (path.startsWith('/static/css')) {
           await buildCSS(true)
+        } else {
+          browserRefreshClient.refreshPage()
         }
-        browserRefreshClient.refreshPage()
       })
   }
 }
