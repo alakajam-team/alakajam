@@ -135,7 +135,11 @@ function handleGameSearch (req, res, searchOptions = {}) {
     searchOptions.eventId = null
   } else if (forms.isId(req.query.eventId)) {
     searchOptions.eventId = req.query.eventId
-  } else if (req.query.eventId === undefined && res.locals.featuredEvent) {
+  } else if (req.query.eventId === undefined && res.locals.event) {
+    searchOptions.eventId = res.locals.event.get('id')
+  } else if (req.query.eventId === undefined && res.locals.featuredEvent &&
+      ![enums.EVENT.STATUS_RESULTS.OFF, enums.EVENT.STATUS_RESULTS.DISABLED]
+        .includes(res.locals.featuredEvent.get('status_results'))) {
     searchOptions.eventId = res.locals.featuredEvent.get('id')
   } else {
     searchOptions.sortByRating = true
