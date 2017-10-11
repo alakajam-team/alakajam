@@ -11,7 +11,7 @@
   border: none;
   font-size: 2rem;
 
-  &.has-moderation-bar, &.has-event-header {
+  &.has-event-header {
     box-shadow: none;
   }
 
@@ -193,10 +193,6 @@
   height: var(--eventbar-height);
   position: relative;
 
-  &.has-moderation-bar {
-    box-shadow: none;
-  }
-
   &__info {
     display: inline-block;
     margin-right: 30px;
@@ -344,7 +340,6 @@
 }
 
 .moderation-bar {
-  @apply --header-shadow;
   margin: -21px 0 20px 0;
   width: 100%;
   background-color: var(--moderation-light);

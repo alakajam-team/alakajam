@@ -71,7 +71,7 @@
 <body {{ 'class=in-event' if event }}>
   {% set showModerationBar = user and (user.get('is_mod') or user.get('is_admin')) %}
 
-  <nav class="navbar navbar-default navbar-fixed-top {{ 'has-moderation-bar' if showModerationBar }} {{ 'has-event-header' if event }}">
+  <nav class="navbar navbar-default navbar-fixed-top {{ 'has-event-header' if event }}">
     <div class="container">
       {# ==== Main header (mobile) ==== #}
       <div class="navbar-header">
