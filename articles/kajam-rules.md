@@ -16,7 +16,9 @@ Everyone has around three weeks to submit their games.
 
 ## Rankings
 
-After the jam, Solo and Team divisions will be ranked separately through community voting: any person who entered the event will be able to play, rate and comment other people's games for one week, until the final results are released. On each game you play, you will get to rate **a single aspect of the game, which is the theme of the month**.
+After the jam, Solo and Team divisions will be ranked separately through community voting: any person who entered the event will be able to play, rate and comment other people's games for one week, until the final results are released.
+
+On each game you play, you will get to rate **a single aspect of the game, which is the topic of the month**. There will even not be an *Overall* rating category, so making a finished, polished game with enough contents is not necessarily the goal.
 
 Unranked games won't get ratings but can expect as much plays & feedback as the others.
 
