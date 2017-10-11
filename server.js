@@ -26,7 +26,6 @@ try {
 const DEV_ENVIRONMENT = process.env.NODE_ENV !== 'production'
 const CSS_INDEX_SRC_FOLDER = './static/css/'
 const CSS_INDEX_DEST_FOLDER = './static/build/'
-const CSS_INDEX_URL = '/static/build/index.css'
 const CSS_PLUGINS = [
   require('postcss-import'),
   require('postcss-cssnext')
@@ -147,7 +146,7 @@ function configureBrowserRefresh () {
     browserRefreshClient
       .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg', { autoRefresh: false })
       .onFileModified(async function (path) {
-        if (path.endsWith('.css') && path !== CSS_INDEX_URL) {
+        if (path.startsWith('/static/css')) {
           await buildCSS(true)
         }
         browserRefreshClient.refreshPage()
