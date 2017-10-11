@@ -42,21 +42,23 @@
           </div>
           {% endif %}
         </div>
-        <div class="home-jumbo__links">
+        <!--div class="home-jumbo__links">
           {{ eventMacros.eventLinks(featuredEvent, null, path, { entryCount: featuredEventCount }) }}
-        </div>
+        </div>-->
         
         {% set rawHypeLink = featuredEvent.get('countdown_config').link %}
         {% if rawHypeLink %}
           {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else buildUrl(featuredEvent, 'event', rawHypeLink) %}
-          <a class="home-jumbo__call" href="{{ hypeLink }}">
-            <span class="home-jumbo__countdown js-countdown"></span>
-            {{ featuredEvent.get('countdown_config').message }}
-          </a>
-          <div class="home-jumbo__details">
-            {% if featuredEvent.get('countdown_config').phrase %}
-              <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime | safe }}
-            {% endif %}
+          <div class="home-jumbo__details-container">
+            <a class="home-jumbo__call" href="{{ hypeLink }}">
+              <span class="home-jumbo__countdown js-countdown"></span>
+              {{ featuredEvent.get('countdown_config').message }}
+            </a>
+            <div class="home-jumbo__details">
+              {% if featuredEvent.get('countdown_config').phrase %}
+                <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime | safe }}
+              {% endif %}
+            </div>
           </div>
         {% endif %}
 

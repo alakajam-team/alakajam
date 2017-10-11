@@ -4,7 +4,6 @@
 
 .home-welcome {
   @apply --shadow;
-  position: relative;
   padding: 10px;
   padding-left: 100px;
   margin: 10px 15px 30px 15px;
@@ -80,10 +79,13 @@
     }
   }
 
+  &__details-container {
+    position: relative;
+  }
   &__details {
-    display: inline-block;
     position: absolute;
-    top: 150px;
+    display: inline-block;
+    top: 46px;
     left: 10px;
     color: white;
     pointer-events: none;
