@@ -8,8 +8,8 @@ Kajam rules
 
 Anyone can enter in any of the following divisions:
 
-* **Solo**, in which you make a whole game alone ;
-* **Team**, in which any number of persons can gather to make a game ;
+* **Solo**, in which you make a game alone ;
+* **Team**, in which any number of persons can work together ;
 * **Unranked**, for those not interested in the competitive aspect of the event.
 
 Everyone has around three weeks to submit their games.
