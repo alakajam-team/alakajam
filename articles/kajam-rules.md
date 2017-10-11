@@ -22,28 +22,9 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
 
 ## What is allowed/not allowed?
 
-### Solo/Team divisions
-
-Unless a particular *Kajam* states otherwise, the following rules apply:
-
-* **Tools:** All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.
-* **Code reuse:** You are allowed to use/reuse any outside library or personal code made prior to the event, or code bits found from sources like StackOverflow or blogs. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.
-* **Audio/Graphical asset reuse:** You are free to reuse any assets as long as you respect their licenses.
-* **Post-jam changes:** During the game rating phase, you are not allowed to add any features, assets or contents to your game. While you're supposed to have properly tested your game, stuff happens, so we do allow to:
-    * Package or improve the packaging of your game ;
-    * Port your game to other platforms ;
-    * Fix bugs ;
-    * Fix balance issues or annoyances *but only* if they're so terrible that people can't properly finish your game.
-
-### Unranked division
-
-Since there is no ratings involved, the rules are much more relaxed. The only rules are:
+Unless a particular *Kajam* states otherwise, those simple rules apply:
 
 * You cannot work on a game you started before the event.
-* Make sure to respect the licenses of the assets you grab.
+* All third-party assets are allowed as long as you have the license to use them.
 
-For best feedback, it is advised to let people know what you did/did not make during the jam.
-
-## In case of doubts...
-
-In those cases where you really want to do something, but it's unclear whether you can, or not doing it just seems unfair, **do it, and mention what you did in your game description**. After all, this is a completely informal competition, there's no prizes involved, we're just here to make games and have fun!
+Note: For best feedback, it is advised to let people know what you did/did not make during the jam.
