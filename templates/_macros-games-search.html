@@ -32,7 +32,8 @@
         <label for="divisions">Divisions</label>
         <div>
           <div class="btn-group" data-toggle="buttons">
-            {% for division in ['solo', 'team', 'unranked'] %}
+            {% set divisions = context.event.get('divisions')|keys if context.event else ['solo', 'team', 'unranked'] %}
+            {% for division in divisions %}
               {% set active = not context.searchOptions.divisions or context.searchOptions.divisions.includes(division) %}
               <label class="btn btn-default {{ 'active' if active }}">
                 <input type="checkbox" name="division-{{ division }}" {{ 'checked="checked"' if active }} autocomplete="off"> {{ division.replace('Unrank') | capitalize }}

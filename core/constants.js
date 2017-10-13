@@ -93,7 +93,7 @@ module.exports = {
   DIVISION_ICONS: {
     'solo': 'user',
     'team': 'users',
-    'ranked': 'user',
+    'ranked': 'flag-checkered',
     'unranked': 'hand-peace-o'
   },
 
