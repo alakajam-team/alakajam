@@ -35,7 +35,7 @@
               {{ featuredEvent.get('display_dates') or '(dates unknown)' }}
             </div>
           </a>
-          {% if featuredEvent.get('status_rules') %}
+          {% if isId(featuredEvent.get('status_rules')) %}
           <div class="home-jumbo__rules">
             <a href="{{ buildUrl(featuredEvent.get('status_rules'), 'post') }}" class="btn btn-default hidden-xs">
               <span class="glyphicon glyphicon-info-sign"></span> Welcome/Rules
