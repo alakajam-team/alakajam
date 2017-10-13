@@ -110,6 +110,13 @@ img.no-border:hover, a:hover img.no-border {
   border: 1px solid #aab2bd;
   border-radius: 4px;
   padding: 3px 0;
+
+  &.auto-height {
+    min-height: auto;
+  }
+  &.auto-height &-scroll {
+    min-height: auto;
+  }
 }
 
 .editor-toolbar.fullscreen, .CodeMirror-fullscreen, .editor-preview-side { 

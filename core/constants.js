@@ -90,6 +90,12 @@ module.exports = {
     'Mobile': 'fa-mobile',
     'Retro': 'fa-gamepad'
   },
+  DIVISION_ICONS: {
+    'solo': 'user',
+    'team': 'users',
+    'ranked': 'user',
+    'unranked': 'hand-peace-o'
+  },
 
   // Events
   MAX_CATEGORY_COUNT: 6,

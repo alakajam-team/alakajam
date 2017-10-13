@@ -114,6 +114,10 @@ function handleGameSearch (req, res, searchOptions = {}) {
     if (req.query[fieldName]) {
       searchOptions.divisions = searchOptions.divisions || []
       searchOptions.divisions.push(division)
+      if (division !== enums.DIVISION.UNRANKED &&
+          !searchOptions.divisions.includes(enums.DIVISION.RANKED)) {
+        searchOptions.divisions.push(enums.DIVISION.RANKED)
+      }
     }
   }
 
@@ -441,11 +445,12 @@ async function viewEventResults (req, res) {
 
   // Parse query
   let sortedBy = 1
-  let division = enums.DIVISION.SOLO
+  let division = eventService.getDefaultDivision(res.locals.event)
   if (forms.isInt(req.query.sortBy) && req.query.sortBy > 0 && req.query.sortBy <= constants.MAX_CATEGORY_COUNT) {
     sortedBy = parseInt(req.query.sortBy)
   }
-  if ([enums.DIVISION.SOLO, enums.DIVISION.TEAM].includes(req.query.division)) {
+  if (Object.keys(res.locals.event.get('divisions')).includes(req.query.division) &&
+      req.query.division !== enums.DIVISION.UNRANKED) {
     division = req.query.division
   }
 
@@ -509,6 +514,13 @@ async function editEvent (req, res) {
     }
     if (!errorMessage) {
       try {
+        fields['divisions'] = JSON.parse(fields['divisions'] || '{}')
+      } catch (e) {
+        errorMessage = 'Invalid divisions JSON'
+      }
+    }
+    if (!errorMessage) {
+      try {
         fields['category-titles'] = JSON.parse(fields['category-titles'] || '[]')
         if (fields['category-titles'].length > constants.MAX_CATEGORY_COUNT) {
           errorMessage = 'Events cannot have more than ' + constants.MAX_CATEGORY_COUNT + ' rating categories'
@@ -529,6 +541,7 @@ async function editEvent (req, res) {
         name: fields.name,
         display_dates: forms.sanitizeString(fields['display-dates']),
         display_theme: forms.sanitizeString(fields['display-theme']),
+        divisions: fields.divisions,
         status: fields.status,
         status_rules: fields['status-rules'],
         status_theme: fields['status-theme'],

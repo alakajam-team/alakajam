@@ -29,6 +29,7 @@ const config = require('../config')
 const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
+const enums = require('../core/enums')
 const settingService = require('../services/setting-service')
 const sessionService = require('../services/session-service')
 const userService = require('../services/user-service')
@@ -73,19 +74,31 @@ async function configure (app) {
   // Templating: custom filters
   nj.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
   nj.env.addGlobal('constants', constants)
+  nj.env.addGlobal('enums', enums)
   nj.env.addGlobal('devMode', app.locals.devMode)
   nj.env.addGlobal('launchTime', LAUNCH_TIME)
   nj.env.addGlobal('context', function () {
     // lets devs display the whole templating context with
     // {{ context() | prettyDump | safe }}
     this.ctx.constants = constants
+    this.ctx.enums = enums
     this.ctx.devMode = app.locals.devMode
+    this.ctx.launchTime = LAUNCH_TIME
     return this.ctx
   })
   for (var functionName in templating) {
     nj.env.addGlobal(functionName, templating[functionName])
   }
 
+  nj.env.addFilter('keys', function (obj) {
+    return Object.keys(obj)
+  })
+  nj.env.addFilter('values', function (obj) {
+    return Object.values(obj)
+  })
+  nj.env.addFilter('pretty', function (obj) {
+    return JSON.stringify(obj, null, 2)
+  })
   nj.env.addFilter('prettyDump', function (obj) {
     return '<pre>' + JSON.stringify(obj, null, 2) + '</pre>'
   })

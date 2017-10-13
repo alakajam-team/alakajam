@@ -111,15 +111,17 @@
 
         <label for="division">Division {{ formMacros.tooltip(divisionTooltip) if not external }}</label>
         <div>
-          
           <div id="js-entry-divisions" class="entry__divisions toggle" data-toggle="buttons">
-            {{ divisionButton('Solo', '48 hours<br />Everything from scratch' if not external, 
-              'user', 'solo', entry.get('division'), canEditDivision, divisionTooltip) }}
-            {{ divisionButton('Team', '48 hours<br />Everything from scratch' if not external,
-              'users', 'team', entry.get('division'), canEditDivision, divisionTooltip) }}
             {% if not external %}
-              {{ divisionButton('Unranked', '72 hours<br />No rankings, just feedback', 'hand-peace-o', 
-                'unranked', entry.get('division'), canEditDivision, divisionTooltip) }}
+              {% for name, description in event.get('divisions') %}
+                {{ divisionButton(name|capitalize, description, constants.DIVISION_ICONS[name], name,
+                  entry.get('division'), canEditDivision, divisionTooltip) }}
+              {% endfor %}
+            {% else %}
+              {{ divisionButton('Solo', '', constants.DIVISION_ICONS['solo'], 'solo',
+                entry.get('division'), canEditDivision, divisionTooltip) }}
+              {{ divisionButton('Team', '', constants.DIVISION_ICONS['team'], 'team', 
+                entry.get('division'), canEditDivision, divisionTooltip) }}
             {% endif %}
           </div>
           

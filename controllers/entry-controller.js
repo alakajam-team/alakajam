@@ -134,7 +134,7 @@ async function editEntry (req, res) {
         event_id: res.locals.event.get('id'),
         event_name: res.locals.event.get('name'),
         division: event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED
-          ? enums.DIVISION.UNRANKED : enums.DIVISION.SOLO
+          ? enums.DIVISION.UNRANKED : eventService.getDefaultDivision(event)
       })
     }
   } else if (!entry) {
@@ -236,7 +236,7 @@ async function editEntry (req, res) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture && files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
-    } else if (fields.division && !forms.isIn(fields.division, enums.DIVISION)) {
+    } else if (fields.division && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
       errorMessage = 'Invalid division'
     } else if (typeof fields.members !== 'string') {
       errorMessage = 'Invalid members'
@@ -261,7 +261,7 @@ async function editEntry (req, res) {
       }
 
       if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
-        let division = fields['division'] || 'solo'
+        let division = fields['division'] || eventService.getDefaultDivision(event)
         if (event &&
           (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED || event.get('status_entry') === enums.EVENT.STATUS_ENTRY.CLOSED)) {
           if (!entry.has('division')) {

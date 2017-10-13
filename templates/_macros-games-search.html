@@ -35,7 +35,7 @@
             {% for division in ['solo', 'team', 'unranked'] %}
               {% set active = not context.searchOptions.divisions or context.searchOptions.divisions.includes(division) %}
               <label class="btn btn-default {{ 'active' if active }}">
-                <input type="checkbox" name="division-{{ division }}" {{ 'checked="checked"' if active }} autocomplete="off"> {{ division | capitalize }}
+                <input type="checkbox" name="division-{{ division }}" {{ 'checked="checked"' if active }} autocomplete="off"> {{ division.replace('Unrank') | capitalize }}
               </label>
             {% endfor %}
           </div>

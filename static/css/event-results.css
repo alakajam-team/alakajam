@@ -3,7 +3,7 @@
  */
 
 .results-links {
-  margin: 20px 0;
+  margin-bottom: 20px;
 
   &__division {
     font-size: 1.5rem;
@@ -22,6 +22,7 @@
 .results-podium {
   @apply --shadow;
   background-color: #DDD;
+  margin-bottom: 20px;
 
   &__event-name {
     font-size: 1.3rem;

@@ -33,8 +33,12 @@
     </div>
   </div>
   <div class="form-group">
+    <label for="divisions">Divisions {{ formMacros.tooltip('Must be a valid JSON object, with keys being the name (among: solo,team,ranked,unranked) and values the description.') }}</label>
+    <textarea name="divisions" class="codemirror auto-height">{{ (event.get('divisions') if event else []) | pretty }}</textarea>
+  </div>
+  <div class="form-group">
     <label for="category-titles">Rating categories {{ formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]') }}</label>
-    <textarea name="category-titles" class="codemirror">{{ (event.related('details').get('category_titles') if event else []) | dump }}</textarea>
+    <textarea name="category-titles" class="codemirror auto-height">{{ (event.related('details').get('category_titles') if event else []) | dump }}</textarea>
   </div>
 
   <div class="horizontal-bar">

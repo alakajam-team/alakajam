@@ -9,6 +9,14 @@ exports.up = async function (knex, Promise) {
       table.integer('entry_count').defaultTo(0)
     })
 
+    // Initialize divisions
+    await knex('event')
+      .update('divisions', JSON.stringify({
+        'solo': '48 hours<br />Everything from scratch',
+        'team': '48 hours<br />Everything from scratch',
+        'unranked': '72 hours<br />No rankings, just feedback'
+      }))
+
     await knex.schema.table('event_details', function (table) {
       table.string('division_counts', 2000).defaultTo('{}')
     })

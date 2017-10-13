@@ -18,8 +18,8 @@ const settingService = require('./setting-service')
 
 module.exports = {
   createEvent,
-  refreshEventReferences,
   areSubmissionsAllowed,
+  getDefaultDivision,
 
   findEventById,
   findEventByName,
@@ -46,6 +46,7 @@ module.exports = {
   countEntriesByEvent,
 
   refreshCommentScore,
+  refreshEventReferences,
   refreshEntryPlatforms,
   refreshUserCommentScoresOnNode,
   refreshEventCounts
@@ -62,27 +63,22 @@ function createEvent () {
     'status_theme': enums.EVENT.STATUS_THEME.DISABLED,
     'status_entry': enums.EVENT.STATUS_ENTRY.OFF,
     'status_results': enums.EVENT.STATUS_RESULTS.DISABLED,
+    'divisions': {
+      'solo': '48 hours<br />Everything from scratch',
+      'team': '48 hours<br />Everything from scratch',
+      'unranked': '72 hours<br />No rankings, just feedback'
+    },
     'published_at': new Date() // TODO Let admins choose when to publish
   })
-}
-
-/**
- * Refreshes various models that cache the event name.
- * Call this after changing the name of an event.
- * @param {Event} event
- */
-async function refreshEventReferences (event) {
-  // TODO Transaction
-  let entryCollection = await models.Entry.where('event_id', event.id).fetchAll()
-  for (let entry of entryCollection.models) {
-    entry.set('event_name', event.get('name'))
-    await entry.save()
-  }
 }
 
 function areSubmissionsAllowed (event) {
   return event && event.get('status') === enums.EVENT.STATUS.OPEN &&
       ([enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get('status_entry')))
+}
+
+function getDefaultDivision (event) {
+  return Object.keys(event.get('divisions'))[0]
 }
 
 /**
@@ -706,6 +702,20 @@ async function countEntriesByEvent (event) {
     .where('event_id', event.get('id'))
     .count()
   return parseInt(count)
+}
+
+/**
+ * Refreshes various models that cache the event name.
+ * Call this after changing the name of an event.
+ * @param {Event} event
+ */
+async function refreshEventReferences (event) {
+  // TODO Transaction
+  let entryCollection = await models.Entry.where('event_id', event.id).fetchAll()
+  for (let entry of entryCollection.models) {
+    entry.set('event_name', event.get('name'))
+    await entry.save()
+  }
 }
 
 async function refreshEntryPlatforms (entry) {

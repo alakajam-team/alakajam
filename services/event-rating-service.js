@@ -339,7 +339,9 @@ function computeFeedbackScore (received, given) {
 }
 
 async function computeRankings (event) {
-  let rankedDivisions = [enums.DIVISION.SOLO, enums.DIVISION.TEAM]
+  let rankedDivisions = Object.keys(event.get('divisions'))
+  rankedDivisions.splice(rankedDivisions.indexOf(enums.DIVISION.UNRANKED), 1)
+
   let rankedEntries = await models.Entry
     .where('event_id', event.get('id'))
     .where('division', '<>', enums.DIVISION.UNRANKED)
