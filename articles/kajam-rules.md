@@ -6,7 +6,7 @@ Kajam rules
 Anyone can enter in any of the following divisions:
 
 * **Ranked**, in which you make a game either alone or as a team ;
-* **Unranked**, for those not interested in the competitive aspect of the event, or who want to submit a game without focusing on the theme.
+* **Unranked**, for those not interested in the competitive aspect of the event, or who want to enter without focusing on the monthly topic.
 
 Everyone has around three weeks to submit their entries.
 
