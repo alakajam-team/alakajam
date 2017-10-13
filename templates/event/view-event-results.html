@@ -113,7 +113,8 @@
           </a></li>
         {% endfor %}
       </ul>
-    </div>rankings
+    </div>rankings 
+    <span class="results-podium__counter">{{ event.related('details').get('division_counts')[division] }} entries</span>
   </h1>
 
   <div class="row">

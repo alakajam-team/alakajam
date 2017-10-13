@@ -1,3 +1,18 @@
 {% extends "_page.html" %}
 
-<!-- Unused -->
+{% block body %}
+
+{% if user %}
+<div class="container" style="margin-bottom: 20px">
+  <div class="row">
+    <div class="col-sm-6">
+      {{ eventMacros.eventShortcutMyEntry(user, event, userEntry) }}
+    </div>
+    <div class="col-sm-6">
+      {{ eventMacros.eventShortcutMyPost(user, event, userPost) }}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

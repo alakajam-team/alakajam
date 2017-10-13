@@ -112,14 +112,17 @@
       <div class="entry-results">
         <h2 class="entry-results__header">Voting results</h2>
         <div class="entry-results__body">
+          <p>
           {% set hasRatings = false %}
           {% set details = entry.related('details') %}
+          {% set entriesInDivision = event.related('details').get('division_counts')[entry.get('division')] %}
           {% for categoryTitle in event.related('details').get('category_titles') %}
             {% set categoryIndex = loop.index %}
             {% set ranking = details.get('ranking_' + categoryIndex) %}
             {% set rating = details.get('rating_' + categoryIndex) %}
             {% if ranking %}
               {% set hasRatings = true %}
+              {% set percentage = ((ranking - 1) / entriesInDivision * 100) | digits(0) %}
               <div class="entry-results__category">
                 <div class="entry-results__category-title">{{ categoryTitle }}</div>
                 <div class="entry-results__category-ranking">
@@ -130,6 +133,7 @@
                     {{ ranking | ordinal }}
                   </a>
                 </div>
+                <div class="entry-results__category-rating hidden-xs">{{ (percentage | digits(0)) + '%' if percentage > 0 }}</div>
                 <div class="entry-results__category-rating">{{ rating | digits(3) }}</div>
                 <div class="entry-results__category-stars hidden-xs">
                   {%- for i in range(1, 11) -%}
@@ -139,7 +143,11 @@
               </div>
             {% endif %}
           {% endfor %}
-          {% if not hasRatings %}
+          </p>
+
+          {% if hasRatings %}
+            This game entered in the <strong>{{ entry.get('division') | capitalize }}</strong> competition (<strong>{{ entriesInDivision }}</strong> entries).
+          {% else %}
             This entry did not get enough ratings to be ranked.
           {% endif %}
         </div>

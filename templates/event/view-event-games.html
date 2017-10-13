@@ -4,16 +4,7 @@
 {% import "_macros-games-search.html" as gamesSearchMacros %}
 
 {% block body %}
-
-{% if user %}
-<div class="container">
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-      {{ eventMacros.eventShortcutMyEntry(user, event, userEntry) }}
-    </div>
-  </div>
-</div>
-{% endif %}
+{{ super() }}
 
 <div class="container-fluid {{ 'spacing' if user }}">
   <div class="row">

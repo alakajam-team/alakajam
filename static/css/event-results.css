@@ -55,6 +55,13 @@
     }
   }
 
+  &__counter {
+    @apply --main-font;
+    display: block;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
   &__step {
     margin: 30px 0 80px 0;
     &::after {
@@ -81,6 +88,90 @@
     &.third::after {
       margin-top: -64px;
       background-position: -256px -320px;
+    }
+  }
+}
+
+/* Results on entry page */
+
+.entry-results {
+  @apply --shadow;
+  background-color: var(--borders);
+  margin-bottom: 20px;
+
+  &__header {
+    padding: 10px;
+    background-color: var(--main);
+    color: white;
+  }
+
+  &__body {
+    padding: 10px;
+    padding-top: 0;
+  }
+
+  &__category {
+    padding-top: 5px;
+    font-size: 1.2rem;
+  }
+
+  &__category-title {
+    display: inline-block;
+    width: 120px;
+  }
+
+  &__category-ranking {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    position: relative;
+    vertical-align: middle;
+    width: 7rem;
+    text-align: right;
+    margin-right: 15px;
+  }
+
+  &__category-medal {
+    @apply --sprite2;
+    display: inline-block;
+    height: 32px;
+    position: absolute;
+    right: 50px;
+    top: 0;
+    width: 32px;
+    &.medal1 {
+      background-position: -64px -112px;
+    }
+    &.medal2 {
+      background-position: -64px -144px;
+    }
+    &.medal3 {
+      background-position: -64px -176px;
+    }
+  }
+
+  &__category-rating {
+    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: bold;
+    vertical-align: middle;
+    width: 3rem;
+    text-align: center;
+    margin-right: 12px;
+  }
+
+  &__category-stars {
+    display: inline-block;
+    font-size: 1rem;
+
+    & .fa {
+      font-size: 1.4rem;
+      width: 1.7rem;
+    }
+  }
+  @media (min-width: 992px) and (max-width: 1199px) {
+    &__category-stars .fa {
+      width: 1.4rem;
     }
   }
 }
