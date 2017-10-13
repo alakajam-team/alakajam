@@ -172,7 +172,7 @@ async function editEntry (req, res) {
       }
     } else {
       // If the client-side JS didn't have the time to load, don't change the links
-      links = entry.get('links')
+      links = entry.get('links') || []
     }
 
     let platforms = null
@@ -237,7 +237,7 @@ async function editEntry (req, res) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture && files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
-    } else if (fields.division && !forms.isIn(enums.DIVISION)) {
+    } else if (fields.division && !forms.isIn(fields.division, enums.DIVISION)) {
       errorMessage = 'Invalid division'
     } else if (typeof fields.members !== 'string') {
       errorMessage = 'Invalid members'

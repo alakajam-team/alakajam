@@ -184,6 +184,8 @@ async function createEntry (user, event) {
   await entryDetails.save()
   await entry.load('details')
 
+  _refreshEventCounts(event) // No need to await
+
   return entry
 }
 
@@ -475,7 +477,7 @@ async function deleteEntry (entry) {
     await post.save()
   })
 
-  return db.transaction(async function (t) {
+  await db.transaction(async function (t) {
     // Delete user roles manually (because no cascading)
     await entry.load('userRoles')
     entry.related('userRoles').each(function (userRole) {
@@ -485,6 +487,8 @@ async function deleteEntry (entry) {
     // Delete entry
     await entry.destroy({ transacting: t })
   })
+
+  _refreshEventCounts(entry.related('event')) // No need to await
 }
 
 /**
@@ -797,4 +801,37 @@ function _computeRawCommentScore (comment) {
   } else { // Short comments
     return 1
   }
+}
+
+/**
+ * Updates the event counters on an event
+ * @param  {Event} event
+ * @return {void}
+ */
+async function _refreshEventCounts (event) {
+  let countByDivision = await db.knex('entry')
+    .count().select('division')
+    .where('event_id', event.get('id'))
+    .groupBy('division')
+
+  let totalCount = 0
+  let divisionCounts = {}
+  for (let row of countByDivision) {
+    let count = parseInt(row['count'])
+    divisionCounts[row['division']] = count
+    totalCount += count
+  }
+
+  if (!event.relations.details) {
+    await event.load('details')
+  }
+
+  return db.transaction(async function (transaction) {
+    event.set('entry_count', totalCount)
+    await event.save(null, { transacting: transaction })
+
+    let details = event.related('details')
+    details.set('division_counts', divisionCounts)
+    await details.save(null, { transacting: transaction })
+  })
 }

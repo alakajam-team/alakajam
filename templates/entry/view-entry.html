@@ -185,6 +185,9 @@
       <h3 style="margin-top: 20px">Links</h3>
 
       <div class="entry__links">
+        {% if canUserWrite(user, entry) %}
+          <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
+        {% endif %}
         {% for link in entry.get('links') %}
           <a class="btn btn-primary" href="{{ link.url }}">
             {{ link.label }}
@@ -192,9 +195,6 @@
         {% endfor %}
         {% if entry.get('links').length === 0 or not entry.get('links')[0].url %}
           <div class="well">No links yet.</div>
-        {% endif %}
-        {% if canUserWrite(user, entry) %}
-        <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
         {% endif %}
       </div>
 

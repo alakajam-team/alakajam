@@ -162,10 +162,13 @@ function isSlug (string) {
  * @return {Boolean}
  */
 function isIn (string, values) {
-  if (typeof values === 'object') {
-    return string && validator.isIn(string, Object.values(values))
+  if (string) {
+    if (typeof values === 'object') {
+      return string && validator.isIn(string, Object.values(values))
+    } else {
+      return string && validator.isIn(string, values)
+    }
   }
-  return string && validator.isIn(string, values)
 }
 
 /**

@@ -51,6 +51,7 @@ module.exports = {
   DIVISION: {
     SOLO: 'solo',
     TEAM: 'team',
+    RANKED: 'ranked',
     UNRANKED: 'unranked'
   }
 }

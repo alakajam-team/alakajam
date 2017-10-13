@@ -157,6 +157,7 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
  * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
+ * | string | divisions | Divisions info: `{"name": "description"}`
  * | date | published_at | Publication date. If empty, the event is a draft.
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
@@ -180,18 +181,21 @@ module.exports.Event = bookshelf.model('Event', {
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
     attrs = attrs || {}
-    attrs['countdown_config'] = attrs.links || {}
-    attrs['cron_config'] = attrs.links || {}
+    attrs['countdown_config'] = attrs['countdown_config'] || {}
+    attrs['cron_config'] = attrs['cron_config'] || {}
+    attrs['divisions'] = attrs['divisions'] || {}
     return attrs
   },
   parse: function parse (attrs) {
     if (attrs['countdown_config']) attrs['countdown_config'] = JSON.parse(attrs['countdown_config'])
     if (attrs['cron_config']) attrs['cron_config'] = JSON.parse(attrs['cron_config'])
+    if (attrs['divisions']) attrs['divisions'] = JSON.parse(attrs['divisions'])
     return attrs
   },
   format: function format (attrs) {
     if (attrs && attrs['countdown_config']) attrs['countdown_config'] = JSON.stringify(attrs['countdown_config'])
     if (attrs && attrs['cron_config']) attrs['cron_config'] = JSON.stringify(attrs['cron_config'])
+    if (attrs && attrs['divisions']) attrs['divisions'] = JSON.stringify(attrs['divisions'])
     return attrs
   }
 }, {
@@ -210,6 +214,7 @@ module.exports.Event = bookshelf.model('Event', {
  * | integer | theme_count | Number of theme ideas submitted
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
+ * | string | division_counts | Number of entries by division: {"name": count...}
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -224,14 +229,17 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
     modelPrototype.initialize.call(this)
     attrs = attrs || {}
     attrs['category_titles'] = attrs['category_titles'] || []
+    attrs['division_counts'] = attrs['division_counts'] || []
     return attrs
   },
   parse: function parse (attrs) {
     if (attrs['category_titles']) attrs['category_titles'] = JSON.parse(attrs['category_titles'])
+    if (attrs['division_counts']) attrs['division_counts'] = JSON.parse(attrs['division_counts'])
     return attrs
   },
   format: function format (attrs) {
     if (attrs && attrs['category_titles']) attrs['category_titles'] = JSON.stringify(attrs['category_titles'])
+    if (attrs && attrs['division_counts']) attrs['division_counts'] = JSON.stringify(attrs['division_counts'])
     return attrs
   },
 
