@@ -5,9 +5,8 @@
 /* Shortcuts to event entry/latest post */
 
 .action-banner {
-  padding: 5px;
+  padding: 10px;
   background-color: var(--borders);
-  height: 110px;
   max-width: 945px;
   
   &__info {
@@ -15,13 +14,15 @@
   }
   
   &__title {
-    padding-bottom: 5px;
+    vertical-align: top;
+    padding-top: 5px;
     color: var(--text-light);
-    line-height: 38px;
-    height: 38px;
+    height: 35px;
   }
 
   &__post {
+    @apply --shadow;
+    background-color: white;
     height: 60px;
     padding: 5px;
     

@@ -124,8 +124,7 @@ async function configure (app) {
   })
   nj.env.addFilter('featuredEventDateTime', function (date) {
     if (date) {
-      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) +
-        ' <a href="https://www.timeanddate.com/worldclock/timezone/utc">UTC</a>'
+      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) + ' UTC'
     } else {
       return ''
     }

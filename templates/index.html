@@ -35,6 +35,13 @@
               {{ featuredEvent.get('display_dates') or '(dates unknown)' }}
             </div>
           </a>
+          {% if featuredEvent.get('status_rules') %}
+          <div class="home-jumbo__rules">
+            <a href="{{ buildUrl(featuredEvent.get('status_rules'), 'post') }}" class="btn btn-default hidden-xs">
+              <span class="glyphicon glyphicon-info-sign"></span> Welcome/Rules
+            </a>
+          </div>
+          {% endif %}
           {% if featuredEvent.get('display_theme') %}
           <div class="event-table__theme">
             <span class="event-table__theme-label">Theme</span>
@@ -49,24 +56,39 @@
         {% set rawHypeLink = featuredEvent.get('countdown_config').link %}
         {% if rawHypeLink %}
           {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else buildUrl(featuredEvent, 'event', rawHypeLink) %}
-          <div class="home-jumbo__details-container">
-            <a class="home-jumbo__call" href="{{ hypeLink }}">
-              <span class="home-jumbo__countdown js-countdown"></span>
-              {{ featuredEvent.get('countdown_config').message }}
-            </a>
-            <div class="home-jumbo__details">
-              {% if featuredEvent.get('countdown_config').phrase %}
-                <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime | safe }}
-              {% endif %}
+          <a class="home-jumbo__call" href="{{ hypeLink }}">
+            <div class="row">
+              <div class="col-md-6">
+                <h2>{{ featuredEvent.get('countdown_config').message }}</h2>
+                {% if featuredEvent.get('countdown_config').phrase %}
+                  <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime }}
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <span class="home-jumbo__countdown js-countdown"></span>
+              </div>
+            </div>
+          </a>
+        {% elseif featuredEvent.get('countdown_config').phrase %}
+          <div class="home-jumbo__details">
+            <div class="row">
+              <div class="col-md-6">
+                {% if featuredEvent.get('countdown_config').phrase %}
+                  <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime }}
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <span class="home-jumbo__countdown js-countdown"></span>
+              </div>
             </div>
           </div>
         {% endif %}
 
-        <div class="row">
-          <div class="col-sm-6" style="padding-right: 0">
+        <div class="row home-jumbo__shortcuts">
+          <div class="col-sm-6">
             {{ eventMacros.eventShortcutMyEntry(user, featuredEvent, userEntry) }}
           </div>
-          <div class="col-sm-6" style="padding-left: 0">
+          <div class="col-sm-6">
             {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost) }}
           </div>
         </div>
@@ -75,7 +97,7 @@
       <div class="home-jumbo__contents">
         {% if featuredEventAnnouncement %}
           <div class="home-jumbo__announcement expandable">
-            {{ postMacros.post(featuredEventAnnouncement, user, { hideSpecialLabels: true, hideDate: true }) }}
+            {{ postMacros.post(featuredEventAnnouncement, user, { hideDate: true }) }}
             {{ formMacros.expandCollapse({ manualScripting: true }) }}
           </div>
           <script type="text/javascript">
@@ -117,6 +139,11 @@
     <div class="col-md-3 visible-md visible-lg">
       <div class="horizontal-bar" style="margin-top: 0px">Event calendar</div>
 
+      <div class="home-scheduled-event">
+        <a class="home-scheduled-event__title" style="font-size: 0.9rem" href="/events">
+          Browse all events
+        </a>
+      </div>
       {% for event in eventSchedule %}
         <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }}">
           <div class="home-scheduled-event__arrow"></div>

@@ -4,6 +4,7 @@
 
 .home-welcome {
   @apply --shadow;
+  position: relative;
   padding: 10px;
   padding-left: 100px;
   margin: 10px 15px 30px 15px;
@@ -52,6 +53,11 @@
     height: 60px;
   }
 
+  &__rules {
+    float: right;
+    padding-right: 10px;
+  }
+
   &__links {
     background-color: white;
     border-top: 1px solid var(--borders);
@@ -62,14 +68,13 @@
     }
   }
 
+
+  &__call-container {
+    position: relative;
+  }
   &__call {
-    @apply --alt-font;
     display: block;
-    height: 80px;
     color: white;
-    font-size: 2.4rem;
-    font-weight: normal;
-    line-height: 2.4rem;
     padding: 10px;
     background-color: var(--alt);
 
@@ -77,34 +82,27 @@
       background-color: var(--alt-dark);
       color: white;
     }
-  }
 
-  &__details-container {
-    position: relative;
-  }
-  &__details {
-    position: absolute;
-    display: inline-block;
-    top: 46px;
-    left: 10px;
-    color: white;
-    pointer-events: none;
-
-    & a {
-      pointer-events: auto;
-      color: white;
-      text-decoration: underline;
-
-      &:hover {
-        font-weight: bold;
-      }
+    & h2 {
+      @apply --alt-font;
+      font-size: 2.2rem;
+      font-weight: normal;
+      line-height: 2.3rem;
+      margin-bottom: 2px;
     }
+  }
+
+  &__details {
+    color: white;
+    padding: 10px;
+    background-color: var(--neutral);
   }
   
   &__countdown {
     display: none;
     float: right;
-    margin-top: 8px;
+    margin: 5px;
+    margin-right: -5px;
     width: 332px;
     
     & .flip .inn {
@@ -114,17 +112,30 @@
       display: none;
     }
   }
+  @media (max-width: 991px) {
+    &__countdown {
+      float: none;
+      margin: 0;
+    }
+  }
+
+  @media (min-width: 769px) {
+    &__shortcuts {
+      & > div:first-child {
+        padding-right: 0;
+      }
+      & > div:last-child {
+        padding-left: 0;
+      }
+    }
+  }
 
   &__contents {
-    @apply --shadow;
     margin-top: 20px;
-    padding: 10px;
-    background-color: var(--borders);
   }
 
   &__announcement {
     text-align: left;
-    margin-right: 10px;
     margin-bottom: 0;
     
     & h1 > a {
@@ -151,10 +162,6 @@
         margin-top: 20px;
         display: inline-block;
       }
-    }
-
-    &__countdown {
-      margin-left: auto;
     }
   }
   
