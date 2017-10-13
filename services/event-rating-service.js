@@ -137,6 +137,11 @@ async function saveEntryVote (user, entry, event, voteData) {
   await refreshEntryRatings(entry)
   if (refreshRequired) {
     refreshEntryScore(entry, event)
+
+    let userEntry = await eventService.findUserEntryForEvent(user, event.get('id'))
+    if (userEntry) {
+      refreshEntryScore(userEntry, event)
+    }
   }
 }
 
