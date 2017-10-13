@@ -207,22 +207,20 @@
       <div class="{{ 'well' if comment and comment.id }}" style="margin-bottom: 10px">
         {{ formMacros.editor('body', comment.get('body') if comment) }}
 
-        <div class="row comment__actions">
-          <div class="col-xs-8">
-            {% if comment and comment.id %}
-            <input type="submit" name="delete" class="btn btn-default" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"/>
-            {% endif %}
-            {% if showAnon and not user.get('disallow_anonymous') %}
-              {{ formMacros.check('comment-anonymously', 'Comment anonymously', null, { noMargin: true }) }}
-              (<a href="/article/faq#anon-comment" target="_blank">about</a>)
-            {% endif %}
-          </div>
-          <div class="col-xs-4 text-right">
+        <div class="comment__actions">
+          <div class="pull-right">
             <input type="submit" name="save" class="btn btn-primary" value="Save" />
             {% if comment and comment.id %}
               <a href="{{ buildUrl(comment, 'comment') }}" class="btn btn-default">Cancel</a>
             {% endif %}
           </div>
+          {% if comment and comment.id %}
+          <input type="submit" name="delete" class="btn btn-default" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"/>
+          {% endif %}
+          {% if showAnon and not user.get('disallow_anonymous') %}
+            {{ formMacros.check('comment-anonymously', 'Comment anonymously', null, { noMargin: true }) }}
+            (<a href="/article/faq#anon-comment" target="_blank">about</a>)
+          {% endif %}
         </div>
       </div>
     </div>

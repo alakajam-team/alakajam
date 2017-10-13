@@ -63,7 +63,7 @@
                     {% set categoryIndex = loop.index %}
                     {% set categoryRating = vote.get('vote_' + categoryIndex) if vote %}
                     <div class="entry-voting__category">
-                      <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ categoryRating or 0 | digits(3) }}" />
+                      <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ (categoryRating or 0) | digits(3) }}" />
                       <div class="entry-voting__category-title">{{ categoryTitle }}</div>
                       <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ (categoryRating | digits(0)) if categoryRating > 0 }}</div>
                         <div class="entry-voting__category-stars">
@@ -297,8 +297,15 @@ function setRating (category, rating, confirmed) {
   var $ratingLabel = $('#js-vote-label-' + category)
   $ratingLabel.text(rating !== 0 ? rating : '\xa0') // &nbsp;
   if (confirmed) {
-    $('#js-vote-' + category).val(rating.toFixed(3))
+    var previousValue = $('#js-vote-' + category).val()
+    var newValue = rating.toFixed(3)
+    console.log(previousValue, newValue)
+
     $ratingLabel.addClass('confirmed')
+    if (previousValue !== newValue) {
+      $('#js-vote-' + category).val(newValue)
+      $('.comment input[name=save]').val('Save comment & ratings')
+    }
   } else {
     $ratingLabel.removeClass('confirmed')
   }
