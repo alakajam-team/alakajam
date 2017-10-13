@@ -27,5 +27,5 @@ $(function domReady () {
   require('./common/disabled-links')('a.disabled')
   require('./common/editor')('.simplemde-editor')
   require('./common/tooltips')('.has-tooltip')
-  require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes')
+  require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes', { autoSubmit: '.js-auto-submit' })
 })

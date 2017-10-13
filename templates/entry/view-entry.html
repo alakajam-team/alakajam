@@ -55,7 +55,7 @@
                 <p style="margin-bottom: 0"><i>Note: The Feedback Score formula grants you as many points on this entry as on Solo/Team ones. <a href="/article/faq#feedback">Learn more</a></i></p>
               {% else %}
                 <p style="margin-bottom: -10px">This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
-                <form method="post" class="js-warn-on-unsaved-changes" action="?#ratings">
+                <form method="post" class="js-warn-on-unsaved-changes js-auto-submit" action="?#ratings">
                   <input type="hidden" name="action" value="vote" />
                   <p class="form-group">
                     {% set optouts = entry.related('details').get('optouts') or [] %}
