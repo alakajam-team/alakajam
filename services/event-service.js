@@ -504,8 +504,10 @@ async function findGames (options = {}) {
     } else if (options.sortByRating) {
       query = query.query(function (qb) {
         return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
-          .orderBy('entry_details.rating_1', 'desc')
-          .where('entry_details.rating_1', '>', 0)
+          .leftJoin('event', 'entry.event_id', 'event.id')
+          .where('event.status', enums.EVENT.STATUS.CLOSED)
+          .orderByRaw('entry_details.rating_1 DESC ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
+          .orderBy('entry.feedback_score', 'DESC')
       })
     } else if (options.eventId !== null) {
       query = query.orderBy('entry.feedback_score', 'DESC')

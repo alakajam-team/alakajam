@@ -120,6 +120,9 @@ function handleGameSearch (req, res, searchOptions = {}) {
       }
     }
   }
+  if (searchOptions.divisions && searchOptions.divisions.length === Object.keys(enums.DIVISION).length) {
+    searchOptions.divisions = undefined
+  }
 
   // Platforms
   if (req.query.platforms) {
