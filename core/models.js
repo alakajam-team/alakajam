@@ -158,6 +158,7 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | string | divisions | Divisions info: `{"name": "description"}`
+ * | integer | entry_count | Total number of entries in the event.
  * | date | published_at | Publication date. If empty, the event is a draft.
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
