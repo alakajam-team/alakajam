@@ -47,7 +47,8 @@ module.exports = {
 
   refreshCommentScore,
   refreshEntryPlatforms,
-  refreshUserCommentScoresOnNode
+  refreshUserCommentScoresOnNode,
+  refreshEventCounts
 }
 
 /**
@@ -184,7 +185,7 @@ async function createEntry (user, event) {
   await entryDetails.save()
   await entry.load('details')
 
-  _refreshEventCounts(event) // No need to await
+  refreshEventCounts(event) // No need to await
 
   return entry
 }
@@ -488,7 +489,7 @@ async function deleteEntry (entry) {
     await entry.destroy({ transacting: t })
   })
 
-  _refreshEventCounts(entry.related('event')) // No need to await
+  refreshEventCounts(entry.related('event')) // No need to await
 }
 
 /**
@@ -808,10 +809,11 @@ function _computeRawCommentScore (comment) {
  * @param  {Event} event
  * @return {void}
  */
-async function _refreshEventCounts (event) {
+async function refreshEventCounts (event) {
   let countByDivision = await db.knex('entry')
     .count().select('division')
     .where('event_id', event.get('id'))
+    .where('published_at', '<=', new Date())
     .groupBy('division')
 
   let totalCount = 0

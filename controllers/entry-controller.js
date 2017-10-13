@@ -200,8 +200,7 @@ async function editEntry (req, res) {
     entry.set({
       'title': forms.sanitizeString(fields.title),
       'description': forms.sanitizeString(fields.description),
-      'links': links,
-      'published_at': new Date()
+      'links': links
     })
     if (isExternalEvent) {
       entry.set({
@@ -276,7 +275,8 @@ async function editEntry (req, res) {
 
         entry.set({
           'division': division,
-          'allow_anonymous': fields['anonymous-enabled'] === 'on'
+          'allow_anonymous': fields['anonymous-enabled'] === 'on',
+          'published_at': entry.get('published_at') || new Date()
         })
 
         let optouts = []
@@ -297,6 +297,9 @@ async function editEntry (req, res) {
       }
 
       // Save entry: Persist changes and side effects
+      if (entry.hasChanged('published_at')) {
+        eventService.refreshEventCounts(event) // No need to await
+      }
       await entryDetails.save()
       await entry.save()
       // Set or remove platforms.

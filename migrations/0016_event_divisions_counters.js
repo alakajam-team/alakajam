@@ -18,6 +18,7 @@ exports.up = async function (knex, Promise) {
       .count()
       .select('division', 'event_id')
       .whereNotNull('event_id')
+      .where('published_at', '<=', new Date())
       .groupBy('division', 'event_id')
     let countsByEvent = {}
     for (let row of rows) {
