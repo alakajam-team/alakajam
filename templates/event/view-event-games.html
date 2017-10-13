@@ -68,12 +68,12 @@
       <div class="horizontal-bar"> 
         Items 
         {% if entriesCollection.pagination.rowCount > entriesCollection.length %}
-        {% set firstItemIndex = 1 + (entriesCollection.pagination.page - 1) * entriesCollection.pagination.pageSize %}
-        {{ firstItemIndex }} - {{ firstItemIndex + entriesCollection.length - 1 }}
+          {% set firstItemIndex = 1 + (entriesCollection.pagination.page - 1) * entriesCollection.pagination.pageSize %}
+          {{ firstItemIndex }} - {{ firstItemIndex + entriesCollection.length - 1 }}
         {% endif %}
         sorted by Feedback Score {{ formMacros.tooltip('Rate and comment other games to increase your score, so you are featured higher on the list!') }}</div>
 
-        {{ formMacros.pagination(searchOptions.currentPage, entriesCollection.pagination.pageCount, path) }}
+        {{ formMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
 
         <div class="row">
           {% for entry in entriesCollection.models %}
@@ -90,7 +90,7 @@
           {% endif %}
         </div>
 
-        {{ formMacros.pagination(searchOptions.currentPage, entriesCollection.pagination.pageCount, path) }}
+        {{ formMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
 
       </div>
     </div>

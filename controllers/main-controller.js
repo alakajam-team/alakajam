@@ -227,11 +227,9 @@ async function games (req, res) {
   res.render('games', {
     searchOptions,
     searchedEvent,
-    entryCount: entriesCollection.pagination.rowCount,
-    pageCount: entriesCollection.pagination.pageCount,
+    entriesCollection,
     rescueEntries,
     requiredVotes,
-    entries: entriesCollection.models,
     events: eventsCollection.models,
     platforms: platformCollection.models
   })

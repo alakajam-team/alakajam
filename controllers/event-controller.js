@@ -99,9 +99,9 @@ async function handleEventUserShortcuts (res, targetEvent) {
 function handleGameSearch (req, res, searchOptions = {}) {
   // Pagination
   searchOptions.pageSize = 20
-  searchOptions.currentPage = 1
+  searchOptions.page = 1
   if (forms.isId(req.query.p)) {
-    searchOptions.currentPage = parseInt(req.query.p)
+    searchOptions.page = parseInt(req.query.p)
   }
 
   // Text search
