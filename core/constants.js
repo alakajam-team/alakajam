@@ -63,15 +63,17 @@ module.exports = {
   SPECIAL_POST_TYPE_HIDDEN,
   SPECIAL_POST_TYPES,
   REQUIRED_ARTICLES: ['docs', 'faq'],
-  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img', 'p'],
+  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img', 'p', 'video', 'source'],
   ALLOWED_POST_ATTRIBUTES: {
     'p': ['class'],
     'a': ['href', 'class', 'name'],
     'iframe': ['src', 'width', 'height', 'class', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
-    'img': ['src', 'width', 'height', 'class']
+    'img': ['src', 'width', 'height', 'class'],
+    'video': ['poster', 'preload', 'autoplay', 'muted', 'loop', 'webkit-playsinline', 'width', 'height'],
+    'source': ['src', 'type']
   },
   ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right', 'spoiler', 'indent'],
-  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com'],
+  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com', 'i.imgur.com'],
   ANONYMOUS_USER_ID: -1,
 
   // Dates
