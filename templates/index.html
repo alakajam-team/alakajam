@@ -84,6 +84,7 @@
           </div>
         {% endif %}
 
+        {% if user %}
         <div class="row home-jumbo__shortcuts">
           <div class="col-sm-6">
             {{ eventMacros.eventShortcutMyEntry(user, featuredEvent, userEntry) }}
@@ -92,6 +93,7 @@
             {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost) }}
           </div>
         </div>
+        {% endif %}
       </div>
 
       <div class="home-jumbo__contents">
