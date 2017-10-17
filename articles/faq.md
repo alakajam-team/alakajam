@@ -1,4 +1,10 @@
 F.A.Q.
+## Do I keep ownership of the games I make for a jam?
+
+Yes. Submitting a game to Alakajam! has absolutely no implication other than letting people play your game for free. You are free to license your game and its sources as you want ; while we tend to encourage people to make their games Open Source (if only for educational purposes) it is not mandatory.
+
+You are also free to expand your games after the jam, and why not release them commercially!
+
 ## <a name="anon-entry"></a>Allowing anonymous comments
 
 Enabling this option allows all users to post anonymous comments on your entry. Doing so gives them a free hand for posting direct, unfiltered feedback about your game, pleasant or not. If you don't feel comfortable with strong criticism, please keep this option disabled.
