@@ -149,11 +149,14 @@
       {% for event in eventSchedule %}
         <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }}">
           <div class="home-scheduled-event__arrow"></div>
-          <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event') }}">
+          <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
             {{ event.get('title') }}
           </a>
           <div class="home-scheduled-event__dates">
-            {{ event.get('display_dates') }}
+            {{ event.get('display_dates') }} 
+            {% if event.get('status') === 'closed' %}
+              - <a href="{{ buildUrl(event, 'event') }}">{{ event.get('entry_count') }} games</a>
+            {% endif %}
           </div>
           <div class="home-scheduled-event__label">
             {% if event.get('status') === 'open' %}

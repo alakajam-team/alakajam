@@ -115,7 +115,7 @@
       {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post'), 'Rules', 'info-sign', path) -}}
       {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
       {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) -}}
-      {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + options.entryCount +')</span>' if options.entryCount), 'tower', path) -}}
+      {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'tower', path) -}}
       {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: 'results' }) -}}
     </div>
     

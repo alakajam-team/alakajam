@@ -11,7 +11,7 @@
       <div class="events-block events-block__live">
         <h3>On now!</h3>
         {% for event in open %}
-          {{ eventMacros.eventTable(event, { neutralStatus: true, entryCount: entryCounts[event.get('id')] }) }}
+          {{ eventTable(event, featuredEntries[event.get('id')]) }}
         {% endfor %}
       </div>
       {% endif %}
@@ -20,7 +20,7 @@
       <div class="events-block events-block__pending">
         <h3>Upcoming events</h3>
         {% for event in pending %}
-          {{ eventMacros.eventTable(event, { neutralStatus: true, entryCount: entryCounts[event.get('id')] }) }}
+          {{ eventTable(event, featuredEntries[event.get('id')]) }}
         {% endfor %}
       </div>
       {% endif %}
@@ -29,7 +29,7 @@
       <div class="events-block events-block__closed">
         <h3>Past events</h3>
         {% for event in closed %}
-          {{ eventMacros.eventTable(event, { neutralStatus: true, entryCount: entryCounts[event.get('id')] }) }}
+          {{ eventTable(event, featuredEntries[event.get('id')]) }}
         {% endfor %}
       </div>
       {% endif %}
@@ -38,3 +38,36 @@
 </div>
 
 {% endblock %}
+
+
+{% macro eventTable(event, featuredEntries) %}
+
+{{ eventMacros.eventTable(event, { neutralStatus: true }) }}
+{% if featuredEntries.length > 0 %}
+<div class="events-block__entries">
+  <div class="row">
+    <div class="col-sm-6">
+    {% for entry in featuredEntries.models %}
+      {% if loop.index % 2 === 1 %}
+      <div class="events-block__entry">
+        {{ eventMacros.entrySmallThumb(entry) }}
+        <span class="entry-results__category-medal medal{{ (loop.index + 1) / 2 }}"></span>
+      </div>
+      {% endif %}
+    {% endfor %}
+    </div>
+    <div class="col-sm-6">
+    {% for entry in featuredEntries.models %}
+      {% if loop.index % 2 === 0 %}
+      <div class="events-block__entry">
+        {{ eventMacros.entrySmallThumb(entry) }}
+        <span class="entry-results__category-medal medal{{ loop.index / 2 }}"></span>
+      </div>
+      {% endif %}
+    {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endmacro %}

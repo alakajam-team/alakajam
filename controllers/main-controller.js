@@ -169,10 +169,9 @@ async function events (req, res) {
 
   let allEventsCollection = await eventService.findEvents()
 
-  // Group entries by status, and compute their entry counts
-  let entryCounts = {}
+  // Group entries by status, gather featured entries
+  let featuredEntries = {}
   for (let event of allEventsCollection.models) {
-    entryCounts[event.get('id')] = await eventService.countEntriesByEvent(event)
     switch (event.get('status')) {
       case enums.EVENT.STATUS.PENDING:
         pending.unshift(event) // sort by ascending dates
@@ -182,6 +181,13 @@ async function events (req, res) {
         break
       default:
         closed.push(event)
+        if (event.get('status_results') === enums.EVENT.STATUS_RESULTS.RESULTS) {
+          featuredEntries[event.get('id')] = await eventService.findGames({
+            eventId: event.get('id'),
+            sortByRanking: true,
+            pageSize: 6
+          })
+        }
     }
   }
 
@@ -189,7 +195,7 @@ async function events (req, res) {
     pending,
     open,
     closed,
-    entryCounts
+    featuredEntries
   })
 }
 

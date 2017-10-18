@@ -489,7 +489,7 @@ async function deleteEntry (entry) {
 }
 
 /**
- * @param options {object} nameFragment eventId platforms pageSize page withRelated notReviewedBy sortByRatingCount sortByRating
+ * @param options {object} nameFragment eventId platforms pageSize page withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
  */
 async function findGames (options = {}) {
   let query = models.Entry.forge()
@@ -508,6 +508,14 @@ async function findGames (options = {}) {
           .where('event.status', enums.EVENT.STATUS.CLOSED)
           .orderByRaw('entry_details.rating_1 DESC ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
           .orderBy('entry.feedback_score', 'DESC')
+      })
+    } else if (options.sortByRanking) {
+      query = query.query(function (qb) {
+        return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
+          .leftJoin('event', 'entry.event_id', 'event.id')
+          .where('event.status', enums.EVENT.STATUS.CLOSED)
+          .orderByRaw('entry_details.ranking_1 ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
+          .orderBy('entry.division')
       })
     } else if (options.eventId !== null) {
       query = query.orderBy('entry.feedback_score', 'DESC')

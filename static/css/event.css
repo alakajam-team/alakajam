@@ -49,6 +49,21 @@
     font-weight: bold;
   }
 
+  &__entries {
+    padding: 15px;
+    background-color: var(--borders);
+  }
+
+  &__entry {
+    position: relative;
+    margin-bottom: 3px;
+
+    & .entry-results__category-medal {
+      top: 12px;
+      right: 20px;
+    }
+  }
+
   &__pending {
   }
 
