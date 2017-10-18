@@ -297,11 +297,13 @@ async function editEntry (req, res) {
       }
 
       // Save entry: Persist changes and side effects
-      if (entry.hasChanged('published_at')) {
-        eventService.refreshEventCounts(event) // No need to await
-      }
+      let eventCountRefreshNeeded = entry.hasChanged('published_at')
       await entryDetails.save()
       await entry.save()
+      if (eventCountRefreshNeeded) {
+        eventService.refreshEventCounts(event) // No need to await
+      }
+
       // Set or remove platforms.
       platformService.setEntryPlatforms(entry, platforms || [], { updateEntry: false })
       cache.user(res.locals.user).del('latestEntry')
