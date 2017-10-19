@@ -103,7 +103,7 @@ async function index (req, res) {
     // Fetch event schedule
     let eventScheduleTask = await eventService.findEvents({
       sortDatesAscending: true,
-      pageSize: 5
+      pageSize: 10
     })
       .then(function (eventScheduleCollection) {
         context.eventSchedule = eventScheduleCollection.models

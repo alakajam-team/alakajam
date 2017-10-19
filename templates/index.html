@@ -136,17 +136,24 @@
       {% endif %}
     </div>
     <div class="col-md-3 visible-md visible-lg">
-      <div class="horizontal-bar" style="margin-top: 0px">Event calendar</div>
+      <div class="horizontal-bar" style="margin-top: 0px; margin-bottom: 10px">
+        <span class="fa fa-calendar"></span>
+        Event calendar
+      </div>
 
-      <div class="home-scheduled-event">
+      <p>
         <a class="home-scheduled-event__title" style="font-size: 0.9rem" href="/events">
           Browse all events
         </a>
-      </div>
+      </p>
       {% for event in eventSchedule %}
-        <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }}">
+        {% set mainEvent = event.get('title').includes('Alakajam') %}
+        <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }} {{ 'main' if mainEvent }}">
           <div class="home-scheduled-event__arrow"></div>
           <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
+            {% if mainEvent %}
+              <img src="/static/images/favicon16.png" class="home-scheduled-event__logo" />
+            {% endif %}
             {{ event.get('title') }}
           </a>
           <div class="home-scheduled-event__dates">

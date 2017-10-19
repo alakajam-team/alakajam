@@ -48,13 +48,23 @@ const MAX_POSTGRESQL_INTEGER = 2147483647
 
 // Libs init
 
+const showdownLazyPicturesExt = {
+  type: 'output',
+  filter: function (text, converter, options) {
+    if (text.includes('img')) {
+      text = text.replace(/<img([^>]+)src="/g, '<img$1data-src="')
+    }
+    return text
+  }
+}
 const showdownConverter = new showdown.Converter({
   tables: true,
   simplifiedAutoLink: true,
   strikethrough: true,
   simpleLineBreaks: true,
   ghMentions: true,
-  ghMentionsLink: config.ROOT_URL + '/user/{u}'
+  ghMentionsLink: config.ROOT_URL + '/user/{u}',
+  extensions: [showdownLazyPicturesExt]
 })
 const customXss = new xss.FilterXSS({
   whiteList: Object.assign({}, xss.whiteList, constants.ALLOWED_POST_ATTRIBUTES)

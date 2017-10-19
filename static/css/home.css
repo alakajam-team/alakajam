@@ -194,12 +194,26 @@
   @apply --shadow;
   position: relative;
   background-color: white;
-  padding: 5px 5px;
+  padding: 2px 5px;
   margin-bottom: 5px;
 
+  &.main {
+    padding: 5px 5px;
+  }
+
+  &__logo {
+    float: left;
+    margin-top: 6px;
+    margin-right: 5px;
+  }
+
   &__title {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: bold;
+  }
+  &.main &__title {
+    font-size: 1.6rem;
+    line-height: 1.7rem;
   }
 
   &.featured &__arrow {
@@ -217,11 +231,19 @@
   &__dates {
     font-size: 0.8rem;
   }
+  &.main &__dates {
+    font-weight: bold;
+  }
+
 
   &__label {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 6px;
+    right: 4px;
+
+    & .label {
+      padding: 1px 6px 2px;
+    }
   }
 }
 

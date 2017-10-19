@@ -28,4 +28,5 @@ $(function domReady () {
   require('./common/editor')('.simplemde-editor')
   require('./common/tooltips')('.has-tooltip')
   require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes', { autoSubmit: '.js-auto-submit' })
+  require('./common/lazy-images')('.js-lazy, .user-contents img')
 })

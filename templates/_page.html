@@ -155,7 +155,9 @@
     {{ adminMacros.moderationBar(context(), user.get('is_admin')) }}
   {% endif %}
 
-  {% block body %}{% endblock %}
+  <div class="body">
+    {% block body %}{% endblock %}
+  </div>
 
   <footer class="container">
     <div class="row">
@@ -193,6 +195,7 @@
   </footer>
 
   <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/static/js/jquery.lazy.min.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
   <script type="text/javascript" src="/static/js/lodash.min.js"></script>

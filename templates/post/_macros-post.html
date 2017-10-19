@@ -51,9 +51,9 @@
     <div class="post__details">
       <a href="{{ buildUrl(author, 'user') }}">
         {% if author.get('avatar') %}
-        <img src="{{ pictureUrl(author.get('avatar'), author) }}" class="post__avatar" /> 
+          <img src="/static/images/default-avatar.png" data-src="{{ pictureUrl(author.get('avatar'), author) }}" class="post__avatar lazy" /> 
         {% else %}
-        <img src="/static/images/default-avatar.png" class="post__avatar" /> 
+          <img src="/static/images/default-avatar.png" class="post__avatar" /> 
         {% endif %}
         {{ author.get('title') }} 
       </a>
@@ -65,7 +65,7 @@
         {% if relatedEntry.get('id') %}
           entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">
             {% if relatedEntry.get('pictures').length > 0 %}
-              <img src="{{ relatedEntry.get('pictures')[0] }}" class="no-border" style="max-height: 22px" />
+              <img data-src="{{ relatedEntry.get('pictures')[0] }}" class="no-border lazy" style="max-height: 22px" />
             {% endif %}
             {{ relatedEntry.get('title') }}
           </a>
