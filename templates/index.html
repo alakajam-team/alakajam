@@ -152,7 +152,7 @@
           <div class="home-scheduled-event__arrow"></div>
           <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
             {% if mainEvent %}
-              <img src="/static/images/favicon16.png" class="home-scheduled-event__logo" />
+              <img src="/static/images/favicon16.png" class="home-scheduled-event__logo no-border" />
             {% endif %}
             {{ event.get('title') }}
           </a>

@@ -152,6 +152,14 @@ input.date-picker {
   @apply --main-font;
   border-radius: 2px;
 }
+.btn-alt {
+  background-color: var(--alt);
+  border: 0;
+
+  &:hover, &:active {
+    background-color: var(--alt-dark);
+  }
+}
 
 .pagination {
   margin-top: 0;
@@ -188,15 +196,6 @@ input.date-picker {
     background-color: var(--alt-lightest);
     border: 1px solid var(--alt-lighter);
     box-shadow: 1px 1px 2px var(--alt-lighter);
-  }
-}
-
-.btn-alt {
-  background-color: var(--alt);
-  border: 0;
-
-  &:hover, &:active {
-    background-color: var(--alt-dark);
   }
 }
 
