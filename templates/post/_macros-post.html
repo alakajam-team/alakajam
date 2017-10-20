@@ -51,7 +51,7 @@
     <div class="post__details">
       <a href="{{ buildUrl(author, 'user') }}">
         {% if author.get('avatar') %}
-          <img data-src="{{ pictureUrl(author.get('avatar'), author) }}" class="post__avatar lazy" /> 
+          <img src="{{ pictureUrl(author.get('avatar'), author) }}" class="post__avatar" /> 
         {% else %}
           <img src="/static/images/default-avatar.png" class="post__avatar" /> 
         {% endif %}
