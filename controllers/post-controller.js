@@ -301,7 +301,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
 
   // Validate comment body
   let body = forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_COMMENT)
-  if (!body) {
+  if (!currentUser || !body) {
     return redirectUrl
   }
 
