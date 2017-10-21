@@ -20,18 +20,6 @@ try {
 }
 
 /**
- * Local constants
- */
-
-const DEV_ENVIRONMENT = process.env.NODE_ENV !== 'production'
-const CSS_INDEX_SRC_FOLDER = './static/css/'
-const CSS_INDEX_DEST_FOLDER = './static/build/'
-const CSS_PLUGINS = [
-  require('postcss-import'),
-  require('postcss-cssnext')
-]
-
-/**
  * Initial dependencies
  */
 
@@ -39,6 +27,18 @@ const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
 const postcssWatch = require('postcss-watch')
+
+/**
+ * Local constants
+ */
+
+const DEV_ENVIRONMENT = process.env.NODE_ENV !== 'production'
+const CSS_INDEX_SRC_FOLDER = path.join(__dirname, './static/css/')
+const CSS_INDEX_DEST_FOLDER = path.join(__dirname, './static/build/')
+const CSS_PLUGINS = [
+  require('postcss-import'),
+  require('postcss-cssnext')
+]
 
 /**
  * App launch!
@@ -168,8 +168,8 @@ async function buildCSS (forceBuildOnce = false) {
   }
 
   postcssWatch({
-    input: CSS_INDEX_SRC_FOLDER,
-    output: CSS_INDEX_DEST_FOLDER,
+    input: CSS_INDEX_SRC_FOLDER.replace(/\\/g, '/'),
+    output: CSS_INDEX_DEST_FOLDER.replace(/\\/g, '/'),
     plugins: CSS_PLUGINS,
     copyAssets: ['png'],
     log: DEV_ENVIRONMENT,
