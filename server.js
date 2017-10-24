@@ -168,8 +168,8 @@ async function buildCSS (forceBuildOnce = false) {
   }
 
   postcssWatch({
-    input: CSS_INDEX_SRC_FOLDER.replace(/\\/g, '/'),
-    output: CSS_INDEX_DEST_FOLDER.replace(/\\/g, '/'),
+    input: path.relative(process.cwd(), CSS_INDEX_SRC_FOLDER),
+    output: path.relative(process.cwd(), CSS_INDEX_DEST_FOLDER),
     plugins: CSS_PLUGINS,
     copyAssets: ['png'],
     log: DEV_ENVIRONMENT,
