@@ -65,7 +65,7 @@
         {% if relatedEntry.get('id') %}
           entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">
             {% if relatedEntry.get('pictures').length > 0 %}
-              <img data-src="{{ relatedEntry.get('pictures')[0] }}" class="no-border lazy" style="max-height: 22px" />
+              <img data-src="{{ relatedEntry.get('pictures')[0] }}" class="no-border js-lazy" style="max-height: 22px" />
             {% endif %}
             {{ relatedEntry.get('title') }}
           </a>
