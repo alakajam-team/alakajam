@@ -2,6 +2,29 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### October 19th
+
+* Added lazy loading for most pictures to make pages load faster
+
+### October 18th
+
+* Events page displays the winners of the past events
+
+### October 14th
+
+* Imgur GIFV embeds are allowed in posts
+
+## [October 13th: 1st Kajam! launch](https://alakajam.com/post/232/juice-up-your-games)
+
+### October 13th
+
+* Admins can customize the divisions per-event
+* Voting results page display the number of games per division
+
+### October 11th
+
+* Reorganized the front page, adding the schedule for the next events
+
 ### October 9th
 
 * Reworked logo
