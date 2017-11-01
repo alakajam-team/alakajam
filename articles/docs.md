@@ -1,7 +1,7 @@
 Welcome!
 Alakajam! is a young community gathering game development enthusiasts from all backgrounds. We host a series of informal events, that give you a chance to both make games *and* get people to play them:
 
-* **Alakajam!** competitions, taking place over a week-end, three times a year. Start/end times are suited to Europan timezones.
+* **Alakajam!** competitions, taking place over a week-end, three times a year. Start/end times are suited to European timezones.
 * **Kajam!** month-long events, inviting people to learn and experiment around a specific topic.
 * And finally **Feedback Fortnights**, to show off personal projects made outside of game jams.
 
