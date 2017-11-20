@@ -168,11 +168,18 @@ async function buildCSS (forceBuildOnce = false) {
   }
 
   postcssWatch({
-    input: path.relative(process.cwd(), CSS_INDEX_SRC_FOLDER),
-    output: path.relative(process.cwd(), CSS_INDEX_DEST_FOLDER),
+    input: _postcssWatchPathFix(CSS_INDEX_SRC_FOLDER),
+    output: _postcssWatchPathFix(CSS_INDEX_DEST_FOLDER),
     plugins: CSS_PLUGINS,
     copyAssets: ['png'],
     log: DEV_ENVIRONMENT,
     watch
   })
+}
+
+/**
+ * A postcss-watch bug converts input paths to output paths incorrectly depending on the folder syntax
+ */
+function _postcssWatchPathFix (anyPath) {
+  return path.relative(process.cwd(), anyPath).replace(/\\/g, '/')
 }
