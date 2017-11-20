@@ -391,14 +391,16 @@ async function viewEventGames (req, res) {
 async function viewEventRatings (req, res) {
   res.locals.pageTitle += ' | Ratings'
 
-  if (res.locals.user &&
-    [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
-      enums.EVENT.STATUS_RESULTS.RESULTS].includes(res.locals.event.get('status_results'))) {
-    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), res.locals.event,
-      { withRelated: ['entry.details', 'entry.userRoles'] })
-    let categoryTitles = res.locals.event.related('details').get('category_titles')
+  let {user, event} = res.locals
 
-    let rankedVoteHistories = []
+  if (user && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
+    enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get('status_results'))) {
+    let voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get('id'), event,
+      { withRelated: ['entry.details', 'entry.userRoles'] })
+    let categoryTitles = event.related('details').get('category_titles')
+    let divisions = Object.keys(event.get('divisions'))
+
+    let votesPerCategory = []
     for (let i in categoryTitles) {
       let categoryIndex = parseInt(i) + 1
       let voteFilter = function (division) {
@@ -410,20 +412,22 @@ async function viewEventRatings (req, res) {
         return vote2.get('vote_' + categoryIndex) - vote.get('vote_' + categoryIndex)
       }
 
-      let validVotesSolo = voteHistoryCollection.filter(voteFilter('solo'))
-      let validVotesTeam = voteHistoryCollection.filter(voteFilter('team'))
-      validVotesSolo.sort(voteSorter)
-      validVotesTeam.sort(voteSorter)
+      let votesPerDivision = {}
+      for (let division of divisions) {
+        if (division !== enums.DIVISION.UNRANKED) {
+          votesPerDivision[division] = voteHistoryCollection.filter(voteFilter(division))
+          votesPerDivision[division].sort(voteSorter)
+        }
+      }
 
-      rankedVoteHistories.push({
+      votesPerCategory.push({
         title: categoryTitles[i],
-        votesSolo: validVotesSolo,
-        votesTeam: validVotesTeam
+        votesPerDivision
       })
     }
 
     res.render('event/view-event-ratings', {
-      rankedVoteHistories,
+      votesPerCategory,
       ratingCount: voteHistoryCollection.length
     })
   } else {
