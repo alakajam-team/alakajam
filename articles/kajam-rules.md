@@ -22,7 +22,7 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
 
 Unless a particular *Kajam* states otherwise, those simple rules apply:
 
-* You cannot work on a game you started before the event.
+* You cannot work on a game you started before the event, unless it is an unfinished game jam entry.
 * All third-party assets are allowed as long as you have the license to use them.
 
 Note: For best feedback, it is advised to let people know what you did/did not make during the jam.
