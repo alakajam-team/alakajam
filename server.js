@@ -51,6 +51,7 @@ createApp()
  */
 async function createApp () {
   catchErrorsAndSignals()
+  let browserRefreshEnabled = configureBrowserRefresh()
   await initFilesLayout()
 
   const express = require('express')
@@ -67,8 +68,13 @@ async function createApp () {
   app.locals.devMode = DEV_ENVIRONMENT
   await db.initDatabase(app.locals.devMode && config.DEBUG_INSERT_SAMPLES)
   await middleware.configure(app)
-  app.listen(config.SERVER_PORT, configureBrowserRefresh)
-  log.info('Server started on port ' + config.SERVER_PORT + '.')
+  
+  app.listen(config.SERVER_PORT, function () {
+    log.info('Server started on port ' + config.SERVER_PORT + '.')
+    if (browserRefreshEnabled) {
+      process.send('online')
+    }
+  })
 }
 
 /*
@@ -130,37 +136,39 @@ async function initFilesLayout () {
   await fileStorage.createFolderIfMissing(path.join(__dirname, config.DATA_PATH, '/tmp'))
   await fileStorage.createFolderIfMissing(path.join(__dirname, config.UPLOADS_PATH))
 
-  // Run CSS build in production (in dev, postcssWatch will handle it)
-  await buildCSS()
+  // Run CSS build (or bootstrap sources watcher in dev mode)
+  await buildCSS(DEV_ENVIRONMENT)
 }
 
 /*
  * Use browser-refresh to refresh the browser automatically during development
+ * @return wheter browser-refresh has been enabled
  */
 function configureBrowserRefresh () {
   const browserRefreshClient = require('browser-refresh-client')
   const config = require('./config.js')
 
   if (process.send && config.DEBUG_REFRESH_BROWSER) {
-    process.send('online')
     browserRefreshClient
       .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg', { autoRefresh: false })
       .onFileModified(async function (path) {
         if (path.startsWith('/static/css')) {
-          await buildCSS(true)
+          await buildCSS(false)
         } else {
           browserRefreshClient.refreshPage()
         }
       })
+    return true
+  } else {
+	return false
   }
 }
 
-async function buildCSS (forceBuildOnce = false) {
+async function buildCSS (watch = false) {
   const fileStorage = require('./core/file-storage.js')
 
   await fileStorage.createFolderIfMissing(path.join(__dirname, CSS_INDEX_DEST_FOLDER))
 
-  let watch = DEV_ENVIRONMENT && !forceBuildOnce
   if (watch) {
     log.info('Setting up automatic CSS build...')
   } else {

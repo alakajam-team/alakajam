@@ -4,7 +4,10 @@
 
 <h1>Events</h1>
 
-<a href="{{ buildUrl(null, 'event', 'create') }}" class="btn btn-primary">Create</a> <a class="btn btn-default" href="/admin/settings?edit=featured_event_name">Change featured event</a>
+<a href="{{ buildUrl(null, 'event', 'create') }}" class="btn btn-primary">Create</a> 
+{% if user.get('is_admin') %}
+  <a class="btn btn-default" href="/admin/settings?edit=featured_event_name">Change featured event</a>
+{% endif %}
 
 <table class="table" style="margin-top: 10px">
 <thead>

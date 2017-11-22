@@ -1,3 +1,6 @@
+# Unbuilt sources
+static/css
+
 # Docs
 docs/*.html
 docs/*/

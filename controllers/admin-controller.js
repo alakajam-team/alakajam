@@ -58,13 +58,9 @@ async function adminHome (req, res) {
 }
 
 /**
- * Admin only: events management
+ * Events management
  */
 async function adminEvents (req, res) {
-  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
-    res.errorPage(403)
-  }
-
   let events = await eventService.findEvents()
   res.render('admin/admin-events', {
     events: events.models

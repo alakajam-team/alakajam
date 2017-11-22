@@ -479,7 +479,7 @@ async function viewEventResults (req, res) {
  * Edit or create an event
  */
 async function editEvent (req, res) {
-  if (!securityService.isAdmin(res.locals.user)) {
+  if (!securityService.isMod(res.locals.user)) {
     res.errorPage(403)
     return
   }
@@ -612,7 +612,9 @@ async function editEvent (req, res) {
  * Manage the event's submitted themes
  */
 async function editEventThemes (req, res) {
-  if (!securityService.isAdmin(res.locals.user)) {
+  res.locals.pageTitle += ' | Themes'
+  
+  if (!securityService.isMod(res.locals.user)) {
     res.errorPage(403)
     return
   }
@@ -647,6 +649,11 @@ async function editEventThemes (req, res) {
  */
 async function editEventEntries (req, res) {
   res.locals.pageTitle += ' | Entries'
+  
+  if (!securityService.isMod(res.locals.user)) {
+    res.errorPage(403)
+    return
+  }
 
   let event = res.locals.event
 
@@ -699,8 +706,12 @@ async function deleteEvent (req, res) {
     return
   }
 
-  await res.locals.event.destroy()
-  res.redirect('/events')
+  if (res.locals.event.get('status') === enums.EVENT.STATUS.PENDING) {
+	await res.locals.event.destroy()
+    res.redirect('/events')
+  } else {
+    res.errorPage(403, 'Only pending events can be deleted')
+  }
 }
 
 /**
