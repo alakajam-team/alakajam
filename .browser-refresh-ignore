@@ -1,6 +1,5 @@
 # Unbuilt sources
-static/css/
-assets/js/
+assets/
 
 # Docs
 docs/*.html

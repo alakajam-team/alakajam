@@ -39,7 +39,7 @@ if (process.env.NODE_ENV !== 'production') {
   process.env.NODE_ENV = 'development'
 }
 const DEV_ENVIRONMENT = process.env.NODE_ENV === 'development'
-const CSS_INDEX_SRC_FOLDER = path.join(__dirname, './static/css/')
+const CSS_INDEX_SRC_FOLDER = path.join(__dirname, './assets/css/')
 const CSS_INDEX_DEST_FOLDER = path.join(__dirname, './static/build/')
 const CSS_PLUGINS = [
   require('postcss-import'),
@@ -155,7 +155,7 @@ function configureBrowserRefresh () {
     browserRefreshClient
       .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg /static/build/*.js', { autoRefresh: false })
       .onFileModified(async function (path) {
-        if (path.startsWith('/static/css')) {
+        if (path.endsWith('.css')) {
           browserRefreshClient.refreshStyles()
         } else {
           browserRefreshClient.refreshPage()
