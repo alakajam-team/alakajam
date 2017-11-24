@@ -2,7 +2,7 @@ const path = require('path')
 
 const rootPathTo = pathFromRoot => path.resolve(__dirname, pathFromRoot)
 
-const distPath = rootPathTo('static/build')
+const outputPath = rootPathTo('static/js')
 
 const babelOptions = {
   presets: [
@@ -24,9 +24,9 @@ module.exports = {
     site: './assets/js/site.js'
   },
   output: {
-    path: distPath,
+    path: outputPath,
     filename: '[name].js',
-    publicPath: '/static/build/'
+    publicPath: '/static/js/'
   },
   module: {
     rules: [

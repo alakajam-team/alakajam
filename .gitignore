@@ -1,7 +1,10 @@
 # Local files
 node_modules/
-build/
 config.js
+
+# Generated output
+static/css/
+static/js/site.js
 
 # Docs
 docs/*.html

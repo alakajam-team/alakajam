@@ -40,7 +40,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const DEV_ENVIRONMENT = process.env.NODE_ENV === 'development'
 const CSS_INDEX_SRC_FOLDER = path.join(__dirname, './assets/css/')
-const CSS_INDEX_DEST_FOLDER = path.join(__dirname, './static/build/')
+const CSS_INDEX_DEST_FOLDER = path.join(__dirname, './static/css/')
 const CSS_PLUGINS = [
   require('postcss-import'),
   require('postcss-cssnext')
@@ -153,10 +153,12 @@ function configureBrowserRefresh () {
 
   if (process.send && config.DEBUG_REFRESH_BROWSER) {
     browserRefreshClient
-      .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg /static/build/*.js', { autoRefresh: false })
+      .enableSpecialReload('*.html /static/**', { autoRefresh: false })
       .onFileModified(async function (path) {
         if (path.endsWith('.css')) {
           browserRefreshClient.refreshStyles()
+        } else if (path.endsWith('.gif') || path.endsWith('.jpg') || path.endsWith('.png')) {
+          browserRefreshClient.refreshImages()
         } else {
           browserRefreshClient.refreshPage()
         }
