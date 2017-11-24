@@ -157,8 +157,6 @@ function configureBrowserRefresh () {
       .onFileModified(async function (path) {
         if (path.startsWith('/static/css')) {
           browserRefreshClient.refreshStyles()
-        } else if (path.startsWith('/client')) {
-          browserRefreshClient.refreshPage()
         } else {
           browserRefreshClient.refreshPage()
         }
@@ -216,14 +214,7 @@ async function buildJS (watch = false) {
       } else if (stats.hasWarnings()) {
         logMethod = log.warning.bind(log)
       }
-      logMethod(stats.toString({
-        all: false,
-        assets: true,
-        colors: true,
-        errors: true,
-        warnings: true,
-        performance: false
-      }))
+      logMethod(stats.toString(config.stats))
 
       resolve()
     }
