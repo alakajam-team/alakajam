@@ -16,6 +16,7 @@
   <script type="text/javascript" src="/static/js/closebrackets.min.js"></script>
   <script type="text/javascript" src="/static/js/codemirror-jsonconf.min.js"></script>
   <script>
+    // TODO move script into a separate file (#21)
     $('.codemirror').each(function () {
       var codemirror = CodeMirror.fromTextArea(this, {
         matchBrackets: true,
@@ -91,6 +92,8 @@
 {% macro radioScripts() %}
 <script type="text/javascript" src="/static/js/icheck.min.js"></script>
 <script type="text/javascript">
+  // TODO move script into a separate file (#21)
+
   /*
    * iCheck library init (for radio styling)
    */
@@ -192,6 +195,7 @@
 
 {% macro expandCollapseScripts() %}
 <script type="text/javascript">
+// TODO move script into a separate file (#21)
 $('.expand-bar').each(function () {
   var $this = $(this)
   if ($this.attr('data-manual-scripting') !== 'true') {
