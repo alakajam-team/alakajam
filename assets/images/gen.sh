@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd "$(dirname "$0")"
+
 mkdir -p cut
 
 while read line; do
@@ -19,5 +21,5 @@ done <<EOM
 136x120+0+0 400% spritesheet4
 EOM
 
-cp cut/spritesheet2.png ../static/images
-cp cut/spritesheet4.png ../static/images
+cp cut/spritesheet2.png ../../static/images
+cp cut/spritesheet4.png ../../static/images
