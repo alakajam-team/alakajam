@@ -9,7 +9,7 @@
 // see: https://babeljs.io/docs/plugins/preset-env#optionsuse-built-ins
 require('babel-polyfill')
 
-module.exports = {
+window.alakajam = {
   common: {
     datePicker: require('./common/date-picker'),
     tabs: require('./common/tabs'),

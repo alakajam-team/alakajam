@@ -4,8 +4,7 @@
  * Server middleware configuration.
  *
  * @description Sets up:
- * - CSS processing (cssnext)
- * - JS processing (browserify)
+ * - Static file serving (CSS/JS/images)
  * - Templating (nunjucks)
  * - Form parsing / file upload (formidable)
  * - Error pages
@@ -17,7 +16,6 @@ const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
 const cookies = require('cookies')
-const browserifyMiddleware = require('browserify-middleware')
 const multer = require('multer')
 const bodyParser = require('body-parser')
 const promisify = require('promisify-node')
@@ -57,9 +55,6 @@ async function configure (app) {
   // Session management
   let sessionKey = await findOrCreateSessionKey()
   app.use(cookies.express([sessionKey]))
-
-  // JavaScript files
-  app.use('/static/js/site.js', bundleJs(app.locals.devMode))
 
   // Remaining static files
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
@@ -331,25 +326,4 @@ function errorPage (req, res, code, error, devMode) {
     stack,
     path: req.originalUrl // Needed by _page.html, normally added by anyPageMiddleware
   })
-}
-
-/**
- * Returns a middleware rendering the JavaScript bundle.
- */
-function bundleJs (devMode) {
-  const bundleJsMiddleware = browserifyMiddleware(
-      path.join(ROOT_PATH, '/client/site.js'),
-      { 'standalone': 'alakajam' })
-  if (devMode) {
-    return function (req, res, next) {
-      bundleJsMiddleware(req, res, function error (err) {
-        const errorString = '"Error during JavaScript server-side bundling:\\n' + err.toString().replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"'
-        const script = 'console.error(' + errorString + ');\ndocument.head.innerHTML = "";\ndocument.body.innerHTML = "<pre style=\\"white-space: pre-wrap\\">" + ' + errorString + ' + "</pre>";\n'
-        res.set('Content-Type', 'text/javascript')
-        res.send(script)
-      })
-    }
-  } else {
-    return bundleJsMiddleware
-  }
 }

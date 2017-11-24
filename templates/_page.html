@@ -199,8 +199,10 @@
   <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
   <script type="text/javascript" src="/static/js/lodash.min.js"></script>
+  {% if browserRefreshUrl %}
   <script src="{{ browserRefreshUrl }}"></script>
-  <script type="text/javascript" src="/static/js/site.js?{{ launchTime }}"></script>
+  {% endif %}
+  <script type="text/javascript" src="/static/build/site.js?{{ launchTime }}"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

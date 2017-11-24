@@ -22,13 +22,13 @@
     "url": "https://github.com/mkalam-alami/issues"
   },
   "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.0",
-    "babelify": "^7.3.0",
     "body-parser": "^1.18.2",
     "bookshelf": "^0.10.2",
     "bookshelf-cascade-delete": "^2.0.1",
-    "browserify-middleware": "^7.1.0",
     "cookies": "^0.7.0",
     "express": "^4.14.0",
     "express-nunjucks": "^2.1.2",
@@ -57,8 +57,10 @@
     "slug": "^0.9.1",
     "sqlite3": "^3.1.8",
     "striptags": "^3.0.1",
-    "uglify-js": "^3.1.2",
+    "uglifyjs-webpack-plugin": "^1.1.1",
     "validator": "^7.0.0",
+    "webpack": "^3.8.1",
+    "webpack-merge": "^4.1.1",
     "winston": "^2.3.0",
     "xss": "^0.3.3"
   },
@@ -77,29 +79,6 @@
       "describe",
       "it",
       "before"
-    ]
-  },
-  "browserify": {
-    "transform": [
-      "babelify"
-    ],
-    "standalone": "alakajam"
-  },
-  "babel": {
-    "presets": [
-      [
-        "env",
-        {
-          "targets": {
-            "browsers": [
-              ">1%",
-              "last 2 versions",
-              "IE >= 9"
-            ]
-          },
-          "useBuiltIns": true
-        }
-      ]
     ]
   },
   "browserslist": [

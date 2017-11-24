@@ -27,12 +27,18 @@ const promisify = require('promisify-node')
 const fs = promisify('fs')
 const path = require('path')
 const postcssWatch = require('postcss-watch')
+const webpack = require('webpack')
+
+const fileStorage = require('./core/file-storage.js')
 
 /**
  * Local constants
  */
 
-const DEV_ENVIRONMENT = process.env.NODE_ENV !== 'production'
+if (process.env.NODE_ENV !== 'production') {
+  process.env.NODE_ENV = 'development'
+}
+const DEV_ENVIRONMENT = process.env.NODE_ENV === 'development'
 const CSS_INDEX_SRC_FOLDER = path.join(__dirname, './static/css/')
 const CSS_INDEX_DEST_FOLDER = path.join(__dirname, './static/build/')
 const CSS_PLUGINS = [
@@ -62,13 +68,10 @@ async function createApp () {
   let app = express()
   app.disable('x-powered-by')
 
-  // Check whether 'development' is on, rather than whether 'production' is
-  // off, so we don't leak stack traces in case production is ever
-  // misconfigured to leave this undefined.
   app.locals.devMode = DEV_ENVIRONMENT
   await db.initDatabase(app.locals.devMode && config.DEBUG_INSERT_SAMPLES)
   await middleware.configure(app)
-  
+
   app.listen(config.SERVER_PORT, function () {
     log.info('Server started on port ' + config.SERVER_PORT + '.')
     if (browserRefreshEnabled) {
@@ -132,12 +135,12 @@ async function initFilesLayout () {
   }
 
   // Create data folders
-  const fileStorage = require('./core/file-storage')
   await fileStorage.createFolderIfMissing(path.join(__dirname, config.DATA_PATH, '/tmp'))
   await fileStorage.createFolderIfMissing(path.join(__dirname, config.UPLOADS_PATH))
 
-  // Run CSS build (or bootstrap sources watcher in dev mode)
+  // Run CSS and JS build (or bootstrap sources watcher in dev mode)
   await buildCSS(DEV_ENVIRONMENT)
+  await buildJS(DEV_ENVIRONMENT)
 }
 
 /*
@@ -150,23 +153,23 @@ function configureBrowserRefresh () {
 
   if (process.send && config.DEBUG_REFRESH_BROWSER) {
     browserRefreshClient
-      .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg', { autoRefresh: false })
+      .enableSpecialReload('*.html *.css *.png *.jpeg *.jpg *.gif *.svg /static/build/*.js', { autoRefresh: false })
       .onFileModified(async function (path) {
         if (path.startsWith('/static/css')) {
-          await buildCSS(false)
+          browserRefreshClient.refreshStyles()
+        } else if (path.startsWith('/client')) {
+          browserRefreshClient.refreshPage()
         } else {
           browserRefreshClient.refreshPage()
         }
       })
     return true
   } else {
-	return false
+    return false
   }
 }
 
 async function buildCSS (watch = false) {
-  const fileStorage = require('./core/file-storage.js')
-
   await fileStorage.createFolderIfMissing(path.join(__dirname, CSS_INDEX_DEST_FOLDER))
 
   if (watch) {
@@ -182,6 +185,56 @@ async function buildCSS (watch = false) {
     copyAssets: ['png'],
     log: DEV_ENVIRONMENT,
     watch
+  })
+}
+
+async function buildJS (watch = false) {
+  const env = process.env.NODE_ENV || 'development'
+  const config = require('./webpack.' + env)
+
+  await fileStorage.createFolderIfMissing(path.join(__dirname, config.output.path))
+
+  const compiler = webpack(config)
+
+  await new Promise(function (resolve, reject) {
+    function callback (err, stats) {
+      // https://webpack.js.org/api/node/#error-handling
+
+      if (err) {
+        // This means an error in webpack or its configuration, not an error in
+        // the compiled sources.
+        log.error(err.stack || err)
+        if (err.details) {
+          log.error(err.details)
+        }
+        return
+      }
+
+      let logMethod = log.info.bind(log)
+      if (stats.hasErrors()) {
+        logMethod = log.error.bind(log)
+      } else if (stats.hasWarnings()) {
+        logMethod = log.warning.bind(log)
+      }
+      logMethod(stats.toString({
+        all: false,
+        assets: true,
+        colors: true,
+        errors: true,
+        warnings: true,
+        performance: false
+      }))
+
+      resolve()
+    }
+
+    if (watch) {
+      log.info('Setting up automatic JS build...')
+      compiler.watch(config.watchOptions || {}, callback)
+    } else {
+      log.info('Building JS...')
+      compiler.run(callback)
+    }
   })
 }
 
