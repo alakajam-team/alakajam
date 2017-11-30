@@ -1,7 +1,7 @@
 Resources
 This page compiles a list of **free** resources for making games, especially for beginners. If you have suggestions to add please [let us know](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform)!
 
-## Graphics software
+## <a name="graphics"></a>Graphics software
 
 | Name | Description |
 | -------- | -------- |
@@ -14,7 +14,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [GraphicsGale](https://graphicsgale.com/)  | Old-school looking but powerful sprite editor, supports animations. |
 
 
-## Audio software
+## <a name="audio"></a>Audio software
 
 | Name | Description |
 | -------- | -------- |
@@ -27,7 +27,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Audiotool](https://www.audiotool.com)  | Online, knobs-and-cables music editor. Exporting requires a free account. |
 | [LMMS](http://alternativeto.net/software/lmms/)  | Full featured, cross-platform music creation software inspired by FL Studio. Open Source. |
 
-## Game engines/frameworks
+## <a name="engines"></a>Game engines/frameworks
 
 | Name | Description |
 | -------- | -------- |
@@ -43,7 +43,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Twine](https://twinery.org) | Engine for writing interactive stories with no code at all. Open Source.|
 | [RPGBoss](http://rpgboss.com/) | RPG Maker clone, for creating RPGs without code. Open source.|
 
-## Free assets
+## <a name="assets"></a>Free assets
 
 | Name | Description |
 | -------- | -------- |
@@ -54,7 +54,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Universal LPC Sprite Sheet Generator](http://gaurav.munjal.us/Universal-LPC-Spritesheet-Character-Generator/) | Customizable character sprite sheets assembled from open art. |  
 
 
-## Miscellaneous
+## <a name="misc"></a>Miscellaneous
 
 | Name | Description |
 | -------- | -------- |
