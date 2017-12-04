@@ -5,7 +5,7 @@ You just stumbled on *Alakajam!*, a new site made by @wan (creator of Feedback F
 
 Because the world always needs more game jams, we're building this sort of spin-off community with the goal to organize regular gamedev events:
 
-* **Alakajam!** competitions, taking place over a week-end a bit like Ludum Dare, except that start/end times will be more suited to European timezones.
+* **Alakajam!** competitions, taking place over a week-end a bit like Ludum Dare, except that start/end times are more suited to European timezones.
 * **Kajam!** month-long events, inviting people to learn and experiment around a specific topic.
 * And finally **Feedback Fortnights**, to show off projects made outside of game jams.
 
