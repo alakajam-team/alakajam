@@ -332,6 +332,7 @@ async function deleteEntry (req, res) {
   let entry = res.locals.entry
   if (res.locals.user && entry && securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
     await eventService.deleteEntry(entry)
+    eventService.refreshEventCounts(entry.related('event')) // No need to await
     cache.user(res.locals.user).del('latestEntry')
   }
 

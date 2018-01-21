@@ -13,6 +13,7 @@ docs/*/
 # Data
 data*/
 tests/data/
+static/build
 static/uploads
 *.log
 *.out

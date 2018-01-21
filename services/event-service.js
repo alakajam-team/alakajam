@@ -181,8 +181,6 @@ async function createEntry (user, event) {
   await entryDetails.save()
   await entry.load('details')
 
-  refreshEventCounts(event) // No need to await
-
   return entry
 }
 
@@ -484,8 +482,6 @@ async function deleteEntry (entry) {
     // Delete entry
     await entry.destroy({ transacting: t })
   })
-
-  refreshEventCounts(entry.related('event')) // No need to await
 }
 
 /**
@@ -843,7 +839,6 @@ async function refreshEventCounts (event) {
     divisionCounts[row['division']] = count
     totalCount += count
   }
-
   if (!event.relations.details) {
     await event.load('details')
   }
@@ -855,5 +850,8 @@ async function refreshEventCounts (event) {
     let details = event.related('details')
     details.set('division_counts', divisionCounts)
     await details.save(null, { transacting: transaction })
+
+    cache.eventsById.del(event.get('id'))
+    cache.eventsByName.del(event.get('name'))
   })
 }
