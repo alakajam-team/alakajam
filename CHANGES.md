@@ -2,6 +2,10 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### November 22nd
+
+* Mods can now manage events just like admins
+
 ### October 19th
 
 * Added lazy loading for most pictures to make pages load faster
