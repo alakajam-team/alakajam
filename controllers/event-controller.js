@@ -462,7 +462,7 @@ async function viewEventResults (req, res) {
   }
 
   // Gather entries rankings
-  let cacheKey = 'results_' + division + '_' + sortedBy
+  let cacheKey = 'results_' + res.locals.event.get('name') + '_' + division + '_' + sortedBy
   let context = await cache.getOrFetch(cache.general, cacheKey, async function () {
     let rankingsCollection = await eventRatingService.findEntryRankings(res.locals.event, division, sortedBy)
     return {
@@ -613,7 +613,7 @@ async function editEvent (req, res) {
  */
 async function editEventThemes (req, res) {
   res.locals.pageTitle += ' | Themes'
-  
+
   if (!securityService.isMod(res.locals.user)) {
     res.errorPage(403)
     return
@@ -649,7 +649,7 @@ async function editEventThemes (req, res) {
  */
 async function editEventEntries (req, res) {
   res.locals.pageTitle += ' | Entries'
-  
+
   if (!securityService.isMod(res.locals.user)) {
     res.errorPage(403)
     return
@@ -707,7 +707,7 @@ async function deleteEvent (req, res) {
   }
 
   if (res.locals.event.get('status') === enums.EVENT.STATUS.PENDING) {
-	await res.locals.event.destroy()
+    await res.locals.event.destroy()
     res.redirect('/events')
   } else {
     res.errorPage(403, 'Only pending events can be deleted')
