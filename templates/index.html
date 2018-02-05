@@ -51,32 +51,37 @@
         </div>
         
         {% set rawHypeLink = featuredEvent.get('countdown_config').link %}
+        {% set animatedCountdown = featuredEvent.get('countdown_config').enabled %}
         {% if rawHypeLink %}
           {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else buildUrl(featuredEvent, 'event', rawHypeLink) %}
           <a class="home-jumbo__call" href="{{ hypeLink }}">
             <div class="row">
-              <div class="col-md-6">
+              <div class="{{ 'col-md-6' if animatedCountdown else 'col-md-12' }}">
                 <h2>{{ featuredEvent.get('countdown_config').message }}</h2>
                 {% if featuredEvent.get('countdown_config').phrase %}
                   <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime }}
                 {% endif %}
               </div>
-              <div class="col-md-6">
-                <span class="home-jumbo__countdown js-countdown"></span>
-              </div>
+              {% if animatedCountdown %}
+                <div class="col-md-6">
+                  <span class="home-jumbo__countdown js-countdown"></span>
+                </div>
+              {% endif %}
             </div>
           </a>
         {% elseif featuredEvent.get('countdown_config').phrase %}
           <div class="home-jumbo__details">
             <div class="row">
-              <div class="col-md-6">
+              <div class="{{ 'col-md-6' if animatedCountdown else 'col-md-12' }}">
                 {% if featuredEvent.get('countdown_config').phrase %}
                   <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime }}
                 {% endif %}
               </div>
-              <div class="col-md-6">
-                <span class="home-jumbo__countdown js-countdown"></span>
-              </div>
+              {% if animatedCountdown %}
+                <div class="col-md-6">
+                  <span class="home-jumbo__countdown js-countdown"></span>
+                </div>
+              {% endif %}
             </div>
           </div>
         {% endif %}
@@ -260,14 +265,10 @@
 {% block scripts %}
 {{ formMacros.expandCollapseScripts() }}
 
-{% if featuredEvent %}
-  {% set countdownEvent = featuredEvent %}
-{% endif %}
-
-{% if countdownEvent and countdownEvent.get('countdown_config').enabled %}
+{% if featuredEvent and featuredEvent.get('countdown_config').enabled %}
   <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
   <script type="text/javascript">
-    alakajam.countdown('.js-countdown', {{ countdownEvent.get('countdown_config').date | jsonInsideScriptTag }});
+    alakajam.countdown('.js-countdown', {{ featuredEvent.get('countdown_config').date | jsonInsideScriptTag }});
   </script>
 {% endif %}
 
