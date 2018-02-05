@@ -6,6 +6,8 @@
 
 * Front page got several little layout changes
 
+## 2017
+
 ### November 24nd
 
 * Non-visible work on back end: rework CSS/JS build toolchain (switching to webpack)
