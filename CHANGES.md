@@ -2,6 +2,10 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### February 5th
+
+* Front page got several little layout changes
+
 ### November 22nd
 
 * Mods can now manage events just like admins
