@@ -6,6 +6,10 @@
 
 * Front page got several little layout changes
 
+### November 24nd
+
+* Non-visible work on back end: rework CSS/JS build toolchain (switching to webpack)
+
 ### November 22nd
 
 * Mods can now manage events just like admins
