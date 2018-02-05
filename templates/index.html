@@ -92,6 +92,21 @@
         </div>
         {% endif %}
       </div>
+        
+      {% if featuredLinks %}
+        <div class="row">
+          <div class="col-lg-10 col-lg-offset-1">
+            <div class="home-featured-links">
+            {% for featuredLink in featuredLinks %}
+              <a class="panel home-featured-link" href="{{ featuredLink.link }}">
+                <span class="fa {{ featuredLink.icon }}"></span>
+                <span class="home-featured-link__title">{{ featuredLink.title }}</span>
+              </a>
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
 
       <div class="home-jumbo__contents">
         {% if featuredEventAnnouncement %}
@@ -135,6 +150,7 @@
         <h1 class="text-center">Next event not announced yet.</h1>
       {% endif %}
     </div>
+    
     <div class="col-md-3 visible-md visible-lg">
       <div class="horizontal-bar" style="margin-top: 0px; margin-bottom: 10px">
         <span class="fa fa-calendar"></span>
@@ -182,21 +198,6 @@
       </div>
     </div>
   </div>
-
-  {% if featuredLinks %}
-    <div class="row">
-      <div class="col-lg-10 col-lg-offset-1">
-        <div class="home-featured-links">
-        {% for featuredLink in featuredLinks %}
-          <a class="panel home-featured-link" href="{{ featuredLink.link }}">
-            <span class="fa {{ featuredLink.icon }}"></span>
-            <span class="home-featured-link__title">{{ featuredLink.title }}</span>
-          </a>
-        {% endfor %}
-        </div>
-      </div>
-    </div>
-  {% endif %}
   
   {% if suggestedEntries and suggestedEntries.length > 0 %}
   <div class="row">
