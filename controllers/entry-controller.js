@@ -117,7 +117,7 @@ async function editEntry (req, res) {
 
   // Security checks
   if (!user) {
-    res.errorPage(403)
+    res.redirect('/login')
     return
   } else if (!entry && event) {
     let existingEntry = await eventService.findUserEntryForEvent(user, event.id)

@@ -124,6 +124,11 @@ async function viewPost (req, res) {
 }
 
 async function editPost (req, res) {
+  if (!res.locals.user) {
+    res.redirect('/login')
+    return
+  }
+
   let createMode = !res.locals.post
   if (createMode || securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
     if (createMode) {
