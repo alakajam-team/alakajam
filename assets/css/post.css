@@ -226,7 +226,7 @@
 
   & iframe, & img {
     max-width: 100% !important;
-    max-height: 350px !important;
+    max-height: 400px !important;
   }
 
   & table {
