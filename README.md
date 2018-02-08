@@ -40,4 +40,4 @@ See also [the wiki](https://github.com/mkalam-alami/wejam/wiki) for additional d
 If the `sharp` dependency failed to install in the initial setup, your picture uploads won't be resized. If you want to fix that:
 
 * Follow the instructions to install the [sharp dependencies](http://sharp.dimens.io/en/stable/install/)
-* Run `nom install` again
+* Run `npm install` again
