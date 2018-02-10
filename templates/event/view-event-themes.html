@@ -81,7 +81,7 @@
           <div>
             <p>
               {% if user %}<b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li><br />{% endif %}
-              <b>Everyone:</b> {{ event.related('details').get('theme_count') }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') }}</span> votes
+              <b>Everyone:</b> {{ d(event.related('details').get('theme_count'), "0", true) }} ideas, <span id="js-total-votes">{{ d(event.related('details').get('theme_vote_count'), "0", true) }}</span> votes
               {{- ', ' + shortlistVotes + ' shortlist votes' if shortlistVotes }}
             </p>
             {% if event.get('status_theme') === 'voting' %}
