@@ -73,8 +73,6 @@ async function updateEntryTags (entry, tagInfo) {
       let createdTag = await createTag(tagLabel)
       tagIds.push(createdTag.get('id'))
     }
-    console.log(1)
-    console.log(tagIds, tagLabels)
 
     // Find existing relations
     const existingIds = (
@@ -84,8 +82,6 @@ async function updateEntryTags (entry, tagInfo) {
     ).map(function (row) {
       return row.tag_id
     }) // eslint-disable-line camelcase
-    console.log(2)
-    console.log(existingIds)
 
     // Create/delete relations
     const toRemoveIds = existingIds.filter(id => !tagIds.includes(id))
@@ -94,8 +90,6 @@ async function updateEntryTags (entry, tagInfo) {
         entry_id: entryId,
         tag_id: id
       }))
-    console.log(3)
-    console.log(toRemoveIds, toAdd)
     const promises = []
     if (toAdd.length > 0) { // Insert new entry_tag records.
       promises.push(transaction('entry_tag').insert(toAdd))

@@ -189,6 +189,7 @@
         </div>
         Platforms
       </div>
+      {% if entry.related('tags').length > 0 %}
       <div class="entry__info">
         <div class="pull-right">
           {% for tag in entry.related('tags').models %}
@@ -197,6 +198,7 @@
         </div>
         Tags
       </div>
+      {% endif %}
 
       <h3 style="margin-top: 20px">Links</h3>
 

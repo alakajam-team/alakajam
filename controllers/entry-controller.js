@@ -199,7 +199,7 @@ async function editEntry (req, res) {
     // Save entry: Update model (even if validation fails, to prevent losing what the user filled)
     let isCreation
     if (!entry.get('id')) {
-      entry = await eventService.createEntry(res.locals.user, res.locals.event)
+      entry = await eventService.createEntry(user, event)
       isCreation = true
     } else {
       isCreation = false
@@ -240,11 +240,11 @@ async function editEntry (req, res) {
     }
     if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
-    } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(res.locals.event)) {
+    } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
       errorMessage = 'Submissions are closed for this event'
     } else if (files.picture && files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
-    } else if (fields.division && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
+    } else if (fields.division && !isExternalEvent && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
       errorMessage = 'Invalid division'
     } else if (typeof fields.members !== 'string') {
       errorMessage = 'Invalid members'
@@ -268,7 +268,7 @@ async function editEntry (req, res) {
         }
       }
 
-      if (isCreation || securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+      if (isCreation || securityService.canUserManage(user, entry, { allowMods: true })) {
         let division = fields['division'] || eventService.getDefaultDivision(event)
         if (event &&
           (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED || event.get('status_entry') === enums.EVENT.STATUS_ENTRY.CLOSED)) {
@@ -294,7 +294,7 @@ async function editEntry (req, res) {
 
         res.locals.infoMessage = ''
         if (teamMembers !== null) {
-          let teamChanges = await eventService.setTeamMembers(res.locals.user, entry, teamMembers)
+          let teamChanges = await eventService.setTeamMembers(user, entry, teamMembers)
           if (teamChanges.numAdded > 0) {
             res.locals.infoMessage += teamChanges.numAdded + ' user(s) have been sent an invite to join your team. '
           }
