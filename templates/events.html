@@ -43,27 +43,23 @@
 {% macro eventTable(event, featuredEntries) %}
 
 {{ eventMacros.eventTable(event, { neutralStatus: true }) }}
-{% if featuredEntries.length > 0 %}
+{% if featuredEntries.solo or featuredEntries.ranked %}
 <div class="events-block__entries">
   <div class="row">
     <div class="col-sm-6">
-    {% for entry in featuredEntries.models %}
-      {% if loop.index % 2 === 1 %}
+    {% for entry in (featuredEntries.solo or featuredEntries.ranked) %}
       <div class="events-block__entry">
         {{ eventMacros.entrySmallThumb(entry) }}
-        <span class="entry-results__category-medal medal{{ (loop.index + 1) / 2 }}"></span>
+        <span class="entry-results__category-medal medal{{ loop.index }}"></span>
       </div>
-      {% endif %}
     {% endfor %}
     </div>
     <div class="col-sm-6">
-    {% for entry in featuredEntries.models %}
-      {% if loop.index % 2 === 0 %}
+    {% for entry in featuredEntries.team %}
       <div class="events-block__entry">
         {{ eventMacros.entrySmallThumb(entry) }}
-        <span class="entry-results__category-medal medal{{ loop.index / 2 }}"></span>
+        <span class="entry-results__category-medal medal{{ loop.index }}"></span>
       </div>
-      {% endif %}
     {% endfor %}
     </div>
   </div>

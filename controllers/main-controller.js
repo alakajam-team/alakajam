@@ -179,11 +179,23 @@ async function events (req, res) {
       default:
         closed.push(event)
         if (event.get('status_results') === enums.EVENT.STATUS_RESULTS.RESULTS) {
-          featuredEntries[event.get('id')] = await eventService.findGames({
+          let topEntries = await eventService.findGames({
             eventId: event.get('id'),
             sortByRanking: true,
-            pageSize: 6
+            pageSize: 6,
+            withRelated: ['details', 'userRoles']
           })
+          let topEntriesByDivision = {}
+          topEntries.forEach(function (entry) {
+            let division = entry.get('division')
+            if (!topEntriesByDivision[division]) {
+              topEntriesByDivision[division] = []
+            }
+            if (topEntriesByDivision[division].length < 3 && entry.related('details').get('ranking_1')) {
+              topEntriesByDivision[division].push(entry)
+            }
+          })
+          featuredEntries[event.get('id')] = topEntriesByDivision
         }
     }
   }
