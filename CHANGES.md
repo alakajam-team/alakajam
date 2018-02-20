@@ -5,6 +5,7 @@
 ### February 20th
 
 * Support eliminating shortlist themes one by one in the moments before the jam starts
+* Support setting tags to games, and searching games by tags
 * Front page layout improvements
 
 ### February 5th
