@@ -43,7 +43,7 @@
       
       {{ formMacros.pagination(currentPage, pageCount, path) }}
       
-      <div class="row">
+      <div class="row user-thumbs">
         {% for someUser in users %}
           {{ userMacros.userThumb(someUser) }}
         {% endfor %}

@@ -22,6 +22,7 @@
 
   &__title {
     margin: 20px 0 0 0;
+    overflow: hidden;
   }
 
   &__name {
@@ -73,7 +74,6 @@
 
 .user-thumb {
   margin-bottom: 10px;
-  height: 50px;
 
   &.full-width {
     float: none;
@@ -125,4 +125,8 @@
   &.centered &__name {
     padding-left: 0;
   }
+}
+
+.user-thumbs .user-thumb {
+  height: 50px;
 }
