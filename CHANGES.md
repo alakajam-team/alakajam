@@ -2,6 +2,11 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### February 20th
+
+* Support eliminating shortlist themes one by one in the moments before the jam starts
+* Front page layout improvements
+
 ### February 5th
 
 * Front page got several little layout changes
