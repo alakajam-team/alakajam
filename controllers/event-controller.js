@@ -334,7 +334,7 @@ async function viewEventThemes (req, res) {
   }
 }
 
-async function _generateShortlistInfo(event, user = null) {
+async function _generateShortlistInfo (event, user = null) {
   let shortlistCollection = await eventThemeService.findShortlist(event)
   let eliminatedShortlistThemes = eventThemeService.computeEliminatedShortlistThemes(event)
 
