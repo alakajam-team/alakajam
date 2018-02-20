@@ -63,6 +63,7 @@
 
 ### October 2nd
 
+* Support closing theme voting without revealing the winner
 * Game rescue block added
 * Ratings management: team & solo entries are split into two columns
 * Non-visible work on back end: tweak asset URLs to support CloudFlare
