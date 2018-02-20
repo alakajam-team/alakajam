@@ -103,7 +103,7 @@
         <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs hidden-sm event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
           <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
           <span class="event-header__announcement-info">
-            Announcement • {{ latestEventAnnouncement.get('created_at') | relativeTime }}
+            Announcement • {{ latestEventAnnouncement.get('published_at') | relativeTime }}
           </span>
         </a><!--
         --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="event-header__link  
