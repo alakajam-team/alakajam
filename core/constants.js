@@ -103,7 +103,6 @@ module.exports = {
 
   // Events
   MAX_CATEGORY_COUNT: 6,
-  MINIMUM_REQUIRED_RATINGS: 1, // TODO Set reasonable value
 
   // Misc
   ARTICLES_ROOT_URL: 'https://raw.githubusercontent.com/alakajam-team/alakajam/master/articles/',

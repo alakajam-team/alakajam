@@ -13,6 +13,7 @@ const db = require('../core/db')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
 const settingService = require('./setting-service')
+const moment = require('moment')
 
 module.exports = {
   isThemeVotingAllowed,
@@ -31,7 +32,8 @@ module.exports = {
   findAllThemes,
   findBestThemes,
   findShortlist,
-  computeShortlist
+  computeShortlist,
+  computeEliminatedShortlistThemes
 }
 
 async function isThemeVotingAllowed (event) {
@@ -254,7 +256,6 @@ async function saveVote (user, event, themeId, score, options = {}) {
           'score': theme.get('score') + score,
           'notes': theme.get('notes') + 1
         })
-        theme.set('normalized_score', 1.0 * theme.get('score') / theme.get('notes'))
         vote = new models.ThemeVote({
           theme_id: themeId,
           user_id: user.get('id'),
@@ -263,6 +264,7 @@ async function saveVote (user, event, themeId, score, options = {}) {
         })
         voteCreated = true
       }
+      theme.set('normalized_score', 1.0 * theme.get('score') / theme.get('notes'))
 
       result = {
         theme,
@@ -436,4 +438,26 @@ async function _refreshEventThemeStats (event) {
   if (!(await isThemeVotingAllowed(event))) {
     cache.general.del(event.get('name') + '_event_voting_allowed_')
   }
+}
+
+/**
+ * @param event Event with loaded details
+ */
+function computeEliminatedShortlistThemes (event) {
+  let eliminated = 0
+
+  let shortlistEliminationInfo = event.related('details').get('shortlist_elimination')
+  if (shortlistEliminationInfo.start && shortlistEliminationInfo.delay && parseInt(shortlistEliminationInfo.delay) > 0) {
+    let delay = parseInt(shortlistEliminationInfo.delay)
+    let eliminationDate = moment(shortlistEliminationInfo.start)
+    let now = moment()
+
+    // We can eliminate at most 7 themes (leaving 3 until the reveal)
+    while (eliminationDate.isBefore(now) && eliminated < 7) {
+      eliminationDate.add(delay, 'minutes')
+      eliminated++
+    }
+  }
+
+  return eliminated
 }

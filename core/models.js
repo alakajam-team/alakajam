@@ -245,6 +245,7 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
     if (attrs && attrs['category_titles']) attrs['category_titles'] = JSON.stringify(attrs['category_titles'])
     if (attrs && attrs['division_counts']) attrs['division_counts'] = JSON.stringify(attrs['division_counts'])
     if (attrs && attrs['shortlist_elimination']) attrs['shortlist_elimination'] = JSON.stringify(attrs['shortlist_elimination'])
+      console.log(attrs)
     return attrs
   },
 

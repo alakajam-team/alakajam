@@ -79,6 +79,18 @@
       padding-left: 30px;
       cursor: default;
     }
+    &.eliminated {
+      cursor: default;
+
+      & .theme-shortlist-line__label {
+        text-decoration: line-through;
+        color: var(--text-lighter);
+      }
+
+      &.draggable-list {
+        padding-left: 30px;
+      }
+    }
     
     &__handle {
       position: absolute;

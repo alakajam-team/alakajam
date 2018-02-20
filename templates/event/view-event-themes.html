@@ -90,7 +90,7 @@
           <div>
             <p>
               {% if user %}<b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li><br />{% endif %}
-              <b>Everyone:</b> {{ d(event.related('details').get('theme_count'), "0", true) }} ideas, <span id="js-total-votes">{{ d(event.related('details').get('theme_vote_count'), "0", true) }}</span> votes
+              <b>Everyone:</b> {{ event.related('details').get('theme_count') or '0' }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') or '0' }}</span> votes
               {{- ', ' + shortlistVotes + ' shortlist votes' if shortlistVotes }}
             </p>
             {% if event.get('status_theme') === 'voting' %}
@@ -168,13 +168,16 @@
             <div class="well">
               <p>
                 {% if randomizedShortlist %}
-                  These are the top 10 submitted ideas, in random order. {{ "Rank them from best (first) to worst (last) by using drag'n'drop." if user }}
+                  These are the top submitted ideas, in random order. {{ "Rank them from best (first) to worst (last) by using drag'n'drop." if user }}
                 {% elseif shortlistVote %}
-                  Here are the top 10 submitted ideas as you ranked them. You can still drag'n'drop them to change the order.
+                  Here are the top submitted ideas as you ranked them. You can still drag'n'drop them to change the order.
                 {% else %}
-                  Here are the top 10 submitted ideas as you ranked them. You can no longer change your vote.
+                  Here are the top submitted ideas as you ranked them. You can no longer change your vote.
                 {% endif %}
               </p>
+              {% if eliminatedShortlist.length > 0 %}
+                <p>The greyed out themes have been eliminated, only {{ 10 - eliminatedShortlist.length }} remain in competition!</p>
+              {% endif %}
               <p>
                 {% if shortlistVote %}
                   <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
@@ -183,11 +186,17 @@
                 {% endif %}
               </p>
               <ol id="{{ 'js-shortlist' if shortlistVote }}" class="{{ 'use-hover' if shortlistVote }}">
-                {% for theme in shortlist %}
+                {% set forcedFontSize = (19 + eliminatedShortlist.length) if (eliminatedShortlist.length > 0) else null %}
+                {% for theme in activeShortlist %}
                 <li class="theme-shortlist-line {{ 'draggable' if shortlistVote }}" data-theme-id="{{ theme.get('id') }}">
                   {% if shortlistVote %}
                     <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
                   {% endif %}
+                  <span class="theme-shortlist-line__label" style="{{ ('font-size: ' + forcedFontSize + 'px') if forcedFontSize }}">{{ theme.get('title') }}</span>
+                </li>
+                {% endfor %}
+                {% for theme in eliminatedShortlist %}
+                <li class="theme-shortlist-line eliminated {{ 'draggable-list' if shortlistVote }}" data-theme-id="{{ theme.get('id') }}">
                   <span class="theme-shortlist-line__label">{{ theme.get('title') }}</span>
                 </li>
                 {% endfor %}

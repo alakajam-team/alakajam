@@ -38,10 +38,19 @@
   Shortlist elimination
 </div>
 
+{% set eventDetails = event.related('details') %}
 <p>This optional feature lets you eliminate shortlisted themes one by one in the hours preceding the jam launch.</p>
+<p>
+  Current state: 
+    {% if eventDetails.get('shortlist_elimination').start %}
+      <span class="label label-success">Enabled</span>
+      <b>(shortlist themes eliminated: {{ eliminatedShortlistThemes }})</b>
+    {% else %}
+      <span class="label">Disabled</span>
+    {% endif %}
+</b>
 
 <form method="post" class="js-warn-on-unsaved-changes">
-  {% set eventDetails = event.related('details') %}
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">

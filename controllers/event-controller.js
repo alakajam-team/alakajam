@@ -260,14 +260,17 @@ async function viewEventThemes (req, res) {
       }
 
       // Gather info for display
+      let statusTheme = event.get('status_theme')
+
       if (res.locals.user) {
+        // Logged users
         let userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, event)
         context.userThemes = userThemesCollection.models
 
         context.voteCount = await eventThemeService.findThemeVotesHistory(
           res.locals.user, event, { count: true })
 
-        if (event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING) {
+        if (statusTheme === enums.EVENT.STATUS_THEME.VOTING) {
           if (await eventThemeService.isThemeVotingAllowed(event)) {
             let votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, event)
             context.votesHistory = votesHistoryCollection.models
@@ -276,23 +279,14 @@ async function viewEventThemes (req, res) {
             context.ideasRequired = await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10')
             context.votingAllowed = false
           }
-        } else if (event.get('status_theme') === enums.EVENT.STATUS_THEME.SHORTLIST) {
-          let shortlistCollection = await eventThemeService.findShortlist(event)
-          let shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(res.locals.user, event)
-
-          if (shortlistVotesCollection.length === shortlistCollection.length) {
-            let scoreByTheme = {}
-            shortlistVotesCollection.each(function (vote) {
-              scoreByTheme[vote.get('theme_id')] = vote.get('score')
-            })
-            context.shortlist = shortlistCollection.sortBy(theme => -scoreByTheme[theme.get('id')] || 0)
-            context.randomizedShortlist = false
-          } else {
-            context.shortlist = shortlistCollection.shuffle()
-            context.randomizedShortlist = true
-          }
+        } else if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED].includes(statusTheme)) {
+          let { activeShortlist, eliminatedShortlist, randomizedShortlist } = await _generateShortlistInfo(event, res.locals.user)
+          context.activeShortlist = activeShortlist
+          context.eliminatedShortlist = eliminatedShortlist
+          context.randomizedShortlist = randomizedShortlist
         }
       } else {
+        // Anonymous users
         if (event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING) {
           if (await eventThemeService.isThemeVotingAllowed(event)) {
             let sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, event)
@@ -302,16 +296,16 @@ async function viewEventThemes (req, res) {
             context.ideasRequired = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, '10'))
             context.votingAllowed = false
           }
-        } else if (event.get('status_theme') === enums.EVENT.STATUS_THEME.SHORTLIST) {
-          let shortlistCollection = await eventThemeService.findShortlist(event)
-          context.shortlist = shortlistCollection.shuffle()
-          context.randomizedShortlist = true
+        } else if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED].includes(statusTheme)) {
+          let { activeShortlist, eliminatedShortlist, randomizedShortlist } = await _generateShortlistInfo(event)
+          context.activeShortlist = activeShortlist
+          context.eliminatedShortlist = eliminatedShortlist
+          context.randomizedShortlist = randomizedShortlist
         }
       }
 
       // State-specific data
-      let statusTheme = event.get('status_theme')
-      if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
+      if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED, enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
         context.shortlistVotes = await eventThemeService.countShortlistVotes(event)
       }
       if (statusTheme === enums.EVENT.STATUS_THEME.RESULTS) {
@@ -338,6 +332,40 @@ async function viewEventThemes (req, res) {
 
     res.render('event/view-event-themes', context)
   }
+}
+
+async function _generateShortlistInfo(event, user = null) {
+  let shortlistCollection = await eventThemeService.findShortlist(event)
+  let eliminatedShortlistThemes = eventThemeService.computeEliminatedShortlistThemes(event)
+
+  // Split shortlist
+  let info = {
+    activeShortlist: shortlistCollection.slice(0, shortlistCollection.length - eliminatedShortlistThemes),
+    eliminatedShortlist: eliminatedShortlistThemes > 0 ? shortlistCollection.slice(-eliminatedShortlistThemes) : [],
+    randomizedShortlist: false
+  }
+
+  // Sort active shortlist by user score
+  let shortlistVotesCollection = user ? await eventThemeService.findThemeShortlistVotes(user, event) : null
+  if (shortlistVotesCollection) {
+    let scoreByTheme = {}
+    shortlistVotesCollection.each(function (vote) {
+      scoreByTheme[vote.get('theme_id')] = vote.get('score')
+    })
+    info.activeShortlist.sort((t1, t2) => (scoreByTheme[t2.get('id')] || 0) - (scoreByTheme[t1.get('id')] || 0))
+  }
+
+  // Randomize active shortlist if no vote or anonymous
+  if (!shortlistVotesCollection || shortlistVotesCollection.length === 0) {
+    info.activeShortlist = shortlistCollection
+      .chain()
+      .slice(0, shortlistCollection.length - eliminatedShortlistThemes)
+      .shuffle()
+      .value()
+    info.randomizedShortlist = true
+  }
+
+  return info
 }
 
 /**
@@ -639,13 +667,15 @@ async function editEventThemes (req, res) {
     let { fields } = await req.parseForm()
     if (fields.elimination) {
       let eventDetails = event.related('details')
-      let sanitizedDelay = forms.isInt(fields['elimination-delay']) ? parseInt(fields['elimination-delay']) : -1
+      let sanitizedDelay = forms.isInt(fields['elimination-delay']) ? parseInt(fields['elimination-delay']) : 8
       eventDetails.set('shortlist_elimination', {
         start: forms.parseDateTime(fields['elimination-start-date']),
         delay: sanitizedDelay,
         body: forms.sanitizeMarkdown(fields['elimination-body'])
       })
       await eventDetails.save()
+      cache.eventsById.del(event.get('id'))
+      cache.eventsByName.del(event.get('name'))
     }
   }
 
@@ -655,7 +685,8 @@ async function editEventThemes (req, res) {
   res.render('event/edit-event-themes', {
     themes: themesCollection.models,
     eliminationMinNotes: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5')),
-    shortlist: shortlistCollection.models
+    shortlist: shortlistCollection.models,
+    eliminatedShortlistThemes: eventThemeService.computeEliminatedShortlistThemes(event)
   })
 }
 
