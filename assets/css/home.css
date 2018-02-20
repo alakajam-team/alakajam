@@ -137,7 +137,10 @@
   &__announcement {
     text-align: left;
     margin-bottom: 0;
-    
+
+    & panel {
+      margin-bottom: 0;
+    }
     & h1 > a {
       color: var(--text);
       
@@ -151,10 +154,6 @@
       text-align: left;
       padding-left: 10px;
 
-      & .panel {
-        margin-bottom: 0;
-      }
-
       & .expand-bar {
         margin-left: 10px;
       }
@@ -166,20 +165,20 @@
   }
   
   &__social {
-    margin-top: 20px;
-    
+    margin-top: 5px;
+
     & a {
       margin-right: 2px;
 
       & img {
-        height: 32px;
+        height: 42px;
       }
     }
   }
   @media (max-width: 991px) {
     &__social {
-      margin-bottom: 20px;
-      padding-left: 20px;
+      padding-left: 16px;
+      text-align: center;
     }
   }
 
@@ -190,12 +189,22 @@
   }
 }
 
+.home-scheduled-events .horizontal-bar a {
+  color: var(--text-lighter);
+
+  &:hover {
+    color: var(--text-light);
+  }
+}
+
 .home-scheduled-event {
-  @apply --shadow;
   position: relative;
-  background-color: white;
-  padding: 2px 5px;
-  margin-bottom: 5px;
+  padding: 6px 0;
+  border-bottom: 1px solid #CCC;
+
+  &:last-child {
+    border-bottom: 0;
+  }
 
   &.main {
     padding: 5px 5px;
@@ -210,12 +219,16 @@
   &__title {
     font-size: 1.2rem;
     font-weight: bold;
+    line-height: 1.5rem;
   }
   &.main &__title {
     font-size: 1.6rem;
-    line-height: 1.7rem;
   }
 
+  &.featured {
+    background-color: white; 
+    margin-bottom: 0;
+  }
   &.featured &__arrow {
     position: absolute;
     top: 50%;
@@ -225,7 +238,7 @@
     height: 0; 
     border-top: 20px solid transparent;
     border-bottom: 20px solid transparent;
-    border-right: 20px solid var(--alt); 
+    border-right: 20px solid var(--alt);
   }
 
   &__dates {
@@ -248,34 +261,35 @@
 }
 
 .home-featured-links {
-  text-align: center;
-  margin-top: 10px;
-  margin-bottom: -10px;
+  margin-bottom: 20px;
+
+  @media (max-width: 991px) {
+    & {
+      margin-bottom: -20px;
+      margin-top: 20px;
+    }
+  }
 }
 .home-featured-link {
   position: relative;
-  display: inline-block;
-  padding: 10px;
-  padding-left: 55px;
-  margin-right: 15px;
+  display: block;
+  padding: 6px 0;
+  margin-bottom: 5px;
   font-size: 1.3rem;
   font-weight: bold;
   top: 0px;
   transition: 0.1s;
+  color: var(--text);
 
   & .fa {
-    font-size: 2.3rem;
-    position: absolute;
-    left: 10px;
-    top: 7px;
-  }
-
-  &:last-child {
-    margin-right: 0;
+    font-size: 1.6rem;
+    padding-right: 10px;
+    width: 32px;
+    color: var(--alt);
   }
 
   &:hover {
-    top: -5px;
+    left: 5px;
   }
 
 }

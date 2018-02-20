@@ -1,8 +1,7 @@
 {% import "_macros-form.html" as formMacros %}
 
-{# Allowed options: hideHeading hideBody hideSpecialLabels showComments allowMods #}
+{# Allowed options: fullWidth centered #}
 {% macro userThumb(user, options = {}) %}
-
 <div class="user-thumb {{ 'full-width' if options.fullWidth else 'col-sm-4' }} {{ 'centered' if options.centered }}">
     <h1 class="user-thumb__title">
       <a href="{{ buildUrl(user, 'user') }}">
@@ -20,5 +19,14 @@
       {{ user.get('name') }}
     </h3>
 </div>
+{% endmacro %}
 
+{% macro userAvatar(user) %}
+<a href="{{ buildUrl(user, 'user') }}">
+  {% if user.get('avatar') %}
+    <img src="{{ pictureUrl(user.get('avatar'), user) }}" />
+  {% else %}
+    <img src="/static/images/default-avatar.png" />
+  {% endif %}
+</a>
 {% endmacro %}

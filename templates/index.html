@@ -2,6 +2,7 @@
 {% extends "_page.html" %}
 {% import "event/_macros-event.html" as eventMacros %}
 {% import "post/_macros-post.html" as postMacros %}
+{% import "user/_macros-user.html" as userMacros %}
 {% import "_macros-form.html" as formMacros %}
 
 {% block body %}
@@ -49,7 +50,7 @@
           </div>
           {% endif %}
         </div>
-        
+
         {% set rawHypeLink = featuredEvent.get('countdown_config').link %}
         {% set animatedCountdown = featuredEvent.get('countdown_config').enabled %}
         {% if rawHypeLink %}
@@ -85,33 +86,10 @@
             </div>
           </div>
         {% endif %}
-
-        {% if user %}
-        <div class="row home-jumbo__shortcuts">
-          <div class="col-sm-6">
-            {{ eventMacros.eventShortcutMyEntry(user, featuredEvent, userEntry) }}
-          </div>
-          <div class="col-sm-6">
-            {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost) }}
-          </div>
-        </div>
+        {% if user and featuredEvent and featuredEvent.get('status_entry') !== 'off' %}
+          {{ eventMacros.eventShortcutMyEntry(user, featuredEvent, userEntry) }}
         {% endif %}
       </div>
-        
-      {% if featuredLinks %}
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="home-featured-links">
-            {% for featuredLink in featuredLinks %}
-              <a class="panel home-featured-link" href="{{ featuredLink.link }}">
-                <span class="fa {{ featuredLink.icon }}"></span>
-                <span class="home-featured-link__title">{{ featuredLink.title }}</span>
-              </a>
-            {% endfor %}
-            </div>
-          </div>
-        </div>
-      {% endif %}
 
       <div class="home-jumbo__contents">
         {% if featuredEventAnnouncement %}
@@ -154,52 +132,65 @@
       {% if not featuredEvent and not featuredPost %}
         <h1 class="text-center">Next event not announced yet.</h1>
       {% endif %}
-    </div>
-    
-    <div class="col-md-3 visible-md visible-lg">
-      <div class="horizontal-bar" style="margin-top: 0px; margin-bottom: 10px">
-        <span class="fa fa-calendar"></span>
-        Event calendar
-      </div>
 
-      <p>
-        <a class="home-scheduled-event__title" style="font-size: 0.9rem" href="/events">
-          Browse all events
-        </a>
-      </p>
-      {% for event in eventSchedule %}
-        {% set mainEvent = event.get('title').includes('Alakajam') %}
-        <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }} {{ 'main' if mainEvent }}">
-          <div class="home-scheduled-event__arrow"></div>
-          <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
-            {% if mainEvent %}
-              <img src="/static/images/favicon16.png" class="home-scheduled-event__logo no-border" />
-            {% endif %}
-            {{ event.get('title') }}
-          </a>
-          <div class="home-scheduled-event__dates">
-            {{ event.get('display_dates') }} 
-            {% if event.get('status') === 'closed' %}
-              - <a href="{{ buildUrl(event, 'event') }}">{{ event.get('entry_count') }} games</a>
-            {% endif %}
-          </div>
-          <div class="home-scheduled-event__label">
-            {% if event.get('status') === 'open' %}
-              <span class="label label-danger">On now!</span>
-            {% elseif event.get('status') === 'pending' %}
-              <span class="label label-default">Up next!</span>
-            {% endif %}
-          </div>
-        </div>
-      {% endfor %}
-      
       <div class="home-jumbo__social">
         {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
+        {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
         {{ socialLink('IRC', '/chat', 'irc.svg') }}
         {{ socialLink('Twitch', 'https://www.twitch.tv/communities/alakajam', 'twitch.png') }}
-        {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
         {{ socialLink('YouTube', 'https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos', 'youtube.svg') }}
         {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+  
+      {% if featuredLinks %}
+        <div class="home-featured-links">
+          <div class="horizontal-bar" style="margin-top: 0px; margin-bottom: 10px">
+            <span class="fa fa-info-circle"></span>
+            Special pages
+          </div>
+        {% for featuredLink in featuredLinks %}
+          <a class="home-featured-link" href="{{ featuredLink.link }}">
+            <span class="fa {{ featuredLink.icon }}"></span>
+            <span class="home-featured-link__title">{{ featuredLink.title }}</span>
+          </a>
+        {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="home-scheduled-events visible-md visible-lg">
+        <div class="horizontal-bar" style="margin-top: 0px; margin-bottom: 10px">
+          <span class="fa fa-calendar"></span>
+          <a href="/events">Event calendar</a>
+        </div>
+
+        {% for event in eventSchedule %}
+          {% set mainEvent = event.get('title').includes('Alakajam') %}
+          <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }} {{ 'main' if mainEvent }}">
+            <div class="home-scheduled-event__arrow"></div>
+            <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
+              {% if mainEvent %}
+                <img src="/static/images/favicon16.png" class="home-scheduled-event__logo no-border" />
+              {% endif %}
+              {{ event.get('title') }}
+            </a>
+            <div class="home-scheduled-event__dates">
+              {{ event.get('display_dates') }} 
+              {% if event.get('status') === 'closed' %}
+                - <a href="{{ buildUrl(event, 'event') }}">{{ event.get('entry_count') }} games</a>
+              {% endif %}
+            </div>
+            <div class="home-scheduled-event__label">
+              {% if event.get('status') === 'open' %}
+                <span class="label label-danger">On now!</span>
+              {% elseif event.get('status') === 'pending' %}
+                <span class="label label-default">Up next!</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
       </div>
     </div>
   </div>
@@ -219,24 +210,26 @@
       </div>
     </div>
   </div>
-
   {% endif %}
     
+  {% if posts.length > 0 %}
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
-      {% if posts.length > 0 %}
         <div class="horizontal-bar">Latest posts</div>
+
+        {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost) }}
+        <div class="spacing"></div>
+
         {% for post in posts %}
           <div class="expandable">
             {{ postMacros.post(post, user) }}
             {{ formMacros.expandCollapse() }}
           </div>
         {% endfor %}
-        
         {{ formMacros.pagination(1, pageCount, '/posts') }}
-      {% endif %}
     </div>
   </div>
+  {% endif %}
 </div>
 
 {% endblock %}

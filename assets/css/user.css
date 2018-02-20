@@ -74,6 +74,7 @@
 
 .user-thumb {
   margin-bottom: 10px;
+  min-height: 50px;
 
   &.full-width {
     float: none;
@@ -89,6 +90,7 @@
 
   &__avatar {
     width: 50px;
+    max-width: 100%;
     max-height: 50px;
     margin-left: -60px;
     display: block;

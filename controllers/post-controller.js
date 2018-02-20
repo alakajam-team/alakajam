@@ -167,8 +167,7 @@ async function savePost (req, res) {
   let post = res.locals.post
 
   // Check permissions
-  if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) ||
-      !(post && res.locals.user)) {
+  if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) || (!post && res.locals.user)) {
     let redirectToView = false
     let {fields} = await req.parseForm()
     let title = forms.sanitizeString(fields.title)
@@ -240,6 +239,8 @@ async function savePost (req, res) {
       // Save
       await post.save()
       cache.user(res.locals.user).del('latestPostsCollection')
+    } else if (!post) {
+      post = new models.Post()
     }
 
     // Render

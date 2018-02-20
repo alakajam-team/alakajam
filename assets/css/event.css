@@ -15,9 +15,16 @@
   
   &__title {
     vertical-align: top;
-    padding-top: 5px;
-    color: var(--text-light);
+    padding-bottom: 5px;
+    color: var(--text);
+    font-weight: bold;
+    font-size: 1.3rem;
     height: 35px;
+
+    & .btn {
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
   }
 
   &__post {
