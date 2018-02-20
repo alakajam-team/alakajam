@@ -92,6 +92,15 @@
     }
   }
 
+  &__call-arrow {
+    position: absolute;
+    display: block;
+    right: 20px;
+    top: 50%;
+    font-size: 60px;
+    margin-top: -30px;
+  }
+
   &__details {
     color: white;
     padding: 10px;
@@ -100,9 +109,10 @@
   
   &__countdown {
     display: none;
-    float: right;
-    margin: 5px;
-    margin-right: -5px;
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    margin-top: -20px;
     width: 332px;
     
     & .flip .inn {
@@ -114,8 +124,12 @@
   }
   @media (max-width: 991px) {
     &__countdown {
-      float: none;
+      position: static;
       margin: 0;
+    }
+
+    & .flip {
+      margin-top: 10px;
     }
   }
 
