@@ -29,6 +29,10 @@
         </select>
       </div>
       <div class="form-group">
+        <label for="platforms">Tags</label>
+        <input type="hidden" name="tags" class="form-control" id="js-tags" multiple="multiple" />
+      </div>
+      <div class="form-group">
         <label for="divisions">Divisions</label>
         <div>
           <div class="btn-group" data-toggle="buttons">
@@ -69,7 +73,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro searchFormScripts() %}
+{% macro searchFormScripts(tags) %}
 <script type="text/javascript" src="/static/js/select2.min.js"></script>
 <script type="text/javascript">
 // TODO move script into a separate file (#21)
@@ -78,4 +82,76 @@ $('#js-event').select2({
 })
 $('#js-platforms').select2()
 </script>
+{{ gameTagJsSelect(tags, { disableCustomTags: true }) }}
 {% endmacro %}
+
+{# Tags must follow the format: [{id, value}, ...] #}
+{% macro gameTagJsSelect(tags, options = {}) %}
+<script type="text/javascript">
+  var disableCustomTags = {{ options.disableCustomTags or 'false' }}
+  $(function() {(function(tags, url) {
+    $('#js-tags').select2({
+      multiple: true,
+      ajax: {
+        url: url,
+        dataType: 'json',
+        delay: 500,
+        data: function (term) {
+          return {
+            name: term
+          }
+        },
+        processResults: function (data, params) {
+          return {
+            results: data.matches
+          }
+        },
+        cache: true
+      },
+      createSearchChoice: function(term, data) {
+        // allow manually entered text in drop down
+        if (!disableCustomTags) {
+          var matchingResults = $(data).filter(function() {
+            return this.value.toLowerCase().localeCompare(term.trim().toLowerCase()) === 0;
+          })
+          if (matchingResults.length===0) {
+            return { id: term, value: term };
+          }
+        }
+      },
+      initSelection: function(elem, cb) {
+        cb(tags)
+      },
+      sortResults: sortSelect2Results,
+      placeholder: 'Select tags',
+      width: "100%",
+      allowClear: false,
+      minimumInputLength: 3,
+      formatResult: format,
+      formatSelection: format
+    })
+    .select2('val', tags)
+
+  })(
+    {{ tags | default([]) | dump | safe }},
+    "{{ buildUrl(null, 'tags', 'ajax-find-tags') }}"
+  ) })
+  
+  function sortSelect2Items (a, b) {
+    if (a.value < b.value) return -1;
+    if (a.value > b.value) return 1;
+    return 0;
+  }
+
+  function sortSelect2Results (results) {
+    return results.sort(sortSelect2Items)
+  }
+  
+  function format (tag) {
+    return ['<div class="tag">',
+          '<span class="tag">',tag.value,'</span>',
+        '</div>']
+      .join('')
+  }
+</script>
+ {% endmacro %}

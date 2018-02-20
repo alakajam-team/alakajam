@@ -217,7 +217,7 @@ async function games (req, res) {
   let {user, featuredEvent} = res.locals
 
   // Parse query
-  let searchOptions = eventController.handleGameSearch(req, res)
+  let searchOptions = await eventController.handleGameSearch(req, res)
 
   // Fetch info
   // TODO Parallelize tasks

@@ -90,6 +90,8 @@ function buildUrl (model, type, page = null, options = {}) {
         pageParams = 'editComment=' + model.id
       }
       return '?' + pageParams + (model ? '#c' + model.id : '')
+    } else if (type === 'tags') {
+      return '/tags/' + page
     }
   } catch (e) {
     throw new Error('Failed to build URL for model "' + model + '" of type "' + type + '": ' + e.message)

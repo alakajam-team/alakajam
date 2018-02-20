@@ -75,6 +75,7 @@ module.exports = {
     // Entries & Events
 
     router.get('/events/ajax-find-external-event', entryController.searchForExternalEvents)
+    router.get('/tags/ajax-find-tags', entryController.searchForTags)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/create-entry', entryController.editEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/ajax-find-team-mate', entryController.searchForTeamMate)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?', entryController.viewEntry)

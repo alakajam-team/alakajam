@@ -16,6 +16,7 @@ const userService = require('../services/user-service')
 const eventService = require('../services/event-service')
 const eventThemeService = require('../services/event-theme-service')
 const eventRatingService = require('../services/event-rating-service')
+const tagService = require('../services/tag-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
@@ -96,7 +97,7 @@ async function handleEventUserShortcuts (res, targetEvent) {
  * @param  {object} searchOptions initial search options
  * @return {object} search options
  */
-function handleGameSearch (req, res, searchOptions = {}) {
+async function handleGameSearch (req, res, searchOptions = {}) {
   // Pagination
   searchOptions.pageSize = 20
   searchOptions.page = 1
@@ -135,6 +136,20 @@ function handleGameSearch (req, res, searchOptions = {}) {
       searchOptions.platforms = []
       log.error('Invalid platform query: ' + req.query.platforms)
     }
+  }
+
+  // Tags
+  if (req.query.tags) {
+    if (typeof req.query.tags !== 'object') {
+      req.query.tags = req.query.tags.split(',')
+    }
+    let tagsIds = req.query.tags.map(str => parseInt(str))
+    if (tagsIds.includes(NaN)) {
+      tagsIds = []
+      log.error('Invalid tag query: ' + req.query.tags)
+    }
+    let tagCollection = await tagService.fetchByIds(tagsIds)
+    searchOptions.tags = tagCollection.map(tag => ({ id: tag.get('id'), value: tag.get('value') }))
   }
 
   // Event
@@ -381,7 +396,7 @@ async function viewEventGames (req, res) {
   }
 
   // Search form & pagination
-  let searchOptions = handleGameSearch(req, res, {
+  let searchOptions = await handleGameSearch(req, res, {
     eventId: event.get('id')
   })
 

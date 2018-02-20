@@ -173,11 +173,11 @@
 
       {% if not external %}
       <div class="entry__info">
-        <span class="pull-right">{{ entry.get('division') | capitalize }}</span>
+        <span class="entry__info-value pull-right">{{ entry.get('division') | capitalize }}</span>
         Division
       </div>
       <div class="entry__info">
-        <span class="pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
+        <span class="entry__info-value pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
         Feedback Score
       </div>
       {% endif %}
@@ -188,6 +188,14 @@
           {%- endfor %}
         </div>
         Platforms
+      </div>
+      <div class="entry__info">
+        <div class="pull-right">
+          {% for tag in entry.related('tags').models %}
+            <a href="/games?eventId=&amp;tags={{ tag.get('id') }}" class="btn btn-xs">{{ tag.get('value') }}</a>
+          {% endfor %}
+        </div>
+        Tags
       </div>
 
       <h3 style="margin-top: 20px">Links</h3>

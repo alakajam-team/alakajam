@@ -305,6 +305,9 @@ module.exports.Entry = bookshelf.model('Entry', {
   invites: function () {
     return this.hasMany('EntryInvite', 'entry_id')
   },
+  tags: function () {
+    return this.belongsToMany('Tag', 'entry_tag', 'entry_id', 'tag_id')
+  },
 
   // Listeners
 
@@ -433,6 +436,23 @@ module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
     modelPrototype.initialize.call(this)
     attrs = attrs || {}
     return attrs
+  }
+})
+
+/**
+ * Tag model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | value | Tag label
+ */
+module.exports.Tag = bookshelf.model('Tag', {
+  tableName: 'tag',
+  idAttribute: 'id',
+
+  entries: function () {
+    return this.belongsToMany('Entry', 'entry_tag')
   }
 })
 

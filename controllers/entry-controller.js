@@ -15,6 +15,7 @@ const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const platformService = require('../services/platform-service')
 const settingService = require('../services/setting-service')
+const tagService = require('../services/tag-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
@@ -35,7 +36,8 @@ module.exports = {
   declineInvite,
 
   searchForTeamMate,
-  searchForExternalEvents
+  searchForExternalEvents,
+  searchForTags
 }
 
 /**
@@ -188,6 +190,12 @@ async function editEntry (req, res) {
       }
     }
 
+    if (fields.tags) {
+      const str = forms.sanitizeString(fields.tags)
+      const ids = str ? str.split(',') : null
+      await tagService.updateEntryTags(entry, ids)
+    }
+
     // Save entry: Update model (even if validation fails, to prevent losing what the user filled)
     let isCreation
     if (!entry.get('id')) {
@@ -307,7 +315,7 @@ async function editEntry (req, res) {
       // Set or remove platforms.
       platformService.setEntryPlatforms(entry, platforms || [], { updateEntry: false })
       cache.user(res.locals.user).del('latestEntry')
-      await entry.load(['userRoles.user', 'comments', 'details'])
+      await entry.load(['userRoles.user', 'comments', 'details', 'tags'])
 
       // Save entry: Redirect to view upon success
       res.redirect(templating.buildUrl(entry, 'entry'))
@@ -321,6 +329,7 @@ async function editEntry (req, res) {
     allPlatforms: await platformService.fetchAllNames(),
     entryPlatforms: entry.get('platforms'),
     external: !res.locals.event,
+    tags: entry.related('tags').map(tag => ({ id: tag.id, value: tag.get('value') })),
     errorMessage
   })
 }
@@ -483,6 +492,35 @@ async function searchForExternalEvents (req, res) {
   if (!errorMessage) {
     let results = await eventService.searchForExternalEvents(nameFragment)
     res.json(results)
+  } else {
+    res.json(400, { error: errorMessage })
+  }
+}
+
+/**
+ * AJAX endpoint : Finds tags
+ */
+async function searchForTags (req, res) {
+  let errorMessage
+
+  if (!req.query || !req.query.name) {
+    errorMessage = 'No search parameter'
+  }
+  const nameFragment = forms.sanitizeString(req.query.name)
+  if (!nameFragment || nameFragment.length < 3) {
+    errorMessage = `Invalid name fragment: '${req.query.name}'`
+  }
+
+  if (!errorMessage) {
+    let matches = await tagService.searchTags(nameFragment)
+
+    const responseData = {
+      matches: matches.map(match => ({
+        id: match.id,
+        value: match.value
+      }))
+    }
+    res.json(responseData)
   } else {
     res.json(400, { error: errorMessage })
   }

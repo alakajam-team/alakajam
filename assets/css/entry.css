@@ -225,10 +225,9 @@
     margin-top: 10px;
     color: var(--text-light);
     font-weight: bold;
-
-    & span {
-      font-size: 1.2rem;
-    }
+  }
+  &__info-value {
+    font-size: 1.2rem;
   }
 
   &__platform {
@@ -240,6 +239,7 @@
   &__divisions {
     height: auto;
   }
+
 }
 
 .entry-division {

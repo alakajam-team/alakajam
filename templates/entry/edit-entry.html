@@ -1,5 +1,6 @@
 {% extends "_page.html" %}
 {% import "_macros-form.html" as formMacros %}
+{% import "_macros-games-search.html" as gamesSearchMacros %}
 
 {% block styles %}
 <style type="text/css">
@@ -16,7 +17,7 @@
 .member .select2-search-choice-close {
   left: 6px !important;
   top: 14px;
-}
+}mul
 .member .select2-search-choice {
   padding-bottom: 2px !important;
 }
@@ -177,7 +178,11 @@
         </div>
         <div class="form-group">
           <label for="platforms">Platforms</label>
-          <input type="hidden" name="platforms" class="bigdro" id="set-platforms" multiple="multiple" />
+          <input type="hidden" name="platforms" class="form-control" id="set-platforms" multiple="multiple" />
+        </div>
+        <div class="form-group">
+          <label for="tags">Tags</label> {{ formMacros.tooltip('Use this to let people search your game by tech (Unity, Game Maker...), genre (Platformer...), style (Pixel art...), etc.') }}
+          <input type="hidden" name="tags" class="form-control" id="js-tags" multiple="multiple" />
         </div>
         <div class="form-group">
           <label for="title">Detailed description</label>
@@ -550,4 +555,5 @@ if ($externalEventInput.length > 0) {
   })
 }
 </script>
+{{ gamesSearchMacros.gameTagJsSelect(tags) }}
 {% endblock %}

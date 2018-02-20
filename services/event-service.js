@@ -485,7 +485,7 @@ async function deleteEntry (entry) {
 }
 
 /**
- * @param options {object} nameFragment eventId platforms pageSize page withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
+ * @param options {object} nameFragment eventId platforms tags pageSize page withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
  */
 async function findGames (options = {}) {
   let query = models.Entry.forge()
@@ -527,6 +527,15 @@ async function findGames (options = {}) {
       return qb.distinct()
         .leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
         .whereIn('entry_platform.platform_id', options.platforms)
+    })
+  }
+  if (options.tags) {
+    query = query.query(function (qb) {
+      return qb.leftJoin('entry_tag', 'entry_tag.entry_id', 'entry.id')
+        .whereIn('entry_tag.tag_id', options.tags.map(tag => tag.id))
+      /* TODO Fix duplicates
+              .groupBy('entry.id')
+              .having(db.knex.raw('count(distinct entry_tag.tag_id) = ' + options.tags.length )) */
     })
   }
   if (options.divisions) {
@@ -588,7 +597,7 @@ async function findLatestEntries () {
  */
 async function findEntryById (id, options = {}) {
   if (!options.withRelated) {
-    options.withRelated = ['details', 'event', 'userRoles']
+    options.withRelated = ['details', 'event', 'userRoles', 'tags']
   }
   return models.Entry.where('id', id).fetch(options)
 }
