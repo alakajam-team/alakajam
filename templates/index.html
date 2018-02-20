@@ -217,7 +217,7 @@
     <div class="col-lg-offset-1 col-lg-10">
         <div class="horizontal-bar">Latest posts</div>
 
-        {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost) }}
+        {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost) if user and featuredEvent }}
         <div class="spacing"></div>
 
         {% for post in posts %}
