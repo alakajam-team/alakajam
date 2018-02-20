@@ -87,8 +87,8 @@ async function resize (sourcePath, targetPath, maxDiagonal) {
       // Resize to max size
       let diagonal = Math.max(Math.sqrt(diagonalSq))
       return source.resize(
-          Math.ceil(meta.width * maxDiagonal / diagonal),
-          Math.ceil(meta.height * maxDiagonal / diagonal))
+        Math.ceil(meta.width * maxDiagonal / diagonal),
+        Math.ceil(meta.height * maxDiagonal / diagonal))
         .toFile(targetPath)
     }
   }

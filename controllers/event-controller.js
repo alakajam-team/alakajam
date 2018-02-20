@@ -64,7 +64,7 @@ async function eventMiddleware (req, res, next) {
       }
 
       let announcementTask = postService.findLatestAnnouncement({ eventId: event.id })
-          .then((announcement) => { res.locals.latestEventAnnouncement = announcement })
+        .then((announcement) => { res.locals.latestEventAnnouncement = announcement })
       let userShortcutTasks = handleEventUserShortcuts(res, res.locals.event)
 
       await Promise.all([announcementTask, userShortcutTasks])
@@ -79,7 +79,7 @@ async function handleEventUserShortcuts (res, targetEvent) {
     let userPostTask = true
 
     entryTask = eventService.findUserEntryForEvent(res.locals.user, targetEvent.get('id'))
-        .then(userEntry => { res.locals.userEntry = userEntry })
+      .then(userEntry => { res.locals.userEntry = userEntry })
     userPostTask = postService.findPost({
       userId: res.locals.user.id,
       eventId: targetEvent.id,
@@ -146,7 +146,7 @@ function handleGameSearch (req, res, searchOptions = {}) {
     searchOptions.eventId = res.locals.event.get('id')
   } else if (req.query.eventId === undefined && res.locals.featuredEvent &&
       ![enums.EVENT.STATUS_RESULTS.OFF, enums.EVENT.STATUS_RESULTS.DISABLED]
-        .includes(res.locals.featuredEvent.get('status_results'))) {
+      .includes(res.locals.featuredEvent.get('status_results'))) {
     searchOptions.eventId = res.locals.featuredEvent.get('id')
   } else {
     searchOptions.sortByRating = true
@@ -587,6 +587,7 @@ async function editEvent (req, res) {
         cache.eventsByName.del(previousName)
       }
 
+      await event.load('details')
       let eventDetails = event.related('details')
       eventDetails.set({
         category_titles: fields['category-titles']
@@ -619,6 +620,8 @@ async function editEventThemes (req, res) {
     return
   }
 
+  let event = res.locals.event
+
   if (forms.isId(req.query.ban)) {
     let theme = await eventThemeService.findThemeById(req.query.ban)
     if (theme) {
@@ -628,14 +631,26 @@ async function editEventThemes (req, res) {
   } else if (forms.isId(req.query.unban)) {
     let theme = await eventThemeService.findThemeById(req.query.unban)
     if (theme) {
-      theme.set('status', (res.locals.event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING)
+      theme.set('status', (event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING)
         ? enums.THEME.STATUS.ACTIVE : enums.THEME.STATUS.OUT)
       await theme.save()
     }
+  } else {
+    let { fields } = await req.parseForm()
+    if (fields.elimination) {
+      let eventDetails = event.related('details')
+      let sanitizedDelay = forms.isInt(fields['elimination-delay']) ? parseInt(fields['elimination-delay']) : -1
+      eventDetails.set('shortlist_elimination', {
+        start: forms.parseDateTime(fields['elimination-start-date']),
+        delay: sanitizedDelay,
+        body: forms.sanitizeMarkdown(fields['elimination-body'])
+      })
+      await eventDetails.save()
+    }
   }
 
-  let themesCollection = await eventThemeService.findAllThemes(res.locals.event)
-  let shortlistCollection = await eventThemeService.findShortlist(res.locals.event)
+  let themesCollection = await eventThemeService.findAllThemes(event)
+  let shortlistCollection = await eventThemeService.findShortlist(event)
 
   res.render('event/edit-event-themes', {
     themes: themesCollection.models,

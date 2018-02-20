@@ -76,11 +76,11 @@ async function findPosts (options = {}) {
     if (options.entryId) qb = qb.where('entry_id', options.entryId)
     if (options.userId) {
       qb = qb.innerJoin('user_role', 'post.id', 'user_role.node_id')
-          .where({
-            'user_role.user_id': options.userId,
-            'user_role.node_type': 'post'
-          })
-          .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
+        .where({
+          'user_role.user_id': options.userId,
+          'user_role.node_type': 'post'
+        })
+        .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
     }
 
     if (!options.allowDrafts) qb = qb.where('published_at', '<=', new Date())
@@ -170,13 +170,13 @@ async function findCommentsByUser (user) {
 async function findCommentsByUserAndEvent (userId, eventId) {
   return models.Comment.query(function (qb) {
     qb.innerJoin('entry', 'comment.node_id', 'entry.id')
-        .where({
-          'user_id': userId,
-          'node_type': 'entry',
-          'entry.event_id': eventId
-        })
+      .where({
+        'user_id': userId,
+        'node_type': 'entry',
+        'entry.event_id': eventId
+      })
   })
-      .fetchAll()
+    .fetchAll()
 }
 
 /**
@@ -195,10 +195,10 @@ async function findCommentsToUser (user, options = {}) {
   }
   return models.Comment.query(function (qb) {
     qb = qb.distinct()
-        .leftJoin('user_role', function () {
-          this.on('comment.node_id', '=', 'user_role.node_id')
+      .leftJoin('user_role', function () {
+        this.on('comment.node_id', '=', 'user_role.node_id')
           .andOn('comment.node_type', '=', 'user_role.node_type')
-        })
+      })
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '<>', user.id)
       .andWhere('comment.updated_at', '>', notificationsLastRead)

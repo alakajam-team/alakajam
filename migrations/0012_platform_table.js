@@ -2,7 +2,7 @@ exports.up = async function (knex, Promise) {
   await knex.schema.createTableIfNotExists('platform', (table) => {
     table.increments('id').primary()
     table.string('name', 32).notNullable().index().unique()
-    table.timestamps(false, true)  // Use a datetime and default to NOW()
+    table.timestamps(false, true) // Use a datetime and default to NOW()
   })
 
   // Replace platform names column with FK to platform table.
@@ -12,7 +12,7 @@ exports.up = async function (knex, Promise) {
     table.integer('platform_id').references('platform.id').notNullable()
     table.string('platform_name').notNullable().index()
     table.unique(['entry_id', 'platform_id'])
-    table.timestamps(false, true)  // Use a datetime and default to NOW()
+    table.timestamps(false, true) // Use a datetime and default to NOW()
   })
 }
 

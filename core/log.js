@@ -17,6 +17,7 @@
 const path = require('path')
 const winston = require('winston')
 const moment = require('moment')
+const util = require('util')
 
 module.exports = initializeLogging()
 
@@ -51,7 +52,8 @@ function initializeLogging () {
       // Build the logging line
       let level = options.level
       let prefix = options.timestamp() + ' ' + options.level.toUpperCase() + ' (' + location + ')'
-      return winston.config.colorize(level, prefix) + (options.message ? ' ' + options.message : '')
+      let message = options.message ? (' ' + util.format(options.message)) : ''
+      return winston.config.colorize(level, prefix) + message
     },
     colorize: true
   })

@@ -45,7 +45,7 @@ if (!config.DEBUG_TEST_MAILER) {
         tls: { rejectUnauthorized: false },
         auth: {
           user: account.user, // generated ethereal user
-          pass: account.pass  // generated ethereal password
+          pass: account.pass // generated ethereal password
         }
       })
     } else {

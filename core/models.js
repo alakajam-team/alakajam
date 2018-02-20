@@ -216,6 +216,7 @@ module.exports.Event = bookshelf.model('Event', {
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
  * | string | division_counts | Number of entries by division: {"name": count...}
+ * | string | shortlist_elimination | Config for shortlist eliminations phase: (JSON: {"start": date, "delay": number in minutes, "body": html}
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -231,16 +232,19 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
     attrs = attrs || {}
     attrs['category_titles'] = attrs['category_titles'] || []
     attrs['division_counts'] = attrs['division_counts'] || []
+    attrs['shortlist_elimination'] = attrs['shortlist_elimination'] || {}
     return attrs
   },
   parse: function parse (attrs) {
     if (attrs['category_titles']) attrs['category_titles'] = JSON.parse(attrs['category_titles'])
     if (attrs['division_counts']) attrs['division_counts'] = JSON.parse(attrs['division_counts'])
+    if (attrs['shortlist_elimination']) attrs['shortlist_elimination'] = JSON.parse(attrs['shortlist_elimination'])
     return attrs
   },
   format: function format (attrs) {
     if (attrs && attrs['category_titles']) attrs['category_titles'] = JSON.stringify(attrs['category_titles'])
     if (attrs && attrs['division_counts']) attrs['division_counts'] = JSON.stringify(attrs['division_counts'])
+    if (attrs && attrs['shortlist_elimination']) attrs['shortlist_elimination'] = JSON.stringify(attrs['shortlist_elimination'])
     return attrs
   },
 

@@ -16,6 +16,9 @@ window.alakajam = {
     syncSlug: require('./common/sync-slug'),
     syncText: require('./common/sync-text')
   },
+  event: {
+    editEventThemes: require('./event/edit-event-themes')
+  },
   post: {
     editPost: require('./post/edit-post')
   },

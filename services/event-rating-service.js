@@ -72,8 +72,8 @@ async function canVoteOnEntry (user, entry) {
 
 async function countEntryVotes (entry) {
   let result = await models.EntryVote
-      .where('entry_id', entry.get('id'))
-      .count()
+    .where('entry_id', entry.get('id'))
+    .count()
   return parseInt(result)
 }
 

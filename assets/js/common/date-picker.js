@@ -5,7 +5,8 @@ module.exports = function datePicker (selector) {
     format: 'yyyy-mm-dd hh:ii',
     autoClose: true,
     todayBtn: true,
-    pickerPosition: 'top-left'
+    pickerPosition: 'top-left',
+    zIndex: 1050
   })
   $.fn.datetimepicker.dates['en'].today = 'Now'
 }

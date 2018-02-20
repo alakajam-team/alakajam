@@ -89,7 +89,7 @@ function getDefaultDivision (event) {
 async function findEventById (id) {
   if (!cache.eventsById.get(id)) {
     let event = await models.Event.where('id', id)
-        .fetch({ withRelated: ['details'] })
+      .fetch({ withRelated: ['details'] })
     cache.eventsById.set(id, event)
   }
   return cache.eventsById.get(id)
@@ -103,7 +103,7 @@ async function findEventById (id) {
 async function findEventByName (name) {
   if (!cache.eventsByName.get(name)) {
     let event = await models.Event.where('name', name)
-        .fetch({ withRelated: ['details'] })
+      .fetch({ withRelated: ['details'] })
     cache.eventsByName.set(name, event)
   }
   return cache.eventsByName.get(name)
@@ -314,8 +314,8 @@ function setTeamMembers (currentUser, entry, userIds) {
 
       // List users who entered the event in this or another team, or already have an invite.
       let existingRolesQuery = transaction('user_role')
-          .select('user_id', 'user_title', 'node_id')
-          .whereIn('user_id', userIds)
+        .select('user_id', 'user_title', 'node_id')
+        .whereIn('user_id', userIds)
       if (entry.get('event_id')) {
         alreadyEntered = await existingRolesQuery.andWhere({
           node_type: 'entry',
@@ -329,9 +329,9 @@ function setTeamMembers (currentUser, entry, userIds) {
       }
       if (entry.get('id')) {
         let pendingInvites = await transaction('entry_invite')
-            .select('invited_user_id', 'invited_user_title')
-            .whereIn('invited_user_id', userIds)
-            .where('entry_id', entry.get('id'))
+          .select('invited_user_id', 'invited_user_title')
+          .whereIn('invited_user_id', userIds)
+          .where('entry_id', entry.get('id'))
         pendingInvites.map(pendingInvite => {
           alreadyEntered.push({
             user_id: pendingInvite.invited_user_id,
@@ -543,11 +543,11 @@ async function findGames (options = {}) {
         .whereNull('entry_vote.id')
         // Hide commented
         .where('entry.id', 'NOT IN', db.knex('comment')
-            .where({
-              'user_id': options.notReviewedById,
-              'node_type': 'entry'
-            })
-            .select('node_id'))
+          .where({
+            'user_id': options.notReviewedById,
+            'node_type': 'entry'
+          })
+          .select('node_id'))
     })
   }
 
@@ -641,12 +641,12 @@ async function findLatestUserEntry (user, options = {}) {
 
   return models.Entry.query((qb) => {
     qb.distinct()
-        .innerJoin('user_role', 'entry.id', 'user_role.node_id')
-        .whereNotNull('entry.event_id')
-        .where({
-          'user_role.user_id': user.get('id'),
-          'user_role.node_type': 'entry'
-        })
+      .innerJoin('user_role', 'entry.id', 'user_role.node_id')
+      .whereNotNull('entry.event_id')
+      .where({
+        'user_role.user_id': user.get('id'),
+        'user_role.node_type': 'entry'
+      })
   })
     .orderBy('created_at', 'desc')
     .fetch(options)

@@ -184,12 +184,12 @@ async function findThemesToVoteOn (user, event) {
         this.andOn('theme_vote.user_id', '=', user.get('id'))
       })
     })
-    .where({
-      status: enums.THEME.STATUS.ACTIVE,
-      'theme.event_id': event.get('id'),
-      'theme_vote.user_id': null
-    })
-    .where('theme.user_id', '<>', user.get('id'))
+      .where({
+        status: enums.THEME.STATUS.ACTIVE,
+        'theme.event_id': event.get('id'),
+        'theme_vote.user_id': null
+      })
+      .where('theme.user_id', '<>', user.get('id'))
   } else {
     query = query.where('event_id', event.get('id'))
       .where('status', 'IN', [enums.THEME.STATUS.ACTIVE, enums.THEME.STATUS.SHORTLIST])
@@ -199,7 +199,7 @@ async function findThemesToVoteOn (user, event) {
   // This helps new themes catch up with the pack fast, while being much better randomized
   // than just showing the themes with the least notes.
   let themesCollection = await query.orderBy('updated_at')
-      .fetchPage({ pageSize: 20 })
+    .fetchPage({ pageSize: 20 })
   let sortedThemes = themesCollection.sortBy(theme => theme.get('notes'))
   let themesToVoteOn = sortedThemes.splice(0, 10)
   let shuffledThemes = new db.Collection(themesToVoteOn).shuffle()

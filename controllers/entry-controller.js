@@ -389,7 +389,7 @@ async function saveCommentOrVote (req, res) {
       fields, user, entry, templating.buildUrl(entry, 'entry'), event)
     res.redirect(redirectUrl)
   } else if (fields['action'] === 'vote') {
-     // Save vote
+    // Save vote
     let i = 1
     let votes = []
     while (fields['vote-' + i] !== undefined) {

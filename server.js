@@ -139,13 +139,15 @@ async function initFilesLayout () {
   await fileStorage.createFolderIfMissing(path.join(__dirname, config.UPLOADS_PATH))
 
   // Run CSS and JS build (or bootstrap sources watcher in dev mode)
-  await buildCSS(DEV_ENVIRONMENT)
-  await buildJS(DEV_ENVIRONMENT)
+  if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
+    await buildCSS(DEV_ENVIRONMENT)
+    await buildJS(DEV_ENVIRONMENT)
+  }
 }
 
 /*
  * Use browser-refresh to refresh the browser automatically during development
- * @return wheter browser-refresh has been enabled
+ * @return whether browser-refresh has been enabled
  */
 function configureBrowserRefresh () {
   const browserRefreshClient = require('browser-refresh-client')
@@ -153,7 +155,7 @@ function configureBrowserRefresh () {
 
   if (process.send && config.DEBUG_REFRESH_BROWSER) {
     browserRefreshClient
-      .enableSpecialReload('*.html /static/**', { autoRefresh: false })
+      .enableSpecialReload('*.html /static/**')
       .onFileModified(async function (path) {
         if (path.endsWith('.css')) {
           browserRefreshClient.refreshStyles()
@@ -171,7 +173,6 @@ function configureBrowserRefresh () {
 
 async function buildCSS (watch = false) {
   await fileStorage.createFolderIfMissing(path.join(__dirname, CSS_INDEX_DEST_FOLDER))
-
   if (watch) {
     log.info('Setting up automatic CSS build...')
   } else {
