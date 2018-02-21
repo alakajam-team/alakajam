@@ -1,3 +1,6 @@
+# External files
+node_modules/
+
 # Unbuilt sources
 assets/
 
