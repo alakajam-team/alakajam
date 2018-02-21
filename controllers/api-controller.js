@@ -8,10 +8,12 @@
 
 const moment = require('moment')
 const urllib = require('url')
+const lodash = require('lodash')
 const config = require('../config')
 const forms = require('../core/forms')
 const enums = require('../core/enums')
 const eventService = require('../services/event-service')
+const eventThemeService = require('../services/event-theme-service')
 const userService = require('../services/user-service')
 const buildUrl = require('./templating').buildUrl
 
@@ -27,6 +29,7 @@ const DETAILED_ENTRY_OPTIONS = { withRelated: ['comments', 'details', 'userRoles
 module.exports = {
   featuredEvent,
   event,
+  eventShortlist,
   entry,
   user,
   userLatestEntry,
@@ -102,6 +105,58 @@ async function event (req, res) {
         entryJson.users.push(_getAttributes(user.related('user'), PUBLIC_ATTRIBUTES_USER))
       }
       json.entries.push(entryJson)
+    }
+  } else {
+    json = { error: 'Event not found' }
+    status = 404
+  }
+
+  _renderJson(req, res, status, json)
+}
+
+/**
+ * Data about the theme shortlist of an event
+ */
+async function eventShortlist (req, res) {
+  let json = {}
+  let status = 200
+
+  let event
+  if (req.params.event && forms.isId(req.params.event)) {
+    event = await eventService.findEventById(req.params.event)
+  } else {
+    event = await eventService.findEventByName(req.params.event)
+  }
+
+  if (event) {
+    let shortlist = await eventThemeService.findShortlist(event)
+    if (shortlist.length > 0) {
+      let eliminatedThemes = eventThemeService.computeEliminatedShortlistThemes(event)
+      if (event.get('status_theme') === enums.EVENT.STATUS_THEME.RESULTS) {
+        eliminatedThemes = 9
+      }
+
+      // Build data
+      let rawShortlist = []
+      shortlist.chain()
+        .forEach(function (theme, i) {
+          let rank = i + 1
+          let eliminated = eliminatedThemes > 10 - rank
+          rawShortlist.push({
+            title: theme.get('title'),
+            eliminated,
+            ranking: eliminated ? rank : undefined
+          })
+        })
+        .value()
+
+      // Obfuscate order for active themes
+      let active = rawShortlist.filter(themeInfo => !themeInfo.eliminated)
+      let eliminated = rawShortlist.filter(themeInfo => themeInfo.eliminated)
+      json.shortlist = lodash.shuffle(active).concat(eliminated)
+    } else {
+      json = { error: 'Event does not have a theme shortlist' }
+      status = 403
     }
   } else {
     json = { error: 'Event not found' }
