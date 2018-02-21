@@ -154,6 +154,7 @@ async function eventShortlist (req, res) {
       let active = rawShortlist.filter(themeInfo => !themeInfo.eliminated)
       let eliminated = rawShortlist.filter(themeInfo => themeInfo.eliminated)
       json.shortlist = lodash.shuffle(active).concat(eliminated)
+      json.nextElimination = eventThemeService.computeNextShortlistEliminationTime(event)
     } else {
       json = { error: 'Event does not have a theme shortlist' }
       status = 403

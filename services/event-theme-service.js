@@ -33,7 +33,8 @@ module.exports = {
   findBestThemes,
   findShortlist,
   computeShortlist,
-  computeEliminatedShortlistThemes
+  computeEliminatedShortlistThemes,
+  computeNextShortlistEliminationTime
 }
 
 async function isThemeVotingAllowed (event) {
@@ -442,6 +443,7 @@ async function _refreshEventThemeStats (event) {
 
 /**
  * @param event Event with loaded details
+ * @return number of eliminated themes
  */
 function computeEliminatedShortlistThemes (event) {
   let eliminated = 0
@@ -460,4 +462,31 @@ function computeEliminatedShortlistThemes (event) {
   }
 
   return eliminated
+}
+
+/**
+ * @param event Event with loaded details
+ * @return moment time
+ */
+function computeNextShortlistEliminationTime (event) {
+  let alreadyEliminated = 0
+
+  let shortlistEliminationInfo = event.related('details').get('shortlist_elimination')
+  if (shortlistEliminationInfo.start && shortlistEliminationInfo.delay && parseInt(shortlistEliminationInfo.delay) > 0) {
+    let delay = parseInt(shortlistEliminationInfo.delay)
+    let nextEliminationDate = moment(shortlistEliminationInfo.start)
+    let now = moment()
+
+    // We can eliminate at most 7 themes (leaving 3 until the reveal)
+    while (nextEliminationDate.isBefore(now) && alreadyEliminated < 7) {
+      nextEliminationDate.add(delay, 'minutes')
+      alreadyEliminated++
+    }
+
+    if (alreadyEliminated < 7) {
+      return nextEliminationDate
+    }
+  }
+  
+  return null
 }
