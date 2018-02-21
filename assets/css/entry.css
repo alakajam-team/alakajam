@@ -222,12 +222,19 @@
   }
 
   &__info {
+    display: table;
+    width: 100%;
     margin-top: 10px;
     color: var(--text-light);
     font-weight: bold;
   }
+  &__info-label {
+    display: table-cell;
+  }
   &__info-value {
+    display: table-cell;
     font-size: 1.2rem;
+    text-align: right;
   }
 
   &__platform {

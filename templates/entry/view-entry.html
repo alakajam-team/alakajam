@@ -173,30 +173,30 @@
 
       {% if not external %}
       <div class="entry__info">
-        <span class="entry__info-value pull-right">{{ entry.get('division') | capitalize }}</span>
-        Division
+        <span class="entry__info-label">Division</span>
+        <span class="entry__info-value">{{ entry.get('division') | capitalize }}</span>
       </div>
       <div class="entry__info">
-        <span class="entry__info-value pull-right">{{ entry.get('feedback_score') | digits(0) }}</span>
-        Feedback Score
+        <span class="entry__info-label">Feedback Score</span>
+        <span class="entry__info-value">{{ entry.get('feedback_score') | digits(0) }}</span>
       </div>
       {% endif %}
       <div class="entry__info">
-        <div class="pull-right">
+        <span class="entry__info-label">Platforms</span>
+        <div class="entry__info-value">
           {% for name in entry.get('platforms') -%}
             <div class="entry__platform">{{ eventMacros.entryPlatformIcon(name, { hideLabel: true }) }}</div>
           {%- endfor %}
         </div>
-        Platforms
       </div>
       {% if entry.related('tags').length > 0 %}
       <div class="entry__info">
-        <div class="pull-right">
+        <span class="entry__info-label">Tags</span>
+        <div class="entry__info-value" style="width: 215px">
           {% for tag in entry.related('tags').models %}
             <a href="/games?eventId=&amp;tags={{ tag.get('id') }}" class="btn btn-xs">{{ tag.get('value') }}</a>
           {% endfor %}
         </div>
-        Tags
       </div>
       {% endif %}
 
