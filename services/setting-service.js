@@ -9,6 +9,7 @@
 const constants = require('../core/constants')
 const models = require('../core/models')
 const cache = require('../core/cache')
+const log = require('../core/log')
 
 module.exports = {
   find,
@@ -47,7 +48,7 @@ async function findArticlesSidebar (key, defaultValue = null) {
     try {
       return JSON.parse(articlesSidebar).sidebar
     } catch (e) {
-      console.log("Malformed JSON. Can't load articles links")
+      log.error("Malformed JSON. Can't load articles links")
     }
   }
   return null

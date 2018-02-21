@@ -11,6 +11,7 @@ const db = require('../core/db')
 const constants = require('../core/constants')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
+const log = require('../core/log')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const eventService = require('../services/event-service')
@@ -199,7 +200,7 @@ async function adminSettings (req, res) {
       try {
         currentEditValue = JSON.stringify(JSON.parse(currentEditValue), null, 4)
       } catch (e) {
-        console.log('Field ' + req.query.edit + ' is not a valid JSON')
+        log.error('Field ' + req.query.edit + ' is not a valid JSON')
       }
     }
 
