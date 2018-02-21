@@ -60,9 +60,17 @@
 {% endmacro %}
 
 {% macro searchDescription(searchOptions, searchedEvent, options) %}
-  {% if searchOptions.search or searchOptions.eventId !== undefined %}
+  {% if searchOptions.search or searchOptions.eventId !== undefined or searchOptions.tags %}
     <div class="count" style="font-size: 1rem"><!-- TODO rename CSS class to "legend" -->
       {% if not options.fixedEvent %}
+        {{ 'in ' + searchedEvent.get('title') if searchedEvent }}
+        {{ 'in external events' if searchOptions.eventId|dump === 'null' }}
+      {% endif %}
+      {% if searchOptions.tags and searchOptions.tags.length > 0 %}
+        with tag{{ 's' if searchOptions.tags.length > 1 }}
+        {% for tag in searchOptions.tags -%}
+          "{{ tag.value }}"{{ ' or ' if not loop.last }}
+        {%- endfor %}
         {{ 'in ' + searchedEvent.get('title') if searchedEvent }}
         {{ 'in external events' if searchOptions.eventId|dump === 'null' }}
       {% endif %}

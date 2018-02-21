@@ -501,7 +501,9 @@ async function findGames (options = {}) {
       query = query.query(function (qb) {
         return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
           .leftJoin('event', 'entry.event_id', 'event.id')
-          .where('event.status', enums.EVENT.STATUS.CLOSED)
+          .where(function () {
+            this.where('event.status', enums.EVENT.STATUS.CLOSED).orWhereNull('event.status')
+          })
           .orderByRaw('entry_details.rating_1 DESC ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
           .orderBy('entry.feedback_score', 'DESC')
       })
@@ -509,7 +511,9 @@ async function findGames (options = {}) {
       query = query.query(function (qb) {
         return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
           .leftJoin('event', 'entry.event_id', 'event.id')
-          .where('event.status', enums.EVENT.STATUS.CLOSED)
+          .where(function () {
+            this.where('event.status', enums.EVENT.STATUS.CLOSED).orWhereNull('event.status')
+          })
           .orderByRaw('entry_details.ranking_1 ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
           .orderBy('entry.division')
       })
@@ -524,18 +528,18 @@ async function findGames (options = {}) {
   if (options.eventId !== undefined) query = query.where('entry.event_id', options.eventId)
   if (options.platforms) {
     query = query.query(function (qb) {
-      return qb.distinct()
-        .leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
+      return qb.leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
         .whereIn('entry_platform.platform_id', options.platforms)
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score',
+          'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
     })
   }
   if (options.tags) {
     query = query.query(function (qb) {
       return qb.leftJoin('entry_tag', 'entry_tag.entry_id', 'entry.id')
         .whereIn('entry_tag.tag_id', options.tags.map(tag => tag.id))
-      /* TODO Fix duplicates
-              .groupBy('entry.id')
-              .having(db.knex.raw('count(distinct entry_tag.tag_id) = ' + options.tags.length )) */
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score',
+          'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
     })
   }
   if (options.divisions) {
