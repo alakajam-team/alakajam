@@ -207,8 +207,9 @@
           <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'edit') }}">Edit entry</a>
         {% endif %}
         {% for link in entry.get('links') %}
-          <a class="btn btn-primary" href="{{ link.url }}">
-            {{ link.label }}
+          <a class="btn btn-primary" href="{{ link.url }}" target="_blank">
+            <span class="fa fa-external-link"></span>
+            {{ link.label }} 
           </a>
         {% endfor %}
         {% if entry.get('links').length === 0 or not entry.get('links')[0].url %}

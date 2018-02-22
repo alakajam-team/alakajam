@@ -215,9 +215,21 @@
     margin-bottom: 20px;
 
     & a {
+      position: relative;
       width: 100%;
       display: block;
       margin-bottom: 5px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      padding: 4px;
+
+      & .fa {
+        position: absolute;
+        font-size: 1rem;
+        right: 10px;
+        top: 50%;
+        margin-top: -0.5rem;
+      }
     }
   }
 
