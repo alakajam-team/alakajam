@@ -95,7 +95,8 @@
     &__handle {
       position: absolute;
       left: 0;
-      top: 10px;
+      top: 50%;
+      margin-top: -0.6rem;
       font-size: 1.2rem;
       color: var(--text);
     }

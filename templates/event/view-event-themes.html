@@ -203,7 +203,7 @@
                 {% for theme in activeShortlist %}
                 <li class="theme-shortlist-line {{ 'draggable' if shortlistVote }}" data-theme-id="{{ theme.get('id') }}">
                   {% if shortlistVote %}
-                    <span class="theme-shortlist-line__handle glyphicon glyphicon-option-vertical"></span> 
+                    <span class="theme-shortlist-line__handle fa fa-bars"></span> 
                   {% endif %}
                   <span class="theme-shortlist-line__label" style="{{ ('font-size: ' + forcedFontSize + 'px') if forcedFontSize }}">{{ theme.get('title') }}</span>
                 </li>
