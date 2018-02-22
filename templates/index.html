@@ -121,6 +121,22 @@
             }
           </script>
         {% endif %}
+
+        <!-- XXX Hard-coded temporary DanaePlays stream -->
+        {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') %}
+        {% if shortlistEliminationInfo.delay %}
+        <div style="margin-bottom: 20px; box-shadow: 2px 2px 2px #DDD">
+          <div id="twitch-embed"></div>
+        </div>
+        <script src="https://embed.twitch.tv/embed/v1.js"></script>
+        <script type="text/javascript">
+          new Twitch.Embed("twitch-embed", {
+            width: '100%',
+            height: 400,
+            channel: "DanaePlays"
+          });
+        </script>
+        {% endif %}
       </div>
       {% endif %}
 
