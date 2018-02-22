@@ -19,6 +19,7 @@
             </div>
 
             <!-- XXX Hard-coded temporary DanaePlays stream -->
+            {% if shortlistEliminationInfo.delay %}
             <div style="margin-bottom: 20px; box-shadow: 2px 2px 2px #DDD">
               <div id="twitch-embed"></div>
             </div>
@@ -30,6 +31,7 @@
                 channel: "DanaePlays"
               });
             </script>
+            {% endif %}
           {% endif %}
         </div>
 
