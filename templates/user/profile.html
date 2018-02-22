@@ -1,6 +1,7 @@
 {% extends "_page.html" %}
 {% import "event/_macros-event.html" as eventMacros %}
 {% import "post/_macros-post.html" as postMacros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block body %}
 
@@ -68,9 +69,9 @@
       {% endif %}
 
       <h2>Entries</h2>
-      {% if entries.length > 0 %}
+      {% if entries.models.length > 0 %}
       <div class="row">
-        {% for entry in entries %}
+        {% for entry in entries.models %}
           <div class="col-md-6 col-lg-4">
             {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
           </div>
@@ -81,10 +82,12 @@
       {% endif %}
 
       <h2>Latest posts</h2>
-      {% if posts.length > 0 %}
-        {% for post in posts %}
+      {% if posts.models.length > 0 %}
+        {% for post in posts.models %}
           {{ postMacros.post(post, user) }}
         {% endfor %}
+
+        {{ formMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id')) }}
       {% else %}
       <div class="well">{{ profileUser.get('title') }} didn't write posts... Yet!</div>
       {% endif %}

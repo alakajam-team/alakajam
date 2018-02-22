@@ -64,7 +64,7 @@ async function viewUserProfile (req, res) {
     res.locals.pageTitle = profileUser.get('title')
     res.locals.pageDescription = forms.markdownToText(profileUser.related('details').get('body'))
 
-    let [entriesCollection, postsCollection] = await Promise.all([
+    let [entries, posts] = await Promise.all([
       eventService.findUserEntries(profileUser),
       postService.findPosts({userId: profileUser.get('id')}),
       profileUser.load('details')
@@ -72,8 +72,8 @@ async function viewUserProfile (req, res) {
 
     res.render('user/profile', {
       profileUser,
-      entries: entriesCollection.models,
-      posts: postsCollection.models
+      entries,
+      posts
     })
   } else {
     res.errorPage(400, 'No user exists with name ' + req.params.name)

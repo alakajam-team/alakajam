@@ -64,11 +64,16 @@ async function postMiddleware (req, res, next) {
 async function posts (req, res) {
   // Fetch posts
   let specialPostType = forms.sanitizeString(req.query['special_post_type']) || null
+  if (specialPostType === 'all') {
+    specialPostType = undefined
+  }
   let eventId = forms.sanitizeString(req.query['event_id']) || undefined
+  let userId = forms.sanitizeString(req.query['user_id']) || undefined
   let currentPage = forms.isId(req.query.p) ? parseInt(req.query.p) : 1
   let posts = await postService.findPosts({
     specialPostType,
     eventId,
+    userId,
     page: currentPage
   })
   await posts.load(['event', 'entry'])
@@ -82,11 +87,14 @@ async function posts (req, res) {
 
   // Determine base URL for pagination
   let paginationBaseUrl = '/posts?'
-  if (specialPostType) {
-    paginationBaseUrl += '&special_post_type=' + specialPostType
+  if (specialPostType !== null) {
+    paginationBaseUrl += '&special_post_type=' + req.query['special_post_type']
   }
   if (eventId) {
     paginationBaseUrl += '&event_id=' + eventId
+  }
+  if (userId) {
+    paginationBaseUrl += '&user_id=' + userId
   }
 
   res.render('posts', {
