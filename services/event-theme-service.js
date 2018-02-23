@@ -472,21 +472,26 @@ function computeNextShortlistEliminationTime (event) {
   let alreadyEliminated = 0
 
   let shortlistEliminationInfo = event.related('details').get('shortlist_elimination')
-  if (shortlistEliminationInfo.start && shortlistEliminationInfo.delay && parseInt(shortlistEliminationInfo.delay) > 0) {
-    let delay = parseInt(shortlistEliminationInfo.delay)
+  if (shortlistEliminationInfo.start) {
     let nextEliminationDate = moment(shortlistEliminationInfo.start)
     let now = moment()
 
-    // We can eliminate at most 7 themes (leaving 3 until the reveal)
-    while (nextEliminationDate.isBefore(now) && alreadyEliminated < 7) {
-      nextEliminationDate.add(delay, 'minutes')
-      alreadyEliminated++
-    }
-
-    if (alreadyEliminated < 7) {
+    if (now.isBefore(nextEliminationDate)) {
       return nextEliminationDate
+    } else if (shortlistEliminationInfo.delay && parseInt(shortlistEliminationInfo.delay) > 0) {
+      let delay = parseInt(shortlistEliminationInfo.delay)
+
+      // We can eliminate at most 7 themes (leaving 3 until the reveal)
+      while (nextEliminationDate.isBefore(now) && alreadyEliminated < 7) {
+        nextEliminationDate.add(delay, 'minutes')
+        alreadyEliminated++
+      }
+
+      if (alreadyEliminated < 7) {
+        return nextEliminationDate
+      }
     }
   }
-  
+
   return null
 }
