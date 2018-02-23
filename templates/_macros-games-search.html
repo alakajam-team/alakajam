@@ -46,7 +46,7 @@
           </div>
         </div>
       </div>
-      {% if user %}
+      {% if context.user %}
       <div class="form-group">
         <p><label><input type="checkbox" name="hideReviewed" {{ 'checked="checked"' if context.searchOptions.notReviewedById }}> Hide rated or commented</label></label>
       </div>
