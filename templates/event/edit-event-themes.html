@@ -6,7 +6,7 @@
 
 <h1>{{ event.get('title') }} themes <span class="count">({{ themes.length }})</span></h1>
 
-{% if event.get('status_theme') === 'shortlist' or event.get('status_theme') === 'results' %}
+{% if ['shortlist', 'closed', 'results'].includes(event.get('status_theme')) %}
 <div class="horizontal-bar">
   Shortlist
 </div>
