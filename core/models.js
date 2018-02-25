@@ -307,6 +307,9 @@ module.exports.Entry = bookshelf.model('Entry', {
   tags: function () {
     return this.belongsToMany('Tag', 'entry_tag', 'entry_id', 'tag_id')
   },
+  posts: function () {
+    return this.hasMany('Post', 'entry_id')
+  },
 
   // Listeners
 
@@ -349,7 +352,7 @@ module.exports.Entry = bookshelf.model('Entry', {
 
 }, {
   // Cascading
-  dependents: ['details', 'comments', 'entryPlatforms', 'votes', 'invites'] // 'userRoles' removed because of issue #93
+  dependents: ['details', 'comments', 'entryPlatforms', 'votes', 'invites', 'tags'] // 'userRoles' removed because of issue #93
 })
 
 /**

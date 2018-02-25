@@ -67,7 +67,7 @@ async function updateEntryTags (entry, tagInfo) {
   return db.knex.transaction(async function (transaction) {
     // Create missing tags
     let tagIds = tagInfo.map(strId => parseInt(strId))
-      .filter(intId => !isNaN(intId))
+      .filter(intId => !isNaN(intId) && intId > 0)
     let tagLabels = tagInfo.filter(label => isNaN(parseInt(label)))
     for (let tagLabel of tagLabels) {
       let createdTag = await createTag(tagLabel)

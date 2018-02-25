@@ -488,19 +488,19 @@ async function deleteEntry (entry) {
  * @param options {object} nameFragment eventId platforms tags pageSize page withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
  */
 async function findGames (options = {}) {
-  let query = models.Entry.forge()
+  let query = models.Entry.forge().query(function (qb) {
+    return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
+  })
 
   // Sorting
   if (!options.count) {
     if (options.sortByRatingCount) {
       query = query.query(function (qb) {
-        return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
-          .orderBy('entry_details.rating_count')
+        return qb.orderBy('entry_details.rating_count')
       })
     } else if (options.sortByRating) {
       query = query.query(function (qb) {
-        return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
-          .leftJoin('event', 'entry.event_id', 'event.id')
+        return qb.leftJoin('event', 'entry.event_id', 'event.id')
           .where(function () {
             this.where('event.status', enums.EVENT.STATUS.CLOSED).orWhereNull('event.status')
           })
@@ -509,8 +509,7 @@ async function findGames (options = {}) {
       })
     } else if (options.sortByRanking) {
       query = query.query(function (qb) {
-        return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
-          .leftJoin('event', 'entry.event_id', 'event.id')
+        return qb.leftJoin('event', 'entry.event_id', 'event.id')
           .where(function () {
             this.where('event.status', enums.EVENT.STATUS.CLOSED).orWhereNull('event.status')
           })

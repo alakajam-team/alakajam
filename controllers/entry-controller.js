@@ -190,11 +190,10 @@ async function editEntry (req, res) {
       }
     }
 
-    if (fields.tags) {
-      const str = forms.sanitizeString(fields.tags)
-      const ids = str ? str.split(',') : null
-      await tagService.updateEntryTags(entry, ids)
-    }
+    // Tags
+    const str = forms.sanitizeString(fields.tags)
+    const ids = str ? str.split(',') : []
+    await tagService.updateEntryTags(entry, ids)
 
     // Save entry: Update model (even if validation fails, to prevent losing what the user filled)
     let isCreation
@@ -340,6 +339,11 @@ async function editEntry (req, res) {
 async function deleteEntry (req, res) {
   let entry = res.locals.entry
   if (res.locals.user && entry && securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+    await entry.load('posts')
+    entry.related('posts').forEach(async function (post) {
+      post.set('entry_id', null)
+      await post.save()
+    })
     await eventService.deleteEntry(entry)
     eventService.refreshEventCounts(entry.related('event')) // No need to await
     cache.user(res.locals.user).del('latestEntry')
