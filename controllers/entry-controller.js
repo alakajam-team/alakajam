@@ -190,11 +190,6 @@ async function editEntry (req, res) {
       }
     }
 
-    // Tags
-    const str = forms.sanitizeString(fields.tags)
-    const ids = str ? str.split(',') : []
-    await tagService.updateEntryTags(entry, ids)
-
     // Save entry: Update model (even if validation fails, to prevent losing what the user filled)
     let isCreation
     if (!entry.get('id')) {
@@ -203,6 +198,11 @@ async function editEntry (req, res) {
     } else {
       isCreation = false
     }
+
+    // Tags
+    const str = forms.sanitizeString(fields.tags)
+    const ids = str ? str.split(',') : []
+    await tagService.updateEntryTags(entry, ids)
 
     entry.set({
       'title': forms.sanitizeString(fields.title),
