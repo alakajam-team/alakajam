@@ -72,5 +72,6 @@
   /* UI elements */
   
   --navbar-height: 60px;
+  --navbar-shrinked-height: 40px;
   --eventbar-height: 60px;
 }
