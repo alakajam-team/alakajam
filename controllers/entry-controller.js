@@ -180,10 +180,10 @@ async function editEntry (req, res) {
     let platforms = null
     if (fields.platforms) {
       // Ensure the requested platforms (if any) are valid before proceeding.
-      const str = forms.sanitizeString(fields.platforms)
-      const names = str ? str.split(',') : null
-      platforms = await platformService.fetchMultipleNamed(names)
-      if (platforms.length < names.length) {
+      let platformNames = (Array.isArray(fields.platforms)) ? fields.platforms : [fields.platforms]
+      platformNames = platformNames.map(tag => forms.sanitizeString(tag))
+      platforms = await platformService.fetchMultipleNamed(platformNames)
+      if (platforms.length < platformNames.length) {
         errorMessage = 'One or more platforms are invalid'
       } else {
         entry.set('platforms', platforms.map(p => p.get('name')))
@@ -200,9 +200,9 @@ async function editEntry (req, res) {
     }
 
     // Tags
-    const str = forms.sanitizeString(fields.tags)
-    const ids = str ? str.split(',') : []
-    await tagService.updateEntryTags(entry, ids)
+    let tags = (Array.isArray(fields.tags)) ? fields.tags : [fields.tags]
+    tags = tags.map(tag => forms.sanitizeString(tag))
+    await tagService.updateEntryTags(entry, tags)
 
     entry.set({
       'title': forms.sanitizeString(fields.title),
@@ -237,6 +237,7 @@ async function editEntry (req, res) {
         break
       }
     }
+
     if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
@@ -245,15 +246,16 @@ async function editEntry (req, res) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
     } else if (fields.division && !isExternalEvent && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
       errorMessage = 'Invalid division'
-    } else if (typeof fields.members !== 'string') {
-      errorMessage = 'Invalid members'
     }
 
     if (!errorMessage) {
       // Save entry: Apply team changes
       let teamMembers = null
-      if (fields.members) { // XXX Requires JavaScript/loaded page
-        teamMembers = fields.members.split(',').map(s => parseInt(s))
+      if (fields.members) {
+        if (!Array.isArray(fields.members)) {
+          fields.members = [fields.members]
+        }
+        teamMembers = fields.members.map(s => parseInt(s))
         let ownerId
         if (!isCreation) {
           ownerId = entry.related('userRoles')
@@ -470,6 +472,7 @@ async function searchForTeamMate (req, res) {
       matches: matches.map(match => ({
         id: match.id,
         text: match.title,
+        avatar: match.avatar,
         status: getStatus(match)
       }))
     }

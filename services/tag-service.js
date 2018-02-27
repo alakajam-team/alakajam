@@ -68,7 +68,7 @@ async function updateEntryTags (entry, tagInfo) {
     // Create missing tags
     let tagIds = tagInfo.map(strId => parseInt(strId))
       .filter(intId => !isNaN(intId) && intId > 0)
-    let tagLabels = tagInfo.filter(label => isNaN(parseInt(label)))
+    let tagLabels = tagInfo.filter(label => isNaN(parseInt(label)) && label.trim())
     for (let tagLabel of tagLabels) {
       let createdTag = await createTag(tagLabel)
       tagIds.push(createdTag.get('id'))

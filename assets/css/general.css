@@ -67,6 +67,21 @@ textarea.json-setting {
   max-width: 500px;
 }
 
+select[readonly].select2-hidden-accessible + .select2-container {
+  pointer-events: none;
+  touch-action: none;
+
+  & .select2-selection {
+    background-color: #aab2bd;
+    opacity: .65;
+    box-shadow: none;
+  }
+
+  & .select2-selection__arrow, & .select2-selection__clear {
+    display: none;
+  }
+}
+
 a {
   color: var(--alt);
   

@@ -108,6 +108,12 @@ async function handleGameSearch (req, res, searchOptions = {}) {
   // Text search
   searchOptions.search = forms.sanitizeString(req.query.search)
 
+  // User search
+  if (forms.isId(req.query.user)) {
+    searchOptions.userId = parseInt(req.query.user)
+    searchOptions.user = await userService.findById(searchOptions.userId)
+  }
+
   // Division
   for (let key in enums.DIVISION) {
     let division = enums.DIVISION[key]
@@ -127,28 +133,24 @@ async function handleGameSearch (req, res, searchOptions = {}) {
 
   // Platforms
   if (req.query.platforms) {
-    if (typeof req.query.platforms === 'object') {
-      searchOptions.platforms = req.query.platforms.map(str => parseInt(str))
-    } else {
-      searchOptions.platforms = [parseInt(req.query.platforms)]
-    }
-    if (searchOptions.platforms.includes(NaN)) {
-      searchOptions.platforms = []
+    let platforms = (Array.isArray(req.query.platforms)) ? req.query.platforms : [req.query.platforms]
+    platforms = platforms.map(str => parseInt(str))
+    if (platforms.includes(NaN)) {
+      platforms = []
       log.error('Invalid platform query: ' + req.query.platforms)
     }
+    searchOptions.platforms = platforms
   }
 
   // Tags
   if (req.query.tags) {
-    if (typeof req.query.tags !== 'object') {
-      req.query.tags = req.query.tags.split(',')
-    }
-    let tagsIds = req.query.tags.map(str => parseInt(str))
-    if (tagsIds.includes(NaN)) {
-      tagsIds = []
+    let tagIds = (Array.isArray(req.query.tags)) ? req.query.tags : [req.query.tags]
+    tagIds = tagIds.map(str => parseInt(str))
+    if (tagIds.includes(NaN)) {
+      tagIds = []
       log.error('Invalid tag query: ' + req.query.tags)
     }
-    let tagCollection = await tagService.fetchByIds(tagsIds)
+    let tagCollection = await tagService.fetchByIds(tagIds)
     searchOptions.tags = tagCollection.map(tag => ({ id: tag.get('id'), value: tag.get('value') }))
   }
 

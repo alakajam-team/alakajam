@@ -17,7 +17,7 @@
 .member .select2-search-choice-close {
   left: 6px !important;
   top: 14px;
-}mul
+}
 .member .select2-search-choice {
   padding-bottom: 2px !important;
 }
@@ -27,37 +27,51 @@
 
 .member {
   font-size: 16px;
-  padding-left: 4px;
-  padding-right: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 4px;
+  margin-left: 0;
+  width: 100%;
 }
-.member>.avatar {
+.member-avatar, .member-info {
+  vertical-align: top;
+  display: inline-block;
+}
+.member-avatar .avatar {
   width: 36px;
   border-radius: 6px;
   vertical-align: middle;
   text-align: center;
   margin-right: 8px;
   margin-left: 2px;
-  float: left;
 }
-.member > .username {
+.member-info .username {
   display: inline-block;
-  margin-top: 8px;
-  margin-right: 2px;
+  margin-top: 2px;
 }
-.select2-result .member .username {
-  margin-top: 4px;
-}
-.member .tag {
+.member-info .tag {
   display: block;
   font-size: 10px;
   color: #666;
+  margin-top: -4px;
 }
-.member .unavailable-tag {
-  display: none;
+.member-info .unavailable-tag {
+  display: none !important;
 }
-.select2-result-unselectable .member .unavailable-tag {
-  display: block;
+.select2-results__option[aria-disabled=true] .member-info .unavailable-tag {
+  display: block !important;
   margin-top: -5px;
+}
+.select2-results__option.loading-results[aria-disabled=true] .member-info .unavailable-tag {
+  display: none !important;
+}
+
+/* Select2 hack to support locking tags from deletion (not supported yet in v4) */
+.select2-locked .select2-selection__choice__remove {
+  display: none !important;
+}
+.select2-results__option[aria-selected="true"] {
+  display: none;
 }
 
 .platform {
@@ -99,7 +113,11 @@
         {% if external %}
         <div class="form-group">
           <label for="title">External event name</label>
-          <input id="external-event" type="text" class="form-control" name="external-event" value="{{ entry.get('external_event') }}" />
+          <select id="external-event" class="form-control" name="external-event">
+            {% if entry.get('external_event') %}
+              <option  value="{{ entry.get('external_event') }}">{{ entry.get('external_event') }}</option>
+            {% endif %}
+          </select>
         </div>
         {% endif %}
 
@@ -136,8 +154,12 @@
 
             <div class="form-group">
               <label for="members">Team members {{ formMacros.tooltip('You can leave the team at the bottom of this form.') if not isEntryOwner }}</label>
-              <input type="hidden" name="members" class="bigdrop" id="search-members" multiple="multiple" {{ 'readonly' if not isEntryOwner }}
-                title="{{ 'Only the entry owner can change this setting. You can leave the team at the bottom of this form.' if not isEntryOwner }}" />
+              <select name="members" class="bigdrop" id="search-members" multiple="multiple" {{ 'readonly' if not isEntryOwner }}
+                title="{{ 'Only the entry owner can change this setting. You can leave the team at the bottom of this form.' if not isEntryOwner }}">
+                {% for member in members %}
+                  <option value="{{ member.id }}" data-locked="{{ member.locked }}" data-invite="{{ member.invite }}" data-avatar="{{ member.avatar }}" selected>{{ member.text }}</option>
+                {% endfor %}
+              </select>
             </div>
           </div>
           
@@ -178,11 +200,19 @@
         </div>
         <div class="form-group">
           <label for="platforms">Platforms</label>
-          <input type="hidden" name="platforms" class="form-control" id="set-platforms" multiple="multiple" />
+          <select name="platforms" class="form-control" id="js-platforms" multiple="multiple">
+            {% for platform in allPlatforms %}
+              <option value="{{ platform }}" {{ 'selected' if entry.get('platforms') and entry.get('platforms').includes(platform) }}>{{ platform }}</option>
+            {% endfor %}
+          </select>
         </div>
         <div class="form-group">
           <label for="tags">Tags</label> {{ formMacros.tooltip('Use this to let people search your game by tech (Unity, Game Maker...), genre (Platformer...), style (Pixel art...), etc.') }}
-          <input type="hidden" name="tags" class="form-control" id="js-tags" multiple="multiple" />
+          <select name="tags" class="form-control" id="js-tags" multiple="multiple">
+            {% for tag in tags %}
+              <option value="{{ tag.id }}" selected>{{ tag.value }}</option>
+            {% endfor %}
+          </select>
         </div>
         <div class="form-group">
           <label for="title">Detailed description</label>
@@ -277,7 +307,7 @@
 {% block scripts %} 
 {{ formMacros.editorScripts() }}
 {{ formMacros.radioScripts() }}
-<script type="text/javascript" src="/static/js/select2.min.js"></script>
+<script type="text/javascript" src="/static/js/select2.full.min.js"></script>
 <script type="text/javascript">
 // TODO move script into a separate file (#21)
 
@@ -349,9 +379,6 @@ function sortSelect2Results (results) {
 }
 
 $(function() {
-  var current = {{ entry.get('platforms') | default([]) | dump | safe }}
-  var platforms = $.map({{ allPlatforms | dump | safe }}, toValue)
-
   function toValue (name) {
     return {
       id: name,
@@ -365,15 +392,13 @@ $(function() {
     return '<div class="platform">' + platform.text + '</div>'
   }
 
-  $('#set-platforms').select2({
+  $('#js-platforms').select2({
     multiple: true,
     placeholder: 'Select platforms',
     width: "100%",
-    data: platforms,
     formatResult: format,
-    formatSelection: format,
+    formatSelection: format
   })
-  .select2('val', current)
 })
 
 // Team toggle behaviour
@@ -402,7 +427,7 @@ $('#js-form').submit(function (ev) {
 
 // Team management
 
-$(function() {(function(members, url) {
+;(function() {
   var eRemovedMsg = $('#removed-msg'),
       eAddedMsg = $('#added-msg'),
       eConflictList = $('#conflict-list'),
@@ -433,21 +458,30 @@ $(function() {(function(members, url) {
     eAddedMsg.toggle(!!opt.added).text('(' + opt.added + ' ' + plural('user', 'users', opt.added) + ' added)')
   }
 
-  function onRevert () {
-    eDirtiable.prop('disabled', true)
-    eSelect.select2('val', $.map(members, toId))
-  }
+  function format (user, container) {
+     if (user.element && $(user.element).attr('data-avatar') !== undefined) {
+      var $option = $(user.element)
+      user.avatar = $option.attr('data-avatar')
+      user.locked = $option.attr('data-locked') === 'true'
+      user.invite = $option.attr('data-invite') === 'true'
+    }
 
-  function format (user) {
+    if (user.locked || eSelect.attr('readonly')) {
+      $(container).addClass('select2-locked') /* Select2 hack to support locking tags from deletion (not supported yet in v4) */
+    }
     const avatarUrl = user.avatar || '/static/images/default-avatar.png'
-    return ['<div class="member">',
-          '<img class="avatar" src="', avatarUrl, '" alt="', user.text, '" />', 
-          '<span class="username">', user.text, '</span>',
-          user.locked ? '<span class="tag owner-tag">Owner</span>' : '',
-          user.invite ? '<span class="tag">Pending invite</span>' : '',
-          '<span class="tag unavailable-tag">Has a game already</span>',
+    return $(['<div class="member">',
+          '<div class="member-avatar">',
+            '<img class="avatar" src="', avatarUrl, '" alt="', user.text, '" />', 
+          '</div>',
+          '<div class="member-info">',
+            '<div class="username">', user.text, '</div>',
+            user.locked ? '<div class="tag owner-tag">Owner</div>' : '',
+            user.invite ? '<div class="tag">Pending invite</div>' : '',
+            '<div class="tag unavailable-tag">Has a game already</div>',
+          '</div>',
         '</div>']
-      .join('')
+      .join(''))
   }
 
   function isDirty () {
@@ -472,12 +506,12 @@ $(function() {(function(members, url) {
   eSelect.select2({
     multiple: true,
     ajax: {
-      url: url,
+      url: "{{ buildUrl(event, 'event', 'ajax-find-team-mate') }}",
       dataType: 'json',
       delay: 500,
-      data: function (term) {
+      data: function (params) {
         return {
-          name: term,
+          name: params.term,
           entryId: {{ entry.get('id') or "''" | safe }}
         }
       },
@@ -492,23 +526,35 @@ $(function() {(function(members, url) {
       cache: true
     },
     initSelection: function(elem, cb) {
-      cb(members)
+      var results = []
+      $(elem).children().each(function (i, option) {
+        var $option = $(option)
+        results.push({
+          id: $option.val(),
+          text: $option.text(),
+          avatar: $option.attr('data-avatar'),
+          locked: $option.attr('data-locked') === "true",
+          invite: $option.attr('data-invite') === "true"
+        })
+      })
+      cb(results)
     },
     sortResults: sortSelect2Results,
-    placeholder: 'Select team members',
+    placeholder: '',
     width: "100%",
     allowClear: false,
     minimumInputLength: 3,
-    formatResult: format,
-    formatSelection: format,
+    templateResult: format,
+    templateSelection: format,
     dropdownCssClass: 'edit-team-dropdown'
   })
-  .select2('val', members)
-  .select2('readonly', eSelect.attr('readonly'))
-})(
-  {{ members | dump | safe }},
-  "{{ buildUrl(event, 'event', 'ajax-find-team-mate') }}"
-) })
+})()
+
+eSelect.on('select2:unselecting', function(e) {
+  if ($(e.params.args.data.element).attr('data-locked') === 'true') {
+    return false
+  }
+})
 
 // External event name auto-completion
 
@@ -520,18 +566,16 @@ if ($externalEventInput.length > 0) {
       url: '/events/ajax-find-external-event',
       dataType: 'json',
       delay: 500,
-      data: function (term) {
+      data: function (params) {
         return {
-          name: term
+          name: params.term
         }
       },
-      results: function (data, params) {
-        var results = []
-        data.forEach(function (string) {
-          results.push({ id: string, text: string })
-        })
+      processResults: function (data, params) {
         return {
-          results: results
+          results: data.map(function (string) {
+            return { id: string, text: string }
+          })
         }
       },
       cache: true
@@ -539,21 +583,19 @@ if ($externalEventInput.length > 0) {
     minimumInputLength: 3,
     maximumInputLength: 255,
     allowClear: true,
-    placeholder: 'Select an event name',
-    createSearchChoice: function(term, data) {
+    placeholder: '',
+    tags: true,
+    createSearchChoice: function(params, data) {
       // allow manually entered text in drop down
       var matchingResults = $(data).filter(function() {
-        return this.text.toLowerCase().localeCompare(term.trim().toLowerCase()) === 0;
+        return this.text.toLowerCase().localeCompare(params.term.trim().toLowerCase()) === 0;
       })
-      if (matchingResults.length===0) {
-        return { id: term, text: term };
+      if (matchingResults.length === 0) {
+        return { id: params.term, text: params.term };
       }
-    },
-    initSelection: function(elem, cb) {
-      cb({id: elem.val(), text: elem.val()})
     },
   })
 }
 </script>
-{{ gamesSearchMacros.gameTagJsSelect(tags) }}
+{{ gamesSearchMacros.gameTagJsSelect() }}
 {% endblock %}

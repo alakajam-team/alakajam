@@ -225,7 +225,7 @@ function searchForTeamMembers (nameFragment, eventId, entry) {
     .where(alreadyEnteredWhereClause)
 
   return db.knex
-    .select('user.id', 'user.title', 'entered.node_id')
+    .select('user.id', 'user.title', 'user.avatar', 'entered.node_id')
     .from('user')
     .leftJoin(alreadyEntered.as('entered'), 'user.id', '=', 'entered.user_id')
     .where('name', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${nameFragment}%`)
@@ -233,19 +233,21 @@ function searchForTeamMembers (nameFragment, eventId, entry) {
 
 async function findTeamMembers (entry, user = null) {
   if (entry && entry.get('id')) {
+    await entry.load(['invites.invited', 'userRoles.user'])
     let members = entry.sortedUserRoles()
       .map(role => ({
         id: role.get('user_id'),
         text: role.get('user_title') || role.get('user_name'),
+        avatar: role.related('user').get('avatar'),
         locked: role.get('permission') === constants.PERMISSION_MANAGE,
         invite: false
       }))
 
-    await entry.load('invites')
     entry.related('invites').each(invite => {
       members.push({
         id: invite.get('invited_user_id'),
         text: invite.get('invited_user_title'),
+        avatar: invite.related('invited').get('avatar'),
         locked: false,
         invite: true
       })
@@ -256,6 +258,7 @@ async function findTeamMembers (entry, user = null) {
     return [{
       id: user.get('id'),
       text: user.get('title'),
+      avatar: user.get('avatar'),
       locked: true,
       invite: false
     }]
@@ -485,7 +488,7 @@ async function deleteEntry (entry) {
 }
 
 /**
- * @param options {object} nameFragment eventId platforms tags pageSize page withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
+ * @param options {object} nameFragment eventId userId platforms tags pageSize page withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
  */
 async function findGames (options = {}) {
   let query = models.Entry.forge().query(function (qb) {
@@ -560,6 +563,15 @@ async function findGames (options = {}) {
             'node_type': 'entry'
           })
           .select('node_id'))
+    })
+  }
+  if (options.userId) {
+    query = query.query((qb) => {
+      return qb.innerJoin('user_role', 'entry.id', 'user_role.node_id')
+        .where({
+          'user_role.user_id': options.userId,
+          'user_role.node_type': 'entry'
+        })
     })
   }
 

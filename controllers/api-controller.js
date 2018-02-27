@@ -280,17 +280,27 @@ async function userSearch (req, res) {
   let json = {}
   let status = 200
 
-  let users = await userService.findUsers({
-    search: req.query.title
-  })
-  if (users.length > 0) {
+  let page = 0
+  try {
+    if (req.query.page) {
+      page = Math.max(0, parseInt(req.query.page))
+    }
+  } catch (e) {
+    json = { error: 'Invalid page number' }
+    status = 401
+  }
+
+  if (!json.error) {
+    let users = await userService.findUsers({
+      search: req.query.title,
+      pageSize: 30,
+      page
+    })
+
     json.users = []
     for (let user of users.models) {
       json.users.push(_getAttributes(user, PUBLIC_ATTRIBUTES_USER))
     }
-  } else {
-    json = { error: 'User not found' }
-    status = 404
   }
 
   _renderJson(req, res, status, json)
