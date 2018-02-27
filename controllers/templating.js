@@ -10,7 +10,7 @@ const forms = require('../core/forms')
 const securityService = require('../services/security-service')
 const postService = require('../services/post-service')
 
-const DASHBOARD_PAGES = ['feed', 'posts', 'entries', 'invite', 'settings', 'password']
+const DASHBOARD_PAGES = ['feed', 'posts', 'entries', 'invite', 'settings', 'password', 'entry-import']
 
 module.exports = {
   buildUrl,

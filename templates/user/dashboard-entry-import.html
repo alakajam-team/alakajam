@@ -1,0 +1,159 @@
+{% extends "user/_page-dashboard.html" %}
+{% import "event/_macros-event.html" as eventMacros %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block styles %}
+<style type="text/css">
+#js-importer .select2-results__option {
+  font-size: 30px;
+}
+</style>
+{% endblock %}
+
+{% block dashboardBody %}
+
+<h1>External entry importer</h1>
+
+<div class="action-banner">
+  <p>This tool helps you import entries from other websites. If you don't find the site you're looking for, you can still use the manual form.</p>
+  <a href="/external-entry/create-entry" class="btn btn-default">Create entry manually</a>
+  <a href="{{ buildUrl(user, 'user', 'entries') }}" class="btn btn-default">Back to Entries</a>
+</div>
+
+<form method="post">
+  <div class="horizontal-bar">Importer configuration</div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="title">Importer</label>
+        <select class="form-control" id="js-importer" name="importer" required="required">
+          <option {{ 'selected' if not importer }}></option>
+          {% for availableImporter in availableImporters %}
+            <option value="{{ availableImporter.id }}" {{ 'selected' if importer === availableImporter.id }}>{{ availableImporter.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group" id="js-profile">
+        <label for="title">User name or profile URL</label>
+        <input class="form-control" id="profileNameOrUrl" name="profileNameOrUrl" type="text" value="{{ profileNameOrUrl }}" />
+      </div>
+    </div>
+  </div>
+  <div id="js-entry-references">
+  {% if entryReferences %}
+    <div class="horizontal-bar">Found entries</div>
+    <div class="row">
+      <div class="col-md-9">
+        <div class="form-group">
+
+          {% if entryReferences.error %}
+            <p><b>Error:</b> {{ entryReferences.error }}.</p>
+            <p>If you are sure the target website is online, there might be a bug, see <a href="/article/docs">the docs for ways to contact an admin</a>.</p>
+          {% elseif entryReferences.length > 0 %}
+
+            <p>Please check the games you want to import.</p>
+            <p>
+              <input type="button" class="btn btn-default btn-sm" value="Check all" id="js-import-all" />
+              <input type="button" class="btn btn-default btn-sm" value="Uncheck all" id="js-import-none" />
+            </p>
+            <table class="table">
+              <thead>
+                <th>
+                  Import?
+                </th>
+                <th></th>
+                <th>Title</th>
+                <th>Already imported</th>
+              </thead>
+              <tbody>
+              {% for entryReference in entryReferences %}
+                <tr>
+                  <td>
+                    <input type="checkbox" name="entries" value="{{ entryReference.id }}" class="js-import-checkbox" />
+                  </td>
+                  <td>
+                    {% if entryReference.thumbnail %}
+                      <img src="{{ entryReference.thumbnail }}" style="max-width: 200px; max-height: 150px" />
+                    {% endif %}
+                  </td>
+                  <td>
+                    <h3>
+                    {% if entryReference.link %}
+                      <a target="_blank" href="{{ entryReference.link }}">{{ entryReference.title }} <span class="legend fa fa-external-link"></span></a>
+                    {% else %}
+                      {{ entryReference.title }}
+                    {% endif %}
+                    </h3>
+                  </td>
+                  <td>
+                    {% if entryReference.existingEntry %}
+                      <p><span class="label label-warning">Yes, entry will be updated</span></p>
+                      {{ eventMacros.entrySmallThumb(entryReference.existingEntry) }}
+                    {% else %}
+                      <span class="label label-default">No</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+
+            <div class="form-group well">
+              <label>
+                <input type="checkbox" name="run" class="form-control" />
+                &nbsp;I confirm those games are mine. If I change my mind, I will have to delete them one by one. Let's import them!
+              </label>
+            </div>
+
+          {% else %}
+            <p>No entries were found for this user name.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  </div>
+
+  <div class="form-group">
+    <input type="submit" value="Confirm" class="btn btn-primary" />
+  </div>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+{{ formMacros.radioScripts() }}
+<script type="text/javascript" src="/static/js/select2.full.min.js"></script>
+<script type="text/javascript">
+// TODO move script into a separate file (#21)
+
+// Toggle detailed import form
+
+function refreshProfileVisibility(e, dontCleanReferences) {
+  $('#js-profile').toggle(!!$importer.val())
+  if (!dontCleanReferences) {
+    $('#js-entry-references').html('')
+  }
+}
+
+var $importer = $('#js-importer')
+$importer .select2({
+  placeholder: 'Select a website to import from',
+  allowClear: true
+})
+$importer.on('change', refreshProfileVisibility)
+$('#profileNameOrUrl').on('change', refreshProfileVisibility)
+
+refreshProfileVisibility(null, true)
+
+// Select all/none buttons
+
+$("#js-import-all").click(function() {
+  $(".js-import-checkbox").iCheck('check')
+})
+$("#js-import-none").click(function() {
+  $(".js-import-checkbox").iCheck('uncheck')
+})
+
+</script>
+{% endblock %}

@@ -214,10 +214,16 @@ input.date-picker {
   }
 }
 
-.count {
+
+.count { /* deprecated, use legend */
   @apply --main-font;
   color: var(--text-light);
   font-size: 0.8em;
+  font-weight: bold;
+}
+.legend {
+  color: var(--text-light);
+  font-size: 0.75em;
   font-weight: bold;
 }
 

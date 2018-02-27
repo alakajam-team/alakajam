@@ -60,6 +60,7 @@ module.exports = {
     router.all('/dashboard/entries', userController.dashboardEntries)
     router.all('/dashboard/settings', userController.dashboardSettings)
     router.all('/dashboard/password', userController.dashboardPassword)
+    router.all('/dashboard/entry-import', userController.dashboardEntryImport)
     router.get('/user/:name', userController.viewUserProfile)
 
     // Mod dashboard

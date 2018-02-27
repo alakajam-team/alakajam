@@ -12,6 +12,7 @@ docs/*/
 data*/
 tests/data/
 static/uploads
+tmp/
 *.log
 *.out
 *.pid

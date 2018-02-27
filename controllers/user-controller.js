@@ -16,6 +16,7 @@ const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const notificationService = require('../services/notification-service')
+const entryImportService = require('../services/entry-import-service')
 
 module.exports = {
   dashboardMiddleware,
@@ -27,6 +28,7 @@ module.exports = {
   dashboardEntries,
   dashboardSettings,
   dashboardPassword,
+  dashboardEntryImport,
 
   registerForm,
   doRegister,
@@ -278,6 +280,46 @@ async function dashboardPassword (req, res) {
     errorMessage,
     infoMessage
   })
+}
+
+async function dashboardEntryImport (req, res) {
+  let context = {
+    availableImporters: entryImportService.getAvailableImporters()
+  }
+
+  if (req.method === 'POST') {
+    let {fields} = await req.parseForm()
+    context.importer = forms.sanitizeString(fields.importer)
+    context.profileNameOrUrl = forms.sanitizeString(fields.profileNameOrUrl)
+
+    let entryIds = fields.entries
+    if (!Array.isArray(entryIds)) {
+      entryIds = entryIds ? [entryIds] : []
+    }
+
+    if (fields.run) {
+      try {
+        let result
+        for (let entryId of entryIds) {
+          result = await entryImportService.createOrUpdateEntry(res.locals.user, context.importer, context.profileNameOrUrl, entryId)
+          if (result.error) {
+            throw new Error(result.error)
+          }
+        }
+        context.infoMessage = 'Successfully imported ' + entryIds.length + ' ' + (entryIds.length === 1 ? 'entry' : 'entries') + '!'
+      } catch (e) {
+        context.errorMessage = 'Error happened during entry import: ' + e.message + '. Import may have been partially done, please check your Entries page.'
+      }
+    } else if (entryIds.length > 0) {
+      context.errorMessage = 'You must confirm the games are yours before importing them (see checkbox at the bottom).'
+    }
+
+    if (context.profileNameOrUrl) {
+      context.entryReferences = await entryImportService.fetchEntryReferences(res.locals.user, context.importer, context.profileNameOrUrl)
+    }
+  }
+
+  res.render('user/dashboard-entry-import', context)
 }
 
 /**

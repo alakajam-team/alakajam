@@ -677,7 +677,7 @@ async function findLatestUserEntry (user, options = {}) {
 }
 
 /**
- * Retrieves the entry a user submited to an event
+ * Retrieves the entry a user submitted to an event
  * @param  {User} user
  * @param  {integer} eventId
  * @return {Entry|null}

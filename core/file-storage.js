@@ -42,7 +42,11 @@ const SOURCES_ROOT = path.join(__dirname, '..')
  */
 function isValidPicture (path) {
   let fileMimeType = mime.lookup(path)
-  return constants.ALLOWED_PICTURE_MIMETYPES.indexOf(fileMimeType) !== -1
+  return _isValidMimeType(fileMimeType)
+}
+
+function _isValidMimeType (mimeType) {
+  return constants.ALLOWED_PICTURE_MIMETYPES.includes(mimeType)
 }
 
 /**
@@ -55,8 +59,9 @@ function isValidPicture (path) {
  * @returns {string} the URL to that path
  */
 async function savePictureUpload (sourcePath, targetPath, options = {}) {
-  if (!isValidPicture(sourcePath)) {
-    throw new Error('Invalid picture mimetype (allowed: PNG GIF JPG)')
+  let fileMimeType = mime.lookup(sourcePath)
+  if (!_isValidMimeType(fileMimeType)) {
+    throw new Error('Invalid picture mimetype: ' + fileMimeType + ' (allowed: PNG GIF JPG)')
   }
 
   let actualTargetPath = targetPath.replace(/^[\\/]/, '') // remove leading slash
