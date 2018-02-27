@@ -3,6 +3,7 @@ const path = require('path')
 const promisify = require('promisify-node')
 const fs = promisify('fs')
 const url = require('url')
+const config = require('../config')
 const log = require('../core/log')
 const fileStorage = require('../core/file-storage')
 const cache = require('../core/cache')
@@ -126,7 +127,7 @@ async function createOrUpdateEntry (user, importerId, profileNameOrUrl, entryId)
       let temporaryPath = false
       try {
         let extension = path.extname(url.parse(entryDetails.picture).pathname) || ''
-        temporaryPath = path.join(__dirname, '../tmp', entryReference.id + extension)
+        temporaryPath = path.join(__dirname, '..', config.DATA_PATH, 'tmp', entryReference.id + extension)
       } catch (e) {
         log.warn('Failed to detect picture file name of ' + entryDetails.picture)
         console.log(e)
