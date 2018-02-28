@@ -4,11 +4,13 @@
 
 Requirement: NodeJS 7.6+
 
-* `npm install --build-from-source`
+* `npm install`
 * `node server.js`
 * Browse to `http://localhost:8000`
 
 There is a default admin user (`administrator`/`administrator`).
+
+> NB. If `npm install` failed to install `sqlite3`, retry with flag `--build-from-source`. If it failed to install `sharp`, it's okay as it's optional (see "Enable picture resizing" below if you really want it).
 
 ## Developer tools
 
