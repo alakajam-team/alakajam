@@ -10,7 +10,7 @@ Requirement: NodeJS 7.6+
 
 There is a default admin user (`administrator`/`administrator`).
 
-> NB. If `npm install` failed to install `sqlite3`, retry with flag `--build-from-source`.
+> NB. If `npm install --no-optional` failed to install `sqlite3`, retry with flag `--build-from-source`.
 
 ## Developer tools
 
