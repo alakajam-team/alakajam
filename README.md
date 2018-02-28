@@ -4,7 +4,7 @@
 
 Requirement: NodeJS 7.6+
 
-* `npm install`
+* `npm install --build-from-source`
 * `node server.js`
 * Browse to `http://localhost:8000`
 
