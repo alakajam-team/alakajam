@@ -47,12 +47,7 @@
       background-image: url("/static/images/favicon32.png");
       background-repeat: no-repeat;
     }
-
-
-
   }
-
-
 
   &.has-event-header {
     box-shadow: none;
