@@ -4,33 +4,33 @@
 {% block body %}
 {{ super() }}
 
-<div class="container">
+<div class="container event-ratings">
   <div class="row">
     <h1>Ratings <span class="count">({{ ratingCount }})</span></h1>
     <ul class="nav nav-tabs">
       {% for votesCategory in votesPerCategory %}
         <li id="js-tab-container-{{ votesCategory.title }}" role="presentation" class="js-tab-container {{ 'active' if loop.index === 1 }}">
           <a class="js-tab-button" data-tab-selector="#js-tab-{{ votesCategory.title }}" href="#">
-            <h2 style="margin-bottom: 0">{{ votesCategory.title }}</h2>
+            <h3>{{ votesCategory.title }}</h3>
           </a>
         </li>
       {% endfor %}
     </ul>
     {% for votesCategory in votesPerCategory %}
       {% set categoryIndex = loop.index %}
-      <div id="js-tab-{{ votesCategory.title }}" class="js-tab" style="background-color: white; padding: 10px; {{ 'display: none' if categoryIndex > 1 }}">
-        <div class="row" style="margin-top: 10px">
+      <div id="js-tab-{{ votesCategory.title }}" class="js-tab event-ratings__tab" style="{{ 'display: none' if categoryIndex > 1 }}">
+        <div class="row">
           {% for division, votes in votesCategory.votesPerDivision %}
             <div class="col-sm-6">
               <div class="row">
-                <div class="col-xs-10 col-xs-offset-2"><h3>{{ division | capitalize }} entries <span class="count">({{ votes.length }})</span></h3></div>
+                <div class="col-xs-10 col-xs-offset-2"><h4>{{ division | capitalize }} entries <span class="count">({{ votes.length }})</span></h4></div>
               </div>
               <div class="row">
               {% for vote in votes %}
                 <div class="col-xs-2">
-                  <h4 class="pull-right">{{ vote.get('vote_' + categoryIndex) }}</h4>
+                  <div class="event-ratings__score">{{ vote.get('vote_' + categoryIndex) }}</div>
                 </div>
-                <div class="col-xs-10" style="margin-bottom: 5px">
+                <div class="col-xs-10 event-ratings__entry">
                   {{ eventMacros.entrySmallThumb(vote.related('entry'), { noShadow: true }) }}
                 </div>
               {% endfor %}
