@@ -4,13 +4,13 @@
 
 Requirement: NodeJS 7.6+
 
-* `npm install`
+* `npm install --no-optional`
 * `node server.js`
 * Browse to `http://localhost:8000`
 
 There is a default admin user (`administrator`/`administrator`).
 
-> NB. If `npm install` failed to install `sqlite3`, retry with flag `--build-from-source`. If it failed to install `sharp`, it's okay as it's optional (see "Enable picture resizing" below if you really want it).
+> NB. If `npm install` failed to install `sqlite3`, retry with flag `--build-from-source`.
 
 ## Developer tools
 
@@ -39,7 +39,4 @@ See also [the wiki](https://github.com/mkalam-alami/wejam/wiki) for additional d
 
 #### ...Enable picture resizing
 
-If the `sharp` dependency failed to install in the initial setup, your picture uploads won't be resized. If you want to fix that:
-
-* Follow the instructions to install the [sharp dependencies](http://sharp.dimens.io/en/stable/install/)
-* Run `npm install` again
+Run `npm install` without the `--no-optional` flag to try and set up the `sharp` dependency. If it fails to install (especially on Windows), follow the instructions to install the [sharp dependencies](http://sharp.dimens.io/en/stable/install/), then try `npm install` again.
