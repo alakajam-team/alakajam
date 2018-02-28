@@ -24,7 +24,7 @@
     & .navbar-nav > li.active > a,
     & .navbar-nav > li > div,
     & .navbar-avatar-wrapper,
-    & .navbar-brand {
+    & a.navbar-brand {
       height: var(--navbar-shrinked-height);
       line-height: var(--navbar-shrinked-height);
     }
@@ -37,6 +37,11 @@
 
     & .navbar-avatar  {
       width: 30px;
+    }
+
+    & a.navbar-brand {
+      width: 32px;
+      margin-top: 4px; /* Vertically center the logo when the navbar shrink */
     }
 
     & .navbar-unread-notifications {
