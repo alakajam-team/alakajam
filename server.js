@@ -28,8 +28,7 @@ const fs = promisify('fs')
 const path = require('path')
 const postcssWatch = require('postcss-watch')
 const webpack = require('webpack')
-
-const fileStorage = require('./core/file-storage.js')
+const mkdirp = promisify('mkdirp')
 
 /**
  * Local constants
@@ -57,8 +56,9 @@ createApp()
  */
 async function createApp () {
   catchErrorsAndSignals()
-  let browserRefreshEnabled = configureBrowserRefresh()
   await initFilesLayout()
+
+  let browserRefreshEnabled = configureBrowserRefresh()
 
   const express = require('express')
   const middleware = require('./core/middleware')
@@ -135,8 +135,8 @@ async function initFilesLayout () {
   }
 
   // Create data folders
-  await fileStorage.createFolderIfMissing(path.join(__dirname, config.DATA_PATH, '/tmp'))
-  await fileStorage.createFolderIfMissing(path.join(__dirname, config.UPLOADS_PATH))
+  await _createFolderIfMissing(path.join(__dirname, config.DATA_PATH, '/tmp'))
+  await _createFolderIfMissing(path.join(__dirname, config.UPLOADS_PATH))
 
   // Run CSS and JS build (or bootstrap sources watcher in dev mode)
   if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
@@ -172,7 +172,7 @@ function configureBrowserRefresh () {
 }
 
 async function buildCSS (watch = false) {
-  await fileStorage.createFolderIfMissing(path.join(__dirname, CSS_INDEX_DEST_FOLDER))
+  await _createFolderIfMissing(path.join(__dirname, CSS_INDEX_DEST_FOLDER))
   if (watch) {
     log.info('Setting up automatic CSS build...')
   } else {
@@ -193,7 +193,7 @@ async function buildJS (watch = false) {
   const env = process.env.NODE_ENV || 'development'
   const config = require('./webpack.' + env)
 
-  await fileStorage.createFolderIfMissing(path.join(__dirname, config.output.path))
+  await _createFolderIfMissing(path.join(__dirname, config.output.path))
 
   const compiler = webpack(config)
 
@@ -237,4 +237,15 @@ async function buildJS (watch = false) {
  */
 function _postcssWatchPathFix (anyPath) {
   return path.relative(process.cwd(), anyPath).replace(/\\/g, '/')
+}
+
+/**
+ * Creates a folder. No-op if the folder exists.
+ */
+async function _createFolderIfMissing (folderPath) {
+  try {
+    await fs.access(folderPath, fs.constants.R_OK)
+  } catch (e) {
+    await mkdirp(folderPath)
+  }
 }

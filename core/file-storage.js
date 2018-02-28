@@ -156,7 +156,7 @@ function toAbsolutePath (anyPath) {
 }
 
 /**
- * Creates a folder. No op if the folder exists.
+ * Creates a folder. No-op if the folder exists.
  * Does *not* make the folder relative to the file storage root.
  */
 async function createFolderIfMissing (folderPath) {
