@@ -9,8 +9,8 @@
     <h1>Ratings <span class="count">({{ ratingCount }})</span></h1>
     <ul class="nav nav-tabs">
       {% for votesCategory in votesPerCategory %}
-        <li id="js-tab-container-{{ rankedVoteHistory.title }}" role="presentation" class="js-tab-container {{ 'active' if loop.index === 1 }}">
-          <a class="js-tab-button" data-tab-selector="#js-tab-{{ rankedVoteHistory.title }}" href="#">
+        <li id="js-tab-container-{{ votesCategory.title }}" role="presentation" class="js-tab-container {{ 'active' if loop.index === 1 }}">
+          <a class="js-tab-button" data-tab-selector="#js-tab-{{ votesCategory.title }}" href="#">
             <h2 style="margin-bottom: 0">{{ votesCategory.title }}</h2>
           </a>
         </li>
@@ -18,7 +18,7 @@
     </ul>
     {% for votesCategory in votesPerCategory %}
       {% set categoryIndex = loop.index %}
-      <div id="js-tab-{{ rankedVoteHistory.title }}" class="js-tab" style="background-color: white; padding: 10px; {{ 'display: none' if categoryIndex > 1 }}">
+      <div id="js-tab-{{ votesCategory.title }}" class="js-tab" style="background-color: white; padding: 10px; {{ 'display: none' if categoryIndex > 1 }}">
         <div class="row" style="margin-top: 10px">
           {% for division, votes in votesCategory.votesPerDivision %}
             <div class="col-sm-6">
