@@ -12,9 +12,9 @@
   font-size: 2rem;
 
   /* Values for the animation when scrolling down */
-  -webkit-transition: all 0.2s;
-  -moz-transition: all 0.2s;
-  transition: all 0.2s;
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
 
   &.shrink  {
     min-height: var(--navbar-shrinked-height);
@@ -51,6 +51,12 @@
     & .navbar-header .navbar-brand {
       background-image: url("/static/images/favicon32.png");
       background-repeat: no-repeat;
+    }
+
+    & .event-header,
+    & .event-header__link {
+      height: var(--navbar-shrinked-height);
+      line-height: var(--navbar-shrinked-height);
     }
   }
 
