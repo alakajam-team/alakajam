@@ -68,6 +68,9 @@
     background-position: 0 0;
     background-repeat: no-repeat;
   };
+  --transition: {
+    transition: all 0.2s;
+  }
 
   /* UI elements */
   

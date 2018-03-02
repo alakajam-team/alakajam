@@ -7,6 +7,7 @@
 
 .navbar-default {
   @apply --header-shadow;
+  @apply --transition;
   background-color: var(--main);
   border: none;
   font-size: 2rem;
@@ -20,8 +21,8 @@
       & .navbar-nav > li.active > a,
       & .navbar-nav > li > div,
       & .navbar-avatar-wrapper,
-      & a.navbar-brand,
       & .nav a {
+        @apply --transition;
         padding-top: 0;
         height: var(--navbar-shrinked-height);
         line-height: var(--navbar-shrinked-height);
@@ -54,6 +55,7 @@
 
       & .event-header,
       & .nav .event-header__link {
+        @apply --transition;
         height: var(--eventbar-shrinked-height);
         line-height: var(--eventbar-shrinked-height);
       }
@@ -74,7 +76,8 @@
   /* Nav logo */
 
   & .navbar-header {
-    height: --eventbar-height;
+    @apply --transition;
+    height: var(--eventbar-height);
 
     & .navbar-brand {
       float: left;
@@ -125,6 +128,7 @@
       }
 
       & > a, &.active > a, & > div {
+        @apply --transition;
         font-size: 1.1rem;
         padding: 0 10px;
         line-height: var(--navbar-height);
@@ -242,6 +246,7 @@
 
 .event-header {
   @apply --header-shadow;
+  @apply --transition;
   box-sizing: border-box;
   width: 100%;
   background-color: white;
@@ -294,6 +299,7 @@
   }
 
   &__link {
+    @apply --transition;
     display: inline-block;
     box-sizing: border-box;
     vertical-align: top;
@@ -347,6 +353,7 @@
 }
 
 .event-navbar {
+  @apply --transition;
   position: relative;
   margin-bottom: 0;
   position: inherit;
