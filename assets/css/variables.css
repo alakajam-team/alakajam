@@ -73,5 +73,6 @@
   
   --navbar-height: 60px;
   --navbar-shrinked-height: 40px;
-  --eventbar-height: 60px;
+  --eventbar-height: 50px;
+  --eventbar-shrinked-height: 36px;
 }

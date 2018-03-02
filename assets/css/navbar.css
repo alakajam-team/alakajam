@@ -11,52 +11,59 @@
   border: none;
   font-size: 2rem;
 
-  /* Values for the animation when scrolling down */
-  -webkit-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
+  @media (min-width: 768px) {
+    &.shrink  {
+      min-height: var(--navbar-shrinked-height);
 
-  &.shrink  {
-    min-height: var(--navbar-shrinked-height);
+      & .navbar-header,
+      & .navbar-nav > li > a,
+      & .navbar-nav > li.active > a,
+      & .navbar-nav > li > div,
+      & .navbar-avatar-wrapper,
+      & a.navbar-brand,
+      & .nav a {
+        padding-top: 0;
+        height: var(--navbar-shrinked-height);
+        line-height: var(--navbar-shrinked-height);
+      }
 
-    & .navbar-header,
-    & .navbar-nav > li > a,
-    & .navbar-nav > li.active > a,
-    & .navbar-nav > li > div,
-    & .navbar-avatar-wrapper,
-    & a.navbar-brand {
-      height: var(--navbar-shrinked-height);
-      line-height: var(--navbar-shrinked-height);
-    }
+      & .live__dates,
+      & .navbar-profile,
+      & .navbar-header .navbar-brand__hover {
+        display: none;
+      }
 
-    & .live__dates,
-    & .navbar-profile,
-    & .navbar-header .navbar-brand__hover {
-      display: none;
-    }
+      & .navbar-avatar  {
+        width: 30px;
+      }
 
-    & .navbar-avatar  {
-      width: 30px;
-    }
+      & a.navbar-brand {
+        width: 32px;
+        margin-top: 4px; /* Vertically center the logo when the navbar shrink */
+      }
 
-    & a.navbar-brand {
-      width: 32px;
-      margin-top: 4px; /* Vertically center the logo when the navbar shrink */
-    }
+      & .navbar-unread-notifications {
+        top: 3px;
+      }
 
-    & .navbar-unread-notifications {
-      top: 3px;
-    }
 
-    & .navbar-header .navbar-brand {
-      background-image: url("/static/images/favicon32.png");
-      background-repeat: no-repeat;
-    }
+      & .navbar-header .navbar-brand {
+        background-image: url("/static/images/favicon32.png");
+        background-repeat: no-repeat;
+      }
 
-    & .event-header,
-    & .event-header__link {
-      height: var(--navbar-shrinked-height);
-      line-height: var(--navbar-shrinked-height);
+      & .event-header,
+      & .nav .event-header__link {
+        height: var(--eventbar-shrinked-height);
+        line-height: var(--eventbar-shrinked-height);
+      }
+      & .event-header__link.active {
+        border-bottom-width: 2px;
+      }
+
+      & .event-header__announcement-info {
+        display: none;
+      }
     }
   }
 
@@ -67,7 +74,7 @@
   /* Nav logo */
 
   & .navbar-header {
-    height: 60px;
+    height: --eventbar-height;
 
     & .navbar-brand {
       float: left;
@@ -293,11 +300,12 @@
     padding: 0 15px;
     margin: 0;
     height: var(--eventbar-height);
+    line-height: var(--eventbar-height);
     font-size: 1.2rem;
-    line-height: 60px;
     
     @media (min-width: 768px) {
       font-size: 1rem;
+      padding: 0 11px;
     }
     
     &:hover {
@@ -342,12 +350,12 @@
   position: relative;
   margin-bottom: 0;
   position: inherit;
-  height: 50px;
+  height: var(--eventbar-height);
 
   @media (max-width: 768px) {
     & .navbar-collapse {
       position: absolute;
-      top: 60px;
+      top: var(--navbar-height);
       left: 0;
       right: 0;
       border: 0;
