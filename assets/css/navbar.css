@@ -11,6 +11,55 @@
   border: none;
   font-size: 2rem;
 
+  /* Values for the animation when scrolling down */
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+
+  &.shrink  {
+    min-height: var(--navbar-shrinked-height);
+
+    & .navbar-header,
+    & .navbar-nav > li > a,
+    & .navbar-nav > li.active > a,
+    & .navbar-nav > li > div,
+    & .navbar-avatar-wrapper,
+    & a.navbar-brand {
+      height: var(--navbar-shrinked-height);
+      line-height: var(--navbar-shrinked-height);
+    }
+
+    & .live__dates,
+    & .navbar-profile,
+    & .navbar-header .navbar-brand__hover {
+      display: none;
+    }
+
+    & .navbar-avatar  {
+      width: 30px;
+    }
+
+    & a.navbar-brand {
+      width: 32px;
+      margin-top: 4px; /* Vertically center the logo when the navbar shrink */
+    }
+
+    & .navbar-unread-notifications {
+      top: 3px;
+    }
+
+    & .navbar-header .navbar-brand {
+      background-image: url("/static/images/favicon32.png");
+      background-repeat: no-repeat;
+    }
+
+    & .event-header,
+    & .event-header__link {
+      height: var(--navbar-shrinked-height);
+      line-height: var(--navbar-shrinked-height);
+    }
+  }
+
   &.has-event-header {
     box-shadow: none;
   }
