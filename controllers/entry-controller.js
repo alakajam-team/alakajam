@@ -478,7 +478,7 @@ async function searchForTeamMate (req, res) {
     }
     res.json(responseData)
   } else {
-    res.json(400, { error: errorMessage })
+    res.status(400).json({ error: errorMessage })
   }
 }
 
@@ -500,7 +500,7 @@ async function searchForExternalEvents (req, res) {
     let results = await eventService.searchForExternalEvents(nameFragment)
     res.json(results)
   } else {
-    res.json(400, { error: errorMessage })
+    res.status(400).json({ error: errorMessage })
   }
 }
 
@@ -529,6 +529,6 @@ async function searchForTags (req, res) {
     }
     res.json(responseData)
   } else {
-    res.json(400, { error: errorMessage })
+    res.status(400).json({ error: errorMessage })
   }
 }
