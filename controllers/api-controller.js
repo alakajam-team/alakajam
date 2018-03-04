@@ -312,7 +312,7 @@ function _renderJson (req, res, statusCode, json) {
     res.locals.pageTitle = 'API Preview for ' + req.path
     res.render('api/pretty', { apiPath: req.path, json })
   } else {
-    res.end(JSON.stringify(json))
+    res.json(json)
   }
 }
 

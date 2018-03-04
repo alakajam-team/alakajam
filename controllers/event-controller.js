@@ -789,7 +789,7 @@ async function ajaxFindThemes (req, res) {
       title: theme.get('title')
     })
   }
-  res.end(JSON.stringify(json))
+  res.json(json)
 }
 
 /**
