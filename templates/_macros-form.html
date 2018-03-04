@@ -15,23 +15,6 @@
   <script type="text/javascript" src="/static/js/matchbrackets.min.js"></script>
   <script type="text/javascript" src="/static/js/closebrackets.min.js"></script>
   <script type="text/javascript" src="/static/js/codemirror-jsonconf.min.js"></script>
-  <script>
-    // TODO move script into a separate file (#21)
-    $('.codemirror').each(function () {
-      var codemirror = CodeMirror.fromTextArea(this, {
-        matchBrackets: true,
-        autoCloseBrackets: true,
-        mode: "application/ld+json",
-        lineWrapping: true,
-        readOnly: !!$(this).attr('readonly'),
-        viewportMargin: Infinity
-      })
-
-      if ($(this).hasClass('auto-height')) {
-        $(codemirror.display.wrapper).addClass('auto-height')
-      }
-    })
-  </script>
 {% endmacro %}
 
 {# ======== PICTURES ========= #}

@@ -3,10 +3,11 @@
 
 /**
  * Initializes the Markdown editor on each textarea matching the given
- * selector. Can be configured using data attributes.
+ * `mdselector`. Can be configured using data attributes. Also initializes
+ * the CodeMirror editor on each textarea matching the given `cmSelector`.
  */
-module.exports = function editor (selector) {
-  $(selector).each(function () {
+module.exports = function editor (mdSelector, cmSelector) {
+  $(mdSelector).each(function () {
     const $this = $(this)
     const autosaveId = $this.attr('data-autosave-id')
     new SimpleMDE({ // eslint-disable-line no-new
@@ -50,6 +51,20 @@ module.exports = function editor (selector) {
         uniqueId: autosaveId
       }
     })
+  })
+  $(cmSelector).each(function () {
+    var codemirror = CodeMirror.fromTextArea(this, {
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      mode: "application/ld+json",
+      lineWrapping: true,
+      readOnly: !!$(this).attr('readonly'),
+      viewportMargin: Infinity
+    })
+
+    if ($(this).hasClass('auto-height')) {
+      $(codemirror.display.wrapper).addClass('auto-height')
+    }
   })
 }
 

@@ -60,7 +60,7 @@
     <input type="text" class="form-control" name="countdown-phrase" value="{{ event.get('countdown_config').phrase if event }}" />
     Date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)
     {{ formMacros.dateTimePicker('countdown-date', event.get('countdown_config').date if event) }}
-    <label><input type="checkbox" class="form-control" name="countdown-enabled" {{ 'checked="checked"' if event and event.get('countdown_config').enabled }}" />
+    <label><input type="checkbox" class="form-control" name="countdown-enabled" {{ 'checked="checked"' if event and event.get('countdown_config').enabled }} />
     Animated countdown</label>
     </div>
   </div>

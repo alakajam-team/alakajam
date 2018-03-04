@@ -28,7 +28,7 @@ window.alakajam = {
 $(function domReady () {
   require('./common/date-picker')('.js-date-picker')
   require('./common/disabled-links')('a.disabled')
-  require('./common/editor')('.simplemde-editor')
+  require('./common/editor')('.simplemde-editor', '.codemirror')
   require('./common/tooltips')('.has-tooltip')
   require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes', { autoSubmit: '.js-auto-submit' })
   require('./common/lazy-images')('.js-lazy, .user-contents img')
