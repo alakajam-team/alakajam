@@ -8,14 +8,32 @@
 
 const constants = require('../core/constants')
 const log = require('../core/log')
+const models = require('../core/models')
 
 module.exports = {
+  isUserWatching,
   canUserRead,
   canUserWrite,
   canUserManage,
+
   isMod,
   isAdmin,
-  getPermissionsEqualOrAbove
+
+  getPermissionsEqualOrAbove,
+  getHighestPermission,
+
+  addUserRight,
+  removeUserRight
+}
+
+/**
+ * Checks if a user is watching the given model
+ * @param  {User} user (optional)
+ * @param  {Entry|Post|Comment} model
+ * @return {boolean}
+ */
+function isUserWatching (user, model) {
+  return canUser(user, model, constants.PERMISSION_WATCH)
 }
 
 /**
@@ -115,4 +133,71 @@ function getPermissionsEqualOrAbove (permission) {
     log.warn('Unknown permission: ' + permission + ' (allowed: ' + constants.ORDERED_PERMISSIONS.join(',') + ')')
     return false
   }
+}
+
+/**
+ * @param {array(string)} permissions
+ * @return {string}
+ */
+function getHighestPermission (permissions) {
+  let highestIndex = permissions
+    .map(permission => constants.ORDERED_PERMISSIONS.indexOf(permission))
+    .reduce((index1, index2) => Math.max(index1, index2), -1)
+  return constants.ORDERED_PERMISSIONS[highestIndex]
+}
+
+/**
+ * Adds a user right to a node
+ * @param  {User} user
+ * @param  {Entry|Post} node
+ * @param  {string} nodeType (entry|post)
+ * @param  {string} permission
+ * @return {boolean}
+ */
+async function addUserRight (user, node, nodeType, permission) {
+  await node.load('userRoles')
+
+  // Check if present already
+  let userRoles = node.related('userRoles')
+  let matchingRole = userRoles.find(userRole => {
+    return userRole.get('user_name') === user.get('name') &&
+      userRole.get('permission') === permission
+  })
+
+  // Update or create existing role
+  if (!matchingRole) {
+    let role = userRoles.find(userRole => userRole.get('user_name') === user.get('name'))
+    if (role) {
+      role.set('permission', getHighestPermission([permission, role.get('permission')]))
+    } else {
+      role = new models.UserRole({
+        user_id: user.get('id'),
+        user_name: user.get('name'),
+        user_title: user.get('title'),
+        node_id: node.get('id'),
+        node_type: nodeType,
+        permission: permission,
+        event_id: node.get('event_id')
+      })
+    }
+    await role.save()
+  }
+}
+
+/**
+ * Removes a user right from a node. If the permission does not match exactly, does nothing.
+ * @param  {User} user
+ * @param  {Entry|Post} node
+ * @param  {string} permission
+ * @return {boolean}
+ */
+async function removeUserRight (user, node, permission) {
+  await node.load('userRoles')
+
+  let userRoles = node.related('userRoles')
+  let matchingRole = userRoles.find(userRole => {
+    return userRole.get('user_name') === user.get('name') &&
+        userRole.get('permission') === permission
+  })
+  await matchingRole.destroy()
 }

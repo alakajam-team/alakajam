@@ -1,5 +1,5 @@
 /* eslint-env jquery */
-/* globals SimpleMDE */
+/* globals SimpleMDE CodeMirror */
 
 /**
  * Initializes the Markdown editor on each textarea matching the given
@@ -56,7 +56,7 @@ module.exports = function editor (mdSelector, cmSelector) {
     var codemirror = CodeMirror.fromTextArea(this, {
       matchBrackets: true,
       autoCloseBrackets: true,
-      mode: "application/ld+json",
+      mode: 'application/ld+json',
       lineWrapping: true,
       readOnly: !!$(this).attr('readonly'),
       viewportMargin: Infinity

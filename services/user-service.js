@@ -124,7 +124,7 @@ async function register (email, name, password) {
   let caseInsensitiveUsernameMatch = await models.User.query(function (query) {
     query.whereRaw("LOWER(name) LIKE '%' || LOWER(?) || '%' ", name)
   }).fetch()
-  if (caseInsensitiveUsernameMatch) {
+  if (caseInsensitiveUsernameMatch || name === 'anonymous') {
     return 'Username is taken'
   }
   if (!forms.isEmail(email)) {

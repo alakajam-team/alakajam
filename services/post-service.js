@@ -158,7 +158,7 @@ async function findCommentsSortedForDisplay (node) {
 async function findCommentsByUser (user) {
   return models.Comment.where('user_id', user.id)
     .orderBy('created_at', 'DESC')
-    .fetchAll({withRelated: ['user', 'node']})
+    .fetchAll({withelated: ['user', 'node']})
 }
 
 /**
@@ -202,6 +202,7 @@ async function findCommentsToUser (user, options = {}) {
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '<>', user.id)
       .andWhere('comment.updated_at', '>', notificationsLastRead)
+      .andWhere('comment.updated_at', '>', db.knex.raw('user_role.created_at'))
       .orWhere('body', (config.DB_TYPE === 'sqlite3' ? 'like' : 'ilike'),
         '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
   })

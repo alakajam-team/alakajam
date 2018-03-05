@@ -28,6 +28,7 @@ module.exports = {
   savePost,
   viewPost,
   deletePost,
+  watchPost,
 
   saveComment
 }
@@ -292,6 +293,23 @@ async function deletePost (req, res) {
 }
 
 /**
+ * Toggles watching a post
+ */
+async function watchPost (req, res) {
+  let {user, post} = res.locals
+
+  if (user) {
+    if (securityService.isUserWatching(user, post)) {
+      await securityService.removeUserRight(user, post, constants.PERMISSION_WATCH)
+    } else {
+      await securityService.addUserRight(user, post, 'post', constants.PERMISSION_WATCH)
+    }
+  }
+
+  res.redirect('.')
+}
+
+/**
  * Save or delete a comment
  */
 async function saveComment (req, res) {
@@ -354,6 +372,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
     let nodeType = comment.get('node_type')
     let userId = comment.get('user_id')
 
+    // Entry-specific updates
     if (nodeType === 'entry') {
       if (isCreation) {
         if (!currentUser.get('disallow_anonymous') && fields['comment-anonymously'] && currentNode.get('allow_anonymous')) {
@@ -377,38 +396,37 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
       if (userEntry) {
         await eventRatingService.refreshEntryScore(userEntry, currentEvent)
       }
-
-      // Cache invalidation
-      if (!isDeletion) {
-        // Comment feed and unread notifications of users associated with the post/entry
-        let node = comment.related('node')
-        let userRoles = node.related('userRoles')
-        userRoles.forEach(function (userRole) {
-          let userCache = cache.user(userRole.get('user_name'))
-          userCache.del('toUserCollection')
-          userCache.del('unreadNotifications')
-        })
-
-        // Users @mentioned in the comment
-        let body = comment.get('body')
-        body.split(' ').forEach(function (word) {
-          if (word.length > 0 && word[0] === '@') {
-            let userCache = cache.user(word.slice(1))
-            userCache.del('toUserCollection')
-            userCache.del('unreadNotifications')
-          }
-        })
-
-        redirectUrl += templating.buildUrl(comment, 'comment')
-      }
     }
 
-    // Cache invalidation: user's own comment history
+    // Cache invalidation: comment feed and unread notifications of users associated with the post/entry
+    let userRoles = currentNode.related('userRoles')
+    userRoles.forEach(function (userRole) {
+      let userCache = cache.user(userRole.get('user_name'))
+      userCache.del('toUserCollection')
+      userCache.del('unreadNotifications')
+    })
+
+    // Cache invalidation: Users @mentioned in the comment
+    let body = comment.get('body')
+    body.split(' ').forEach(function (word) {
+      if (word.length > 0 && word[0] === '@') {
+        let userCache = cache.user(word.slice(1))
+        userCache.del('toUserCollection')
+        userCache.del('unreadNotifications')
+      }
+    })
+
+    // Cache invalidation: User's own comment history
     cache.user(currentUser.get('name')).del('byUserCollection')
 
     // Refresh node comment count
     if (isDeletion || isCreation) {
       await postService.refreshCommentCount(currentNode)
+    }
+
+    // Redirect to anchor
+    if (!isDeletion) {
+      redirectUrl += templating.buildUrl(comment, 'comment')
     }
   }
 

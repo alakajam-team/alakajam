@@ -116,6 +116,7 @@ module.exports = {
     router.post('/post/:postId(\\d+)/:postName/edit', postController.savePost)
     router.get('/post/:postId(\\d+)/:postName/edit', postController.editPost)
     router.get('/post/:postId(\\d+)/:postName/delete', postController.deletePost)
+    router.post('/post/:postId(\\d+)/:postName/watch', postController.watchPost)
 
     // Articles
 

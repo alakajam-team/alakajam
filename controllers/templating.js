@@ -24,6 +24,7 @@ module.exports = {
   isPast: postService.isPast,
   wasEdited: postService.wasEdited,
 
+  isUserWatching: securityService.isUserWatching,
   canUserRead: securityService.canUserRead,
   canUserWrite: securityService.canUserWrite,
   canUserManage: securityService.canUserManage,
