@@ -54,8 +54,11 @@
       }
 
       & .event-header,
+      & .event-header .container,
+      & .event-header__name,
       & .nav .event-header__link {
         @apply --transition;
+        padding-top: 0 !important;
         height: var(--eventbar-shrinked-height);
         line-height: var(--eventbar-shrinked-height);
       }
@@ -63,7 +66,8 @@
         border-bottom-width: 2px;
       }
 
-      & .event-header__announcement-info {
+      & .event-header__announcement-info,
+      & .event-header__dates {
         display: none;
       }
     }
@@ -257,11 +261,12 @@
   &__info {
     display: inline-block;
     margin-right: 30px;
-    vertical-align: middle;
+    vertical-align: top;
   }
   @media (max-width: 768px) {
     &__info {
       margin-right: 0;
+      padding-top: 2px;
     }
   }
 
@@ -285,6 +290,7 @@
     font-size: .8rem;
     color: var(--text-light);
     line-height: .8rem;
+    margin-top: -2px;
   }
   
   &__links {
@@ -383,6 +389,7 @@
   }
   
   & .navbar-toggle, & .navbar-toggle:hover, & .navbar-toggle:focus {
+    margin-top: 6px;
     border-color: var(--alt);
     
     & .icon-bar {
