@@ -10,6 +10,7 @@
  */
 
 let log
+let startDate = Date.now()
 try {
   log = global.log = require('./core/log')
   log.info('Starting server...')
@@ -58,8 +59,6 @@ async function createApp () {
   catchErrorsAndSignals()
   await initFilesLayout()
 
-  let browserRefreshEnabled = configureBrowserRefresh()
-
   const express = require('express')
   const middleware = require('./core/middleware')
   const db = require('./core/db')
@@ -73,9 +72,10 @@ async function createApp () {
   await middleware.configure(app)
 
   app.listen(config.SERVER_PORT, function () {
-    log.info('Server started on port ' + config.SERVER_PORT + '.')
-    if (browserRefreshEnabled) {
-      process.send('online')
+    let startSeconds = (Date.now() - startDate) / 1000
+    log.info('Server started in ' + startSeconds.toFixed(1) + 's on port ' + config.SERVER_PORT + '.')
+    if (process.send) {
+      process.send('online') // browser-refresh event
     }
   })
 }
@@ -138,6 +138,13 @@ async function initFilesLayout () {
   await _createFolderIfMissing(path.join(__dirname, config.DATA_PATH, '/tmp'))
   await _createFolderIfMissing(path.join(__dirname, config.UPLOADS_PATH))
 
+  // Configure browser-refresh
+  try {
+    configureBrowserRefresh()
+  } catch (e) {
+    // Nothing (dev-only dependency)
+  }
+
   // Run CSS and JS build (or bootstrap sources watcher in dev mode)
   if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
     await buildCSS(DEV_ENVIRONMENT)
@@ -147,15 +154,17 @@ async function initFilesLayout () {
 
 /*
  * Use browser-refresh to refresh the browser automatically during development
- * @return whether browser-refresh has been enabled
  */
 function configureBrowserRefresh () {
+  const config = require('./config')
   const browserRefreshClient = require('browser-refresh-client')
-  const config = require('./config.js')
 
-  if (process.send && config.DEBUG_REFRESH_BROWSER) {
+  const CLIENT_RESOURCES = '/templates/** /static/**'
+
+  // Configure for client-side resources
+  if (config.DEBUG_REFRESH_BROWSER) {
     browserRefreshClient
-      .enableSpecialReload('*.html /static/**')
+      .enableSpecialReload(CLIENT_RESOURCES)
       .onFileModified(async function (path) {
         if (path.endsWith('.css')) {
           browserRefreshClient.refreshStyles()
@@ -165,9 +174,9 @@ function configureBrowserRefresh () {
           browserRefreshClient.refreshPage()
         }
       })
-    return true
   } else {
-    return false
+    browserRefreshClient
+      .enableSpecialReload(CLIENT_RESOURCES, { autoRefresh: false })
   }
 }
 

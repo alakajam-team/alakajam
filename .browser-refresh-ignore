@@ -1,26 +1,14 @@
-# External files
 node_modules/
-
-# Unbuilt sources
 assets/
-
-# Docs
-docs/*.html
-docs/*/
-
-# Data
-data*/
-tests/data/
+data/
+docs/
 static/uploads
+tests/
 tmp/
+.git/
+.DS_Store/
+
 *.log
 *.out
 *.pid
-.git
-
-# OS-specific garbage
-.DS_Store
 *~
-
-# Misc
-*.psd
