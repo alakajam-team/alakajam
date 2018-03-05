@@ -22,6 +22,7 @@
       <a class="comment__anchor" name="comments"></a>
       <h2>
         Comments <span class="legend">({{ post.get('comment_count') or '0' }})</span>
+        {% if user %}
         <form method="post" class="comment__subscribe" action="{{ buildUrl(post, 'post', 'watch') }}">
           <!-- Being subscribed to a post = having a user right. Only allow removing the right-->
           {% if isUserWatching(user, post) %}
@@ -34,6 +35,7 @@
               <button type="submit" class="btn btn-default btn-sm"><span class="fa fa-plus"></span> Subscribe</button>
           {% endif %}
         </form>
+        {% endif %}
       </h2>
       {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
     </div>
