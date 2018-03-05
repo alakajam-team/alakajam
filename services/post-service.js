@@ -158,7 +158,7 @@ async function findCommentsSortedForDisplay (node) {
 async function findCommentsByUser (user) {
   return models.Comment.where('user_id', user.id)
     .orderBy('created_at', 'DESC')
-    .fetchAll({withelated: ['user', 'node']})
+    .fetchAll({withRelated: ['user', 'node']})
 }
 
 /**
