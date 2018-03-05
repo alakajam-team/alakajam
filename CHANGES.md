@@ -2,6 +2,29 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### March 5th
+
+* Let users subscribe to comment threads
+* Let admins view and moderate all tags
+
+### March 2nd
+
+* Make the header shrink with a nice animation when scrolling down
+
+### February 27th
+
+* Game importer for ludumdare.com
+* Upgrade the dropdown library, impacting the styling of various forms
+
+### February 22nd
+
+* Add post pagination to user profile, event announcements list
+* Improvements on the Games page
+
+### February 21st
+
+* Expose theme shortlist info in the JSON API
+
 ### February 20th
 
 * Support eliminating shortlist themes one by one in the moments before the jam starts
