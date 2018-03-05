@@ -6,8 +6,11 @@ module.exports = {
   searchTags,
   fetchById,
   fetchByIds,
+
   createTag,
-  updateEntryTags
+  updateEntryTags,
+
+  fetchTagStats
 }
 
 /**
@@ -35,8 +38,8 @@ async function searchTags (nameFragment) {
  *
  * @param {number} id
  */
-async function fetchById (id) {
-  return models.Tag.where({ id }).fetch()
+async function fetchById (id, options = {}) {
+  return models.Tag.where({ id }).fetch(options)
 }
 
 /**
@@ -113,4 +116,12 @@ async function updateEntryTags (entry, tagInfo) {
         .del()
     }
   })
+}
+
+async function fetchTagStats (options = {}) {
+  return db.knex('entry_tag')
+    .select('tag.id', 'tag.value', 'tag.created_at', db.knex.raw('count(*) as count'))
+    .leftJoin('tag', 'entry_tag.tag_id', 'tag.id')
+    .groupBy('tag.id', 'tag.value')
+    .orderBy(options.orderByDate ? 'created_at' : 'count', 'DESC')
 }

@@ -18,6 +18,7 @@ const eventService = require('../services/event-service')
 const userService = require('../services/user-service')
 const settingService = require('../services/setting-service')
 const platformService = require('../services/platform-service')
+const tagService = require('../services/tag-service')
 
 module.exports = {
   adminMiddleware,
@@ -26,6 +27,7 @@ module.exports = {
 
   adminEvents,
   adminPlatforms,
+  adminTags,
   adminSettings,
   adminUsers,
   adminStatus,
@@ -140,6 +142,48 @@ async function adminPlatforms (req, res) {
     platforms: platformCollection.models,
     entryCount,
     editPlatform,
+    errorMessage
+  })
+}
+
+/**
+ * Admin only: Tags management
+ */
+async function adminTags (req, res) {
+  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+    res.errorPage(403)
+  }
+
+  let errorMessage = null
+
+  // Tag deletion
+  if (forms.isId(req.query.delete)) {
+    let tag = await tagService.fetchById(req.query.delete)
+    if (tag) {
+      await tag.destroy()
+    } else {
+      errorMessage = 'Tag to delete not found'
+    }
+  }
+
+  // Detailed tag view
+  let detailedTag = null
+  if (forms.isId(req.query.view)) {
+    detailedTag = await tagService.fetchById(req.query.view, { withRelated: 'entries.userRoles' })
+  }
+
+  // Custom sorting
+  let fetchTagsOptions = {}
+  let sortBy = null
+  if (req.query.sortBy === 'date') {
+    fetchTagsOptions.orderByDate = true
+    sortBy = 'date'
+  }
+
+  res.render('admin/admin-tags', {
+    tags: await tagService.fetchTagStats(fetchTagsOptions),
+    sortBy,
+    detailedTag,
     errorMessage
   })
 }

@@ -454,8 +454,18 @@ module.exports.Tag = bookshelf.model('Tag', {
   idAttribute: 'id',
 
   entries: function () {
-    return this.belongsToMany('Entry', 'entry_tag')
+    return this.belongsToMany('Entry', 'entry_tag', 'tag_id', 'entry_id')
+  },
+  entryJoins: function () {
+    return this.hasMany('EntryTag', 'tag_id')
   }
+}, {
+  // Cascading
+  dependents: ['entryJoins']
+})
+
+module.exports.EntryTag = bookshelf.model('EntryTag', {
+  tableName: 'entry_tag'
 })
 
 /**
