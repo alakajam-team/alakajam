@@ -27,6 +27,7 @@ const eventService = require('./event-service')
  * Grabs the detailed info of an entry. The object holds:
  *   - title = Entry title
  *   - externalEvent = Event title
+ *   - published = Optional entry publication date
  *   - picture = Optional URL of a picture to download
  *   - links = An array of links to play the game [{url, label}]
  *   - platforms = Optional array of entry platforms
@@ -114,6 +115,7 @@ async function createOrUpdateEntry (user, importerId, profileNameOrUrl, entryId)
       title: entryDetails.title,
       external_event: entryDetails.externalEvent,
       platforms: entryDetails.platforms || [],
+      published_at: entryDetails.published || new Date(),
       links: entryDetails.links.map(link => ({ // ensure data format, just in case
         label: link.label,
         url: link.url

@@ -111,13 +111,23 @@
         </div>
         
         {% if external %}
-        <div class="form-group">
-          <label for="title">External event name</label>
-          <select id="external-event" class="form-control" name="external-event">
-            {% if entry.get('external_event') %}
-              <option  value="{{ entry.get('external_event') }}">{{ entry.get('external_event') }}</option>
-            {% endif %}
-          </select>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="title">External event name</label>
+              <select id="external-event" class="form-control" name="external-event">
+                {% if entry.get('external_event') %}
+                  <option  value="{{ entry.get('external_event') }}">{{ entry.get('external_event') }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="title">Entry publication date</label>
+              {{ formMacros.dateTimePicker('published-at', entry.get('published_at'), { minView: '2', momentFormat: 'YYYY-MM-DD', pickerFormat: 'yyyy-mm-dd' }) }}
+            </div>
+          </div>
         </div>
         {% endif %}
 

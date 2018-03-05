@@ -103,9 +103,9 @@ async function configure (app) {
   nj.env.addFilter('markdownUnescape', function (str) {
     return str ? str.replace(/&amp;/g, '&').replace(/&quot;/g, '"') : null
   })
-  nj.env.addFilter('date', function (date) {
+  nj.env.addFilter('date', function (date, format) {
     if (date) {
-      return moment(date).utc().format(constants.DATE_FORMAT)
+      return moment(date).utc().format(format || constants.DATE_FORMAT)
     } else {
       return ''
     }
@@ -120,13 +120,6 @@ async function configure (app) {
   nj.env.addFilter('featuredEventDateTime', function (date) {
     if (date) {
       return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) + ' UTC'
-    } else {
-      return ''
-    }
-  })
-  nj.env.addFilter('pickerDateTime', function (date) {
-    if (date) {
-      return moment(date).utc().format(constants.PICKER_DATE_TIME_FORMAT)
     } else {
       return ''
     }

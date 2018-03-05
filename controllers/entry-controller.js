@@ -191,7 +191,7 @@ async function editEntry (req, res) {
       }
     }
 
-    // Save entry: Update model (even if validation fails, to prevent losing what the user filled)
+    // Create model if needed
     let isCreation
     if (!entry.get('id')) {
       entry = await eventService.createEntry(user, event)
@@ -214,6 +214,7 @@ async function editEntry (req, res) {
       entry.set({
         event_id: null,
         event_name: null,
+        published_at: forms.parseDateTime(fields['published-at']) || entry.get('published_at'),
         external_event: forms.sanitizeString(fields['external-event'])
       })
     }

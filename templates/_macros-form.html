@@ -135,8 +135,14 @@
 
 {# ======== DATE TIME PICKER ========= #}
 
-{% macro dateTimePicker(name, value) %}
-  <input type="datetime" name="{{ name }}" class="form-control date-picker js-date-picker" value="{{ value | pickerDateTime }}" />
+{% macro dateTimePicker(name, value, options = {}) %}
+  <input type="datetime" name="{{ name }}"
+    class="form-control date-picker js-date-picker"
+    value="{{ value | date(options.momentFormat or 'YYYY-MM-DD HH:mm') }}" 
+    data-format="{{ options.pickerFormat or 'yyyy-mm-dd hh:ii' }}"
+    {% if options.minView %} data-min-view="{{ options.minView }}" {% endif %}
+    {% if options.maxView %} data-max-view="{{ options.maxView }}" {% endif %}
+    />
 {% endmacro %}
 
 

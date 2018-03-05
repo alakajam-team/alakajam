@@ -171,6 +171,10 @@
       </div>
       {% endif %}
 
+      <div class="entry__info">
+        <span class="entry__info-label">Published</span>
+        <span class="entry__info-value">{{ entry.get('published_at') | date }}</span>
+      </div>
       {% if not external %}
       <div class="entry__info">
         <span class="entry__info-label">Division</span>
