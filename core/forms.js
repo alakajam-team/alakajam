@@ -62,8 +62,6 @@ const showdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
   strikethrough: true,
   simpleLineBreaks: true,
-  ghMentions: true,
-  ghMentionsLink: config.ROOT_URL + '/user/{u}',
   extensions: [showdownLazyPicturesExt]
 })
 const customXss = new xss.FilterXSS({
@@ -241,6 +239,19 @@ function parseDateTime (string) {
  * @return {string}
  */
 function markdownToHtml (markdown) {
+  // Github-style mentions parsing
+  // (adapted from https://github.com/showdownjs/showdown/blob/master/src/subParsers/makehtml/anchors.js)
+  markdown = markdown.replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,[\]()]|\s|$)/gmi, function (wm, st, escape, mentions, username) {
+    if (escape === '\\') {
+      return st + mentions
+    } else {
+      return st +
+        '<a href="' + config.ROOT_URL + '/user/' + username + '">' +
+        mentions.replace(/_/g, '\\_') + // Don't trigger italics tags
+        '</a>'
+    }
+  })
+
   let html = showdownConverter.makeHtml(markdown)
   let safeHtml = customXss.process(html)
   return safeHtml
