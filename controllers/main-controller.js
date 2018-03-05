@@ -48,8 +48,8 @@ async function anyPageMiddleware (req, res, next) {
       // Fetch comment to edit
       if (req.query.editComment && forms.isId(req.query.editComment)) {
         return postService.findCommentById(req.query.editComment).then(async function (comment) {
-          if (securityService.canUserWrite(user, comment, { allowMods: true }) ||
-              await postService.isOwnAnonymousComment(comment, user)) {
+          if (comment && (securityService.canUserWrite(user, comment, { allowMods: true }) ||
+              await postService.isOwnAnonymousComment(comment, user))) {
             res.locals.editComment = comment
           }
         })
