@@ -81,13 +81,12 @@
 
   & .navbar-header {
     @apply --transition;
-    height: var(--eventbar-height);
+    height: var(--navbar-mobile-height);
 
     & .navbar-brand {
       float: left;
-      margin-top: 3px;
       width: 220px;
-      height: 50px;
+      height: var(--navbar-mobile-height);
       background: url('/static/images/brand.svg');
       padding: 0;
     }
@@ -100,7 +99,7 @@
     
     & .navbar-brand:hover .navbar-brand__hover {
       width: 220px;
-      height: 50px;
+      height: var(--navbar-mobile-height);
     }
     
     @media (max-width: 350px) {
@@ -110,6 +109,10 @@
       & .navbar-brand__hover {
         display: none;
       }
+    }
+
+    & .navbar-profile-mobile {
+      height: var(--navbar-mobile-height);
     }
   }
 
@@ -368,7 +371,7 @@
   @media (max-width: 768px) {
     & .navbar-collapse {
       position: absolute;
-      top: var(--navbar-height);
+      top: var(--eventbar-height);
       left: 0;
       right: 0;
       border: 0;
