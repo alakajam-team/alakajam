@@ -14,7 +14,7 @@ The only available division is *Unranked*, as the event doesn't produce winners.
 
 ## Results
 
-At the end of the event, the most dedicated reviewers will be announced as this year's *Feedback Champions*!
+At the end of the event, the most dedicated reviewers will be announced as this year's *Feedback Champions*, by a completely subjective jury :) The games theirselves don't get any ratings or rankings.
 
 ## What is allowed/not allowed?
 
