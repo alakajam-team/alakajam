@@ -12,7 +12,7 @@ Everyone has around three weeks to submit their entries.
 
 ## Rankings
 
-After the jam, any person who entered the event will be able to play, rate and comment other people's games for one week, until the final results are released.
+After the jam, *everyone* with an Alakajam! account is able to play, rate and comment other people's games for one week, until the final results are released.
 
 On each Ranked game you play, you will get to rate **a single aspect of the game, being the topic of the month**. You won't even see an *Overall* rating category, so making a finished, polished game with enough contents is not necessarily the goal!
 
