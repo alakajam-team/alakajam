@@ -1,19 +1,23 @@
 Feedback Fortnight rules
-## Before the event
 
-Until the event starts, all you can do is create blog posts. Feel free to introduce yourself or the game you plan to make/submit.
+*Feedback Fortnight* is an annual event where you are invited to submit *any game you worked on this year*. While you can use this event as a game jam, you can actually use it to get feedback on a longer term project you're working on, or maybe a game from a past jam that you improved since.
 
-## Submitting a game
+## Divisions
 
-Once the event starts, you can submit **any game you worked on this year**. You can use this event as a game jam, making and submitting a game especially for it, though there is no particular "theme" to follow.
+The only available division is *Unranked*, as the event doesn't produce winners. The focus is on plain feedback.
 
-It's okay if the game is unfinished, closed-source, made as a team, we don't mind either if the game was started before 2017. The only requirements are that the game must be yours.
+## Schedule
 
-## Exchanging feedback
+1. **Before the event**: All you can do is create blog posts. Feel free to introduce yourself or the game you plan to make/submit.
+2. **Submission week-end**: When the event launches, you have a week-end to prepare your game if needed, and of course submit it to the website.
+3. **Exchanging feedback**: Once games are submitted, everyone gets to play and comment on each other's games for a couple weeks. The more games you comment on, the higher your own is featured in the games list!
 
-Any comment you post on another entry will count towards increasing your *Feedback Score*. That score is used to determine in which order games are listed on the event. You will get notifications if someone wrote a comment on your entry or answered your comments using @-based mentions.
+## Results
 
-## After the event
+At the end of the event, the most dedicated reviewers will be announced as this year's *Feedback Champions*!
 
-Newcomers will no longer be able to submit games, but you can still exchange feedback after the event ends.
-There will be no judging or ranking or the game, but instead as a reward, videos will be made of all the entries and posted on YouTube.
+## What is allowed/not allowed?
+
+It's okay if the game is unfinished, closed-source, made as a team, we don't  mind either if the game was started before the current year. The only requirements are that the game must be yours, and is made playable for free.
+
+All third-party assets are allowed as long as you have the license to use them.
