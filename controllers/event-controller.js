@@ -162,8 +162,8 @@ async function handleGameSearch (req, res, searchOptions = {}) {
   } else if (req.query.eventId === undefined && res.locals.event) {
     searchOptions.eventId = res.locals.event.get('id')
   } else if (req.query.eventId === undefined && res.locals.featuredEvent &&
-      ![enums.EVENT.STATUS_RESULTS.OFF, enums.EVENT.STATUS_RESULTS.DISABLED]
-      .includes(res.locals.featuredEvent.get('status_results'))) {
+      [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
+        .includes(res.locals.featuredEvent.get('status_results'))) {
     searchOptions.eventId = res.locals.featuredEvent.get('id')
   } else {
     searchOptions.sortByRating = true

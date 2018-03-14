@@ -45,53 +45,35 @@
 .events-block {
   margin-bottom: 20px;
 
-  & > h3 {
+  & > h2 {
     padding: 10px;
     padding-bottom: 0;
     margin-bottom: 0;
-  }
-
-  &__live > h3 {
-    color: var(--alt-dark);
-    font-weight: bold;
-  }
-
-  &__entries {
-    padding: 15px;
-    background-color: var(--borders);
-  }
-
-  &__entry {
-    position: relative;
-    margin-bottom: 3px;
-
-    & .entry-results__category-medal {
-      top: 12px;
-      right: 20px;
-    }
-  }
-
-  &__pending {
-  }
-
-  &__closed {
   }
 }
 
 .event-table {
   @apply --shadow;
   margin-top: 10px;
-  display: flex;
-  width: 100%;
-  background-color: white;
-  line-height: 60px;
+
+  &__header {
+    width: 100%;
+    background-color: white;
+  }
 
   &__title {
     @apply --alt-font;
     display: inline-block;
     line-height: 42px;
+    height: 60px;
     font-size: 1.7rem;
     padding: 0 10px 0 10px;
+  }
+
+  &.pending {
+    display: inline-block;
+    width: inherit;
+    line-height: normal;
   }
   &.pending &__title {
     background-color: var(--main);
@@ -109,14 +91,6 @@
       background-color: var(--alt-dark);
     }
   }
-  &.closed &__title {
-    background-color: var(--neutral);
-    color: white;
-
-    &:hover {
-      background-color: var(--neutral-dark);
-    }
-  }
 
   &__theme {
     float: right;
@@ -126,6 +100,7 @@
     height: 48px;
     margin-top: 6px;
     font-size: 1.4rem;
+    font-weight: bold;
   }
   &__theme-label {
     font-size: 0.8rem;
@@ -133,9 +108,13 @@
     display: block;
     margin-bottom: -5px;
   }
-  
-  &__links {
-    flex: 1;
+  &__theme-mobile {
+    padding: 0 0 8px 10px;
+    margin-top: -6px;
+    width: 100%;
+    background-color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
   }
 
   &__status {
@@ -154,16 +133,24 @@
     border-radius: 0;
     width: 100%;
   }
-  &.pending &__dates, &.open &__dates, &.closed &__dates {
+  &.pending &__dates, &.open &__dates {
     color: var(--white-lighter);
   }
 
-  &__theme {
-    float: right;
-    font-size: 1.5rem;
-    font-weight: bold;
+  &__entries {
+    padding: 15px;
+    background-color: var(--borders);
   }
 
+  &__entry {
+    position: relative;
+    margin-bottom: 3px;
+
+    & .entry-results__category-medal {
+      top: 12px;
+      right: 20px;
+    }
+  }
 }
 
 .event-small-table {

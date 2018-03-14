@@ -48,9 +48,7 @@
   & .event-table {
     display: block;
     margin-top: 0;
-    padding-bottom: 5px;
     box-shadow: none;
-    height: 60px;
   }
 
   &__rules {
@@ -255,9 +253,6 @@
     border-right: 20px solid var(--alt);
   }
 
-  &__dates {
-    font-size: 0.8rem;
-  }
   &.main &__dates {
     font-weight: bold;
   }

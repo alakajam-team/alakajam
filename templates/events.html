@@ -6,10 +6,10 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
-      <h1>Events <span class="count">({{ open.length + pending.length + closed.length }})</span></h1>
+      <h1>Events <span class="count">({{ open.length + pending.length + closedAlakajam.length + closedOther.length }})</span></h1>
       {% if open.length > 0 %}
       <div class="events-block events-block__live">
-        <h3>On now!</h3>
+        <h2>On now!</h2>
         {% for event in open %}
           {{ eventTable(event, featuredEntries[event.get('id')]) }}
         {% endfor %}
@@ -18,18 +18,28 @@
       
       {% if pending.length > 0 %}
       <div class="events-block events-block__pending">
-        <h3>Upcoming events</h3>
+        <h2><span class="fa fa-calendar"></span> Upcoming</h2>
         {% for event in pending %}
           {{ eventTable(event, featuredEntries[event.get('id')]) }}
         {% endfor %}
       </div>
       {% endif %}
 
-      {% if closed.length > 0 %}
+
+      {% if closedAlakajam.length > 0 %}
       <div class="events-block events-block__closed">
-        <h3>Past events</h3>
-        {% for event in closed %}
+        <h2><img src="{{ rootUrl }}/static/images/favicon32.png" />&nbsp;Past Alakajam! events</h2>
+        {% for event in closedAlakajam %}
           {{ eventTable(event, featuredEntries[event.get('id')]) }}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if closedOther.length > 0 %}
+      <div class="events-block events-block__closed">
+        <h2><img src="{{ rootUrl }}/static/images/favicon32.png" />&nbsp;Other past events</h2>
+        {% for event in closedOther %}
+          {{ eventTable(event, featuredEntries[event.get('id')], { noResults: true }) }}
         {% endfor %}
       </div>
       {% endif %}
@@ -40,30 +50,49 @@
 {% endblock %}
 
 
-{% macro eventTable(event, featuredEntries) %}
+{% macro eventTable(event, featuredEntries, options = {}) %}
 
-{{ eventMacros.eventTable(event, { neutralStatus: true }) }}
-{% if featuredEntries.solo or featuredEntries.ranked %}
-<div class="events-block__entries">
-  <div class="row">
-    <div class="col-sm-6">
-    {% for entry in (featuredEntries.solo or featuredEntries.ranked) %}
-      <div class="events-block__entry">
-        {{ eventMacros.entrySmallThumb(entry) }}
-        <span class="entry-results__category-medal medal{{ loop.index }}"></span>
+<div class="event-table {{ event.get('status') }}">
+  <div class="event-table__header">
+    <a href="{{ buildUrl(event, 'event') }}" class="event-table__title">
+      {{ event.get('title') }} 
+      {% if event.get('status') !== 'pending' %}
+        <span class="count">({{ event.get('entry_count') }} entries)</span>
+      {% endif %}
+      <div class="event-table__dates">
+        {{ event.get('display_dates') or '(dates unknown)' }}
       </div>
-    {% endfor %}
-    </div>
-    <div class="col-sm-6">
-    {% for entry in featuredEntries.team %}
-      <div class="events-block__entry">
-        {{ eventMacros.entrySmallThumb(entry) }}
-        <span class="entry-results__category-medal medal{{ loop.index }}"></span>
+    </a>
+    {%- if event.get('display_theme') -%}
+      <div class="event-table__theme">
+        <span class="event-table__theme-label">Theme</span>
+        {{ event.get('display_theme') }}
       </div>
-    {% endfor %}
+    {%- endif -%}
+  </div>
+
+  {% if not options.noResults and (featuredEntries.solo or featuredEntries.ranked) %}
+  <div class="event-table__entries">
+    <div class="row">
+      <div class="col-sm-6">
+      {% for entry in (featuredEntries.solo or featuredEntries.ranked) %}
+        <div class="event-table__entry">
+          {{ eventMacros.entrySmallThumb(entry) }}
+          <span class="entry-results__category-medal medal{{ loop.index }}"></span>
+        </div>
+      {% endfor %}
+      </div>
+      <div class="col-sm-6">
+      {% for entry in featuredEntries.team %}
+        <div class="event-table__entry">
+          {{ eventMacros.entrySmallThumb(entry) }}
+          <span class="entry-results__category-medal medal{{ loop.index }}"></span>
+        </div>
+      {% endfor %}
+      </div>
     </div>
   </div>
+  {% endif %}
 </div>
-{% endif %}
 
 {% endmacro %}

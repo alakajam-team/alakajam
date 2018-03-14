@@ -30,18 +30,23 @@
       {% if featuredEvent %}
       <div class="home-jumbo {{ featuredEvent.get('status') }}">
         <div class="event-table">
-          <a href="{{ buildUrl(featuredEvent, 'event') }}" class="event-table__title">
-            {{ featuredEvent.get('title') }}
-            <div class="event-table__dates">
-              {{ featuredEvent.get('display_dates') or '(dates unknown)' }}
+          <div class="event-table__header">
+            <a href="{{ buildUrl(featuredEvent, 'event') }}" class="event-table__title">
+              {{ featuredEvent.get('title') }}
+              <div class="event-table__dates">
+                {{ featuredEvent.get('display_dates') or '(dates unknown)' }}
+              </div>
+            </a>
+            {% if featuredEvent.get('display_theme') %}
+            <div class="event-table__theme hidden-xs">
+              <span class="event-table__theme-label">Theme</span>
+              {{ featuredEvent.get('display_theme') }}
             </div>
-          </a>
-          {% if featuredEvent.get('display_theme') %}
-          <div class="event-table__theme">
-            <span class="event-table__theme-label">Theme</span>
-            {{ featuredEvent.get('display_theme') }}
+            {% endif %}
           </div>
-          {% endif %}
+          <div class="event-table__theme-mobile visible-xs">
+            Theme: {{ featuredEvent.get('display_theme') }}
+          </div>
         </div>
 
         <div class="home-jumbo__call-container">
@@ -174,7 +179,7 @@
       <div class="home-scheduled-events visible-md visible-lg">
         <div class="horizontal-bar" style="margin-top: 0px; margin-bottom: 10px">
           <span class="fa fa-calendar"></span>
-          <a href="/events">Event calendar</a>
+          Event calendar
         </div>
 
         {% for event in eventSchedule %}
@@ -202,6 +207,9 @@
             </div>
           </div>
         {% endfor %}
+        <div class="home-scheduled-event">
+          <a class="home-scheduled-event__title" href="/events">More...</a>
+        </div>
       </div>
     </div>
   </div>

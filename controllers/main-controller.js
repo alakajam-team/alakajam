@@ -162,7 +162,8 @@ async function events (req, res) {
 
   let pending = []
   let open = []
-  let closed = []
+  let closedAlakajam = []
+  let closedOther = []
 
   let allEventsCollection = await eventService.findEvents()
 
@@ -177,7 +178,12 @@ async function events (req, res) {
         open.push(event)
         break
       default:
-        closed.push(event)
+        if (event.get('status_theme') !== enums.EVENT.STATUS_THEME.DISABLED) {
+          closedAlakajam.push(event)
+        } else {
+          closedOther.push(event)
+        }
+
         if (event.get('status_results') === enums.EVENT.STATUS_RESULTS.RESULTS) {
           let topEntries = await eventService.findGames({
             eventId: event.get('id'),
@@ -203,7 +209,8 @@ async function events (req, res) {
   res.render('events', {
     pending,
     open,
-    closed,
+    closedAlakajam,
+    closedOther,
     featuredEntries
   })
 }
