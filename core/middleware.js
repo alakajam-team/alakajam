@@ -201,7 +201,7 @@ async function configure (app) {
       fields: 1000,
       fileSize: 2 * MB,
       files: 20,
-      parts: 20
+      parts: 2000
     }
   })
   let doParseForm = promisify(function (req, res, uploadInfo, callback) {
