@@ -1,4 +1,5 @@
 const log = require('../core/log')
+const config = require('../config')
 
 exports.up = async function (knex, Promise) {
   await knex.schema.alterTable('tag', function (table) {
@@ -44,6 +45,10 @@ exports.up = async function (knex, Promise) {
       entry_id: entryTag['entry_id'],
       tag_id: entryTag['tag_id']
     })
+  }
+
+  if (config.DB_TYPE === 'postgresql') {
+    await knex.raw("select setval('tag_id_seq1', (SELECT MAX(id) FROM tag) + 1, false)")
   }
 
   // Delete old tables
