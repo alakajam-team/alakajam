@@ -4,7 +4,7 @@
 
 ### March 14th
 
-* Slightly reorganized, more mobile-friendly Events page
+* Slightly reorganize the Events page (now more mobile-friendly)
 
 ### March 5th
 
