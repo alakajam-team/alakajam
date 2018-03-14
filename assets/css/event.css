@@ -50,6 +50,10 @@
     padding-bottom: 0;
     margin-bottom: 0;
   }
+
+  &__live {
+    color: var(--alt-dark);
+  }
 }
 
 .event-table {

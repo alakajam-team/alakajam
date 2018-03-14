@@ -9,7 +9,7 @@
       <h1>Events <span class="count">({{ open.length + pending.length + closedAlakajam.length + closedOther.length }})</span></h1>
       {% if open.length > 0 %}
       <div class="events-block events-block__live">
-        <h2>On now!</h2>
+        <h2><span class="fa fa-play-circle"></span> On now!</h2>
         {% for event in open %}
           {{ eventTable(event, featuredEntries[event.get('id')]) }}
         {% endfor %}
@@ -56,7 +56,7 @@
   <div class="event-table__header">
     <a href="{{ buildUrl(event, 'event') }}" class="event-table__title">
       {{ event.get('title') }} 
-      {% if event.get('status') !== 'pending' %}
+      {% if event.get('status') === 'closed' %}
         <span class="count">({{ event.get('entry_count') }} entries)</span>
       {% endif %}
       <div class="event-table__dates">
