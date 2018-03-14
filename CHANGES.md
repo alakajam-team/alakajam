@@ -2,6 +2,10 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### March 14th
+
+* Slightly reorganized, more mobile-friendly Events page
+
 ### March 5th
 
 * Let users subscribe to comment threads
