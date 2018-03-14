@@ -132,16 +132,19 @@ $('#js-platforms').select2()
       },
       cache: true
     },
-    createSearchChoice: function(params, data) {
-      // allow manually entered text in drop down
-      if (!disableCustomTags) {
-        var matchingResults = $(data).filter(function() {
-          return this.value.toLowerCase().localeCompare(params.term.trim().toLowerCase()) === 0;
-        })
-        if (matchingResults.length === 0) {
-          return { id: term, value: params.term };
-        }
+    createTag: function(tag) {
+      if (tag.term.indexOf('[NEW]') === -1) {
+        return {
+            id: tag.term,
+            text: tag.term + " [NEW]"
+        };
+      } else {
+        return null;
       }
+    },
+    escapeMarkup: function(m) {
+      return jQuery.fn.select2.defaults.defaults.escapeMarkup(m)
+          .replace('[NEW]', '<strong><i>(new tag)</i></strong>');
     },
     tags: !disableCustomTags,
     sortResults: sortSelect2Results,

@@ -590,20 +590,25 @@ if ($externalEventInput.length > 0) {
       },
       cache: true
     },
+    createTag: function(tag) {
+      if (tag.term.indexOf('[NEW]') === -1) {
+        return {
+            id: tag.term,
+            text: tag.term + " [NEW]"
+        };
+      } else {
+        return null;
+      }
+    },
+    escapeMarkup: function(m) {
+      return jQuery.fn.select2.defaults.defaults.escapeMarkup(m)
+          .replace('[NEW]', '<strong><i>(new event)</i></strong>');
+    },
     minimumInputLength: 3,
     maximumInputLength: 255,
     allowClear: true,
     placeholder: '',
-    tags: true,
-    createSearchChoice: function(params, data) {
-      // allow manually entered text in drop down
-      var matchingResults = $(data).filter(function() {
-        return this.text.toLowerCase().localeCompare(params.term.trim().toLowerCase()) === 0;
-      })
-      if (matchingResults.length === 0) {
-        return { id: params.term, text: params.term };
-      }
-    },
+    tags: true
   })
 }
 </script>
