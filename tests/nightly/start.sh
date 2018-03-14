@@ -7,6 +7,7 @@ cat server.pid | xargs kill -TERM
 
 # Update sources and reset data
 rm -r ../../data
+git checkout -- .
 git pull
 npm install
 
