@@ -98,6 +98,7 @@ async function setEntryPlatforms (entry, platforms, { updateEntry = true }) {
   const entryId = entry.get('id')
   const nameList = JSON.stringify(platforms.map(p => p.get('name')))
   const platformIds = platforms.map(p => p.id)
+
   return db.knex.transaction(async function (transaction) {
     const existingIds = (
       await transaction('entry_platform')

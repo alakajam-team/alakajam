@@ -67,16 +67,17 @@ async function createTag (value) {
  */
 async function updateEntryTags (entry, tagInfo) {
   const entryId = entry.get('id')
-  return db.knex.transaction(async function (transaction) {
-    // Create missing tags
-    let tagIds = tagInfo.map(strId => parseInt(strId))
-      .filter(intId => !isNaN(intId) && intId > 0)
-    let tagLabels = tagInfo.filter(label => isNaN(parseInt(label)) && label.trim())
-    for (let tagLabel of tagLabels) {
-      let createdTag = await createTag(tagLabel)
-      tagIds.push(createdTag.get('id'))
-    }
 
+  // Create missing tags
+  let tagIds = tagInfo.map(strId => parseInt(strId))
+    .filter(intId => !isNaN(intId) && intId > 0)
+  let tagLabels = tagInfo.filter(label => isNaN(parseInt(label)) && label.trim())
+  for (let tagLabel of tagLabels) {
+    let createdTag = await createTag(tagLabel)
+    tagIds.push(createdTag.get('id'))
+  }
+
+  return db.knex.transaction(async function (transaction) {
     // Find existing relations
     const existingIds = (
       await transaction('entry_tag')

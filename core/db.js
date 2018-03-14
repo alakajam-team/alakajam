@@ -203,7 +203,7 @@ async function insertInitialData (knex, samples) {
   // Samples
 
   if (samples) {
-    log.info('Inserting samples...')
+    log.info('Inserting samples (this can take a while)...')
 
     // Users
 
@@ -275,17 +275,17 @@ async function insertInitialData (knex, samples) {
     userEntry.set('title', 'Game 1')
     await userEntry.save()
 
-    for (let i = 2; i <= 30; i++) {
+    for (let i = 2; i <= 10; i++) {
       await userService.register('entrant@example.com', 'entrant' + i, 'entrant' + i)
       let otherUser = await userService.findByName('entrant' + i)
       let otherEntry = await eventService.createEntry(otherUser, event2)
       otherEntry.set('title', 'Game ' + i)
       await otherEntry.save()
     }
-    for (let i = 2; i <= 30; i++) {
+    for (let i = 2; i <= 10; i++) {
       let userA = await userService.findByName('entrant' + i)
       for (let j = 1; j <= 10; j++) {
-        let ji = (i + j) % 31
+        let ji = (i + j) % 11
         if (ji < 2) {
           ji = 2
         }
