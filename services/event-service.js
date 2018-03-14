@@ -517,6 +517,7 @@ async function findGames (options = {}) {
             this.where('event.status', enums.EVENT.STATUS.CLOSED).orWhereNull('event.status')
           })
           .orderByRaw('entry_details.ranking_1 ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
+          .orderBy('entry.created_at', 'DESC')
           .orderBy('entry.division')
       })
     } else if (options.eventId !== null) {
