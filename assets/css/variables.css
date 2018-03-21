@@ -5,7 +5,7 @@
 :root {
   /* Main colors */
   
-  --bg: #eee;
+  --bg: #eec;
   --borders: #dadada;
   --text: #1f3038;
   --text-light: color(var(--text) alpha(70%));
@@ -14,15 +14,15 @@
 
   --white-lighter: color(white alpha(90%));
   
-  --main: #00abd6;
+  --main: #1045b7;
   --main-light: color(var(--main) lightness(46%));
   --main-lighter: color(var(--main) alpha(25%));
   --main-lightest: color(var(--main) alpha(10%));
   --main-dark: color(var(--main) lightness(32%));
   --main-transparent: color(var(--main) alpha(10%));
   
-  --alt: #f2536d;
-  --alt-light: #f47171;
+  --alt: #cc7700;
+  --alt-light: #f47122;
   --alt-lighter: color(var(--alt) alpha(25%));
   --alt-lightest: #ffded6;
   --alt-dark: color(var(--alt) lightness(42%));
