@@ -218,7 +218,7 @@
     border-bottom: 0;
   }
 
-  &.main {
+  &.main, &.featured {
     padding: 5px 5px;
   }
 
