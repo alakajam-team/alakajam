@@ -35,6 +35,13 @@ module.exports = {
         include: rootPathTo('static/js'),
         loader: 'babel-loader',
         options: babelOptions
+      },
+      // Remove the massive Unicode table pulled in by the `slug` package.
+      // https://www.npmjs.com/package/slug
+      // https://stackoverflow.com/questions/41873334/webpack-browserify-ignore-equivalent
+      {
+        test: /unicode\/category\/So\.js$/,
+        loader: 'null-loader'
       }
     ]
   },

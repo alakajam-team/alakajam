@@ -1,5 +1,6 @@
 /* eslint-env jquery */
-/* global slug */
+
+const slug = require('slug')
 
 module.exports = function syncSlug (inputSelector) {
   $(inputSelector)
