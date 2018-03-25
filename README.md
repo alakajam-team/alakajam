@@ -14,7 +14,9 @@ There is a default admin user (`administrator`/`administrator`).
 
 ## Developer tools
 
-Prerequisite: `npm install -g knex standard browser-refresh node-inspector jsdoc mocha`
+Prerequisites: `npm install -g knex standard browser-refresh node-inspector jsdoc mocha`
+
+See also [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional developer documentation.
 
 ### Recommended
 
@@ -26,9 +28,7 @@ Prerequisite: `npm install -g knex standard browser-refresh node-inspector jsdoc
 * `node-debug server.js`: Launches the app in debug mode.
 * `npm run-script docs`: Generates the JS documentation in the `docs/` folder.
 * `mocha tests/`: Runs unit tests.
-* `DEBUG=express:*`: Enables debugging of routes & performance (must be set before launching the server)
-
-See also [the wiki](https://github.com/mkalam-alami/wejam/wiki) for additional developer documentation.
+* `DEBUG=express:*`: Enables debugging of routes and performance (must be set before launching the server).
 
 ## How do I...
 
