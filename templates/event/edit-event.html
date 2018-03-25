@@ -5,14 +5,16 @@
 
 <form action="{{ buildUrl(event, 'event', 'edit') }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
 
-  <h1 id="js-title-display"></h1>
+  <h1 id="title-display"></h1>
 
   <div class="horizontal-bar">
     General
   </div>
   <div class="form-group input-group-lg">
     <label for="title">Title</label>
-    <input type="text" class="form-control" id="js-title" name="title" value="{{ event.get('title') if event }}" required="required" />
+    <input type="text" class="form-control js-sync-text" name="title" value="{{ event.get('title') if event }}" required="required"
+      data-sync-text-display-selector="#title-display"
+      data-sync-text-default="My event" />
   </div>
   <div class="form-group">
     <label for="name">Slug</label>
@@ -173,7 +175,6 @@
 {{ formMacros.codeMirrorScripts() }}
 <script src="/static/js/slug.min.js"></script>
 <script>
-  alakajam.common.syncText('#js-title', '#js-title-display', 'My event');
   alakajam.common.syncSlug('#js-title', '#js-name');
 </script>
 {% endblock %}

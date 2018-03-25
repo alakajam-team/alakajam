@@ -1,16 +1,13 @@
 /* eslint-env jquery */
 
-module.exports = function syncText (inputSelector, displaySelector, defaultText = null) {
-  const $input = $(inputSelector)
-  const $display = $(displaySelector)
-
-  function refreshDisplay () {
-    let text = $input.val()
-    if (!text && typeof defaultText === 'string') {
-      text = defaultText
-    }
-    $display.text(text)
-  }
-  $input.on('change keyup', refreshDisplay)
-  refreshDisplay()
+module.exports = function syncText (inputSelector) {
+  $(inputSelector)
+    .on('change keyup', function (event) {
+      const $input = $(event.target)
+      const defaultText = $input.attr('data-sync-text-default')
+      const text = $input.val() || defaultText || ''
+      const $display = $($input.attr('data-sync-text-display-selector'))
+      $display.text(text)
+    })
+    .trigger('change')
 }

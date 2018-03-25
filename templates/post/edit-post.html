@@ -35,7 +35,9 @@
 
     <div class="form-group input-group-lg">
       <label for="title">Title</label>
-      <input type="text" class="form-control" id="title" name="title" value="{{ post.get('title') }}" required="required">
+      <input type="text" class="form-control js-sync-text" name="title" value="{{ post.get('title') }}" required="required"
+        data-sync-text-display-selector="#title-display"
+        data-sync-text-default="{{ specialPostType | capitalize if specialPostType else 'Blog post' }}">
     </div>
 
     <div class="form-group">
@@ -89,7 +91,4 @@
 
 {% block scripts %} 
 {{ formMacros.editorScripts() }}
-<script>
-  alakajam.common.syncText('#title', '#title-display', {{ ( specialPostType | capitalize if specialPostType else 'Blog post' ) | jsonInsideScriptTag }});
-</script>
 {% endblock %}

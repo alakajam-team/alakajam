@@ -13,8 +13,7 @@ window.alakajam = {
   common: {
     datePicker: require('./common/date-picker'),
     tabs: require('./common/tabs'),
-    syncSlug: require('./common/sync-slug'),
-    syncText: require('./common/sync-text')
+    syncSlug: require('./common/sync-slug')
   },
   event: {
     editEventThemes: require('./event/edit-event-themes')
@@ -32,4 +31,5 @@ $(function domReady () {
   require('./common/select')()
   require('./common/show-hide')('.js-show', '.js-hide')
   require('./common/shrink-navbar')()
+  require('./common/sync-text')('.js-sync-text')
 })
