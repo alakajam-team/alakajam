@@ -64,7 +64,7 @@
               </div>
             </div>
             {% if animatedCountdown %}
-              <span class="home-jumbo__countdown js-countdown"></span>
+              <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ featuredEvent.get('countdown_config').date }}"></span>
             {% endif %}
             <span class="fa fa-angle-right home-jumbo__call-arrow"></span>
           </a>
@@ -78,7 +78,7 @@
               </div>
               {% if animatedCountdown %}
                 <div class="col-md-6">
-                  <span class="home-jumbo__countdown js-countdown"></span>
+                  <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ featuredEvent.get('countdown_config').date }}"></span>
                 </div>
               {% endif %}
             </div>
@@ -276,13 +276,4 @@
 
 {% block scripts %}
 {{ formMacros.expandCollapseScripts() }}
-
-{% if featuredEvent and featuredEvent.get('countdown_config').enabled %}
-  <script type="text/javascript" src="/static/js/flipclock.min.js"></script>
-  <script type="text/javascript">
-    alakajam.countdown('.js-countdown', {{ featuredEvent.get('countdown_config').date | jsonInsideScriptTag }});
-  </script>
-{% endif %}
-
 {% endblock %}
-

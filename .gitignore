@@ -5,6 +5,7 @@ config.js
 # Generated output
 static/css/
 static/js/site.js
+static/js/site.js.map
 
 # Docs
 docs/*.html

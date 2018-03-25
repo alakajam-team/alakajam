@@ -16,8 +16,7 @@ window.alakajam = {
   },
   event: {
     editEventThemes: require('./event/edit-event-themes')
-  },
-  countdown: require('./countdown')
+  }
 }
 
 $(function domReady () {
@@ -32,4 +31,5 @@ $(function domReady () {
   require('./common/shrink-navbar')()
   require('./common/sync-text')('.js-sync-text')
   require('./common/sync-slug')('.js-sync-slug')
+  require('./countdown')('.js-countdown')
 })
