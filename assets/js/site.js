@@ -19,9 +19,6 @@ window.alakajam = {
   event: {
     editEventThemes: require('./event/edit-event-themes')
   },
-  post: {
-    editPost: require('./post/edit-post')
-  },
   countdown: require('./countdown')
 }
 
@@ -33,5 +30,6 @@ $(function domReady () {
   require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes', { autoSubmit: '.js-auto-submit' })
   require('./common/lazy-images')('.js-lazy, .user-contents img')
   require('./common/select')()
+  require('./common/show-hide')('.js-show', '.js-hide')
   require('./common/shrink-navbar')()
 })

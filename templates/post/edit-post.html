@@ -64,7 +64,7 @@
         <input type="submit" class="btn btn-primary" name="publish" value="Save and publish now" />
         <input type="submit" class="btn btn-default" name="save-draft" value="Save draft" />
         {% endif %}
-        <input id="schedule-show" type="button" class="btn btn-default" name="save" value="Schedule..." />
+        <input type="button" class="btn btn-default js-show js-hide" name="save" value="Schedule..." data-show-selector=".post__schedule" data-hide-selector=".post__actions" />
         <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
       </div>
       <div class="col-xs-8 post__schedule text-right form-inline">
@@ -74,7 +74,7 @@
         </div>
         <div class="form-group">
           <input type="submit" class="btn btn-primary" name="save-custom" value="Schedule" />
-          <input id="schedule-hide" type="button" class="btn btn-default" value="Back..." />
+          <input type="button" class="btn btn-default js-show js-hide" value="Back..." data-show-selector=".post__actions" data-hide-selector=".post__schedule" />
         </div>
       </div>
     </div>
@@ -90,7 +90,6 @@
 {% block scripts %} 
 {{ formMacros.editorScripts() }}
 <script>
-  alakajam.post.editPost.toggleShowHide('#schedule-show', '#schedule-hide', '.post__schedule', '.post__actions');
   alakajam.common.syncText('#title', '#title-display', {{ ( specialPostType | capitalize if specialPostType else 'Blog post' ) | jsonInsideScriptTag }});
 </script>
 {% endblock %}
