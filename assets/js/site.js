@@ -12,9 +12,6 @@ require('babel-polyfill')
 window.alakajam = {
   common: {
     datePicker: require('./common/date-picker')
-  },
-  event: {
-    editEventThemes: require('./event/edit-event-themes')
   }
 }
 
@@ -27,6 +24,7 @@ $(function domReady () {
   require('./common/lazy-images')('.js-lazy, .user-contents img')
   require('./common/select')()
   require('./common/show-hide')('.js-show', '.js-hide')
+  require('./common/show-if-nonempty')('.js-show-if-nonempty')
   require('./common/shrink-navbar')()
   require('./common/sync-text')('.js-sync-text')
   require('./common/sync-slug')('.js-sync-slug')

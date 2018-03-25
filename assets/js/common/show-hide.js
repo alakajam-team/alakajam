@@ -1,8 +1,8 @@
 /* eslint-env jquery */
 
 /**
- * Sets up event listeners that show/hide elements, based on a selector stored
- * in a data attribute.
+ * Sets up event listeners that show/hide elements on click, based on a
+ * selector stored in a data attribute.
  */
 module.exports = function init (showButtonSelector, hideButtonSelector) {
   $(showButtonSelector).click(function (event) {

@@ -55,7 +55,15 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="start-date">Start date {{ formMacros.tooltip('Specify when the first of the shortlisted themes is eliminated. Eliminations will stop when 3 themes remain. If the date is unset, feature is disabled.') }}</label>
-        {{ formMacros.dateTimePicker('elimination-start-date', eventDetails.get('shortlist_elimination').start) }}
+        {{
+          formMacros.dateTimePicker(
+            'elimination-start-date',
+            eventDetails.get('shortlist_elimination').start,
+            {
+              classes: 'js-show-if-nonempty',
+              attrs: { 'data-show-if-nonempty-selector': '#elimination-details' }
+            })
+          }}
       </div>
     </div>
     <div class="col-md-6">
@@ -125,7 +133,4 @@
 
 {% block scripts %}
 {{ formMacros.editorScripts() }}
-<script type="text/javascript">
-  alakajam.event.editEventThemes.initEliminationDetails()
-</script>
 {% endblock %}
