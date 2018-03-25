@@ -18,7 +18,7 @@
     </ul>
     {% for votesCategory in votesPerCategory %}
       {% set categoryIndex = loop.index %}
-      <div id="js-tab-{{ votesCategory.title }}" class="js-tab event-ratings__tab" style="{{ 'display: none' if categoryIndex > 1 }}">
+      <div id="js-tab-{{ votesCategory.title }}" class="js-tab event-ratings__tab {{ 'js-tab-active' if categoryIndex === 1 }}">
         <div class="row">
           {% for division, votes in votesCategory.votesPerDivision %}
             <div class="col-sm-6">
@@ -43,14 +43,4 @@
   </div>
 </div>
 
-{% endblock %}
-
-{% block scripts %}
-<script type="text/javascript">
-  alakajam.common.tabs.init({
-    buttonContainerSelector: '.js-tab-container',
-    buttonSelector: '.js-tab-button',
-    tabSelector: '.js-tab'
-  });
-</script>
 {% endblock %}

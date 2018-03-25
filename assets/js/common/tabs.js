@@ -1,6 +1,10 @@
 /* eslint-env jquery */
 
-function init (options) {
+/**
+ * Interactivity for a set of tabs, exactly one of which is visible at any time.
+ * XXX: the current implementation permits only one set of tabs per page.
+ */
+module.exports = function tabs (options) {
   const { buttonContainerSelector, buttonSelector, tabSelector } = options
   $(buttonSelector).click(function () {
     var $this = $(this)
@@ -8,11 +12,8 @@ function init (options) {
 
     $(buttonContainerSelector).removeClass('active')
     $this.parent(buttonContainerSelector).addClass('active')
-    $(tabSelector).hide()
-    $(activeTabSelector).show()
+    $(tabSelector).removeClass('js-tab-active')
+    $(activeTabSelector).addClass('js-tab-active')
   })
-}
-
-module.exports = {
-  init
+  $(buttonSelector).eq(0).click()
 }

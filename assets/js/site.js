@@ -11,8 +11,7 @@ require('babel-polyfill')
 
 window.alakajam = {
   common: {
-    datePicker: require('./common/date-picker'),
-    tabs: require('./common/tabs')
+    datePicker: require('./common/date-picker')
   },
   event: {
     editEventThemes: require('./event/edit-event-themes')
@@ -31,5 +30,6 @@ $(function domReady () {
   require('./common/shrink-navbar')()
   require('./common/sync-text')('.js-sync-text')
   require('./common/sync-slug')('.js-sync-slug')
+  require('./common/tabs')({ buttonContainerSelector: '.js-tab-container', buttonSelector: '.js-tab-button', tabSelector: '.js-tab' })
   require('./countdown')('.js-countdown')
 })

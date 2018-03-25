@@ -305,11 +305,22 @@ input.date-picker {
 }
 
 /* Warning box */
-
 .warning-box {
   @apply --shadow;
   padding: 10px;
   background-color: var(--moderation);
   color: var(--moderation-text);
   border-radius: 4px;
+}
+
+/* Hide all tabs except the active one. */
+/* XXX: this makes tabs inaccessible if JavaScript is disabled. It would be
+ * better to turn tabs into regular flowing text inside a <noscript> element,
+ * and have JavaScript pull them out and put them into the right structure for
+ * display. Or perhaps have some CSS inside a <noscript> tag? */
+.js-tab {
+  display: none;
+  &.js-tab-active {
+    display: block;
+  }
 }
