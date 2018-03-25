@@ -9,12 +9,6 @@
 // see: https://babeljs.io/docs/plugins/preset-env#optionsuse-built-ins
 require('babel-polyfill')
 
-window.alakajam = {
-  common: {
-    datePicker: require('./common/date-picker')
-  }
-}
-
 $(function domReady () {
   require('./common/date-picker')('.js-date-picker')
   require('./common/disabled-links')('a.disabled')
