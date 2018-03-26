@@ -10,15 +10,15 @@
     <div class="entry-thumb__picture js-lazy" data-src="{{ pictureUrl(picturePath, entry) if picturePath else '/static/images/default-entry.png' }}">
       {% if not options.hideMedals %}
         <div class="entry-medals">
-          {% set details = entry.related('details') %}
-          {% if details %}
-          {% for categoryIndex in range(1, 7) %}
-            {% set ranking = details.get('ranking_' + categoryIndex) %}
-            {% if ranking and ranking <= 3 %}
+          {%- set details = entry.related('details') -%}
+          {%- if details -%}
+          {%- for categoryIndex in range(1, 7) -%}
+            {%- set ranking = details.get('ranking_' + categoryIndex) -%}
+            {%- if ranking and ranking <= 3 -%}
               <span class="entry-results__category-medal medal-category-{{categoryIndex}} medal-ranking-{{ranking}}"></span>
-            {% endif %}
-          {% endfor %}
-          {% endif %}
+            {%- endif %}
+          {%- endfor -%}
+          {%- endif -%}
         </div>
       {% endif %}
       <div class="entry-thumb__picture-gradient"></div>
