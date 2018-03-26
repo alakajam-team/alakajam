@@ -360,7 +360,7 @@ function setTeamMembers (currentUser, entry, userIds) {
           invited_user_title: toCreateUserRow.title || toCreateUserRow.name,
           permission: constants.PERMISSION_WRITE
         })
-        await invite.save()
+        await invite.save(null, { transacting: transaction })
 
         if (toCreateUserRow.id === currentUser.get('id')) {
           acceptInvite(currentUser, entry)
@@ -477,7 +477,7 @@ async function deleteEntry (entry) {
 
   await db.transaction(async function (t) {
     // Delete user roles manually (because no cascading)
-    await entry.load('userRoles')
+    await entry.load('userRoles', { transacting: t })
     entry.related('userRoles').each(function (userRole) {
       userRole.destroy({ transacting: t })
     })
