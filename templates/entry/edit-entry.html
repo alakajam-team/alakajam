@@ -117,7 +117,7 @@
           <div class="col-md-6">
             <div class="form-group">
               <label for="title">External event name</label>
-              <select id="external-event" class="form-control" name="external-event">
+              <select class="form-control js-entry-external-event" name="external-event">
                 {% if entry.get('external_event') %}
                   <option  value="{{ entry.get('external_event') }}">{{ entry.get('external_event') }}</option>
                 {% endif %}
@@ -323,52 +323,5 @@
 {{ formMacros.editorScripts() }}
 {{ formMacros.radioScripts() }}
 <script type="text/javascript" src="/static/js/select2.full.min.js"></script>
-<script>
-  // External event name auto-completion
-
-  var $externalEventInput = $('#external-event')
-
-  if ($externalEventInput.length > 0) {
-    $externalEventInput.select2({
-      ajax: {
-        url: '/events/ajax-find-external-event',
-        dataType: 'json',
-        delay: 500,
-        data: function (params) {
-          return {
-            name: params.term
-          }
-        },
-        processResults: function (data, params) {
-          return {
-            results: data.map(function (string) {
-              return { id: string, text: string }
-            })
-          }
-        },
-        cache: true
-      },
-      createTag: function(tag) {
-        if (tag.term.indexOf('[NEW]') === -1) {
-          return {
-              id: tag.term,
-              text: tag.term + " [NEW]"
-          };
-        } else {
-          return null;
-        }
-      },
-      escapeMarkup: function(m) {
-        return jQuery.fn.select2.defaults.defaults.escapeMarkup(m)
-            .replace('[NEW]', '<strong><i>(new event)</i></strong>');
-      },
-      minimumInputLength: 3,
-      maximumInputLength: 255,
-      allowClear: true,
-      placeholder: '',
-      tags: true
-    })
-  }
-</script>
 {{ gamesSearchMacros.gameTagJsSelect() }}
 {% endblock %}

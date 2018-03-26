@@ -27,6 +27,7 @@ $(function domReady () {
   require('./countdown')('.js-countdown')
 
   require('./entry/edit-entry-division')()
+  require('./entry/edit-entry-external')()
   require('./entry/edit-entry-links')()
   require('./entry/edit-entry-platforms')()
   require('./entry/edit-entry-team')()
