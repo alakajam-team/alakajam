@@ -801,5 +801,6 @@ async function ajaxSaveVote (req, res) {
     let score = (fields['upvote'] !== undefined) ? 1 : -1
     await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['id']), score)
   }
+  res.type('text/plain') // Keeps Firefox from parsing the empty response as XML and logging an error.
   res.end('')
 }
