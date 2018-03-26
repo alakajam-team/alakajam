@@ -87,7 +87,7 @@
 {% block body %}
 
 <div class="container">
-  <form id="js-form" action="{{ buildUrl(entry, 'entry', 'create-entry' if not entry.get('id') else 'edit') }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
+  <form id="js-edit-entry-form" action="{{ buildUrl(entry, 'entry', 'create-entry' if not entry.get('id') else 'edit') }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
 
     <div class="row">
       <div class="col-md-12">
@@ -142,7 +142,8 @@
 
         <label for="division">Division {{ formMacros.tooltip(divisionTooltip) if not external }}</label>
         <div>
-          <div id="js-entry-divisions" class="entry__divisions toggle" data-toggle="buttons">
+          <div class="entry__divisions toggle js-entry-divisions" data-toggle="buttons"
+               data-initial-division="{{ entry.get('division') | default('solo') }}">
             {% if not external %}
               {% for name, description in event.get('divisions') %}
                 {{ divisionButton(name|capitalize, description, constants.DIVISION_ICONS[name], name,
@@ -156,7 +157,9 @@
             {% endif %}
           </div>
           
-          <div id="edit-team" class="{{ 'hidden' if entry.get('division') === 'solo' }}">
+          <div id="edit-team" class="{{ 'hidden' if entry.get('division') === 'solo' }} js-edit-entry-team"
+              data-find-team-mate-url="{{ buildUrl(event, 'event', 'ajax-find-team-mate') }}"
+              data-entry-id="{{ entry.get('id') or '' }}">
             <div id="result-box" class="form-group" style="display:none;">
               <h3 id="result-msg"></h3>
               <ul id="conflict-list" style="display:none;"></ul>
@@ -166,7 +169,7 @@
 
             <div class="form-group">
               <label for="members">Team members {{ formMacros.tooltip('You can leave the team at the bottom of this form.') if not isEntryOwner }}</label>
-              <select name="members" class="bigdrop" id="search-members" multiple="multiple" {{ 'readonly' if not isEntryOwner }}
+              <select name="members" class="bigdrop js-search-members" multiple="multiple" {{ 'readonly' if not isEntryOwner }}
                 title="{{ 'Only the entry owner can change this setting. You can leave the team at the bottom of this form.' if not isEntryOwner }}">
                 {% for member in members %}
                   <option value="{{ member.id }}" data-locked="{{ member.locked }}" data-invite="{{ member.invite }}" data-avatar="{{ member.avatar }}" selected>{{ member.text }}</option>
@@ -301,7 +304,7 @@
 
 {% macro divisionButton(title, legend, icon, value, currentValue, canEditDivision, tooltipMessage) %}
   {% if canEditDivision %}
-    <label class="btn entry-division {{ 'active' if value === currentValue }}">
+    <label class="btn entry-division js-division-button {{ 'active' if value === currentValue }}">
       <div class="fa fa-{{ icon }}"></div>
       <input type="radio" name="division" value="{{ value }}" autocomplete="off" {{ 'checked' if value === currentValue }}>
       {{ title }}
@@ -321,15 +324,7 @@
 {{ formMacros.radioScripts() }}
 <script type="text/javascript" src="/static/js/select2.full.min.js"></script>
 <script>
-  function sortSelect2Items (a, b) {
-    if (a.text < b.text) return -1;
-    if (a.text > b.text) return 1;
-    return 0;
-  }
-
-  function sortSelect2Results (results) {
-    return results.sort(sortSelect2Items)
-  }
+  // Platforms
 
   $(function() {
     function toValue (name) {
@@ -352,161 +347,6 @@
       formatResult: format,
       formatSelection: format
     })
-  })
-
-  // Team toggle behaviour
-
-  var initialDivision = "{{ entry.get('division') }}" || "solo"
-  $('#js-entry-divisions label').each(function(i, el) {
-    el = $(el)
-    var input = el.find('input')
-    var active = input.val() === initialDivision
-    input.prop('checked', active)
-    el.toggleClass('active', active)
-  })
-  $('.toggle label').click(function(ev) {
-    $('#edit-team').toggleClass('hidden', $(this).find('input').val() === 'solo')
-    $('#edit-optouts').toggleClass('hidden', $(this).find('input').val() === 'unranked')
-  })
-
-  // Show warning upon not being a team entry anymore
-
-  $('#js-form').submit(function (ev) {
-    if (initialDivision !== 'solo' && $('input[name="division"]:checked').val() === 'solo'
-        && !confirm('You are about to switch to a Solo entry. All team members will be removed. Continue?')) {
-      ev.preventDefault()
-    }
-  })
-
-  // Team management
-
-  ;(function() {
-    var eRemovedMsg = $('#removed-msg'),
-        eAddedMsg = $('#added-msg'),
-        eConflictList = $('#conflict-list'),
-        eResultMsg = $('#result-msg'),
-        eResultBox = $('#result-box'),
-        eForm = $('#edit-team')
-        eSelect = $('#search-members')
-        savingCls = 'saving'
-
-    function toId (obj) {
-      return obj.id
-    }
-
-    function plural (sing, pl, count) {
-      return count === 1 ? sing : pl
-    }
-
-    function result (opt) {
-      if (!opt) {
-        return eResultBox.hide()
-      }
-      eResultBox.show().toggleClass('error', !!opt.error)
-      eResultMsg.text(opt.message)
-      eConflictList.html($.map(opt.conflicts || [], function(c) {
-        return '<li class="conflict">' + c.user_title + '</li>'
-      })).toggle(opt.conflicts.length > 0)
-      eRemovedMsg.toggle(!!opt.removed).text('(' + opt.removed + ' ' + plural('user', 'users', opt.removed) + ' removed)')
-      eAddedMsg.toggle(!!opt.added).text('(' + opt.added + ' ' + plural('user', 'users', opt.added) + ' added)')
-    }
-
-    function format (user, container) {
-       if (user.element && $(user.element).attr('data-avatar') !== undefined) {
-        var $option = $(user.element)
-        user.avatar = $option.attr('data-avatar')
-        user.locked = $option.attr('data-locked') === 'true'
-        user.invite = $option.attr('data-invite') === 'true'
-      }
-
-      if (user.locked || eSelect.attr('readonly')) {
-        $(container).addClass('select2-locked') /* Select2 hack to support locking tags from deletion (not supported yet in v4) */
-      }
-      const avatarUrl = user.avatar || '/static/images/default-avatar.png'
-      return $(['<div class="member">',
-            '<div class="member-avatar">',
-              '<img class="avatar" src="', avatarUrl, '" alt="', user.text, '" />', 
-            '</div>',
-            '<div class="member-info">',
-              '<div class="username">', user.text, '</div>',
-              user.locked ? '<div class="tag owner-tag">Owner</div>' : '',
-              user.invite ? '<div class="tag">Pending invite</div>' : '',
-              '<div class="tag unavailable-tag">Has a game already</div>',
-            '</div>',
-          '</div>']
-        .join(''))
-    }
-
-    function isDirty () {
-      return arraysEqual(members.map(toId).sort(), eSelect.select2('val').sort())
-    }
-
-    function arraysEqual (a, b) {
-      var len = a.length, i
-      if (len !== b.length) {
-        return false
-      }
-      a.sort()
-      b.sort()
-      for (i = 0; i < len; ++i) {
-        if (a[i] !== b[i]) {
-          return false
-        }
-      }
-      return true
-    }
-
-    eSelect.select2({
-      multiple: true,
-      ajax: {
-        url: "{{ buildUrl(event, 'event', 'ajax-find-team-mate') }}",
-        dataType: 'json',
-        delay: 500,
-        data: function (params) {
-          return {
-            name: params.term,
-            entryId: {{ entry.get('id') or "''" | safe }}
-          }
-        },
-        processResults: function (data, params) {
-          $.each(data.matches, function(i, m) {
-            m.disabled = (m.status === 'unavailable')
-          })
-          return {
-            results: data.matches
-          }
-        },
-        cache: true
-      },
-      initSelection: function(elem, cb) {
-        var results = []
-        $(elem).children().each(function (i, option) {
-          var $option = $(option)
-          results.push({
-            id: $option.val(),
-            text: $option.text(),
-            avatar: $option.attr('data-avatar'),
-            locked: $option.attr('data-locked') === "true",
-            invite: $option.attr('data-invite') === "true"
-          })
-        })
-        cb(results)
-      },
-      sortResults: sortSelect2Results,
-      placeholder: '',
-      width: "100%",
-      allowClear: false,
-      minimumInputLength: 3,
-      templateResult: format,
-      templateSelection: format,
-      dropdownCssClass: 'edit-team-dropdown'
-    })
-  })()
-
-  eSelect.on('select2:unselecting', function(e) {
-    if ($(e.params.args.data.element).attr('data-locked') === 'true') {
-      return false
-    }
   })
 
   // External event name auto-completion
