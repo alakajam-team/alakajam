@@ -31,6 +31,7 @@ $(function domReady () {
   require('./entry/edit-entry-links')()
   require('./entry/edit-entry-platforms')()
   require('./entry/edit-entry-team')()
+  require('./entry/view-entry-voting')()
 
   require('./event/theme-ideas')()
   require('./event/theme-votes')()
