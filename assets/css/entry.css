@@ -16,6 +16,7 @@
   position: relative;
 
   &__picture {
+    position: relative;
     display: block;
     height: 150px;
     width: 100%;
@@ -23,7 +24,6 @@
     background-size: cover;
     background-position: center;
     transition: 0.3s;
-
   }
   & a:hover &__picture {
     border: 4px solid var(--alt);
@@ -57,8 +57,7 @@
   &__picture-gradient {
     height: 100%;
     width: 100%;
-    background: linear-gradient(to bottom,
-      transparent 0%, transparent 40%, rgba(0,0,0,0.25) 100%);
+    background: linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(0,0,0,0.25) 100%);
   }
 
   &__details {
@@ -189,9 +188,11 @@
 
   &__picture {
     @apply --shadow;
+    position: relative;
     margin-bottom: 20px;
     text-align: center;
     background-color: var(--text);
+    min-height: 40px; /* for medals */
 
     &.empty {
       background-color: var(--main-dark);
@@ -386,5 +387,24 @@
   &__score-big-number {
     font-size: 1.3rem;
     font-weight: bold;
+  }
+}
+
+.entry-medals {
+  position: absolute;
+  height: 40px;
+  bottom: 0;
+  overflow: hidden;
+  background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 100%);
+  padding: 5px;
+
+  & .entry-results__category-medal {
+    position: static;
+    display: inline-block;
+    margin-right: -6px;
+  }
+
+  &:empty {
+    display: none;
   }
 }

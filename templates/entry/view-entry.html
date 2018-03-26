@@ -36,6 +36,21 @@
         {% else %}
         <img src="/static/images/default-entry.png" style="padding: 20px" />
         {% endif %}
+        {% if event and event.get('status_results') === 'results' and entry.get('division') !== 'unranked' %}
+        <div class="entry-medals">
+          {%- set details = entry.related('details') -%}
+          {%- if details -%}
+          {%- for categoryIndex in range(1, 7) -%}
+            {%- set ranking = details.get('ranking_' + categoryIndex) -%}
+            {%- if ranking and ranking <= 3 -%}
+              <a href="#results">
+                <span class="entry-results__category-medal medal-category-{{categoryIndex}} medal-ranking-{{ranking}}"></span>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- endif -%}
+        </div>
+        {% endif %}
       </div>
       {% if entry.related('details').get('body') %}
       <div class="well post user-contents">
@@ -110,7 +125,7 @@
 
       {% if event and event.get('status_results') === 'results' and entry.get('division') !== 'unranked' %}
       <div class="entry-results">
-        <h2 class="entry-results__header">Voting results</h2>
+        <h2 class="entry-results__header"><a name="results"></a>Voting results</h2>
         <div class="entry-results__body">
           <p>
           {% set hasRatings = false %}
@@ -128,7 +143,7 @@
                 <div class="entry-results__category-ranking">
                   <a href="{{ buildUrl(event, 'event', 'results') }}?sortBy={{ categoryIndex }}&amp;division={{ entry.get('division') }}">
                     {% if ranking <= 3 %}
-                      <span class="entry-results__category-medal medal{{ranking}}"></span>
+                      <span class="entry-results__category-medal medal-category-{{categoryIndex}} medal-ranking-{{ranking}}"></span>
                     {% endif %}
                     {{ ranking | ordinal }}
                   </a>

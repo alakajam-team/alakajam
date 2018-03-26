@@ -139,6 +139,8 @@
     right: 50px;
     top: 0;
     width: 32px;
+
+    /* Neutral medals */
     &.medal1 {
       background-position: -64px -112px;
     }
@@ -147,6 +149,35 @@
     }
     &.medal3 {
       background-position: -64px -176px;
+    }
+
+    /* Per-rating-category medals */
+    &.medal-category-1 {
+      background-position-y: -240px;
+    }
+    &.medal-category-2 {
+      background-position-y: -273px;
+    }
+    &.medal-category-3 {
+      background-position-y: -307px;
+    }
+    &.medal-category-4 {
+      background-position-y: -341px;
+    }
+    &.medal-category-5 {
+      background-position-y: -375px;
+    }
+    &.medal-category-6 {
+      background-position-y: -409px;
+    }
+    &.medal-ranking-1 {
+      background-position-x: -133px;
+    }
+    &.medal-ranking-2 {
+      background-position-x: -167px;
+    }
+    &.medal-ranking-3 {
+      background-position-x: -201px;
     }
   }
 
