@@ -23,5 +23,10 @@ $(function domReady () {
   require('./common/sync-text')('.js-sync-text')
   require('./common/sync-slug')('.js-sync-slug')
   require('./common/tabs')({ buttonContainerSelector: '.js-tab-container', buttonSelector: '.js-tab-button', tabSelector: '.js-tab' })
+
   require('./countdown')('.js-countdown')
+
+  require('./event/theme-ideas')()
+  require('./event/theme-votes')()
+  require('./event/theme-shortlist')()
 })

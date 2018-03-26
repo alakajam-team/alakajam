@@ -60,6 +60,7 @@
     "sanitize-html": "^1.14.1",
     "showdown": "^1.6.4",
     "slug": "^0.9.1",
+    "sortablejs": "^1.7.0",
     "sqlite3": "^3.1.13",
     "striptags": "^3.0.1",
     "uglifyjs-webpack-plugin": "^1.1.1",
