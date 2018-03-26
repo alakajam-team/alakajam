@@ -282,13 +282,13 @@
   <% for (var i in links) { %>
     <div class="row" style="margin-bottom: 5px">
       <div class="col-xs-3">
-        <input type="text" name="label<%= i %>" class="js-link-label form-control" data-row="<%= i %>" placeholder="Label" value="<%= links[i].label %>" />
+        <input type="text" name="label<%- i %>" class="js-link-label form-control" data-row="<%- i %>" placeholder="Label" value="<%- links[i].label %>" />
       </div>
       <div class="col-xs-8">
-        <input type="url" class="js-link-url form-control" data-row="<%= i %>" name="url<%= i %>" placeholder="URL" value="<%= links[i].url %>">
+        <input type="url" class="js-link-url form-control" data-row="<%- i %>" name="url<%- i %>" placeholder="URL" value="<%- links[i].url %>">
       </div>
       <div class="col-xs-1">
-        <input type="button" class="js-remove-link btn btn-sm" data-row="<%= i %>" value="x" />
+        <input type="button" class="js-remove-link btn btn-sm" data-row="<%- i %>" value="x" />
       </div>
     </div>
   <% } %>

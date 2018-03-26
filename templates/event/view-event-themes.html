@@ -248,12 +248,12 @@
   <tr><td class="theme-vote__buttons">
     <form id="js-vote-form" method="post">
       <input type="hidden" name="action" value="vote" />
-      <input type="hidden" name="theme-id" id="js-theme-id" value="<%= theme.id %>" />
+      <input type="hidden" name="theme-id" id="js-theme-id" value="<%- theme.id %>" />
       <button id="js-upvote" name="upvote" class="btn btn-default"><span class="glyphicon glyphicon-arrow-up"></span></button>
       <button id="js-downvote" name="downvote" class="btn btn-default"><span class="glyphicon glyphicon-arrow-down"></span></button>
     </form>
   </td><td id="js-theme-title" class="theme-vote__label">
-    <%= theme.title %>
+    <%- theme.title %>
   </td></tr>
   </table>
   <% } else { %>
@@ -274,12 +274,12 @@
       <tr><td class="theme-past__buttons">
         <form method="post">
           <input type="hidden" name="action" value="vote" />
-          <input type="hidden" name="theme-id" value="<%= theme.id %>" />
-          <button name="upvote" class="btn <%= theme.upvote ? 'btn-success' : 'btn-default' %> btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
-          <button name="downvote" class="btn <%= theme.downvote ? 'btn-danger' : 'btn-default' %> btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
+          <input type="hidden" name="theme-id" value="<%- theme.id %>" />
+          <button name="upvote" class="btn <%- theme.upvote ? 'btn-success' : 'btn-default' %> btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
+          <button name="downvote" class="btn <%- theme.downvote ? 'btn-danger' : 'btn-default' %> btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></button>
         </form>
       </td><td class="theme-past__label">
-        <%= theme.title %>
+        <%- theme.title %>
       </td></tr>
       </table>
     </div>
