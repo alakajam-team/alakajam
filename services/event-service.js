@@ -385,7 +385,7 @@ async function acceptInvite (user, entry) {
     let invite = await models.EntryInvite.where({
       entry_id: entry.get('id'),
       invited_user_id: user.get('id')
-    }).fetch()
+    }).fetch({ transacting: transaction })
 
     if (invite) {
       // Check if the user role exists yet
@@ -393,7 +393,7 @@ async function acceptInvite (user, entry) {
         node_id: entry.get('id'),
         node_type: 'entry',
         user_id: user.get('id')
-      }).fetch()
+      }).fetch({ transacting: transaction })
 
       // Create or promote role
       if (userRole) {
