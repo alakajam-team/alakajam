@@ -26,7 +26,8 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="title">Importer</label>
-        <select class="form-control" id="js-importer" name="importer" required="required">
+        <select class="form-control js-show-if-nonempty js-importer" id="js-importer" name="importer" required="required"
+                data-show-if-nonempty-selector="#js-profile">
           <option {{ 'selected' if not importer }}></option>
           {% for availableImporter in availableImporters %}
             <option value="{{ availableImporter.id }}" {{ 'selected' if importer === availableImporter.id }}>{{ availableImporter.title }}</option>
@@ -53,8 +54,10 @@
 
             <p>Please check the games you want to import.</p>
             <p>
-              <input type="button" class="btn btn-default btn-sm" value="Check all" id="js-import-all" />
-              <input type="button" class="btn btn-default btn-sm" value="Uncheck all" id="js-import-none" />
+              <input type="button" class="btn btn-default btn-sm js-check-all" value="Check all"
+                     data-check-all-selector=".js-import-checkbox"/>
+              <input type="button" class="btn btn-default btn-sm js-check-none" value="Uncheck all"
+                     data-check-none-selector=".js-import-checkbox"/>
             </p>
             <table class="table">
               <thead>
@@ -124,36 +127,4 @@
 {% block scripts %}
 {{ formMacros.radioScripts() }}
 <script type="text/javascript" src="/static/js/select2.full.min.js"></script>
-<script type="text/javascript">
-// TODO move script into a separate file (#21)
-
-// Toggle detailed import form
-
-function refreshProfileVisibility(e, dontCleanReferences) {
-  $('#js-profile').toggle(!!$importer.val())
-  if (!dontCleanReferences) {
-    $('#js-entry-references').html('')
-  }
-}
-
-var $importer = $('#js-importer')
-$importer .select2({
-  placeholder: 'Select a website to import from',
-  allowClear: true
-})
-$importer.on('change', refreshProfileVisibility)
-$('#profileNameOrUrl').on('change', refreshProfileVisibility)
-
-refreshProfileVisibility(null, true)
-
-// Select all/none buttons
-
-$("#js-import-all").click(function() {
-  $(".js-import-checkbox").iCheck('check')
-})
-$("#js-import-none").click(function() {
-  $(".js-import-checkbox").iCheck('uncheck')
-})
-
-</script>
 {% endblock %}

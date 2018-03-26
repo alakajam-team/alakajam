@@ -10,6 +10,7 @@
 require('babel-polyfill')
 
 $(function domReady () {
+  require('./common/check-all-none')('.js-check-all', '.js-check-none')
   require('./common/date-picker')('.js-date-picker')
   require('./common/disabled-links')('a.disabled')
   require('./common/editor')('.simplemde-editor', '.codemirror')
@@ -36,4 +37,6 @@ $(function domReady () {
   require('./event/theme-ideas')()
   require('./event/theme-votes')()
   require('./event/theme-shortlist')()
+
+  require('./user/dashboard-entry-import')()
 })
