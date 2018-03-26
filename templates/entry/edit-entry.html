@@ -103,7 +103,9 @@
       <div class="col-lg-8 col-md-7">
         <div class="form-group input-group-lg">
           <label for="title">Game title</label>
-          <input type="text" id="js-title" class="form-control" name="title" value="{{ entry.get('title') }}" required="required" />
+          <input type="text" class="form-control js-sync-text" name="title" value="{{ entry.get('title') }}" required="required"
+            data-sync-text-display-selector="#js-title-display"
+            data-sync-text-default="My {{ 'external' if external else event.get('title') }} entry"/>
         </div>
         <div class="form-group">
           <label for="title">Short description</label>
@@ -206,7 +208,7 @@
 
         <div class="form-group">
           <label for="title">Links</label>
-          <div class="js-links"></div>
+          <div class="js-links" data-entry-links="{{ entry.get('links') | default([]) | dump }}"></div>
         </div>
         <div class="form-group">
           <label for="platforms">Platforms</label>
@@ -314,303 +316,244 @@
   {% endif %}
 {% endmacro %}
             
-{% block scripts %} 
+{% block scripts %}
 {{ formMacros.editorScripts() }}
 {{ formMacros.radioScripts() }}
 <script type="text/javascript" src="/static/js/select2.full.min.js"></script>
-<script type="text/javascript">
-// TODO move script into a separate file (#21)
+<script>
+  function sortSelect2Items (a, b) {
+    if (a.text < b.text) return -1;
+    if (a.text > b.text) return 1;
+    return 0;
+  }
 
-// Sync H1 with title input
+  function sortSelect2Results (results) {
+    return results.sort(sortSelect2Items)
+  }
 
-var $titleInput = $('#js-title')
-var $titleDisplay = $('#js-title-display')
-var defaultText = "My {{ 'external' if external else event.get('title') }} entry"
-$titleInput.on('change keyup', refreshTitleDisplay)
-refreshTitleDisplay()
+  $(function() {
+    function toValue (name) {
+      return {
+        id: name,
+        text: name,
+        lower: name.toLowerCase(),
+        selected: $.inArray(name, current) >= 0
+      }
+    }
 
-function refreshTitleDisplay () {
-  $titleDisplay.text($titleInput.val() || defaultText)
-}
+    function format (platform) {
+      return '<div class="platform">' + platform.text + '</div>'
+    }
 
-// Manage links
-
-var linksTemplate = _.template($('#js-links-template').html())
-var links = {{ entry.get('links') | default([]) | dump | safe }}
-if (!links) {
-  links = [[]]
-} else if (links.length === 0) {
-  links.push([])
-}
-refreshLinksView()
-
-function refreshLinksView () {
-  $('.js-links').html(linksTemplate({ links: links }));
-  $('.js-add-link').click(function () {
-    refreshLinksModel()
-    links.push({})
-    refreshLinksView()
+    $('#js-platforms').select2({
+      multiple: true,
+      placeholder: 'Select platforms',
+      width: "100%",
+      formatResult: format,
+      formatSelection: format
+    })
   })
-  $('.js-remove-link').click(function () {
-    refreshLinksModel()
-    links.splice($(this).attr('data-row'), 1)
-    if (links.length === 0) {
-      links.push({})
-    }
-    refreshLinksView()
+
+  // Team toggle behaviour
+
+  var initialDivision = "{{ entry.get('division') }}" || "solo"
+  $('#js-entry-divisions label').each(function(i, el) {
+    el = $(el)
+    var input = el.find('input')
+    var active = input.val() === initialDivision
+    input.prop('checked', active)
+    el.toggleClass('active', active)
   })
-  $('.js-link-label').change(function () {
-    if("other" == $( this ).val()){
-      $( this ).next(".js-link-customlabel").show();
-    } else {
-      $( this ).next(".js-link-customlabel").hide();
+  $('.toggle label').click(function(ev) {
+    $('#edit-team').toggleClass('hidden', $(this).find('input').val() === 'solo')
+    $('#edit-optouts').toggleClass('hidden', $(this).find('input').val() === 'unranked')
+  })
+
+  // Show warning upon not being a team entry anymore
+
+  $('#js-form').submit(function (ev) {
+    if (initialDivision !== 'solo' && $('input[name="division"]:checked').val() === 'solo'
+        && !confirm('You are about to switch to a Solo entry. All team members will be removed. Continue?')) {
+      ev.preventDefault()
     }
   })
-}
-function refreshLinksModel () {
-  $('.js-link-label').each(function () {
-    var $this = $(this)
-    links[$this.attr('data-row')].label = $this.val()
-  })
-  $('.js-link-url').each(function () {
-    var $this = $(this)
-    links[$this.attr('data-row')].url = $this.val()
-  })
-}
 
-function sortSelect2Items (a, b) {
-  if (a.text < b.text) return -1;
-  if (a.text > b.text) return 1;
-  return 0;
-}
+  // Team management
 
-function sortSelect2Results (results) {
-  return results.sort(sortSelect2Items)
-}
+  ;(function() {
+    var eRemovedMsg = $('#removed-msg'),
+        eAddedMsg = $('#added-msg'),
+        eConflictList = $('#conflict-list'),
+        eResultMsg = $('#result-msg'),
+        eResultBox = $('#result-box'),
+        eForm = $('#edit-team')
+        eSelect = $('#search-members')
+        savingCls = 'saving'
 
-$(function() {
-  function toValue (name) {
-    return {
-      id: name,
-      text: name,
-      lower: name.toLowerCase(),
-      selected: $.inArray(name, current) >= 0
-    }
-  }
-
-  function format (platform) {
-    return '<div class="platform">' + platform.text + '</div>'
-  }
-
-  $('#js-platforms').select2({
-    multiple: true,
-    placeholder: 'Select platforms',
-    width: "100%",
-    formatResult: format,
-    formatSelection: format
-  })
-})
-
-// Team toggle behaviour
-
-var initialDivision = "{{ entry.get('division') }}" || "solo"
-$('#js-entry-divisions label').each(function(i, el) {
-  el = $(el)
-  var input = el.find('input')
-  var active = input.val() === initialDivision
-  input.prop('checked', active)
-  el.toggleClass('active', active)
-})
-$('.toggle label').click(function(ev) {
-  $('#edit-team').toggleClass('hidden', $(this).find('input').val() === 'solo')
-  $('#edit-optouts').toggleClass('hidden', $(this).find('input').val() === 'unranked')
-})
-
-// Show warning upon not being a team entry anymore
-
-$('#js-form').submit(function (ev) {
-  if (initialDivision !== 'solo' && $('input[name="division"]:checked').val() === 'solo'
-      && !confirm('You are about to switch to a Solo entry. All team members will be removed. Continue?')) {
-    ev.preventDefault()
-  }
-})
-
-// Team management
-
-;(function() {
-  var eRemovedMsg = $('#removed-msg'),
-      eAddedMsg = $('#added-msg'),
-      eConflictList = $('#conflict-list'),
-      eResultMsg = $('#result-msg'),
-      eResultBox = $('#result-box'),
-      eForm = $('#edit-team')
-      eSelect = $('#search-members')
-      savingCls = 'saving'
-
-  function toId (obj) {
-    return obj.id
-  }
-
-  function plural (sing, pl, count) {
-    return count === 1 ? sing : pl
-  }
-
-  function result (opt) {
-    if (!opt) {
-      return eResultBox.hide()
-    }
-    eResultBox.show().toggleClass('error', !!opt.error)
-    eResultMsg.text(opt.message)
-    eConflictList.html($.map(opt.conflicts || [], function(c) {
-      return '<li class="conflict">' + c.user_title + '</li>'
-    })).toggle(opt.conflicts.length > 0)
-    eRemovedMsg.toggle(!!opt.removed).text('(' + opt.removed + ' ' + plural('user', 'users', opt.removed) + ' removed)')
-    eAddedMsg.toggle(!!opt.added).text('(' + opt.added + ' ' + plural('user', 'users', opt.added) + ' added)')
-  }
-
-  function format (user, container) {
-     if (user.element && $(user.element).attr('data-avatar') !== undefined) {
-      var $option = $(user.element)
-      user.avatar = $option.attr('data-avatar')
-      user.locked = $option.attr('data-locked') === 'true'
-      user.invite = $option.attr('data-invite') === 'true'
+    function toId (obj) {
+      return obj.id
     }
 
-    if (user.locked || eSelect.attr('readonly')) {
-      $(container).addClass('select2-locked') /* Select2 hack to support locking tags from deletion (not supported yet in v4) */
+    function plural (sing, pl, count) {
+      return count === 1 ? sing : pl
     }
-    const avatarUrl = user.avatar || '/static/images/default-avatar.png'
-    return $(['<div class="member">',
-          '<div class="member-avatar">',
-            '<img class="avatar" src="', avatarUrl, '" alt="', user.text, '" />', 
-          '</div>',
-          '<div class="member-info">',
-            '<div class="username">', user.text, '</div>',
-            user.locked ? '<div class="tag owner-tag">Owner</div>' : '',
-            user.invite ? '<div class="tag">Pending invite</div>' : '',
-            '<div class="tag unavailable-tag">Has a game already</div>',
-          '</div>',
-        '</div>']
-      .join(''))
-  }
 
-  function isDirty () {
-    return arraysEqual(members.map(toId).sort(), eSelect.select2('val').sort())
-  }
-
-  function arraysEqual (a, b) {
-    var len = a.length, i
-    if (len !== b.length) {
-      return false
+    function result (opt) {
+      if (!opt) {
+        return eResultBox.hide()
+      }
+      eResultBox.show().toggleClass('error', !!opt.error)
+      eResultMsg.text(opt.message)
+      eConflictList.html($.map(opt.conflicts || [], function(c) {
+        return '<li class="conflict">' + c.user_title + '</li>'
+      })).toggle(opt.conflicts.length > 0)
+      eRemovedMsg.toggle(!!opt.removed).text('(' + opt.removed + ' ' + plural('user', 'users', opt.removed) + ' removed)')
+      eAddedMsg.toggle(!!opt.added).text('(' + opt.added + ' ' + plural('user', 'users', opt.added) + ' added)')
     }
-    a.sort()
-    b.sort()
-    for (i = 0; i < len; ++i) {
-      if (a[i] !== b[i]) {
+
+    function format (user, container) {
+       if (user.element && $(user.element).attr('data-avatar') !== undefined) {
+        var $option = $(user.element)
+        user.avatar = $option.attr('data-avatar')
+        user.locked = $option.attr('data-locked') === 'true'
+        user.invite = $option.attr('data-invite') === 'true'
+      }
+
+      if (user.locked || eSelect.attr('readonly')) {
+        $(container).addClass('select2-locked') /* Select2 hack to support locking tags from deletion (not supported yet in v4) */
+      }
+      const avatarUrl = user.avatar || '/static/images/default-avatar.png'
+      return $(['<div class="member">',
+            '<div class="member-avatar">',
+              '<img class="avatar" src="', avatarUrl, '" alt="', user.text, '" />', 
+            '</div>',
+            '<div class="member-info">',
+              '<div class="username">', user.text, '</div>',
+              user.locked ? '<div class="tag owner-tag">Owner</div>' : '',
+              user.invite ? '<div class="tag">Pending invite</div>' : '',
+              '<div class="tag unavailable-tag">Has a game already</div>',
+            '</div>',
+          '</div>']
+        .join(''))
+    }
+
+    function isDirty () {
+      return arraysEqual(members.map(toId).sort(), eSelect.select2('val').sort())
+    }
+
+    function arraysEqual (a, b) {
+      var len = a.length, i
+      if (len !== b.length) {
         return false
       }
-    }
-    return true
-  }
-
-  eSelect.select2({
-    multiple: true,
-    ajax: {
-      url: "{{ buildUrl(event, 'event', 'ajax-find-team-mate') }}",
-      dataType: 'json',
-      delay: 500,
-      data: function (params) {
-        return {
-          name: params.term,
-          entryId: {{ entry.get('id') or "''" | safe }}
+      a.sort()
+      b.sort()
+      for (i = 0; i < len; ++i) {
+        if (a[i] !== b[i]) {
+          return false
         }
-      },
-      processResults: function (data, params) {
-        $.each(data.matches, function(i, m) {
-          m.disabled = (m.status === 'unavailable')
-        })
-        return {
-          results: data.matches
-        }
-      },
-      cache: true
-    },
-    initSelection: function(elem, cb) {
-      var results = []
-      $(elem).children().each(function (i, option) {
-        var $option = $(option)
-        results.push({
-          id: $option.val(),
-          text: $option.text(),
-          avatar: $option.attr('data-avatar'),
-          locked: $option.attr('data-locked') === "true",
-          invite: $option.attr('data-invite') === "true"
-        })
-      })
-      cb(results)
-    },
-    sortResults: sortSelect2Results,
-    placeholder: '',
-    width: "100%",
-    allowClear: false,
-    minimumInputLength: 3,
-    templateResult: format,
-    templateSelection: format,
-    dropdownCssClass: 'edit-team-dropdown'
-  })
-})()
-
-eSelect.on('select2:unselecting', function(e) {
-  if ($(e.params.args.data.element).attr('data-locked') === 'true') {
-    return false
-  }
-})
-
-// External event name auto-completion
-
-var $externalEventInput = $('#external-event')
-
-if ($externalEventInput.length > 0) {
-  $externalEventInput.select2({
-    ajax: {
-      url: '/events/ajax-find-external-event',
-      dataType: 'json',
-      delay: 500,
-      data: function (params) {
-        return {
-          name: params.term
-        }
-      },
-      processResults: function (data, params) {
-        return {
-          results: data.map(function (string) {
-            return { id: string, text: string }
-          })
-        }
-      },
-      cache: true
-    },
-    createTag: function(tag) {
-      if (tag.term.indexOf('[NEW]') === -1) {
-        return {
-            id: tag.term,
-            text: tag.term + " [NEW]"
-        };
-      } else {
-        return null;
       }
-    },
-    escapeMarkup: function(m) {
-      return jQuery.fn.select2.defaults.defaults.escapeMarkup(m)
-          .replace('[NEW]', '<strong><i>(new event)</i></strong>');
-    },
-    minimumInputLength: 3,
-    maximumInputLength: 255,
-    allowClear: true,
-    placeholder: '',
-    tags: true
+      return true
+    }
+
+    eSelect.select2({
+      multiple: true,
+      ajax: {
+        url: "{{ buildUrl(event, 'event', 'ajax-find-team-mate') }}",
+        dataType: 'json',
+        delay: 500,
+        data: function (params) {
+          return {
+            name: params.term,
+            entryId: {{ entry.get('id') or "''" | safe }}
+          }
+        },
+        processResults: function (data, params) {
+          $.each(data.matches, function(i, m) {
+            m.disabled = (m.status === 'unavailable')
+          })
+          return {
+            results: data.matches
+          }
+        },
+        cache: true
+      },
+      initSelection: function(elem, cb) {
+        var results = []
+        $(elem).children().each(function (i, option) {
+          var $option = $(option)
+          results.push({
+            id: $option.val(),
+            text: $option.text(),
+            avatar: $option.attr('data-avatar'),
+            locked: $option.attr('data-locked') === "true",
+            invite: $option.attr('data-invite') === "true"
+          })
+        })
+        cb(results)
+      },
+      sortResults: sortSelect2Results,
+      placeholder: '',
+      width: "100%",
+      allowClear: false,
+      minimumInputLength: 3,
+      templateResult: format,
+      templateSelection: format,
+      dropdownCssClass: 'edit-team-dropdown'
+    })
+  })()
+
+  eSelect.on('select2:unselecting', function(e) {
+    if ($(e.params.args.data.element).attr('data-locked') === 'true') {
+      return false
+    }
   })
-}
+
+  // External event name auto-completion
+
+  var $externalEventInput = $('#external-event')
+
+  if ($externalEventInput.length > 0) {
+    $externalEventInput.select2({
+      ajax: {
+        url: '/events/ajax-find-external-event',
+        dataType: 'json',
+        delay: 500,
+        data: function (params) {
+          return {
+            name: params.term
+          }
+        },
+        processResults: function (data, params) {
+          return {
+            results: data.map(function (string) {
+              return { id: string, text: string }
+            })
+          }
+        },
+        cache: true
+      },
+      createTag: function(tag) {
+        if (tag.term.indexOf('[NEW]') === -1) {
+          return {
+              id: tag.term,
+              text: tag.term + " [NEW]"
+          };
+        } else {
+          return null;
+        }
+      },
+      escapeMarkup: function(m) {
+        return jQuery.fn.select2.defaults.defaults.escapeMarkup(m)
+            .replace('[NEW]', '<strong><i>(new event)</i></strong>');
+      },
+      minimumInputLength: 3,
+      maximumInputLength: 255,
+      allowClear: true,
+      placeholder: '',
+      tags: true
+    })
+  }
 </script>
 {{ gamesSearchMacros.gameTagJsSelect() }}
 {% endblock %}

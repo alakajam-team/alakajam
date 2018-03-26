@@ -26,6 +26,8 @@ $(function domReady () {
 
   require('./countdown')('.js-countdown')
 
+  require('./entry/edit-entry-links')()
+
   require('./event/theme-ideas')()
   require('./event/theme-votes')()
   require('./event/theme-shortlist')()

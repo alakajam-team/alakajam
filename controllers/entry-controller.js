@@ -164,9 +164,6 @@ async function editEntry (req, res) {
       while (fields['url' + i]) {
         let label = forms.sanitizeString(fields['label' + i])
         let url = fields['url' + i]
-        if (label === 'other') {
-          label = forms.sanitizeString(fields['customlabel' + i])
-        }
         links.push({
           label,
           url
