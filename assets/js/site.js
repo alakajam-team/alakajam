@@ -28,6 +28,7 @@ $(function domReady () {
 
   require('./entry/edit-entry-division')()
   require('./entry/edit-entry-links')()
+  require('./entry/edit-entry-platforms')()
   require('./entry/edit-entry-team')()
 
   require('./event/theme-ideas')()

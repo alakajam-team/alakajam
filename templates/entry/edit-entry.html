@@ -215,7 +215,7 @@
         </div>
         <div class="form-group">
           <label for="platforms">Platforms</label>
-          <select name="platforms" class="form-control" id="js-platforms" multiple="multiple">
+          <select name="platforms" class="form-control js-entry-platforms" multiple="multiple">
             {% for platform in allPlatforms %}
               <option value="{{ platform }}" {{ 'selected' if entry.get('platforms') and entry.get('platforms').includes(platform) }}>{{ platform }}</option>
             {% endfor %}
@@ -324,31 +324,6 @@
 {{ formMacros.radioScripts() }}
 <script type="text/javascript" src="/static/js/select2.full.min.js"></script>
 <script>
-  // Platforms
-
-  $(function() {
-    function toValue (name) {
-      return {
-        id: name,
-        text: name,
-        lower: name.toLowerCase(),
-        selected: $.inArray(name, current) >= 0
-      }
-    }
-
-    function format (platform) {
-      return '<div class="platform">' + platform.text + '</div>'
-    }
-
-    $('#js-platforms').select2({
-      multiple: true,
-      placeholder: 'Select platforms',
-      width: "100%",
-      formatResult: format,
-      formatSelection: format
-    })
-  })
-
   // External event name auto-completion
 
   var $externalEventInput = $('#external-event')
