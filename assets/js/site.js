@@ -24,6 +24,7 @@ $(function domReady () {
   require('./common/sync-text')('.js-sync-text')
   require('./common/sync-slug')('.js-sync-slug')
   require('./common/tabs')({ buttonContainerSelector: '.js-tab-container', buttonSelector: '.js-tab-button', tabSelector: '.js-tab' })
+  require('./common/tags-select')()
 
   require('./countdown')('.js-countdown')
 

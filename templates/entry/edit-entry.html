@@ -223,7 +223,9 @@
         </div>
         <div class="form-group">
           <label for="tags">Tags</label> {{ formMacros.tooltip('Use this to let people search your game by tech (Unity, Game Maker...), genre (Platformer...), style (Pixel art...), etc.') }}
-          <select name="tags" class="form-control" id="js-tags" multiple="multiple">
+          <select name="tags" class="form-control js-tags-select" multiple="multiple"
+                  data-allow-new-tags="true"
+                  data-find-tags-url="{{ buildUrl(null, 'tags', 'ajax-find-tags') }}">
             {% for tag in tags %}
               <option value="{{ tag.id }}" selected>{{ tag.value }}</option>
             {% endfor %}
@@ -323,5 +325,4 @@
 {{ formMacros.editorScripts() }}
 {{ formMacros.radioScripts() }}
 <script type="text/javascript" src="/static/js/select2.full.min.js"></script>
-{{ gamesSearchMacros.gameTagJsSelect() }}
 {% endblock %}
