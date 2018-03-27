@@ -10,7 +10,7 @@ module.exports = function editor (mdSelector, cmSelector) {
   $(mdSelector).each(function () {
     const $this = $(this)
     const autosaveId = $this.attr('data-autosave-id')
-    new SimpleMDE({ // eslint-disable-line no-new
+    const mde = new SimpleMDE({
       element: this,
       spellChecker: false,
       toolbar: ['bold', 'italic', 'heading', '|',
@@ -51,7 +51,12 @@ module.exports = function editor (mdSelector, cmSelector) {
         uniqueId: autosaveId
       }
     })
+    mde.codemirror.setOption('extraKeys', {
+      'Home': 'goLineLeft',
+      'End': 'goLineRight'
+    })
   })
+
   $(cmSelector).each(function () {
     var codemirror = CodeMirror.fromTextArea(this, {
       matchBrackets: true,
