@@ -22,7 +22,7 @@
       </div>
       <div class="form-group">
         <label for="user">User</label>
-        <select name="user" class="form-control" id="js-user">
+        <select name="user" class="form-control js-user-select">
           {% if context.searchOptions.user %}
           <option value="{{ context.searchOptions.user.get('id') }}" selected>{{ context.searchOptions.user.get('title') }}</option>
           {% endif %}
@@ -89,43 +89,4 @@
       {{ 'matching "' + searchOptions.search + '"' if searchOptions.search }}
     </div>
   {% endif %}
-{% endmacro %}
-
-{% macro searchFormScripts(tags, user) %}
-<script type="text/javascript" src="/static/js/select2.full.min.js"></script>
-{{ gameUserJsSelect() }}
-{% endmacro %}
-
-{% macro gameUserJsSelect() %}
-<script type="text/javascript">
-  var $user = $('#js-user')
-  $user.select2({
-    ajax: {
-      url: '/api/user',
-      dataType: 'json',
-      delay: 500,
-      data: function (params, page) {
-          return {
-              title: params.term,
-              page: (page - 1)
-          };
-      },
-      processResults: function (data, params) {
-        return {
-          results: data.users.map(function (userInfo) {
-            return {
-              id: userInfo.id,
-              text: userInfo.title
-            }
-          })
-        }
-      },
-      cache: true
-    },
-    width: "100%",
-    allowClear: true,
-    placeholder: "",
-    minimumInputLength: 3
-  })
-</script>
 {% endmacro %}
