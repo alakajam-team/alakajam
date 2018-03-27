@@ -7,7 +7,7 @@
       {% if not options.fixedEvent %}
       <div class="form-group">
         <label for="search">Event</label>
-        <select id="js-event" name="eventId" class="form-control">
+        <select name="eventId" class="form-control js-select" data-allow-clear="true">
           <option value="" {{ 'selected' if not context.searchOptions.eventId }}></option>
           {% for event in context.events %}
             <option value="{{ event.get('id') }}" {{ 'selected' if event.get('id') == context.searchOptions.eventId }}>{{ event.get('title') }}</option>
@@ -30,7 +30,7 @@
       </div>
       <div class="form-group">
         <label for="platforms">Platforms</label>
-        <select id="js-platforms" name="platforms" class="form-control" multiple="multiple">
+        <select name="platforms" class="form-control js-select" multiple="multiple">
           {% for platform in context.platforms %}
             <option value="{{ platform.get('id') }}" {{ 'selected' if context.searchOptions.platforms and context.searchOptions.platforms.includes(platform.get('id')) }}>{{ platform.get('name') }}</option>
           {% endfor %}
@@ -92,14 +92,6 @@
 
 {% macro searchFormScripts(tags, user) %}
 <script type="text/javascript" src="/static/js/select2.full.min.js"></script>
-<script type="text/javascript">
-// TODO move script into a separate file (#21)
-$('#js-event').select2({
-  allowClear: true,
-  placeholder: ""
-})
-$('#js-platforms').select2()
-</script>
 {{ gameTagJsSelect({ disableCustomTags: true }) }}
 {{ gameUserJsSelect() }}
 {% endmacro %}

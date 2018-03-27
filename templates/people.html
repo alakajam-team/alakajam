@@ -18,7 +18,7 @@
           </div>
           <div class="form-group">
             <label for="search">Joined event</label>
-            <select name="eventId" class="form-control js-select">
+            <select name="eventId" class="form-control js-select" data-allow-clear="true">
               <option value="" {{ 'selected' if not searchOptions.eventId }}></option>
               {% for event in events %}
                 <option value="{{ event.get('id') }}" {{ 'selected' if event.get('id') == searchOptions.eventId }}>{{ event.get('title') }}</option>

@@ -1,18 +1,17 @@
 /* eslint-env jquery */
 
 /**
- * Simple wrapper that lets you style <select> elements using the select2
+ * Simple wrapper that lets you style <select> elements using the Select2
  * library by simply adding a `js-select` class.
+ *
+ * Configuration can be done through Select2's own API for data- attributes:
+ * https://select2.org/configuration/data-attributes
+ * Notable ones include `data-placeholder` and `data-allow-clear`.
  */
 module.exports = function select () {
   $('.js-select').each(function () {
     const $select = $(this)
-    const placeholder = $select.attr('data-select-placeholder') || ''
-
-    $select.select2({
-      placeholder: placeholder,
-      allowClear: true
-    })
+    $select.select2()
   })
 
   $('select').on('select2:unselecting', function (ev) {
