@@ -2,6 +2,11 @@
  * CSS Variables
  */
 
+@font-face {
+    font-family: 'harryp';
+    src: url('/static/fonts/harryp.ttf');
+}
+
 :root {
   /* Main colors */
   
@@ -49,7 +54,7 @@
     letter-spacing: 0;
   };
   --alt-font: {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'harryp', cursive;
     letter-spacing: 1px;
   };
   --shadow: {
