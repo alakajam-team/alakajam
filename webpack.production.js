@@ -6,6 +6,7 @@ const webpackCommon = require('./webpack.common')
 
 // https://webpack.js.org/guides/production/#setup
 module.exports = webpackMerge(webpackCommon, {
+  mode: 'production',
   // https://webpack.js.org/guides/production/#source-mapping
   devtool: 'source-map',
   plugins: [

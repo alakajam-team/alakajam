@@ -65,7 +65,7 @@
     "striptags": "^3.0.1",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "validator": "^7.0.0",
-    "webpack": "^3.8.1",
+    "webpack": "^4.3.0",
     "webpack-merge": "^4.1.1",
     "winston": "^2.3.0",
     "xss": "^0.3.3"
