@@ -7,7 +7,6 @@
  */
 
 const sanitizeHtml = require('sanitize-html')
-const xss = require('xss')
 const validator = require('validator')
 const striptags = require('striptags')
 const showdown = require('showdown')
@@ -64,9 +63,6 @@ const showdownConverter = new showdown.Converter({
   simpleLineBreaks: true,
   extensions: [showdownLazyPicturesExt]
 })
-const customXss = new xss.FilterXSS({
-  whiteList: Object.assign({}, xss.whiteList, constants.ALLOWED_POST_ATTRIBUTES)
-})
 const sanitizeHtmlOptions = {
   allowedTags: constants.ALLOWED_POST_TAGS,
   allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
@@ -100,14 +96,13 @@ function sanitizeString (string, maxLength = 255) {
 }
 
 /**
- * Sanitizes Markdown form input (by fixing/stripping any embedded HTML tags)
+ * Sanitizes Markdown form input very lightly, just by limiting its length.
+ * Real sanitization needs to happen after converting it to HTML.
  * @param  {string} markdown
  * @return {string}
  */
 function sanitizeMarkdown (markdown, maxLength = constants.MAX_BODY_COMMENT) {
-  return sanitizeHtml(markdown, sanitizeHtmlOptions)
-    .replace(/&gt;/g, '>') // ">"s are used in quote blocks
-    .slice(0, maxLength)
+  return markdown.slice(0, maxLength)
 }
 
 /**
@@ -252,15 +247,15 @@ function markdownToHtml (markdown) {
     }
   })
 
-  let html = showdownConverter.makeHtml(markdown)
-  let safeHtml = customXss.process(html)
+  const unsafeHtml = showdownConverter.makeHtml(markdown)
+  const safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)
   return safeHtml
 }
 
 /**
  * Converts the given Markdown to single-line text
  * @param  {string} markdown
- * @return {string}
+ * @return {string} text without markup, but *should not be trusted* as safe HTML!
  */
 function markdownToText (markdown) {
   return removeMarkdown(sanitizeMarkdown(markdown, constants.MAX_BODY_ANY)).replace(/\n\r/g, ' ')
