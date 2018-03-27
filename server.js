@@ -224,7 +224,7 @@ async function buildJS (watch = false) {
       if (stats.hasErrors()) {
         logMethod = log.error.bind(log)
       } else if (stats.hasWarnings()) {
-        logMethod = log.warning.bind(log)
+        logMethod = log.warn.bind(log)
       }
       logMethod(stats.toString(config.stats))
 
