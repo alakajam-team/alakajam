@@ -188,7 +188,8 @@
                 <label>Opt-outs (<a href="/article/faq#optouts" target="_blank">help</a>)</label>
                 <div>
                   <label style="font-weight: normal">
-                    <input type="checkbox" name="optout-graphics" {{ 'readonly' if not canEditOptouts }}
+                    <input type="checkbox" name="optout-graphics" class="js-checkbox"
+                    {{ 'readonly' if not canEditOptouts }}
                     {{ 'checked="checked"' if optouts and optouts.includes('Graphics') }} 
                     {{ 'disabled' if not canEditOptouts }} />
                     Disable ratings for graphics
@@ -196,7 +197,8 @@
                 </div>
                 <div>
                   <label style="font-weight: normal">
-                    <input type="checkbox" name="optout-audio" {{ 'readonly' if not canEditOptouts }}
+                    <input type="checkbox" name="optout-audio" class="js-checkbox"
+                    {{ 'readonly' if not canEditOptouts }}
                     {{ 'checked="checked"' if optouts and optouts.includes('Audio') }}
                     {{ 'disabled' if not canEditOptouts }} />
                     Disable ratings for audio
@@ -323,5 +325,4 @@
             
 {% block scripts %}
 {{ formMacros.editorScripts() }}
-{{ formMacros.radioScripts() }}
 {% endblock %}

@@ -72,7 +72,7 @@
               {% for entryReference in entryReferences %}
                 <tr>
                   <td>
-                    <input type="checkbox" name="entries" value="{{ entryReference.id }}" class="js-import-checkbox" />
+                    <input type="checkbox" name="entries" value="{{ entryReference.id }}" class="js-checkbox js-import-checkbox" />
                   </td>
                   <td>
                     {% if entryReference.thumbnail %}
@@ -103,7 +103,7 @@
 
             <div class="form-group well">
               <label>
-                <input type="checkbox" name="run" class="form-control" />
+                <input type="checkbox" name="run" class="form-control js-checkbox" />
                 &nbsp;I confirm those games are mine. If I change my mind, I will have to delete them one by one. Let's import them!
               </label>
             </div>
@@ -122,8 +122,4 @@
   </div>
 </form>
 
-{% endblock %}
-
-{% block scripts %}
-{{ formMacros.radioScripts() }}
 {% endblock %}
