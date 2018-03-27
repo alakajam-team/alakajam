@@ -1,14 +1,6 @@
 /* eslint-env jquery */
 
-function sortSelect2Items (a, b) {
-  if (a.text < b.text) return -1
-  if (a.text > b.text) return 1
-  return 0
-}
-
-function sortSelect2Results (results) {
-  return results.sort(sortSelect2Items)
-}
+const select2Sort = require('../common/select2-sort')
 
 module.exports = function editEntryTeam () {
   $('.js-edit-entry-team').each(function () {
@@ -82,7 +74,7 @@ module.exports = function editEntryTeam () {
         })
         cb(results)
       },
-      sortResults: sortSelect2Results,
+      sortResults: select2Sort.byText,
       placeholder: '',
       width: '100%',
       allowClear: false,

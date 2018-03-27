@@ -1,16 +1,6 @@
 /* eslint-env jquery */
 
-// TODO deduplicate these select2 helpers
-
-function sortSelect2Results (results) {
-  return results.sort(sortSelect2Items)
-}
-
-function sortSelect2Items (a, b) {
-  if (a.value < b.value) return -1
-  if (a.value > b.value) return 1
-  return 0
-}
+const select2Sort = require('./select2-sort')
 
 module.exports = function tagsSelect () {
   $('.js-tags-select').each(function () {
@@ -56,7 +46,7 @@ module.exports = function tagsSelect () {
             .replace('[NEW]', '<strong><i>(new tag)</i></strong>')
       },
       tags: allowNewTags,
-      sortResults: sortSelect2Results,
+      sortResults: select2Sort.byValue,
       width: '100%',
       allowClear: false,
       minimumInputLength: 3
