@@ -14,6 +14,7 @@ $(function domReady () {
   require('./common/date-picker')('.js-date-picker')
   require('./common/disabled-links')('a.disabled')
   require('./common/editor')('.simplemde-editor', '.codemirror')
+  require('./common/expand-collapse')()
   require('./common/icheck')()
   require('./common/lazy-images')('.js-lazy, .user-contents img')
   require('./common/radio-text-field')()

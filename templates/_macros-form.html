@@ -111,7 +111,7 @@
    - options.maxHeight: customizes the maximum height before enabling the expand/collapse bar
 #}
 {% macro expandCollapse(options = {}) %}
-<div class="expand-bar" data-manual-scripting="{{ options.manualScripting or 'false' }}" data-max-height="{{ options.maxHeight or 600 }}">
+<div class="expand-bar {{ 'js-expand-bar' if not options.manualScripting }}" data-max-height="{{ options.maxHeight or 600 }}">
   <span class="expand">
     <span class="glyphicon glyphicon-arrow-down"></span> 
     Expand
@@ -123,28 +123,6 @@
     <span class="glyphicon glyphicon-arrow-up"></span> 
   </span>
 </div>
-{% endmacro %}
-
-{% macro expandCollapseScripts() %}
-<script type="text/javascript">
-// TODO move script into a separate file (#21)
-$('.expand-bar').each(function () {
-  var $this = $(this)
-  if ($this.attr('data-manual-scripting') !== 'true') {
-    var maxHeight = parseInt($this.attr('data-max-height'))
-    var $parent = $this.parent()
-    if ($parent.height() > maxHeight) {
-      $parent.attr('style', 'max-height: ' + (maxHeight * 0.8) + 'px') // limit the size while preventing cropping just a single line
-      $this.show()
-      $this.click(function () {
-        $parent.toggleClass('expanded')
-      })
-    } else {
-      $this.remove()
-    }
-  }
-})
-</script>
 {% endmacro %}
 
 {# ======== PAGINATION ========= #}
