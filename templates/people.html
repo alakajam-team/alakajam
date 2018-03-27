@@ -18,7 +18,7 @@
           </div>
           <div class="form-group">
             <label for="search">Joined event</label>
-            <select id="js-event" name="eventId" class="form-control">
+            <select name="eventId" class="form-control js-select">
               <option value="" {{ 'selected' if not searchOptions.eventId }}></option>
               {% for event in events %}
                 <option value="{{ event.get('id') }}" {{ 'selected' if event.get('id') == searchOptions.eventId }}>{{ event.get('title') }}</option>
@@ -56,11 +56,4 @@
 
 {% block scripts %}
 <script type="text/javascript" src="/static/js/select2.full.min.js"></script>
-<script type="text/javascript">
-// TODO move script into a separate file (#21)
-$('#js-event').select2({
-  placeholder: "",
-  allowClear: true
-})
-</script>
 {% endblock %}
