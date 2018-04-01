@@ -43,7 +43,7 @@ module.exports = function tagsSelect () {
       },
       escapeMarkup: function (m) {
         return jQuery.fn.select2.defaults.defaults.escapeMarkup(m)
-            .replace('[NEW]', '<strong><i>(new tag)</i></strong>')
+          .replace('[NEW]', '<strong><i>(new tag)</i></strong>')
       },
       tags: allowNewTags,
       sortResults: select2Sort.byValue,

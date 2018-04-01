@@ -35,7 +35,7 @@ module.exports = function editEntryExternal () {
       },
       escapeMarkup: function (m) {
         return jQuery.fn.select2.defaults.defaults.escapeMarkup(m)
-            .replace('[NEW]', '<strong><i>(new event)</i></strong>')
+          .replace('[NEW]', '<strong><i>(new event)</i></strong>')
       },
       minimumInputLength: 3,
       maximumInputLength: 255,

@@ -157,16 +157,7 @@ async function editPost (req, res) {
     }
 
     // Fetch related event info
-    let post = res.locals.post
-    let context = {
-      allEvents: (await eventService.findEvents()).models
-    }
-    if (post.get('event_id')) {
-      context.relatedEvent = await eventService.findEventById(post.get('event_id'))
-    }
-    context.specialPostType = post.get('special_post_type')
-
-    res.render('post/edit-post', context)
+    res.render('post/edit-post', await buildPostContext(res.locals.post))
   } else {
     res.errorPage(403)
   }
@@ -182,6 +173,18 @@ async function savePost (req, res) {
     let title = forms.sanitizeString(fields.title)
     let body = forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_POST)
     let errorMessage = null
+    let customPublishDate = null
+
+    // Fill main post fields in advance (so we don't lose data in case of errors)
+    post.set('title', title)
+    post.set('body', body)
+
+    if (fields['save-custom']) {
+      customPublishDate = forms.parseDateTime(fields['published-at'])
+      if (!customPublishDate) {
+        errorMessage = 'Invalid scheduling time'
+      }
+    }
     if (!title) {
       errorMessage = 'Title is mandatory'
     }
@@ -206,8 +209,6 @@ async function savePost (req, res) {
       }
 
       // Fill post from form info
-      post.set('title', title)
-      post.set('body', body)
       if (eventIdIsValid) {
         post.set('event_id', fields['event-id'])
         if (post.hasChanged('event_id') || post.hasChanged('special_post_type')) {
@@ -241,8 +242,8 @@ async function savePost (req, res) {
       } else if (fields.unpublish) {
         post.set('published_at', null)
         redirectToView = false
-      } else if (fields['save-custom']) {
-        post.set('published_at', forms.parseDateTime(fields['published-at']))
+      } else if (customPublishDate) {
+        post.set('published_at', customPublishDate)
       }
 
       // Save
@@ -256,14 +257,26 @@ async function savePost (req, res) {
     if (redirectToView) {
       res.redirect(templating.buildUrl(post, 'post')) // TODO move buildUrl to routing-service
     } else {
-      res.render('post/edit-post', {
-        post,
-        errorMessage
-      })
+      let context = await buildPostContext(post)
+      context.errorMessage = errorMessage
+      res.render('post/edit-post', context)
     }
   } else {
     res.errorPage(403)
   }
+}
+
+async function buildPostContext (post) {
+  // Fetch related event info
+  let context = {
+    post,
+    allEvents: (await eventService.findEvents()).models
+  }
+  if (post.get('event_id')) {
+    context.relatedEvent = await eventService.findEventById(post.get('event_id'))
+  }
+  context.specialPostType = post.get('special_post_type')
+  return context
 }
 
 function validateSpecialPostType (specialPostType, user) {
