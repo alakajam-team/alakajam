@@ -65,10 +65,16 @@ module.exports.User = bookshelf.model('User', {
   },
   comments: function () {
     return this.hasMany('Comment', 'user_id')
+  },
+  entryScores: function () {
+    return this.hasMany('EntryScore', 'user_id')
+  },
+  tournamentScores: function () {
+    return this.hasMany('TournamentScore', 'user_id')
   }
 }, {
   // Cascading
-  dependents: ['details', 'roles']
+  dependents: ['details', 'roles', 'entryScores', 'tournamentScores']
 })
 
 /**
@@ -156,6 +162,7 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'closed', 'results', or a post ID (not null)
  * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
  * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)
+ * | string | status_tournament | Event tournament status: 'disabled', 'off', 'submission', 'playing', 'results'
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | string | divisions | Divisions info: `{"name": "description"}`
  * | integer | entry_count | Total number of entries in the event.
@@ -175,6 +182,9 @@ module.exports.Event = bookshelf.model('Event', {
   },
   entries: function () {
     return this.hasMany('Entry', 'event_id')
+  },
+  tournamentScores: function () {
+    return this.hasMany('TournamentScore', 'event_id')
   },
 
   // Listeners
@@ -275,6 +285,7 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  * | boolean | allow_anonymous | Are anonymous comments allowed on this entry?
+ * | string | status_high_score | High score enablement status ('off', 'normal', 'reversed')
  */
 module.exports.Entry = bookshelf.model('Entry', {
   tableName: 'entry',
@@ -309,6 +320,9 @@ module.exports.Entry = bookshelf.model('Entry', {
   },
   posts: function () {
     return this.hasMany('Post', 'entry_id')
+  },
+  scores: function () {
+    return this.hasMany('EntryScore', 'entry_id')
   },
 
   // Listeners
@@ -352,7 +366,7 @@ module.exports.Entry = bookshelf.model('Entry', {
 
 }, {
   // Cascading
-  dependents: ['details', 'comments', 'entryPlatforms', 'votes', 'invites', 'tags'] // 'userRoles' removed because of issue #93
+  dependents: ['details', 'comments', 'entryPlatforms', 'votes', 'invites', 'tags', 'scores'] // 'userRoles' removed because of issue #93
 })
 
 /**
@@ -367,6 +381,8 @@ module.exports.Entry = bookshelf.model('Entry', {
  * | decimal | rating_1 .. 6 | Rating for categories 1 to 6 ([-99.999,99.999])
  * | integer | ranking_1 .. 6 | Ranking for categories 1 to 6 (max: 100000)
  * | integer | rating_count | Received rating count
+ * | integer | high_score_count | Submitted scores count
+ * | integer | high_score_instructions | Markdown text to be shown when submitting a score (max size: 2000)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -427,8 +443,7 @@ module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
   },
-
-  platform () {
+  platform: function () {
     return this.belongsTo('Platform', 'platform_id')
   },
 
@@ -595,7 +610,83 @@ module.exports.ThemeVote = bookshelf.model('ThemeVote', {
   user: function () {
     return this.belongsTo('User', 'user_id')
   }
+})
 
+// ===============================================================
+// HIGH SCORES / TOURNAMENTS
+// ===============================================================
+
+/**
+ * Entry score model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | user_id | User ID (not null)
+ * | integer | entry_id | Entry ID (not null)
+ * | decimal | score | Score ([-999.999.999.999,999;999.999.999.999,999], not null)
+ * | integer | ranking | User ranking on that entry
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
+ */
+module.exports.EntryScore = bookshelf.model('EntryScore', {
+  tableName: 'entry_score',
+  hasTimestamps: true,
+
+  user: function () {
+    return this.belongsTo('User', 'user_id')
+  },
+  entry: function () {
+    return this.belongsTo('Entry', 'entry_id')
+  }
+})
+
+/**
+ * Tournament entry model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | event_id | Tournament event ID (not null)
+ * | integer | entry_id | Entry ID (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
+ */
+module.exports.TournamentEntry = bookshelf.model('TournamentEntry', {
+  tableName: 'tournament_entry',
+  hasTimestamps: true,
+
+  entry: function () {
+    return this.belongsTo('Entry', 'entry_id')
+  },
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  }
+})
+
+/**
+ * Tournament score model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | user_id | User ID (not null)
+ * | integer | event_id | Tournament event ID (not null)
+ * | decimal | score | Score ([-999.999.999.999,999;999.999.999.999,999], not null)
+ * | integer | ranking | User ranking on that tournament
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
+ */
+module.exports.TournamentScore = bookshelf.model('TournamentScore', {
+  tableName: 'tournament_score',
+  hasTimestamps: true,
+
+  user: function () {
+    return this.belongsTo('User', 'user_id')
+  },
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  }
 })
 
 // ===============================================================
