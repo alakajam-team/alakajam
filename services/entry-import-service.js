@@ -7,15 +7,23 @@ const config = require('../config')
 const log = require('../core/log')
 const fileStorage = require('../core/file-storage')
 const cache = require('../core/cache')
-const importerLudumdare = require('./entry-importers/ludumdare')
 const eventService = require('./event-service')
 
 /**
  * Importers spec:
  *
- * > fetchEntryReferences(profileNameOrUrl)
+ * > config
  *
- * Returns an array of entry references. Each entry reference holds:
+ * Constants to configure the importer.
+ *   - id = some unique string
+ *   - title = full importer name as listed on the client-side
+ *   - mode = 'scraping' or 'oauth'
+ *   - oauthUrl = URL to send the user to, in case 'oauth' mode has been selected
+ *
+ * > fetchEntryReferences(profileIdentifier)
+ *
+ * 'identifier' is either an OAuth authorization key (if mode is 'oauth'), or a profile name/URL otherwise.
+ * The function must return an array of entry references. Each entry reference holds:
  *   - id = Unique entry ID (use the importer name + profile name + remote entry ID to generate this). Must be usable as a filename.
  *   - title = Entry title
  *   - link = Optional link to the remote entry
@@ -24,17 +32,19 @@ const eventService = require('./event-service')
  *
  * > fetchEntryDetails(entryReference)
  *
- * Grabs the detailed info of an entry. The object holds:
+ * The function grabs the detailed info of an entry. The object holds:
  *   - title = Entry title
  *   - externalEvent = Event title
  *   - published = Optional entry publication date
  *   - picture = Optional URL of a picture to download
  *   - links = An array of links to play the game [{url, label}]
  *   - platforms = Optional array of entry platforms
+ *   - description = Optional short description (plain text)
  *   - body = Detailed description (plain text or Markdown, no HTML)
  */
 const importers = [
-  { id: 'ludumdare.com', title: 'Ludum Dare legacy site (ludumdare.com)', importer: importerLudumdare }
+  require('./entry-importers/ludumdare'),
+  require('./entry-importers/itch')
 ]
 
 module.exports = {
@@ -47,14 +57,14 @@ function getAvailableImporters () {
   return importers
 }
 
-async function fetchEntryReferences (user, importerId, profileNameOrUrl) {
+async function fetchEntryReferences (user, importerId, profileIdentifier) {
   // Fetch and cache entry list
-  let cacheKey = importerId + '-' + profileNameOrUrl
+  let cacheKey = importerId + '-' + profileIdentifier
   let entryReferences = await cache.getOrFetch(cache.entryImport, cacheKey, async function () {
     try {
       let importer = _getImporter(importerId)
       if (importer) {
-        return await importer.fetchEntryReferences(profileNameOrUrl)
+        return await importer.fetchEntryReferences(profileIdentifier)
       } else {
         return { error: 'No importer found with name ' + importerId }
       }
@@ -69,7 +79,7 @@ async function fetchEntryReferences (user, importerId, profileNameOrUrl) {
     // Enhance result by detecting existing entries
     let entries = await eventService.findUserEntries(user)
     for (let entryReference of entryReferences) {
-      entryReference.existingEntry = entries.find(entry => entry.get('external_event') && entry.get('title') === entryReference.title)
+      entryReference.existingEntry = entries.find(entry => entry.get('event_name') === null && entry.get('title') === entryReference.title)
     }
   } else {
     // Don't cache failures
@@ -79,16 +89,16 @@ async function fetchEntryReferences (user, importerId, profileNameOrUrl) {
   return entryReferences
 }
 
-async function createOrUpdateEntry (user, importerId, profileNameOrUrl, entryId) {
+async function createOrUpdateEntry (user, importerId, profileIdentifier, entryId) {
   try {
     // Find entry reference (hopefully cached)
-    let entryReferences = await fetchEntryReferences(user, importerId, profileNameOrUrl)
+    let entryReferences = await fetchEntryReferences(user, importerId, profileIdentifier)
     if (entryReferences.error) {
       return { error: 'Failed to fetch entry list before downloading entry' }
     }
     let entryReference = entryReferences.find(entryReference => entryReference.id === entryId)
     if (!entryReference) {
-      log.error(`Entry not found: ${profileNameOrUrl} ${entryId}`)
+      log.error(`Entry not found: ${profileIdentifier} ${entryId}`)
       return { error: 'Entry not found for this profile' }
     }
 
@@ -114,6 +124,7 @@ async function createOrUpdateEntry (user, importerId, profileNameOrUrl, entryId)
     entryModel.set({
       title: entryDetails.title,
       external_event: entryDetails.externalEvent,
+      description: entryDetails.description || null,
       platforms: entryDetails.platforms || [],
       published_at: entryDetails.published || new Date(),
       links: entryDetails.links.map(link => ({ // ensure data format, just in case
@@ -182,6 +193,6 @@ async function createOrUpdateEntry (user, importerId, profileNameOrUrl, entryId)
 }
 
 function _getImporter (id) {
-  let entry = importers.find(importer => importer.id === id)
-  return entry ? entry.importer : null
+  let found = importers.find(importer => importer.config.id === id)
+  return found || null
 }

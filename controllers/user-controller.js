@@ -290,18 +290,20 @@ async function dashboardEntryImport (req, res) {
   if (req.method === 'POST') {
     let {fields} = await req.parseForm()
     context.importer = forms.sanitizeString(fields.importer)
-    context.profileNameOrUrl = forms.sanitizeString(fields.profileNameOrUrl)
+    context.profileIdentifier = forms.sanitizeString(fields.profileIdentifier)
+    context.oauthIdentifier = forms.sanitizeString(fields.oauthIdentifier)
 
     let entryIds = fields.entries
     if (!Array.isArray(entryIds)) {
       entryIds = entryIds ? [entryIds] : []
     }
 
+    let importerProfileIdentifier = context.profileIdentifier || context.oauthIdentifier
     if (fields.run) {
       try {
         let result
         for (let entryId of entryIds) {
-          result = await entryImportService.createOrUpdateEntry(res.locals.user, context.importer, context.profileNameOrUrl, entryId)
+          result = await entryImportService.createOrUpdateEntry(res.locals.user, context.importer, importerProfileIdentifier, entryId)
           if (result.error) {
             throw new Error(result.error)
           }
@@ -314,8 +316,8 @@ async function dashboardEntryImport (req, res) {
       context.errorMessage = 'You must confirm the games are yours before importing them (see checkbox at the bottom).'
     }
 
-    if (context.profileNameOrUrl) {
-      context.entryReferences = await entryImportService.fetchEntryReferences(res.locals.user, context.importer, context.profileNameOrUrl)
+    if (importerProfileIdentifier) {
+      context.entryReferences = await entryImportService.fetchEntryReferences(res.locals.user, context.importer, importerProfileIdentifier)
     }
   }
 

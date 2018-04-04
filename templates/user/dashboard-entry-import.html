@@ -26,17 +26,35 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="title">Importer</label>
-        <select class="form-control js-show-if-nonempty js-importer" id="js-importer" name="importer" required="required"
-                data-show-if-nonempty-selector="#js-profile">
+        <select class="form-control js-importer" id="js-importer" name="importer" required="required">
           <option {{ 'selected' if not importer }}></option>
           {% for availableImporter in availableImporters %}
-            <option value="{{ availableImporter.id }}" {{ 'selected' if importer === availableImporter.id }}>{{ availableImporter.title }}</option>
+            <option value="{{ availableImporter.config.id }}"
+              data-mode="{{ availableImporter.config.mode }}" 
+              data-oauth-url="{{ availableImporter.config.oauthUrl }}" 
+              {{ 'selected' if importer === availableImporter.config.id }}>
+                {{ availableImporter.config.title }}
+            </option>
           {% endfor %}
         </select>
       </div>
-      <div class="form-group" id="js-profile">
+      <div class="form-group" id="js-profile" style="display: none">
         <label for="title">User name or profile URL</label>
-        <input class="form-control" id="profileNameOrUrl" name="profileNameOrUrl" type="text" value="{{ profileNameOrUrl }}" />
+        <input class="form-control" id="profileIdentifier" name="profileIdentifier" type="text" value="{{ profileIdentifier }}" />
+      </div>
+      <div class="form-group" id="js-oauth" style="display: none">
+        <label for="title">OAuth key</label>
+        <ol style="padding-left: 20px; font-size: 1.1rem; line-height: 3rem">
+          <li>
+            <a id="js-oauth-button" href="?" class="btn btn-primary" target="_blank">
+              <span class="fa fa-external-link"></span> <span id="js-oauth-label"></span>
+            </a>
+          </li>
+          <li>
+            <input class="form-control" id="oauthIdentifier" name="oauthIdentifier" type="text" value="{{ oauthIdentifier }}" placeholder="Paste the key here" />
+          </li>
+        </ol>
+        <p>Note: The authentication key will not be saved. It will only be used for importing games, then forgotten.</p>
       </div>
     </div>
   </div>

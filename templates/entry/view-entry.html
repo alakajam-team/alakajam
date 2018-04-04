@@ -21,7 +21,9 @@
         {% if external %}
           <h2 style="margin-top: -5px; margin-bottom: 20px">
             <span class="label label-xs label-primary">External entry</span>
-            Made for <i>{{ entry.get('external_event') }}</i>
+            {% if entry.get('external_event') %}
+              Made for <i>{{ entry.get('external_event') }}</i>
+            {% endif %}
           </h2>
         {% endif %}
       </h1>

@@ -4,6 +4,11 @@ const log = require('../../core/log')
 const forms = require('../../core/forms')
 
 module.exports = {
+  config: {
+    id: 'ludumdare.com',
+    title: 'Ludum Dare legacy site (ludumdare.com)',
+    mode: 'scraping'
+  },
   fetchEntryReferences,
   fetchEntryDetails
 }
@@ -16,12 +21,12 @@ const PLATFORM_KEYWORDS = {
   'Web': ['web', 'flash', 'swf', 'html', 'webgl', 'canvas']
 }
 
-async function fetchEntryReferences (profileNameOrUrl) {
+async function fetchEntryReferences (profileIdentifier) {
   let profileName
-  if (profileNameOrUrl.includes('://')) {
-    profileName = profileNameOrUrl.replace(/\/$/, '').replace(/^.*\//, '')
+  if (profileIdentifier.includes('://')) {
+    profileName = profileIdentifier.replace(/\/$/, '').replace(/^.*\//, '')
   } else {
-    profileName = profileNameOrUrl
+    profileName = profileIdentifier
   }
 
   // Download page

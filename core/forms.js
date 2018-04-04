@@ -16,6 +16,7 @@ const nunjucks = require('nunjucks')
 const removeMarkdown = require('remove-markdown')
 const url = require('url')
 const htmlToText = require('html-to-text')
+const TurndownService = require('turndown')
 const constants = require('../core/constants')
 const config = require('../config')
 
@@ -40,6 +41,7 @@ module.exports = {
 
   markdownToHtml,
   markdownToText,
+  htmlToMarkdown,
   htmlToText: htmlToText.fromString
 }
 
@@ -81,6 +83,8 @@ for (let allowedTag in constants.ALLOWED_POST_ATTRIBUTES) {
     sanitizeHtmlOptions.allowedClasses[allowedTag] = constants.ALLOWED_POST_CLASSES
   }
 }
+
+const turndownService = new TurndownService()
 
 /**
  * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
@@ -259,4 +263,13 @@ function markdownToHtml (markdown) {
  */
 function markdownToText (markdown) {
   return removeMarkdown(sanitizeMarkdown(markdown, constants.MAX_BODY_ANY)).replace(/\n\r/g, ' ')
+}
+
+/**
+ * Converts the given HTML string to Markdown
+ * @param  {string} html
+ * @return {string} Markdown
+ */
+function htmlToMarkdown (html) {
+  return turndownService.turndown(html)
 }
