@@ -162,7 +162,7 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'closed', 'results', or a post ID (not null)
  * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
  * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)
- * | string | status_tournament | Event tournament status: 'disabled', 'off', 'submission', 'playing', 'results'
+ * | string | status_tournament | Event tournament status: 'disabled', 'off', 'submission', 'playing', 'closed', 'results'
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | string | divisions | Divisions info: `{"name": "description"}`
  * | integer | entry_count | Total number of entries in the event.
@@ -382,7 +382,7 @@ module.exports.Entry = bookshelf.model('Entry', {
  * | integer | ranking_1 .. 6 | Ranking for categories 1 to 6 (max: 100000)
  * | integer | rating_count | Received rating count
  * | integer | high_score_count | Submitted scores count
- * | integer | high_score_unit | 'number', 'time' or any custom text to be used as a suffix (max size: 20)
+ * | integer | high_score_type | 'number', 'time' or any custom text to be used as a suffix (max size: 20)
  * | integer | high_score_instructions | Markdown text to be shown when submitting a score (max size: 2000)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
