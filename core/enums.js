@@ -51,6 +51,10 @@ module.exports = {
       OFF: 'off',
       NORMAL: 'normal',
       REVERSED: 'reversed'
+    },
+    HIGH_SCORE_TYPE: {
+      NUMBER: 'number',
+      TIME: 'time'
     }
   },
   THEME: {

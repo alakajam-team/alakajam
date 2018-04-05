@@ -310,8 +310,7 @@ async function createComment (user, node, body, requestAnonymous = false) {
 async function refreshCommentCount (node) {
   await node.load('comments')
   let commentCount = node.related('comments').size()
-  node.set('comment_count', commentCount)
-  await node.save()
+  await node.save({ 'comment_count': commentCount }, { patch: true })
 }
 
 /**

@@ -30,3 +30,7 @@
   {% endif %}
 </a>
 {% endmacro %}
+
+{% macro userLink(user) %}
+<a href="{{ buildUrl(user, 'user') }}">@{{ user.get('title') }}</a>
+{% endmacro %}

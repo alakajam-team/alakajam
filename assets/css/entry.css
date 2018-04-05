@@ -408,3 +408,20 @@
     display: none;
   }
 }
+
+.highscore-medal {
+  @apply --sprite2;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+
+  &.ranking-1 {
+    background-position: 0px -224px;
+  }
+  &.ranking-2 {
+    background-position: -16px -224px;
+  }
+  &.ranking-3 {
+    background-position: -32px -224px;
+  }
+}

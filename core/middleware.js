@@ -22,6 +22,7 @@ const promisify = require('promisify-node')
 const moment = require('moment')
 const nunjucks = require('nunjucks')
 const randomKey = require('random-key')
+const leftPad = require('left-pad')
 const log = require('./log')
 const config = require('../config')
 const constants = require('../core/constants')
@@ -127,6 +128,11 @@ async function configure (app) {
   nj.env.addFilter('relativeTime', function (date) {
     return moment(date).utc().fromNow()
   })
+  nj.env.addFilter('duration', function (durationInSeconds) {
+    let minutes = Math.floor(durationInSeconds / 60)
+    let seconds = durationInSeconds - minutes * 60
+    return minutes + "'" + leftPad(seconds.toFixed(3).replace('.', '"'), 6, '0')
+  })
   nj.env.addFilter('ordinal', function (n) {
     // source: https://stackoverflow.com/a/12487454
     let s = ['th', 'st', 'nd', 'rd']
@@ -142,6 +148,9 @@ async function configure (app) {
     } else {
       return null
     }
+  })
+  nj.env.addFilter('leftpad', function (number, toLength, char) {
+    return leftPad(number, toLength, char)
   })
   nj.env.addFilter('paginationBasePath', function (path) {
     let basePath = path.replace(/[?&]p=[^&]*/g, '')

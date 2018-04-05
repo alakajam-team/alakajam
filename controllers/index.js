@@ -87,6 +87,7 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/leave', entryController.leaveEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/accept-invite', entryController.acceptInvite)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/decline-invite', entryController.declineInvite)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/submit-score', entryController.submitScore)
 
     router.get('/create-event', eventController.editEvent)
     router.post('/create-event', eventController.editEvent)

@@ -1,0 +1,61 @@
+{% import "user/_macros-user.html" as userMacros %}
+
+{% macro highScores(entry, scoreCollection, userScore = null) %}
+{% set highScoreType = entry.related('details').get('high_score_type') %}
+{% set unit = highScoreType if not ['number', time'].includes(highScoreType) %}
+<table class="table">
+  <thead>
+  <tr>
+    <th>#</th>
+    <th>User</th>
+    <th>{{ 'Time' if highScoreType === 'time' else 'Score' }}</th>
+    <th>Date</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% if scoreCollection.length > 0 %}
+    {% for score in scoreCollection.models %}
+    <tr class="{{ 'active' if userScore and score.get('id') === userScore.get('id') }}">
+      <td>{{ printRanking(score) }}</td>
+      <td>{{ userMacros.userLink(score.related('user')) }}</td>
+      <td><b>{{ printScore(entry, score) }}</b></td>
+      <td>{{ score.get('updated_at') | date }}</td>
+    </tr>
+    {% endfor %}
+    {% if userScore and userScore.get('id') and userScore.get('ranking') > 10 %}
+    <tr>
+      <td colspan="4" class="text-center">...</td>
+    </tr>
+    <tr class="active">
+      <td>{{ userScore.get('ranking') | ordinal }}</td>
+      <td>{{ userMacros.userLink(userScore.related('user')) }}</td>
+      <td><b>{{ printScore(entry, userScore) }}</td></td>
+      <td>{{ userScore.get('updated_at') | date }}</td>
+    </tr>
+    {% endif %}
+    {% if scoreCollection.pagination.rowCount > 9 %}
+    <tr>
+      <td colspan="4">Total submitted scores: <b>{{ scoreCollection.pagination.rowCount }}</b></td>
+    </tr>
+    {% endif %}
+  {% else %}
+    <tr>
+      <td colspan="4">Be the first to submit a score!</td>
+    </tr>
+  {% endif %}
+  </tbody>
+</table>
+{% endmacro %}
+
+{% macro printRanking(score) %}
+  {%- if score.get('ranking') > 3 -%}
+    {{- score.get('ranking') -}}
+  {%- else -%}
+    <span class="highscore-medal ranking-{{ score.get('ranking') }}"></span>
+  {%- endif -%}
+{% endmacro %}
+
+{% macro printScore(entry, score) %}
+  {%- set highScoreType = entry.related('details').get('high_score_type') -%}
+  {{- (score.get('score') | duration) if highScoreType === 'time' else (score.get('score') | float) }} {{ highScoreType if not ['number', time'].includes(highScoreType) -}}
+{% endmacro %}

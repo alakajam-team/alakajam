@@ -3,6 +3,7 @@
 {% import "user/_macros-user.html" as userMacros %}
 {% import "event/_macros-event.html" as eventMacros %}
 {% import "_macros-form.html" as formMacros %}
+{% import "entry/_macros-score.html" as scoreMacros %}
 
 {% block body %}
 
@@ -247,6 +248,10 @@
           {% endfor %}
         </div>
       </div>
+
+      <h3 name="high-scores">High scores</h3>
+      {{ scoreMacros.highScores(entry, highScoresCollection, userScore) }}
+      <a href="./submit-score" class="btn btn-primary">{{ 'Manage your score' if userScore else 'Submit score' }}</a>
 
       {% if posts.models.length > 0 %}
         <h3>Related posts</h3>

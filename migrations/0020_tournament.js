@@ -9,7 +9,9 @@ exports.up = async function (knex, Promise) {
       table.integer('user_id').references('user.id').notNullable()
       table.integer('entry_id').references('entry.id').notNullable()
       table.decimal('score', 15, 3).notNullable()
+      table.string('picture')
       table.integer('ranking')
+      table.boolean('active').defaultTo(true)
       table.timestamps()
     })
 
@@ -32,17 +34,17 @@ exports.up = async function (knex, Promise) {
     })
 
     await knex.schema.table('entry', function (table) {
-      table.string('status_high_score').defaultTo('off') // off, normal, reversed
+      table.string('status_high_score').defaultTo('off')
     })
 
     await knex.schema.table('entry_details', function (table) {
       table.integer('high_score_count')
-      table.string('high_score_unit', 20)
+      table.string('high_score_type', 20)
       table.string('high_score_instructions', 2000)
     })
 
     await knex.schema.table('event', function (table) {
-      table.string('status_tournament').defaultTo('disabled') // disabled, off, submission, playing, results
+      table.string('status_tournament').defaultTo('disabled')
     })
 
     Promise.resolve()
@@ -64,7 +66,7 @@ exports.down = async function (knex, Promise) {
 
     await knex.schema.table('entry_details', function (table) {
       table.dropColumn('high_score_count')
-      table.dropColumn('high_score_unit')
+      table.dropColumn('high_score_type')
       table.dropColumn('high_score_instructions')
     })
 

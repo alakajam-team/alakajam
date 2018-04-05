@@ -17,6 +17,7 @@ const securityService = require('../services/security-service')
 const platformService = require('../services/platform-service')
 const settingService = require('../services/setting-service')
 const tagService = require('../services/tag-service')
+const highscoreService = require('../services/highscore-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
@@ -32,6 +33,7 @@ module.exports = {
   leaveEntry,
 
   saveCommentOrVote,
+  submitScore,
 
   acceptInvite,
   declineInvite,
@@ -70,7 +72,8 @@ async function entryMiddleware (req, res, next) {
  * Browse entry
  */
 async function viewEntry (req, res) {
-  const entry = res.locals.entry
+  const { user, entry } = res.locals
+
   // Let the template display user thumbs
   await entry.load('userRoles.user')
 
@@ -111,7 +114,9 @@ async function viewEntry (req, res) {
     vote,
     canVote,
     eventVote,
-    external: !res.locals.event
+    external: !res.locals.event,
+    highScoresCollection: await highscoreService.findHighScores(entry),
+    userScore: await highscoreService.findEntryScore(user, entry)
   })
 }
 
@@ -243,11 +248,16 @@ async function editEntry (req, res) {
     if (fields['optout-graphics']) optouts.push('Graphics')
     if (fields['optout-audio']) optouts.push('Audio')
 
+    let highScoreType = forms.sanitizeString(fields['high-score-type'], 20)
+    if (highScoreType === 'custom') {
+      highScoreType = forms.sanitizeString(fields['custom-unit'], 20)
+    }
+
     let entryDetails = entry.related('details')
     entryDetails.set({
       'optouts': optouts,
       'body': forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_ENTRY_DETAILS),
-      'high_score_unit': forms.sanitizeString(fields['high-score-unit'], 20),
+      'high_score_type': highScoreType,
       'high_score_instructions': forms.sanitizeString(fields['high-score-instructions'], 2000)
     })
 
@@ -435,6 +445,104 @@ async function saveCommentOrVote (req, res) {
     }
     viewEntry(req, res)
   }
+}
+
+/**
+ * Submit a high score
+ */
+async function submitScore (req, res) {
+  let { user, entry } = res.locals
+  let { fields } = await req.parseForm()
+
+  if (!user) {
+    res.redirect('/login?redirect=' + req.url)
+    return
+  } else if (entry.get('status_high_score') === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+    res.errorPage(403, 'High scores are disabled on this entry')
+    return
+  }
+
+  // Fetch existing score, handle deletion
+  let entryScore = await highscoreService.findEntryScore(user, entry)
+  if (req.method === 'POST' && fields.delete && entryScore) {
+    await highscoreService.deleteEntryScore(entryScore, entry)
+    entryScore = null
+  }
+  if (!entryScore) {
+    entryScore = await highscoreService.createEntryScore(user, entry)
+  }
+
+  let rankingPercent
+  if (entryScore.get('ranking')) {
+    rankingPercent = Math.floor(100 * entryScore.get('ranking') / entry.related('details').get('high_score_count'))
+  }
+
+  // Score submission
+  let errorMessage
+  if (req.method === 'POST' && !fields.delete) {
+    // Validation
+    let score = forms.sanitizeString(fields.score) || '0'
+    score = score.replace(/,/g, '.').replace(/ /g, '') // give some flexibility to number parsing
+
+    if (fields['score-mn'] || fields['score-s'] || fields['score-ms']) {
+      let minutes = fields['score-mn'] || 0
+      let seconds = fields['score-s'] || 0
+      let milliseconds = fields['score-ms'] || 0
+      console.log(minutes, seconds, milliseconds)
+
+      if (!forms.isInt(minutes, { min: 0, max: 999 })) {
+        errorMessage = 'Invalid minutes'
+        minutes = 0
+      }
+      if (!forms.isInt(seconds, { min: 0, max: 60 })) {
+        errorMessage = 'Invalid seconds'
+        seconds = 0
+      }
+      if (!forms.isInt(milliseconds, { min: 0, max: 999 })) {
+        errorMessage = 'Invalid milliseconds'
+        milliseconds = 0
+      }
+      score = parseInt(minutes) * 60 + parseInt(seconds) + parseInt(milliseconds) * 0.001
+    } else if (!forms.isFloat(score)) {
+      errorMessage = 'Invalid score'
+    }
+    if (fields.picture && !forms.isURL(fields.picture)) {
+      errorMessage = 'Invalid picture URL'
+    }
+
+    entryScore.set({
+      score: score,
+      picture: forms.sanitizeString(fields.picture)
+    })
+
+    // Saving
+    if (!errorMessage) {
+      let result = await highscoreService.submitEntryScore(entryScore, entry)
+      if (result.error) {
+        errorMessage = result.error
+      } else {
+        entryScore = result
+      }
+    }
+  }
+
+  // Build context
+  let context = {
+    highScoresCollection: await highscoreService.findHighScores(entry),
+    entryScore,
+    rankingPercent,
+    errorMessage
+  }
+  if (entry.related('details').get('high_score_type') === 'time') {
+    let durationInSeconds = entryScore.get('score')
+    if (durationInSeconds) {
+      context.scoreMn = Math.floor(durationInSeconds / 60)
+      context.scoreS = Math.floor(durationInSeconds) - context.scoreMn * 60
+      context.scoreMs = Math.round(1000 * (durationInSeconds - Math.floor(durationInSeconds)))
+    }
+  }
+
+  res.render('entry/submit-score', context)
 }
 
 /**

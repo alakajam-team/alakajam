@@ -185,7 +185,7 @@ function isIn (string, values) {
  * @return {Boolean}
  */
 function isInt (input, options = {}) {
-  return input && ((typeof input === 'number' && Number.isInteger(input)) ||
+  return (input || input === 0) && ((typeof input === 'number' && Number.isInteger(input)) ||
     validator.isInt(input, options))
 }
 
@@ -196,7 +196,7 @@ function isInt (input, options = {}) {
  * @return {Boolean}
  */
 function isFloat (input, options = {}) {
-  return input && (typeof input === 'number' || validator.isFloat(input, options))
+  return (input || input === 0) && (typeof input === 'number' || validator.isFloat(input, options))
 }
 
 /**

@@ -324,3 +324,25 @@ input.date-picker {
     display: block;
   }
 }
+
+.big-table {
+  @apply --shadow;
+  background-color: var(--borders);
+  margin-bottom: 20px;
+
+  &__header {
+    padding: 10px;
+    background-color: var(--main);
+    color: white;
+    font-weight: bold;
+    font-size: 1.4rem;
+
+    & .label {
+      vertical-align: 2px;
+    }
+  }
+
+  &__body {
+    padding: 10px;
+  }
+}

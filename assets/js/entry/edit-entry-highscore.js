@@ -20,8 +20,8 @@ module.exports = function editEntryHighScore () {
   toggleHighScoreDetails($('input[type=radio][name=enable-high-score]:checked').val())
 
   // Toggle custom unit input
-  $('input[type=radio][name=high-score-unit]').on('change, ifChecked', function () {
+  $('input[type=radio][name=high-score-type]').on('change, ifChecked', function () {
     toggleCustomUnitInput(this.value)
   })
-  toggleCustomUnitInput($('input[type=radio][name=high-score-unit]:checked').val())
+  toggleCustomUnitInput($('input[type=radio][name=high-score-type]:checked').val())
 }

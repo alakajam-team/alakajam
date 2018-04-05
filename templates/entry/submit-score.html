@@ -1,0 +1,79 @@
+{% extends "_page.html" %}
+{% import "post/_macros-post.html" as postMacros %}
+{% import "user/_macros-user.html" as userMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
+{% import "entry/_macros-score.html" as scoreMacros %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h1>{{ entry.get('title') }}</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      {% if entryScore.get('id') %}
+        <h2>Update your high score</h2>
+      {% else %}
+        <h2>Submit your high score</h2>
+      {% endif %}
+
+      {% if errorMessage %}
+        <div class="alert alert-warning">{{ errorMessage }}</div>
+      {% endif %}
+
+      {% set instructions = entry.related('details').get('high_score_instructions') %}
+      {% if instructions %}
+        <div class="well">{{ entry.related('details').get('high_score_instructions') | markdown | safe }}</div>
+      {% endif %}
+
+      {% if entryScore.get('ranking') %}
+        <div class="big-table">
+          <div class="big-table__header">Current ranking: <span class="label label-default">{{ entryScore.get('ranking') | ordinal }}</span></div>
+          <div class="big-table__body">
+            Out of {{ entry.related('details').get('high_score_count') }} players (top {{ rankingPercent or '0' }}%)
+          </div>
+        </div>
+      {% endif %}
+
+      <form method="post">
+        <div class="form-group">
+          <label for="score">{{ 'Time' if entry.related('details').get('high_score_type') === 'time' else 'Score' }}</label>
+          {% if entry.related('details').get('high_score_type') === 'time' %}
+            <div class="form-inline">
+              {% set hasScore = entryScore.get('score') %}
+              <input type="number" name="score-mn" class="form-control input-lg" value="{{ (scoreMn or '0') if hasScore else (scoreMn or '') | int }}" placeholder="minutes" style="width: 100px" min="0" max="999" /> '
+              <input type="number" name="score-s" class="form-control input-lg" value="{{ ((scoreS or '0') if hasScore else (scoreS or '')) | int | leftpad(2, '0') }}" placeholder="seconds" style="width: 100px" min="0" max="60" /> "
+              <input type="number" name="score-ms" class="form-control input-lg" value="{{ ((scoreMs or '0') if hasScore else (scoreMs or '')) | int | leftpad(3, '0') }}" placeholder="milliseconds" style="width: 130px" min="0" max="999" /> 
+            </div>
+          {% else %}
+          <input type="text" name="score" class="form-control input-lg" value="{{ entryScore.get('score') | float }}" />
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="picture">Link to proof screenshot</label>
+          <p>Until we support uploading screenshots, we suggest using <a href="https://imgur.com/">Imgur</a> or any other image sharing service.</p>
+          <input type="text" name="picture" class="form-control" value="{{ entryScore.get('picture') }}" placeholder="http://..." />
+        </div>
+        <div class="form-group">
+          <input type="submit" class="btn btn-primary" value="Submit" />
+          <input type="submit" name="delete" class="btn btn-default" value="Delete" onclick="return confirm('Delete your high score?')" />
+        </div>
+      </form>
+    </div>
+    <div class="col-md-4">
+      <h2>High scores</h2>
+      {{ eventMacros.entryThumb(entry) }}
+      {{ scoreMacros.highScores(entry, highScoresCollection, user, entryScore) }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ formMacros.editorScripts() }}
+{% endblock %}
