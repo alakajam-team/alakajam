@@ -382,6 +382,7 @@ module.exports.Entry = bookshelf.model('Entry', {
  * | integer | ranking_1 .. 6 | Ranking for categories 1 to 6 (max: 100000)
  * | integer | rating_count | Received rating count
  * | integer | high_score_count | Submitted scores count
+ * | integer | high_score_unit | 'number', 'time' or any custom text to be used as a suffix (max size: 20)
  * | integer | high_score_instructions | Markdown text to be shown when submitting a score (max size: 2000)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)

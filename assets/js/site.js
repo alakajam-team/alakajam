@@ -37,6 +37,7 @@ $(function domReady () {
   require('./entry/edit-entry-links')()
   require('./entry/edit-entry-platforms')()
   require('./entry/edit-entry-team')()
+  require('./entry/edit-entry-highscore')()
   require('./entry/view-entry-voting')()
 
   require('./event/theme-ideas')()

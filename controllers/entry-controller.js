@@ -197,16 +197,26 @@ async function editEntry (req, res) {
       isCreation = false
     }
 
-    // Tags
+    // Save tags
     let tags = (Array.isArray(fields.tags)) ? fields.tags : [fields.tags]
     tags = tags.map(tag => forms.sanitizeString(tag))
     await tagService.updateEntryTags(entry, tags)
 
+    // Update entry
+
+    let statusHighScore = 'off'
+    if (fields['enable-high-score'] === 'on') {
+      statusHighScore = fields['high-score-reversed'] ? enums.ENTRY.STATUS_HIGH_SCORE.REVERSED : enums.ENTRY.STATUS_HIGH_SCORE.NORMAL
+    }
+
     entry.set({
       'title': forms.sanitizeString(fields.title),
       'description': forms.sanitizeString(fields.description),
-      'links': links
+      'links': links,
+      'allow_anonymous': fields['anonymous-enabled'] === 'on',
+      'status_high_score': statusHighScore
     })
+
     if (isExternalEvent) {
       entry.set({
         event_id: null,
@@ -215,6 +225,7 @@ async function editEntry (req, res) {
         external_event: forms.sanitizeString(fields['external-event'])
       })
     }
+
     let picturePath = '/entry/' + entry.get('id')
     if (fields['picture-delete'] && entry.get('pictures').length > 0) {
       await fileStorage.remove(entry.get('pictures')[0])
@@ -226,8 +237,19 @@ async function editEntry (req, res) {
       entry.set('pictures', [forms.sanitizeString(fields.picture)])
     }
 
+    // Update entry details
+
+    let optouts = []
+    if (fields['optout-graphics']) optouts.push('Graphics')
+    if (fields['optout-audio']) optouts.push('Audio')
+
     let entryDetails = entry.related('details')
-    entryDetails.set('body', forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_ENTRY_DETAILS))
+    entryDetails.set({
+      'optouts': optouts,
+      'body': forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_ENTRY_DETAILS),
+      'high_score_unit': forms.sanitizeString(fields['high-score-unit'], 20),
+      'high_score_instructions': forms.sanitizeString(fields['high-score-instructions'], 2000)
+    })
 
     // Save entry: Validate form data
     for (let link of links) {
@@ -248,7 +270,7 @@ async function editEntry (req, res) {
     }
 
     if (!errorMessage) {
-      // Save entry: Apply team changes
+      // Save entry: Prepare team changes
       let teamMembers = null
       if (fields.members) {
         if (!Array.isArray(fields.members)) {
@@ -268,6 +290,7 @@ async function editEntry (req, res) {
         }
       }
 
+      // Manager-only changes
       if (isCreation || securityService.canUserManage(user, entry, { allowMods: true })) {
         let division = fields['division'] || eventService.getDefaultDivision(event)
         if (event &&
@@ -280,17 +303,7 @@ async function editEntry (req, res) {
             division = entry.get('division')
           }
         }
-
-        entry.set({
-          'division': division,
-          'allow_anonymous': fields['anonymous-enabled'] === 'on',
-          'published_at': entry.get('published_at') || new Date()
-        })
-
-        let optouts = []
-        if (fields['optout-graphics']) optouts.push('Graphics')
-        if (fields['optout-audio']) optouts.push('Audio')
-        entryDetails.set('optouts', optouts)
+        entry.set('division', division)
 
         res.locals.infoMessage = ''
         if (teamMembers !== null) {
@@ -313,6 +326,7 @@ async function editEntry (req, res) {
       } else {
         await entryDetails.save()
       }
+      entry.set('published_at', entry.get('published_at') || new Date())
       await entry.save()
       if (eventCountRefreshNeeded) {
         eventService.refreshEventCounts(event) // No need to await

@@ -37,6 +37,7 @@ exports.up = async function (knex, Promise) {
 
     await knex.schema.table('entry_details', function (table) {
       table.integer('high_score_count')
+      table.string('high_score_unit', 20)
       table.string('high_score_instructions', 2000)
     })
 
@@ -63,6 +64,7 @@ exports.down = async function (knex, Promise) {
 
     await knex.schema.table('entry_details', function (table) {
       table.dropColumn('high_score_count')
+      table.dropColumn('high_score_unit')
       table.dropColumn('high_score_instructions')
     })
 
