@@ -10,7 +10,7 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <h1>{{ entry.get('title') }}</h1>
+      <h1><a href="{{ buildUrl(entry, 'entry') }}">{{ entry.get('title') }}</a></h1>
     </div>
   </div>
   <div class="row">
@@ -41,13 +41,16 @@
 
       <form method="post">
         <div class="form-group">
-          <label for="score">{{ 'Time' if entry.related('details').get('high_score_type') === 'time' else 'Score' }}</label>
+          <label for="score" class="hidden-xs">{{ 'Time' if entry.related('details').get('high_score_type') === 'time' else 'Score' }}</label>
           {% if entry.related('details').get('high_score_type') === 'time' %}
             <div class="form-inline">
               {% set hasScore = entryScore.get('score') %}
-              <input type="number" name="score-mn" class="form-control input-lg" value="{{ (scoreMn or '0') if hasScore else (scoreMn or '') | int }}" placeholder="minutes" style="width: 100px" min="0" max="999" /> '
-              <input type="number" name="score-s" class="form-control input-lg" value="{{ ((scoreS or '0') if hasScore else (scoreS or '')) | int | leftpad(2, '0') }}" placeholder="seconds" style="width: 100px" min="0" max="60" /> "
-              <input type="number" name="score-ms" class="form-control input-lg" value="{{ ((scoreMs or '0') if hasScore else (scoreMs or '')) | int | leftpad(3, '0') }}" placeholder="milliseconds" style="width: 130px" min="0" max="999" /> 
+              <label for="score-mn" class="visible-xs">Minutes</label>
+              <input type="number" name="score-mn" class="form-control input-lg" value="{{ (scoreMn or '0') if hasScore else (scoreMn or '') | int }}" placeholder="minutes" style="width: 120px" min="0" max="999" /><span class="hidden-xs"> ' </span>
+              <label for="score-mn" class="visible-xs">Seconds</label>
+              <input type="number" name="score-s" class="form-control input-lg" value="{{ ((scoreS or '0') if hasScore else (scoreS or '')) | int | leftpad(2, '0') }}" placeholder="seconds" style="width: 120px" min="0" max="60" /><span class="hidden-xs"> " </span>
+              <label for="score-mn" class="visible-xs">Milliseconds</label>
+              <input type="number" name="score-ms" class="form-control input-lg" value="{{ ((scoreMs or '0') if hasScore else (scoreMs or '')) | int | leftpad(3, '0') }}" placeholder="milliseconds" style="width: 170px" min="0" max="999" /> 
             </div>
           {% else %}
           <input type="text" name="score" class="form-control input-lg" value="{{ entryScore.get('score') | float }}" />
@@ -67,7 +70,7 @@
     <div class="col-md-4">
       <h2>High scores</h2>
       {{ eventMacros.entryThumb(entry) }}
-      {{ scoreMacros.highScores(entry, highScoresCollection, user, entryScore) }}
+      {{ scoreMacros.highScores(entry, highScoresCollection, entryScore) }}
     </div>
   </div>
 </div>

@@ -37,6 +37,10 @@ h1 {
   font-weight: normal;
   letter-spacing: 1px;
   color: var(--text);
+  
+  & a {
+    color: var(--text);
+  }
 }
 h2 {
   font-weight: bold;

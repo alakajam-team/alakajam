@@ -34,6 +34,7 @@ module.exports = {
 
   saveCommentOrVote,
   submitScore,
+  editScores,
 
   acceptInvite,
   declineInvite,
@@ -125,7 +126,7 @@ async function editEntry (req, res) {
 
   // Security checks
   if (!user) {
-    res.redirect('/login')
+    res.redirect('/login?redirect=' + req.url)
     return
   } else if (!entry && event) {
     let existingEntry = await eventService.findUserEntryForEvent(user, event.id)
@@ -543,6 +544,46 @@ async function submitScore (req, res) {
   }
 
   res.render('entry/submit-score', context)
+}
+
+/**
+ * Moderate high scores
+ */
+async function editScores (req, res) {
+  let { user, entry } = res.locals
+  let { fields } = await req.parseForm()
+
+  if (!user) {
+    res.redirect('/login?redirect=' + req.url)
+    return
+  } else if (!securityService.canUserWrite(user, entry, { allowMods: true })) {
+    res.errorPage(403)
+    return
+  } else if (entry.get('status_high_score') === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+    res.errorPage(403, 'High scores are disabled on this entry')
+    return
+  }
+
+  if (req.method === 'POST') {
+    for (let field in fields) {
+      if (field.includes('suspend') || field.includes('restore')) {
+        let parsedField = field.split('-')
+        let id = parsedField.length === 2 ? parsedField[1] : null
+        if (id && forms.isId(id)) {
+          await highscoreService.setEntryScoreActive(id, field.includes('restore'))
+        }
+      } else if (field === 'clearall') {
+        await highscoreService.deleteAllEntryScores(entry)
+      }
+    }
+  }
+
+  res.render('entry/edit-scores', {
+    highScoresCollection: await highscoreService.findHighScores(entry, {
+      fetchAll: true,
+      withSuspended: true
+    })
+  })
 }
 
 /**

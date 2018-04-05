@@ -15,17 +15,29 @@ module.exports = {
 
   createEntryScore,
   findEntryScore,
+  findEntryScoreById,
   submitEntryScore,
-  deleteEntryScore
+  setEntryScoreActive,
+  deleteEntryScore,
+  deleteAllEntryScores
 }
 
-async function findHighScores (entry) {
-  return models.EntryScore.where('entry_id', entry.get('id'))
-    .orderBy('score', _rankingDir(entry))
-    .fetchPage({
-      pageSize: 10,
-      withRelated: ['user']
-    })
+async function findHighScores (entry, options = {}) {
+  let query = models.EntryScore.where('entry_id', entry.get('id'))
+  if (!options.withSuspended) {
+    query.where('active', true)
+  }
+  query.orderBy('score', _rankingDir(entry))
+
+  let fetchOptions = {
+    withRelated: ['user']
+  }
+  if (options.fetchAll) {
+    return query.fetchAll(fetchOptions)
+  } else {
+    fetchOptions.pageSize = 10
+    return query.fetchPage(fetchOptions)
+  }
 }
 
 async function createEntryScore (user, entry) {
@@ -49,6 +61,10 @@ async function findEntryScore (user, entry) {
   }
 }
 
+async function findEntryScoreById (id) {
+  return models.EntryScore.where('id', id).fetch({ withRelated: ['user'] })
+}
+
 /**
  * @return any errors, or the entry score with up-to-date ranking set
  */
@@ -66,12 +82,15 @@ async function submitEntryScore (entryScore, entry) {
         .count()
       let ranking = higherScoreCount + 1
       if (ranking <= 10) {
-        return { error: 'You must submit a proof screenshot to get in the Top 10' }
+        return { error: 'Pic or it didn\'t happen! You need a screenshot to get in the Top 10 :)' }
       }
     }
 
-    // Save score and refresh rankings
+    // Save score
+    entryScore.set('active', true)
     await entryScore.save()
+
+    // Refresh rankings
     let rankedEntryScore = _refreshEntryRankings(entry, entryScore.get('id'))
     if (rankedEntryScore) {
       return rankedEntryScore
@@ -84,9 +103,24 @@ async function submitEntryScore (entryScore, entry) {
   }
 }
 
+async function setEntryScoreActive (id, active) {
+  let entryScore = await findEntryScoreById(id)
+  if (entryScore) {
+    entryScore.set('active', active)
+    await entryScore.save()
+  }
+}
+
 async function deleteEntryScore (entryScore, entry) {
   await entryScore.destroy()
-  _refreshEntryRankings(entry)
+  await _refreshEntryRankings(entry)
+}
+
+async function deleteAllEntryScores (entry) {
+  await db.knex('entry_score')
+    .where('entry_id', entry.get('id'))
+    .delete()
+  await _refreshEntryRankings(entry)
 }
 
 async function _refreshEntryRankings (entry, retrieveScoreId = null) {
@@ -95,6 +129,7 @@ async function _refreshEntryRankings (entry, retrieveScoreId = null) {
   let scores = await models.EntryScore
     .where('entry_id', entry.get('id'))
     .orderBy('score', _rankingDir(entry))
+    .orderBy('updated_at')
     .fetchAll()
 
   await db.transaction(async function (t) {
@@ -104,11 +139,14 @@ async function _refreshEntryRankings (entry, retrieveScoreId = null) {
         score.set('ranking', ranking)
         score.save(null, { transacting: t })
       }
+      if (score.get('active')) {
+        ranking++
+      }
+
       if (retrieveScoreId && score.get('id') === retrieveScoreId) {
         retrievedScore = score
         await retrievedScore.load(['user'], { transacting: t })
       }
-      ranking++
     }
   })
 

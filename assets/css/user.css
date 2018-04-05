@@ -110,7 +110,9 @@
   }
 
   &__title {
+    @apply --alt-font;
     font-size: 1.4rem;
+    line-height: 1.6rem;
     padding-left: 60px;
     margin: 0;
   }
@@ -120,9 +122,10 @@
 
   &__name {
     font-size: 0.85rem;
+    font-weight: bold;
     color: var(--text-light);
     padding-left: 60px;
-    margin-bottom: 2px;
+    margin-top: -3px;
   }
   &.centered &__name {
     padding-left: 0;

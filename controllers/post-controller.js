@@ -134,7 +134,7 @@ async function viewPost (req, res) {
 
 async function editPost (req, res) {
   if (!res.locals.user) {
-    res.redirect('/login')
+    res.redirect('/login?redirect=' + req.url)
     return
   }
 
