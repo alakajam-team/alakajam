@@ -35,6 +35,10 @@ module.exports = {
   viewEventGames,
   viewEventRatings,
   viewEventResults,
+  
+  viewEventTournamentGames,
+  submitTournamentGame,
+  viewEventTournamentLeaderboard,
 
   editEvent,
   editEventThemes,
@@ -521,6 +525,31 @@ async function viewEventResults (req, res) {
 }
 
 /**
+ * View the games of a tournament
+ */
+async function viewEventTournamentGames (req, res) {
+  // TODO
+  res.render('event/view-event-tourn-games')
+}
+
+/**
+ * Submit a game to a tournament
+ */
+async function submitTournamentGame (req, res) {
+  // TODO
+  res.redirect('./tournament-games')
+}
+
+
+/**
+ * View the leaderboard of a tournament
+ */
+async function viewEventTournamentLeaderboard (req, res) {
+  // TODO
+  res.render('event/view-event-tourn-leaderboard')
+}
+
+/**
  * Edit or create an event
  */
 async function editEvent (req, res) {
@@ -556,6 +585,8 @@ async function editEvent (req, res) {
     } else if (!forms.isIn(fields['status-results'], enums.EVENT.STATUS_RESULTS) &&
         !forms.isId(fields['status-results'])) {
       errorMessage = 'Invalid results status'
+    } else if (!forms.isIn(fields['status-tournament'], enums.EVENT.STATUS_TOURNAMENT)) {
+      errorMessage = 'Invalid tournament status'
     } else if (event) {
       let matchingEventsCollection = await eventService.findEvents({ name: fields.name })
       for (let matchingEvent of matchingEventsCollection.models) {
@@ -599,6 +630,7 @@ async function editEvent (req, res) {
         status_theme: fields['status-theme'],
         status_entry: fields['status-entry'],
         status_results: fields['status-results'],
+        status_tournament: fields['status-tournament'],
         countdown_config: {
           message: forms.sanitizeString(fields['countdown-message']),
           link: forms.sanitizeString(fields['countdown-link']),

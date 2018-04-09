@@ -40,6 +40,7 @@ $(function domReady () {
   require('./entry/edit-entry-highscore')()
   require('./entry/view-entry-voting')()
 
+  require('./event/edit-event-status')()
   require('./event/theme-ideas')()
   require('./event/theme-votes')()
   require('./event/theme-shortlist')()

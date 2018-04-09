@@ -43,6 +43,7 @@ module.exports = {
       OFF: 'off',
       SUBMISSION: 'submission',
       PLAYING: 'playing',
+      CLOSED: 'closed',
       RESULTS: 'results'
     }
   },

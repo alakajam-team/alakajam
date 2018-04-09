@@ -104,9 +104,16 @@
 
       {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post'), 'Rules', 'info-sign', path) -}}
       {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
-      {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) -}}
-      {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'tower', path) -}}
-      {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: 'results' }) -}}
+      
+      {% set statusTournament = event.get('status_tournament') %}
+      {% if not statusTournament or statusTournament === 'disabled' %}
+        {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) -}}
+        {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'tower', path) -}}
+        {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: ['results'] }) -}}
+      {% else %}
+        {{- eventLink(event, 'status_tournament', 'tournament-games', 'Games', 'tower', path) -}}
+        {{- eventLink(event, 'status_tournament', 'tournament-leaderboard', 'Leaderboard', 'th-list', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
+      {% endif %}
     </div>
     
   {% if options.collapse %}
@@ -119,7 +126,7 @@
 {%- if not statusField or event.get(statusField) !== 'disabled' -%}
   {%- set targetUrl = targetPath if targetPath.includes('/') else buildUrl(event, 'event', targetPath) -%}
   <a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
-      {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and event.get(statusField) != options.requiredValue )}}">
+      {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
     <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="hidden-xs">{{ label | safe }}</span>
   </a>
 {%- endif -%}
