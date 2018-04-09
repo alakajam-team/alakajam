@@ -240,7 +240,7 @@ function parseDateTime (string) {
 function markdownToHtml (markdown) {
   // Github-style mentions parsing
   // (adapted from https://github.com/showdownjs/showdown/blob/master/src/subParsers/makehtml/anchors.js)
-  markdown = markdown.replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,[\]()]|\s|$)/gmi, function (wm, st, escape, mentions, username) {
+  markdown = (markdown || '').replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,[\]()]|\s|$)/gmi, function (wm, st, escape, mentions, username) {
     if (escape === '\\') {
       return st + mentions
     } else {
@@ -262,7 +262,7 @@ function markdownToHtml (markdown) {
  * @return {string} text without markup, but *should not be trusted* as safe HTML!
  */
 function markdownToText (markdown) {
-  return removeMarkdown(sanitizeMarkdown(markdown, constants.MAX_BODY_ANY)).replace(/\n\r/g, ' ')
+  return removeMarkdown(sanitizeMarkdown(markdown || '', constants.MAX_BODY_ANY)).replace(/\n\r/g, ' ')
 }
 
 /**
@@ -271,5 +271,5 @@ function markdownToText (markdown) {
  * @return {string} Markdown
  */
 function htmlToMarkdown (html) {
-  return turndownService.turndown(html)
+  return turndownService.turndown(html || '')
 }
