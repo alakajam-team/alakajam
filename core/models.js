@@ -183,8 +183,8 @@ module.exports.Event = bookshelf.model('Event', {
   entries: function () {
     return this.hasMany('Entry', 'event_id')
   },
-  tournamentScores: function () {
-    return this.hasMany('TournamentScore', 'event_id')
+  tournamentEntries: function () {
+    return this.hasMany('TournamentEntry', 'event_id')
   },
 
   // Listeners
@@ -650,6 +650,7 @@ module.exports.EntryScore = bookshelf.model('EntryScore', {
  * | increments | id | Primary key
  * | integer | event_id | Tournament event ID (not null)
  * | integer | entry_id | Entry ID (not null)
+ * | integer | order | Entry order
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */

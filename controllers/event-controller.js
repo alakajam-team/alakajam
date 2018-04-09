@@ -16,6 +16,7 @@ const userService = require('../services/user-service')
 const eventService = require('../services/event-service')
 const eventThemeService = require('../services/event-theme-service')
 const eventRatingService = require('../services/event-rating-service')
+const eventTournamentService = require('../services/event-tournament-service')
 const tagService = require('../services/tag-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
@@ -35,7 +36,7 @@ module.exports = {
   viewEventGames,
   viewEventRatings,
   viewEventResults,
-  
+
   viewEventTournamentGames,
   submitTournamentGame,
   viewEventTournamentLeaderboard,
@@ -43,6 +44,7 @@ module.exports = {
   editEvent,
   editEventThemes,
   editEventEntries,
+  editEventTournamentGames,
   deleteEvent,
 
   ajaxFindThemes,
@@ -540,7 +542,6 @@ async function submitTournamentGame (req, res) {
   res.redirect('./tournament-games')
 }
 
-
 /**
  * View the leaderboard of a tournament
  */
@@ -789,6 +790,65 @@ async function editEventEntries (req, res) {
     entriesById,
     usersById,
     detailedEntryInfo
+  })
+}
+
+/**
+ * Manage tournament games
+ */
+async function editEventTournamentGames (req, res) {
+  res.locals.pageTitle += ' | Tournament games'
+
+  let { user, event } = res.locals
+
+  if (!securityService.isMod(user)) {
+    res.errorPage(403)
+    return
+  }
+
+  let errorMessage
+  if (req.method === 'POST') {
+    let { fields } = await req.parseForm()
+
+    // Add to tournament
+    if (fields.add) {
+      if (forms.isId(fields.add)) {
+        let entry = await eventService.findEntryById(fields.add)
+        if (entry) {
+          await eventTournamentService.addTournamentEntry(event, entry)
+        } else {
+          errorMessage = 'Entry not found with ID ' + fields.add
+        }
+      } else {
+        errorMessage = 'Invalid entry ID'
+      }
+    }
+
+    // Update order
+    if (fields.update && forms.isId(fields.id)) {
+      if (forms.isInt(fields.order)) {
+        let entry = await eventService.findEntryById(fields.id)
+        if (entry) {
+          await eventTournamentService.setTournamentEntryOrder(event, entry, fields.order)
+        }
+      } else {
+        errorMessage = 'Invalid order'
+      }
+    }
+
+    // Remove from tournament
+    if (fields.remove && forms.isId(fields.id)) {
+      let entry = await eventService.findEntryById(fields.id)
+      if (entry) {
+        await eventTournamentService.removeTournamentEntry(event, entry)
+      }
+    }
+  }
+
+  // Load tournament entries
+  res.render('event/edit-event-tourn-games', {
+    tournamentEntries: (await eventTournamentService.getTournamentEntries(event)).models,
+    errorMessage
   })
 }
 
