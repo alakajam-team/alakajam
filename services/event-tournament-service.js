@@ -9,13 +9,13 @@
 const models = require('../core/models')
 
 module.exports = {
-  getTournamentEntries,
+  findTournamentEntries,
   addTournamentEntry,
-  setTournamentEntryOrder,
+  saveTournamentEntryOrder,
   removeTournamentEntry
 }
 
-async function getTournamentEntries (event) {
+async function findTournamentEntries (event) {
   await event.load(['tournamentEntries.entry.userRoles'])
   return event.related('tournamentEntries').orderBy('order')
 }
@@ -32,7 +32,7 @@ async function addTournamentEntry (event, entry) {
   return tEntry
 }
 
-async function setTournamentEntryOrder (event, entry, order) {
+async function saveTournamentEntryOrder (event, entry, order) {
   let tEntry = await _getTournamentEntry(event, entry)
   tEntry.set('order', order)
   return tEntry.save()

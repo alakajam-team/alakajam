@@ -3,7 +3,7 @@
 {% macro highScores(entry, scoreCollection, userScore = null, options = {}) %}
 {% set highScoreType = entry.related('details').get('high_score_type') %}
 {% set unit = highScoreType if not ['number', time'].includes(highScoreType) %}
-<table class="table">
+<table class="table" style="margin-bottom: 10px">
   <thead>
   <tr>
     <th>#</th>
@@ -58,6 +58,15 @@
   {% endif %}
   </tbody>
 </table>
+
+<p style="margin-bottom: 20px">
+  {% if not options.hideSubmitButton %}
+  <a href="{{ buildUrl(entry, 'entry', 'submit-score') }}" class="btn btn-primary">{{ 'Manage your score' if userScore else 'Submit score' }}</a>
+  {% endif %}
+  {% if canUserWrite(user, entry, { allowMods: true }) %}
+    <a href="{{ buildUrl(entry, 'entry', 'edit-scores') }}" class="btn btn-default">Moderate scores</a>
+  {% endif %}
+</p>
 {% endmacro %}
 
 {% macro printRanking(score) %}

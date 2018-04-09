@@ -22,6 +22,7 @@ const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
 const platformService = require('../services/platform-service')
+const highScoreService = require('../services/highscore-service')
 
 module.exports = {
   handleEventUserShortcuts,
@@ -530,8 +531,28 @@ async function viewEventResults (req, res) {
  * View the games of a tournament
  */
 async function viewEventTournamentGames (req, res) {
-  // TODO
-  res.render('event/view-event-tourn-games')
+  let { user, event } = res.locals
+
+  let statusTournament = event.get('status_tournament')
+  if ([enums.EVENT.STATUS_TOURNAMENT.DISABLED, enums.EVENT.STATUS_TOURNAMENT.OFF].includes(statusTournament)) {
+    res.errorPage(404)
+    return
+  }
+
+  let cacheKey = 'event-' + event.get('name') + '-tournament-games'
+  let context = await cache.getOrFetch(cache.general, cacheKey, async function () {
+    let tournamentEntries = await eventTournamentService.findTournamentEntries(event)
+    let entries = tournamentEntries.map(tEntry => tEntry.related('entry'))
+    let highScoresMap = await highScoreService.findHighScoresMap(entries)
+    return {
+      entries,
+      highScoresMap
+    }
+  }, 10 /* 10 seconds */)
+
+  context.userScoresMap = user ? await highScoreService.findEntryScoresMap(user, context.entries) : {}
+
+  res.render('event/view-event-tourn-games', context)
 }
 
 /**
@@ -829,7 +850,7 @@ async function editEventTournamentGames (req, res) {
       if (forms.isInt(fields.order)) {
         let entry = await eventService.findEntryById(fields.id)
         if (entry) {
-          await eventTournamentService.setTournamentEntryOrder(event, entry, fields.order)
+          await eventTournamentService.saveTournamentEntryOrder(event, entry, fields.order)
         }
       } else {
         errorMessage = 'Invalid order'
@@ -847,7 +868,7 @@ async function editEventTournamentGames (req, res) {
 
   // Load tournament entries
   res.render('event/edit-event-tourn-games', {
-    tournamentEntries: (await eventTournamentService.getTournamentEntries(event)).models,
+    tournamentEntries: (await eventTournamentService.findTournamentEntries(event)).models,
     errorMessage
   })
 }

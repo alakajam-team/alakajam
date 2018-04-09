@@ -12,10 +12,13 @@ const enums = require('../core/enums')
 
 module.exports = {
   findHighScores,
+  findHighScoresMap,
 
-  createEntryScore,
   findEntryScore,
   findEntryScoreById,
+  findEntryScoresMap,
+
+  createEntryScore,
   submitEntryScore,
   setEntryScoreActive,
   deleteEntryScore,
@@ -40,6 +43,16 @@ async function findHighScores (entry, options = {}) {
   }
 }
 
+async function findHighScoresMap (entries) {
+  entries = entries.models || entries // Accept collections or arrays
+
+  let highScoresMap = {}
+  for (let entry of entries) {
+    highScoresMap[entry.get('id')] = await findHighScores(entry)
+  }
+  return highScoresMap
+}
+
 async function createEntryScore (user, entry) {
   let entryScore = new models.EntryScore({
     user_id: user.get('id'),
@@ -56,6 +69,24 @@ async function findEntryScore (user, entry) {
       entry_id: entry.get('id')
     })
       .fetch({ withRelated: ['user'] })
+  } else {
+    return null
+  }
+}
+
+async function findEntryScoresMap (user, entries) {
+  entries = entries.models || entries // Accept collections or arrays
+
+  if (user && entries) {
+    let entriesToScore = {}
+    let entryScores = await models.EntryScore
+      .where('user_id', user.get('id'))
+      .where('entry_id', 'in', entries.map(entry => entry.get('id')))
+      .fetchAll({ withRelated: ['user'] })
+    for (let entry of entries) {
+      entriesToScore[entry.get('id')] = entryScores.find(score => score.get('entry_id') === entry.get('id'))
+    }
+    return entriesToScore
   } else {
     return null
   }
@@ -145,7 +176,6 @@ async function _refreshEntryRankings (entry, retrieveScoreId = null) {
 
       if (retrieveScoreId && score.get('id') === retrieveScoreId) {
         retrievedScore = score
-        await retrievedScore.load(['user'], { transacting: t })
       }
     }
   })
@@ -156,11 +186,14 @@ async function _refreshEntryRankings (entry, retrieveScoreId = null) {
     await entryDetails.save({ 'high_score_count': scores.models.length }, {patch: true})
   }
 
+  if (retrievedScore) {
+    await retrievedScore.load(['user'])
+  }
   return retrievedScore
 }
 
 function _rankingDir (entry) {
-  return entry.get('status_high_score') === enums.ENTRY.STATUS_HIGH_SCORE.REVERSED ? 'DESC' : 'ASC'
+  return entry.get('status_high_score') === enums.ENTRY.STATUS_HIGH_SCORE.REVERSED ? 'ASC' : 'DESC'
 }
 
 function _rankingOperator (entry) {

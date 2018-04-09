@@ -1,16 +1,24 @@
 {% extends "event/_page-event.html" %}
-{% import "post/_macros-post.html" as postMacros %}
+{% import "event/_macros-event.html" as eventMacros %}
+{% import "entry/_macros-score.html" as scoreMacros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block body %}
 {{ super() }}
 
-<div class="container">
-  <div class="row">
+<div class="container-fluid">
+  <div class="row wrap-fix">
     <div class="col-xs-12">
-      <h1>Games</h1>
-      
-      <i>TODO</i>
+      <h1>Tournament games <span class="count">({{ entries.length }})</span></h1>
     </div>
+    
+    {% for entry in entries %}
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      {{ eventMacros.entryThumb(entry) }}
+      {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')]) }}
+    </div>
+    {% endfor %}
   </div>
 </div>
+
 {% endblock %}

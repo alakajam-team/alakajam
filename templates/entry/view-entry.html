@@ -252,12 +252,6 @@
       {% if entry.get('status_high_score') !== 'off' %}
         <h3 name="high-scores">High scores</h3>
         {{ scoreMacros.highScores(entry, highScoresCollection, userScore) }}
-        <p style="margin-top: -10px; margin-bottom: 20px">
-          <a href="./submit-score" class="btn btn-primary">{{ 'Manage your score' if userScore else 'Submit score' }}</a>
-          {% if canUserWrite(user, entry, { allowMods: true }) %}
-            <a href="./edit-scores" class="btn btn-default">Moderate scores</a>
-          {% endif %}
-        </p>
       {% endif %}
 
       {% if posts.models.length > 0 %}

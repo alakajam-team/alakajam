@@ -90,7 +90,7 @@ function catchErrorsAndSignals () {
     _doGracefulShutdown()
   })
   process.on('unhandledRejection', (reason, p) => {
-    log.error('Unhandled promise rejection:', p)
+    log.error('Unhandled promise rejection:', reason, p)
   })
 
   // Stop the server gracefully upon shut down signals
