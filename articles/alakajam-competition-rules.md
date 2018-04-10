@@ -52,10 +52,13 @@ Those third-party assets exceptions are only allowed as long as you have the lic
 
 Since there is no ratings involved, the rules are much more relaxed. While the ranked divisions are only made for video games, card & board games are allowed here. The only rules are:
 
-* You cannot work on a game you started before the event. You can however use any assets you made beforehand.
 * All third-party assets are allowed as long as you have the license to use them.
 
-Note: For best feedback, it is advised to let people know what you did/did not make during the jam.
+There are additional rules **if you submit an existing project** of yours. These are fuzzy rules only aimed at preventing abusive self-promotion:
+
+* You must spend a significant part of your week-end working on the game ;
+* Use the game description to let people know what you did/did not make during the jam ;
+* Make it easy to play the parts you worked on (eg. don't make testers play the full game to try your final boss!).
 
 ## In case of doubts...
 
