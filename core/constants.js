@@ -105,6 +105,7 @@ module.exports = {
 
   // Events
   MAX_CATEGORY_COUNT: 6,
+  TOURNAMENT_POINTS_DISTRIBUTION: [15, 12, 10, 8, 6, 5, 4, 3, 2, 1],
 
   // Misc
   ARTICLES_ROOT_URL: 'https://raw.githubusercontent.com/alakajam-team/alakajam/master/articles/',

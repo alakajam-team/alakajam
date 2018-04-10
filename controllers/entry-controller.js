@@ -18,6 +18,7 @@ const platformService = require('../services/platform-service')
 const settingService = require('../services/setting-service')
 const tagService = require('../services/tag-service')
 const highscoreService = require('../services/highscore-service')
+const eventTournamentService = require('../services/event-tournament-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
@@ -452,7 +453,7 @@ async function saveCommentOrVote (req, res) {
  * Submit a high score
  */
 async function submitScore (req, res) {
-  let { user, entry } = res.locals
+  let { user, entry, event } = res.locals
   let { fields } = await req.parseForm()
 
   if (!user) {
@@ -489,7 +490,6 @@ async function submitScore (req, res) {
       let minutes = fields['score-mn'] || 0
       let seconds = fields['score-s'] || 0
       let milliseconds = fields['score-ms'] || 0
-      console.log(minutes, seconds, milliseconds)
 
       if (!forms.isInt(minutes, { min: 0, max: 999 })) {
         errorMessage = 'Invalid minutes'
@@ -522,7 +522,13 @@ async function submitScore (req, res) {
       if (result.error) {
         errorMessage = result.error
       } else {
-        entryScore = result
+        entryScore = result.entryScore
+        
+        // Refresh active tournament
+        if (result.scoreHasChanged && await eventTournamentService.isActiveTournamentPlaying(entry)) {
+          let tournamentEvent = await eventTournamentService.findActiveTournamentEvent()
+          eventTournamentService.refreshTournamentScore(tournamentEvent, user)
+        }
       }
     }
   }
@@ -535,6 +541,7 @@ async function submitScore (req, res) {
     errorMessage
   }
   if (entry.related('details').get('high_score_type') === 'time') {
+    // Parse time
     let durationInSeconds = entryScore.get('score')
     if (durationInSeconds) {
       context.scoreMn = Math.floor(durationInSeconds / 60)

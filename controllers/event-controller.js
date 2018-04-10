@@ -531,6 +531,8 @@ async function viewEventResults (req, res) {
  * View the games of a tournament
  */
 async function viewEventTournamentGames (req, res) {
+  res.locals.pageTitle += ' | Tournament games'
+  
   let { user, event } = res.locals
 
   let statusTournament = event.get('status_tournament')
@@ -546,11 +548,12 @@ async function viewEventTournamentGames (req, res) {
     let highScoresMap = await highScoreService.findHighScoresMap(entries)
     return {
       entries,
-      highScoresMap
+      highScoresMap,
+      pointsDistribution: constants.TOURNAMENT_POINTS_DISTRIBUTION
     }
   }, 10 /* 10 seconds */)
 
-  context.userScoresMap = user ? await highScoreService.findEntryScoresMap(user, context.entries) : {}
+  context.userScoresMap = user ? await highScoreService.findUserScoresMapByEntry(user, context.entries) : {}
 
   res.render('event/view-event-tourn-games', context)
 }
@@ -567,8 +570,24 @@ async function submitTournamentGame (req, res) {
  * View the leaderboard of a tournament
  */
 async function viewEventTournamentLeaderboard (req, res) {
-  // TODO
-  res.render('event/view-event-tourn-leaderboard')
+  res.locals.pageTitle += ' | Leaderboard'
+  
+  let { event } = res.locals
+  
+  let statusTournament = event.get('status_tournament')
+  if (![enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED,
+      enums.EVENT.STATUS_TOURNAMENT.RESULTS].includes(statusTournament)) {
+    res.errorPage(404)
+    return
+  }
+  
+  let tEntries = await eventTournamentService.findTournamentEntries(event)
+  
+  res.render('event/view-event-tourn-leaderboard', {
+    tournamentScores: (await eventTournamentService.findTournamentScores(event)).models,
+    entries: tEntries.map(tEntry => tEntry.related('entry')),
+    scoreMap: await eventTournamentService.findEntryScoreMapForTournament(event)
+  })
 }
 
 /**
@@ -677,6 +696,8 @@ async function editEvent (req, res) {
         }
       }
 
+      // Caches clearing
+      cache.general.del('active-tournament-event')
       let nameChanged = event.hasChanged('name')
       event = await event.save()
       cache.eventsById.del(event.get('id'))
@@ -686,6 +707,7 @@ async function editEvent (req, res) {
         cache.eventsByName.del(previousName)
       }
 
+      // Event details update
       await event.load('details')
       let eventDetails = event.related('details')
       eventDetails.set({

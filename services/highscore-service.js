@@ -16,7 +16,7 @@ module.exports = {
 
   findEntryScore,
   findEntryScoreById,
-  findEntryScoresMap,
+  findUserScoresMapByEntry,
 
   createEntryScore,
   submitEntryScore,
@@ -74,7 +74,7 @@ async function findEntryScore (user, entry) {
   }
 }
 
-async function findEntryScoresMap (user, entries) {
+async function findUserScoresMapByEntry (user, entries) {
   entries = entries.models || entries // Accept collections or arrays
 
   if (user && entries) {
@@ -117,18 +117,25 @@ async function submitEntryScore (entryScore, entry) {
       }
     }
 
-    // Save score
-    entryScore.set('active', true)
-    await entryScore.save()
-
-    // Refresh rankings
-    let rankedEntryScore = _refreshEntryRankings(entry, entryScore.get('id'))
-    if (rankedEntryScore) {
-      return rankedEntryScore
-    } else {
-      console.error('Failed to retrieve a score ranking', entryScore)
-      return entryScore
+    let result = {
+      entryScore,
+      scoreHasChanged: entryScore.hasChanged()
     }
+    if (entryScore.hasChanged()) {
+      // Save score
+      entryScore.set('active', true)
+      await entryScore.save()
+
+      // Refresh rankings
+      let rankedEntryScore = await _refreshEntryRankings(entry, entryScore.get('id'))
+      if (rankedEntryScore) {
+        result.entryScore = rankedEntryScore
+      } else {
+        console.error('Failed to retrieve a score ranking', entryScore)
+      }
+    }
+
+    return result
   } else {
     return { error: 'High scores are disabled on this entry' }
   }
