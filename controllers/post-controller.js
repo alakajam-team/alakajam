@@ -175,10 +175,6 @@ async function savePost (req, res) {
     let errorMessage = null
     let customPublishDate = null
 
-    // Fill main post fields in advance (so we don't lose data in case of errors)
-    post.set('title', title)
-    post.set('body', body)
-
     if (fields['save-custom']) {
       customPublishDate = forms.parseDateTime(fields['published-at'])
       if (!customPublishDate) {
@@ -209,6 +205,8 @@ async function savePost (req, res) {
       }
 
       // Fill post from form info
+      post.set('title', title)
+      post.set('body', body)
       if (eventIdIsValid) {
         post.set('event_id', fields['event-id'])
         if (post.hasChanged('event_id') || post.hasChanged('special_post_type')) {
