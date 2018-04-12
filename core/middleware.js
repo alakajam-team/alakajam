@@ -48,6 +48,20 @@ const LAUNCH_TIME = new Date().getTime()
 async function configure (app) {
   app.locals.config = config
 
+  // Slow requests logging
+  if (config.DEBUG_TRACE_SLOW_REQUESTS > -1) {
+    app.use(function (req, res, next) {
+      let start = Date.now()
+      res.once('finish', () => {
+        let totalTime = Date.now() - start
+        if (totalTime > config.DEBUG_TRACE_SLOW_REQUESTS) {
+          log.debug(req.url + ' ' + totalTime + 'ms')
+        }
+      })
+      next()
+    })
+  }
+
   // In-memory data
   await userService.loadPasswordRecoveryCache(app)
   await sessionService.loadSessionCache(app)

@@ -13,11 +13,20 @@ let log
 let startDate = Date.now()
 try {
   log = global.log = require('./core/log')
-  log.info('Starting server...')
+  log.warn('Starting server...')
 } catch (e) {
   console.error('Failed to start the server: ' + e.message)
   console.error('Did you run "npm install"?')
   process.exit(1)
+}
+
+try {
+  let config = require('./config')
+  if (config.DEBUG_TRACE_REQUESTS) {
+    process.env.DEBUG = 'express:*'
+  }
+} catch (e) {
+  // Nothing (config file might not be created yet)
 }
 
 /**
@@ -30,6 +39,7 @@ const path = require('path')
 const postcssWatch = require('postcss-watch')
 const webpack = require('webpack')
 const mkdirp = promisify('mkdirp')
+const express = require('express')
 
 /**
  * Local constants
@@ -59,7 +69,6 @@ async function createApp () {
   catchErrorsAndSignals()
   await initFilesLayout()
 
-  const express = require('express')
   const middleware = require('./core/middleware')
   const db = require('./core/db')
   const config = require('./config')
@@ -73,7 +82,7 @@ async function createApp () {
 
   app.listen(config.SERVER_PORT, function () {
     let startSeconds = (Date.now() - startDate) / 1000
-    log.info('Server started in ' + startSeconds.toFixed(1) + 's on port ' + config.SERVER_PORT + '.')
+    log.warn('Server started in ' + startSeconds.toFixed(1) + 's on port ' + config.SERVER_PORT + '.')
     if (process.send) {
       process.send('online') // browser-refresh event
     }

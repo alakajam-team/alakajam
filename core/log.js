@@ -25,7 +25,15 @@ module.exports = initializeLogging()
  * Configure the Winston logger to print pretty, colorful & informative log lines
  */
 function initializeLogging () {
+  try {
+    const config = require('../config')
+    winston.level = config.LOG_LEVEL
+  } catch (e) {
+    // Nothing (config file might not be created yet)
+  }
+
   let sourcesRoot = path.join(__dirname, '..')
+
   winston.remove(winston.transports.Console)
   winston.add(winston.transports.Console, {
     timestamp: function () {
