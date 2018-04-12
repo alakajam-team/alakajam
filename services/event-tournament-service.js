@@ -13,8 +13,8 @@ const constants = require('../core/constants')
 const cache = require('../core/cache')
 
 module.exports = {
-  findActiveTournamentEvent,
-  isActiveTournamentPlaying,
+  findActiveTournament,
+  findActiveTournamentPlaying,
 
   findTournamentEntries,
   addTournamentEntry,
@@ -26,27 +26,29 @@ module.exports = {
   recalculateAllTournamentScores
 }
 
-async function findActiveTournamentEvent () {
-  return cache.getOrFetch(cache.general, 'active-tournament-event', async function () {
+async function findActiveTournament (options = {}) {
+  let statusTournamentAllowed = options.statusTournamentAllowed || [enums.EVENT.STATUS_TOURNAMENT.PLAYING]
+  let cacheKey = 'active-tournament-event-' + statusTournamentAllowed.join('-')
+  return cache.getOrFetch(cache.general, cacheKey, async function () {
     return models.Event
-      .where('status_tournament', enums.EVENT.STATUS_TOURNAMENT.PLAYING)
+      .where('status_tournament', 'IN', statusTournamentAllowed)
       .fetch({ withRelated: ['tournamentEntries'] })
   })
 }
-
-async function isActiveTournamentPlaying (entryId) {
+// activeTournamentPlaying
+async function findActiveTournamentPlaying (entryId, options = {}) {
   if (entryId) {
-    let activeTournamentEvent = await findActiveTournamentEvent()
+    let activeTournamentEvent = await findActiveTournament(options)
     if (activeTournamentEvent) {
       let tEntries = activeTournamentEvent.related('tournamentEntries').models
       for (let tEntry of tEntries) {
         if (tEntry.get('entry_id') === entryId) {
-          return true
+          return activeTournamentEvent
         }
       }
     }
   }
-  return false
+  return null
 }
 
 async function findTournamentEntries (event) {
@@ -87,7 +89,12 @@ async function findTournamentScores (event) {
     .fetchAll({ withRelated: ['user'] })
 }
 
-async function refreshTournamentScores (highScoreService, event, triggeringUserId = null, impactedEntryScores = []) {
+async function refreshTournamentScores (highScoreService, event, triggeringUserId = null, impactedEntryScores = [], options = {}) {
+  let statusTournamentAllowed = options.statusTournamentAllowed || [enums.EVENT.STATUS_TOURNAMENT.PLAYING]
+  if (!statusTournamentAllowed.includes(event.get('status_tournament'))) {
+    return
+  }
+
   let tEntries = await findTournamentEntries(event)
   let entries = tEntries.map(tEntry => tEntry.related('entry'))
   let tournamentScoresHaveChanged = false

@@ -95,8 +95,11 @@ async function findUserScoresMapByEntry (userId, entries) {
   }
 }
 
-async function findEntryScoreById (id) {
-  return models.EntryScore.where('id', id).fetch({ withRelated: ['user'] })
+async function findEntryScoreById (id, options = {}) {
+  return models.EntryScore.where('id', id)
+    .fetch({
+      withRelated: options.withRelated || ['user']
+    })
 }
 
 /**
@@ -137,10 +140,12 @@ async function submitEntryScore (entryScore, entry) {
 }
 
 async function setEntryScoreActive (id, active) {
-  let entryScore = await findEntryScoreById(id)
-  if (entryScore) {
+  let entryScore = await findEntryScoreById(id, { withRelated: ['entry.details'] })
+  if (entryScore && entryScore.get('active') !== active) {
     entryScore.set('active', active)
     await entryScore.save()
+    await refreshEntryRankings(entryScore.related('entry'), entryScore,
+      { statusTournamentAllowed: [enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED] })
   }
 }
 
@@ -156,7 +161,7 @@ async function deleteAllEntryScores (entry) {
   await refreshEntryRankings(entry)
 }
 
-async function refreshEntryRankings (entry, triggeringEntryScore = null) {
+async function refreshEntryRankings (entry, triggeringEntryScore = null, options = {}) {
   let updatedEntryScore = null
   let impactedEntryScores = []
 
@@ -189,13 +194,13 @@ async function refreshEntryRankings (entry, triggeringEntryScore = null) {
   // Update high score count
   let entryDetails = entry.related('details')
   if (entryDetails.get('high_score_count') !== scores.models.length) {
-    await entryDetails.save({ 'high_score_count': scores.models.length }, {patch: true})
+    await entryDetails.save({ 'high_score_count': scores.models.length }, { patch: true })
   }
 
   // Refresh active tournament scores
-  if (await eventTournamentService.isActiveTournamentPlaying(entry.get('id'))) {
-    let tournamentEvent = await eventTournamentService.findActiveTournamentEvent()
-    eventTournamentService.refreshTournamentScores(module.exports, tournamentEvent, triggeringEntryScore.get('user_id'), impactedEntryScores)
+  let activeTournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get('id'), options)
+  if (activeTournamentEvent) {
+    eventTournamentService.refreshTournamentScores(module.exports, activeTournamentEvent, triggeringEntryScore.get('user_id'), impactedEntryScores, options)
   }
 
   if (updatedEntryScore) {

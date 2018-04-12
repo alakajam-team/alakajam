@@ -158,7 +158,7 @@ async function editEntry (req, res) {
     return
   }
 
-  let isPlayedInTournament = await eventTournamentService.isActiveTournamentPlaying(entry.get('id'))
+  let isPlayedInTournament = await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
   let errorMessage = null
 
   if (req.method === 'POST') {
