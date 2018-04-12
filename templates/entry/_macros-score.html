@@ -10,6 +10,7 @@
     <th>User</th>
     <th>{{ 'Time' if highScoreType === 'time' else 'Score' }}</th>
     <th>Date</th>
+    <th><!-- Proof link --></th>
     {% if options.showActiveToggles %}<th>State</th>{% endif %}
   </tr>
   </thead>
@@ -20,7 +21,8 @@
       <td>{{ printRanking(score) }}</td>
       <td>{{ userMacros.userLink(score.related('user')) }}</td>
       <td><b>{{ printScore(entry, score) }}</b></td>
-      <td>{{ score.get('updated_at') | date }}</td>
+      <td style="font-size: 0.8rem">{{ score.get('updated_at') | date }}</td>
+      <td>{{ printProof(score) }}</td>
       {% if options.showActiveToggles %}
         <td>
           {% if score.get('active') %}
@@ -43,7 +45,8 @@
       <td>{{ userScore.get('ranking') | ordinal }}</td>
       <td>{{ userMacros.userLink(userScore.related('user')) }}</td>
       <td><b>{{ printScore(entry, userScore) }}</td></td>
-      <td>{{ userScore.get('updated_at') | date }}</td>
+      <td style="font-size: 0.8rem">{{ userScore.get('updated_at') | date }}</td>
+      <td>{{ printProof(userScore) }}</td>
     </tr>
     {% endif %}
     {% if scoreCollection.pagination.rowCount > 9 %}
@@ -67,6 +70,15 @@
     <a href="{{ buildUrl(entry, 'entry', 'edit-scores') }}" class="btn btn-default">Moderate scores</a>
   {% endif %}
 </p>
+{% endmacro %}
+
+{% macro printProof(score) %}
+  {% set proof = score.get('proof') %}
+  {% if proof %}
+  <a href="{{ proof }}" target="alakajam_proof">
+    <span class="fa fa-{{ 'video' if proof.includes('youtube.com') or proof.includes('twitch') else 'camera' }}"></span>
+  </a>
+  {% endif %}
 {% endmacro %}
 
 {% macro printRanking(score) %}

@@ -512,13 +512,13 @@ async function submitScore (req, res) {
     } else if (!forms.isFloat(score)) {
       errorMessage = 'Invalid score'
     }
-    if (fields.picture && !forms.isURL(fields.picture)) {
-      errorMessage = 'Invalid picture URL'
+    if (fields.proof && !forms.isURL(fields.proof)) {
+      errorMessage = 'Invalid proof URL'
     }
 
     entryScore.set({
       score: score,
-      picture: forms.sanitizeString(fields.picture)
+      proof: forms.sanitizeString(fields.proof)
     })
 
     // Saving

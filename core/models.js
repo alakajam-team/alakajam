@@ -626,6 +626,7 @@ module.exports.ThemeVote = bookshelf.model('ThemeVote', {
  * | integer | user_id | User ID (not null)
  * | integer | entry_id | Entry ID (not null)
  * | decimal | score | Score ([-999.999.999.999,999;999.999.999.999,999], not null)
+ * | string | proof | URL of the proof picture or video
  * | integer | ranking | User ranking on that entry
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)

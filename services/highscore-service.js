@@ -109,7 +109,7 @@ async function submitEntryScore (entryScore, entry) {
 
   if (entry.get('status_high_score') !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
     // Check ranking before accepting proof-less score
-    if (!entryScore.get('picture')) {
+    if (!entryScore.get('proof')) {
       let higherScoreCount = await models.EntryScore
         .where('entry_id', entry.get('id'))
         .where('score', _rankingOperator(entry), entryScore.get('score'))
