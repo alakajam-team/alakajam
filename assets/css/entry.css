@@ -416,6 +416,8 @@
   }
 }
 
+/* High score tables */
+
 .highscore-medal {
   @apply --sprite2;
   display: inline-block;
@@ -430,5 +432,24 @@
   }
   &.ranking-3 {
     background-position: -32px -224px;
+  }
+}
+
+.highscore-banner {
+  @apply --shadow;
+  display: block;
+  background-color: var(--alt);
+  color: white;
+  padding: 6px;
+  text-align: center;
+
+  &:hover {
+    background-color: var(--alt-dark);
+    color: white;
+  }
+
+  &__title {
+    @apply --alt-font;
+    font-size: 1.3rem;
   }
 }

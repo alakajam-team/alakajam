@@ -250,8 +250,9 @@
       </div>
 
       {% if entry.get('status_high_score') !== 'off' %}
-        <h3 name="high-scores">High scores</h3>
-        {{ scoreMacros.highScores(entry, highScoresCollection, user, userScore) }}
+        <h3 name="high-scores">High scores {{ scoreMacros.highScoresLinks(entry, user) }}</h3>
+        {{ scoreMacros.tournamentEventBanner(tournamentEvent) }}
+        {{ scoreMacros.highScores(entry, highScoresCollection, userScore) }}
       {% endif %}
 
       {% if posts.models.length > 0 %}

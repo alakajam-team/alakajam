@@ -1,6 +1,7 @@
 {% extends "event/_page-event.html" %}
 {% import "post/_macros-post.html" as postMacros %}
 {% import "user/_macros-user.html" as userMacros %}
+{% import "entry/_macros-score.html" as scoreMacros %}
 
 {% block body %}
 {{ super() }}
@@ -38,9 +39,9 @@
           <th>{{ 'Live ' if event.get('status_tournament') !== 'results' }}Ranking</th>
           <th>User</th>
           {% for entry in entries %}
-          <th class="text-center">
+          <th class="text-center visible-md visible-lg" style="width: 80px">
             <a href="{{ buildUrl(entry, 'entry') }}">
-              <img src="{{ entry.get('pictures')[0] if entry.get('pictures') and entry.get('pictures').length > 0 }}" style="max-height: 30px" class="no-border" title="{{ entry.get('title') }}" />
+              <img src="{{ entry.get('pictures')[0] if entry.get('pictures') and entry.get('pictures').length > 0 }}" style="max-height:80 px; max-height: 30px" title="{{ entry.get('title') }}" />
             </a>
           </th>
           {% endfor %}
@@ -57,7 +58,7 @@
               </td>
               {% set entryScores = tournamentScore.get('entry_scores') %}
               {% for entry in entries %}
-                <td class="text-center">{{ entryScores[entry.get('id')].ranking | ordinal if entryScores[entry.get('id')] }}</td>
+                <td class="text-center visible-md visible-lg">{{ scoreMacros.printRanking(entryScores[entry.get('id')].ranking) if entryScores[entry.get('id')] }}</td>
               {% endfor %}
               <td><b>{{ tournamentScore.get('score') | int }}</b></td>
             </tr>

@@ -17,7 +17,7 @@
       <p>You can suspend here any score that seems invalid. Any suspended score will not be deleted, it will simply no longer appear in the public high scores.</p>
 
       <form method="post">
-        {{ scoreMacros.highScores(entry, highScoresCollection, null, null, { showActiveToggles: true }) }}
+        {{ scoreMacros.highScores(entry, highScoresCollection, null, { showActiveToggles: true }) }}
         <input type="submit" name="clearall" class="btn btn-danger" onclick="return confirm('This will actually delete all the scores. It\'s here in case you make gameplay changes that turn all scores obsolete. Do you really want to reset all scores?')" value="Reset all scores" />
       </form>
     </div>

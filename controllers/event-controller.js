@@ -193,9 +193,9 @@ async function viewDefaultPage (req, res) {
   let page
   if (![enums.EVENT.STATUS_TOURNAMENT.OFF, enums.EVENT.STATUS_TOURNAMENT.DISABLED].includes(event.get('status_tournament'))) {
     if (event.get('status_tournament') === enums.EVENT.STATUS_TOURNAMENT.RESULTS) {
-      page = 'tournament-games'
-    } else {
       page = 'tournament-leaderboard'
+    } else {
+      page = 'tournament-games'
     }
   } else if (event.get('status_entry') !== enums.EVENT.STATUS_ENTRY.OFF) {
     if (event.get('status_results') === enums.EVENT.STATUS_RESULTS.RESULTS) {

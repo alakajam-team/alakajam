@@ -19,7 +19,7 @@
     {% for entry in entries %}
     <div class="col-sm-6 col-md-4 col-lg-3">
       {{ eventMacros.entryThumb(entry) }}
-      {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], user, userScoresMap[entry.get('id')]) }}
+      {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')]) }}
     </div>
     {% endfor %}
       

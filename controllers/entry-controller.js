@@ -33,6 +33,8 @@ module.exports = {
   leaveEntry,
 
   saveCommentOrVote,
+
+  viewScores,
   submitScore,
   editScores,
 
@@ -117,7 +119,8 @@ async function viewEntry (req, res) {
     eventVote,
     external: !res.locals.event,
     highScoresCollection: await highscoreService.findHighScores(entry),
-    userScore: await highscoreService.findEntryScore(user.get('id'), entry.get('id'))
+    userScore: await highscoreService.findEntryScore(user.get('id'), entry.get('id')),
+    tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
   })
 }
 
@@ -451,6 +454,24 @@ async function saveCommentOrVote (req, res) {
 }
 
 /**
+ * Browse entry scores
+ */
+async function viewScores (req, res) {
+  let { user, entry } = res.locals
+
+  if (entry.get('status_high_score') === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+    res.errorPage(403, 'High scores are disabled on this entry')
+    return
+  }
+
+  res.render('entry/view-scores', {
+    entryScore: await highscoreService.findEntryScore(user.get('id'), entry.get('id')),
+    highScoresCollection: await highscoreService.findHighScores(entry, { fetchAll: true }),
+    tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
+  })
+}
+
+/**
  * Submit a high score
  */
 async function submitScore (req, res) {
@@ -531,6 +552,7 @@ async function submitScore (req, res) {
   // Build context
   let context = {
     highScoresCollection: await highscoreService.findHighScores(entry),
+    tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id')),
     entryScore,
     rankingPercent,
     errorMessage
