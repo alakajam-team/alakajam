@@ -1,11 +1,13 @@
 {% import "user/_macros-user.html" as userMacros %}
 
-{% macro highScoresLinks(entry, user = null, options = {}) %}
+{% macro highScoresLinks(entry, user, path, options = {}) %}
   {% if not options.hideSubmitButton %}
-    <a href="{{ buildUrl(entry, 'entry', 'submit-score') }}" class="btn btn-primary">Submit</a>
+    <a href="{{ buildUrl(entry, 'entry', 'submit-score') }}?redirectTo={{ path }}" class="btn btn-primary">Submit score</a>
   {% endif %}
   {% if canUserWrite(user, entry, { allowMods: true }) %}
-    <a href="{{ buildUrl(entry, 'entry', 'edit-scores') }}" class="btn btn-default">Moderate</a>
+    <a href="{{ buildUrl(entry, 'entry', 'edit-scores') }}" class="btn btn-default">
+      <span class="fa fa-cog"></span>
+    </a>
   {% endif %}
 {% endmacro %}
 

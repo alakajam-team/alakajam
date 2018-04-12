@@ -51,8 +51,12 @@ async function findActiveTournamentPlaying (entryId, options = {}) {
   return null
 }
 
-async function findTournamentEntries (event) {
-  await event.load(['tournamentEntries.entry.userRoles'])
+async function findTournamentEntries (event, options = {}) {
+  if (options.withDetails) {
+    await event.load(['tournamentEntries.entry.userRoles', 'tournamentEntries.entry.details'])
+  } else {
+    await event.load(['tournamentEntries.entry.userRoles'])
+  }
   return event.related('tournamentEntries').sortBy(tEntry => tEntry.get('ordering'))
 }
 

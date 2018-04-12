@@ -558,7 +558,7 @@ async function viewEventTournamentGames (req, res) {
 
   let cacheKey = 'event-' + event.get('name') + '-tournament-games'
   let context = await cache.getOrFetch(cache.general, cacheKey, async function () {
-    let tournamentEntries = await eventTournamentService.findTournamentEntries(event)
+    let tournamentEntries = await eventTournamentService.findTournamentEntries(event, { withDetails: true })
     let entries = tournamentEntries.map(tEntry => tEntry.related('entry'))
     let highScoresMap = await highScoreService.findHighScoresMap(entries)
     return {

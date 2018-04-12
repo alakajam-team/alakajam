@@ -250,7 +250,7 @@
       </div>
 
       {% if entry.get('status_high_score') !== 'off' %}
-        <h3 name="high-scores">High scores {{ scoreMacros.highScoresLinks(entry, user) }}</h3>
+        <h3 name="high-scores">High scores {{ scoreMacros.highScoresLinks(entry, user, path) }}</h3>
         {{ scoreMacros.tournamentEventBanner(tournamentEvent) }}
         {{ scoreMacros.highScores(entry, highScoresCollection, userScore) }}
       {% endif %}

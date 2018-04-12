@@ -397,8 +397,7 @@ async function deleteEntry (req, res) {
  * Leaves the team of an entry
  */
 async function leaveEntry (req, res) {
-  let entry = res.locals.entry
-  let user = res.locals.user
+  let { entry, user } = res.locals
 
   if (user && entry) {
     // Remove requesting user from the team
@@ -546,6 +545,11 @@ async function submitScore (req, res) {
       } else {
         entryScore = result
       }
+    }
+
+    if (req.query.redirectTo) {
+      res.redirect(req.query.redirectTo)
+      return
     }
   }
 
