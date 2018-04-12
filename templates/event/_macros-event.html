@@ -134,7 +134,7 @@
 
 {% macro entryPlatformIcon(platform, options = {}) %}
   {% set icon = constants.ENTRY_PLATFORM_ICONS[platform] or constants.ENTRY_PLATFORM_DEFAULT_ICON %}
-  <span class="fa {{ icon }} has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="{{ platform }}"></span> {{ platform if not options.hideLabel }}
+  <span class="fab {{ icon }} has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="{{ platform }}"></span> {{ platform if not options.hideLabel }}
 {% endmacro %}
 
 {% macro eventThemeStatus (event, options = {}) %}

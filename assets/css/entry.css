@@ -258,6 +258,7 @@
 
   &__platform {
     display: inline-block;
+    font-weight: normal;
     font-size: 1.2rem;
     margin-left: 5px;
   }
