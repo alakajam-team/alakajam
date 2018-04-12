@@ -76,7 +76,7 @@
 </div>
 {% endmacro %}
 
-{% macro eventLinks (event, latestEventAnnouncement, path, options = {}) %}
+{% macro eventLinks (event, path, options = {}) %}
 {% if options.collapse %}
 <nav class="event-navbar navbar">
   <div class="navbar-header">
@@ -89,19 +89,6 @@
   {% endif %}
   
     <div class="nav">
-      {% if latestEventAnnouncement %}
-        <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs hidden-sm event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
-          <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
-          <span class="event-header__announcement-info">
-            Announcement • {{ latestEventAnnouncement.get('published_at') | relativeTime }}
-          </span>
-        </a><!--
-        --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="event-header__link  
-      hidden-md hidden-lg {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
-          <span class="glyphicon glyphicon-pushpin"></span>
-        </a>
-      {%- endif -%}
-
       {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post'), 'Rules', 'info-sign', path) -}}
       {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
       
