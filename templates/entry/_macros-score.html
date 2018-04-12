@@ -1,6 +1,6 @@
 {% import "user/_macros-user.html" as userMacros %}
 
-{% macro highScores(entry, scoreCollection, userScore = null, options = {}) %}
+{% macro highScores(entry, scoreCollection, user = null, userScore = null, options = {}) %}
 {% set highScoreType = entry.related('details').get('high_score_type') %}
 {% set unit = highScoreType if not ['number', time'].includes(highScoreType) %}
 <table class="table" style="margin-bottom: 10px">

@@ -29,6 +29,7 @@ exports.up = async function (knex, Promise) {
       table.integer('event_id').references('event.id').notNullable()
       table.integer('user_id').references('user.id').notNullable()
       table.decimal('score', 15, 3).defaultTo(0).notNullable()
+      table.string('entry_scores', 1000)
       table.integer('ranking')
       table.timestamps()
     })

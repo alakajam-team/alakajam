@@ -118,7 +118,7 @@ async function viewEntry (req, res) {
     eventVote,
     external: !res.locals.event,
     highScoresCollection: await highscoreService.findHighScores(entry),
-    userScore: await highscoreService.findEntryScore(user, entry)
+    userScore: await highscoreService.findEntryScore(user.get('id'), entry.get('id'))
   })
 }
 
@@ -159,7 +159,9 @@ async function editEntry (req, res) {
     return
   }
 
+  let isPlayedInTournament = await eventTournamentService.isActiveTournamentPlaying(entry.get('id'))
   let errorMessage = null
+
   if (req.method === 'POST') {
     let {fields, files} = await req.parseForm('picture')
 
@@ -271,7 +273,9 @@ async function editEntry (req, res) {
       }
     }
 
-    if (!forms.isLengthValid(links, 1000)) {
+    if (isPlayedInTournament && statusHighScore === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+      errorMessage = 'Cannot disable high scores while the game is featured in an active tournament'
+    } else if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
       errorMessage = 'Submissions are closed for this event'
@@ -362,6 +366,7 @@ async function editEntry (req, res) {
     entryPlatforms: entry.get('platforms'),
     external: !res.locals.event,
     tags: entry.related('tags').map(tag => ({ id: tag.id, value: tag.get('value') })),
+    isPlayedInTournament,
     errorMessage
   })
 }
@@ -453,7 +458,7 @@ async function saveCommentOrVote (req, res) {
  * Submit a high score
  */
 async function submitScore (req, res) {
-  let { user, entry, event } = res.locals
+  let { user, entry } = res.locals
   let { fields } = await req.parseForm()
 
   if (!user) {
@@ -465,13 +470,13 @@ async function submitScore (req, res) {
   }
 
   // Fetch existing score, handle deletion
-  let entryScore = await highscoreService.findEntryScore(user, entry)
+  let entryScore = await highscoreService.findEntryScore(user.get('id'), entry.get('id'))
   if (req.method === 'POST' && fields.delete && entryScore) {
     await highscoreService.deleteEntryScore(entryScore, entry)
     entryScore = null
   }
   if (!entryScore) {
-    entryScore = await highscoreService.createEntryScore(user, entry)
+    entryScore = await highscoreService.createEntryScore(user.get('id'), entry.get('id'))
   }
 
   let rankingPercent
@@ -523,11 +528,11 @@ async function submitScore (req, res) {
         errorMessage = result.error
       } else {
         entryScore = result.entryScore
-        
+
         // Refresh active tournament
-        if (result.scoreHasChanged && await eventTournamentService.isActiveTournamentPlaying(entry)) {
+        if (result.scoreHasChanged && await eventTournamentService.isActiveTournamentPlaying(entry.get('id'))) {
           let tournamentEvent = await eventTournamentService.findActiveTournamentEvent()
-          eventTournamentService.refreshTournamentScore(tournamentEvent, user)
+          eventTournamentService.refreshTournamentScores(tournamentEvent, user.get('id'), result.impactedEntryScores)
         }
       }
     }

@@ -53,20 +53,20 @@ async function findHighScoresMap (entries) {
   return highScoresMap
 }
 
-async function createEntryScore (user, entry) {
+async function createEntryScore (userId, entryId) {
   let entryScore = new models.EntryScore({
-    user_id: user.get('id'),
-    entry_id: entry.get('id')
+    user_id: userId,
+    entry_id: entryId
   })
   await entryScore.load(['user'])
   return entryScore
 }
 
-async function findEntryScore (user, entry) {
-  if (user && entry) {
+async function findEntryScore (userId, entryId) {
+  if (userId && entryId) {
     return models.EntryScore.where({
-      user_id: user.get('id'),
-      entry_id: entry.get('id')
+      user_id: userId,
+      entry_id: entryId
     })
       .fetch({ withRelated: ['user'] })
   } else {
@@ -74,13 +74,13 @@ async function findEntryScore (user, entry) {
   }
 }
 
-async function findUserScoresMapByEntry (user, entries) {
+async function findUserScoresMapByEntry (userId, entries) {
   entries = entries.models || entries // Accept collections or arrays
 
-  if (user && entries) {
+  if (userId && entries) {
     let entriesToScore = {}
     let entryScores = await models.EntryScore
-      .where('user_id', user.get('id'))
+      .where('user_id', userId)
       .where('entry_id', 'in', entries.map(entry => entry.get('id')))
       .fetchAll({ withRelated: ['user'] })
     for (let entry of entries) {
@@ -97,7 +97,10 @@ async function findEntryScoreById (id) {
 }
 
 /**
- * @return any errors, or the entry score with up-to-date ranking set
+ * @return any errors, or detailed info about the entry scores: { scoreHasChanged, entryScore, impactedEntryScores }
+ *         - boolean scoreHasChanged  Whether there was any actual score change
+ *         - EntryScore entryScore  The final version of the entry score (ie. with the ranking set)
+ *         - EntryScore[] impactedEntryScores The list of scores from other users that were pushed down in the rankings by the new score
  */
 async function submitEntryScore (entryScore, entry) {
   if (!entryScore || !entry) {
@@ -117,21 +120,23 @@ async function submitEntryScore (entryScore, entry) {
       }
     }
 
+    let scoreHasChanged = entryScore.hasChanged()
     let result = {
-      entryScore,
-      scoreHasChanged: entryScore.hasChanged()
+      entryScore: null,
+      impactedEntryScores: [],
+      scoreHasChanged
     }
-    if (entryScore.hasChanged()) {
+    if (scoreHasChanged) {
       // Save score
       entryScore.set('active', true)
       await entryScore.save()
 
       // Refresh rankings
-      let rankedEntryScore = await _refreshEntryRankings(entry, entryScore.get('id'))
-      if (rankedEntryScore) {
-        result.entryScore = rankedEntryScore
-      } else {
-        console.error('Failed to retrieve a score ranking', entryScore)
+      result = await _refreshEntryRankings(entry, entryScore.get('id'))
+      result.scoreHasChanged = scoreHasChanged
+      if (!result.entryScore) {
+        console.warn('Failed to retrieve a score ranking', entryScore)
+        result.entryScore = entryScore
       }
     }
 
@@ -162,7 +167,10 @@ async function deleteAllEntryScores (entry) {
 }
 
 async function _refreshEntryRankings (entry, retrieveScoreId = null) {
-  let retrievedScore = null
+  let result = {
+    entryScore: null,
+    impactedEntryScores: []
+  }
 
   let scores = await models.EntryScore
     .where('entry_id', entry.get('id'))
@@ -176,13 +184,16 @@ async function _refreshEntryRankings (entry, retrieveScoreId = null) {
       if (score.get('ranking') !== ranking) {
         score.set('ranking', ranking)
         score.save(null, { transacting: t })
+        if (score.get('active')) {
+          result.impactedEntryScores.push(score)
+        }
       }
       if (score.get('active')) {
         ranking++
       }
 
       if (retrieveScoreId && score.get('id') === retrieveScoreId) {
-        retrievedScore = score
+        result.entryScore = score
       }
     }
   })
@@ -193,10 +204,10 @@ async function _refreshEntryRankings (entry, retrieveScoreId = null) {
     await entryDetails.save({ 'high_score_count': scores.models.length }, {patch: true})
   }
 
-  if (retrievedScore) {
-    await retrievedScore.load(['user'])
+  if (result.entryScore) {
+    await result.entryScore.load(['user'])
   }
-  return retrievedScore
+  return result
 }
 
 function _rankingDir (entry) {

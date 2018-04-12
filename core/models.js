@@ -634,6 +634,8 @@ module.exports.EntryScore = bookshelf.model('EntryScore', {
   tableName: 'entry_score',
   hasTimestamps: true,
 
+  // Relations
+
   user: function () {
     return this.belongsTo('User', 'user_id')
   },
@@ -658,6 +660,8 @@ module.exports.TournamentEntry = bookshelf.model('TournamentEntry', {
   tableName: 'tournament_entry',
   hasTimestamps: true,
 
+  // Relations
+
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
   },
@@ -675,6 +679,7 @@ module.exports.TournamentEntry = bookshelf.model('TournamentEntry', {
  * | integer | user_id | User ID (not null)
  * | integer | event_id | Tournament event ID (not null)
  * | decimal | score | Score ([-999.999.999.999,999;999.999.999.999,999], not null)
+ * | string | entry_scores | JSON caching of the entry scores used to compute the tournament score: {entryId: {score, ranking}}
  * | integer | ranking | User ranking on that tournament
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
@@ -682,6 +687,25 @@ module.exports.TournamentEntry = bookshelf.model('TournamentEntry', {
 module.exports.TournamentScore = bookshelf.model('TournamentScore', {
   tableName: 'tournament_score',
   hasTimestamps: true,
+
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs['entry_scores'] = attrs['entry_scores'] || {}
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['entry_scores']) attrs['entry_scores'] = JSON.parse(attrs['entry_scores'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs && attrs['entry_scores']) attrs['entry_scores'] = JSON.stringify(attrs['entry_scores'])
+    return attrs
+  },
+
+  // Relations
 
   user: function () {
     return this.belongsTo('User', 'user_id')
@@ -727,6 +751,9 @@ module.exports.Post = bookshelf.model('Post', {
     })
     return attrs
   },
+
+  // Relations
+
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
   },
@@ -766,6 +793,8 @@ module.exports.Post = bookshelf.model('Post', {
 module.exports.Comment = bookshelf.model('Comment', {
   tableName: 'comment',
   hasTimestamps: true,
+
+  // Relations
 
   node: function () {
     return this.morphTo('node', ['node_type', 'node_id'], 'Entry', 'Post')

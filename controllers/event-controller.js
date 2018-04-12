@@ -188,11 +188,26 @@ async function handleGameSearch (req, res, searchOptions = {}) {
  * Root event page, redirects to its entries
  */
 async function viewDefaultPage (req, res) {
-  if (res.locals.event.get('status_entry') !== enums.EVENT.STATUS_ENTRY.OFF) {
-    res.redirect(templating.buildUrl(res.locals.event, 'event', 'games'))
+  let { event } = res.locals
+
+  let page
+  if (![enums.EVENT.STATUS_TOURNAMENT.OFF, enums.EVENT.STATUS_TOURNAMENT.DISABLED].includes(event.get('status_tournament'))) {
+    if (event.get('status_tournament') === enums.EVENT.STATUS_TOURNAMENT.RESULTS) {
+      page = 'tournament-games'
+    } else {
+      page = 'tournament-leaderboard'
+    }
+  } else if (event.get('status_entry') !== enums.EVENT.STATUS_ENTRY.OFF) {
+    if (event.get('status_results') === enums.EVENT.STATUS_RESULTS.RESULTS) {
+      page = 'results'
+    } else {
+      page = 'games'
+    }
   } else {
-    res.redirect(templating.buildUrl(res.locals.event, 'event', 'posts'))
+    page = 'posts'
   }
+
+  res.redirect(templating.buildUrl(res.locals.event, 'event', page))
 }
 
 /**
@@ -532,7 +547,7 @@ async function viewEventResults (req, res) {
  */
 async function viewEventTournamentGames (req, res) {
   res.locals.pageTitle += ' | Tournament games'
-  
+
   let { user, event } = res.locals
 
   let statusTournament = event.get('status_tournament')
@@ -553,7 +568,7 @@ async function viewEventTournamentGames (req, res) {
     }
   }, 10 /* 10 seconds */)
 
-  context.userScoresMap = user ? await highScoreService.findUserScoresMapByEntry(user, context.entries) : {}
+  context.userScoresMap = user ? await highScoreService.findUserScoresMapByEntry(user.get('id'), context.entries) : {}
 
   res.render('event/view-event-tourn-games', context)
 }
@@ -571,22 +586,21 @@ async function submitTournamentGame (req, res) {
  */
 async function viewEventTournamentLeaderboard (req, res) {
   res.locals.pageTitle += ' | Leaderboard'
-  
+
   let { event } = res.locals
-  
+
   let statusTournament = event.get('status_tournament')
   if (![enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED,
-      enums.EVENT.STATUS_TOURNAMENT.RESULTS].includes(statusTournament)) {
+    enums.EVENT.STATUS_TOURNAMENT.RESULTS].includes(statusTournament)) {
     res.errorPage(404)
     return
   }
-  
+
   let tEntries = await eventTournamentService.findTournamentEntries(event)
-  
+
   res.render('event/view-event-tourn-leaderboard', {
     tournamentScores: (await eventTournamentService.findTournamentScores(event)).models,
-    entries: tEntries.map(tEntry => tEntry.related('entry')),
-    scoreMap: await eventTournamentService.findEntryScoreMapForTournament(event)
+    entries: tEntries.map(tEntry => tEntry.related('entry'))
   })
 }
 
@@ -854,11 +868,11 @@ async function editEventTournamentGames (req, res) {
     let { fields } = await req.parseForm()
 
     // Add to tournament
-    if (fields.add) {
+    if (fields.add !== undefined) {
       if (forms.isId(fields.add)) {
         let entry = await eventService.findEntryById(fields.add)
         if (entry) {
-          await eventTournamentService.addTournamentEntry(event, entry)
+          await eventTournamentService.addTournamentEntry(event.get('id'), entry.get('id'))
         } else {
           errorMessage = 'Entry not found with ID ' + fields.add
         }
@@ -868,11 +882,11 @@ async function editEventTournamentGames (req, res) {
     }
 
     // Update order
-    if (fields.update && forms.isId(fields.id)) {
+    if (fields.update !== undefined && forms.isId(fields.id)) {
       if (forms.isInt(fields.order)) {
         let entry = await eventService.findEntryById(fields.id)
         if (entry) {
-          await eventTournamentService.saveTournamentEntryOrder(event, entry, fields.order)
+          await eventTournamentService.saveTournamentEntryOrder(event.get('id'), entry.get('id'), fields.order)
         }
       } else {
         errorMessage = 'Invalid order'
@@ -880,10 +894,10 @@ async function editEventTournamentGames (req, res) {
     }
 
     // Remove from tournament
-    if (fields.remove && forms.isId(fields.id)) {
+    if (fields.remove !== undefined && forms.isId(fields.id)) {
       let entry = await eventService.findEntryById(fields.id)
       if (entry) {
-        await eventTournamentService.removeTournamentEntry(event, entry)
+        await eventTournamentService.removeTournamentEntry(event.get('id'), entry.get('id'))
       }
     }
   }

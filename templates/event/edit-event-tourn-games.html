@@ -4,7 +4,7 @@
 
 {% block editEventBody %}
 
-<h1>{{ event.get('title') }} tournament games <span class="count">({{ tournamentEntry.length or '0' }})</span></h1>
+<h1>{{ event.get('title') }} tournament games <span class="count">({{ tournamentEntries.length or '0' }})</span></h1>
 
 <p>This page lets you manage the games for which high scores are counted in the tournament's leaderboard.</p>
 
@@ -13,6 +13,9 @@
     {% set entry = tournamentEntry.related('entry') %}
     <div class="col-sm-6 col-md-4">
       {{ eventMacros.entryThumb(entry) }}
+      {% if entry.get('status_high_score') === 'off' %} 
+        <div class="entry-thumb__form"><span class="label label-danger">High scores are not enabled</span></div>
+      {% endif %}
       <form method="post" class="form-inline form-group" style="margin-top: -15px">
         <input type="hidden" name="id" value="{{ entry.get('id') }}" />
         <label for="order">Order&nbsp;</label>

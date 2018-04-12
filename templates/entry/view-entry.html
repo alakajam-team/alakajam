@@ -251,7 +251,7 @@
 
       {% if entry.get('status_high_score') !== 'off' %}
         <h3 name="high-scores">High scores</h3>
-        {{ scoreMacros.highScores(entry, highScoresCollection, userScore) }}
+        {{ scoreMacros.highScores(entry, highScoresCollection, user, userScore) }}
       {% endif %}
 
       {% if posts.models.length > 0 %}

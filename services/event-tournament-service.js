@@ -16,15 +16,15 @@ const highScoreService = require('./highscore-service')
 module.exports = {
   findActiveTournamentEvent,
   isActiveTournamentPlaying,
-  
+
   findTournamentEntries,
   addTournamentEntry,
   saveTournamentEntryOrder,
   removeTournamentEntry,
 
   findTournamentScores,
-  refreshTournamentScore,
-  
+  refreshTournamentScores,
+
   findEntryScoreMapForTournament
 }
 
@@ -36,13 +36,15 @@ async function findActiveTournamentEvent () {
   })
 }
 
-async function isActiveTournamentPlaying (entry) {
-  let activeTournamentEvent = await findActiveTournamentEvent()
-  if (activeTournamentEvent) {
-    let tEntries = activeTournamentEvent.related('tournamentEntries').models
-    for (let tEntry of tEntries) {
-      if (tEntry.get('entry_id') === entry.get('id')) {
-        return true
+async function isActiveTournamentPlaying (entryId) {
+  if (entryId) {
+    let activeTournamentEvent = await findActiveTournamentEvent()
+    if (activeTournamentEvent) {
+      let tEntries = activeTournamentEvent.related('tournamentEntries').models
+      for (let tEntry of tEntries) {
+        if (tEntry.get('entry_id') === entryId) {
+          return true
+        }
       }
     }
   }
@@ -54,55 +56,77 @@ async function findTournamentEntries (event) {
   return event.related('tournamentEntries').orderBy('order')
 }
 
-async function addTournamentEntry (event, entry) {
-  let tEntry = await _getTournamentEntry(event, entry)
+async function addTournamentEntry (eventId, entryId) {
+  let tEntry = await _getTournamentEntry(eventId, entryId)
   if (!tEntry) {
     tEntry = new models.TournamentEntry({
-      event_id: event.get('id'),
-      entry_id: entry.get('id')
+      event_id: eventId,
+      entry_id: entryId
     })
     await tEntry.save()
   }
   return tEntry
 }
 
-async function saveTournamentEntryOrder (event, entry, order) {
-  let tEntry = await _getTournamentEntry(event, entry)
+async function saveTournamentEntryOrder (eventId, entryId, order) {
+  let tEntry = await _getTournamentEntry(eventId, entryId)
   tEntry.set('order', order)
   return tEntry.save()
 }
 
-async function removeTournamentEntry (event, entry) {
-  let tEntry = await _getTournamentEntry(event, entry)
+async function removeTournamentEntry (eventId, entryId) {
+  let tEntry = await _getTournamentEntry(eventId, entryId)
   if (tEntry) {
     await tEntry.destroy()
   }
 }
 
-async function refreshTournamentScore (event, user) {
+async function refreshTournamentScores (event, userId, impactedEntryScores = []) {
   let tEntries = await findTournamentEntries(event)
   let entries = tEntries.map(tEntry => tEntry.related('entry'))
+  let tournamentScoresHaveChanged = false
 
-  let totalScore = 0
-  let entryScoresMap = await highScoreService.findUserScoresMapByEntry(user, entries)
-  for (let entryId in entryScoresMap) {
-    let entryScore = entryScoresMap[entryId]
-    if (entryScore && entryScore.get('active') && entryScore.get('ranking') <= constants.TOURNAMENT_POINTS_DISTRIBUTION.length) {
-      totalScore += constants.TOURNAMENT_POINTS_DISTRIBUTION[entryScore.get('ranking') - 1]
+  // Make sure tournament points are redistributed for both the user who directly saved a score,
+  // and the other users that were pushed down in the rankings in the process (skip those who are out of the points though)
+  let userIdsToUpdate = [userId]
+  for (let entryScore of impactedEntryScores) {
+    if (entryScore.get('ranking') <= constants.TOURNAMENT_POINTS_DISTRIBUTION.length + 1) { // include 11th player to remove his point
+      if (entryScore.get('user_id') !== userId) {
+        userIdsToUpdate.push(entryScore.get('user_id'))
+      }
     }
   }
-  
-  let scoreHasChanged = await _saveTournamentScore(event, user, totalScore)
-  if (scoreHasChanged) {
+
+  // Recalculate tournament scores
+  for (let userIdToUpdate of userIdsToUpdate) {
+    let totalScore = 0
+    let entryScores = {}
+    let entryScoresMap = await highScoreService.findUserScoresMapByEntry(userIdToUpdate, entries)
+    for (let entryId in entryScoresMap) {
+      let entryScore = entryScoresMap[entryId]
+      if (entryScore && entryScore.get('active') && entryScore.get('ranking') <= constants.TOURNAMENT_POINTS_DISTRIBUTION.length) {
+        let entryPoints = constants.TOURNAMENT_POINTS_DISTRIBUTION[entryScore.get('ranking') - 1]
+        totalScore += entryPoints
+        entryScores[entryId] = { score: entryScore.get('score') }
+        if (entryPoints) {
+          entryScores[entryId].ranking = entryScore.get('ranking')
+        }
+      }
+    }
+    tournamentScoresHaveChanged = (await _saveTournamentScore(event.get('id'), userIdToUpdate, totalScore, entryScores)) || tournamentScoresHaveChanged
+  }
+
+  // Refresh tournament rankings if there was any actual change to the scores
+  if (tournamentScoresHaveChanged) {
     await _refreshTournamentRankings(event)
   }
 }
 
-async function _saveTournamentScore (event, user, score) {
+async function _saveTournamentScore (eventId, userId, score, entryScores) {
   // Fetch
   let tournamentScoreKeys = {
-    event_id: event.get('id'),
-    user_id: user.get('id')
+    event_id: eventId,
+    user_id: userId
   }
   let tournamentScore = await models.TournamentScore
     .where(tournamentScoreKeys)
@@ -111,19 +135,19 @@ async function _saveTournamentScore (event, user, score) {
   // Create if missing
   if (!tournamentScore) {
     tournamentScore = new models.TournamentScore({
-      event_id: event.get('id'),
-      user_id: user.get('id')
+      event_id: eventId,
+      user_id: userId
     })
   }
 
   // Update & save
-  if (tournamentScore.get('score') !== score) {
-    tournamentScore.set('score', score)
-    await tournamentScore.save()
-    return true
-  } else {
-    return false
-  }
+  let tournamentScoreHasChanged = tournamentScore.get('score') !== score
+  tournamentScore.set({
+    'score': score,
+    'entry_scores': entryScores
+  })
+  await tournamentScore.save()
+  return tournamentScoreHasChanged
 }
 
 async function findTournamentScores (event) {
@@ -154,29 +178,29 @@ async function _refreshTournamentRankings (event) {
   }
 }
 
-async function _getTournamentEntry (event, entry) {
-  return models.TournamentEntry.where({
-    event_id: event.get('id'),
-    entry_id: entry.get('id')
-  })
-    .fetch()
-}
-
 async function findEntryScoreMapForTournament (event) {
   let tEntries = await findTournamentEntries(event)
   let entryIds = tEntries.models.map(tEntry => tEntry.related('entry').get('id'))
   let entryScores = await models.EntryScore
     .where('entry_id', 'in', entryIds)
     .fetchAll()
-    
+
   let map = {}
   for (let entryScore of entryScores.models) {
     let entryId = entryScore.get('entry_id')
     let userId = entryScore.get('user_id')
-    
+
     if (!map[entryId]) map[entryId] = {}
     map[entryId][userId] = entryScore
   }
-  
+
   return map
+}
+
+async function _getTournamentEntry (eventId, entryId) {
+  return models.TournamentEntry.where({
+    event_id: eventId,
+    entry_id: entryId
+  })
+    .fetch()
 }

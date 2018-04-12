@@ -10,12 +10,16 @@
   <div class="row wrap-fix">
     <div class="col-xs-12">
       <h1>Tournament games <span class="count">({{ entries.length }})</span></h1>
+    
+      {% if ['closed', 'results'].includes(event.get('status_tournament')) %}
+        <p class="featured"><b>Note:</b> This tournament is closed. New high scores will appear here, but will no longer impact the tournament points and rankings.</p>
+      {% endif %}
     </div>
     
     {% for entry in entries %}
     <div class="col-sm-6 col-md-4 col-lg-3">
       {{ eventMacros.entryThumb(entry) }}
-      {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')]) }}
+      {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], user, userScoresMap[entry.get('id')]) }}
     </div>
     {% endfor %}
       
