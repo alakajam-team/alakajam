@@ -19,7 +19,7 @@ exports.up = async function (knex, Promise) {
       table.increments('id').primary()
       table.integer('event_id').references('event.id').notNullable() // NB. Usually not the same event as the entry's!
       table.integer('entry_id').references('entry.id').notNullable()
-      table.integer('order')
+      table.integer('ordering').defaultTo(0)
       table.boolean('active').defaultTo(false)
       table.timestamps()
     })

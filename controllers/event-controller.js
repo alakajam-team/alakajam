@@ -709,6 +709,10 @@ async function editEvent (req, res) {
           infoMessage = 'Event results cleared.'
         }
       }
+      if (event.hasChanged('status_tournament') && event.previous('status_tournament') === enums.EVENT.STATUS_TOURNAMENT.OFF) {
+        // Pre-fill leaderboard with people who were already in the high scores
+        eventTournamentService.recalculateAllTournamentScores(highScoreService, event)
+      }
 
       // Caches clearing
       cache.general.del('active-tournament-event')
@@ -873,6 +877,7 @@ async function editEventTournamentGames (req, res) {
         let entry = await eventService.findEntryById(fields.add)
         if (entry) {
           await eventTournamentService.addTournamentEntry(event.get('id'), entry.get('id'))
+          eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry])
         } else {
           errorMessage = 'Entry not found with ID ' + fields.add
         }
@@ -883,10 +888,10 @@ async function editEventTournamentGames (req, res) {
 
     // Update order
     if (fields.update !== undefined && forms.isId(fields.id)) {
-      if (forms.isInt(fields.order)) {
+      if (forms.isInt(fields.ordering)) {
         let entry = await eventService.findEntryById(fields.id)
         if (entry) {
-          await eventTournamentService.saveTournamentEntryOrder(event.get('id'), entry.get('id'), fields.order)
+          await eventTournamentService.saveTournamentEntryOrdering(event.get('id'), entry.get('id'), fields.ordering)
         }
       } else {
         errorMessage = 'Invalid order'
@@ -898,13 +903,14 @@ async function editEventTournamentGames (req, res) {
       let entry = await eventService.findEntryById(fields.id)
       if (entry) {
         await eventTournamentService.removeTournamentEntry(event.get('id'), entry.get('id'))
+        eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry])
       }
     }
   }
 
   // Load tournament entries
   res.render('event/edit-event-tourn-games', {
-    tournamentEntries: (await eventTournamentService.findTournamentEntries(event)).models,
+    tournamentEntries: await eventTournamentService.findTournamentEntries(event),
     errorMessage
   })
 }

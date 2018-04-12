@@ -7,7 +7,6 @@
  */
 
 const fileStorage = require('../core/file-storage')
-const log = require('../core/log')
 const forms = require('../core/forms')
 const models = require('../core/models')
 const eventService = require('../services/event-service')
@@ -335,12 +334,9 @@ async function editEntry (req, res) {
 
       // Save entry: Persist changes and side effects
       let eventCountRefreshNeeded = entry.hasChanged('published_at')
-      if (entryDetails.get('body') === 'undefined') {
-        // FIXME
-        log.error('Preventing to blank the entry body (bug #248)')
-        console.error(entryDetails)
-      } else {
-        await entryDetails.save()
+      await entryDetails.save()
+      if (entry.hasChanged('status_high_score') && entry.get('status_high_score') !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+        highscoreService.refreshEntryRankings(entry) // corner case: owner toggles lower-is-better after some scores are submitted
       }
       entry.set('published_at', entry.get('published_at') || new Date())
       await entry.save()
@@ -527,13 +523,7 @@ async function submitScore (req, res) {
       if (result.error) {
         errorMessage = result.error
       } else {
-        entryScore = result.entryScore
-
-        // Refresh active tournament
-        if (result.scoreHasChanged && await eventTournamentService.isActiveTournamentPlaying(entry.get('id'))) {
-          let tournamentEvent = await eventTournamentService.findActiveTournamentEvent()
-          eventTournamentService.refreshTournamentScores(tournamentEvent, user.get('id'), result.impactedEntryScores)
-        }
+        entryScore = result
       }
     }
   }

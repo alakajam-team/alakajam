@@ -9,6 +9,7 @@
 const models = require('../core/models')
 const db = require('../core/db')
 const enums = require('../core/enums')
+const eventTournamentService = require('./event-tournament-service')
 
 module.exports = {
   findHighScores,
@@ -22,7 +23,9 @@ module.exports = {
   submitEntryScore,
   setEntryScoreActive,
   deleteEntryScore,
-  deleteAllEntryScores
+  deleteAllEntryScores,
+
+  refreshEntryRankings
 }
 
 async function findHighScores (entry, options = {}) {
@@ -97,10 +100,7 @@ async function findEntryScoreById (id) {
 }
 
 /**
- * @return any errors, or detailed info about the entry scores: { scoreHasChanged, entryScore, impactedEntryScores }
- *         - boolean scoreHasChanged  Whether there was any actual score change
- *         - EntryScore entryScore  The final version of the entry score (ie. with the ranking set)
- *         - EntryScore[] impactedEntryScores The list of scores from other users that were pushed down in the rankings by the new score
+ * @return any errors, or the updated entry score (ie. with the ranking set)
  */
 async function submitEntryScore (entryScore, entry) {
   if (!entryScore || !entry) {
@@ -108,39 +108,29 @@ async function submitEntryScore (entryScore, entry) {
   }
 
   if (entry.get('status_high_score') !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
-    // Check ranking before accepting proof-less score
-    if (!entryScore.get('proof')) {
-      let higherScoreCount = await models.EntryScore
-        .where('entry_id', entry.get('id'))
-        .where('score', _rankingOperator(entry), entryScore.get('score'))
-        .count()
-      let ranking = higherScoreCount + 1
-      if (ranking <= 10) {
-        return { error: 'Pic or it didn\'t happen! You need a screenshot to get in the Top 10 :)' }
+    if (entryScore.hasChanged()) {
+      // Check ranking before accepting proof-less score
+      if (!entryScore.get('proof')) {
+        let higherScoreCount = await models.EntryScore
+          .where('entry_id', entry.get('id'))
+          .where('score', _rankingOperator(entry), entryScore.get('score'))
+          .count()
+        let ranking = higherScoreCount + 1
+        if (ranking <= 10) {
+          return { error: 'Pic or it didn\'t happen! You need a screenshot to get in the Top 10 :)' }
+        }
       }
-    }
 
-    let scoreHasChanged = entryScore.hasChanged()
-    let result = {
-      entryScore: null,
-      impactedEntryScores: [],
-      scoreHasChanged
-    }
-    if (scoreHasChanged) {
       // Save score
       entryScore.set('active', true)
       await entryScore.save()
 
       // Refresh rankings
-      result = await _refreshEntryRankings(entry, entryScore.get('id'))
-      result.scoreHasChanged = scoreHasChanged
-      if (!result.entryScore) {
-        console.warn('Failed to retrieve a score ranking', entryScore)
-        result.entryScore = entryScore
-      }
+      let updatedEntryScore = await refreshEntryRankings(entry, entryScore)
+      return updatedEntryScore || entryScore
+    } else {
+      return entryScore
     }
-
-    return result
   } else {
     return { error: 'High scores are disabled on this entry' }
   }
@@ -156,21 +146,19 @@ async function setEntryScoreActive (id, active) {
 
 async function deleteEntryScore (entryScore, entry) {
   await entryScore.destroy()
-  await _refreshEntryRankings(entry)
+  await refreshEntryRankings(entry, entryScore)
 }
 
 async function deleteAllEntryScores (entry) {
   await db.knex('entry_score')
     .where('entry_id', entry.get('id'))
     .delete()
-  await _refreshEntryRankings(entry)
+  await refreshEntryRankings(entry)
 }
 
-async function _refreshEntryRankings (entry, retrieveScoreId = null) {
-  let result = {
-    entryScore: null,
-    impactedEntryScores: []
-  }
+async function refreshEntryRankings (entry, triggeringEntryScore = null) {
+  let updatedEntryScore = null
+  let impactedEntryScores = []
 
   let scores = await models.EntryScore
     .where('entry_id', entry.get('id'))
@@ -185,15 +173,15 @@ async function _refreshEntryRankings (entry, retrieveScoreId = null) {
         score.set('ranking', ranking)
         score.save(null, { transacting: t })
         if (score.get('active')) {
-          result.impactedEntryScores.push(score)
+          impactedEntryScores.push(score)
         }
       }
       if (score.get('active')) {
         ranking++
       }
 
-      if (retrieveScoreId && score.get('id') === retrieveScoreId) {
-        result.entryScore = score
+      if (updatedEntryScore && score.get('id') === triggeringEntryScore.get('id')) {
+        updatedEntryScore = score
       }
     }
   })
@@ -204,10 +192,16 @@ async function _refreshEntryRankings (entry, retrieveScoreId = null) {
     await entryDetails.save({ 'high_score_count': scores.models.length }, {patch: true})
   }
 
-  if (result.entryScore) {
-    await result.entryScore.load(['user'])
+  // Refresh active tournament scores
+  if (await eventTournamentService.isActiveTournamentPlaying(entry.get('id'))) {
+    let tournamentEvent = await eventTournamentService.findActiveTournamentEvent()
+    eventTournamentService.refreshTournamentScores(module.exports, tournamentEvent, triggeringEntryScore.get('user_id'), impactedEntryScores)
   }
-  return result
+
+  if (updatedEntryScore) {
+    await updatedEntryScore.load(['user'])
+  }
+  return updatedEntryScore
 }
 
 function _rankingDir (entry) {
