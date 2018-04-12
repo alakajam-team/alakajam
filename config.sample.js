@@ -40,7 +40,7 @@ module.exports = {
   DEBUG_DISABLE_STARTUP_BUILD: false, // Makes the server start faster by not rebuilding the client JS/CSS
 
   // Debug: trace options
-  LOG_LEVEL: 'debug', // Verbose level among 'none', 'error', 'warning', 'info', 'debug'
+  LOG_LEVEL: 'debug', // Verbose level among 'none', 'error', 'warn', 'info', 'debug'
   DEBUG_TRACE_SQL: false, // Traces all SQL calls
   DEBUG_TRACE_SLOW_SQL: -1, // Traces SQL calls taking more than the specified time (in milliseconds, use -1 to disable)
   DEBUG_TRACE_REQUESTS: false, // Enables Express debug mode to trace request routes & timing
