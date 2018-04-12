@@ -21,7 +21,7 @@
         <label for="order">Order&nbsp;</label>
         <input type="text" name="order" class="form-control" value="{{ tournamentEntry.get('order') }}" style="max-width: 50px"  />
         <button type="submit" name="update" class="btn btn-primary">
-          <span class="fa fa-floppy-o"></span>
+          <span class="fa fa-save"></span>
         </button>
         <button type="submit" name="remove" class="btn btn-default" onclick="return confirm('Remove &quot;{{ entry.get('title') | escape }}&quot; from the tournament?')">
           <span class="fa fa-trash"></span>
