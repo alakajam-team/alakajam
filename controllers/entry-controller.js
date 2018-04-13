@@ -242,7 +242,7 @@ async function editEntry (req, res) {
     if (fields['picture-delete'] && entry.get('pictures').length > 0) {
       await fileStorage.remove(entry.get('pictures')[0])
       entry.set('pictures', [])
-    } else if (files.picture && files.picture.size > 0 && fileStorage.isValidPicture(files.picture.path)) { // TODO Formidable shouldn't create an empty file
+    } else if (files.picture && files.picture.size > 0 && await fileStorage.isValidPicture(files.picture.path)) { // TODO Formidable shouldn't create an empty file
       let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
       entry.set('pictures', [finalPath])
     } else if (fields.picture) {
@@ -282,7 +282,7 @@ async function editEntry (req, res) {
       errorMessage = 'Too many links (max allowed: around 7)'
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
       errorMessage = 'Submissions are closed for this event'
-    } else if (files.picture && files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
+    } else if (files.picture && files.picture.size > 0 && !(await fileStorage.isValidPicture(files.picture.path))) {
       errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
     } else if (fields.division && !isExternalEvent && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
       errorMessage = 'Invalid division'

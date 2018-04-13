@@ -109,11 +109,6 @@ module.exports = {
 
   // Misc
   ARTICLES_ROOT_URL: 'https://raw.githubusercontent.com/alakajam-team/alakajam/master/articles/',
-  ALLOWED_PICTURE_MIMETYPES: [
-    'image/png',
-    'image/jpeg',
-    'image/gif'
-  ],
 
   // Limits
   MAX_BODY_ANY: 100000,

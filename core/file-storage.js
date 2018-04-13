@@ -12,14 +12,14 @@ const mkdirp = promisify('mkdirp')
 const path = require('path')
 const url = require('url')
 const mime = require('mime-types')
+const log = require('./log')
 const config = require('../config')
-const constants = require('./constants')
 
 let sharp = null
 try {
   sharp = require('sharp')
 } catch (e) {
-  // Nothing
+  log.warn('Sharp dependency missing. Disabled features: picture resizing, picture format validation')
 }
 
 module.exports = {
@@ -40,13 +40,14 @@ const SOURCES_ROOT = path.join(__dirname, '..')
  * @param {string} path
  * @returns {bool} whather the specified path is a vaild picture
  */
-function isValidPicture (path) {
-  let fileMimeType = mime.lookup(path)
-  return _isValidMimeType(fileMimeType)
-}
-
-function _isValidMimeType (mimeType) {
-  return constants.ALLOWED_PICTURE_MIMETYPES.includes(mimeType)
+async function isValidPicture (path) {
+  if (sharp) {
+    let meta = await sharp(path).metadata()
+    return ['jpeg', 'png', 'gif'].includes(meta.format)
+  } else {
+    let mimeType = mime.lookup(path)
+    return ['image/png', 'image/jpeg', 'image/gif'].includes(mimeType)
+  }
 }
 
 /**
@@ -59,9 +60,8 @@ function _isValidMimeType (mimeType) {
  * @returns {string} the URL to that path
  */
 async function savePictureUpload (sourcePath, targetPath, options = {}) {
-  let fileMimeType = mime.lookup(sourcePath)
-  if (!_isValidMimeType(fileMimeType)) {
-    throw new Error('Invalid picture mimetype: ' + fileMimeType + ' (allowed: PNG GIF JPG)')
+  if (!(await isValidPicture(sourcePath))) {
+    throw new Error('Invalid picture type (allowed: PNG GIF JPG)')
   }
 
   let actualTargetPath = targetPath.replace(/^[\\/]/, '') // remove leading slash
