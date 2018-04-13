@@ -36,18 +36,38 @@ module.exports = {
 
 const SOURCES_ROOT = path.join(__dirname, '..')
 
+// Leading bytes for common image formats.
+// See https://stackoverflow.com/questions/8473703/in-node-js-given-a-url-how-do-i-check-whether-its-a-jpg-png-gif/8475542#8475542
+const IMAGE_HEADER_MAGIC_TO_TYPE = {
+  'ffd8ffe0': 'jpg',
+  '89504e47': 'png',
+  '47494638': 'gif',
+}
+
+/**
+ * Get the type of an image file.
+ *
+ * @param {string} filepath the absolute path to a file.
+ * @returns {string} one of 'jpg', 'png' or 'gif' if valid; undefined if not.
+ */
+async function getImageType (filepath) {
+  // Read the first four bytes of the file to ensure it's an image. See
+  // IMAGE_HEADER_MAGIC_TO_TYPE and the stackoverflow link there.
+  let fileHandle = await fs.open(filepath, 'r')
+  let buf = new Buffer(4)
+  let readResult = await fs.read(fileHandle, buf, 0, 4, 0)
+  await fs.close(fileHandle)
+  let leadingBytes = buf.toString('hex', 0, 4)
+  return IMAGE_HEADER_MAGIC_TO_TYPE[leadingBytes]
+}
+
+
 /**
  * @param {string} path
  * @returns {bool} whather the specified path is a vaild picture
  */
 async function isValidPicture (path) {
-  if (sharp) {
-    let meta = await sharp(path).metadata()
-    return ['jpeg', 'png', 'gif'].includes(meta.format)
-  } else {
-    let mimeType = mime.lookup(path)
-    return ['image/png', 'image/jpeg', 'image/gif'].includes(mimeType)
-  }
+  return (await getImageType(path)) !== undefined
 }
 
 /**

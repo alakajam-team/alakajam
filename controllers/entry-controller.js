@@ -242,7 +242,7 @@ async function editEntry (req, res) {
     if (fields['picture-delete'] && entry.get('pictures').length > 0) {
       await fileStorage.remove(entry.get('pictures')[0])
       entry.set('pictures', [])
-    } else if (files.picture && files.picture.size > 0 && await fileStorage.isValidPicture(files.picture.path)) { // TODO Formidable shouldn't create an empty file
+    } else if (files.picture && files.picture.size > 0 && fileStorage.isValidPicture(files.picture.path)) { // TODO Formidable shouldn't create an empty file
       let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
       entry.set('pictures', [finalPath])
     } else if (fields.picture) {
@@ -542,13 +542,13 @@ async function submitScore (req, res) {
     })
 
     if (!errorMessage && files.upload && !entryScore.get('proof')) {
-      let extension = mime.extension(files.upload.mimetype)
-      let proofPath = `/scores/${entry.get('id')}/${entryScore.get('user_id')}.${extension}`
-      if (files.upload && files.upload.size > 0 && fileStorage.isValidPicture(files.upload.path)) {
+      if (!files.upload || files.upload.size === 0 || !(await fileStorage.isValidPicture(files.upload.path))) {
+        errorMessage = 'Invalid upload'
+      } else {
+        let extension = mime.extension(files.upload.mimetype)
+        let proofPath = `/scores/${entry.get('id')}/${entryScore.get('user_id')}.${extension}`
         let finalPath = await fileStorage.savePictureUpload(files.upload.path, proofPath)
         entryScore.set('proof', finalPath)
-      } else {
-        errorMessage = 'Invalid upload'
       }
     }
 
