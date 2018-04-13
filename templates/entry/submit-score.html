@@ -39,7 +39,7 @@
         </div>
       {% endif %}
 
-      <form method="post">
+      <form method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label for="score" class="hidden-xs">{{ 'Time' if entry.related('details').get('high_score_type') === 'time' else 'Score' }}</label>
           {% if entry.related('details').get('high_score_type') === 'time' %}
@@ -57,9 +57,12 @@
           {% endif %}
         </div>
         <div class="form-group">
-          <label for="proof">Link to proof screenshot (or video)</label>
-          <p>Until we support uploading screenshots, we suggest using <a href="https://imgur.com/">Imgur</a> or any other image sharing service.</p>
+          <label for="proof-url">Link to proof screenshot (or video)</label>
           <input type="text" name="proof" class="form-control" value="{{ entryScore.get('proof') }}" placeholder="http://..." />
+        </div>
+        <div class="form-group">
+          <label for="proof-img">Alternatively, upload an image as proof</label>
+          {{ formMacros.pictureInput('upload', upload) }}
         </div>
         <div class="form-group">
           <input type="submit" class="btn btn-primary" value="Submit" />

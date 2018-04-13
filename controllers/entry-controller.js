@@ -6,6 +6,7 @@
  * @module controllers/entry-controller
  */
 
+const mime = require('mime')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const models = require('../core/models')
@@ -475,7 +476,7 @@ async function viewScores (req, res) {
  */
 async function submitScore (req, res) {
   let { user, entry } = res.locals
-  let { fields } = await req.parseForm()
+  let { fields, files } = await req.parseForm('upload')
 
   if (!user) {
     res.redirect('/login?redirect=' + req.url)
@@ -531,11 +532,25 @@ async function submitScore (req, res) {
     if (fields.proof && !forms.isURL(fields.proof)) {
       errorMessage = 'Invalid proof URL'
     }
+    if (fields.proof && fields.upload) {
+      errorMessage = 'Please either upload or link to your proof (not both)'
+    }
 
     entryScore.set({
       score: score,
       proof: forms.sanitizeString(fields.proof)
     })
+
+    if (!errorMessage && files.upload && !entryScore.get('proof')) {
+      let extension = mime.extension(files.upload.mimetype)
+      let proofPath = `/scores/${entry.get('id')}/${entryScore.get('user_id')}.${extension}`
+      if (files.upload && files.upload.size > 0 && fileStorage.isValidPicture(files.upload.path)) {
+        let finalPath = await fileStorage.savePictureUpload(files.upload.path, proofPath)
+        entryScore.set('proof', finalPath)
+      } else {
+        errorMessage = 'Invalid upload'
+      }
+    }
 
     // Saving
     if (!errorMessage) {
