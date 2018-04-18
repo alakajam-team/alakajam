@@ -134,17 +134,8 @@ async function index (req, res) {
         }
       })
 
-    // Find featured links data
-    let featuredLinksTask = settingService.find(constants.SETTING_FEATURED_LINKS)
-      .then(function (featuredLinks) {
-        if (featuredLinks) {
-          let data = JSON.parse(featuredLinks)
-          context.featuredLinks = data.featured
-        }
-      })
-
     await Promise.all([featuredEventTask, eventScheduleTask, suggestedEntriesTask,
-      postsTask, featuredPostTask, featuredLinksTask]) // Parallelize fetching everything
+      postsTask, featuredPostTask]) // Parallelize fetching everything
 
     cache.general.set('home_page', context, 10 /* 10 seconds */)
   }

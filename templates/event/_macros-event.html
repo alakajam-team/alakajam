@@ -76,6 +76,14 @@
 </div>
 {% endmacro %}
 
+{% macro eventBanner (event) %}
+<div class="event-banner__container">
+  <div class="event-banner" style="background-image: url('{{ event.related('details').get('banner') }}')">
+    <div class="event-banner__gradient"></div>
+  </div>
+</div>
+{% endmacro %}
+
 {% macro eventJumbo (event, user, userEntry) %}
 <div class="home-jumbo {{ event.get('status') }}">
   <div class="event-table">

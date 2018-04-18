@@ -4,19 +4,34 @@
 
 {% block body %}
 
-{% set eventBanner = featuredEvent.related('details').get('banner') if featuredEvent %}
-{% if eventBanner %}
-<div class="event-banner" style="background-image: url('{{ eventBanner }}')">
-  <div class="event-banner__gradient"></div>
-</div>
-{% endif %}
+{% set eventBanner = event.related('details').get('banner') if featuredEvent %}
+{{ eventMacros.eventBanner(event) if eventBanner }}
 
 <div class="container">
   <div class="row">
-    <div class="col-lg-offset-1 col-xs-10" style="margin-bottom: 20px">
+    <div class="col-lg-offset-1 col-lg-10" style="margin-bottom: 20px">
       {{ eventMacros.eventJumbo(event, user, userEntry) }}
     </div>
   </div>
+
+  {% set featuredLinks = featuredEvent.related('details').get('links') %}
+  {% if featuredLinks and featuredLinks.length > 0 %}
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10 well" style="padding: 10px 30px">
+      <div class="row">
+      {% for featuredLink in featuredLinks %}
+        <div class="col-sm-6 col-md-4">
+        <a class="home-featured-link" style="max-width: 600px; margin-right: 20px; display: inline-block" href="{{ featuredLink.link }}">
+          <span class="fa {{ featuredLink.icon }}"></span>
+          <span class="home-featured-link__title">{{ featuredLink.title }}</span>
+        </a>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10 {{ 'event-banner-panel' if eventBanner }}" style=" {{ 'padding-top: 10px' if eventBanner }}">
       {% for post in posts.models %}

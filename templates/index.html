@@ -8,11 +8,7 @@
 {% block body %}
 
 {% set featuredEventBanner = featuredEvent.related('details').get('banner') if featuredEvent %}
-{% if featuredEventBanner %}
-<div class="event-banner" style="background-image: url('{{ featuredEventBanner }}')">
-  <div class="event-banner__gradient"></div>
-</div>
-{% endif %}
+{{ eventMacros.eventBanner(featuredEvent) if featuredEventBanner }}
 
 <div class="container {{ 'event-banner-offset' if featuredEventBanner }}">
   <div class="row">
@@ -97,8 +93,8 @@
     </div>
     
     <div class="col-md-3 {{ 'event-banner-panel' if featuredEventBanner }}">
-
-      {% if featuredLinks %}
+      {% set featuredLinks = featuredEvent.related('details').get('links') %}
+      {% if featuredLinks and featuredLinks.length > 0 %}
         <div class="home-featured-links">
           <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
             <span class="fa fa-info-circle"></span>
@@ -119,30 +115,9 @@
           Event calendar
         </div>
 
+        {% set compactCalendar = featuredLinks and featuredLinks.length > 0 %}
         {% for event in eventSchedule %}
-          {% set mainEvent = event.get('title').includes('Alakajam') %}
-          <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }} {{ 'main' if mainEvent }}">
-            <div class="home-scheduled-event__arrow"></div>
-            <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
-              {% if mainEvent %}
-                <img src="/static/images/favicon16.png" class="home-scheduled-event__logo no-border" />
-              {% endif %}
-              {{ event.get('title') }}
-            </a>
-            <div class="home-scheduled-event__dates">
-              {{ event.get('display_dates') }} 
-              {% if event.get('status') === 'closed' %}
-                - <a href="{{ buildUrl(event, 'event') }}">{{ event.get('entry_count') }} games</a>
-              {% endif %}
-            </div>
-            <div class="home-scheduled-event__label">
-              {% if event.get('status') === 'open' %}
-                <span class="label label-danger">On now!</span>
-              {% elseif event.get('status') === 'pending' %}
-                <span class="label label-default">Up next!</span>
-              {% endif %}
-            </div>
-          </div>
+          {{ featuredLink(event, featuredEvent) if not compactCalendar or event.get('status') !== 'closed' }}
         {% endfor %}
         <div class="home-scheduled-event">
           <a class="home-scheduled-event__title" href="/events">More...</a>
@@ -203,6 +178,31 @@
 
 {% endblock %}
 
+{% macro featuredLink (event, featuredEvent) %}
+  {% set mainEvent = event.get('title').includes('Alakajam') %}
+  <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }} {{ 'main' if mainEvent }}">
+    <div class="home-scheduled-event__arrow"></div>
+    <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
+      {% if mainEvent %}
+        <img src="/static/images/favicon16.png" class="home-scheduled-event__logo no-border" />
+      {% endif %}
+      {{ event.get('title') }}
+    </a>
+    <div class="home-scheduled-event__dates">
+      {{ event.get('display_dates') }} 
+      {% if event.get('status') === 'closed' %}
+        - <a href="{{ buildUrl(event, 'event') }}">{{ event.get('entry_count') }} games</a>
+      {% endif %}
+    </div>
+    <div class="home-scheduled-event__label">
+      {% if event.get('status') === 'open' %}
+        <span class="label label-danger">On now!</span>
+      {% elseif event.get('status') === 'pending' %}
+        <span class="label label-default">Up next!</span>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
 
 {% macro jumboLink (event, statusField, targetPath, label, icon, closedValues = [], options = {}) %}
 {% if not statusField or event.get(statusField) !== 'disabled' %}

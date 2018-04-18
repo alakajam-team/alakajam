@@ -678,7 +678,7 @@ async function editEvent (req, res) {
     if (!errorMessage && (files.logo || fields['logo-delete'])) {
       let file = files.logo ? files.logo[0] : null
       let result = await fileStorage.savePictureToModel(event, 'logo', file,
-        fields['logo-delete'], `/events/${event.get('name')}/logo`)
+        fields['logo-delete'], `/events/${event.get('name')}/logo`, { maxDiagonal: 1000 })
       if (result.error) {
         errorMessage = result.error
       }
@@ -686,7 +686,7 @@ async function editEvent (req, res) {
     if (!errorMessage && (files.banner || fields['banner-delete'])) {
       let file = files.banner ? files.banner[0] : null
       let result = await fileStorage.savePictureToModel(event.related('details'), 'banner', file,
-        fields['banner-delete'], `/events/${event.get('name')}/banner`)
+        fields['banner-delete'], `/events/${event.get('name')}/banner`, { maxDiagonal: 3000 })
       if (result.error) {
         errorMessage = result.error
       }

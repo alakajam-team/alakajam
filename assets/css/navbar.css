@@ -402,7 +402,7 @@
   background-color: var(--moderation-dark);
 
   & .btn {
-    background-color: var(--moderation);
+    background-color: var(--moderation-dark);
     border-color: var(--moderation-dark);
     color: var(--moderation-text);
     padding: 0px 5px;

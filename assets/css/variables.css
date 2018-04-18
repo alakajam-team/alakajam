@@ -34,12 +34,12 @@
   --neutral-lighter: color(var(--neutral) alpha(25%));
   --neutral-lightest: color(var(--neutral) alpha(10%));
   
-  /* Mod / Admin colors (based on 'warning' and 'danger' colors from the Bootstrap theme) */
+  /* Mod / Admin colors */
   
-  --moderation: var(--main-dark);
-  --moderation-light: var(--main-lighter);
-  --moderation-lightest: var(--main-lightest);
-  --moderation-dark: color(var(--main) lightness(20%));
+  --moderation: var(--neutral);
+  --moderation-light: var(--neutral-lighter);
+  --moderation-lightest: var(--neutral-lightest);
+  --moderation-dark: color(var(--neutral-light));
   --moderation-text: color(white alpha(90%));
 
   /* Fonts */
