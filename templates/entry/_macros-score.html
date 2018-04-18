@@ -80,7 +80,7 @@
     </tr>
   {% endif %}
   {% if scoreCollection.length > 0 and not options.hideViewAllScores %}
-    <td colspan="5" class="text-center"><a href="{{ buildUrl(entry, 'entry', 'scores') }}">View all scores</a></td>
+    <td colspan="5" class="text-center"><a href="{{ buildUrl(entry, 'entry', 'scores') }}">View all <b>{{ scoreCollection.pagination.rowCount }}</b> scores</a></td>
   {% endif %}
 
   </tbody>

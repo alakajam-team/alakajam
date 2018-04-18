@@ -506,6 +506,7 @@ async function submitScore (req, res) {
   let errorMessage
   if (req.method === 'POST' && !fields.delete) {
     // Validation
+    let isExternalProof = fields.proof !== 'upload'
     let score = forms.sanitizeString(fields.score) || '0'
     score = score.replace(/,/g, '.').replace(/ /g, '') // give some flexibility to number parsing
 
@@ -530,23 +531,23 @@ async function submitScore (req, res) {
     } else if (!forms.isFloat(score)) {
       errorMessage = 'Invalid score'
     }
-    if (fields.proof && !forms.isURL(fields.proof)) {
+    if (isExternalProof && fields.proof && !forms.isURL(fields.proof)) {
       errorMessage = 'Invalid proof URL'
     }
-    if (fields.proof && files.upload) {
-      errorMessage = 'Please either upload or link to your proof (not both)'
-    }
 
+    // Store score & proof
     entryScore.set('score', score)
-    if (fields.proof || (!files.upload && !fields.upload)) {
+    if (isExternalProof) {
       entryScore.set('proof', forms.sanitizeString(fields.proof))
-    }
-
-    if (!errorMessage && !fields.proof && (files.upload || fields['upload-delete'])) {
-      let proofPath = `/scores/${entry.get('id')}/${entryScore.get('user_id')}`
-      let result = await fileStorage.savePictureToModel(entryScore, 'proof', files.upload, fields['upload-delete'], proofPath)
-      if (result.error) {
-        errorMessage = result.error
+    } else {
+      if (files.upload || fields['upload-delete']) {
+        let proofPath = `/scores/${entry.get('id')}/${entryScore.get('user_id')}`
+        let result = await fileStorage.savePictureToModel(entryScore, 'proof', files.upload, fields['upload-delete'], proofPath)
+        if (result.error) {
+          errorMessage = result.error
+        }
+      } else {
+        entryScore.set('proof', fields.upload)
       }
     }
 

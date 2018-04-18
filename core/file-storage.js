@@ -65,7 +65,6 @@ async function getImageType (filepath) {
       return IMAGE_HEADER_MAGIC_TO_TYPE[header]
     }
   }
-  return null
 }
 
 /**
@@ -90,7 +89,7 @@ async function isValidPicture (path) {
  * @param {string} deleteFile Whether to delete the picture
  * @param {string} targetPathWithoutExtension The path to the destination, **relative to the uploads folder**
  * @param {object} options (Optional) allowed: maxDiagonal
- * @returns {object} result, with either "error" or "finalPath" set
+ * @returns {object} result, with either "error" or "finalPath" set, or nothing if the picture was deleted
  */
 async function savePictureToModel (model, attribute, fileUpload, deleteFile, targetPathWithoutExtension, options = {}) {
   if (deleteFile) {
@@ -98,7 +97,8 @@ async function savePictureToModel (model, attribute, fileUpload, deleteFile, tar
     if (model.get(attribute)) {
       await remove(model.get(attribute))
     }
-    return model.set(attribute, null)
+    model.set(attribute, null)
+    return {}
   } else if (fileUpload) {
     // Upload or replace picture
     let result = await savePictureUpload(fileUpload, targetPathWithoutExtension, options)
@@ -107,7 +107,7 @@ async function savePictureToModel (model, attribute, fileUpload, deleteFile, tar
       if (previousPath && previousPath !== result.finalPath) {
         await remove(previousPath)
       }
-      return model.set(attribute, result.finalPath)
+      model.set(attribute, result.finalPath)
     }
     return result
   } else {

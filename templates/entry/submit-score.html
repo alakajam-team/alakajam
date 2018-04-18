@@ -31,11 +31,8 @@
       {% endif %}
 
       {% if entryScore.get('ranking') %}
-        <div class="big-table">
-          <div class="big-table__header">Current ranking: <span class="label label-default">{{ entryScore.get('ranking') | ordinal }}</span></div>
-          <div class="big-table__body">
-            Out of {{ entry.related('details').get('high_score_count') }} players (top {{ rankingPercent or '0' }}%)
-          </div>
+        <div class="featured">
+          <h4 style="margin: 0">Current ranking: <span class="label label-default">{{ entryScore.get('ranking') | ordinal }}</span></h4>
         </div>
       {% endif %}
 
@@ -57,12 +54,30 @@
           {% endif %}
         </div>
         <div class="form-group">
-          <label for="proof-url">Link to proof screenshot (or video)</label>
-          <input type="text" name="proof" class="form-control" value="{{ entryScore.get('proof') if isExternalProof }}" placeholder="http://..." />
-        </div>
-        <div class="form-group">
-          <label for="proof-img">Alternatively, upload an image as proof</label>
-          {{ formMacros.pictureInput('upload', entryScore.get('proof') if not isExternalProof) }}
+          <label for="proof-method">Proof picture</label>
+          <div class="row">
+            <div class="col-xs-2">
+              <label style="font-weight: normal">
+                <input id="proof-method-upload" name="proof" value="upload" class="js-radio"
+                   type="radio" {{ 'checked="checked"' if not isExternalProof }} /> Upload
+              </label>
+            </div>
+            <div class="col-xs-10">
+              {{ formMacros.pictureInput('upload', entryScore.get('proof') if not isExternalProof) }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-2">
+              <label style="font-weight: normal">
+                <input id="proof-method-link" name="proof" value="{{ entryScore.get('proof') if isExternalProof }}" class="js-radio"
+                type="radio" {{ 'checked="checked"' if isExternalProof }} /> Link
+              </label>
+            </div>
+            <div class="col-xs-10">
+              <input type="text" class="form-control js-radio-text-field" value="{{ entryScore.get('proof') if isExternalProof }}"
+                data-target="proof-method-link" placeholder="http://..." />
+            </div>
+          </div>
         </div>
         <div class="form-group">
           <input type="submit" class="btn btn-primary" value="Submit" />

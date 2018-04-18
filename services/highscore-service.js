@@ -122,7 +122,7 @@ async function submitEntryScore (entryScore, entry) {
           .where('entry_id', entry.get('id'))
           .where('score', _rankingOperator(entry), entryScore.get('score'))
           .count()
-        let ranking = higherScoreCount + 1
+        let ranking = parseInt(higherScoreCount) + 1
         if (ranking <= 10) {
           return { error: 'Pic or it didn\'t happen! You need a screenshot to get in the Top 10 :)' }
         }
