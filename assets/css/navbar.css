@@ -399,10 +399,10 @@
 .moderation-bar {
   margin: -21px 0 20px 0;
   width: 100%;
-  background-color: var(--moderation-light);
+  background-color: var(--moderation-dark);
 
   & .btn {
-    background-color: var(--moderation-dark);
+    background-color: var(--moderation);
     border-color: var(--moderation-dark);
     color: var(--moderation-text);
     padding: 0px 5px;

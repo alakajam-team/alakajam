@@ -36,11 +36,11 @@
   
   /* Mod / Admin colors (based on 'warning' and 'danger' colors from the Bootstrap theme) */
   
-  --moderation: #ffce54;
-  --moderation-light: #ffe198;
-  --moderation-lightest: color(var(--moderation-light) alpha(30%));
-  --moderation-dark: #f6bb42;
-  --moderation-text: #876000;
+  --moderation: var(--main-dark);
+  --moderation-light: var(--main-lighter);
+  --moderation-lightest: var(--main-lightest);
+  --moderation-dark: color(var(--main) lightness(20%));
+  --moderation-text: color(white alpha(90%));
 
   /* Fonts */
   
