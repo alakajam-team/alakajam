@@ -25,6 +25,7 @@ try {
 module.exports = {
   isValidPicture,
 
+  savePictureToModel,
   savePictureUpload,
 
   exists,
@@ -37,11 +38,11 @@ module.exports = {
 const SOURCES_ROOT = path.join(__dirname, '..')
 
 // Leading bytes for common image formats.
-// See https://stackoverflow.com/questions/8473703/in-node-js-given-a-url-how-do-i-check-whether-its-a-jpg-png-gif/8475542#8475542
+// See https://stackoverflow.com/a/8475542/1213677 and https://github.com/sindresorhus/file-type/blob/master/index.js
 const IMAGE_HEADER_MAGIC_TO_TYPE = {
-  'ffd8ffe0': 'jpg',
-  '89504e47': 'png',
-  '47494638': 'gif',
+  'ffd8ff': 'jpg',
+  '89504e470d0a1a0a': 'png',
+  '474946': 'gif'
 }
 
 /**
@@ -54,50 +55,90 @@ async function getImageType (filepath) {
   // Read the first four bytes of the file to ensure it's an image. See
   // IMAGE_HEADER_MAGIC_TO_TYPE and the stackoverflow link there.
   let fileHandle = await fs.open(filepath, 'r')
-  let buf = new Buffer(4)
-  let readResult = await fs.read(fileHandle, buf, 0, 4, 0)
+  let buf = Buffer.alloc(8)
+  await fs.read(fileHandle, buf, 0, 8, 0)
   await fs.close(fileHandle)
-  let leadingBytes = buf.toString('hex', 0, 4)
-  return IMAGE_HEADER_MAGIC_TO_TYPE[leadingBytes]
-}
+  let leadingBytes = buf.toString('hex', 0, 8)
 
+  for (let header in IMAGE_HEADER_MAGIC_TO_TYPE) {
+    if (leadingBytes.indexOf(header) === 0) {
+      return IMAGE_HEADER_MAGIC_TO_TYPE[header]
+    }
+  }
+  return null
+}
 
 /**
  * @param {string} path
- * @returns {bool} whather the specified path is a vaild picture
+ * @returns {bool} whather the specified path is a valid picture
  */
 async function isValidPicture (path) {
-  return (await getImageType(path)) !== undefined
+  if (await exists(path)) {
+    return (await getImageType(path)) !== undefined
+  } else {
+    return false
+  }
 }
 
 /**
- * Moves the file from a path to another. Typically used for saving temporary files.
- * @param {string} sourcePath The full path to the file to move
- * @param {string} targetPath The path to the destination, relative to the uploads folder.
+ * Saves a file upload on a model. The picture will be resized (if needed) & moved, but model.save() won't be called.
+ * The file extension will be grabbed from the source path. If folders don't exist, they will be created.
+ * If there was a pre-exiting picture, it will be deleted.
+ * @param {Model} model
+ * @param {string} attribute
+ * @param {object} fileUpload The form field to save
+ * @param {string} deleteFile Whether to delete the picture
+ * @param {string} targetPathWithoutExtension The path to the destination, **relative to the uploads folder**
  * @param {object} options (Optional) allowed: maxDiagonal
- *   If the file extension is omitted, it will be grabbed from the source path. If folders don't exist, they will be created.
+ * @returns {object} result, with either "error" or "finalPath" set
+ */
+async function savePictureToModel (model, attribute, fileUpload, deleteFile, targetPathWithoutExtension, options = {}) {
+  if (deleteFile) {
+    // Delete picture
+    if (model.get(attribute)) {
+      await remove(model.get(attribute))
+    }
+    return model.set(attribute, null)
+  } else if (fileUpload) {
+    // Upload or replace picture
+    let result = await savePictureUpload(fileUpload, targetPathWithoutExtension, options)
+    if (!result.error) {
+      let previousPath = model.get(attribute)
+      if (previousPath && previousPath !== result.finalPath) {
+        await remove(previousPath)
+      }
+      return model.set(attribute, result.finalPath)
+    }
+    return result
+  } else {
+    return { error: 'Invalid upload' }
+  }
+}
+
+/**
+ * Saves an upload to the specified path, resizing it if needed in the process.
+ * The file extension will be grabbed from the source path. If folders don't exist, they will be created.
+ * @param {string} fileUpload The form field to save
+ * @param {string} targetPathWithoutExtension The path to the destination, **relative to the uploads folder**
+ * @param {object} options (Optional) allowed: maxDiagonal
  * @throws if the source path is not a valid picture
  * @returns {string} the URL to that path
  */
-async function savePictureUpload (sourcePath, targetPath, options = {}) {
-  if (!(await isValidPicture(sourcePath))) {
-    throw new Error('Invalid picture type (allowed: PNG GIF JPG)')
+async function savePictureUpload (fileUpload, targetPathWithoutExtension, options = {}) {
+  if (!(await isValidPicture(fileUpload.path))) {
+    return { error: 'Invalid picture type (allowed: PNG GIF JPG)' }
   }
 
-  let actualTargetPath = targetPath.replace(/^[\\/]/, '') // remove leading slash
+  let actualTargetPath = targetPathWithoutExtension.replace(/^[\\/]/, '') // remove leading slash
   if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
     actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath)
   }
-  let sourcePathExtension = path.extname(sourcePath)
-  if (!targetPath.endsWith(sourcePathExtension)) {
-    // TODO replace extension rather than just append
-    actualTargetPath += sourcePathExtension
-  }
-
+  actualTargetPath += '.' + mime.extension(fileUpload.mimetype)
   let absoluteTargetPath = toAbsolutePath(actualTargetPath)
+
   await createFolderIfMissing(path.dirname(absoluteTargetPath))
-  await resize(sourcePath, absoluteTargetPath, options.maxDiagonal || 2000)
-  return url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath))
+  await resize(fileUpload.path, absoluteTargetPath, options.maxDiagonal || 2000)
+  return { finalPath: url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath)) }
 }
 
 async function resize (sourcePath, targetPath, maxDiagonal) {

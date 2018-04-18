@@ -59,6 +59,7 @@ module.exports = function editor (mdSelector, cmSelector) {
 
   $(cmSelector).each(function () {
     var codemirror = CodeMirror.fromTextArea(this, {
+      autoRefresh: true, // required for editors to load correctly in tabs
       matchBrackets: true,
       autoCloseBrackets: true,
       mode: 'application/ld+json',

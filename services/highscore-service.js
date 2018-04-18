@@ -9,6 +9,8 @@
 const models = require('../core/models')
 const db = require('../core/db')
 const enums = require('../core/enums')
+const forms = require('../core/forms')
+const fileStorage = require('../core/file-storage')
 const eventTournamentService = require('./event-tournament-service')
 
 module.exports = {
@@ -24,6 +26,8 @@ module.exports = {
   setEntryScoreActive,
   deleteEntryScore,
   deleteAllEntryScores,
+
+  isExternalProof,
 
   refreshEntryRankings
 }
@@ -150,6 +154,9 @@ async function setEntryScoreActive (id, active) {
 }
 
 async function deleteEntryScore (entryScore, entry) {
+  if (!isExternalProof(entryScore)) {
+    fileStorage.remove(entryScore.get('proof'))
+  }
   await entryScore.destroy()
   await refreshEntryRankings(entry, entryScore)
 }
@@ -207,6 +214,10 @@ async function refreshEntryRankings (entry, triggeringEntryScore = null, options
     await updatedEntryScore.load(['user'])
   }
   return updatedEntryScore
+}
+
+function isExternalProof (entryScore) {
+  return forms.isURL(entryScore.get('proof'))
 }
 
 function _rankingDir (entry) {

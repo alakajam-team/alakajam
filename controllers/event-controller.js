@@ -11,6 +11,7 @@ const enums = require('../core/enums')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
 const log = require('../core/log')
+const fileStorage = require('../core/file-storage')
 const templating = require('../controllers/templating')
 const userService = require('../services/user-service')
 const eventService = require('../services/event-service')
@@ -613,7 +614,7 @@ async function editEvent (req, res) {
     return
   }
 
-  let { fields } = await req.parseForm()
+  let { fields, files } = await req.parseForm([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }])
   let errorMessage = null
   let infoMessage = ''
   let redirected = false
@@ -665,6 +666,29 @@ async function editEvent (req, res) {
         }
       } catch (e) {
         errorMessage = 'Invalid rating category JSON'
+      }
+    }
+    if (!errorMessage) {
+      try {
+        fields['links'] = JSON.parse(fields['links'] || '[]')
+      } catch (e) {
+        errorMessage = 'Invalid links JSON'
+      }
+    }
+    if (!errorMessage && (files.logo || fields['logo-delete'])) {
+      let file = files.logo ? files.logo[0] : null
+      let result = await fileStorage.savePictureToModel(event, 'logo', file,
+        fields['logo-delete'], `/events/${event.get('name')}/logo`)
+      if (result.error) {
+        errorMessage = result.error
+      }
+    }
+    if (!errorMessage && (files.banner || fields['banner-delete'])) {
+      let file = files.banner ? files.banner[0] : null
+      let result = await fileStorage.savePictureToModel(event.related('details'), 'banner', file,
+        fields['banner-delete'], `/events/${event.get('name')}/banner`)
+      if (result.error) {
+        errorMessage = result.error
       }
     }
 
@@ -726,9 +750,9 @@ async function editEvent (req, res) {
       }
 
       // Event details update
-      await event.load('details')
       let eventDetails = event.related('details')
       eventDetails.set({
+        links: fields.links,
         category_titles: fields['category-titles']
       })
       await eventDetails.save()

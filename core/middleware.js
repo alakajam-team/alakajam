@@ -270,7 +270,13 @@ function cleanupFormFilesCallback (req, res) {
       for (let key in res.locals.form.files) {
         let fileInfo = res.locals.form.files[key]
         if (fileInfo) {
-          fileStorage.remove(fileInfo.path)
+          if (Array.isArray(fileInfo)) {
+            for (let fileInfoEntry of fileInfo) {
+              fileStorage.remove(fileInfoEntry.path)
+            }
+          } else {
+            fileStorage.remove(fileInfo.path)
+          }
         }
       }
     }

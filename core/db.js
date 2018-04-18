@@ -29,7 +29,7 @@ function initBookshelf () {
    * @return {string} the DB version after upgrading
    */
   bookshelf.initDatabase = async function (withSamples) {
-    console.log('Upgrading database...', {withSamples})
+    log.info('Upgrading database...')
     let previousVersion = await knex.migrate.currentVersion()
     await knex.migrate.latest(knexfile)
     let newVersion = await knex.migrate.currentVersion()

@@ -6,7 +6,6 @@
  * @module controllers/entry-controller
  */
 
-const mime = require('mime')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const models = require('../core/models')
@@ -238,13 +237,17 @@ async function editEntry (req, res) {
       })
     }
 
-    let picturePath = '/entry/' + entry.get('id')
     if (fields['picture-delete'] && entry.get('pictures').length > 0) {
       await fileStorage.remove(entry.get('pictures')[0])
       entry.set('pictures', [])
-    } else if (files.picture && files.picture.size > 0 && (await fileStorage.isValidPicture(files.picture.path))) { // TODO Formidable shouldn't create an empty file
-      let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
-      entry.set('pictures', [finalPath])
+    } else if (files.picture && (await fileStorage.isValidPicture(files.picture.path))) {
+      let picturePath = '/entry/' + entry.get('id')
+      let result = await fileStorage.savePictureUpload(files.picture, picturePath)
+      if (!result.error) {
+        entry.set('pictures', [result.finalPath])
+      } else {
+        errorMessage = result.error
+      }
     } else if (fields.picture) {
       entry.set('pictures', [forms.sanitizeString(fields.picture)])
     }
@@ -282,8 +285,6 @@ async function editEntry (req, res) {
       errorMessage = 'Too many links (max allowed: around 7)'
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
       errorMessage = 'Submissions are closed for this event'
-    } else if (files.picture && files.picture.size > 0 && !(await fileStorage.isValidPicture(files.picture.path))) {
-      errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
     } else if (fields.division && !isExternalEvent && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
       errorMessage = 'Invalid division'
     }
@@ -532,23 +533,20 @@ async function submitScore (req, res) {
     if (fields.proof && !forms.isURL(fields.proof)) {
       errorMessage = 'Invalid proof URL'
     }
-    if (fields.proof && fields.upload) {
+    if (fields.proof && files.upload) {
       errorMessage = 'Please either upload or link to your proof (not both)'
     }
 
-    entryScore.set({
-      score: score,
-      proof: forms.sanitizeString(fields.proof)
-    })
+    entryScore.set('score', score)
+    if (fields.proof || (!files.upload && !fields.upload)) {
+      entryScore.set('proof', forms.sanitizeString(fields.proof))
+    }
 
-    if (!errorMessage && files.upload && !entryScore.get('proof')) {
-      if (!files.upload || files.upload.size === 0 || !(await fileStorage.isValidPicture(files.upload.path))) {
-        errorMessage = 'Invalid upload'
-      } else {
-        let extension = mime.extension(files.upload.mimetype)
-        let proofPath = `/scores/${entry.get('id')}/${entryScore.get('user_id')}.${extension}`
-        let finalPath = await fileStorage.savePictureUpload(files.upload.path, proofPath)
-        entryScore.set('proof', finalPath)
+    if (!errorMessage && !fields.proof && (files.upload || fields['upload-delete'])) {
+      let proofPath = `/scores/${entry.get('id')}/${entryScore.get('user_id')}`
+      let result = await fileStorage.savePictureToModel(entryScore, 'proof', files.upload, fields['upload-delete'], proofPath)
+      if (result.error) {
+        errorMessage = result.error
       }
     }
 
@@ -560,11 +558,11 @@ async function submitScore (req, res) {
       } else {
         entryScore = result
       }
-    }
 
-    if (req.query.redirectTo) {
-      res.redirect(req.query.redirectTo)
-      return
+      if (req.query.redirectTo) {
+        res.redirect(req.query.redirectTo)
+        return
+      }
     }
   }
 
@@ -574,7 +572,8 @@ async function submitScore (req, res) {
     tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id')),
     entryScore,
     rankingPercent,
-    errorMessage
+    errorMessage,
+    isExternalProof: highscoreService.isExternalProof(entryScore)
   }
   if (entry.related('details').get('high_score_type') === 'time') {
     // Parse time

@@ -157,6 +157,7 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | title | Title (not null)
  * | string | display_dates | The event dates, for display only
  * | string | display_theme | The event theme, for display only
+ * | string | logo | Path to a logo picture
  * | string | status | General status: 'pending', 'open' or 'closed' (not null)
  * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID (not null)
  * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'closed', 'results', or a post ID (not null)
@@ -225,8 +226,10 @@ module.exports.Event = bookshelf.model('Event', {
  * | integer | theme_count | Number of theme ideas submitted
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
+ * | string | banner | Path to a banner picture
  * | string | division_counts | Number of entries by division: {"name": count...}
  * | string | shortlist_elimination | Config for shortlist eliminations phase: (JSON: {"start": date, "delay": number in minutes, "body": html}
+ * | string | links | Config for a list of special pages to link to: (JSON: [{"title": string, "link": string, "icon": string}]
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -243,18 +246,21 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
     attrs['category_titles'] = attrs['category_titles'] || []
     attrs['division_counts'] = attrs['division_counts'] || []
     attrs['shortlist_elimination'] = attrs['shortlist_elimination'] || {}
+    attrs['links'] = attrs['links'] || {}
     return attrs
   },
   parse: function parse (attrs) {
     if (attrs['category_titles']) attrs['category_titles'] = JSON.parse(attrs['category_titles'])
     if (attrs['division_counts']) attrs['division_counts'] = JSON.parse(attrs['division_counts'])
     if (attrs['shortlist_elimination']) attrs['shortlist_elimination'] = JSON.parse(attrs['shortlist_elimination'])
+    if (attrs['links']) attrs['links'] = JSON.parse(attrs['links'])
     return attrs
   },
   format: function format (attrs) {
     if (attrs && attrs['category_titles']) attrs['category_titles'] = JSON.stringify(attrs['category_titles'])
     if (attrs && attrs['division_counts']) attrs['division_counts'] = JSON.stringify(attrs['division_counts'])
     if (attrs && attrs['shortlist_elimination']) attrs['shortlist_elimination'] = JSON.stringify(attrs['shortlist_elimination'])
+    if (attrs && attrs['links']) attrs['links'] = JSON.stringify(attrs['links'])
     return attrs
   },
 

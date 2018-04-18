@@ -14,8 +14,7 @@ docs/*/
 # Data
 data*/
 tests/data/
-static/build
-static/uploads
+static/uploads/
 *.log
 *.out
 *.pid

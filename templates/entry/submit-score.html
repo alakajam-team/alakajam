@@ -58,11 +58,11 @@
         </div>
         <div class="form-group">
           <label for="proof-url">Link to proof screenshot (or video)</label>
-          <input type="text" name="proof" class="form-control" value="{{ entryScore.get('proof') }}" placeholder="http://..." />
+          <input type="text" name="proof" class="form-control" value="{{ entryScore.get('proof') if isExternalProof }}" placeholder="http://..." />
         </div>
         <div class="form-group">
           <label for="proof-img">Alternatively, upload an image as proof</label>
-          {{ formMacros.pictureInput('upload', upload) }}
+          {{ formMacros.pictureInput('upload', entryScore.get('proof') if not isExternalProof) }}
         </div>
         <div class="form-group">
           <input type="submit" class="btn btn-primary" value="Submit" />

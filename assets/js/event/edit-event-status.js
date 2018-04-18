@@ -2,7 +2,6 @@
 
 function refreshEventStatusToggles (value) {
   let showOtherStatus = value === 'disabled'
-  console.log(showOtherStatus, value)
   $('#js-edit-event-status-jam').toggle(showOtherStatus)
 }
 
