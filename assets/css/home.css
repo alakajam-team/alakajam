@@ -7,9 +7,9 @@
   position: relative;
   padding: 10px;
   padding-left: 100px;
-  margin: 10px 15px 30px 15px;
+  margin: 10px 0px 20px 15px;
   background-color: var(--main-lighter);
-  border-left: 10px solid var(--main-dark);
+  border-left: 10px solid var(--main);
   font-size: 1.2rem;
 
   &__icon {
@@ -144,6 +144,7 @@
 
   &__contents {
     margin-top: 20px;
+    padding: 10px;
   }
 
   &__announcement {
@@ -178,12 +179,13 @@
   
   &__social {
     margin-top: 5px;
+    margin-bottom: 10px;
 
     & a {
       margin-right: 2px;
 
       & img {
-        height: 42px;
+        height: 36px;
       }
     }
   }

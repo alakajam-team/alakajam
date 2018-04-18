@@ -16,7 +16,7 @@
   
   --main: #00abd6;
   --main-light: color(var(--main) lightness(46%));
-  --main-lighter: color(var(--main) alpha(25%));
+  --main-lighter: color(var(--main) lightness(85%));
   --main-lightest: color(var(--main) alpha(10%));
   --main-dark: color(var(--main) lightness(32%));
   --main-transparent: color(var(--main) alpha(10%));

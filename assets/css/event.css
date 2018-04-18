@@ -65,6 +65,12 @@
     background-color: white;
   }
 
+  &__logo {
+    vertical-align: top;
+    height: 60px;
+    border-right: 1px solid var(--borders);
+  }
+
   &__title {
     @apply --alt-font;
     display: inline-block;
@@ -201,4 +207,31 @@
   &__entry {
     margin-bottom: 5px;
   }
+}
+
+/* Event banner */
+
+.event-banner {
+  width: 100%;
+  height: 50%;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin-top: -20px;
+
+  &__gradient {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: linear-gradient(to bottom, transparent 0%, var(--bg) 100%);
+  }
+}
+
+.event-banner-offset {
+  padding-top: 150px;
+}
+
+.event-banner-panel {
+  @apply --shadow;
+  background-color: color(var(--bg) alpha(85%));
 }

@@ -7,7 +7,14 @@
 
 {% block body %}
 
-<div class="container">
+{% set featuredEventBanner = featuredEvent.related('details').get('banner') if featuredEvent %}
+{% if featuredEventBanner %}
+<div class="event-banner" style="background-image: url('{{ featuredEventBanner }}')">
+  <div class="event-banner__gradient"></div>
+</div>
+{% endif %}
+
+<div class="container {{ 'event-banner-offset' if featuredEventBanner }}">
   <div class="row">
     {% if not user %}
     <div class="home-welcome">
@@ -28,70 +35,9 @@
   <div class="row">
     <div class="col-md-9">
       {% if featuredEvent %}
-      <div class="home-jumbo {{ featuredEvent.get('status') }}">
-        <div class="event-table">
-          <div class="event-table__header">
-            <a href="{{ buildUrl(featuredEvent, 'event') }}" class="event-table__title">
-              {{ featuredEvent.get('title') }}
-              <div class="event-table__dates">
-                {{ featuredEvent.get('display_dates') or '(dates unknown)' }}
-              </div>
-            </a>
-            {% if featuredEvent.get('display_theme') %}
-            <div class="event-table__theme hidden-xs">
-              <span class="event-table__theme-label">Theme</span>
-              {{ featuredEvent.get('display_theme') }}
-            </div>
-            {% endif %}
-          </div>
-          <div class="event-table__theme-mobile visible-xs">
-            Theme: {{ featuredEvent.get('display_theme') }}
-          </div>
-        </div>
+        {{ eventMacros.eventJumbo(featuredEvent, user, userEntry) }}
 
-        <div class="home-jumbo__call-container">
-        {% set rawHypeLink = featuredEvent.get('countdown_config').link %}
-        {% set animatedCountdown = featuredEvent.get('countdown_config').enabled %}
-        {% if rawHypeLink %}
-          {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else buildUrl(featuredEvent, 'event', rawHypeLink) %}
-          <a class="home-jumbo__call" href="{{ hypeLink }}">
-            <div class="row">
-              <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
-                <h2>{{ featuredEvent.get('countdown_config').message }}</h2>
-                {% if featuredEvent.get('countdown_config').phrase %}
-                  <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime }}
-                {% endif %}
-              </div>
-            </div>
-            {% if animatedCountdown %}
-              <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ featuredEvent.get('countdown_config').date }}"></span>
-            {% endif %}
-            <span class="fa fa-angle-right home-jumbo__call-arrow"></span>
-          </a>
-        {% elseif featuredEvent.get('countdown_config').phrase %}
-          <div class="home-jumbo__details">
-            <div class="row">
-              <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
-                {% if featuredEvent.get('countdown_config').phrase %}
-                  <span class="glyphicon glyphicon-calendar"></span> {{ featuredEvent.get('countdown_config').phrase }} {{ featuredEvent.get('countdown_config').date | featuredEventDateTime }}
-                {% endif %}
-              </div>
-              {% if animatedCountdown %}
-                <div class="col-md-6">
-                  <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ featuredEvent.get('countdown_config').date }}"></span>
-                </div>
-              {% endif %}
-            </div>
-          </div>
-        {% endif %}
-        </div>
-
-        {% if user and featuredEvent and featuredEvent.get('status_entry') !== 'off' %}
-          {{ eventMacros.eventShortcutMyEntry(user, featuredEvent, userEntry) }}
-        {% endif %}
-      </div>
-
-      <div class="home-jumbo__contents">
+        <div class="home-jumbo__contents {{ 'event-banner-panel' if featuredEventBanner }}">
         {% if featuredEventAnnouncement %}
           <div class="home-jumbo__announcement expandable">
             {{ postMacros.post(featuredEventAnnouncement, user, { hideDate: true }) }}
@@ -100,7 +46,7 @@
           <script type="text/javascript">
             // Custom announcement height limit and expand/collapse button
             // Script inlined for fast loading
-            var maxAnnouncementHeight = 350
+            var maxAnnouncementHeight = 265
             var announcementEl = findByClass('home-jumbo__announcement')
             if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
               announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
@@ -148,22 +94,13 @@
       {% if not featuredEvent and not featuredPost %}
         <h1 class="text-center">Next event not announced yet.</h1>
       {% endif %}
-
-      <div class="home-jumbo__social">
-        {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
-        {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
-        {{ socialLink('IRC', '/chat', 'irc.svg') }}
-        {{ socialLink('Twitch', 'https://www.twitch.tv/communities/alakajam', 'twitch.png') }}
-        {{ socialLink('YouTube', 'https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos', 'youtube.svg') }}
-        {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
-      </div>
     </div>
     
-    <div class="col-md-3">
-  
+    <div class="col-md-3 {{ 'event-banner-panel' if featuredEventBanner }}">
+
       {% if featuredLinks %}
         <div class="home-featured-links">
-          <div class="horizontal-bar" style="margin-top: 0px; margin-bottom: 10px">
+          <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
             <span class="fa fa-info-circle"></span>
             Special pages
           </div>
@@ -177,7 +114,7 @@
       {% endif %}
 
       <div class="home-scheduled-events visible-md visible-lg">
-        <div class="horizontal-bar" style="margin-top: 0px; margin-bottom: 10px">
+        <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
           <span class="fa fa-calendar"></span>
           Event calendar
         </div>
@@ -210,6 +147,19 @@
         <div class="home-scheduled-event">
           <a class="home-scheduled-event__title" href="/events">More...</a>
         </div>
+      </div>
+
+      <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
+        <span class="fa fa-angle-right"></span>
+        Follow Alakajam!
+      </div>
+      <div class="home-jumbo__social">
+        {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
+        {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
+        {{ socialLink('IRC', '/chat', 'irc.svg') }}
+        {{ socialLink('Twitch', 'https://www.twitch.tv/communities/alakajam', 'twitch.png') }}
+        {{ socialLink('YouTube', 'https://www.youtube.com/channel/UCaIXjxJWGYQs7x_1d1OZi6Q/videos', 'youtube.svg') }}
+        {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
       </div>
     </div>
   </div>

@@ -54,6 +54,11 @@
 
 <div class="event-table {{ event.get('status') }}">
   <div class="event-table__header">
+    {%- if featuredEvent.get('logo') -%}
+    <a href="{{ buildUrl(event, 'event') }}"><!--
+      --><img src="{{ event.get('logo') }}" class="event-table__logo no-border" /><!--
+  --></a>
+    {%- endif -%}
     <a href="{{ buildUrl(event, 'event') }}" class="event-table__title">
       {{ event.get('title') }} 
       {% if event.get('status') === 'closed' %}

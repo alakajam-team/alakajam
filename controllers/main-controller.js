@@ -101,7 +101,7 @@ async function index (req, res) {
     }
 
     // Fetch event schedule
-    let eventScheduleTask = await eventService.findEvents({ pageSize: 6 })
+    let eventScheduleTask = await eventService.findEvents({ pageSize: 5 })
       .then(function (eventScheduleCollection) {
         context.eventSchedule = eventScheduleCollection.models
       })

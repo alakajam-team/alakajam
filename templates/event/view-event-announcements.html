@@ -4,9 +4,21 @@
 
 {% block body %}
 
+{% set eventBanner = featuredEvent.related('details').get('banner') if featuredEvent %}
+{% if eventBanner %}
+<div class="event-banner" style="background-image: url('{{ eventBanner }}')">
+  <div class="event-banner__gradient"></div>
+</div>
+{% endif %}
+
 <div class="container">
   <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
+    <div class="col-lg-offset-1 col-xs-10" style="margin-bottom: 20px">
+      {{ eventMacros.eventJumbo(event, user, userEntry) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10 {{ 'event-banner-panel' if eventBanner }}" style=" {{ 'padding-top: 10px' if eventBanner }}">
       {% for post in posts.models %}
         {{ postMacros.post(post, user) }}
       {% endfor %}

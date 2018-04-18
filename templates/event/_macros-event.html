@@ -76,6 +76,76 @@
 </div>
 {% endmacro %}
 
+{% macro eventJumbo (event, user, userEntry) %}
+<div class="home-jumbo {{ event.get('status') }}">
+  <div class="event-table">
+    <div class="event-table__header">
+      {% if event.get('logo') %}
+      <a href="{{ buildUrl(event, 'event') }}">
+        <img src="{{ event.get('logo') }}" class="event-table__logo no-border" />
+      </a>
+      {% endif %}
+      <a href="{{ buildUrl(event, 'event') }}" class="event-table__title">
+        {{ event.get('title') }}
+        <div class="event-table__dates">
+          {{ event.get('display_dates') or '(dates unknown)' }}
+        </div>
+      </a>
+      {% if event.get('display_theme') %}
+      <div class="event-table__theme hidden-xs">
+        <span class="event-table__theme-label">Theme</span>
+        {{ event.get('display_theme') }}
+      </div>
+      {% endif %}
+    </div>
+    <div class="event-table__theme-mobile visible-xs">
+      Theme: {{ event.get('display_theme') }}
+    </div>
+  </div>
+
+  <div class="home-jumbo__call-container">
+  {% set rawHypeLink = event.get('countdown_config').link %}
+  {% set animatedCountdown = event.get('countdown_config').enabled %}
+  {% if rawHypeLink %}
+    {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else buildUrl(event, 'event', rawHypeLink) %}
+    <a class="home-jumbo__call" href="{{ hypeLink }}">
+      <div class="row">
+        <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
+          <h2>{{ event.get('countdown_config').message }}</h2>
+          {% if event.get('countdown_config').phrase %}
+            <span class="glyphicon glyphicon-calendar"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
+          {% endif %}
+        </div>
+      </div>
+      {% if animatedCountdown %}
+        <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></span>
+      {% endif %}
+      <span class="fa fa-angle-right home-jumbo__call-arrow"></span>
+    </a>
+  {% elseif event.get('countdown_config').phrase %}
+    <div class="home-jumbo__details">
+      <div class="row">
+        <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
+          {% if event.get('countdown_config').phrase %}
+            <span class="glyphicon glyphicon-calendar"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
+          {% endif %}
+        </div>
+        {% if animatedCountdown %}
+          <div class="col-md-6">
+            <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+  </div>
+
+  {% if user and event and event.get('status_entry') !== 'off' %}
+    {{ eventShortcutMyEntry(user, event, userEntry) }}
+  {% endif %}
+</div>
+{% endmacro %}
+
 {% macro eventLinks (event, path, options = {}) %}
 {% if options.collapse %}
 <nav class="event-navbar navbar">
