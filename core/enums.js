@@ -37,6 +37,25 @@ module.exports = {
       VOTING: 'voting',
       VOTING_RESCUE: 'voting_rescue',
       RESULTS: 'results'
+    },
+    STATUS_TOURNAMENT: {
+      DISABLED: 'disabled',
+      OFF: 'off',
+      SUBMISSION: 'submission',
+      PLAYING: 'playing',
+      CLOSED: 'closed',
+      RESULTS: 'results'
+    }
+  },
+  ENTRY: {
+    STATUS_HIGH_SCORE: {
+      OFF: 'off',
+      NORMAL: 'normal',
+      REVERSED: 'reversed'
+    },
+    HIGH_SCORE_TYPE: {
+      NUMBER: 'number',
+      TIME: 'time'
     }
   },
   THEME: {

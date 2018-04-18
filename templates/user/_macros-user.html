@@ -3,7 +3,7 @@
 {# Allowed options: fullWidth centered #}
 {% macro userThumb(user, options = {}) %}
 <div class="user-thumb {{ 'full-width' if options.fullWidth else 'col-sm-4' }} {{ 'centered' if options.centered }}">
-    <h1 class="user-thumb__title">
+    <div class="user-thumb__title">
       <a href="{{ buildUrl(user, 'user') }}">
         <div class="user-thumb__avatar">
           {% if user.get('avatar') %}
@@ -14,10 +14,10 @@
         </div>
         {{ user.get('title') }}
       </a>
-    </h1>
-    <h3 class="user-thumb__name">
+    </div>
+    <div class="user-thumb__name">
       {{ user.get('name') }}
-    </h3>
+    </div>
 </div>
 {% endmacro %}
 
@@ -29,4 +29,8 @@
     <img src="/static/images/default-avatar.png" />
   {% endif %}
 </a>
+{% endmacro %}
+
+{% macro userLink(user) %}
+<a href="{{ buildUrl(user, 'user') }}">@{{ user.get('title') }}</a>
 {% endmacro %}

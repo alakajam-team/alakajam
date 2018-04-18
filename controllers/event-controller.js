@@ -11,16 +11,19 @@ const enums = require('../core/enums')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
 const log = require('../core/log')
+const fileStorage = require('../core/file-storage')
 const templating = require('../controllers/templating')
 const userService = require('../services/user-service')
 const eventService = require('../services/event-service')
 const eventThemeService = require('../services/event-theme-service')
 const eventRatingService = require('../services/event-rating-service')
+const eventTournamentService = require('../services/event-tournament-service')
 const tagService = require('../services/tag-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
 const platformService = require('../services/platform-service')
+const highScoreService = require('../services/highscore-service')
 
 module.exports = {
   handleEventUserShortcuts,
@@ -36,9 +39,14 @@ module.exports = {
   viewEventRatings,
   viewEventResults,
 
+  viewEventTournamentGames,
+  submitTournamentGame,
+  viewEventTournamentLeaderboard,
+
   editEvent,
   editEventThemes,
   editEventEntries,
+  editEventTournamentGames,
   deleteEvent,
 
   ajaxFindThemes,
@@ -181,11 +189,26 @@ async function handleGameSearch (req, res, searchOptions = {}) {
  * Root event page, redirects to its entries
  */
 async function viewDefaultPage (req, res) {
-  if (res.locals.event.get('status_entry') !== enums.EVENT.STATUS_ENTRY.OFF) {
-    res.redirect(templating.buildUrl(res.locals.event, 'event', 'games'))
+  let { event } = res.locals
+
+  let page
+  if (![enums.EVENT.STATUS_TOURNAMENT.OFF, enums.EVENT.STATUS_TOURNAMENT.DISABLED].includes(event.get('status_tournament'))) {
+    if (event.get('status_tournament') === enums.EVENT.STATUS_TOURNAMENT.RESULTS) {
+      page = 'tournament-leaderboard'
+    } else {
+      page = 'tournament-games'
+    }
+  } else if (event.get('status_entry') !== enums.EVENT.STATUS_ENTRY.OFF) {
+    if (event.get('status_results') === enums.EVENT.STATUS_RESULTS.RESULTS) {
+      page = 'results'
+    } else {
+      page = 'games'
+    }
   } else {
-    res.redirect(templating.buildUrl(res.locals.event, 'event', 'posts'))
+    page = 'posts'
   }
+
+  res.redirect(templating.buildUrl(res.locals.event, 'event', page))
 }
 
 /**
@@ -521,6 +544,67 @@ async function viewEventResults (req, res) {
 }
 
 /**
+ * View the games of a tournament
+ */
+async function viewEventTournamentGames (req, res) {
+  res.locals.pageTitle += ' | Tournament games'
+
+  let { user, event } = res.locals
+
+  let statusTournament = event.get('status_tournament')
+  if ([enums.EVENT.STATUS_TOURNAMENT.DISABLED, enums.EVENT.STATUS_TOURNAMENT.OFF].includes(statusTournament)) {
+    res.errorPage(404)
+    return
+  }
+
+  let cacheKey = 'event-' + event.get('name') + '-tournament-games'
+  let context = await cache.getOrFetch(cache.general, cacheKey, async function () {
+    let tournamentEntries = await eventTournamentService.findTournamentEntries(event, { withDetails: true })
+    let entries = tournamentEntries.map(tEntry => tEntry.related('entry'))
+    let highScoresMap = await highScoreService.findHighScoresMap(entries)
+    return {
+      entries,
+      highScoresMap
+    }
+  }, 10 /* 10 seconds */)
+
+  context.userScoresMap = user ? await highScoreService.findUserScoresMapByEntry(user.get('id'), context.entries) : {}
+
+  res.render('event/view-event-tourn-games', context)
+}
+
+/**
+ * Submit a game to a tournament
+ */
+async function submitTournamentGame (req, res) {
+  // TODO
+  res.redirect('./tournament-games')
+}
+
+/**
+ * View the leaderboard of a tournament
+ */
+async function viewEventTournamentLeaderboard (req, res) {
+  res.locals.pageTitle += ' | Leaderboard'
+
+  let { event } = res.locals
+
+  let statusTournament = event.get('status_tournament')
+  if (![enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED,
+    enums.EVENT.STATUS_TOURNAMENT.RESULTS].includes(statusTournament)) {
+    res.errorPage(404)
+    return
+  }
+
+  let tEntries = await eventTournamentService.findTournamentEntries(event)
+
+  res.render('event/view-event-tourn-leaderboard', {
+    tournamentScores: (await eventTournamentService.findTournamentScores(event)).models,
+    entries: tEntries.map(tEntry => tEntry.related('entry'))
+  })
+}
+
+/**
  * Edit or create an event
  */
 async function editEvent (req, res) {
@@ -529,7 +613,7 @@ async function editEvent (req, res) {
     return
   }
 
-  let { fields } = await req.parseForm()
+  let { fields, files } = await req.parseForm([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }])
   let errorMessage = null
   let infoMessage = ''
   let redirected = false
@@ -556,6 +640,8 @@ async function editEvent (req, res) {
     } else if (!forms.isIn(fields['status-results'], enums.EVENT.STATUS_RESULTS) &&
         !forms.isId(fields['status-results'])) {
       errorMessage = 'Invalid results status'
+    } else if (!forms.isIn(fields['status-tournament'], enums.EVENT.STATUS_TOURNAMENT)) {
+      errorMessage = 'Invalid tournament status'
     } else if (event) {
       let matchingEventsCollection = await eventService.findEvents({ name: fields.name })
       for (let matchingEvent of matchingEventsCollection.models) {
@@ -581,6 +667,29 @@ async function editEvent (req, res) {
         errorMessage = 'Invalid rating category JSON'
       }
     }
+    if (!errorMessage) {
+      try {
+        fields['links'] = JSON.parse(fields['links'] || '[]')
+      } catch (e) {
+        errorMessage = 'Invalid links JSON'
+      }
+    }
+    if (!errorMessage && (files.logo || fields['logo-delete'])) {
+      let file = files.logo ? files.logo[0] : null
+      let result = await fileStorage.savePictureToModel(event, 'logo', file,
+        fields['logo-delete'], `/events/${event.get('name')}/logo`, { maxDiagonal: 1000 })
+      if (result.error) {
+        errorMessage = result.error
+      }
+    }
+    if (!errorMessage && (files.banner || fields['banner-delete'])) {
+      let file = files.banner ? files.banner[0] : null
+      let result = await fileStorage.savePictureToModel(event.related('details'), 'banner', file,
+        fields['banner-delete'], `/events/${event.get('name')}/banner`, { maxDiagonal: 3000 })
+      if (result.error) {
+        errorMessage = result.error
+      }
+    }
 
     if (!errorMessage) {
       if (creation) {
@@ -599,6 +708,7 @@ async function editEvent (req, res) {
         status_theme: fields['status-theme'],
         status_entry: fields['status-entry'],
         status_results: fields['status-results'],
+        status_tournament: fields['status-tournament'],
         countdown_config: {
           message: forms.sanitizeString(fields['countdown-message']),
           link: forms.sanitizeString(fields['countdown-link']),
@@ -622,7 +732,13 @@ async function editEvent (req, res) {
           infoMessage = 'Event results cleared.'
         }
       }
+      if (event.hasChanged('status_tournament') && event.previous('status_tournament') === enums.EVENT.STATUS_TOURNAMENT.OFF) {
+        // Pre-fill leaderboard with people who were already in the high scores
+        eventTournamentService.recalculateAllTournamentScores(highScoreService, event)
+      }
 
+      // Caches clearing
+      cache.general.del('active-tournament-event')
       let nameChanged = event.hasChanged('name')
       event = await event.save()
       cache.eventsById.del(event.get('id'))
@@ -632,9 +748,10 @@ async function editEvent (req, res) {
         cache.eventsByName.del(previousName)
       }
 
-      await event.load('details')
+      // Event details update
       let eventDetails = event.related('details')
       eventDetails.set({
+        links: fields.links,
         category_titles: fields['category-titles']
       })
       await eventDetails.save()
@@ -757,6 +874,73 @@ async function editEventEntries (req, res) {
     entriesById,
     usersById,
     detailedEntryInfo
+  })
+}
+
+/**
+ * Manage tournament games
+ */
+async function editEventTournamentGames (req, res) {
+  res.locals.pageTitle += ' | Tournament games'
+
+  let { user, event } = res.locals
+
+  if (!securityService.isMod(user)) {
+    res.errorPage(403)
+    return
+  }
+
+  let errorMessage
+  if (req.method === 'POST') {
+    let { fields } = await req.parseForm()
+
+    // Add to tournament
+    if (fields.add !== undefined) {
+      if (forms.isId(fields.add)) {
+        let entry = await eventService.findEntryById(fields.add)
+        if (entry) {
+          await eventTournamentService.addTournamentEntry(event.get('id'), entry.get('id'))
+          eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry])
+        } else {
+          errorMessage = 'Entry not found with ID ' + fields.add
+        }
+      } else {
+        errorMessage = 'Invalid entry ID'
+      }
+    }
+
+    // Update order
+    if (fields.update !== undefined && forms.isId(fields.id)) {
+      if (forms.isInt(fields.ordering)) {
+        let entry = await eventService.findEntryById(fields.id)
+        if (entry) {
+          await eventTournamentService.saveTournamentEntryOrdering(event.get('id'), entry.get('id'), fields.ordering)
+        }
+      } else {
+        errorMessage = 'Invalid order'
+      }
+    }
+
+    // Remove from tournament
+    if (fields.remove !== undefined && forms.isId(fields.id)) {
+      let entry = await eventService.findEntryById(fields.id)
+      if (entry) {
+        await eventTournamentService.removeTournamentEntry(event.get('id'), entry.get('id'))
+        eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry])
+      }
+    }
+
+    // Refresh scores
+    if (fields.refresh) {
+      let onlyRefreshEntries = forms.isId(fields.refresh) ? [await eventService.findEntryById(fields.refresh)] : null
+      await eventTournamentService.recalculateAllTournamentScores(highScoreService, event, onlyRefreshEntries)
+    }
+  }
+
+  // Load tournament entries
+  res.render('event/edit-event-tourn-games', {
+    tournamentEntries: await eventTournamentService.findTournamentEntries(event),
+    errorMessage
   })
 }
 

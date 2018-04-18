@@ -15,22 +15,19 @@
   <script type="text/javascript" src="/static/js/matchbrackets.min.js"></script>
   <script type="text/javascript" src="/static/js/closebrackets.min.js"></script>
   <script type="text/javascript" src="/static/js/codemirror-jsonconf.min.js"></script>
+  <script type="text/javascript" src="/static/js/codemirror-autorefresh.min.js"></script>
 {% endmacro %}
 
 {# ======== PICTURES ========= #}
 
-{% macro pictureInput(name, value, defaultValue = null) %}
-<div class="well">
+{% macro pictureInput(name, value, options = {}) %}
+<div class="{{ 'well' if not options.noPanel }}">
   <p>
     <input type="file" name="{{ name }}" class="btn"/>
     <input type="hidden" name="{{ name }}" value="{{ value }}"/>
   </p>
   <p>
-    {% if value  %}
-    <img src="{{ value }}" style="max-width: 100%" />
-    {% elseif defaultValue %}
-    <img src="{{ defaultValue }}" style="max-width: 100%" />
-    {% endif %}
+    <img src="{{ value or options.defaultValue }}" style="max-width: 100%" />
   </p>
   {% if value %}
   <label><input type="checkbox" name="{{ name }}-delete" /> Delete picture</label>

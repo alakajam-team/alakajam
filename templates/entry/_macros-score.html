@@ -1,0 +1,148 @@
+{% import "user/_macros-user.html" as userMacros %}
+
+{% macro highScoresLinks(entry, user, path, options = {}) %}
+  {% if not options.hideSubmitButton %}
+    <a href="{{ buildUrl(entry, 'entry', 'submit-score') }}?redirectTo={{ path }}" class="btn btn-primary">Submit score</a>
+  {% endif %}
+  {% if canUserWrite(user, entry, { allowMods: true }) %}
+    <a href="{{ buildUrl(entry, 'entry', 'edit-scores') }}" class="btn btn-default">
+      <span class="fa fa-cog"></span>
+    </a>
+  {% endif %}
+{% endmacro %}
+
+{% macro tournamentEventBanner(tournamentEvent) %}
+{% if tournamentEvent %}
+  <a href="{{ buildUrl(tournamentEvent, 'event') }}" class="highscore-banner">
+    <div>This game is currently featured in the</div>
+    <div class="highscore-banner__title">{{ tournamentEvent.get('title') }}</div>
+  </a>
+{% endif %}
+{% endmacro %}
+
+{% macro highScores(entry, scoreCollection, userScore = null, options = {}) %}
+{% set highScoreType = entry.related('details').get('high_score_type') %}
+{% set unit = highScoreType if not ['number', time'].includes(highScoreType) %}
+{% set colspan = 4 + (1 if options.showDates else 0) + (1 if options.showActiveToggles else 0) %}
+<table class="table">
+  <thead>
+  <tr>
+    <th>#</th>
+    <th>User</th>
+    <th>{{ 'Time' if highScoreType === 'time' else 'Score' }}</th>
+    {% if options.showDates %}<th>Date</th>{% endif %}
+    <th><!-- Proof link --></th>
+    {% if options.showActiveToggles %}<th class="text-right">State</th>{% endif %}
+  </tr>
+  </thead>
+  <tbody>
+  {% if scoreCollection.length > 0 %}
+    {% for score in scoreCollection.models %}
+      {% set isOwnScore = 'active' if userScore and score.get('id') === userScore.get('id') %}
+      <tr class="{{ 'active' if isOwnScore }}">
+        <td>{{ printRanking(score.get('ranking')) }}</td>
+        <td>{{ userMacros.userLink(score.related('user')) }}</td>
+        <td><b>{{ printScore(entry, score, isOwnScore) }}</b></td>
+        {% if options.showDates %}<td style="font-size: 0.8rem">{{ score.get('updated_at') | date }}</td>{% endif %}
+        <td>{{ printProof(score) }}</td>
+        {% if options.showActiveToggles %}
+          <td class="text-right">
+            {% if score.get('active') %}
+              <span class="label label-success">Active</span>
+              &nbsp;<input type="submit" name="suspend-{{ score.get('id') }}" class="btn btn-default btn-sm" onclick="return confirm('Suspend the score of {{ score.related('user').get('title') }}?')" value="Suspend" />
+            {% else %}
+              <span class="label label-warning">Suspended</span>
+              &nbsp;<input type="submit" name="restore-{{ score.get('id') }}" class="btn btn-default btn-sm" onclick="return confirm('Restore the score of {{ score.related('user').get('title') }}?')" value="Restore" />
+            {% endif %}
+          </td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+
+    {% if userScore and userScore.get('id') and userScore.get('ranking') > 10 %}
+    <tr>
+      <td colspan="{{ colspan }}" class="text-center">...</td>
+    </tr>
+    <tr class="active">
+      <td>{{ userScore.get('ranking') | ordinal }}</td>
+      <td>{{ userMacros.userLink(userScore.related('user')) }}</td>
+      <td><b>{{ printScore(entry, userScore, true) }}</td></td>
+      {% if options.showDates %}<td style="font-size: 0.8rem">{{ userScore.get('updated_at') | date }}</td>{% endif %}
+      <td>{{ printProof(userScore) }}</td>
+    </tr>
+    {% endif %}
+    {% if scoreCollection.pagination.rowCount > 9 %}
+    <tr>
+      <td colspan="{{ colspan }}">Total submitted scores: <b>{{ scoreCollection.pagination.rowCount }}</b></td>
+    </tr>
+    {% endif %}
+  {% else %}
+    <tr>
+      <td colspan="{{ colspan }}">Be the first to submit a score!</td>
+    </tr>
+  {% endif %}
+  {% if scoreCollection.length > 0 and not options.hideViewAllScores %}
+    <td colspan="{{ colspan }}" class="text-center">
+      <a href="{{ buildUrl(entry, 'entry', 'scores') }}">View all <b>{{ scoreCollection.pagination.rowCount or scoreCollection.length }}</b> scores</a>
+    </td>
+  {% endif %}
+
+  </tbody>
+</table>
+{% endmacro %}
+
+{% macro printProof(score) %}
+  {% set proof = score.get('proof') %}
+  {% if proof %}
+  <a href="{{ proof }}" target="alakajam_proof">
+    <span class="fa fa-{{ 'video' if proof.includes('youtube.com') or proof.includes('twitch') else 'camera' }}"></span>
+  </a>
+  {% endif %}
+{% endmacro %}
+
+{% macro printRanking(ranking) %}
+  {%- if ranking > 3 -%}
+    {{- ranking -}}
+  {%- else -%}
+    <span class="highscore-medal ranking-{{ ranking }}"></span>
+  {%- endif -%}
+{% endmacro %}
+
+{% macro printScore(entry, score, ownScore = false) %}
+  {%- set highScoreType = entry.related('details').get('high_score_type') -%}
+  {{- (score.get('score') | duration) if highScoreType === 'time' else (score.get('score') | float) }} {{ highScoreType if not ['number', 'time'].includes(highScoreType) -}}
+  {% if ownScore %}
+  <a href="{{ buildUrl(entry, 'entry', 'submit-score') }}">
+    <span class="fa fa-edit"></span>
+  </a>
+  {% endif %}
+{% endmacro %}
+
+{% macro pointsDistributionLegend(pointsDistribution) %}
+<div class="horizontal-bar"></div>
+
+<h2>Points distribution</h2>
+
+<p>Leaderboards points are awarded to all players that enter the top {{ pointsDistribution.length }} of a game. For each spot in the high scores, each player gets a number of points as per the table below. At the end of the event, the player with the most points wins the tournament!</p>
+
+<div class="row">
+  <div class="col-md-6">
+  <table class="table">
+    <thead>
+      <tr>
+        {% for points in pointsDistribution %}
+          <th>{{ loop.index | ordinal }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        {% for points in pointsDistribution %}
+          <td>{{ points }}</td>
+        {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endmacro %}

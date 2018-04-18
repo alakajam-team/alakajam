@@ -3,6 +3,7 @@
 {% import "user/_macros-user.html" as userMacros %}
 {% import "event/_macros-event.html" as eventMacros %}
 {% import "_macros-form.html" as formMacros %}
+{% import "entry/_macros-score.html" as scoreMacros %}
 
 {% block body %}
 
@@ -247,6 +248,12 @@
           {% endfor %}
         </div>
       </div>
+
+      {% if entry.get('status_high_score') !== 'off' %}
+        <h3 name="high-scores">High scores {{ scoreMacros.highScoresLinks(entry, user, path) }}</h3>
+        {{ scoreMacros.tournamentEventBanner(tournamentEvent) }}
+        {{ scoreMacros.highScores(entry, highScoresCollection, userScore) }}
+      {% endif %}
 
       {% if posts.models.length > 0 %}
         <h3>Related posts</h3>

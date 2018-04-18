@@ -276,7 +276,6 @@
   &__name {
     @apply --alt-font;
     display: block;
-    padding-top: 2px;
     box-sizing: border-box;
     font-size: 1.5rem;
   }
@@ -343,22 +342,6 @@
   &__link-label {
     color: red;
   }
-  
-  &__announcement {
-    padding-top: calc(var(--eventbar-height) / 2 - 1.2rem);
-    line-height: 1.0rem;
-    margin-left: -20px;
-    margin-right: 20px;
-    text-align: left;
-  }
-  
-  &__announcement-info {
-    display: block;
-    font-size: 0.7rem;
-    line-height: 1.2rem;
-    color: var(--text-light);
-  }
-
 }
 
 .event-navbar {
@@ -416,7 +399,11 @@
 .moderation-bar {
   margin: -21px 0 20px 0;
   width: 100%;
-  background-color: var(--moderation-light);
+  background-color: var(--moderation-dark);
+
+  @media (max-width: 768px) {
+    margin-top: -31px;
+  }
 
   & .btn {
     background-color: var(--moderation-dark);

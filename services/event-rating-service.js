@@ -260,13 +260,10 @@ async function refreshEntryScore (entry, event, options = {}) {
   await entry.load(['details', 'comments', 'userRoles', 'votes'])
   let received = (await computeScoreReceivedByUser(entry, event)).total
   let given = (await computeScoreGivenByUserAndEntry(entry, event)).total
-
-  entry.set('feedback_score', computeFeedbackScore(received, given))
-  await entry.save()
+  await entry.save({ 'feedback_score': computeFeedbackScore(received, given) }, { patch: true })
 
   let entryDetails = entry.related('details')
-  entryDetails.set('rating_count', entry.related('votes').length)
-  await entryDetails.save()
+  await entryDetails.save({ 'rating_count': entry.related('votes').length }, { patch: true })
 }
 
 /* Compute received score */

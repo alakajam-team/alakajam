@@ -65,10 +65,16 @@ module.exports.User = bookshelf.model('User', {
   },
   comments: function () {
     return this.hasMany('Comment', 'user_id')
+  },
+  entryScores: function () {
+    return this.hasMany('EntryScore', 'user_id')
+  },
+  tournamentScores: function () {
+    return this.hasMany('TournamentScore', 'user_id')
   }
 }, {
   // Cascading
-  dependents: ['details', 'roles']
+  dependents: ['details', 'roles', 'entryScores', 'tournamentScores']
 })
 
 /**
@@ -151,11 +157,13 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | title | Title (not null)
  * | string | display_dates | The event dates, for display only
  * | string | display_theme | The event theme, for display only
+ * | string | logo | Path to a logo picture
  * | string | status | General status: 'pending', 'open' or 'closed' (not null)
  * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID (not null)
  * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'closed', 'results', or a post ID (not null)
  * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
  * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)
+ * | string | status_tournament | Event tournament status: 'disabled', 'off', 'submission', 'playing', 'closed', 'results'
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | string | divisions | Divisions info: `{"name": "description"}`
  * | integer | entry_count | Total number of entries in the event.
@@ -175,6 +183,9 @@ module.exports.Event = bookshelf.model('Event', {
   },
   entries: function () {
     return this.hasMany('Entry', 'event_id')
+  },
+  tournamentEntries: function () {
+    return this.hasMany('TournamentEntry', 'event_id')
   },
 
   // Listeners
@@ -215,8 +226,10 @@ module.exports.Event = bookshelf.model('Event', {
  * | integer | theme_count | Number of theme ideas submitted
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
+ * | string | banner | Path to a banner picture
  * | string | division_counts | Number of entries by division: {"name": count...}
  * | string | shortlist_elimination | Config for shortlist eliminations phase: (JSON: {"start": date, "delay": number in minutes, "body": html}
+ * | string | links | Config for a list of special pages to link to: (JSON: [{"title": string, "link": string, "icon": string}]
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -233,18 +246,21 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
     attrs['category_titles'] = attrs['category_titles'] || []
     attrs['division_counts'] = attrs['division_counts'] || []
     attrs['shortlist_elimination'] = attrs['shortlist_elimination'] || {}
+    attrs['links'] = attrs['links'] || {}
     return attrs
   },
   parse: function parse (attrs) {
     if (attrs['category_titles']) attrs['category_titles'] = JSON.parse(attrs['category_titles'])
     if (attrs['division_counts']) attrs['division_counts'] = JSON.parse(attrs['division_counts'])
     if (attrs['shortlist_elimination']) attrs['shortlist_elimination'] = JSON.parse(attrs['shortlist_elimination'])
+    if (attrs['links']) attrs['links'] = JSON.parse(attrs['links'])
     return attrs
   },
   format: function format (attrs) {
     if (attrs && attrs['category_titles']) attrs['category_titles'] = JSON.stringify(attrs['category_titles'])
     if (attrs && attrs['division_counts']) attrs['division_counts'] = JSON.stringify(attrs['division_counts'])
     if (attrs && attrs['shortlist_elimination']) attrs['shortlist_elimination'] = JSON.stringify(attrs['shortlist_elimination'])
+    if (attrs && attrs['links']) attrs['links'] = JSON.stringify(attrs['links'])
     return attrs
   },
 
@@ -275,6 +291,7 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  * | boolean | allow_anonymous | Are anonymous comments allowed on this entry?
+ * | string | status_high_score | High score enablement status ('off', 'normal', 'reversed')
  */
 module.exports.Entry = bookshelf.model('Entry', {
   tableName: 'entry',
@@ -309,6 +326,9 @@ module.exports.Entry = bookshelf.model('Entry', {
   },
   posts: function () {
     return this.hasMany('Post', 'entry_id')
+  },
+  scores: function () {
+    return this.hasMany('EntryScore', 'entry_id')
   },
 
   // Listeners
@@ -352,7 +372,7 @@ module.exports.Entry = bookshelf.model('Entry', {
 
 }, {
   // Cascading
-  dependents: ['details', 'comments', 'entryPlatforms', 'votes', 'invites', 'tags'] // 'userRoles' removed because of issue #93
+  dependents: ['details', 'comments', 'entryPlatforms', 'votes', 'invites', 'tags', 'scores'] // 'userRoles' removed because of issue #93
 })
 
 /**
@@ -367,6 +387,9 @@ module.exports.Entry = bookshelf.model('Entry', {
  * | decimal | rating_1 .. 6 | Rating for categories 1 to 6 ([-99.999,99.999])
  * | integer | ranking_1 .. 6 | Ranking for categories 1 to 6 (max: 100000)
  * | integer | rating_count | Received rating count
+ * | integer | high_score_count | Submitted scores count
+ * | integer | high_score_type | 'number', 'time' or any custom text to be used as a suffix (max size: 20)
+ * | integer | high_score_instructions | Markdown text to be shown when submitting a score (max size: 2000)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -427,8 +450,7 @@ module.exports.EntryPlatform = bookshelf.model('EntryPlatform', {
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
   },
-
-  platform () {
+  platform: function () {
     return this.belongsTo('Platform', 'platform_id')
   },
 
@@ -595,7 +617,109 @@ module.exports.ThemeVote = bookshelf.model('ThemeVote', {
   user: function () {
     return this.belongsTo('User', 'user_id')
   }
+})
 
+// ===============================================================
+// HIGH SCORES / TOURNAMENTS
+// ===============================================================
+
+/**
+ * Entry score model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | user_id | User ID (not null)
+ * | integer | entry_id | Entry ID (not null)
+ * | decimal | score | Score ([-999.999.999.999,999;999.999.999.999,999], not null)
+ * | string | proof | URL of the proof picture or video
+ * | integer | ranking | User ranking on that entry
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
+ */
+module.exports.EntryScore = bookshelf.model('EntryScore', {
+  tableName: 'entry_score',
+  hasTimestamps: true,
+
+  // Relations
+
+  user: function () {
+    return this.belongsTo('User', 'user_id')
+  },
+  entry: function () {
+    return this.belongsTo('Entry', 'entry_id')
+  }
+})
+
+/**
+ * Tournament entry model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | event_id | Tournament event ID (not null)
+ * | integer | entry_id | Entry ID (not null)
+ * | integer | ordering | Entry order
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
+ */
+module.exports.TournamentEntry = bookshelf.model('TournamentEntry', {
+  tableName: 'tournament_entry',
+  hasTimestamps: true,
+
+  // Relations
+
+  entry: function () {
+    return this.belongsTo('Entry', 'entry_id')
+  },
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  }
+})
+
+/**
+ * Tournament score model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | user_id | User ID (not null)
+ * | integer | event_id | Tournament event ID (not null)
+ * | decimal | score | Score ([-999.999.999.999,999;999.999.999.999,999], not null)
+ * | string | entry_scores | JSON caching of the entry scores used to compute the tournament score: {entryId: {score, ranking}}
+ * | integer | ranking | User ranking on that tournament
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
+ */
+module.exports.TournamentScore = bookshelf.model('TournamentScore', {
+  tableName: 'tournament_score',
+  hasTimestamps: true,
+
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs['entry_scores'] = attrs['entry_scores'] || {}
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['entry_scores']) attrs['entry_scores'] = JSON.parse(attrs['entry_scores'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs && attrs['entry_scores']) attrs['entry_scores'] = JSON.stringify(attrs['entry_scores'])
+    return attrs
+  },
+
+  // Relations
+
+  user: function () {
+    return this.belongsTo('User', 'user_id')
+  },
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  }
 })
 
 // ===============================================================
@@ -634,6 +758,9 @@ module.exports.Post = bookshelf.model('Post', {
     })
     return attrs
   },
+
+  // Relations
+
   entry: function () {
     return this.belongsTo('Entry', 'entry_id')
   },
@@ -673,6 +800,8 @@ module.exports.Post = bookshelf.model('Post', {
 module.exports.Comment = bookshelf.model('Comment', {
   tableName: 'comment',
   hasTimestamps: true,
+
+  // Relations
 
   node: function () {
     return this.morphTo('node', ['node_type', 'node_id'], 'Entry', 'Post')

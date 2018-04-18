@@ -1,3 +1,11 @@
+'use strict'
+
+/**
+ * Service for importing entries from third-party websites
+ *
+ * @module services/event-import-service
+ */
+
 const download = require('download')
 const path = require('path')
 const promisify = require('promisify-node')

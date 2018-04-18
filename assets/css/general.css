@@ -37,6 +37,10 @@ h1 {
   font-weight: normal;
   letter-spacing: 1px;
   color: var(--text);
+  
+  & a {
+    color: var(--text);
+  }
 }
 h2 {
   font-weight: bold;
@@ -323,4 +327,37 @@ input.date-picker {
   &.js-tab-active {
     display: block;
   }
+}
+
+.big-table {
+  @apply --shadow;
+  background-color: var(--borders);
+  margin-bottom: 20px;
+
+  &__header {
+    padding: 10px;
+    background-color: var(--main);
+    color: white;
+    font-weight: bold;
+    font-size: 1.4rem;
+
+    & .label {
+      vertical-align: 2px;
+    }
+  }
+
+  &__body {
+    padding: 10px;
+  }
+}
+
+.table > tbody > tr.active >td {
+  background-color: #FAFAFA;
+}
+
+.wrap-fix {
+  /* source: https://stackoverflow.com/a/42166932 */
+  display: flex;
+  flex-wrap: wrap;
+  width:100%;
 }

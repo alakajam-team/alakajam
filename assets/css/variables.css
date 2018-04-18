@@ -16,7 +16,7 @@
   
   --main: #00abd6;
   --main-light: color(var(--main) lightness(46%));
-  --main-lighter: color(var(--main) alpha(25%));
+  --main-lighter: color(var(--main) lightness(85%));
   --main-lightest: color(var(--main) alpha(10%));
   --main-dark: color(var(--main) lightness(32%));
   --main-transparent: color(var(--main) alpha(10%));
@@ -34,13 +34,13 @@
   --neutral-lighter: color(var(--neutral) alpha(25%));
   --neutral-lightest: color(var(--neutral) alpha(10%));
   
-  /* Mod / Admin colors (based on 'warning' and 'danger' colors from the Bootstrap theme) */
+  /* Mod / Admin colors */
   
-  --moderation: #ffce54;
-  --moderation-light: #ffe198;
-  --moderation-lightest: color(var(--moderation-light) alpha(30%));
-  --moderation-dark: #f6bb42;
-  --moderation-text: #876000;
+  --moderation: var(--neutral);
+  --moderation-light: var(--neutral-lighter);
+  --moderation-lightest: var(--neutral-lightest);
+  --moderation-dark: color(var(--neutral-light));
+  --moderation-text: color(white alpha(90%));
 
   /* Fonts */
   

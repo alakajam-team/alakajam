@@ -93,15 +93,13 @@
       {# ==== Main header (desktop) ==== #}
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav">
-          {% set shortcutEvent = event or featuredEvent %}
-          {% set eventActive = event and shortcutEvent.get('id') === event.get('id') %}
-          {% if shortcutEvent %}
-          <li class="hidden-sm hidden-xs live {{ 'active' if eventActive }}">
-            <a href="{{ buildUrl(shortcutEvent, 'event') }}">
+          {% if featuredEvent and (not event or featuredEvent.get('id') !== event.get('id')) %}
+          <li class="hidden-sm hidden-xs live {{ 'active' if isInFeaturedEvent }}">
+            <a href="{{ buildUrl(featuredEvent, 'event') }}">
               <div class="live__event">
-                {{ shortcutEvent.get('title') }}
+                {{ featuredEvent.get('title') }}
                 <div class="live__dates">
-                  {{ shortcutEvent.get('display_dates') }}
+                  {{ featuredEvent.get('display_dates') }}
                 </div>
               </div>
             </a>
@@ -127,23 +125,21 @@
 
     {# ==== Event header ==== #}
     {% if (event) %}
-      <div class="event-header {{ 'has-moderation-bar' if showModerationBar }}">
+      <div class="event-header">
         <div class="container">
-          <div class="event-header__info hidden-md hidden-lg">
-            <a href="{{ buildUrl(event, 'event') }}" class="event-header__name">
+          <div class="event-header__info">
+            <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="event-header__name">
               {{ event.get('title') }}
             </a>
             <div class="event-header__dates">
               {{ event.get('display_dates') }}
-              {% if isId(event.get('status_rules')) %}
-                <a href="{{ buildUrl(event.get('status_rules'), 'post') }}">
-                  <span class="glyphicon glyphicon-info-sign"></span>
+                •  <a href="{{ buildUrl(event, 'event', 'announcements') }}">
+                  <span class="glyphicon glyphicon-pushpin"></span> News
                 </a>
-              {% endif %}
             </div>
           </div>
           <div class="event-header__links">
-            {{ eventMacros.eventLinks(event, latestEventAnnouncement, path, { collapse: true }) }}
+            {{ eventMacros.eventLinks(event, path, { collapse: true }) }}
           </div>
         </div>
       </div>

@@ -86,6 +86,7 @@
 
 {% block body %}
 
+{% set entryDetails = entry.related('details') %}
 <div class="container">
   <form id="js-edit-entry-form" action="{{ buildUrl(entry, 'entry', 'create-entry' if not entry.get('id') else 'edit') }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
 
@@ -182,7 +183,7 @@
               and event.related('details').get('category_titles')
               and event.related('details').get('category_titles').includes('Graphics') %}
             {% set canEditOptouts = isEntryOwner or isMod(user) %}
-            {% set optouts = entry.related('details').get('optouts') %}
+            {% set optouts = entryDetails.get('optouts') %}
             <div id="edit-optouts" class="{{ 'hidden' if entry.get('division') === 'unranked' }}">
               <div class="form-group" title="{{ 'Only the entry owner can change this setting' if not canEditOptouts }}">
                 <label>Opt-outs (<a href="/article/faq#optouts" target="_blank">help</a>)</label>
@@ -212,8 +213,14 @@
         <div class="horizontal-bar" style="margin-top: 40px">Details</div>
 
         <div class="form-group">
-          <label for="title">Links</label>
+          <label>Links</label>
           <div class="js-links" data-entry-links="{{ entry.get('links') | default([]) | dump }}"></div>
+        </div>
+        <div class="form-group">
+          <label for="body">Detailed description</label>
+          <div class="user-contents user-contents__editor">
+            {{ formMacros.editor('body', entryDetails.get('body'), 'entry-details-' + entry.get('id')) }}
+          </div>
         </div>
         <div class="form-group">
           <label for="platforms">Platforms</label>
@@ -233,22 +240,48 @@
             {% endfor %}
           </select>
         </div>
+
+        <div class="horizontal-bar" style="margin-top: 40px">High scores</div>
+
         <div class="form-group">
-          <label for="title">Detailed description</label>
-          <div class="user-contents user-contents__editor">
-            {{ formMacros.editor('body', entry.related('details').get('body'), 'entry-details-' + entry.get('id')) }}
+          <label for="enable-high-score">Enable high scores {{ formMacros.tooltip('Players will be able to submit their scores with a screenshot as proof.') }}</label>
+          <div>
+            {% set highScoreEnabled = entry.get('status_high_score') and entry.get('status_high_score') !== 'off' %}
+            {{ formMacros.radio('enable-high-score', 'off', 'Off', 'off' if not highScoreEnabled) }}
+            {{ formMacros.radio('enable-high-score', 'on', 'On', 'on' if highScoreEnabled) }}
+            <span class="js-high-score-details">
+            {{ formMacros.check('high-score-reversed', 'Lower score is better', entry.get('status_high_score') === 'reversed') }}
+            </span>
           </div>
         </div>
 
+        <div class="js-high-score-details">
+          <div class="form-group">
+            <label for="high-score-unit">Score type</label>
+            <div class="form-inline">
+              {% set isCustomUnit = entryDetails.get('high_score_type') and not ['number', 'time'].includes(entryDetails.get('high_score_type')) %}
+              {{ formMacros.radio('high-score-type', 'number', 'Number', entryDetails.get('high_score_type') or 'number') }}
+              {{ formMacros.radio('high-score-type', 'time', 'Time', entryDetails.get('high_score_type')) }}
+              {{ formMacros.radio('high-score-type', 'custom', 'Custom unit', 'custom' if isCustomUnit) }}
+              <input type="text" name="custom-unit" class="form-control js-custom-unit-input" value="{{ entryDetails.get('high_score_type') if isCustomUnit }}" size="5" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="high-score-instructions">Score submission instructions {{ formMacros.tooltip('You can use this text to specify which score to submit, or which game mode to use, what must appear is the proof screenshot, etc. Markdown allowed.') }}</label>
+            <textarea name="high-score-instructions" class="form-control">{{ entryDetails.get('high_score_instructions') }}</textarea>
+          </div>
+        </div>
+
+        <div class="horizontal-bar" style="margin-top: 40px">Other</div>
+
         <div class="form-group">
-          <label for="status">Comment options</label>
+          <label for="anonymous-enabled">Comments options</label>
           <div>
             {{ formMacros.check('anonymous-enabled', 'Allow anonymous feedback', entry.get('allow_anonymous'), { noMargin: true }) }}
             (<a href="/article/faq#anon-entry" target="_blank">help</a>)
           </div>
         </div>
       </div>
-
       
 
       <div class="col-lg-4 col-md-5">

@@ -87,6 +87,9 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/leave', entryController.leaveEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/accept-invite', entryController.acceptInvite)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/decline-invite', entryController.declineInvite)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/submit-score', entryController.submitScore)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/scores', entryController.viewScores)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit-scores', entryController.editScores)
 
     router.get('/create-event', eventController.editEvent)
     router.post('/create-event', eventController.editEvent)
@@ -99,9 +102,13 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/games', eventController.viewEventGames)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/ratings', eventController.viewEventRatings)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/results', eventController.viewEventResults)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/tournament-games', eventController.viewEventTournamentGames)
+    router.post('/:eventName([^/]{0,}-[^/]{0,})/tournament-games', eventController.submitTournamentGame)
+    router.get('/:eventName([^/]{0,}-[^/]{0,})/tournament-leaderboard', eventController.viewEventTournamentLeaderboard)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/edit', eventController.editEvent)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/edit-themes', eventController.editEventThemes)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/edit-entries', eventController.editEventEntries)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/edit-tournament-games', eventController.editEventTournamentGames)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/delete', eventController.deleteEvent)
 
     // Posts

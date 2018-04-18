@@ -2,7 +2,8 @@
 
 {% block body %}
 
-{% if user %}
+{% set statusTournament = event.get('status_tournament') %}
+{% if user and (not statusTournament or statusTournament === 'disabled') %}
 <div class="container" style="margin-bottom: 20px">
   <div class="row">
     <div class="col-sm-6">

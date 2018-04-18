@@ -3,23 +3,34 @@
 
 {% block editEventBody %}
 
+<h1 id="title-display"></h1>
+
 <form action="{{ buildUrl(event, 'event', 'edit') }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
 
-  <h1 id="title-display"></h1>
+<div class="panel">
+<ul class="nav nav-tabs nav-justified">
+  <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#" data-tab-selector="#js-appearance">Appearance</a></li>
+  <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#" data-tab-selector="#js-state">State</a></li>
+  <li role="presentation" class="js-tab-container"><a  class="js-tab-button" href="#" data-tab-selector="#js-config">Jam config</a></li>
+</ul>
 
-  <div class="horizontal-bar">
-    General
-  </div>
-  <div class="form-group input-group-lg">
-    <label for="title">Title</label>
-    <input type="text" class="form-control js-sync-text js-sync-slug" name="title" value="{{ event.get('title') if event }}" required="required"
-      data-sync-text-display-selector="#title-display"
-      data-sync-text-default="My event" 
-      data-sync-slug-input-selector="#name" />
-  </div>
-  <div class="form-group">
-    <label for="name">Slug</label>
-    <input type="text" class="form-control" id="name" name="name" value="{{ event.get('name') if event }}" required="required" />
+<div id="js-appearance" class="tab-content js-tab">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="form-group input-group-lg">
+        <label for="title">Title</label>
+        <input type="text" class="form-control js-sync-text js-sync-slug" name="title" value="{{ event.get('title') if event }}" required="required"
+          data-sync-text-display-selector="#title-display"
+          data-sync-text-default="My event" 
+          data-sync-slug-input-selector="#name" />
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group input-group-lg">
+        <label for="name">Slug</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ event.get('name') if event }}" required="required" />
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="col-md-6">
@@ -34,14 +45,6 @@
         <input type="text" class="form-control" name="display-theme" value="{{ event.get('display_theme') if event }}" />
       </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="divisions">Divisions {{ formMacros.tooltip('Must be a valid JSON object, with keys being the name (among: solo,team,ranked,unranked) and values the description.') }}</label>
-    <textarea name="divisions" class="codemirror auto-height">{{ (event.get('divisions') if event else []) | pretty }}</textarea>
-  </div>
-  <div class="form-group">
-    <label for="category-titles">Rating categories {{ formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]') }}</label>
-    <textarea name="category-titles" class="codemirror auto-height">{{ (event.related('details').get('category_titles') if event else []) | dump }}</textarea>
   </div>
 
   <div class="horizontal-bar">
@@ -67,10 +70,31 @@
     Animated countdown</label>
     </div>
   </div>
+  <div class="form-group">
+    <label for="links">Special pages {{ formMacros.tooltip('Must be a valid JSON array of links, eg. [\{ "title": "Event rules", "link": "/post/123", "icon": "fa-question-circle" \}]') }}</label>
+    <textarea name="links" class="codemirror auto-height">{{ (event.related('details').get('links') if event else []) | pretty }}</textarea>
+  </div>
 
   <div class="horizontal-bar">
-    Status toggles
+    Pictures
   </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="logo">Logo</label>
+        {{ formMacros.pictureInput('logo', event.get('logo') if event, { noPanel: true }) }}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="logo">Banner</label>
+        {{ formMacros.pictureInput('banner', event.related('details').get('banner') if event, { noPanel: true }) }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="js-state" class="tab-content js-tab">
   <div class="row">
     <div class="col-lg-6">
       <div class="form-group">
@@ -99,55 +123,89 @@
       </div>
     </div>
   </div>
-  <div class="form-group">
-    <label for="status-theme">Theme voting status</label>
-    <div>
-    {{ formMacros.radio('status-theme', 'disabled', 'Disabled', 
-      event.get('status_theme') if event else 'disabled') }}
-    {{ formMacros.radio('status-theme', 'off', 'Off', 
-      event.get('status_theme') if event) }}
-    {{ formMacros.radio('status-theme', 'voting', 'Voting', 
-      event.get('status_theme') if event) }}
-    {{ formMacros.radio('status-theme', 'shortlist', 'Shortlist', 
-      event.get('status_theme') if event) }}
-    {{ formMacros.radio('status-theme', 'closed', 'Closed', 
-      event.get('status_theme') if event) }}
-    {{ formMacros.radio('status-theme', 'results', 'Results', 
-      event.get('status_theme') if event) }}
-    {{ formMacros.radio('status-theme', '', '', 
-      event.get('status_theme') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_theme')) if event }) }}
+  <div id="js-edit-event-status-jam">
+    <div class="form-group">
+      <label for="status-theme">Theme voting status</label>
+      <div>
+      {{ formMacros.radio('status-theme', 'disabled', 'Disabled', 
+        event.get('status_theme') if event else 'disabled') }}
+      {{ formMacros.radio('status-theme', 'off', 'Off', 
+        event.get('status_theme') if event) }}
+      {{ formMacros.radio('status-theme', 'voting', 'Voting', 
+        event.get('status_theme') if event) }}
+      {{ formMacros.radio('status-theme', 'shortlist', 'Shortlist', 
+        event.get('status_theme') if event) }}
+      {{ formMacros.radio('status-theme', 'closed', 'Closed', 
+        event.get('status_theme') if event) }}
+      {{ formMacros.radio('status-theme', 'results', 'Results', 
+        event.get('status_theme') if event) }}
+      {{ formMacros.radio('status-theme', '', '', 
+        event.get('status_theme') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_theme')) if event }) }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="status-entry">Entry submission status</label>
+      <div>
+      {{ formMacros.radio('status-entry', 'off', 'Off', 
+        event.get('status_entry') if event else 'off') }}
+      {{ formMacros.radio('status-entry', 'open', 'Open',
+        event.get('status_entry') if event) }}
+      {{ formMacros.radio('status-entry', 'open_unranked', 'Open (unranked only)',
+        event.get('status_entry') if event) }}
+      {{ formMacros.radio('status-entry', 'closed', 'Closed',
+        event.get('status_entry') if event) }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="status-results">Event results status</label>
+      <div>
+      {{ formMacros.radio('status-results', 'disabled', 'Disabled',
+        event.get('status_results') if event else 'disabled') }}
+      {{ formMacros.radio('status-results', 'off', 'Off',
+        event.get('status_results') if event) }}
+      {{ formMacros.radio('status-results', 'voting', 'Voting', 
+        event.get('status_results') if event) }}
+      {{ formMacros.radio('status-results', 'voting_rescue', 'Voting (rescue)', 
+        event.get('status_results') if event) }}
+      {{ formMacros.radio('status-results', 'results', 'Results', 
+        event.get('status_results') if event) }}
+      {{ formMacros.radio('status-results', '', '', 
+        event.get('status_results') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_results')) if event}) }}
+      </div>
     </div>
   </div>
-  <div class="form-group">
-    <label for="status-entry">Entry submission status</label>
+  <div id="js-appearance" class="form-group">
+    <label for="status-theme">Tournament status</label>
     <div>
-    {{ formMacros.radio('status-entry', 'off', 'Off', 
-      event.get('status_entry') if event else 'off') }}
-    {{ formMacros.radio('status-entry', 'open', 'Open',
-      event.get('status_entry') if event) }}
-    {{ formMacros.radio('status-entry', 'open_unranked', 'Open (unranked only)',
-      event.get('status_entry') if event) }}
-    {{ formMacros.radio('status-entry', 'closed', 'Closed',
-      event.get('status_entry') if event) }}
+    {{ formMacros.radio('status-tournament', 'disabled', 'Disabled', 
+      event.get('status_tournament') if event else 'disabled') }}
+    {{ formMacros.radio('status-tournament', 'off', 'Off', 
+      event.get('status_tournament') if event) }}
+    {{ formMacros.radio('status-tournament', 'submission', 'Submission', 
+      event.get('status_tournament') if event) }}
+    {{ formMacros.radio('status-tournament', 'playing', 'Playing', 
+      event.get('status_tournament') if event) }}
+    {{ formMacros.radio('status-tournament', 'closed', 'Closed', 
+      event.get('status_tournament') if event) }}
+    {{ formMacros.radio('status-tournament', 'results', 'Results', 
+      event.get('status_tournament') if event) }}
     </div>
   </div>
+  
+</div>
+
+<div id="js-config" class="tab-content js-tab">
   <div class="form-group">
-    <label for="status-results">Event results status</label>
-    <div>
-    {{ formMacros.radio('status-results', 'disabled', 'Disabled',
-      event.get('status_results') if event else 'disabled') }}
-    {{ formMacros.radio('status-results', 'off', 'Off',
-      event.get('status_results') if event) }}
-    {{ formMacros.radio('status-results', 'voting', 'Voting', 
-      event.get('status_results') if event) }}
-    {{ formMacros.radio('status-results', 'voting_rescue', 'Voting (rescue)', 
-      event.get('status_results') if event) }}
-    {{ formMacros.radio('status-results', 'results', 'Results', 
-      event.get('status_results') if event) }}
-    {{ formMacros.radio('status-results', '', '', 
-      event.get('status_results') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_results')) if event}) }}
-    </div>
+    <label for="divisions">Divisions {{ formMacros.tooltip('Must be a valid JSON object, with keys being the name (among: solo,team,ranked,unranked) and values the description.') }}</label>
+    <textarea name="divisions" class="codemirror auto-height">{{ (event.get('divisions') if event else []) | pretty }}</textarea>
   </div>
+  <div class="form-group">
+    <label for="category-titles">Rating categories {{ formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]') }}</label>
+    <textarea name="category-titles" class="codemirror auto-height">{{ (event.related('details').get('category_titles') if event else []) | dump }}</textarea>
+  </div>
+</div>
+
+<div class="tab-content">
   <div class="form-group">
     <div class="row">
       <div class="col-md-4">
@@ -166,9 +224,11 @@
       </div>
     </div>
   </div>
-  
-</form>
+</div>
 
+</div>
+
+</form>
 {% endblock %}
 
 {% block scripts %} 

@@ -1,0 +1,128 @@
+{% extends "event/_page-event.html" %}
+{% import "post/_macros-post.html" as postMacros %}
+{% import "user/_macros-user.html" as userMacros %}
+{% import "entry/_macros-score.html" as scoreMacros %}
+
+{% block body %}
+{{ super() }}
+
+{% set hasEventBanner = event.related('details').get('banner') and event.get('status_tournament') === 'results' %}
+{{ eventMacros.eventBanner(event) if hasEventBanner }}
+
+<div class="container {{ 'event-banner-offset' if hasEventBanner }}">
+  <div class="row">
+    <div class="col-xs-12">
+      {% if event.get('status_tournament') === 'results' %}
+        {{ podium(tournamentScores) }}
+      {% endif %}
+      
+      {% if event.get('status_tournament') === 'closed' %}
+        {{ podium() }}
+        <p class="well">Moderators are currently making a final review of the high scores before revealing the tournament winners. The results will be out soon!</p>
+      {% endif %}
+      
+      {% if ['closed', 'results'].includes(event.get('status_tournament')) %}
+        <p class="featured"><b>Note:</b> This tournament is closed. New high scores will no longer impact the tournament points and rankings.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      {% if not ['closed', 'results'].includes(event.get('status_tournament')) %}
+        <h1>Tournament leaderboard</h1>
+      {% endif %}
+
+      {% if event.get('status_tournament') !== 'closed' %}
+        {% if event.get('status_tournament') !== 'results' or tournamentScores.length > 3 %}
+        <table class="table">
+        <thead>
+          <th>{{ 'Live ' if event.get('status_tournament') !== 'results' }}Ranking</th>
+          <th>User</th>
+          {% for entry in entries %}
+          <th class="text-center visible-md visible-lg" style="width: 80px">
+            <a href="{{ buildUrl(entry, 'entry') }}">
+              <img src="{{ entry.get('pictures')[0] if entry.get('pictures') and entry.get('pictures').length > 0 }}" style="max-height:80 px; max-height: 30px" title="{{ entry.get('title') }}" />
+            </a>
+          </th>
+          {% endfor %}
+          <th>Points</th>
+        </thead>
+        <tbody>
+          {% for tournamentScore in tournamentScores %}
+            <tr class="{{ 'active' if user and tournamentScore.related('user').get('id') === user.get('id') }}">
+              <td><h3>{{ tournamentScore.get('ranking') | ordinal }}</h3></td>
+              <td>
+                <div class="row">
+                  {{ userMacros.userThumb(tournamentScore.related('user')) }}
+                </div>
+              </td>
+              {% set entryScores = tournamentScore.get('entry_scores') %}
+              {% for entry in entries %}
+                <td class="text-center visible-md visible-lg">{{ scoreMacros.printRanking(entryScores[entry.get('id')].ranking) if entryScores[entry.get('id')] }}</td>
+              {% endfor %}
+              <td><b>{{ tournamentScore.get('score') | int }}</b></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        </table>
+        {% endif %}
+      
+        {% if tournamentScores.length === 0 %}
+        <p>Be the first to enter the leaderboards, by submitting a high score to any of the games!</p>
+        {% endif %}
+      {% endif %}
+
+        {{ scoreMacros.pointsDistributionLegend(constants.TOURNAMENT_POINTS_DISTRIBUTION) }}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% macro podium(tournamentScores) %}
+
+<div class="results-podium">
+  <h1 class="results-podium__event-name">{{ event.get('title') }} results</h1>
+  <h2 class="results-podium__title">Tournament leaderboard</h2>
+
+  <div class="row">
+    <div class="col-md-offset-1 col-md-10 col-xs-12">
+      <div class="row">
+        {% set entryThumbOptions = { hideMedals: categoryTitles.length === 1 } %}
+        {% if tournamentScores.length > 0 %}
+          <div class="col-xs-4 {{ 'results-podium__step second' if tournamentScores.length >= 2 }}">
+            {% if tournamentScores.length >= 2 %}
+              {{ podiumScore(tournamentScores[1]) }}
+            {% endif %}
+          </div>
+          {% if tournamentScores.length >= 1 %}
+          <div class="col-xs-4 results-podium__step first">
+            {{ podiumScore(tournamentScores[0]) }}
+          </div>
+          {% endif %}
+          {% if tournamentScores.length >= 3 %}
+          <div class="col-xs-4 results-podium__step third">
+            {{ podiumScore(tournamentScores[2]) }}
+          </div>
+          {% endif %}
+        {% else %}
+          <h2 class="text-center">Pending results</h2>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endmacro %}
+
+{% macro podiumScore(tournamentScore) %}
+<div class="row">
+  {{ userMacros.userThumb(tournamentScore.related('user'), { fullWidth: true, centered: true }) }}
+  <div class="col-xs-12">
+    <h2 class="text-center" style="margin-top: 10px; margin-bottom: 45px">{{ tournamentScore.get('score') | int }} pts.</h2>
+  </div>
+</div>
+{% endmacro %}

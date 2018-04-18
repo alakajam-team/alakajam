@@ -38,6 +38,7 @@
     "flipclock": "^0.7.8",
     "html-to-text": "^3.3.0",
     "knex": "^0.12.6",
+    "left-pad": "^1.2.0",
     "lodash": "^4.17.5",
     "mime-types": "^2.1.16",
     "mkdirp": "^0.5.1",

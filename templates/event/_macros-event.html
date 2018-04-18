@@ -76,7 +76,85 @@
 </div>
 {% endmacro %}
 
-{% macro eventLinks (event, latestEventAnnouncement, path, options = {}) %}
+{% macro eventBanner (event) %}
+<div class="event-banner__container">
+  <div class="event-banner" style="background-image: url('{{ event.related('details').get('banner') }}')">
+    <div class="event-banner__gradient"></div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro eventJumbo (event, user, userEntry) %}
+<div class="home-jumbo {{ event.get('status') }}">
+  <div class="event-table">
+    <div class="event-table__header">
+      {% if event.get('logo') %}
+      <a href="{{ buildUrl(event, 'event') }}">
+        <img src="{{ event.get('logo') }}" class="event-table__logo no-border" />
+      </a>
+      {% endif %}
+      <a href="{{ buildUrl(event, 'event') }}" class="event-table__title">
+        {{ event.get('title') }}
+        <div class="event-table__dates">
+          {{ event.get('display_dates') or '(dates unknown)' }}
+        </div>
+      </a>
+      {% if event.get('display_theme') %}
+      <div class="event-table__theme hidden-xs">
+        <span class="event-table__theme-label">Theme</span>
+        {{ event.get('display_theme') }}
+      </div>
+      {% endif %}
+    </div>
+    <div class="event-table__theme-mobile visible-xs">
+      Theme: {{ event.get('display_theme') }}
+    </div>
+  </div>
+
+  <div class="home-jumbo__call-container">
+  {% set rawHypeLink = event.get('countdown_config').link %}
+  {% set animatedCountdown = event.get('countdown_config').enabled %}
+  {% if rawHypeLink %}
+    {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else buildUrl(event, 'event', rawHypeLink) %}
+    <a class="home-jumbo__call" href="{{ hypeLink }}">
+      <div class="row">
+        <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
+          <h2>{{ event.get('countdown_config').message }}</h2>
+          {% if event.get('countdown_config').phrase %}
+            <span class="glyphicon glyphicon-calendar"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
+          {% endif %}
+        </div>
+      </div>
+      {% if animatedCountdown %}
+        <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></span>
+      {% endif %}
+      <span class="fa fa-angle-right home-jumbo__call-arrow"></span>
+    </a>
+  {% elseif event.get('countdown_config').phrase %}
+    <div class="home-jumbo__details">
+      <div class="row">
+        <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
+          {% if event.get('countdown_config').phrase %}
+            <span class="glyphicon glyphicon-calendar"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
+          {% endif %}
+        </div>
+        {% if animatedCountdown %}
+          <div class="col-md-6">
+            <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+  </div>
+
+  {% if user and event and event.get('status_entry') !== 'off' %}
+    {{ eventShortcutMyEntry(user, event, userEntry) }}
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro eventLinks (event, path, options = {}) %}
 {% if options.collapse %}
 <nav class="event-navbar navbar">
   <div class="navbar-header">
@@ -89,24 +167,18 @@
   {% endif %}
   
     <div class="nav">
-      {% if latestEventAnnouncement %}
-        <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="hidden-xs hidden-sm event-header__link {{ 'active' if path == buildUrl(event, 'event', 'announcements') }} event-header__announcement">
-          <span class="glyphicon glyphicon-pushpin"></span> {{ latestEventAnnouncement.get('title')}}
-          <span class="event-header__announcement-info">
-            Announcement • {{ latestEventAnnouncement.get('published_at') | relativeTime }}
-          </span>
-        </a><!--
-        --><a href="{{ buildUrl(event, 'event', 'announcements') }}" class="event-header__link  
-      hidden-md hidden-lg {{ 'active' if path == buildUrl(event, 'event', 'announcements') }}">
-          <span class="glyphicon glyphicon-pushpin"></span>
-        </a>
-      {%- endif -%}
-
       {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post'), 'Rules', 'info-sign', path) -}}
       {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
-      {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) -}}
-      {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'tower', path) -}}
-      {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: 'results' }) -}}
+      
+      {% set statusTournament = event.get('status_tournament') %}
+      {% if not statusTournament or statusTournament === 'disabled' %}
+        {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) -}}
+        {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'tower', path) -}}
+        {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: ['results'] }) -}}
+      {% else %}
+        {{- eventLink(event, 'status_tournament', 'tournament-games', 'Games', 'tower', path) -}}
+        {{- eventLink(event, 'status_tournament', 'tournament-leaderboard', 'Leaderboard', 'th-list', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
+      {% endif %}
     </div>
     
   {% if options.collapse %}
@@ -119,7 +191,7 @@
 {%- if not statusField or event.get(statusField) !== 'disabled' -%}
   {%- set targetUrl = targetPath if targetPath.includes('/') else buildUrl(event, 'event', targetPath) -%}
   <a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
-      {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and event.get(statusField) != options.requiredValue )}}">
+      {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
     <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="hidden-xs">{{ label | safe }}</span>
   </a>
 {%- endif -%}
@@ -127,7 +199,7 @@
 
 {% macro entryPlatformIcon(platform, options = {}) %}
   {% set icon = constants.ENTRY_PLATFORM_ICONS[platform] or constants.ENTRY_PLATFORM_DEFAULT_ICON %}
-  <span class="fa {{ icon }} has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="{{ platform }}"></span> {{ platform if not options.hideLabel }}
+  <span class="fab {{ icon }} has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="{{ platform }}"></span> {{ platform if not options.hideLabel }}
 {% endmacro %}
 
 {% macro eventThemeStatus (event, options = {}) %}

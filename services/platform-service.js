@@ -1,3 +1,11 @@
+'use strict'
+
+/**
+ * Service for manipulating game platforms
+ *
+ * @module services/platform-service
+ */
+
 const constants = require('../core/constants')
 const models = require('../core/models')
 const db = require('../core/db')

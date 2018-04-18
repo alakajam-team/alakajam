@@ -7,7 +7,6 @@
  */
 
 const fileStorage = require('../core/file-storage')
-const log = require('../core/log')
 const forms = require('../core/forms')
 const models = require('../core/models')
 const eventService = require('../services/event-service')
@@ -17,6 +16,8 @@ const securityService = require('../services/security-service')
 const platformService = require('../services/platform-service')
 const settingService = require('../services/setting-service')
 const tagService = require('../services/tag-service')
+const highscoreService = require('../services/highscore-service')
+const eventTournamentService = require('../services/event-tournament-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
@@ -32,6 +33,10 @@ module.exports = {
   leaveEntry,
 
   saveCommentOrVote,
+
+  viewScores,
+  submitScore,
+  editScores,
 
   acceptInvite,
   declineInvite,
@@ -70,7 +75,8 @@ async function entryMiddleware (req, res, next) {
  * Browse entry
  */
 async function viewEntry (req, res) {
-  const entry = res.locals.entry
+  const { user, entry } = res.locals
+
   // Let the template display user thumbs
   await entry.load('userRoles.user')
 
@@ -111,7 +117,10 @@ async function viewEntry (req, res) {
     vote,
     canVote,
     eventVote,
-    external: !res.locals.event
+    external: !res.locals.event,
+    highScoresCollection: await highscoreService.findHighScores(entry),
+    userScore: await highscoreService.findEntryScore(user.get('id'), entry.get('id')),
+    tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
   })
 }
 
@@ -120,7 +129,7 @@ async function editEntry (req, res) {
 
   // Security checks
   if (!user) {
-    res.redirect('/login')
+    res.redirect('/login?redirect=' + req.url)
     return
   } else if (!entry && event) {
     let existingEntry = await eventService.findUserEntryForEvent(user, event.id)
@@ -152,7 +161,9 @@ async function editEntry (req, res) {
     return
   }
 
+  let isPlayedInTournament = await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
   let errorMessage = null
+
   if (req.method === 'POST') {
     let {fields, files} = await req.parseForm('picture')
 
@@ -197,16 +208,26 @@ async function editEntry (req, res) {
       isCreation = false
     }
 
-    // Tags
+    // Save tags
     let tags = (Array.isArray(fields.tags)) ? fields.tags : [fields.tags]
     tags = tags.map(tag => forms.sanitizeString(tag))
     await tagService.updateEntryTags(entry, tags)
 
+    // Update entry
+
+    let statusHighScore = 'off'
+    if (fields['enable-high-score'] === 'on') {
+      statusHighScore = fields['high-score-reversed'] ? enums.ENTRY.STATUS_HIGH_SCORE.REVERSED : enums.ENTRY.STATUS_HIGH_SCORE.NORMAL
+    }
+
     entry.set({
       'title': forms.sanitizeString(fields.title),
       'description': forms.sanitizeString(fields.description),
-      'links': links
+      'links': links,
+      'allow_anonymous': fields['anonymous-enabled'] === 'on',
+      'status_high_score': statusHighScore
     })
+
     if (isExternalEvent) {
       entry.set({
         event_id: null,
@@ -215,19 +236,40 @@ async function editEntry (req, res) {
         external_event: forms.sanitizeString(fields['external-event'])
       })
     }
-    let picturePath = '/entry/' + entry.get('id')
+
     if (fields['picture-delete'] && entry.get('pictures').length > 0) {
       await fileStorage.remove(entry.get('pictures')[0])
       entry.set('pictures', [])
-    } else if (files.picture && files.picture.size > 0 && fileStorage.isValidPicture(files.picture.path)) { // TODO Formidable shouldn't create an empty file
-      let finalPath = await fileStorage.savePictureUpload(files.picture.path, picturePath)
-      entry.set('pictures', [finalPath])
+    } else if (files.picture && (await fileStorage.isValidPicture(files.picture.path))) {
+      let picturePath = '/entry/' + entry.get('id')
+      let result = await fileStorage.savePictureUpload(files.picture, picturePath)
+      if (!result.error) {
+        entry.set('pictures', [result.finalPath])
+      } else {
+        errorMessage = result.error
+      }
     } else if (fields.picture) {
       entry.set('pictures', [forms.sanitizeString(fields.picture)])
     }
 
+    // Update entry details
+
+    let optouts = []
+    if (fields['optout-graphics']) optouts.push('Graphics')
+    if (fields['optout-audio']) optouts.push('Audio')
+
+    let highScoreType = forms.sanitizeString(fields['high-score-type'], 20)
+    if (highScoreType === 'custom') {
+      highScoreType = forms.sanitizeString(fields['custom-unit'], 20)
+    }
+
     let entryDetails = entry.related('details')
-    entryDetails.set('body', forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_ENTRY_DETAILS))
+    entryDetails.set({
+      'optouts': optouts,
+      'body': forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_ENTRY_DETAILS),
+      'high_score_type': highScoreType,
+      'high_score_instructions': forms.sanitizeString(fields['high-score-instructions'], 2000)
+    })
 
     // Save entry: Validate form data
     for (let link of links) {
@@ -237,18 +279,18 @@ async function editEntry (req, res) {
       }
     }
 
-    if (!forms.isLengthValid(links, 1000)) {
+    if (isPlayedInTournament && statusHighScore === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+      errorMessage = 'Cannot disable high scores while the game is featured in an active tournament'
+    } else if (!forms.isLengthValid(links, 1000)) {
       errorMessage = 'Too many links (max allowed: around 7)'
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
       errorMessage = 'Submissions are closed for this event'
-    } else if (files.picture && files.picture.size > 0 && !fileStorage.isValidPicture(files.picture.path)) {
-      errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
     } else if (fields.division && !isExternalEvent && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
       errorMessage = 'Invalid division'
     }
 
     if (!errorMessage) {
-      // Save entry: Apply team changes
+      // Save entry: Prepare team changes
       let teamMembers = null
       if (fields.members) {
         if (!Array.isArray(fields.members)) {
@@ -268,6 +310,7 @@ async function editEntry (req, res) {
         }
       }
 
+      // Manager-only changes
       if (isCreation || securityService.canUserManage(user, entry, { allowMods: true })) {
         let division = fields['division'] || eventService.getDefaultDivision(event)
         if (event &&
@@ -280,17 +323,7 @@ async function editEntry (req, res) {
             division = entry.get('division')
           }
         }
-
-        entry.set({
-          'division': division,
-          'allow_anonymous': fields['anonymous-enabled'] === 'on',
-          'published_at': entry.get('published_at') || new Date()
-        })
-
-        let optouts = []
-        if (fields['optout-graphics']) optouts.push('Graphics')
-        if (fields['optout-audio']) optouts.push('Audio')
-        entryDetails.set('optouts', optouts)
+        entry.set('division', division)
 
         res.locals.infoMessage = ''
         if (teamMembers !== null) {
@@ -306,13 +339,11 @@ async function editEntry (req, res) {
 
       // Save entry: Persist changes and side effects
       let eventCountRefreshNeeded = entry.hasChanged('published_at')
-      if (entryDetails.get('body') === 'undefined') {
-        // FIXME
-        log.error('Preventing to blank the entry body (bug #248)')
-        console.error(entryDetails)
-      } else {
-        await entryDetails.save()
+      await entryDetails.save()
+      if (entry.hasChanged('status_high_score') && entry.get('status_high_score') !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+        highscoreService.refreshEntryRankings(entry) // corner case: owner toggles lower-is-better after some scores are submitted
       }
+      entry.set('published_at', entry.get('published_at') || new Date())
       await entry.save()
       if (eventCountRefreshNeeded) {
         eventService.refreshEventCounts(event) // No need to await
@@ -336,6 +367,7 @@ async function editEntry (req, res) {
     entryPlatforms: entry.get('platforms'),
     external: !res.locals.event,
     tags: entry.related('tags').map(tag => ({ id: tag.id, value: tag.get('value') })),
+    isPlayedInTournament,
     errorMessage
   })
 }
@@ -367,8 +399,7 @@ async function deleteEntry (req, res) {
  * Leaves the team of an entry
  */
 async function leaveEntry (req, res) {
-  let entry = res.locals.entry
-  let user = res.locals.user
+  let { entry, user } = res.locals
 
   if (user && entry) {
     // Remove requesting user from the team
@@ -421,6 +452,187 @@ async function saveCommentOrVote (req, res) {
     }
     viewEntry(req, res)
   }
+}
+
+/**
+ * Browse entry scores
+ */
+async function viewScores (req, res) {
+  let { user, entry } = res.locals
+
+  if (entry.get('status_high_score') === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+    res.errorPage(403, 'High scores are disabled on this entry')
+    return
+  }
+
+  res.render('entry/view-scores', {
+    entryScore: await highscoreService.findEntryScore(user.get('id'), entry.get('id')),
+    highScoresCollection: await highscoreService.findHighScores(entry, { fetchAll: true }),
+    tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
+  })
+}
+
+/**
+ * Submit a high score
+ */
+async function submitScore (req, res) {
+  let { user, entry } = res.locals
+  let { fields, files } = await req.parseForm('upload')
+
+  if (!user) {
+    res.redirect('/login?redirect=' + req.url)
+    return
+  } else if (entry.get('status_high_score') === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+    res.errorPage(403, 'High scores are disabled on this entry')
+    return
+  }
+
+  // Fetch existing score, handle deletion
+  let entryScore = await highscoreService.findEntryScore(user.get('id'), entry.get('id'))
+  if (req.method === 'POST' && fields.delete && entryScore) {
+    await highscoreService.deleteEntryScore(entryScore, entry)
+    entryScore = null
+  }
+  if (!entryScore) {
+    entryScore = await highscoreService.createEntryScore(user.get('id'), entry.get('id'))
+  }
+
+  let rankingPercent
+  if (entryScore.get('ranking')) {
+    rankingPercent = Math.floor(100 * entryScore.get('ranking') / entry.related('details').get('high_score_count'))
+  }
+
+  // Score submission
+  let errorMessage
+  if (req.method === 'POST' && !fields.delete) {
+    // Validation
+    let isExternalProof = fields.proof !== 'upload'
+    let score = forms.sanitizeString(fields.score) || '0'
+    score = score.replace(/,/g, '.').replace(/ /g, '') // give some flexibility to number parsing
+
+    if (fields['score-mn'] || fields['score-s'] || fields['score-ms']) {
+      let minutes = fields['score-mn'] || 0
+      let seconds = fields['score-s'] || 0
+      let milliseconds = fields['score-ms'] || 0
+
+      if (!forms.isInt(minutes, { min: 0, max: 999 })) {
+        errorMessage = 'Invalid minutes'
+        minutes = 0
+      }
+      if (!forms.isInt(seconds, { min: 0, max: 60 })) {
+        errorMessage = 'Invalid seconds'
+        seconds = 0
+      }
+      if (!forms.isInt(milliseconds, { min: 0, max: 999 })) {
+        errorMessage = 'Invalid milliseconds'
+        milliseconds = 0
+      }
+      score = parseInt(minutes) * 60 + parseInt(seconds) + parseInt(milliseconds) * 0.001
+    } else if (!forms.isFloat(score)) {
+      errorMessage = 'Invalid score'
+    }
+    if (isExternalProof && fields.proof && !forms.isURL(fields.proof)) {
+      errorMessage = 'Invalid proof URL'
+    }
+
+    // Store score & proof
+    entryScore.set('score', score)
+    if (isExternalProof) {
+      entryScore.set('proof', forms.sanitizeString(fields.proof))
+    } else {
+      if (files.upload || fields['upload-delete']) {
+        let proofPath = `/scores/${entry.get('id')}/${entryScore.get('user_id')}`
+        let result = await fileStorage.savePictureToModel(entryScore, 'proof', files.upload, fields['upload-delete'], proofPath)
+        if (result.error) {
+          errorMessage = result.error
+        }
+      } else {
+        entryScore.set('proof', fields.upload)
+      }
+    }
+
+    // Saving
+    if (!errorMessage) {
+      let result = await highscoreService.submitEntryScore(entryScore, entry)
+      if (result.error) {
+        errorMessage = result.error
+      } else {
+        entryScore = result
+      }
+
+      if (!errorMessage && req.query.redirectTo) {
+        res.redirect(req.query.redirectTo)
+        return
+      }
+    }
+  }
+
+  // Force header to the featured event if a tournament is on, to make navigation less confusing
+  let tournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
+  if (tournamentEvent) {
+    res.locals.event = res.locals.featuredEvent
+  }
+
+  // Build context
+  let context = {
+    highScoresCollection: await highscoreService.findHighScores(entry),
+    tournamentEvent,
+    entryScore,
+    rankingPercent,
+    errorMessage,
+    isExternalProof: highscoreService.isExternalProof(entryScore)
+  }
+  if (entry.related('details').get('high_score_type') === 'time') {
+    // Parse time
+    let durationInSeconds = entryScore.get('score')
+    if (durationInSeconds) {
+      context.scoreMn = Math.floor(durationInSeconds / 60)
+      context.scoreS = Math.floor(durationInSeconds) - context.scoreMn * 60
+      context.scoreMs = Math.round(1000 * (durationInSeconds - Math.floor(durationInSeconds)))
+    }
+  }
+
+  res.render('entry/submit-score', context)
+}
+
+/**
+ * Moderate high scores
+ */
+async function editScores (req, res) {
+  let { user, entry } = res.locals
+  let { fields } = await req.parseForm()
+
+  if (!user) {
+    res.redirect('/login?redirect=' + req.url)
+    return
+  } else if (!securityService.canUserWrite(user, entry, { allowMods: true })) {
+    res.errorPage(403)
+    return
+  } else if (entry.get('status_high_score') === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+    res.errorPage(403, 'High scores are disabled on this entry')
+    return
+  }
+
+  if (req.method === 'POST') {
+    for (let field in fields) {
+      if (field.includes('suspend') || field.includes('restore')) {
+        let parsedField = field.split('-')
+        let id = parsedField.length === 2 ? parsedField[1] : null
+        if (id && forms.isId(id)) {
+          await highscoreService.setEntryScoreActive(id, field.includes('restore'))
+        }
+      } else if (field === 'clearall') {
+        await highscoreService.deleteAllEntryScores(entry)
+      }
+    }
+  }
+
+  res.render('entry/edit-scores', {
+    highScoresCollection: await highscoreService.findHighScores(entry, {
+      fetchAll: true,
+      withSuspended: true
+    })
+  })
 }
 
 /**

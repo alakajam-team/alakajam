@@ -180,7 +180,6 @@ async function dashboardSettings (req, res) {
     let {fields, files} = await req.parseForm('avatar')
     if (!res.headersSent) { // FIXME Why?
       let dashboardUser = res.locals.dashboardUser
-      let newAvatar = files.avatar && files.avatar.size > 0
 
       if (!forms.isEmail(fields.email)) {
         errorMessage = 'Invalid email'
@@ -190,7 +189,7 @@ async function dashboardSettings (req, res) {
         errorMessage = 'Not allowed to change special permissions on this user'
       } else if (!res.locals.dashboardAdminMode && fields['disallow-anonymous']) {
         errorMessage = 'Not allows to change anonymous comments settings on this user'
-      } else if (newAvatar && !fileStorage.isValidPicture(files.avatar.path)) {
+      } else if (files.avatar && !(await fileStorage.isValidPicture(files.avatar.path))) {
         errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
       }
 
@@ -223,17 +222,11 @@ async function dashboardSettings (req, res) {
           await userService.refreshUserReferences(dashboardUser)
         }
 
-        // TODO Formidable shouldn't create an empty file
-        if (dashboardUser.get('avatar') && (files['avatar-delete'] || newAvatar)) {
-          await fileStorage.remove(dashboardUser.get('avatar'))
-          dashboardUser.unset('avatar')
-        }
-        if (newAvatar) {
+        if (files.avatar || fields['avatar-delete']) {
           let avatarPath = '/user/' + dashboardUser.get('id')
-          let finalPath = await fileStorage.savePictureUpload(
-            files.avatar.path, avatarPath, {maxDiagonal: 500})
-          dashboardUser.set('avatar', finalPath)
+          await fileStorage.savePictureToModel(dashboardUser, 'avatar', files.avatar, fields['avatar-delete'], avatarPath, { maxDiagonal: 500 })
         }
+
         await dashboardUser.save()
       }
     }
