@@ -351,6 +351,10 @@ input.date-picker {
   }
 }
 
+.table > tbody > tr.active >td {
+  background-color: #FAFAFA;
+}
+
 .wrap-fix {
   /* source: https://stackoverflow.com/a/42166932 */
   display: flex;

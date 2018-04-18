@@ -113,6 +113,9 @@ async function submitEntryScore (entryScore, entry) {
   if (!entryScore || !entry) {
     return { error: 'Internal error (missing score information)' }
   }
+  if (entryScore.get('score') === 0) {
+    return { error: 'Invalid score' }
+  }
 
   if (entry.get('status_high_score') !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
     if (entryScore.hasChanged()) {
@@ -157,8 +160,9 @@ async function deleteEntryScore (entryScore, entry) {
   if (!isExternalProof(entryScore)) {
     fileStorage.remove(entryScore.get('proof'))
   }
+  let triggeringUserId = entryScore.get('user_id')
   await entryScore.destroy()
-  await refreshEntryRankings(entry, entryScore)
+  await refreshEntryRankings(entry, null, { triggeringUserId })
 }
 
 async function deleteAllEntryScores (entry) {
@@ -192,7 +196,7 @@ async function refreshEntryRankings (entry, triggeringEntryScore = null, options
         ranking++
       }
 
-      if (updatedEntryScore && score.get('id') === triggeringEntryScore.get('id')) {
+      if (triggeringEntryScore && score.get('id') === triggeringEntryScore.get('id')) {
         updatedEntryScore = score
       }
     }
@@ -207,7 +211,8 @@ async function refreshEntryRankings (entry, triggeringEntryScore = null, options
   // Refresh active tournament scores
   let activeTournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get('id'), options)
   if (activeTournamentEvent) {
-    eventTournamentService.refreshTournamentScores(module.exports, activeTournamentEvent, triggeringEntryScore.get('user_id'), impactedEntryScores, options)
+    let triggeringUserId = options.triggeringUserId || (triggeringEntryScore ? triggeringEntryScore.get('user_id') : null)
+    eventTournamentService.refreshTournamentScores(module.exports, activeTournamentEvent, triggeringUserId, impactedEntryScores, options)
   }
 
   if (updatedEntryScore) {

@@ -27,31 +27,7 @@
     {% endfor %}
       
     <div class="col-xs-12">
-      <div class="horizontal-bar"></div>
-      <h2>Points distribution</h2>
-      
-      <p>Leaderboards points are awarded to all players that enter the top {{ pointsDistribution.length }} of a game. For each spot in the high scores, each player gets a number of points as per the table below. At the end of the event, the player with the most points wins the tournament!</p>
-      
-      <div class="row">
-        <div class="col-md-6">
-        <table class="table">
-          <thead>
-            <tr>
-              {% for points in pointsDistribution %}
-                <th>{{ loop.index | ordinal }}</th>
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              {% for points in pointsDistribution %}
-                <td>{{ points }}</td>
-              {% endfor %}
-            </tr>
-          </tbody>
-        </table>
-        </div>
-      </div>
+      {{ scoreMacros.pointsDistributionLegend(constants.TOURNAMENT_POINTS_DISTRIBUTION) }}
     </div>
   </div>
 </div>

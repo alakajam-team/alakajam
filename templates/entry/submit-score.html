@@ -81,7 +81,9 @@
         </div>
         <div class="form-group">
           <input type="submit" class="btn btn-primary" value="Submit" />
-          <input type="submit" name="delete" class="btn btn-default" value="Delete" onclick="return confirm('Delete your high score?')" />
+          {% if entryScore.get('id') %}
+            <input type="submit" name="delete" class="btn btn-default" value="Delete" onclick="return confirm('Delete your high score?')" />
+          {% endif %}
         </div>
       </form>
     </div>

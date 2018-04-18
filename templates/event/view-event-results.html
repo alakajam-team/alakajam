@@ -5,7 +5,10 @@
 {% block body %}
 {{ super() }}
 
-<div class="container">
+{% set hasEventBanner = event.related('details').get('banner') %}
+{{ eventMacros.eventBanner(event) if hasEventBanner }}
+
+<div class="container {{ 'event-banner-offset' if hasEventBanner }}">
   <div class="row">
     {% if resultsPost %}
       <div class="col-lg-offset-1 col-lg-10">
@@ -14,9 +17,11 @@
     {% else %} 
       {% set categoryTitles = event.related('details').get('category_titles') %}
 
+      <div class="col-sm-12">
       {{ podium(rankings, event, categoryTitles, division, sortedBy) }}
 
       {{ pageLinks(event.get('divisions'), categoryTitles, division, sortedBy) }}
+      </div>
 
       {% if rankings.length > 0 %}
       <div class="row">

@@ -119,27 +119,32 @@ async function refreshTournamentScores (highScoreService, event, triggeringUserI
 
   // Recalculate tournament scores
   for (let userIdToUpdate of userIdsToUpdate) {
-    let totalScore = 0
-    let entryScores = {}
-    let entryScoresMap = await highScoreService.findUserScoresMapByEntry(userIdToUpdate, entries)
-    for (let entryId in entryScoresMap) {
-      let entryScore = entryScoresMap[entryId]
-      if (entryScore && entryScore.get('active') && entryScore.get('ranking') <= constants.TOURNAMENT_POINTS_DISTRIBUTION.length) {
-        let entryPoints = constants.TOURNAMENT_POINTS_DISTRIBUTION[entryScore.get('ranking') - 1]
-        totalScore += entryPoints
-        entryScores[entryId] = { score: entryScore.get('score') }
-        if (entryPoints) {
-          entryScores[entryId].ranking = entryScore.get('ranking')
-        }
-      }
-    }
-    tournamentScoresHaveChanged = (await _saveTournamentScore(event.get('id'), userIdToUpdate, totalScore, entryScores)) || tournamentScoresHaveChanged
+    tournamentScoresHaveChanged = (await refreshTournamentScoresForUser(highScoreService, event.get('id'), entries, userIdToUpdate)) ||
+      tournamentScoresHaveChanged
   }
 
   // Refresh tournament rankings if there was any actual change to the scores
   if (tournamentScoresHaveChanged) {
     await _refreshTournamentRankings(event)
   }
+}
+
+async function refreshTournamentScoresForUser (highScoreService, eventId, entries, userId) {
+  let totalScore = 0
+  let entryScores = {}
+  let entryScoresMap = await highScoreService.findUserScoresMapByEntry(userId, entries)
+  for (let entryId in entryScoresMap) {
+    let entryScore = entryScoresMap[entryId]
+    if (entryScore && entryScore.get('active') && entryScore.get('ranking') <= constants.TOURNAMENT_POINTS_DISTRIBUTION.length) {
+      let entryPoints = constants.TOURNAMENT_POINTS_DISTRIBUTION[entryScore.get('ranking') - 1]
+      totalScore += entryPoints
+      entryScores[entryId] = { score: entryScore.get('score') }
+      if (entryPoints) {
+        entryScores[entryId].ranking = entryScore.get('ranking')
+      }
+    }
+  }
+  return _saveTournamentScore(eventId, userId, totalScore, entryScores)
 }
 
 async function _saveTournamentScore (eventId, userId, score, entryScores) {
@@ -171,7 +176,7 @@ async function _saveTournamentScore (eventId, userId, score, entryScores) {
 }
 
 async function _refreshTournamentRankings (event) {
-  if (event.get('status_tournament') === enums.EVENT.STATUS_TOURNAMENT.PLAYING) {
+  if ([enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED].includes(event.get('status_tournament'))) {
     let tScores = await models.TournamentScore
       .where('event_id', event.get('id'))
       .orderBy('score', 'DESC')
@@ -193,20 +198,37 @@ async function _refreshTournamentRankings (event) {
 
 async function recalculateAllTournamentScores (highScoreService, event, onlyForEntries = []) {
   // Pick entries for which to fetch scores
+  let tournamentEntries = await findTournamentEntries(event)
+  let fullRefresh = !onlyForEntries || onlyForEntries.length === 0
   let refreshScoresForEntries = onlyForEntries
-  if (!refreshScoresForEntries) {
-    let tournamentEntries = await highScoreService.findTournamentEntries(event)
+  if (fullRefresh) {
     refreshScoresForEntries = tournamentEntries.map(tEntry => tEntry.related('entry'))
   }
 
-  // Fetch all high scores for these entries
-  let allHighScores = []
-  for (let entry of refreshScoresForEntries) {
-    allHighScores = allHighScores.concat((await highScoreService.findHighScores(entry)).models)
+  // List all users having entry scores
+  let entryUserIds = await db.knex('entry_score')
+    .where('entry_id', 'IN', refreshScoresForEntries.map(entry => entry.get('id')))
+    .select('user_id')
+    .distinct()
+
+  // Append all users having a score in the tournament (might no longer have entry scores)
+  let tournamentUserIds = []
+  if (fullRefresh) {
+    tournamentUserIds = await db.knex('tournament_score')
+      .where('event_id', event.get('id'))
+      .select('user_id')
+      .distinct()
   }
 
-  // Request tournament score refresh for all the scores gathered
-  await refreshTournamentScores(highScoreService, event, null, allHighScores)
+  // Request tournament score refresh for each user
+  let allUserIds = entryUserIds.map(data => data['user_id'])
+  for (let data of tournamentUserIds) {
+    if (allUserIds.indexOf(data['user_id']) === -1) allUserIds.push(data['user_id'])
+  }
+  for (let userId of allUserIds) {
+    await refreshTournamentScoresForUser(highScoreService, event.get('id'), refreshScoresForEntries, userId)
+  }
+  await _refreshTournamentRankings(event)
 }
 
 async function _getTournamentEntry (eventId, entryId) {

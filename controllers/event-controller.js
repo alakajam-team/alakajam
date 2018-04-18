@@ -564,8 +564,7 @@ async function viewEventTournamentGames (req, res) {
     let highScoresMap = await highScoreService.findHighScoresMap(entries)
     return {
       entries,
-      highScoresMap,
-      pointsDistribution: constants.TOURNAMENT_POINTS_DISTRIBUTION
+      highScoresMap
     }
   }, 10 /* 10 seconds */)
 
@@ -929,6 +928,12 @@ async function editEventTournamentGames (req, res) {
         await eventTournamentService.removeTournamentEntry(event.get('id'), entry.get('id'))
         eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry])
       }
+    }
+
+    // Refresh scores
+    if (fields.refresh) {
+      let onlyRefreshEntries = forms.isId(fields.refresh) ? [await eventService.findEntryById(fields.refresh)] : null
+      await eventTournamentService.recalculateAllTournamentScores(highScoreService, event, onlyRefreshEntries)
     }
   }
 

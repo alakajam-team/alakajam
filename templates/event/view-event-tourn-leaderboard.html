@@ -6,7 +6,10 @@
 {% block body %}
 {{ super() }}
 
-<div class="container">
+{% set hasEventBanner = event.related('details').get('banner') and event.get('status_tournament') === 'results' %}
+{{ eventMacros.eventBanner(event) if hasEventBanner }}
+
+<div class="container {{ 'event-banner-offset' if hasEventBanner }}">
   <div class="row">
     <div class="col-xs-12">
       {% if event.get('status_tournament') === 'results' %}
@@ -71,6 +74,8 @@
         <p>Be the first to enter the leaderboards, by submitting a high score to any of the games!</p>
         {% endif %}
       {% endif %}
+
+        {{ scoreMacros.pointsDistributionLegend(constants.TOURNAMENT_POINTS_DISTRIBUTION) }}
     </div>
   </div>
 </div>

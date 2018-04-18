@@ -4,10 +4,10 @@
 
 {% block body %}
 
-{% set eventBanner = event.related('details').get('banner') if featuredEvent %}
-{{ eventMacros.eventBanner(event) if eventBanner }}
+{% set hasEventBanner = event.related('details').get('banner') %}
+{{ eventMacros.eventBanner(event) if hasEventBanner }}
 
-<div class="container">
+<div class="container {{ 'event-banner-offset' if hasEventBanner }}">">
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10" style="margin-bottom: 20px">
       {{ eventMacros.eventJumbo(event, user, userEntry) }}

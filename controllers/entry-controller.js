@@ -560,17 +560,23 @@ async function submitScore (req, res) {
         entryScore = result
       }
 
-      if (req.query.redirectTo) {
+      if (!errorMessage && req.query.redirectTo) {
         res.redirect(req.query.redirectTo)
         return
       }
     }
   }
 
+  // Force header to the featured event if a tournament is on, to make navigation less confusing
+  let tournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
+  if (tournamentEvent) {
+    res.locals.event = res.locals.featuredEvent
+  }
+
   // Build context
   let context = {
     highScoresCollection: await highscoreService.findHighScores(entry),
-    tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id')),
+    tournamentEvent,
     entryScore,
     rankingPercent,
     errorMessage,

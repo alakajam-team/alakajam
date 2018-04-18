@@ -401,6 +401,10 @@
   width: 100%;
   background-color: var(--moderation-dark);
 
+  @media (max-width: 768px) {
+    margin-top: -31px;
+  }
+
   & .btn {
     background-color: var(--moderation-dark);
     border-color: var(--moderation-dark);
