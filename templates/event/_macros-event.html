@@ -78,9 +78,11 @@
 
 {% macro eventBanner (event) %}
 <div class="event-banner__container">
+<div class="event-banner__origin">
   <div class="event-banner" style="background-image: url('{{ event.related('details').get('banner') }}')">
     <div class="event-banner__gradient"></div>
   </div>
+</div>
 </div>
 {% endmacro %}
 
