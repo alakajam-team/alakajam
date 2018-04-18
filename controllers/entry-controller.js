@@ -106,6 +106,11 @@ async function viewEntry (req, res) {
     editableAnonComments = await postService.findOwnAnonymousCommentIds(res.locals.user, entry.get('id'), 'entry')
   }
 
+  let userScore = null
+  if (user) {
+    userScore = await highscoreService.findEntryScore(user.get('id'), entry.get('id'))
+  }
+
   res.render('entry/view-entry', {
     sortedComments: await postService.findCommentsSortedForDisplay(entry),
     editableAnonComments,
@@ -119,7 +124,7 @@ async function viewEntry (req, res) {
     eventVote,
     external: !res.locals.event,
     highScoresCollection: await highscoreService.findHighScores(entry),
-    userScore: await highscoreService.findEntryScore(user.get('id'), entry.get('id')),
+    userScore,
     tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
   })
 }
