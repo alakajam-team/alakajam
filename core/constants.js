@@ -87,12 +87,12 @@ module.exports = {
   // Entries
   ENTRY_PLATFORM_DEFAULT_ICON: 'fa-file-o',
   ENTRY_PLATFORM_ICONS: {
-    'Windows': 'fa-windows',
-    'Linux': 'fa-linux',
-    'Mac': 'fa-apple',
-    'Web': 'fa-globe',
-    'Mobile': 'fa-mobile',
-    'Retro': 'fa-gamepad'
+    'Windows': 'fab fa-windows',
+    'Linux': 'fab fa-linux',
+    'Mac': 'fab fa-apple',
+    'Web': 'fas fa-globe',
+    'Mobile': 'fa fa-mobile-alt',
+    'Retro': 'fa fa-gamepad'
   },
   DIVISION_ICONS: {
     'solo': 'user',
