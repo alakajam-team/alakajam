@@ -118,14 +118,18 @@ async function savePictureToModel (model, attribute, fileUpload, deleteFile, tar
 /**
  * Saves an upload to the specified path, resizing it if needed in the process.
  * The file extension will be grabbed from the source path. If folders don't exist, they will be created.
- * @param {string} fileUpload The form field to save
+ * @param {string} fileUploadOrPath The form field to save, or the file path if this is not a form upload
  * @param {string} targetPathWithoutExtension The path to the destination, **relative to the uploads folder**
  * @param {object} options (Optional) allowed: maxDiagonal
  * @throws if the source path is not a valid picture
  * @returns {string} the URL to that path
  */
-async function savePictureUpload (fileUpload, targetPathWithoutExtension, options = {}) {
-  if (!(await isValidPicture(fileUpload.path))) {
+async function savePictureUpload (fileUploadOrPath, targetPathWithoutExtension, options = {}) {
+  let filePath = (typeof fileUploadOrPath === 'string') ? fileUploadOrPath : fileUploadOrPath.path
+  let mimetype = (typeof fileUploadOrPath === 'string') ? mime.lookup(fileUploadOrPath) : fileUploadOrPath.mimetype
+  let fileExtension = mime.extension(mimetype)
+
+  if (!(await isValidPicture(filePath))) {
     return { error: 'Invalid picture type (allowed: PNG GIF JPG)' }
   }
 
@@ -133,11 +137,11 @@ async function savePictureUpload (fileUpload, targetPathWithoutExtension, option
   if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
     actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath)
   }
-  actualTargetPath += '.' + mime.extension(fileUpload.mimetype)
+  actualTargetPath += '.' + fileExtension
   let absoluteTargetPath = toAbsolutePath(actualTargetPath)
 
   await createFolderIfMissing(path.dirname(absoluteTargetPath))
-  await resize(fileUpload.path, absoluteTargetPath, options.maxDiagonal || 2000)
+  await resize(filePath, absoluteTargetPath, options.maxDiagonal || 2000)
   return { finalPath: url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath)) }
 }
 

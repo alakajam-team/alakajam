@@ -170,9 +170,12 @@ async function createOrUpdateEntry (user, importerId, profileIdentifier, entryId
         // Create actual entry picture
         if (downloadSuccessful) {
           let picturePath = '/entry/' + entryModel.get('id')
-          let finalPath = false
+          let result = false
           try {
-            finalPath = await fileStorage.savePictureUpload(temporaryPath, picturePath)
+            result = await fileStorage.savePictureUpload(temporaryPath, picturePath)
+            if (result.error) {
+              throw new Error(result.error)
+            }
           } catch (e) {
             log.warn('Failed to save picture upload ' + temporaryPath)
             console.log(e)
@@ -182,8 +185,8 @@ async function createOrUpdateEntry (user, importerId, profileIdentifier, entryId
           fs.unlink(temporaryPath)
 
           // Save actual picture
-          if (finalPath) {
-            entryModel.set('pictures', [finalPath])
+          if (result.finalPath) {
+            entryModel.set('pictures', [result.finalPath])
           }
         }
       }
