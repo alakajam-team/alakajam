@@ -78,7 +78,7 @@ async function viewUserProfile (req, res) {
       posts
     })
   } else {
-    res.errorPage(400, 'No user exists with name ' + req.params.name)
+    res.errorPage(404, 'No user exists with name ' + req.params.name)
   }
 }
 

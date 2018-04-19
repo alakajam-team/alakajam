@@ -336,7 +336,7 @@ function errorPage (req, res, code, error, devMode) {
 
   // Internal error logging
   if (code !== 404 && code !== 403) {
-    log.error(message + (error ? '\n' + error.stack : ''))
+    log.error(`HTTP ${code}: ${message}` + (error ? '\n' + error.stack : ''))
   }
 
   // Page rendering
