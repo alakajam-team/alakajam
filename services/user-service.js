@@ -10,6 +10,7 @@ const crypto = require('crypto')
 const randomKey = require('random-key')
 const path = require('path')
 const config = require('../config')
+const db = require('../core/db')
 const constants = require('../core/constants')
 const forms = require('../core/forms')
 const models = require('../core/models')
@@ -159,7 +160,9 @@ async function register (email, name, password) {
  */
 async function authenticate (name, password) {
   let user = await models.User.query(function (query) {
-    query.where('name', name).orWhere('email', name)
+    query
+      .where(db.knex.raw('LOWER(name)'), name.toLowerCase())
+      .orWhere('email', name)
   }).fetch()
   if (user) {
     let hashToTest = hashPassword(password, user.get('password_salt'))
