@@ -343,7 +343,7 @@ async function editEntry (req, res) {
       }
 
       // Save entry: Persist changes and side effects
-      let eventCountRefreshNeeded = entry.hasChanged('published_at')
+      let eventCountRefreshNeeded = event && entry.hasChanged('published_at')
       await entryDetails.save()
       if (entry.hasChanged('status_high_score') && entry.get('status_high_score') !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
         highscoreService.refreshEntryRankings(entry) // corner case: owner toggles lower-is-better after some scores are submitted
