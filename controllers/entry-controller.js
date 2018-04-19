@@ -470,8 +470,13 @@ async function viewScores (req, res) {
     return
   }
 
+  let entryScore
+  if (user) {
+    entryScore = await highscoreService.findEntryScore(user.get('id'), entry.get('id'))
+  }
+
   res.render('entry/view-scores', {
-    entryScore: await highscoreService.findEntryScore(user.get('id'), entry.get('id')),
+    entryScore,
     highScoresCollection: await highscoreService.findHighScores(entry, { fetchAll: true }),
     tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
   })
