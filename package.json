@@ -1,6 +1,6 @@
 {
   "name": "alakajam",
-  "version": "1.3.0",
+  "version": "1.4.0-dev",
   "description": "Game jam system",
   "main": "server.js",
   "scripts": {
