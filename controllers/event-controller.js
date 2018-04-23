@@ -682,14 +682,6 @@ async function editEvent (req, res) {
         errorMessage = result.error
       }
     }
-    if (!errorMessage && (files.banner || fields['banner-delete'])) {
-      let file = files.banner ? files.banner[0] : null
-      let result = await fileStorage.savePictureToModel(event.related('details'), 'banner', file,
-        fields['banner-delete'], `/events/${event.get('name')}/banner`, { maxDiagonal: 3000 })
-      if (result.error) {
-        errorMessage = result.error
-      }
-    }
 
     if (!errorMessage) {
       if (creation) {
@@ -754,6 +746,14 @@ async function editEvent (req, res) {
         links: fields.links,
         category_titles: fields['category-titles']
       })
+      if (files.banner || fields['banner-delete']) {
+        let file = files.banner ? files.banner[0] : null
+        let result = await fileStorage.savePictureToModel(eventDetails, 'banner', file,
+          fields['banner-delete'], `/events/${event.get('name')}/banner`, { maxDiagonal: 3000 })
+        if (result.error) {
+          errorMessage = result.error
+        }
+      }
       await eventDetails.save()
 
       if (creation) {
