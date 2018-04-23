@@ -56,7 +56,7 @@ if (!config.DEBUG_TEST_MAILER) {
 
 /**
  * Sends an email
- * @param  {Express app} app
+ * @param  {App} app
  * @param  {User} user mail recipient
  * @param  {string} subject mail subject
  * @param  {string} template mail template name

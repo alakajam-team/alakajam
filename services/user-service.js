@@ -270,7 +270,7 @@ function validatePasswordRecoveryToken (app, token) {
 
 /**
  *
- * @param {Express app} app
+ * @param {App} app
  * @param {string} token
  * @param {string} password
  * @returns {boolean|string} true or an error message
