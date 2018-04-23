@@ -36,12 +36,18 @@
 
 const models = require('../core/models')
 const constants = require('../core/constants')
+const enums = require('../core/enums')
+const db = require('../core/db')
 const settingService = require('../services/setting-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
+const forms = require('../core/forms')
 
 module.exports = {
+  areVotesAllowed,
+  canVoteInEvent,
   canVoteOnEntry,
+
   countEntryVotes,
   findEntryVote,
   saveEntryVote,
@@ -53,7 +59,23 @@ module.exports = {
   refreshEntryScore,
   computeScoreReceivedByUser,
   computeScoreGivenByUserAndEntry,
-  computeFeedbackScore
+  computeFeedbackScore,
+
+  computeRankings,
+  clearRankings
+}
+
+function areVotesAllowed (event) {
+  return event &amp;&amp;
+    [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get('status_results'))
+}
+
+async function canVoteInEvent (user, event) {
+  if (user &amp;&amp; areVotesAllowed(event)) {
+    return !!(await eventService.findUserEntryForEvent(user, event.get('id')))
+  } else {
+    return false
+  }
 }
 
 /**
@@ -63,9 +85,14 @@ module.exports = {
  * @return {void}
  */
 async function canVoteOnEntry (user, entry) {
-  if (entry.related('event').get('status_results') === 'voting') {
-    let userEntry = await eventService.findUserEntryForEvent(user, entry.get('event_id'))
-    return userEntry &amp;&amp; userEntry.get('id') !== entry.get('id')
+  if (user &amp;&amp; areVotesAllowed(entry.related('event'))) {
+    let openVoting = await settingService.find(constants.SETTING_EVENT_OPEN_VOTING, false)
+    if (openVoting) {
+      return true
+    } else {
+      let userEntry = await eventService.findUserEntryForEvent(user, entry.get('event_id'))
+      return userEntry &amp;&amp; userEntry.get('id') !== entry.get('id')
+    }
   } else {
     return false
   }
@@ -73,8 +100,8 @@ async function canVoteOnEntry (user, entry) {
 
 async function countEntryVotes (entry) {
   let result = await models.EntryVote
-      .where('entry_id', entry.get('id'))
-      .count()
+    .where('entry_id', entry.get('id'))
+    .count()
   return parseInt(result)
 }
 
@@ -121,9 +148,11 @@ async function saveEntryVote (user, entry, event, voteData) {
   let optouts = entry.related('details').get('optouts') || []
   for (let i in voteData) {
     let categoryIndex = (parseInt(i) + 1)
-    if (optouts.includes(eventDetails.get('category_titles')[categoryIndex - 1])) {
+    if (!forms.isFloat(voteData[i], {min: 0, max: 10}) ||
+        optouts.includes(eventDetails.get('category_titles')[categoryIndex - 1])) {
       voteData[i] = 0
     }
+
     vote.set('vote_' + categoryIndex, voteData[i] || 0)
     hasActualVote = hasActualVote || voteData[i] > 0
   }
@@ -141,6 +170,11 @@ async function saveEntryVote (user, entry, event, voteData) {
   await refreshEntryRatings(entry)
   if (refreshRequired) {
     refreshEntryScore(entry, event)
+
+    let userEntry = await eventService.findUserEntryForEvent(user, event.get('id'))
+    if (userEntry) {
+      refreshEntryScore(userEntry, event)
+    }
   }
 }
 
@@ -184,8 +218,9 @@ async function findEntryRankings (event, division, categoryIndex) {
           'event_id': event.get('id'),
           'division': division
         })
-        .where('entry_details.rating_' + categoryIndex, '>', 0)
-        .orderBy('entry_details.rating_' + categoryIndex, 'desc')
+        .whereNotNull('entry_details.ranking_' + categoryIndex)
+        .orderBy('entry_details.ranking_' + categoryIndex)
+        .orderBy('entry.id', 'desc')
     }).fetchAll({ withRelated: ['userRoles', 'details'] })
   } else {
     throw new Error('Invalid category index: ' + categoryIndex)
@@ -215,16 +250,17 @@ async function refreshEntryRatings (entry) {
 
   votes.each(function (vote) {
     for (let categoryIndex of categoryIndexes) {
-      let rating = vote.get('vote_' + categoryIndex)
+      let rating = parseFloat(vote.get('vote_' + categoryIndex) || 0)
       if (rating !== 0) {
         ratingCount[categoryIndex]++
-        ratingSum[categoryIndex] += parseFloat(rating)
+        ratingSum[categoryIndex] += rating
       }
     }
   })
 
+  // Only give a rating if the entry has enough votes (tolerate being a bit under the minimum)
   let entryDetails = entry.related('details')
-  let requiredRatings = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '1'))
+  let requiredRatings = Math.floor(0.8 * parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '1')))
   for (let categoryIndex of categoryIndexes) {
     let averageRating
     if (ratingCount[categoryIndex] >= requiredRatings) {
@@ -249,14 +285,13 @@ function _range (from, to) {
  * @return {void}
  */
 async function refreshEntryScore (entry, event, options = {}) {
-  // Refresh at most every minute
-  // if (new Date().getTime() - entry.get('updated_at').getTime() > 60000 || options.force) {
-  await entry.load(['comments', 'userRoles', 'votes'])
+  await entry.load(['details', 'comments', 'userRoles', 'votes'])
   let received = (await computeScoreReceivedByUser(entry, event)).total
   let given = (await computeScoreGivenByUserAndEntry(entry, event)).total
-  entry.set('feedback_score', computeFeedbackScore(received, given))
-  await entry.save()
- // }
+  await entry.save({ 'feedback_score': computeFeedbackScore(received, given) }, { patch: true })
+
+  let entryDetails = entry.related('details')
+  await entryDetails.save({ 'rating_count': entry.related('votes').length }, { patch: true })
 }
 
 /* Compute received score */
@@ -337,6 +372,78 @@ function computeFeedbackScore (received, given) {
   // (except that here, higher is better)
   return Math.floor(Math.max(0, 74 + 8.5 * Math.sqrt(10 + Math.min(given, 100)) - received))
 }
+
+async function computeRankings (event) {
+  let rankedDivisions = Object.keys(event.get('divisions'))
+  rankedDivisions.splice(rankedDivisions.indexOf(enums.DIVISION.UNRANKED), 1)
+
+  let rankedEntries = await models.Entry
+    .where('event_id', event.get('id'))
+    .where('division', '&lt;>', enums.DIVISION.UNRANKED)
+    .fetchAll({
+      withRelated: ['details', 'votes']
+    })
+
+  // For each ranking category...
+  let categoryCount = event.related('details').get('category_titles').length
+  let categoryIndexes = _range(1, categoryCount)
+  for (let categoryIndex of categoryIndexes) {
+    let sortedEntries = rankedEntries.sortBy(entry => -entry.related('details').get('rating_' + categoryIndex))
+
+    // For each division...
+    for (let division of rankedDivisions) {
+      let rank = 1
+      let previousDetails = null
+
+      // For each entry, best to worst...
+      let divisionEntries = sortedEntries.filter(entry => entry.get('division') === division)
+      for (let entry of divisionEntries) {
+        let details = entry.related('details')
+
+        // Rank it, if it has an average rating if the given category
+        if (details.get('rating_' + categoryIndex) >= 1) {
+          let tie = previousDetails &amp;&amp;
+            previousDetails.get('rating_' + categoryIndex) === details.get('rating_' + categoryIndex)
+          if (tie) {
+            details.set('ranking_' + categoryIndex, previousDetails.get('ranking_' + categoryIndex))
+          } else {
+            details.set('ranking_' + categoryIndex, rank)
+            previousDetails = details
+          }
+          rank++
+        }
+      }
+    }
+  }
+
+  return db.transaction(async function (transaction) {
+    for (let entry of rankedEntries.models) {
+      await entry.related('details').save(null, { transacting: transaction })
+    }
+  })
+}
+
+async function clearRankings (event) {
+  let entries = await models.Entry
+    .where('entry.event_id', event.get('id'))
+    .where('entry.division', '&lt;>', enums.DIVISION.UNRANKED)
+    .fetchAll({
+      withRelated: ['details', 'votes']
+    })
+
+  let categoryCount = event.related('details').get('category_titles').length
+  let categoryIndexes = _range(1, categoryCount)
+
+  return db.transaction(async function (transaction) {
+    for (let entry of entries.models) {
+      let entryDetails = entry.related('details')
+      for (let categoryIndex of categoryIndexes) {
+        entryDetails.set('ranking_' + categoryIndex, null)
+      }
+      await entryDetails.save(null, { transacting: transaction })
+    }
+  })
+}
 </code></pre>
         </article>
     </section>
@@ -347,13 +454,13 @@ function computeFeedbackScore (received, given) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

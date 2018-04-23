@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: services/platform-service.js</title>
+    <title>JSDoc: Source: services/tag-service.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: services/platform-service.js</h1>
+    <h1 class="page-title">Source: services/tag-service.js</h1>
 
     
 
@@ -26,147 +26,133 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>'use strict'
-
-/**
- * Service for manipulating game platforms
- *
- * @module services/platform-service
- */
-
-const constants = require('../core/constants')
-const models = require('../core/models')
+            <pre class="prettyprint source linenums"><code>const models = require('../core/models')
+const config = require('../config')
 const db = require('../core/db')
-const cache = require('../core/cache')
 
 module.exports = {
-  searchPlatforms,
+  searchTags,
   fetchById,
-  fetchAllNames,
-  fetchAll,
-  fetchMultipleNamed,
-  countEntriesByPlatform,
+  fetchByIds,
 
-  createPlatform,
-  setEntryPlatforms
+  createTag,
+  updateEntryTags,
+
+  fetchTagStats
 }
 
 /**
- * Search for a platform by name.
+ * Search for a tag by name.
  *
  * @param {string} nameFragment a fragment of the name.
- * @returns {Bookshelf.Collection} platforms matching the search.
+ * @returns {Bookshelf.Collection} tags matching the search.
  */
-function searchPlatforms (nameFragment) {
-  return models.Platform.where('name', constants.DB_ILIKE, `%${nameFragment}%`)
+async function searchTags (nameFragment) {
+  let results = await db.knex('tag')
+    .where('value', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `${nameFragment}%`)
+
+  let formattedResults = []
+  for (let result of results) {
+    formattedResults.push(result.value)
+  }
+  formattedResults.sort(function (a, b) {
+    return a.localeCompare(b)
+  })
+  return results
 }
 
 /**
- * Fetch platform by ID
+ * Fetch tag by ID
  *
  * @param {number} id
  */
-async function fetchById (id) {
-  return models.Platform.where({ id }).fetch()
+async function fetchById (id, options = {}) {
+  return models.Tag.where({ id }).fetch(options)
 }
 
 /**
- * Fetch platforms by name (case-insensitive except in SQLite).
+ * Fetch tag by ID
  *
- * @param {string[]} names the platform names to fetch by.
+ * @param {number} id
  */
-function fetchMultipleNamed (names) {
-  return models.Platform.query(qb => qb.whereIn('name', names)).fetchAll()
+async function fetchByIds (ids) {
+  return models.Tag.where('id', 'in', ids).fetchAll()
 }
 
 /**
- * Load all platform names.
+ * Creates a tag
+ * @param  {string} value
+ * @return {Tag}
+ */
+async function createTag (value) {
+  let tag = new models.Tag({ value })
+  return tag.save()
+}
+
+/**
+ * Updates entry/tag associations, creating any missing tags in the process.
  *
- * @returns {Promise&lt;string[]>} a promise which resolves with the names.
  */
-async function fetchAllNames () {
-  let names = (await db.knex('platform').select('name')).map(({name}) => name)
-  names.sort()
-  return names
-}
-
-/** Fetch all platform instances. */
-async function fetchAll () {
-  if (!cache.general.get('platforms')) {
-    cache.general.set('platforms',
-      await models.Platform.forge()
-        .orderBy('name')
-        .fetchAll())
-  }
-  return cache.general.get('platforms')
-}
-
-/**
- * Counts the number of entries using a given platform
- *
- * @param  {Platform} platform
- * @return {number}
- */
-async function countEntriesByPlatform (platform) {
-  let count = await models.EntryPlatform
-    .where('platform_id', platform.get('id'))
-    .count()
-  return parseInt(count)
-}
-
-/**
- * Creates a platform
- * @param  {string} name
- * @return {Platform}
- */
-function createPlatform (name) {
-  return new models.Platform({ name })
-}
-
-/**
- * Set the platforms of an entry.
- *
- * @param {models.Entry} entry the entry instance.
- * @param {models.Platform[]} platforms the platforms to set.
- * @returns {Promise} a promise which resolves when complete.
- */
-async function setEntryPlatforms (entry, platforms, { updateEntry = true }) {
+async function updateEntryTags (entry, tagInfo) {
   const entryId = entry.get('id')
-  const nameList = JSON.stringify(platforms.map(p => p.get('name')))
-  const platformIds = platforms.map(p => p.id)
+
+  // Create missing tags
+  let tagIds = tagInfo.map(strId => parseInt(strId))
+    .filter(intId => !isNaN(intId) &amp;&amp; intId > 0)
+  let tagLabels = tagInfo.filter(label => isNaN(parseInt(label)) &amp;&amp; label.trim())
+  for (let tagLabel of tagLabels) {
+    let createdTag = await createTag(tagLabel)
+    tagIds.push(createdTag.get('id'))
+  }
 
   return db.knex.transaction(async function (transaction) {
+    // Find existing relations
     const existingIds = (
-      await transaction('entry_platform')
-        .select('platform_id')
+      await transaction('entry_tag')
+        .select('tag_id')
         .where('entry_id', entryId)
-    ).map(({platform_id}) => platform_id) // eslint-disable-line camelcase
-    const toRemoveIds = existingIds.filter(id => !platformIds.includes(id))
-    const toAdd = platforms
-      .filter(p => !existingIds.includes(p.id))
-      .map(p => ({
-        entry_id: entryId,
-        platform_id: p.id,
-        platform_name: p.get('name')
-      }))
+    ).map(function (row) {
+      return row.tag_id
+    }) // eslint-disable-line camelcase
 
+    // Create/delete relations
+    const toRemoveIds = existingIds.filter(id => !tagIds.includes(id))
+    const toAdd = tagIds.filter(id => !existingIds.includes(id))
+      .map(id => ({
+        entry_id: entryId,
+        tag_id: id
+      }))
     const promises = []
-    if (updateEntry) {
-      promises.push(entry.save('platforms', nameList, {transaction}))
+    if (toAdd.length > 0) { // Insert new entry_tag records.
+      promises.push(transaction('entry_tag').insert(toAdd))
     }
-    if (toAdd.length > 0) { // Insert new entry_platform records.
-      promises.push(transaction('entry_platform').insert(toAdd))
-    }
-    if (toRemoveIds.length > 0) { // Remove old entry_platform records.
+    if (toRemoveIds.length > 0) { // Remove old entry_tag records.
       promises.push(
-        transaction('entry_platform')
-          .whereIn('platform_id', toRemoveIds)
+        transaction('entry_tag')
+          .whereIn('tag_id', toRemoveIds)
           .andWhere('entry_id', '=', entryId)
           .del()
       )
     }
     await Promise.all(promises)
+
+    // Clear empty tags
+    if (toRemoveIds.length > 0) {
+      await transaction('tag')
+        .whereNotIn('id', function () {
+          return this.from('entry_tag').distinct('tag_id')
+        })
+        .del()
+    }
   })
+}
+
+async function fetchTagStats (options = {}) {
+  return db.knex('entry_tag')
+    .select('tag.id', 'tag.value', 'tag.created_at', db.knex.raw('count(*) as count'))
+    .leftJoin('tag', 'entry_tag.tag_id', 'tag.id')
+    .groupBy('tag.id', 'tag.value')
+    .orderBy(options.orderByDate ? 'created_at' : 'count', 'DESC')
 }
 </code></pre>
         </article>

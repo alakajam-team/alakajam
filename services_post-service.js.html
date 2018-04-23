@@ -58,7 +58,8 @@ module.exports = {
 
   createPost,
   refreshCommentCount,
-  createComment
+  createComment,
+  deleteComment
 }
 
 /**
@@ -103,11 +104,11 @@ async function findPosts (options = {}) {
     if (options.entryId) qb = qb.where('entry_id', options.entryId)
     if (options.userId) {
       qb = qb.innerJoin('user_role', 'post.id', 'user_role.node_id')
-          .where({
-            'user_role.user_id': options.userId,
-            'user_role.node_type': 'post'
-          })
-          .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
+        .where({
+          'user_role.user_id': options.userId,
+          'user_role.node_type': 'post'
+        })
+        .whereIn('permission', securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE))
     }
 
     if (!options.allowDrafts) qb = qb.where('published_at', '&lt;=', new Date())
@@ -153,9 +154,7 @@ async function findPost (options = {}) {
 async function findLatestAnnouncement (options = {}) {
   let query = models.Post
     .where('special_post_type', constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
-    .query(function (qb) {
-      qb.whereNotNull('published_at')
-    })
+    .where('published_at', '&lt;=', new Date())
   if (options.eventId) {
     query = query.where('event_id', options.eventId)
   }
@@ -199,13 +198,13 @@ async function findCommentsByUser (user) {
 async function findCommentsByUserAndEvent (userId, eventId) {
   return models.Comment.query(function (qb) {
     qb.innerJoin('entry', 'comment.node_id', 'entry.id')
-        .where({
-          'user_id': userId,
-          'node_type': 'entry',
-          'entry.event_id': eventId
-        })
+      .where({
+        'user_id': userId,
+        'node_type': 'entry',
+        'entry.event_id': eventId
+      })
   })
-      .fetchAll()
+    .fetchAll()
 }
 
 /**
@@ -224,13 +223,14 @@ async function findCommentsToUser (user, options = {}) {
   }
   return models.Comment.query(function (qb) {
     qb = qb.distinct()
-        .leftJoin('user_role', function () {
-          this.on('comment.node_id', '=', 'user_role.node_id')
+      .leftJoin('user_role', function () {
+        this.on('comment.node_id', '=', 'user_role.node_id')
           .andOn('comment.node_type', '=', 'user_role.node_type')
-        })
+      })
       .where('user_role.user_id', user.id)
       .andWhere('comment.user_id', '&lt;>', user.id)
       .andWhere('comment.updated_at', '>', notificationsLastRead)
+      .andWhere('comment.updated_at', '>', db.knex.raw('user_role.created_at'))
       .orWhere('body', (config.DB_TYPE === 'sqlite3' ? 'like' : 'ilike'),
         '%@' + user.get('name') + '%') // TODO Use special mention/notification table filled on write
   })
@@ -247,9 +247,8 @@ async function findCommentsToUser (user, options = {}) {
  * @return {array(number)}
  */
 async function findOwnAnonymousCommentIds (user, nodeId, nodeType) {
-  let results = db.knex()
+  let results = db.knex('anonymous_comment_user')
     .select('anonymous_comment_user.comment_id')
-    .from('anonymous_comment_user')
     .leftJoin('comment', 'comment.id', 'anonymous_comment_user.comment_id')
     .where({
       'anonymous_comment_user.user_id': user.get('id'),
@@ -267,9 +266,8 @@ async function findOwnAnonymousCommentIds (user, nodeId, nodeType) {
  */
 async function isOwnAnonymousComment (comment, user) {
   if (comment.get('user_id') === constants.ANONYMOUS_USER_ID) {
-    let result = await db.knex()
+    let result = await db.knex('anonymous_comment_user')
       .count()
-      .from('anonymous_comment_user')
       .where({
         comment_id: comment.get('id'),
         user_id: user.get('id')
@@ -306,17 +304,30 @@ async function createPost (user, eventId) {
 }
 
 /**
- * Creates a new comment.
+ * Creates and persists a new comment.
  * @param  {User} user
  * @param  {Post|Entry} node
  * @param  {string} (optional) comment body
+ * @param  {Boolean} requestAnonymous (optional)
  * @return {Comment}
  */
-async function createComment (user, node, body) {
+async function createComment (user, node, body, requestAnonymous = false) {
   let comment = await node.comments().create({
     user_id: user.get('id'),
     body: body
   })
+
+  if (requestAnonymous &amp;&amp; !user.get('disallow_anonymous') &amp;&amp; node.get('allow_anonymous')) {
+    comment.set('user_id', -1)
+    await comment.save() // save the comment now to get an ID
+    await db.knex('anonymous_comment_user').insert({
+      'comment_id': comment.get('id'),
+      'user_id': user.get('id')
+    })
+  } else {
+    await comment.save()
+  }
+
   return comment
 }
 
@@ -327,8 +338,21 @@ async function createComment (user, node, body) {
 async function refreshCommentCount (node) {
   await node.load('comments')
   let commentCount = node.related('comments').size()
-  node.set('comment_count', commentCount)
-  await node.save()
+  await node.save({ 'comment_count': commentCount }, { patch: true })
+}
+
+/**
+ * Deletes the given comment
+ * @param  {Comment} comment
+ * @return {void}
+ */
+async function deleteComment (comment) {
+  // In case it was an anonymous comment, delete the associated user link
+  await db.knex('anonymous_comment_user')
+    .where('comment_id', comment.get('id'))
+    .del()
+
+  await comment.destroy()
 }
 </code></pre>
         </article>
@@ -340,13 +364,13 @@ async function refreshCommentCount (node) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

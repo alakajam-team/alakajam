@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: core/db</title>
+    <title>JSDoc: Source: core/enums.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,314 +17,94 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: core/db</h1>
+    <h1 class="page-title">Source: core/enums.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Database storage configuration.
-Requiring the module returns a <a href="http://bookshelfjs.org/">Bookshelf</a> instance.</p></div>
-        
-
-        
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_db.js.html">core/db.js</a>, <a href="core_db.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~insertInitialData"><span class="type-signature">(inner) </span>insertInitialData<span class="signature">(knex, samples)</span><span class="type-signature"> &rarr; {void}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Inserts sample data in the database.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>knex</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">knex</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>samples</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-|
-
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>true to add samples, 'nightly' to add the special nighly post</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_db.js.html">core/db.js</a>, <a href="core_db.js.html#line127">line 127</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">void</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+/**
+ * Enums
+ *
+ * @module core/enums
+ */
+
+module.exports = {
+  EVENT: {
+    STATUS: {
+      PENDING: 'pending',
+      OPEN: 'open',
+      CLOSED: 'closed'
+    },
+    STATUS_RULES: {
+      DISABLED: 'disabled',
+      OFF: 'off'
+    },
+    STATUS_THEME: {
+      DISABLED: 'disabled',
+      OFF: 'off',
+      VOTING: 'voting',
+      SHORTLIST: 'shortlist',
+      CLOSED: 'closed',
+      RESULTS: 'results'
+    },
+    STATUS_ENTRY: {
+      OFF: 'off',
+      OPEN: 'open',
+      OPEN_UNRANKED: 'open_unranked',
+      CLOSED: 'closed'
+    },
+    STATUS_RESULTS: {
+      DISABLED: 'disabled',
+      OFF: 'off',
+      VOTING: 'voting',
+      VOTING_RESCUE: 'voting_rescue',
+      RESULTS: 'results'
+    },
+    STATUS_TOURNAMENT: {
+      DISABLED: 'disabled',
+      OFF: 'off',
+      SUBMISSION: 'submission',
+      PLAYING: 'playing',
+      CLOSED: 'closed',
+      RESULTS: 'results'
+    }
+  },
+  ENTRY: {
+    STATUS_HIGH_SCORE: {
+      OFF: 'off',
+      NORMAL: 'normal',
+      REVERSED: 'reversed'
+    },
+    HIGH_SCORE_TYPE: {
+      NUMBER: 'number',
+      TIME: 'time'
+    }
+  },
+  THEME: {
+    STATUS: {
+      OUT: 'out',
+      ACTIVE: 'active',
+      BANNED: 'banned',
+      SHORTLIST: 'shortlist',
+      DUPLICATE: 'duplicate'
+    }
+  },
+  DIVISION: {
+    SOLO: 'solo',
+    TEAM: 'team',
+    RANKED: 'ranked',
+    UNRANKED: 'unranked'
+  }
+}
+</code></pre>
+        </article>
+    </section>
 
 
 

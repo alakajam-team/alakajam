@@ -42,6 +42,7 @@ const path = require('path')
 const config = require('../config')
 const knexfile = require('../knexfile')
 const constants = require('../core/constants')
+const enums = require('../core/enums')
 const log = require('../core/log')
 
 module.exports = initBookshelf()
@@ -110,7 +111,26 @@ function createKnexInstance () {
       charset: 'utf8'
     }
   }
-  return require('knex')(knexOptions)
+
+  let knex = require('knex')(knexOptions)
+
+  if (config.DEBUG_TRACE_SLOW_SQL > -1) {
+    const queryTimes = {}
+    knex.on('query', function (request) {
+      queryTimes[request.__knexUid] = Date.now()
+    })
+    knex.on('query-response', function (response, request) {
+      if (queryTimes[request.__knexUid]) {
+        let totalTime = Date.now() - queryTimes[request.__knexUid]
+        if (totalTime > config.DEBUG_TRACE_SLOW_SQL) {
+          log.debug('"' + request.sql + '"', request.bindings, totalTime + 'ms')
+        }
+        delete queryTimes[request.__knexUid]
+      }
+    })
+  }
+
+  return knex
 }
 
 /*
@@ -135,6 +155,7 @@ function createBookshelfInstance (knex) {
 async function insertInitialData (knex, samples) {
   const userService = require('../services/user-service')
   const eventService = require('../services/event-service')
+  const eventRatingService = require('../services/event-rating-service')
   const eventThemeService = require('../services/event-theme-service')
   const postService = require('../services/post-service')
   const settingService = require('../services/setting-service')
@@ -229,7 +250,7 @@ async function insertInitialData (knex, samples) {
   // Samples
 
   if (samples) {
-    log.info('Inserting samples...')
+    log.info('Inserting samples (this can take a while)...')
 
     // Users
 
@@ -248,12 +269,12 @@ async function insertInitialData (knex, samples) {
     event1.set({
       title: '1st Alakajam',
       name: '1st-alakajam',
-      status: 'closed',
+      status: enums.EVENT.STATUS.CLOSED,
       display_dates: 'Novembary 17 - 20, 2016',
       display_theme: 'Make a website',
-      status_theme: 'disabled',
-      status_entry: 'on',
-      status_results: 'disabled'
+      status_theme: enums.EVENT.STATUS_THEME.DISABLED,
+      status_entry: enums.EVENT.STATUS_ENTRY.OFF,
+      status_results: enums.EVENT.STATUS_RESULTS.DISABLED
     })
     await event1.save()
     let userEntry = await eventService.createEntry(entrantUser, event1)
@@ -266,12 +287,12 @@ async function insertInitialData (knex, samples) {
     event2.set({
       title: '2nd Alakajam',
       name: '2nd-alakajam',
-      status: 'open',
+      status: enums.EVENT.STATUS.OPEN,
       display_dates: 'Januember 29 - 31, 2017',
       display_theme: 'You are not alone',
-      status_theme: 'voting',
-      status_entry: 'open',
-      status_results: 'voting',
+      status_theme: enums.EVENT.STATUS_THEME.VOTING,
+      status_entry: enums.EVENT.STATUS_ENTRY.OPEN,
+      status_results: enums.EVENT.STATUS_RESULTS.VOTING,
       countdown_config: {
         phrase: 'starts',
         date: moment().add(1, 'days').toDate(),
@@ -301,12 +322,28 @@ async function insertInitialData (knex, samples) {
     userEntry.set('title', 'Game 1')
     await userEntry.save()
 
-    for (let i = 2; i &lt;= 50; i++) {
+    for (let i = 2; i &lt;= 10; i++) {
       await userService.register('entrant@example.com', 'entrant' + i, 'entrant' + i)
       let otherUser = await userService.findByName('entrant' + i)
       let otherEntry = await eventService.createEntry(otherUser, event2)
       otherEntry.set('title', 'Game ' + i)
       await otherEntry.save()
+    }
+    for (let i = 2; i &lt;= 10; i++) {
+      let userA = await userService.findByName('entrant' + i)
+      for (let j = 1; j &lt;= 10; j++) {
+        let ji = (i + j) % 11
+        if (ji &lt; 2) {
+          ji = 2
+        }
+        let userB = await userService.findByName('entrant' + ji)
+        let entryB = await eventService.findUserEntryForEvent(userB, event2.get('id'))
+        let votes = []
+        for (let k = 0; k &lt; 6; k++) {
+          votes[k] = 3 + Math.floor(Math.random() * 4)
+        }
+        await eventRatingService.saveEntryVote(userA, entryB, event2, votes)
+      }
     }
 
     let post = await postService.createPost(entrantUser, event2.get('id'))
@@ -348,11 +385,11 @@ async function insertInitialData (knex, samples) {
     event3.set({
       title: '3rd Alakajam',
       name: '3rd-alakajam',
-      status: 'pending',
+      status: enums.EVENT.STATUS.PENDING,
       display_dates: 'Marchpril 5 - 8, 2017',
-      status_theme: 'off',
-      status_entry: 'off',
-      status_results: 'off'
+      status_theme: enums.EVENT.STATUS_THEME.OFF,
+      status_entry: enums.EVENT.STATUS_ENTRY.OFF,
+      status_results: enums.EVENT.STATUS_RESULTS.OFF
     })
     await event3.save()
 
@@ -385,13 +422,13 @@ async function insertInitialData (knex, samples) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

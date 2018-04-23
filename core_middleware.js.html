@@ -32,8 +32,7 @@
  * Server middleware configuration.
  *
  * @description Sets up:
- * - CSS processing (cssnext)
- * - JS processing (browserify)
+ * - Static file serving (CSS/JS/images)
  * - Templating (nunjucks)
  * - Form parsing / file upload (formidable)
  * - Error pages
@@ -44,23 +43,23 @@
 const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
-// const ExpressBrute = require('express-brute')
 const cookies = require('cookies')
-const postCss = require('postcss-middleware')
-const browserifyMiddleware = require('browserify-middleware')
 const multer = require('multer')
 const bodyParser = require('body-parser')
 const promisify = require('promisify-node')
 const moment = require('moment')
 const nunjucks = require('nunjucks')
 const randomKey = require('random-key')
+const leftPad = require('left-pad')
 const log = require('./log')
 const config = require('../config')
 const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
+const enums = require('../core/enums')
 const settingService = require('../services/setting-service')
 const sessionService = require('../services/session-service')
+const userService = require('../services/user-service')
 const controllers = require('../controllers/index')
 const templating = require('../controllers/templating')
 
@@ -70,6 +69,7 @@ module.exports = {
 
 const ROOT_PATH = path.join(__dirname, '..')
 const MB = 1024 * 1024
+const LAUNCH_TIME = new Date().getTime()
 
 /*
  * Setup app middleware
@@ -77,36 +77,30 @@ const MB = 1024 * 1024
 async function configure (app) {
   app.locals.config = config
 
+  // Slow requests logging
+  if (config.DEBUG_TRACE_SLOW_REQUESTS > -1) {
+    app.use(function (req, res, next) {
+      let start = Date.now()
+      res.once('finish', () => {
+        let totalTime = Date.now() - start
+        if (totalTime > config.DEBUG_TRACE_SLOW_REQUESTS) {
+          log.debug(req.url + ' ' + totalTime + 'ms')
+        }
+      })
+      next()
+    })
+  }
+
+  // In-memory data
+  await userService.loadPasswordRecoveryCache(app)
+  await sessionService.loadSessionCache(app)
+
   // Session management
-  app.locals.sessionCache = await sessionService.loadSessionCache()
   let sessionKey = await findOrCreateSessionKey()
   app.use(cookies.express([sessionKey]))
 
-  // CSS files
-  app.use('/static/css/site.css', postCss({
-    src: () => path.join(ROOT_PATH, '/static/css/site.css'),
-    plugins: [require('postcss-cssnext')]
-  }))
-
-  // JavaScript files
-  app.use('/static/js/site.js', bundleJs(app.locals.devMode))
-
   // Remaining static files
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
-
-  // Request throttling
-  if (!app.locals.devMode) {
-   // let store = new ExpressBrute.MemoryStore() // TODO use brute-knex
-  /*  let bruteforce = new ExpressBrute(store, {
-      freeRetries: 10,
-      minWait: 100, // ms
-      lifetime: 0.2, // seconds
-      failCallback: function (req, res, next, nextValidRequestDate) {
-        res.end('ERROR: Too many requests. Fair use is 5req/s.')
-      }
-    }) */
-    // app.use(bruteforce.prevent)
-  }
 
   // Templating
   app.set('views', path.join(ROOT_PATH, '/templates'))
@@ -118,18 +112,31 @@ async function configure (app) {
   // Templating: custom filters
   nj.env.addGlobal('browserRefreshUrl', process.env.BROWSER_REFRESH_URL)
   nj.env.addGlobal('constants', constants)
+  nj.env.addGlobal('enums', enums)
   nj.env.addGlobal('devMode', app.locals.devMode)
+  nj.env.addGlobal('launchTime', LAUNCH_TIME)
   nj.env.addGlobal('context', function () {
     // lets devs display the whole templating context with
     // {{ context() | prettyDump | safe }}
     this.ctx.constants = constants
+    this.ctx.enums = enums
     this.ctx.devMode = app.locals.devMode
+    this.ctx.launchTime = LAUNCH_TIME
     return this.ctx
   })
   for (var functionName in templating) {
     nj.env.addGlobal(functionName, templating[functionName])
   }
 
+  nj.env.addFilter('keys', function (obj) {
+    return Object.keys(obj)
+  })
+  nj.env.addFilter('values', function (obj) {
+    return Object.values(obj)
+  })
+  nj.env.addFilter('pretty', function (obj) {
+    return JSON.stringify(obj, null, 2)
+  })
   nj.env.addFilter('prettyDump', function (obj) {
     return '&lt;pre>' + JSON.stringify(obj, null, 2) + '&lt;/pre>'
   })
@@ -139,9 +146,9 @@ async function configure (app) {
   nj.env.addFilter('markdownUnescape', function (str) {
     return str ? str.replace(/&amp;amp;/g, '&amp;').replace(/&amp;quot;/g, '"') : null
   })
-  nj.env.addFilter('date', function (date) {
+  nj.env.addFilter('date', function (date, format) {
     if (date) {
-      return moment(date).utc().format(constants.DATE_FORMAT)
+      return moment(date).utc().format(format || constants.DATE_FORMAT)
     } else {
       return ''
     }
@@ -155,21 +162,18 @@ async function configure (app) {
   })
   nj.env.addFilter('featuredEventDateTime', function (date) {
     if (date) {
-      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) +
-        ' &lt;a href="https://www.timeanddate.com/worldclock/timezone/utc">UTC&lt;/a>'
-    } else {
-      return ''
-    }
-  })
-  nj.env.addFilter('pickerDateTime', function (date) {
-    if (date) {
-      return moment(date).utc().format(constants.PICKER_DATE_TIME_FORMAT)
+      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) + ' UTC'
     } else {
       return ''
     }
   })
   nj.env.addFilter('relativeTime', function (date) {
     return moment(date).utc().fromNow()
+  })
+  nj.env.addFilter('duration', function (durationInSeconds) {
+    let minutes = Math.floor(durationInSeconds / 60)
+    let seconds = durationInSeconds - minutes * 60
+    return minutes + "'" + leftPad(seconds.toFixed(3).replace('.', '"'), 6, '0')
   })
   nj.env.addFilter('ordinal', function (n) {
     // source: https://stackoverflow.com/a/12487454
@@ -186,6 +190,9 @@ async function configure (app) {
     } else {
       return null
     }
+  })
+  nj.env.addFilter('leftpad', function (number, toLength, char) {
+    return leftPad(number, toLength, char)
   })
   nj.env.addFilter('paginationBasePath', function (path) {
     let basePath = path.replace(/[?&amp;]p=[^&amp;]*/g, '')
@@ -245,7 +252,7 @@ async function configure (app) {
       fields: 1000,
       fileSize: 2 * MB,
       files: 20,
-      parts: 20
+      parts: 2000
     }
   })
   let doParseForm = promisify(function (req, res, uploadInfo, callback) {
@@ -305,7 +312,13 @@ function cleanupFormFilesCallback (req, res) {
       for (let key in res.locals.form.files) {
         let fileInfo = res.locals.form.files[key]
         if (fileInfo) {
-          fileStorage.remove(fileInfo.path)
+          if (Array.isArray(fileInfo)) {
+            for (let fileInfoEntry of fileInfo) {
+              fileStorage.remove(fileInfoEntry.path)
+            }
+          } else {
+            fileStorage.remove(fileInfo.path)
+          }
         }
       }
     }
@@ -351,7 +364,7 @@ function errorPage (req, res, code, error, devMode) {
 
   // Internal error logging
   if (code !== 404 &amp;&amp; code !== 403) {
-    log.error(message + (error ? '\n' + error.stack : ''))
+    log.error(`HTTP ${code}: ${message}` + (error ? '\n' + error.stack : ''))
   }
 
   // Page rendering
@@ -364,27 +377,6 @@ function errorPage (req, res, code, error, devMode) {
     path: req.originalUrl // Needed by _page.html, normally added by anyPageMiddleware
   })
 }
-
-/**
- * Returns a middleware rendering the JavaScript bundle.
- */
-function bundleJs (devMode) {
-  const bundleJsMiddleware = browserifyMiddleware(
-      path.join(ROOT_PATH, '/client/site.js'),
-      { 'standalone': 'alakajam' })
-  if (devMode) {
-    return function (req, res, next) {
-      bundleJsMiddleware(req, res, function error (err) {
-        const errorString = '"Error during JavaScript server-side bundling: ' + err.toString().replace('"', '\\"').replace('\\', '\\\\') + '"'
-        const script = 'console.error(' + errorString + ');\ndocument.head.innerHTML = "";\ndocument.body.innerHTML = "&lt;pre style=\\"white-space: pre-wrap\\">" + ' + errorString + ' + "&lt;/pre>";\n'
-        res.set('Content-Type', 'text/javascript')
-        res.send(script)
-      })
-    }
-  } else {
-    return bundleJsMiddleware
-  }
-}
 </code></pre>
         </article>
     </section>
@@ -395,13 +387,13 @@ function bundleJs (devMode) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

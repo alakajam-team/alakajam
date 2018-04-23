@@ -113,6 +113,8 @@
 
 
 
+
+
         
     
     </div>
@@ -123,7 +125,9 @@
 
     
 
-     
+    
+
+    
 
     
 
@@ -137,14 +141,16 @@
 
     
 
+    
     <h4 class="name" id="~createFolderIfMissing"><span class="type-signature">(inner) </span>createFolderIfMissing<span class="signature">()</span><span class="type-signature"></span></h4>
+    
 
     
 
 
 
 <div class="description">
-    <p>Creates a folder. No op if the folder exists.
+    <p>Creates a folder. No-op if the folder exists.
 Does <em>not</em> make the folder relative to the file storage root.</p>
 </div>
 
@@ -189,7 +195,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line157">line 157</a>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line227">line 227</a>
     </li></ul></dd>
     
 
@@ -215,12 +221,173 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
 
 
+
+
         
             
 
     
 
+    
+    <h4 class="name" id="~getImageType"><span class="type-signature">(inner) </span>getImageType<span class="signature">(filepath)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Get the type of an image file.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>filepath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the absolute path to a file.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line54">line 54</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>one of 'jpg', 'png' or 'gif' if valid; undefined if not.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="~isValidPicture"><span class="type-signature">(inner) </span>isValidPicture<span class="signature">(path)</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    
 
     
 
@@ -316,7 +483,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line43">line 43</a>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line74">line 74</a>
     </li></ul></dd>
     
 
@@ -343,7 +510,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
         
 <div class="param-desc">
-    <p>whather the specified path is a vaild picture</p>
+    <p>whather the specified path is a valid picture</p>
 </div>
 
 
@@ -364,12 +531,16 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~read"><span class="type-signature">(inner) </span>read<span class="signature">(documentPath)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
 
     
 
@@ -469,7 +640,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line114">line 114</a>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line184">line 184</a>
     </li></ul></dd>
     
 
@@ -517,19 +688,25 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
 
 
+
+
         
             
 
     
 
-    <h4 class="name" id="~savePictureUpload"><span class="type-signature">(inner) </span>savePictureUpload<span class="signature">(sourcePath, targetPath, options)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    <h4 class="name" id="~savePictureToModel"><span class="type-signature">(inner) </span>savePictureToModel<span class="signature">(model, attribute, fileUpload, deleteFile, targetPathWithoutExtension, options)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    
 
     
 
 
 
 <div class="description">
-    <p>Moves the file from a path to another. Typically used for saving temporary files.</p>
+    <p>Saves a file upload on a model. The picture will be resized (if needed) &amp; moved, but model.save() won't be called.
+The file extension will be grabbed from the source path. If folders don't exist, they will be created.
+If there was a pre-exiting picture, it will be deleted.</p>
 </div>
 
 
@@ -565,13 +742,13 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
         <tr>
             
-                <td class="name"><code>sourcePath</code></td>
+                <td class="name"><code>model</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Model</span>
 
 
             
@@ -581,14 +758,14 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
             
 
-            <td class="description last"><p>The full path to the file to move</p></td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>targetPath</code></td>
+                <td class="name"><code>attribute</code></td>
             
 
             <td class="type">
@@ -604,7 +781,76 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
             
 
-            <td class="description last"><p>The path to the destination, relative to the uploads folder.</p></td>
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fileUpload</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The form field to save</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>deleteFile</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Whether to delete the picture</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>targetPathWithoutExtension</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The path to the destination, <strong>relative to the uploads folder</strong></p></td>
         </tr>
 
     
@@ -627,8 +873,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
             
 
-            <td class="description last"><p>(Optional) allowed: maxDiagonal
-  If the file extension is omitted, it will be grabbed from the source path. If folders don't exist, they will be created.</p></td>
+            <td class="description last"><p>(Optional) allowed: maxDiagonal</p></td>
         </tr>
 
     
@@ -669,7 +914,211 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line57">line 57</a>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line94">line 94</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>result, with either &quot;error&quot; or &quot;finalPath&quot; set, or nothing if the picture was deleted</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~savePictureUpload"><span class="type-signature">(inner) </span>savePictureUpload<span class="signature">(fileUploadOrPath, targetPathWithoutExtension, options)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Saves an upload to the specified path, resizing it if needed in the process.
+The file extension will be grabbed from the source path. If folders don't exist, they will be created.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fileUploadOrPath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The form field to save, or the file path if this is not a form upload</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>targetPathWithoutExtension</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The path to the destination, <strong>relative to the uploads folder</strong></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>(Optional) allowed: maxDiagonal</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line127">line 127</a>
     </li></ul></dd>
     
 
@@ -729,12 +1178,16 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~write"><span class="type-signature">(inner) </span>write<span class="signature">(documentPath, data)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -857,7 +1310,7 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line125">line 125</a>
+        <a href="core_file-storage.js.html">core/file-storage.js</a>, <a href="core_file-storage.js.html#line195">line 195</a>
     </li></ul></dd>
     
 
@@ -867,6 +1320,8 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 
     
 </dl>
+
+
 
 
 
@@ -899,13 +1354,13 @@ Does <em>not</em> make the folder relative to the file storage root.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

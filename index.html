@@ -43,15 +43,19 @@
 
 
     <section>
-        <article><p><img src="https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/brand.png" alt="Alakajam!"></p>
+        <article><p><img src="https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/logo.png" alt="Alakajam!"></p>
 <h2>Initial setup</h2><p>Requirement: NodeJS 7.6+</p>
 <ul>
-<li><code>npm install</code></li>
+<li><code>npm install --no-optional</code></li>
 <li><code>node server.js</code></li>
 <li>Browse to <code>http://localhost:8000</code></li>
 </ul>
 <p>There is a default admin user (<code>administrator</code>/<code>administrator</code>).</p>
-<h2>Developer tools</h2><p>Prerequisite: <code>npm install -g knex standard browser-refresh node-inspector jsdoc mocha</code></p>
+<blockquote>
+<p>NB. If <code>npm install --no-optional</code> failed to install <code>sqlite3</code>, retry with flag <code>--build-from-source</code>.</p>
+</blockquote>
+<h2>Developer tools</h2><p>Prerequisites: <code>npm install -g knex standard browser-refresh node-inspector jsdoc mocha</code></p>
+<p>See also <a href="https://github.com/alakajam-team/alakajam/wiki">the wiki</a> for additional developer documentation.</p>
 <h3>Recommended</h3><ul>
 <li><code>browser-refresh server.js</code>: Launches the app, and makes the server and browser refresh when needed upon file changes.</li>
 <li><code>standard</code>: Validates the code style. Run <code>githooks/install.sh</code> to trigger validation automatically before committing.</li>
@@ -60,18 +64,13 @@
 <li><code>node-debug server.js</code>: Launches the app in debug mode.</li>
 <li><code>npm run-script docs</code>: Generates the JS documentation in the <code>docs/</code> folder.</li>
 <li><code>mocha tests/</code>: Runs unit tests.</li>
-<li><code>DEBUG=express:*</code>: Enables debugging of routes &amp; performance (must be set before launching the server)</li>
+<li><code>DEBUG=express:*</code>: Enables debugging of routes and performance (must be set before launching the server).</li>
 </ul>
-<p>See also <a href="https://github.com/mkalam-alami/wejam/wiki">the wiki</a> for additional developer documentation.</p>
 <h2>How do I...</h2><h4>...Reset the data</h4><ul>
 <li>With SQLite, all you have to do is delete the <code>data/</code> folder.</li>
 <li>PostgreSQL requires you additionally to empty your database.</li>
 </ul>
-<h4>...Enable picture resizing</h4><p>If the <code>sharp</code> dependency failed to install in the initial setup, your picture uploads won't be resized. If you want to fix that:</p>
-<ul>
-<li>Follow the instructions to install the <a href="http://sharp.dimens.io/en/stable/install/">sharp dependencies</a></li>
-<li>Run <code>nom install</code> again</li>
-</ul></article>
+<h4>...Enable picture resizing</h4><p>Run <code>npm install</code> without the <code>--no-optional</code> flag to try and set up the <code>sharp</code> dependency. If it fails to install (especially on Windows), follow the instructions to install the <a href="http://sharp.dimens.io/en/stable/install/">sharp dependencies</a>, then try <code>npm install</code> again.</p></article>
     </section>
 
 
@@ -82,13 +81,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: services/event-tournament-service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: services/event-tournament-service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+/**
+ * Service for managing tournaments.
+ *
+ * @module services/event-tournament-service
+ */
+
+const models = require('../core/models')
+const db = require('../core/db')
+const enums = require('../core/enums')
+const constants = require('../core/constants')
+const cache = require('../core/cache')
+
+module.exports = {
+  findActiveTournament,
+  findActiveTournamentPlaying,
+
+  findTournamentEntries,
+  addTournamentEntry,
+  saveTournamentEntryOrdering,
+  removeTournamentEntry,
+
+  findTournamentScores,
+  refreshTournamentScores,
+  recalculateAllTournamentScores
+}
+
+async function findActiveTournament (options = {}) {
+  let statusTournamentAllowed = options.statusTournamentAllowed || [enums.EVENT.STATUS_TOURNAMENT.PLAYING]
+  let cacheKey = 'active-tournament-event-' + statusTournamentAllowed.join('-')
+  return cache.getOrFetch(cache.general, cacheKey, async function () {
+    return models.Event
+      .where('status_tournament', 'IN', statusTournamentAllowed)
+      .fetch({ withRelated: ['tournamentEntries'] })
+  })
+}
+// activeTournamentPlaying
+async function findActiveTournamentPlaying (entryId, options = {}) {
+  if (entryId) {
+    let activeTournamentEvent = await findActiveTournament(options)
+    if (activeTournamentEvent) {
+      let tEntries = activeTournamentEvent.related('tournamentEntries').models
+      for (let tEntry of tEntries) {
+        if (tEntry.get('entry_id') === entryId) {
+          return activeTournamentEvent
+        }
+      }
+    }
+  }
+  return null
+}
+
+async function findTournamentEntries (event, options = {}) {
+  if (options.withDetails) {
+    await event.load(['tournamentEntries.entry.userRoles', 'tournamentEntries.entry.details'])
+  } else {
+    await event.load(['tournamentEntries.entry.userRoles'])
+  }
+  return event.related('tournamentEntries').sortBy(tEntry => tEntry.get('ordering'))
+}
+
+async function addTournamentEntry (eventId, entryId) {
+  let tEntry = await _getTournamentEntry(eventId, entryId)
+  if (!tEntry) {
+    tEntry = new models.TournamentEntry({
+      event_id: eventId,
+      entry_id: entryId
+    })
+    await tEntry.save()
+  }
+  return tEntry
+}
+
+async function saveTournamentEntryOrdering (eventId, entryId, ordering) {
+  let tEntry = await _getTournamentEntry(eventId, entryId)
+  tEntry.set('ordering', ordering)
+  return tEntry.save()
+}
+
+async function removeTournamentEntry (eventId, entryId) {
+  let tEntry = await _getTournamentEntry(eventId, entryId)
+  if (tEntry) {
+    await tEntry.destroy()
+  }
+}
+
+async function findTournamentScores (event) {
+  return models.TournamentScore
+    .where('event_id', event.get('id'))
+    .where('score', '>', 0)
+    .orderBy('ranking')
+    .fetchAll({ withRelated: ['user'] })
+}
+
+async function refreshTournamentScores (highScoreService, event, triggeringUserId = null, impactedEntryScores = [], options = {}) {
+  let statusTournamentAllowed = options.statusTournamentAllowed || [enums.EVENT.STATUS_TOURNAMENT.PLAYING]
+  if (!statusTournamentAllowed.includes(event.get('status_tournament'))) {
+    return
+  }
+
+  let tEntries = await findTournamentEntries(event)
+  let entries = tEntries.map(tEntry => tEntry.related('entry'))
+  let tournamentScoresHaveChanged = false
+
+  // Make sure tournament scores are updated for both the user who directly saved a score (we at least need to refresh his entry_scores cache),
+  // plus the other users that were pushed down in the rankings in the process (skip those who are out of the points though, nothing will change for them)
+  let userIdsToUpdate = []
+  if (triggeringUserId) {
+    userIdsToUpdate.push(triggeringUserId)
+  }
+  for (let entryScore of impactedEntryScores) {
+    if (entryScore.get('ranking') &lt;= constants.TOURNAMENT_POINTS_DISTRIBUTION.length + 1) { // include 11th player in case we need to remove his point
+      if (!userIdsToUpdate.includes(entryScore.get('user_id'))) {
+        userIdsToUpdate.push(entryScore.get('user_id'))
+      }
+    }
+  }
+
+  // Recalculate tournament scores
+  for (let userIdToUpdate of userIdsToUpdate) {
+    tournamentScoresHaveChanged = (await refreshTournamentScoresForUser(highScoreService, event.get('id'), entries, userIdToUpdate)) ||
+      tournamentScoresHaveChanged
+  }
+
+  // Refresh tournament rankings if there was any actual change to the scores
+  if (tournamentScoresHaveChanged) {
+    await _refreshTournamentRankings(event)
+  }
+}
+
+async function refreshTournamentScoresForUser (highScoreService, eventId, entries, userId) {
+  let totalScore = 0
+  let entryScores = {}
+  let entryScoresMap = await highScoreService.findUserScoresMapByEntry(userId, entries)
+  for (let entryId in entryScoresMap) {
+    let entryScore = entryScoresMap[entryId]
+    if (entryScore &amp;&amp; entryScore.get('active') &amp;&amp; entryScore.get('ranking') &lt;= constants.TOURNAMENT_POINTS_DISTRIBUTION.length) {
+      let entryPoints = constants.TOURNAMENT_POINTS_DISTRIBUTION[entryScore.get('ranking') - 1]
+      totalScore += entryPoints
+      entryScores[entryId] = { score: entryScore.get('score') }
+      if (entryPoints) {
+        entryScores[entryId].ranking = entryScore.get('ranking')
+      }
+    }
+  }
+  return _saveTournamentScore(eventId, userId, totalScore, entryScores)
+}
+
+async function _saveTournamentScore (eventId, userId, score, entryScores) {
+  // Fetch
+  let tournamentScoreKeys = {
+    event_id: eventId,
+    user_id: userId
+  }
+  let tournamentScore = await models.TournamentScore
+    .where(tournamentScoreKeys)
+    .fetch()
+
+  // Create if missing
+  if (!tournamentScore) {
+    tournamentScore = new models.TournamentScore({
+      event_id: eventId,
+      user_id: userId
+    })
+  }
+
+  // Update &amp; save
+  let tournamentScoreHasChanged = tournamentScore.get('score') !== score
+  tournamentScore.set({
+    'score': score,
+    'entry_scores': entryScores
+  })
+  await tournamentScore.save()
+  return tournamentScoreHasChanged
+}
+
+async function _refreshTournamentRankings (event) {
+  if ([enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED].includes(event.get('status_tournament'))) {
+    let tScores = await models.TournamentScore
+      .where('event_id', event.get('id'))
+      .orderBy('score', 'DESC')
+      .orderBy('updated_at')
+      .fetchAll()
+
+    await db.transaction(async function (t) {
+      let ranking = 1
+      for (let tScore of tScores.models) {
+        if (tScore.get('ranking') !== ranking) {
+          tScore.set('ranking', ranking)
+          tScore.save(null, { transacting: t })
+        }
+        ranking++
+      }
+    })
+  }
+}
+
+async function recalculateAllTournamentScores (highScoreService, event, onlyForEntries = []) {
+  // Pick entries for which to fetch scores
+  let tournamentEntries = await findTournamentEntries(event)
+  let fullRefresh = !onlyForEntries || onlyForEntries.length === 0
+  let refreshScoresForEntries = onlyForEntries
+  if (fullRefresh) {
+    refreshScoresForEntries = tournamentEntries.map(tEntry => tEntry.related('entry'))
+  }
+
+  // List all users having entry scores
+  let entryUserIds = await db.knex('entry_score')
+    .where('entry_id', 'IN', refreshScoresForEntries.map(entry => entry.get('id')))
+    .select('user_id')
+    .distinct()
+
+  // Append all users having a score in the tournament (might no longer have entry scores)
+  let tournamentUserIds = []
+  if (fullRefresh) {
+    tournamentUserIds = await db.knex('tournament_score')
+      .where('event_id', event.get('id'))
+      .select('user_id')
+      .distinct()
+  }
+
+  // Request tournament score refresh for each user
+  let allUserIds = entryUserIds.map(data => data['user_id'])
+  for (let data of tournamentUserIds) {
+    if (allUserIds.indexOf(data['user_id']) === -1) allUserIds.push(data['user_id'])
+  }
+  for (let userId of allUserIds) {
+    await refreshTournamentScoresForUser(highScoreService, event.get('id'), refreshScoresForEntries, userId)
+  }
+  await _refreshTournamentRankings(event)
+}
+
+async function _getTournamentEntry (eventId, entryId) {
+  return models.TournamentEntry.where({
+    event_id: eventId,
+    entry_id: entryId
+  })
+    .fetch()
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

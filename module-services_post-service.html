@@ -89,7 +89,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line3">line 3</a>
+        <a href="services_article-service.js.html">services/article-service.js</a>, <a href="services_article-service.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -99,6 +99,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -161,7 +163,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_article-service.js.html">services/article-service.js</a>, <a href="services_article-service.js.html#line3">line 3</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -171,6 +173,8 @@
 
     
 </dl>
+
+
 
 
 
@@ -197,7 +201,9 @@
 
     
 
-     
+    
+
+    
 
     
 
@@ -211,14 +217,16 @@
 
     
 
-    <h4 class="name" id="~createComment"><span class="type-signature">(inner) </span>createComment<span class="signature">(user, node, (optional))</span><span class="type-signature"> &rarr; {Comment}</span></h4>
+    
+    <h4 class="name" id="~createComment"><span class="type-signature">(inner) </span>createComment<span class="signature">(user, node, (optional), requestAnonymous)</span><span class="type-signature"> &rarr; {Comment}</span></h4>
+    
 
     
 
 
 
 <div class="description">
-    <p>Creates a new comment.</p>
+    <p>Creates and persists a new comment.</p>
 </div>
 
 
@@ -323,6 +331,29 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>requestAnonymous</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>(optional)</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -360,7 +391,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line287">line 287</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line286">line 286</a>
     </li></ul></dd>
     
 
@@ -404,12 +435,16 @@
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~createPost"><span class="type-signature">(inner) </span>createPost<span class="signature">(user, eventId)</span><span class="type-signature"> &rarr; {Post}</span></h4>
+    
 
     
 
@@ -532,7 +567,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line261">line 261</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line259">line 259</a>
     </li></ul></dd>
     
 
@@ -576,12 +611,169 @@
 
 
 
+
+
         
             
 
     
 
+    
+    <h4 class="name" id="~deleteComment"><span class="type-signature">(inner) </span>deleteComment<span class="signature">(comment)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Deletes the given comment</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>comment</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Comment</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line321">line 321</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="~findArticle"><span class="type-signature">(inner) </span>findArticle<span class="signature">(article)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
 
     
 
@@ -681,7 +873,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_article-service.js.html">services/article-service.js</a>, <a href="services_article-service.js.html#line24">line 24</a>
+        <a href="services_article-service.js.html">services/article-service.js</a>, <a href="services_article-service.js.html#line23">line 23</a>
     </li></ul></dd>
     
 
@@ -729,12 +921,16 @@
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findCommentsByUser"><span class="type-signature">(inner) </span>findCommentsByUser<span class="signature">(user)</span><span class="type-signature"> &rarr; {Collection(Comment)}</span></h4>
+    
 
     
 
@@ -834,7 +1030,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line159">line 159</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line158">line 158</a>
     </li></ul></dd>
     
 
@@ -878,12 +1074,16 @@
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findCommentsByUserAndEvent"><span class="type-signature">(inner) </span>findCommentsByUserAndEvent<span class="signature">(userId, eventId)</span><span class="type-signature"> &rarr; {Collection(Comment)}</span></h4>
+    
 
     
 
@@ -1006,7 +1206,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line171">line 171</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line170">line 170</a>
     </li></ul></dd>
     
 
@@ -1050,12 +1250,16 @@
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findCommentsSortedForDisplay"><span class="type-signature">(inner) </span>findCommentsSortedForDisplay<span class="signature">(node)</span><span class="type-signature"> &rarr; {array(Comment)}</span></h4>
+    
 
     
 
@@ -1158,7 +1362,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line148">line 148</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line147">line 147</a>
     </li></ul></dd>
     
 
@@ -1202,12 +1406,16 @@
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findCommentsToUser"><span class="type-signature">(inner) </span>findCommentsToUser<span class="signature">(user, options)</span><span class="type-signature"> &rarr; {Collection(Comment)}</span></h4>
+    
 
     
 
@@ -1331,7 +1539,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line190">line 190</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line189">line 189</a>
     </li></ul></dd>
     
 
@@ -1375,12 +1583,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findLatestAnnouncement"><span class="type-signature">(inner) </span>findLatestAnnouncement<span class="signature">(options)</span><span class="type-signature"> &rarr; {Post}</span></h4>
+    
 
     
 
@@ -1480,7 +1692,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line125">line 125</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -1524,12 +1736,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findOwnAnonymousCommentIds"><span class="type-signature">(inner) </span>findOwnAnonymousCommentIds<span class="signature">(user, nodeId, nodeType)</span><span class="type-signature"> &rarr; {array(number)}</span></h4>
+    
 
     
 
@@ -1719,12 +1935,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findPost"><span class="type-signature">(inner) </span>findPost<span class="signature">(options)</span><span class="type-signature"> &rarr; {Post}</span></h4>
+    
 
     
 
@@ -1824,7 +2044,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line107">line 107</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line108">line 108</a>
     </li></ul></dd>
     
 
@@ -1868,12 +2088,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findPosts"><span class="type-signature">(inner) </span>findPosts<span class="signature">(options)</span><span class="type-signature"> &rarr; {array(Post)}</span></h4>
+    
 
     
 
@@ -1973,7 +2197,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line59">line 59</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line60">line 60</a>
     </li></ul></dd>
     
 
@@ -2017,12 +2241,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~isOwnAnonymousComment"><span class="type-signature">(inner) </span>isOwnAnonymousComment<span class="signature">(comment, user)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
 
     
 
@@ -2145,7 +2373,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line240">line 240</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line239">line 239</a>
     </li></ul></dd>
     
 
@@ -2189,12 +2417,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~isPast"><span class="type-signature">(inner) </span>isPast<span class="signature">(time)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    
 
     
 
@@ -2294,7 +2526,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line41">line 41</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line42">line 42</a>
     </li></ul></dd>
     
 
@@ -2338,12 +2570,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~refreshCommentCount"><span class="type-signature">(inner) </span>refreshCommentCount<span class="signature">(node)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -2446,7 +2682,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line299">line 299</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line310">line 310</a>
     </li></ul></dd>
     
 
@@ -2472,12 +2708,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~wasEdited"><span class="type-signature">(inner) </span>wasEdited<span class="signature">(model)</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    
 
     
 
@@ -2577,7 +2817,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line50">line 50</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line51">line 51</a>
     </li></ul></dd>
     
 
@@ -2618,6 +2858,8 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 </dl>
 
     
+
+
 
 
 
@@ -2702,7 +2944,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line3">line 3</a>
+        <a href="services_article-service.js.html">services/article-service.js</a>, <a href="services_article-service.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -2712,6 +2954,8 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
     
 </dl>
+
+
 
 
 
@@ -2774,7 +3018,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_article-service.js.html">services/article-service.js</a>, <a href="services_article-service.js.html#line3">line 3</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -2784,6 +3028,8 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
     
 </dl>
+
+
 
 
 
@@ -2810,7 +3056,9 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
     
 
-     
+    
+
+    
 
     
 
@@ -2824,14 +3072,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
     
 
-    <h4 class="name" id="~createComment"><span class="type-signature">(inner) </span>createComment<span class="signature">(user, node, (optional))</span><span class="type-signature"> &rarr; {Comment}</span></h4>
+    
+    <h4 class="name" id="~createComment"><span class="type-signature">(inner) </span>createComment<span class="signature">(user, node, (optional), requestAnonymous)</span><span class="type-signature"> &rarr; {Comment}</span></h4>
+    
 
     
 
 
 
 <div class="description">
-    <p>Creates a new comment.</p>
+    <p>Creates and persists a new comment.</p>
 </div>
 
 
@@ -2936,6 +3186,29 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>requestAnonymous</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>(optional)</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -2973,7 +3246,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line287">line 287</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line286">line 286</a>
     </li></ul></dd>
     
 
@@ -3017,12 +3290,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~createPost"><span class="type-signature">(inner) </span>createPost<span class="signature">(user, eventId)</span><span class="type-signature"> &rarr; {Post}</span></h4>
+    
 
     
 
@@ -3145,7 +3422,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line261">line 261</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line259">line 259</a>
     </li></ul></dd>
     
 
@@ -3189,12 +3466,169 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
+    <h4 class="name" id="~deleteComment"><span class="type-signature">(inner) </span>deleteComment<span class="signature">(comment)</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Deletes the given comment</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>comment</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Comment</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line321">line 321</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="~findArticle"><span class="type-signature">(inner) </span>findArticle<span class="signature">(article)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
 
     
 
@@ -3294,7 +3728,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_article-service.js.html">services/article-service.js</a>, <a href="services_article-service.js.html#line24">line 24</a>
+        <a href="services_article-service.js.html">services/article-service.js</a>, <a href="services_article-service.js.html#line23">line 23</a>
     </li></ul></dd>
     
 
@@ -3342,12 +3776,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findCommentsByUser"><span class="type-signature">(inner) </span>findCommentsByUser<span class="signature">(user)</span><span class="type-signature"> &rarr; {Collection(Comment)}</span></h4>
+    
 
     
 
@@ -3447,7 +3885,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line159">line 159</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line158">line 158</a>
     </li></ul></dd>
     
 
@@ -3491,12 +3929,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findCommentsByUserAndEvent"><span class="type-signature">(inner) </span>findCommentsByUserAndEvent<span class="signature">(userId, eventId)</span><span class="type-signature"> &rarr; {Collection(Comment)}</span></h4>
+    
 
     
 
@@ -3619,7 +4061,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line171">line 171</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line170">line 170</a>
     </li></ul></dd>
     
 
@@ -3663,12 +4105,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findCommentsSortedForDisplay"><span class="type-signature">(inner) </span>findCommentsSortedForDisplay<span class="signature">(node)</span><span class="type-signature"> &rarr; {array(Comment)}</span></h4>
+    
 
     
 
@@ -3771,7 +4217,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line148">line 148</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line147">line 147</a>
     </li></ul></dd>
     
 
@@ -3815,12 +4261,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findCommentsToUser"><span class="type-signature">(inner) </span>findCommentsToUser<span class="signature">(user, options)</span><span class="type-signature"> &rarr; {Collection(Comment)}</span></h4>
+    
 
     
 
@@ -3944,7 +4394,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line190">line 190</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line189">line 189</a>
     </li></ul></dd>
     
 
@@ -3988,12 +4438,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findLatestAnnouncement"><span class="type-signature">(inner) </span>findLatestAnnouncement<span class="signature">(options)</span><span class="type-signature"> &rarr; {Post}</span></h4>
+    
 
     
 
@@ -4093,7 +4547,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line125">line 125</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -4137,12 +4591,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findOwnAnonymousCommentIds"><span class="type-signature">(inner) </span>findOwnAnonymousCommentIds<span class="signature">(user, nodeId, nodeType)</span><span class="type-signature"> &rarr; {array(number)}</span></h4>
+    
 
     
 
@@ -4332,12 +4790,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findPost"><span class="type-signature">(inner) </span>findPost<span class="signature">(options)</span><span class="type-signature"> &rarr; {Post}</span></h4>
+    
 
     
 
@@ -4437,7 +4899,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line107">line 107</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line108">line 108</a>
     </li></ul></dd>
     
 
@@ -4481,12 +4943,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~findPosts"><span class="type-signature">(inner) </span>findPosts<span class="signature">(options)</span><span class="type-signature"> &rarr; {array(Post)}</span></h4>
+    
 
     
 
@@ -4586,7 +5052,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line59">line 59</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line60">line 60</a>
     </li></ul></dd>
     
 
@@ -4630,12 +5096,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~isOwnAnonymousComment"><span class="type-signature">(inner) </span>isOwnAnonymousComment<span class="signature">(comment, user)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
 
     
 
@@ -4758,7 +5228,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line240">line 240</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line239">line 239</a>
     </li></ul></dd>
     
 
@@ -4802,12 +5272,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~isPast"><span class="type-signature">(inner) </span>isPast<span class="signature">(time)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    
 
     
 
@@ -4907,7 +5381,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line41">line 41</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line42">line 42</a>
     </li></ul></dd>
     
 
@@ -4951,12 +5425,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~refreshCommentCount"><span class="type-signature">(inner) </span>refreshCommentCount<span class="signature">(node)</span><span class="type-signature"></span></h4>
+    
 
     
 
@@ -5059,7 +5537,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line299">line 299</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line310">line 310</a>
     </li></ul></dd>
     
 
@@ -5085,12 +5563,16 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
             
 
     
 
+    
     <h4 class="name" id="~wasEdited"><span class="type-signature">(inner) </span>wasEdited<span class="signature">(model)</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    
 
     
 
@@ -5190,7 +5672,7 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line50">line 50</a>
+        <a href="services_post-service.js.html">services/post-service.js</a>, <a href="services_post-service.js.html#line51">line 51</a>
     </li></ul></dd>
     
 
@@ -5234,6 +5716,8 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 
 
 
+
+
         
     
 
@@ -5250,13 +5734,13 @@ This includes both &quot;@&quot;-mentions and all comments to the user posts &am
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:10 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

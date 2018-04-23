@@ -35,18 +35,19 @@
  */
 
 const config = require('../config')
+const enums = require('../core/enums')
 const db = require('../core/db')
 const models = require('../core/models')
 const constants = require('../core/constants')
 const cache = require('../core/cache')
 const postService = require('./post-service')
 const securityService = require('./security-service')
+const settingService = require('./setting-service')
 
 module.exports = {
   createEvent,
-  refreshEventReferences,
   areSubmissionsAllowed,
-  areVotesAllowed,
+  getDefaultDivision,
 
   findEventById,
   findEventByName,
@@ -62,18 +63,21 @@ module.exports = {
   searchForExternalEvents,
   deleteEntry,
 
+  findGames,
   findLatestEntries,
   findEntryById,
   findLatestUserEntry,
   findUserEntries,
   findUserEntryForEvent,
   findEntryInvitesForUser,
+  findRescueEntries,
   countEntriesByEvent,
-  findGames,
 
   refreshCommentScore,
+  refreshEventReferences,
   refreshEntryPlatforms,
-  refreshUserCommentScoresOnNode
+  refreshUserCommentScoresOnNode,
+  refreshEventCounts
 }
 
 /**
@@ -82,36 +86,27 @@ module.exports = {
  */
 function createEvent () {
   return new models.Event({
-    'status': 'pending',
-    'status_rules': 'disabled',
-    'status_theme': 'disabled',
-    'status_entry': 'off',
-    'status_results': 'disabled',
+    'status': enums.EVENT.STATUS.PENDING,
+    'status_rules': enums.EVENT.STATUS_RULES.DISABLED,
+    'status_theme': enums.EVENT.STATUS_THEME.DISABLED,
+    'status_entry': enums.EVENT.STATUS_ENTRY.OFF,
+    'status_results': enums.EVENT.STATUS_RESULTS.DISABLED,
+    'divisions': {
+      'solo': '48 hours&lt;br />Everything from scratch',
+      'team': '48 hours&lt;br />Everything from scratch',
+      'unranked': '72 hours&lt;br />No rankings, just feedback'
+    },
     'published_at': new Date() // TODO Let admins choose when to publish
   })
 }
 
-/**
- * Refreshes various models that cache the event name.
- * Call this after changing the name of an event.
- * @param {Event} event
- */
-async function refreshEventReferences (event) {
-  // TODO Transaction
-  let entryCollection = await models.Entry.where('event_id', event.id).fetchAll()
-  for (let entry of entryCollection.models) {
-    entry.set('event_name', event.get('name'))
-    await entry.save()
-  }
-}
-
 function areSubmissionsAllowed (event) {
-  return event &amp;&amp; event.get('status') === 'open' &amp;&amp;
-      (event.get('status_entry') === 'open' || event.get('status_entry') === 'open_unranked')
+  return event &amp;&amp; event.get('status') === enums.EVENT.STATUS.OPEN &amp;&amp;
+      ([enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get('status_entry')))
 }
 
-function areVotesAllowed (event) {
-  return event &amp;&amp; event.get('status_results') === 'voting'
+function getDefaultDivision (event) {
+  return Object.keys(event.get('divisions'))[0]
 }
 
 /**
@@ -122,7 +117,7 @@ function areVotesAllowed (event) {
 async function findEventById (id) {
   if (!cache.eventsById.get(id)) {
     let event = await models.Event.where('id', id)
-        .fetch({ withRelated: ['details'] })
+      .fetch({ withRelated: ['details'] })
     cache.eventsById.set(id, event)
   }
   return cache.eventsById.get(id)
@@ -136,7 +131,7 @@ async function findEventById (id) {
 async function findEventByName (name) {
   if (!cache.eventsByName.get(name)) {
     let event = await models.Event.where('name', name)
-        .fetch({ withRelated: ['details'] })
+      .fetch({ withRelated: ['details'] })
     cache.eventsByName.set(name, event)
   }
   return cache.eventsByName.get(name)
@@ -144,7 +139,7 @@ async function findEventByName (name) {
 
 /**
  * Fetches all models.Events and their Entries.
- * @param {object} options Allowed: status name
+ * @param {object} options Allowed: status name sortDatesAscending
  * @returns {array(Event)}
  */
 async function findEvents (options = {}) {
@@ -153,7 +148,11 @@ async function findEvents (options = {}) {
   if (options.status) query = query.where('status', options.status)
   if (options.statusNot) query = query.where('status', '&lt;>', options.statusNot)
   if (options.name) query = query.where('name', options.name)
-  return query.fetchAll()
+  if (options.pageSize) {
+    return query.fetchPage(options)
+  } else {
+    return query.fetchAll(options)
+  }
 }
 
 /**
@@ -163,7 +162,7 @@ async function findEvents (options = {}) {
  */
 async function findEventByStatus (status) {
   let sortOrder = 'ASC'
-  if (status === 'closed') {
+  if (status === enums.EVENT.STATUS.CLOSED) {
     sortOrder = 'DESC'
   }
   return models.Event.where('status', status)
@@ -254,7 +253,7 @@ function searchForTeamMembers (nameFragment, eventId, entry) {
     .where(alreadyEnteredWhereClause)
 
   return db.knex
-    .select('user.id', 'user.title', 'entered.node_id')
+    .select('user.id', 'user.title', 'user.avatar', 'entered.node_id')
     .from('user')
     .leftJoin(alreadyEntered.as('entered'), 'user.id', '=', 'entered.user_id')
     .where('name', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${nameFragment}%`)
@@ -262,19 +261,21 @@ function searchForTeamMembers (nameFragment, eventId, entry) {
 
 async function findTeamMembers (entry, user = null) {
   if (entry &amp;&amp; entry.get('id')) {
+    await entry.load(['invites.invited', 'userRoles.user'])
     let members = entry.sortedUserRoles()
       .map(role => ({
         id: role.get('user_id'),
         text: role.get('user_title') || role.get('user_name'),
+        avatar: role.related('user').get('avatar'),
         locked: role.get('permission') === constants.PERMISSION_MANAGE,
         invite: false
       }))
 
-    await entry.load('invites')
     entry.related('invites').each(invite => {
       members.push({
         id: invite.get('invited_user_id'),
         text: invite.get('invited_user_title'),
+        avatar: invite.related('invited').get('avatar'),
         locked: false,
         invite: true
       })
@@ -285,6 +286,7 @@ async function findTeamMembers (entry, user = null) {
     return [{
       id: user.get('id'),
       text: user.get('title'),
+      avatar: user.get('avatar'),
       locked: true,
       invite: false
     }]
@@ -316,7 +318,7 @@ function setTeamMembers (currentUser, entry, userIds) {
     let numAdded = 0
     let alreadyEntered = []
 
-    if (entry.get('division') === 'solo') {
+    if (entry.get('division') === enums.DIVISION.SOLO) {
       // Force only keeping the owner role
       numRemoved = await transaction('user_role')
         .whereNot('permission', constants.PERMISSION_MANAGE)
@@ -343,8 +345,8 @@ function setTeamMembers (currentUser, entry, userIds) {
 
       // List users who entered the event in this or another team, or already have an invite.
       let existingRolesQuery = transaction('user_role')
-          .select('user_id', 'user_title', 'node_id')
-          .whereIn('user_id', userIds)
+        .select('user_id', 'user_title', 'node_id')
+        .whereIn('user_id', userIds)
       if (entry.get('event_id')) {
         alreadyEntered = await existingRolesQuery.andWhere({
           node_type: 'entry',
@@ -358,9 +360,9 @@ function setTeamMembers (currentUser, entry, userIds) {
       }
       if (entry.get('id')) {
         let pendingInvites = await transaction('entry_invite')
-            .select('invited_user_id', 'invited_user_title')
-            .whereIn('invited_user_id', userIds)
-            .where('entry_id', entry.get('id'))
+          .select('invited_user_id', 'invited_user_title')
+          .whereIn('invited_user_id', userIds)
+          .where('entry_id', entry.get('id'))
         pendingInvites.map(pendingInvite => {
           alreadyEntered.push({
             user_id: pendingInvite.invited_user_id,
@@ -386,7 +388,7 @@ function setTeamMembers (currentUser, entry, userIds) {
           invited_user_title: toCreateUserRow.title || toCreateUserRow.name,
           permission: constants.PERMISSION_WRITE
         })
-        await invite.save()
+        await invite.save(null, { transacting: transaction })
 
         if (toCreateUserRow.id === currentUser.get('id')) {
           acceptInvite(currentUser, entry)
@@ -411,7 +413,7 @@ async function acceptInvite (user, entry) {
     let invite = await models.EntryInvite.where({
       entry_id: entry.get('id'),
       invited_user_id: user.get('id')
-    }).fetch()
+    }).fetch({ transacting: transaction })
 
     if (invite) {
       // Check if the user role exists yet
@@ -419,7 +421,7 @@ async function acceptInvite (user, entry) {
         node_id: entry.get('id'),
         node_type: 'entry',
         user_id: user.get('id')
-      }).fetch()
+      }).fetch({ transacting: transaction })
 
       // Create or promote role
       if (userRole) {
@@ -501,9 +503,9 @@ async function deleteEntry (entry) {
     await post.save()
   })
 
-  return db.transaction(async function (t) {
+  await db.transaction(async function (t) {
     // Delete user roles manually (because no cascading)
-    await entry.load('userRoles')
+    await entry.load('userRoles', { transacting: t })
     entry.related('userRoles').each(function (userRole) {
       userRole.destroy({ transacting: t })
     })
@@ -511,6 +513,109 @@ async function deleteEntry (entry) {
     // Delete entry
     await entry.destroy({ transacting: t })
   })
+}
+
+/**
+ * @param options {object} nameFragment eventId userId platforms tags pageSize page withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
+ */
+async function findGames (options = {}) {
+  let query = models.Entry.forge().query(function (qb) {
+    return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
+  })
+
+  // Sorting
+  if (!options.count) {
+    if (options.sortByRatingCount) {
+      query = query.query(function (qb) {
+        return qb.orderBy('entry_details.rating_count')
+      })
+    } else if (options.sortByRating) {
+      query = query.query(function (qb) {
+        return qb.leftJoin('event', 'entry.event_id', 'event.id')
+          .where(function () {
+            this.where('event.status', enums.EVENT.STATUS.CLOSED).orWhereNull('event.status')
+          })
+          .orderByRaw('entry_details.rating_1 DESC ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
+          .orderBy('entry.feedback_score', 'DESC')
+      })
+    } else if (options.sortByRanking) {
+      query = query.query(function (qb) {
+        return qb.leftJoin('event', 'entry.event_id', 'event.id')
+          .where(function () {
+            this.where('event.status', enums.EVENT.STATUS.CLOSED).orWhereNull('event.status')
+          })
+          .orderByRaw('entry_details.ranking_1 ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
+          .orderBy('entry.created_at', 'DESC')
+          .orderBy('entry.division')
+      })
+    } else if (options.eventId !== null) {
+      query = query.orderBy('entry.feedback_score', 'DESC')
+    }
+    query = query.orderBy('entry.created_at', 'DESC')
+  }
+
+  // Filters
+  if (options.search) query = query.where('entry.title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
+  if (options.eventId !== undefined) query = query.where('entry.event_id', options.eventId)
+  if (options.platforms) {
+    query = query.query(function (qb) {
+      return qb.leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
+        .whereIn('entry_platform.platform_id', options.platforms)
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score',
+          'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
+    })
+  }
+  if (options.tags) {
+    query = query.query(function (qb) {
+      return qb.leftJoin('entry_tag', 'entry_tag.entry_id', 'entry.id')
+        .whereIn('entry_tag.tag_id', options.tags.map(tag => tag.id))
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score',
+          'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
+    })
+  }
+  if (options.divisions) {
+    query = query.where('division', 'in', options.divisions)
+  }
+  if (options.notReviewedById) {
+    query = query.query(function (qb) {
+      return qb.distinct()
+        // Hide rated
+        .leftJoin('entry_vote', function () {
+          this.on('entry_vote.entry_id', '=', 'entry.id')
+            .andOn('entry_vote.user_id', '=', options.notReviewedById)
+        })
+        .whereNull('entry_vote.id')
+        // Hide commented
+        .where('entry.id', 'NOT IN', db.knex('comment')
+          .where({
+            'user_id': options.notReviewedById,
+            'node_type': 'entry'
+          })
+          .select('node_id'))
+    })
+  }
+  if (options.userId) {
+    query = query.query((qb) => {
+      return qb.innerJoin('user_role', 'entry.id', 'user_role.node_id')
+        .where({
+          'user_role.user_id': options.userId,
+          'user_role.node_type': 'entry'
+        })
+    })
+  }
+
+  // Pagination settings
+  if (options.pageSize === undefined) options.pageSize = 30
+  if (options.withRelated === undefined) options.withRelated = ['event', 'userRoles']
+
+  // Fetch
+  if (options.count) {
+    return query.count()
+  } else if (options.pageSize) {
+    return query.fetchPage(options)
+  } else {
+    return query.fetchAll(options)
+  }
 }
 
 /**
@@ -534,9 +639,11 @@ async function findLatestEntries () {
  * @param id {id} models.Entry ID
  * @returns {Entry}
  */
-async function findEntryById (id) {
-  return models.Entry.where('id', id)
-    .fetch({ withRelated: ['details', 'event', 'userRoles'] })
+async function findEntryById (id, options = {}) {
+  if (!options.withRelated) {
+    options.withRelated = ['details', 'event', 'userRoles', 'tags']
+  }
+  return models.Entry.where('id', id).fetch(options)
 }
 
 /**
@@ -559,7 +666,7 @@ async function findUserEntries (user) {
     // TODO Sort by publication date
     if (a.get('event_id')) {
       if (b.get('event_id')) {
-        return a.get('created_at') - b.get('created_at')
+        return b.get('created_at') - a.get('created_at')
       } else {
         return -1
       }
@@ -580,8 +687,12 @@ async function findUserEntries (user) {
  * @param  {User} user
  * @return {Entry|null}
  */
-async function findLatestUserEntry (user) {
-  let entryCollection = await models.Entry.query((qb) => {
+async function findLatestUserEntry (user, options = {}) {
+  if (!options.withRelated) {
+    options.withRelated = ['userRoles', 'event']
+  }
+
+  return models.Entry.query((qb) => {
     qb.distinct()
       .innerJoin('user_role', 'entry.id', 'user_role.node_id')
       .whereNotNull('entry.event_id')
@@ -589,13 +700,13 @@ async function findLatestUserEntry (user) {
         'user_role.user_id': user.get('id'),
         'user_role.node_type': 'entry'
       })
-  }).orderBy('created_at', 'desc')
-  .fetchAll({ withRelated: ['userRoles', 'event'] })
-  return entryCollection.models[0]
+  })
+    .orderBy('created_at', 'desc')
+    .fetch(options)
 }
 
 /**
- * Retrieves the entry a user submited to an event
+ * Retrieves the entry a user submitted to an event
  * @param  {User} user
  * @param  {integer} eventId
  * @return {Entry|null}
@@ -623,6 +734,28 @@ async function findEntryInvitesForUser (user, options) {
     .fetchAll(options)
 }
 
+async function findRescueEntries (event, user, options = {}) {
+  let minRatings = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
+
+  if (options.pageSize === undefined) options.pageSize = 4
+  if (options.withRelated === undefined) options.withRelated = ['details', 'userRoles']
+
+  return models.Entry.where('entry.event_id', event.get('id'))
+    .where('division', '&lt;>', enums.DIVISION.UNRANKED)
+    .query(function (qb) {
+      return qb.leftJoin('entry_details', 'entry_details.entry_id', 'entry.id')
+        .where('entry_details.rating_count', '>', Math.floor(minRatings / 4)) // do not rescue those who really didn't participate
+        .where('entry_details.rating_count', '&lt;', minRatings)
+        .leftJoin('entry_vote', function () {
+          this.on('entry_vote.entry_id', '=', 'entry.id')
+            .andOn('entry_vote.user_id', '=', user.get('id'))
+        })
+        .whereNull('entry_vote.id') // hide rated games
+    })
+    .orderBy('entry_details.rating_count', 'desc')
+    .fetchPage(options)
+}
+
 async function countEntriesByEvent (event) {
   let count = await models.Entry
     .where('event_id', event.get('id'))
@@ -631,38 +764,16 @@ async function countEntriesByEvent (event) {
 }
 
 /**
- * @param options {object} nameFragment eventId platforms pageSize page withRelated
+ * Refreshes various models that cache the event name.
+ * Call this after changing the name of an event.
+ * @param {Event} event
  */
-async function findGames (options = {}) {
-  let query = models.Entry.forge()
-  if (!options.count) {
-    if (options.sortByScore) {
-      query = query.orderBy('feedback_score', 'DESC')
-    }
-    query = query.orderBy('created_at', 'DESC')
-  }
-  if (options.search) query = query.where('title', (config.DB_TYPE === 'postgresql') ? 'ILIKE' : 'LIKE', `%${options.search}%`)
-  if (options.eventId !== undefined) query = query.where('event_id', options.eventId)
-  if (options.platforms) {
-    query = query.query(function (qb) {
-      return qb.distinct()
-        .leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
-        .whereIn('entry_platform.platform_id', options.platforms)
-    })
-  }
-  if (options.divisions) {
-    query = query.where('division', 'in', options.divisions)
-  }
-
-  if (options.pageSize === undefined) options.pageSize = 30
-  if (options.withRelated === undefined) options.withRelated = ['event', 'userRoles']
-
-  if (options.count) {
-    return query.count()
-  } else if (options.pageSize) {
-    return query.fetchPage(options)
-  } else {
-    return query.fetchAll()
+async function refreshEventReferences (event) {
+  // TODO Transaction
+  let entryCollection = await models.Entry.where('event_id', event.id).fetchAll()
+  for (let entry of entryCollection.models) {
+    entry.set('event_name', event.get('name'))
+    await entry.save()
   }
 }
 
@@ -761,6 +872,42 @@ function _computeRawCommentScore (comment) {
     return 1
   }
 }
+
+/**
+ * Updates the event counters on an event
+ * @param  {Event} event
+ * @return {void}
+ */
+async function refreshEventCounts (event) {
+  let countByDivision = await db.knex('entry')
+    .count().select('division')
+    .where('event_id', event.get('id'))
+    .where('published_at', '&lt;=', new Date())
+    .groupBy('division')
+
+  let totalCount = 0
+  let divisionCounts = {}
+  for (let row of countByDivision) {
+    let count = parseInt(row['count'])
+    divisionCounts[row['division']] = count
+    totalCount += count
+  }
+  if (!event.relations.details) {
+    await event.load('details')
+  }
+
+  return db.transaction(async function (transaction) {
+    event.set('entry_count', totalCount)
+    await event.save(null, { transacting: transaction })
+
+    let details = event.related('details')
+    details.set('division_counts', divisionCounts)
+    await details.save(null, { transacting: transaction })
+
+    cache.eventsById.del(event.get('id'))
+    cache.eventsByName.del(event.get('name'))
+  })
+}
 </code></pre>
         </article>
     </section>
@@ -771,13 +918,13 @@ function _computeRawCommentScore (comment) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

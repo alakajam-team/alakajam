@@ -35,7 +35,6 @@
  */
 
 const sanitizeHtml = require('sanitize-html')
-const xss = require('xss')
 const validator = require('validator')
 const striptags = require('striptags')
 const showdown = require('showdown')
@@ -44,6 +43,8 @@ const slug = require('slug')
 const nunjucks = require('nunjucks')
 const removeMarkdown = require('remove-markdown')
 const url = require('url')
+const htmlToText = require('html-to-text')
+const TurndownService = require('turndown')
 const constants = require('../core/constants')
 const config = require('../config')
 
@@ -67,23 +68,30 @@ module.exports = {
   parseDateTime,
 
   markdownToHtml,
-  markdownToText
+  markdownToText,
+  htmlToMarkdown,
+  htmlToText: htmlToText.fromString
 }
 
 const MAX_POSTGRESQL_INTEGER = 2147483647
 
 // Libs init
 
+const showdownLazyPicturesExt = {
+  type: 'output',
+  filter: function (text, converter, options) {
+    if (text.includes('img')) {
+      text = text.replace(/&lt;img([^>]+)src="/g, '&lt;img$1data-src="')
+    }
+    return text
+  }
+}
 const showdownConverter = new showdown.Converter({
   tables: true,
   simplifiedAutoLink: true,
   strikethrough: true,
   simpleLineBreaks: true,
-  ghMentions: true,
-  ghMentionsLink: config.ROOT_URL + '/user/{u}'
-})
-const customXss = new xss.FilterXSS({
-  whiteList: Object.assign({}, xss.whiteList, constants.ALLOWED_POST_ATTRIBUTES)
+  extensions: [showdownLazyPicturesExt]
 })
 const sanitizeHtmlOptions = {
   allowedTags: constants.ALLOWED_POST_TAGS,
@@ -104,10 +112,10 @@ for (let allowedTag in constants.ALLOWED_POST_ATTRIBUTES) {
   }
 }
 
+const turndownService = new TurndownService()
+
 /**
  * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
- * If the string is meant for anything other than direct display (e.g. links, markdown...)
- * then this is not the right filter.
  * Use this on all string input unless you need more advanced escaping (e.g. for URLs, for Markdown)
  * @param  {string} string
  * @param  {string} maxLength
@@ -118,14 +126,13 @@ function sanitizeString (string, maxLength = 255) {
 }
 
 /**
- * Sanitizes Markdown form input (by fixing/stripping any embedded HTML tags)
+ * Sanitizes Markdown form input very lightly, just by limiting its length.
+ * Real sanitization needs to happen after converting it to HTML.
  * @param  {string} markdown
  * @return {string}
  */
-function sanitizeMarkdown (markdown, maxLength = 10000) {
-  return sanitizeHtml(markdown, sanitizeHtmlOptions)
-    .replace(/&amp;gt;/g, '>') // ">"s are used in quote blocks
-    .slice(0, maxLength)
+function sanitizeMarkdown (markdown, maxLength = constants.MAX_BODY_COMMENT) {
+  return markdown.slice(0, maxLength)
 }
 
 /**
@@ -184,29 +191,38 @@ function isSlug (string) {
 /**
  * Checks whether the string is in an array of allowed values
  * @param  {string} string
- * @param  {array(string)} values
+ * @param  {array(string)|object} values
  * @return {Boolean}
  */
 function isIn (string, values) {
-  return string &amp;&amp; validator.isIn(string, values)
+  if (string) {
+    if (typeof values === 'object') {
+      return string &amp;&amp; validator.isIn(string, Object.values(values))
+    } else {
+      return string &amp;&amp; validator.isIn(string, values)
+    }
+  }
 }
 
 /**
  * Checks whether the string is in an integer
- * @param  {string} string
+ * @param  {string|number} string
+ * @param  {object} options (optional) min max lt gt
  * @return {Boolean}
  */
-function isInt (string) {
-  return string &amp;&amp; validator.isInt(string)
+function isInt (input, options = {}) {
+  return (input || input === 0) &amp;&amp; ((typeof input === 'number' &amp;&amp; Number.isInteger(input)) ||
+    validator.isInt(input, options))
 }
 
 /**
  * Checks whether the string is in a float
- * @param  {string} string
+ * @param  {string|number} string
+ * @param  {object} options (optional) min max lt gt
  * @return {Boolean}
  */
-function isFloat (string) {
-  return string &amp;&amp; validator.isFloat(string)
+function isFloat (input, options = {}) {
+  return (input || input === 0) &amp;&amp; (typeof input === 'number' || validator.isFloat(input, options))
 }
 
 /**
@@ -248,18 +264,40 @@ function parseDateTime (string) {
  * @return {string}
  */
 function markdownToHtml (markdown) {
-  let html = showdownConverter.makeHtml(markdown)
-  let safeHtml = customXss.process(html)
+  // Github-style mentions parsing
+  // (adapted from https://github.com/showdownjs/showdown/blob/master/src/subParsers/makehtml/anchors.js)
+  markdown = (markdown || '').replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,[\]()]|\s|$)/gmi, function (wm, st, escape, mentions, username) {
+    if (escape === '\\') {
+      return st + mentions
+    } else {
+      return st +
+        '&lt;a href="' + config.ROOT_URL + '/user/' + username + '">' +
+        mentions.replace(/_/g, '\\_') + // Don't trigger italics tags
+        '&lt;/a>'
+    }
+  })
+
+  const unsafeHtml = showdownConverter.makeHtml(markdown)
+  const safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)
   return safeHtml
 }
 
 /**
  * Converts the given Markdown to single-line text
  * @param  {string} markdown
- * @return {string}
+ * @return {string} text without markup, but *should not be trusted* as safe HTML!
  */
 function markdownToText (markdown) {
-  return removeMarkdown(sanitizeMarkdown(markdown)).replace(/\n\r/g, ' ')
+  return removeMarkdown(sanitizeMarkdown(markdown || '', constants.MAX_BODY_ANY)).replace(/\n\r/g, ' ')
+}
+
+/**
+ * Converts the given HTML string to Markdown
+ * @param  {string} html
+ * @return {string} Markdown
+ */
+function htmlToMarkdown (html) {
+  return turndownService.turndown(html || '')
 }
 </code></pre>
         </article>
@@ -271,13 +309,13 @@ function markdownToText (markdown) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>

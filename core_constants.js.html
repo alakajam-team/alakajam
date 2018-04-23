@@ -36,9 +36,10 @@
 const config = require('../config')
 
 const PERMISSION_READ = 'read'
+const PERMISSION_WATCH = 'watch'
 const PERMISSION_WRITE = 'write'
 const PERMISSION_MANAGE = 'manage'
-const ORDERED_PERMISSIONS = [PERMISSION_READ, PERMISSION_WRITE, PERMISSION_MANAGE]
+const ORDERED_PERMISSIONS = [PERMISSION_READ, PERMISSION_WATCH, PERMISSION_WRITE, PERMISSION_MANAGE]
 
 const SPECIAL_POST_TYPE_ANNOUNCEMENT = 'announcement'
 const SPECIAL_POST_TYPE_HIDDEN = 'hidden'
@@ -46,7 +47,6 @@ const SPECIAL_POST_TYPES = [SPECIAL_POST_TYPE_ANNOUNCEMENT, SPECIAL_POST_TYPE_HI
 
 const SETTING_FEATURED_EVENT_NAME = 'featured_event_name'
 const SETTING_FEATURED_POST_ID = 'featured_post_id'
-const SETTING_FEATURED_LINKS = 'featured_links'
 const SETTING_ARTICLE_SIDEBAR = 'article_sidebar'
 const SETTING_SESSION_KEY = 'session_key'
 const SETTING_INVITE_PASSWORD = 'invite_password'
@@ -56,18 +56,12 @@ const SETTING_EVENT_THEME_IDEAS_REQUIRED = 'event_theme_ideas_required'
 const SETTING_EVENT_THEME_ELIMINATION_MODULO = 'event_theme_elimination_modulo'
 const SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES = 'event_theme_elimination_min_notes'
 const SETTING_EVENT_THEME_SUGGESTIONS = 'event_theme_suggestions'
-
-const THEME_STATUS_OUT = 'out'
-const THEME_STATUS_ACTIVE = 'active'
-const THEME_STATUS_BANNED = 'banned'
-const THEME_STATUS_SHORTLIST = 'shortlist'
-const THEME_STATUS_DUPLICATE = 'duplicate'
+const SETTING_EVENT_OPEN_VOTING = 'event_open_voting'
 
 module.exports = {
   // Settings
   SETTING_FEATURED_EVENT_NAME,
   SETTING_FEATURED_POST_ID,
-  SETTING_FEATURED_LINKS,
   SETTING_ARTICLE_SIDEBAR,
   SETTING_SESSION_KEY,
   SETTING_INVITE_PASSWORD,
@@ -77,13 +71,15 @@ module.exports = {
   SETTING_EVENT_THEME_ELIMINATION_MODULO,
   SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
   SETTING_EVENT_THEME_SUGGESTIONS,
+  SETTING_EVENT_OPEN_VOTING,
   EDITABLE_SETTINGS: [SETTING_FEATURED_EVENT_NAME, SETTING_FEATURED_POST_ID, SETTING_ARTICLE_SIDEBAR, SETTING_EVENT_REQUIRED_ENTRY_VOTES,
     SETTING_EVENT_THEME_IDEAS_REQUIRED, SETTING_EVENT_THEME_ELIMINATION_MODULO, SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_SUGGESTIONS,
-    SETTING_FEATURED_LINKS],
-  JSON_EDIT_SETTINGS: [SETTING_ARTICLE_SIDEBAR, SETTING_FEATURED_LINKS],
+    SETTING_EVENT_OPEN_VOTING],
+  JSON_EDIT_SETTINGS: [SETTING_ARTICLE_SIDEBAR],
 
   // Security
   PERMISSION_READ,
+  PERMISSION_WATCH,
   PERMISSION_WRITE,
   PERMISSION_MANAGE,
   ORDERED_PERMISSIONS,
@@ -92,29 +88,22 @@ module.exports = {
   // Database
   DB_ILIKE: config.DB_TYPE.startsWith('sqlite') ? 'LIKE' : 'ILIKE',
 
-  // Themes
-  THEME_STATUS_OUT,
-  THEME_STATUS_ACTIVE,
-  THEME_STATUS_BANNED,
-  THEME_STATUS_SHORTLIST,
-  THEME_STATUS_DUPLICATE,
-  THEME_STATUS_LIST: [THEME_STATUS_OUT, THEME_STATUS_ACTIVE, THEME_STATUS_BANNED,
-    THEME_STATUS_SHORTLIST, THEME_STATUS_DUPLICATE],
-
   // Posts
   SPECIAL_POST_TYPE_ANNOUNCEMENT,
   SPECIAL_POST_TYPE_HIDDEN,
   SPECIAL_POST_TYPES,
   REQUIRED_ARTICLES: ['docs', 'faq'],
-  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'br', 'iframe', 'img', 'p'],
+  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'del', 'code', 'br', 'hr', 'iframe', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'ul', 'ol', 'li', 'video', 'source', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
   ALLOWED_POST_ATTRIBUTES: {
     'p': ['class'],
     'a': ['href', 'class', 'name'],
     'iframe': ['src', 'width', 'height', 'class', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
-    'img': ['src', 'width', 'height', 'class']
+    'img': ['src', 'data-src', 'width', 'height', 'class'],
+    'video': ['poster', 'preload', 'autoplay', 'muted', 'loop', 'webkit-playsinline', 'width', 'height', 'class'],
+    'source': ['src', 'type']
   },
   ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right', 'spoiler', 'indent'],
-  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com'],
+  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com', 'i.imgur.com'],
   ANONYMOUS_USER_ID: -1,
 
   // Dates
@@ -126,25 +115,33 @@ module.exports = {
   // Entries
   ENTRY_PLATFORM_DEFAULT_ICON: 'fa-file-o',
   ENTRY_PLATFORM_ICONS: {
-    'Windows': 'fa-windows',
-    'Linux': 'fa-linux',
-    'Mac': 'fa-apple',
-    'Web': 'fa-globe',
-    'Mobile': 'fa-mobile',
-    'Retro': 'fa-gamepad'
+    'Windows': 'fab fa-windows',
+    'Linux': 'fab fa-linux',
+    'Mac': 'fab fa-apple',
+    'Web': 'fas fa-globe',
+    'Mobile': 'fa fa-mobile-alt',
+    'Retro': 'fa fa-gamepad'
+  },
+  DIVISION_ICONS: {
+    'solo': 'user',
+    'team': 'users',
+    'ranked': 'flag-checkered',
+    'unranked': 'hand-peace-o'
   },
 
   // Events
   MAX_CATEGORY_COUNT: 6,
-  MINIMUM_REQUIRED_RATINGS: 1, // TODO Set reasonable value
+  TOURNAMENT_POINTS_DISTRIBUTION: [15, 12, 10, 8, 6, 5, 4, 3, 2, 1],
 
   // Misc
   ARTICLES_ROOT_URL: 'https://raw.githubusercontent.com/alakajam-team/alakajam/master/articles/',
-  ALLOWED_PICTURE_MIMETYPES: [
-    'image/png',
-    'image/jpeg',
-    'image/gif'
-  ]
+
+  // Limits
+  MAX_BODY_ANY: 100000,
+  MAX_BODY_POST: 100000,
+  MAX_BODY_USER_DETAILS: 100000,
+  MAX_BODY_ENTRY_DETAILS: 100000,
+  MAX_BODY_COMMENT: 10000
 
 }
 </code></pre>
@@ -157,13 +154,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#countEntriesByPlatform">countEntriesByPlatform</a></li><li><a href="global.html#createPlatform">createPlatform</a></li><li><a href="global.html#fetchAll">fetchAll</a></li><li><a href="global.html#fetchAllNames">fetchAllNames</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchMultipleNamed">fetchMultipleNamed</a></li><li><a href="global.html#searchPlatforms">searchPlatforms</a></li><li><a href="global.html#setEntryPlatforms">setEntryPlatforms</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Sep 29 2017 14:48:45 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
 </footer>
 
 <script> prettyPrint(); </script>
