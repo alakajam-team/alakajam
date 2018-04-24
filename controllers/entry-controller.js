@@ -173,7 +173,7 @@ async function editEntry (req, res) {
     let {fields, files} = await req.parseForm('picture')
 
     // Parse form data
-    let isExternalEvent = fields['external-event'] !== undefined
+    let isExternalEvent = fields['external-event'] !== undefined || !event
     let links = []
     let i = 0
     if (fields['submit-links']) {
@@ -290,7 +290,7 @@ async function editEntry (req, res) {
       errorMessage = 'Too many links (max allowed: around 7)'
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
       errorMessage = 'Submissions are closed for this event'
-    } else if (fields.division && !isExternalEvent && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
+    } else if (fields.division && !isExternalEvent && event && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
       errorMessage = 'Invalid division'
     }
 
