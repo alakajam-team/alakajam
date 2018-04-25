@@ -164,7 +164,7 @@ async function configure (app) {
     }
   })
   nj.env.addFilter('leftpad', function (number, toLength, char) {
-    return leftPad(number, toLength, char)
+    return number ? leftPad(number, toLength, char) : ''
   })
   nj.env.addFilter('paginationBasePath', function (path) {
     let basePath = path.replace(/[?&]p=[^&]*/g, '')

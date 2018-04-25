@@ -43,11 +43,11 @@
             <div class="form-inline">
               {% set hasScore = entryScore.get('score') %}
               <label for="score-mn" class="visible-xs">Minutes</label>
-              <input type="number" name="score-mn" class="form-control input-lg" value="{{ (scoreMn or '0') if hasScore else (scoreMn or '') | int }}" placeholder="minutes" style="width: 120px" min="0" max="999" /><span class="hidden-xs"> ' </span>
+              <input type="number" name="score-mn" class="form-control input-lg no-spinner" value="{{ (scoreMn or '0') if hasScore else (scoreMn or '') | int }}" placeholder="minutes" style="width: 120px" min="0" max="999" /><span class="hidden-xs"> ' </span>
               <label for="score-mn" class="visible-xs">Seconds</label>
-              <input type="number" name="score-s" class="form-control input-lg" value="{{ ((scoreS or '0') if hasScore else (scoreS or '')) | int | leftpad(2, '0') }}" placeholder="seconds" style="width: 120px" min="0" max="60" /><span class="hidden-xs"> " </span>
+              <input type="text" name="score-s" class="form-control input-lg js-fixed-digits" data-digits="2" value="{{ ((scoreS or '0') if hasScore else (scoreS or '')) | int | leftpad(2, '0') }}" placeholder="seconds" style="width: 120px" /><span class="hidden-xs"> " </span>
               <label for="score-mn" class="visible-xs">Milliseconds</label>
-              <input type="number" name="score-ms" class="form-control input-lg" value="{{ ((scoreMs or '0') if hasScore else (scoreMs or '')) | int | leftpad(3, '0') }}" placeholder="milliseconds" style="width: 170px" min="0" max="999" /> 
+              <input type="text" name="score-ms" class="form-control input-lg js-fixed-digits" value="{{ ((scoreMs or '0') if hasScore else (scoreMs or '')) | int | leftpad(3, '0') }}" placeholder="milliseconds" style="width: 170px" /> 
             </div>
           {% else %}
           <input type="text" name="score" class="form-control input-lg" value="{{ entryScore.get('score') | float }}" />
