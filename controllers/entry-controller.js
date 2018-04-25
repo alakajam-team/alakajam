@@ -343,7 +343,7 @@ async function editEntry (req, res) {
       }
 
       // Save entry: Persist changes and side effects
-      let eventCountRefreshNeeded = event && entry.hasChanged('published_at')
+      let eventCountRefreshNeeded = event && (isCreation || entry.hasChanged('published_at'))
       await entryDetails.save()
       if (entry.hasChanged('status_high_score') && entry.get('status_high_score') !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
         highscoreService.refreshEntryRankings(entry) // corner case: owner toggles lower-is-better after some scores are submitted
@@ -381,22 +381,25 @@ async function editEntry (req, res) {
  * Deletes an entry
  */
 async function deleteEntry (req, res) {
-  let entry = res.locals.entry
-  if (res.locals.user && entry && securityService.canUserManage(res.locals.user, entry, { allowMods: true })) {
+  let { entry, event, user } = res.locals
+
+  if (user && entry && securityService.canUserManage(user, entry, { allowMods: true })) {
     await entry.load('posts')
     entry.related('posts').forEach(async function (post) {
       post.set('entry_id', null)
       await post.save()
     })
     await eventService.deleteEntry(entry)
-    eventService.refreshEventCounts(entry.related('event')) // No need to await
+    if (event) {
+      eventService.refreshEventCounts(event) // No need to await
+    }
     cache.user(res.locals.user).del('latestEntry')
   }
 
-  if (res.locals.event) {
-    res.redirect(templating.buildUrl(res.locals.event, 'event'))
+  if (event) {
+    res.redirect(templating.buildUrl(event, 'event'))
   } else {
-    res.redirect(templating.buildUrl(res.locals.user, 'user', 'entries'))
+    res.redirect(templating.buildUrl(user, 'user', 'entries'))
   }
 }
 
@@ -529,7 +532,7 @@ async function submitScore (req, res) {
         errorMessage = 'Invalid minutes'
         minutes = 0
       }
-      if (!forms.isInt(seconds, { min: 0, max: 60 })) {
+      if (!forms.isInt(seconds, { min: 0, max: 59 })) {
         errorMessage = 'Invalid seconds'
         seconds = 0
       }
