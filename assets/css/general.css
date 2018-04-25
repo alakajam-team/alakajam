@@ -176,6 +176,11 @@ input[type=number].no-spinner {
   }
 }
 
+input[type=submit][disabled] {
+  /* Don't show a frightening "forbidden" cursor when disabling form submission after the first click */
+  cursor: default;
+}
+
 .btn {
   @apply --main-font;
   border-radius: 2px;
