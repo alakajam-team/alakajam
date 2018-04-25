@@ -68,10 +68,17 @@ async function createTag (value) {
 async function updateEntryTags (entry, tagInfo) {
   const entryId = entry.get('id')
 
-  // Create missing tags
+  // Make sure missing tags haven't been created since
   let tagIds = tagInfo.map(strId => parseInt(strId))
     .filter(intId => !isNaN(intId) && intId > 0)
   let tagLabels = tagInfo.filter(label => isNaN(parseInt(label)) && label.trim())
+  let actuallyExistingTags = await models.Tag.where('value', 'in', tagLabels).fetchAll()
+  actuallyExistingTags.each(function (tag) {
+    tagIds.push(tag.get('id'))
+    tagLabels.splice(tagLabels.indexOf(tag.get('value')), 1)
+  })
+
+  // Create missing tags
   for (let tagLabel of tagLabels) {
     let createdTag = await createTag(tagLabel)
     tagIds.push(createdTag.get('id'))
