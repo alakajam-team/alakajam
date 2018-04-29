@@ -214,7 +214,22 @@
 
         <div class="form-group">
           <label>Links</label>
-          <div class="js-links" data-entry-links="{{ entry.get('links') | default([]) | dump }}"></div>
+          <div class="js-links" data-entry-links="{{ entry.get('links') | default([]) | dump }}">
+            <!-- No-JavaScript link support -->
+            <input type="hidden" name="submit-links" value="true" />
+            {% set linkCount = entry.get('links').length if (entry.get('links').length > 3) else 3 %}
+            {% for linkIndex in range(0, linkCount) %}
+              {% set link = entry.get('links')[linkIndex] if entry.get('links').length > linkIndex else {} %}
+              <div class="row" style="margin-bottom: 5px">
+                <div class="col-xs-3">
+                  <input type="text" name="label{{ loop.index0 }}" class="js-link-label form-control" placeholder="Label" value="{{ link.label }}" />
+                </div>
+                <div class="col-xs-8">
+                  <input type="url" class="js-link-url form-control" name="url{{ loop.index0 }}" placeholder="URL" value="{{ link.url }}">
+                </div>
+              </div>
+            {% endfor %}
+          </div>
         </div>
         <div class="form-group">
           <label for="body">Detailed description</label>
