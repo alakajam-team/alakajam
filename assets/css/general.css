@@ -176,9 +176,11 @@ input[type=number].no-spinner {
   }
 }
 
-input[type=submit][disabled] {
-  /* Don't show a frightening "forbidden" cursor when disabling form submission after the first click */
+input[type=submit][data-disabled] {
+  /* Disable form submission after the first click */
   cursor: default;
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 .btn {
