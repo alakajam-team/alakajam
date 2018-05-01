@@ -94,7 +94,7 @@
 {% macro printProof(score) %}
   {% set proof = score.get('proof') %}
   {% if proof %}
-  <a href="{{ proof }}" target="alakajam_proof">
+  <a href="{{ proof }}?{{ score.get('updated_at') }}" target="alakajam_proof">
     <span class="fa fa-{{ 'video' if proof.includes('youtube.com') or proof.includes('twitch') else 'camera' }}"></span>
   </a>
   {% endif %}
