@@ -36,7 +36,7 @@
           <span class="fa fa-save"></span>
         </button>
         {% if canRefreshResult %}
-        <button type="submit" name="refresh" value="{{ tournamentEntry.get('id') }}" class="btn btn-default" onclick="return confirm('Refresh all tournament scores involving &quot;{{ entry.get('title').replace('\'', '\\\'') | escape }}&quot;?')">
+        <button type="submit" name="refresh" class="btn btn-default" onclick="return confirm('Refresh all tournament scores involving &quot;{{ entry.get('title').replace('\'', '\\\'') | escape }}&quot;?')">
           <span class="fa fa-sync"></span>
         </button>
         {% endif %}

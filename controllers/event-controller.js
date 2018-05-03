@@ -932,8 +932,12 @@ async function editEventTournamentGames (req, res) {
 
     // Refresh scores
     if (fields.refresh) {
-      let onlyRefreshEntries = forms.isId(fields.refresh) ? [await eventService.findEntryById(fields.refresh)] : null
-      await eventTournamentService.recalculateAllTournamentScores(highScoreService, event, onlyRefreshEntries)
+      let onlyRefreshEntries = forms.isId(fields.refresh) ? [await eventService.findEntryById(fields.id)] : null
+      if (onlyRefreshEntries && onlyRefreshEntries[0]) {
+        await eventTournamentService.recalculateAllTournamentScores(highScoreService, event, onlyRefreshEntries)
+      } else {
+        errorMessage = 'Entry not found with ID ' + fields.id
+      }
     }
   }
 
