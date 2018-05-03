@@ -419,13 +419,15 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
 
     // Cache invalidation: Users @mentioned in the comment
     let body = comment.get('body')
-    body.split(' ').forEach(function (word) {
-      if (word.length > 0 && word[0] === '@') {
-        let userCache = cache.user(word.slice(1))
-        userCache.del('toUserCollection')
-        userCache.del('unreadNotifications')
-      }
-    })
+    if (typeof body === 'string') {
+      body.split(' ').forEach(function (word) {
+        if (word.length > 0 && word[0] === '@') {
+          let userCache = cache.user(word.slice(1))
+          userCache.del('toUserCollection')
+          userCache.del('unreadNotifications')
+        }
+      })
+    }
 
     // Cache invalidation: User's own comment history
     cache.user(currentUser.get('name')).del('byUserCollection')
