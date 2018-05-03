@@ -37,7 +37,7 @@ async function findHighScores (entry, options = {}) {
   if (!options.withSuspended) {
     query.where('active', true)
   }
-  query.orderBy('score', _rankingDir(entry))
+  query.orderBy('ranking')
 
   let fetchOptions = {
     withRelated: ['user']

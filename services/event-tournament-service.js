@@ -130,8 +130,24 @@ async function refreshTournamentScores (highScoreService, event, triggeringUserI
 }
 
 async function refreshTournamentScoresForUser (highScoreService, eventId, entries, userId) {
+  // Fetch or create tournament score
+  let tournamentScoreKeys = {
+    event_id: eventId,
+    user_id: userId
+  }
+  let tournamentScore = await models.TournamentScore
+    .where(tournamentScoreKeys)
+    .fetch()
+  if (!tournamentScore) {
+    tournamentScore = new models.TournamentScore({
+      event_id: eventId,
+      user_id: userId
+    })
+  }
+
+  // (Re)-calculate score info
   let totalScore = 0
-  let entryScores = {}
+  let entryScores = tournamentScore.get('entry_scores')
   let entryScoresMap = await highScoreService.findUserScoresMapByEntry(userId, entries)
   for (let entryId in entryScoresMap) {
     let entryScore = entryScoresMap[entryId]
@@ -144,31 +160,11 @@ async function refreshTournamentScoresForUser (highScoreService, eventId, entrie
       }
     }
   }
-  return _saveTournamentScore(eventId, userId, totalScore, entryScores)
-}
-
-async function _saveTournamentScore (eventId, userId, score, entryScores) {
-  // Fetch
-  let tournamentScoreKeys = {
-    event_id: eventId,
-    user_id: userId
-  }
-  let tournamentScore = await models.TournamentScore
-    .where(tournamentScoreKeys)
-    .fetch()
-
-  // Create if missing
-  if (!tournamentScore) {
-    tournamentScore = new models.TournamentScore({
-      event_id: eventId,
-      user_id: userId
-    })
-  }
 
   // Update & save
-  let tournamentScoreHasChanged = tournamentScore.get('score') !== score
+  let tournamentScoreHasChanged = tournamentScore.get('score') !== totalScore
   tournamentScore.set({
-    'score': score,
+    'score': totalScore,
     'entry_scores': entryScores
   })
   await tournamentScore.save()
