@@ -357,7 +357,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
     if (forms.isId(fields.id)) {
       comment = await postService.findCommentById(fields.id)
       hasWritePermissions = securityService.canUserManage(currentUser, comment, { allowMods: true }) ||
-          await postService.isOwnAnonymousComment(comment, currentUser)
+          (comment && await postService.isOwnAnonymousComment(comment, currentUser))
     }
 
     if (hasWritePermissions) {
