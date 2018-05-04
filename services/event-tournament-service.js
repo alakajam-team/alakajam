@@ -88,8 +88,8 @@ async function removeTournamentEntry (eventId, entryId) {
 
 async function findOrCreateTournamentScore (eventId, userId) {
   let attributes = {
-      'event_id': eventId,
-      'user_id': userId
+    'event_id': eventId,
+    'user_id': userId
   }
   let tScore = await models.TournamentScore
     .where(attributes)
@@ -187,7 +187,6 @@ async function refreshTournamentScoresForUser (highScoreService, eventId, entrie
 }
 
 async function _refreshTournamentRankings (event) {
-  console.log("refresh rankings")
   if ([enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED].includes(event.get('status_tournament'))) {
     let tScores = await models.TournamentScore
       .where('event_id', event.get('id'))
