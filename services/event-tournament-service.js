@@ -21,6 +21,7 @@ module.exports = {
   saveTournamentEntryOrdering,
   removeTournamentEntry,
 
+  findOrCreateTournamentScore,
   findTournamentScores,
   refreshTournamentScores,
   recalculateAllTournamentScores
@@ -85,6 +86,20 @@ async function removeTournamentEntry (eventId, entryId) {
   }
 }
 
+async function findOrCreateTournamentScore (eventId, userId) {
+  let attributes = {
+      'event_id': eventId,
+      'user_id': userId
+  }
+  let tScore = await models.TournamentScore
+    .where(attributes)
+    .fetch()
+  if (!tScore) {
+    tScore = new models.TournamentScore(attributes)
+  }
+  return tScore
+}
+
 async function findTournamentScores (event) {
   return models.TournamentScore
     .where('event_id', event.get('id'))
@@ -147,7 +162,7 @@ async function refreshTournamentScoresForUser (highScoreService, eventId, entrie
 
   // (Re)-calculate score info
   let totalScore = 0
-  let entryScores = tournamentScore.get('entry_scores')
+  let entryScores = tournamentScore.get('entry_scores') || {}
   let entryScoresMap = await highScoreService.findUserScoresMapByEntry(userId, entries)
   for (let entryId in entryScoresMap) {
     let entryScore = entryScoresMap[entryId]
@@ -172,6 +187,7 @@ async function refreshTournamentScoresForUser (highScoreService, eventId, entrie
 }
 
 async function _refreshTournamentRankings (event) {
+  console.log("refresh rankings")
   if ([enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED].includes(event.get('status_tournament'))) {
     let tScores = await models.TournamentScore
       .where('event_id', event.get('id'))
@@ -179,8 +195,8 @@ async function _refreshTournamentRankings (event) {
       .orderBy('updated_at')
       .fetchAll()
 
+    let ranking = 1
     await db.transaction(async function (t) {
-      let ranking = 1
       for (let tScore of tScores.models) {
         if (tScore.get('ranking') !== ranking) {
           tScore.set('ranking', ranking)
@@ -189,6 +205,9 @@ async function _refreshTournamentRankings (event) {
         ranking++
       }
     })
+
+    event.set('entry_count', ranking - 1)
+    await event.save()
   }
 }
 

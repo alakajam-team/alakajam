@@ -40,7 +40,7 @@
     {% for score in scoreCollection.models %}
       {% set isOwnScore = 'active' if userScore and score.get('id') === userScore.get('id') %}
       <tr class="{{ 'active' if isOwnScore }}">
-        <td>{{ printRanking(score.get('ranking')) }}</td>
+        <td><a name="score-rank-{{ score.get('ranking') }}"></a>{{ printRanking(score.get('ranking')) }}</td>
         <td>{{ userMacros.userLink(score.related('user')) }}</td>
         <td><b>{{ printScore(entry, score, isOwnScore) }}</b></td>
         {% if options.showDates %}<td style="font-size: 0.8rem">{{ score.get('updated_at') | date }}</td>{% endif %}

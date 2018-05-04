@@ -28,5 +28,6 @@
 @import "./user.css";
 @import "./event.css";
 @import "./event-themes.css";
+@import "./event-tournament.css";
 @import "./event-results.css";
 @import "./entry.css";

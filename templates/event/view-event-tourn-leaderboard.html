@@ -61,7 +61,14 @@
               </td>
               {% set entryScores = tournamentScore.get('entry_scores') %}
               {% for entry in entries %}
-                <td class="text-center visible-md visible-lg">{{ scoreMacros.printRanking(entryScores[entry.get('id')].ranking) if entryScores[entry.get('id')] }}</td>
+                <td class="text-center visible-md visible-lg">
+                  {% if entryScores[entry.get('id')] %}
+                    {% set ranking = entryScores[entry.get('id')].ranking %}
+                    <a href="{{ buildUrl(entry, 'entry', 'scores') }}#score-rank-{{ ranking }}" class="tournament-ranking">
+                      {{ scoreMacros.printRanking(ranking) }}
+                    </a>
+                  {% endif %}
+                </td>
               {% endfor %}
               <td><b>{{ tournamentScore.get('score') | int }}</b></td>
             </tr>
