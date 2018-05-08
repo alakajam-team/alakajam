@@ -205,8 +205,13 @@ async function _refreshTournamentRankings (event) {
       }
     })
 
-    event.set('entry_count', ranking - 1)
-    await event.save()
+    let entryCount = ranking - 1
+    if (entryCount !== event.get('entry_count')) {
+      event.set('entry_count', entryCount)
+      await event.save()
+      cache.eventsById.del(event.get('id'))
+      cache.eventsByName.del(event.get('name'))
+    }
   }
 }
 

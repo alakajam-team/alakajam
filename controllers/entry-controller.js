@@ -436,7 +436,7 @@ async function saveCommentOrVote (req, res) {
   let {entry, event, user} = res.locals
 
   // Security checks
-  if (!user) {
+  if (!user || !event) {
     res.errorPage(403)
     return
   }
