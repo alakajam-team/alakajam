@@ -533,7 +533,7 @@ async function findGames (options = {}) {
     query = query.query(function (qb) {
       return qb.leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
         .whereIn('entry_platform.platform_id', options.platforms)
-        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score',
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score', 'entry.created_at',
           'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
     })
   }
@@ -541,7 +541,7 @@ async function findGames (options = {}) {
     query = query.query(function (qb) {
       return qb.leftJoin('entry_tag', 'entry_tag.entry_id', 'entry.id')
         .whereIn('entry_tag.tag_id', options.tags.map(tag => tag.id))
-        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score',
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score', 'entry.created_at',
           'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
     })
   }
@@ -550,7 +550,7 @@ async function findGames (options = {}) {
   }
   if (options.notReviewedById) {
     query = query.query(function (qb) {
-      return qb.distinct()
+      return qb
         // Hide rated
         .leftJoin('entry_vote', function () {
           this.on('entry_vote.entry_id', '=', 'entry.id')
