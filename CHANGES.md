@@ -2,6 +2,36 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### May 30th
+
+* Let users delete their accounts
+* Add a Privacy policy page
+* Add CSRF protection on all forms
+
+## [May 1st: 1st AKJ Tournament launch](https://alakajam.com/post/497)
+
+### April 29th
+
+* Make entry submission work with JavaScript-free browsers
+
+### April 24th
+
+* Added support for button styling in posts and comments
+
+### April 18th
+
+* Support for enabling high scores on any game (using pictures as proofs)
+* Support for organizing tournaments where users have to beat high scores on a selection of games
+* Event banners can be set by admins as backgrounds on various pages
+
+### April 4th
+
+* Game importer for itch.io
+
+### March 27th
+
+* Large client-side code refactoring
+
 ### March 14th
 
 * Slightly reorganize the Events page (now more mobile-friendly)
