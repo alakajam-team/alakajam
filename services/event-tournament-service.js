@@ -6,6 +6,7 @@
  * @module services/event-tournament-service
  */
 
+const leftPad = require('left-pad')
 const models = require('../core/models')
 const db = require('../core/db')
 const enums = require('../core/enums')
@@ -187,21 +188,47 @@ async function refreshTournamentScoresForUser (highScoreService, eventId, entrie
 }
 
 async function _refreshTournamentRankings (event) {
-  if ([enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED].includes(event.get('status_tournament'))) {
+  let statusTournamentAllowed = [enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED]
+  if (statusTournamentAllowed.includes(event.get('status_tournament'))) {
+    // Fetch ALL tournament scores
+    let tournamentEntries = await findTournamentEntries(event, {statusTournamentAllowed})
     let tScores = await models.TournamentScore
       .where('event_id', event.get('id'))
       .orderBy('score', 'DESC')
       .orderBy('updated_at')
       .fetchAll()
 
+    // Break ties
+    let tScoreGroups = tScores.models.reduce(function (prev, current) {
+      // 1. Regroup ties together
+      let score = current.get('score')
+      if (!prev[score]) prev[score] = []
+      prev[score].push(current)
+      return prev
+    }, [])
+    let tScoresWithoutTies = []
+    for (let score in tScoreGroups) {
+      // 2. Sort tied scores
+      tScoreGroups[score].sort(function (a, b) {
+        return _tieBreakScore(b, tournamentEntries).localeCompare(_tieBreakScore(a, tournamentEntries))
+      })
+
+      // 3. Append them back to the list
+      tScoresWithoutTies = tScoresWithoutTies.concat(tScoreGroups[score])
+    }
+
     let ranking = 1
     await db.transaction(async function (t) {
-      for (let tScore of tScores.models) {
-        if (tScore.get('ranking') !== ranking) {
-          tScore.set('ranking', ranking)
-          tScore.save(null, { transacting: t })
+      for (let tScore of tScoresWithoutTies) {
+        if (parseFloat(tScore.get('score')) > 0) {
+          if (tScore.get('ranking') !== ranking) {
+            tScore.set('ranking', ranking)
+            tScore.save(null, { transacting: t })
+          }
+          ranking++
+        } else {
+          tScore.destroy({ transacting: t })
         }
-        ranking++
       }
     })
 
@@ -213,6 +240,35 @@ async function _refreshTournamentRankings (event) {
       cache.eventsByName.del(event.get('name'))
     }
   }
+}
+
+function _tieBreakScore (tScore, tournamentEntries) {
+  // Ties are broken by:
+  // 1. who has the most 1st places
+  // 2. who has the most 2nd places
+  // ...
+  // N+1. Who has the best ranking in the first tournament game
+  // N+2. Who has the best ranking in the 2nd tournament game
+  // ... (this always breaks ties)
+  let scoreData = tScore.get('entry_scores')
+  let points = 0
+  let suffix = []
+  if (scoreData) {
+    for (let entryId in scoreData) {
+      let ranking = scoreData[entryId].ranking
+      if (ranking <= 10) {
+        points += Math.pow(10, 10 - ranking)
+      }
+    }
+    for (let entry of tournamentEntries) {
+      let entryScoreInfo = scoreData[entry.get('entry_id')] || { ranking: 100000 }
+      suffix.push(leftPad(100000 - entryScoreInfo.ranking, 5, '0'))
+    }
+  }
+
+  // Example: 1010000000|99997-99999-00000 means the player had 1 bronze medal on the 1st game, 1 gold medal on the second, and did not play the third.
+  // Reverse alphabetical order provides the expected sorting result.
+  return leftPad(points, 10, '0') + '|' + suffix.join('-')
 }
 
 async function recalculateAllTournamentScores (highScoreService, event, onlyForEntries = []) {
