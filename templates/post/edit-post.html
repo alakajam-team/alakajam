@@ -28,6 +28,7 @@
   </div>
   
   <form method="post" class="js-warn-on-unsaved-changes">
+    {{ csrfToken() | safe }}
         
     {% if errorMessage %}
       <div class="alert alert-warning">{{ errorMessage }}</div>

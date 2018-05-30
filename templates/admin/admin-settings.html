@@ -6,6 +6,7 @@
 <h1>Settings</h1>
 {% if editSetting %}
 <form action="/admin/settings" method="post">
+  {{ csrfToken() | safe }}
   <div class="form-group">
     <label for="key">Key</label>
     <p>{{ editSetting.key }}</p>

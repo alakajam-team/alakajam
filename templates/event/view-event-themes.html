@@ -62,6 +62,8 @@
         </div>
 
         <form id="js-manage-themes" method="post" style="display: none" class="js-warn-on-unsaved-changes">
+          {{ csrfToken() | safe }}
+
           <h2>Theme ideas </h2>
           <div class="panel themes__ideas">
             {% set ideaRows = max(userThemes.length, maxThemeSuggestions) %}
@@ -138,6 +140,7 @@
                       <table>
                       <tr><td class="theme-past__buttons">
                         <form method="post">
+                          {{ csrfToken() | safe }}
                           <input type="hidden" name="action" value="vote" />
                           <input type="hidden" name="theme-id" value="{{ vote.get('theme_id') }}" />
                           <button name="upvote" class="btn {{ 'btn-success' if vote.get('score') > 0 else 'btn-default' }} btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>
@@ -169,8 +172,10 @@
         {% set shortlistVote = (user and event.get('status_theme') === 'shortlist') %}
         <div class="themes__shortlist">
           <form method="post" class="js-warn-on-unsaved-changes">
-            <h2>Shortlist ranking</h2> 
+            {{ csrfToken() | safe }}
             <input type="hidden" name="action" value="shortlist" />
+
+            <h2>Shortlist ranking</h2> 
             <input id="js-shortlist-votes" type="hidden" name="shortlist-votes" />
             <div class="well">
               <p>
@@ -247,6 +252,7 @@
   <table>
   <tr><td class="theme-vote__buttons">
     <form id="js-vote-form" method="post">
+      {{ csrfToken() | safe }}
       <input type="hidden" name="action" value="vote" />
       <input type="hidden" name="theme-id" id="js-theme-id" value="<%- theme.id %>" />
       <button id="js-upvote" name="upvote" class="btn btn-default"><span class="glyphicon glyphicon-arrow-up"></span></button>
@@ -273,6 +279,7 @@
       <table class="js-theme-vote-history-block" style="display: none">
       <tr><td class="theme-past__buttons">
         <form method="post">
+          {{ csrfToken() | safe }}
           <input type="hidden" name="action" value="vote" />
           <input type="hidden" name="theme-id" value="<%- theme.id %>" />
           <button name="upvote" class="btn <%- theme.upvote ? 'btn-success' : 'btn-default' %> btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></button>

@@ -89,7 +89,8 @@
 {% set entryDetails = entry.related('details') %}
 <div class="container">
   <form id="js-edit-entry-form" action="{{ buildUrl(entry, 'entry', 'create-entry' if not entry.get('id') else 'edit') }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
-
+    {{ csrfToken() | safe }}
+    
     <div class="row">
       <div class="col-md-12">
         <h1 id="js-title-display"></h1>

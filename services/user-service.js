@@ -25,6 +25,7 @@ module.exports = {
 
   register,
   authenticate,
+  deleteUser,
 
   setPassword,
   refreshUserReferences,
@@ -171,6 +172,20 @@ async function authenticate (name, password) {
     }
   }
   return false
+}
+
+/**
+ * Deletes an user, but only if it doesn't have any entries.
+ * @param {User} user
+ */
+async function deleteUser (user) {
+  await user.load('entries')
+  if (user.related('entries').length === 0) {
+    await user.destroy()
+    return {}
+  } else {
+    return { error: 'As a safety measure, you must delete or leave all your entries before deleting your account.' }
+  }
 }
 
 /**

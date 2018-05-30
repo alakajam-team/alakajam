@@ -41,8 +41,8 @@ async function anyPageMiddleware (req, res, next) {
   // Fetch current user
   await sessionService.restoreSessionIfNeeded(req, res)
   let userTask = null
-  if (req.session.userId) {
-    userTask = userService.findById(req.session.userId).then(function (user) {
+  if (req.userSession.userId) {
+    userTask = userService.findById(req.userSession.userId).then(function (user) {
       res.locals.user = user
 
       // Fetch comment to edit

@@ -24,6 +24,7 @@
         Comments <span class="legend">({{ post.get('comment_count') or '0' }})</span>
         {% if user %}
         <form method="post" class="comment__subscribe" action="{{ buildUrl(post, 'post', 'watch') }}">
+          {{ csrfToken() | safe }}
           <!-- Being subscribed to a post = having a user right. Only allow removing the right-->
           {% if isUserWatching(user, post) %}
             {% if canUserWrite(user, post) %}
@@ -37,7 +38,7 @@
         </form>
         {% endif %}
       </h2>
-      {{ postMacros.comments(sortedComments, user, {allowMods: true, editComment: editComment}) }}
+      {{ postMacros.comments(sortedComments, user, {csrfToken: csrfToken, allowMods: true, editComment: editComment}) }}
     </div>
   </div>
 </div>

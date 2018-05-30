@@ -51,6 +51,7 @@
 </b>
 
 <form method="post" class="js-warn-on-unsaved-changes">
+  {{ csrfToken() | safe }}
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">

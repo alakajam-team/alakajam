@@ -106,7 +106,7 @@
 {% macro comments(comments, readingUser, options) %}
 {% for comment in comments %}
   {% if options.editComment and options.editComment.id === comment.id %}
-    {{ commentEditor(comment, readingUser, options) }}
+    {{ commentEditor(comment, readingUser, options.csrfToken, options) }}
   {% else %}
     {% set author = comment.related('user') %}
     {% set node = comment.related('node') %}
@@ -172,7 +172,7 @@
 <div class="well">No comments.</div>
 {% endif %}
 
-{{ commentEditor(null, readingUser, options) if not options.readOnly }}
+{{ commentEditor(null, readingUser, options.csrfToken, options) if not options.readOnly }}
 
 <style type="text/css">
   .CodeMirror, .CodeMirror-scroll {
@@ -183,12 +183,13 @@
 {% endmacro %}
 
 
-{% macro commentEditor(comment, readingUser, options) %}
+{% macro commentEditor(comment, readingUser, csrfToken, options) %}
 {% set user = comment.related('user') if comment and comment.related('user') else readingUser %}
 {% set showAnon = options.allowAnonymous and not comment %}
 {% if user %}
 
 <form method="post" action="{{ buildUrl(comment, 'comment', 'edit') }}" class="comment js-warn-on-unsaved-changes">
+  {{ csrfToken() | safe }}
   <input type="hidden" name="action" value="comment" />
   <input type="hidden" name="id" value="{{ comment.id if comment }}" />
   <a class="comment__anchor" name="c{{ comment.id if comment }}"></a>

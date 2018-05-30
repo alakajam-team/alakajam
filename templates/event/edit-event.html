@@ -6,6 +6,7 @@
 <h1 id="title-display"></h1>
 
 <form action="{{ buildUrl(event, 'event', 'edit') }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
+{{ csrfToken() | safe }}
 
 <div class="panel">
 <ul class="nav nav-tabs nav-justified">

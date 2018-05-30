@@ -8,6 +8,7 @@
 
 {% if editPlatform %}
 <form action="/admin/platforms" method="post">
+  {{ csrfToken() | safe }}
   <div class="form-group">
     <label for="id">ID</label>
     <p>{{ editPlatform.get('id') or 'N.A.' }}</p>

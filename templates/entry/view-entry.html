@@ -74,6 +74,7 @@
               {% else %}
                 <p style="margin-bottom: -10px">This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
                 <form method="post" class="js-warn-on-unsaved-changes js-auto-submit" action="?#ratings">
+                  {{ csrfToken() | safe }}
                   <input type="hidden" name="action" value="vote" />
                   <p class="form-group">
                     {% set optouts = entry.related('details').get('optouts') or [] %}
@@ -176,7 +177,8 @@
         <p class="pull-right" style="line-height: 30px">This entry welcomes anonymous comments (<a href="/article/faq#anon-comment" target="_blank">help</a>)</p>
       {% endif %}
       <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
-      {{ postMacros.comments(sortedComments, user, { allowMods: true, editComment: editComment, allowAnonymous: entry.get('allow_anonymous'), editableAnonComments: editableAnonComments }) }}
+      {{ postMacros.comments(sortedComments, user, { csrfToken: csrfToken, allowMods: true, editComment: editComment, 
+        allowAnonymous: entry.get('allow_anonymous'), editableAnonComments: editableAnonComments }) }}
 
     </div>
 

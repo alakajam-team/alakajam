@@ -178,9 +178,19 @@ async function dashboardSettings (req, res) {
 
   if (req.method === 'POST') {
     let {fields, files} = await req.parseForm('avatar')
-    if (!res.headersSent) { // FIXME Why?
-      let dashboardUser = res.locals.dashboardUser
+    let dashboardUser = res.locals.dashboardUser
 
+    if (fields.delete) {
+      // Account deletion
+      let result = await userService.deleteUser(res.locals.dashboardUser)
+      if (!result.error) {
+        sessionService.invalidateSession(req, res)
+        res.redirect('/')
+        return
+      } else {
+        errorMessage = result.error
+      }
+    } else {
       if (!forms.isEmail(fields.email)) {
         errorMessage = 'Invalid email'
       } else if (fields['social_web'] && !forms.isURL(fields['social_web'])) {

@@ -112,20 +112,8 @@ async function viewPost (req, res) {
   let post = res.locals.post
   if (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, post, { allowMods: true })) {
-    let context = {
-      sortedComments: await postService.findCommentsSortedForDisplay(post)
-    }
-
-    // Attach related entry/event
-    if (post.get('event_id')) {
-      if (post.related('event').id) {
-        context.relatedEvent = post.related('event')
-      }
-      if (post.related('entry').id && !post.get('special_post_type')) {
-        context.relatedEntry = post.related('entry')
-      }
-    }
-
+    let context = await buildPostContext(post)
+    context.sortedComments = await postService.findCommentsSortedForDisplay(post)
     res.render('post/view-post', context)
   } else {
     res.errorPage(403)
@@ -265,13 +253,16 @@ async function savePost (req, res) {
 }
 
 async function buildPostContext (post) {
-  // Fetch related event info
+  // Fetch related event & entry info
   let context = {
     post,
     allEvents: (await eventService.findEvents()).models
   }
   if (post.get('event_id')) {
     context.relatedEvent = await eventService.findEventById(post.get('event_id'))
+  }
+  if (post.related('entry').id && !post.get('special_post_type')) {
+    context.relatedEntry = post.related('entry')
   }
   context.specialPostType = post.get('special_post_type')
   return context

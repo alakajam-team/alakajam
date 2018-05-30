@@ -15,6 +15,7 @@
 const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
+const expressSession = require('express-session')
 const cookies = require('cookies')
 const multer = require('multer')
 const bodyParser = require('body-parser')
@@ -23,6 +24,7 @@ const moment = require('moment')
 const nunjucks = require('nunjucks')
 const randomKey = require('random-key')
 const leftPad = require('left-pad')
+const csurf = require('csurf')
 const log = require('./log')
 const config = require('../config')
 const constants = require('../core/constants')
@@ -70,8 +72,13 @@ async function configure (app) {
   // Session management
   let sessionKey = await findOrCreateSessionKey()
   app.use(cookies.express([sessionKey]))
+  app.use(expressSession({
+    secret: randomKey.generate(),
+    resave: false,
+    saveUninitialized: false
+  }))
 
-  // Remaining static files
+  // Static files
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
   // Templating
@@ -189,24 +196,6 @@ async function configure (app) {
     return nunjucks.runtime.markSafe(jsonString)
   })
 
-  // Templating: rendering context
-  app.use(function templateTooling (req, res, next) {
-    // Allow anyone to display an error page
-    res.errorPage = (code, message) => errorPage(req, res, code, message, app.locals.devMode)
-
-    // Context made available anywhere
-    let nativeRender = res.render
-    res.render = function (template, context) {
-      let mergedContext = Object.assign({
-        rootUrl: config.ROOT_URL
-      }, res.locals, context)
-      nativeRender.call(res, template, mergedContext)
-      res.rendered = true
-    }
-
-    next()
-  })
-
   // Multer (form parsing/file upload)
   app.use(bodyParser.urlencoded({ extended: false }))
   let uploadStorage = multer.diskStorage({
@@ -256,13 +245,43 @@ async function configure (app) {
       callback(null, res.locals.form)
     }
   })
-  app.use(function (req, res, next) {
+  app.use(async function (req, res, next) {
     // usage: let {fields, files} = await req.parseForm()
     req.parseForm = async function (uploadInfo) {
       return doParseForm(req, res, uploadInfo)
     }
     res.on('finish', cleanupFormFilesCallback(req, res))
     res.on('close', cleanupFormFilesCallback(req, res))
+
+    if (req.method !== 'GET') {
+      // Needed for CSRF check
+      await req.parseForm()
+    }
+    next()
+  })
+
+  // CSRF protection
+  app.use(csurf({
+    cookie: false,
+    ignoreMethods: ['GET']
+  }))
+
+  // Templating: rendering context
+  app.use(function templateTooling (req, res, next) {
+    // Allow anyone to display an error page
+    res.errorPage = (code, message) => errorPage(req, res, code, message, app.locals.devMode)
+
+    // Context made available anywhere
+    let nativeRender = res.render
+    res.render = function (template, context) {
+      let mergedContext = Object.assign({
+        rootUrl: config.ROOT_URL,
+        csrfToken: () => '<input type="hidden" name="_csrf" value="' + req.csrfToken() + '" />'
+      }, res.locals, context)
+      nativeRender.call(res, template, mergedContext)
+      res.rendered = true
+    }
+
     next()
   })
 
@@ -274,7 +293,12 @@ async function configure (app) {
     errorPage(req, res, 404, undefined, app.locals.devMode)
   })
   app.use(function error (error, req, res, next) {
-    errorPage(req, res, 500, error, app.locals.devMode)
+    if (error.code === 'EBADCSRFTOKEN') {
+      // Redirect to the GET method of the form
+      res.redirect(req.url)
+    } else {
+      errorPage(req, res, 500, error, app.locals.devMode)
+    }
   })
 }
 

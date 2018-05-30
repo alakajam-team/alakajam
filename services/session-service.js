@@ -31,13 +31,13 @@ const COOKIE_DEFAULT_OPTIONS = { signed: true }
  * @returns {boolean} true if valid, false if invalid (usually because expired)
  */
 async function restoreSessionIfNeeded (req, res) {
-  req.session = {}
+  req.userSession = {}
 
   // Look for active session
   let sessionCookie = req.cookies.get('session', COOKIE_DEFAULT_OPTIONS)
   if (sessionCookie) {
     try {
-      req.session = JSON.parse(sessionCookie)
+      req.userSession = JSON.parse(sessionCookie)
     } catch (e) {
       req.cookies.set('session', '', COOKIE_DEFAULT_OPTIONS) // clear session cookie
       sessionCookie = null
@@ -89,7 +89,7 @@ function invalidateSession (req, res) {
 
   req.cookies.set('rememberMe', '', COOKIE_DEFAULT_OPTIONS)
   req.cookies.set('session', '', COOKIE_DEFAULT_OPTIONS)
-  req.session = null
+  req.userSession = null
   res.locals.user = null
 }
 
@@ -127,8 +127,8 @@ function hash (token) {
  * Write session cookie
  */
 async function _writeSessionCookie (req, res, userId) {
-  req.session = { userId }
-  req.cookies.set('session', JSON.stringify(req.session), {
+  req.userSession = { userId }
+  req.cookies.set('session', JSON.stringify(req.userSession), {
     httpOnly: true,
     signed: true
   })

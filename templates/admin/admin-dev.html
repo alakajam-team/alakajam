@@ -5,6 +5,7 @@
 <h1>Developer tools</h1>
 
 <form method="post">
+  {{ csrfToken() | safe }}
   <input type="submit" name="db-reset" class="btn btn-danger" onclick="return confirm('Reset the whole DB?')" value="Reset database" />
 </form>
 

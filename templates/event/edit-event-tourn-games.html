@@ -29,6 +29,7 @@
         <div class="entry-thumb__form"><span class="label label-danger">High scores are not enabled</span></div>
       {% endif %}
       <form method="post" class="form-inline form-group" style="margin-top: -15px">
+        {{ csrfToken() | safe }}
         <input type="hidden" name="id" value="{{ entry.get('id') }}" />
         <label for="ordering">Order&nbsp;</label>
         <input type="text" name="ordering" class="form-control" value="{{ tournamentEntry.get('ordering') }}" style="max-width: 50px"  />
@@ -49,6 +50,7 @@
   <div class="col-sm-6 col-md-4">
   <h3>Add game</h3>
   <form method="post" class="form-inline">
+    {{ csrfToken() | safe }}
     <input type="number" name="add" class="form-control" placeholder="Entry ID" style="max-width: 120px" />
     <input type="submit" class="btn btn-primary" value="Add" /> 
   </form>

@@ -6,6 +6,7 @@
 <h1>Settings</h1>
 
 <form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
+{{ csrfToken() | safe }}
 
 {% if dashboardAdminMode %}
 <div class="alert alert-danger">
@@ -80,7 +81,14 @@
 </div>
 
 </form>
+<!--
+<h2 class="spacing">Danger zone</h2>
 
+<form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}" method="post">
+  {{ csrfToken() | safe }}
+  <input type="button" name="delete" value="Delete account" onclick="return confirm('Delete your account permanently? This will REALLY delete everything. Note: it will only work after you have deleted or left all your entries.')" />
+</form>
+-->
 {% endblock %}
 
 {% block scripts %} 
