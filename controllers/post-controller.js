@@ -401,11 +401,13 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
       }
 
       // Refresh feedback score on both the giver & receiver entries
-      let currentEntry = currentNode
-      let userEntry = await eventService.findUserEntryForEvent(currentUser, currentEntry.get('event_id'))
-      await eventRatingService.refreshEntryScore(currentEntry, currentEvent)
-      if (userEntry) {
-        await eventRatingService.refreshEntryScore(userEntry, currentEvent)
+      if (currentEvent) {
+        let currentEntry = currentNode
+        let userEntry = await eventService.findUserEntryForEvent(currentUser, currentEntry.get('event_id'))
+        await eventRatingService.refreshEntryScore(currentEntry, currentEvent)
+        if (userEntry) {
+          await eventRatingService.refreshEntryScore(userEntry, currentEvent)
+        }
       }
     }
 
