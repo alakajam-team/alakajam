@@ -16,7 +16,7 @@
 
 ### April 24th
 
-* Added support for button styling in posts and comments
+* Support for buttons and styling them in posts and comments
 
 ### April 18th
 
