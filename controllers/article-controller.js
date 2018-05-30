@@ -50,6 +50,8 @@ async function _renderArticle (name, res) {
   if (res.locals.articleName && res.locals.articleBody) {
     res.locals.pageTitle = res.locals.articleName
     res.render('article')
+  } else if (name !== 'docs') {
+    res.redirect('/article/docs')
   } else {
     res.errorPage(404)
   }
