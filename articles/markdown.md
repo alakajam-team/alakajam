@@ -11,12 +11,13 @@ Alakajam! posts and comments allow you to use [Markdown](https://daringfireball.
 * [Displaying code](#code)
 * [Mentions](#mentions)
 
-You cannot use arbitrary HTML code in Alakajam! posts and comments, but some tags (and classes) are allowed:
+While cannot use arbitrary **HTML code** in Alakajam! posts and comments, some tags (and classes) are allowed:
 
-* [Alignment](#alignment)
-* [Spoilers](#spoilers)
-* [Indentation](#indent)
 * [Embeds](#embeds)
+* [Images](#images)
+* [Spoilers](#spoilers)
+* [Alignment](#alignment)
+* [Buttons](#buttons)
 
 ## <a name="emphasis"></a>Emphasis ##
 
@@ -89,11 +90,11 @@ You cannot use arbitrary HTML code in Alakajam! posts and comments, but some tag
 
 #### Code ####
 
-    ![](https://alakajam.com/static/images/brand.png)
+    ![](https://alakajam.com/static/images/favicon32.png)
 
 #### Result ####
 
-![](https://alakajam.com/static/images/brand.png)
+![](https://alakajam.com/static/images/favicon32.png)
 
 ## <a name="tables"></a>Tables ##
 
@@ -157,6 +158,46 @@ alakajam.bang();
 
 Hello, @wan!
 
+
+
+## <a name="embeds"></a>Embeds ##
+
+The `<iframe>` tag is allowed from whitelisted hosts:
+
+* `gfycat.com`
+* `vimeo.com`
+* `youtube.com`
+
+You can use this to embed media in your post.
+
+## <a name="images"></a>Images ##
+
+Allowed attributes are:
+
+* `src`
+* `width`
+* `height`
+* `class` (allowed values: `pull-left`, `pull-right`)
+
+#### Code ####
+
+    <img src="https://alakajam.com/static/images/logo.png" class="pull-right" width="50" />
+    This is a paragraph of text with an image on the right. This is a paragraph of text with an image on the right. This is a paragraph of text with an image on the right.
+
+#### Result ####
+<img src="https://alakajam.com/static/images/logo.png" class="pull-right" width="50" />
+This is a paragraph of text with an image on the right. This is a paragraph of text with an image on the right. This is a paragraph of text with an image on the right. 
+
+## <a name="spoilers"></a>Spoilers ##
+
+#### Code ####
+
+    <p class="spoiler">Trinity snapes Tyler Durden!</p>
+
+#### Result ####
+
+<p class="spoiler">Trinity snapes Tyler Durden!</p>
+
 ## <a name="alignment"></a>Alignment ##
 
 #### Code ####
@@ -175,17 +216,6 @@ Hello, @wan!
 
 <p class="text-right">Weird …</p>
 
-## <a name="spoilers"></a>Spoilers ##
-
-#### Code ####
-
-    <p class="spoiler">Trinity snapes Tyler Durden!</p>
-
-#### Result ####
-
-<p class="spoiler">Trinity snapes Tyler Durden!</p>
-
-## <a name="indent"></a>Indentation ##
 
 #### Code ####
 
@@ -195,12 +225,14 @@ Hello, @wan!
 
 <p class="indent">Lorem ipsum dolor sit Alakajam, consectetur adipiscing elit. Sed auctor dictum elit, vitae fringilla eros iaculis at. Proin scelerisque enim finibus quam sollicitudin, in molestie neque convallis. Proin pretium placerat dignissim. Sed ligula nibh, ornare id tempor vitae, pellentesque ut est. Aenean in ex non augue consequat dictum sed sit amet felis. Donec eu odio eget diam bibendum tempor. Proin porttitor nec turpis vitae viverra.</p>
 
-## <a name="embeds"></a>Embeds ##
+## <a name="buttons"></a>Buttons ##
 
-The `<iframe>` tag is allowed from whitelisted hosts:
+#### Code ####
 
-* `gfycat.com`
-* `vimeo.com`
-* `youtube.com`
+    <a href="#buttons" class="btn btn-default">Normal button</a>    
+    <a href="#buttons" class="btn btn-primary">Important button</a>
 
-You can use this to embed media in your post.
+#### Result ####
+
+<a href="#buttons" class="btn btn-default">Normal button</a>    
+<a href="#buttons" class="btn btn-primary">Important button</a>
