@@ -37,7 +37,7 @@ function initializeLogging () {
   winston.remove(winston.transports.Console)
   winston.add(winston.transports.Console, {
     timestamp: function () {
-      return moment().format('hh:mm:ss.SSS')
+      return moment().format('YYYY-MM-DD hh:mm:ss.SSS')
     },
     formatter: function (options) {
       // Figure out the logging caller location
