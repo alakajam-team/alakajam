@@ -8,7 +8,7 @@
       <div class="form-group">
         <label for="search">Event</label>
         <select name="eventId" class="form-control js-select" data-allow-clear="true">
-          <option value="" {{ 'selected' if not context.searchOptions.eventId }}></option>
+          <option value="" {{ 'selected' if not context.searchOptions.eventId }}>All events</option>
           {% for event in context.events %}
             <option value="{{ event.get('id') }}" {{ 'selected' if event.get('id') == context.searchOptions.eventId }}>{{ event.get('title') }}</option>
           {% endfor %}
