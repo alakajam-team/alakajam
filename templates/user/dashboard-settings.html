@@ -74,21 +74,31 @@
 
 <h2 class="spacing">Bio</h2>
 
-<div class="form-group">
-  {{ formMacros.editor('body', dashboardUser.related('details').get('body'), 'user-details-' + dashboardUser.get('id')) }}
-  <input type="submit" class="btn btn-primary" value="Save changes" />
-  <a href="/user/{{ dashboardUser.get('name') }}" class="btn btn-default">View profile</a>
+<div class="row">
+  <div class="col-md-12">
+    <div class="form-group">
+      {{ formMacros.editor('body', dashboardUser.related('details').get('body'), 'user-details-' + dashboardUser.get('id')) }}
+    </div>
+
+    <div class="form-group">
+      <input type="submit" class="btn btn-primary" value="Save changes" />
+      <a href="/user/{{ dashboardUser.get('name') }}" class="btn btn-default">View profile</a>
+    </div>
+  </div>
 </div>
 
 </form>
-<!--
+
 <h2 class="spacing">Danger zone</h2>
 
 <form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}" method="post">
   {{ csrfToken() | safe }}
-  <input type="button" name="delete" value="Delete account" onclick="return confirm('Delete your account permanently? This will REALLY delete everything. Note: it will only work after you have deleted or left all your entries.')" />
+  <div class="form-group">
+    <input type="submit" name="delete" class="btn btn-danger" value="Delete account"
+      onclick="return confirm('Delete your account permanently? This will REALLY delete all your data, including posts and comments. IMPORTANT: this will only work *after* you have manually deleted or left the team for all your entries.')" />
+  </div>
 </form>
--->
+
 {% endblock %}
 
 {% block scripts %} 

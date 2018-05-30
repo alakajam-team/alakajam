@@ -63,6 +63,9 @@ module.exports.User = bookshelf.model('User', {
   roles: function () {
     return this.hasMany('UserRole', 'user_id')
   },
+  posts: function () {
+    return this.hasMany('Post', 'author_user_id')
+  },
   comments: function () {
     return this.hasMany('Comment', 'user_id')
   },
@@ -74,7 +77,7 @@ module.exports.User = bookshelf.model('User', {
   }
 }, {
   // Cascading
-  dependents: ['details', 'roles', 'entryScores', 'tournamentScores']
+  dependents: ['details', 'roles', 'entryScores', 'tournamentScores', 'comments', 'posts']
 })
 
 /**

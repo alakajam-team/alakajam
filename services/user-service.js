@@ -11,11 +11,13 @@ const randomKey = require('random-key')
 const path = require('path')
 const config = require('../config')
 const db = require('../core/db')
+const log = require('../core/log')
 const constants = require('../core/constants')
 const forms = require('../core/forms')
 const models = require('../core/models')
 const fileStorage = require('../core/file-storage')
-const mailService = require('../services/mail-service')
+const mailService = require('./mail-service')
+const eventService = require('./event-service')
 
 module.exports = {
   findUsers,
@@ -179,12 +181,14 @@ async function authenticate (name, password) {
  * @param {User} user
  */
 async function deleteUser (user) {
-  await user.load('entries')
-  if (user.related('entries').length === 0) {
-    await user.destroy()
+  let entries = await eventService.findUserEntries(user)
+  if (entries.length === 0) {
+    let userId = user.get('id')
+    await user.destroy() // XXX Comment/entry counters are not refreshed
+    log.info('User %s has been deleted', userId)
     return {}
   } else {
-    return { error: 'As a safety measure, you must delete or leave all your entries before deleting your account.' }
+    return { error: 'As a safety measure, you must manually delete or leave the team for all your entries before deleting your account.' }
   }
 }
 
