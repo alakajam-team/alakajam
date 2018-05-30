@@ -38,6 +38,7 @@ module.exports = {
   DEBUG_ADMIN: false, // Lets you access the admin back-end even when logged out
   DEBUG_TEST_MAILER: true, // Uses a mailer requiring no config (might not work but emails are logged)
   DEBUG_DISABLE_STARTUP_BUILD: false, // Makes the server start faster by not rebuilding the client JS/CSS
+  DEBUG_ARTICLES: true, // Uses the local version of the articles rather than downloading them from Github
 
   // Debug: trace options
   LOG_LEVEL: 'debug', // Verbose level among 'none', 'error', 'warn', 'info', 'debug'
