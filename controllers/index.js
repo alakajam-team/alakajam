@@ -160,7 +160,7 @@ module.exports = {
 }
 
 function initUploadMiddleware () {
-  // Multipart form parser, to be embedded directly in routes (see controllers/index.js)
+  // Multipart form parser
   const uploadStorage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, path.join(__dirname, '..', config.DATA_PATH, 'tmp'))
@@ -182,7 +182,7 @@ function initUploadMiddleware () {
 }
 
 function initCSRFMiddleware () {
-  // CSRF protection, to be embedded directly in routes (see controllers/index.js)
+  // CSRF protection
   return csurf({
     cookie: false,
     ignoreMethods: ['GET']
