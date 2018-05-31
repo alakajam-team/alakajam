@@ -246,7 +246,7 @@ function _tieBreakScore (tScore, tournamentEntries) {
   // Ties are broken by:
   // 1. who has the most 1st places
   // 2. who has the most 2nd places
-  // ...
+  // ... (up to 10th place)
   // N+1. Who has the best ranking in the first tournament game
   // N+2. Who has the best ranking in the 2nd tournament game
   // ... (this always breaks ties)

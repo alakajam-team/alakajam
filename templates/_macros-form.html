@@ -26,12 +26,15 @@
     <input type="file" name="{{ name }}" class="btn"/>
     <input type="hidden" name="{{ name }}" value="{{ value }}"/>
   </p>
+  {% if value or options.defaultValue %}
   <p>
     <img src="{{ value or options.defaultValue }}" style="max-width: 100%" />
   </p>
+  {% endif %}
   {% if value %}
   <label><input type="checkbox" name="{{ name }}-delete" /> Delete picture</label>
   {% endif %}
+  <div class="legend">{{ options.legend or 'Max size: 2.0 MiB. GIFs allowed.' }}</div>
 </div>
 {% endmacro %}
 

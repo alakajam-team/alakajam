@@ -68,7 +68,6 @@ module.exports = function viewEntryVoting () {
     if (confirmed) {
       const previousValue = $('#js-vote-' + category).val()
       const newValue = rating.toFixed(3)
-      console.log(previousValue, newValue)
 
       $ratingLabel.addClass('confirmed')
       if (previousValue !== newValue) {

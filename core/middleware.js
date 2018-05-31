@@ -217,6 +217,7 @@ async function configure (app) {
     }
   })
   let doParseForm = promisify(function (req, res, uploadInfo, callback) {
+    console.log(uploadInfo, !!res.locals.form)
     if (!res.locals.form) {
       // uploadInfo must contain either the name of the file field,
       // or an array looking like: [{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }]
@@ -239,6 +240,7 @@ async function configure (app) {
           fields: req.body,
           files
         }
+        console.log(files)
         callback(null, res.locals.form)
       })
     } else {
@@ -253,10 +255,20 @@ async function configure (app) {
     res.on('finish', cleanupFormFilesCallback(req, res))
     res.on('close', cleanupFormFilesCallback(req, res))
 
+    // Parse form
     if (req.method !== 'GET') {
-      // Needed for CSRF check
-      await req.parseForm()
+      let uploadInfo = null
+      if (req.query.upload) {
+        let uploadFieldNames = forms.sanitizeString(req.query.upload)
+        if (uploadFieldNames.includes(',')) {
+          uploadInfo = uploadFieldNames.split(',').map(name => ({ name, maxCount: 1 }))
+        } else {
+          uploadInfo = uploadFieldNames
+        }
+      }
+      await doParseForm(req, res, uploadInfo)
     }
+
     next()
   })
 

@@ -29,7 +29,6 @@ module.exports = function warnOnUnsavedChanges (formSelector, options) {
         $(formSelector + options.autoSubmit).each(function () {
           if (this !== triggeredForm) {
             var $autoSubmitForm = $(this)
-            console.log($autoSubmitForm.attr('action'))
             $.post($autoSubmitForm.attr('action'), $autoSubmitForm.serialize())
             storeInitialValues(this)
           }

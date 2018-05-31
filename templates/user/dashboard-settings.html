@@ -5,7 +5,7 @@
 
 <h1>Settings</h1>
 
-<form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
+<form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}?upload=avatar" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
 {{ csrfToken() | safe }}
 
 {% if dashboardAdminMode %}

@@ -36,7 +36,7 @@
         </div>
       {% endif %}
 
-      <form method="post" enctype="multipart/form-data">
+      <form action="?upload=upload" method="post" enctype="multipart/form-data">
         {{ csrfToken() | safe }}
         <div class="form-group">
           <label for="score" class="hidden-xs">{{ 'Time' if entry.related('details').get('high_score_type') === 'time' else 'Score' }}</label>
