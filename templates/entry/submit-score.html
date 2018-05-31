@@ -36,7 +36,7 @@
         </div>
       {% endif %}
 
-      <form action="?upload=upload" method="post" enctype="multipart/form-data">
+      <form method="post" enctype="multipart/form-data">
         {{ csrfToken() | safe }}
         <div class="form-group">
           <label for="score" class="hidden-xs">{{ 'Time' if entry.related('details').get('high_score_type') === 'time' else 'Score' }}</label>
@@ -64,7 +64,7 @@
               </label>
             </div>
             <div class="col-xs-10">
-              {{ formMacros.pictureInput('upload', entryScore.get('proof') if not isExternalProof) }}
+              {{ formMacros.pictureInput('upload', entryScore.get('proof') if not isExternalProof, { model: entryScore }) }}
             </div>
           </div>
           <div class="row">

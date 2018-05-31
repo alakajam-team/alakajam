@@ -67,7 +67,7 @@
   <div class="col-md-6 col-lg-5">
     <div class="form-group">
       <label for="name">Avatar</label>
-      {{ formMacros.pictureInput('avatar', dashboardUser.get('avatar')) }}
+      {{ formMacros.pictureInput('avatar', dashboardUser.get('avatar'), { model: dashboardUser }) }}
     </div>
   </div>
 </div>

@@ -21,6 +21,7 @@
 {# ======== PICTURES ========= #}
 
 {% macro pictureInput(name, value, options = {}) %}
+{# Setting options.model to any DB model is recommended to let the macro tweak the picture URL ie. prevent caching issues #}
 <div class="{{ 'well' if not options.noPanel }}">
   <p>
     <input type="file" name="{{ name }}" class="btn"/>
@@ -28,7 +29,8 @@
   </p>
   {% if value or options.defaultValue %}
   <p>
-    <img src="{{ value or options.defaultValue }}" style="max-width: 100%" />
+    {% set displayValue = value or options.defaultValue %}
+    <img src="{{ pictureUrl(displayValue, options.model) if options.model else displayValue }}" style="max-width: 100%" />
   </p>
   {% endif %}
   {% if value %}

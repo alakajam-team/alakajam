@@ -17,14 +17,11 @@ const express = require('express')
 const expressNunjucks = require('express-nunjucks')
 const expressSession = require('express-session')
 const cookies = require('cookies')
-const multer = require('multer')
 const bodyParser = require('body-parser')
-const promisify = require('promisify-node')
 const moment = require('moment')
 const nunjucks = require('nunjucks')
 const randomKey = require('random-key')
 const leftPad = require('left-pad')
-const csurf = require('csurf')
 const log = require('./log')
 const config = require('../config')
 const constants = require('../core/constants')
@@ -37,13 +34,12 @@ const userService = require('../services/user-service')
 const controllers = require('../controllers/index')
 const templating = require('../controllers/templating')
 
+const ROOT_PATH = path.join(__dirname, '..')
+const LAUNCH_TIME = new Date().getTime()
+
 module.exports = {
   configure
 }
-
-const ROOT_PATH = path.join(__dirname, '..')
-const MB = 1024 * 1024
-const LAUNCH_TIME = new Date().getTime()
 
 /*
  * Setup app middleware
@@ -196,87 +192,25 @@ async function configure (app) {
     return nunjucks.runtime.markSafe(jsonString)
   })
 
-  // Multer (form parsing/file upload)
+  // Body parsers config
   app.use(bodyParser.urlencoded({ extended: false }))
-  let uploadStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '..', config.DATA_PATH, 'tmp'))
-    },
-    filename: function (req, file, cb) {
-      file.filename = randomKey.generate() + '-' + file.originalname
-      cb(null, file.filename)
-    }
-  })
-  let upload = multer({
-    storage: uploadStorage,
-    limits: {
-      fields: 1000,
-      fileSize: 2 * MB,
-      files: 20,
-      parts: 2000
-    }
-  })
-  let doParseForm = promisify(function (req, res, uploadInfo, callback) {
-    console.log(uploadInfo, !!res.locals.form)
-    if (!res.locals.form) {
-      // uploadInfo must contain either the name of the file field,
-      // or an array looking like: [{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }]
-      let uploadFunction
-      if (typeof uploadInfo === 'string') {
-        uploadFunction = upload.single(uploadInfo)
-      } else if (typeof uploadInfo === 'object') {
-        uploadFunction = upload.fields(uploadInfo)
-      } else {
-        uploadFunction = upload.array()
-      }
-
-      uploadFunction(req, res, function () {
-        let files = req.files
-        if (!files) {
-          files = {}
-          files[uploadInfo] = req.file
-        }
-        res.locals.form = {
-          fields: req.body,
-          files
-        }
-        console.log(files)
-        callback(null, res.locals.form)
-      })
-    } else {
-      callback(null, res.locals.form)
-    }
-  })
   app.use(async function (req, res, next) {
-    // usage: let {fields, files} = await req.parseForm()
-    req.parseForm = async function (uploadInfo) {
-      return doParseForm(req, res, uploadInfo)
+    // XXX Deprecated, use req.body & req.file[s] directly instead
+    req.parseForm = async function () {
+      let files = req.files || {}
+      if (req.file) {
+        files[req.file.fieldname] = req.file
+      }
+      return {
+        fields: req.body,
+        files
+      }
     }
+    // Multer auto cleanup (actual Multer middleware is declared at initUploadMiddleware())
     res.on('finish', cleanupFormFilesCallback(req, res))
     res.on('close', cleanupFormFilesCallback(req, res))
-
-    // Parse form
-    if (req.method !== 'GET') {
-      let uploadInfo = null
-      if (req.query.upload) {
-        let uploadFieldNames = forms.sanitizeString(req.query.upload)
-        if (uploadFieldNames.includes(',')) {
-          uploadInfo = uploadFieldNames.split(',').map(name => ({ name, maxCount: 1 }))
-        } else {
-          uploadInfo = uploadFieldNames
-        }
-      }
-      await doParseForm(req, res, uploadInfo)
-    }
-
     next()
   })
-
-  // CSRF protection
-  app.use(csurf({
-    cookie: false,
-    ignoreMethods: ['GET']
-  }))
 
   // Templating: rendering context
   app.use(function templateTooling (req, res, next) {

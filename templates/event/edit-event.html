@@ -5,7 +5,7 @@
 
 <h1 id="title-display"></h1>
 
-<form action="{{ buildUrl(event, 'event', 'edit') }}?upload=logo,banner" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
+<form method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
 {{ csrfToken() | safe }}
 
 <div class="panel">
@@ -83,13 +83,14 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="logo">Logo</label>
-        {{ formMacros.pictureInput('logo', event.get('logo') if event, { noPanel: true }) }}
+        {{ formMacros.pictureInput('logo', event.get('logo') if event, { noPanel: true, model: event }) }}
       </div>
     </div>
     <div class="col-md-6">
       <div class="form-group">
         <label for="logo">Banner</label>
-        {{ formMacros.pictureInput('banner', event.related('details').get('banner') if event, { noPanel: true }) }}
+        {% set eventDetails = event.related('details') if event %}
+        {{ formMacros.pictureInput('banner', eventDetails.get('banner') if eventDetails, { noPanel: true, model: eventDetails }) }}
       </div>
     </div>
   </div>
