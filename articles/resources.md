@@ -5,8 +5,9 @@ This page compiles a list of **free** resources for making games, especially for
 
 | Name | Description |
 | -------- | -------- |
-| [Gimp](https://www.gimp.org)  | Popular general purpose software for drawing and manipulating images. Open Source. |
+| [Gimp](https://www.gimp.org)  | Popular general purpose drawing and image manipulation software. Open Source. |
 | [Inkscape](https://inkscape.org)  | Popular vector graphics software. Open Source. |
+| [Krita](https://krita.org)  | Digital painting program. Open Source. |
 | [Blender](http://www.blender.org/)  | Popular 3D modeling & animation software. Open Source. |
 | [Paint.NET](https://www.getpaint.net/)  | Intuitive image editing, like Paint but enhanced with layers, transparency, etc. (Windows only). |
 | [MagicaVoxel](https://ephtracy.github.io/)  | Voxel editor, which is a cool way to make original assets, either in 2D or 3D. |
@@ -18,7 +19,7 @@ This page compiles a list of **free** resources for making games, especially for
 
 | Name | Description |
 | -------- | -------- |
-| [sfxr](http://www.drpetter.se/project_sfxr.html)  | Excellent and accessible tool for creating sounds effects. Online variants have been made since: [bfxr](http://www.bfxr.net/) (Flash) and [jfxr](https://jfxr.frozenfractal.com/#) (JavaScript). |
+| [sfxr](http://www.drpetter.se/project_sfxr.html)  | Excellent and accessible tool for creating sounds effects. Check @thomastc's [jfxr](https://jfxr.frozenfractal.com) for an online variant. |
 | [Chiptone](http://sfbgames.com/chiptone/)  | Visual, powerful, online sound generator. |
 | [Audacity](http://audacity.sourceforge.net/)  | Simple and popular audio recording, mixing & conversion software. Perfect for turning WAVs into lighter formats.|
 | [Beepbox](http://www.beepbox.co) | The easiest music making tool you could find. Online and Open Source. |
