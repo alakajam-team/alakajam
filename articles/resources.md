@@ -12,7 +12,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Paint.NET](https://www.getpaint.net/)  | Intuitive image editing, like Paint but enhanced with layers, transparency, etc. (Windows only). |
 | [MagicaVoxel](https://ephtracy.github.io/)  | Voxel editor, which is a cool way to make original assets, either in 2D or 3D. |
 | [Piskel](http://www.piskelapp.com/) | Editor for animated sprites, has an online version. Ad-supported. |
-| [GraphicsGale](https://graphicsgale.com/)  | Old-school looking but powerful sprite editor, supports animations. |
+| [GraphicsGale](https://graphicsgale.com/)  | Old-school looking but powerful pixel art editor, supports animations. |
 
 
 ## <a name="audio"></a>Audio software
