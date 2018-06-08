@@ -13,7 +13,11 @@ const babelOptions = {
         // Requires babel-core >= 7 (otherwise just true and false are supported).
         // TODO Once Babel 7 stabilizes, set to 'usage' and remove require('babel-polyfill') from main.js
         // useBuiltIns: 'usage'
-        useBuiltIns: true
+        useBuiltIns: true,
+        targets: {
+          'browsers': [ '>0.25%', 'not op_mini all' ],
+          'firefox': '29' // Sorceress compatibility!
+        }
       }
     ]
   ]
