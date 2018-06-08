@@ -33,6 +33,7 @@ This page compiles a list of **free** resources for making games, especially for
 | Name | Description |
 | -------- | -------- |
 | [Unity](https://unity3d.com)  | Popular and feature-rich engine, both for 3D and 2D games. Requires programming in either JS or C#. Free version has few limitations and plenty to work with. |
+| [Unreal Engine](https://unity3d.com)  | Popular and feature-rich engine specialized in 3D games. Supports a quite accessible, visual scripting language called Blueprints. And good old C++. |
 | [Godot Engine](https://godotengine.org/)  | Powerful engine for 3D and 2D games. Uses a Python-like language. Open Source. |
 | [Game Pencil](http://gamepencil.pawbyte.com/) | A new cross-platform engine inspired by Unity & Game Maker, except Open Source. Uses JS scripting. |
 | [GDevelop](http://www.compilgames.net) | 2D game engine letting you write logic without knowledge of coding. Open Source. |
