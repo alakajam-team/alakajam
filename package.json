@@ -15,11 +15,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mkalam-alami/alakajam.git"
+    "url": "https://github.com/alakajam-team/alakajam.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mkalam-alami/issues"
+    "url": "https://github.com/alakajam-team/issues"
   },
   "dependencies": {
     "babel-core": "^6.26.0",
