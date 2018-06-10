@@ -7,17 +7,18 @@ const outputPath = rootPathTo('static/js')
 const babelOptions = {
   presets: [
     [
-      'env',
+      '@babel/preset-env',
       {
-        // https://github.com/babel/babel/tree/master/experimental/babel-preset-env#usebuiltins
-        // Requires babel-core >= 7 (otherwise just true and false are supported).
-        // TODO Once Babel 7 stabilizes, set to 'usage' and remove require('babel-polyfill') from main.js
-        // useBuiltIns: 'usage'
-        useBuiltIns: true,
-        targets: {
-          'browsers': [ '>0.25%', 'not op_mini all' ],
-          'firefox': '29' // Sorceress compatibility!
-        }
+        // Add polyfills for only those features that we use, like Array.find,
+        // and only if they're not available on our set of target browsers (see
+        // "browserslist" in package.json):
+        // https://babeljs.io/blog/2017/12/27/nearing-the-7.0-release
+        //
+        // Note that this requires Babel >= 7, still in beta at the time of
+        // writing (2018-06-10), so most of the documentation you'll find for
+        // this feature is not up to date. This one is:
+        // https://new.babeljs.io/docs/en/next/babel-preset-env.html#usebuiltins
+        useBuiltIns: 'usage'
       }
     ]
   ]

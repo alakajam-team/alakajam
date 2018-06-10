@@ -4,11 +4,6 @@
 
 /* eslint-env jquery */
 
-// This is transformed by babel-env-preset into a list of requires for only
-// those polyfills that are needed for our target set of browsers. For details,
-// see: https://babeljs.io/docs/plugins/preset-env#optionsuse-built-ins
-require('babel-polyfill')
-
 $(function domReady () {
   require('./common/check-all-none')('.js-check-all', '.js-check-none')
   require('./common/date-picker')('.js-date-picker')
