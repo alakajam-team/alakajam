@@ -36,7 +36,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        include: rootPathTo('static/js'),
+        include: rootPathTo('assets/js'),
         use: [
           {
             loader: 'babel-loader',
