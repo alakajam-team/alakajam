@@ -313,19 +313,21 @@ async function _eliminateLowestTheme (event) {
       .orderBy('created_at')
       .fetch()
 
-    let betterThemeCount = await models.Theme.where({
-      event_id: event.get('id')
-    })
-      .where('normalized_score', '>', loserTheme.get('normalized_score'))
-      .count()
-
     await event.load('details')
-    loserTheme.set({
-      'status': enums.THEME.STATUS.OUT,
-      'ranking': 1.0 * betterThemeCount / (event.related('details').get('theme_count') || 1)
-    })
-    await loserTheme.save()
+    _eliminateTheme(loserTheme, event.related('details'))
   }
+}
+
+async function _eliminateTheme (theme, eventDetails, options = {}) {
+  let betterThemeCount = await models.Theme.where('event_id', eventDetails.get('event_id'))
+    .where('normalized_score', '>', theme.get('normalized_score'))
+    .count(null, options)
+
+  theme.set({
+    'status': enums.THEME.STATUS.OUT,
+    'ranking': 1.0 * betterThemeCount / (eventDetails.get('theme_count') || 1)
+  })
+  await theme.save(null, options)
 }
 
 async function saveShortlistVotes (user, event, ids) {
@@ -397,10 +399,10 @@ async function findShortlist (event) {
 async function computeShortlist (event) {
   // Mark all themes as out
   let allThemesCollection = await findAllThemes(event, {shortlistEligible: true})
+  await event.load('details')
   await db.transaction(async function (t) {
     allThemesCollection.each(function (theme) {
-      theme.set('status', enums.THEME.STATUS.OUT)
-      theme.save(null, { transacting: t })
+      _eliminateTheme(theme, event.related('details'))
     })
   })
 
@@ -442,6 +444,7 @@ async function _refreshEventThemeStats (event) {
 }
 
 /**
+ * Live elimination of the theme shortlist in the moments leading to the jam
  * @param event Event with loaded details
  * @return number of eliminated themes
  */
