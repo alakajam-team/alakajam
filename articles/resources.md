@@ -50,12 +50,13 @@ This page compiles a list of **free** resources for making games, especially for
 
 | Name | Description |
 | -------- | -------- |
-| [Open Game Art](https://opengameart.org)  | The main reference for finding graphics & audio to reuse with permissive licenses. |
+| [Open Game Art](https://opengameart.org)  | A popular platform for finding/sharing graphics & audio with permissive licenses. |
+| [Kenney's Asset Packs](https://kenney.nl/assets) | Large variety of cute art packs. Public domain. |
+| [Nobiax Texture Pack](https://github.com/The-Yak/NobiaxTexturePack)  | A pack of 1300+ quality textures and patterns. Public domain. |
 | [Free Music Archive](http://freemusicarchive.org)  | A large database of permissive music (mostly Creative Commons), featuring a wide range of styles. |
-| [FreeSound](http://freesound.org/)  | A huge database of sound effects. |
-| [Soniss GDC 2017 Bundle](https://sonniss.com/gameaudiogdc2017/) | Massive 20GB pack of game-related royalty-free sounds. |
+| [FreeSound](http://freesound.org/)  | A huge database of sound effects (mix of Creative Commons and Public Domain). |
+| [Soniss GDC 2018 Bundle](https://sonniss.com/gameaudiogdc18/) | [2017](https://sonniss.com/gameaudiogdc2017/) | Massive packs of game-related royalty-free sounds. |
 | [Universal LPC Sprite Sheet Generator](http://gaurav.munjal.us/Universal-LPC-Spritesheet-Character-Generator/) | Customizable character sprite sheets assembled from open art. |  
-
 
 ## <a name="misc"></a>Miscellaneous
 
@@ -64,3 +65,4 @@ This page compiles a list of **free** resources for making games, especially for
 | [TilEd](http://www.mapeditor.org/)  | Powerful editor for 2D maps (platformers, RPGs, etc.), which can then be exported in either its own TFX format or simple JSON. Open Source. |
 | [Open Broadcaster Software](https://obsproject.com)  | Lets you record your desktop to either videos or streaming platforms. |
 | [ScreenToGif](http://www.screentogif.com)  | Powerful tool for recording short sequences from your screen, editing them and exporting them as gifs (Windows only). |
+| [Snipping Tool](https://support.microsoft.com/en-us/help/13776/windows-use-snipping-tool-to-capture-screenshots) | A native and often underrated Windows program for capturing screnshots. |
