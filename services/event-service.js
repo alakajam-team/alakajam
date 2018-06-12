@@ -45,10 +45,10 @@ module.exports = {
   findRescueEntries,
   countEntriesByEvent,
 
-  refreshCommentScore,
+  refreshCommentKarma,
   refreshEventReferences,
   refreshEntryPlatforms,
-  refreshUserCommentScoresOnNode,
+  refreshUserCommentKarmaOnNode,
   refreshEventCounts
 }
 
@@ -508,7 +508,7 @@ async function findGames (options = {}) {
             this.where('event.status', enums.EVENT.STATUS.CLOSED).orWhereNull('event.status')
           })
           .orderByRaw('entry_details.rating_1 DESC ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
-          .orderBy('entry.feedback_score', 'DESC')
+          .orderBy('entry.karma', 'DESC')
       })
     } else if (options.sortByRanking) {
       query = query.query(function (qb) {
@@ -521,7 +521,7 @@ async function findGames (options = {}) {
           .orderBy('entry.division')
       })
     } else if (options.eventId !== null) {
-      query = query.orderBy('entry.feedback_score', 'DESC')
+      query = query.orderBy('entry.karma', 'DESC')
     }
     query = query.orderBy('entry.created_at', 'DESC')
   }
@@ -533,7 +533,7 @@ async function findGames (options = {}) {
     query = query.query(function (qb) {
       return qb.leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
         .whereIn('entry_platform.platform_id', options.platforms)
-        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score', 'entry.created_at',
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.karma', 'entry.created_at',
           'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
     })
   }
@@ -541,7 +541,7 @@ async function findGames (options = {}) {
     query = query.query(function (qb) {
       return qb.leftJoin('entry_tag', 'entry_tag.entry_id', 'entry.id')
         .whereIn('entry_tag.tag_id', options.tags.map(tag => tag.id))
-        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score', 'entry.created_at',
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.karma', 'entry.created_at',
           'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
     })
   }
@@ -768,7 +768,7 @@ async function refreshEntryPlatforms (entry) {
   await Promise.all(tasks)
 }
 
-async function refreshCommentScore (comment) {
+async function refreshCommentKarma (comment) {
   await comment.load(['node.comments', 'node.userRoles'])
 
   let isTeamMember = 0
@@ -783,19 +783,19 @@ async function refreshCommentScore (comment) {
 
   let adjustedScore = 0
   if (!isTeamMember) {
-    let rawScore = _computeRawCommentScore(comment)
+    let rawScore = _computeRawCommentKarma(comment)
 
     let previousCommentsScore = 0
     let entryComments = entry.related('comments')
     for (let entryComment of entryComments.models) {
       if (entryComment.get('user_id') === comment.get('user_id') && entryComment.get('id') !== comment.get('id')) {
-        previousCommentsScore += entryComment.get('feedback_score')
+        previousCommentsScore += entryComment.get('karma')
       }
     }
     adjustedScore = Math.max(0, Math.min(rawScore, 3 - previousCommentsScore))
   }
 
-  comment.set('feedback_score', adjustedScore)
+  comment.set('karma', adjustedScore)
 }
 
 /**
@@ -804,7 +804,7 @@ async function refreshCommentScore (comment) {
  * @param {integer} userId The user id of the modified comment
  * @param {Post|Entry} node
  */
-async function refreshUserCommentScoresOnNode (node, userId) {
+async function refreshUserCommentKarmaOnNode (node, userId) {
   await node.load(['comments', 'userRoles'])
   let isTeamMember = 0
 
@@ -823,18 +823,18 @@ async function refreshUserCommentScoresOnNode (node, userId) {
       if (comment.get('user_id') === userId) {
         let adjustedScore = 0
         if (previousCommentsScore < 3) {
-          let rawScore = _computeRawCommentScore(comment)
+          let rawScore = _computeRawCommentKarma(comment)
           adjustedScore = Math.max(0, Math.min(rawScore, 3 - previousCommentsScore))
           previousCommentsScore += adjustedScore
         }
-        comment.set('feedback_score', adjustedScore)
+        comment.set('karma', adjustedScore)
         await comment.save()
       }
     }
   }
 }
 
-function _computeRawCommentScore (comment) {
+function _computeRawCommentKarma (comment) {
   let commentLength = comment.get('body').length
   if (commentLength > 300) { // Elaborate comments
     return 3

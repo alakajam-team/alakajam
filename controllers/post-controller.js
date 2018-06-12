@@ -382,20 +382,20 @@ async function handleSaveComment (reqBody, currentUser, currentNode, baseUrl, cu
             'user_id': userId
           })
         }
-        await eventService.refreshCommentScore(comment)
+        await eventService.refreshCommentKarma(comment)
         await comment.save()
       } else {
-        // This change might impact the feedback score of other comments, refresh them
-        await eventService.refreshUserCommentScoresOnNode(currentNode, userId)
+        // This change might impact the karma of other comments, refresh them
+        await eventService.refreshUserCommentKarmaOnNode(currentNode, userId)
       }
 
-      // Refresh feedback score on both the giver & receiver entries
+      // Refresh karma on both the giver & receiver entries
       if (currentEvent) {
         let currentEntry = currentNode
         let userEntry = await eventService.findUserEntryForEvent(currentUser, currentEntry.get('event_id'))
-        await eventRatingService.refreshEntryScore(currentEntry, currentEvent)
+        await eventRatingService.refreshEntryKarma(currentEntry, currentEvent)
         if (userEntry) {
-          await eventRatingService.refreshEntryScore(userEntry, currentEvent)
+          await eventRatingService.refreshEntryKarma(userEntry, currentEvent)
         }
       }
     }

@@ -19,20 +19,20 @@
   {% set entry = entriesById[detailedEntryInfo.id] %}
   <h2>Feedback details: {{ entry.get('title') }}</h2>
 
-  <p>Feedback score: <strong>{{ detailedEntryInfo.total }}</strong></p>
+  <p>Karma: <strong>{{ detailedEntryInfo.total }}</strong></p>
 
   <h4>Given <span class="count">(+{{ detailedEntryInfo.given.total }})</span></h4>
 
   <ul>
   {% for key, data in detailedEntryInfo.given.givenByUserAndEntry %}
     <li>
-    {% if data.commentScore > 0 %}
-      <strong>+ {{ data.commentScore or '0' }}</strong> with comments by {{ userTitle(usersById, data.userId) }}
+    {% if data.commentKarma > 0 %}
+      <strong>+ {{ data.commentKarma or '0' }}</strong> with comments by {{ userTitle(usersById, data.userId) }}
         on {{ entriesById[data.entryId].get('title') if entriesById[data.entryId] else '???' }}
     {% endif %}
-    {{ ' or ' if data.commentScore and data.voteScore }}
-    {% if data.voteScore > 0 %}
-      <strong>+ {{ data.voteScore or '0' }}</strong> with votes by {{ userTitle(usersById, data.userId) }}
+    {{ ' or ' if data.commentKarma and data.voteKarma }}
+    {% if data.voteKarma > 0 %}
+      <strong>+ {{ data.voteKarma or '0' }}</strong> with votes by {{ userTitle(usersById, data.userId) }}
         on {{ entriesById[data.entryId].get('title') if entriesById[data.entryId] else '???' }}
     {% endif %}
     </li>
@@ -44,12 +44,12 @@
   <ul>
   {% for userId, data in detailedEntryInfo.received.receivedByUser %}
     <li>
-    {% if data.commentScore > 0 %}
-      <strong>- {{ data.commentScore or '0' }}</strong> with comments by {{ userTitle(usersById, userId) }}
+    {% if data.commentKarma > 0 %}
+      <strong>- {{ data.commentKarma or '0' }}</strong> with comments by {{ userTitle(usersById, userId) }}
     {% endif %}
-    {{ ' or ' if data.commentScore and data.voteScore }}
-    {% if data.voteScore > 0 %}
-      <strong>- {{ data.voteScore or '0' }}</strong> with votes by {{ userTitle(usersById, userId) }}
+    {{ ' or ' if data.commentKarma and data.voteKarma }}
+    {% if data.voteKarma > 0 %}
+      <strong>- {{ data.voteKarma or '0' }}</strong> with votes by {{ userTitle(usersById, userId) }}
     {% endif %}
     </li>
   {% endfor %}
@@ -58,7 +58,7 @@
 {% endif %}
 
 <p>
-  <a href="?orderBy=score" class="btn btn-default">Order by Feedback Score</a>
+  <a href="?orderBy=karma" class="btn btn-default">Order by Karma</a>
   <a href="?orderBy=ratingCount" class="btn btn-default">Order by rating count</a>
 </p>
 
@@ -81,7 +81,7 @@
       {{ eventMacros.entrySmallThumb(entry) }}
     </td>
     <td>{{ entry.get('division') | capitalize }}</td>
-    <td>{{ entry.get('feedback_score') }}</td>
+    <td>{{ entry.get('karma') }}</td>
     <td>{{ entry.related('details').get('rating_count') if entry.get('division') !== 'unranked' else 'N.A.' }}</td>
     <td><a href="?entryDetails={{ entry.get('id') }}&amp;orderBy={{ orderBy }}" class="btn btn-default">Details</a></td>
   </tr>

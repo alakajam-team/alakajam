@@ -28,10 +28,10 @@ module.exports = {
   findEntryRankings,
 
   refreshEntryRatings,
-  refreshEntryScore,
-  computeScoreReceivedByUser,
-  computeScoreGivenByUserAndEntry,
-  computeFeedbackScore,
+  refreshEntryKarma,
+  computeKarmaReceivedByUser,
+  computeKarmaGivenByUserAndEntry,
+  computeKarma,
 
   computeRankings,
   clearRankings
@@ -141,11 +141,11 @@ async function saveEntryVote (user, entry, event, voteData) {
 
   await refreshEntryRatings(entry)
   if (refreshRequired) {
-    refreshEntryScore(entry, event)
+    refreshEntryKarma(entry, event)
 
     let userEntry = await eventService.findUserEntryForEvent(user, event.get('id'))
     if (userEntry) {
-      refreshEntryScore(userEntry, event)
+      refreshEntryKarma(userEntry, event)
     }
   }
 }
@@ -256,30 +256,30 @@ function _range (from, to) {
  * @param  {object} options (optional) force
  * @return {void}
  */
-async function refreshEntryScore (entry, event, options = {}) {
+async function refreshEntryKarma (entry, event, options = {}) {
   await entry.load(['details', 'comments', 'userRoles', 'votes'])
-  let received = (await computeScoreReceivedByUser(entry, event)).total
-  let given = (await computeScoreGivenByUserAndEntry(entry, event)).total
-  await entry.save({ 'feedback_score': computeFeedbackScore(received, given) }, { patch: true })
+  let received = (await computeKarmaReceivedByUser(entry, event)).total
+  let given = (await computeKarmaGivenByUserAndEntry(entry, event)).total
+  await entry.save({ 'karma': computeKarma(received, given) }, { patch: true })
 
   let entryDetails = entry.related('details')
   await entryDetails.save({ 'rating_count': entry.related('votes').length }, { patch: true })
 }
 
 /* Compute received score */
-async function computeScoreReceivedByUser (entry, event) {
+async function computeKarmaReceivedByUser (entry, event) {
   let receivedByUser = {}
   for (let comment of entry.related('comments').models) {
     // Earn up to 3 points per user from comments
     let userId = comment.get('user_id')
-    receivedByUser[userId] = receivedByUser[userId] || { commentScore: 0 }
-    receivedByUser[userId].commentScore += comment.get('feedback_score')
+    receivedByUser[userId] = receivedByUser[userId] || { commentKarma: 0 }
+    receivedByUser[userId].commentKarma += comment.get('karma')
   }
   for (let vote of entry.related('votes').models) {
     // Earn 2 points per user from votes
     let userId = vote.get('user_id')
     receivedByUser[userId] = receivedByUser[userId] || {}
-    receivedByUser[userId].voteScore = 2
+    receivedByUser[userId].voteKarma = 2
   }
 
   let result = {
@@ -288,13 +288,13 @@ async function computeScoreReceivedByUser (entry, event) {
   }
   for (let userId in receivedByUser) {
     // Pick the highest score among comments & votes on each user
-    result.total += Math.max(receivedByUser[userId].commentScore || 0, receivedByUser[userId].voteScore || 0)
+    result.total += Math.max(receivedByUser[userId].commentKarma || 0, receivedByUser[userId].voteKarma || 0)
   }
   return result
 }
 
 /* Compute given score using comments & votes from all the team */
-async function computeScoreGivenByUserAndEntry (entry, event) {
+async function computeKarmaGivenByUserAndEntry (entry, event) {
   let givenByUserAndEntry = {}
   let userRoles = entry.related('userRoles')
   for (let userRole of userRoles.models) {
@@ -304,11 +304,11 @@ async function computeScoreGivenByUserAndEntry (entry, event) {
     for (let givenComment of givenComments.models) {
       let key = userId + '_to_' + givenComment.get('node_id')
       givenByUserAndEntry[key] = givenByUserAndEntry[key] || {
-        commentScore: 0,
+        commentKarma: 0,
         userId: userId,
         entryId: givenComment.get('node_id')
       }
-      givenByUserAndEntry[key].commentScore += givenComment.get('feedback_score')
+      givenByUserAndEntry[key].commentKarma += givenComment.get('karma')
     }
 
     // Earn 2 points per user from votes
@@ -316,11 +316,11 @@ async function computeScoreGivenByUserAndEntry (entry, event) {
     for (let vote of votes.models) {
       let key = vote.get('user_id') + '_to_' + vote.get('entry_id')
       givenByUserAndEntry[key] = givenByUserAndEntry[key] || {
-        commentScore: 0,
+        commentKarma: 0,
         userId: vote.get('user_id'),
         entryId: vote.get('entry_id')
       }
-      givenByUserAndEntry[key].voteScore = 2
+      givenByUserAndEntry[key].voteKarma = 2
     }
   }
 
@@ -330,13 +330,13 @@ async function computeScoreGivenByUserAndEntry (entry, event) {
   }
   for (let key in givenByUserAndEntry) {
     // Pick the highest score among comments & votes on each user
-    result.total += Math.max(givenByUserAndEntry[key].commentScore || 0, givenByUserAndEntry[key].voteScore || 0)
+    result.total += Math.max(givenByUserAndEntry[key].commentKarma || 0, givenByUserAndEntry[key].voteKarma || 0)
   }
 
   return result
 }
 
-function computeFeedbackScore (received, given) {
+function computeKarma (received, given) {
   // This formula boosts a little bit low scores (< 30) to ensure everybody gets at least some comments,
   // and to reward people for posting their first comments. It also nerfs & caps very active commenters to prevent
   // them from trusting the front page. Finally, negative scores are not cool so we use 100 as the origin.

@@ -288,7 +288,7 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | string | platforms | JSON Array : [platform]
  * | string | pictures | JSON Array : [path]
  * | string | division | "solo"/"team"/"unranked" (not null)
- * | decimal | feedback_score | ([-999.999;999.999], defaults to 100, not null)
+ * | decimal | karma | ([-999.999;999.999], defaults to 100, not null)
  * | dateTime | published_at |
  * | integer | comment_count | (not null)
  * | date | created_at | Creation time (not null)
@@ -796,7 +796,7 @@ module.exports.Post = bookshelf.model('Post', {
  * | integer | user_id | Author user ID (not null)
  * | integer | parent_id | Parent comment ID
  * | string | body | Comment body (max size: 10000)
- * | integer | feedback_score | Feedback score gained through this comment (between 1 & 3, not null)
+ * | integer | karma | Karma gained through this comment (between 1 & 3, not null)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */

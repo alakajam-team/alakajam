@@ -18,7 +18,7 @@ const userService = require('../services/user-service')
 const buildUrl = require('./templating').buildUrl
 
 const PUBLIC_ATTRIBUTES_EVENT = ['id', 'name', 'title', 'display_dates', 'display_theme', 'status', 'status_theme', 'status_entry', 'status_results', 'countdown_config']
-const PUBLIC_ATTRIBUTES_ENTRY = ['id', 'event_id', 'event_name', 'name', 'title', 'description', 'links', 'pictures', 'category', 'comment_count', 'feedback_score', 'division']
+const PUBLIC_ATTRIBUTES_ENTRY = ['id', 'event_id', 'event_name', 'name', 'title', 'description', 'links', 'pictures', 'category', 'comment_count', 'karma', 'division']
 const PUBLIC_ATTRIBUTES_ENTRY_DETAILS = ['body', 'optouts', 'rating_count']
 const PUBLIC_ATTRIBUTES_ENTRY_DETAILS_RESULTS = ['rating_1', 'rating_2', 'rating_3', 'rating_4', 'rating_5', 'rating_6', 'ranking_1', 'ranking_2', 'ranking_3', 'ranking_4', 'ranking_5', 'ranking_6']
 const PUBLIC_ATTRIBUTES_USER = ['id', 'name', 'title', 'avatar', 'is_mod', 'is_admin']

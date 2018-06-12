@@ -862,9 +862,9 @@ async function editEventEntries (req, res) {
     let entry = entriesById[req.query.entryDetails]
     await entry.load(['comments', 'votes'])
     detailedEntryInfo.id = req.query.entryDetails
-    detailedEntryInfo.given = await eventRatingService.computeScoreGivenByUserAndEntry(entry, event)
-    detailedEntryInfo.received = await eventRatingService.computeScoreReceivedByUser(entry, event)
-    detailedEntryInfo.total = eventRatingService.computeFeedbackScore(detailedEntryInfo.received.total, detailedEntryInfo.given.total)
+    detailedEntryInfo.given = await eventRatingService.computeKarmaGivenByUserAndEntry(entry, event)
+    detailedEntryInfo.received = await eventRatingService.computeKarmaReceivedByUser(entry, event)
+    detailedEntryInfo.total = eventRatingService.computeKarma(detailedEntryInfo.received.total, detailedEntryInfo.given.total)
   }
 
   res.render('event/edit-event-entries', {
