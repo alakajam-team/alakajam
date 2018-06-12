@@ -170,16 +170,14 @@ async function editEntry (req, res) {
   let errorMessage = null
 
   if (req.method === 'POST') {
-    let {fields, files} = await req.parseForm('picture')
-
     // Parse form data
-    let isExternalEvent = fields['external-event'] !== undefined || !event
+    let isExternalEvent = req.body['external-event'] !== undefined || !event
     let links = []
     let i = 0
-    if (fields['submit-links']) {
-      while (fields['url' + i]) {
-        let label = forms.sanitizeString(fields['label' + i])
-        let url = fields['url' + i]
+    if (req.body['submit-links']) {
+      while (req.body['url' + i]) {
+        let label = forms.sanitizeString(req.body['label' + i])
+        let url = req.body['url' + i]
         links.push({
           label,
           url
@@ -192,9 +190,9 @@ async function editEntry (req, res) {
     }
 
     let platforms = null
-    if (fields.platforms) {
+    if (req.body.platforms) {
       // Ensure the requested platforms (if any) are valid before proceeding.
-      let platformNames = (Array.isArray(fields.platforms)) ? fields.platforms : [fields.platforms]
+      let platformNames = (Array.isArray(req.body.platforms)) ? req.body.platforms : [req.body.platforms]
       platformNames = platformNames.map(tag => forms.sanitizeString(tag))
       platforms = await platformService.fetchMultipleNamed(platformNames)
       if (platforms.length < platformNames.length) {
@@ -214,22 +212,22 @@ async function editEntry (req, res) {
     }
 
     // Save tags
-    let tags = (Array.isArray(fields.tags)) ? fields.tags : [fields.tags]
+    let tags = (Array.isArray(req.body.tags)) ? req.body.tags : [req.body.tags]
     tags = tags.map(tag => forms.sanitizeString(tag))
     await tagService.updateEntryTags(entry, tags)
 
     // Update entry
 
     let statusHighScore = 'off'
-    if (fields['enable-high-score'] === 'on') {
-      statusHighScore = fields['high-score-reversed'] ? enums.ENTRY.STATUS_HIGH_SCORE.REVERSED : enums.ENTRY.STATUS_HIGH_SCORE.NORMAL
+    if (req.body['enable-high-score'] === 'on') {
+      statusHighScore = req.body['high-score-reversed'] ? enums.ENTRY.STATUS_HIGH_SCORE.REVERSED : enums.ENTRY.STATUS_HIGH_SCORE.NORMAL
     }
 
     entry.set({
-      'title': forms.sanitizeString(fields.title),
-      'description': forms.sanitizeString(fields.description),
+      'title': forms.sanitizeString(req.body.title),
+      'description': forms.sanitizeString(req.body.description),
       'links': links,
-      'allow_anonymous': fields['anonymous-enabled'] === 'on',
+      'allow_anonymous': req.body['anonymous-enabled'] === 'on',
       'status_high_score': statusHighScore
     })
 
@@ -237,43 +235,43 @@ async function editEntry (req, res) {
       entry.set({
         event_id: null,
         event_name: null,
-        published_at: forms.parseDateTime(fields['published-at']) || entry.get('published_at'),
-        external_event: forms.sanitizeString(fields['external-event'])
+        published_at: forms.parseDateTime(req.body['published-at']) || entry.get('published_at'),
+        external_event: forms.sanitizeString(req.body['external-event'])
       })
     }
 
-    if (fields['picture-delete'] && entry.get('pictures').length > 0) {
+    if (req.body['picture-delete'] && entry.get('pictures').length > 0) {
       await fileStorage.remove(entry.get('pictures')[0])
       entry.set('pictures', [])
-    } else if (files.picture && (await fileStorage.isValidPicture(files.picture.path))) {
+    } else if (req.file && (await fileStorage.isValidPicture(req.file.path))) {
       let picturePath = '/entry/' + entry.get('id')
-      let result = await fileStorage.savePictureUpload(files.picture, picturePath)
+      let result = await fileStorage.savePictureUpload(req.file, picturePath)
       if (!result.error) {
         entry.set('pictures', [result.finalPath])
       } else {
         errorMessage = result.error
       }
-    } else if (fields.picture) {
-      entry.set('pictures', [forms.sanitizeString(fields.picture)])
+    } else if (req.body.picture) {
+      entry.set('pictures', [forms.sanitizeString(req.body.picture)])
     }
 
     // Update entry details
 
     let optouts = []
-    if (fields['optout-graphics']) optouts.push('Graphics')
-    if (fields['optout-audio']) optouts.push('Audio')
+    if (req.body['optout-graphics']) optouts.push('Graphics')
+    if (req.body['optout-audio']) optouts.push('Audio')
 
-    let highScoreType = forms.sanitizeString(fields['high-score-type'], 20)
+    let highScoreType = forms.sanitizeString(req.body['high-score-type'], 20)
     if (highScoreType === 'custom') {
-      highScoreType = forms.sanitizeString(fields['custom-unit'], 20)
+      highScoreType = forms.sanitizeString(req.body['custom-unit'], 20)
     }
 
     let entryDetails = entry.related('details')
     entryDetails.set({
       'optouts': optouts,
-      'body': forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_ENTRY_DETAILS),
+      'body': forms.sanitizeMarkdown(req.body.body, constants.MAX_BODY_ENTRY_DETAILS),
       'high_score_type': highScoreType,
-      'high_score_instructions': forms.sanitizeString(fields['high-score-instructions'], 2000)
+      'high_score_instructions': forms.sanitizeString(req.body['high-score-instructions'], 2000)
     })
 
     // Save entry: Validate form data
@@ -290,18 +288,18 @@ async function editEntry (req, res) {
       errorMessage = 'Too many links (max allowed: around 7)'
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
       errorMessage = 'Submissions are closed for this event'
-    } else if (fields.division && !isExternalEvent && event && !forms.isIn(fields.division, Object.keys(event.get('divisions')))) {
+    } else if (req.body.division && !isExternalEvent && event && !forms.isIn(req.body.division, Object.keys(event.get('divisions')))) {
       errorMessage = 'Invalid division'
     }
 
     if (!errorMessage) {
       // Save entry: Prepare team changes
       let teamMembers = null
-      if (fields.members) {
-        if (!Array.isArray(fields.members)) {
-          fields.members = [fields.members]
+      if (req.body.members) {
+        if (!Array.isArray(req.body.members)) {
+          req.body.members = [req.body.members]
         }
-        teamMembers = fields.members.map(s => parseInt(s))
+        teamMembers = req.body.members.map(s => parseInt(s))
         let ownerId
         if (!isCreation) {
           ownerId = entry.related('userRoles')
@@ -317,7 +315,7 @@ async function editEntry (req, res) {
 
       // Manager-only changes
       if (isCreation || securityService.canUserManage(user, entry, { allowMods: true })) {
-        let division = fields['division'] || eventService.getDefaultDivision(event)
+        let division = req.body['division'] || eventService.getDefaultDivision(event)
         if (event &&
           (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED || event.get('status_entry') === enums.EVENT.STATUS_ENTRY.CLOSED)) {
           if (!entry.has('division')) {
@@ -441,18 +439,17 @@ async function saveCommentOrVote (req, res) {
     return
   }
 
-  let {fields} = await req.parseForm()
-  if (fields['action'] === 'comment') {
+  if (req.body['action'] === 'comment') {
     // Save comment
     let redirectUrl = await postController.handleSaveComment(
-      fields, user, entry, templating.buildUrl(entry, 'entry'), event)
+      req.body, user, entry, templating.buildUrl(entry, 'entry'), event)
     res.redirect(redirectUrl)
-  } else if (fields['action'] === 'vote') {
+  } else if (req.body['action'] === 'vote') {
     // Save vote
     let i = 1
     let votes = []
-    while (fields['vote-' + i] !== undefined) {
-      votes.push(fields['vote-' + i])
+    while (req.body['vote-' + i] !== undefined) {
+      votes.push(req.body['vote-' + i])
       i++
     }
     if (await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)) {
@@ -490,7 +487,6 @@ async function viewScores (req, res) {
  */
 async function submitScore (req, res) {
   let { user, entry } = res.locals
-  let { fields, files } = await req.parseForm('upload')
 
   if (!user) {
     res.redirect('/login?redirect=' + req.url)
@@ -502,7 +498,7 @@ async function submitScore (req, res) {
 
   // Fetch existing score, handle deletion
   let entryScore = await highscoreService.findEntryScore(user.get('id'), entry.get('id'))
-  if (req.method === 'POST' && fields.delete && entryScore) {
+  if (req.method === 'POST' && req.body.delete && entryScore) {
     await highscoreService.deleteEntryScore(entryScore, entry)
     entryScore = null
   }
@@ -517,16 +513,16 @@ async function submitScore (req, res) {
 
   // Score submission
   let errorMessage
-  if (req.method === 'POST' && !fields.delete) {
+  if (req.method === 'POST' && !req.body.delete) {
     // Validation
-    let isExternalProof = fields.proof !== 'upload'
-    let score = forms.sanitizeString(fields.score) || '0'
+    let isExternalProof = req.body.proof !== 'upload'
+    let score = forms.sanitizeString(req.body.score) || '0'
     score = score.replace(/,/g, '.').replace(/ /g, '') // give some flexibility to number parsing
 
-    if (fields['score-mn'] || fields['score-s'] || fields['score-ms']) {
-      let minutes = fields['score-mn'] || 0
-      let seconds = fields['score-s'] || 0
-      let milliseconds = fields['score-ms'] || 0
+    if (req.body['score-mn'] || req.body['score-s'] || req.body['score-ms']) {
+      let minutes = req.body['score-mn'] || 0
+      let seconds = req.body['score-s'] || 0
+      let milliseconds = req.body['score-ms'] || 0
 
       if (!forms.isInt(minutes, { min: 0, max: 999 })) {
         errorMessage = 'Invalid minutes'
@@ -544,23 +540,23 @@ async function submitScore (req, res) {
     } else if (!forms.isFloat(score)) {
       errorMessage = 'Invalid score'
     }
-    if (isExternalProof && fields.proof && !forms.isURL(fields.proof)) {
+    if (isExternalProof && req.body.proof && !forms.isURL(req.body.proof)) {
       errorMessage = 'Invalid proof URL'
     }
 
     // Store score & proof
     entryScore.set('score', score)
     if (isExternalProof) {
-      entryScore.set('proof', forms.sanitizeString(fields.proof))
+      entryScore.set('proof', forms.sanitizeString(req.body.proof))
     } else {
-      if (files.upload || fields['upload-delete']) {
+      if (req.file || req.body['upload-delete']) {
         let proofPath = `/scores/${entry.get('id')}/${entryScore.get('user_id')}`
-        let result = await fileStorage.savePictureToModel(entryScore, 'proof', files.upload, fields['upload-delete'], proofPath)
+        let result = await fileStorage.savePictureToModel(entryScore, 'proof', req.file, req.body['upload-delete'], proofPath)
         if (result.error) {
           errorMessage = result.error
         }
       } else {
-        entryScore.set('proof', fields.upload)
+        entryScore.set('proof', req.body.upload)
       }
     }
 
@@ -613,7 +609,6 @@ async function submitScore (req, res) {
  */
 async function editScores (req, res) {
   let { user, entry } = res.locals
-  let { fields } = await req.parseForm()
 
   if (!user) {
     res.redirect('/login?redirect=' + req.url)
@@ -627,7 +622,7 @@ async function editScores (req, res) {
   }
 
   if (req.method === 'POST') {
-    for (let field in fields) {
+    for (let field in req.body) {
       if (field.includes('suspend') || field.includes('restore')) {
         let parsedField = field.split('-')
         let id = parsedField.length === 2 ? parsedField[1] : null

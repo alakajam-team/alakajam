@@ -177,10 +177,8 @@ async function dashboardSettings (req, res) {
   let infoMessage = ''
 
   if (req.method === 'POST') {
-    let {fields, files} = await req.parseForm('avatar')
     let dashboardUser = res.locals.dashboardUser
-
-    if (fields.delete) {
+    if (req.body.delete) {
       // Account deletion
       let result = await userService.deleteUser(res.locals.dashboardUser)
       if (!result.error) {
@@ -191,25 +189,25 @@ async function dashboardSettings (req, res) {
         errorMessage = result.error
       }
     } else {
-      if (!forms.isEmail(fields.email)) {
+      if (!forms.isEmail(req.body.email)) {
         errorMessage = 'Invalid email'
-      } else if (fields['social_web'] && !forms.isURL(fields['social_web'])) {
+      } else if (req.body['social_web'] && !forms.isURL(req.body['social_web'])) {
         errorMessage = 'Invalid URL'
-      } else if (!res.locals.dashboardAdminMode && fields['special-permissions']) {
+      } else if (!res.locals.dashboardAdminMode && req.body['special-permissions']) {
         errorMessage = 'Not allowed to change special permissions on this user'
-      } else if (!res.locals.dashboardAdminMode && fields['disallow-anonymous']) {
+      } else if (!res.locals.dashboardAdminMode && req.body['disallow-anonymous']) {
         errorMessage = 'Not allows to change anonymous comments settings on this user'
-      } else if (files.avatar && !(await fileStorage.isValidPicture(files.avatar.path))) {
+      } else if (req.file.avatar && !(await fileStorage.isValidPicture(req.file.path))) {
         errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
       }
 
       if (!errorMessage) {
         // General settings form
-        dashboardUser.set('title', forms.sanitizeString(fields.title || dashboardUser.get('name')))
-        dashboardUser.set('email', fields.email)
-        if (fields['special-permissions']) {
-          let isMod = fields['special-permissions'] === 'mod' || fields['special-permissions'] === 'admin'
-          let isAdmin = fields['special-permissions'] === 'admin'
+        dashboardUser.set('title', forms.sanitizeString(req.body.title || dashboardUser.get('name')))
+        dashboardUser.set('email', req.body.email)
+        if (req.body['special-permissions']) {
+          let isMod = req.body['special-permissions'] === 'mod' || req.body['special-permissions'] === 'admin'
+          let isAdmin = req.body['special-permissions'] === 'admin'
           dashboardUser.set({
             'is_mod': isMod ? 'true' : '',
             'is_admin': isAdmin ? 'true' : ''
@@ -217,24 +215,24 @@ async function dashboardSettings (req, res) {
         }
 
         if (res.locals.dashboardAdminMode) {
-          dashboardUser.set('disallow_anonymous', fields['disallow-anonymous'] === 'on')
+          dashboardUser.set('disallow_anonymous', req.body['disallow-anonymous'] === 'on')
         }
 
         let dashboardUserDetails = dashboardUser.related('details')
         dashboardUserDetails.set('social_links', {
-          website: fields.website,
-          twitter: forms.sanitizeString(fields.twitter.replace('@', ''))
+          website: req.body.website,
+          twitter: forms.sanitizeString(req.body.twitter.replace('@', ''))
         })
-        dashboardUserDetails.set('body', forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_USER_DETAILS))
+        dashboardUserDetails.set('body', forms.sanitizeMarkdown(req.body.body, constants.MAX_BODY_USER_DETAILS))
         await dashboardUserDetails.save()
 
         if (dashboardUser.hasChanged('title')) {
           await userService.refreshUserReferences(dashboardUser)
         }
 
-        if (files.avatar || fields['avatar-delete']) {
+        if (req.file || req.body['avatar-delete']) {
           let avatarPath = '/user/' + dashboardUser.get('id')
-          await fileStorage.savePictureToModel(dashboardUser, 'avatar', files.avatar, fields['avatar-delete'], avatarPath, { maxDiagonal: 500 })
+          await fileStorage.savePictureToModel(dashboardUser, 'avatar', req.file, req.body['avatar-delete'], avatarPath, { maxDiagonal: 500 })
         }
 
         await dashboardUser.save()
@@ -256,20 +254,19 @@ async function dashboardPassword (req, res) {
   let infoMessage = ''
 
   if (req.method === 'POST') {
-    let {fields} = await req.parseForm()
     let dashboardUser = res.locals.dashboardUser
 
     // Change password form
-    if (!res.locals.dashboardAdminMode && !fields['password']) {
+    if (!res.locals.dashboardAdminMode && !req.body['password']) {
       errorMessage = 'You must enter your current password'
-    } else if (!res.locals.dashboardAdminMode && !await userService.authenticate(dashboardUser.get('name'), fields['password'])) {
+    } else if (!res.locals.dashboardAdminMode && !await userService.authenticate(dashboardUser.get('name'), req.body['password'])) {
       errorMessage = 'Current password is incorrect'
-    } else if (!fields['new-password']) {
+    } else if (!req.body['new-password']) {
       errorMessage = 'You must enter a new password'
-    } else if (fields['new-password'] !== fields['new-password-bis']) {
+    } else if (req.body['new-password'] !== req.body['new-password-bis']) {
       errorMessage = 'New passwords do not match'
     } else {
-      let result = userService.setPassword(dashboardUser, fields['new-password'])
+      let result = userService.setPassword(dashboardUser, req.body['new-password'])
       if (result !== true) {
         errorMessage = result
       } else {
@@ -291,18 +288,17 @@ async function dashboardEntryImport (req, res) {
   }
 
   if (req.method === 'POST') {
-    let {fields} = await req.parseForm()
-    context.importer = forms.sanitizeString(fields.importer)
-    context.profileIdentifier = forms.sanitizeString(fields.profileIdentifier)
-    context.oauthIdentifier = forms.sanitizeString(fields.oauthIdentifier)
+    context.importer = forms.sanitizeString(req.body.importer)
+    context.profileIdentifier = forms.sanitizeString(req.body.profileIdentifier)
+    context.oauthIdentifier = forms.sanitizeString(req.body.oauthIdentifier)
 
-    let entryIds = fields.entries
+    let entryIds = req.body.entries
     if (!Array.isArray(entryIds)) {
       entryIds = entryIds ? [entryIds] : []
     }
 
     let importerProfileIdentifier = context.profileIdentifier || context.oauthIdentifier
-    if (fields.run) {
+    if (req.body.run) {
       try {
         let result
         for (let entryId of entryIds) {
@@ -341,16 +337,15 @@ async function registerForm (req, res) {
 async function doRegister (req, res) {
   res.locals.pageTitle = 'Register'
 
-  let {fields} = await req.parseForm()
   let errorMessage = null
-  if (!(fields.name && fields.password && fields.email)) {
+  if (!(req.body.name && req.body.password && req.body.email)) {
     errorMessage = 'A field is missing'
-  } else if (!forms.isUsername(fields.name)) {
+  } else if (!forms.isUsername(req.body.name)) {
     errorMessage = 'Your usename is too weird (either too short, or has special chars other than "_" or "-", or starts with a number)'
-  } else if (fields.password !== fields['password-bis']) {
+  } else if (req.body.password !== req.body['password-bis']) {
     errorMessage = 'Passwords do not match'
   } else {
-    let result = await userService.register(fields.email, fields.name, fields.password)
+    let result = await userService.register(req.body.email, req.body.name, req.body.password)
     if (result === true) {
       doLogin(req, res)
     } else {
@@ -359,8 +354,8 @@ async function doRegister (req, res) {
   }
 
   if (errorMessage) {
-    fields.errorMessage = errorMessage
-    res.render('register', fields)
+    req.body.errorMessage = errorMessage
+    res.render('register', req.body)
   }
 }
 
@@ -381,16 +376,15 @@ async function loginForm (req, res) {
 async function doLogin (req, res) {
   res.locals.pageTitle = 'Login'
 
-  let {fields} = await req.parseForm()
   let context = {
-    redirect: forms.sanitizeString(fields.redirect)
+    redirect: forms.sanitizeString(req.body.redirect)
   }
-  if (fields.name && fields.password) {
-    let user = await userService.authenticate(fields.name, fields.password)
+  if (req.body.name && req.body.password) {
+    let user = await userService.authenticate(req.body.name, req.body.password)
     if (user) {
       context.user = user
       context.infoMessage = 'Authentication successful'
-      await sessionService.openSession(req, res, user.get('id'), !!fields['remember-me'])
+      await sessionService.openSession(req, res, user.get('id'), !!req.body['remember-me'])
 
       // Force notification count update
       context.unreadNotifications = await notificationService.countUnreadNotifications(res.locals.user)
@@ -429,15 +423,13 @@ async function passwordRecoveryRequest (req, res) {
   }
 
   if (req.method === 'POST') {
-    let {fields} = await req.parseForm()
-
-    if (!forms.isEmail(fields.email)) {
+    if (!forms.isEmail(req.body.email)) {
       errorMessage = 'Invalid email address'
     }
 
     if (!errorMessage) {
       try {
-        await userService.sendPasswordRecoveryEmail(res.app, fields.email)
+        await userService.sendPasswordRecoveryEmail(res.app, req.body.email)
         res.locals.success = true
       } catch (err) {
         errorMessage = err.message
@@ -465,14 +457,12 @@ async function passwordRecovery (req, res) {
     res.locals.token = true
 
     if (req.method === 'POST') {
-      let {fields} = await req.parseForm()
-
-      if (!fields['new-password']) {
+      if (!req.body['new-password']) {
         errorMessage = 'You must enter a new password'
-      } else if (fields['new-password'] !== fields['new-password-bis']) {
+      } else if (req.body['new-password'] !== req.body['new-password-bis']) {
         errorMessage = 'New passwords do not match'
       } else {
-        let result = await userService.setPasswordUsingToken(res.app, req.query.token, fields['new-password'])
+        let result = await userService.setPasswordUsingToken(res.app, req.query.token, req.body['new-password'])
         if (result === true) {
           res.locals.success = true
         } else {

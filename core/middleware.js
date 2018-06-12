@@ -195,17 +195,6 @@ async function configure (app) {
   // Body parsers config
   app.use(bodyParser.urlencoded({ extended: false }))
   app.use(async function (req, res, next) {
-    // XXX Deprecated, use req.body & req.file[s] directly instead
-    req.parseForm = async function () {
-      let files = req.files || {}
-      if (req.file) {
-        files[req.file.fieldname] = req.file
-      }
-      return {
-        fields: req.body,
-        files
-      }
-    }
     // Multer auto cleanup (actual Multer middleware is declared at initUploadMiddleware())
     res.on('finish', cleanupFormFilesCallback(req, res))
     res.on('close', cleanupFormFilesCallback(req, res))

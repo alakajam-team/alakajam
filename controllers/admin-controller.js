@@ -82,17 +82,15 @@ async function adminPlatforms (req, res) {
 
   // Save changed platform
   if (req.method === 'POST') {
-    let {fields} = await req.parseForm()
-
-    let name = forms.sanitizeString(fields.name)
+    let name = forms.sanitizeString(req.body.name)
     if (name) {
       let platform = null
 
-      if (forms.isId(fields.id)) {
-        platform = await platformService.fetchById(fields.id)
+      if (forms.isId(req.body.id)) {
+        platform = await platformService.fetchById(req.body.id)
         platform.set('name', name)
       } else {
-        platform = platformService.createPlatform(forms.sanitizeString(fields.name))
+        platform = platformService.createPlatform(forms.sanitizeString(req.body.name))
       }
 
       if (platform) {
@@ -199,24 +197,23 @@ async function adminSettings (req, res) {
   // Save changed setting
   let currentEditValue
   if (req.method === 'POST') {
-    let {fields} = await req.parseForm()
-    if (constants.EDITABLE_SETTINGS.indexOf(fields.key) !== -1) {
+    if (constants.EDITABLE_SETTINGS.indexOf(req.body.key) !== -1) {
       let save = true
-      if (constants.JSON_EDIT_SETTINGS.indexOf(fields.key) !== -1) {
+      if (constants.JSON_EDIT_SETTINGS.indexOf(req.body.key) !== -1) {
         try {
           // Minimize JSON
-          fields.value = JSON.stringify(JSON.parse(fields.value))
+          req.body.value = JSON.stringify(JSON.parse(req.body.value))
         } catch (e) {
           // We re-send the user to the edit page with an error message
           save = false
-          req.query.edit = fields.key
-          currentEditValue = fields.value
+          req.query.edit = req.body.key
+          currentEditValue = req.body.value
           res.locals.errorMessage = 'This setting field needs to be a valid JSON field'
         }
       }
       if (save) {
-        currentEditValue = forms.sanitizeString(fields.value, 10000)
-        await settingService.save(fields.key, currentEditValue)
+        currentEditValue = forms.sanitizeString(req.body.value, 10000)
+        await settingService.save(req.body.key, currentEditValue)
       }
     } else {
       res.errorPage(403, 'Tried to edit a non-editable setting')
@@ -311,8 +308,7 @@ async function adminDev (req, res) {
     let infoMessage = ''
     let errorMessage = ''
     if (req.method === 'POST') {
-      let {fields} = await req.parseForm()
-      if (fields['db-reset']) {
+      if (req.body['db-reset']) {
         await db.emptyDatabase()
         let newVersion = await db.initDatabase(config.DEBUG_INSERT_SAMPLES)
         infoMessage = 'DB reset done (current version : ' + newVersion + ').'

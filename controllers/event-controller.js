@@ -256,6 +256,7 @@ async function viewEventThemes (req, res) {
   } else {
     let context = {
       maxThemeSuggestions: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, '3')),
+      eliminationMinNotes: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5')),
       infoMessage: null
     }
 
@@ -263,29 +264,27 @@ async function viewEventThemes (req, res) {
       context.themesPost = await postService.findPostById(statusThemes)
     } else {
       if (req.method === 'POST' && res.locals.user) {
-        let {fields} = await req.parseForm()
-
-        if (fields.action === 'ideas') {
+        if (req.body.action === 'ideas') {
           // Gather ideas data
           let ideas = []
-          for (let i = 0; i < parseInt(fields['idea-rows']); i++) {
-            let idField = fields['idea-id[' + i + ']']
+          for (let i = 0; i < parseInt(req.body['idea-rows']); i++) {
+            let idField = req.body['idea-id[' + i + ']']
             if (forms.isId(idField) || !idField) {
               ideas.push({
                 id: idField,
-                title: forms.sanitizeString(fields['idea-title[' + i + ']'])
+                title: forms.sanitizeString(req.body['idea-title[' + i + ']'])
               })
             }
           }
           // Update theme ideas
           await eventThemeService.saveThemeIdeas(res.locals.user, event, ideas)
-        } else if (fields.action === 'vote') {
-          if (forms.isId(fields['theme-id']) && (fields['upvote'] !== undefined || fields['downvote'] !== undefined)) {
-            let score = (fields['upvote'] !== undefined) ? 1 : -1
-            await eventThemeService.saveVote(res.locals.user, event, parseInt(fields['theme-id']), score)
+        } else if (req.body.action === 'vote') {
+          if (forms.isId(req.body['theme-id']) && (req.body['upvote'] !== undefined || req.body['downvote'] !== undefined)) {
+            let score = (req.body['upvote'] !== undefined) ? 1 : -1
+            await eventThemeService.saveVote(res.locals.user, event, parseInt(req.body['theme-id']), score)
           }
-        } else if (fields.action === 'shortlist' && fields['shortlist-votes']) {
-          let ids = fields['shortlist-votes'].split(',').map(id => parseInt(id))
+        } else if (req.body.action === 'shortlist' && req.body['shortlist-votes']) {
+          let ids = req.body['shortlist-votes'].split(',').map(id => parseInt(id))
           let validIds = true
           for (let id of ids) {
             if (!forms.isId(id)) {
@@ -614,37 +613,36 @@ async function editEvent (req, res) {
     return
   }
 
-  let { fields, files } = await req.parseForm([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }])
   let errorMessage = null
   let infoMessage = ''
   let redirected = false
 
-  if (fields && fields.name && fields.title) {
+  if (req.body && req.body.name && req.body.title) {
     let event = res.locals.event
     let creation = !event
 
     // TODO Typed fields should not be reset if validation fails
-    if (!forms.isSlug(fields.name)) {
+    if (!forms.isSlug(req.body.name)) {
       errorMessage = 'Name is not a valid slug'
-    } else if (fields.name.indexOf('-') === -1) {
+    } else if (req.body.name.indexOf('-') === -1) {
       errorMessage = 'Name must contain at least one hyphen (-)'
-    } else if (!forms.isIn(fields.status, enums.EVENT.STATUS)) {
+    } else if (!forms.isIn(req.body.status, enums.EVENT.STATUS)) {
       errorMessage = 'Invalid status'
-    } else if (!forms.isIn(fields['status-rules'], enums.EVENT.STATUS_RULES) &&
-        !forms.isId(fields['status-rules'])) {
+    } else if (!forms.isIn(req.body['status-rules'], enums.EVENT.STATUS_RULES) &&
+        !forms.isId(req.body['status-rules'])) {
       errorMessage = 'Invalid welcome/rules post status'
-    } else if (!forms.isIn(fields['status-theme'], enums.EVENT.STATUS_THEME) &&
-        !forms.isId(fields['status-theme'])) {
+    } else if (!forms.isIn(req.body['status-theme'], enums.EVENT.STATUS_THEME) &&
+        !forms.isId(req.body['status-theme'])) {
       errorMessage = 'Invalid theme status'
-    } else if (!forms.isIn(fields['status-entry'], enums.EVENT.STATUS_ENTRY)) {
+    } else if (!forms.isIn(req.body['status-entry'], enums.EVENT.STATUS_ENTRY)) {
       errorMessage = 'Invalid entry status'
-    } else if (!forms.isIn(fields['status-results'], enums.EVENT.STATUS_RESULTS) &&
-        !forms.isId(fields['status-results'])) {
+    } else if (!forms.isIn(req.body['status-results'], enums.EVENT.STATUS_RESULTS) &&
+        !forms.isId(req.body['status-results'])) {
       errorMessage = 'Invalid results status'
-    } else if (!forms.isIn(fields['status-tournament'], enums.EVENT.STATUS_TOURNAMENT)) {
+    } else if (!forms.isIn(req.body['status-tournament'], enums.EVENT.STATUS_TOURNAMENT)) {
       errorMessage = 'Invalid tournament status'
     } else if (event) {
-      let matchingEventsCollection = await eventService.findEvents({ name: fields.name })
+      let matchingEventsCollection = await eventService.findEvents({ name: req.body.name })
       for (let matchingEvent of matchingEventsCollection.models) {
         if (event.id !== matchingEvent.id) {
           errorMessage = 'Another event with the same exists'
@@ -653,15 +651,15 @@ async function editEvent (req, res) {
     }
     if (!errorMessage) {
       try {
-        fields['divisions'] = JSON.parse(fields['divisions'] || '{}')
+        req.body['divisions'] = JSON.parse(req.body['divisions'] || '{}')
       } catch (e) {
         errorMessage = 'Invalid divisions JSON'
       }
     }
     if (!errorMessage) {
       try {
-        fields['category-titles'] = JSON.parse(fields['category-titles'] || '[]')
-        if (fields['category-titles'].length > constants.MAX_CATEGORY_COUNT) {
+        req.body['category-titles'] = JSON.parse(req.body['category-titles'] || '[]')
+        if (req.body['category-titles'].length > constants.MAX_CATEGORY_COUNT) {
           errorMessage = 'Events cannot have more than ' + constants.MAX_CATEGORY_COUNT + ' rating categories'
         }
       } catch (e) {
@@ -670,15 +668,15 @@ async function editEvent (req, res) {
     }
     if (!errorMessage) {
       try {
-        fields['links'] = JSON.parse(fields['links'] || '[]')
+        req.body['links'] = JSON.parse(req.body['links'] || '[]')
       } catch (e) {
         errorMessage = 'Invalid links JSON'
       }
     }
-    if (!errorMessage && (files.logo || fields['logo-delete'])) {
-      let file = files.logo ? files.logo[0] : null
+    if (!errorMessage && (req.files.logo || req.body['logo-delete'])) {
+      let file = req.files.logo ? req.files.logo[0] : null
       let result = await fileStorage.savePictureToModel(event, 'logo', file,
-        fields['logo-delete'], `/events/${event.get('name')}/logo`, { maxDiagonal: 1000 })
+        req.body['logo-delete'], `/events/${event.get('name')}/logo`, { maxDiagonal: 1000 })
       if (result.error) {
         errorMessage = result.error
       }
@@ -691,23 +689,23 @@ async function editEvent (req, res) {
 
       let previousName = event.get('name')
       event.set({
-        title: forms.sanitizeString(fields.title),
-        name: fields.name,
-        display_dates: forms.sanitizeString(fields['display-dates']),
-        display_theme: forms.sanitizeString(fields['display-theme']),
-        divisions: fields.divisions,
-        status: fields.status,
-        status_rules: fields['status-rules'],
-        status_theme: fields['status-theme'],
-        status_entry: fields['status-entry'],
-        status_results: fields['status-results'],
-        status_tournament: fields['status-tournament'],
+        title: forms.sanitizeString(req.body.title),
+        name: req.body.name,
+        display_dates: forms.sanitizeString(req.body['display-dates']),
+        display_theme: forms.sanitizeString(req.body['display-theme']),
+        divisions: req.body.divisions,
+        status: req.body.status,
+        status_rules: req.body['status-rules'],
+        status_theme: req.body['status-theme'],
+        status_entry: req.body['status-entry'],
+        status_results: req.body['status-results'],
+        status_tournament: req.body['status-tournament'],
         countdown_config: {
-          message: forms.sanitizeString(fields['countdown-message']),
-          link: forms.sanitizeString(fields['countdown-link']),
-          date: forms.parseDateTime(fields['countdown-date']),
-          phrase: forms.sanitizeString(fields['countdown-phrase']),
-          enabled: fields['countdown-enabled'] === 'on'
+          message: forms.sanitizeString(req.body['countdown-message']),
+          link: forms.sanitizeString(req.body['countdown-link']),
+          date: forms.parseDateTime(req.body['countdown-date']),
+          phrase: forms.sanitizeString(req.body['countdown-phrase']),
+          enabled: req.body['countdown-enabled'] === 'on'
         }
       })
 
@@ -744,13 +742,13 @@ async function editEvent (req, res) {
       // Event details update
       let eventDetails = event.related('details')
       eventDetails.set({
-        links: fields.links,
-        category_titles: fields['category-titles']
+        links: req.body.links,
+        category_titles: req.body['category-titles']
       })
-      if (files.banner || fields['banner-delete']) {
-        let file = files.banner ? files.banner[0] : null
+      if (req.files.banner || req.body['banner-delete']) {
+        let file = req.files.banner ? req.files.banner[0] : null
         let result = await fileStorage.savePictureToModel(eventDetails, 'banner', file,
-          fields['banner-delete'], `/events/${event.get('name')}/banner`, { maxDiagonal: 3000 })
+          req.body['banner-delete'], `/events/${event.get('name')}/banner`, { maxDiagonal: 3000 })
         if (result.error) {
           errorMessage = result.error
         }
@@ -799,14 +797,13 @@ async function editEventThemes (req, res) {
       await theme.save()
     }
   } else {
-    let { fields } = await req.parseForm()
-    if (fields.elimination) {
+    if (req.body.elimination) {
       let eventDetails = event.related('details')
-      let sanitizedDelay = forms.isInt(fields['elimination-delay']) ? parseInt(fields['elimination-delay']) : 8
+      let sanitizedDelay = forms.isInt(req.body['elimination-delay']) ? parseInt(req.body['elimination-delay']) : 8
       eventDetails.set('shortlist_elimination', {
-        start: forms.parseDateTime(fields['elimination-start-date']),
+        start: forms.parseDateTime(req.body['elimination-start-date']),
         delay: sanitizedDelay,
-        body: forms.sanitizeMarkdown(fields['elimination-body'])
+        body: forms.sanitizeMarkdown(req.body['elimination-body'])
       })
       await eventDetails.save()
       cache.eventsById.del(event.get('id'))
@@ -893,17 +890,15 @@ async function editEventTournamentGames (req, res) {
 
   let errorMessage
   if (req.method === 'POST') {
-    let { fields } = await req.parseForm()
-
     // Add to tournament
-    if (fields.add !== undefined) {
-      if (forms.isId(fields.add)) {
-        let entry = await eventService.findEntryById(fields.add)
+    if (req.body.add !== undefined) {
+      if (forms.isId(req.body.add)) {
+        let entry = await eventService.findEntryById(req.body.add)
         if (entry) {
           await eventTournamentService.addTournamentEntry(event.get('id'), entry.get('id'))
           eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry])
         } else {
-          errorMessage = 'Entry not found with ID ' + fields.add
+          errorMessage = 'Entry not found with ID ' + req.body.add
         }
       } else {
         errorMessage = 'Invalid entry ID'
@@ -911,11 +906,11 @@ async function editEventTournamentGames (req, res) {
     }
 
     // Update order
-    if (fields.update !== undefined && forms.isId(fields.id)) {
-      if (forms.isInt(fields.ordering)) {
-        let entry = await eventService.findEntryById(fields.id)
+    if (req.body.update !== undefined && forms.isId(req.body.id)) {
+      if (forms.isInt(req.body.ordering)) {
+        let entry = await eventService.findEntryById(req.body.id)
         if (entry) {
-          await eventTournamentService.saveTournamentEntryOrdering(event.get('id'), entry.get('id'), fields.ordering)
+          await eventTournamentService.saveTournamentEntryOrdering(event.get('id'), entry.get('id'), req.body.ordering)
         }
       } else {
         errorMessage = 'Invalid order'
@@ -923,8 +918,8 @@ async function editEventTournamentGames (req, res) {
     }
 
     // Remove from tournament
-    if (fields.remove !== undefined && forms.isId(fields.id)) {
-      let entry = await eventService.findEntryById(fields.id)
+    if (req.body.remove !== undefined && forms.isId(req.body.id)) {
+      let entry = await eventService.findEntryById(req.body.id)
       if (entry) {
         await eventTournamentService.removeTournamentEntry(event.get('id'), entry.get('id'))
         eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry])
@@ -932,9 +927,9 @@ async function editEventTournamentGames (req, res) {
     }
 
     // Refresh scores
-    if (fields.refresh || fields['refresh-all']) {
-      let onlyRefreshEntries = (!fields['refresh-all'] && forms.isId(fields.refresh))
-        ? [await eventService.findEntryById(fields.id)] : null
+    if (req.body.refresh || req.body['refresh-all']) {
+      let onlyRefreshEntries = (!req.body['refresh-all'] && forms.isId(req.body.refresh))
+        ? [await eventService.findEntryById(req.body.id)] : null
       await eventTournamentService.recalculateAllTournamentScores(highScoreService, event, onlyRefreshEntries)
     }
   }
@@ -982,10 +977,9 @@ async function ajaxFindThemes (req, res) {
  * AJAX API: Save a vote
  */
 async function ajaxSaveVote (req, res) {
-  let {fields} = await req.parseForm()
-  if (forms.isId(fields['id']) && (fields['upvote'] !== undefined || fields['downvote'] !== undefined)) {
-    let score = (fields['upvote'] !== undefined) ? 1 : -1
-    await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(fields['id']), score)
+  if (forms.isId(req.body['id']) && (req.body['upvote'] !== undefined || req.body['downvote'] !== undefined)) {
+    let score = (req.body['upvote'] !== undefined) ? 1 : -1
+    await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(req.body['id']), score)
   }
   res.type('text/plain') // Keeps Firefox from parsing the empty response as XML and logging an error.
   res.end('')

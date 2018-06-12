@@ -157,14 +157,13 @@ async function savePost (req, res) {
   // Check permissions
   if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) || (!post && res.locals.user)) {
     let redirectToView = false
-    let {fields} = await req.parseForm()
-    let title = forms.sanitizeString(fields.title)
-    let body = forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_POST)
+    let title = forms.sanitizeString(req.body.title)
+    let body = forms.sanitizeMarkdown(req.body.body, constants.MAX_BODY_POST)
     let errorMessage = null
     let customPublishDate = null
 
-    if (fields['save-custom']) {
-      customPublishDate = forms.parseDateTime(fields['published-at'])
+    if (req.body['save-custom']) {
+      customPublishDate = forms.parseDateTime(req.body['published-at'])
       if (!customPublishDate) {
         errorMessage = 'Invalid scheduling time'
       }
@@ -177,13 +176,13 @@ async function savePost (req, res) {
     }
 
     if (!errorMessage) {
-      const eventIdIsValid = forms.isId(fields['event-id'])
+      const eventIdIsValid = forms.isId(req.body['event-id'])
 
       // Create new post if needed
       if (!post) {
         post = await postService.createPost(
           res.locals.user,
-          eventIdIsValid ? fields['event-id'] : undefined
+          eventIdIsValid ? req.body['event-id'] : undefined
         )
         let specialPostType = req.query['special_post_type']
         if (specialPostType) {
@@ -196,7 +195,7 @@ async function savePost (req, res) {
       post.set('title', title)
       post.set('body', body)
       if (eventIdIsValid) {
-        post.set('event_id', fields['event-id'])
+        post.set('event_id', req.body['event-id'])
         if (post.hasChanged('event_id') || post.hasChanged('special_post_type')) {
           if (!post.get('special_post_type')) {
             await post.load(['userRoles', 'author'])
@@ -223,9 +222,9 @@ async function savePost (req, res) {
 
       // Publication & redirection strategy
       redirectToView = true
-      if (fields.publish) {
+      if (req.body.publish) {
         post.set('published_at', new Date())
-      } else if (fields.unpublish) {
+      } else if (req.body.unpublish) {
         post.set('published_at', null)
         redirectToView = false
       } else if (customPublishDate) {
@@ -315,38 +314,37 @@ async function watchPost (req, res) {
  * Save or delete a comment
  */
 async function saveComment (req, res) {
-  let {fields} = await req.parseForm()
-  let redirectUrl = await handleSaveComment(fields, res.locals.user, res.locals.post, templating.buildUrl(res.locals.post, 'post'))
+  let redirectUrl = await handleSaveComment(req.body, res.locals.user, res.locals.post, templating.buildUrl(res.locals.post, 'post'))
   res.redirect(redirectUrl)
 }
 
 /**
  * Handler for handling the comment saving form.
  * Reusable between all controllers of models supporting comments.
- * @param {object} fields The parsed form fields
+ * @param {object} reqBody The parsed request body
  * @param {User} user The current user
  * @param {Post|Entry} node The current node model
  * @param {string} baseUrl The view URL for the current node
  * @param {Event} currentEvent The current event, if the node is an entry
  * @return {string} A URL to redirect to
  */
-async function handleSaveComment (fields, currentUser, currentNode, baseUrl, currentEvent) {
+async function handleSaveComment (reqBody, currentUser, currentNode, baseUrl, currentEvent) {
   let redirectUrl = baseUrl
 
   // Validate comment body
-  let body = forms.sanitizeMarkdown(fields.body, constants.MAX_BODY_COMMENT)
-  if (!currentUser || !body) {
+  let commentBody = forms.sanitizeMarkdown(reqBody.body, constants.MAX_BODY_COMMENT)
+  if (!currentUser || !commentBody) {
     return redirectUrl
   }
 
   // Check permissions, then update/create/delete comment
   let comment = null
   let isCreation = false
-  let isDeletion = fields.delete
+  let isDeletion = reqBody.delete
   let hasWritePermissions = false
-  if (fields.id) {
-    if (forms.isId(fields.id)) {
-      comment = await postService.findCommentById(fields.id)
+  if (reqBody.id) {
+    if (forms.isId(reqBody.id)) {
+      comment = await postService.findCommentById(reqBody.id)
       hasWritePermissions = securityService.canUserManage(currentUser, comment, { allowMods: true }) ||
           (comment && await postService.isOwnAnonymousComment(comment, currentUser))
     }
@@ -357,7 +355,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
         await postService.deleteComment(comment)
       } else {
         // Update comment
-        comment.set('body', body)
+        comment.set('body', commentBody)
         await comment.save()
       }
     } else {
@@ -366,7 +364,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
   } else {
     isCreation = true
     hasWritePermissions = true
-    comment = await postService.createComment(currentUser, currentNode, body, fields['comment-anonymously'])
+    comment = await postService.createComment(currentUser, currentNode, commentBody, reqBody['comment-anonymously'])
   }
 
   // Comment repercussions
@@ -377,7 +375,7 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
     // Entry-specific updates
     if (nodeType === 'entry') {
       if (isCreation) {
-        if (!currentUser.get('disallow_anonymous') && fields['comment-anonymously'] && currentNode.get('allow_anonymous')) {
+        if (!currentUser.get('disallow_anonymous') && reqBody['comment-anonymously'] && currentNode.get('allow_anonymous')) {
           comment.set('user_id', -1)
           await db.knex('anonymous_comment_user').insert({
             'comment_id': comment.get('id'),
@@ -411,9 +409,9 @@ async function handleSaveComment (fields, currentUser, currentNode, baseUrl, cur
     })
 
     // Cache invalidation: Users @mentioned in the comment
-    let body = comment.get('body')
-    if (typeof body === 'string') {
-      body.split(' ').forEach(function (word) {
+    let commentBody = comment.get('body')
+    if (typeof commentBody === 'string') {
+      commentBody.split(' ').forEach(function (word) {
         if (word.length > 0 && word[0] === '@') {
           let userCache = cache.user(word.slice(1))
           userCache.del('toUserCollection')
