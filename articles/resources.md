@@ -26,7 +26,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Bosca Ceoil](http://boscaceoil.net/) | Easy music editor, great for beginners. Misses an undo button. Open Source. |
 | [TIC-80](https://tic.computer/) | While a full-featured fantasy console, you could just use its accessible music tracker. Open Source.|
 | [Audiotool](https://www.audiotool.com)  | Online, knobs-and-cables music editor. Exporting requires a free account. |
-| [LMMS](http://alternativeto.net/software/lmms/)  | Full featured, cross-platform music creation software inspired by FL Studio. Open Source. |
+| [LMMS](https://lmms.io/)  | Full featured, cross-platform music creation software inspired by FL Studio. Open Source. |
 
 ## <a name="engines"></a>Game engines/frameworks
 
