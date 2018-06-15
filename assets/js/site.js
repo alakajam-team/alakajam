@@ -8,7 +8,7 @@ $(function domReady () {
   require('./common/check-all-none')('.js-check-all', '.js-check-none')
   require('./common/date-picker')('.js-date-picker')
   require('./common/disabled-links')('a.disabled')
-  require('./common/editor')('.simplemde-editor', '.codemirror')
+  require('./common/editor')('.easymde-editor', '.codemirror')
   require('./common/expand-collapse')()
   require('./common/fixed-digits')()
   require('./common/form-submit')()

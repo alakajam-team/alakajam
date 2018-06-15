@@ -1,11 +1,11 @@
 {# ======== MARKDOWN EDITOR ========= #}
 
 {% macro editor(editorName, editorContents, autosaveId = '') %}
-<textarea class="form-control simplemde-editor" name="{{ editorName }}" data-autosave-id="{{ autosaveId }}">{{ editorContents | markdownUnescape }}</textarea>
+<textarea class="form-control easymde-editor" name="{{ editorName }}" data-autosave-id="{{ autosaveId }}">{{ editorContents | markdownUnescape }}</textarea>
 {% endmacro %}
 
 {% macro editorScripts() %}
-  <script type="text/javascript" src="/static/js/simplemde.min.js"></script>
+  <script type="text/javascript" src="/static/js/easymde.min.js"></script>
 {% endmacro %}
 
 {# ======== CODEMIRROR EDITOR ========= #}

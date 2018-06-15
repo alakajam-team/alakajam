@@ -61,7 +61,7 @@ textarea.form-control {
   resize: none;
   height: 70px;
 }
-textarea.simplemde-editor {
+textarea.easymde-editor {
   resize: vertical;
   height: 300px;
 }

@@ -1,5 +1,5 @@
 /* eslint-env jquery */
-/* globals SimpleMDE CodeMirror */
+/* globals EasyMDE CodeMirror */
 
 /**
  * Initializes the Markdown editor on each textarea matching the given
@@ -10,7 +10,7 @@ module.exports = function editor (mdSelector, cmSelector) {
   $(mdSelector).each(function () {
     const $this = $(this)
     const autosaveId = $this.attr('data-autosave-id')
-    const mde = new SimpleMDE({
+    const mde = new EasyMDE({
       element: this,
       spellChecker: false,
       toolbar: ['bold', 'italic', 'heading', '|',
