@@ -100,7 +100,16 @@
   {% if theme.get('status') !== 'shortlist' %}
   <tr>
   <td>
-    {% if theme.get('status') !== 'banned' %}
+    <a name="{{ theme.get('id') }}"></a>
+    {% if editTheme and editTheme.get('id') === theme.get('id') %}
+      <form method="post" action="?#{{ theme.get('id') }}" class="form-inline">
+        {{ csrfToken() | safe }}
+        <input type="hidden" name="id" value="{{ editTheme.get('id') }}" />
+        <input type="text" name="title" class="form-control" value="{{ editTheme.get('title') }}" />
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a href="?#{{ theme.get('id') }}" class="btn btn-default">Cancel</a>
+      </form>
+    {% elseif theme.get('status') !== 'banned' %}
       {{ theme.get('title') }}
     {% else %}
       <span style="text-decoration: line-through">{{ theme.get('title') }}</span>
@@ -119,10 +128,13 @@
     {% endif %}
   </td>
   <td>
+    <a href="?edit={{ theme.get('id') }}#{{ theme.get('id') }}" class="btn btn-xs btn-default">
+      <span class="fa fa-pencil"></span>
+    </a>
     {% if theme.get('status') !== 'banned' %}
-      <a href="?ban={{ theme.get('id') }}" class="btn btn-xs btn-default">Ban</a>
+      <a href="?ban={{ theme.get('id') }}#{{ theme.get('id') }}" class="btn btn-xs btn-default">Ban</a>
     {% else %}
-      <a href="?unban={{ theme.get('id') }}" class="btn btn-xs btn-default">Unban</a>
+      <a href="?unban={{ theme.get('id') }}#{{ theme.get('id') }}" class="btn btn-xs btn-default">Unban</a>
     {% endif %}
   </td>
   </tr>

@@ -781,23 +781,25 @@ async function editEventThemes (req, res) {
     return
   }
 
+  // Init context
   let event = res.locals.event
+  let shortlistCollection = await eventThemeService.findShortlist(event)
+  let context = {
+    eliminationMinNotes: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5')),
+    shortlist: shortlistCollection.models,
+    eliminatedShortlistThemes: eventThemeService.computeEliminatedShortlistThemes(event)
+  }
 
-  if (forms.isId(req.query.ban)) {
-    let theme = await eventThemeService.findThemeById(req.query.ban)
-    if (theme) {
-      theme.set('status', enums.THEME.STATUS.BANNED)
-      await theme.save()
-    }
-  } else if (forms.isId(req.query.unban)) {
-    let theme = await eventThemeService.findThemeById(req.query.unban)
-    if (theme) {
-      theme.set('status', (event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING)
-        ? enums.THEME.STATUS.ACTIVE : enums.THEME.STATUS.OUT)
-      await theme.save()
-    }
-  } else {
-    if (req.body.elimination) {
+  if (req.method === 'POST') {
+    if (forms.isId(req.body.id)) {
+      // Save theme title
+      let theme = await eventThemeService.findThemeById(req.body.id)
+      if (theme) {
+        theme.set('title', forms.sanitizeString(req.body.title))
+        await theme.save()
+      }
+    } else if (req.body.elimination) {
+      // Save shortlist elimination settings
       let eventDetails = event.related('details')
       let sanitizedDelay = forms.isInt(req.body['elimination-delay']) ? parseInt(req.body['elimination-delay']) : 8
       eventDetails.set('shortlist_elimination', {
@@ -811,15 +813,31 @@ async function editEventThemes (req, res) {
     }
   }
 
-  let themesCollection = await eventThemeService.findAllThemes(event)
-  let shortlistCollection = await eventThemeService.findShortlist(event)
+  if (forms.isId(req.query.edit)) {
+    // Edit theme title
+    context.editTheme = await eventThemeService.findThemeById(req.query.edit)
+  } else if (forms.isId(req.query.ban)) {
+    // Ban theme
+    let theme = await eventThemeService.findThemeById(req.query.ban)
+    if (theme) {
+      theme.set('status', enums.THEME.STATUS.BANNED)
+      await theme.save()
+    }
+  } else if (forms.isId(req.query.unban)) {
+    // Unban theme
+    let theme = await eventThemeService.findThemeById(req.query.unban)
+    if (theme) {
+      theme.set('status', (event.get('status_theme') === enums.EVENT.STATUS_THEME.VOTING)
+        ? enums.THEME.STATUS.ACTIVE : enums.THEME.STATUS.OUT)
+      await theme.save()
+    }
+  }
 
-  res.render('event/edit-event-themes', {
-    themes: themesCollection.models,
-    eliminationMinNotes: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5')),
-    shortlist: shortlistCollection.models,
-    eliminatedShortlistThemes: eventThemeService.computeEliminatedShortlistThemes(event)
-  })
+  // Fetch themes list at the end to make sure all changes are visible
+  let themesCollection = await eventThemeService.findAllThemes(event)
+  context.themes = themesCollection.models
+
+  res.render('event/edit-event-themes', context)
 }
 
 /**
