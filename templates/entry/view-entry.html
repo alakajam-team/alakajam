@@ -64,7 +64,12 @@
       {% if user and event and eventVote %}
         {% if canVote %}
           <div class="entry-voting">
-            <h2 class="entry-voting__header">Game voting</h2>
+            <h2 class="entry-voting__header">
+              <div class="pull-right">
+                <a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-default btn-xs">Manage my ratings</a>
+              </div>
+              Game voting
+            </h2>
             <div class="entry-voting__body">
               {% if entry.get('division') === 'unranked' %}
                 <p>This game is an <strong>Unranked</strong> entry.</p>
@@ -77,18 +82,18 @@
                     <div class="show-if-saving-success"><i class="fa fa-check-circle" title="Ratings saved successfully"></i></div>
                     <div class="show-if-saving-error"><i class="fa fa-times-circle"></i> <span class="js-saving-error-text"></span></div>
                   </div>
-                  <p style="margin-bottom: -10px">This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
+                  <p>This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
                   {{ csrfToken() | safe }}
                   <input type="hidden" name="action" value="vote" />
-                  <p class="form-group">
+                  <div>
                     {% set optouts = entry.related('details').get('optouts') or [] %}
                     {% for categoryTitle in event.related('details').get('category_titles') %}
-                    {% set categoryIndex = loop.index %}
-                    {% set categoryRating = vote.get('vote_' + categoryIndex) if vote %}
-                    <div class="entry-voting__category">
-                      <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ (categoryRating or 0) | digits(3) }}" />
-                      <div class="entry-voting__category-title">{{ categoryTitle }}</div>
-                      <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ (categoryRating | digits(0)) if categoryRating > 0 }}</div>
+                      {% set categoryIndex = loop.index %}
+                      {% set categoryRating = vote.get('vote_' + categoryIndex) if vote %}
+                      <div class="entry-voting__category">
+                        <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ (categoryRating or 0) | digits(3) }}" />
+                        <div class="entry-voting__category-title">{{ categoryTitle }}</div>
+                        <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ (categoryRating | digits(0)) if categoryRating > 0 }}</div>
                         <div class="entry-voting__category-stars">
                           <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if not categoryRating }}"></span>
                           {% if optouts.includes(categoryTitle) %}
@@ -99,12 +104,9 @@
                             {%- endfor -%}
                           {% endif %}
                         </div>
-                    </div>
+                      </div>
                     {% endfor %}
-                  </p>
-                  <p class="form-group">
-                    <a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-default">Manage ratings</a>
-                  </p>
+                  </div>
                 </form>
               {% endif %}
             </div>
