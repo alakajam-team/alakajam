@@ -68,7 +68,7 @@
               <div class="pull-right">
                 <a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-default btn-xs">Manage my ratings</a>
               </div>
-              Game voting
+              Game ratings
             </h2>
             <div class="entry-voting__body">
               {% if entry.get('division') === 'unranked' %}
@@ -82,7 +82,7 @@
                     <div class="show-if-saving-success"><i class="fa fa-check-circle" title="Ratings saved successfully"></i></div>
                     <div class="show-if-saving-error"><i class="fa fa-times-circle"></i> <span class="js-saving-error-text"></span></div>
                   </div>
-                  <p>This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
+                  <p>This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> rating{{ 's' if entryVotes !== 1 }} so far.</p>
                   {{ csrfToken() | safe }}
                   <input type="hidden" name="action" value="vote" />
                   <div>
@@ -113,19 +113,19 @@
           </div>
         {% elseif not canUserWrite(user, entry) %}
           <div class="entry-voting">
-            <h2 class="entry-voting__header">Game voting</h2>
+            <h2 class="entry-voting__header">Game ratings</h2>
             <div class="entry-voting__body">
-              <p>Because you didn't enter the event, you cannot vote on this game.</p>
+              <p>Because you didn't enter the event, you cannot rate this game.</p>
               <p>You can still provide feedback using comments!</p>
             </div>
           </div>
         {% elseif entryVotes !== null and entry.get('division') !== 'unranked' %}
           <div class="entry-voting">
-            <h2 class="entry-voting__header">Game voting</h2>
+            <h2 class="entry-voting__header">Game ratings</h2>
             <div class="entry-voting__body">
-              <p>You have received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
+              <p>You have received <strong>{{ entryVotes }}</strong> rating{{ 's' if entryVotes !== 1 }} so far.</p>
               {% if entryVotes < minEntryVotes %}
-                <p>You need at least <strong>{{ minEntryVotes }}</strong> votes for your game to receive rankings.</p>
+                <p>You need at least <strong>{{ minEntryVotes }}</strong> ratings for your game to receive rankings.</p>
               {% endif %}
             </div>
           </div>
