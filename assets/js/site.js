@@ -25,7 +25,7 @@ $(function domReady () {
   require('./common/tags-select')()
   require('./common/tooltips')('.has-tooltip')
   require('./common/user-select')()
-  require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes', { autoSubmit: '.js-auto-submit' })
+  require('./common/warn-on-unsaved-changes')('.js-warn-on-unsaved-changes')
 
   require('./countdown')('.js-countdown')
 

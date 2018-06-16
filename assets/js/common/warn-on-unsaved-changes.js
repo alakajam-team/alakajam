@@ -11,7 +11,7 @@ const watchedForms = []
  * serialized values to the stored ones. If they differ, a warning is thrown
  * up.
  */
-module.exports = function warnOnUnsavedChanges (formSelector, options) {
+module.exports = function warnOnUnsavedChanges (formSelector) {
   const $forms = $(formSelector)
 
   // Wait a bit before storing initial values, because other scripts might come
@@ -21,19 +21,7 @@ module.exports = function warnOnUnsavedChanges (formSelector, options) {
       const $form = $(this)
 
       storeInitialValues(this)
-      $form.on('submit', function () {
-        storeInitialValues(this)
-
-        // Auto-submit forms marked as such
-        var triggeredForm = this
-        $(formSelector + options.autoSubmit).each(function () {
-          if (this !== triggeredForm) {
-            var $autoSubmitForm = $(this)
-            $.post($autoSubmitForm.attr('action'), $autoSubmitForm.serialize())
-            storeInitialValues(this)
-          }
-        })
-      })
+      $form.on('submit', function () { storeInitialValues(this) })
 
       watchedForms.push(this)
     })
