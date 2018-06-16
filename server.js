@@ -82,7 +82,7 @@ async function createApp () {
 
   app.listen(config.SERVER_PORT, function () {
     let startSeconds = (Date.now() - startDate) / 1000
-    log.warn('Server started in ' + startSeconds.toFixed(1) + 's on port ' + config.SERVER_PORT + '.')
+    log.warn(`Server started in ${startSeconds.toFixed(1)}s: http://localhost:${config.SERVER_PORT}/`)
     if (process.send) {
       process.send('online') // browser-refresh event
     }
