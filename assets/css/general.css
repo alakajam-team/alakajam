@@ -377,3 +377,33 @@ input[type=submit][data-disabled] {
   flex-wrap: wrap;
   width:100%;
 }
+
+.show-if-saving {
+  display: none;
+}
+.form-saving .show-if-saving {
+  display: block;
+}
+
+.show-if-saving-success {
+  /* Not using display:none here, because it breaks animating the opacity
+   * property. The standard solution is to use visibility:hidden, but that
+   * means it'll still take up space and push other elements down. */
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.form-saving-success .show-if-saving-success {
+  width: auto;
+  height: auto;
+  /* Gradually fade out after appearing. */
+  opacity: 0;
+  transition: 5s opacity ease-in-out 2s;
+}
+
+.show-if-saving-error {
+  display: none;
+}
+.form-saving-error .show-if-saving-error {
+  display: block;
+}

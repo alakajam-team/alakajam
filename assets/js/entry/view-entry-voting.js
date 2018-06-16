@@ -24,6 +24,10 @@ module.exports = function viewEntryVoting () {
     const category = $this.attr('data-category')
     const rating = parseInt($this.attr('data-rating'))
     setRating(category, rating, true)
+
+    const $form = $this.closest('form')
+    const $errorText = $form.find('.js-saving-error-text')
+    saveRatings($form, $errorText)
   })
 
   let currentCategory = null
@@ -72,10 +76,46 @@ module.exports = function viewEntryVoting () {
       $ratingLabel.addClass('confirmed')
       if (previousValue !== newValue) {
         $('#js-vote-' + category).val(newValue)
-        $('.comment input[name=save]').val('Save comment & ratings')
       }
     } else {
       $ratingLabel.removeClass('confirmed')
+    }
+  }
+
+  // Allow only one in-flight POST request at a time to prevent any race conditions.
+  let posting = false
+  let postQueue = []
+
+  function saveRatings ($form, $errorText) {
+    const postObj = {
+      url: $form.attr('action') || '',
+      data: $form.serialize(),
+      beforeSend: function (jqXHR, settings) {
+        $form.removeClass('form-saving-success')
+        $form.removeClass('form-saving-error')
+        $form.addClass('form-saving')
+        posting = true
+      },
+      success: function (data, textStatus, jqXHR) {
+        $form.addClass('form-saving-success')
+        $errorText.empty()
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        $form.addClass('form-saving-error')
+        $errorText.text(`Failed to save ratings: ${errorThrown || textStatus}. Enter another rating to retry.`)
+      },
+      complete: function (jqXHR, textStatus) {
+        $form.removeClass('form-saving')
+        posting = false
+        if (postQueue.length > 0) {
+          $.post(postQueue.shift())
+        }
+      }
+    }
+    if (posting) {
+      postQueue.push(postObj)
+    } else {
+      $.post(postObj)
     }
   }
 }

@@ -2,6 +2,10 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### June 16th
+
+* Implemented automatic saving for entry ratings
+
 ### May 30th
 
 * Let users delete their accounts

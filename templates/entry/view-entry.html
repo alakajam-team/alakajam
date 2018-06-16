@@ -63,7 +63,6 @@
 
       {% if user and event and eventVote %}
         {% if canVote %}
-          <a name="ratings"></a>
           <div class="entry-voting">
             <h2 class="entry-voting__header">Game voting</h2>
             <div class="entry-voting__body">
@@ -72,8 +71,13 @@
                 <p>Voting is disabled, please provide feedback instead.</p>
                 <p style="margin-bottom: 0"><i>Note: The Karma formula grants you as many points on this entry as on ranked ones. <a href="/article/faq#karma-intro">Learn more</a></i></p>
               {% else %}
-                <p style="margin-bottom: -10px">This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
-                <form method="post" class="js-warn-on-unsaved-changes js-auto-submit" action="?#ratings">
+                <form action="" method="post">
+                  <div class="pull-right">
+                    <div class="show-if-saving"><i class="fa fa-spinner fa-spin" title="Saving…"></i></div>
+                    <div class="show-if-saving-success"><i class="fa fa-check-circle" title="Ratings saved successfully"></i></div>
+                    <div class="show-if-saving-error"><i class="fa fa-times-circle"></i> <span class="js-saving-error-text"></span></div>
+                  </div>
+                  <p style="margin-bottom: -10px">This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> vote{{ 's' if entryVotes !== 1 }} so far.</p>
                   {{ csrfToken() | safe }}
                   <input type="hidden" name="action" value="vote" />
                   <p class="form-group">
@@ -96,10 +100,9 @@
                           {% endif %}
                         </div>
                     </div>
-                  {% endfor %}
+                    {% endfor %}
                   </p>
                   <p class="form-group">
-                    <input type="submit" class="btn btn-primary js-save-vote" value="Save changes" />
                     <a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-default">Manage ratings</a>
                   </p>
                 </form>
