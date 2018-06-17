@@ -16,7 +16,6 @@ const enums = require('../core/enums')
 const eventService = require('../services/event-service')
 const eventRatingService = require('../services/event-rating-service')
 const userService = require('../services/user-service')
-const sessionService = require('../services/session-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
@@ -39,10 +38,9 @@ async function anyPageMiddleware (req, res, next) {
   res.locals.path = req.originalUrl
 
   // Fetch current user
-  await sessionService.restoreSessionIfNeeded(req, res)
   let userTask = null
-  if (req.userSession.userId) {
-    userTask = userService.findById(req.userSession.userId).then(function (user) {
+  if (req.session.userId) {
+    userTask = userService.findById(req.session.userId).then(function (user) {
       res.locals.user = user
 
       // Fetch comment to edit

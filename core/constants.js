@@ -51,6 +51,9 @@ module.exports = {
     SETTING_EVENT_OPEN_VOTING],
   JSON_EDIT_SETTINGS: [SETTING_ARTICLE_SIDEBAR],
 
+  // Sessions
+  REMEMBER_ME_MAX_AGE: 30 * 24 * 3600000 /* 30 days */,
+
   // Security
   PERMISSION_READ,
   PERMISSION_WATCH,

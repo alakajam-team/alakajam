@@ -11,11 +11,9 @@ const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
 const userService = require('../services/user-service')
-const sessionService = require('../services/session-service')
 const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
-const notificationService = require('../services/notification-service')
 const entryImportService = require('../services/entry-import-service')
 
 module.exports = {
@@ -182,7 +180,8 @@ async function dashboardSettings (req, res) {
       // Account deletion
       let result = await userService.deleteUser(res.locals.dashboardUser)
       if (!result.error) {
-        sessionService.invalidateSession(req, res)
+        await req.session.regeneratePromisified()
+        res.locals.user = null
         res.redirect('/')
         return
       } else {
@@ -384,10 +383,12 @@ async function doLogin (req, res) {
     if (user) {
       context.user = user
       context.infoMessage = 'Authentication successful'
-      await sessionService.openSession(req, res, user.get('id'), !!req.body['remember-me'])
 
-      // Force notification count update
-      context.unreadNotifications = await notificationService.countUnreadNotifications(res.locals.user)
+      req.session.userId = user.get('id')
+      if (req.body['remember-me']) {
+        req.session.cookie.maxAge = constants.REMEMBER_ME_MAX_AGE
+      }
+      await req.session.savePromisified()
     } else {
       context.errorMessage = 'Authentication failed'
     }
@@ -408,7 +409,8 @@ async function doLogin (req, res) {
 async function doLogout (req, res) {
   res.locals.pageTitle = 'Login'
 
-  sessionService.invalidateSession(req, res)
+  await req.session.regeneratePromisified()
+  res.locals.user = null
   res.render('login', {
     infoMessage: 'Logout successful.'
   })

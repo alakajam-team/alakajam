@@ -23,6 +23,7 @@ const moment = require('moment')
 const nunjucks = require('nunjucks')
 const randomKey = require('random-key')
 const leftPad = require('left-pad')
+const promisify = require('promisify-node')
 const log = require('./log')
 const db = require('./db')
 const config = require('../config')
@@ -31,7 +32,6 @@ const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const enums = require('../core/enums')
 const settingService = require('../services/setting-service')
-const sessionService = require('../services/session-service')
 const userService = require('../services/user-service')
 const controllers = require('../controllers/index')
 const templating = require('../controllers/templating')
@@ -65,7 +65,6 @@ async function configure (app) {
 
   // In-memory data
   await userService.loadPasswordRecoveryCache(app)
-  await sessionService.loadSessionCache(app)
 
   // Session management
   let sessionKey = await findOrCreateSessionKey()
@@ -258,6 +257,8 @@ function cleanupFormFilesCallback (req, res) {
 }
 
 async function createSessionMiddleware () {
+  promisifySession()
+
   return expressSession({
     cookie: {
       path: '/',
@@ -288,6 +289,22 @@ function createSessionStore () {
     tablename: 'sessions',
     createtable: true,
     clearInterval: 60000 // Milliseconds between clearing expired sessions
+  })
+}
+
+function promisifySession () {
+  // For each session method that takes a callback, add a promisified variant
+  // as well. Make sure these are not enumerable to avoid confusing anything.
+  const Session = expressSession.Session
+  ;['regenerate', 'destroy', 'reload', 'save'].forEach(function (funcName) {
+    const originalFunction = Session.prototype[funcName]
+    const promisifiedFunction = promisify(function (callback) { originalFunction.call(this, callback) })
+    Object.defineProperty(Session.prototype, funcName + 'Promisified', {
+      configurable: true,
+      enumerable: false,
+      value: promisifiedFunction,
+      writable: false
+    })
   })
 }
 
