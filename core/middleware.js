@@ -225,6 +225,10 @@ async function configure (app) {
     errorPage(req, res, 404, undefined, app.locals.devMode)
   })
   app.use(function error (error, req, res, next) {
+    // Replace the default error message from csurf by something more user friendly.
+    if (error.code === 'EBADCSRFTOKEN') {
+      error.message = 'Invalid CSRF token. Your session may have expired. Please go back and try again.'
+    }
     errorPage(req, res, error.statusCode || 500, error, app.locals.devMode)
   })
 }
