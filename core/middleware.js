@@ -225,13 +225,7 @@ async function configure (app) {
     errorPage(req, res, 404, undefined, app.locals.devMode)
   })
   app.use(function error (error, req, res, next) {
-    if (error.code === 'EBADCSRFTOKEN') {
-      // Redirect to the GET method of the form
-      log.warn('Invalid CSRF token, redirecting to GET form')
-      res.redirect(req.url)
-    } else {
-      errorPage(req, res, 500, error, app.locals.devMode)
-    }
+    errorPage(req, res, error.statusCode || 500, error, app.locals.devMode)
   })
 }
 
