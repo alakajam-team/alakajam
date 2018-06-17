@@ -21,6 +21,7 @@ const SETTING_FEATURED_EVENT_NAME = 'featured_event_name'
 const SETTING_FEATURED_POST_ID = 'featured_post_id'
 const SETTING_ARTICLE_SIDEBAR = 'article_sidebar'
 const SETTING_SESSION_KEY = 'session_key'
+const SETTING_SESSION_SECRET = 'session_secret'
 const SETTING_INVITE_PASSWORD = 'invite_password'
 const SETTING_INVITE_PEPPER = 'invite_pepper'
 const SETTING_EVENT_REQUIRED_ENTRY_VOTES = 'event_required_entry_votes'
@@ -36,6 +37,7 @@ module.exports = {
   SETTING_FEATURED_POST_ID,
   SETTING_ARTICLE_SIDEBAR,
   SETTING_SESSION_KEY,
+  SETTING_SESSION_SECRET,
   SETTING_INVITE_PASSWORD,
   SETTING_INVITE_PEPPER,
   SETTING_EVENT_REQUIRED_ENTRY_VOTES,

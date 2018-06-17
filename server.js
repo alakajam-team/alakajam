@@ -75,6 +75,10 @@ async function createApp () {
 
   let app = express()
   app.disable('x-powered-by')
+  if (config.SECURE_SESSION_COOKIES) {
+    // See https://github.com/expressjs/session#cookiesecure
+    app.set('trust proxy', 1)
+  }
 
   app.locals.devMode = DEV_ENVIRONMENT
   await db.initDatabase(app.locals.devMode && config.DEBUG_INSERT_SAMPLES)

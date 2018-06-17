@@ -30,6 +30,7 @@ module.exports = {
 
   // Misc
   // GOOGLE_ANALYTICS_ID: '',
+  SECURE_SESSION_COOKIES: false, // Set 'Secure' flag on session cookies, preventing their use over http
 
   // Debug: general options
   DEBUG_INSERT_SAMPLES: true, // Inserts sample data upon DB init (false/true/'nightly')
