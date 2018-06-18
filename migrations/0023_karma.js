@@ -1,5 +1,5 @@
 /**
- * Fast case-insensitive username search
+ * Rename Feedback Score to Karma
  */
 
 exports.up = async function (knex, Promise) {
@@ -10,7 +10,6 @@ exports.up = async function (knex, Promise) {
     await knex.schema.table('comment', function (table) {
       table.renameColumn('feedback_score', 'karma')
     })
-    //   if (config.DB_TYPE !== 'postgresql') {
 
     Promise.resolve()
   } catch (e) {

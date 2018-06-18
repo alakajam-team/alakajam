@@ -197,7 +197,7 @@ async function dashboardSettings (req, res) {
         errorMessage = 'Not allowed to change special permissions on this user'
       } else if (!res.locals.dashboardAdminMode && req.body['disallow-anonymous']) {
         errorMessage = 'Not allows to change anonymous comments settings on this user'
-      } else if (req.file.avatar && !(await fileStorage.isValidPicture(req.file.path))) {
+      } else if (req.file && !(await fileStorage.isValidPicture(req.file.path))) {
         errorMessage = 'Invalid picture format (allowed: PNG GIF JPG)'
       }
 
