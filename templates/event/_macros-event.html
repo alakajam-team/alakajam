@@ -118,7 +118,7 @@
         <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
           <h2>{{ event.get('countdown_config').message }}</h2>
           {% if event.get('countdown_config').phrase %}
-            <span class="glyphicon glyphicon-calendar"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
+            <span class="fas fa-calendar-alt"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
           {% endif %}
         </div>
       </div>
@@ -132,7 +132,7 @@
       <div class="row">
         <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
           {% if event.get('countdown_config').phrase %}
-            <span class="glyphicon glyphicon-calendar"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
+            <span class="fas fa-calendar-alt"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
           {% endif %}
         </div>
         {% if animatedCountdown %}
@@ -164,16 +164,16 @@
   {% endif %}
   
     <div class="nav">
-      {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post'), 'Rules', 'info-sign', path) -}}
+      {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post'), 'Rules', 'info-circle', path) -}}
       {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
       
       {% set statusTournament = event.get('status_tournament') %}
       {% if not statusTournament or statusTournament === 'disabled' %}
-        {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'apple', path) -}}
-        {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'tower', path) -}}
+        {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'lightbulb', path) -}}
+        {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'chess-rook', path) -}}
         {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: ['results'] }) -}}
       {% else %}
-        {{- eventLink(event, 'status_tournament', 'tournament-games', 'Games', 'tower', path) -}}
+        {{- eventLink(event, 'status_tournament', 'tournament-games', 'Games', 'chess-rook', path) -}}
         {{- eventLink(event, 'status_tournament', 'tournament-leaderboard', 'Leaderboard', 'th-list', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
       {% endif %}
     </div>
@@ -189,14 +189,14 @@
   {%- set targetUrl = targetPath if targetPath.includes('/') else buildUrl(event, 'event', targetPath) -%}
   <a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
       {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
-    <span class="glyphicon glyphicon-{{ icon }}"></span> <span class="hidden-xs">{{ label | safe }}</span>
+    <span class="fas fa-{{ icon }}"></span> <span class="hidden-xs">{{ label | safe }}</span>
   </a>
 {%- endif -%}
 {% endmacro %}
 
 {% macro entryPlatformIcon(platform, options = {}) %}
   {% set icon = constants.ENTRY_PLATFORM_ICONS[platform] or constants.ENTRY_PLATFORM_DEFAULT_ICON %}
-  <span class="{{ icon }} has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="{{ platform }}"></span> {{ platform if not options.hideLabel }}
+  <span class="fas fa-{{ icon }} has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="{{ platform }}"></span> {{ platform if not options.hideLabel }}
 {% endmacro %}
 
 {% macro eventThemeStatus (event, options = {}) %}

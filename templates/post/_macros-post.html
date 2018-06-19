@@ -36,7 +36,7 @@
                 {{ specialPostType| upper }}
               </span>
               <span class="visible-xs hidden-sm">
-                <span class="glyphicon glyphicon-pushpin"></span>
+                <span class="fas fa-thumbtack"></span>
               </span>
             </span>
           </div>
@@ -157,7 +157,7 @@
           • <a href="#c{{ comment.id }}"><i class="fa fa-link" aria-hidden="true"></i></a>
           {% endif %}
           {% if not options.readOnly and (canUserWrite(readingUser, comment, options) or isOwnAnonComment)  %}
-          <a class="btn btn-default btn-xs pull-right" href="{{ buildUrl(comment, 'comment', 'edit') }}"><span class="glyphicon glyphicon-pencil"></span></a>
+          <a class="btn btn-default btn-xs pull-right" href="{{ buildUrl(comment, 'comment', 'edit') }}"><span class="fas fa-pencil-alt"></span></a>
           {% endif %}
         </div>
         <div class="comment__body panel user-contents">

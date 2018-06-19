@@ -204,19 +204,6 @@
   </div>
 {% endmacro %}
 
-{% macro jumboLink (event, statusField, targetPath, label, icon, closedValues = [], options = {}) %}
-{% if not statusField or event.get(statusField) !== 'disabled' %}
-  <a href="{{ targetPath if options.absoluteUrl else buildUrl(event, 'event', targetPath) }}" 
-      class="home-jumbo__link {{ 'disabled' if statusField and closedValues.includes(event.get(statusField)) else 'active' }}">
-    <div class="panel home-jumbo__link-border">
-      <span class="glyphicon glyphicon-{{ icon }}"></span> 
-      <span class="home-jumbo__link-label">{{ label }}{% if options.count %}<span class="count"> ({{ options.count }})</span>{% endif %}</span>
-    </div>
-  </a>
-{% endif %}
-{% endmacro %}
-
-
 {% macro socialLink (title, url, iconName) %}
   <a href="{{ url }}" class="footer__link has-tooltip" data-toggle="tooltip" data-original-title="{{ title }}">
     <img src="/static/images/social/{{ iconName }}" class="footer__icon no-border" /> 

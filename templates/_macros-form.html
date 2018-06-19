@@ -44,7 +44,7 @@
 {# ======== TOOLTIPS ========= #}
 
 {% macro tooltip(title, options = {}) %}
- <span class="glyphicon glyphicon-info-sign has-tooltip" data-toggle="tooltip" data-placement="{{ options.placement or 'top' }}" data-original-title="{{ title }}" style="font-size: 0.8rem"></span>
+ <span class="fas fa-info-circle has-tooltip" data-toggle="tooltip" data-placement="{{ options.placement or 'top' }}" data-original-title="{{ title }}" style="font-size: 0.8rem"></span>
 {% endmacro %}
 
 
@@ -115,14 +115,14 @@
 {% macro expandCollapse(options = {}) %}
 <div class="expand-bar {{ 'js-expand-bar' if not options.manualScripting }}" data-max-height="{{ options.maxHeight or 600 }}">
   <span class="expand">
-    <span class="glyphicon glyphicon-arrow-down"></span> 
+    <span class="fas fa-arrow-down"></span> 
     Expand
-    <span class="glyphicon glyphicon-arrow-down"></span> 
+    <span class="fas fa-arrow-down"></span> 
   </span>
   <span class="collapse">
-    <span class="glyphicon glyphicon-arrow-up"></span> 
+    <span class="fas fa-arrow-up"></span> 
     Collapse
-    <span class="glyphicon glyphicon-arrow-up"></span> 
+    <span class="fas fa-arrow-up"></span> 
   </span>
 </div>
 {% endmacro %}
