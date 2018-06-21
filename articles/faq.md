@@ -13,7 +13,7 @@ If you enable the option, you may change your mind later, but comments posted an
 
 ## <a name="anon-comment"></a>Commenting anonymously
 
-If the owner of an entry allowed it, you can choose to post a comment anonymously. This allows you to provide honest feedback (even unpleasant) in the safest conditions. Anonymous comments can still be identified by administrators (though only by running database queries), to moderate any form of hateful, offensive or insulting comments. 
+If the owner of an entry allowed it, you can choose to post a comment anonymously. This allows you to provide honest, even unpleasant feedback while making sure the user won't give you bad ratings in exchange. Note that anonymous comments can still be identified by administrators, to moderate any form of hateful, offensive or insulting comments.
 
 Anonymous comments do not count towards your [karma](#karma-intro).
 

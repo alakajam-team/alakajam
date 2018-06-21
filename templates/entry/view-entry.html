@@ -97,7 +97,7 @@
                         <div class="entry-voting__category-stars">
                           <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if not categoryRating }}"></span>
                           {% if optouts.includes(categoryTitle) %}
-                            Opted out (<a href="/article/faq#optouts">about</a>)
+                            Opted out (<a href="/article/faq#optouts">what?</a>)
                           {% else %}
                             {%- for i in range(1, 11) -%}
                               <span data-category="{{ categoryIndex }}" data-rating="{{ i }}" class="js-star fa fa-lg {{ 'fa-star confirmed' if i <= categoryRating else 'fa-star-o' }}"></span>
