@@ -152,32 +152,70 @@
     }
 
     /* Per-rating-category medals */
-    &.medal-category-1 {
-      background-position-y: -240px;
+    /* TODO once we have SCSS support, it can be simplified to:
+    $medal-category-y: -240px -273px -307px -341px -375px -409px;
+    $medal-ranking-x: -133px -167px -201px;
+    @for $category from 1 through length($medal-category-y) {
+      @for $ranking from 1 through length($medal-ranking-x) {
+        .medal-category-#{$category}.medal-ranking-#{$ranking} {
+          background-position: nth($medal-ranking-x, $ranking) nth($medal-category-y, $category);
+        }
+      }
     }
-    &.medal-category-2 {
-      background-position-y: -273px;
+    */
+    &.medal-category-1.medal-ranking-1 {
+      background-position: -133px -240px;
     }
-    &.medal-category-3 {
-      background-position-y: -307px;
+    &.medal-category-1.medal-ranking-2 {
+      background-position: -167px -240px;
     }
-    &.medal-category-4 {
-      background-position-y: -341px;
+    &.medal-category-1.medal-ranking-3 {
+      background-position: -201px -240px;
     }
-    &.medal-category-5 {
-      background-position-y: -375px;
+    &.medal-category-2.medal-ranking-1 {
+      background-position: -133px -273px;
     }
-    &.medal-category-6 {
-      background-position-y: -409px;
+    &.medal-category-2.medal-ranking-2 {
+      background-position: -167px -273px;
     }
-    &.medal-ranking-1 {
-      background-position-x: -133px;
+    &.medal-category-2.medal-ranking-3 {
+      background-position: -201px -273px;
     }
-    &.medal-ranking-2 {
-      background-position-x: -167px;
+    &.medal-category-3.medal-ranking-1 {
+      background-position: -133px -307px;
     }
-    &.medal-ranking-3 {
-      background-position-x: -201px;
+    &.medal-category-3.medal-ranking-2 {
+      background-position: -167px -307px;
+    }
+    &.medal-category-3.medal-ranking-3 {
+      background-position: -201px -307px;
+    }
+    &.medal-category-4.medal-ranking-1 {
+      background-position: -133px -341px;
+    }
+    &.medal-category-4.medal-ranking-2 {
+      background-position: -167px -341px;
+    }
+    &.medal-category-4.medal-ranking-3 {
+      background-position: -201px -341px;
+    }
+    &.medal-category-5.medal-ranking-1 {
+      background-position: -133px -375px;
+    }
+    &.medal-category-5.medal-ranking-2 {
+      background-position: -167px -375px;
+    }
+    &.medal-category-5.medal-ranking-3 {
+      background-position: -201px -375px;
+    }
+    &.medal-category-6.medal-ranking-1 {
+      background-position: -133px -409px;
+    }
+    &.medal-category-6.medal-ranking-2 {
+      background-position: -167px -409px;
+    }
+    &.medal-category-6.medal-ranking-3 {
+      background-position: -201px -409px;
     }
   }
 
