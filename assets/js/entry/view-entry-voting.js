@@ -48,21 +48,17 @@ module.exports = function viewEntryVoting () {
         const starRating = parseInt($star.attr('data-rating'))
         if ((starRating !== 0 && starRating > rating) ||
             (starRating === 0 && rating !== 0)) {
-          if (!$star.hasClass('fa-circle-o')) {
-            $star.removeClass('fa-star')
-            $star.addClass('fa-star-o')
+          if ($star.hasClass('fa-star')) {
+            $star.removeClass('fas')
+            $star.addClass('far')
           }
           $star.removeClass('confirmed')
         } else {
-          if (!$star.hasClass('fa-circle-o')) {
-            $star.removeClass('fa-star-o')
-            $star.addClass('fa-star')
+          if ($star.hasClass('fa-star')) {
+            $star.removeClass('far')
+            $star.addClass('fas')
           }
-          if (confirmed) {
-            $star.addClass('confirmed')
-          } else {
-            $star.removeClass('confirmed')
-          }
+          $star.toggleClass('confirmed', confirmed)
         }
       }
     })

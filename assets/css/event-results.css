@@ -195,13 +195,17 @@
     display: inline-block;
     font-size: 1rem;
 
-    & .fa {
+    & .fas,
+    & .far,
+    & .fab {
       font-size: 1.4rem;
       width: 1.7rem;
     }
   }
   @media (min-width: 992px) and (max-width: 1199px) {
-    &__category-stars .fa {
+    &__category-stars .fas,
+    &__category-stars .far,
+    &__category-stars .fab {
       width: 1.4rem;
     }
   }

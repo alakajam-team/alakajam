@@ -28,12 +28,12 @@
           <!-- Being subscribed to a post = having a user right. Only allow removing the right-->
           {% if isUserWatching(user, post) %}
             {% if canUserWrite(user, post) %}
-              <span class="fa fa-check"></span> Subscribed
+              <span class="fas fa-check"></span> Subscribed
             {% else %}
-              <button type="submit" class="btn btn-default btn-sm"><span class="fa fa-minus"></span> Unsubscribe</button>
+              <button type="submit" class="btn btn-default btn-sm"><span class="fas fa-minus"></span> Unsubscribe</button>
             {% endif %}
           {% else %}
-              <button type="submit" class="btn btn-default btn-sm"><span class="fa fa-plus"></span> Subscribe</button>
+            <button type="submit" class="btn btn-default btn-sm"><span class="fas fa-plus"></span> Subscribe</button>
           {% endif %}
         </form>
         {% endif %}

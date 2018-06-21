@@ -357,14 +357,14 @@
 {% macro divisionButton(title, legend, icon, value, currentValue, canEditDivision, tooltipMessage) %}
   {% if canEditDivision %}
     <label class="btn entry-division js-division-button {{ 'active' if value === currentValue }}">
-      <div class="fas fa-{{ icon }}"></div>
+      <div class="{{ icon }}"></div>
       <input type="radio" name="division" value="{{ value }}" autocomplete="off" {{ 'checked' if value === currentValue }}>
       {{ title }}
       <div class="entry-division__legend hidden-xs hidden-sm">{{ legend | safe }}</div>
     </label>
   {% else %}
     <div class="btn entry-division {{ 'active' if value === currentValue else 'disabled' }}" title="{{ tooltipMessage }}">
-      <div class="fas fa-{{ icon }}"></div>
+      <div class="{{ icon }}"></div>
       {{ title }}
       <div class="entry-division__legend hidden-xs hidden-sm">{{ legend | safe }}</div>
     </div>

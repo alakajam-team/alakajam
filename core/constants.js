@@ -85,20 +85,20 @@ module.exports = {
   FEATURED_EVENT_DATE_FORMAT: 'MMM. Do, ha',
 
   // Entries
-  ENTRY_PLATFORM_DEFAULT_ICON: 'fa-file-o',
+  ENTRY_PLATFORM_DEFAULT_ICON: 'far fa-file',
   ENTRY_PLATFORM_ICONS: {
     'Windows': 'fab fa-windows',
     'Linux': 'fab fa-linux',
     'Mac': 'fab fa-apple',
     'Web': 'fas fa-globe',
-    'Mobile': 'fa fa-mobile-alt',
-    'Retro': 'fa fa-gamepad'
+    'Mobile': 'fas fa-mobile-alt',
+    'Retro': 'fas fa-gamepad'
   },
   DIVISION_ICONS: {
-    'solo': 'user',
-    'team': 'users',
-    'ranked': 'flag-checkered',
-    'unranked': 'hand-peace-o'
+    'solo': 'fas fa-user',
+    'team': 'fas fa-users',
+    'ranked': 'fas fa-flag-checkered',
+    'unranked': 'far fa-hand-peace'
   },
 
   // Events

@@ -75,7 +75,7 @@
                   placeholder="Idea #{{ index + 1 }}" value="{{ userTheme.get('title') if userTheme }}" />
                 {% if userTheme %}
                   {% if userTheme.get('status') === 'duplicate' or userTheme.get('status') === 'active' %}
-                    <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-default"><span class="fa fa-remove"></span></button>
+                    <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-default"><span class="fas fa-remove"></span></button>
                   {% endif %}
                 {% endif %}
                 <input type="hidden" name="idea-id[{{ index }}]" value="{{ userTheme.get('id') if userTheme }}" />
@@ -204,7 +204,7 @@
                 {% for theme in activeShortlist %}
                 <li class="theme-shortlist-line {{ 'draggable' if shortlistVote }}" data-theme-id="{{ theme.get('id') }}">
                   {% if shortlistVote %}
-                    <span class="theme-shortlist-line__handle fa fa-bars"></span> 
+                    <span class="theme-shortlist-line__handle fas fa-bars"></span> 
                   {% endif %}
                   <span class="theme-shortlist-line__label" style="{{ ('font-size: ' + forcedFontSize + 'px') if forcedFontSize }}">{{ theme.get('title') }}</span>
                 </li>

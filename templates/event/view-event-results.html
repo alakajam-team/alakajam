@@ -71,7 +71,7 @@
       {% for division in ['solo','team'] %}
         <a href="?sortBy={{ selectedCategoryIndex }}&amp;division={{ division }}" type="button" 
             class="btn btn-primary results-links__division {{ 'disabled' if selectedDivision === division }}">
-          <span class="fa fa-{{ constants.DIVISION_ICONS[division] }}"></span>
+          <span class="{{ constants.DIVISION_ICONS[division] }}"></span>
           {{ division | capitalize }}
         </a>
       {% endfor %}
@@ -95,7 +95,7 @@
   <h2 class="results-podium__title">
     <div class="dropdown">
       <button class="dropdown-toggle" type="button" data-toggle="dropdown">
-        <span class="fa fa-{{ constants.DIVISION_ICONS[division] }}"></span>
+        <span class="{{ constants.DIVISION_ICONS[division] }}"></span>
         {{ division | capitalize }} division:
       </button>
       <ul class="dropdown-menu">

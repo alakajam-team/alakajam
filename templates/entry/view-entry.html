@@ -78,9 +78,9 @@
               {% else %}
                 <form action="" method="post">
                   <div class="pull-right">
-                    <div class="show-if-saving"><i class="fa fa-spinner fa-spin" title="Saving…"></i></div>
-                    <div class="show-if-saving-success"><i class="fa fa-check-circle" title="Ratings saved successfully"></i></div>
-                    <div class="show-if-saving-error"><i class="fa fa-times-circle"></i> <span class="js-saving-error-text"></span></div>
+                    <div class="show-if-saving"><i class="fas fa-spinner fa-spin" title="Saving…"></i></div>
+                    <div class="show-if-saving-success"><i class="fas fa-check-circle" title="Ratings saved successfully"></i></div>
+                    <div class="show-if-saving-error"><i class="fas fa-times-circle"></i> <span class="js-saving-error-text"></span></div>
                   </div>
                   <p>This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> rating{{ 's' if entryVotes !== 1 }} so far.</p>
                   {{ csrfToken() | safe }}
@@ -95,12 +95,12 @@
                         <div class="entry-voting__category-title">{{ categoryTitle }}</div>
                         <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ (categoryRating | digits(0)) if categoryRating > 0 }}</div>
                         <div class="entry-voting__category-stars">
-                          <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star fa fa-lg fa-circle-o {{ 'confirmed' if not categoryRating }}"></span>
+                          <span data-category="{{ categoryIndex }}" data-rating="0" class="js-star far fa-lg fa-circle {{ 'confirmed' if not categoryRating }}"></span>
                           {% if optouts.includes(categoryTitle) %}
                             Opted out (<a href="/article/faq#optouts">what?</a>)
                           {% else %}
                             {%- for i in range(1, 11) -%}
-                              <span data-category="{{ categoryIndex }}" data-rating="{{ i }}" class="js-star fa fa-lg {{ 'fa-star confirmed' if i <= categoryRating else 'fa-star-o' }}"></span>
+                              <span data-category="{{ categoryIndex }}" data-rating="{{ i }}" class="js-star fa-lg {{ 'fas fa-star confirmed' if i <= categoryRating else 'far fa-star' }}"></span>
                             {%- endfor -%}
                           {% endif %}
                         </div>
@@ -161,7 +161,7 @@
                 <div class="entry-results__category-rating">{{ rating | digits(3) }}</div>
                 <div class="entry-results__category-stars hidden-xs">
                   {%- for i in range(1, 11) -%}
-                    <span class="fa fa-lg {{ 'fa-star' if i <= rating|round(0) else 'fa-star-o' }}"></span>
+                    <span class="fa-lg {{ 'fas fa-star' if i <= rating|round(0) else 'far fa-star' }}"></span>
                   {%- endfor -%}
                 </div>
               </div>
@@ -237,7 +237,7 @@
         {% endif %}
         {% for link in entry.get('links') %}
           <a class="btn btn-primary" href="{{ link.url }}" target="_blank">
-            <span class="fa fa-external-link"></span>
+            <span class="fas fa-external-link"></span>
             {{ link.label }} 
           </a>
         {% endfor %}

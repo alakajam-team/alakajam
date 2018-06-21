@@ -292,7 +292,9 @@
   transition: 0.1s;
   color: var(--text);
 
-  & .fa {
+  & .fas,
+  & .far,
+  & .fab {
     font-size: 1.6rem;
     padding-right: 10px;
     width: 32px;

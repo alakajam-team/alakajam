@@ -19,7 +19,7 @@
             {{ post.get('title') }}
           </a>
           <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
-            <span class="fa fa-comments"></span> {{ post.get('comment_count') or 0 }}
+            <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}
           </a>
           {% if canUserWrite(readingUser, post, options) %}
             <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
@@ -90,7 +90,7 @@
       {% endif %}
       {% if not options.commentsAnchorLinks %}
       <a href="{{ buildUrl(post, 'post', '#comments') }}" style="margin-left: 10px">
-         <span class="fa fa-comments"></span>
+         <span class="fas fa-comments"></span>
          {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
       </a>
       {% endif %}
@@ -154,7 +154,7 @@
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
           {% endif %}
           {% if comment and not options.linkToNode %}
-          • <a href="#c{{ comment.id }}"><i class="fa fa-link" aria-hidden="true"></i></a>
+          • <a href="#c{{ comment.id }}"><i class="fas fa-link" aria-hidden="true"></i></a>
           {% endif %}
           {% if not options.readOnly and (canUserWrite(readingUser, comment, options) or isOwnAnonComment)  %}
           <a class="btn btn-default btn-xs pull-right" href="{{ buildUrl(comment, 'comment', 'edit') }}"><span class="fas fa-pencil-alt"></span></a>

@@ -18,19 +18,19 @@ module.exports = function editor (mdSelector, cmSelector) {
         {
           name: 'float-left',
           action: alignText('pull-left'),
-          className: 'fa fa-align-left',
+          className: 'fas fa-align-left',
           title: 'Float left'
         },
         {
           name: 'align-center',
           action: alignText('text-center'),
-          className: 'fa fa-align-center',
+          className: 'fas fa-align-center',
           title: 'Align center'
         },
         {
           name: 'float-right',
           action: alignText('pull-right'),
-          className: 'fa fa-align-right',
+          className: 'fas fa-align-right',
           title: 'Float right'
         },
         '|',
@@ -42,7 +42,7 @@ module.exports = function editor (mdSelector, cmSelector) {
           action: function () {
             window.open('/article/markdown', '_blank')
           },
-          className: 'fa fa-question-circle',
+          className: 'fas fa-question-circle',
           title: 'Markdown guide'
         }],
       status: false,
