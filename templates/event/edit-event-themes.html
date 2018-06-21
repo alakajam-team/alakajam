@@ -20,7 +20,7 @@
 {% for theme in shortlist %}
   <tr>
     <td>
-      {% if event.get('status_theme') === 'shortlist' and loop.index <= 5 %}
+      {% if event.get('status_theme') === 'shortlist' %}
         <span class="label">R E D A C T E D</span>
       {% else %}
         {{ theme.get('title') }}
