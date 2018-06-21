@@ -91,7 +91,7 @@
                       {% set categoryIndex = loop.index %}
                       {% set categoryRating = vote.get('vote_' + categoryIndex) if vote %}
                       <div class="entry-voting__category">
-                        <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ (categoryRating or 0) | digits(3) }}" />
+                        <input type="hidden" id="js-vote-{{ categoryIndex }}" name="vote-{{ categoryIndex }}" value="{{ (categoryRating or 0) | digits(3) }}" autocomplete="off" />
                         <div class="entry-voting__category-title">{{ categoryTitle }}</div>
                         <div id="js-vote-label-{{ categoryIndex }}" class="entry-voting__category-rating confirmed">&nbsp;{{ (categoryRating | digits(0)) if categoryRating > 0 }}</div>
                         <div class="entry-voting__category-stars">
