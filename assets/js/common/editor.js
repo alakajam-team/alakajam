@@ -12,6 +12,7 @@ module.exports = function editor (mdSelector, cmSelector) {
     const autosaveId = $this.attr('data-autosave-id')
     const mde = new EasyMDE({
       element: this,
+      autoDownloadFontAwesome: false,
       spellChecker: false,
       toolbar: ['bold', 'italic', 'heading', '|',
         {
