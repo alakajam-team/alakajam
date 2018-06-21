@@ -874,7 +874,7 @@ async function editEventEntries (req, res) {
   }
   let entriesCollection = await eventService.findGames(findGameOptions)
 
-  // Gather info for feedback details
+  // Gather info for karma details
   let entriesById = {}
   entriesCollection.each(function (entry) {
     entriesById[entry.get('id')] = entry

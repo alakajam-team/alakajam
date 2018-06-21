@@ -216,7 +216,8 @@
             {% endif %}
           </div>
           {% if comment and comment.id %}
-          <input type="submit" name="delete" class="btn btn-default" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"/>
+          <input type="submit" name="delete" class="btn btn-default" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"
+            onclick="return confirm('Delete this comment?')" />
           {% endif %}
           {% if showAnon and not user.get('disallow_anonymous') %}
             {{ formMacros.check('comment-anonymously', 'Comment anonymously', null, { noMargin: true }) }}

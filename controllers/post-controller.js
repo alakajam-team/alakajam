@@ -342,6 +342,8 @@ async function handleSaveComment (reqBody, currentUser, currentNode, baseUrl, cu
   let isCreation = false
   let isDeletion = reqBody.delete
   let hasWritePermissions = false
+  let nodeType = null
+  let userId = null
   if (reqBody.id) {
     if (forms.isId(reqBody.id)) {
       comment = await postService.findCommentById(reqBody.id)
@@ -352,6 +354,8 @@ async function handleSaveComment (reqBody, currentUser, currentNode, baseUrl, cu
     if (hasWritePermissions) {
       if (isDeletion) {
         // Delete comment
+        nodeType = comment.get('node_type')
+        userId = comment.get('user_id')
         await postService.deleteComment(comment)
       } else {
         // Update comment
@@ -369,8 +373,8 @@ async function handleSaveComment (reqBody, currentUser, currentNode, baseUrl, cu
 
   // Comment repercussions
   if (hasWritePermissions) {
-    let nodeType = comment.get('node_type')
-    let userId = comment.get('user_id')
+    nodeType = nodeType || comment.get('node_type')
+    userId = userId || comment.get('user_id')
 
     // Entry-specific updates
     if (nodeType === 'entry') {
