@@ -319,10 +319,7 @@ async function viewEventThemes (req, res) {
             context.votingAllowed = false
           }
         } else if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED].includes(statusTheme)) {
-          let { activeShortlist, eliminatedShortlist, randomizedShortlist } = await _generateShortlistInfo(event, res.locals.user)
-          context.activeShortlist = activeShortlist
-          context.eliminatedShortlist = eliminatedShortlist
-          context.randomizedShortlist = randomizedShortlist
+          context = Object.assign(context, await _generateShortlistInfo(event, res.locals.user))
         }
       } else {
         // Anonymous users
@@ -336,10 +333,7 @@ async function viewEventThemes (req, res) {
             context.votingAllowed = false
           }
         } else if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED].includes(statusTheme)) {
-          let { activeShortlist, eliminatedShortlist, randomizedShortlist } = await _generateShortlistInfo(event)
-          context.activeShortlist = activeShortlist
-          context.eliminatedShortlist = eliminatedShortlist
-          context.randomizedShortlist = randomizedShortlist
+          context = Object.assign(context, await _generateShortlistInfo(event))
         }
       }
 
@@ -373,6 +367,18 @@ async function viewEventThemes (req, res) {
   }
 }
 
+/**
+ * Builds an object filled with data related to the theme shortlist:
+ * @returns
+ * {
+ *  activeShortlist: The themes of the shortlist that aren't eliminated by the final countdown.
+ *                   If a user has rated them, they are sorted by his ratings.
+ *  eliminatedShortlist: The themes of the shortlist that are eliminated by the final countdown
+ *  randomizedShortlist: true/false whether the shortlist is randomized
+ *  hasRankedShortlist: true/false whether the user has ranked the shortlist
+ *  scoreByTheme: (optional) The scores set by the user
+ * }
+ */
 async function _generateShortlistInfo (event, user = null) {
   let shortlistCollection = await eventThemeService.findShortlist(event)
   let eliminatedShortlistThemes = eventThemeService.computeEliminatedShortlistThemes(event)
@@ -381,17 +387,21 @@ async function _generateShortlistInfo (event, user = null) {
   let info = {
     activeShortlist: shortlistCollection.slice(0, shortlistCollection.length - eliminatedShortlistThemes),
     eliminatedShortlist: eliminatedShortlistThemes > 0 ? shortlistCollection.slice(-eliminatedShortlistThemes) : [],
-    randomizedShortlist: false
+    randomizedShortlist: false,
+    hasRankedShortlist: false
   }
 
   // Sort active shortlist by user score
   let shortlistVotesCollection = user ? await eventThemeService.findThemeShortlistVotes(user, event) : null
   if (shortlistVotesCollection) {
-    let scoreByTheme = {}
+    info.scoreByTheme = {}
     shortlistVotesCollection.each(function (vote) {
-      scoreByTheme[vote.get('theme_id')] = vote.get('score')
+      info.scoreByTheme[vote.get('theme_id')] = vote.get('score')
+      if (vote.get('score') === 9) {
+        info.hasRankedShortlist = true
+      }
     })
-    info.activeShortlist.sort((t1, t2) => (scoreByTheme[t2.get('id')] || 0) - (scoreByTheme[t1.get('id')] || 0))
+    info.activeShortlist.sort((t1, t2) => (info.scoreByTheme[t2.get('id')] || 0) - (info.scoreByTheme[t1.get('id')] || 0))
   }
 
   // Randomize active shortlist if no vote or anonymous

@@ -183,8 +183,10 @@
                   These are the top submitted ideas, in random order. {{ "Rank them from best (first) to worst (last) by using drag'n'drop." if user }}
                 {% elseif shortlistVote %}
                   Here are the top submitted ideas as you ranked them. You can still drag'n'drop them to change the order.
-                {% else %}
+                {% elseif hasRankedShortlist %}
                   Here are the top submitted ideas as you ranked them. You can no longer change your vote.
+                {% else %}
+                  Here are the top submitted ideas, in random order. It is now too late to rate them.
                 {% endif %}
               </p>
               {% if eliminatedShortlist.length > 0 %}
