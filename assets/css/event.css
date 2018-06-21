@@ -32,10 +32,13 @@
     background-color: white;
     height: 60px;
     padding: 5px;
-    
+    overflow: hidden;
+    width: 100%;
+
     & a {
       @apply --alt-font;
       font-size: 1.4rem;
+      line-height: 1.4rem;
     }
   }
 }

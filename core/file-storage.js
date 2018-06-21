@@ -19,7 +19,7 @@ let sharp = null
 try {
   sharp = require('sharp')
 } catch (e) {
-  log.warn('Sharp dependency missing. Disabled features: picture resizing, picture format validation')
+  log.warn('Sharp dependency missing. Picture resizing disabled')
 }
 
 module.exports = {

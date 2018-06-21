@@ -238,12 +238,18 @@
 {% macro eventShortcutMyPost(user, event, userPost) %}
   <div class="action-banner">
     <div class="action-banner__title">
-      Your latest post
+      Your last post
       <div class="pull-right">
         {% if userPost %}
-          <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">Edit</a>
+          <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">
+            <span class="fas fa-pencil-alt"></span>
+            <span class="hidden-xs hidden-sm">Edit</span>
+          </a>
         {% endif %}
-        <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-alt">Create</a>
+        <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-alt">
+          <span class="fas fa-plus"></span>
+          <span class="hidden-xs hidden-sm">Create</span>
+        </a>
         <a href="{{ buildUrl(user, 'user', 'posts') }}" class="btn btn-alt">My posts</a>
       </div>
     </div>
