@@ -293,6 +293,7 @@ async function insertInitialData (knex, samples) {
 
     userEntry = await eventService.createEntry(entrantUser, event2)
     userEntry.set('title', 'Game 1')
+    userEntry.set('published_at', new Date())
     await userEntry.save()
 
     for (let i = 2; i <= 10; i++) {
@@ -300,6 +301,7 @@ async function insertInitialData (knex, samples) {
       let otherUser = await userService.findByName('entrant' + i)
       let otherEntry = await eventService.createEntry(otherUser, event2)
       otherEntry.set('title', 'Game ' + i)
+      otherEntry.set('published_at', new Date())
       await otherEntry.save()
     }
     for (let i = 2; i <= 10; i++) {
