@@ -852,7 +852,7 @@ function _computeRawCommentKarma (comment) {
  */
 async function refreshEventCounts (event) {
   let countByDivision = await db.knex('entry')
-    .count().select('division')
+    .count('* as count').select('division')
     .where('event_id', event.get('id'))
     .where('published_at', '<=', new Date())
     .groupBy('division')
