@@ -86,7 +86,8 @@ function createKnexInstance () {
 
   let knex = require('knex')(knexOptions)
 
-  if (config.DEBUG_TRACE_SLOW_SQL > -1) {
+  const traceSqlThreshold = config.DEBUG_TRACE_SQL ? 0 : config.DEBUG_TRACE_SLOW_SQL
+  if (traceSqlThreshold >= 0) {
     const queryTimes = {}
     knex.on('query', function (request) {
       queryTimes[request.__knexUid] = Date.now()
@@ -94,7 +95,7 @@ function createKnexInstance () {
     knex.on('query-response', function (response, request) {
       if (queryTimes[request.__knexUid]) {
         let totalTime = Date.now() - queryTimes[request.__knexUid]
-        if (totalTime > config.DEBUG_TRACE_SLOW_SQL) {
+        if (totalTime >= traceSqlThreshold) {
           log.debug('"' + request.sql + '"', request.bindings, totalTime + 'ms')
         }
         delete queryTimes[request.__knexUid]
