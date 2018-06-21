@@ -91,6 +91,9 @@
         padding-left: 30px;
       }
     }
+    &.winner .theme-shortlist-line__label {
+      font-size: 1.8rem;
+    }
     
     &__handle {
       position: absolute;

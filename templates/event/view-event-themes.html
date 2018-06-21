@@ -228,11 +228,13 @@
                 <span class="theme-shortlist-line__score">Your picks</span>
               {% endif %}
               <span class="theme-shortlist-line__score hidden-xs">Score</span>
-              Final rankings of the theme shortlist
+              {% if shortlist.length > 0 %}
+                The theme of the <em>{{ event.get('title') }}</em> is <strong>{{ shortlist[0].get('title') }}</strong>. Here are the detailed voting results:
+              {% endif %}
             </p>
             <ol>
               {% for theme in shortlist %}
-              <li class="theme-shortlist-line"> 
+              <li class="theme-shortlist-line {{ 'winner' if loop.index == 1 }}"> 
                 <span class="theme-shortlist-line__label">{{ theme.get('title') }}</span>
                 {% if userRanks %}
                   <span class="theme-shortlist-line__ranking">{{ userRanks[theme.get('id')] | ordinal }}</span>
