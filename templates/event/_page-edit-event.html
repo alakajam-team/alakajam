@@ -13,7 +13,7 @@
         {{ editEventLink(event, 'edit', 'General') }}
         {{ editEventLink(event, 'edit-themes', 'Themes') }}
         {{ editEventLink(event, 'edit-entries', 'Entries') }}
-        {{ editEventLink(event, 'edit-tournament-games', 'Tournament') }}
+        {{ editEventLink(event, 'edit-tournament-games', 'Tournament', { disabled: event.get('status_tournament') === 'disabled' }) }}
       </div>
     </div>
     <div class="col-sm-8 col-md-9">
@@ -31,10 +31,10 @@
 
 {% endblock %}
 
-{% macro editEventLink(event, page, label) %}
+{% macro editEventLink(event, page, label, options) %}
   {% set url = buildUrl(event, 'event', page) %}
   <a href="{{ url }}" class="list-group-item 
     {{ 'active' if path === url and event}} 
     {{ 'list-group-item-primary' if path === url and event}}
-    {{ 'disabled' if not event }}">{{ label }}</a>
+    {{ 'disabled' if not event or options.disabled }}">{{ label }}</a>
 {% endmacro %}
