@@ -1,3 +1,11 @@
+'use strict'
+
+/**
+ * itch.io entry importer
+ *
+ * @module services/entry-importers/itch
+ */
+
 const download = require('download')
 const cheerio = require('cheerio')
 const log = require('../../core/log')

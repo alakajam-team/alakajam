@@ -1,7 +1,16 @@
+'use strict'
+
+/**
+ * ludumdare.com entry importer
+ *
+ * @module services/entry-importers/ludumdare
+ */
+
 const download = require('download')
 const cheerio = require('cheerio')
 const log = require('../../core/log')
 const forms = require('../../core/forms')
+const entryImporterTools = require('./entry-importer-tools')
 
 module.exports = {
   config: {
@@ -11,14 +20,6 @@ module.exports = {
   },
   fetchEntryReferences,
   fetchEntryDetails
-}
-
-const PLATFORM_KEYWORDS = {
-  'Windows': ['windows', 'win32', 'win64', 'exe', 'java', 'jar'],
-  'Linux': ['linux', 'debian', 'ubuntu', 'java', 'jar'],
-  'Mac': ['mac', 'osx', 'os/x', 'os x', 'java', 'jar'],
-  'Mobile': ['android', 'apk'],
-  'Web': ['web', 'flash', 'swf', 'html', 'webgl', 'canvas']
 }
 
 async function fetchEntryReferences (profileIdentifier) {
@@ -48,7 +49,7 @@ async function fetchEntryReferences (profileIdentifier) {
     let title = $(elem).text()
     let link = $(elem).attr('href').replace('../../', 'http://ludumdare.com/compo/')
     let eventId = $(elem).attr('href').replace('../../', '').replace(/\/.*/, '')
-    let externalEvent = _capitalize(eventId.replace(/-/g, ' ')).replace('Minild', 'MiniLD')
+    let externalEvent = entryImporterTools.capitalizeAllWords(eventId.replace(/-/g, ' ')).replace('Minild', 'MiniLD')
 
     // Sanitize & store info
     entryReferences.push({
@@ -85,17 +86,6 @@ async function fetchEntryDetails (entryReference) {
       }
     }).get()
 
-    // Platforms info
-    let platforms = []
-    for (let platform in PLATFORM_KEYWORDS) {
-      for (let platformKeyword of PLATFORM_KEYWORDS[platform]) {
-        if (linksText.indexOf(platformKeyword) !== -1) {
-          platforms.push(platform)
-          break
-        }
-      }
-    }
-
     // Prepare links (with an additional to ludumdare.com)
     links = links.map(link => ({
       label: forms.sanitizeString(link.label),
@@ -112,7 +102,7 @@ async function fetchEntryDetails (entryReference) {
       externalEvent: entryReference.importerProperties.externalEvent,
       picture: forms.isURL(picture) ? picture : null,
       body: forms.sanitizeString(body, 100000),
-      platforms,
+      platforms: entryImporterTools.guessPlatforms(linksText),
       links
     }
 
@@ -120,9 +110,4 @@ async function fetchEntryDetails (entryReference) {
   }
 
   return { error: 'Entry page seems empty' }
-}
-
-function _capitalize (str) {
-  // Source: https://stackoverflow.com/a/38530325/1213677
-  return str.replace(/(^|\s)\S/g, l => l.toUpperCase())
 }

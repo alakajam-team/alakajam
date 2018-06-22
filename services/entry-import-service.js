@@ -15,6 +15,7 @@ const config = require('../config')
 const log = require('../core/log')
 const fileStorage = require('../core/file-storage')
 const cache = require('../core/cache')
+const enums = require('../core/enums')
 const eventService = require('./event-service')
 
 /**
@@ -49,10 +50,12 @@ const eventService = require('./event-service')
  *   - platforms = Optional array of entry platforms
  *   - description = Optional short description (plain text)
  *   - body = Detailed description (plain text or Markdown, no HTML)
+ *   - division = Optional game division (solo/team)
  */
 const importers = [
+  require('./entry-importers/itch'),
   require('./entry-importers/ludumdare'),
-  require('./entry-importers/itch')
+  require('./entry-importers/ldjam')
 ]
 
 module.exports = {
@@ -133,6 +136,7 @@ async function createOrUpdateEntry (user, importerId, profileIdentifier, entryId
       title: entryDetails.title,
       external_event: entryDetails.externalEvent,
       description: entryDetails.description || null,
+      division: entryDetails.division || enums.DIVISION.SOLO,
       platforms: entryDetails.platforms || [],
       published_at: entryDetails.published || new Date(),
       links: entryDetails.links.map(link => ({ // ensure data format, just in case
