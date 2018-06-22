@@ -2,9 +2,29 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### June 22th
+
+* Game importer for ldjam.com
+
+### June 19th
+
+* Rename "Feedback Score" concept to "Karma"
+
 ### June 16th
 
-* Implemented automatic saving for entry ratings
+* Implement automatic saving for entry ratings
+
+### June 15th
+
+* Comment/Post editor now has better mobile compatibility
+
+### June 11th
+
+* Make Google Analytics no longer use cookies, in order to fit GDPR better
+
+### June 10th
+
+* Better support of older browsers
 
 ### May 30th
 
