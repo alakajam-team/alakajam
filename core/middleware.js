@@ -232,6 +232,9 @@ async function configure (app) {
       // Redirect to the GET method of the form
       log.warn('Invalid CSRF token, redirecting to GET form')
       res.redirect(req.url)
+    } else if (error.code === 'LIMIT_FILE_SIZE') {
+      console.log(error)
+      errorPage(req, res, 400, 'Attachment is too large, please go back and check the size limit', app.locals.devMode)
     } else {
       errorPage(req, res, 500, error, app.locals.devMode)
     }
