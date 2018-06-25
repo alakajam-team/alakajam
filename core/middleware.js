@@ -16,20 +16,22 @@ const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
 const expressSession = require('express-session')
+const connectSessionKnex = require('connect-session-knex')
 const cookies = require('cookies')
 const bodyParser = require('body-parser')
 const moment = require('moment')
 const nunjucks = require('nunjucks')
 const randomKey = require('random-key')
 const leftPad = require('left-pad')
+const promisify = require('promisify-node')
 const log = require('./log')
+const db = require('./db')
 const config = require('../config')
 const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const enums = require('../core/enums')
 const settingService = require('../services/setting-service')
-const sessionService = require('../services/session-service')
 const userService = require('../services/user-service')
 const controllers = require('../controllers/index')
 const templating = require('../controllers/templating')
@@ -63,16 +65,11 @@ async function configure (app) {
 
   // In-memory data
   await userService.loadPasswordRecoveryCache(app)
-  await sessionService.loadSessionCache(app)
 
   // Session management
   let sessionKey = await findOrCreateSessionKey()
   app.use(cookies.express([sessionKey]))
-  app.use(expressSession({
-    secret: randomKey.generate(),
-    resave: false,
-    saveUninitialized: false
-  }))
+  app.use(await createSessionMiddleware())
 
   // Static files
   app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
@@ -227,17 +224,16 @@ async function configure (app) {
   app.use(function notFound (req, res) {
     errorPage(req, res, 404, undefined, app.locals.devMode)
   })
-  app.use(function error (error, req, res, next) {
+  app.use(function error (error, req, res) {
     if (error.code === 'EBADCSRFTOKEN') {
-      // Redirect to the GET method of the form
-      log.warn('Invalid CSRF token, redirecting to GET form')
-      res.redirect(req.url)
+      // Replace the default error message from csurf by something more user friendly.
+      error.message = 'Invalid CSRF token. Your session may have expired. Please go back and try again.'
     } else if (error.code === 'LIMIT_FILE_SIZE') {
-      console.log(error)
-      errorPage(req, res, 400, 'Attachment is too large, please go back and check the size limit', app.locals.devMode)
-    } else {
-      errorPage(req, res, 500, error, app.locals.devMode)
+      // Same with multer's upload size limit
+      error.statusCode = 400
+      error.message = 'Attachment is too large, please go back and check the size limit'
     }
+    errorPage(req, res, error.statusCode || 500, error, app.locals.devMode)
   })
 }
 
@@ -260,6 +256,58 @@ function cleanupFormFilesCallback (req, res) {
     res.removeAllListeners('finish')
     res.removeAllListeners('close')
   }
+}
+
+async function createSessionMiddleware () {
+  promisifySession()
+
+  return expressSession({
+    cookie: {
+      path: '/',
+      httpOnly: true,
+      secure: config.SECURE_SESSION_COOKIES || false,
+      maxAge: null // Expire when the browser closes (typically)
+    },
+    resave: false,
+    saveUninitialized: false,
+    secret: await getOrCreateSessionSecret(),
+    store: createSessionStore()
+  })
+}
+
+async function getOrCreateSessionSecret () {
+  let secret = await settingService.find(constants.SETTING_SESSION_SECRET)
+  if (!secret) {
+    secret = randomKey.generate()
+    await settingService.save(constants.SETTING_SESSION_SECRET, secret)
+  }
+  return secret
+}
+
+function createSessionStore () {
+  const KnexSessionStore = connectSessionKnex(expressSession)
+  return new KnexSessionStore({
+    knex: db.knex,
+    tablename: 'sessions',
+    createtable: true,
+    clearInterval: 60000 // Milliseconds between clearing expired sessions
+  })
+}
+
+function promisifySession () {
+  // For each session method that takes a callback, add a promisified variant
+  // as well. Make sure these are not enumerable to avoid confusing anything.
+  const Session = expressSession.Session
+  ;['regenerate', 'destroy', 'reload', 'save'].forEach(function (funcName) {
+    const originalFunction = Session.prototype[funcName]
+    const promisifiedFunction = promisify(function (callback) { originalFunction.call(this, callback) })
+    Object.defineProperty(Session.prototype, funcName + 'Promisified', {
+      configurable: true,
+      enumerable: false,
+      value: promisifiedFunction,
+      writable: false
+    })
+  })
 }
 
 async function findOrCreateSessionKey () {
