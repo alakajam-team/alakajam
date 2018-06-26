@@ -13,7 +13,7 @@
         {{ editEventLink(event, 'edit', 'General') }}
         {{ editEventLink(event, 'edit-themes', 'Themes') }}
         {{ editEventLink(event, 'edit-entries', 'Entries') }}
-        {{ editEventLink(event, 'edit-tournament-games', 'Tournament', { disabled: event.get('status_tournament') === 'disabled' }) }}
+        {{ editEventLink(event, 'edit-tournament-games', 'Tournament', { disabled: event.get('status_tournament') === 'disabled' if event }) }}
       </div>
     </div>
     <div class="col-sm-8 col-md-9">
