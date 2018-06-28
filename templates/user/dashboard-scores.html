@@ -80,9 +80,10 @@
         Claimed
         <b>{{ scoreMacros.printRanking(entryScore.get('ranking'), { onlyMedal: true }) }} 
           {{ entryScore.get('ranking') | ordinal }} place</b> on
-        <a href="{{ buildUrl(entry, 'entry', 'scores') }}">{{ entry.get('title') }}</a>
+        <a href="{{ buildUrl(entry, 'entry') }}">{{ entry.get('title') }}</a>
         with
-        <b>{{ scoreMacros.printScore(entry, entryScore, { showEditLink: entryScore.get('user_id') === user.get('id') }) }}</b>
+        <b><a href="{{ buildUrl(entry, 'entry', 'scores') }}">
+          {{ scoreMacros.printScore(entry, entryScore, { showEditLink: entryScore.get('user_id') === user.get('id') }) }}</a></b>
         <br />
         <span style="font-size: 0.8rem">{{ entryScore.get('updated_at') | relativeTime }}</span>
       </div>
