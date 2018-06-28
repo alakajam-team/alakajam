@@ -65,8 +65,9 @@ module.exports = {
     router.all('/passwordRecovery', csrf, userController.passwordRecovery)
 
     router.all('/dashboard(/feed)?', csrf, userController.dashboardFeed)
-    router.all('/dashboard/posts', csrf, userController.dashboardPosts)
     router.all('/dashboard/entries', csrf, userController.dashboardEntries)
+    router.all('/dashboard/posts', csrf, userController.dashboardPosts)
+    router.all('/dashboard/scores', csrf, userController.dashboardScores)
     router.get('/dashboard/settings', csrf, userController.dashboardSettings)
     router.post('/dashboard/settings', upload.single('avatar'), csrf, userController.dashboardSettings)
     router.all('/dashboard/password', csrf, userController.dashboardPassword)

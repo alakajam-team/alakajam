@@ -42,7 +42,7 @@
       <tr class="{{ 'active' if isOwnScore }}">
         <td><a name="score-rank-{{ score.get('ranking') }}"></a>{{ printRanking(score.get('ranking')) }}</td>
         <td>{{ userMacros.userLink(score.related('user')) }}</td>
-        <td><b>{{ printScore(entry, score, isOwnScore) }}</b></td>
+        <td><b>{{ printScore(entry, score, { showEditLink: isOwnScore }) }}</b></td>
         {% if options.showDates %}<td style="font-size: 0.8rem">{{ score.get('updated_at') | date }}</td>{% endif %}
         <td>{{ printProof(score) }}</td>
         {% if options.showActiveToggles %}
@@ -66,7 +66,7 @@
     <tr class="active">
       <td>{{ userScore.get('ranking') | ordinal }}</td>
       <td>{{ userMacros.userLink(userScore.related('user')) }}</td>
-      <td><b>{{ printScore(entry, userScore, true) }}</td></td>
+      <td><b>{{ printScore(entry, userScore, { showEditLink: true }) }}</td></td>
       {% if options.showDates %}<td style="font-size: 0.8rem">{{ userScore.get('updated_at') | date }}</td>{% endif %}
       <td>{{ printProof(userScore) }}</td>
     </tr>
@@ -100,18 +100,18 @@
   {% endif %}
 {% endmacro %}
 
-{% macro printRanking(ranking) %}
+{% macro printRanking(ranking, options = {}) %}
   {%- if ranking > 3 -%}
-    {{- ranking -}}
+    {{- ranking if not options.onlyMedal -}}
   {%- else -%}
     <span class="highscore-medal ranking-{{ ranking }}"></span>
   {%- endif -%}
 {% endmacro %}
 
-{% macro printScore(entry, score, ownScore = false) %}
+{% macro printScore(entry, score, options = {}) %}
   {%- set highScoreType = entry.related('details').get('high_score_type') -%}
   {{- (score.get('score') | duration) if highScoreType === 'time' else (score.get('score') | float) }} {{ highScoreType if not ['number', 'time'].includes(highScoreType) -}}
-  {% if ownScore %}
+  {% if options.showEditLink %}
   <a href="{{ buildUrl(entry, 'entry', 'submit-score') }}">
     <span class="fas fa-edit"></span>
   </a>

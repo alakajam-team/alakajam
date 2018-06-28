@@ -18,14 +18,14 @@
 <ul class="dropdown-menu">
   <li><a href="{{ buildUrl(user, 'user', 'feed') }}">Dashboard</a></li>
   <li><a href="{{ buildUrl(user, 'user') }}">Public profile</a></li>
-  <li><a href="{{ buildUrl(user, 'user', 'entries') }}">Manage entries</a></li>
+  <li><a href="{{ buildUrl(user, 'user', 'entries') }}">My entries</a></li>
    <li class="divider"></li> 
   <li><a href="{{ buildUrl(null, 'post', 'create') }}">Create post</a></li>
-  <li><a href="{{ buildUrl(user, 'user', 'posts') }}">Manage posts</a></li>
-  {% if user %}
+  <li><a href="{{ buildUrl(user, 'user', 'posts') }}">My posts</a></li>
    <li class="divider"></li> 
+   <li><a href="{{ buildUrl(user, 'user', 'scores') }}">My scores</a></li>
+    <li class="divider"></li> 
   <li><a href="/logout">Logout</a></li>
-  {% endif %}
 </ul>
 {% endmacro %}
 

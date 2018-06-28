@@ -19,7 +19,10 @@ module.exports = {
 
   findEntryScore,
   findEntryScoreById,
+  findUserScores,
   findUserScoresMapByEntry,
+  findRecentlyActiveEntries,
+  findEntriesLastActivity,
 
   createEntryScore,
   submitEntryScore,
@@ -81,29 +84,94 @@ async function findEntryScore (userId, entryId) {
   }
 }
 
-async function findUserScoresMapByEntry (userId, entries) {
-  entries = entries.models || entries // Accept collections or arrays
-
-  if (userId && entries) {
-    let entriesToScore = {}
-    let entryScores = await models.EntryScore
-      .where('user_id', userId)
-      .where('entry_id', 'in', entries.map(entry => entry.get('id')))
-      .fetchAll({ withRelated: ['user'] })
-    for (let entry of entries) {
-      entriesToScore[entry.get('id')] = entryScores.find(score => score.get('entry_id') === entry.get('id'))
-    }
-    return entriesToScore
-  } else {
-    return null
-  }
-}
-
 async function findEntryScoreById (id, options = {}) {
   return models.EntryScore.where('id', id)
     .fetch({
       withRelated: options.withRelated || ['user']
     })
+}
+
+/**
+ * Retrieves all user scores
+ */
+async function findUserScores (userId, options = {}) {
+  if (!userId) return null
+
+  let query = models.EntryScore.where('user_id', userId)
+  switch (options.sortBy) {
+    case 'ranking':
+      query = query.orderBy('ranking')
+      break
+    case 'updated_at':
+      query = query.orderBy('updated_at', 'DESC')
+      break
+    default:
+  }
+
+  // PERF: Entry details required to format scores
+  return query.fetchAll({ withRelated: options.related || ['entry.userRoles', 'entry.details'] })
+}
+
+/**
+ * Finds all scores submitted by a user to the specified entry array or collection
+ */
+async function findUserScoresMapByEntry (userId, entries) {
+  if (!userId || !entries) return null
+
+  entries = entries.models || entries // Accept collections or arrays
+
+  let entriesToScore = {}
+  let entryScores = await models.EntryScore
+    .where('user_id', userId)
+    .where('entry_id', 'in', entries.map(entry => entry.get('id')))
+    .fetchAll({ withRelated: ['user'] })
+  for (let entry of entries) {
+    entriesToScore[entry.get('id')] = entryScores.find(score => score.get('entry_id') === entry.get('id'))
+  }
+  return entriesToScore
+}
+
+/**
+ * Returns the date of the last submitted score for all the specified entries
+ */
+async function findEntriesLastActivity (entryIds) {
+  let rows = await db.knex('entry_score')
+    .select('entry_id')
+    .max('updated_at as max_updated_at')
+    .groupBy('entry_id')
+    .where('entry_id', 'in', entryIds)
+
+  let entryIdToUpdatedAt = {}
+  rows.forEach(row => {
+    entryIdToUpdatedAt[row['entry_id']] = row['max_updated_at']
+  })
+  return entryIdToUpdatedAt
+}
+
+/**
+ * Finds the most recently active entry scores
+ */
+async function findRecentlyActiveEntries (limit = 10) {
+  let entryScoreIds = await db.knex.select('entry_score.id')
+    .from(function () {
+      this.distinct('entry_id')
+        .max('updated_at as max_updated_at')
+        .from('entry_score')
+        .groupBy('entry_id')
+        .orderBy('max_updated_at', 'DESC')
+        .limit(limit)
+        .as('active')
+    })
+    .innerJoin('entry_score', function () {
+      this.on('entry_score.updated_at', '=', 'active.max_updated_at')
+        .andOn('entry_score.entry_id', '=', 'active.entry_id')
+    })
+    .orderBy('active.max_updated_at', 'DESC')
+
+  return models.EntryScore
+    .where('id', 'IN', entryScoreIds.map(row => row['id']))
+    .orderBy('updated_at', 'DESC')
+    .fetchAll({ withRelated: ['entry.details', 'user'] }) // PERF: Entry details required to format scores
 }
 
 /**

@@ -16,8 +16,9 @@
           {{ userMacros.userThumb(dashboardUser, { fullWidth: true, centered: true }) }}
         </div>
         {{ dashboardLink(dashboardUser, 'feed', 'Home', options) }}
-        {{ dashboardLink(dashboardUser, 'posts', 'Posts', options) }}
         {{ dashboardLink(dashboardUser, 'entries', 'Entries', options) }}
+        {{ dashboardLink(dashboardUser, 'posts', 'Posts', options) }}
+        {{ dashboardLink(dashboardUser, 'scores', 'Scores', options) }}
         {{ dashboardLink(dashboardUser, 'settings', 'Settings', options) }}
         {{ dashboardLink(dashboardUser, 'password', 'Change password', options) }}
       </div>
@@ -48,6 +49,6 @@
 
 {% macro dashboardLink(dashboardUser, page, label, options) %}
   {% set url = buildUrl(dashboardUser, 'user', page, options) %}
-  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} 
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path.indexOf(url) === 0 }} 
     {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">{{ label }}</a>
 {% endmacro %}

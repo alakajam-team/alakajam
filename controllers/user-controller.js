@@ -15,6 +15,7 @@ const eventService = require('../services/event-service')
 const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const entryImportService = require('../services/entry-import-service')
+const highScoreService = require('../services/highscore-service')
 
 module.exports = {
   dashboardMiddleware,
@@ -22,8 +23,9 @@ module.exports = {
   viewUserProfile,
 
   dashboardFeed,
-  dashboardPosts,
   dashboardEntries,
+  dashboardPosts,
+  dashboardScores,
   dashboardSettings,
   dashboardPassword,
   dashboardEntryImport,
@@ -135,6 +137,16 @@ async function dashboardFeed (req, res) {
 }
 
 /**
+ * Manage user entries
+ */
+async function dashboardEntries (req, res) {
+  let entryCollection = await eventService.findUserEntries(res.locals.user)
+  res.render('user/dashboard-entries', {
+    entries: entryCollection.models
+  })
+}
+
+/**
  * Manage user posts
  */
 async function dashboardPosts (req, res) {
@@ -158,10 +170,26 @@ async function dashboardPosts (req, res) {
 /**
  * Manage user entries
  */
-async function dashboardEntries (req, res) {
-  let entryCollection = await eventService.findUserEntries(res.locals.user)
-  res.render('user/dashboard-entries', {
-    entries: entryCollection.models
+async function dashboardScores (req, res) {
+  let sortedBy = forms.sanitizeString(req.query.sortBy) || 'updated_at'
+
+  let userScoresCollection = await highScoreService.findUserScores(res.locals.user.get('id'), { sortBy: sortedBy })
+  let activeEntriesCollection = await highScoreService.findRecentlyActiveEntries(Math.max(3, Math.floor(userScoresCollection.length / 2)))
+  let entriesLastActivity = await highScoreService.findEntriesLastActivity(
+    userScoresCollection.map(entryScore => entryScore.get('entry_id')))
+
+  let userScores = userScoresCollection.models
+  if (sortedBy === 'activity') {
+    userScores.sort((score1, score2) =>
+      entriesLastActivity[score2.get('entry_id')] - entriesLastActivity[score1.get('entry_id')])
+  }
+
+  res.render('user/dashboard-scores', {
+    userScores,
+    activeEntries: activeEntriesCollection.models,
+    entriesLastActivity,
+    sortedBy,
+    medals: userScoresCollection.countBy(userScore => userScore.get('ranking'))
   })
 }
 
