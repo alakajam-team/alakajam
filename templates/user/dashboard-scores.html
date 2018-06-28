@@ -15,7 +15,7 @@
     <div style="line-height: 40px">
       <div class="row">
         <div class="col-sm-4">
-          {% set totalMedals = (medals[1] or 0) + (medals[2] or ) + (medals[3] or 0) %} {% if totalMedals > 0 %}
+          {% set totalMedals = (medals[1] or 0) + (medals[2] or 0) + (medals[3] or 0) %} {% if totalMedals > 0 %}
           <div>
             {{ scoreMacros.printRanking(1) }} x{{ medals[1] or 0 }}
             {{ scoreMacros.printRanking(2) }} x{{ medals[2] or 0 }}
