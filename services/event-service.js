@@ -564,6 +564,12 @@ async function findGames (options = {}) {
             'node_type': 'entry'
           })
           .select('node_id'))
+        // Hide own entry (not strictly requested, but sensible)
+        .leftJoin('user_role', function () {
+          this.on('user_role.node_id', '=', 'entry.id')
+            .andOn('user_role.user_id', '=', options.notReviewedById)
+        })
+        .whereNull('user_role.id')
     })
   }
   if (options.userId) {
