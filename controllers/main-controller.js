@@ -111,7 +111,7 @@ async function index (req, res) {
       suggestedEntriesTask = eventService.findGames({
         eventId: res.locals.featuredEvent.get('id'),
         pageSize: 4,
-        notReviewedById: res.locals.user ? res.locals.user.id : undefined
+        notReviewedById: res.locals.user ? res.locals.user.get('id') : undefined
       }).then(function (suggestedEntriesCollection) {
         context.suggestedEntries = suggestedEntriesCollection.models
       })
