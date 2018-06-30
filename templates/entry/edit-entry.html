@@ -337,15 +337,19 @@
 <script id="js-links-template" type="text/template">
   <input type="hidden" name="submit-links" value="true" />
   <% for (var i in links) { %>
-    <div class="row" style="margin-bottom: 5px">
-      <div class="col-xs-3">
-        <input type="text" name="label<%- i %>" class="js-link-label form-control" data-row="<%- i %>" placeholder="Label" value="<%- links[i].label %>" />
-      </div>
-      <div class="col-xs-8">
-        <input type="url" class="js-link-url form-control" data-row="<%- i %>" name="url<%- i %>" placeholder="URL" value="<%- links[i].url %>">
-      </div>
-      <div class="col-xs-1">
-        <input type="button" class="js-remove-link btn btn-sm" data-row="<%- i %>" value="x" />
+    <div class="js-link" style="margin-bottom: 5px">
+        <div class="draggable" style="width: 3%; display: inline-block; cursor: pointer">
+          <span class="fas fa-bars"></span> 
+        </div>
+        <div style="width: 25%; display: inline-block">
+          <input type="text" name="label<%- i %>" class="js-link-label form-control" data-row="<%- i %>" placeholder="Label" value="<%- links[i].label %>" />
+        </div>
+        <div style="width: 64%; display: inline-block">
+          <input type="url" class="js-link-url form-control" data-row="<%- i %>" name="url<%- i %>" placeholder="URL" value="<%- links[i].url %>">
+        </div>
+        <div style="width: 5%; display: inline-block">
+          <input type="button" class="js-remove-link btn btn-sm" data-row="<%- i %>" value="x" />
+        </div>
       </div>
     </div>
   <% } %>
