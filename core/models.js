@@ -69,6 +69,9 @@ module.exports.User = bookshelf.model('User', {
   comments: function () {
     return this.hasMany('Comment', 'user_id')
   },
+  likes: function () {
+    return this.hasMany('Like', 'user_id')
+  },
   entryScores: function () {
     return this.hasMany('EntryScore', 'user_id')
   },
@@ -744,6 +747,8 @@ module.exports.TournamentScore = bookshelf.model('TournamentScore', {
  * | string | special_post_type | 'announcement' or empty
  * | integer | comment_count | Number of comments made on this post
  * | dateTime | published_at | Publication time
+ * | integer | like_count | Number of likes of any type on this post
+ * | string | like_details | JSON array: [{type, count}]
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -779,10 +784,13 @@ module.exports.Post = bookshelf.model('Post', {
   },
   comments: function () {
     return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
+  },
+  likes: function () {
+    return this.morphMany('Like', 'node', ['node_type', 'node_id'])
   }
 }, {
   // Cascading
-  dependents: ['comments'] // 'userRoles' removed because of issue #93
+  dependents: ['comments', 'likes'] // 'userRoles' removed because of issue #93
 })
 
 /**
@@ -814,5 +822,32 @@ module.exports.Comment = bookshelf.model('Comment', {
   },
   parentComment: function () {
     return this.belongsTo('Comment', 'parent_id', 'id')
+  }
+})
+
+/**
+ * Like model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | node_id | ID of the target node (not null)
+ * | string | node_type | Type of the target node ('entry' or 'post', not null)
+ * | integer | user_id | Author user ID (not null)
+ * | integer | like_type | Like type
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
+ */
+module.exports.Like = bookshelf.model('Like', {
+  tableName: 'like',
+  hasTimestamps: true,
+
+  // Relations
+
+  node: function () {
+    return this.morphTo('node', ['node_type', 'node_id'], 'Post')
+  },
+  user: function () {
+    return this.belongsTo('User', 'user_id', 'id')
   }
 })
