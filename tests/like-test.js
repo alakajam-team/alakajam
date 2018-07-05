@@ -32,11 +32,11 @@ describe('like', async function () {
   it('retrieving user likes should work as expected', async function () {
     const likeService = require('../services/like-service')
 
-    let { user2Id, anyLikeType, post1, post2 } = await initLikeSamples()
+    let { user2, user2Id, anyLikeType, post1, post2 } = await initLikeSamples()
 
     await likeService.like(post1, user2Id, anyLikeType)
     await likeService.like(post2, user2Id, anyLikeType)
-    let likeInfo = await likeService.findUserLikeInfo([post1, post2], 'post', user2Id)
+    let likeInfo = await likeService.findUserLikeInfo([post1, post2], 'post', user2)
 
     assert.equal(Object.keys(likeInfo).length, 2)
     assert.equal(likeInfo[post1.get('id')], anyLikeType)
@@ -62,5 +62,5 @@ async function initLikeSamples () {
   let post2 = await postService.createPost(user2)
   let anyLikeType = Object.keys(enums.LIKES)[0]
 
-  return { user1Id: user1.get('id'), user2Id: user2.get('id'), anyLikeType, post1, post2 }
+  return { user1, user1Id: user1.get('id'), user2, user2Id: user2.get('id'), anyLikeType, post1, post2 }
 }

@@ -407,3 +407,11 @@ input[type=submit][data-disabled] {
 .form-saving-error .show-if-saving-error {
   display: block;
 }
+
+.in-event .anchor {
+  position: absolute;
+  top: calc(-60px - var(--eventbar-height));
+}
+.comment .anchor {
+  top: 0 !important;
+}

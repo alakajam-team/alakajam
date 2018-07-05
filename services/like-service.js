@@ -24,14 +24,15 @@ function isValidLikeType (likeType) {
 }
 
 /**
- * Get all user likes on a set of nodes.
+ * Get all user likes on a set of nodes (can contain holes).
  * LIMITATIONS:
  * - All nodes must be of the same model type.
  * - Make sure the nodes array size has a reasonable max value or the SQL might overflow (IN clause).
  * @returns {object} An object where keys are node IDs, and values are the type of like.
  */
-async function findUserLikeInfo (nodes, nodeTableName, userId) {
-  if (nodes.length === 0) {
+async function findUserLikeInfo (nodes, user) {
+  nodes = nodes.filter(node => !!node)
+  if (nodes.length === 0 || !user) {
     return {}
   }
 
@@ -39,11 +40,9 @@ async function findUserLikeInfo (nodes, nodeTableName, userId) {
     .select('node_id', 'type')
     .where({
       node_type: nodes[0].tableName,
-      user_id: userId
+      user_id: user.get('id')
     })
-    .where('node_id', 'IN', nodes
-      .filter(node => !!node)
-      .map(node => node.get('id')))
+    .where('node_id', 'IN', nodes.map(node => node.get('id')))
 
   let result = {}
   likeData.forEach(like => {

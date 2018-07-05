@@ -16,6 +16,7 @@ const postService = require('../services/post-service')
 const securityService = require('../services/security-service')
 const entryImportService = require('../services/entry-import-service')
 const highScoreService = require('../services/highscore-service')
+const likeService = require('../services/like-service')
 
 module.exports = {
   dashboardMiddleware,
@@ -75,7 +76,8 @@ async function viewUserProfile (req, res) {
     res.render('user/profile', {
       profileUser,
       entries,
-      posts
+      posts,
+      userLikes: await likeService.findUserLikeInfo(posts, res.locals.user)
     })
   } else {
     res.errorPage(404, 'No user exists with name ' + req.params.name)

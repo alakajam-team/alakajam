@@ -117,7 +117,7 @@
             {{ userMenu(user, unreadNotifications) }}
             </li>
           {% else %}
-            <li class="nav-login"><a href="/login{{ '?redirect=' + path if path !== '/logout' }}"><b>Login</b></a> or <a href="/register"><b>Register</b></a></li>
+            <li class="nav-login"><a href="/login{{ '?redirect=' + (path|urlencode) if path !== '/logout' }}"><b>Login</b></a> or <a href="/register"><b>Register</b></a></li>
           {% endif %}
         </ul>
       </div>

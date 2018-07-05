@@ -1,5 +1,5 @@
 {% extends "admin/_page-admin.html" %}
-{% import "post/_macros-post.html" as postMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
 
 {% block adminBody %}
 
@@ -16,14 +16,14 @@
 {% if draftPosts.length > 0 %}
   <h2>Drafts</h2>
   {% for post in draftPosts %}
-    {{ postMacros.post(post, {allowMods: true, hideBody: true, readingUser: user }) }}
+    {{ postMacros.post(post, {allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes }) }}
   {% endfor %}
 
   <h2>Published</h2>
 {% endif %}
 
 {% for post in publishedPosts %}
-  {{ postMacros.post(post, {allowMods: true, hideBody: true, readingUser: user }) }}
+  {{ postMacros.post(post, {allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes }) }}
 {% endfor %}
 
 {% if publishedPosts.length === 0 %}

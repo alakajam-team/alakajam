@@ -62,7 +62,7 @@ async function postMiddleware (req, res, next) {
 }
 
 /**
- * Announcements listing
+ * General paginated posts browsing
  */
 async function posts (req, res) {
   // Fetch posts
@@ -102,6 +102,7 @@ async function posts (req, res) {
 
   res.render('posts', {
     posts: posts.models,
+    userLikes: await likeService.findUserLikeInfo(posts, res.locals.user),
     title,
     currentPage,
     pageCount: posts.pagination.pageCount,
@@ -117,7 +118,7 @@ async function viewPost (req, res) {
     let context = await buildPostContext(post)
     context.sortedComments = await postService.findCommentsSortedForDisplay(post)
     if (res.locals.user) {
-      context.userLikes = await likeService.findUserLikeInfo([post], 'post', res.locals.user.get('id'))
+      context.userLikes = await likeService.findUserLikeInfo([post], res.locals.user)
     }
     res.render('post/view-post', context)
   } else {
@@ -329,7 +330,7 @@ async function likePost (req, res) {
     }
   }
 
-  res.redirect(templating.buildUrl(post, 'post'))
+  res.redirect(req.query.redirect || templating.buildUrl(post, 'post'))
 }
 
 /**

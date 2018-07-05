@@ -116,10 +116,6 @@
     padding-top: 10px;
     margin-bottom: 5px;
   }
-  
-  &__anchor {
-    top: 0 !important;
-  }
 
   &__avatar-container {
     padding-right: 0;
@@ -149,10 +145,6 @@
     margin-top: 10px;
   }
 
-}
-.in-event .comment__anchor {
-  position: absolute;
-  top: calc(-60px - var(--eventbar-height));
 }
 
 /* User contents */

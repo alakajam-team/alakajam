@@ -1,5 +1,5 @@
 {% extends "_page.html" %}
-{% import "post/_macros-post.html" as postMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
 {% import "_macros-form.html" as formMacros %}
 
 {% block body %}
@@ -13,7 +13,7 @@
       
       {% for post in posts %}
         <div class="expandable">
-          {{ postMacros.post(post, {allowMods: true, readingUser: user}) }}
+          {{ postMacros.post(post, {allowMods: true, readingUser: user, readingUserLikes: userLikes}) }}
           {{ formMacros.expandCollapse() }}
         </div>
       {% endfor %}

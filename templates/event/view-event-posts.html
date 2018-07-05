@@ -1,5 +1,5 @@
 {% extends "event/_page-event.html" %}
-{% import "post/_macros-post.html" as postMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
 {% import "_macros-form.html" as formMacros %}
 
 {% block body %}
@@ -11,7 +11,7 @@
       <div class="{{ 'spacing' if user }}">
         {% for post in posts %}
           <div class="expandable">
-            {{ postMacros.post(post, {readingUser: user}) }}
+            {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
             {{ formMacros.expandCollapse() }}
           </div>
         {% endfor %}

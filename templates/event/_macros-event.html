@@ -188,7 +188,7 @@
 {%- if not statusField or event.get(statusField) !== 'disabled' -%}
   {%- set targetUrl = targetPath if targetPath.includes('/') else buildUrl(event, 'event', targetPath) -%}
   <a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
-      {{ 'disabled' if statusField and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
+      {{ 'disabled' if statusField and (not (event.get(statusField)|int)) and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
     <span class="fas fa-{{ icon }}"></span> <span class="hidden-xs">{{ label | safe }}</span>
   </a>
 {%- endif -%}

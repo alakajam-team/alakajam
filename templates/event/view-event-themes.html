@@ -1,5 +1,5 @@
 {% extends "event/_page-event.html" %}
-{% import "post/_macros-post.html" as postMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
 
 {% block body %}
 {{ super() }}
@@ -8,7 +8,7 @@
   <div class="row">
     {% if themesPost %}
       <div class="col-lg-offset-1 col-lg-10">
-        {{ postMacros.post(themesPost, {readingUser: user}) }}
+        {{ postMacros.post(themesPost, {readingUser: user, readingUserLikes: userLikes}) }}
       </div>
     {% else %}
         <div class="col-xs-12">
@@ -38,13 +38,13 @@
               {% if event.get('status_theme') === 'voting' %}
                 <p style="margin-bottom: 10px">None yet. You can submit up to {{ maxThemeSuggestions }} ideas.</p>
                 {% if not user %}
-                  <p><a href="/login?redirect={{ path }}" class="btn btn-primary">Login to submit ideas</a></p>
+                  <p><a href="/login?redirect={{ path | urlencode }}" class="btn btn-primary">Login to submit ideas</a></p>
                 {% endif %}
               {% else %}
                 {% if user %}
                   You didn't submit theme ideas.
                 {% else %}
-                  <p><a href="/login?redirect={{ path }}" class="btn btn-primary">Login to view your ideas</a></p>
+                  <p><a href="/login?redirect={{ path | urlencode }}" class="btn btn-primary">Login to view your ideas</a></p>
                 {% endif %}
               {% endif %}
               </div>
@@ -157,7 +157,7 @@
             </div>
           {% else %}
             {% if votingAllowed %}
-              <p>Here are some of the ideas submitted to the event. <a href="/login?redirect={{ path }}" class="btn btn-primary">Login to vote</a></p>
+              <p>Here are some of the ideas submitted to the event. <a href="/login?redirect={{ path | urlencode }}" class="btn btn-primary">Login to vote</a></p>
               {% for theme in sampleThemes %}
                 <div class="panel theme-vote theme-vote__label">{{ theme.get('title') }}</div>
               {% endfor %}
@@ -196,7 +196,7 @@
                 {% if shortlistVote %}
                   <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled="disabled" />
                 {% elseif event.get('status_theme') === 'shortlist' %}
-                  <a href="/login?redirect={{ path }}" class="btn btn-primary">Log in to rank the shortlist</a>
+                  <a href="/login?redirect={{ path | urlencode }}" class="btn btn-primary">Log in to rank the shortlist</a>
                 {% endif %}
               </p>
               <ol id="{{ 'js-shortlist' if shortlistVote }}" class="{{ 'use-hover' if shortlistVote }}">

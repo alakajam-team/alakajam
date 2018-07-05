@@ -1,5 +1,5 @@
 {% extends "_page.html" %}
-{% import "post/_macros-post.html" as postMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
 {% import "event/_macros-event.html" as eventMacros %}
 {% import "_macros-form.html" as formMacros %}
 
@@ -14,12 +14,12 @@
         <div class="alert alert-warning"><strong>Pending post</strong> Other users can't see it until {{ post.get('published_at') | relativeTime }}.</div>
       {% endif %}
       
-      {{ postMacros.post(post, { commentsAnchorLinks: true, readingUser: user, readingUserLikes: userLikes }) }}
+      {{ postMacros.post(post, {commentsAnchorLinks: true, readingUser: user, readingUserLikes: userLikes}) }}
     </div>
   </div>
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
-      <a class="comment__anchor" name="comments"></a>
+      <a class="anchor" name="comments"></a>
       <h2>
         Comments <span class="legend">({{ post.get('comment_count') or '0' }})</span>
         {% if user %}

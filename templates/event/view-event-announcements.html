@@ -1,5 +1,5 @@
 {% extends "event/_page-event.html" %}
-{% import "post/_macros-post.html" as postMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
 {% import "_macros-form.html" as formMacros %}
 
 {% block body %}
@@ -35,7 +35,7 @@
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10 {{ 'event-banner-panel' if eventBanner }}" style=" {{ 'padding-top: 10px' if eventBanner }}">
       {% for post in posts.models %}
-        {{ postMacros.post(post, {readingUser: user}) }}
+        {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
       {% endfor %}
 
       {% if posts.models.length > 0 %}

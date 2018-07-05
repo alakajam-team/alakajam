@@ -18,6 +18,7 @@ const settingService = require('../services/setting-service')
 const tagService = require('../services/tag-service')
 const highscoreService = require('../services/highscore-service')
 const eventTournamentService = require('../services/event-tournament-service')
+const likeService = require('../services/like-service')
 const templating = require('./templating')
 const postController = require('./post-controller')
 const cache = require('../core/cache')
@@ -106,17 +107,21 @@ async function viewEntry (req, res) {
     editableAnonComments = await postService.findOwnAnonymousCommentIds(res.locals.user, entry.get('id'), 'entry')
   }
 
+  let posts = await postService.findPosts({
+    entryId: entry.get('id')
+  })
+
   let userScore = null
+  let userLikes = null
   if (user) {
     userScore = await highscoreService.findEntryScore(user.get('id'), entry.get('id'))
+    userLikes = await likeService.findUserLikeInfo(posts, user)
   }
 
   res.render('entry/view-entry', {
     sortedComments: await postService.findCommentsSortedForDisplay(entry),
     editableAnonComments,
-    posts: await postService.findPosts({
-      entryId: entry.get('id')
-    }),
+    posts,
     entryVotes,
     minEntryVotes,
     vote,
@@ -125,6 +130,7 @@ async function viewEntry (req, res) {
     external: !res.locals.event,
     highScoresCollection: await highscoreService.findHighScores(entry),
     userScore,
+    userLikes,
     tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
   })
 }

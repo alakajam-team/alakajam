@@ -144,7 +144,7 @@ async function index (req, res) {
 
   if (res.locals.user) {
     let allPagePosts = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts)
-    res.locals.userLikes = await likeService.findUserLikeInfo(allPagePosts, 'post', res.locals.user.get('id'))
+    res.locals.userLikes = await likeService.findUserLikeInfo(allPagePosts, res.locals.user)
   }
 
   res.render('index', context)

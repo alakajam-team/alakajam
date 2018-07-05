@@ -1,5 +1,5 @@
 {% extends "user/_page-dashboard.html" %}
-{% import "post/_macros-post.html" as postMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
 {% import "event/_macros-event.html" as eventMacros %}
 
 {% block dashboardBody %}
@@ -62,7 +62,7 @@
     <div class="list-group">
     {% for post in latestPosts %}
       <div class="list-group-item" style="margin-bottom: -10px">
-        {{ postMacros.post(post, {hideDetails: true, hideSpecialLabels: true, readingUser: user}) }}
+        {{ postMacros.post(post, { hideDetails: true, hideSpecialLabels: true, readingUser: user, readingUserLikes: {} }) }}
       </div>
     {% endfor %}
     </div>

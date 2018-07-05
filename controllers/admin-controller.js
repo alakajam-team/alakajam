@@ -19,6 +19,7 @@ const userService = require('../services/user-service')
 const settingService = require('../services/setting-service')
 const platformService = require('../services/platform-service')
 const tagService = require('../services/tag-service')
+const likeService = require('../services/like-service')
 
 module.exports = {
   adminMiddleware,
@@ -54,9 +55,11 @@ async function adminHome (req, res) {
     allowDrafts: true
   })
   let draftPosts = allPostsCollection.where({'published_at': null})
+
   res.render('admin/admin-home', {
     draftPosts,
-    publishedPosts: allPostsCollection.difference(draftPosts)
+    publishedPosts: allPostsCollection.difference(draftPosts),
+    userLikes: await likeService.findUserLikeInfo(allPostsCollection, res.locals.user)
   })
 }
 

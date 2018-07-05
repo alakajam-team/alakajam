@@ -1,6 +1,6 @@
 {% extends "_page.html" %}
 {% import "event/_macros-event.html" as eventMacros %}
-{% import "post/_macros-post.html" as postMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
 {% import "_macros-form.html" as formMacros %}
 
 {% block body %}
@@ -84,7 +84,7 @@
       <h2>Latest posts</h2>
       {% if posts.models.length > 0 %}
         {% for post in posts.models %}
-          {{ postMacros.post(post, {readingUser: user}) }}
+          {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
         {% endfor %}
 
         {{ formMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id')) }}

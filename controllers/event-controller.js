@@ -24,6 +24,7 @@ const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
 const platformService = require('../services/platform-service')
 const highScoreService = require('../services/highscore-service')
+const likeService = require('../services/like-service')
 
 module.exports = {
   handleEventUserShortcuts,
@@ -217,11 +218,14 @@ async function viewDefaultPage (req, res) {
 async function viewEventAnnouncements (req, res) {
   res.locals.pageTitle += ' | Announcements'
 
+  let posts = await postService.findPosts({
+    eventId: res.locals.event.get('id'),
+    specialPostType: 'announcement'
+  })
+
   res.render('event/view-event-announcements', {
-    posts: await postService.findPosts({
-      eventId: res.locals.event.get('id'),
-      specialPostType: 'announcement'
-    })
+    posts,
+    userLikes: await likeService.findUserLikeInfo(posts, res.locals.user)
   })
 }
 
@@ -238,7 +242,8 @@ async function viewEventPosts (req, res) {
 
   res.render('event/view-event-posts', {
     posts: postsCollection.models,
-    pageCount: postsCollection.pagination.pageCount
+    pageCount: postsCollection.pagination.pageCount,
+    userLikes: await likeService.findUserLikeInfo(postsCollection, res.locals.user)
   })
 }
 
@@ -262,6 +267,7 @@ async function viewEventThemes (req, res) {
 
     if (forms.isId(statusThemes)) {
       context.themesPost = await postService.findPostById(statusThemes)
+      context.userLikes = await likeService.findUserLikeInfo([context.themesPost], res.locals.user)
     } else {
       if (req.method === 'POST' && res.locals.user) {
         if (req.body.action === 'ideas') {
@@ -522,6 +528,7 @@ async function viewEventResults (req, res) {
   let statusResults = res.locals.event.get('status_results')
   if (forms.isId(statusResults)) {
     res.locals.resultsPost = await postService.findPostById(statusResults)
+    res.locals.userLikes = await likeService.findUserLikeInfo([res.locals.resultsPost], res.locals.user)
   } else if (statusResults !== enums.EVENT.STATUS_RESULTS.RESULTS) {
     res.errorPage(404)
     return
