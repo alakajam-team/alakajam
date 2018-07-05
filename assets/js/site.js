@@ -42,5 +42,7 @@ $(function domReady () {
   require('./event/theme-votes')()
   require('./event/theme-shortlist')()
 
+  require('./post/like')()
+
   require('./user/dashboard-entry-import')()
 })

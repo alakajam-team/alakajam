@@ -330,7 +330,14 @@ async function likePost (req, res) {
     }
   }
 
-  res.redirect(req.query.redirect || templating.buildUrl(post, 'post'))
+  if (req.body.ajax) {
+    res.render('post/ajax-likes', {
+      post: await postService.findPostById(post.get('id')),
+      userLikes: await likeService.findUserLikeInfo([post], user)
+    })
+  } else {
+    res.redirect(req.query.redirect || templating.buildUrl(post, 'post'))
+  }
 }
 
 /**

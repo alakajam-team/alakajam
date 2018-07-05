@@ -94,10 +94,8 @@ async function unlike (node, userId) {
 
 async function _refreshNodeLikes (node, addLikeType, removeLikeType) {
   if (addLikeType || removeLikeType) {
-    let likeCount = node.get('like_count') || 0
+    // Update like details
     let likeDetails = node.get('like_details') || {} // {type: count}
-
-    likeCount += (addLikeType ? 1 : 0) + (removeLikeType ? -1 : 0)
     if (removeLikeType && likeDetails[removeLikeType]) {
       likeDetails[removeLikeType]--
       if (likeDetails[removeLikeType] === 0) {
@@ -111,6 +109,16 @@ async function _refreshNodeLikes (node, addLikeType, removeLikeType) {
       likeDetails[addLikeType]++
     }
 
+    // Recompute like count
+    let likeCount = node.get('like_count')
+    if ((!addLikeType) !== (!removeLikeType)) {
+      likeCount = await models.Like.where({
+        node_type: node.tableName,
+        node_id: node.get('id')
+      }).count()
+    }
+
+    // Update node
     node.set({
       like_count: likeCount,
       like_details: likeDetails
