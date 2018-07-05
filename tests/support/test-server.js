@@ -13,6 +13,8 @@ module.exports = {
   init
 }
 
+const TESTS_ROOT_PATH = path.join(__dirname, '..')
+
 let initialized = false
 
 async function init () {
@@ -33,8 +35,8 @@ function overrideConfig () {
     SERVER_PORT: 8001,
 
     // Data storage
-    DATA_PATH: 'tests/data/',
-    UPLOADS_PATH: 'tests/data/uploads/',
+    DATA_PATH: path.join(TESTS_ROOT_PATH, 'data'),
+    UPLOADS_PATH: path.join(TESTS_ROOT_PATH, 'data/uploads'),
 
     // Database : SQLite
     DB_TYPE: 'sqlite3',
@@ -42,7 +44,7 @@ function overrideConfig () {
     DB_USER: 'root',
     DB_PASSWORD: '',
     DB_NAME: '',
-    DB_SQLITE_FILENAME: 'tests/data/db.sqlite',
+    DB_SQLITE_FILENAME: path.join(TESTS_ROOT_PATH, 'data/db.sqlite'),
 
     // Debug options
     DEBUG_SQL: false,
@@ -80,5 +82,5 @@ async function initFilesLayout () {
 
 async function initDatabase () {
   const db = require('../../core/db')
-  await db.initDatabase(true)
+  await db.initDatabase(false)
 }

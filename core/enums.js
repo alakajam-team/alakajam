@@ -72,5 +72,8 @@ module.exports = {
     TEAM: 'team',
     RANKED: 'ranked',
     UNRANKED: 'unranked'
+  },
+  LIKES: {
+    LIKE: { icon: 'fas fa-heart', title: 'Like' }
   }
 }

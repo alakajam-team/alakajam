@@ -116,7 +116,7 @@ async function searchByName (fragment, options = {}) {
  * @param email {string} email
  * @param name {string} name
  * @param password {string} unencrypted password (will be hashed before storage)
- * @returns {boolean|string} true, or an error message
+ * @returns {User|string} the created user, or an error message
  */
 async function register (email, name, password) {
   if (!name.match(USERNAME_VALIDATION_REGEX)) {
@@ -152,7 +152,7 @@ async function register (email, name, password) {
   })
   await userDetails.save()
 
-  return true
+  return user
 }
 
 /**

@@ -256,7 +256,7 @@ async function isOwnAnonymousComment (comment, user) {
  * @param  {number} eventId the optional ID of an event to associate with.
  * @return {Post}
  */
-async function createPost (user, eventId) {
+async function createPost (user, eventId = null) {
   // TODO Better use of Bookshelf API
   let post = new models.Post()
   post.set({

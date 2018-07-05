@@ -748,7 +748,7 @@ module.exports.TournamentScore = bookshelf.model('TournamentScore', {
  * | integer | comment_count | Number of comments made on this post
  * | dateTime | published_at | Publication time
  * | integer | like_count | Number of likes of any type on this post
- * | string | like_details | JSON array: [{type, count}]
+ * | string | like_details | JSON array: {type: count}
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -756,14 +756,28 @@ module.exports.Post = bookshelf.model('Post', {
   tableName: 'post',
   hasTimestamps: true,
 
+  // Listeners
+
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
+
     this.on('saving', function (model, attrs, options) {
       this.trigger('titleChanged')
     })
     this.on('titleChanged', function () {
       this.set('name', slug(this.get('title') || '').toLowerCase())
     })
+
+    attrs = attrs || {}
+    attrs['like_details'] = attrs['like_details'] || {}
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['like_details']) attrs['like_details'] = JSON.parse(attrs['like_details'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs && attrs['like_details']) attrs['like_details'] = JSON.stringify(attrs['like_details'])
     return attrs
   },
 
@@ -834,7 +848,7 @@ module.exports.Comment = bookshelf.model('Comment', {
  * | integer | node_id | ID of the target node (not null)
  * | string | node_type | Type of the target node ('entry' or 'post', not null)
  * | integer | user_id | Author user ID (not null)
- * | integer | like_type | Like type
+ * | integer | type | Like type
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */

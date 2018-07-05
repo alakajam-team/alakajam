@@ -13,11 +13,13 @@ docs/*/
 
 # Data
 data*/
+coverage/
 tests/data/
 static/uploads/
 *.log
 *.out
 *.pid
+/.*
 
 # OS-specific garbage
 .DS_Store

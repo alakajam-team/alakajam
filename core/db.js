@@ -71,8 +71,11 @@ function createKnexInstance () {
   }
 
   if (config.DB_TYPE === 'sqlite3') {
+    let absoluteFilename = path.isAbsolute(config.DB_SQLITE_FILENAME)
+      ? config.DB_SQLITE_FILENAME
+      : path.join(__dirname, '..', config.DB_SQLITE_FILENAME)
     knexOptions.connection = {
-      filename: path.join(__dirname, '..', config.DB_SQLITE_FILENAME)
+      filename: absoluteFilename
     }
   } else {
     knexOptions.connection = {
