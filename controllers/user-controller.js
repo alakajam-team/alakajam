@@ -373,10 +373,10 @@ async function doRegister (req, res) {
     errorMessage = 'Passwords do not match'
   } else {
     let result = await userService.register(req.body.email, req.body.name, req.body.password)
-    if (result === true) {
-      doLogin(req, res)
-    } else {
+    if (typeof result === 'string') {
       errorMessage = result
+    } else {
+      doLogin(req, res)
     }
   }
 

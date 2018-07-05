@@ -18,7 +18,23 @@
     font-size: 1.5rem;
     white-space: nowrap;
   }
-  
+
+  &__like-count {
+    display: inline-block;
+    font-size: 1.5rem;
+    white-space: nowrap;
+    color: var(--text-light);
+
+    & button {
+      border: none;
+      background: none;
+    }
+
+    &:hover, &.liked {
+      color: var(--alt);
+    }
+  }
+
   &__related {
     margin-top: 2px;
     font-size: 1.2rem;

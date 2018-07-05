@@ -8,7 +8,7 @@
   <div class="row">
     {% if themesPost %}
       <div class="col-lg-offset-1 col-lg-10">
-        {{ postMacros.post(themesPost, user) }}
+        {{ postMacros.post(themesPost, {readingUser: user}) }}
       </div>
     {% else %}
         <div class="col-xs-12">

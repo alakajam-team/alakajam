@@ -141,6 +141,7 @@ module.exports = {
     router.get('/post/:postId(\\d+)/:postName/edit', csrf, postController.editPost)
     router.get('/post/:postId(\\d+)/:postName/delete', csrf, postController.deletePost)
     router.post('/post/:postId(\\d+)/:postName/watch', csrf, postController.watchPost)
+    router.post('/post/:postId(\\d+)/:postName/like', postController.likePost)
 
     // Articles
 

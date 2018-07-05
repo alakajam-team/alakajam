@@ -74,6 +74,6 @@ module.exports = {
     UNRANKED: 'unranked'
   },
   LIKES: {
-    LIKE: { icon: 'fas fa-heart', title: 'Like' }
+    'like': { icon_unliked: 'far fa-heart', icon_liked: 'fas fa-heart', title: 'Like' }
   }
 }

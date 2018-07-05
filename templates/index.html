@@ -44,7 +44,7 @@
 
     {% if featuredPost %}
     <div class="col-lg-offset-1 col-lg-10">
-      {{ postMacros.post(featuredPost, user) }}
+      {{ postMacros.post(featuredPost, {readingUser: user, readingUserLikes: userLikes}) }}
     </div>
     {% endif %}
   </div>
@@ -57,7 +57,7 @@
         <div class="home-jumbo__contents {{ 'event-banner-panel' if featuredEventBanner }}">
         {% if featuredEventAnnouncement %}
           <div class="home-jumbo__announcement expandable">
-            {{ postMacros.post(featuredEventAnnouncement, user, { hideDate: true }) }}
+            {{ postMacros.post(featuredEventAnnouncement, {hideDate: true, readingUser: user, readingUserLikes: userLikes}) }}
             {{ formMacros.expandCollapse({ manualScripting: true }) }}
           </div>
           <script type="text/javascript">
@@ -171,7 +171,7 @@
 
         {% for post in posts %}
           <div class="expandable">
-            {{ postMacros.post(post, user) }}
+            {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
             {{ formMacros.expandCollapse() }}
           </div>
         {% endfor %}

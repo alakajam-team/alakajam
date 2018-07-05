@@ -11,7 +11,7 @@
       <div class="{{ 'spacing' if user }}">
         {% for post in posts %}
           <div class="expandable">
-            {{ postMacros.post(post, user) }}
+            {{ postMacros.post(post, {readingUser: user}) }}
             {{ formMacros.expandCollapse() }}
           </div>
         {% endfor %}

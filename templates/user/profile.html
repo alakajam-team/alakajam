@@ -84,7 +84,7 @@
       <h2>Latest posts</h2>
       {% if posts.models.length > 0 %}
         {% for post in posts.models %}
-          {{ postMacros.post(post, user) }}
+          {{ postMacros.post(post, {readingUser: user}) }}
         {% endfor %}
 
         {{ formMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id')) }}

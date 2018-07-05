@@ -1,8 +1,8 @@
 {% import "_macros-form.html" as formMacros %}
 {% import "event/_macros-event.html" as eventMacros %}
 
-{# Allowed options: hideHeading hideBody hideDetails hideSpecialLabels showId allowMods commentsAnchorLinks #}
-{% macro post(post, readingUser, options = {}) %}
+{# Allowed options: readingUser readingUserLikes hideHeading hideBody hideDetails hideSpecialLabels showId allowMods commentsAnchorLinks #}
+{% macro post(post, options = {}) %}
 
 <div class="post">
 
@@ -21,7 +21,23 @@
           <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
             <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}
           </a>
-          {% if canUserWrite(readingUser, post, options) %}
+          {% if options.readingUser %}
+            {% if options.readingUserLikes %}
+              {% set liked = options.readingUserLikes[post.get('id')] if options.readingUserLikes %}
+              {% set likeIcon = enums.LIKES[liked].icon_liked if (liked and enums.LIKES[liked]) else enums.LIKES['like'].icon_unliked %}
+              <form method="post" action="{{ buildUrl(post, 'post', 'like') }}" class="post__like-count {{ 'liked' if liked }}">
+                <input type="hidden" name="{{ 'unlike' if liked else 'like' }}" value="like" />
+                <button type="submit">
+                  <span class="{{ likeIcon }}"></span> {{ post.get('like_count') or 0 }}
+                </button>
+              </form>
+            {% endif %}
+          {% else %}
+            <a href="/login?redirect={{ path }}" class="post__like-count">
+              <span class="{{ enums.LIKES['like'].icon_unliked }}"></span> {{ post.get('like_count') or 0 }}
+            </a>
+          {% endif %}
+          {% if canUserWrite(options.readingUser, post, options) %}
             <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
           {% endif %}
           {% if options.showId %}

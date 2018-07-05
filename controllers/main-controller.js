@@ -21,6 +21,7 @@ const securityService = require('../services/security-service')
 const settingService = require('../services/setting-service')
 const notificationService = require('../services/notification-service')
 const platformService = require('../services/platform-service')
+const likeService = require('../services/like-service')
 const eventController = require('./event-controller')
 
 module.exports = {
@@ -140,6 +141,11 @@ async function index (req, res) {
   }
 
   await eventController.handleEventUserShortcuts(res, res.locals.featuredEvent)
+
+  if (res.locals.user) {
+    let allPagePosts = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts)
+    res.locals.userLikes = await likeService.findUserLikeInfo(allPagePosts, 'post', res.locals.user.get('id'))
+  }
 
   res.render('index', context)
 }

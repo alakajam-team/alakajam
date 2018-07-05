@@ -14,6 +14,7 @@ const postService = require('../services/post-service')
 const eventService = require('../services/event-service')
 const eventRatingService = require('../services/event-rating-service')
 const securityService = require('../services/security-service')
+const likeService = require('../services/like-service')
 const templating = require('./templating')
 const db = require('../core/db')
 
@@ -29,6 +30,7 @@ module.exports = {
   viewPost,
   deletePost,
   watchPost,
+  likePost,
 
   saveComment
 }
@@ -114,6 +116,9 @@ async function viewPost (req, res) {
       securityService.canUserRead(res.locals.user, post, { allowMods: true })) {
     let context = await buildPostContext(post)
     context.sortedComments = await postService.findCommentsSortedForDisplay(post)
+    if (res.locals.user) {
+      context.userLikes = await likeService.findUserLikeInfo([post], 'post', res.locals.user.get('id'))
+    }
     res.render('post/view-post', context)
   } else {
     res.errorPage(403)
@@ -294,7 +299,7 @@ async function deletePost (req, res) {
 }
 
 /**
- * Toggles watching a post
+ * Likes a post
  */
 async function watchPost (req, res) {
   let {user, post} = res.locals
@@ -308,6 +313,23 @@ async function watchPost (req, res) {
   }
 
   res.redirect('.')
+}
+
+/**
+ * Likes or unlikes a post
+ */
+async function likePost (req, res) {
+  let {user, post} = res.locals
+
+  if (user) {
+    if (req.body.like && likeService.isValidLikeType(req.body.like)) {
+      await likeService.like(post, user.get('id'), req.body.like)
+    } else if (req.body.unlike) {
+      await likeService.unlike(post, user.get('id'))
+    }
+  }
+
+  res.redirect(templating.buildUrl(post, 'post'))
 }
 
 /**

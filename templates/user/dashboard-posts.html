@@ -17,7 +17,7 @@
     <h2>Drafts</h2>
     {% for post in draftPosts %}
       <div class="expandable">
-        {{ postMacros.post(post, user, { allowMods: true }) }}
+        {{ postMacros.post(post, {allowMods: true, readingUser: user}) }}
         {{ formMacros.expandCollapse() }}
       </div>
     {% endfor %}
@@ -27,7 +27,7 @@
 
   {% for post in publishedPosts %}
     <div class="expandable">
-      {{ postMacros.post(post, user, { allowMods: true }) }}
+      {{ postMacros.post(post, {allowMods: true, readingUser: user}) }}
       {{ formMacros.expandCollapse() }}
     </div>
   {% endfor %}

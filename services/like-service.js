@@ -8,10 +8,12 @@
 
 const models = require('../core/models')
 const enums = require('../core/enums')
+const db = require('../core/db')
 
 module.exports = {
   isValidLikeType,
-  getLike,
+  findUserLikeInfo,
+  findLike,
 
   like,
   unlike
@@ -21,7 +23,36 @@ function isValidLikeType (likeType) {
   return !!enums.LIKES[likeType]
 }
 
-async function getLike (node, userId) {
+/**
+ * Get all user likes on a set of nodes.
+ * LIMITATIONS:
+ * - All nodes must be of the same model type.
+ * - Make sure the nodes array size has a reasonable max value or the SQL might overflow (IN clause).
+ * @returns {object} An object where keys are node IDs, and values are the type of like.
+ */
+async function findUserLikeInfo (nodes, nodeTableName, userId) {
+  if (nodes.length === 0) {
+    return {}
+  }
+
+  let likeData = await db.knex('like')
+    .select('node_id', 'type')
+    .where({
+      node_type: nodes[0].tableName,
+      user_id: userId
+    })
+    .where('node_id', 'IN', nodes
+      .filter(node => !!node)
+      .map(node => node.get('id')))
+
+  let result = {}
+  likeData.forEach(like => {
+    result[like['node_id']] = like['type']
+  })
+  return result
+}
+
+async function findLike (node, userId) {
   return models.Like.where({
     node_type: node.tableName,
     node_id: node.get('id'),
@@ -34,7 +65,7 @@ async function like (node, userId, likeType) {
     let addLikeType = false
     let removeLikeType = false
 
-    let like = await getLike(node, userId)
+    let like = await findLike(node, userId)
     if (!like) {
       addLikeType = likeType
       like = await node.likes().create({
@@ -54,7 +85,7 @@ async function like (node, userId, likeType) {
 }
 
 async function unlike (node, userId) {
-  let like = await getLike(node, userId)
+  let like = await findLike(node, userId)
   if (like) {
     let likeType = like.get('type')
     await like.destroy()
