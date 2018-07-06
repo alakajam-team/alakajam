@@ -148,16 +148,16 @@
         <a class="anchor" name="c{{ comment.id if comment }}"></a>
         <div class="comment__details">
           {% if isOwnAnonComment %}
-            <a href="{{ buildUrl(options.readingUser, 'user') }}">
-              <div class="comment__avatar-container">
-                {% if options.readingUser.get('avatar') %}
-                <img src="{{ pictureUrl(readingUser.get('avatar'), options.readingUser) }}" /> 
-                {% else %}
-                <img src="/static/images/default-avatar.png" />
-                {% endif %}
-              </div>
-              {{ options.readingUser.get('title') }} <span style="color: black">(as Anonymous)</span>
-            </a>
+          <a href="{{ buildUrl(options.readingUser, 'user') }}">
+            <div class="comment__avatar-container">
+              {% if options.readingUser.get('avatar') %}
+              <img src="{{ pictureUrl(options.readingUser.get('avatar'), options.readingUser) }}" /> 
+              {% else %}
+              <img src="/static/images/default-avatar.png" />
+              {% endif %}
+            </div>
+            {{ options.readingUser.get('title') }} <span style="color: black">(as Anonymous)</span>
+          </a>
           {% else %} 
             {% if author.get('name') != 'anonymous' %}
               <a href="{{ buildUrl(author, 'user') }}">
