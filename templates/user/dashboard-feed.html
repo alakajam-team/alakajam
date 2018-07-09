@@ -62,7 +62,7 @@
     <div class="list-group">
     {% for post in latestPosts %}
       <div class="list-group-item" style="margin-bottom: -10px">
-        {{ postMacros.post(post, { hideDetails: true, hideSpecialLabels: true, readingUser: user, readingUserLikes: {} }) }}
+        {{ postMacros.post(post, { hideDetails: true, readingUser: user, readingUserLikes: {} }) }}
       </div>
     {% endfor %}
     </div>

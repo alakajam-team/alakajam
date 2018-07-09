@@ -125,7 +125,9 @@
       </div>
     </div>
   </div>
+
   <div id="js-edit-event-status-jam">
+    <div class="horizontal-bar">Game jam</div>
     <div class="form-group">
       <label for="status-theme">Theme voting status</label>
       <div>
@@ -176,7 +178,9 @@
       </div>
     </div>
   </div>
+  
   <div id="js-appearance" class="form-group">
+    <div class="horizontal-bar">Tournament</div>
     <label for="status-theme">Tournament status</label>
     <div>
     {{ formMacros.radio('status-tournament', 'disabled', 'Disabled', 
@@ -189,7 +193,7 @@
       event.get('status_tournament') if event) }}
     {{ formMacros.radio('status-tournament', 'closed', 'Closed', 
       event.get('status_tournament') if event) }}
-    {{ formMacros.radio('status-tournament', 'results', 'Results', 
+    {{ formMacros.radio('status-tournament', 'results', 'Tournament results', 
       event.get('status_tournament') if event) }}
     </div>
   </div>

@@ -1,7 +1,7 @@
 {% import "_macros-form.html" as formMacros %}
 {% import "event/_macros-event.html" as eventMacros %}
 
-{# Allowed options: readingUser readingUserLikes hideHeading hideBody hideDetails hideSpecialLabels showId allowMods commentsAnchorLinks #}
+{# Allowed options: readingUser readingUserLikes hideHeading hideBody hideDetails showId allowMods commentsAnchorLinks #}
 {% macro post(post, options = {}) %}
 
 <div class="post">
@@ -14,7 +14,7 @@
     {% set specialPostType = post.get('special_post_type') %}
     <{{h}}>
       <div class="row">
-        <div class="{{ 'col-xs-10 col-sm-8 col-md-9' if not options.hideSpecialLabels and specialPostType else 'col-xs-12' }}">
+        <div class="col-xs-12">
           <a name="p{{ post.get('id') }}" class="anchor" />
           <a href="{{ buildUrl(post, 'post') }}" class="post__title">
             {{ post.get('title') }}
@@ -29,20 +29,6 @@
             <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
           {% endif %}
         </div>
-        {% if not options.hideSpecialLabels and specialPostType and specialPostType !== 'hidden' %}
-        <div class="col-xs-2 col-sm-4 col-md-3">
-          <div class="post__special-type">
-            <span class="post__special-type-label">
-              <span class="hidden-xs visible-sm visible-md visible-lg">
-                {{ specialPostType| upper }}
-              </span>
-              <span class="visible-xs hidden-sm">
-                <span class="fas fa-thumbtack"></span>
-              </span>
-            </span>
-          </div>
-        </div>
-        {% endif %}
       </div>
     </{{h}}>
   {% endif %}
