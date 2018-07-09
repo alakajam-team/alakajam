@@ -38,7 +38,7 @@
         </form>
         {% endif %}
       </h2>
-      {{ postMacros.comments(sortedComments, { readingUser: readingUser, csrfToken: csrfToken, allowMods: true, editComment: editComment }) }}
+      {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, allowMods: true, editComment: editComment }) }}
     </div>
   </div>
 </div>
