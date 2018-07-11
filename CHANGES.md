@@ -2,6 +2,23 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### July 5th
+
+* Like system on blog posts
+
+### June 30th
+
+* Entry links can be reorder using drag'n'drop
+
+### June 29th
+
+* Game search: Own entry is now hidden if "rated or commented" is selected
+* Game voting: Rated and commented entries are now hidden from the front page suggestions
+
+### June 28th
+
+* Users can browse all personal scores from the dashboard
+
 ### June 22th
 
 * Game importer for ldjam.com
