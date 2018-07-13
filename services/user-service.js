@@ -64,7 +64,7 @@ async function findUsers (options = {}) {
 
   if (options.count) {
     return query.count(options)
-  } else if (options.page !== undefined) {
+  } else if (options.page !== undefined || options.pageSize) {
     return query.orderBy('created_at', 'DESC')
       .fetchPage(options)
   } else {

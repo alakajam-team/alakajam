@@ -75,7 +75,7 @@
                   placeholder="Idea #{{ index + 1 }}" value="{{ userTheme.get('title') if userTheme }}" />
                 {% if userTheme %}
                   {% if userTheme.get('status') === 'duplicate' or userTheme.get('status') === 'active' %}
-                    <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-default"><span class="fas fa-remove"></span></button>
+                    <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-default"><span class="fas fa-trash"></span></button>
                   {% endif %}
                 {% endif %}
                 <input type="hidden" name="idea-id[{{ index }}]" value="{{ userTheme.get('id') if userTheme }}" />

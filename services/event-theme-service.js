@@ -197,16 +197,21 @@ async function findThemesToVoteOn (user, event) {
     query = query.where('event_id', event.get('id'))
       .where('status', 'IN', [enums.THEME.STATUS.ACTIVE, enums.THEME.STATUS.SHORTLIST])
   }
-
-  // Grab the 20 oldest theme ideas, then just keep the 10 with the least notes.
-  // This helps new themes catch up with the pack fast, while being much better randomized
-  // than just showing the themes with the least notes.
   let themesCollection = await query.orderBy('updated_at')
     .fetchPage({ pageSize: 20 })
-  let sortedThemes = themesCollection.sortBy(theme => theme.get('notes'))
-  let themesToVoteOn = sortedThemes.splice(0, 10)
-  let shuffledThemes = new db.Collection(themesToVoteOn).shuffle()
-  return new db.Collection(shuffledThemes)
+
+  if (themesCollection.length >= 5) {
+    // Grab the 20 oldest theme ideas, then just keep the 10 with the least notes.
+    // This helps new themes catch up with the pack fast, while being much better randomized
+    // than just showing the themes with the least notes.
+    let sortedThemes = themesCollection.sortBy(theme => theme.get('notes'))
+    let themesToVoteOn = sortedThemes.splice(0, 10)
+    let shuffledThemes = new db.Collection(themesToVoteOn).shuffle()
+    return new db.Collection(shuffledThemes)
+  } else {
+    // Only serve themes in batches, otherwise it gives away when a person submitted its 3 themes
+    return new db.Collection()
+  }
 }
 
 async function findThemeShortlistVotes (user, event) {
