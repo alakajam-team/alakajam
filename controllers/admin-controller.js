@@ -315,7 +315,7 @@ async function adminDev (req, res) {
         await db.emptyDatabase()
         let newVersion = await db.initDatabase(config.DEBUG_INSERT_SAMPLES)
         infoMessage = 'DB reset done (current version : ' + newVersion + ').'
-      } else if (req.body['normalize-passwords']) {
+      } else if (req.body['replace-passwords']) {
         let users = await userService.findUsers({ pageSize: 30 })
         await db.transaction(async function (t) {
           for (let user of users.models) {
