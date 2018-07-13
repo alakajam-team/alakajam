@@ -208,11 +208,14 @@ async function dashboardSettings (req, res) {
     let dashboardUser = res.locals.dashboardUser
     if (req.body.delete) {
       // Account deletion
+      let deletingOwnAccount = res.locals.user.get('id') === res.locals.dashboardUser.get('id')
       let result = await userService.deleteUser(res.locals.dashboardUser)
       if (!result.error) {
-        await req.session.regeneratePromisified()
-        res.locals.user = null
-        res.redirect('/')
+        if (deletingOwnAccount) {
+          doLogout(req, res)
+        } else {
+          res.redirect('/people')
+        }
         return
       } else {
         errorMessage = result.error
