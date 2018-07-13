@@ -151,6 +151,7 @@ module.exports = {
 
     router.get('/api', articleController.api)
     router.get('/api/featuredEvent', apiController.featuredEvent)
+    router.get('/api/event', apiController.eventTimeline)
     router.get('/api/event/:event', apiController.event)
     router.get('/api/event/:event/shortlist', apiController.eventShortlist)
     router.get('/api/entry/:entry', apiController.entry)

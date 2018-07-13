@@ -28,6 +28,7 @@ const DETAILED_ENTRY_OPTIONS = { withRelated: ['comments', 'details', 'userRoles
 
 module.exports = {
   featuredEvent,
+  eventTimeline,
   event,
   eventShortlist,
   entry,
@@ -46,6 +47,32 @@ async function featuredEvent (req, res) {
   } else {
     _renderJson(req, res, 404, { error: 'No featured event' })
   }
+}
+
+/**
+ * Event timeline
+ */
+async function eventTimeline (req, res) {
+  let json = {}
+  let status = 200
+
+  let page = 0
+  try {
+    if (req.query.page) {
+      page = Math.max(0, parseInt(req.query.page))
+    }
+  } catch (e) {
+    json = { error: 'Invalid page number' }
+    status = 401
+  }
+
+  let events = await eventService.findEvents({
+    pageSize: 10,
+    page
+  })
+
+  json = events.map(event => _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT))
+  _renderJson(req, res, status, json)
 }
 
 /**
