@@ -283,18 +283,10 @@ function validateSpecialPostType (specialPostType, user) {
 }
 
 async function deletePost (req, res) {
-  let post = res.locals.post
+  let { user, post } = res.locals
 
-  if (res.locals.user && post && securityService.canUserManage(res.locals.user, post, { allowMods: true })) {
-    // Delete user roles manually (no cascading)
-    let post = res.locals.post
-    await post.load('userRoles')
-    post.related('userRoles').each(function (userRole) {
-      userRole.destroy()
-    })
-
-    await post.destroy()
-    cache.user(res.locals.user).del('latestPostsCollection')
+  if (user && post && securityService.canUserManage(user, post, { allowMods: true })) {
+    await postService.deletePost(post)
   }
   res.redirect('/')
 }

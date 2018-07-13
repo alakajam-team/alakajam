@@ -476,10 +476,15 @@ async function deleteEntry (entry) {
   })
 
   await db.transaction(async function (t) {
-    // Delete user roles manually (because no cascading)
-    await entry.load('userRoles', { transacting: t })
+    // Delete user roles & comments manually (because no cascading)
+    await entry.load(['userRoles.user', 'comments.user'], { transacting: t })
     entry.related('userRoles').each(function (userRole) {
+      cache.user(userRole.related('user')).del('latestEntry')
       userRole.destroy({ transacting: t })
+    })
+    entry.related('comments').each(function (comment) {
+      cache.user(comment.related('user')).del('byUserCollection')
+      comment.destroy({ transacting: t })
     })
 
     // Delete entry

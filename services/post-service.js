@@ -9,6 +9,7 @@
 const models = require('../core/models')
 const constants = require('../core/constants')
 const db = require('../core/db')
+const cache = require('../core/cache')
 const securityService = require('../services/security-service')
 const config = require('../config')
 
@@ -30,6 +31,7 @@ module.exports = {
 
   createPost,
   refreshCommentCount,
+  deletePost,
   createComment,
   deleteComment
 }
@@ -311,6 +313,25 @@ async function refreshCommentCount (node) {
   await node.load('comments')
   let commentCount = node.related('comments').size()
   await node.save({ 'comment_count': commentCount }, { patch: true })
+}
+
+/**
+ * Deletes the given post
+ * @param {Post} post
+ * @return {void}
+ */
+async function deletePost (post) {
+  await post.load(['userRoles.user', 'comments.user'])
+  post.related('userRoles').each(function (userRole) {
+    cache.user(userRole.related('user')).del('latestPostsCollection')
+    userRole.destroy()
+  })
+  post.related('comments').each(function (comment) {
+    cache.user(comment.related('user')).del('byUserCollection')
+    comment.destroy()
+  })
+
+  await post.destroy()
 }
 
 /**
