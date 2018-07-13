@@ -19,6 +19,7 @@ $(function domReady () {
   require('./common/show-hide')('.js-show', '.js-hide')
   require('./common/show-if-nonempty')('.js-show-if-nonempty')
   require('./common/shrink-navbar')()
+  require('./common/sortable-table')()
   require('./common/sync-slug')('.js-sync-slug')
   require('./common/sync-text')('.js-sync-text')
   require('./common/tabs')({ buttonContainerSelector: '.js-tab-container', buttonSelector: '.js-tab-button', tabSelector: '.js-tab' })

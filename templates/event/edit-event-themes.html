@@ -10,13 +10,14 @@
 <div class="horizontal-bar">
   Shortlist
 </div>
-<table class="table">
-<tr>
-<th>Theme</th>
-<th>Notes</th>
-<th>Score</th>
-<th>Average</th>
+<table class="table sortable">
+<thead>
+  <tr>
+  <th>Theme</th>
+  <th data-sort-default aria-sort="ascending">Score</th>
 </tr>
+</thead>
+<tbody>
 {% for theme in shortlist %}
   <tr>
     <td>
@@ -26,11 +27,10 @@
         {{ theme.get('title') }}
       {% endif %}
     </td>
-    <td>{{ theme.get('notes') }}</td>
     <td><strong>{{ theme.get('score') }}</strong></td>
-    <td>{{ (theme.get('score') / theme.get('notes')) | digits(2) }}</td>
   </tr>
 {% endfor %}
+</tbody>
 </table>
 {% endif %}
 
@@ -87,18 +87,23 @@
   Submitted themes
 </div>
 
-<table class="table">
-<tr>
-<th>Theme<th>
-<th>Status</th>
-<th>Notes</th>
-<th>Score</th>
-<th>Normalized  {{ formMacros.tooltip('Computed by evaluating "Score / Notes". "New" means the theme does not have enough notes yet.') }}</th>
-<th>Actions</th>
-</tr>
+<table class="table sortable">
+<thead>
+  <tr>
+    <th>#</th>
+    <th>Theme<th>
+    <th>Status</th>
+    <th>Notes</th>
+    <th>Score</th>
+    <th data-sort-default aria-sort="ascending">Normalized  {{ formMacros.tooltip('Computed by evaluating "Score / Notes". "New" means the theme does not have enough notes yet.') }}</th>
+    <th data-sort-method="none">Actions</th>
+  </tr>
+</thead>
+<tbody>
 {% for theme in themes %}
   {% if theme.get('status') !== 'shortlist' %}
   <tr>
+  <td class="legend">#{{ theme.get('id') }}</td>
   <td>
     <a name="{{ theme.get('id') }}"></a>
     {% if editTheme and editTheme.get('id') === theme.get('id') %}
@@ -140,6 +145,7 @@
   </tr>
   {% endif %}
 {% endfor %}
+</tbody>
 </table>
 
 {% endblock %}
