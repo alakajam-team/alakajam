@@ -238,7 +238,7 @@ function parseDateTime (string) {
 function markdownToHtml (markdown) {
   // Github-style mentions parsing
   // (adapted from https://github.com/showdownjs/showdown/blob/master/src/subParsers/makehtml/anchors.js)
-  markdown = (markdown || '').replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,[\]()]|\s|$)/gmi, function (wm, st, escape, mentions, username) {
+  markdown = (markdown || '').replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,'[\]()]|\s|$)/gmi, function (wm, st, escape, mentions, username) {
     if (escape === '\\') {
       return st + mentions
     } else {
