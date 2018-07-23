@@ -40,7 +40,7 @@
         {% if author.get('avatar') %}
           <img src="{{ pictureUrl(author.get('avatar'), author) }}" class="post__avatar" /> 
         {% else %}
-          <img src="/static/images/default-avatar.png" class="post__avatar" /> 
+          <img src="{{ staticUrl('/static/images/default-avatar.png') }}" class="post__avatar" /> 
         {% endif %}
         {{ author.get('title') }} 
       </a>
@@ -139,7 +139,7 @@
               {% if options.readingUser.get('avatar') %}
               <img src="{{ pictureUrl(options.readingUser.get('avatar'), options.readingUser) }}" /> 
               {% else %}
-              <img src="/static/images/default-avatar.png" />
+              <img src="{{ staticUrl('/static/images/default-avatar.png') }}" />
               {% endif %}
             </div>
             {{ options.readingUser.get('title') }} <span style="color: black">(as Anonymous)</span>
@@ -152,7 +152,7 @@
                 {% if author.get('avatar') %}
                 <img src="{{ pictureUrl(author.get('avatar'), author) }}" /> 
                 {% else %}
-                <img src="/static/images/default-avatar.png" />
+                <img src="{{ staticUrl('/static/images/default-avatar.png') }}" />
                 {% endif %}
               </div>
               {{ author.get('title') }}
@@ -212,7 +212,7 @@
           {% if user.get('avatar') %}
           <img src="{{ user.get('avatar') }}" /> 
           {% else %}
-          <img src="/static/images/default-avatar.png" />
+          <img src="{{ staticUrl('/static/images/default-avatar.png') }}" />
           {% endif %}
         </div>
         {{ user.get('title') }}

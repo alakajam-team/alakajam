@@ -6,15 +6,20 @@
  * @module controllers/templating
  */
 
+const url = require('url')
+const config = require('../config')
 const forms = require('../core/forms')
 const securityService = require('../services/security-service')
 const postService = require('../services/post-service')
 
 const DASHBOARD_PAGES = ['feed', 'entries', 'posts', 'scores', 'invite', 'settings', 'password', 'entry-import']
+const ALTERNATE_STATIC_ROOT_URL = url.resolve(config.ROOT_URL, 'static/')
 
 module.exports = {
   buildUrl,
+
   pictureUrl,
+  staticUrl,
 
   min: Math.min,
   max: Math.max,
@@ -102,5 +107,10 @@ function buildUrl (model, type, page = null, options = {}) {
 function pictureUrl (picturePath, model) {
   let rawUpdatedAt = model.get('updated_at')
   let timestamp = (typeof rawUpdatedAt === 'object') ? rawUpdatedAt.getTime() : rawUpdatedAt // SQlite/PostgreSQL inconsistency
-  return picturePath + '?' + timestamp
+  return staticUrl(picturePath + '?' + timestamp)
+}
+
+function staticUrl (path) {
+  let rootUrl = config.STATIC_ROOT_URL || ALTERNATE_STATIC_ROOT_URL
+  return url.resolve(rootUrl, path)
 }

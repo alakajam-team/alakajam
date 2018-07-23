@@ -5,17 +5,17 @@
 {% endmacro %}
 
 {% macro editorScripts() %}
-  <script type="text/javascript" src="/static/js/easymde.min.js"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/js/easymde.min.js') }}"></script>
 {% endmacro %}
 
 {# ======== CODEMIRROR EDITOR ========= #}
 
 {% macro codeMirrorScripts() %}
-  <script type="text/javascript" src="/static/js/codemirror.min.js"></script>
-  <script type="text/javascript" src="/static/js/matchbrackets.min.js"></script>
-  <script type="text/javascript" src="/static/js/closebrackets.min.js"></script>
-  <script type="text/javascript" src="/static/js/codemirror-jsonconf.min.js"></script>
-  <script type="text/javascript" src="/static/js/codemirror-autorefresh.min.js"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/js/codemirror.min.js') }}"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/js/matchbrackets.min.js') }}"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/js/closebrackets.min.js') }}"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/js/codemirror-jsonconf.min.js') }}"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/js/codemirror-autorefresh.min.js') }}"></script>
 {% endmacro %}
 
 {# ======== PICTURES ========= #}

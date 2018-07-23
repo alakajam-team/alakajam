@@ -31,7 +31,7 @@
       {% if featuredEvent and searchedEvent and featuredEvent.get('id') === searchedEvent.get('id') %}
         {% if featuredEvent.get('status_results') === 'voting' or featuredEvent.get('status_results') === 'voting_rescue' %}
         <div class="well" style="padding: 6px">
-        <b><img src="/static/images/favicon16.png" /> Rating phase in progress</b><br />
+        <b><img src="{{ staticUrl('/static/images/favicon16.png') }}" /> Rating phase in progress</b><br />
         All jam entrants are invited to rate other people's games. Everyone else can still play and post comments.
         </div>
         {% endif %}

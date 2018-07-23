@@ -2,6 +2,7 @@ module.exports = {
   // Web server
   SERVER_PORT: 8000,
   ROOT_URL: 'http://localhost:8000',
+  STATIC_ROOT_URL: false,
 
   // File storage
   DATA_PATH: 'data/',

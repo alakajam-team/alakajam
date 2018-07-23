@@ -11,7 +11,7 @@
       {% if profileUser.get('avatar') %}
       <img src="{{ pictureUrl(profileUser.get('avatar'), profileUser) }}" class="profile__avatar" />
       {% else %}
-      <img src="/static/images/default-avatar.png" class="profile__avatar" />
+      <img src="{{ staticUrl('/static/images/default-avatar.png') }}" class="profile__avatar" />
       {% endif %}
 
       <h1 class="profile__title">
@@ -29,11 +29,11 @@
 
       {% if profileUser.get('is_admin') %}
       <p class="profile__admin">
-        <img src="/static/images/adminbadge.png" class="profile__admin" />
+        <img src="{{ staticUrl('/static/images/adminbadge.png') }}" class="profile__admin" />
       </p>
       {% elseif profileUser.get('is_mod') %}
       <p class="profile__mod">
-        <img src="/static/images/modbadge.png" class="profile__mod" />
+        <img src="{{ staticUrl('/static/images/modbadge.png') }}" class="profile__mod" />
       </p>
       {% endif %}
 
@@ -53,7 +53,7 @@
         {% if socialLinks.twitter %}
           <div class="profile__social-link">
             <a href="https://www.twitter.com/{{ socialLinks.twitter }}">
-              <img src="/static/images/social/twitter.svg" class="no-border" style="width: 32px" /> Twitter
+              <img src="{{ staticUrl('/static/images/social/twitter.svg') }}" class="no-border" style="width: 32px" /> Twitter
             </a>
           </div>
         {% endif %}

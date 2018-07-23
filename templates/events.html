@@ -28,7 +28,7 @@
 
       {% if closedAlakajam.length > 0 %}
       <div class="events-block events-block__closed">
-        <h2><img src="{{ rootUrl }}/static/images/favicon32.png" />&nbsp;Past Alakajam! events</h2>
+        <h2><img src="{{ staticUrl('/static/images/favicon32.png') }}" />&nbsp;Past Alakajam! events</h2>
         {% for event in closedAlakajam %}
           {{ eventTable(event, featuredEntries[event.get('id')]) }}
         {% endfor %}
@@ -37,7 +37,7 @@
 
       {% if closedOther.length > 0 %}
       <div class="events-block events-block__closed">
-        <h2><img src="{{ rootUrl }}/static/images/favicon32.png" />&nbsp;Other past events</h2>
+        <h2><img src="{{ staticUrl('/static/images/favicon32.png') }}" />&nbsp;Other past events</h2>
         {% for event in closedOther %}
           {{ eventTable(event, featuredEntries[event.get('id')], { noResults: true }) }}
         {% endfor %}

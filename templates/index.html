@@ -35,7 +35,7 @@
   <div class="row">
     {% if not user %}
     <div class="home-welcome">
-      <img class="home-welcome__icon" src="/static/images/welcome.png" />
+      <img class="home-welcome__icon" src="{{ staticUrl('/static/images/welcome.png') }}" />
       <div class="home-welcome__title">New website unlocked</div>
        Welcome to <div class="home-welcome__brand">Alakajam!</div>, a game making community. We host informal game jams!
        <a class="home-welcome__more" href="/article/docs">Learn&nbsp;more</a>
@@ -189,7 +189,7 @@
     <div class="home-scheduled-event__arrow"></div>
     <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
       {% if mainEvent %}
-        <img src="/static/images/favicon16.png" class="home-scheduled-event__logo no-border" />
+        <img src="{{ staticUrl('/static/images/favicon16.png') }}" class="home-scheduled-event__logo no-border" />
       {% endif %}
       {{ event.get('title') }}
     </a>
@@ -211,6 +211,6 @@
 
 {% macro socialLink (title, url, iconName) %}
   <a href="{{ url }}" class="footer__link has-tooltip" data-toggle="tooltip" data-original-title="{{ title }}">
-    <img src="/static/images/social/{{ iconName }}" class="footer__icon no-border" /> 
+    <img src="{{ staticUrl('/static/images/social/' + iconName) }}" class="footer__icon no-border" /> 
   </a>
 {% endmacro %}

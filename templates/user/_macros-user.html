@@ -9,7 +9,7 @@
           {% if user.get('avatar') %}
             <img src="{{ pictureUrl(user.get('avatar'), user) }}" />
           {% else %}
-            <img src="/static/images/default-avatar.png" />
+            <img src="{{ staticUrl('/static/images/default-avatar.png') }}" />
           {% endif %}
         </div>
         {{ user.get('title') }}
@@ -26,7 +26,7 @@
   {% if user.get('avatar') %}
     <img src="{{ pictureUrl(user.get('avatar'), user) }}" />
   {% else %}
-    <img src="/static/images/default-avatar.png" />
+    <img src="{{ staticUrl('/static/images/default-avatar.png') }}" />
   {% endif %}
 </a>
 {% endmacro %}
