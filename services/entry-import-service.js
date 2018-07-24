@@ -191,6 +191,10 @@ async function createOrUpdateEntry (user, importerId, profileIdentifier, entryId
           // Save actual picture
           if (result.finalPath) {
             entryModel.set('pictures', [result.finalPath])
+            if (!entryModel.hasChanged('pictures')) {
+              // Make sure to make pictures URLs change for caching purposes
+              entryModel.set('updated_at', new Date())
+            }
           }
         }
       }

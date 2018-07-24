@@ -107,7 +107,13 @@ async function savePictureToModel (model, attribute, fileUpload, deleteFile, tar
       if (previousPath && previousPath !== result.finalPath) {
         await remove(previousPath)
       }
-      model.set(attribute, result.finalPath)
+      if (result.finalPath === previousPath) {
+        // Make sure to change the last_updated date, because it is used
+        // on picture URLs as a query string to clear the client cache
+        model.set('updated_at', new Date())
+      } else {
+        model.set(attribute, result.finalPath)
+      }
     }
     return result
   } else {

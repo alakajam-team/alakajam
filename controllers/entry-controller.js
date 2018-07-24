@@ -254,6 +254,10 @@ async function editEntry (req, res) {
       let result = await fileStorage.savePictureUpload(req.file, picturePath)
       if (!result.error) {
         entry.set('pictures', [result.finalPath])
+        if (!entry.hasChanged('pictures')) {
+          // Make sure to make pictures URLs change for caching purposes
+          entry.set('updated_at', new Date())
+        }
       } else {
         errorMessage = result.error
       }
