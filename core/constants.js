@@ -80,7 +80,7 @@ module.exports = {
     'source': ['src', 'type']
   },
   ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right', 'spoiler', 'indent', 'btn', 'btn-default', 'btn-primary'],
-  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com', 'i.imgur.com'],
+  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com', 'i.imgur.com', 'w.soundcloud.com'],
   ANONYMOUS_USER_ID: -1,
 
   // Dates
