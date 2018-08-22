@@ -67,8 +67,7 @@ function createEvent () {
       'solo': '48 hours<br />Everything from scratch',
       'team': '48 hours<br />Everything from scratch',
       'unranked': '72 hours<br />No rankings, just feedback'
-    },
-    'published_at': new Date() // TODO Let admins choose when to publish
+    }
   })
 }
 
@@ -116,7 +115,7 @@ async function findEventByName (name) {
  */
 async function findEvents (options = {}) {
   let query = models.Event.forge()
-    .orderBy('published_at', options.sortDatesAscending ? 'ASC' : 'DESC')
+    .orderBy('started_at', options.sortDatesAscending ? 'ASC' : 'DESC')
   if (options.status) query = query.where('status', options.status)
   if (options.statusNot) query = query.where('status', '<>', options.statusNot)
   if (options.name) query = query.where('name', options.name)
@@ -138,7 +137,7 @@ async function findEventByStatus (status) {
     sortOrder = 'DESC'
   }
   return models.Event.where('status', status)
-    .orderBy('published_at', sortOrder)
+    .orderBy('started_at', sortOrder)
     .fetch()
 }
 

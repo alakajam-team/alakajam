@@ -173,7 +173,7 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | string | divisions | Divisions info: `{"name": "description"}`
  * | integer | entry_count | Total number of entries (if a jam) or entrants (if a tournament) in the event.
- * | date | published_at | Publication date. If empty, the event is a draft.
+ * | date | started_at | Event start date, for sorting purposes
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */

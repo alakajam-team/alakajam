@@ -710,6 +710,7 @@ async function editEvent (req, res) {
         name: req.body.name,
         display_dates: forms.sanitizeString(req.body['display-dates']),
         display_theme: forms.sanitizeString(req.body['display-theme']),
+        started_at: forms.parseDateTime(req.body['started-at']),
         divisions: req.body.divisions,
         status: req.body.status,
         status_rules: req.body['status-rules'],
