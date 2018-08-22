@@ -19,6 +19,9 @@
           <a href="{{ buildUrl(post, 'post') }}" class="post__title">
             {{ post.get('title') }}
           </a>
+          {% if canUserWrite(options.readingUser, post, options) %}
+            <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
+          {% endif %}
           <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
             <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}
           </a>
