@@ -9,8 +9,9 @@ Sounds exciting? Come join us! You can start by making an account [in a few clic
 
 If you want to give a hand to this brand new community: spread the word, [give feedback](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform?usp=sf_link) and if you're a coder, why not [join us on Github](https://github.com/mkalam-alami/alakajam)!
 
-## Contacting us
+## <a name="contact"></a>Contact us
 
-* [AlakajamBang](https://twitter.com/AlakajamBang) on Twitter
-* [Support form](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform)
-* contact *[[at]]* alakajam *[[dot]]* com
+* **Twitter:** [@AlakajamBang](https://twitter.com/AlakajamBang)
+* **Email:** `contact [[at]] alakajam [[dot]] com`
+* **Chat:** [#alakajam on AfterNet](/chat)
+* **Contact form:** [Click here](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform)

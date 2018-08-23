@@ -166,6 +166,14 @@ async function insertInitialData (knex, samples) {
                 {
                     "title": "F.A.Q.",
                     "url": "/article/faq"
+                },
+                {
+                    "title": "Contributing",
+                    "url": "/article/contributing"
+                },
+                {
+                    "title": "Privacy policy",
+                    "url": "/article/privacy-policy"
                 }
             ]
         },
