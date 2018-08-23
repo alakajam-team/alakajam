@@ -10,10 +10,41 @@
 {% set featuredEventBanner = featuredEvent.related('details').get('banner') if featuredEvent %}
 {{ eventMacros.eventBanner(featuredEvent) if featuredEventBanner }}
 
+<script type="text/javascript">
+  // Custom announcement height limit and expand/collapse button
+  // Script inlined for immediate loading
+  function postExpandCollapse(postClass, maxAnnouncementHeight) {
+    maxAnnouncementHeight = maxAnnouncementHeight || 265
+    var announcementEl = findByClass(postClass)
+    if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
+      announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
+      var expandBarEl = findByClass('expand-bar', postClass)
+      expandBarEl.setAttribute('style', 'display: block')
+      expandBarEl.onclick = function (e) {
+        if (announcementEl.className.indexOf('expanded') !== -1) {
+          announcementEl.className = announcementEl.className.replace(' expanded', '')
+        } else {
+          announcementEl.className += ' expanded'
+        }
+        e.preventDefault()
+        return false
+      }
+    } else {
+      findByClass('expand-bar', postClass).remove()
+    }
+  }
+  
+  function findByClass(className, parentClassName) {
+    var parent = parentClassName ? findByClass(parentClassName) : document
+    var elements = parent.getElementsByClassName(className)
+    return (elements.length > 0) ? elements[0] : null
+  }
+</script>
+
 <div class="container {{ 'event-banner-offset' if featuredEventBanner }}">
 
   <!-- XXX Hard-coded temporary DanaePlays stream -->
-  {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') %}
+  {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') if featuredEvent %}
   {% if shortlistEliminationInfo.delay %}
   <div class="row">
     <div class="col-xs-12">
@@ -44,7 +75,13 @@
 
     {% if featuredPost %}
     <div class="col-lg-offset-1 col-lg-10">
-      {{ postMacros.post(featuredPost, {readingUser: user, readingUserLikes: userLikes}) }}
+      <div class="js-featured-post expandable">
+        {{ postMacros.post(featuredPost, {readingUser: user, readingUserLikes: userLikes}) }}
+        {{ formMacros.expandCollapse({ manualScripting: true }) }}
+      </div>
+      <script type="text/javascript">
+        postExpandCollapse('js-featured-post', 450)
+      </script>
     </div>
     {% endif %}
   </div>
@@ -61,32 +98,7 @@
             {{ formMacros.expandCollapse({ manualScripting: true }) }}
           </div>
           <script type="text/javascript">
-            // Custom announcement height limit and expand/collapse button
-            // Script inlined for fast loading
-            var maxAnnouncementHeight = 265
-            var announcementEl = findByClass('home-jumbo__announcement')
-            if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
-              announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
-              var expandBarEl = findByClass('expand-bar', 'home-jumbo__announcement')
-              expandBarEl.setAttribute('style', 'display: block')
-              expandBarEl.onclick = function (e) {
-                if (announcementEl.className.indexOf('expanded') !== -1) {
-                  announcementEl.className = announcementEl.className.replace(' expanded', '')
-                } else {
-                  announcementEl.className += ' expanded'
-                }
-                e.preventDefault()
-                return false
-              }
-            } else {
-              findByClass('expand-bar', 'home-jumbo__announcement').remove()
-            }
-            
-            function findByClass(className, parentClassName) {
-              var parent = parentClassName ? findByClass(parentClassName) : document
-              var elements = parent.getElementsByClassName(className)
-              return (elements.length > 0) ? elements[0] : null
-            }
+            postExpandCollapse('home-jumbo__announcement')
           </script>
         {% endif %}
       </div>
@@ -98,7 +110,7 @@
     </div>
     
     <div class="col-md-3 {{ 'event-banner-panel' if featuredEventBanner }}">
-      {% set featuredLinks = featuredEvent.related('details').get('links') %}
+      {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
       {% if featuredLinks and featuredLinks.length > 0 %}
         <div class="home-featured-links">
           <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">

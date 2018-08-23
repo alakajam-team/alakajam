@@ -226,7 +226,7 @@ function parseDateTime (string) {
   if (momentDate.isValid()) {
     return momentDate.toDate()
   } else {
-    return ''
+    return null
   }
 }
 

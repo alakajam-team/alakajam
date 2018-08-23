@@ -43,7 +43,7 @@
     <div class="col-md-4">
       <div class="form-group">
         <label for="title">Event start date {{ formMacros.tooltip('e.g. the jam start date. Mostly just to sort events.') }}</label>
-        {{ formMacros.dateTimePicker('started-at', event.get('started_at'), { minView: '2', momentFormat: 'YYYY-MM-DD', pickerFormat: 'yyyy-mm-dd' }) }}
+        {{ formMacros.dateTimePicker('started-at', event.get('started_at') if event, { minView: '2', momentFormat: 'YYYY-MM-DD', pickerFormat: 'yyyy-mm-dd' }) }}
       </div>
     </div>
   </div>
