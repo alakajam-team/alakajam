@@ -1,5 +1,5 @@
 Contributing
-## <img src="https://static.alakajam.com/static/images/welcome.png" class="pull-right" height="70" />Donations
+## <img src="https://static.alakajam.com/static/images/welcome.png" class="pull-right" height="64" />Donations
 
 As of August 2018, we're paving the way to accept donations through a small non-profit! When it's ready, financial help will be very welcome to cover the hosting costs.
 
