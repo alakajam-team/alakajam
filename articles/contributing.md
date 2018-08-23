@@ -24,4 +24,4 @@ All Alakajam! events are run by volunteers from the community. Helping with that
 *So in short nothing too complicated. The core of all this is  we just like the idea of putting forward a community member each event, rather than have the same faces around every time :)*
 ## Web design
 
-Having good web design skills? We love you already. We feel the website is still far from perfect in terms of looks and navigation, so getting website mockups with ideas for improving Alakajam! would be super valuable.
+Have good web design skills? We love you already. We feel the website is still far from perfect in terms of looks and navigation, so getting website mockups with ideas for improving Alakajam! would be super valuable.
