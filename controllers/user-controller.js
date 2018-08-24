@@ -376,6 +376,8 @@ async function doRegister (req, res) {
     errorMessage = 'Your usename is too weird (either too short, or has special chars other than "_" or "-", or starts with a number)'
   } else if (req.body.password !== req.body['password-bis']) {
     errorMessage = 'Passwords do not match'
+  } else if (!req.body.captcha || req.body.captcha.trim().toLowerCase()[0] !== 'y') {
+    errorMessage = 'You didn\'t pass the human test!'
   } else {
     let result = await userService.register(req.body.email, req.body.name, req.body.password)
     if (typeof result === 'string') {
