@@ -58,7 +58,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Soniss GDC 2018 Bundle](https://sonniss.com/gameaudiogdc18/) \| [2017](https://sonniss.com/gameaudiogdc2017/) | Massive packs of game-related royalty-free sounds. |
 | [Universal LPC Sprite Sheet Generator](http://gaurav.munjal.us/Universal-LPC-Spritesheet-Character-Generator/) | Customizable character sprite sheets assembled from open art. |  
 
-## <a name="misc"></a>Miscellaneous
+## <a name="misc"></a>Miscellaneous software
 
 | Name | Description |
 | -------- | -------- |
@@ -66,3 +66,10 @@ This page compiles a list of **free** resources for making games, especially for
 | [Open Broadcaster Software](https://obsproject.com)  | Lets you record your desktop to either videos or streaming platforms. |
 | [ScreenToGif](http://www.screentogif.com)  | Powerful tool for recording short sequences from your screen, editing them and exporting them as gifs (Windows only). |
 | [Snipping Tool](https://support.microsoft.com/en-us/help/13776/windows-use-snipping-tool-to-capture-screenshots) | A native and often underrated Windows program for capturing screnshots. |
+
+## <a name="misc"></a>Learning
+
+| Name | Description |
+| -------- | -------- |
+| **Code:** [https://taxandbusinessonline.villanova.edu/master-of-science-in-analytics/learning-programming-and-game-design](Learning Programming and Game Design) | A list of easy tutorials and articles to learn the basics of programming... And start making games! Also covers plenty of related topics, from video game history to programming jobs. Perfect for beginners curious about game development. |
+| **Art:** [Ctrl+Paint](https://www.ctrlpaint.com/library/) | An excellent and extensive collection of videos about drawing in general, then digital painting in particular. Whatever art style you are interested in, these can help you improve your art skills. |
