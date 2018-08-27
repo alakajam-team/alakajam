@@ -63,13 +63,15 @@ function buildUrl (model, type, page = null, options = {}) {
       // User Role model / User model
       if (DASHBOARD_PAGES.indexOf(page) !== -1) {
         if (options.dashboardAdminMode) {
-          page += '?user=' + model.get('name')
+          page += '?user=' + model.get('name') + (options.query ? '&' + options.query : '')
+        } else if (options.query) {
+          page += '?' + options.query
         }
         let fullPath = '/dashboard/' + page
         if (model) {
           return fullPath
         } else {
-          return '/login?redirect=' + fullPath
+          return '/login?redirect=' + encodeURIComponent(fullPath)
         }
       } else {
         let userName = model.get('name') || model.get('user_name')
