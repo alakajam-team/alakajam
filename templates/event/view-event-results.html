@@ -6,7 +6,7 @@
 {{ super() }}
 
 {% set hasEventBanner = event.related('details').get('banner') %}
-{{ eventMacros.eventBanner(event) if hasEventBanner }}
+{{ eventMacros.eventBanner(event) }}
 
 <div class="container {{ 'event-banner-offset' if hasEventBanner }}">
   <div class="row">

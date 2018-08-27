@@ -8,7 +8,7 @@
 {% block body %}
 
 {% set featuredEventBanner = featuredEvent.related('details').get('banner') if featuredEvent %}
-{{ eventMacros.eventBanner(featuredEvent) if featuredEventBanner }}
+{{ eventMacros.eventBanner(featuredEvent) }}
 
 <script type="text/javascript">
   // Custom announcement height limit and expand/collapse button
@@ -109,7 +109,7 @@
       {% endif %}
     </div>
     
-    <div class="col-md-3 {{ 'event-banner-panel' if featuredEventBanner }}">
+    <div class="col-md-3 event-banner-panel">
       {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
       {% if featuredLinks and featuredLinks.length > 0 %}
         <div class="home-featured-links">
