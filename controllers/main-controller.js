@@ -298,10 +298,10 @@ async function people (req, res) {
 }
 
 async function peopleMods (req, res) {
-  res.locals.pageTitle = 'People | Admins & mods'
+  res.locals.pageTitle = 'Admins & mods'
 
-  let adminsCollection = await userService.findUsers({ isAdmin: true })
-  let modsCollection = await userService.findUsers({ isMod: true })
+  let adminsCollection = await userService.findUsers({ isAdmin: true, orderBy: 'title' })
+  let modsCollection = await userService.findUsers({ isMod: true, orderBy: 'title' })
   modsCollection.remove(adminsCollection.models)
 
   res.render('people-mods', {

@@ -70,6 +70,7 @@ async function findUsers (options = {}) {
     return query.orderBy('created_at', 'DESC')
       .fetchPage(options)
   } else {
+    if (options.orderBy) query.orderBy(options.orderBy, options.orderByDesc ? 'DESC' : 'ASC')
     return query.fetchAll(options)
   }
 }
