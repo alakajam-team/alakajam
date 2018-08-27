@@ -25,24 +25,39 @@
       </div>
       {% endif %}
 
+      <div class="panel page-tabs">
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a href="#alakajam_events" data-toggle="tab">
+              <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Past Alakajam! events</h2>
+            </a>
+          </li>
+          <li>
+            <a href="#other_events" data-toggle="tab">
+              <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Other events</h2>
+            </a>
+          </li>
+        </ul>
 
-      {% if closedAlakajam.length > 0 %}
-      <div class="events-block events-block__closed">
-        <h2><img src="{{ staticUrl('/static/images/favicon32.png') }}" />&nbsp;Past Alakajam! events</h2>
-        {% for event in closedAlakajam %}
-          {{ eventTable(event, featuredEntries[event.get('id')]) }}
-        {% endfor %}
-      </div>
-      {% endif %}
+        <div class="tab-content">
+          {% if closedAlakajam.length > 0 %}
+          <div id="alakajam_events" class="events-block events-block__closed tab-pane fade active in">
+            
+            {% for event in closedAlakajam %}
+              {{ eventTable(event, featuredEntries[event.get('id')]) }}
+            {% endfor %}
+          </div>
+          {% endif %}
 
-      {% if closedOther.length > 0 %}
-      <div class="events-block events-block__closed">
-        <h2><img src="{{ staticUrl('/static/images/favicon32.png') }}" />&nbsp;Other past events</h2>
-        {% for event in closedOther %}
-          {{ eventTable(event, featuredEntries[event.get('id')], { noResults: true }) }}
-        {% endfor %}
+          {% if closedOther.length > 0 %}
+          <div id="other_events" class="events-block events-block__closed tab-pane fade">
+            {% for event in closedOther %}
+              {{ eventTable(event, featuredEntries[event.get('id')], { noResults: true }) }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
       </div>
-      {% endif %}
     </div>
   </div>
 </div>

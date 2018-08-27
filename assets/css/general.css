@@ -450,23 +450,30 @@ table.sortable {
   }
 }
 
-.nav.nav-tabs.page-tabs {
-  background-color: var(--bg);
-  border-bottom: 1px solid var(--tabs);
-  
-  & > li {
-    border: 0;
-    margin-bottom: -1px;
-
-    & > a {
-      border: 0 solid var(--tabs);
-    }
+.panel.page-tabs {
+  box-shadow: none;
+  background-color: transparent;
     
-    &.active > a {
-      background-color: transparent !important;
-      border-width: 1px;
-      border-bottom-color: var(--bg);
+  @media (min-width: 768px) {
+    & .nav.nav-tabs {
+      background-color: var(--bg);
+      border-bottom: 1px solid var(--tabs);
+      
+      & > li {
+        border: 0;
+        margin-bottom: -1px;
+
+        & > a {
+          border: 0 solid var(--tabs);
+        }
+        
+        &.active > a {
+          background-color: transparent !important;
+          border-width: 1px;
+          border-bottom-color: var(--bg);
+        }
+      }
+
     }
   }
-
 }
