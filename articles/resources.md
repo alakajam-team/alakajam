@@ -1,4 +1,4 @@
-Resources
+Game development resources
 This page compiles a list of **free** resources for making games, especially for beginners. If you have suggestions to add please [let us know](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform)!
 
 * [Graphics software](#graphics)
