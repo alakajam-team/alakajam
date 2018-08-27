@@ -61,6 +61,8 @@ async function findUsers (options = {}) {
         .where('user_role.event_id', options.eventId)
     })
   }
+  if (options.isMod) query.where('is_mod', true)
+  if (options.isAdmin) query.where('is_admin', true)
 
   if (options.count) {
     return query.count(options)

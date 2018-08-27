@@ -1,0 +1,16 @@
+{% macro people() %}
+<div class="row">
+    <div class="col-xs-12">
+        <ul class="nav nav-tabs page-tabs">
+            {{ tab('/people', 'General') }}
+            {{ tab('/people/mods', 'Admins & mods') }}
+        </ul>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro tab(linkPath, title) %}
+<li class="{{ 'active' if path === linkPath }}">
+    <a href="{{ linkPath }}">{{ title }}</a>
+</li>
+{% endmacro %}

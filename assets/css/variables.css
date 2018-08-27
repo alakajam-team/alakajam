@@ -7,6 +7,7 @@
   
   --bg: #eee;
   --borders: #dadada;
+  --tabs: #bbb;
   --text: #1f3038;
   --text-light: color(var(--text) alpha(70%));
   --text-lighter: color(var(--text) alpha(40%));

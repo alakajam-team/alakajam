@@ -31,6 +31,7 @@ module.exports = {
   events,
   games,
   people,
+  peopleMods,
   chat,
   changes
 }
@@ -293,6 +294,19 @@ async function people (req, res) {
     pageCount: usersCollection.pagination.pageCount,
     currentPage,
     events: eventsCollection.models
+  })
+}
+
+async function peopleMods (req, res) {
+  res.locals.pageTitle = 'People | Admins & mods'
+
+  let adminsCollection = await userService.findUsers({ isAdmin: true })
+  let modsCollection = await userService.findUsers({ isMod: true })
+  modsCollection.remove(adminsCollection.models)
+
+  res.render('people-mods', {
+    mods: modsCollection.models,
+    admins: adminsCollection.models
   })
 }
 

@@ -1,11 +1,14 @@
 {% extends "_page.html" %}
 {% import "user/_macros-user.html" as userMacros %}
 {% import "_macros-form.html" as formMacros %}
+{% import "_macros-tabs.html" as tabsMacros with context %}
 
 {% block body %}
 
 <div class="container">
-  <div class="row">
+  {{ tabsMacros.people() }}
+
+  <div class="row spacing">
     <div class="col-sm-4 col-md-3">
       <div class="list-group">
         <div class="list-group-item">
