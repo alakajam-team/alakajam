@@ -30,7 +30,7 @@ This office can be transferred to another place on the decision of a general ass
 ## <a name="a4"></a>ARTICLE 4 - DURATION
 
 The association has an unlimited duration.
- 
+
 ## <a name="a5"></a>ARTICLE 5 - COMPOSITION
 
 The association is comprised of members, whose role is to contribute to meetings, participate in decisions (in particular through votes), and help in the realization of the activities.
@@ -61,7 +61,7 @@ Membership can be lost by:
 **d)** Death.
 
 All revocation of membership must be decided at the time of a general meeting or assembly.
- 
+
 ## <a name="a9"></a>ARTICLE 9 - RESOURCES
 
 The financial resources of the association comprise of:
@@ -127,7 +127,7 @@ The association members elect among them a board of directors (or « council of 
 Each counselor can be given a more specific title to match his responsibilities. While these responsibilities are recommended to be assigned to the board of directors, they can also be delegated to other members of the association. These responsibilities can be reassigned at any time.
 
 A board member cannot cumulate secretary and treasurer powers.
- 
+
 ## <a name="a14"></a>ARTICLE 14 – COMPENSATIONS
 
 All roles within the association, including those of the board of directors, are volunteer work. Upon presentation of receipts, members can be refunded expenses spent in association-related activities, provided that the treasurer has approved said expenses. The financial report presented during the ordinary general assembly must show, for each beneficiary, the amounts refunded in a such manner.
