@@ -22,7 +22,7 @@ If you want to give a hand to our little community, check the [contributing page
 
 ## Non-profit
 
-Alalakam! is a registered non-profit. Our constitution [can be read here](/article/constitution).
+Alalakam! is a [registered non-profit](/post/722/alakajam-an-npo). Our constitution [can be read here](/article/constitution).
 
 ### Current council of jamicians
 
