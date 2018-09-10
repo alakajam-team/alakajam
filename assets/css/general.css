@@ -289,12 +289,12 @@ input[type=submit][data-disabled] {
     
     & .expand-bar {
       background-color: transparent;
-      bottom: 20px;
       box-shadow: none;
       border-top: none;
       display: inline-block;
       width: 150px;
       margin: auto;
+      bottom: 5px;
     }
     & .expand {
       display: none;

@@ -95,11 +95,14 @@
     max-width: 100%;
   }
 
+  & .panel {
+    margin-bottom: 0;
+  }
+
   &__footer {
+    padding: 10px;
     font-weight: bold;
-    border-top: 1px solid var(--borders);
     text-align: right;
-    padding: 5px 10px;
   }
 }
 

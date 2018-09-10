@@ -173,10 +173,6 @@
       & .expand-bar {
         margin-left: 10px;
       }
-      &.expanded .collapse {
-        margin-top: 20px;
-        display: inline-block;
-      }
     }
   }
   

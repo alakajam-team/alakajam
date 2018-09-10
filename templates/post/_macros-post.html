@@ -22,8 +22,7 @@
           {% if canUserWrite(options.readingUser, post, options) %}
             <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
           {% endif %}
-          <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count has-tooltip"
-             data-toggle="tooltip" data-original-title="{{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != -1 }}">
+          <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
             <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}
           </a>
           <span class="js-like">
@@ -78,18 +77,20 @@
       <div class="post__body panel-body user-contents">
         {{ post.get('body') | markdown | safe }}
       </div>
-      
-      {% if not options.commentsAnchorLinks %}
-      <div class="post__footer">
-        <a href="{{ buildUrl(post, 'post', '#comments') }}" style="margin-left: 10px">
-          <span class="fas fa-comments"></span>
-          {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
-        </a>
-      </div>
-      {% endif %}
+    {% endif %}
+
+    {% if not options.hideBody and not options.commentsAnchorLinks %}
+    <div class="post__footer">
+      <a href="{{ buildUrl(post, 'post', '#comments') }}">
+        <span class="fas fa-comments"></span>
+        {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
+      </a>
+    </div>
     {% endif %}
   </div>
+  
   {% endif %}
+  
 </div>
 
 {% endmacro %}
