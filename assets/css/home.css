@@ -112,7 +112,7 @@
   &__countdown {
     display: none;
     position: absolute;
-    right: 40px;
+    right: 0;
     top: 50%;
     margin-top: -20px;
     width: 332px;
