@@ -20,7 +20,7 @@
   <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
       <a class="anchor" name="comments"></a>
-      <h2>
+      <h2 class="spacing">
         Comments <span class="legend">({{ post.get('comment_count') or '0' }})</span>
         {% if user %}
         <form method="post" class="comment__subscribe" action="{{ buildUrl(post, 'post', 'watch') }}">
