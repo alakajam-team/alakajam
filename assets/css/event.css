@@ -263,11 +263,9 @@
 }
 
 .event-banner-panel {
-  @apply --shadow;
-  background-color: color(var(--bg) alpha(85%));
-
-  @media (max-width: 767px) {
-    box-shadow: none;
-    background-color: none;
+  @media (min-width: 767px) {
+    @apply --shadow;
+    padding: 10px;
+    background-color: color(var(--bg) alpha(85%));
   }
 }

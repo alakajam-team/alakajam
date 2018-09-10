@@ -88,26 +88,6 @@
 
 {% macro eventJumbo (event, user, userEntry) %}
 <div class="home-jumbo {{ event.get('status') }}">
-  <div class="event-table">
-    <div class="event-table__header">
-      <a href="{{ buildUrl(event, 'event') }}" class="event-table__title">
-        {{ event.get('title') }}
-        <div class="event-table__dates">
-          {{ event.get('display_dates') or '(dates unknown)' }}
-        </div>
-      </a>
-      {% if event.get('display_theme') %}
-      <div class="event-table__theme hidden-xs">
-        <span class="event-table__theme-label">Theme</span>
-        {{ event.get('display_theme') }}
-      </div>
-      {% endif %}
-    </div>
-    <div class="event-table__theme-mobile visible-xs">
-      Theme: {{ event.get('display_theme') }}
-    </div>
-  </div>
-
   <div class="home-jumbo__call-container">
   {% set rawHypeLink = event.get('countdown_config').link %}
   {% set animatedCountdown = event.get('countdown_config').enabled %}
@@ -117,15 +97,21 @@
       <div class="row">
         <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
           <h2>{{ event.get('countdown_config').message }}</h2>
-          {% if event.get('countdown_config').phrase %}
-            <span class="fas fa-calendar-alt"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
-          {% endif %}
+          <div class="home-jumbo__call-details">
+            {% if event.get('display_theme') %}
+              <span class="fas fa-lightbulb"></span> <b>Theme:</b> {{ event.get('display_theme') }}
+              <span style="margin-right: 10px"></span>
+            {% endif %}
+            {% if event.get('countdown_config').phrase %}
+              <span class="fas fa-calendar-alt"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
+            {% endif %}
+          </div>
         </div>
       </div>
       {% if animatedCountdown %}
         <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></span>
       {% endif %}
-      <span class="fas fa-angle-right home-jumbo__call-arrow"></span>
+      <span class="fas fa-angle-right home-jumbo__call-arrow visible-xs visible-sm"></span>
     </a>
   {% elseif event.get('countdown_config').phrase %}
     <div class="home-jumbo__details">

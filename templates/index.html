@@ -91,7 +91,7 @@
       {% if featuredEvent %}
         {{ eventMacros.eventJumbo(featuredEvent, user, userEntry) }}
 
-        <div class="home-jumbo__contents {{ 'event-banner-panel' if featuredEventBanner }}">
+        <div class="home-jumbo__contents event-banner-panel">
         {% if featuredEventAnnouncement %}
           <div class="home-jumbo__announcement expandable">
             {{ postMacros.post(featuredEventAnnouncement, {hideDate: true, readingUser: user, readingUserLikes: userLikes}) }}
@@ -127,7 +127,7 @@
       {% endif %}
 
       <div class="home-scheduled-events visible-md visible-lg">
-        <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
+        <div class="horizontal-bar" style="margin-top: 0; margin-bottom: 10px">
           <span class="fas fa-calendar"></span>
           Event calendar
         </div>
@@ -205,10 +205,12 @@
       {% endif %}
       {{ event.get('title') }}
     </a>
-    <div class="home-scheduled-event__dates">
-      {{ event.get('display_dates') }} 
+    <div>
+      <span class="home-scheduled-event__dates">
+        {{ event.get('display_dates') }} 
+      </span>
       {% if event.get('status') === 'closed' %}
-        - <a href="{{ buildUrl(event, 'event') }}">{{ event.get('entry_count') }} games</a>
+        - <a href="{{ buildUrl(event, 'event') }}" class="home-scheduled-event__entries">{{ event.get('entry_count') }} entries</a>
       {% endif %}
     </div>
     <div class="home-scheduled-event__label">

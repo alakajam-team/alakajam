@@ -99,6 +99,10 @@
     margin-top: -30px;
   }
 
+  &__call-details {
+    margin-top: 5px;
+  }
+
   &__details {
     color: white;
     padding: 10px;
@@ -143,8 +147,7 @@
   }
 
   &__contents {
-    margin-top: 20px;
-    padding: 10px;
+    margin-top: 15px;
   }
 
   &__announcement {
@@ -231,12 +234,9 @@
   }
 
   &__title {
-    font-size: 1.2rem;
+    color: var(--alt);
     font-weight: bold;
     line-height: 1.5rem;
-  }
-  &.main &__title {
-    font-size: 1.6rem;
   }
 
   &.featured {
@@ -255,10 +255,9 @@
     border-right: 20px solid var(--alt);
   }
 
-  &.main &__dates {
-    font-weight: bold;
+  & &__entries {
+    color: var(--text-light);
   }
-
 
   &__label {
     position: absolute;
