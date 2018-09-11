@@ -206,7 +206,7 @@ async function viewDefaultPage (req, res) {
       page = 'games'
     }
   } else {
-    page = 'annoucements'
+    page = 'announcements'
   }
 
   res.redirect(templating.buildUrl(res.locals.event, 'event', page))
