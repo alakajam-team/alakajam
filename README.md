@@ -4,13 +4,15 @@
 
 Requirement: NodeJS 7.6+
 
-* `npm install --no-optional`
+* `npm install --no-optional` (*)
 * `node server.js`
 * Browse to `http://localhost:8000`
 
 There is a default admin user (`administrator`/`administrator`).
 
-> NB. If `npm install --no-optional` failed to install `sqlite3`, retry with flag `--build-from-source`.
+For better performance, consider editing `config.js` to set up a PostgreSQL database.
+
+> (*) If `npm install --no-optional` failed to install `sqlite3`, retry with flag `--build-from-source`.
 
 ## Developer tools
 
