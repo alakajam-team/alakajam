@@ -1,4 +1,4 @@
-![Alakajam!](https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/logo.png)
+<img src="https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/logo.png" width="250" />
 
 ## Initial setup
 
