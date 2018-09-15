@@ -18,8 +18,6 @@ For better performance, consider editing `config.js` to set up a PostgreSQL data
 
 Prerequisites: `npm install -g knex standard browser-refresh node-inspector jsdoc mocha`
 
-See also [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional developer documentation.
-
 ### Recommended
 
 * `browser-refresh server.js`: Launches the app, and makes the server and browser refresh when needed upon file changes.
@@ -31,6 +29,8 @@ See also [the wiki](https://github.com/alakajam-team/alakajam/wiki) for addition
 * `npm run-script docs`: Generates the JS documentation in the `docs/` folder.
 * `mocha tests/`: Runs unit tests.
 * `DEBUG=express:*`: Enables debugging of routes and performance (must be set before launching the server).
+
+See also [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional developer documentation.
 
 ## How do I...
 
