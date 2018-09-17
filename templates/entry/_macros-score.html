@@ -95,7 +95,7 @@
   {% set proof = score.get('proof') %}
   {% if proof %}
   <a href="{{ pictureUrl(proof, score) }}" target="alakajam_proof">
-    <span class="{{ 'fas fa-video' if proof.includes('youtube.com') or proof.includes('twitch') else 'fas fa-camera' }}"></span>
+    <span class="{{ 'fas fa-video' if proof.includes('youtu') or proof.includes('twitch') else 'fas fa-camera' }}"></span>
   </a>
   {% endif %}
 {% endmacro %}
