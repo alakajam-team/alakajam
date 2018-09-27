@@ -100,11 +100,24 @@ async function index (req, res) {
         })
     }
 
-    // Fetch event schedule
-    let eventScheduleTask = await eventService.findEvents({ pageSize: 5 })
-      .then(function (eventScheduleCollection) {
-        context.eventSchedule = eventScheduleCollection.models
-      })
+    // Fetch event schedule (preferably without displaying too many events after the featured one)
+    if (res.locals.featuredEvent) {
+      let featuredEventIndex
+      let fetchedEventsCollection
+      let eventSchedule = []
+      let page = 0
+      do {
+        fetchedEventsCollection = await eventService.findEvents({ pageSize: 5, page: page++ })
+        eventSchedule = eventSchedule.concat(fetchedEventsCollection.models)
+        featuredEventIndex = eventSchedule.findIndex(event => event.get('id') === res.locals.featuredEvent.get('id'))
+      } while (featuredEventIndex === -1 && fetchedEventsCollection.length > 0)
+
+      let startIndex = Math.max(0, featuredEventIndex - 2)
+      context.eventSchedule = eventSchedule.slice(startIndex, startIndex + 5)
+    } else {
+      let fetchedEventsCollection = await eventService.findEvents({ pageSize: 5 })
+      context.eventSchedule = fetchedEventsCollection.models
+    }
 
     // Gather featured entries
     let suggestedEntriesTask = null
@@ -135,8 +148,7 @@ async function index (req, res) {
         }
       })
 
-    await Promise.all([featuredEventTask, eventScheduleTask, suggestedEntriesTask,
-      postsTask, featuredPostTask]) // Parallelize fetching everything
+    await Promise.all([featuredEventTask, suggestedEntriesTask, postsTask, featuredPostTask]) // Parallelize fetching everything
 
     cache.general.set('home_page', context, 10 /* 10 seconds */)
   }
