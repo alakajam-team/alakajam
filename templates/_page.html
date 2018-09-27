@@ -68,10 +68,11 @@
     {% endif %}
   </script>
 </head>
-<body {{ 'class=in-event' if event }}>
+{% set inEvent = event and event.get('id') %}
+<body {{ 'class=in-event' if inEvent }}>
   {% set showModerationBar = user and (user.get('is_mod') or user.get('is_admin')) %}
 
-  <nav class="navbar navbar-default navbar-fixed-top {{ 'has-event-header' if event }}">
+  <nav class="navbar navbar-default navbar-fixed-top {{ 'has-event-header' if inEvent }}">
     <div class="container">
       {# ==== Main header (mobile) ==== #}
       <div class="navbar-header">
@@ -124,7 +125,7 @@
     </div>
 
     {# ==== Event header ==== #}
-    {% if (event) %}
+    {% if inEvent %}
       <div class="event-header">
         <div class="container">
           <div class="event-header__info">

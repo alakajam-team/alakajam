@@ -47,8 +47,10 @@ function buildUrl (model, type, page = null, options = {}) {
         return '/' + model.get('name') + pagePath
       } else if (page === 'ajax-find-team-mate') {
         return '/external-entry/ajax-find-team-mate'
+      } else if (page === 'template') {
+        return '/pick_event_template'
       } else {
-        return '/create-event'
+        return '/create_event'
       }
     } else if (type === 'entry') {
       // Entry model

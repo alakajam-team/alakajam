@@ -44,6 +44,7 @@ module.exports = {
   submitTournamentGame,
   viewEventTournamentLeaderboard,
 
+  pickEventTemplate,
   editEvent,
   editEventThemes,
   editEventEntries,
@@ -58,7 +59,7 @@ module.exports = {
  * Fetches the event & optionally the user's entry
  */
 async function eventMiddleware (req, res, next) {
-  if (req.params.eventName !== 'create-event' && req.baseUrl.indexOf('/external-entry') !== 0) {
+  if (req.baseUrl.indexOf('/external-entry') !== 0) {
     let event = await eventService.findEventByName(req.params.eventName)
     res.locals.event = event
     if (!event) {
@@ -621,6 +622,17 @@ async function viewEventTournamentLeaderboard (req, res) {
   })
 }
 
+async function pickEventTemplate (req, res) {
+  if (!securityService.isMod(res.locals.user)) {
+    res.errorPage(403)
+    return
+  }
+
+  res.render('event/pick-event-template', {
+    eventTemplates: (await eventService.findEventTemplates()).models
+  })
+}
+
 /**
  * Edit or create an event
  */
@@ -633,9 +645,9 @@ async function editEvent (req, res) {
   let errorMessage = null
   let infoMessage = ''
   let redirected = false
+  let event = res.locals.event
 
   if (req.body && req.body.name && req.body.title) {
-    let event = res.locals.event
     let creation = !event
 
     // TODO Typed fields should not be reset if validation fails
@@ -643,6 +655,8 @@ async function editEvent (req, res) {
       errorMessage = 'Name is not a valid slug'
     } else if (req.body.name.indexOf('-') === -1) {
       errorMessage = 'Name must contain at least one hyphen (-)'
+    } else if (req.body['event-preset-id'] && !forms.isInt(req.body['event-preset-id'])) {
+      errorMessage = 'Invalid event preset ID'
     } else if (!forms.isIn(req.body.status, enums.EVENT.STATUS)) {
       errorMessage = 'Invalid status'
     } else if (!forms.isIn(req.body['status-rules'], enums.EVENT.STATUS_RULES) &&
@@ -712,6 +726,7 @@ async function editEvent (req, res) {
         display_theme: forms.sanitizeString(req.body['display-theme']),
         started_at: forms.parseDateTime(req.body['started-at']),
         divisions: req.body.divisions,
+        event_preset_id: req.body['event-preset-id'] || null,
         status: req.body.status,
         status_rules: req.body['status-rules'],
         status_theme: req.body['status-theme'],
@@ -781,7 +796,19 @@ async function editEvent (req, res) {
   }
 
   if (!redirected) {
+    // Initialize event (optionally from template)
+    if (!event) {
+      let eventTemplate = null
+      if (forms.isId(req.query['event-template-id'])) {
+        eventTemplate = await eventService.findEventTemplateById(parseInt(req.query['event-template-id']))
+      }
+      event = eventService.createEvent(eventTemplate)
+    }
+
+    // Render
     res.render('event/edit-event', {
+      event,
+      eventPresetsData: (await eventService.findEventPresets()).toJSON(),
       infoMessage,
       errorMessage
     })

@@ -347,6 +347,9 @@ function computeKarma (received, given) {
 
 async function computeRankings (event) {
   let rankedDivisions = Object.keys(event.get('divisions'))
+  if (rankedDivisions.length === 0) {
+    return
+  }
   rankedDivisions.splice(rankedDivisions.indexOf(enums.DIVISION.UNRANKED), 1)
 
   let rankedEntries = await models.Entry

@@ -21,7 +21,7 @@ $(function domReady () {
   require('./common/shrink-navbar')()
   require('./common/sortable-table')()
   require('./common/sync-slug')('.js-sync-slug')
-  require('./common/sync-text')('.js-sync-text')
+  require('./common/sync-text')()
   require('./common/tabs')({ buttonContainerSelector: '.js-tab-container', buttonSelector: '.js-tab-button', tabSelector: '.js-tab' })
   require('./common/tags-select')()
   require('./common/tooltips')('.has-tooltip')

@@ -1,0 +1,65 @@
+{% extends "admin/_page-admin.html" %}
+{% import "event/_macros-edit-event.html" as editEventMacros %}
+
+{% block adminBody %}
+
+<h1>Event presets</h1>
+
+<p>Event presets are just a way to simplify event administration: they allow to change plenty of event settings (states, call to action) in a single step.</p>
+
+<p>
+  <a href="?create" class="btn btn-primary">Create</a> 
+</p>
+
+{% if editEventPreset %}
+<div class="well">
+  <h2><span id="preset-header"></span></h2>
+  <form method="post" action="?">
+    {{ csrfToken() | safe }}
+    <div class="form-group">
+      <label for="title">Preset title</label>
+      <input type="text" class="form-control js-sync-text" name="title" value="{{ editEventPreset.get('title') }}"
+        data-sync-text-display-selector="#preset-header" data-sync-text-default="New"  />
+    </div>
+
+    {{ editEventMacros.countdownForm(editEventPreset, { offsetDate: true }) }}
+    <div class="alert alert-info">
+      <b>Minutes from event start</b>: Instead of an actual date for the deadline, set a number in minutes from the event start. This number will be added to the start date on the actual event.
+    </div>
+    {{ editEventMacros.stateForm(editEventPreset) }}
+    
+    <div class="form-group">
+      <button name="save" type="submit" class="btn btn-primary">Save</button>
+      <a href="?" class="btn btn-default">Cancel</a>
+      {% if editEventPreset.get('id') %}
+        <div class="pull-right">
+          <input type="hidden" name="id" value="{{ editEventPreset.get('id') }}" />
+          <button type="submit" class="btn btn-danger" name="delete" onclick="return confirm('Delete this preset?')">Delete</button>
+        </div>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endif %}
+
+<table class="table">
+<thead>
+<tr>
+  <th>Title</th>
+  <th>Actions</th>
+</tr>
+</thead>
+<tbody>
+{% for eventPreset in eventPresets %}
+<tr>
+  <td>{{ eventPreset.get('title') }}</td>
+  <td>
+    <a href="?edit={{ eventPreset.get('id') }}" class="btn btn-default">Edit</a>
+    <a href="?create&reference={{ eventPreset.get('id') }}" class="btn btn-default">Copy</a>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}

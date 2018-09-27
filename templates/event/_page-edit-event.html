@@ -3,17 +3,19 @@
 
 {% block body %}
 
+{% set createdEvent = event and event.get('id') %}
+
 <div class="container">
   <div class="row">
     <div class="col-sm-4 col-md-3">
       <div class="list-group">
         <div class="list-group-item">
-          <h4 style="margin: 0">{{ event.get('title') if event else 'Event' }}</h4>
+          <h4 style="margin: 0">{{ event.get('title') if createdEvent else 'Event' }}</h4>
         </div>
-        {{ editEventLink(event, 'edit', 'General') }}
-        {{ editEventLink(event, 'edit-themes', 'Themes') }}
-        {{ editEventLink(event, 'edit-entries', 'Entries') }}
-        {{ editEventLink(event, 'edit-tournament-games', 'Tournament', { disabled: event.get('status_tournament') === 'disabled' if event }) }}
+        {{ editEventLink(event, createdEvent, 'edit', 'General') }}
+        {{ editEventLink(event, createdEvent, 'edit-themes', 'Themes') }}
+        {{ editEventLink(event, createdEvent, 'edit-entries', 'Entries') }}
+        {{ editEventLink(event, createdEvent, 'edit-tournament-games', 'Tournament', { disabled: event.get('status_tournament') === 'disabled' if createdEvent }) }}
       </div>
     </div>
     <div class="col-sm-8 col-md-9">
@@ -31,10 +33,10 @@
 
 {% endblock %}
 
-{% macro editEventLink(event, page, label, options) %}
+{% macro editEventLink(event, createdEvent, page, label, options) %}
   {% set url = buildUrl(event, 'event', page) %}
   <a href="{{ url }}" class="list-group-item 
-    {{ 'active' if path === url and event}} 
-    {{ 'list-group-item-primary' if path === url and event}}
-    {{ 'disabled' if not event or options.disabled }}">{{ label }}</a>
+    {{ 'active' if path === url and createdEvent}} 
+    {{ 'list-group-item-primary' if path === url and createdEvent}}
+    {{ 'disabled' if not createdEvent or options.disabled }}">{{ label }}</a>
 {% endmacro %}

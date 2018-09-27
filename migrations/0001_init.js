@@ -60,7 +60,7 @@ exports.up = async function (knex, Promise) {
       table.string('status_theme').notNullable()
       table.string('status_entry').notNullable()
       table.string('status_results').notNullable()
-      table.string('countdown_config') // JSON Object : {phrase, date}
+      table.string('countdown_config') // JSON Object : {phrase, date, enabled, message, link}
       table.dateTime('published_at').index()
       table.timestamps()
     })

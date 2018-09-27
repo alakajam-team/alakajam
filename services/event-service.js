@@ -20,11 +20,20 @@ module.exports = {
   createEvent,
   areSubmissionsAllowed,
   getDefaultDivision,
-
   findEventById,
   findEventByName,
   findEventByStatus,
   findEvents,
+
+  createEventTemplate,
+  findEventTemplates,
+  findEventTemplateById,
+  deleteEventTemplate,
+
+  createEventPreset,
+  findEventPresets,
+  findEventPresetById,
+  deleteEventPreset,
 
   createEntry,
   searchForTeamMembers,
@@ -54,21 +63,30 @@ module.exports = {
 
 /**
  * Creates a new empty event
+ * @param {EventTemplate} template An optional template to initialize the event with
  * @return {Event}
  */
-function createEvent () {
-  return new models.Event({
+function createEvent (template = null) {
+  let event = new models.Event({
     'status': enums.EVENT.STATUS.PENDING,
-    'status_rules': enums.EVENT.STATUS_RULES.DISABLED,
+    'status_rules': enums.EVENT.STATUS_RULES.OFF,
     'status_theme': enums.EVENT.STATUS_THEME.DISABLED,
     'status_entry': enums.EVENT.STATUS_ENTRY.OFF,
     'status_results': enums.EVENT.STATUS_RESULTS.DISABLED,
+    'status_tournament': enums.EVENT.STATUS_TOURNAMENT.DISABLED,
     'divisions': {
       'solo': '48 hours<br />Everything from scratch',
       'team': '48 hours<br />Everything from scratch',
       'unranked': '72 hours<br />No rankings, just feedback'
     }
   })
+  if (template) {
+    // TODO More properties, also apply event preset
+    event.set({
+      'title': template.get('title')
+    })
+  }
+  return event
 }
 
 function areSubmissionsAllowed (event) {
@@ -139,6 +157,93 @@ async function findEventByStatus (status) {
   return models.Event.where('status', status)
     .orderBy('started_at', sortOrder)
     .fetch()
+}
+
+/**
+ * Creates an empty, unpersisted event template.
+ */
+function createEventTemplate () {
+  return new models.EventTemplate()
+}
+
+/**
+ * Finds all event templates.
+ */
+async function findEventTemplates () {
+  return models.EventTemplate
+    .forge()
+    .orderBy('title')
+    .fetchAll()
+}
+
+/**
+ * Finds an event template.
+ * @param {number} id
+ */
+async function findEventTemplateById (id) {
+  return models.EventTemplate.where({ id }).fetch()
+}
+
+/**
+ * Deletes an event template.
+ * @param {EventTemplate} eventTemplate
+ */
+async function deleteEventTemplate (eventTemplate) {
+  return eventTemplate.destroy()
+}
+
+/**
+ * Creates an empty, unpersisted event preset.
+ * @param {EventPreset} referencePreset Optional reference preset to clone data from
+ */
+function createEventPreset (referencePreset = null) {
+  let eventPreset = new models.EventPreset({
+    countdown_config: { date: new Date(0) }
+  })
+  if (referencePreset) {
+    let overrideAttributes = {
+      id: null,
+      title: (referencePreset.get('title') || '') + ' (copy)'
+    }
+    eventPreset.set('countdown_config',
+      Object.assign({}, referencePreset.get('countdown_config'), eventPreset.get('countdown_config')))
+    eventPreset.set(Object.assign({}, referencePreset.attributes, overrideAttributes))
+  }
+  return eventPreset
+}
+
+/**
+ * Finds all event presets.
+ */
+async function findEventPresets () {
+  return models.EventPreset
+    .forge()
+    .orderBy('title')
+    .fetchAll()
+}
+
+/**
+ * Finds an event preset.
+ * @param {number} id
+ */
+async function findEventPresetById (id) {
+  return models.EventPreset
+    .where({ id })
+    .fetch({ withRelated: ['events'] })
+}
+
+/**
+ * Deletes an event preset after making sure no event is currently using it.
+ * @param {EventPreset} eventPreset
+ */
+async function deleteEventPreset (eventPreset) {
+  await eventPreset.load('events')
+  let eventsUsingPreset = eventPreset.related('events').length
+  if (eventsUsingPreset > 0) {
+    throw new Error(`Cannot delete preset ${eventPreset.get('title')} because ${eventsUsingPreset} events depend on it`)
+  } else {
+    return eventPreset.destroy()
+  }
 }
 
 /**

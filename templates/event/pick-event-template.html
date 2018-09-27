@@ -1,0 +1,33 @@
+{% extends "_page.html" %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block body %}
+
+<div class="container">
+<div class="row">
+<div class="col-xs-12">
+  <h1>Create event</h1>
+
+  <form action="{{ buildUrl(null, 'event', 'create') }}" method="get">
+    <div class="form-group">
+      <label for="logo">Template</label>
+      <select name="event-template-id" class="js-select" style="width: 100%"
+          data-placeholder="None (Create from scratch)" data-allow-clear="true">
+        <option value=""></option>
+        {% for eventTemplate in eventTemplates %}
+        <option value="{{ eventTemplate.get('id') }}">
+          {{ eventTemplate.get('title') }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Continue</button>
+      <button class="btn btn-default" onclick="window.history.back(); return false;">Cancel</button>
+    </div>
+  </form>
+</div>
+</div>
+</div>
+
+{% endblock %}

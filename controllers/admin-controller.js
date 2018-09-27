@@ -27,6 +27,8 @@ module.exports = {
   adminHome,
 
   adminEvents,
+  adminEventPresets,
+  adminEventTemplates,
   adminPlatforms,
   adminTags,
   adminSettings,
@@ -67,9 +69,103 @@ async function adminHome (req, res) {
  * Events management
  */
 async function adminEvents (req, res) {
-  let events = await eventService.findEvents()
+  let eventsCollection = await eventService.findEvents()
   res.render('admin/admin-events', {
-    events: events.models
+    events: eventsCollection.models
+  })
+}
+
+/**
+ * Event presets management
+ */
+async function adminEventPresets (req, res) {
+  // Find template to edit
+  let editEventPreset = null
+  let editEventPresetId = req.query.edit || req.body.id
+  if (forms.isId(editEventPresetId)) {
+    editEventPreset = await eventService.findEventPresetById(parseInt(editEventPresetId))
+  } else if (req.query.create !== undefined) {
+    let referencePreset = null
+    if (forms.isId(req.query.reference)) {
+      referencePreset = await eventService.findEventPresetById(parseInt(req.query.reference))
+    }
+    editEventPreset = eventService.createEventPreset(referencePreset)
+  }
+
+  // Apply changes
+  if (req.method === 'POST') {
+    if (req.body.delete !== undefined) {
+      await eventService.deleteEventPreset(editEventPreset)
+    } else {
+      editEventPreset = editEventPreset || eventService.createEventPreset()
+      editEventPreset.set({
+        // TODO Validate
+        title: forms.sanitizeString(req.body.title),
+        status: forms.sanitizeString(req.body.status),
+        status_rules: forms.sanitizeString(req.body['status-rules']),
+        status_theme: forms.sanitizeString(req.body['status-theme']),
+        status_entry: forms.sanitizeString(req.body['status-entry']),
+        status_results: forms.sanitizeString(req.body['status-results']),
+        status_tournament: forms.sanitizeString(req.body['status-tournament']),
+        countdown_config: {
+          message: forms.sanitizeString(req.body['countdown-message']),
+          link: forms.sanitizeString(req.body['countdown-link']),
+          offset: forms.isInt(req.body['countdown-offset']) ? req.body['countdown-offset'] : '',
+          phrase: forms.sanitizeString(req.body['countdown-phrase']),
+          enabled: req.body['countdown-enabled'] === 'on'
+        }
+      })
+      await editEventPreset.save()
+    }
+    editEventPreset = null
+  }
+
+  // Render page
+  let eventPresetsCollection = await eventService.findEventPresets()
+  res.render('admin/admin-event-presets', {
+    eventPresets: eventPresetsCollection.models,
+    editEventPreset
+  })
+}
+
+/**
+ * Event templates management
+ */
+async function adminEventTemplates (req, res) {
+  // Find template to edit
+  let editEventTemplate = null
+  let editEventTemplateId = req.query.edit || req.body.id
+  if (forms.isId(editEventTemplateId)) {
+    editEventTemplate = await eventService.findEventTemplateById(parseInt(editEventTemplateId))
+  } else if (req.query.create !== undefined) {
+    editEventTemplate = eventService.createEventTemplate()
+  }
+
+  // Apply changes
+  if (req.method === 'POST') {
+    if (req.body.delete !== undefined) {
+      await eventService.deleteEventTemplate(editEventTemplate)
+    } else {
+      editEventTemplate = editEventTemplate || eventService.createEventTemplate()
+      editEventTemplate.set({
+        // TODO Validate
+        title: forms.sanitizeString(req.body.title),
+        event_preset_id: req.body['event-preset-id'],
+        default_divisions: req.body['default-divisions'],
+        default_category_titles: req.body['default-category-titles']
+      })
+      await editEventTemplate.save()
+    }
+    editEventTemplate = null
+  }
+
+  // Render page
+  let eventPresetsCollection = await eventService.findEventPresets()
+  let eventTemplatesCollection = await eventService.findEventTemplates()
+  res.render('admin/admin-event-templates', {
+    eventPresets: eventPresetsCollection.models,
+    eventTemplates: eventTemplatesCollection.models,
+    editEventTemplate
   })
 }
 

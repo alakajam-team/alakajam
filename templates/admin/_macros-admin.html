@@ -7,7 +7,7 @@
         
         {{ moderationLink('Edit event', 'calendar', buildUrl(context.event, 'event', 'edit')) if context.event.id and (not context.featuredEvent or context.event.id != context.featuredEvent.id) }}
         {{ moderationLink('Edit featured event', 'calendar', buildUrl(context.featuredEvent, 'event', 'edit')) if context.featuredEvent.id }}
-        {{ moderationLink('Create event', 'calendar', buildUrl(null, 'event', 'create')) if context.path === '/events' }}
+        {{ moderationLink('Create event', 'calendar', buildUrl(null, 'event', 'template')) if context.path === '/events' }}
 
         {{ moderationLink('Create announcement', 'pencil-alt', buildUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'announcement' })) if context.event.id }}
         

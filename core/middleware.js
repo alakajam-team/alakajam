@@ -106,6 +106,9 @@ async function configure (app) {
   nj.env.addFilter('values', function (obj) {
     return Object.values(obj)
   })
+  nj.env.addFilter('stringify', function (obj) {
+    return JSON.stringify(obj)
+  })
   nj.env.addFilter('pretty', function (obj) {
     return JSON.stringify(obj, null, 2)
   })

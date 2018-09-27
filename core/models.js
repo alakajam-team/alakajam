@@ -164,6 +164,7 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | display_dates | The event dates, for display only
  * | string | display_theme | The event theme, for display only
  * | string | logo | Path to a logo picture
+ * | string | event_preset_id | Currently used state preset
  * | string | status | General status: 'pending', 'open' or 'closed' (not null)
  * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID (not null)
  * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'closed', 'results', or a post ID (not null)
@@ -192,6 +193,9 @@ module.exports.Event = bookshelf.model('Event', {
   },
   tournamentEntries: function () {
     return this.hasMany('TournamentEntry', 'event_id')
+  },
+  preset: function () {
+    return this.hasOne('EventPreset', 'event_preset_id')
   },
 
   // Listeners
@@ -228,7 +232,7 @@ module.exports.Event = bookshelf.model('Event', {
  * |--    |--    |--
  * | increments | id | Primary key
  * | integer | event_id | Event ID (not null)
- * | integer | category_titles | Category names (JSON: [name])
+ * | string | category_titles | Category names (JSON: [name])
  * | integer | theme_count | Number of theme ideas submitted
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
@@ -243,6 +247,12 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
   tableName: 'event_details',
   idAttribute: 'id',
   hasTimestamps: true,
+
+  // Relations
+
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  },
 
   // Listeners
 
@@ -268,10 +278,91 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
     if (attrs && attrs['shortlist_elimination']) attrs['shortlist_elimination'] = JSON.stringify(attrs['shortlist_elimination'])
     if (attrs && attrs['links']) attrs['links'] = JSON.stringify(attrs['links'])
     return attrs
+  }
+})
+
+/**
+ * Event preset model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | integer | id | ID
+ * | string | title | Title (not null)
+ * | string | status | General status (see Event)
+ * | string | status_rules | Event rules status (see Event)
+ * | string | status_theme | Theme voting status (see Event)
+ * | string | status_entry | Entry submission status (see Event)
+ * | string | status_results | Event results status (see Event)
+ * | string | status_tournament | Event tournament status (see Event)
+ * | string | coutdown_config | Home page countdown JSON (see Event)
+ */
+module.exports.EventPreset = bookshelf.model('EventPreset', {
+  tableName: 'event_preset',
+  idAttribute: 'id',
+
+  // Relations
+
+  events: function () {
+    return this.hasMany('Event', 'event_preset_id')
   },
 
-  event: function () {
-    return this.belongsTo('Event', 'event_id')
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs['countdown_config'] = attrs['countdown_config'] || {}
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['countdown_config']) attrs['countdown_config'] = JSON.parse(attrs['countdown_config'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs && attrs['countdown_config']) attrs['countdown_config'] = JSON.stringify(attrs['countdown_config'])
+    return attrs
+  }
+})
+
+/**
+ * Event template model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | integer | id | ID
+ * | string | title | Title (not null)
+ * | integer | event_preset_id | Default event preset
+ * | string | default_divisions | Default divisions info (see Event)
+ * | string | default_category_titles | Default category names (see EventDetails)
+ */
+module.exports.EventTemplate = bookshelf.model('EventTemplate', {
+  tableName: 'event_template',
+  idAttribute: 'id',
+
+  // Relations
+
+  preset: function () {
+    return this.hasOne('EventPreset', 'event_preset_id')
+  },
+
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs['default_divisions'] = attrs['default_divisions'] || {}
+    attrs['default_category_titles'] = attrs['default_category_titles'] || []
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['default_divisions']) attrs['default_divisions'] = JSON.parse(attrs['default_divisions'])
+    if (attrs['default_category_titles']) attrs['default_category_titles'] = JSON.parse(attrs['default_category_titles'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs && attrs['default_divisions']) attrs['default_divisions'] = JSON.stringify(attrs['default_divisions'])
+    if (attrs && attrs['default_category_titles']) attrs['default_category_titles'] = JSON.stringify(attrs['default_category_titles'])
+    return attrs
   }
 })
 

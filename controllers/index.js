@@ -79,6 +79,8 @@ module.exports = {
 
     router.get('/admin', csrf, adminController.adminHome)
     router.get('/admin/events', csrf, adminController.adminEvents)
+    router.all('/admin/event-presets', csrf, adminController.adminEventPresets)
+    router.all('/admin/event-templates', csrf, adminController.adminEventTemplates)
     router.all('/admin/platforms', csrf, adminController.adminPlatforms)
     router.all('/admin/tags', csrf, adminController.adminTags)
     router.all('/admin/settings', csrf, adminController.adminSettings)
@@ -107,8 +109,9 @@ module.exports = {
     router.all('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit-scores', csrf, entryController.editScores)
 
     const eventFormParser = upload.fields([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }])
-    router.get('/create-event', csrf, eventController.editEvent)
-    router.post('/create-event', eventFormParser, csrf, eventController.editEvent)
+    router.get('/pick_event_template', csrf, eventController.pickEventTemplate)
+    router.get('/create_event', csrf, eventController.editEvent)
+    router.post('/create_event', eventFormParser, csrf, eventController.editEvent)
     router.get('/:eventName([^/]{0,}-[^/]{0,})', eventController.viewDefaultPage)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/announcements', eventController.viewEventAnnouncements)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/posts', eventController.viewEventPosts)
