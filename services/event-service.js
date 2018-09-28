@@ -67,7 +67,7 @@ module.exports = {
  * @return {Event}
  */
 function createEvent (template = null) {
-  let event = new models.Event({
+  const event = new models.Event({
     'status': enums.EVENT.STATUS.PENDING,
     'status_rules': enums.EVENT.STATUS_RULES.OFF,
     'status_theme': enums.EVENT.STATUS_THEME.DISABLED,
@@ -81,9 +81,15 @@ function createEvent (template = null) {
     }
   })
   if (template) {
-    // TODO More properties, also apply event preset
     event.set({
-      'title': template.get('title')
+      'title': template.get('event_title'),
+      'event_preset_id': template.get('event_preset_id'),
+      'divisions': event.get('divisions') || template.get('divisions')
+    })
+    const details = event.related('details')
+    details.set({
+      'links': template.get('links'),
+      'category_titles': template.get('category_titles')
     })
   }
   return event

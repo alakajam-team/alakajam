@@ -650,7 +650,7 @@ async function editEvent (req, res) {
   if (req.body && req.body.name && req.body.title) {
     let creation = !event
 
-    // TODO Typed fields should not be reset if validation fails
+    // TODO Fields should not be reset if validation fails
     if (!forms.isSlug(req.body.name)) {
       errorMessage = 'Name is not a valid slug'
     } else if (req.body.name.indexOf('-') === -1) {

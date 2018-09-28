@@ -21,7 +21,7 @@
     <div class="col-md-7">
       <div class="form-group input-group-lg">
         <label for="title">Title</label>
-        <input type="text" class="form-control js-sync-text js-sync-slug" name="title" value="{{ event.get('title') if event }}" required="required"
+        <input type="text" class="form-control js-sync-text js-sync-slug" name="title" value="{{ event.get('title') if event }}" required
           data-sync-text-display-selector="#title-display"
           data-sync-text-default="My event" 
           data-sync-slug-input-selector="#name" />
@@ -30,7 +30,7 @@
     <div class="col-md-5">
       <div class="form-group input-group-lg">
         <label for="name">Slug</label>
-        <input type="text" class="form-control" id="name" name="name" value="{{ event.get('name') if event }}" required="required" />
+        <input type="text" class="form-control" id="name" name="name" value="{{ event.get('name') if event }}" required />
       </div>
     </div>
   </div>
@@ -43,7 +43,7 @@
     </div>
     <div class="col-md-4">
       <div class="form-group">
-        <label for="title">Event start date {{ formMacros.tooltip('e.g. the jam start date. Mostly just to sort events.') }}</label>
+        <label for="title">Event start date {{ formMacros.tooltip('The jam start date. Used to sort events, but also to let state presets guess deadlines correctly.') }}</label>
         {{ formMacros.dateTimePicker('started-at', event.get('started_at') if event, { minView: '2', momentFormat: 'YYYY-MM-DD', pickerFormat: 'yyyy-mm-dd' }) }}
       </div>
     </div>
@@ -68,10 +68,7 @@
     </div>
   </div>
 
-  <div class="form-group">
-    <label for="links">Home page shortcuts {{ formMacros.tooltip('Must be a valid JSON array of links, eg. [\{ "title": "Event rules", "link": "/post/123", "icon": "fa-question-circle" \}]') }}</label>
-    <textarea name="links" class="codemirror auto-height">{{ (event.related('details').get('links') if event else []) | pretty }}</textarea>
-  </div>
+  {{ editEventMacros.linksForm(event.related('details') if event) }}
 
   <div class="horizontal-bar">
     Pictures
@@ -124,14 +121,7 @@
 </div>
 
 <div id="js-config" class="tab-content js-tab">
-  <div class="form-group">
-    <label for="divisions">Divisions {{ formMacros.tooltip('Must be a valid JSON object, with keys being the name (among: solo,team,ranked,unranked) and values the description.') }}</label>
-    <textarea name="divisions" class="codemirror auto-height">{{ (event.get('divisions') if event else []) | pretty }}</textarea>
-  </div>
-  <div class="form-group">
-    <label for="category-titles">Rating categories {{ formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]') }}</label>
-    <textarea name="category-titles" class="codemirror auto-height">{{ (event.related('details').get('category_titles') if event else []) | dump }}</textarea>
-  </div>
+    {{ editEventMacros.jamConfigForm(event, event.related('details') if event) }}
 </div>
 
 <div class="tab-content">

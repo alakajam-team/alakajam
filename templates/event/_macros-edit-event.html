@@ -1,5 +1,17 @@
 {% import "_macros-form.html" as formMacros %}
 
+{#
+ # Various chunks of the event edition form have been extracted here
+ # for reuse on the event templates/event presets admin forms.
+ #}
+
+{% macro linksForm (eventDetails) %}
+  <div class="form-group">
+    <label for="links">Home page shortcuts {{ formMacros.tooltip('Must be a valid JSON array of links, eg. [\{ "title": "Event rules", "link": "/post/123", "icon": "fa-question-circle" \}]') }}</label>
+    <textarea name="links" class="codemirror auto-height">{{ (eventDetails.get('links') if eventDetails else []) | pretty }}</textarea>
+  </div>
+{% endmacro %}
+
 {% macro countdownForm (event, options = {}) %}
   <div class="horizontal-bar">
     Home page
@@ -19,9 +31,12 @@
     <div class="form-inline">
     Phrase {{ formMacros.tooltip('For instance: "ends", "voting starts"... or directly "starts January 31st" if the date is not set.') }} 
     <input type="text" class="form-control" name="countdown-phrase" value="{{ event.get('countdown_config').phrase if event }}" />
-    {% if options.offsetDate %}
-      Minutes from event start
-      <input type="number" class="form-control" name="countdown-offset" value="{{ event.get('countdown_config').offset if event }}" />
+    {% if options.countdownOffset %}
+      Offset from start
+      <input type="text" name="countdown-offset-d" class="form-control" style="width: 50px" value="{{ options.countdownOffset.d or '0' }}" />d
+      <input type="text" name="countdown-offset-h" class="form-control" style="width: 50px" value="{{ options.countdownOffset.h or '0' }}" />h
+      <input type="text" name="countdown-offset-m" class="form-control" style="width: 50px" value="{{ options.countdownOffset.m or '0' }}" />m
+      &nbsp;
     {% else %}
       Date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)
       {{ formMacros.dateTimePicker('countdown-date', event.get('countdown_config').date if event) }}
@@ -119,5 +134,16 @@
     {{ formMacros.radio('status-tournament', 'results', 'Tournament results', 
       event.get('status_tournament') if event) }}
     </div>
+  </div>
+{% endmacro %}
+
+{% macro jamConfigForm(event, eventDetails) %}
+  <div class="form-group">
+    <label for="divisions">Divisions {{ formMacros.tooltip('Must be a valid JSON object, with keys being the name (among: solo,team,ranked,unranked) and values the description.') }}</label>
+    <textarea name="divisions" class="codemirror auto-height">{{ (event.get('divisions') if event else []) | pretty }}</textarea>
+  </div>
+  <div class="form-group">
+    <label for="category-titles">Rating categories {{ formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]') }}</label>
+    <textarea name="category-titles" class="codemirror auto-height">{{ (eventDetails.get('category_titles') if eventDetails else []) | dump }}</textarea>
   </div>
 {% endmacro %}

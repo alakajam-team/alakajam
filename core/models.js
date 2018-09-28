@@ -331,9 +331,11 @@ module.exports.EventPreset = bookshelf.model('EventPreset', {
  * |--    |--    |--
  * | integer | id | ID
  * | string | title | Title (not null)
+ * | string | event_title | Default event title (not null)
  * | integer | event_preset_id | Default event preset
- * | string | default_divisions | Default divisions info (see Event)
- * | string | default_category_titles | Default category names (see EventDetails)
+ * | string | links | Default spacial pages (see EventDetails)
+ * | string | divisions | Default divisions info (see Event)
+ * | string | category_titles | Default category names (see EventDetails)
  */
 module.exports.EventTemplate = bookshelf.model('EventTemplate', {
   tableName: 'event_template',
@@ -350,18 +352,21 @@ module.exports.EventTemplate = bookshelf.model('EventTemplate', {
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
     attrs = attrs || {}
-    attrs['default_divisions'] = attrs['default_divisions'] || {}
-    attrs['default_category_titles'] = attrs['default_category_titles'] || []
+    attrs['links'] = attrs['links'] || []
+    attrs['divisions'] = attrs['divisions'] || {}
+    attrs['category_titles'] = attrs['category_titles'] || []
     return attrs
   },
   parse: function parse (attrs) {
-    if (attrs['default_divisions']) attrs['default_divisions'] = JSON.parse(attrs['default_divisions'])
-    if (attrs['default_category_titles']) attrs['default_category_titles'] = JSON.parse(attrs['default_category_titles'])
+    if (attrs['links']) attrs['links'] = JSON.parse(attrs['links'])
+    if (attrs['divisions']) attrs['divisions'] = JSON.parse(attrs['divisions'])
+    if (attrs['category_titles']) attrs['category_titles'] = JSON.parse(attrs['category_titles'])
     return attrs
   },
   format: function format (attrs) {
-    if (attrs && attrs['default_divisions']) attrs['default_divisions'] = JSON.stringify(attrs['default_divisions'])
-    if (attrs && attrs['default_category_titles']) attrs['default_category_titles'] = JSON.stringify(attrs['default_category_titles'])
+    if (attrs && attrs['links']) attrs['links'] = JSON.stringify(attrs['links'])
+    if (attrs && attrs['divisions']) attrs['divisions'] = JSON.stringify(attrs['divisions'])
+    if (attrs && attrs['category_titles']) attrs['category_titles'] = JSON.stringify(attrs['category_titles'])
     return attrs
   }
 })

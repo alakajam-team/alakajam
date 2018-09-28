@@ -3,6 +3,7 @@
 const advancedModeToggleInputs = '#js-edit-event-status-toggles input'
 const advancedModeBlock = '#js-state-advanced'
 const eventPresetSelect = '#js-edit-event-status-preset'
+const eventStartInput = 'input[name=started-at]'
 const errorOutput = '#js-edit-event-status-error'
 
 /**
@@ -60,6 +61,41 @@ function setError (value) {
   }
 }
 
+function applyPreset () {
+  setError('')
+
+  const presetValue = $(eventPresetSelect).val()
+  if (presetValue) {
+    const $valueOption = $(eventPresetSelect + ' option[value="' + presetValue + '"]')
+    const presetAttributes = $valueOption.data('attributes')
+
+    applyInputValue('countdown-message', presetAttributes['countdown_config']['message'])
+    applyInputValue('countdown-link', presetAttributes['countdown_config']['link'])
+    applyInputValue('countdown-phrase', presetAttributes['countdown_config']['phrase'])
+
+    // Countdown date = event start date + preset offset in minutes
+    const startedAtPickerData = $(eventStartInput).data('datetimepicker')
+    const startedAtDate = startedAtPickerData.getDate()
+    let targetDate
+    if (startedAtPickerData.element.val() && startedAtDate) {
+      targetDate = new Date(startedAtDate.getTime() + parseInt(presetAttributes['countdown_config']['offset']))
+    } else {
+      setError('Please first set the event Start Date, or deadlines will be wrong! (under the Appearance tab)')
+      return
+    }
+    $(advancedModeBlock + ' [name=countdown-date]')
+      .data('datetimepicker')
+      .setDate(targetDate)
+
+    applyRadioValue('status', presetAttributes['status'])
+    applyRadioValue('status-rules', presetAttributes['status_rules'])
+    applyRadioValue('status-theme', presetAttributes['status_theme'])
+    applyRadioValue('status-entry', presetAttributes['status_entry'])
+    applyRadioValue('status-results', presetAttributes['status_results'])
+    applyRadioValue('status-tournament', presetAttributes['status_tournament'])
+  }
+}
+
 module.exports = function editEventStatus () {
   // Non-tournament status
   $('input[type=radio][name=status-tournament]').on('change, ifChecked', function () {
@@ -76,41 +112,11 @@ module.exports = function editEventStatus () {
   })
 
   // Apply preset changes
-  $(eventPresetSelect).on('change', function (event) {
-    setError('')
-
-    const presetValue = $(this).val()
-    if (presetValue) {
-      const $valueOption = $(eventPresetSelect + ' option[value="' + presetValue + '"]')
-      const presetAttributes = $valueOption.data('attributes')
-
-      applyInputValue('countdown-message', presetAttributes['countdown_config']['message'])
-      applyInputValue('countdown-link', presetAttributes['countdown_config']['link'])
-      applyInputValue('countdown-phrase', presetAttributes['countdown_config']['phrase'])
-
-      // Countdown date = event start date + preset offset in minutes
-      const startedAtPickerData = $('input[name=started-at]').data('datetimepicker')
-      const startedAtDate = startedAtPickerData.getDate()
-      let targetDate
-      if (startedAtPickerData.element.val() && startedAtDate) {
-        targetDate = new Date(startedAtDate.getTime() + parseInt(presetAttributes['countdown_config']['offset']) * 60000)
-      } else {
-        clearPreset()
-        setError('Please first set the event Start Date, or deadlines will be wrong! (under the Appearance tab)')
-        return
-      }
-      $(advancedModeBlock + ' [name=countdown-date]')
-        .data('datetimepicker')
-        .setDate(targetDate)
-
-      applyRadioValue('status', presetAttributes['status'])
-      applyRadioValue('status-rules', presetAttributes['status_rules'])
-      applyRadioValue('status-theme', presetAttributes['status_theme'])
-      applyRadioValue('status-entry', presetAttributes['status_entry'])
-      applyRadioValue('status-results', presetAttributes['status_results'])
-      applyRadioValue('status-tournament', presetAttributes['status_tournament'])
-    }
-  })
+  $(eventPresetSelect).on('change', applyPreset)
+  if (window.location.search.includes('event-template-id=')) {
+    applyPreset()
+  }
+  $(eventStartInput).on('change', applyPreset)
 
   // Clear preset on advanced changes
   const $allAdvancedInputs = $(advancedModeBlock + ' input')

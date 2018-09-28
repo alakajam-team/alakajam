@@ -110,7 +110,19 @@ async function configure (app) {
     return JSON.stringify(obj)
   })
   nj.env.addFilter('pretty', function (obj) {
-    return JSON.stringify(obj, null, 2)
+    if (typeof obj === 'object') {
+      return JSON.stringify(obj, null, 2)
+    } else {
+      return obj
+    }
+  })
+  nj.env.addFilter('dump', function (obj) {
+    // Override default behavior to prevent escaping non-objects
+    if (typeof obj === 'object') {
+      return JSON.stringify(obj)
+    } else {
+      return obj
+    }
   })
   nj.env.addFilter('prettyDump', function (obj) {
     return '<pre>' + JSON.stringify(obj, null, 2) + '</pre>'

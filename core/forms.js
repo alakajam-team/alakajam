@@ -38,6 +38,7 @@ module.exports = {
   isLengthValid,
 
   parseDateTime,
+  parseJson,
 
   markdownToHtml,
   markdownToText,
@@ -227,6 +228,29 @@ function parseDateTime (string) {
     return momentDate.toDate()
   } else {
     return null
+  }
+}
+
+/**
+ * Tries to parse the given JSON. By default, returns false if parsing fails
+ * @param {string} string
+ * @param {object} options throwError acceptInvalid
+ */
+function parseJson (string, options = {}) {
+  if (!string) {
+    return string
+  }
+
+  try {
+    return JSON.parse(string)
+  } catch (e) {
+    if (options.acceptInvalid) {
+      return string
+    } else if (options.throwError) {
+      throw e
+    } else {
+      return false
+    }
   }
 }
 

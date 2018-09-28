@@ -21,9 +21,11 @@ exports.up = async function (knex, Promise) {
     await knex.schema.createTableIfNotExists('event_template', (table) => {
       table.increments('id').primary()
       table.string('title')
+      table.string('event_title')
       table.integer('event_preset_id').references('event_preset.id')
-      table.string('default_divisions', 2000)
-      table.string('default_category_titles', 1000)
+      table.string('links', 2000)
+      table.string('divisions', 2000)
+      table.string('category_titles', 1000)
     })
 
     if (config.DB_TYPE === 'postgresql') {

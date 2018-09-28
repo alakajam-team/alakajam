@@ -1,4 +1,6 @@
 {% extends "admin/_page-admin.html" %}
+{% import "event/_macros-edit-event.html" as editEventMacros %}
+{% import "_macros-form.html" as formMacros %}
 
 {% block adminBody %}
 
@@ -12,14 +14,32 @@
 
 {% if editEventTemplate %}
 <div class="well">
-  <h2><span id="template-header"></span> template</h2>
+  <h2><span id="template-header"></span> event template</h2>
   <form method="post" action="?">
     {{ csrfToken() | safe }}
     <div class="form-group">
       <label for="title">Title</label>
-      <input type="text" class="form-control js-sync-text" name="title" value="{{ editEventTemplate.get('title') }}"
+      <input type="text" required class="form-control js-sync-text" name="title" value="{{ editEventTemplate.get('title') }}"
         data-sync-text-display-selector="#template-header" data-sync-text-default="New"  />
     </div>
+    <div class="form-group">
+      <label for="title">Default event title</label>
+      <input type="text" class="form-control" name="event-title" value="{{ editEventTemplate.get('event_title') }}" />
+    </div>
+    <div class="form-group">
+      <label for="logo">Preset</label>
+      <select name="event-preset-id" class="js-select" style="width: 100%" data-placeholder="None" data-allow-clear="true">
+        <option value=""></option>
+        {% for eventPreset in eventPresets %}
+        <option value="{{ eventPreset.get('id') }}"
+            {{ 'selected' if editEventTemplate.get('event_preset_id') == eventPreset.get('id') }}>
+          {{ eventPreset.get('title') }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    {{ editEventMacros.linksForm(editEventTemplate) }}
+    {{ editEventMacros.jamConfigForm(editEventTemplate, editEventTemplate) }}
     <div class="form-group">
       {% if editEventTemplate.get('id') %}
         <div class="pull-right">
@@ -46,11 +66,15 @@
 <tr>
   <td>{{ eventTemplate.get('title') }}</td>
   <td>
-    <a href="?edit={{ eventTemplate.get('id') }}" class="btn btn-default">Edit</a>
+    <a href="?edit={{ eventTemplate.get('id') }}" class="btn btn-primary">Edit</a>
   </td>
 </tr>
 {% endfor %}
 </tbody>
 </table>
 
+{% endblock %}
+
+{% block scripts %} 
+{{ formMacros.codeMirrorScripts() }}
 {% endblock %}

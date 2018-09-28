@@ -93,13 +93,30 @@ async function adminEventPresets (req, res) {
   }
 
   // Apply changes
+  let errorMessage = null
   if (req.method === 'POST') {
     if (req.body.delete !== undefined) {
+      // Delete model
       await eventService.deleteEventPreset(editEventPreset)
+      editEventPreset = null
     } else {
+      // Validation / Compute deadline offset
+      // TODO Status radios validation (to be put in common with the event edition form)
+      let offset = 0
+      try {
+        offset = parseInt(req.body['countdown-offset-d']) * 60 * 24 +
+          parseInt(req.body['countdown-offset-h']) * 60 +
+          parseInt(req.body['countdown-offset-m'])
+      } catch (e) {
+        errorMessage = 'Invalid deadline offset from start'
+      }
+      if (!editEventPreset.get('title')) {
+        errorMessage = 'Title is required'
+      }
+
+      // Update model (without saving yet)
       editEventPreset = editEventPreset || eventService.createEventPreset()
       editEventPreset.set({
-        // TODO Validate
         title: forms.sanitizeString(req.body.title),
         status: forms.sanitizeString(req.body.status),
         status_rules: forms.sanitizeString(req.body['status-rules']),
@@ -110,22 +127,38 @@ async function adminEventPresets (req, res) {
         countdown_config: {
           message: forms.sanitizeString(req.body['countdown-message']),
           link: forms.sanitizeString(req.body['countdown-link']),
-          offset: forms.isInt(req.body['countdown-offset']) ? req.body['countdown-offset'] : '',
+          offset: offset,
           phrase: forms.sanitizeString(req.body['countdown-phrase']),
           enabled: req.body['countdown-enabled'] === 'on'
         }
       })
-      await editEventPreset.save()
+
+      // Save if valid
+      if (!errorMessage) {
+        await editEventPreset.save()
+        editEventPreset = null
+      }
     }
-    editEventPreset = null
   }
 
   // Render page
   let eventPresetsCollection = await eventService.findEventPresets()
-  res.render('admin/admin-event-presets', {
+  let context = {
     eventPresets: eventPresetsCollection.models,
     editEventPreset
-  })
+  }
+  if (editEventPreset) {
+    let rawOffset = 1.0 * (editEventPreset.get('countdown_config').offset || 0)
+    const minutesPerDay = 60.0 * 24.0
+    let days = Math.floor(rawOffset / minutesPerDay)
+    let rawOffsetWithoutDays = rawOffset - days * minutesPerDay
+    context.countdownOffset = {
+      d: days,
+      h: Math.floor(rawOffsetWithoutDays / 60),
+      m: rawOffsetWithoutDays % 60
+    }
+  }
+  res.render('admin/admin-event-presets', context)
 }
 
 /**
@@ -142,21 +175,41 @@ async function adminEventTemplates (req, res) {
   }
 
   // Apply changes
+  let errorMessage = null
   if (req.method === 'POST') {
     if (req.body.delete !== undefined) {
+      // Delete model
       await eventService.deleteEventTemplate(editEventTemplate)
+      editEventTemplate = null
     } else {
+      // Update model (without saving yet)
       editEventTemplate = editEventTemplate || eventService.createEventTemplate()
       editEventTemplate.set({
-        // TODO Validate
         title: forms.sanitizeString(req.body.title),
-        event_preset_id: req.body['event-preset-id'],
-        default_divisions: req.body['default-divisions'],
-        default_category_titles: req.body['default-category-titles']
+        event_title: forms.sanitizeString(req.body['event-title']),
+        event_preset_id: req.body['event-preset-id'] || null,
+        links: forms.parseJson(req.body['links'], { acceptInvalid: true }),
+        divisions: forms.parseJson(req.body['divisions'], { acceptInvalid: true }),
+        category_titles: forms.parseJson(req.body['category-titles'], { acceptInvalid: true })
       })
-      await editEventTemplate.save()
+
+      // Validation
+      if (!editEventTemplate.get('title')) {
+        errorMessage = 'Title is required'
+      } else if (forms.parseJson(req.body['links']) === false) {
+        errorMessage = 'Invalid home page shortcuts JSON'
+      } else if (forms.parseJson(req.body['divisions']) === false) {
+        errorMessage = 'Invalid divisions JSON'
+      } else if (forms.parseJson(req.body['category-titles']) === false) {
+        errorMessage = 'Invalid rating categories JSON'
+      }
+
+      // Save if valid
+      if (!errorMessage) {
+        await editEventTemplate.save()
+        editEventTemplate = null
+      }
     }
-    editEventTemplate = null
   }
 
   // Render page
@@ -165,7 +218,8 @@ async function adminEventTemplates (req, res) {
   res.render('admin/admin-event-templates', {
     eventPresets: eventPresetsCollection.models,
     eventTemplates: eventTemplatesCollection.models,
-    editEventTemplate
+    editEventTemplate,
+    errorMessage
   })
 }
 
