@@ -11,7 +11,8 @@
   <form action="{{ buildUrl(null, 'event', 'create') }}" method="get">
     <div class="form-group">
       <label for="logo">Template</label>
-      <select name="event-template-id" class="js-select" style="width: 100%"
+      <div>
+      <select name="event-template-id" class="js-select" style="width: 30%"
           data-placeholder="None (Create from scratch)" data-allow-clear="true">
         <option value=""></option>
         {% for eventTemplate in eventTemplates %}
@@ -20,6 +21,7 @@
         </option>
         {% endfor %}
       </select>
+      </div>
     </div>
     <div class="form-group">
       <button type="submit" class="btn btn-primary">Continue</button>
