@@ -84,7 +84,7 @@ function createEvent (template = null) {
     event.set({
       'title': template.get('event_title'),
       'event_preset_id': template.get('event_preset_id'),
-      'divisions': event.get('divisions') || template.get('divisions')
+      'divisions': template.get('divisions') || event.get('divisions')
     })
     const details = event.related('details')
     details.set({
