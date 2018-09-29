@@ -173,7 +173,7 @@ async function configure (app) {
       number = parseFloat(number)
     }
     if (typeof number === 'number') {
-      return number.toFixed(digits)
+      return number.toFixed(digits).toString()
     } else {
       return null
     }

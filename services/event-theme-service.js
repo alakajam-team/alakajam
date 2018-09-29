@@ -270,7 +270,14 @@ async function saveVote (user, event, themeId, score, options = {}) {
         })
         voteCreated = true
       }
-      theme.set('normalized_score', 1.0 * theme.get('score') / theme.get('notes'))
+
+      const positiveVotes = (theme.get('notes') + theme.get('score')) / 2.0
+      const wilsonBounds = computeWilsonBounds(positiveVotes, theme.get('notes'))
+      theme.set({
+        'rating_elimination': wilsonBounds.high,
+        'rating_shortlist': wilsonBounds.low,
+        'normalized_score': 1.0 * theme.get('score') / theme.get('notes')
+      })
 
       result = {
         theme,
@@ -283,14 +290,14 @@ async function saveVote (user, event, themeId, score, options = {}) {
   }
 
   if (expectedStatus === enums.THEME.STATUS.ACTIVE && voteCreated) {
-    _refreshEventThemeStats(event)
-
-    // Eliminate a theme every x votes. No need for DB calls, just count in-memory
+    // Eliminate lowest themes every x votes. No need for DB calls, just count in-memory
     let eliminationThreshold = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, '10'))
     let uptimeVotes = cache.general.get('uptime_votes') || 0
     if (uptimeVotes % eliminationThreshold === 0) {
-      _eliminateLowestTheme(event)
+      _eliminateLowestThemes(event)
     }
+    _refreshEventThemeStats(event)
+
     uptimeVotes++
     cache.general.set('uptime_votes', uptimeVotes)
   }
@@ -298,8 +305,25 @@ async function saveVote (user, event, themeId, score, options = {}) {
   return result
 }
 
-async function _eliminateLowestTheme (event) {
+function computeWilsonBounds (positive, total) {
+  if (total === 0) {
+    return { low: 0, high: 1 }
+  } else {
+    // Equation source: http://www.evanmiller.org/how-not-to-sort-by-average-rating.html
+    const z = 3.0
+    const phat = 1.0 * positive / total
+    const zsqbyn = z * z / total
+    const uncertainty = z * Math.sqrt((phat * (1 - phat) + zsqbyn / 4) / total)
+    return {
+      low: (phat + zsqbyn / 2 - uncertainty) / (1 + zsqbyn),
+      high: (phat + zsqbyn / 2 + uncertainty) / (1 + zsqbyn)
+    }
+  }
+}
+
+async function _eliminateLowestThemes (event) {
   let eliminationMinNotes = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5'))
+  let eliminationThreshold = parseFloat(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, '0.58'))
 
   let battleReadyThemesQuery = await models.Theme.where({
     event_id: event.get('id'),
@@ -307,26 +331,35 @@ async function _eliminateLowestTheme (event) {
   })
     .where('notes', '>=', eliminationMinNotes)
 
-  // Make sure we have at least enough themes to fill our shortlist before removing one
-  if (await battleReadyThemesQuery.count() > 10) {
-    let loserTheme = await models.Theme.where({
+  // Make sure we have at least enough themes to fill our shortlist before removing some
+  const battleReadyThemeCount = await battleReadyThemesQuery.count()
+  if (battleReadyThemeCount > constants.SHORTLIST_SIZE) {
+    const loserThemes = await models.Theme.where({
       event_id: event.get('id'),
-      status: 'active'
+      status: enums.THEME.STATUS.ACTIVE
     })
       .where('notes', '>=', eliminationMinNotes)
-      .orderBy('normalized_score')
-      .orderBy('created_at')
-      .fetch()
+      .where('rating_elimination', '<', eliminationThreshold)
+      .orderBy('rating_elimination')
+      .orderBy('created_at', 'desc')
+      .fetchAll()
 
     await event.load('details')
-    _eliminateTheme(loserTheme, event.related('details'))
+    const eliminatedThemes = loserThemes.slice(0, Math.min(battleReadyThemeCount - constants.SHORTLIST_SIZE, loserThemes.length))
+    for (let eliminatedTheme of eliminatedThemes) {
+      await _eliminateTheme(eliminatedTheme, event.related('details'))
+    }
   }
 }
 
 async function _eliminateTheme (theme, eventDetails, options = {}) {
-  let betterThemeCount = await models.Theme.where('event_id', eventDetails.get('event_id'))
-    .where('normalized_score', '>', theme.get('normalized_score'))
-    .count(null, options)
+  let betterThemeQuery = models.Theme.where('event_id', eventDetails.get('event_id'))
+  if (options.eliminatedOnShortlistRating) {
+    betterThemeQuery = betterThemeQuery.where('rating_shortlist', '>', theme.get('rating_shortlist'))
+  } else {
+    betterThemeQuery = betterThemeQuery.where('rating_elimination', '>', theme.get('rating_elimination'))
+  }
+  let betterThemeCount = await betterThemeQuery.count(null, options)
 
   theme.set({
     'status': enums.THEME.STATUS.OUT,
@@ -341,7 +374,7 @@ async function saveShortlistVotes (user, event, ids) {
     return ids.indexOf(theme.get('id'))
   })
 
-  let score = 10
+  let score = constants.SHORTLIST_SIZE
   let results = []
   for (let theme of sortedShortlist) {
     results.push(await saveVote(user, event, theme.get('id'), score, {doNotSave: true}))
@@ -387,9 +420,9 @@ async function findBestThemes (event) {
   })
     .where('status', '<>', enums.THEME.STATUS.BANNED)
     .where('notes', '>=', eliminationMinNotes)
-    .orderBy('normalized_score', 'DESC')
+    .orderBy('rating_shortlist', 'DESC')
     .orderBy('created_at')
-    .fetchPage({ pageSize: 10 })
+    .fetchPage({ pageSize: constants.SHORTLIST_SIZE })
 }
 
 async function findShortlist (event) {
@@ -406,8 +439,9 @@ async function computeShortlist (event) {
   let allThemesCollection = await findAllThemes(event, {shortlistEligible: true})
   await event.load('details')
   await db.transaction(async function (t) {
+    // FIXME Transaction unused
     allThemesCollection.each(function (theme) {
-      _eliminateTheme(theme, event.related('details'))
+      _eliminateTheme(theme, event.related('details'), { eliminatedOnShortlistRating: true })
     })
   })
 

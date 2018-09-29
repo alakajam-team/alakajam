@@ -87,15 +87,18 @@
   Submitted themes
 </div>
 
+<p>Themes are eliminated when they are no longer <span class="label">New</span> ({{ eliminationMinNotes }} votes or more) and their Elimination Rating gets under <strong>{{ (eliminationThreshold * 100) | digits(1) }}%</strong>.</p>
+
 <table class="table sortable">
 <thead>
   <tr>
     <th>#</th>
     <th>Theme<th>
     <th>Status</th>
-    <th>Notes</th>
-    <th>Score</th>
-    <th data-sort-default aria-sort="ascending">Normalized  {{ formMacros.tooltip('Computed by evaluating "Score / Notes". "New" means the theme does not have enough notes yet.') }}</th>
+    <th>Votes</th>
+    <th>Positive %</th>
+    <th width="70" data-sort-default>Elim. Rat. {{ formMacros.tooltip('High bound of a Wilson interval calculation. Smaller means confidently worse theme.') }}</th>
+    <th width="70">Shortlist Rat. {{ formMacros.tooltip('Low bound of a Wilson interval calculation. Higher means confidently better theme.') }}</th>
     <th data-sort-method="none">Actions</th>
   </tr>
 </thead>
@@ -122,15 +125,17 @@
   <td>
   <td>
     {{ eventMacros.eventThemeStatus(theme, {uncensored: true}) }}
-  </td>
-  <td>{{ theme.get('notes') }}</td>
-  <td>{{ theme.get('score') }}</td>
-  <td>
     {% if theme.get('status') === 'active' and theme.get('notes') < eliminationMinNotes %}
-      <div class="label">New</div>
-    {% else %}
-      <strong style="{{ 'color: #999' if theme.get('status') === 'out' }}">{{ (50 + (theme.get('normalized_score') or 0) * 50.0) | digits(1) }}%</strong>
+      <div class="label" title="New themes cannot be eliminated">New</div>
     {% endif %}
+  </td>
+  <td data-sort="{{ theme.get('notes') }}">{{ (theme.get('score') + theme.get('notes'))/2 }} / {{ theme.get('notes') }}</td>
+  <td>{{ (50 + (theme.get('normalized_score') or 0) * 50.0) | digits(1) }}%
+  <td>
+    <strong style="{{ 'color: grey' if ['out', 'banned'].includes(theme.get('status')) }}">{{ (theme.get('rating_elimination') * 100.) | digits(1) }}%</strong>
+  </td>
+  <td>
+    <strong style="{{ 'color: grey' if ['out', 'banned'].includes(theme.get('status')) }}">{{ (theme.get('rating_shortlist') * 100.) | digits(1) }}%</strong>
   </td>
   <td>
     <a href="?edit={{ theme.get('id') }}#{{ theme.get('id') }}" class="btn btn-xs btn-default">

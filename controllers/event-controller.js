@@ -831,6 +831,7 @@ async function editEventThemes (req, res) {
   let shortlistCollection = await eventThemeService.findShortlist(event)
   let context = {
     eliminationMinNotes: parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, '5')),
+    eliminationThreshold: parseFloat(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, '0.58')),
     shortlist: shortlistCollection.models,
     eliminatedShortlistThemes: eventThemeService.computeEliminatedShortlistThemes(event)
   }
