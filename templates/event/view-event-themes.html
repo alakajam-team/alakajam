@@ -305,7 +305,7 @@
   {% set themeStatus = userTheme.get('status') if userTheme %}
   {% if themeStatus !== 'duplicate' %}
     {% if themeStatus === 'out' or themeStatus === 'banned' %}
-      Ended in the top {{ (userTheme.get('ranking') * 100) | digits(0) }}%
+      Out after {{ userTheme.get('notes') }} votes
     {% elseif themeStatus !== 'duplicate' %}
       Rated {{ userTheme.get('notes') }} time{{ 's' if userTheme.get('notes') !== 1 }}
     {% endif %}
