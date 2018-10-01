@@ -190,16 +190,16 @@ async function savePost (req, res) {
           res.locals.user,
           eventIdIsValid ? req.body['event-id'] : undefined
         )
-        let specialPostType = req.query['special_post_type']
-        if (specialPostType) {
-          validateSpecialPostType(specialPostType, res.locals.user)
-          post.set('special_post_type', specialPostType)
-        }
       }
 
       // Fill post from form info
       post.set('title', title)
       post.set('body', body)
+      let specialPostType = req.query['special_post_type'] || req.body['special-post-type']
+      if (securityService.isMod(res.locals.user)) {
+        validateSpecialPostType(specialPostType, res.locals.user)
+        post.set('special_post_type', specialPostType)
+      }
       if (eventIdIsValid) {
         post.set('event_id', req.body['event-id'])
         if (post.hasChanged('event_id') || post.hasChanged('special_post_type')) {
@@ -274,7 +274,7 @@ async function buildPostContext (post) {
 }
 
 function validateSpecialPostType (specialPostType, user) {
-  if (constants.SPECIAL_POST_TYPES.indexOf(specialPostType) === -1) {
+  if (specialPostType && constants.SPECIAL_POST_TYPES.indexOf(specialPostType) === -1) {
     throw new Error('invalid special post type: ' + specialPostType)
   }
   if (specialPostType && !securityService.isMod(user)) {

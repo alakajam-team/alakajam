@@ -85,6 +85,7 @@
       {% if posts.models.length > 0 %}
         {% for post in posts.models %}
           {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+          <div class="spacing"></div>
         {% endfor %}
 
         {{ formMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id')) }}

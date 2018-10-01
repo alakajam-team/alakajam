@@ -7,25 +7,7 @@
 <div class="row">
 <div class="col-lg-offset-1 col-lg-10">
 
-  <div class="row">
-    <div class="{{ 'col-xs-10 col-sm-8 col-md-9' if specialPostType else 'col-xs-12' }}">
-      <h1 id="title-display"></h1>
-    </div>
-    {% if specialPostType %}
-    <div class="col-xs-2 col-sm-4 col-md-3">
-      <div class="post__special-type">
-        <span class="post__special-type-label">
-          <span class="hidden-xs visible-sm visible-md visible-lg">
-            {{ specialPostType | upper }}
-          </span>
-          <span class="visible-xs hidden-sm">
-            <span class="fas fa-thumbtack"></span>
-          </span>
-        </span>
-      </div>
-    </div>
-    {% endif %}
-  </div>
+  <h1 id="title-display"></h1>
   
   <form method="post" class="js-warn-on-unsaved-changes">
     {{ csrfToken() | safe }}
@@ -40,6 +22,30 @@
         data-sync-text-display-selector="#title-display"
         data-sync-text-default="{{ specialPostType | capitalize if specialPostType else 'Blog post' }}">
     </div>
+    
+    <div class="form-group">
+      {% if isMod(user) %}
+        <select name="special-post-type" class="js-select form-control"
+           data-placeholder="Special post type" data-allow-clear="true">
+          <option value=""></option>
+          {% for type in constants.SPECIAL_POST_TYPES %}
+            <option value="{{ type }}" {{ 'selected' if type === specialPostType }}>{{ type | capitalize }}</option>
+          {% endfor %}
+        </select>
+      {% elseif specialPostType %}
+        <div class="post__special-type">
+          <span class="post__special-type-label">
+            <span class="hidden-xs visible-sm visible-md visible-lg">
+              {{ specialPostType | upper }}
+            </span>
+            <span class="visible-xs hidden-sm">
+              <span class="fas fa-thumbtack"></span>
+            </span>
+          </span>
+        </div>
+      {% endif %}
+    </div>
+
 
     <div class="form-group">
       <label>Related event</label>
