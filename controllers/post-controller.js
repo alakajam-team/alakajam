@@ -136,7 +136,7 @@ async function editPost (req, res) {
   if (createMode || securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
     if (createMode) {
       let post = new models.Post()
-      post.set('special_post_type', forms.sanitizeString(req.query['special_post_type']))
+      post.set('special_post_type', forms.sanitizeString(req.query['special_post_type']) || null)
       post.set('title', forms.sanitizeString(req.query.title))
       if (forms.isId(req.query.eventId)) {
         post.set('event_id', req.query.eventId)
@@ -195,7 +195,7 @@ async function savePost (req, res) {
       // Fill post from form info
       post.set('title', title)
       post.set('body', body)
-      let specialPostType = req.query['special_post_type'] || req.body['special-post-type']
+      let specialPostType = req.query['special_post_type'] || req.body['special-post-type'] || null
       if (securityService.isMod(res.locals.user)) {
         validateSpecialPostType(specialPostType, res.locals.user)
         post.set('special_post_type', specialPostType)
