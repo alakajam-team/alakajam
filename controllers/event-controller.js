@@ -851,7 +851,8 @@ async function editEventThemes (req, res) {
       eventDetails.set('shortlist_elimination', {
         start: forms.parseDateTime(req.body['elimination-start-date']),
         delay: sanitizedDelay,
-        body: forms.sanitizeMarkdown(req.body['elimination-body'])
+        body: forms.sanitizeMarkdown(req.body['elimination-body']),
+        stream: forms.sanitizeString(req.body.stream)
       })
       await eventDetails.save()
       cache.eventsById.del(event.get('id'))

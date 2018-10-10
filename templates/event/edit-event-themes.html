@@ -69,8 +69,16 @@
     </div>
     <div class="col-md-6">
       <div class="form-group">
-        <label for="title">Delay between eliminations, in minutes</i></label>
+        <label for="title">Minutes between eliminations</label>
         <input type="text" class="form-control" name="elimination-delay" value="{{ eventDetails.get('shortlist_elimination').delay }}" />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="stream">Twitch channel to display on front page</label>
+        <input type="text" class="form-control" name="stream" value="{{ eventDetails.get('shortlist_elimination').stream }}" placeholder="Channel name (e.g. DanaePlays)" />
       </div>
     </div>
   </div>
