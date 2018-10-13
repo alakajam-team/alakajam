@@ -642,7 +642,7 @@ async function editEvent (req, res) {
     return
   }
 
-  let errorMessage = null
+  let errorMessage = res.locals.errorMessage
   let infoMessage = ''
   let redirected = false
   let event = res.locals.event

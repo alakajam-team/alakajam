@@ -469,8 +469,7 @@ async function adminDev (req, res) {
         let users = await userService.findUsers({ pageSize: 30 })
         await db.transaction(async function (t) {
           for (let user of users.models) {
-            console.log(user.get('name'))
-            console.log(userService.setPassword(user, 'password'))
+            userService.setPassword(user, 'password')
             await user.save(null, { transacting: t })
           }
         })

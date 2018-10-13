@@ -201,7 +201,7 @@ async function dashboardScores (req, res) {
 async function dashboardSettings (req, res) {
   await res.locals.dashboardUser.load('details')
 
-  let errorMessage = ''
+  let errorMessage = res.locals.errorMessage
   let infoMessage = ''
 
   if (req.method === 'POST') {

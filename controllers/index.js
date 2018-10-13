@@ -11,6 +11,7 @@ const csurf = require('csurf')
 const path = require('path')
 const randomKey = require('random-key')
 const config = require('../config')
+const log = require('../core/log')
 
 const upload = initUploadMiddleware()
 const csrf = initCSRFMiddleware()
@@ -70,7 +71,7 @@ module.exports = {
     router.all('/dashboard/posts', csrf, userController.dashboardPosts)
     router.all('/dashboard/scores', csrf, userController.dashboardScores)
     router.get('/dashboard/settings', csrf, userController.dashboardSettings)
-    router.post('/dashboard/settings', upload.single('avatar'), csrf, userController.dashboardSettings)
+    router.post('/dashboard/settings', softUploadFailure(upload.single('avatar')), csrf, userController.dashboardSettings)
     router.all('/dashboard/password', csrf, userController.dashboardPassword)
     router.all('/dashboard/entry-import', csrf, userController.dashboardEntryImport)
     router.get('/user/:name', csrf, userController.viewUserProfile)
@@ -90,7 +91,7 @@ module.exports = {
 
     // Entries & Events
 
-    const entryFormParser = upload.single('picture')
+    const entryFormParser = softUploadFailure(upload.single('picture'))
     router.get('/events/ajax-find-external-event', entryController.searchForExternalEvents)
     router.get('/tags/ajax-find-tags', entryController.searchForTags)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/create-entry', csrf, entryController.editEntry)
@@ -104,11 +105,11 @@ module.exports = {
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/leave', csrf, entryController.leaveEntry)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/accept-invite', csrf, entryController.acceptInvite)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/decline-invite', csrf, entryController.declineInvite)
-    router.all('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/submit-score', upload.single('upload'), csrf, entryController.submitScore)
+    router.all('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/submit-score', softUploadFailure(upload.single('upload')), csrf, entryController.submitScore)
     router.get('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/scores', entryController.viewScores)
     router.all('/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit-scores', csrf, entryController.editScores)
 
-    const eventFormParser = upload.fields([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }])
+    const eventFormParser = softUploadFailure(upload.fields([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }]))
     router.get('/pick_event_template', csrf, eventController.pickEventTemplate)
     router.get('/create_event', csrf, eventController.editEvent)
     router.post('/create_event', eventFormParser, csrf, eventController.editEvent)
@@ -164,6 +165,20 @@ module.exports = {
     router.get('/api/user/:user/latestEntry', apiController.userLatestEntry)
   }
 
+}
+
+function softUploadFailure (parserFunction) {
+  return async function (req, res, next) {
+    // XXX Hacky way to handle upload failure softly
+    parserFunction(req, res, function (err) {
+      if (err) {
+        req.method = 'GET'
+        res.locals.errorMessage = 'Error: ' + err.message
+        log.warn(err.message)
+      }
+      next()
+    })
+  }
 }
 
 function initUploadMiddleware () {

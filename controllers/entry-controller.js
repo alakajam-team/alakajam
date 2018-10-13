@@ -173,7 +173,7 @@ async function editEntry (req, res) {
   }
 
   let isPlayedInTournament = await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
-  let errorMessage = null
+  let errorMessage = res.locals.errorMessage
 
   if (req.method === 'POST') {
     // Parse form data
