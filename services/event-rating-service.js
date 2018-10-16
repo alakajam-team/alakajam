@@ -58,8 +58,8 @@ async function canVoteInEvent (user, event) {
  */
 async function canVoteOnEntry (user, entry) {
   if (user && areVotesAllowed(entry.related('event'))) {
-    let openVoting = await settingService.find(constants.SETTING_EVENT_OPEN_VOTING, false)
-    if (openVoting) {
+    let openVoting = await settingService.find(constants.SETTING_EVENT_OPEN_VOTING, 'false')
+    if (openVoting && openVoting.toLowerCase() === 'true') {
       return true
     } else {
       let userEntry = await eventService.findUserEntryForEvent(user, entry.get('event_id'))
