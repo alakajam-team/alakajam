@@ -39,12 +39,11 @@
     <span class="label label-default label-xs">{{ entry.get('division') | capitalize }}</span>
   </div>
   {% if options.showEvent %}
-    <div class="entry-thumb__event" >
-      on 
+    <div class="entry-thumb__event">
       {% if entry.get('event_id') %}
-        <a href="{{ buildUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
-      {% else %}
-        {{ entry.get('external_event') }}
+        on <a href="{{ buildUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
+      {% elseif entry.get('external_event') %}
+        on {{ entry.get('external_event') }}
       {% endif %}
     </div>
   {% endif %}
