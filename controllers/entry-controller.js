@@ -241,7 +241,7 @@ async function editEntry (req, res) {
       entry.set({
         event_id: null,
         event_name: null,
-        published_at: forms.parseDateTime(req.body['published-at']) || entry.get('published_at'),
+        published_at: forms.parseDateTime(req.body['published-at']) || null,
         external_event: forms.sanitizeString(req.body['external-event'])
       })
     }

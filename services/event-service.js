@@ -752,27 +752,16 @@ async function findUserEntries (user) {
         'user_role.user_id': user.get('id'),
         'user_role.node_type': 'entry'
       })
-  }).fetchAll({ withRelated: ['userRoles', 'event'] })
-
-  entriesCollection.models.sort(function (a, b) {
-    // Sort by most recent event first, then external entries sorted by event name
-    // TODO Sort by publication date
-    if (a.get('event_id')) {
-      if (b.get('event_id')) {
-        return b.get('created_at') - a.get('created_at')
-      } else {
-        return -1
-      }
-    } else {
-      if (b.get('event_id')) {
-        return 1
-      } else {
-        return (b.get('external_event') || '').localeCompare(a.get('external_event'))
-      }
-    }
   })
+    .orderBy('published_at', 'desc')
+    .orderBy('external_event', 'desc')
+    .fetchAll({ withRelated: ['userRoles', 'event'] })
 
-  return entriesCollection
+  // Move entries without a publication date to the end (otherwise nulls would be first)
+  let entriesWithoutPublicationDate = entriesCollection.filter(entry => !entry.get('published_at'))
+  return new db.Collection(entriesCollection
+    .difference(entriesWithoutPublicationDate)
+    .concat(entriesWithoutPublicationDate))
 }
 
 /**

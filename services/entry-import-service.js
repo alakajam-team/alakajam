@@ -138,7 +138,7 @@ async function createOrUpdateEntry (user, importerId, profileIdentifier, entryId
       description: entryDetails.description || null,
       division: entryDetails.division || enums.DIVISION.SOLO,
       platforms: entryDetails.platforms || [],
-      published_at: entryDetails.published || new Date(),
+      published_at: entryDetails.published || null,
       links: entryDetails.links.map(link => ({ // ensure data format, just in case
         label: link.label,
         url: link.url
