@@ -110,7 +110,7 @@ async function adminEventPresets (req, res) {
       } catch (e) {
         errorMessage = 'Invalid deadline offset from start'
       }
-      if (!editEventPreset.get('title')) {
+      if (!req.body.title) {
         errorMessage = 'Title is required'
       }
 
