@@ -320,7 +320,7 @@ input[type=submit][data-disabled] {
     display: inline-block;
   }
   &__icon {
-    height: 16px;
+    height: 24px;
   }
 }
 

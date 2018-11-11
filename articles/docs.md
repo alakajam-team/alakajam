@@ -13,20 +13,16 @@ If you want to give a hand to our little community, check the [contributing page
 ## <a name="contact"></a>Contact us
 
 
-| How | Where | 
-| -------- | -------- | 
-| Twitter     | [@AlakajamBang](https://twitter.com/AlakajamBang)     | 
-|  Email    |   `contact [[at]] alakajam [[dot]] com`  | 
-| Chat | [#alakajam on irc.afternet.org](/chat)
+| How          | Where | 
+| ------------ | ----- | 
+| Twitter      | [@AlakajamBang](https://twitter.com/AlakajamBang) | 
+| Chat         | [IRC](/chat) or [Discord](https://discord.gg/yZPBpTn) |
+| Email        |   `contact [[at]] alakajam [[dot]] com` | 
 | Contact form | [Click here](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform) |
 
 ## Non-profit
 
-Alalakam! is a [registered non-profit](https://alakajam.com/post/722/alakajam-an-npo). Our constitution [can be read here](/article/constitution).
-
-### Current council of jamicians
-
-Our current council (= board of directors) is in office until July 2019:
+ALAKAJAM! is a non-profit registered in France on 11 August 2018, as an "association loi 1901" (RNA Number W691095617). Our constitution [can be read here](/article/constitution). The current council of jamicians (which is basically the board of directors except it sounds better) is in office until July 2019:
 
 * **Scribe**: @dollarone
 * **Master of coin, Lead developer**: @wan
@@ -34,10 +30,4 @@ Our current council (= board of directors) is in office until July 2019:
 * **Counselor, "Lord"**: @toasty
 * **Counselor, "Doctor"**: @Laguna
 
-### Registration info
-
-```
-ALAKAJAM!
-Registered in France on 11 August 2018, as an "association loi 1901"
-RNA Number W691095617
-```
+You can read more about the creation of this non-profit [here](https://alakajam.com/post/722/alakajam-an-npo). If you're interested, you can stay in touch with the NPO's discussions by joining [our mailing-list](https://framalistes.org/sympa/info/alakajam-team).
