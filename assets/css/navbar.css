@@ -201,8 +201,19 @@
       & a img:hover {
         border: 4px solid white;
       }
-    }
 
+      @media (max-width: 1199px) {
+        &.live a {
+          max-width: 180px;
+        }
+
+        &.live a > .live__event{
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
   }
 
   /* User profile menu */
