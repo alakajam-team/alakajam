@@ -414,7 +414,7 @@
   & .entry-results__category-medal {
     position: static;
     display: inline-block;
-    margin-right: -6px;
+    margin-right: -4px;
   }
 
   &:empty {
