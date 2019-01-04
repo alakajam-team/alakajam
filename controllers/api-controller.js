@@ -71,7 +71,11 @@ async function eventTimeline (req, res) {
     page
   })
 
-  json = events.map(event => _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT))
+  json = events.map(event => {
+    let eventJson = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT)
+    eventJson.url = urllib.resolve(config.ROOT_URL, buildUrl(event, 'event'))
+    return eventJson
+  })
   _renderJson(req, res, status, json)
 }
 
@@ -91,7 +95,9 @@ async function event (req, res) {
 
   if (event) {
     json = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT)
-    if (json.countdown_config.date) {
+    json.url = urllib.resolve(config.ROOT_URL, buildUrl(event, 'event'))
+
+    if (json.countdown_config && json.countdown_config.date) {
       let result = json.title + ' ' + json.countdown_config.phrase
 
       let countdownMs = moment(json.countdown_config.date).valueOf() - Date.now()
@@ -225,6 +231,7 @@ async function entry (req, res) {
  */
 function _getDetailedEntryJson (entry) {
   let json = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY)
+  json.url = urllib.resolve(config.ROOT_URL, buildUrl(entry, 'entry'))
 
   let entryDetails = entry.related('details')
   Object.assign(json, _getAttributes(entryDetails, PUBLIC_ATTRIBUTES_ENTRY_DETAILS))
@@ -263,6 +270,7 @@ async function user (req, res) {
 
   if (user) {
     json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
+    json.url = urllib.resolve(config.ROOT_URL, buildUrl(user, 'user'))
 
     json.entries = []
     for (let entry of (await eventService.findUserEntries(user)).models) {
@@ -326,7 +334,9 @@ async function userSearch (req, res) {
 
     json.users = []
     for (let user of users.models) {
-      json.users.push(_getAttributes(user, PUBLIC_ATTRIBUTES_USER))
+      let userJson = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
+      userJson.url = urllib.resolve(config.ROOT_URL, buildUrl(user, 'user'))
+      json.users.push(userJson)
     }
   }
 
