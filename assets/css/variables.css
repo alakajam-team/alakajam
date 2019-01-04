@@ -50,7 +50,7 @@
     letter-spacing: 0;
   };
   --alt-font: {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Fredoka One', 'Arial Black', sans-serif;
     letter-spacing: 1px;
   };
   --shadow: {
