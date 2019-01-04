@@ -7,7 +7,7 @@
  */
 
 const moment = require('moment')
-const urllib = require('url')
+const url = require('url')
 const lodash = require('lodash')
 const config = require('../config')
 const forms = require('../core/forms')
@@ -73,7 +73,7 @@ async function eventTimeline (req, res) {
 
   json = events.map(event => {
     let eventJson = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT)
-    eventJson.url = urllib.resolve(config.ROOT_URL, buildUrl(event, 'event'))
+    eventJson.url = url.resolve(config.ROOT_URL, buildUrl(event, 'event'))
     return eventJson
   })
   _renderJson(req, res, status, json)
@@ -95,7 +95,7 @@ async function event (req, res) {
 
   if (event) {
     json = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT)
-    json.url = urllib.resolve(config.ROOT_URL, buildUrl(event, 'event'))
+    json.url = url.resolve(config.ROOT_URL, buildUrl(event, 'event'))
 
     if (json.countdown_config && json.countdown_config.date) {
       let result = json.title + ' ' + json.countdown_config.phrase
@@ -231,7 +231,7 @@ async function entry (req, res) {
  */
 function _getDetailedEntryJson (entry) {
   let json = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY)
-  json.url = urllib.resolve(config.ROOT_URL, buildUrl(entry, 'entry'))
+  json.url = url.resolve(config.ROOT_URL, buildUrl(entry, 'entry'))
 
   let entryDetails = entry.related('details')
   Object.assign(json, _getAttributes(entryDetails, PUBLIC_ATTRIBUTES_ENTRY_DETAILS))
@@ -270,7 +270,7 @@ async function user (req, res) {
 
   if (user) {
     json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
-    json.url = urllib.resolve(config.ROOT_URL, buildUrl(user, 'user'))
+    json.url = url.resolve(config.ROOT_URL, buildUrl(user, 'user'))
 
     json.entries = []
     for (let entry of (await eventService.findUserEntries(user)).models) {
@@ -301,7 +301,7 @@ async function userLatestEntry (req, res) {
     const entry = await eventService.findLatestUserEntry(user)
     if (entry) {
       json.latest_entry = _getDetailedEntryJson(await eventService.findLatestUserEntry(user, DETAILED_ENTRY_OPTIONS))
-      json.latest_entry.url = urllib.resolve(config.ROOT_URL, buildUrl(entry, 'entry'))
+      json.latest_entry.url = url.resolve(config.ROOT_URL, buildUrl(entry, 'entry'))
     }
   } else {
     json = { error: 'User not found' }
@@ -335,7 +335,7 @@ async function userSearch (req, res) {
     json.users = []
     for (let user of users.models) {
       let userJson = _getAttributes(user, PUBLIC_ATTRIBUTES_USER)
-      userJson.url = urllib.resolve(config.ROOT_URL, buildUrl(user, 'user'))
+      userJson.url = url.resolve(config.ROOT_URL, buildUrl(user, 'user'))
       json.users.push(userJson)
     }
   }
