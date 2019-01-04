@@ -5,7 +5,8 @@ This page compiles a list of **free** resources for making games, especially for
 * [Audio software](#audio)
 * [Game engines/frameworks](#engines)
 * [Free assets](#assets)
-* [Miscellaneous software](#misc)
+* [Screen capture](#capture)
+* [Level design](#level)
 * [Learning](#learning)
 
 
@@ -66,14 +67,20 @@ This page compiles a list of **free** resources for making games, especially for
 | [Soniss GDC 2018 Bundle](https://sonniss.com/gameaudiogdc18/) \| [2017](https://sonniss.com/gameaudiogdc2017/) | Massive packs of game-related royalty-free sounds. |
 | [Universal LPC Sprite Sheet Generator](http://gaurav.munjal.us/Universal-LPC-Spritesheet-Character-Generator/) | Customizable character sprite sheets assembled from open art. |  
 
-## <a name="misc"></a>Miscellaneous software
+## <a name="capture"></a>Screen capture
+
+| [Open Broadcaster Software](https://obsproject.com)  | Lets you record your desktop to either videos or streaming platforms. |
+| [ScreenToGif](http://www.screentogif.com) | Powerful tool for recording short sequences from your screen, editing them and exporting them as gifs (Windows only). |
+| [GifCam](http://blog.bahraniapps.com/gifcam/#download) | A lightweight tool for capturing Gifs from your screen  (Windows only). |
+| [Peek](https://github.com/phw/peek) | Simple animated GIF screen recorder with an easy to use interface. Cross-platform. |
+| [Gyazo](https://gyazo.com/) | Service letting you capture your screen (as a picture or GIF) *and* automatically publishing the result to a dedicated website. |
+| [Snipping Tool](https://support.microsoft.com/en-us/help/13776/windows-use-snipping-tool-to-capture-screenshots) | A native and often underrated Windows program for capturing screnshots. |
+
+## <a name="levels"></a>Level design
 
 | Name | Description |
 | -------- | -------- |
 | [TilEd](http://www.mapeditor.org/)  | Powerful editor for 2D maps (platformers, RPGs, etc.), which can then be exported in either its own TFX format or simple JSON. Open Source. |
-| [Open Broadcaster Software](https://obsproject.com)  | Lets you record your desktop to either videos or streaming platforms. |
-| [ScreenToGif](http://www.screentogif.com)  | Powerful tool for recording short sequences from your screen, editing them and exporting them as gifs (Windows only). |
-| [Snipping Tool](https://support.microsoft.com/en-us/help/13776/windows-use-snipping-tool-to-capture-screenshots) | A native and often underrated Windows program for capturing screnshots. |
 
 ## <a name="learning"></a>Learning
 
