@@ -115,11 +115,19 @@ async function viewPost (req, res) {
   let post = res.locals.post
   if (postService.isPast(res.locals.post.get('published_at')) ||
       securityService.canUserRead(res.locals.user, post, { allowMods: true })) {
+    // Fetch comments and likes
     let context = await buildPostContext(post)
     context.sortedComments = await postService.findCommentsSortedForDisplay(post)
     if (res.locals.user) {
       context.userLikes = await likeService.findUserLikeInfo([post], res.locals.user)
     }
+
+    // Guess social thumbnail pic
+    context.pageImage = postService.getFirstPicture(post)
+    if (context.pageImage && context.pageImage.indexOf('://') === -1) {
+      context.pageImage = templating.staticUrl(context.pageImage)
+    }
+
     res.render('post/view-post', context)
   } else {
     res.errorPage(403)

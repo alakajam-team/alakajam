@@ -60,7 +60,7 @@ async function entryMiddleware (req, res, next) {
   res.locals.pageTitle = entry.get('title')
   res.locals.pageDescription = entry.get('description') || forms.markdownToText(entry.related('details').get('body'))
   if (entry.get('pictures') && entry.get('pictures').length > 0) {
-    res.locals.pageImage = entry.get('pictures')[0]
+    res.locals.pageImage = templating.staticUrl(entry.get('pictures')[0])
   }
 
   if (req.params.eventName !== 'external-entry' &&

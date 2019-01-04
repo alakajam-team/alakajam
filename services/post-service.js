@@ -13,9 +13,12 @@ const cache = require('../core/cache')
 const securityService = require('../services/security-service')
 const config = require('../config')
 
+const FIRST_PICTURE_REGEXP = /(?:!\[.*?\]\((.*?)\)|src="([^"]+)")/
+
 module.exports = {
   isPast,
   wasEdited,
+  getFirstPicture,
 
   findPosts,
   findPostById,
@@ -52,6 +55,19 @@ function isPast (time) {
  */
 function wasEdited (model) {
   return model.get('updated_at') - model.get('created_at') > 3600 * 1000
+}
+
+/**
+ * Finds the URL of the first picture in the body, if any.
+ * Quick and not-completely-reliable implementation.
+ * @param {Model} model Any model with a body
+ */
+function getFirstPicture (model) {
+  let matches = FIRST_PICTURE_REGEXP.exec(model.get('body'))
+  if (matches) {
+    return matches[1] || matches[2] // Markdown capture OR HTML tag capture
+  }
+  return null
 }
 
 /**
