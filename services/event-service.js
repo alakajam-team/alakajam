@@ -399,6 +399,7 @@ function setTeamMembers (currentUser, entry, userIds) {
     let numRemoved = 0
     let numAdded = 0
     let alreadyEntered = []
+    let entryId = entry.get('id')
 
     if (entry.get('division') === enums.DIVISION.SOLO) {
       // Force only keeping the owner role
@@ -406,8 +407,13 @@ function setTeamMembers (currentUser, entry, userIds) {
         .whereNot('permission', constants.PERMISSION_MANAGE)
         .andWhere({
           node_type: 'entry',
-          node_id: entry.id
+          node_id: entryId
         })
+        .del()
+
+      // Delete any pending invites
+      await transaction('entry_invite')
+        .where('entry_id', entryId)
         .del()
     } else {
       // Remove users not in team list.
@@ -415,14 +421,14 @@ function setTeamMembers (currentUser, entry, userIds) {
         .whereNotIn('user_id', userIds)
         .andWhere({
           node_type: 'entry',
-          node_id: entry.id
+          node_id: entryId
         })
         .del()
 
       // Remove invites not in team list
       numRemoved += await transaction('entry_invite')
         .whereNotIn('invited_user_id', userIds)
-        .andWhere('entry_id', entry.id)
+        .andWhere('entry_id', entryId)
         .del()
 
       // List users who entered the event in this or another team, or already have an invite.
@@ -437,7 +443,7 @@ function setTeamMembers (currentUser, entry, userIds) {
       } else {
         alreadyEntered = await existingRolesQuery.andWhere({
           node_type: 'entry',
-          node_id: entry.id
+          node_id: entryId
         })
       }
       if (entry.get('id')) {
@@ -465,7 +471,7 @@ function setTeamMembers (currentUser, entry, userIds) {
         .whereIn('id', userIds)
       for (let toCreateUserRow of toCreateUserData) {
         let invite = new models.EntryInvite({
-          entry_id: entry.id,
+          entry_id: entryId,
           invited_user_id: toCreateUserRow.id,
           invited_user_title: toCreateUserRow.title || toCreateUserRow.name,
           permission: constants.PERMISSION_WRITE
@@ -490,6 +496,11 @@ function setTeamMembers (currentUser, entry, userIds) {
 }
 
 async function acceptInvite (user, entry) {
+  // Verify we're not on a solo entry
+  if (entry.get('division') === enums.DIVISION.SOLO) {
+    return deleteInvite(user, entry)
+  }
+
   await db.transaction(async function (transaction) {
     // Check that the invite exists
     let invite = await models.EntryInvite.where({
@@ -498,7 +509,7 @@ async function acceptInvite (user, entry) {
     }).fetch({ transacting: transaction })
 
     if (invite) {
-      // Check if the user role exists yet
+      // Check if the user role already exists
       let userRole = await models.UserRole.where({
         node_id: entry.get('id'),
         node_type: 'entry',

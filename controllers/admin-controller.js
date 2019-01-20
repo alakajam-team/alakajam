@@ -473,7 +473,7 @@ async function adminDev (req, res) {
             await user.save(null, { transacting: t })
           }
         })
-        infoMessage = 'Last 30 created users had their password set to "password"'
+        infoMessage = 'The last 30 created users now have their password set to "password".'
       }
     }
     res.render('admin/admin-dev', {
