@@ -91,21 +91,22 @@ const turndownService = new TurndownService()
  * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
  * Use this on all string input unless you need more advanced escaping (e.g. for URLs, for Markdown)
  * @param  {string} string
- * @param  {string} maxLength
+ * @param  {object} options maxLength
  * @return {string}
  */
-function sanitizeString (string, maxLength = 255) {
-  return striptags(string).trim().slice(0, maxLength)
+function sanitizeString (string, options = {}) {
+  return striptags(string).trim().slice(0, options.maxLength || 255)
 }
 
 /**
  * Sanitizes Markdown form input very lightly, just by limiting its length.
  * Real sanitization needs to happen after converting it to HTML.
  * @param  {string} markdown
+ * @param  {object} options maxLength
  * @return {string}
  */
-function sanitizeMarkdown (markdown, maxLength = constants.MAX_BODY_COMMENT) {
-  return markdown.slice(0, maxLength)
+function sanitizeMarkdown (markdown, options = {}) {
+  return markdown.slice(0, options.maxLength || constants.MAX_BODY_COMMENT)
 }
 
 /**
@@ -199,7 +200,7 @@ function isFloat (input, options = {}) {
 }
 
 /**
- * Checks whether the string is not longer than the specified length.
+ * Checks whether the string is no longer than the specified length.
  * (Note: not checking this does not trigger crashes on the developer
  * H2 database, instead strings are just truncated)
  * @param  {any}  input

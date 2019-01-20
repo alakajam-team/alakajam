@@ -102,7 +102,7 @@ async function fetchEntryDetails (entryReference) {
       externalEvent: entryReference.importerProperties.externalEvent,
       published: eventDate(entryReference.importerProperties.externalEvent),
       picture: forms.isURL(picture) ? picture : null,
-      body: forms.sanitizeString(body, 100000),
+      body: forms.sanitizeString(body, { maxLength: 100000 }),
       platforms: entryImporterTools.guessPlatforms(linksText),
       links
     }

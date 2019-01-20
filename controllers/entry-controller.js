@@ -199,7 +199,7 @@ async function editEntry (req, res) {
     if (req.body.platforms) {
       // Ensure the requested platforms (if any) are valid before proceeding.
       let platformNames = (Array.isArray(req.body.platforms)) ? req.body.platforms : [req.body.platforms]
-      platformNames = platformNames.map(tag => forms.sanitizeString(tag))
+      platformNames = platformNames.map(forms.sanitizeString)
       platforms = await platformService.fetchMultipleNamed(platformNames)
       if (platforms.length < platformNames.length) {
         errorMessage = 'One or more platforms are invalid'
@@ -271,9 +271,9 @@ async function editEntry (req, res) {
     if (req.body['optout-graphics']) optouts.push('Graphics')
     if (req.body['optout-audio']) optouts.push('Audio')
 
-    let highScoreType = forms.sanitizeString(req.body['high-score-type'], 20)
+    let highScoreType = forms.sanitizeString(req.body['high-score-type'], { maxLength: 20 })
     if (highScoreType === 'custom') {
-      highScoreType = forms.sanitizeString(req.body['custom-unit'], 20)
+      highScoreType = forms.sanitizeString(req.body['custom-unit'], { maxLength: 20 })
     }
 
     let entryDetails = entry.related('details')
@@ -281,7 +281,7 @@ async function editEntry (req, res) {
       'optouts': optouts,
       'body': forms.sanitizeMarkdown(req.body.body, constants.MAX_BODY_ENTRY_DETAILS),
       'high_score_type': highScoreType,
-      'high_score_instructions': forms.sanitizeString(req.body['high-score-instructions'], 2000)
+      'high_score_instructions': forms.sanitizeString(req.body['high-score-instructions'], { maxLength: 2000 })
     })
 
     // Save entry: Validate form data

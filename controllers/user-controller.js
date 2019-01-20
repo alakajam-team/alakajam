@@ -255,7 +255,7 @@ async function dashboardSettings (req, res) {
           website: req.body.website,
           twitter: forms.sanitizeString(req.body.twitter.replace('@', ''))
         })
-        dashboardUserDetails.set('body', forms.sanitizeMarkdown(req.body.body, constants.MAX_BODY_USER_DETAILS))
+        dashboardUserDetails.set('body', forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_USER_DETAILS }))
         await dashboardUserDetails.save()
 
         if (dashboardUser.hasChanged('title')) {

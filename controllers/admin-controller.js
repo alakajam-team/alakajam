@@ -365,7 +365,7 @@ async function adminSettings (req, res) {
         }
       }
       if (save) {
-        currentEditValue = forms.sanitizeString(req.body.value, 10000)
+        currentEditValue = forms.sanitizeString(req.body.value, { maxLength: 10000 })
         await settingService.save(req.body.key, currentEditValue)
       }
     } else {
