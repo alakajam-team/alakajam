@@ -107,10 +107,11 @@ async function index (req, res) {
       let eventSchedule = []
       let page = 0
       do {
-        fetchedEventsCollection = await eventService.findEvents({ pageSize: 5, page: page++ })
+        fetchedEventsCollection = await eventService.findEvents({ pageSize: 10, page: page++ })
         eventSchedule = eventSchedule.concat(fetchedEventsCollection.models)
         featuredEventIndex = eventSchedule.findIndex(event => event.get('id') === res.locals.featuredEvent.get('id'))
-      } while (featuredEventIndex === -1 && fetchedEventsCollection.length > 0)
+        // Make sure we have the featured event + at least one past event (or we have run out of events)
+      } while ((featuredEventIndex === -1 || featuredEventIndex >= eventSchedule.length - 1) && fetchedEventsCollection.length > 0)
 
       let startIndex = Math.max(0, featuredEventIndex - 2)
       context.eventSchedule = eventSchedule.slice(startIndex, startIndex + 5)
