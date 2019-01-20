@@ -16,7 +16,7 @@
         onclick="return confirm('Refresh all tournament scores?')" /> 
     </p>
   </form>
-{% else %}
+{% elseif event.get('status_tournament') === 'results' %}
   <p class="featured"><b>Note:</b> The tournament results are out. The options for refreshing the scores/rankings have been disabled.</p>
 {% endif %}
 
