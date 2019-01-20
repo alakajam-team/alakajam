@@ -172,7 +172,7 @@ async function savePost (req, res) {
   if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) || (!post && res.locals.user)) {
     let redirectToView = false
     let title = forms.sanitizeString(req.body.title)
-    let body = forms.sanitizeMarkdown(req.body.body, constants.MAX_BODY_POST)
+    let body = forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_POST })
     let errorMessage = null
     let customPublishDate = null
 
@@ -362,7 +362,7 @@ async function handleSaveComment (reqBody, currentUser, currentNode, baseUrl, cu
   let redirectUrl = baseUrl
 
   // Validate comment body
-  let commentBody = forms.sanitizeMarkdown(reqBody.body, constants.MAX_BODY_COMMENT)
+  let commentBody = forms.sanitizeMarkdown(reqBody.body, { maxLength: constants.MAX_BODY_COMMENT })
   if (!currentUser || !commentBody) {
     return redirectUrl
   }

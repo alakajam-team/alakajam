@@ -202,9 +202,7 @@ async function editEntry (req, res) {
       platformNames = platformNames.map(forms.sanitizeString)
       platforms = await platformService.fetchMultipleNamed(platformNames)
       if (platforms.length < platformNames.length) {
-        errorMessage = 'One or more platforms are invalid'
-      } else {
-        entry.set('platforms', platforms.map(p => p.get('name')))
+        errorMessage = 'One or more platforms are invalid: ' + platformNames.join(', ')
       }
     }
 
@@ -279,7 +277,7 @@ async function editEntry (req, res) {
     let entryDetails = entry.related('details')
     entryDetails.set({
       'optouts': optouts,
-      'body': forms.sanitizeMarkdown(req.body.body, constants.MAX_BODY_ENTRY_DETAILS),
+      'body': forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_ENTRY_DETAILS }),
       'high_score_type': highScoreType,
       'high_score_instructions': forms.sanitizeString(req.body['high-score-instructions'], { maxLength: 2000 })
     })
@@ -363,7 +361,7 @@ async function editEntry (req, res) {
       }
 
       // Set or remove platforms.
-      platformService.setEntryPlatforms(entry, platforms || [], { updateEntry: false })
+      platformService.setEntryPlatforms(entry, platforms || [])
       cache.user(res.locals.user).del('latestEntry')
       await entry.load(['userRoles.user', 'comments', 'details', 'tags'])
 

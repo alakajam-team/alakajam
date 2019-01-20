@@ -10,6 +10,7 @@ const constants = require('../core/constants')
 const models = require('../core/models')
 const db = require('../core/db')
 const cache = require('../core/cache')
+const log = require('../core/log')
 
 module.exports = {
   searchPlatforms,
@@ -97,46 +98,51 @@ function createPlatform (name) {
 
 /**
  * Set the platforms of an entry.
+ * The data is duplicated on `entry.platforms` (for quick access) and the `entry_platform` table (for search queries).
  *
  * @param {models.Entry} entry the entry instance.
  * @param {models.Platform[]} platforms the platforms to set.
  * @returns {Promise} a promise which resolves when complete.
  */
-async function setEntryPlatforms (entry, platforms, { updateEntry = true }) {
+async function setEntryPlatforms (entry, platforms) {
   const entryId = entry.get('id')
-  const nameList = JSON.stringify(platforms.map(p => p.get('name')))
+  const platformNames = platforms.map(p => p.get('name'))
   const platformIds = platforms.map(p => p.id)
 
-  return db.knex.transaction(async function (transaction) {
-    const existingIds = (
-      await transaction('entry_platform')
-        .select('platform_id')
-        .where('entry_id', entryId)
-    ).map(({platform_id}) => platform_id) // eslint-disable-line camelcase
-    const toRemoveIds = existingIds.filter(id => !platformIds.includes(id))
-    const toAdd = platforms
-      .filter(p => !existingIds.includes(p.id))
-      .map(p => ({
-        entry_id: entryId,
-        platform_id: p.id,
-        platform_name: p.get('name')
-      }))
+  try {
+    await db.knex.transaction(async function (transaction) {
+      const existingIds = (
+        await transaction('entry_platform')
+          .select('platform_id')
+          .where('entry_id', entryId)
+      ).map(({platform_id}) => platform_id) // eslint-disable-line camelcase
+      const toRemoveIds = existingIds.filter(id => !platformIds.includes(id))
+      const toAdd = platforms
+        .filter(p => !existingIds.includes(p.id))
+        .map(p => ({
+          entry_id: entryId,
+          platform_id: p.id,
+          platform_name: p.get('name')
+        }))
 
-    const promises = []
-    if (updateEntry) {
-      promises.push(entry.save('platforms', nameList, {transaction}))
-    }
-    if (toAdd.length > 0) { // Insert new entry_platform records.
-      promises.push(transaction('entry_platform').insert(toAdd))
-    }
-    if (toRemoveIds.length > 0) { // Remove old entry_platform records.
-      promises.push(
-        transaction('entry_platform')
-          .whereIn('platform_id', toRemoveIds)
-          .andWhere('entry_id', '=', entryId)
-          .del()
-      )
-    }
-    await Promise.all(promises)
-  })
+      const promises = []
+      promises.push(entry.save('platforms', platformNames, {transaction}))
+
+      if (toAdd.length > 0) { // Insert new entry_platform records.
+        promises.push(transaction('entry_platform').insert(toAdd))
+      }
+      if (toRemoveIds.length > 0) { // Remove old entry_platform records.
+        promises.push(
+          transaction('entry_platform')
+            .whereIn('platform_id', toRemoveIds)
+            .andWhere('entry_id', '=', entryId)
+            .del()
+        )
+      }
+      await Promise.all(promises)
+    })
+  } catch (e) {
+    log.error('Failed to update entry platforms')
+    log.error(e)
+  }
 }
