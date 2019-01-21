@@ -215,17 +215,19 @@ async function configure (app) {
 
   // Templating: rendering context
   app.use(function templateTooling (req, res, next) {
-    // Allow anyone to display an error page.
-    // Calling render() after an errorPage() is tolerated an will be a no-op.
+    /* Allows anyone to display an error page.
+     * Calling render() after an errorPage() is tolerated an will be a no-op, although it would be bad practice.
+     */
     res.errorPage = (code, error) => {
       errorPage(req, res, code, error, app.locals.devMode)
       res.alreadyRenderedWithError = true
     }
 
-    // Shorthand for rendering errors on promise failures.
-    // Calling render() after a traceAndShowErrorPage() is tolerated an will be a no-op.
-    // (needed to catch rejections properly on promises that are asynchronously awaited,
-    // eg. when awaiting services in the middle of preparing a Promise.all())
+    /* Shorthand for rendering errors on promise failures.
+     * Calling render() after a traceAndShowErrorPage() is tolerated an will be a no-op, although it would be bad practice.
+     * (This method helps catching rejections properly on promises that are *asynchronously* awaited, eg. while awaiting
+     * other services in the middle of preparing a Promise.all(). You should prefer refactoring your code rather than use this)
+     */
     res.traceAndShowErrorPage = (error) => {
       errorPage(req, res, 500, error, app.locals.devMode)
       res.alreadyRenderedWithError = true
@@ -251,7 +253,7 @@ async function configure (app) {
   controllers.initRoutes(app)
 
   // Routing: 500/404
-  app.use(function notFound (error, req, res, next) {
+  app.use(function renderErrors (error, req, res, next) {
     if (!error) {
       errorPage(req, res, 404, undefined, app.locals.devMode)
     } else {
