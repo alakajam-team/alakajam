@@ -215,18 +215,33 @@ async function configure (app) {
 
   // Templating: rendering context
   app.use(function templateTooling (req, res, next) {
-    // Allow anyone to display an error page
-    res.errorPage = (code, message) => errorPage(req, res, code, message, app.locals.devMode)
+    // Allow anyone to display an error page.
+    // Calling render() after an errorPage() is tolerated an will be a no-op.
+    res.errorPage = (code, error) => {
+      errorPage(req, res, code, error, app.locals.devMode)
+      res.alreadyRenderedWithError = true
+    }
+
+    // Shorthand for rendering errors on promise failures.
+    // Calling render() after a traceAndShowErrorPage() is tolerated an will be a no-op.
+    // (needed to catch rejections properly on promises that are asynchronously awaited,
+    // eg. when awaiting services in the middle of preparing a Promise.all())
+    res.traceAndShowErrorPage = (error) => {
+      errorPage(req, res, 500, error, app.locals.devMode)
+      res.alreadyRenderedWithError = true
+    }
 
     // Context made available anywhere
     let nativeRender = res.render
     res.render = function (template, context) {
-      let mergedContext = Object.assign({
-        rootUrl: config.ROOT_URL,
-        csrfToken: () => '<input type="hidden" name="_csrf" value="' + req.csrfToken() + '" />'
-      }, res.locals, context)
-      nativeRender.call(res, template, mergedContext)
-      res.rendered = true
+      if (!res.alreadyRenderedWithError) {
+        let mergedContext = Object.assign({
+          rootUrl: config.ROOT_URL,
+          csrfToken: () => '<input type="hidden" name="_csrf" value="' + req.csrfToken() + '" />'
+        }, res.locals, context)
+        nativeRender.call(res, template, mergedContext)
+        res.rendered = true
+      }
     }
 
     next()
@@ -236,19 +251,20 @@ async function configure (app) {
   controllers.initRoutes(app)
 
   // Routing: 500/404
-  app.use(function notFound (req, res) {
-    errorPage(req, res, 404, undefined, app.locals.devMode)
-  })
-  app.use(function error (error, req, res) {
-    if (error.code === 'EBADCSRFTOKEN') {
-      // Replace the default error message from csurf by something more user friendly.
-      error.message = 'Invalid CSRF token. Your session may have expired. Please go back and try again.'
-    } else if (error.code === 'LIMIT_FILE_SIZE') {
-      // Same with multer's upload size limit
-      error.statusCode = 400
-      error.message = 'Attachment is too large, please go back and check the size limit'
+  app.use(function notFound (error, req, res, next) {
+    if (!error) {
+      errorPage(req, res, 404, undefined, app.locals.devMode)
+    } else {
+      if (error.code === 'EBADCSRFTOKEN') {
+        // Replace the default error message from csurf by something more user friendly.
+        error.message = 'Invalid CSRF token. Your session may have expired. Please go back and try again.'
+      } else if (error.code === 'LIMIT_FILE_SIZE') {
+        // Same with multer's upload size limit
+        error.statusCode = 400
+        error.message = 'Attachment is too large, please go back and check the size limit'
+      }
+      errorPage(req, res, error.statusCode || 500, error, app.locals.devMode)
     }
-    errorPage(req, res, error.statusCode || 500, error, app.locals.devMode)
   })
 }
 

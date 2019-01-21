@@ -256,7 +256,7 @@ async function findOwnAnonymousCommentIds (user, nodeId, nodeType) {
  */
 async function isOwnAnonymousComment (comment, user) {
   if (comment.get('user_id') === constants.ANONYMOUS_USER_ID) {
-    let result = await db.knex('anonymous_comment_user')
+    let result = await db.knex('anonyous_comment_user')
       .count()
       .where({
         comment_id: comment.get('id'),

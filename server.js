@@ -97,13 +97,13 @@ async function createApp () {
  * Catch unhandled errors and system signals
  */
 function catchErrorsAndSignals () {
-  // Display unhandled rejections more nicely
-  process.on('unhandledException', (e) => {
-    log.error('Unhandled promise rejection:', e)
-    _doGracefulShutdown()
+  // Display unhandled errors more nicely
+  process.on('uncaughtException', (error) => {
+    log.error(`Uncaught exception: ${error.message}\n${error.stack}`)
+    _doGracefulShutdown(1)
   })
-  process.on('unhandledRejection', (reason, p) => {
-    log.error('Unhandled promise rejection:', reason, p)
+  process.on('unhandledRejection', (error, p) => {
+    log.error(`Unhandled promise rejection: ${error.message}\n${error.stack}`)
   })
 
   // Stop the server gracefully upon shut down signals
@@ -112,12 +112,12 @@ function catchErrorsAndSignals () {
   signals.forEach((signal) => {
     process.on(signal, _doGracefulShutdown)
   })
-  function _doGracefulShutdown (cb) {
+  function _doGracefulShutdown (exitCode = -1) {
     if (!alreadyShuttingDown) {
       alreadyShuttingDown = true
       const db = require('./core/db')
       log.info('Shutting down.')
-      db.knex.destroy(() => process.exit(-1))
+      db.knex.destroy(() => process.exit(exitCode))
     }
   }
 }

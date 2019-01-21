@@ -84,7 +84,7 @@ async function eventMiddleware (req, res, next) {
   next()
 }
 
-async function handleEventUserShortcuts (res, targetEvent) {
+function handleEventUserShortcuts (res, targetEvent) {
   if (targetEvent && res.locals.user) {
     let entryTask = true
     let userPostTask = true
@@ -95,7 +95,8 @@ async function handleEventUserShortcuts (res, targetEvent) {
       userId: res.locals.user.id,
       eventId: targetEvent.id,
       specialPostType: null
-    }).then(userPost => { res.locals.userPost = userPost })
+    })
+      .then(userPost => { res.locals.userPost = userPost })
 
     return Promise.all([entryTask, userPostTask])
   }

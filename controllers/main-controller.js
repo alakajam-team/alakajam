@@ -88,16 +88,12 @@ async function index (req, res) {
   if (!context) {
     context = {}
 
-    let featuredEventTask
+    let featuredAnnouncementTask
     if (res.locals.featuredEvent) {
-      // Find live event and its latest announcement
-      featuredEventTask = postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
-        .then(async function (announcement) {
-          context.featuredEventAnnouncement = announcement
-          if (res.locals.featuredEvent.get('status_entry') !== enums.EVENT.STATUS_ENTRY.OFF) {
-            res.locals.featuredEventCount = await eventService.countEntriesByEvent(res.locals.featuredEvent)
-          }
-        })
+      // Find latest announcement for featured event
+      featuredAnnouncementTask = postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get('id') })
+        .then(announcement => { context.featuredEventAnnouncement = announcement })
+        .catch(res.traceAndShowErrorPage)
     }
 
     // Fetch event schedule (preferably without displaying too many events after the featured one)
@@ -131,6 +127,7 @@ async function index (req, res) {
       }).then(function (suggestedEntriesCollection) {
         context.suggestedEntries = suggestedEntriesCollection.models
       })
+        .catch(res.traceAndShowErrorPage)
     }
 
     // Gather any user posts
@@ -140,6 +137,7 @@ async function index (req, res) {
         context.posts = postsCollection.models
         context.pageCount = postsCollection.pagination.pageCount
       })
+      .catch(res.traceAndShowErrorPage)
 
     // Find featured post
     let featuredPostTask = settingService.find(constants.SETTING_FEATURED_POST_ID)
@@ -148,8 +146,9 @@ async function index (req, res) {
           context.featuredPost = await postService.findPostById(featuredPostId)
         }
       })
+      .catch(res.traceAndShowErrorPage)
 
-    await Promise.all([featuredEventTask, suggestedEntriesTask, postsTask, featuredPostTask]) // Parallelize fetching everything
+    await Promise.all([featuredAnnouncementTask, suggestedEntriesTask, postsTask, featuredPostTask]) // Parallelize fetching everything
 
     cache.general.set('home_page', context, 10 /* 10 seconds */)
   }
