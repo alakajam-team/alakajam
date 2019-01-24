@@ -30,7 +30,7 @@
       </div>
       <div class="form-group">
         <label for="platforms">Platforms</label>
-        <select name="platforms" class="form-control js-select" multiple="multiple">
+        <select name="platforms" class="form-control js-select" multiple="multiple" size="2">
           {% for platform in context.platforms %}
             <option value="{{ platform.get('id') }}" {{ 'selected' if context.searchOptions.platforms and context.searchOptions.platforms.includes(platform.get('id')) }}>{{ platform.get('name') }}</option>
           {% endfor %}
