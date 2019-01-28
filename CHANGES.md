@@ -2,6 +2,48 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### January 4th
+
+* Twitter cards now use pictures from blog posts & entry pages
+
+## 2018
+
+### November 11th
+
+* Discord chat is now featured
+
+### October 1st
+
+* Let mods change the type of a post
+* Use Wilson score to select themes & trigger elimination
+
+### September 28th
+
+* Template system to let mods create events more easily
+* Event presets to let mods change the state of events more easily
+
+### August 27th
+
+* Reworked events page (move non-major events to a second tab)
+* Special tab under People to list mods & admins
+* Display the non-profit constitution on the website
+
+### August 24th
+
+* Basic registration captcha
+
+### July 31st
+
+* Support Soundcloud embeds
+
+### July 23rd
+
+* Support serviv static assets from a separate domain, to optimize performance
+
+### July 13rd
+
+* JSON API: event timeline
+
 ### July 5th
 
 * Like system on blog posts
