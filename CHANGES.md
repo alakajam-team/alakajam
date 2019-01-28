@@ -4,13 +4,13 @@
 
 ### January 4th
 
-* Twitter cards now use pictures from blog posts & entry pages
+* Make Twitter cards use pictures from blog posts & entry pages
 
 ## 2018
 
 ### November 11th
 
-* Discord chat is now featured
+* Feature Discord chat on chat page
 
 ### October 1st
 
