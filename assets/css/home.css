@@ -135,7 +135,7 @@
     }
   }
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     &__shortcuts {
       & > div:first-child {
         padding-right: 0;

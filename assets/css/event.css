@@ -263,7 +263,7 @@
 }
 
 .event-banner-panel {
-  @media (min-width: 767px) {
+  @media (min-width: 768px) {
     @apply --shadow;
     padding: 10px;
     background-color: color(var(--bg) alpha(85%));

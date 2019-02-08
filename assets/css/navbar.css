@@ -192,7 +192,7 @@
           padding: 0 5px;
         }
       }
-      @media (max-width: 768px) {
+      @media (max-width: 767px) {
         &.nav-login {
           padding-left: 5px;
         }
@@ -277,7 +277,7 @@
     margin-right: 30px;
     vertical-align: top;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     &__info {
       margin-right: 0;
       padding-top: 2px;
@@ -290,7 +290,7 @@
     box-sizing: border-box;
     font-size: 1.5rem;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     &__name {
       font-size: 1.3rem;
       letter-spacing: 0px;
@@ -311,14 +311,13 @@
     display: inline-block;
     line-height: var(--eventbar-height);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     &__links {
       float: left;
     }
   }
 
   &__link {
-    @apply --transition;
     display: inline-block;
     box-sizing: border-box;
     vertical-align: top;
@@ -326,11 +325,28 @@
     margin: 0;
     height: var(--eventbar-height);
     line-height: var(--eventbar-height);
-    font-size: 1.2rem;
-    
+    font-size: 1.3rem;
+    text-align: center;
+
     @media (min-width: 768px) {
       font-size: 1rem;
+      padding: 7px 12px;
+      line-height: 20px;
+
+      & .fas {
+        display: block;
+      }
+    }
+    
+    @media (min-width: 992px) {
+      text-align: left;
+      line-height: var(--eventbar-height);
+      font-size: 1rem;
       padding: 0 11px;
+      
+      & .fas {
+        display: inline;
+      }
     }
     
     &:hover {
@@ -362,7 +378,7 @@
   position: inherit;
   height: var(--eventbar-height);
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     & .navbar-collapse {
       position: absolute;
       top: var(--eventbar-height);
@@ -400,7 +416,7 @@
     background-color: var(--alt-dark);
   }
   
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     & .navbar-collapse {
       box-shadow: 0px 5px 3px -3px rgba(0, 0, 0, 0.3);
     }
@@ -412,7 +428,7 @@
   width: 100%;
   background-color: var(--moderation-dark);
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     margin-top: -31px;
   }
 

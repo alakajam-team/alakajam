@@ -119,7 +119,7 @@
       margin-top: 2px;
       width: 100px;
     }
-    @media (max-width: 768px) {
+    @media (max-width: 767px) {
       & &__score, &__ranking {
         width: 50px;
       }
