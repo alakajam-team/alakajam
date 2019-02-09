@@ -291,6 +291,16 @@ async function createEntry (user, event) {
   await entryDetails.save()
   await entry.load('details')
 
+  // Attach posts from same event
+  let posts = await postService.findPosts({
+    eventId: event.get('id'),
+    specialPostType: null
+  })
+  posts.each(async function (post) {
+    post.set('entry_id', entry.get('id'))
+    await post.save()
+  })
+
   return entry
 }
 
