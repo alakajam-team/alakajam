@@ -62,8 +62,19 @@
         height: var(--eventbar-shrinked-height);
         line-height: var(--eventbar-shrinked-height);
       }
+
+      & .nav .event-header__link .fas {
+        @media (min-width: 768px) {
+          display: none;
+        }
+        
+        @media (min-width: 992px) {
+          display: inline;
+        }
+      }
+
       & .event-header__link.active {
-        border-bottom-width: 2px;
+        border-bottom-width: 3px;
       }
 
       & .event-header__announcement-info,
