@@ -21,7 +21,8 @@ const babelOptions = {
         useBuiltIns: 'usage'
       }
     ]
-  ]
+  ],
+  sourceType: 'unambiguous'
 }
 
 module.exports = {
