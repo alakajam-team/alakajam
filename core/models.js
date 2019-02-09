@@ -6,8 +6,8 @@
  * @module core/models
  */
 
-const slug = require('slug')
 const bookshelf = require('./db')
+const forms = require('./forms')
 
 let modelPrototype = bookshelf.Model.prototype
 
@@ -438,7 +438,7 @@ module.exports.Entry = bookshelf.model('Entry', {
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
     this.on('saving', function (model, attrs, options) {
-      model.set('name', slug(model.get('title') || '').toLowerCase() || 'unnamed')
+      model.set('name', forms.slug(model.get('title') || '').toLowerCase() || 'unnamed')
     })
     attrs = attrs || {}
     attrs.links = attrs.links || []
@@ -863,7 +863,7 @@ module.exports.Post = bookshelf.model('Post', {
       this.trigger('titleChanged')
     })
     this.on('titleChanged', function () {
-      this.set('name', slug(this.get('title') || '').toLowerCase())
+      this.set('name', forms.slug(this.get('title') || '').toLowerCase())
     })
 
     attrs = attrs || {}

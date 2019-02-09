@@ -47,6 +47,7 @@ module.exports = {
 }
 
 const MAX_POSTGRESQL_INTEGER = 2147483647
+const SLUG_SETTINGS = { symbols: false }
 
 // Libs init
 
@@ -113,7 +114,7 @@ function sanitizeMarkdown (markdown, options = {}) {
  * Turns a string into a slug suitable for URLs.
  */
 function _slug (string) {
-  return slug(string).toLowerCase()
+  return slug(string, SLUG_SETTINGS).toLowerCase()
 }
 
 /**
