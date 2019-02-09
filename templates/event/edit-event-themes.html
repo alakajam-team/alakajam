@@ -2,6 +2,14 @@
 {% import "_macros-form.html" as formMacros %}
 {% import "event/_macros-event.html" as eventMacros %}
 
+{% block styles %}
+<style type="text/css">
+.table td {
+  max-width: 200px;
+}
+</style>
+{% endblock %}
+
 {% block editEventBody %}
 
 <h1>{{ event.get('title') }} themes <span class="count">({{ themes.length }})</span></h1>

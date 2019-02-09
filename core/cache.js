@@ -12,7 +12,6 @@ const NodeCache = require('node-cache')
 /*
  * Caches declaration
  * stdTTL: (default: 0) the standard ttl as number in seconds for every generated cache element. 0 = unlimited
- * checkperiod: (default: 600) The period in seconds, as a number, used for the automatic delete check interval. 0 = no periodic check.
  */
 const generalTtl = 24 * 60 * 3600 // one day
 const usersTtl = 10 * 60 // 10 minutes
@@ -24,7 +23,7 @@ const entryImportTtl = 3 * 60 // 3 minutes
 let Cache = NodeCache
 if (config.DEBUG_DISABLE_CACHE) {
   Cache = function () {
-    let fastExpiryCache = new NodeCache({stdTTL: 1, checkperiod: 0})
+    let fastExpiryCache = new NodeCache({ stdTTL: eventsTtl })
 
     this.get = key => fastExpiryCache.get(key)
     this.set = (key, value) => fastExpiryCache.set(key, value) // Ignore any custom TTL
@@ -35,13 +34,13 @@ if (config.DEBUG_DISABLE_CACHE) {
 }
 
 const cacheMap = {
-  general: new Cache({ stdTTL: generalTtl, checkperiod: 10 * 60 }),
-  users: new Cache({ stdTTL: usersTtl, checkperiod: usersTtl }),
-  settings: new Cache({ stdTTL: settingsTtl, checkperiod: settingsTtl }),
-  eventsById: new Cache({ stdTTL: eventsTtl, checkperiod: eventsTtl }),
-  eventsByName: new Cache({ stdTTL: eventsTtl, checkperiod: eventsTtl }),
-  articles: new Cache({ stdTTL: articlesTtl, checkperiod: articlesTtl }),
-  entryImport: new Cache({ stdTTL: entryImportTtl, checkperiod: 10 * 60 })
+  general: new Cache({ stdTTL: generalTtl }),
+  users: new Cache({ stdTTL: usersTtl }),
+  settings: new Cache({ stdTTL: settingsTtl }),
+  eventsById: new Cache({ stdTTL: eventsTtl }),
+  eventsByName: new Cache({ stdTTL: eventsTtl }),
+  articles: new Cache({ stdTTL: articlesTtl }),
+  entryImport: new Cache({ stdTTL: entryImportTtl })
 }
 
 module.exports = {
