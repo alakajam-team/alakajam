@@ -299,13 +299,18 @@
     @apply --alt-font;
     display: block;
     box-sizing: border-box;
-    font-size: 1.5rem;
-  }
-  @media (max-width: 767px) {
-    &__name {
-      font-size: 1.3rem;
-      letter-spacing: 0px;
+    font-size: 1.3rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    @media (min-width: 768px) {
       max-width: 250px;
+      letter-spacing: 1px;
+    }
+
+    @media (min-width: 992px) {
+      max-width: 300px;
     }
   }
 
