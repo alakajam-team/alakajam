@@ -66,13 +66,13 @@ async function configure (app) {
   // In-memory data
   await userService.loadPasswordRecoveryCache(app)
 
+  // Static files
+  app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
+
   // Session management
   let sessionKey = await findOrCreateSessionKey()
   app.use(cookies.express([sessionKey]))
   app.use(await createSessionMiddleware())
-
-  // Static files
-  app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
   // Templating
   app.set('views', path.join(ROOT_PATH, '/templates'))
