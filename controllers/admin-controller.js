@@ -104,9 +104,10 @@ async function adminEventPresets (req, res) {
       // TODO Status radios validation (to be put in common with the event edition form)
       let offset = 0
       try {
-        offset = parseInt(req.body['countdown-offset-d']) * 60 * 24 +
+        const offsetMinutes = parseInt(req.body['countdown-offset-d']) * 60 * 24 +
           parseInt(req.body['countdown-offset-h']) * 60 +
           parseInt(req.body['countdown-offset-m'])
+        offset = offsetMinutes * 60000
       } catch (e) {
         errorMessage = 'Invalid deadline offset from start'
       }
