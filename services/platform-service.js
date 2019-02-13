@@ -126,7 +126,7 @@ async function setEntryPlatforms (entry, platforms) {
         }))
 
       const promises = []
-      promises.push(entry.save('platforms', platformNames, {transaction}))
+      promises.push(entry.save('platforms', platformNames, {transacting: transaction}))
 
       if (toAdd.length > 0) { // Insert new entry_platform records.
         promises.push(transaction('entry_platform').insert(toAdd))
