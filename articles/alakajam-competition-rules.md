@@ -62,6 +62,6 @@ There are additional rules **if you submit an existing project** of yours. These
 
 ## In case of doubts...
 
-Obviously, those rules don't cover every scenario (for instance you may realize the music volume is super low, or in-game instructions are wrong, etc.).
+Obviously, the rules on post-jam changes don't cover every scenario (for instance you may realize the music volume is super low, or in-game instructions are wrong, etc.).
 
-...So in those cases where you  want to do something but it's unclear if you can, or not doing it seems unfair, **do it, and mention what you did in your game description**. After all, this is a completely informal competition, there's no prizes involved, we're just here to make games and have fun!
+...So in those cases where you want to do something but it's unclear if you can, or not doing it seems unfair, **do it, and mention what you did in your game description**. After all, this is a completely informal competition, there's no prizes involved, we're just here to make games and have fun!
