@@ -470,6 +470,27 @@ module.exports.Entry = bookshelf.model('Entry', {
         return userRole.get('user_title')
       }
     })
+  },
+  picturePreviews: function () {
+    if (this.has('pictures') && this.get('pictures').previews) {
+      return this.get('pictures').previews
+    } else {
+      return []
+    }
+  },
+  pictureThumbnail: function () {
+    if (this.has('pictures')) {
+      return this.get('pictures').thumbnail
+    } else {
+      return undefined
+    }
+  },
+  pictureThumbnail60x60: function () {
+    if (this.has('pictures')) {
+      return this.get('pictures').thumbnail60x60
+    } else {
+      return undefined
+    }
   }
 
 }, {

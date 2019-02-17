@@ -17,7 +17,7 @@
       {% if infoMessage %}
         <div class="alert alert-info">{{ infoMessage }}</div>
       {% endif %}
-      
+
       <h1>
         {{ entry.get('title') }} 
         {% if canUserWrite(user, entry) %}
@@ -36,10 +36,10 @@
   </div>
   <div class="row">
     <div class="col-md-8">
-      {% set hasPictures = entry.has('pictures') and entry.get('pictures').length > 0 %}
+      {% set hasPictures = entry.picturePreviews().length > 0 %}
       <div class="entry__picture {{ 'empty' if not hasPictures }}">
         {% if hasPictures %}
-        <img src="{{ pictureUrl(entry.get('pictures')[0], entry) }}"/>
+        <img src="{{ pictureUrl(entry.picturePreviews()[0], entry) }}"/>
         {% else %}
         <img src="{{ staticUrl('/static/images/default-entry.png') }}" style="padding: 20px" />
         {% endif %}

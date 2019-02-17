@@ -262,7 +262,8 @@ async function createEntry (user, event) {
   let entry = new models.Entry({
     'name': 'untitled',
     'title': '',
-    'comment_count': 0
+    'comment_count': 0,
+    'pictures': '{previews: []}'
   })
 
   if (event) {

@@ -6,7 +6,7 @@
       <div class="entry-thumb__description">{{ entry.get('description') }}</div>
     </div>
     {% endif %}
-    {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 %}
+    {% set picturePath = entry.pictureThumbnail() %}
     <div class="entry-thumb__picture js-lazy" data-src="{{ pictureUrl(picturePath, entry) if picturePath else staticUrl('/static/images/default-entry.png') }}">
       {% if not options.hideMedals %}
         <div class="entry-medals">
@@ -53,10 +53,10 @@
 {% macro entrySmallThumb(entry, options = {}) %}
 <div class="entry-small-thumb" style="{{ 'box-shadow: none' if options.noShadow }}">
   {% if entry and entry.get('id') %}
-    {% set picturePath = entry.get('pictures')[0] if entry.get('pictures').length > 0 else staticUrl('/static/images/default-entry.png') %}
+    {% set picturePath = entry.pictureThumbnail60x60() %}
     <div class="entry-small-thumb__details">
       <a href="{{ buildUrl(entry, 'entry') }}">
-        <div class="entry-small-thumb__picture js-lazy" data-src="{{ pictureUrl(picturePath, entry) }}"></div>
+        <div class="entry-small-thumb__picture js-lazy" data-src="{{ pictureUrl(picturePath, entry) if picturePath else staticUrl('/static/images/default-entry.png') }}"></div>
         <div class="entry-small-thumb__title"  href="{{ buildUrl(entry, 'entry') }}">
           {{ entry.get('title') }}
         </div>

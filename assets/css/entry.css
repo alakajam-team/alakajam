@@ -10,35 +10,34 @@
   text-align: center;
   background-color: white;
   width: 100%;
-  height: 250px;
   margin-bottom: 20px;
+  padding-bottom: 20px;
   text-align: left;
   position: relative;
 
   &__picture {
     position: relative;
     display: block;
-    height: 150px;
+    padding-top: 56.25%;
     width: 100%;
     background-color: var(--main-dark);
     background-size: cover;
     background-position: center;
-    transition: 0.3s;
   }
   & a:hover &__picture {
     border: 4px solid var(--alt);
-    transition: 0.1s;
+    padding-top: calc(56.25% - 8px);
   }
 
   &__description-container {
     position: relative;
-    height: 150px;
+    padding-top: 56.25%;
     width: 100%;
     float: left;
   }
   &__description {
     width: 100%;
-    max-height: 150px;
+    max-height: 100%;
     position: absolute;
     bottom: 0;
     padding: 10px;
@@ -47,6 +46,7 @@
     background-color: transparent;
     overflow: hidden;
     transition: 0.1s;
+    z-index: 1;
   }
   &__description-container:hover &__description {
     color: white;
@@ -57,6 +57,8 @@
   &__picture-gradient {
     height: 100%;
     width: 100%;
+    position: absolute;
+    bottom: 0;
     background: linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(0,0,0,0.25) 100%);
   }
 
@@ -199,14 +201,20 @@
     text-align: center;
     background-color: var(--text);
     min-height: 40px; /* for medals */
+    padding-bottom: 56.25%; /* 16/9 ratio */
 
     &.empty {
       background-color: var(--main-dark);
     }
 
     & img {
-      max-width: 100%;
-      max-height: 500px;
+      position: absolute;
+      object-fit: cover;
+      height: 100%;
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
 
