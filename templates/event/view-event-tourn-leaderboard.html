@@ -44,7 +44,7 @@
           {% for entry in entries %}
           <th class="text-center visible-md visible-lg" style="width: 80px">
             <a href="{{ buildUrl(entry, 'entry') }}">
-              <img src="{{ entry.picturePreviews()[0] if entry.picturePreviews().length > 0 }}" style="max-height:80 px; max-height: 30px" title="{{ entry.get('title') }}" />
+              <img src="{{ entry.pictureIcon() if entry.pictureIcon() }}" style="max-height:60px" title="{{ entry.get('title') }}" />
             </a>
           </th>
           {% endfor %}
