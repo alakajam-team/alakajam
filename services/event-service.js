@@ -12,6 +12,7 @@ const db = require('../core/db')
 const models = require('../core/models')
 const constants = require('../core/constants')
 const cache = require('../core/cache')
+const fileStorage = require('../core/file-storage')
 const postService = require('./post-service')
 const securityService = require('./security-service')
 const settingService = require('./setting-service')
@@ -36,6 +37,7 @@ module.exports = {
   deleteEventPreset,
 
   createEntry,
+  setEntryPicture,
   searchForTeamMembers,
   findTeamMembers,
   setTeamMembers,
@@ -303,6 +305,41 @@ async function createEntry (user, event) {
   })
 
   return entry
+}
+
+/**
+ * Sets the entry picture and generates its thumbnails
+ * @param {Entry} entry
+ * @param {object|string} file The form upload
+ */
+async function setEntryPicture (entry, file) {
+  let picturePath = '/entry/' + entry.get('id')
+  let result = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_DEFAULT)
+  if (!result.error) {
+    entry.set('updated_at', new Date())
+    // Thumbnails creation
+    let resultThumbnail
+    if (result && result.width >= result.height * 1.1) {
+      resultThumbnail = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_THUMB)
+    } else {
+      resultThumbnail = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_THUMB_PORTRAIT)
+    }
+    let resultIcon = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_ICON)
+
+    // Delete previous pictures (in case of a different extension)
+    if (entry.picturePreviews().length > 0 && result.finalPath !== entry.picturePreviews()[0]) {
+      await fileStorage.remove(entry.picturePreviews()[0])
+    }
+    if (entry.pictureThumbnail() && resultThumbnail.finalPath !== entry.pictureThumbnail()) {
+      await fileStorage.remove(entry.pictureThumbnail())
+    }
+    if (entry.pictureIcon() && resultIcon.finalPath !== entry.pictureIcon()) {
+      await fileStorage.remove(entry.pictureIcon())
+    }
+
+    entry.set('pictures', { previews: [result.finalPath], thumbnail: resultThumbnail.finalPath, icon: resultIcon.finalPath })
+  }
+  return result
 }
 
 /**

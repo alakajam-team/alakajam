@@ -1,5 +1,5 @@
 {% macro entryThumb(entry, options = {}) %}
-<div class="entry-thumb {{ 'large-team' if entry.related('userRoles').length > 2 }}">
+<div class="entry-thumb">
   <a href="{{ buildUrl(entry, 'entry') }}">
     {% if entry.get('description') %}
     <div class="entry-thumb__description-container">
@@ -53,7 +53,7 @@
 {% macro entrySmallThumb(entry, options = {}) %}
 <div class="entry-small-thumb" style="{{ 'box-shadow: none' if options.noShadow }}">
   {% if entry and entry.get('id') %}
-    {% set picturePath = entry.pictureThumbnail60x60() %}
+    {% set picturePath = entry.pictureIcon() %}
     <div class="entry-small-thumb__details">
       <a href="{{ buildUrl(entry, 'entry') }}">
         <div class="entry-small-thumb__picture js-lazy" data-src="{{ pictureUrl(picturePath, entry) if picturePath else staticUrl('/static/images/default-entry.png') }}"></div>

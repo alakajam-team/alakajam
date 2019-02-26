@@ -24,7 +24,6 @@ const postController = require('./post-controller')
 const cache = require('../core/cache')
 const constants = require('../core/constants')
 const enums = require('../core/enums')
-const config = require('../config')
 
 module.exports = {
   entryMiddleware,
@@ -34,7 +33,6 @@ module.exports = {
   deleteEntry,
   leaveEntry,
 
-  upgradePictures,
   saveCommentOrVote,
 
   viewScores,
@@ -250,21 +248,18 @@ async function editEntry (req, res) {
       if (entry.picturePreviews().length > 0) {
         await fileStorage.remove(entry.picturePreviews()[0])
       }
-      if (entry.pictureThumbnail60x60()) {
+      if (entry.pictureThumbnail()) {
         await fileStorage.remove(entry.pictureThumbnail())
       }
-      if (entry.pictureThumbnail60x60()) {
-        await fileStorage.remove(entry.pictureThumbnail60x60())
+      if (entry.pictureIcon()) {
+        await fileStorage.remove(entry.pictureIcon())
       }
       entry.set('pictures', { previews: [] })
     } else if (req.file && (await fileStorage.isValidPicture(req.file.path))) {
-      let result = await upgradePictures(entry, req.file)
+      let result = await eventService.setEntryPicture(entry, req.file)
       if (result.error) {
         errorMessage = result.error
       }
-    } else if (req.body.picture) {
-      // Nothing new
-      // entry.set('pictures', {previews: [forms.sanitizeString(req.body.picture)]})
     }
 
     // Update entry details
@@ -385,43 +380,6 @@ async function editEntry (req, res) {
     isPlayedInTournament,
     errorMessage
   })
-}
-
-/**
- * Upgrade the entry pictures and it's thumbnails associate
- * @param entry
- * @param file
- */
-async function upgradePictures (entry, file) {
-  let picturePath = '/entry/' + entry.get('id')
-  let result = await fileStorage.savePictureUpload(file, picturePath, { maxWidth: 750, maxHeight: 500 })
-  if (!result.error) {
-    if (!entry.hasChanged('pictures')) {
-      // Make sure to make pictures URLs change for caching purposes
-      entry.set('updated_at', new Date())
-    }
-    // Thumbnails creation
-    let resultThumbnail
-    if (result && result.width >= result.height * 1.1) {
-      resultThumbnail = await fileStorage.savePictureUpload(file, picturePath + config.THUMBNAIL_SUFFIX, { maxWidth: 350, fit: 'inside' })
-    } else {
-      resultThumbnail = await fileStorage.savePictureUpload(file, picturePath + config.THUMBNAIL_SUFFIX, { maxWidth: 350, maxHeight: 180, fit: 'contain' })
-    }
-    let resultThumbnail60x60 = await fileStorage.savePictureUpload(file, picturePath + config.THUMBNAIL_SUFFIX + '60x60', { maxWidth: 60, maxHeight: 60, fit: 'cover' })
-
-    // delete previous picture (in case of a different extension)
-    if (entry.picturePreviews().length > 0 && result.finalPath !== entry.picturePreviews()[0]) {
-      await fileStorage.remove(entry.picturePreviews()[0])
-    }
-    if (entry.pictureThumbnail60x60() && resultThumbnail.finalPath !== entry.pictureThumbnail()) {
-      await fileStorage.remove(entry.pictureThumbnail())
-    }
-    if (entry.pictureThumbnail60x60() && resultThumbnail60x60.finalPath !== entry.pictureThumbnail60x60()) {
-      await fileStorage.remove(entry.pictureThumbnail60x60())
-    }
-    entry.set('pictures', { previews: [result.finalPath], thumbnail: resultThumbnail.finalPath, thumbnail60x60: resultThumbnail60x60.finalPath })
-  }
-  return result
 }
 
 /**

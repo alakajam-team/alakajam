@@ -125,8 +125,8 @@ async function savePictureToModel (model, attribute, fileUpload, deleteFile, tar
  * Saves an upload to the specified path, resizing it if needed in the process.
  * The file extension will be grabbed from the source path. If folders don't exist, they will be created.
  * @param {string} fileUploadOrPath The form field to save, or the file path if this is not a form upload
- * @param {string} targetPathWithoutExtension The path to the destination, **relative to the uploads folder**
- * @param {object} options (Optional) allowed: maxDiagonal / maxWidth / maxHeight / fit)
+ * @param {object|string} targetPathWithoutExtension The path to the destination, **relative to the uploads folder**
+ * @param {object} options (Optional) allowed: maxDiagonal / maxWidth / maxHeight / fit / suffix). See presets: constants.PICTURE_OPTIONS_*
  * @throws if the source path is not a valid picture
  * @returns {string} the URL to that path
  */
@@ -142,7 +142,7 @@ async function savePictureUpload (fileUploadOrPath, targetPathWithoutExtension, 
   if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
     actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath)
   }
-  actualTargetPath += '.' + fileExtension
+  actualTargetPath += (options.suffix || '') + '.' + fileExtension
   let absoluteTargetPath = toAbsolutePath(actualTargetPath)
 
   await createFolderIfMissing(path.dirname(absoluteTargetPath))
