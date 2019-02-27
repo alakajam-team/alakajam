@@ -62,8 +62,23 @@
     font-weight: bold;
   }
 
+  & .results-podium-row {
+    display: flex;
+    flex-direction: column;
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
   &__step {
     margin: 30px 0 80px 0;
+    @media (max-width: 768px) {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-evenly;
+      margin: 10px 0 15px 0;
+    }
     &::after {
       @apply --sprite4;
       background-position: -256px -64px;
@@ -71,29 +86,63 @@
       display: block;
       filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
       height: 128px;
-      margin: -44px 0 0 -80px;
+      margin: -45px 0 0 -80px;
       position: absolute;
       top: 100%;
       left: 50%;
       width: 160px;
+      @media (max-width: 768px) {
+        position: relative;
+        align-self: center;
+        margin: 0;
+        top:-10px;
+        left: 0;
+      }
     }
 
     &.first {
       margin-top: 10px;
+      & .entry-thumb {
+        height: calc(100% - 20px);
+      }
     }
     &.second::after {
-      margin-top: -64px;
       background-position: -256px -192px;
     }
     &.third::after {
-      margin-top: -64px;
       background-position: -256px -320px;
+    }
+
+    & .entry-thumb {
+      padding-bottom: 50px;
+      @media (max-width: 768px) {
+        flex: 1;
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    & .first {
+      order:2;
+    }
+    & .second {
+      order:1;
+    }
+    & .third {
+      order:3;
+    }
+  }
+
+  & .tournament-score {
+    margin-top: 10px;
+    margin-bottom: 45px;
+    @media (max-width: 768px) {
+      margin-bottom:0;
     }
   }
 }
 
 /* Results on entry page */
-
 .entry-results {
   @apply --shadow;
   background-color: var(--borders);

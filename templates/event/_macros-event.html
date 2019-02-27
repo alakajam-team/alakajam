@@ -47,6 +47,11 @@
       {% endif %}
     </div>
   {% endif %}
+  {% if options.showKarma %}
+    <div class="entry-thumb__score">
+      Karma {{ entry.get('karma') | digits(0) }}
+    </div>
+  {% endif %}
 </div>
 {% endmacro %}
 

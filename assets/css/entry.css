@@ -1,17 +1,45 @@
 /**
  * Entry page & entry macros
  */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-gap: 20px;
+  padding-bottom: 20px;
+}
+
+@media (min-width: 576px) {
+  .game-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 992px) {
+  .game-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1200px) {
+  .game-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 30px;
+  }
+}
+
+.game-grid-entry {
+  height: 100%;
+}
 
 /* Entry thumb */
 
 .entry-thumb {
   @apply --shadow;
-  display: block;
+  display: flex;
+  flex-direction: column;
   text-align: center;
   background-color: white;
   width: 100%;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+  height: 100%;
+  padding-bottom: 8px;
   text-align: left;
   position: relative;
 
@@ -68,21 +96,17 @@
 
   &__title {
     padding: 10px;
-    padding-bottom: 0;
+    padding-bottom: 4px;
     font-size: 1.1rem;
     font-weight: bold;
-  }
-  &.large-team &__title {
-    padding-bottom: 4px;
     line-height: 1.1rem;
   }
 
   &__author {
     padding-left: 10px;
     color: var(--text);
-  }
-  &.large-team &__author {
     line-height: 1.0rem;
+    flex:1;
   }
   
   &__event {
@@ -102,7 +126,7 @@
   }
 
   &__score {
-    margin: -15px 10px 20px 10px;
+    margin: 0 10px 0 10px;
     color: var(--text-light);
     font-weight: bold;
     
@@ -188,6 +212,10 @@
   padding-bottom: 0;
   margin-bottom: 10px;
   background-color: var(--borders);
+
+  & .game-grid-entry {
+    height: calc(100% - 20px);
+  }
 }
 
 /* Entry page */

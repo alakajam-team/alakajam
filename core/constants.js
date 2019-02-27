@@ -116,7 +116,7 @@ module.exports = {
   // Pictures
   PICTURE_OPTIONS_DEFAULT: { maxWidth: 750, maxHeight: 500 },
   PICTURE_OPTIONS_THUMB: { maxWidth: 350, fit: 'inside', suffix: '-thumb' },
-  PICTURE_OPTIONS_THUMB_PORTRAIT: { maxWidth: 350, maxHeight: 180, fit: 'contain', suffix: '-thumbp' },
+  PICTURE_OPTIONS_THUMB_PORTRAIT: { maxWidth: 350, maxHeight: 180, fit: 'contain', suffix: '-thumb' },
   PICTURE_OPTIONS_ICON: { maxWidth: 60, maxHeight: 60, fit: 'cover', suffix: '-icon' },
 
   // Limits
