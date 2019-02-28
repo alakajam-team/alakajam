@@ -656,6 +656,17 @@ async function deleteEntry (entry) {
       comment.destroy({ transacting: t })
     })
 
+    // Delete pictures
+    if (entry.picturePreviews().length > 0) {
+      await fileStorage.remove(entry.picturePreviews()[0])
+    }
+    if (entry.pictureThumbnail()) {
+      await fileStorage.remove(entry.pictureThumbnail())
+    }
+    if (entry.pictureIcon()) {
+      await fileStorage.remove(entry.pictureIcon())
+    }
+
     // Delete entry
     await entry.destroy({ transacting: t })
   })
