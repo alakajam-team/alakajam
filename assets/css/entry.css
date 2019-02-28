@@ -19,13 +19,14 @@
   }
 }
 @media (min-width: 1200px) {
-  .game-grid {
+  .container .game-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+  }
+
+  .game-grid, .container .home-grid.game-grid {
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 30px;
-    &.edit-event-tourn {
-      grid-template-columns: repeat(3, 1fr);
-      grid-gap: 20px;
-    }
   }
 }
 

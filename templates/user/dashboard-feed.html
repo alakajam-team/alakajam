@@ -46,14 +46,14 @@
     
     {% if latestEntry %}
       <div class="row">
-        <div class="col-lg-8" style="margin-bottom: -10px">
+        <div class="col-lg-8">
         {{ eventMacros.entryThumb(latestEntry, { showEvent: true }) if latestEntry }}
         </div>
       </div>
     {% else %}
       <div class="well">No entry yet.</div>
     {% endif %}
-    <div style="margin-bottom: 20px; clear: both">
+    <div style="margin: 10px 0 20px 0; clear: both">
       <a href="{{ buildUrl(dashboardUser, 'user', 'entries') }}" class="btn btn-default">All entries</a>
     </div>
     

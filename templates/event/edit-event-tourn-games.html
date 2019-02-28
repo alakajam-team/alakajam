@@ -28,7 +28,7 @@
       {% if entry.get('status_high_score') === 'off' %} 
         <div class="entry-thumb__form"><span class="label label-danger">High scores are not enabled</span></div>
       {% endif %}
-      <form method="post" class="form-inline form-group">
+      <form method="post" class="form-inline form-group" style="margin-top: 5px">
         {{ csrfToken() | safe }}
         <input type="hidden" name="id" value="{{ entry.get('id') }}" />
         <label for="ordering">Order&nbsp;</label>
@@ -47,7 +47,7 @@
       </form>
     </div>
   {% endfor %}
-  <div class="col-sm-6 col-md-4">
+  <div class="game-grid-entry">
   <h3>Add game</h3>
   <form method="post" class="form-inline">
     {{ csrfToken() | safe }}

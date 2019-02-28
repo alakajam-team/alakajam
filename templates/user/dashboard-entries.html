@@ -10,9 +10,9 @@
   <a href="/external-entry/create-entry" class="btn btn-default">Create entry manually</a>
 </div>
 
-<div class="row">
+<div class="game-grid">
   {% for entry in entries %}
-    <div class="col-sm-6 col-md-4 col-lg-3">
+    <div class="game-grid-entry">
       {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
       <div class="entry-thumb__form">
         <a href="{{ buildUrl(entry, 'entry', 'edit') }}"class="btn btn-default">Edit</a>
