@@ -22,6 +22,8 @@ If you want to give a hand to our little community, check the [contributing page
 
 ## Non-profit
 
+[[PAYPAL_BUTTON]]
+
 ALAKAJAM! is a non-profit registered in France on 11 August 2018, as an "association loi 1901" (RNA Number W691095617). Our constitution [can be read here](/article/npo-constitution). The current council of jamicians (which is basically the board of directors except it sounds better) is in office until July 2019:
 
 * **Scribe**: @dollarone
@@ -30,6 +32,4 @@ ALAKAJAM! is a non-profit registered in France on 11 August 2018, as an "associa
 * **Counselor, "Lord"**: @toasty
 * **Counselor, "Doctor"**: @Laguna
 
-You can read more about the creation of this non-profit [here](https://alakajam.com/post/722/alakajam-an-npo). If you're interested, you can stay in touch with the NPO's discussions by joining [our mailing-list](https://framalistes.org/sympa/info/alakajam-team). We are also accepting donations ([more info here](https://alakajam.com/post/1070/finances-of-the-alakajam-association)):
-
-[[PAYPAL_BUTTON]]
+You can read more about the creation of this non-profit [here](https://alakajam.com/post/722/alakajam-an-npo). If you're interested, you can stay in touch with the NPO's discussions by joining [our mailing-list](https://framalistes.org/sympa/info/alakajam-team). We are also accepting donations ([more info here](https://alakajam.com/post/1070/finances-of-the-alakajam-association)).
