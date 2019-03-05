@@ -113,14 +113,20 @@ module.exports = {
   TOURNAMENT_POINTS_DISTRIBUTION: [15, 12, 10, 8, 6, 5, 4, 3, 2, 1],
   SHORTLIST_SIZE: 10,
 
-  // Misc
-  ARTICLES_ROOT_URL: 'https://raw.githubusercontent.com/alakajam-team/alakajam/master/articles/',
-
   // Limits
   MAX_BODY_ANY: 100000,
   MAX_BODY_POST: 100000,
   MAX_BODY_USER_DETAILS: 100000,
   MAX_BODY_ENTRY_DETAILS: 100000,
-  MAX_BODY_COMMENT: 10000
+  MAX_BODY_COMMENT: 10000,
 
+  // Misc
+  ARTICLES_ROOT_URL: 'https://raw.githubusercontent.com/alakajam-team/alakajam/master/articles/',
+  PAYPAL_BUTTON: `<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="display: inline">
+    <input type="hidden" name="cmd" value="_s-xclick" />
+    <input type="hidden" name="hosted_button_id" value="M9V7Y5CNLP4EN" />
+    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+    <img alt="" border="0" src="https://www.paypal.com/en_FR/i/scr/pixel.gif" width="1" height="1" />
+    </form>`
+  
 }

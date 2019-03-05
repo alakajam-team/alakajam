@@ -53,7 +53,7 @@ const SLUG_SETTINGS = { symbols: false }
 
 const showdownLazyPicturesExt = {
   type: 'output',
-  filter: function (text, converter, options) {
+  filter: function (text, _converter, _options) {
     if (text.includes('img')) {
       text = text.replace(/<img([^>]+)src="/g, '<img$1data-src="')
     }
@@ -67,6 +67,7 @@ const showdownConverter = new showdown.Converter({
   simpleLineBreaks: true,
   extensions: [showdownLazyPicturesExt]
 })
+
 const sanitizeHtmlOptions = {
   allowedTags: constants.ALLOWED_POST_TAGS,
   allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
@@ -86,7 +87,12 @@ for (let allowedTag in constants.ALLOWED_POST_ATTRIBUTES) {
   }
 }
 
+const markdownSnippets = {
+  PAYPAL_BUTTON: constants.PAYPAL_BUTTON
+}
+
 const turndownService = new TurndownService()
+
 
 /**
  * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
@@ -277,6 +283,9 @@ function markdownToHtml (markdown) {
 
   const unsafeHtml = showdownConverter.makeHtml(markdown)
   const safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)
+    .replace(/\[\[([A-Z_].*)\]\]/g, (_match, key) => {
+      return markdownSnippets[key] || '[[Unknown snippet ' + key + ']]'
+    })
   return safeHtml
 }
 
