@@ -33,6 +33,7 @@
 .game-grid-entry {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 /* Entry thumb */
@@ -155,7 +156,7 @@
   &__form {
     position: absolute;
     top: 10px;
-    right: 25px;
+    right: 10px;
   }
 }
 

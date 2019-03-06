@@ -23,7 +23,7 @@ const entryImportTtl = 3 * 60 // 3 minutes
 let Cache = NodeCache
 if (config.DEBUG_DISABLE_CACHE) {
   Cache = function () {
-    let fastExpiryCache = new NodeCache({ stdTTL: eventsTtl })
+    let fastExpiryCache = new NodeCache({ stdTTL: 1 })
 
     this.get = key => fastExpiryCache.get(key)
     this.set = (key, value) => fastExpiryCache.set(key, value) // Ignore any custom TTL
