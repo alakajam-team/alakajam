@@ -159,9 +159,9 @@
       <div class="horizontal-bar">
         Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
       </div>
-      <div class="row">
+      <div class="home-grid game-grid">
       {% for entry in suggestedEntries %}
-        <div class="home-entry col-sm-4 col-md-3">
+        <div class="home-entry game-grid-entry">
         {{ eventMacros.entryThumb(entry) }}
         </div>
       {% endfor %}

@@ -20,15 +20,15 @@
   <p class="featured"><b>Note:</b> The tournament results are out. The options for refreshing the scores/rankings have been disabled.</p>
 {% endif %}
 
-<div class="row">
+<div class="game-grid edit-event-tourn">
   {% for tournamentEntry in tournamentEntries %}
     {% set entry = tournamentEntry.related('entry') %}
-    <div class="col-sm-6 col-md-4">
+    <div class="game-grid-entry">
       {{ eventMacros.entryThumb(entry) }}
       {% if entry.get('status_high_score') === 'off' %} 
         <div class="entry-thumb__form"><span class="label label-danger">High scores are not enabled</span></div>
       {% endif %}
-      <form method="post" class="form-inline form-group" style="margin-top: -15px">
+      <form method="post" class="form-inline form-group" style="margin-top: 5px">
         {{ csrfToken() | safe }}
         <input type="hidden" name="id" value="{{ entry.get('id') }}" />
         <label for="ordering">Order&nbsp;</label>
@@ -47,7 +47,7 @@
       </form>
     </div>
   {% endfor %}
-  <div class="col-sm-6 col-md-4">
+  <div class="game-grid-entry">
   <h3>Add game</h3>
   <form method="post" class="form-inline">
     {{ csrfToken() | safe }}

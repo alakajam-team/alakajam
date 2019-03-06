@@ -42,15 +42,16 @@
     </div>
   </div>
 
-  <div class="row wrap-fix">
+  <div class="row">
     <div class="col-xs-12">
       {% if ['closed', 'results'].includes(event.get('status_tournament')) %}
         <p class="featured"><b>Note:</b> This tournament is closed. New high scores will appear here, but will no longer impact the tournament points and rankings.</p>
       {% endif %}
     </div>
-    
+  </div>
+  <div class="game-grid tournament">
     {% for entry in entries %}
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+    <div class="game-grid-entry">
       {{ eventMacros.entryThumb(entry) }}
       <div class="entry-thumb__form">
         {{ scoreMacros.highScoresLinks(entry, user, path) }}
@@ -58,7 +59,8 @@
       {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')]) }}
     </div>
     {% endfor %}
-      
+  </div>
+  <div class="row">
     <div class="col-xs-12">
       {{ scoreMacros.pointsDistributionLegend(constants.TOURNAMENT_POINTS_DISTRIBUTION) }}
     </div>

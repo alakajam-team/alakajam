@@ -113,6 +113,12 @@ module.exports = {
   TOURNAMENT_POINTS_DISTRIBUTION: [15, 12, 10, 8, 6, 5, 4, 3, 2, 1],
   SHORTLIST_SIZE: 10,
 
+  // Pictures
+  PICTURE_OPTIONS_DEFAULT: { maxWidth: 750, maxHeight: 500 },
+  PICTURE_OPTIONS_THUMB: { maxWidth: 350, fit: 'inside', suffix: '-thumb' },
+  PICTURE_OPTIONS_THUMB_PORTRAIT: { maxWidth: 350, maxHeight: 180, fit: 'contain', suffix: '-thumb' },
+  PICTURE_OPTIONS_ICON: { maxWidth: 60, maxHeight: 60, fit: 'cover', suffix: '-icon' },
+
   // Limits
   MAX_BODY_ANY: 100000,
   MAX_BODY_POST: 100000,

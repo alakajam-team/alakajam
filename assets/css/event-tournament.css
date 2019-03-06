@@ -29,3 +29,16 @@
     padding-right: 10px;
   }
 }
+
+/* Event tournament game grid is not perfect, when css-grid-2 will be ready we can use https://www.w3.org/TR/css-grid-2/#subgrids*/
+.tournament.game-grid {
+  & .entry-thumb {
+    flex: none;
+    &__author {
+      min-height: 2rem;
+    }
+  }
+  & .table {
+    flex:1;
+  }
+}

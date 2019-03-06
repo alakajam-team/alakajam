@@ -39,9 +39,9 @@
         {% if rescueEntries.length > 0 %}
         <div class="entries-rescue">
           <h3>Rescue these games by rating them!</h3>
-          <div class="row">
+          <div class="game-grid">
             {% for entry in rescueEntries %}
-            <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="game-grid-entry">
               {{ eventMacros.entryThumb(entry) }}
               <div class="entry-thumb__score">
                 <span class="pull-right">{{ requiredVotes - entry.related('details').get('rating_count') }}</span>
@@ -56,9 +56,9 @@
 
       {{ formMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
       
-      <div class="row">
+      <div class="game-grid">
       {% for entry in entriesCollection.models %}
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="game-grid-entry">
           {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
         </div>
       {% endfor %}
