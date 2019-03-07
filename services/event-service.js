@@ -766,6 +766,9 @@ async function findGames (options = {}) {
         })
     })
   }
+  if (options.highScoresSupport) {
+    query = query.where('status_high_score', '!=', 'off')
+  }
 
   // Pagination settings
   if (options.pageSize === undefined) options.pageSize = 30

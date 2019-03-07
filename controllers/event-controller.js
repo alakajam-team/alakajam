@@ -133,8 +133,8 @@ async function handleGameSearch (req, res, searchOptions = {}) {
     searchOptions.divisions = req.query.divisions.map(forms.sanitizeString)
 
     // Hack for Kajam's ranked division
-    if (!searchOptions.divisions.includes(enums.DIVISION.SOLO)
-        || !searchOptions.divisions.includes(enums.DIVISION.TEAM)) {
+    if (searchOptions.divisions.includes(enums.DIVISION.SOLO) ||
+        searchOptions.divisions.includes(enums.DIVISION.TEAM)) {
       searchOptions.divisions.push(enums.DIVISION.RANKED)
     }
   }
@@ -183,6 +183,11 @@ async function handleGameSearch (req, res, searchOptions = {}) {
   // Hide rated/commented
   if (req.query.hideReviewed && res.locals.user) {
     searchOptions.notReviewedById = res.locals.user.get('id')
+  }
+
+  // High scores
+  if (req.query.highScoresSupport) {
+    searchOptions.highScoresSupport = true
   }
 
   return searchOptions

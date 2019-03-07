@@ -55,11 +55,20 @@
             {% endfor %}
         </select>
       </div>
-      {% if context.user %}
       <div class="form-group">
-        <p><label><input type="checkbox" name="hideReviewed" {{ 'checked="checked"' if context.searchOptions.notReviewedById }}> Hide rated or commented by me</label></label>
-      </div>
+      {% if context.user %}
+        <div>
+          <label><input type="checkbox" name="hideReviewed" {{ 'checked="checked"' if context.searchOptions.notReviewedById }}>
+          Hide rated or commented by me
+          </label>
+        </div>
       {% endif %}
+        <div>
+          <label><input type="checkbox" name="highScoresSupport" {{ 'checked="checked"' if context.searchOptions.highScoresSupport }}>
+          High scores support
+          </label>
+        </div>
+      </div>
       <div class="form-group">
         <input type="submit" class="btn btn-primary" value="Apply" />
         <a href="?" class="btn btn-default">Clear</a>
@@ -69,7 +78,7 @@
 {% endmacro %}
 
 {% macro searchDescription(searchOptions, searchedEvent) %}
-  {% if searchOptions.search or searchOptions.user or searchOptions.eventId !== undefined or searchOptions.tags or searchOptions.divisions %}
+  {% if searchOptions.search or searchOptions.user or searchOptions.eventId !== undefined or searchOptions.tags or searchOptions.divisions or searchOptions.highScoresSupport %}
     <div class="count" style="font-size: 1rem"><!-- TODO rename CSS class to "legend" -->
       {{ ('made by ' + searchOptions.user.get('title')) if searchOptions.user }}
       {% if searchOptions.tags and searchOptions.tags.length > 0 %}
@@ -82,6 +91,7 @@
       {% endif %}
       {{ 'on restricted platforms' if searchOptions.platforms.length > 0 }}
       {{ 'in division' + ('s' if searchOptions.divisions.length > 1) + ' "' + (searchOptions.divisions| join(', ') | replace(", unranked", "")) + '"' if searchOptions.divisions }}
+      {{ 'with high scores support' if searchOptions.highScoresSupport }}
       {{ 'matching "' + searchOptions.search + '"' if searchOptions.search }}
     </div>
   {% endif %}

@@ -15,11 +15,11 @@ exports.up = async function (knex, Promise) {
         i++
         if (entry.picturePreviews().length > 0) {
           u++
-            let movedFile = '.' + entry.picturePreviews()[0].replace('.','-old.')
-            await fs.rename('.' + entry.picturePreviews()[0], movedFile)
-            await eventService.setEntryPicture(entry, movedFile)
-            await entry.save()
-            await fs.unlink(movedFile)
+          let movedFile = '.' + entry.picturePreviews()[0].replace('.', '-old.')
+          await fs.rename('.' + entry.picturePreviews()[0], movedFile)
+          await eventService.setEntryPicture(entry, movedFile)
+          await entry.save()
+          await fs.unlink(movedFile)
         }
         console.log(i + '/' + entries.length)
       } catch (e) {
