@@ -47,17 +47,13 @@
       </div>
       <div class="form-group">
         <label for="divisions">Divisions</label>
-        <div>
-          <div class="btn-group" data-toggle="buttons">
+        <select name="divisions" class="form-control js-select" multiple="multiple">
             {% set divisions = context.event.get('divisions')|keys if context.event else ['solo', 'team', 'unranked'] %}
             {% for division in divisions %}
               {% set active = not context.searchOptions.divisions or context.searchOptions.divisions.includes(division) %}
-              <label class="btn btn-default {{ 'active' if active }}">
-                <input type="checkbox" name="division-{{ division }}" {{ 'checked="checked"' if active }} autocomplete="off"> {{ division.replace('Unrank') | capitalize }}
-              </label>
+              <option value="{{ division }}" {{ 'selected' if active }}>{{ division.replace('Unrank') | capitalize }}</option>
             {% endfor %}
-          </div>
-        </div>
+        </select>
       </div>
       {% if context.user %}
       <div class="form-group">
@@ -73,7 +69,7 @@
 {% endmacro %}
 
 {% macro searchDescription(searchOptions, searchedEvent) %}
-  {% if searchOptions.search or searchOptions.user or searchOptions.eventId !== undefined or searchOptions.tags %}
+  {% if searchOptions.search or searchOptions.user or searchOptions.eventId !== undefined or searchOptions.tags or searchOptions.divisions %}
     <div class="count" style="font-size: 1rem"><!-- TODO rename CSS class to "legend" -->
       {{ ('made by ' + searchOptions.user.get('title')) if searchOptions.user }}
       {% if searchOptions.tags and searchOptions.tags.length > 0 %}
@@ -85,7 +81,7 @@
         {{ 'in external events' if searchOptions.eventId|dump === 'null' }}
       {% endif %}
       {{ 'on restricted platforms' if searchOptions.platforms.length > 0 }}
-      {{ 'in division' + ('s' if searchOptions.divisions.length > 1) + ' "' + searchOptions.divisions + '"' if searchOptions.divisions }}
+      {{ 'in division' + ('s' if searchOptions.divisions.length > 1) + ' "' + (searchOptions.divisions| join(', ') | replace(", unranked", "")) + '"' if searchOptions.divisions }}
       {{ 'matching "' + searchOptions.search + '"' if searchOptions.search }}
     </div>
   {% endif %}

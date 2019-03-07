@@ -126,16 +126,16 @@ async function handleGameSearch (req, res, searchOptions = {}) {
   }
 
   // Division
-  for (let key in enums.DIVISION) {
-    let division = enums.DIVISION[key]
-    let fieldName = 'division-' + division
-    if (req.query[fieldName]) {
-      searchOptions.divisions = searchOptions.divisions || []
-      searchOptions.divisions.push(division)
-      if (division !== enums.DIVISION.UNRANKED &&
-          !searchOptions.divisions.includes(enums.DIVISION.RANKED)) {
-        searchOptions.divisions.push(enums.DIVISION.RANKED)
-      }
+  if (req.query.divisions) {
+    if (typeof req.query.divisions === 'string') {
+      req.query.divisions = [req.query.divisions]
+    }
+    searchOptions.divisions = req.query.divisions.map(forms.sanitizeString)
+
+    // Hack for Kajam's ranked division
+    if (!searchOptions.divisions.includes(enums.DIVISION.SOLO)
+        || !searchOptions.divisions.includes(enums.DIVISION.TEAM)) {
+      searchOptions.divisions.push(enums.DIVISION.RANKED)
     }
   }
   if (searchOptions.divisions && searchOptions.divisions.length === Object.keys(enums.DIVISION).length) {
