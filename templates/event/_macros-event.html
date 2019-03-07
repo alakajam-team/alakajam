@@ -1,3 +1,5 @@
+{% import "_macros-form.html" as formMacros %}
+
 {% macro entryThumb(entry, options = {}) %}
 <div class="entry-thumb">
   <a href="{{ buildUrl(entry, 'entry') }}">
@@ -32,26 +34,27 @@
      </a>{{- ', ' if not loop.last -}}
     {%- endfor %}
   </div>
-  <div class="entry-thumb__platforms">
+  <div class="entry-thumb__footer">
+    {% if options.showEvent %}
+      <span class="entry-thumb__event">
+        {% if entry.get('event_id') %}
+          on <a href="{{ buildUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
+        {% elseif entry.get('external_event') %}
+          on {{ entry.get('external_event') }}
+        {% endif %}
+      </span>
+    {% endif %}
+    {% if options.showKarma %}
+      <span class="entry-thumb__karma has-tooltip" data-toggle="tooltip"
+          data-original-title="Rate and review other games to increase your karma, and get featured higher on the list!">
+        Karma: {{ entry.get('karma') | digits(0) }} 
+      </span>
+    {% endif %}
     {% for platform in entry.get('platforms') %}
       {{ entryPlatformIcon(platform, { hideLabel: true }) }}
     {% endfor %}
     <span class="label label-default label-xs">{{ entry.get('division') | capitalize }}</span>
   </div>
-  {% if options.showEvent %}
-    <div class="entry-thumb__event">
-      {% if entry.get('event_id') %}
-        on <a href="{{ buildUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
-      {% elseif entry.get('external_event') %}
-        on {{ entry.get('external_event') }}
-      {% endif %}
-    </div>
-  {% endif %}
-  {% if options.showKarma %}
-    <div class="entry-thumb__score">
-      Karma {{ entry.get('karma') | digits(0) }}
-    </div>
-  {% endif %}
 </div>
 {% endmacro %}
 

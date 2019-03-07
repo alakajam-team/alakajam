@@ -63,7 +63,7 @@
           {% set firstItemIndex = 1 + (entriesCollection.pagination.page - 1) * entriesCollection.pagination.pageSize %}
           {{ firstItemIndex }} - {{ firstItemIndex + entriesCollection.length - 1 }}
         {% endif %}
-        sorted by Karma {{ formMacros.tooltip('Rate and comment other games to increase your karma, so you are featured higher on the list!') }}</div>
+        sorted by Karma {{ formMacros.tooltip('Rate and review other games to increase your karma, and get featured higher on the list!') }}</div>
 
         {{ formMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
 

@@ -45,7 +45,6 @@
   flex-direction: column;
   text-align: center;
   background-color: white;
-  padding-bottom: 20px;
   text-align: left;
   position: relative;
 
@@ -82,7 +81,7 @@
     transition: 0.1s;
     z-index: 1;
   }
-  &__description-container:hover &__description {
+  & a:hover &__description {
     color: white;
     background-color: var(--alt);
     transition: 0.3s;
@@ -116,8 +115,7 @@
   }
   
   &__event {
-    padding-top: 5px;
-    padding-left: 10px;
+    float: left;
     color: var(--text-light);
     font-size: 0.8rem;
     
@@ -131,26 +129,24 @@
     }
   }
 
-  &__score {
-    margin: 0 10px 0 10px;
+  &__footer {
+    text-align: right;
+    padding: 6px 0 10px 0;
+    margin: 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
     color: var(--text-light);
-    font-weight: bold;
-    
-    & span {
-      font-size: 1.2rem;
+
+    & .fas {
+      margin-left: 3px;
     }
   }
 
-  &__platforms {
-    position: absolute;
-    text-align: right;
-    bottom: 10px;
-    right: 10px;
+  &__karma {
     color: var(--text-light);
-
-    & span {
-      margin-left: 3px;
-    }
+    float: left;
+    font-weight: bold;
+    vertical-align: bottom;
   }
   
   &__form {
