@@ -1,0 +1,28 @@
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+	.game-grid {
+    display: block;
+
+    & .game-grid-entry {
+      display: inline-block;
+      width: 300px;
+      padding: 0 10px;
+
+      & .entry-thumb {
+        min-height: 270px;
+        
+        &__author {
+          flex: none;
+        }
+        &__form {
+          position: relative;
+          right: 0;
+          padding-bottom: 10px;
+        }
+      }
+    }
+  }
+
+  .container .game-grid-entry {
+    width: 280px;
+  }
+}

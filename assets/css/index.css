@@ -31,3 +31,8 @@
 @import "./event-tournament.css";
 @import "./event-results.css";
 @import "./entry.css";
+
+/**
+ * IE Hacks
+ */
+ @import "./ie.css";
