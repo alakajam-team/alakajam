@@ -38,6 +38,7 @@ const constants = require('../core/constants')
 const models = require('../core/models')
 const db = require('../core/db')
 const cache = require('../core/cache')
+const log = require('../core/log')
 
 module.exports = {
   searchPlatforms,
@@ -125,48 +126,53 @@ function createPlatform (name) {
 
 /**
  * Set the platforms of an entry.
+ * The data is duplicated on `entry.platforms` (for quick access) and the `entry_platform` table (for search queries).
  *
  * @param {models.Entry} entry the entry instance.
  * @param {models.Platform[]} platforms the platforms to set.
  * @returns {Promise} a promise which resolves when complete.
  */
-async function setEntryPlatforms (entry, platforms, { updateEntry = true }) {
+async function setEntryPlatforms (entry, platforms) {
   const entryId = entry.get('id')
-  const nameList = JSON.stringify(platforms.map(p => p.get('name')))
+  const platformNames = platforms.map(p => p.get('name'))
   const platformIds = platforms.map(p => p.id)
 
-  return db.knex.transaction(async function (transaction) {
-    const existingIds = (
-      await transaction('entry_platform')
-        .select('platform_id')
-        .where('entry_id', entryId)
-    ).map(({platform_id}) => platform_id) // eslint-disable-line camelcase
-    const toRemoveIds = existingIds.filter(id => !platformIds.includes(id))
-    const toAdd = platforms
-      .filter(p => !existingIds.includes(p.id))
-      .map(p => ({
-        entry_id: entryId,
-        platform_id: p.id,
-        platform_name: p.get('name')
-      }))
+  try {
+    await db.knex.transaction(async function (transaction) {
+      const existingIds = (
+        await transaction('entry_platform')
+          .select('platform_id')
+          .where('entry_id', entryId)
+      ).map(({platform_id}) => platform_id) // eslint-disable-line camelcase
+      const toRemoveIds = existingIds.filter(id => !platformIds.includes(id))
+      const toAdd = platforms
+        .filter(p => !existingIds.includes(p.id))
+        .map(p => ({
+          entry_id: entryId,
+          platform_id: p.id,
+          platform_name: p.get('name')
+        }))
 
-    const promises = []
-    if (updateEntry) {
-      promises.push(entry.save('platforms', nameList, {transaction}))
-    }
-    if (toAdd.length > 0) { // Insert new entry_platform records.
-      promises.push(transaction('entry_platform').insert(toAdd))
-    }
-    if (toRemoveIds.length > 0) { // Remove old entry_platform records.
-      promises.push(
-        transaction('entry_platform')
-          .whereIn('platform_id', toRemoveIds)
-          .andWhere('entry_id', '=', entryId)
-          .del()
-      )
-    }
-    await Promise.all(promises)
-  })
+      const promises = []
+      promises.push(entry.save('platforms', platformNames, {transacting: transaction}))
+
+      if (toAdd.length > 0) { // Insert new entry_platform records.
+        promises.push(transaction('entry_platform').insert(toAdd))
+      }
+      if (toRemoveIds.length > 0) { // Remove old entry_platform records.
+        promises.push(
+          transaction('entry_platform')
+            .whereIn('platform_id', toRemoveIds)
+            .andWhere('entry_id', '=', entryId)
+            .del()
+        )
+      }
+      await Promise.all(promises)
+    })
+  } catch (e) {
+    log.error('Failed to update entry platforms')
+    log.error(e)
+  }
 }
 </code></pre>
         </article>
@@ -178,13 +184,13 @@ async function setEntryPlatforms (entry, platforms, { updateEntry = true }) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>

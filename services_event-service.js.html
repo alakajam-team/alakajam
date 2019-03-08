@@ -40,6 +40,7 @@ const db = require('../core/db')
 const models = require('../core/models')
 const constants = require('../core/constants')
 const cache = require('../core/cache')
+const fileStorage = require('../core/file-storage')
 const postService = require('./post-service')
 const securityService = require('./security-service')
 const settingService = require('./setting-service')
@@ -48,13 +49,23 @@ module.exports = {
   createEvent,
   areSubmissionsAllowed,
   getDefaultDivision,
-
   findEventById,
   findEventByName,
   findEventByStatus,
   findEvents,
 
+  createEventTemplate,
+  findEventTemplates,
+  findEventTemplateById,
+  deleteEventTemplate,
+
+  createEventPreset,
+  findEventPresets,
+  findEventPresetById,
+  deleteEventPreset,
+
   createEntry,
+  setEntryPicture,
   searchForTeamMembers,
   findTeamMembers,
   setTeamMembers,
@@ -73,31 +84,45 @@ module.exports = {
   findRescueEntries,
   countEntriesByEvent,
 
-  refreshCommentScore,
+  refreshCommentKarma,
   refreshEventReferences,
   refreshEntryPlatforms,
-  refreshUserCommentScoresOnNode,
+  refreshUserCommentKarmaOnNode,
   refreshEventCounts
 }
 
 /**
  * Creates a new empty event
+ * @param {EventTemplate} template An optional template to initialize the event with
  * @return {Event}
  */
-function createEvent () {
-  return new models.Event({
+function createEvent (template = null) {
+  const event = new models.Event({
     'status': enums.EVENT.STATUS.PENDING,
-    'status_rules': enums.EVENT.STATUS_RULES.DISABLED,
+    'status_rules': enums.EVENT.STATUS_RULES.OFF,
     'status_theme': enums.EVENT.STATUS_THEME.DISABLED,
     'status_entry': enums.EVENT.STATUS_ENTRY.OFF,
     'status_results': enums.EVENT.STATUS_RESULTS.DISABLED,
+    'status_tournament': enums.EVENT.STATUS_TOURNAMENT.DISABLED,
     'divisions': {
       'solo': '48 hours&lt;br />Everything from scratch',
       'team': '48 hours&lt;br />Everything from scratch',
       'unranked': '72 hours&lt;br />No rankings, just feedback'
-    },
-    'published_at': new Date() // TODO Let admins choose when to publish
+    }
   })
+  if (template) {
+    event.set({
+      'title': template.get('event_title'),
+      'event_preset_id': template.get('event_preset_id'),
+      'divisions': template.get('divisions') || event.get('divisions')
+    })
+    const details = event.related('details')
+    details.set({
+      'links': template.get('links'),
+      'category_titles': template.get('category_titles')
+    })
+  }
+  return event
 }
 
 function areSubmissionsAllowed (event) {
@@ -144,7 +169,7 @@ async function findEventByName (name) {
  */
 async function findEvents (options = {}) {
   let query = models.Event.forge()
-    .orderBy('published_at', options.sortDatesAscending ? 'ASC' : 'DESC')
+    .orderBy('started_at', options.sortDatesAscending ? 'ASC' : 'DESC')
   if (options.status) query = query.where('status', options.status)
   if (options.statusNot) query = query.where('status', '&lt;>', options.statusNot)
   if (options.name) query = query.where('name', options.name)
@@ -166,8 +191,95 @@ async function findEventByStatus (status) {
     sortOrder = 'DESC'
   }
   return models.Event.where('status', status)
-    .orderBy('published_at', sortOrder)
+    .orderBy('started_at', sortOrder)
     .fetch()
+}
+
+/**
+ * Creates an empty, unpersisted event template.
+ */
+function createEventTemplate () {
+  return new models.EventTemplate()
+}
+
+/**
+ * Finds all event templates.
+ */
+async function findEventTemplates () {
+  return models.EventTemplate
+    .forge()
+    .orderBy('title')
+    .fetchAll()
+}
+
+/**
+ * Finds an event template.
+ * @param {number} id
+ */
+async function findEventTemplateById (id) {
+  return models.EventTemplate.where({ id }).fetch()
+}
+
+/**
+ * Deletes an event template.
+ * @param {EventTemplate} eventTemplate
+ */
+async function deleteEventTemplate (eventTemplate) {
+  return eventTemplate.destroy()
+}
+
+/**
+ * Creates an empty, unpersisted event preset.
+ * @param {EventPreset} referencePreset Optional reference preset to clone data from
+ */
+function createEventPreset (referencePreset = null) {
+  let eventPreset = new models.EventPreset({
+    countdown_config: { date: new Date(0) }
+  })
+  if (referencePreset) {
+    let overrideAttributes = {
+      id: null,
+      title: (referencePreset.get('title') || '') + ' (copy)'
+    }
+    eventPreset.set('countdown_config',
+      Object.assign({}, referencePreset.get('countdown_config'), eventPreset.get('countdown_config')))
+    eventPreset.set(Object.assign({}, referencePreset.attributes, overrideAttributes))
+  }
+  return eventPreset
+}
+
+/**
+ * Finds all event presets.
+ */
+async function findEventPresets () {
+  return models.EventPreset
+    .forge()
+    .orderBy('title')
+    .fetchAll()
+}
+
+/**
+ * Finds an event preset.
+ * @param {number} id
+ */
+async function findEventPresetById (id) {
+  return models.EventPreset
+    .where({ id })
+    .fetch({ withRelated: ['events'] })
+}
+
+/**
+ * Deletes an event preset after making sure no event is currently using it.
+ * @param {EventPreset} eventPreset
+ */
+async function deleteEventPreset (eventPreset) {
+  await eventPreset.load('events')
+  let eventsUsingPreset = eventPreset.related('events').length
+  if (eventsUsingPreset > 0) {
+    throw new Error(`Cannot delete preset ${eventPreset.get('title')} because ${eventsUsingPreset} events depend on it`)
+  } else {
+    return eventPreset.destroy()
+  }
 }
 
 /**
@@ -180,7 +292,8 @@ async function createEntry (user, event) {
   let entry = new models.Entry({
     'name': 'untitled',
     'title': '',
-    'comment_count': 0
+    'comment_count': 0,
+    'pictures': '{previews: []}'
   })
 
   if (event) {
@@ -209,7 +322,52 @@ async function createEntry (user, event) {
   await entryDetails.save()
   await entry.load('details')
 
+  // Attach posts from same event
+  let posts = await postService.findPosts({
+    eventId: event.get('id'),
+    specialPostType: null
+  })
+  posts.each(async function (post) {
+    post.set('entry_id', entry.get('id'))
+    await post.save()
+  })
+
   return entry
+}
+
+/**
+ * Sets the entry picture and generates its thumbnails
+ * @param {Entry} entry
+ * @param {object|string} file The form upload
+ */
+async function setEntryPicture (entry, file) {
+  let picturePath = '/entry/' + entry.get('id')
+  let result = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_DEFAULT)
+  if (!result.error) {
+    entry.set('updated_at', new Date())
+    // Thumbnails creation
+    let resultThumbnail
+    if (result &amp;&amp; result.width >= result.height * 1.1) {
+      resultThumbnail = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_THUMB)
+    } else {
+      resultThumbnail = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_THUMB_PORTRAIT)
+    }
+    let resultIcon = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_ICON)
+
+    // Delete previous pictures (in case of a different extension)
+    if (entry.picturePreviews().length > 0 &amp;&amp; result.finalPath !== entry.picturePreviews()[0]) {
+      await fileStorage.remove(entry.picturePreviews()[0])
+    }
+    if (entry.pictureThumbnail() &amp;&amp; resultThumbnail.finalPath !== entry.pictureThumbnail()) {
+      await fileStorage.remove(entry.pictureThumbnail())
+    }
+    if (entry.pictureIcon() &amp;&amp; resultIcon.finalPath !== entry.pictureIcon()) {
+      await fileStorage.remove(entry.pictureIcon())
+    }
+
+    entry.set('pictures', { previews: [result.finalPath], thumbnail: resultThumbnail.finalPath, icon: resultIcon.finalPath })
+  }
+  return result
 }
 
 /**
@@ -317,6 +475,7 @@ function setTeamMembers (currentUser, entry, userIds) {
     let numRemoved = 0
     let numAdded = 0
     let alreadyEntered = []
+    let entryId = entry.get('id')
 
     if (entry.get('division') === enums.DIVISION.SOLO) {
       // Force only keeping the owner role
@@ -324,8 +483,13 @@ function setTeamMembers (currentUser, entry, userIds) {
         .whereNot('permission', constants.PERMISSION_MANAGE)
         .andWhere({
           node_type: 'entry',
-          node_id: entry.id
+          node_id: entryId
         })
+        .del()
+
+      // Delete any pending invites
+      await transaction('entry_invite')
+        .where('entry_id', entryId)
         .del()
     } else {
       // Remove users not in team list.
@@ -333,14 +497,14 @@ function setTeamMembers (currentUser, entry, userIds) {
         .whereNotIn('user_id', userIds)
         .andWhere({
           node_type: 'entry',
-          node_id: entry.id
+          node_id: entryId
         })
         .del()
 
       // Remove invites not in team list
       numRemoved += await transaction('entry_invite')
         .whereNotIn('invited_user_id', userIds)
-        .andWhere('entry_id', entry.id)
+        .andWhere('entry_id', entryId)
         .del()
 
       // List users who entered the event in this or another team, or already have an invite.
@@ -355,7 +519,7 @@ function setTeamMembers (currentUser, entry, userIds) {
       } else {
         alreadyEntered = await existingRolesQuery.andWhere({
           node_type: 'entry',
-          node_id: entry.id
+          node_id: entryId
         })
       }
       if (entry.get('id')) {
@@ -383,7 +547,7 @@ function setTeamMembers (currentUser, entry, userIds) {
         .whereIn('id', userIds)
       for (let toCreateUserRow of toCreateUserData) {
         let invite = new models.EntryInvite({
-          entry_id: entry.id,
+          entry_id: entryId,
           invited_user_id: toCreateUserRow.id,
           invited_user_title: toCreateUserRow.title || toCreateUserRow.name,
           permission: constants.PERMISSION_WRITE
@@ -408,6 +572,11 @@ function setTeamMembers (currentUser, entry, userIds) {
 }
 
 async function acceptInvite (user, entry) {
+  // Verify we're not on a solo entry
+  if (entry.get('division') === enums.DIVISION.SOLO) {
+    return deleteInvite(user, entry)
+  }
+
   await db.transaction(async function (transaction) {
     // Check that the invite exists
     let invite = await models.EntryInvite.where({
@@ -416,7 +585,7 @@ async function acceptInvite (user, entry) {
     }).fetch({ transacting: transaction })
 
     if (invite) {
-      // Check if the user role exists yet
+      // Check if the user role already exists
       let userRole = await models.UserRole.where({
         node_id: entry.get('id'),
         node_type: 'entry',
@@ -504,11 +673,27 @@ async function deleteEntry (entry) {
   })
 
   await db.transaction(async function (t) {
-    // Delete user roles manually (because no cascading)
-    await entry.load('userRoles', { transacting: t })
+    // Delete user roles &amp; comments manually (because no cascading)
+    await entry.load(['userRoles.user', 'comments.user'], { transacting: t })
     entry.related('userRoles').each(function (userRole) {
+      cache.user(userRole.related('user')).del('latestEntry')
       userRole.destroy({ transacting: t })
     })
+    entry.related('comments').each(function (comment) {
+      cache.user(comment.related('user')).del('byUserCollection')
+      comment.destroy({ transacting: t })
+    })
+
+    // Delete pictures
+    if (entry.picturePreviews().length > 0) {
+      await fileStorage.remove(entry.picturePreviews()[0])
+    }
+    if (entry.pictureThumbnail()) {
+      await fileStorage.remove(entry.pictureThumbnail())
+    }
+    if (entry.pictureIcon()) {
+      await fileStorage.remove(entry.pictureIcon())
+    }
 
     // Delete entry
     await entry.destroy({ transacting: t })
@@ -536,7 +721,7 @@ async function findGames (options = {}) {
             this.where('event.status', enums.EVENT.STATUS.CLOSED).orWhereNull('event.status')
           })
           .orderByRaw('entry_details.rating_1 DESC ' + ((config.DB_TYPE === 'postgresql') ? 'NULLS LAST' : 'IS NOT NULL'))
-          .orderBy('entry.feedback_score', 'DESC')
+          .orderBy('entry.karma', 'DESC')
       })
     } else if (options.sortByRanking) {
       query = query.query(function (qb) {
@@ -549,7 +734,7 @@ async function findGames (options = {}) {
           .orderBy('entry.division')
       })
     } else if (options.eventId !== null) {
-      query = query.orderBy('entry.feedback_score', 'DESC')
+      query = query.orderBy('entry.karma', 'DESC')
     }
     query = query.orderBy('entry.created_at', 'DESC')
   }
@@ -561,7 +746,7 @@ async function findGames (options = {}) {
     query = query.query(function (qb) {
       return qb.leftJoin('entry_platform', 'entry_platform.entry_id', 'entry.id')
         .whereIn('entry_platform.platform_id', options.platforms)
-        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score',
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.karma', 'entry.created_at',
           'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
     })
   }
@@ -569,7 +754,7 @@ async function findGames (options = {}) {
     query = query.query(function (qb) {
       return qb.leftJoin('entry_tag', 'entry_tag.entry_id', 'entry.id')
         .whereIn('entry_tag.tag_id', options.tags.map(tag => tag.id))
-        .groupBy('entry.id', 'entry_details.rating_1', 'entry.feedback_score',
+        .groupBy('entry.id', 'entry_details.rating_1', 'entry.karma', 'entry.created_at',
           'entry.division', 'entry_details.ranking_1', 'entry_details.rating_count') // all order by options must appear
     })
   }
@@ -578,7 +763,7 @@ async function findGames (options = {}) {
   }
   if (options.notReviewedById) {
     query = query.query(function (qb) {
-      return qb.distinct()
+      return qb
         // Hide rated
         .leftJoin('entry_vote', function () {
           this.on('entry_vote.entry_id', '=', 'entry.id')
@@ -592,6 +777,12 @@ async function findGames (options = {}) {
             'node_type': 'entry'
           })
           .select('node_id'))
+        // Hide own entry (not strictly requested, but sensible)
+        .leftJoin('user_role', function () {
+          this.on('user_role.node_id', '=', 'entry.id')
+            .andOn('user_role.user_id', '=', options.notReviewedById)
+        })
+        .whereNull('user_role.id')
     })
   }
   if (options.userId) {
@@ -602,6 +793,9 @@ async function findGames (options = {}) {
           'user_role.node_type': 'entry'
         })
     })
+  }
+  if (options.highScoresSupport) {
+    query = query.where('status_high_score', '!=', 'off')
   }
 
   // Pagination settings
@@ -659,27 +853,16 @@ async function findUserEntries (user) {
         'user_role.user_id': user.get('id'),
         'user_role.node_type': 'entry'
       })
-  }).fetchAll({ withRelated: ['userRoles', 'event'] })
-
-  entriesCollection.models.sort(function (a, b) {
-    // Sort by most recent event first, then external entries sorted by event name
-    // TODO Sort by publication date
-    if (a.get('event_id')) {
-      if (b.get('event_id')) {
-        return b.get('created_at') - a.get('created_at')
-      } else {
-        return -1
-      }
-    } else {
-      if (b.get('event_id')) {
-        return 1
-      } else {
-        return (b.get('external_event') || '').localeCompare(a.get('external_event'))
-      }
-    }
   })
+    .orderBy('published_at', 'desc')
+    .orderBy('external_event', 'desc')
+    .fetchAll({ withRelated: ['userRoles', 'event'] })
 
-  return entriesCollection
+  // Move entries without a publication date to the end (otherwise nulls would be first)
+  let entriesWithoutPublicationDate = entriesCollection.filter(entry => !entry.get('published_at'))
+  return new db.Collection(entriesCollection
+    .difference(entriesWithoutPublicationDate)
+    .concat(entriesWithoutPublicationDate))
 }
 
 /**
@@ -796,7 +979,7 @@ async function refreshEntryPlatforms (entry) {
   await Promise.all(tasks)
 }
 
-async function refreshCommentScore (comment) {
+async function refreshCommentKarma (comment) {
   await comment.load(['node.comments', 'node.userRoles'])
 
   let isTeamMember = 0
@@ -811,19 +994,19 @@ async function refreshCommentScore (comment) {
 
   let adjustedScore = 0
   if (!isTeamMember) {
-    let rawScore = _computeRawCommentScore(comment)
+    let rawScore = _computeRawCommentKarma(comment)
 
     let previousCommentsScore = 0
     let entryComments = entry.related('comments')
     for (let entryComment of entryComments.models) {
       if (entryComment.get('user_id') === comment.get('user_id') &amp;&amp; entryComment.get('id') !== comment.get('id')) {
-        previousCommentsScore += entryComment.get('feedback_score')
+        previousCommentsScore += entryComment.get('karma')
       }
     }
     adjustedScore = Math.max(0, Math.min(rawScore, 3 - previousCommentsScore))
   }
 
-  comment.set('feedback_score', adjustedScore)
+  comment.set('karma', adjustedScore)
 }
 
 /**
@@ -832,7 +1015,7 @@ async function refreshCommentScore (comment) {
  * @param {integer} userId The user id of the modified comment
  * @param {Post|Entry} node
  */
-async function refreshUserCommentScoresOnNode (node, userId) {
+async function refreshUserCommentKarmaOnNode (node, userId) {
   await node.load(['comments', 'userRoles'])
   let isTeamMember = 0
 
@@ -851,18 +1034,18 @@ async function refreshUserCommentScoresOnNode (node, userId) {
       if (comment.get('user_id') === userId) {
         let adjustedScore = 0
         if (previousCommentsScore &lt; 3) {
-          let rawScore = _computeRawCommentScore(comment)
+          let rawScore = _computeRawCommentKarma(comment)
           adjustedScore = Math.max(0, Math.min(rawScore, 3 - previousCommentsScore))
           previousCommentsScore += adjustedScore
         }
-        comment.set('feedback_score', adjustedScore)
+        comment.set('karma', adjustedScore)
         await comment.save()
       }
     }
   }
 }
 
-function _computeRawCommentScore (comment) {
+function _computeRawCommentKarma (comment) {
   let commentLength = comment.get('body').length
   if (commentLength > 300) { // Elaborate comments
     return 3
@@ -880,7 +1063,7 @@ function _computeRawCommentScore (comment) {
  */
 async function refreshEventCounts (event) {
   let countByDivision = await db.knex('entry')
-    .count().select('division')
+    .count('* as count').select('division')
     .where('event_id', event.get('id'))
     .where('published_at', '&lt;=', new Date())
     .groupBy('division')
@@ -918,13 +1101,13 @@ async function refreshEventCounts (event) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -34,8 +34,8 @@
  * @module core/models
  */
 
-const slug = require('slug')
 const bookshelf = require('./db')
+const forms = require('./forms')
 
 let modelPrototype = bookshelf.Model.prototype
 
@@ -91,8 +91,14 @@ module.exports.User = bookshelf.model('User', {
   roles: function () {
     return this.hasMany('UserRole', 'user_id')
   },
+  posts: function () {
+    return this.hasMany('Post', 'author_user_id')
+  },
   comments: function () {
     return this.hasMany('Comment', 'user_id')
+  },
+  likes: function () {
+    return this.hasMany('Like', 'user_id')
   },
   entryScores: function () {
     return this.hasMany('EntryScore', 'user_id')
@@ -102,7 +108,7 @@ module.exports.User = bookshelf.model('User', {
   }
 }, {
   // Cascading
-  dependents: ['details', 'roles', 'entryScores', 'tournamentScores']
+  dependents: ['details', 'roles', 'entryScores', 'tournamentScores', 'comments', 'posts']
 })
 
 /**
@@ -186,16 +192,17 @@ module.exports.UserRole = bookshelf.model('UserRole', {
  * | string | display_dates | The event dates, for display only
  * | string | display_theme | The event theme, for display only
  * | string | logo | Path to a logo picture
+ * | string | event_preset_id | Currently used state preset
  * | string | status | General status: 'pending', 'open' or 'closed' (not null)
  * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID (not null)
  * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'closed', 'results', or a post ID (not null)
  * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
- * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)
+ * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'voting_rescue', results', or a post ID (not null)
  * | string | status_tournament | Event tournament status: 'disabled', 'off', 'submission', 'playing', 'closed', 'results'
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | string | divisions | Divisions info: `{"name": "description"}`
- * | integer | entry_count | Total number of entries in the event.
- * | date | published_at | Publication date. If empty, the event is a draft.
+ * | integer | entry_count | Total number of entries (if a jam) or entrants (if a tournament) in the event.
+ * | date | started_at | Event start date, for sorting purposes
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -214,6 +221,9 @@ module.exports.Event = bookshelf.model('Event', {
   },
   tournamentEntries: function () {
     return this.hasMany('TournamentEntry', 'event_id')
+  },
+  preset: function () {
+    return this.hasOne('EventPreset', 'event_preset_id')
   },
 
   // Listeners
@@ -250,7 +260,7 @@ module.exports.Event = bookshelf.model('Event', {
  * |--    |--    |--
  * | increments | id | Primary key
  * | integer | event_id | Event ID (not null)
- * | integer | category_titles | Category names (JSON: [name])
+ * | string | category_titles | Category names (JSON: [name])
  * | integer | theme_count | Number of theme ideas submitted
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
@@ -265,6 +275,12 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
   tableName: 'event_details',
   idAttribute: 'id',
   hasTimestamps: true,
+
+  // Relations
+
+  event: function () {
+    return this.belongsTo('Event', 'event_id')
+  },
 
   // Listeners
 
@@ -290,10 +306,96 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
     if (attrs &amp;&amp; attrs['shortlist_elimination']) attrs['shortlist_elimination'] = JSON.stringify(attrs['shortlist_elimination'])
     if (attrs &amp;&amp; attrs['links']) attrs['links'] = JSON.stringify(attrs['links'])
     return attrs
+  }
+})
+
+/**
+ * Event preset model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | integer | id | ID
+ * | string | title | Title (not null)
+ * | string | status | General status (see Event)
+ * | string | status_rules | Event rules status (see Event)
+ * | string | status_theme | Theme voting status (see Event)
+ * | string | status_entry | Entry submission status (see Event)
+ * | string | status_results | Event results status (see Event)
+ * | string | status_tournament | Event tournament status (see Event)
+ * | string | coutdown_config | Home page countdown JSON (see Event)
+ */
+module.exports.EventPreset = bookshelf.model('EventPreset', {
+  tableName: 'event_preset',
+  idAttribute: 'id',
+
+  // Relations
+
+  events: function () {
+    return this.hasMany('Event', 'event_preset_id')
   },
 
-  event: function () {
-    return this.belongsTo('Event', 'event_id')
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs['countdown_config'] = attrs['countdown_config'] || {}
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['countdown_config']) attrs['countdown_config'] = JSON.parse(attrs['countdown_config'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs &amp;&amp; attrs['countdown_config']) attrs['countdown_config'] = JSON.stringify(attrs['countdown_config'])
+    return attrs
+  }
+})
+
+/**
+ * Event template model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | integer | id | ID
+ * | string | title | Title (not null)
+ * | string | event_title | Default event title (not null)
+ * | integer | event_preset_id | Default event preset
+ * | string | links | Default spacial pages (see EventDetails)
+ * | string | divisions | Default divisions info (see Event)
+ * | string | category_titles | Default category names (see EventDetails)
+ */
+module.exports.EventTemplate = bookshelf.model('EventTemplate', {
+  tableName: 'event_template',
+  idAttribute: 'id',
+
+  // Relations
+
+  preset: function () {
+    return this.hasOne('EventPreset', 'event_preset_id')
+  },
+
+  // Listeners
+
+  initialize: function initialize (attrs) {
+    modelPrototype.initialize.call(this)
+    attrs = attrs || {}
+    attrs['links'] = attrs['links'] || []
+    attrs['divisions'] = attrs['divisions'] || {}
+    attrs['category_titles'] = attrs['category_titles'] || []
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['links']) attrs['links'] = JSON.parse(attrs['links'])
+    if (attrs['divisions']) attrs['divisions'] = JSON.parse(attrs['divisions'])
+    if (attrs['category_titles']) attrs['category_titles'] = JSON.parse(attrs['category_titles'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs &amp;&amp; attrs['links']) attrs['links'] = JSON.stringify(attrs['links'])
+    if (attrs &amp;&amp; attrs['divisions']) attrs['divisions'] = JSON.stringify(attrs['divisions'])
+    if (attrs &amp;&amp; attrs['category_titles']) attrs['category_titles'] = JSON.stringify(attrs['category_titles'])
+    return attrs
   }
 })
 
@@ -313,7 +415,7 @@ module.exports.EventDetails = bookshelf.model('EventDetails', {
  * | string | platforms | JSON Array : [platform]
  * | string | pictures | JSON Array : [path]
  * | string | division | "solo"/"team"/"unranked" (not null)
- * | decimal | feedback_score | ([-999.999;999.999], defaults to 100, not null)
+ * | decimal | karma | ([-999.999;999.999], defaults to 100, not null)
  * | dateTime | published_at |
  * | integer | comment_count | (not null)
  * | date | created_at | Creation time (not null)
@@ -364,7 +466,7 @@ module.exports.Entry = bookshelf.model('Entry', {
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
     this.on('saving', function (model, attrs, options) {
-      model.set('name', slug(model.get('title') || '').toLowerCase() || 'unnamed')
+      model.set('name', forms.slug(model.get('title') || '').toLowerCase() || 'unnamed')
     })
     attrs = attrs || {}
     attrs.links = attrs.links || []
@@ -396,11 +498,32 @@ module.exports.Entry = bookshelf.model('Entry', {
         return userRole.get('user_title')
       }
     })
+  },
+  picturePreviews: function () {
+    if (this.has('pictures') &amp;&amp; this.get('pictures').previews) {
+      return this.get('pictures').previews
+    } else {
+      return []
+    }
+  },
+  pictureThumbnail: function () {
+    if (this.has('pictures')) {
+      return this.get('pictures').thumbnail
+    } else {
+      return undefined
+    }
+  },
+  pictureIcon: function () {
+    if (this.has('pictures')) {
+      return this.get('pictures').icon
+    } else {
+      return undefined
+    }
   }
 
 }, {
   // Cascading
-  dependents: ['details', 'comments', 'entryPlatforms', 'votes', 'invites', 'tags', 'scores'] // 'userRoles' removed because of issue #93
+  dependents: ['details', 'entryPlatforms', 'votes', 'invites', 'tags', 'scores'] // 'comments', 'userRoles' removed because of issue #93
 })
 
 /**
@@ -588,8 +711,10 @@ module.exports.EntryInvite = bookshelf.model('EntryInvite', {
  * | integer | score | (defaults to 0, not null)
  * | decimal | normalized_score | (defaults to 0, not null, [-9.999;9.999])
  * | decimal | ranking | rough ranking in percentage ([-9.999;9.999])
- * | integer | notes | (defaults to 0, not null)
- * | integer | reports | (defaults to 0, not null)
+ * | decimal | rating_elimination | lowest scores are eliminated or will soon ([-9.999;9.999])
+ * | decimal | rating_shortlist | highest scores are to be chosen for the shortlist ([-9.999;9.999])
+ * | integer | notes | total notes (defaults to 0, not null)
+ * | integer | reports | total reports (defaults to 0, not null)
  * | string | status | 'active', 'out', 'banned', 'shortlist' (not null)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
@@ -769,6 +894,8 @@ module.exports.TournamentScore = bookshelf.model('TournamentScore', {
  * | string | special_post_type | 'announcement' or empty
  * | integer | comment_count | Number of comments made on this post
  * | dateTime | published_at | Publication time
+ * | integer | like_count | Number of likes of any type on this post
+ * | string | like_details | JSON array: {type: count}
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -776,14 +903,28 @@ module.exports.Post = bookshelf.model('Post', {
   tableName: 'post',
   hasTimestamps: true,
 
+  // Listeners
+
   initialize: function initialize (attrs) {
     modelPrototype.initialize.call(this)
+
     this.on('saving', function (model, attrs, options) {
       this.trigger('titleChanged')
     })
     this.on('titleChanged', function () {
-      this.set('name', slug(this.get('title') || '').toLowerCase())
+      this.set('name', forms.slug(this.get('title') || '').toLowerCase())
     })
+
+    attrs = attrs || {}
+    attrs['like_details'] = attrs['like_details'] || {}
+    return attrs
+  },
+  parse: function parse (attrs) {
+    if (attrs['like_details']) attrs['like_details'] = JSON.parse(attrs['like_details'])
+    return attrs
+  },
+  format: function format (attrs) {
+    if (attrs &amp;&amp; attrs['like_details']) attrs['like_details'] = JSON.stringify(attrs['like_details'])
     return attrs
   },
 
@@ -804,10 +945,13 @@ module.exports.Post = bookshelf.model('Post', {
   },
   comments: function () {
     return this.morphMany('Comment', 'node', ['node_type', 'node_id'])
+  },
+  likes: function () {
+    return this.morphMany('Like', 'node', ['node_type', 'node_id'])
   }
 }, {
   // Cascading
-  dependents: ['comments'] // 'userRoles' removed because of issue #93
+  dependents: ['likes'] // 'comments', 'userRoles' removed because of issue #93
 })
 
 /**
@@ -821,7 +965,7 @@ module.exports.Post = bookshelf.model('Post', {
  * | integer | user_id | Author user ID (not null)
  * | integer | parent_id | Parent comment ID
  * | string | body | Comment body (max size: 10000)
- * | integer | feedback_score | Feedback score gained through this comment (between 1 &amp; 3, not null)
+ * | integer | karma | Karma gained through this comment (between 1 &amp; 3, not null)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -841,6 +985,33 @@ module.exports.Comment = bookshelf.model('Comment', {
     return this.belongsTo('Comment', 'parent_id', 'id')
   }
 })
+
+/**
+ * Like model
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | increments | id | Primary key
+ * | integer | node_id | ID of the target node (not null)
+ * | string | node_type | Type of the target node ('entry' or 'post', not null)
+ * | integer | user_id | Author user ID (not null)
+ * | integer | type | Like type
+ * | date | created_at | Creation time (not null)
+ * | date | modified_at | Last modification time (not null)
+ */
+module.exports.Like = bookshelf.model('Like', {
+  tableName: 'like',
+  hasTimestamps: true,
+
+  // Relations
+
+  node: function () {
+    return this.morphTo('node', ['node_type', 'node_id'], 'Post')
+  },
+  user: function () {
+    return this.belongsTo('User', 'user_id', 'id')
+  }
+})
 </code></pre>
         </article>
     </section>
@@ -851,13 +1022,13 @@ module.exports.Comment = bookshelf.model('Comment', {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>

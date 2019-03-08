@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: core/enums.js</title>
+    <title>JSDoc: Source: services/like-service.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: core/enums.js</h1>
+    <h1 class="page-title">Source: services/like-service.js</h1>
 
     
 
@@ -29,80 +29,129 @@
             <pre class="prettyprint source linenums"><code>'use strict'
 
 /**
- * Enums
+ * Like service.
  *
- * @module core/enums
+ * @module services/like-service
  */
 
+const models = require('../core/models')
+const enums = require('../core/enums')
+const db = require('../core/db')
+
 module.exports = {
-  EVENT: {
-    STATUS: {
-      PENDING: 'pending',
-      OPEN: 'open',
-      CLOSED: 'closed'
-    },
-    STATUS_RULES: {
-      DISABLED: 'disabled',
-      OFF: 'off'
-    },
-    STATUS_THEME: {
-      DISABLED: 'disabled',
-      OFF: 'off',
-      VOTING: 'voting',
-      SHORTLIST: 'shortlist',
-      CLOSED: 'closed',
-      RESULTS: 'results'
-    },
-    STATUS_ENTRY: {
-      OFF: 'off',
-      OPEN: 'open',
-      OPEN_UNRANKED: 'open_unranked',
-      CLOSED: 'closed'
-    },
-    STATUS_RESULTS: {
-      DISABLED: 'disabled',
-      OFF: 'off',
-      VOTING: 'voting',
-      VOTING_RESCUE: 'voting_rescue',
-      RESULTS: 'results'
-    },
-    STATUS_TOURNAMENT: {
-      DISABLED: 'disabled',
-      OFF: 'off',
-      SUBMISSION: 'submission',
-      PLAYING: 'playing',
-      CLOSED: 'closed',
-      RESULTS: 'results'
+  isValidLikeType,
+  findUserLikeInfo,
+  findLike,
+
+  like,
+  unlike
+}
+
+function isValidLikeType (likeType) {
+  return !!enums.LIKES[likeType]
+}
+
+/**
+ * Get all user likes on a set of nodes (can contain holes).
+ * LIMITATIONS:
+ * - All nodes must be of the same model type.
+ * - Make sure the nodes array size has a reasonable max value or the SQL might overflow (IN clause).
+ * @returns {object} An object where keys are node IDs, and values are the type of like.
+ */
+async function findUserLikeInfo (nodes, user) {
+  nodes = nodes.filter(node => !!node)
+  if (nodes.length === 0 || !user) {
+    return {}
+  }
+
+  let likeData = await db.knex('like')
+    .select('node_id', 'type')
+    .where({
+      node_type: nodes[0].tableName,
+      user_id: user.get('id')
+    })
+    .where('node_id', 'IN', nodes.map(node => node.get('id')))
+
+  let result = {}
+  likeData.forEach(like => {
+    result[like['node_id']] = like['type']
+  })
+  return result
+}
+
+async function findLike (node, userId) {
+  return models.Like.where({
+    node_type: node.tableName,
+    node_id: node.get('id'),
+    user_id: userId
+  }).fetch()
+}
+
+async function like (node, userId, likeType) {
+  if (isValidLikeType(likeType)) {
+    let addLikeType = false
+    let removeLikeType = false
+
+    let like = await findLike(node, userId)
+    if (!like) {
+      addLikeType = likeType
+      like = await node.likes().create({
+        user_id: userId,
+        type: likeType
+      })
+    } else if (like.get('type') !== likeType) {
+      removeLikeType = like.get('type')
+      addLikeType = likeType
+      like.set('type', likeType)
+      await like.save()
     }
-  },
-  ENTRY: {
-    STATUS_HIGH_SCORE: {
-      OFF: 'off',
-      NORMAL: 'normal',
-      REVERSED: 'reversed'
-    },
-    HIGH_SCORE_TYPE: {
-      NUMBER: 'number',
-      TIME: 'time'
+
+    await _refreshNodeLikes(node, addLikeType, removeLikeType)
+    return like
+  }
+}
+
+async function unlike (node, userId) {
+  let like = await findLike(node, userId)
+  if (like) {
+    let likeType = like.get('type')
+    await like.destroy()
+    await _refreshNodeLikes(node, false, likeType)
+  }
+}
+
+async function _refreshNodeLikes (node, addLikeType, removeLikeType) {
+  if (addLikeType || removeLikeType) {
+    // Update like details
+    let likeDetails = node.get('like_details') || {} // {type: count}
+    if (removeLikeType &amp;&amp; likeDetails[removeLikeType]) {
+      likeDetails[removeLikeType]--
+      if (likeDetails[removeLikeType] === 0) {
+        delete likeDetails[removeLikeType]
+      }
     }
-  },
-  THEME: {
-    STATUS: {
-      OUT: 'out',
-      ACTIVE: 'active',
-      BANNED: 'banned',
-      SHORTLIST: 'shortlist',
-      DUPLICATE: 'duplicate'
+    if (addLikeType) {
+      if (!likeDetails[addLikeType]) {
+        likeDetails[addLikeType] = 0
+      }
+      likeDetails[addLikeType]++
     }
-  },
-  DIVISION: {
-    SOLO: 'solo',
-    TEAM: 'team',
-    RANKED: 'ranked',
-    UNRANKED: 'unranked'
-  },
-  LIKES: {
-    'like': { icon_unliked: 'far fa-gem', icon_liked: 'fas fa-gem', title: 'Like' }
+
+    // Recompute like count
+    let likeCount = node.get('like_count')
+    if ((!addLikeType) !== (!removeLikeType)) {
+      likeCount = await models.Like.where({
+        node_type: node.tableName,
+        node_id: node.get('id')
+      }).count()
+    }
+
+    // Update node
+    node.set({
+      like_count: likeCount,
+      like_details: likeDetails
+    })
+    await node.save()
   }
 }
 </code></pre>

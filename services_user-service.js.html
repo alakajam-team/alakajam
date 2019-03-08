@@ -39,11 +39,13 @@ const randomKey = require('random-key')
 const path = require('path')
 const config = require('../config')
 const db = require('../core/db')
+const log = require('../core/log')
 const constants = require('../core/constants')
 const forms = require('../core/forms')
 const models = require('../core/models')
 const fileStorage = require('../core/file-storage')
-const mailService = require('../services/mail-service')
+const mailService = require('./mail-service')
+const eventService = require('./event-service')
 
 module.exports = {
   findUsers,
@@ -53,6 +55,7 @@ module.exports = {
 
   register,
   authenticate,
+  deleteUser,
 
   setPassword,
   refreshUserReferences,
@@ -86,13 +89,16 @@ async function findUsers (options = {}) {
         .where('user_role.event_id', options.eventId)
     })
   }
+  if (options.isMod) query.where('is_mod', true)
+  if (options.isAdmin) query.where('is_admin', true)
 
   if (options.count) {
     return query.count(options)
-  } else if (options.page !== undefined) {
+  } else if (options.page !== undefined || options.pageSize) {
     return query.orderBy('created_at', 'DESC')
       .fetchPage(options)
   } else {
+    if (options.orderBy) query.orderBy(options.orderBy, options.orderByDesc ? 'DESC' : 'ASC')
     return query.fetchAll(options)
   }
 }
@@ -141,7 +147,7 @@ async function searchByName (fragment, options = {}) {
  * @param email {string} email
  * @param name {string} name
  * @param password {string} unencrypted password (will be hashed before storage)
- * @returns {boolean|string} true, or an error message
+ * @returns {User|string} the created user, or an error message
  */
 async function register (email, name, password) {
   if (!name.match(USERNAME_VALIDATION_REGEX)) {
@@ -177,7 +183,7 @@ async function register (email, name, password) {
   })
   await userDetails.save()
 
-  return true
+  return user
 }
 
 /**
@@ -199,6 +205,22 @@ async function authenticate (name, password) {
     }
   }
   return false
+}
+
+/**
+ * Deletes an user, but only if it doesn't have any entries.
+ * @param {User} user
+ */
+async function deleteUser (user) {
+  let entries = await eventService.findUserEntries(user)
+  if (entries.length === 0) {
+    let userId = user.get('id')
+    await user.destroy() // XXX Comment/entry counters are not refreshed
+    log.info('User %s has been deleted', userId)
+    return {}
+  } else {
+    return { error: 'As a safety measure, you must manually delete or leave the team for all your entries before deleting your account.' }
+  }
 }
 
 /**
@@ -298,7 +320,7 @@ function validatePasswordRecoveryToken (app, token) {
 
 /**
  *
- * @param {ExpressApp} app
+ * @param {App} app
  * @param {string} token
  * @param {string} password
  * @returns {boolean|string} true or an error message
@@ -332,13 +354,13 @@ async function setPasswordUsingToken (app, token, password) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>

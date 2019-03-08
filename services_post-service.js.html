@@ -37,12 +37,16 @@
 const models = require('../core/models')
 const constants = require('../core/constants')
 const db = require('../core/db')
+const cache = require('../core/cache')
 const securityService = require('../services/security-service')
 const config = require('../config')
+
+const FIRST_PICTURE_REGEXP = /(?:!\[.*?\]\((.*?)\)|src="([^"]+)")/
 
 module.exports = {
   isPast,
   wasEdited,
+  getFirstPicture,
 
   findPosts,
   findPostById,
@@ -58,6 +62,7 @@ module.exports = {
 
   createPost,
   refreshCommentCount,
+  deletePost,
   createComment,
   deleteComment
 }
@@ -78,6 +83,19 @@ function isPast (time) {
  */
 function wasEdited (model) {
   return model.get('updated_at') - model.get('created_at') > 3600 * 1000
+}
+
+/**
+ * Finds the URL of the first picture in the body, if any.
+ * Quick and not-completely-reliable implementation.
+ * @param {Model} model Any model with a body
+ */
+function getFirstPicture (model) {
+  let matches = FIRST_PICTURE_REGEXP.exec(model.get('body'))
+  if (matches) {
+    return matches[1] || matches[2] // Markdown capture OR HTML tag capture
+  }
+  return null
 }
 
 /**
@@ -266,7 +284,7 @@ async function findOwnAnonymousCommentIds (user, nodeId, nodeType) {
  */
 async function isOwnAnonymousComment (comment, user) {
   if (comment.get('user_id') === constants.ANONYMOUS_USER_ID) {
-    let result = await db.knex('anonymous_comment_user')
+    let result = await db.knex('anonyous_comment_user')
       .count()
       .where({
         comment_id: comment.get('id'),
@@ -284,7 +302,7 @@ async function isOwnAnonymousComment (comment, user) {
  * @param  {number} eventId the optional ID of an event to associate with.
  * @return {Post}
  */
-async function createPost (user, eventId) {
+async function createPost (user, eventId = null) {
   // TODO Better use of Bookshelf API
   let post = new models.Post()
   post.set({
@@ -342,6 +360,25 @@ async function refreshCommentCount (node) {
 }
 
 /**
+ * Deletes the given post
+ * @param {Post} post
+ * @return {void}
+ */
+async function deletePost (post) {
+  await post.load(['userRoles.user', 'comments.user'])
+  post.related('userRoles').each(function (userRole) {
+    cache.user(userRole.related('user')).del('latestPostsCollection')
+    userRole.destroy()
+  })
+  post.related('comments').each(function (comment) {
+    cache.user(comment.related('user')).del('byUserCollection')
+    comment.destroy()
+  })
+
+  await post.destroy()
+}
+
+/**
  * Deletes the given comment
  * @param  {Comment} comment
  * @return {void}
@@ -364,13 +401,13 @@ async function deleteComment (comment) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>

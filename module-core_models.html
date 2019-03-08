@@ -184,8 +184,8 @@
 </tr>
 <tr>
 <td>integer</td>
-<td>feedback_score</td>
-<td>Feedback score gained through this comment (between 1 &amp; 3, not null)</td>
+<td>karma</td>
+<td>Karma gained through this comment (between 1 &amp; 3, not null)</td>
 </tr>
 <tr>
 <td>date</td>
@@ -236,7 +236,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line800">line 800</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line944">line 944</a>
     </li></ul></dd>
     
 
@@ -327,7 +327,7 @@
 </tr>
 <tr>
 <td>decimal</td>
-<td>feedback_score</td>
+<td>karma</td>
 <td>([-999.999;999.999], defaults to 100, not null)</td>
 </tr>
 <tr>
@@ -398,7 +398,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line296">line 296</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line398">line 398</a>
     </li></ul></dd>
     
 
@@ -531,7 +531,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line396">line 396</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line519">line 519</a>
     </li></ul></dd>
     
 
@@ -629,7 +629,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line533">line 533</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line656">line 656</a>
     </li></ul></dd>
     
 
@@ -717,7 +717,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line446">line 446</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line569">line 569</a>
     </li></ul></dd>
     
 
@@ -830,7 +830,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line640">line 640</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line765">line 765</a>
     </li></ul></dd>
     
 
@@ -938,7 +938,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line506">line 506</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line629">line 629</a>
     </li></ul></dd>
     
 
@@ -1004,6 +1004,11 @@
 </tr>
 <tr>
 <td>string</td>
+<td>event_preset_id</td>
+<td>Currently used state preset</td>
+</tr>
+<tr>
+<td>string</td>
 <td>status</td>
 <td>General status: 'pending', 'open' or 'closed' (not null)</td>
 </tr>
@@ -1025,7 +1030,7 @@
 <tr>
 <td>string</td>
 <td>status_results</td>
-<td>Event results status: 'disabled', 'off', 'voting', 'results', or a post ID (not null)</td>
+<td>Event results status: 'disabled', 'off', 'voting', 'voting_rescue', results', or a post ID (not null)</td>
 </tr>
 <tr>
 <td>string</td>
@@ -1045,12 +1050,12 @@
 <tr>
 <td>integer</td>
 <td>entry_count</td>
-<td>Total number of entries in the event.</td>
+<td>Total number of entries (if a jam) or entrants (if a tournament) in the event.</td>
 </tr>
 <tr>
 <td>date</td>
-<td>published_at</td>
-<td>Publication date. If empty, the event is a draft.</td>
+<td>started_at</td>
+<td>Event start date, for sorting purposes</td>
 </tr>
 <tr>
 <td>date</td>
@@ -1101,7 +1106,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line174">line 174</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line181">line 181</a>
     </li></ul></dd>
     
 
@@ -1146,7 +1151,7 @@
 <td>Event ID (not null)</td>
 </tr>
 <tr>
-<td>integer</td>
+<td>string</td>
 <td>category_titles</td>
 <td>Category names (JSON: [name])</td>
 </tr>
@@ -1234,7 +1239,341 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line236">line 236</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line246">line 246</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".EventPreset"><span class="type-signature">(static) </span>EventPreset<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Event preset model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>integer</td>
+<td>id</td>
+<td>ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>title</td>
+<td>Title (not null)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status</td>
+<td>General status (see Event)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status_rules</td>
+<td>Event rules status (see Event)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status_theme</td>
+<td>Theme voting status (see Event)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status_entry</td>
+<td>Entry submission status (see Event)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status_results</td>
+<td>Event results status (see Event)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>status_tournament</td>
+<td>Event tournament status (see Event)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>coutdown_config</td>
+<td>Home page countdown JSON (see Event)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line299">line 299</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".EventTemplate"><span class="type-signature">(static) </span>EventTemplate<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Event template model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>integer</td>
+<td>id</td>
+<td>ID</td>
+</tr>
+<tr>
+<td>string</td>
+<td>title</td>
+<td>Title (not null)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>event_title</td>
+<td>Default event title (not null)</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>event_preset_id</td>
+<td>Default event preset</td>
+</tr>
+<tr>
+<td>string</td>
+<td>links</td>
+<td>Default spacial pages (see EventDetails)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>divisions</td>
+<td>Default divisions info (see Event)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>category_titles</td>
+<td>Default category names (see EventDetails)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line340">line 340</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".Like"><span class="type-signature">(static) </span>Like<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Like model</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>increments</td>
+<td>id</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>node_id</td>
+<td>ID of the target node (not null)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>node_type</td>
+<td>Type of the target node ('entry' or 'post', not null)</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>user_id</td>
+<td>Author user ID (not null)</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>type</td>
+<td>Like type</td>
+</tr>
+<tr>
+<td>date</td>
+<td>created_at</td>
+<td>Creation time (not null)</td>
+</tr>
+<tr>
+<td>date</td>
+<td>modified_at</td>
+<td>Last modification time (not null)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line974">line 974</a>
     </li></ul></dd>
     
 
@@ -1317,7 +1656,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line432">line 432</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line555">line 555</a>
     </li></ul></dd>
     
 
@@ -1402,6 +1741,16 @@
 <td>Publication time</td>
 </tr>
 <tr>
+<td>integer</td>
+<td>like_count</td>
+<td>Number of likes of any type on this post</td>
+</tr>
+<tr>
+<td>string</td>
+<td>like_details</td>
+<td>JSON array: {type: count}</td>
+</tr>
+<tr>
 <td>date</td>
 <td>created_at</td>
 <td>Creation time (not null)</td>
@@ -1450,7 +1799,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line747">line 747</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line874">line 874</a>
     </li></ul></dd>
     
 
@@ -1626,7 +1975,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line474">line 474</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line597">line 597</a>
     </li></ul></dd>
     
 
@@ -1701,14 +2050,24 @@
 <td>rough ranking in percentage ([-9.999;9.999])</td>
 </tr>
 <tr>
+<td>decimal</td>
+<td>rating_elimination</td>
+<td>lowest scores are eliminated or will soon ([-9.999;9.999])</td>
+</tr>
+<tr>
+<td>decimal</td>
+<td>rating_shortlist</td>
+<td>highest scores are to be chosen for the shortlist ([-9.999;9.999])</td>
+</tr>
+<tr>
 <td>integer</td>
 <td>notes</td>
-<td>(defaults to 0, not null)</td>
+<td>total notes (defaults to 0, not null)</td>
 </tr>
 <tr>
 <td>integer</td>
 <td>reports</td>
-<td>(defaults to 0, not null)</td>
+<td>total reports (defaults to 0, not null)</td>
 </tr>
 <tr>
 <td>string</td>
@@ -1764,7 +2123,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line569">line 569</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line694">line 694</a>
     </li></ul></dd>
     
 
@@ -1872,7 +2231,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line604">line 604</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line729">line 729</a>
     </li></ul></dd>
     
 
@@ -1975,7 +2334,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line666">line 666</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line791">line 791</a>
     </li></ul></dd>
     
 
@@ -2088,7 +2447,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line694">line 694</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line819">line 819</a>
     </li></ul></dd>
     
 
@@ -2314,7 +2673,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line90">line 90</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line96">line 96</a>
     </li></ul></dd>
     
 
@@ -2432,7 +2791,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line133">line 133</a>
+        <a href="core_models.js.html">core/models.js</a>, <a href="core_models.js.html#line139">line 139</a>
     </li></ul></dd>
     
 
@@ -2466,13 +2825,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -47,7 +47,7 @@ let sharp = null
 try {
   sharp = require('sharp')
 } catch (e) {
-  log.warn('Sharp dependency missing. Disabled features: picture resizing, picture format validation')
+  log.warn('Sharp dependency missing. Picture resizing disabled')
 }
 
 module.exports = {
@@ -135,7 +135,13 @@ async function savePictureToModel (model, attribute, fileUpload, deleteFile, tar
       if (previousPath &amp;&amp; previousPath !== result.finalPath) {
         await remove(previousPath)
       }
-      model.set(attribute, result.finalPath)
+      if (result.finalPath === previousPath) {
+        // Make sure to change the last_updated date, because it is used
+        // on picture URLs as a query string to clear the client cache
+        model.set('updated_at', new Date())
+      } else {
+        model.set(attribute, result.finalPath)
+      }
     }
     return result
   } else {
@@ -147,12 +153,12 @@ async function savePictureToModel (model, attribute, fileUpload, deleteFile, tar
  * Saves an upload to the specified path, resizing it if needed in the process.
  * The file extension will be grabbed from the source path. If folders don't exist, they will be created.
  * @param {string} fileUploadOrPath The form field to save, or the file path if this is not a form upload
- * @param {string} targetPathWithoutExtension The path to the destination, **relative to the uploads folder**
- * @param {object} options (Optional) allowed: maxDiagonal
+ * @param {object|string} targetPathWithoutExtension The path to the destination, **relative to the uploads folder**
+ * @param {object} options (Optional) allowed: maxDiagonal / maxWidth / maxHeight / fit / suffix). See presets: constants.PICTURE_OPTIONS_*
  * @throws if the source path is not a valid picture
  * @returns {string} the URL to that path
  */
-async function savePictureUpload (fileUploadOrPath, targetPathWithoutExtension, options = {}) {
+async function savePictureUpload (fileUploadOrPath, targetPathWithoutExtension, options = { maxDiagonal: 2000 }) {
   let filePath = (typeof fileUploadOrPath === 'string') ? fileUploadOrPath : fileUploadOrPath.path
   let mimetype = (typeof fileUploadOrPath === 'string') ? mime.lookup(fileUploadOrPath) : fileUploadOrPath.mimetype
   let fileExtension = mime.extension(mimetype)
@@ -160,38 +166,55 @@ async function savePictureUpload (fileUploadOrPath, targetPathWithoutExtension, 
   if (!(await isValidPicture(filePath))) {
     return { error: 'Invalid picture type (allowed: PNG GIF JPG)' }
   }
-
   let actualTargetPath = targetPathWithoutExtension.replace(/^[\\/]/, '') // remove leading slash
   if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
     actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath)
   }
-  actualTargetPath += '.' + fileExtension
+  actualTargetPath += (options.suffix || '') + '.' + fileExtension
   let absoluteTargetPath = toAbsolutePath(actualTargetPath)
 
   await createFolderIfMissing(path.dirname(absoluteTargetPath))
-  await resize(filePath, absoluteTargetPath, options.maxDiagonal || 2000)
-  return { finalPath: url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath)) }
+  let res = await resize(filePath, absoluteTargetPath, options)
+  return { ...res, finalPath: url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath)) }
 }
 
-async function resize (sourcePath, targetPath, maxDiagonal) {
+async function resize (sourcePath, targetPath, options) {
+  let res
   // Sharp is an optional dependency
   if (sharp) {
+    // Avoid file to stay opened after resize
+    sharp.cache(false)
     // Check whether image is too big
     let source = sharp(sourcePath)
     let meta = await source.metadata()
-    let diagonalSq = meta.width * meta.width + meta.height * meta.height
-    if (diagonalSq > maxDiagonal * maxDiagonal) {
-      // Resize to max size
-      let diagonal = Math.max(Math.sqrt(diagonalSq))
-      return source.resize(
-        Math.ceil(meta.width * maxDiagonal / diagonal),
-        Math.ceil(meta.height * maxDiagonal / diagonal))
-        .toFile(targetPath)
+    if (options.maxWidth || options.maxHeight) {
+      if ((options.maxWidth &amp;&amp; meta.width > options.maxWidth) || (options.maxHeight &amp;&amp; meta.height > options.maxHeight)) {
+        return source.resize(
+          options.maxWidth, options.maxHeight, {
+            fit: options.fit || 'inside',
+            withoutEnlargement: false,
+            background: { r: 0, g: 0, b: 0, alpha: 0 }
+          }
+        ).toFile(targetPath)
+      }
+    } else {
+      let maxDiagonal = options.maxDiagonal || 2000
+      let diagonalSq = meta.width * meta.width + meta.height * meta.height
+      if (diagonalSq > maxDiagonal * maxDiagonal) {
+        // Resize to max size
+        let diagonal = Math.max(Math.sqrt(diagonalSq))
+        return source.resize(
+          Math.ceil(meta.width * maxDiagonal / diagonal),
+          Math.ceil(meta.height * maxDiagonal / diagonal))
+          .toFile(targetPath)
+      }
     }
+    res = meta
   }
 
-  // Don't modify the image if small enough (or sharp is missing)
-  return fs.rename(sourcePath, targetPath)
+  // Copy the image if small enough (or sharp is missing)
+  fs.copyFile(sourcePath, targetPath)
+  return res
 }
 
 async function exists (documentPath) {
@@ -267,13 +290,13 @@ async function createFolderIfMissing (folderPath) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>

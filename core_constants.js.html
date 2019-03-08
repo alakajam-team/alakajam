@@ -49,12 +49,14 @@ const SETTING_FEATURED_EVENT_NAME = 'featured_event_name'
 const SETTING_FEATURED_POST_ID = 'featured_post_id'
 const SETTING_ARTICLE_SIDEBAR = 'article_sidebar'
 const SETTING_SESSION_KEY = 'session_key'
+const SETTING_SESSION_SECRET = 'session_secret'
 const SETTING_INVITE_PASSWORD = 'invite_password'
 const SETTING_INVITE_PEPPER = 'invite_pepper'
 const SETTING_EVENT_REQUIRED_ENTRY_VOTES = 'event_required_entry_votes'
 const SETTING_EVENT_THEME_IDEAS_REQUIRED = 'event_theme_ideas_required'
 const SETTING_EVENT_THEME_ELIMINATION_MODULO = 'event_theme_elimination_modulo'
 const SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES = 'event_theme_elimination_min_notes'
+const SETTING_EVENT_THEME_ELIMINATION_THRESHOLD = 'event_theme_elimination_threshold'
 const SETTING_EVENT_THEME_SUGGESTIONS = 'event_theme_suggestions'
 const SETTING_EVENT_OPEN_VOTING = 'event_open_voting'
 
@@ -64,18 +66,23 @@ module.exports = {
   SETTING_FEATURED_POST_ID,
   SETTING_ARTICLE_SIDEBAR,
   SETTING_SESSION_KEY,
+  SETTING_SESSION_SECRET,
   SETTING_INVITE_PASSWORD,
   SETTING_INVITE_PEPPER,
   SETTING_EVENT_REQUIRED_ENTRY_VOTES,
   SETTING_EVENT_THEME_IDEAS_REQUIRED,
   SETTING_EVENT_THEME_ELIMINATION_MODULO,
   SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
+  SETTING_EVENT_THEME_ELIMINATION_THRESHOLD,
   SETTING_EVENT_THEME_SUGGESTIONS,
   SETTING_EVENT_OPEN_VOTING,
   EDITABLE_SETTINGS: [SETTING_FEATURED_EVENT_NAME, SETTING_FEATURED_POST_ID, SETTING_ARTICLE_SIDEBAR, SETTING_EVENT_REQUIRED_ENTRY_VOTES,
-    SETTING_EVENT_THEME_IDEAS_REQUIRED, SETTING_EVENT_THEME_ELIMINATION_MODULO, SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_SUGGESTIONS,
-    SETTING_EVENT_OPEN_VOTING],
+    SETTING_EVENT_THEME_IDEAS_REQUIRED, SETTING_EVENT_THEME_ELIMINATION_MODULO, SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_ELIMINATION_THRESHOLD,
+    SETTING_EVENT_THEME_SUGGESTIONS, SETTING_EVENT_OPEN_VOTING],
   JSON_EDIT_SETTINGS: [SETTING_ARTICLE_SIDEBAR],
+
+  // Sessions
+  REMEMBER_ME_MAX_AGE: 30 * 24 * 3600000 /* 30 days */,
 
   // Security
   PERMISSION_READ,
@@ -102,8 +109,8 @@ module.exports = {
     'video': ['poster', 'preload', 'autoplay', 'muted', 'loop', 'webkit-playsinline', 'width', 'height', 'class'],
     'source': ['src', 'type']
   },
-  ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right', 'spoiler', 'indent'],
-  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com', 'i.imgur.com'],
+  ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right', 'spoiler', 'indent', 'btn', 'btn-default', 'btn-primary'],
+  ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com', 'i.imgur.com', 'w.soundcloud.com'],
   ANONYMOUS_USER_ID: -1,
 
   // Dates
@@ -113,35 +120,48 @@ module.exports = {
   FEATURED_EVENT_DATE_FORMAT: 'MMM. Do, ha',
 
   // Entries
-  ENTRY_PLATFORM_DEFAULT_ICON: 'fa-file-o',
+  ENTRY_PLATFORM_DEFAULT_ICON: 'far fa-file',
   ENTRY_PLATFORM_ICONS: {
     'Windows': 'fab fa-windows',
     'Linux': 'fab fa-linux',
     'Mac': 'fab fa-apple',
     'Web': 'fas fa-globe',
-    'Mobile': 'fa fa-mobile-alt',
-    'Retro': 'fa fa-gamepad'
+    'Mobile': 'fas fa-mobile-alt',
+    'Retro': 'fas fa-gamepad'
   },
   DIVISION_ICONS: {
-    'solo': 'user',
-    'team': 'users',
-    'ranked': 'flag-checkered',
-    'unranked': 'hand-peace-o'
+    'solo': 'fas fa-user',
+    'team': 'fas fa-users',
+    'ranked': 'fas fa-flag-checkered',
+    'unranked': 'far fa-hand-peace'
   },
 
   // Events
   MAX_CATEGORY_COUNT: 6,
   TOURNAMENT_POINTS_DISTRIBUTION: [15, 12, 10, 8, 6, 5, 4, 3, 2, 1],
+  SHORTLIST_SIZE: 10,
 
-  // Misc
-  ARTICLES_ROOT_URL: 'https://raw.githubusercontent.com/alakajam-team/alakajam/master/articles/',
+  // Pictures
+  PICTURE_OPTIONS_DEFAULT: { maxWidth: 750, maxHeight: 500 },
+  PICTURE_OPTIONS_THUMB: { maxWidth: 350, fit: 'inside', suffix: '-thumb' },
+  PICTURE_OPTIONS_THUMB_PORTRAIT: { maxWidth: 350, maxHeight: 180, fit: 'contain', suffix: '-thumb' },
+  PICTURE_OPTIONS_ICON: { maxWidth: 60, maxHeight: 60, fit: 'cover', suffix: '-icon' },
 
   // Limits
   MAX_BODY_ANY: 100000,
   MAX_BODY_POST: 100000,
   MAX_BODY_USER_DETAILS: 100000,
   MAX_BODY_ENTRY_DETAILS: 100000,
-  MAX_BODY_COMMENT: 10000
+  MAX_BODY_COMMENT: 10000,
+
+  // Misc
+  ARTICLES_ROOT_URL: 'https://raw.githubusercontent.com/alakajam-team/alakajam/master/articles/',
+  PAYPAL_BUTTON: `&lt;form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="display: inline">
+    &lt;input type="hidden" name="cmd" value="_s-xclick" />
+    &lt;input type="hidden" name="hosted_button_id" value="M9V7Y5CNLP4EN" />
+    &lt;input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+    &lt;img alt="" border="0" src="https://www.paypal.com/en_FR/i/scr/pixel.gif" width="1" height="1" />
+    &lt;/form>`
 
 }
 </code></pre>
@@ -154,13 +174,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -43,33 +43,33 @@
 const path = require('path')
 const express = require('express')
 const expressNunjucks = require('express-nunjucks')
+const expressSession = require('express-session')
+const connectSessionKnex = require('connect-session-knex')
 const cookies = require('cookies')
-const multer = require('multer')
 const bodyParser = require('body-parser')
-const promisify = require('promisify-node')
 const moment = require('moment')
 const nunjucks = require('nunjucks')
 const randomKey = require('random-key')
 const leftPad = require('left-pad')
+const promisify = require('promisify-node')
 const log = require('./log')
+const db = require('./db')
 const config = require('../config')
 const constants = require('../core/constants')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const enums = require('../core/enums')
 const settingService = require('../services/setting-service')
-const sessionService = require('../services/session-service')
 const userService = require('../services/user-service')
 const controllers = require('../controllers/index')
 const templating = require('../controllers/templating')
 
+const ROOT_PATH = path.join(__dirname, '..')
+const LAUNCH_TIME = new Date().getTime()
+
 module.exports = {
   configure
 }
-
-const ROOT_PATH = path.join(__dirname, '..')
-const MB = 1024 * 1024
-const LAUNCH_TIME = new Date().getTime()
 
 /*
  * Setup app middleware
@@ -93,14 +93,14 @@ async function configure (app) {
 
   // In-memory data
   await userService.loadPasswordRecoveryCache(app)
-  await sessionService.loadSessionCache(app)
+
+  // Static files
+  app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
 
   // Session management
   let sessionKey = await findOrCreateSessionKey()
   app.use(cookies.express([sessionKey]))
-
-  // Remaining static files
-  app.use('/static', express.static(path.join(ROOT_PATH, '/static')))
+  app.use(await createSessionMiddleware())
 
   // Templating
   app.set('views', path.join(ROOT_PATH, '/templates'))
@@ -134,8 +134,23 @@ async function configure (app) {
   nj.env.addFilter('values', function (obj) {
     return Object.values(obj)
   })
+  nj.env.addFilter('stringify', function (obj) {
+    return JSON.stringify(obj)
+  })
   nj.env.addFilter('pretty', function (obj) {
-    return JSON.stringify(obj, null, 2)
+    if (typeof obj === 'object') {
+      return JSON.stringify(obj, null, 2)
+    } else {
+      return obj
+    }
+  })
+  nj.env.addFilter('dump', function (obj) {
+    // Override default behavior to prevent escaping non-objects
+    if (typeof obj === 'object') {
+      return JSON.stringify(obj)
+    } else {
+      return obj
+    }
   })
   nj.env.addFilter('prettyDump', function (obj) {
     return '&lt;pre>' + JSON.stringify(obj, null, 2) + '&lt;/pre>'
@@ -186,13 +201,13 @@ async function configure (app) {
       number = parseFloat(number)
     }
     if (typeof number === 'number') {
-      return number.toFixed(digits)
+      return number.toFixed(digits).toString()
     } else {
       return null
     }
   })
   nj.env.addFilter('leftpad', function (number, toLength, char) {
-    return leftPad(number, toLength, char)
+    return number ? leftPad(number, toLength, char) : ''
   })
   nj.env.addFilter('paginationBasePath', function (path) {
     let basePath = path.replace(/[?&amp;]p=[^&amp;]*/g, '')
@@ -217,80 +232,48 @@ async function configure (app) {
     return nunjucks.runtime.markSafe(jsonString)
   })
 
+  // Body parsers config
+  app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(async function (req, res, next) {
+    // Multer auto cleanup (actual Multer middleware is declared at initUploadMiddleware())
+    res.on('finish', cleanupFormFilesCallback(req, res))
+    res.on('close', cleanupFormFilesCallback(req, res))
+    next()
+  })
+
   // Templating: rendering context
   app.use(function templateTooling (req, res, next) {
-    // Allow anyone to display an error page
-    res.errorPage = (code, message) => errorPage(req, res, code, message, app.locals.devMode)
+    /* Allows anyone to display an error page.
+     * Calling render() after an errorPage() is tolerated an will be a no-op, although it would be bad practice.
+     */
+    res.errorPage = (code, error) => {
+      errorPage(req, res, code, error, app.locals.devMode)
+      res.alreadyRenderedWithError = true
+    }
+
+    /* Shorthand for rendering errors on promise failures.
+     * Calling render() after a traceAndShowErrorPage() is tolerated an will be a no-op, although it would be bad practice.
+     * (This method helps catching rejections properly on promises that are *asynchronously* awaited, eg. while awaiting
+     * other services in the middle of preparing a Promise.all(). You should prefer refactoring your code rather than use this)
+     */
+    res.traceAndShowErrorPage = (error) => {
+      errorPage(req, res, 500, error, app.locals.devMode)
+      res.alreadyRenderedWithError = true
+    }
 
     // Context made available anywhere
     let nativeRender = res.render
     res.render = function (template, context) {
-      let mergedContext = Object.assign({
-        rootUrl: config.ROOT_URL
-      }, res.locals, context)
-      nativeRender.call(res, template, mergedContext)
-      res.rendered = true
-    }
-
-    next()
-  })
-
-  // Multer (form parsing/file upload)
-  app.use(bodyParser.urlencoded({ extended: false }))
-  let uploadStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '..', config.DATA_PATH, 'tmp'))
-    },
-    filename: function (req, file, cb) {
-      file.filename = randomKey.generate() + '-' + file.originalname
-      cb(null, file.filename)
-    }
-  })
-  let upload = multer({
-    storage: uploadStorage,
-    limits: {
-      fields: 1000,
-      fileSize: 2 * MB,
-      files: 20,
-      parts: 2000
-    }
-  })
-  let doParseForm = promisify(function (req, res, uploadInfo, callback) {
-    if (!res.locals.form) {
-      // uploadInfo must contain either the name of the file field,
-      // or an array looking like: [{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }]
-      let uploadFunction
-      if (typeof uploadInfo === 'string') {
-        uploadFunction = upload.single(uploadInfo)
-      } else if (typeof uploadInfo === 'object') {
-        uploadFunction = upload.fields(uploadInfo)
-      } else {
-        uploadFunction = upload.array()
+      if (!res.alreadyRenderedWithError) {
+        let mergedContext = Object.assign({
+          rootUrl: config.ROOT_URL,
+          csrfToken: () => '&lt;input type="hidden" name="_csrf" value="' + req.csrfToken() + '" />'
+        }, res.locals, context)
+        nativeRender.call(res, template, mergedContext)
+        res.rendered = true
       }
+    }
 
-      uploadFunction(req, res, function () {
-        let files = req.files
-        if (!files) {
-          files = {}
-          files[uploadInfo] = req.file
-        }
-        res.locals.form = {
-          fields: req.body,
-          files
-        }
-        callback(null, res.locals.form)
-      })
-    } else {
-      callback(null, res.locals.form)
-    }
-  })
-  app.use(function (req, res, next) {
-    // usage: let {fields, files} = await req.parseForm()
-    req.parseForm = async function (uploadInfo) {
-      return doParseForm(req, res, uploadInfo)
-    }
-    res.on('finish', cleanupFormFilesCallback(req, res))
-    res.on('close', cleanupFormFilesCallback(req, res))
     next()
   })
 
@@ -298,11 +281,20 @@ async function configure (app) {
   controllers.initRoutes(app)
 
   // Routing: 500/404
-  app.use(function notFound (req, res) {
-    errorPage(req, res, 404, undefined, app.locals.devMode)
-  })
-  app.use(function error (error, req, res, next) {
-    errorPage(req, res, 500, error, app.locals.devMode)
+  app.use(function renderErrors (error, req, res, next) {
+    if (!error) {
+      errorPage(req, res, 404, undefined, app.locals.devMode)
+    } else {
+      if (error.code === 'EBADCSRFTOKEN') {
+        // Replace the default error message from csurf by something more user friendly.
+        error.message = 'Invalid CSRF token. Your session may have expired. Please go back and try again.'
+      } else if (error.code === 'LIMIT_FILE_SIZE') {
+        // Same with multer's upload size limit
+        error.statusCode = 400
+        error.message = 'Attachment is too large, please go back and check the size limit'
+      }
+      errorPage(req, res, error.statusCode || 500, error, app.locals.devMode)
+    }
   })
 }
 
@@ -325,6 +317,58 @@ function cleanupFormFilesCallback (req, res) {
     res.removeAllListeners('finish')
     res.removeAllListeners('close')
   }
+}
+
+async function createSessionMiddleware () {
+  promisifySession()
+
+  return expressSession({
+    cookie: {
+      path: '/',
+      httpOnly: true,
+      secure: config.SECURE_SESSION_COOKIES || false,
+      maxAge: null // Expire when the browser closes (typically)
+    },
+    resave: false,
+    saveUninitialized: false,
+    secret: await getOrCreateSessionSecret(),
+    store: createSessionStore()
+  })
+}
+
+async function getOrCreateSessionSecret () {
+  let secret = await settingService.find(constants.SETTING_SESSION_SECRET)
+  if (!secret) {
+    secret = randomKey.generate()
+    await settingService.save(constants.SETTING_SESSION_SECRET, secret)
+  }
+  return secret
+}
+
+function createSessionStore () {
+  const KnexSessionStore = connectSessionKnex(expressSession)
+  return new KnexSessionStore({
+    knex: db.knex,
+    tablename: 'sessions',
+    createtable: true,
+    clearInterval: 60000 // Milliseconds between clearing expired sessions
+  })
+}
+
+function promisifySession () {
+  // For each session method that takes a callback, add a promisified variant
+  // as well. Make sure these are not enumerable to avoid confusing anything.
+  const Session = expressSession.Session
+  ;['regenerate', 'destroy', 'reload', 'save'].forEach(function (funcName) {
+    const originalFunction = Session.prototype[funcName]
+    const promisifiedFunction = promisify(function (callback) { originalFunction.call(this, callback) })
+    Object.defineProperty(Session.prototype, funcName + 'Promisified', {
+      configurable: true,
+      enumerable: false,
+      value: promisifiedFunction,
+      writable: false
+    })
+  })
 }
 
 async function findOrCreateSessionKey () {
@@ -387,13 +431,13 @@ function errorPage (req, res, code, error, devMode) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>

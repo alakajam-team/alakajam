@@ -47,7 +47,10 @@ module.exports = {
 
   findEntryScore,
   findEntryScoreById,
+  findUserScores,
   findUserScoresMapByEntry,
+  findRecentlyActiveEntries,
+  findEntriesLastActivity,
 
   createEntryScore,
   submitEntryScore,
@@ -65,7 +68,7 @@ async function findHighScores (entry, options = {}) {
   if (!options.withSuspended) {
     query.where('active', true)
   }
-  query.orderBy('score', _rankingDir(entry))
+  query.orderBy('ranking')
 
   let fetchOptions = {
     withRelated: ['user']
@@ -109,29 +112,94 @@ async function findEntryScore (userId, entryId) {
   }
 }
 
-async function findUserScoresMapByEntry (userId, entries) {
-  entries = entries.models || entries // Accept collections or arrays
-
-  if (userId &amp;&amp; entries) {
-    let entriesToScore = {}
-    let entryScores = await models.EntryScore
-      .where('user_id', userId)
-      .where('entry_id', 'in', entries.map(entry => entry.get('id')))
-      .fetchAll({ withRelated: ['user'] })
-    for (let entry of entries) {
-      entriesToScore[entry.get('id')] = entryScores.find(score => score.get('entry_id') === entry.get('id'))
-    }
-    return entriesToScore
-  } else {
-    return null
-  }
-}
-
 async function findEntryScoreById (id, options = {}) {
   return models.EntryScore.where('id', id)
     .fetch({
       withRelated: options.withRelated || ['user']
     })
+}
+
+/**
+ * Retrieves all user scores
+ */
+async function findUserScores (userId, options = {}) {
+  if (!userId) return null
+
+  let query = models.EntryScore.where('user_id', userId)
+  switch (options.sortBy) {
+    case 'ranking':
+      query = query.orderBy('ranking')
+      break
+    case 'updated_at':
+      query = query.orderBy('updated_at', 'DESC')
+      break
+    default:
+  }
+
+  // PERF: Entry details required to format scores
+  return query.fetchAll({ withRelated: options.related || ['entry.userRoles', 'entry.details'] })
+}
+
+/**
+ * Finds all scores submitted by a user to the specified entry array or collection
+ */
+async function findUserScoresMapByEntry (userId, entries) {
+  if (!userId || !entries) return null
+
+  entries = entries.models || entries // Accept collections or arrays
+
+  let entriesToScore = {}
+  let entryScores = await models.EntryScore
+    .where('user_id', userId)
+    .where('entry_id', 'in', entries.map(entry => entry.get('id')))
+    .fetchAll({ withRelated: ['user'] })
+  for (let entry of entries) {
+    entriesToScore[entry.get('id')] = entryScores.find(score => score.get('entry_id') === entry.get('id'))
+  }
+  return entriesToScore
+}
+
+/**
+ * Returns the date of the last submitted score for all the specified entries
+ */
+async function findEntriesLastActivity (entryIds) {
+  let rows = await db.knex('entry_score')
+    .select('entry_id')
+    .max('updated_at as max_updated_at')
+    .groupBy('entry_id')
+    .where('entry_id', 'in', entryIds)
+
+  let entryIdToUpdatedAt = {}
+  rows.forEach(row => {
+    entryIdToUpdatedAt[row['entry_id']] = row['max_updated_at']
+  })
+  return entryIdToUpdatedAt
+}
+
+/**
+ * Finds the most recently active entry scores
+ */
+async function findRecentlyActiveEntries (limit = 10) {
+  let entryScoreIds = await db.knex.select('entry_score.id')
+    .from(function () {
+      this.distinct('entry_id')
+        .max('updated_at as max_updated_at')
+        .from('entry_score')
+        .groupBy('entry_id')
+        .orderBy('max_updated_at', 'DESC')
+        .limit(limit)
+        .as('active')
+    })
+    .innerJoin('entry_score', function () {
+      this.on('entry_score.updated_at', '=', 'active.max_updated_at')
+        .andOn('entry_score.entry_id', '=', 'active.entry_id')
+    })
+    .orderBy('active.max_updated_at', 'DESC')
+
+  return models.EntryScore
+    .where('id', 'IN', entryScoreIds.map(row => row['id']))
+    .orderBy('updated_at', 'DESC')
+    .fetchAll({ withRelated: ['entry.details', 'user'] }) // PERF: Entry details required to format scores
 }
 
 /**
@@ -270,13 +338,13 @@ function _rankingOperator (entry) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_session-service.html">services/session-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core_cache.html">core/cache</a></li><li><a href="module-core_constants.html">core/constants</a></li><li><a href="module-core_db.html">core/db</a></li><li><a href="module-core_enums.html">core/enums</a></li><li><a href="module-core_file-storage.html">core/file-storage</a></li><li><a href="module-core_forms.html">core/forms</a></li><li><a href="module-core_log.html">core/log</a></li><li><a href="module-core_middleware.html">core/middleware</a></li><li><a href="module-core_models.html">core/models</a></li><li><a href="module-services_entry-importers_entry-importers-tools.html">services/entry-importers/entry-importers-tools</a></li><li><a href="module-services_entry-importers_itch.html">services/entry-importers/itch</a></li><li><a href="module-services_entry-importers_ldjam.html">services/entry-importers/ldjam</a></li><li><a href="module-services_entry-importers_ludumdare.html">services/entry-importers/ludumdare</a></li><li><a href="module-services_event-import-service.html">services/event-import-service</a></li><li><a href="module-services_event-rating-service.html">services/event-rating-service</a></li><li><a href="module-services_event-service.html">services/event-service</a></li><li><a href="module-services_event-theme-service.html">services/event-theme-service</a></li><li><a href="module-services_event-tournament-service.html">services/event-tournament-service</a></li><li><a href="module-services_highscore-service.html">services/highscore-service</a></li><li><a href="module-services_like-service.html">services/like-service</a></li><li><a href="module-services_mail-service.html">services/mail-service</a></li><li><a href="module-services_notification-service.html">services/notification-service</a></li><li><a href="module-services_platform-service.html">services/platform-service</a></li><li><a href="module-services_post-service.html">services/post-service</a></li><li><a href="module-services_security-service.html">services/security-service</a></li><li><a href="module-services_setting-service.html">services/setting-service</a></li><li><a href="module-services_user-service.html">services/user-service</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createTag">createTag</a></li><li><a href="global.html#fetchById">fetchById</a></li><li><a href="global.html#fetchByIds">fetchByIds</a></li><li><a href="global.html#searchTags">searchTags</a></li><li><a href="global.html#updateEntryTags">updateEntryTags</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 23 2018 09:52:09 GMT+0200 (Paris, Madrid (heure d’été))
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Mar 08 2019 09:19:55 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>
