@@ -225,23 +225,13 @@
     position: relative;
     margin-bottom: 20px;
     text-align: center;
-    background-color: var(--text);
     min-height: 40px; /* for medals */
     padding-bottom: 56.25%; /* 16/9 ratio */
-
-    &.empty {
-      background-color: var(--main-dark);
-    }
-
-    & img {
-      position: absolute;
-      object-fit: cover;
-      height: 100%;
-      left: 0;
-      right: 0;
-      margin-left: auto;
-      margin-right: auto;
-    }
+    background-color: var(--text);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* background-image to be set inline */
   }
 
   &__description,
