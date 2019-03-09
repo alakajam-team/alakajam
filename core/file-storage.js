@@ -13,6 +13,7 @@ const path = require('path')
 const url = require('url')
 const mime = require('mime-types')
 const log = require('./log')
+const constants = require('./constants')
 const config = require('../config')
 
 let sharp = null
@@ -150,12 +151,20 @@ async function savePictureUpload (fileUploadOrPath, targetPathWithoutExtension, 
   return { ...res, finalPath: url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath)) }
 }
 
-async function resize (sourcePath, targetPath, options) {
+async function resize (sourcePath, targetPath, options = {}) {
   let res
   // Sharp is an optional dependency
   if (sharp) {
-    // Avoid file to stay opened after resize
+    // Disable thumbnail resizing for gifs (unsupported by sharp for now)
+    // https://github.com/lovell/sharp/issues/1372
+    if ((await getImageType(sourcePath) === 'gif') && options.maxWidth >= constants.PICTURE_OPTIONS_THUMB.maxWidth) {
+      delete options.maxWidth
+      delete options.maxHeight
+    }
+
+    // Prevent file to stay opened after resize
     sharp.cache(false)
+
     // Check whether image is too big
     let source = sharp(sourcePath)
     let meta = await source.metadata()

@@ -228,7 +228,7 @@
     min-height: 40px; /* for medals */
     padding-bottom: 56.25%; /* 16/9 ratio */
     background-color: var(--text);
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     /* background-image to be set inline */
