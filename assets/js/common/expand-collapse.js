@@ -2,17 +2,23 @@
 
 module.exports = function expandCollapse () {
   $('.js-expand-bar').each(function () {
-    var $this = $(this)
-    var maxHeight = parseInt($this.attr('data-max-height'))
-    var $parent = $this.parent()
-    if ($parent.height() > maxHeight) {
-      $parent.attr('style', 'max-height: ' + (maxHeight * 0.8) + 'px') // limit the size while preventing cropping just a single line
-      $this.show()
-      $this.click(function () {
-        $parent.toggleClass('expanded')
-      })
-    } else {
-      $this.remove()
-    }
-  })
+    LimitExpandContent($(this), $(this).parent());
+  });
+
+  $('.expandable img').on('load', function() {
+    var content = $(this).parents('.expandable');
+    LimitExpandContent($('.js-expand-bar', content), $(content))
+  });
+}
+
+function LimitExpandContent(expandBar, content) {
+  var maxHeight = parseInt(expandBar.attr('data-max-height'));
+  console.log(maxHeight);
+  if (content.height() > maxHeight) {
+    content.attr('style', 'max-height: ' + (maxHeight * 0.8) + 'px'); // limit the size while preventing cropping just a single line
+    expandBar.show();
+    expandBar.click(function () {
+      content.toggleClass('expanded');
+    });
+  }
 }
