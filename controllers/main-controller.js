@@ -239,9 +239,9 @@ async function games (req, res) {
   // TODO Parallelize tasks
   let rescueEntries = []
   let requiredVotes = null
-  if (featuredEvent) {
+  if (featuredEvent && featuredEvent.get('status_results') === 'voting_rescue') {
     let canVoteInEvent = await eventRatingService.canVoteInEvent(user, featuredEvent)
-    if (canVoteInEvent && featuredEvent.get('status_results') === 'voting_rescue') {
+    if (canVoteInEvent || securityService.isMod(user)) {
       rescueEntries = (await eventService.findRescueEntries(featuredEvent, user)).models
       requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
     }

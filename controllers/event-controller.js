@@ -449,9 +449,11 @@ async function viewEventGames (req, res) {
 
   // Search entries
   let rescueEntries = []
-  let canVoteInEvent = await eventRatingService.canVoteInEvent(user, event)
-  if (canVoteInEvent && event.get('status_results') === 'voting_rescue') {
-    rescueEntries = (await eventService.findRescueEntries(event, user)).models
+  if (event.get('status_results') === 'voting_rescue') {
+    let canVoteInEvent = await eventRatingService.canVoteInEvent(user, event)
+    if (canVoteInEvent || securityService.isMod(user)) {
+      rescueEntries = (await eventService.findRescueEntries(event, user)).models
+    }
   }
   let requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, '10'))
   let entriesCollection = await eventService.findGames(searchOptions)
