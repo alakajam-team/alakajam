@@ -908,6 +908,7 @@ async function findRescueEntries (event, user, options = {}) {
         .whereNull('entry_vote.id') // hide rated games
     })
     .orderBy('entry_details.rating_count', 'desc')
+    .orderBy('entry.karma', 'desc')
     .fetchPage(options)
 }
 
