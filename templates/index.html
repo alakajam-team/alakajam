@@ -14,7 +14,6 @@
   // Custom announcement height limit and expand/collapse button
   // Script inlined for immediate loading
   function postExpandCollapse(postClass, maxAnnouncementHeight) {
-    maxAnnouncementHeight = maxAnnouncementHeight || 265
     var announcementEl = findByClass(postClass)
     if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
       announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
@@ -95,9 +94,6 @@
             {{ postMacros.post(featuredEventAnnouncement, {hideDate: true, readingUser: user, readingUserLikes: userLikes}) }}
             {{ formMacros.expandCollapse({ manualScripting: true }) }}
           </div>
-          <script type="text/javascript">
-            postExpandCollapse('home-jumbo__announcement')
-          </script>
         {% endif %}
       </div>
       {% endif %}
@@ -107,7 +103,7 @@
       {% endif %}
     </div>
     
-    <div class="col-md-3 event-banner-panel">
+    <div id="js-event-sidebar" class="col-md-3 event-banner-panel">
       {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
       {% if featuredLinks and featuredLinks.length > 0 %}
         <div class="home-featured-links">
@@ -153,6 +149,14 @@
       </div>
     </div>
   </div>
+  {% if featuredEventAnnouncement %}
+    <script type="text/javascript">
+      var announcement = findByClass('home-jumbo__announcement')
+      var sidebar = document.getElementById('js-event-sidebar')
+      var remainingHeight = sidebar.clientHeight - announcement.offsetTop - 10
+      postExpandCollapse('home-jumbo__announcement', Math.max(remainingHeight, 265))
+    </script>
+  {% endif %}
 
   {% if suggestedEntries and suggestedEntries.length > 0 %}
   <div class="row">
