@@ -99,7 +99,7 @@
       width: 220px;
       height: var(--navbar-mobile-height);
       background: url('/static/images/brand.svg');
-      padding: 0;
+      margin-top: 4px;
     }
       
     & .navbar-brand__hover {
