@@ -17,16 +17,13 @@ Here is a selection of the most useful assets from the kit.
 
 [Original SVG logo](https://static.alakajam.com/static/presskit/images/jamician-big.png) (Fredoka One font required)
 
-<a href="https://static.alakajam.com/static/presskit/images/logo.png"><img src="https://static.alakajam.com/static/presskit/images/logo.png" width="200"/></a>
-<a href="https://static.alakajam.com/static/presskit/images/avatar.png"><img src="https://static.alakajam.com/static/presskit/images/avatar.png" width="200"/></a>
+<a href="https://static.alakajam.com/static/presskit/images/logo.png"><img src="https://static.alakajam.com/static/presskit/images/logo.png" width="200"/></a> <a href="https://static.alakajam.com/static/presskit/images/avatar.png"><img src="https://static.alakajam.com/static/presskit/images/avatar.png" width="200"/></a>
 
 ### The Jamician
 
 [Full size Jamician](https://static.alakajam.com/static/presskit/images/jamician-big.png)
 
-[![](https://static.alakajam.com/static/presskit/images/jamician196.png)](https://static.alakajam.com/static/presskit/images/jamician196.png)
-[![](https://static.alakajam.com/static/presskit/images/jamician32.png)](https://static.alakajam.com/static/presskit/images/jamician32.png)
-[![](https://static.alakajam.com/static/presskit/images/jamician16.png)](https://static.alakajam.com/static/presskit/images/jamician16.png)
+[![](https://static.alakajam.com/static/presskit/images/jamician196.png)](https://static.alakajam.com/static/presskit/images/jamician196.png) [![](https://static.alakajam.com/static/presskit/images/jamician32.png)](https://static.alakajam.com/static/presskit/images/jamician32.png) [![](https://static.alakajam.com/static/presskit/images/jamician16.png)](https://static.alakajam.com/static/presskit/images/jamician16.png)
 
 ### Textures
 
