@@ -39,10 +39,6 @@
       {% set hasPictures = entry.picturePreviews().length > 0 %}
       {% set mainPicture = pictureUrl(entry.picturePreviews()[0], entry) if hasPictures else staticUrl('/static/images/default-entry.png') %}
       <div class="entry__picture{{ ' empty' if not hasPictures }}" style="background-image: url('{{ mainPicture }}')">
-        {% if hasPictures %}
-        {% else %}
-        <img src="{{ staticUrl('/static/images/default-entry.png') }}" style="padding: 20px" />
-        {% endif %}
         {% if event and event.get('status_results') === 'results' and entry.get('division') !== 'unranked' %}
         <div class="entry-medals">
           {%- set details = entry.related('details') -%}
