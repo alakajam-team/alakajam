@@ -61,12 +61,9 @@ const showdownLazyPicturesExt = {
   }
 }
 const showdownConverter = new showdown.Converter({
-  tables: true,
-  simplifiedAutoLink: true,
-  strikethrough: true,
-  simpleLineBreaks: true,
   extensions: [showdownLazyPicturesExt]
 })
+showdownConverter.setFlavor('github')
 
 const sanitizeHtmlOptions = {
   allowedTags: constants.ALLOWED_POST_TAGS,
