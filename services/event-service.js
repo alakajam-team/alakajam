@@ -735,7 +735,7 @@ async function findGames (options = {}) {
   }
   if (options.notReviewedById) {
     query = query.query(function (qb) {
-      return qb
+      qb = qb
         // Hide rated
         .leftJoin('entry_vote', function () {
           this.on('entry_vote.entry_id', '=', 'entry.id')
@@ -748,22 +748,34 @@ async function findGames (options = {}) {
             'user_id': options.notReviewedById,
             'node_type': 'entry'
           })
-          .select('node_id'))
+          .select('node_id'));
+
+      // If this option is set, this has already been done (to avoid multiple joins on same table)
+      if (!options.userId) {
         // Hide own entry (not strictly requested, but sensible)
-        .leftJoin('user_role', function () {
+        qb = qb.leftJoin('user_role', function () {
           this.on('user_role.node_id', '=', 'entry.id')
             .andOn('user_role.user_id', '=', options.notReviewedById)
         })
         .whereNull('user_role.id')
+      }
+      return qb;
     })
   }
   if (options.userId) {
     query = query.query((qb) => {
-      return qb.innerJoin('user_role', 'entry.id', 'user_role.node_id')
+      qb = qb.innerJoin('user_role', 'entry.id', 'user_role.node_id')
         .where({
           'user_role.user_id': options.userId,
           'user_role.node_type': 'entry'
         })
+      // Hide own entry (not strictly requested, but sensible)
+      if (options.notReviewedById) {
+        qb.whereNot({
+          'user_role.user_id': options.notReviewedById
+        })
+      }
+      return qb;
     })
   }
   if (options.highScoresSupport) {
