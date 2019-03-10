@@ -477,3 +477,32 @@ table.sortable {
     }
   }
 }
+
+:root {
+  --progress-bar {
+    background-color: #DDD;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2) inset;
+  }
+  --progress-value {
+    background-color: var(--main-dark);
+    border-radius: 4px 0 0 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset;
+  }
+}
+progress {
+  appearance: none;
+  border: none;
+  height: 25px;
+  width: 100%;
+  @apply(--progress-bar);
+}
+progress[value]::-webkit-progress-bar {
+  @apply(--progress-bar);
+}
+progress[value]::-webkit-progress-value {
+  @apply(--progress-value);
+}
+progress[value]::-moz-progress-bar {
+  @apply(--progress-value);
+}

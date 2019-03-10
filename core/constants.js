@@ -72,14 +72,15 @@ module.exports = {
   SPECIAL_POST_TYPE_HIDDEN,
   SPECIAL_POST_TYPES,
   REQUIRED_ARTICLES: ['docs', 'faq'],
-  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'del', 'code', 'br', 'hr', 'iframe', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'ul', 'ol', 'li', 'video', 'source', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+  ALLOWED_POST_TAGS: ['b', 'i', 'em', 'strong', 'a', 'u', 'del', 'code', 'br', 'hr', 'iframe', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'ul', 'ol', 'li', 'video', 'source', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'progress'],
   ALLOWED_POST_ATTRIBUTES: {
     'p': ['class'],
     'a': ['href', 'class', 'name'],
     'iframe': ['src', 'width', 'height', 'class', 'frameborder', 'webkitallowfullscreen', 'mozallowfullscreen', 'allowfullscreen'],
     'img': ['src', 'data-src', 'width', 'height', 'class'],
     'video': ['poster', 'preload', 'autoplay', 'muted', 'loop', 'webkit-playsinline', 'width', 'height', 'class'],
-    'source': ['src', 'type']
+    'source': ['src', 'type'],
+    'progress': ['value', 'max', 'width']
   },
   ALLOWED_POST_CLASSES: ['pull-left', 'pull-right', 'text-left', 'text-center', 'text-right', 'spoiler', 'indent', 'btn', 'btn-default', 'btn-primary'],
   ALLOWED_IFRAME_HOSTS: ['player.vimeo.com', 'www.youtube.com', 'gfycat.com', 'i.imgur.com', 'w.soundcloud.com'],

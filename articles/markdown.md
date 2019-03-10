@@ -10,6 +10,7 @@ Alakajam! posts and comments allow you to use [Markdown](https://daringfireball.
 * [Tables](#tables)
 * [Displaying code](#code)
 * [Mentions](#mentions)
+* [Progress bars](#progress)
 
 While cannot use arbitrary **HTML code** in Alakajam! posts and comments, some tags (and classes) are allowed:
 
@@ -236,3 +237,13 @@ This is a paragraph of text with an image on the right. This is a paragraph of t
 
 <a href="#buttons" class="btn btn-default">Normal button</a>    
 <a href="#buttons" class="btn btn-primary">Important button</a>
+
+## <a name="progress"></a>Progress bars ##
+
+#### Code ####
+
+    <progress max="100" value="40"></progress>
+
+#### Result ####
+
+<progress max="100" value="40"></progress>
