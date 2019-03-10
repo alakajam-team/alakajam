@@ -160,12 +160,16 @@ async function insertInitialData (knex, samples) {
                     "url": "/article/docs"
                 },
                 {
-                    "title": "Resources",
+                    "title": "F.A.Q.",
+                    "url": "/article/faq"
+                },
+                {
+                    "title": "Game making resources",
                     "url": "/article/resources"
                 },
                 {
-                    "title": "F.A.Q.",
-                    "url": "/article/faq"
+                    "title": "Press kit",
+                    "url": "/article/press-kit"
                 },
                 {
                     "title": "Contributing",
@@ -219,10 +223,6 @@ async function insertInitialData (knex, samples) {
             "title": "Behind the scenes",
             "links": [
                 {
-                    "title": "Press kit",
-                    "url": "/article/press-kit"
-                },
-                {
                     "title": "JSON API",
                     "url": "/api"
                 },
@@ -230,6 +230,10 @@ async function insertInitialData (knex, samples) {
                     "title": "Site changelog",
                     "url": "/changes"
                 },
+                {
+                    "title": "NPO constitution",
+                    "url": "/article/constitution"
+                }
             ]
         }
     ]
