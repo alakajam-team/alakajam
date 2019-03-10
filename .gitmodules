@@ -1,3 +1,4 @@
 [submodule "static/presskit"]
 	path = static/presskit
 	url = https://github.com/alakajam-team/alakajam-presskit.git
+	branch = master
