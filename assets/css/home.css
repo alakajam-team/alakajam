@@ -180,12 +180,8 @@
     margin-top: 5px;
     margin-bottom: 10px;
 
-    & a {
-      margin-right: 2px;
-
-      & img {
-        height: 48px;
-      }
+    & img {
+      height: 42px;
     }
   }
   @media (max-width: 991px) {
