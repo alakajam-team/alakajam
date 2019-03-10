@@ -219,13 +219,17 @@ async function insertInitialData (knex, samples) {
             "title": "Behind the scenes",
             "links": [
                 {
-                    "title": "Site changelog",
-                    "url": "/changes"
+                    "title": "Press kit",
+                    "url": "/article/press-kit"
                 },
                 {
                     "title": "JSON API",
                     "url": "/api"
-                }
+                },
+                {
+                    "title": "Site changelog",
+                    "url": "/changes"
+                },
             ]
         }
     ]
