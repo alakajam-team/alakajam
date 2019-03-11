@@ -129,6 +129,18 @@
     padding-left: 60px;
     margin-top: -3px;
   }
+  &__entries {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--text-light);
+    padding-left: 60px;
+
+    & img {
+      vertical-align: top;
+      padding-left: 3px;
+      padding-right: 5px;
+    }
+  }
   &.centered &__name {
     padding-left: 0;
   }
@@ -136,4 +148,5 @@
 
 .user-thumbs .user-thumb {
   height: 50px;
+  margin-bottom: 12px;
 }

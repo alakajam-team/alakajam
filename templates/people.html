@@ -28,6 +28,11 @@
               {% endfor %}
             </select>
           </div>
+          <div>
+            <label><input type="checkbox" name="withEntries" {{ 'checked="checked"' if searchOptions.withEntries }}>
+            With entries
+            </label>
+          </div>
           <div class="form-group">
             <input type="submit" class="btn btn-primary" value="Apply" />
             <a href="?" class="btn btn-default">Clear</a>

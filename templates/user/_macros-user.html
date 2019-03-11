@@ -18,6 +18,12 @@
     <div class="user-thumb__name">
       {{ user.get('name') }}
     </div>
+    {% if user.get('entries_count') > 0 -%}
+      <div class="user-thumb__entries">
+        {{ user.get('akj_entries_count') }}<img src="{{ staticUrl('/static/images/jamician32.png') }}" height="14" />
+        {{ user.get('entries_count') - user.get('akj_entries_count') }} ext
+      </div>
+    {%- endif %}
 </div>
 {% endmacro %}
 

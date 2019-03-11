@@ -281,7 +281,9 @@ async function people (req, res) {
   }
   let searchOptions = {
     pageSize: PAGE_SIZE,
-    page: currentPage
+    page: currentPage,
+    withEntries: req.query.withEntries,
+    entriesCount: true
   }
   searchOptions.search = forms.sanitizeString(req.query.search)
   if (req.query.eventId === 'none') {

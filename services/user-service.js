@@ -61,6 +61,26 @@ async function findUsers (options = {}) {
         .where('user_role.event_id', options.eventId)
     })
   }
+  if (options.entriesCount && !options.count) {
+    let subQuery = models.User.forge().query(function (qb) {
+      qb.count('user_role.user_id as entries_count')
+        .count('user_role.event_id as akj_entries_count')
+        .select('user.id')
+        .leftJoin('user_role', function () {
+          this.on('user_role.user_id', '=', 'user.id').andOn('user_role.node_type', 'like', db.knex.raw('?', ['entry']))
+        })
+        .groupBy('user.id')
+        .as('c')
+    })
+
+    query = query.query(function (qb) {
+      qb.leftJoin(subQuery.query().as('c'), 'c.id', 'user.id')
+      qb.select('user.*', 'c.entries_count', 'c.akj_entries_count')
+      if (options.withEntries) {
+        qb.where('c.entries_count', '>', 0)
+      }
+    })
+  }
   if (options.isMod) query.where('is_mod', true)
   if (options.isAdmin) query.where('is_admin', true)
 
