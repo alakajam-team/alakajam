@@ -65,7 +65,9 @@
   & .results-podium-row {
     display: flex;
     flex-direction: column;
+    margin-bottom: 10px;
     @media (min-width: 768px) {
+      flex-wrap: wrap;
       flex-direction: row;
       justify-content: center;
     }
@@ -101,9 +103,10 @@
     }
 
     &.first {
-      margin-top: 10px;
-      & .entry-thumb {
-        height: calc(100% - 20px);
+      margin-top: 15px;
+      padding-bottom: 15px;
+      &::after {
+        margin-top: -50px;
       }
     }
     &.second::after {
@@ -112,15 +115,25 @@
     &.third::after {
       background-position: -256px -320px;
     }
-
-    & .entry-thumb {
-      padding-bottom: 50px;
-      @media (max-width: 768px) {
-        flex: 1;
-      }
-    }
   }
 
+  & .entry-thumb {
+    height: 100%;
+    padding-bottom: 30px;
+    @media (max-width: 768px) {
+      padding-bottom: 0;
+      flex: 1;
+    }
+  }
+  
+  & .unranked {
+    align-self: center;
+    padding-bottom: 15px;
+    & .entry-thumb{
+      padding-bottom: 0px;
+    }
+  }
+  
   @media (min-width: 768px) {
     & .first {
       order:2;

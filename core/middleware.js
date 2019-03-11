@@ -204,6 +204,10 @@ async function configure (app) {
     return nunjucks.runtime.markSafe(jsonString)
   })
 
+  nj.env.addFilter('shuffle', function (arr) {
+    return arr && Array.isArray(arr) ? arr.sort(() => { return 0.5 - Math.random()}) : arr;
+  })
+
   // Body parsers config
   app.use(bodyParser.urlencoded({ extended: false }))
   app.use(async function (req, res, next) {

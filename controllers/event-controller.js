@@ -546,24 +546,40 @@ async function viewEventResults (req, res) {
   // Parse query
   let sortedBy = 1
   let division = eventService.getDefaultDivision(res.locals.event)
-  if (forms.isInt(req.query.sortBy) && req.query.sortBy > 0 && req.query.sortBy <= constants.MAX_CATEGORY_COUNT) {
-    sortedBy = parseInt(req.query.sortBy)
-  }
-  if (Object.keys(res.locals.event.get('divisions')).includes(req.query.division) &&
-      req.query.division !== enums.DIVISION.UNRANKED) {
+  if (Object.keys(res.locals.event.get('divisions')).includes(req.query.division)) {
     division = req.query.division
   }
-
-  // Gather entries rankings
-  let cacheKey = 'results_' + res.locals.event.get('name') + '_' + division + '_' + sortedBy
-  let context = await cache.getOrFetch(cache.general, cacheKey, async function () {
-    let rankingsCollection = await eventRatingService.findEntryRankings(res.locals.event, division, sortedBy)
-    return {
-      rankings: rankingsCollection.models,
-      sortedBy,
-      division
+  let context;
+  if (division == enums.DIVISION.UNRANKED) {
+    let cacheKey = 'results_' + res.locals.event.get('name') + '_' + division
+    context = await cache.getOrFetch(cache.general, cacheKey, async function () {
+      let findGameOptions = {
+        eventId: res.locals.event.get('id'),
+        divisions: enums.DIVISION.UNRANKED
+      }
+      let games = await eventService.findGames(findGameOptions)
+      return {
+        rankings: games.models,
+        sortedBy,
+        division
+      }
+    })
+  } else {
+    if (forms.isInt(req.query.sortBy) && req.query.sortBy > 0 && req.query.sortBy <= constants.MAX_CATEGORY_COUNT) {
+      sortedBy = parseInt(req.query.sortBy)
     }
-  })
+  
+    // Gather entries rankings
+    let cacheKey = 'results_' + res.locals.event.get('name') + '_' + division + '_' + sortedBy
+    context = await cache.getOrFetch(cache.general, cacheKey, async function () {
+      let rankingsCollection = await eventRatingService.findEntryRankings(res.locals.event, division, sortedBy)
+      return {
+        rankings: rankingsCollection.models,
+        sortedBy,
+        division
+      }
+    })
+  }
 
   res.render('event/view-event-results', context)
 }
