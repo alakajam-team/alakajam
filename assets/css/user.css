@@ -67,14 +67,6 @@
     max-height: 28.5px;
     border-radius: 2%;
   }
-
-  & .nav-tabs > li.active > a, & .nav-tabs > li.active > a:focus, & .nav-tabs > li.active > a:hover {
-    background-color: #f4f4f4 !important;
-  }
-
-  & .tab-content {
-    background-color: #f4f4f4 !important;
-  } 
 }
 
 /* User thumbnail */

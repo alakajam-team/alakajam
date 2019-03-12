@@ -5,6 +5,13 @@
  * - The yellow moderator bar
  */
 
+.nav-tabs.nav-justified {
+  display: flex;
+}
+.nav-tabs.nav-justified>li {
+  flex: 1;
+}
+
 .navbar-default {
   @apply --header-shadow;
   @apply --transition;
