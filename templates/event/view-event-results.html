@@ -131,9 +131,9 @@
           {% endfor %}
         </ul>
       </div>rankings 
-    {% else %}
-      No Ranking :)
-    {% endif %}
+    {%- else -%}
+      No Rankings :)
+    {%- endif -%}
     <span class="results-podium__counter">{{ event.related('details').get('division_counts')[division] }} entries (out of {{ event.get('entry_count') }})</span>
   </h2>
 
@@ -156,7 +156,7 @@
             {% endif %}
           </div>
         {% elseif rankings.length > 0 and division == enums.DIVISION.UNRANKED %}
-          <h2 class="col-xs-12 text-center">Random Hightlights</h2>
+          <h2 class="col-xs-12 text-center">Random Highlights</h2>
           <div class="col-sm-4 col-xs-10 first unranked">
             {{ eventMacros.entryThumb(rankings[0], entryThumbOptions) }}
           </div>
