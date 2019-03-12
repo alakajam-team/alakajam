@@ -7,7 +7,7 @@
 
 <div class="form-group">
   <a href="{{ buildUrl(user, 'user', 'entry-import') }}" class="btn btn-primary">Import entries from external sites</a>
-  <a href="/external-entry/create-entry" class="btn btn-default">Create entry manually</a>
+  <a href="/external-entry/create-entry" class="btn btn-default">Create external entry manually</a>
 </div>
 
 <div class="game-grid">
@@ -21,7 +21,49 @@
   {% endfor %}
 </div>
 
-{% if entries.length === 0 %}
+{% if alakajamEntries.length > 0 %}
+<h2>Alakajam! entries ({{alakajamEntries.length}})</h2>
+  <div class="game-grid">
+    {% for entry in alakajamEntries %}
+      <div class="game-grid-entry">
+        {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
+        <div class="entry-thumb__form">
+          <a href="{{ buildUrl(entry, 'entry', 'edit') }}"class="btn btn-default">Edit</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if otherEntries.length > 0 %}
+<h2>Other Entries ({{otherEntries.length}}): Kajam, Feedback, ...</h2>
+  <div class="game-grid">
+    {% for entry in otherEntries %}
+      <div class="game-grid-entry">
+        {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
+        <div class="entry-thumb__form">
+          <a href="{{ buildUrl(entry, 'entry', 'edit') }}"class="btn btn-default">Edit</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if externalEntries.length > 0 %}
+<h2>External Entries ({{externalEntries.length}})</h2>
+  <div class="game-grid">
+    {% for entry in externalEntries %}
+      <div class="game-grid-entry">
+        {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
+        <div class="entry-thumb__form">
+          <a href="{{ buildUrl(entry, 'entry', 'edit') }}"class="btn btn-default">Edit</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if alakajamEntries.length + otherEntries.length + externalEntries.length === 0 %}
   <div class="well">No entries yet.</div>
 {% endif %}
 

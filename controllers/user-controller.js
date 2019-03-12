@@ -162,8 +162,24 @@ async function dashboardFeed (req, res) {
  */
 async function dashboardEntries (req, res) {
   let entryCollection = await eventService.findUserEntries(res.locals.user)
+
+  let alakajamEntries = []
+  let otherEntries = []
+  let externalEntries = []
+  entryCollection.models.forEach(entry => {
+    if (entry.get('external_event') != null) {
+      externalEntries.push(entry)
+    } else if (entry.related('event').get('status_theme') !== enums.EVENT.STATUS_THEME.DISABLED) {
+      alakajamEntries.push(entry)
+    } else {
+      otherEntries.push(entry)
+    }
+  })
+
   res.render('user/dashboard-entries', {
-    entries: entryCollection.models
+    alakajamEntries,
+    otherEntries,
+    externalEntries
   })
 }
 
