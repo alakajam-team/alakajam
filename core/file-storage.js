@@ -127,7 +127,7 @@ async function savePictureToModel (model, attribute, fileUpload, deleteFile, tar
  * The file extension will be grabbed from the source path. If folders don't exist, they will be created.
  * @param {string} fileUploadOrPath The form field to save, or the file path if this is not a form upload
  * @param {object|string} targetPathWithoutExtension The path to the destination, **relative to the uploads folder**
- * @param {object} options (Optional) allowed: maxDiagonal / maxWidth / maxHeight / fit / suffix). See presets: constants.PICTURE_OPTIONS_*
+ * @param {object} options (Optional) allowed: maxDiagonal / maxWidth / maxHeight / fit / suffix / format). See presets: constants.PICTURE_OPTIONS_*
  * @throws if the source path is not a valid picture
  * @returns {string} the URL to that path
  */
@@ -143,23 +143,26 @@ async function savePictureUpload (fileUploadOrPath, targetPathWithoutExtension, 
   if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
     actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath)
   }
-  actualTargetPath += (options.suffix || '') + '.' + fileExtension
+  actualTargetPath += (options.suffix || '')
   let absoluteTargetPath = toAbsolutePath(actualTargetPath)
 
   await createFolderIfMissing(path.dirname(absoluteTargetPath))
-  let res = await resize(filePath, absoluteTargetPath, options)
-  return { ...res, finalPath: url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath)) }
+  let res = await resize(filePath, absoluteTargetPath, fileExtension, options)
+  return { ...res, finalPath: url.resolve('/', path.relative(SOURCES_ROOT, absoluteTargetPath + '.' + res.format)) }
 }
 
-async function resize (sourcePath, targetPath, options = {}) {
-  let res
+async function resize (sourcePath, targetPathWithoutExtension, fileExtension, options = {}) {
+  let res = { format: fileExtension }
   // Sharp is an optional dependency
   if (sharp) {
     // Disable thumbnail resizing for gifs (unsupported by sharp for now)
     // https://github.com/lovell/sharp/issues/1372
-    if ((await getImageType(sourcePath) === 'gif') && options.maxWidth >= constants.PICTURE_OPTIONS_THUMB.maxWidth) {
-      delete options.maxWidth
-      delete options.maxHeight
+    if ((await getImageType(sourcePath) === 'gif')) {
+      options.format = 'png';
+      if (options.maxWidth >= constants.PICTURE_OPTIONS_THUMB.maxWidth) {
+        delete options.maxWidth
+        delete options.maxHeight
+      }
     }
 
     // Prevent file to stay opened after resize
@@ -168,33 +171,42 @@ async function resize (sourcePath, targetPath, options = {}) {
     // Check whether image is too big
     let source = sharp(sourcePath)
     let meta = await source.metadata()
+    let resizeOptions;
     if (options.maxWidth || options.maxHeight) {
       if ((options.maxWidth && meta.width > options.maxWidth) || (options.maxHeight && meta.height > options.maxHeight)) {
-        return source.resize(
-          options.maxWidth, options.maxHeight, {
-            fit: options.fit || 'inside',
-            withoutEnlargement: false,
-            background: { r: 0, g: 0, b: 0, alpha: 0 }
-          }
-        ).toFile(targetPath)
+        resizeOptions = {
+          width: options.maxWidth,
+          height: options.maxHeight,
+          fit: options.fit || 'inside',
+          withoutEnlargement: false,
+          background: { r: 0, g: 0, b: 0, alpha: 0 }
+        }
       }
     } else {
       let maxDiagonal = options.maxDiagonal || 2000
       let diagonalSq = meta.width * meta.width + meta.height * meta.height
       if (diagonalSq > maxDiagonal * maxDiagonal) {
-        // Resize to max size
         let diagonal = Math.max(Math.sqrt(diagonalSq))
-        return source.resize(
-          Math.ceil(meta.width * maxDiagonal / diagonal),
-          Math.ceil(meta.height * maxDiagonal / diagonal))
-          .toFile(targetPath)
+        resizeOptions = {
+          width: Math.ceil(meta.width * maxDiagonal / diagonal),
+          height: Math.ceil(meta.height * maxDiagonal / diagonal)
+        }
       }
     }
-    res = meta
+    if (resizeOptions) {
+      let resize = source.resize(resizeOptions)
+      if (options.format) {
+        fileExtension = options.format
+        resize = resize.toFormat(options.format)
+      }
+      return resize.toFile(targetPathWithoutExtension + '.' + fileExtension)
+    } else {
+      res = meta
+    }
   }
 
   // Copy the image if small enough (or sharp is missing)
-  fs.copyFile(sourcePath, targetPath)
+  fs.copyFile(sourcePath, targetPathWithoutExtension + '.' + fileExtension)
   return res
 }
 
