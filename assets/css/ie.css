@@ -5,11 +5,10 @@
     & .game-grid-entry {
       display: inline-block;
       width: 300px;
-      padding: 0 10px;
+      padding: 5px 5px;
+      vertical-align: top;
 
       & .entry-thumb {
-        min-height: 270px;
-        
         &__author {
           flex: none;
         }
@@ -24,5 +23,9 @@
 
   .container .game-grid-entry {
     width: 280px;
+  }
+
+  .profile .game-grid-entry {
+    width: 270px;
   }
 }
