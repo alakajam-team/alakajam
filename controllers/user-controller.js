@@ -7,6 +7,7 @@
  */
 
 const constants = require('../core/constants')
+const enums = require('../core/enums')
 const fileStorage = require('../core/file-storage')
 const forms = require('../core/forms')
 const cache = require('../core/cache')
@@ -67,16 +68,34 @@ async function viewUserProfile (req, res) {
     res.locals.pageTitle = profileUser.get('title')
     res.locals.pageDescription = forms.markdownToText(profileUser.related('details').get('body'))
 
-    let [entries, posts] = await Promise.all([
+    let [entries, posts, scores] = await Promise.all([
       eventService.findUserEntries(profileUser),
-      postService.findPosts({userId: profileUser.get('id')}),
+      postService.findPosts({ userId: profileUser.get('id') }),
+      highScoreService.findUserScores(profileUser.get('id'), { sortBy: 'ranking' }),
       profileUser.load('details')
     ])
 
+    let alakajamEntries = []
+    let otherEntries = []
+    let externalEntries = []
+    entries.models.forEach(entry => {
+      if (entry.get('external_event') != null) {
+        externalEntries.push(entry)
+      } else if (entry.related('event').get('status_theme') !== enums.EVENT.STATUS_THEME.DISABLED) {
+        alakajamEntries.push(entry)
+      } else {
+        otherEntries.push(entry)
+      }
+    })
+
     res.render('user/profile', {
       profileUser,
-      entries,
+      alakajamEntries,
+      otherEntries,
+      externalEntries,
       posts,
+      userScores: scores.models,
+      medals: scores.countBy(userScore => userScore.get('ranking')),
       userLikes: await likeService.findUserLikeInfo(posts, res.locals.user)
     })
   } else {

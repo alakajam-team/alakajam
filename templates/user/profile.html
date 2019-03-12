@@ -3,6 +3,9 @@
 {% import "post/_macros-post.html" as postMacros with context %}
 {% import "_macros-form.html" as formMacros %}
 
+{% import "entry/_macros-score.html" as scoreMacros %}
+{% import "event/_macros-event.html" as entryMacros %}
+
 {% block body %}
 
 <div class="container profile">
@@ -68,34 +71,125 @@
       </div>
       {% endif %}
 
-      <h2>Entries</h2>
-      {% if entries.models.length > 0 %}
-      <div class="game-grid">
-        {% for entry in entries.models %}
-          <div class="game-grid-entry">
-            {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
+      <div class="panel">
+        <ul class="nav nav-tabs nav-justified">
+          <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#entries" data-tab-selector="#js-entries">Alakajam Entries ({{alakajamEntries.length + otherEntries.length}})</a></li>
+          <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#entries-ext" data-tab-selector="#js-entries-ext">External Entries ({{externalEntries.length}})</a></li>
+          <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#posts" data-tab-selector="#js-posts">Latest posts ({{posts.pagination.rowCount}})</a></li>
+          <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#posts" data-tab-selector="#js-scores">High scores ({{userScores.length}})</a></li>
+        </ul>
+        <div id="js-entries" class="tab-content js-tab">
+          {% if alakajamEntries.length > 0 or otherEntries.length > 0 %}
+            <h2>Alakajam! entries</h2>
+            {% if alakajamEntries.length > 0 %}
+              <div class="game-grid">
+                {% for entry in alakajamEntries %}
+                  <div class="game-grid-entry">
+                    {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="well">{{ profileUser.get('title') }} didn't submit Alakajam! games... Yet!</div>
+            {% endif %}
+
+            <h2>Other Entries (Kajam, Feedback, ...)</h2>
+            {% if otherEntries.length > 0 %}
+              <div class="game-grid">
+                {% for entry in otherEntries %}
+                  <div class="game-grid-entry">
+                    {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="well">{{ profileUser.get('title') }} didn't submit games... Yet!</div>
+            {% endif %}
+          {% else %}
+            <div class="well">{{ profileUser.get('title') }} didn't submit games... Yet!</div>
+          {% endif %}
+        </div>
+        <div id="js-entries-ext" class="tab-content js-tab">
+          {% if externalEntries.length > 0 %}
+          <div class="game-grid">
+            {% for entry in externalEntries %}
+              <div class="game-grid-entry">
+                {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
+              </div>
+            {% endfor %}
           </div>
-        {% endfor %}
+          {% else %}
+          <div class="well">{{ profileUser.get('title') }} didn't submit external games... Yet!</div>
+          {% endif %}
+        </div>
+        <div id="js-posts" class="tab-content js-tab">
+          {% if posts.models.length > 0 %}
+            {% for post in posts.models %}
+              {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+              <div class="spacing"></div>
+            {% endfor %}
+
+            {{ formMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id')) }}
+          {% else %}
+          <div class="well">{{ profileUser.get('title') }} didn't write posts... Yet!</div>
+          {% endif %}
+        </div>
+        <div id="js-scores" class="tab-content js-tab">
+          <h1>High scores</h1>
+          <div style="line-height: 40px">
+            <div class="row">
+              <div class="col-sm-4">
+                {% set totalMedals = (medals[1] or 0) + (medals[2] or 0) + (medals[3] or 0) %}
+                {% if totalMedals > 0 %}
+                  <div>
+                    {{ scoreMacros.printRanking(1) }} x{{ medals[1] or 0 }}
+                    {{ scoreMacros.printRanking(2) }} x{{ medals[2] or 0 }}
+                    {{ scoreMacros.printRanking(3) }} x{{ medals[3] or 0 }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+      
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Game</th>
+                <th>Score</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for userScore in userScores %} {% set entry = userScore.related('entry') %}
+              <tr>
+                <td>{{ scoreMacros.printRanking(userScore.get('ranking')) }}</td>
+                <td style="max-width: 200px">{{ entryMacros.entrySmallThumb(entry) }}</td>
+                <td>
+                  <b>{{ scoreMacros.printScore(entry, userScore, { showEditLink: false }) }}</b>
+                </td>
+                <td style="font-size: 0.8rem">{{ userScore.get('updated_at') | date }}</td>
+                <td>
+                  <b>{{ scoreMacros.printProof(userScore) }}</b>
+                </td>
+              </tr>
+              {% endfor %}
+              {% if userScores.length === 0 %}
+              <tr>
+                <td colspan="6" class="text-center">No score submitted yet!</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
       </div>
-      {% else %}
-      <div class="well">{{ profileUser.get('title') }} didn't submit games... Yet!</div>
-      {% endif %}
-
-      <h2>Latest posts</h2>
-      {% if posts.models.length > 0 %}
-        {% for post in posts.models %}
-          {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
-          <div class="spacing"></div>
-        {% endfor %}
-
-        {{ formMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id')) }}
-      {% else %}
-      <div class="well">{{ profileUser.get('title') }} didn't write posts... Yet!</div>
-      {% endif %}
     </div>
   </div>
 </div>
 
-</div>
-
 {% endblock %}
+
+{% macro linkSortBy(id, label, sortedBy) %}
+<a href="?sortBy={{ id }}" class="btn btn-sm btn-default {{ 'disabled' if sortedBy === id }}">{{ label }}</a>
+{% endmacro %} 
