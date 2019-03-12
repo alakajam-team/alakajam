@@ -483,3 +483,9 @@
     font-size: 1.3rem;
   }
 }
+
+@media (min-width: 992px) {
+  .game-info {
+    float: right;
+  }
+}

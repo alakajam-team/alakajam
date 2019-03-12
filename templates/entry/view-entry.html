@@ -181,16 +181,9 @@
       </div>
       {% endif %}
 
-      {% if entry.get('allow_anonymous') and user and not user.get('disallow_anonymous') %}
-        <p class="pull-right" style="line-height: 30px">This entry welcomes anonymous comments (<a href="/article/faq#anon-comment" target="_blank">help</a>)</p>
-      {% endif %}
-      <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
-      {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, allowMods: true, editComment: editComment, 
-        allowAnonymous: entry.get('allow_anonymous'), editableAnonComments: editableAnonComments }) }}
-
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-4 game-info">
       <h3>Info</h3>
 
       {% if entry.get('description') %}
@@ -275,7 +268,15 @@
         {% endfor %}
         </div>
       {% endif %}
-
+    </div>
+    <div class="col-md-8">
+      {% if entry.get('allow_anonymous') and user and not user.get('disallow_anonymous') %}
+        <p class="pull-right" style="line-height: 30px">This entry welcomes anonymous comments (<a href="/article/faq#anon-comment" target="_blank">help</a>)</p>
+      {% endif %}
+      <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
+      {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, allowMods: true, editComment: editComment, 
+        allowAnonymous: entry.get('allow_anonymous'), editableAnonComments: editableAnonComments }) }}
+    </div>
   </div>
 </div>
 
