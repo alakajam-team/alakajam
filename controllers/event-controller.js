@@ -436,7 +436,7 @@ async function _generateShortlistInfo (event, user = null) {
 async function viewEventGames (req, res) {
   res.locals.pageTitle += ' | Games'
 
-  let {user, event} = res.locals
+  let { user, event } = res.locals
   if (event.get('status_entry') === enums.EVENT.STATUS_ENTRY.OFF) {
     res.errorPage(404)
     return
@@ -483,7 +483,7 @@ async function viewEventGames (req, res) {
 async function viewEventRatings (req, res) {
   res.locals.pageTitle += ' | Ratings'
 
-  let {user, event} = res.locals
+  let { user, event } = res.locals
 
   if (user && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
     enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get('status_results'))) {
@@ -549,8 +549,8 @@ async function viewEventResults (req, res) {
   if (Object.keys(res.locals.event.get('divisions')).includes(req.query.division)) {
     division = req.query.division
   }
-  let context;
-  if (division == enums.DIVISION.UNRANKED) {
+  let context
+  if (division === enums.DIVISION.UNRANKED) {
     let cacheKey = 'results_' + res.locals.event.get('name') + '_' + division
     context = await cache.getOrFetch(cache.general, cacheKey, async function () {
       let findGameOptions = {
@@ -568,7 +568,7 @@ async function viewEventResults (req, res) {
     if (forms.isInt(req.query.sortBy) && req.query.sortBy > 0 && req.query.sortBy <= constants.MAX_CATEGORY_COUNT) {
       sortedBy = parseInt(req.query.sortBy)
     }
-  
+
     // Gather entries rankings
     let cacheKey = 'results_' + res.locals.event.get('name') + '_' + division + '_' + sortedBy
     context = await cache.getOrFetch(cache.general, cacheKey, async function () {

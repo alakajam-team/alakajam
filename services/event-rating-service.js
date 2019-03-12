@@ -120,7 +120,7 @@ async function saveEntryVote (user, entry, event, voteData) {
   let optouts = entry.related('details').get('optouts') || []
   for (let i in voteData) {
     let categoryIndex = (parseInt(i) + 1)
-    if (!forms.isFloat(voteData[i], {min: 0, max: 10}) ||
+    if (!forms.isFloat(voteData[i], { min: 0, max: 10 }) ||
         optouts.includes(eventDetails.get('category_titles')[categoryIndex - 1])) {
       voteData[i] = 0
     }

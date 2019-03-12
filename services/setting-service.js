@@ -64,10 +64,10 @@ async function save (key, value) {
   let settingModel = await models.Setting.where('key', key).fetch()
   let method = 'update'
   if (!settingModel) {
-    settingModel = new models.Setting({key: key})
+    settingModel = new models.Setting({ key: key })
     method = 'insert' // setting the ID manually makes Bookshelf assume an update
   }
   settingModel.set('value', value)
-  await settingModel.save(null, {method: method})
+  await settingModel.save(null, { method: method })
   cache.settings.del(key)
 }

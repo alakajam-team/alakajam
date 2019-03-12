@@ -303,7 +303,7 @@ async function deletePost (req, res) {
  * Likes a post
  */
 async function watchPost (req, res) {
-  let {user, post} = res.locals
+  let { user, post } = res.locals
 
   if (user) {
     if (securityService.isUserWatching(user, post)) {
@@ -320,7 +320,7 @@ async function watchPost (req, res) {
  * Likes or unlikes a post
  */
 async function likePost (req, res) {
-  let {user, post} = res.locals
+  let { user, post } = res.locals
 
   if (user) {
     if (req.body.like && likeService.isValidLikeType(req.body.like)) {

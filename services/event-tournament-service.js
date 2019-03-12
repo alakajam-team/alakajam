@@ -191,7 +191,7 @@ async function _refreshTournamentRankings (event) {
   let statusTournamentAllowed = [enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED]
   if (statusTournamentAllowed.includes(event.get('status_tournament'))) {
     // Fetch ALL tournament scores
-    let tournamentEntries = await findTournamentEntries(event, {statusTournamentAllowed})
+    let tournamentEntries = await findTournamentEntries(event, { statusTournamentAllowed })
     let tScores = await models.TournamentScore
       .where('event_id', event.get('id'))
       .orderBy('score', 'DESC')

@@ -58,7 +58,7 @@ function fetchMultipleNamed (names) {
  * @returns {Promise<string[]>} a promise which resolves with the names.
  */
 async function fetchAllNames () {
-  let names = (await db.knex('platform').select('name')).map(({name}) => name)
+  let names = (await db.knex('platform').select('name')).map(({ name }) => name)
   names.sort()
   return names
 }
@@ -115,7 +115,7 @@ async function setEntryPlatforms (entry, platforms) {
         await transaction('entry_platform')
           .select('platform_id')
           .where('entry_id', entryId)
-      ).map(({platform_id}) => platform_id) // eslint-disable-line camelcase
+      ).map(({ platform_id }) => platform_id) // eslint-disable-line camelcase
       const toRemoveIds = existingIds.filter(id => !platformIds.includes(id))
       const toAdd = platforms
         .filter(p => !existingIds.includes(p.id))
@@ -126,7 +126,7 @@ async function setEntryPlatforms (entry, platforms) {
         }))
 
       const promises = []
-      promises.push(entry.save('platforms', platformNames, {transacting: transaction}))
+      promises.push(entry.save('platforms', platformNames, { transacting: transaction }))
 
       if (toAdd.length > 0) { // Insert new entry_platform records.
         promises.push(transaction('entry_platform').insert(toAdd))

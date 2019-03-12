@@ -230,7 +230,7 @@ async function events (req, res) {
 async function games (req, res) {
   res.locals.pageTitle = 'Games'
 
-  let {user, featuredEvent} = res.locals
+  let { user, featuredEvent } = res.locals
 
   // Parse query
   let searchOptions = await eventController.handleGameSearch(req, res)
@@ -252,7 +252,7 @@ async function games (req, res) {
   let eventsCollection = await eventService.findEvents()
   let searchedEvent = null
   if (searchOptions.eventId) {
-    searchedEvent = eventsCollection.findWhere({'id': parseInt(searchOptions.eventId)})
+    searchedEvent = eventsCollection.findWhere({ 'id': parseInt(searchOptions.eventId) })
   }
 
   res.render('games', {
@@ -297,7 +297,7 @@ async function people (req, res) {
   let eventsCollection = await eventService.findEvents({ statusNot: enums.EVENT.STATUS.PENDING })
   let searchedEvent = null
   if (searchOptions.eventId) {
-    searchedEvent = eventsCollection.findWhere({'id': parseInt(searchOptions.eventId)})
+    searchedEvent = eventsCollection.findWhere({ 'id': parseInt(searchOptions.eventId) })
   }
 
   res.render('people', {

@@ -56,7 +56,7 @@ async function adminHome (req, res) {
     allowHidden: true,
     allowDrafts: true
   })
-  let draftPosts = allPostsCollection.where({'published_at': null})
+  let draftPosts = allPostsCollection.where({ 'published_at': null })
 
   res.render('admin/admin-home', {
     draftPosts,

@@ -136,7 +136,7 @@ async function viewEntry (req, res) {
 }
 
 async function editEntry (req, res) {
-  let {entry, event, user} = res.locals
+  let { entry, event, user } = res.locals
 
   // Security checks
   if (!user) {
@@ -438,7 +438,7 @@ async function leaveEntry (req, res) {
  * Saves a comment or vote made to an entry
  */
 async function saveCommentOrVote (req, res) {
-  let {entry, event, user} = res.locals
+  let { entry, event, user } = res.locals
 
   // Security checks
   if (!user) {

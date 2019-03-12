@@ -377,7 +377,7 @@ async function saveShortlistVotes (user, event, ids) {
   let score = constants.SHORTLIST_SIZE
   let results = []
   for (let theme of sortedShortlist) {
-    results.push(await saveVote(user, event, theme.get('id'), score, {doNotSave: true}))
+    results.push(await saveVote(user, event, theme.get('id'), score, { doNotSave: true }))
     score--
   }
 
@@ -436,7 +436,7 @@ async function findShortlist (event) {
 
 async function computeShortlist (event) {
   // Mark all themes as out
-  let allThemesCollection = await findAllThemes(event, {shortlistEligible: true})
+  let allThemesCollection = await findAllThemes(event, { shortlistEligible: true })
   await event.load('details')
   await db.transaction(async function (t) {
     // FIXME Transaction unused

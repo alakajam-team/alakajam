@@ -195,7 +195,7 @@ async function dashboardPosts (req, res) {
     userId: res.locals.dashboardUser.get('id'),
     allowDrafts: true
   })
-  let draftPosts = allPostsCollection.where({'published_at': null})
+  let draftPosts = allPostsCollection.where({ 'published_at': null })
 
   res.render('user/dashboard-posts', {
     publishedPosts: allPostsCollection.difference(draftPosts),

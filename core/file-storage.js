@@ -158,7 +158,7 @@ async function resize (sourcePath, targetPathWithoutExtension, fileExtension, op
     // Disable thumbnail resizing for gifs (unsupported by sharp for now)
     // https://github.com/lovell/sharp/issues/1372
     if ((await getImageType(sourcePath) === 'gif')) {
-      options.format = 'png';
+      options.format = 'png'
       if (options.maxWidth >= constants.PICTURE_OPTIONS_THUMB.maxWidth) {
         delete options.maxWidth
         delete options.maxHeight
@@ -171,7 +171,7 @@ async function resize (sourcePath, targetPathWithoutExtension, fileExtension, op
     // Check whether image is too big
     let source = sharp(sourcePath)
     let meta = await source.metadata()
-    let resizeOptions;
+    let resizeOptions
     if (options.maxWidth || options.maxHeight) {
       if ((options.maxWidth && meta.width > options.maxWidth) || (options.maxHeight && meta.height > options.maxHeight)) {
         resizeOptions = {

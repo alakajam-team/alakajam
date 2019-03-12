@@ -301,9 +301,9 @@ async function insertInitialData (knex, samples) {
     await settingService.save(constants.SETTING_FEATURED_EVENT_NAME, '2nd-alakajam')
 
     eventThemeService.saveThemeIdeas(entrantUser, event2, [
-      {title: 'Alone'},
-      {title: 'Evolution'},
-      {title: 'Two buttons'}
+      { title: 'Alone' },
+      { title: 'Evolution' },
+      { title: 'Two buttons' }
     ])
 
     let adminEntry = await eventService.createEntry(adminUser, event2)

@@ -205,7 +205,7 @@ async function configure (app) {
   })
 
   nj.env.addFilter('shuffle', function (arr) {
-    return arr && Array.isArray(arr) ? arr.sort(() => { return 0.5 - Math.random()}) : arr;
+    return arr && Array.isArray(arr) ? arr.sort(() => { return 0.5 - Math.random() }) : arr
   })
 
   // Body parsers config

@@ -115,7 +115,7 @@ async function findPosts (options = {}) {
 
 async function findPostById (postId) {
   return models.Post.where('id', postId)
-    .fetch({withRelated: ['author', 'userRoles', 'event', 'entry', 'entry.userRoles']})
+    .fetch({ withRelated: ['author', 'userRoles', 'event', 'entry', 'entry.userRoles'] })
 }
 
 /**
@@ -133,7 +133,7 @@ async function findPost (options = {}) {
   if (!options.allowDrafts) query = query.where('published_at', '<=', new Date())
   return query
     .orderBy('published_at', 'desc')
-    .fetch({withRelated: ['author', 'userRoles']})
+    .fetch({ withRelated: ['author', 'userRoles'] })
 }
 
 /**
@@ -149,12 +149,12 @@ async function findLatestAnnouncement (options = {}) {
     query = query.where('event_id', options.eventId)
   }
   return query.orderBy('published_at', 'DESC')
-    .fetch({withRelated: ['author', 'userRoles']})
+    .fetch({ withRelated: ['author', 'userRoles'] })
 }
 
 async function findCommentById (commentId) {
   return models.Comment.where('id', commentId)
-    .fetch({withRelated: ['user']})
+    .fetch({ withRelated: ['user'] })
 }
 
 /**
@@ -176,7 +176,7 @@ async function findCommentsSortedForDisplay (node) {
 async function findCommentsByUser (user) {
   return models.Comment.where('user_id', user.id)
     .orderBy('created_at', 'DESC')
-    .fetchAll({withRelated: ['user', 'node']})
+    .fetchAll({ withRelated: ['user', 'node'] })
 }
 
 /**
@@ -226,7 +226,7 @@ async function findCommentsToUser (user, options = {}) {
   })
     .where('comment.updated_at', '>', notificationsLastRead)
     .orderBy('created_at', 'DESC')
-    .fetchAll({withRelated: ['user', 'node']})
+    .fetchAll({ withRelated: ['user', 'node'] })
 }
 
 /**

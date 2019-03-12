@@ -748,7 +748,7 @@ async function findGames (options = {}) {
             'user_id': options.notReviewedById,
             'node_type': 'entry'
           })
-          .select('node_id'));
+          .select('node_id'))
 
       // If this option is set, this has already been done (to avoid multiple joins on same table)
       if (!options.userId) {
@@ -757,9 +757,9 @@ async function findGames (options = {}) {
           this.on('user_role.node_id', '=', 'entry.id')
             .andOn('user_role.user_id', '=', options.notReviewedById)
         })
-        .whereNull('user_role.id')
+          .whereNull('user_role.id')
       }
-      return qb;
+      return qb
     })
   }
   if (options.userId) {
@@ -775,7 +775,7 @@ async function findGames (options = {}) {
           'user_role.user_id': options.notReviewedById
         })
       }
-      return qb;
+      return qb
     })
   }
   if (options.highScoresSupport) {
