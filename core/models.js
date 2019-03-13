@@ -133,6 +133,7 @@ module.exports.UserDetails = bookshelf.model('UserDetails', {
  * | integer | node_id | ID of the target node (not null)
  * | string | node_type | Type of the target node ('entry' or 'post', not null)
  * | string | permission | Permission: 'read', 'write', 'manage' (not null)
+ * | integer | event_id | Event ID
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */

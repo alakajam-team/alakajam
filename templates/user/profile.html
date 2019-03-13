@@ -69,19 +69,22 @@
       <div class="featured">
         {{ profileUser.related('details').get('body') | markdown | safe }}
       </div>
+      <div class="spacing"></div>
       {% endif %}
 
       <div class="panel page-tabs">
-        <ul class="nav nav-tabs nav-justified">
-          <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#entries" data-tab-selector="#js-entries">Alakajam Entries ({{alakajamEntries.length + otherEntries.length}})</a></li>
-          <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#entries-ext" data-tab-selector="#js-entries-ext">External Entries ({{externalEntries.length}})</a></li>
-          <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#posts" data-tab-selector="#js-posts">Latest posts ({{posts.pagination.rowCount}})</a></li>
+        <ul class="nav nav-tabs nav-justified" style="margin-top: 30px; margin-bottom: 10px">
+          <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#entries" data-tab-selector="#js-entries">Alakajam! games ({{alakajamEntries.length + otherEntries.length}})</a></li>
+          {% if externalEntries.length > 0 %}
+          <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#entries-ext" data-tab-selector="#js-entries-ext">Other games ({{externalEntries.length}})</a></li>
+          {% endif %}
+          <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#posts" data-tab-selector="#js-posts">Blog posts ({{posts.pagination.rowCount}})</a></li>
           <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#posts" data-tab-selector="#js-scores">High scores ({{userScores.length}})</a></li>
         </ul>
         <div id="js-entries" class="tab-content js-tab">
           {% if alakajamEntries.length > 0 or otherEntries.length > 0 %}
-            <h2>Alakajam! entries</h2>
             {% if alakajamEntries.length > 0 %}
+            <h2>Main events</h2>
               <div class="game-grid">
                 {% for entry in alakajamEntries %}
                   <div class="game-grid-entry">
@@ -89,12 +92,10 @@
                   </div>
                 {% endfor %}
               </div>
-            {% else %}
-              <div class="well">{{ profileUser.get('title') }} didn't submit Alakajam! games... Yet!</div>
             {% endif %}
 
-            <h2>Other Entries (Kajam, Feedback, ...)</h2>
             {% if otherEntries.length > 0 %}
+            <h2>Special events</h2>
               <div class="game-grid">
                 {% for entry in otherEntries %}
                   <div class="game-grid-entry">
@@ -102,15 +103,12 @@
                   </div>
                 {% endfor %}
               </div>
-            {% else %}
-              <div class="well">{{ profileUser.get('title') }} didn't submit games... Yet!</div>
             {% endif %}
           {% else %}
             <div class="well">{{ profileUser.get('title') }} didn't submit games... Yet!</div>
           {% endif %}
         </div>
         <div id="js-entries-ext" class="tab-content js-tab">
-          {% if externalEntries.length > 0 %}
           <div class="game-grid">
             {% for entry in externalEntries %}
               <div class="game-grid-entry">
@@ -118,9 +116,6 @@
               </div>
             {% endfor %}
           </div>
-          {% else %}
-          <div class="well">{{ profileUser.get('title') }} didn't submit external games... Yet!</div>
-          {% endif %}
         </div>
         <div id="js-posts" class="tab-content js-tab">
           {% if posts.models.length > 0 %}
@@ -151,6 +146,7 @@
             </div>
           </div>
       
+          {% if userScores.length > 0 %}
           <table class="table">
             <thead>
               <tr>
@@ -175,13 +171,12 @@
                 </td>
               </tr>
               {% endfor %}
-              {% if userScores.length === 0 %}
-              <tr>
-                <td colspan="6" class="text-center">No score submitted yet!</td>
-              </tr>
-              {% endif %}
             </tbody>
           </table>
+          {% else %}
+            <p>No score submitted yet!</p>
+            <p><a class="btn btn-primary" href="/games?highScoresSupport=on">Find games with high scores</a></p>
+          {% endif %}
         </div>
       </div>
     </div>
