@@ -95,9 +95,9 @@
       <div class="col-md-12">
         <h1 id="js-title-display"></h1>
         
-        {% if errorMessage %}
+        {% for errorMessage in errorMessages %}
           <div class="alert alert-warning">{{ errorMessage }}</div>
-        {% endif %}
+        {% endfor %}
       </div>
     </div>
 

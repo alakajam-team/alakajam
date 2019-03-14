@@ -173,7 +173,7 @@ async function editEntry (req, res) {
   }
 
   let isPlayedInTournament = await eventTournamentService.findActiveTournamentPlaying(entry.get('id'))
-  let errorMessage = res.locals.errorMessage
+  let errorMessages = res.locals.errorMessages || []
 
   if (req.method === 'POST') {
     // Parse form data
@@ -181,7 +181,7 @@ async function editEntry (req, res) {
     let links = []
     let i = 0
     if (req.body['submit-links']) {
-      while (req.body['url' + i]) {
+      while (req.body['url' + i] || req.body['label' + i]) {
         let label = forms.sanitizeString(req.body['label' + i])
         let url = req.body['url' + i]
         links.push({
@@ -202,7 +202,7 @@ async function editEntry (req, res) {
       platformNames = platformNames.map(forms.sanitizeString)
       platforms = await platformService.fetchMultipleNamed(platformNames)
       if (platforms.length < platformNames.length) {
-        errorMessage = 'One or more platforms are invalid: ' + platformNames.join(', ')
+        errorMessages.push('One or more platforms are invalid: ' + platformNames.join(', '))
       }
     }
 
@@ -258,7 +258,7 @@ async function editEntry (req, res) {
     } else if (req.file && (await fileStorage.isValidPicture(req.file.path))) {
       let result = await eventService.setEntryPicture(entry, req.file)
       if (result.error) {
-        errorMessage = result.error
+        errorMessages.push(result.error)
       }
     }
 
@@ -282,24 +282,27 @@ async function editEntry (req, res) {
     })
 
     // Save entry: Validate form data
+    i = 0
     for (let link of links) {
-      if (!forms.isURL(link.url) || !link.label) {
-        errorMessage = 'Link #' + i + ' is invalid'
-        break
+      i++
+      if (!forms.isURL(link.url)) {
+        errorMessages.push(`Link #${i} '${link.label}' is invalid. Url <${link.url}> is not a valid url.`)
+      } else if (!link.label) {
+        errorMessages.push(`Link #${i} <${link.url}> is invalid. Label is required.`)
       }
     }
 
     if (isPlayedInTournament && statusHighScore === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
-      errorMessage = 'Cannot disable high scores while the game is featured in an active tournament'
+      errorMessages.push('Cannot disable high scores while the game is featured in an active tournament')
     } else if (!forms.isLengthValid(links, 1000)) {
-      errorMessage = 'Too many links (max allowed: around 7)'
+      errorMessages.push('Too many links (max allowed: around 7)')
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
-      errorMessage = 'Submissions are closed for this event'
+      errorMessages.push('Submissions are closed for this event')
     } else if (req.body.division && !isExternalEvent && event && !forms.isIn(req.body.division, Object.keys(event.get('divisions')))) {
-      errorMessage = 'Invalid division'
+      errorMessages.push('Invalid division')
     }
 
-    if (!errorMessage) {
+    if (errorMessages.length === 0) {
       // Save entry: Prepare team changes
       let teamMembers = null
       if (req.body.members) {
@@ -378,7 +381,7 @@ async function editEntry (req, res) {
     external: !res.locals.event,
     tags: entry.related('tags').map(tag => ({ id: tag.id, value: tag.get('value') })),
     isPlayedInTournament,
-    errorMessage
+    errorMessages
   })
 }
 
