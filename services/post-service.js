@@ -90,8 +90,8 @@ async function findPosts (options = {}) {
       qb.orWhere('special_post_type', 'hidden')
     }
 
-    if (options.eventId) qb = qb.where('event_id', options.eventId)
-    if (options.entryId) qb = qb.where('entry_id', options.entryId)
+    if (options.eventId) qb = qb.where('post.event_id', options.eventId)
+    if (options.entryId) qb = qb.where('post.entry_id', options.entryId)
     if (options.userId) {
       qb = qb.innerJoin('user_role', 'post.id', 'user_role.node_id')
         .where({
