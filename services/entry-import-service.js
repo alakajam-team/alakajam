@@ -173,29 +173,14 @@ async function createOrUpdateEntry (user, importerId, profileIdentifier, entryId
 
         // Create actual entry picture
         if (downloadSuccessful) {
-          let picturePath = '/entry/' + entryModel.get('id')
-          let result = false
-          try {
-            result = await fileStorage.savePictureUpload(temporaryPath, picturePath)
-            if (result.error) {
-              throw new Error(result.error)
-            }
-          } catch (e) {
+          let result = await eventService.setEntryPicture(entryModel, temporaryPath)
+          if (result.error) {
             log.warn('Failed to save picture upload ' + temporaryPath)
-            console.log(e)
+            log.warn(result.error)
           }
 
           // Delete temporary picture if needed
           fs.unlink(temporaryPath)
-
-          // Save actual picture
-          if (result.finalPath) {
-            entryModel.set('pictures', [result.finalPath])
-            if (!entryModel.hasChanged('pictures')) {
-              // Make sure to make pictures URLs change for caching purposes
-              entryModel.set('updated_at', new Date())
-            }
-          }
         }
       }
     }

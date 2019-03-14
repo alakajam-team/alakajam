@@ -138,12 +138,15 @@ async function fetchEntryDetails (entryReference) {
     label: 'Ludum Dare entry page',
     url: entryReference.link
   })
+  let regex = new RegExp('!\[[^\\]]*\]\\(' + meta.cover + '\\)')
+  let body = entryReference.importerProperties.body ? entryReference.importerProperties.body.replace(regex, '').trim() : ''
+
   let entryDetails = {
     title: entryReference.title,
     externalEvent: entryReference.importerProperties.externalEvent,
     published: entryReference.importerProperties.published,
     picture: entryReference.thumbnail,
-    body: _replaceTripleSlashes(entryReference.importerProperties.body),
+    body: _replaceTripleSlashes(body),
     division: meta.author.length > 1 ? enums.DIVISION.TEAM : enums.DIVISION.SOLO,
     platforms,
     links
