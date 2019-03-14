@@ -295,8 +295,9 @@ async function createEntry (user, event) {
   await entry.load('details')
 
   // Attach posts from same event
-  await postService.attachPostsToEntry(event.get('id'), user.get('id'), entry.get('id'))
-
+  if (event) {
+    await postService.attachPostsToEntry(event.get('id'), user.get('id'), entry.get('id'))
+  }
   return entry
 }
 
