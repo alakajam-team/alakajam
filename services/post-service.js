@@ -36,7 +36,9 @@ module.exports = {
   refreshCommentCount,
   deletePost,
   createComment,
-  deleteComment
+  deleteComment,
+
+  attachPostsToEntry
 }
 
 /**
@@ -362,4 +364,27 @@ async function deleteComment (comment) {
     .del()
 
   await comment.destroy()
+}
+
+/**
+ * Attach existing post on the event from a user the given entry
+ * @param  {number} eventId
+ * @param  {number} userId
+ * @param  {number} entryId
+ * @return {void}
+ */
+async function attachPostsToEntry (eventId, userId, entryId) {
+  // Attach posts from same event
+  let posts = await findPosts({
+    eventId,
+    userId,
+    specialPostType: null
+  })
+  let promises = [];
+  posts.each(async function (post) {
+    post.set('entry_id', entryId)
+    promises.push(post.save())
+  })
+
+  return Promise.all(promises)
 }

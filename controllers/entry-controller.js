@@ -415,6 +415,15 @@ async function leaveEntry (req, res) {
   let { entry, user } = res.locals
 
   if (user && entry) {
+    // Remove requesting user posts from the entry
+    await entry.load('posts')
+    entry.related('posts').forEach(async function (post) {
+      if (post.get('author_user_id') === user.get('id')) {
+        post.set('entry_id', null)
+        await post.save()
+      }
+    })
+
     // Remove requesting user from the team
     let newTeamMembers = []
     entry.related('userRoles').each(function (userRole) {

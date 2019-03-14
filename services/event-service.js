@@ -295,15 +295,7 @@ async function createEntry (user, event) {
   await entry.load('details')
 
   // Attach posts from same event
-  let posts = await postService.findPosts({
-    eventId: event.get('id'),
-    userId: user.get('id'),
-    specialPostType: null
-  })
-  posts.each(async function (post) {
-    post.set('entry_id', entry.get('id'))
-    await post.save()
-  })
+  await postService.attachPostsToEntry(event.get('id'), user.get('id'), entry.get('id'))
 
   return entry
 }
@@ -465,6 +457,15 @@ function setTeamMembers (currentUser, entry, userIds) {
         .where('entry_id', entryId)
         .del()
     } else {
+      // Remove removed user posts from the entry
+      await entry.load('posts')
+      entry.related('posts').forEach(async function (post) {
+        if (!userIds.includes(post.get('author_user_id'))) {
+          post.set('entry_id', null)
+          await post.save()
+        }
+      })
+
       // Remove users not in team list.
       numRemoved = await transaction('user_role')
         .whereNotIn('user_id', userIds)
@@ -597,6 +598,8 @@ async function acceptInvite (user, entry) {
           event_id: entry.get('event_id')
         })
       }
+
+      await postService.attachPostsToEntry(entry.get('event_id'), user.get('id'), entry.get('id'))
 
       await userRole.save(null, { transacting: transaction })
       await deleteInvite(user, entry, { transacting: transaction })
