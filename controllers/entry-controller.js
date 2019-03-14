@@ -79,7 +79,7 @@ async function viewEntry (req, res) {
   const { user, entry } = res.locals
 
   // Let the template display user thumbs
-  await entry.load('userRoles.user')
+  await entry.load(['invites.invited', 'userRoles.user'])
 
   // Check voting phase
   let eventVote = eventRatingService.areVotesAllowed(res.locals.event)

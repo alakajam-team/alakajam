@@ -2,7 +2,7 @@
 
 {# Allowed options: fullWidth centered #}
 {% macro userThumb(user, options = {}) %}
-<div class="user-thumb {{ 'full-width' if options.fullWidth else 'col-sm-4' }} {{ 'centered' if options.centered }}">
+<div class="user-thumb {{ 'full-width' if options.fullWidth else 'col-sm-4' }} {{ 'centered' if options.centered }} {{ 'pending' if options.pending }}">
     <div class="user-thumb__title">
       <a href="{{ buildUrl(user, 'user') }}">
         <div class="user-thumb__avatar">
@@ -15,6 +15,11 @@
         {{ user.get('title') }}
       </a>
     </div>
+    {% if options.pending -%}
+      <div class="user-thumb__pending">
+        Pending invite
+      </div>
+    {%- endif %}
     <div class="user-thumb__name">
       {{ user.get('name') }}
     </div>

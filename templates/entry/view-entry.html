@@ -249,6 +249,11 @@
           {% for userRole in entry.sortedUserRoles() %}
             {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}
           {% endfor %}
+          {% if canUserWrite(user, entry) %}
+            {% for invite in entry.related('invites').models %}
+              {{ userMacros.userThumb(invite.related('invited'), { fullWidth: true, pending: true }) }}
+            {% endfor %}
+          {% endif %}
         </div>
       </div>
 
