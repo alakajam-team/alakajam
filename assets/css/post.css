@@ -53,6 +53,11 @@
     line-height: 36px;
     font-weight: bold;
     padding-right: 10px;
+    padding-left: 10px;
+
+    & > a:first-child {
+      margin-left: -10px;
+    }
 
     & a.btn {
       margin-top: -6px;

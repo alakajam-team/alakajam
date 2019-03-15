@@ -48,7 +48,7 @@
         {{ author.get('title') }} 
       </a>
       {% if not options.hideDate %}
-      <span class="hidden-xs">
+      <span>
          • {% if isPast(post.get('published_at')) %}
           <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('published_at') | dateTime }}">{{ post.get('published_at') | relativeTime }}</span>
         {% elseif post.get('published_at') %}
@@ -58,19 +58,22 @@
         {% endif %}
       </span>
       {% endif %}
+
       {% set relatedEvent = post.related('event') if post.related('event') %}
-        {% set relatedEntry = post.related('entry') %}
-        {% if relatedEvent.get('id') %}
-         on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
-        {% endif %}
-        {% if relatedEntry.get('id') %}
+      {% set relatedEntry = post.related('entry') %}
+      {%- if relatedEvent.get('id') -%}
+        on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
+      {% endif -%}
+      {%- if relatedEntry.get('id') -%}
+        <span style="display: inline-block;">
           entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">
-            {% if relatedEntry.pictureIcon() %}
+            {%- if relatedEntry.pictureIcon() -%}
               <img data-src="{{ pictureUrl(relatedEntry.pictureIcon(), relatedEntry) }}" class="no-border js-lazy" style="max-height: 32px; margin-top: -2px;" />
-            {% endif %}
-            {{ relatedEntry.get('title') }}
+            {%- endif -%}
+            {{ relatedEntry.get('title') -}}
           </a>
-        {% endif %}
+        </span>
+      {%- endif -%}
     </div>
     
     {% if not options.hideBody %}
