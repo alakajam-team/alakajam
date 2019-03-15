@@ -69,7 +69,7 @@
           entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">
             {%- if relatedEntry.pictureIcon() -%}
               <img data-src="{{ pictureUrl(relatedEntry.pictureIcon(), relatedEntry) }}" class="no-border js-lazy" style="max-height: 32px; margin-top: -2px;" />
-            {%- endif -%}
+            {%- endif %}
             {{ relatedEntry.get('title') -}}
           </a>
         </span>
