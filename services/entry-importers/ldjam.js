@@ -138,7 +138,7 @@ async function fetchEntryDetails (entryReference) {
     label: 'Ludum Dare entry page',
     url: entryReference.link
   })
-  let regex = new RegExp('!\[[^\\]]*\]\\(' + meta.cover + '\\)')
+  let regex = new RegExp('!\\[[^\\]]*\\]\\(' + meta.cover + '\\)')
   let body = entryReference.importerProperties.body ? entryReference.importerProperties.body.replace(regex, '').trim() : ''
 
   let entryDetails = {

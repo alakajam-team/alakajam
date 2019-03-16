@@ -380,7 +380,7 @@ async function attachPostsToEntry (eventId, userId, entryId) {
     userId,
     specialPostType: null
   })
-  let promises = [];
+  let promises = []
   posts.each(async function (post) {
     post.set('entry_id', entryId)
     promises.push(post.save())

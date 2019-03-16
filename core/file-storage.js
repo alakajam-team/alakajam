@@ -158,10 +158,11 @@ async function resize (sourcePath, targetPathWithoutExtension, fileExtension, op
     // Disable thumbnail resizing for gifs (unsupported by sharp for now)
     // https://github.com/lovell/sharp/issues/1372
     if ((await getImageType(sourcePath) === 'gif')) {
-      options.format = 'png'
       if (options.maxWidth >= constants.PICTURE_OPTIONS_THUMB.maxWidth) {
         delete options.maxWidth
         delete options.maxHeight
+      } else {
+        options.format = 'png'
       }
     }
 
@@ -202,6 +203,7 @@ async function resize (sourcePath, targetPathWithoutExtension, fileExtension, op
       return resize.toFile(targetPathWithoutExtension + '.' + fileExtension)
     } else {
       res = meta
+      fileExtension = meta.format
     }
   }
 
