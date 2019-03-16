@@ -11,6 +11,7 @@ const cheerio = require('cheerio')
 const log = require('../../core/log')
 const forms = require('../../core/forms')
 const entryImporterTools = require('./entry-importer-tools')
+const enums = require('../../core/enums')
 
 module.exports = {
   config: {
@@ -74,6 +75,7 @@ async function fetchEntryDetails (entryReference) {
   let authorLink = $('#compo2 a strong')
   if (authorLink.text()) {
     // Fetch detailed info
+    let ldDivision = $('#compo2 div i').text()
     let picture = $('#shotview img').attr('src')
     let body = $($('#compo2 h2').get(1)).prev().text()
     let linksText = ''
@@ -100,11 +102,12 @@ async function fetchEntryDetails (entryReference) {
     let entryDetails = {
       title: entryReference.title,
       externalEvent: entryReference.importerProperties.externalEvent,
-      published: eventDate(entryReference.importerProperties.externalEvent),
+      published: eventDate(entryReference.importerProperties.externalEvent, ldDivision),
       picture: forms.isURL(picture) ? picture : null,
       body: forms.sanitizeString(body, { maxLength: 100000 }),
       platforms: entryImporterTools.guessPlatforms(linksText),
-      links
+      links,
+      division: ldDivision === 'Jam Entry' ? enums.DIVISION.TEAM : enums.DIVISION.SOLO
     }
 
     return entryDetails
@@ -113,7 +116,7 @@ async function fetchEntryDetails (entryReference) {
   return { error: 'Entry page seems empty' }
 }
 
-function eventDate (eventName) {
+function eventDate (eventName, ldDivision) {
   const eventDates = {
     // LD dates are stored for teams
     'Ludum Dare 18': '2010-08-23',
@@ -135,6 +138,7 @@ function eventDate (eventName) {
     'Ludum Dare 34': '2015-12-14',
     'Ludum Dare 35': '2016-04-18',
     'Ludum Dare 36': '2016-08-29',
+    'Ludum Dare 37': '2016-12-11',
 
     'MiniLD 40': '2013-02-29',
     'MiniLD 41': '2013-03-31',
@@ -173,5 +177,15 @@ function eventDate (eventName) {
     'MiniLD 74': '2017-07-31'
   }
 
-  return eventDates[eventName] ? new Date(eventDates[eventName]) : null
+  let date = eventDates[eventName] ? new Date(eventDates[eventName]) : null
+  if (date == null) {
+    let noWarmupName = eventName.replace(' Warmup', '')
+    if (eventDates[noWarmupName] != null) {
+      date = new Date(eventDates[noWarmupName])
+      date.setDate(date.getDate() - 7)
+    }
+  } else if (ldDivision === 'Compo Entry') {
+    date.setDate(date.getDate() - 1)
+  }
+  return date
 }
