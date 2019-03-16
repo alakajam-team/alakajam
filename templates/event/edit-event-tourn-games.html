@@ -12,6 +12,7 @@
 {% if canRefreshResult %}
   <form method="post" class="form-inline">
     <p>
+      {{ csrfToken() | safe }}
       <input type="submit" name="refresh" class="btn btn-primary" value="Refresh all tournament scores" 
         onclick="return confirm('Refresh all tournament scores?')" /> 
     </p>
