@@ -1,5 +1,5 @@
-const log = require("../core/log");
-const config = require("../core/config");
+const log = require("../core/log").default;
+const config = require("../core/config").default;
 
 exports.up = async function(knex, Promise) {
   await knex.schema.alterTable("tag", function(table) {

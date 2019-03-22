@@ -2,7 +2,7 @@
  * Add `event_id` field to `user_role` table.
  */
 
-const config = require("../core/config");
+const config = require("../core/config").default;
 
 exports.up = async function(knex, Promise) {
   await knex.schema.table("user_role", function(table) {

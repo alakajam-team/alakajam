@@ -2,7 +2,7 @@
  * Fix setting values being to small for the sidebar JSON
  */
 
-const config = require("../core/config");
+const config = require("../core/config").default;
 
 exports.up = async function(knex, Promise) {
   try {

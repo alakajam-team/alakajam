@@ -2,7 +2,7 @@
  * Theme rough ranking, in percentage from the top
  */
 
-const config = require("../core/config");
+const config = require("../core/config").default;
 
 exports.up = async function(knex, Promise) {
   try {

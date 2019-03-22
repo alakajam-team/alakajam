@@ -2,7 +2,7 @@
  * Makes post bodies, user details, and entry details longer.
  */
 
-const config = require("../core/config");
+const config = require("../core/config").default;
 
 exports.up = async function(knex, Promise) {
   try {
