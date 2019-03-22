@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "dist/server",
+    "target": "ES2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "types": ["node", "mocha"],
+  },
+  "include": [
+    "server/**/*.ts"
+  ]
+}

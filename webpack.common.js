@@ -27,7 +27,7 @@ const babelOptions = {
 
 module.exports = {
   entry: {
-    site: './assets/js/site.js'
+    site: './client/js/site.js'
   },
   output: {
     path: outputPath,
@@ -38,7 +38,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        include: rootPathTo('assets/js'),
+        include: rootPathTo('client/js'),
         use: [
           {
             loader: 'babel-loader',
