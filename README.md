@@ -18,9 +18,9 @@ See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional do
 
 ### Recommended
 
-* `npm run start:ts` Launches the server without needing to compile it first. Every TypeScript change will trigger a server restart. (Uses `ts-node-dev`)
-* `npm run start:refresh` Alternative that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (Uses `tsc` + `browser-refresh`)
-* `npm run lint` Checks your code for errors and fixes the most obvious ones.
+* `npm run start:ts` Launches the server without needing to compile it first. Every TypeScript change will trigger a server restart. (based on ts-node-dev)
+* `npm run start:refresh` Alternative that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)
+* `npm run lint` Checks your code for errors, and fixes the most obvious ones.
 
 ### Other tools
 

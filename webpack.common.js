@@ -2,15 +2,17 @@ const path = require('path')
 
 const rootPathTo = pathFromRoot => path.resolve(__dirname, pathFromRoot)
 
-const outputPath = rootPathTo('dist/client/js')
+const outputPath = rootPathTo('dist/client/scripts')
 
 const babelOptions = {
   presets: [
+    "@babel/typescript",
     [
       '@babel/preset-env',
       {
         useBuiltIns: 'usage',
-        corejs: 'core-js@3'
+        corejs: 'core-js@3',
+        modules: false
       }
     ]
   ],
@@ -19,18 +21,21 @@ const babelOptions = {
 
 module.exports = {
   entry: {
-    site: './client/js/site.js'
+    site: './client/scripts/site.ts'
   },
   output: {
     path: outputPath,
     filename: '[name].js',
-    publicPath: '/static/js/'
+    publicPath: '/static/scripts/'
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js']
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
-        include: rootPathTo('client/js'),
+        test: /\.tsx?$/,
+        include: rootPathTo('client/scripts'),
         use: [
           {
             loader: 'babel-loader',
@@ -42,7 +47,7 @@ module.exports = {
       // https://www.npmjs.com/package/slug
       // https://stackoverflow.com/questions/41873334/webpack-browserify-ignore-equivalent
       {
-        test: /unicode\/category\/So\.js$/,
+        test: /unicode[\\\/]category[\\\/]So\.js$/,
         use: [
           {
             loader: 'null-loader'

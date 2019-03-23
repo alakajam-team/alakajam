@@ -7,6 +7,7 @@
 import * as download from "download";
 import * as fs from "fs";
 import * as path from "path";
+import constants from "server/core/constants";
 import * as url from "url";
 import { promisify } from "util";
 import cache from "../core/cache";
@@ -17,7 +18,6 @@ import entryImporterItch from "./entry-importers/itch";
 import entryImporterLDJam from "./entry-importers/ldjam";
 import entryImporterLudumDare from "./entry-importers/ludumdare";
 import eventService from "./event-service";
-import constants from "server/core/constants";
 
 /**
  * Importers spec:

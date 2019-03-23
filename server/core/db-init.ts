@@ -11,8 +11,8 @@ import userService from "../services/user-service";
 import constants from "./constants";
 import db from "./db";
 import enums from "./enums";
-import log from "./log";
 import fileStorage from "./file-storage";
+import log from "./log";
 
 /**
  * Inserts sample data in the database.
@@ -294,5 +294,5 @@ function defaultArticleSidebar() {
             ]
         }
     ]
-}`
-};
+}`;
+}

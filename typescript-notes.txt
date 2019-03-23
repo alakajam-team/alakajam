@@ -1,2 +1,0 @@
-import (.*) = require\("(.*)"\);
-import * as $1 from "$2";

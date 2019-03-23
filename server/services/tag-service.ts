@@ -92,7 +92,7 @@ async function updateEntryTags(entry, tagInfo) {
         .where("entry_id", entryId)
     ).map((row) => {
       return row.tag_id;
-    }); // eslint-disable-line camelcase
+    });
 
     // Create/delete relations
     const toRemoveIds = existingIds.filter((id) => !tagIds.includes(id));
