@@ -2,13 +2,14 @@ const promisify = require("promisify-node");
 const fs = promisify("fs");
 const path = promisify("path");
 
-const models = require("../core/models");
-const eventService = require("../services/event-service");
+const log = require("../core/log").default;
+const models = require("../core/models").default;
+const eventService = require("../services/event-service").default;
 
 exports.up = async function(knex, Promise) {
   try {
     let entries = await models.Entry.where({}).orderBy("id", "ASC").fetchAll();
-    console.log("Generate Thumbnails for " + entries.length + " entries.");
+    log.info("Generate Thumbnails for " + entries.length + " entries.");
     let i = 0;
     let u = 0;
     for (const entry of entries.models) {
@@ -22,12 +23,12 @@ exports.up = async function(knex, Promise) {
           await entry.save();
           await fs.unlink(movedFile);
         }
-        console.log(i + "/" + entries.length);
+        log.info(i + "/" + entries.length);
       } catch (e) {
-        console.error("Failed to generate thumbnails for entry " + entry.get("name") + ", picture: " + entry.picturePreviews()[0], e);
+        log.error("Failed to generate thumbnails for entry " + entry.get("name") + ", picture: " + entry.picturePreviews()[0], e);
       }
     }
-    console.log("Generated Thumbnails: " + u);
+    log.info("Generated Thumbnails: " + u);
 
     Promise.resolve();
   } catch (e) {

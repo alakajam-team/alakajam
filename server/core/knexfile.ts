@@ -4,12 +4,13 @@
  * @module knexfile
  */
 
-let config = require("./config");
-let path = require("path");
+import * as path from "path";
+import config from "./config";
+import constants from "./constants";
 
-module.exports = {
+export default {
 
-  directory: path.join(path.relative(process.cwd(), __dirname), "server/migrations"),
+  directory: path.join(constants.ROOT_PATH, "server/migrations"),
 
   development: {
     client: config.DB_TYPE,
