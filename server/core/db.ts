@@ -9,6 +9,7 @@ import * as path from "path";
 import config from "./config";
 import knexfile from "./knexfile";
 import log from "./log";
+import constants from "./constants";
 
 export default initBookshelf();
 
@@ -60,11 +61,8 @@ function createKnexInstance() {
   };
 
   if (config.DB_TYPE === "sqlite3") {
-    const absoluteFilename = path.isAbsolute(config.DB_SQLITE_FILENAME)
-      ? config.DB_SQLITE_FILENAME
-      : path.join(__dirname, "..", config.DB_SQLITE_FILENAME);
     knexOptions.connection = {
-      filename: absoluteFilename,
+      filename: path.resolve(constants.ROOT_PATH, config.DB_SQLITE_FILENAME)
     };
   } else {
     knexOptions.connection = {

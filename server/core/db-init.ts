@@ -12,6 +12,7 @@ import constants from "./constants";
 import db from "./db";
 import enums from "./enums";
 import log from "./log";
+import fileStorage from "./file-storage";
 
 /**
  * Inserts sample data in the database.
@@ -157,8 +158,8 @@ export async function insertInitialData(samples) {
       published_at: new Date(),
     });
     if (samples === "nightly") {
-      const nightlyPostBuffer = await promisify(fs.readFile)(path.join(__dirname, "../tests/nightly/POST.md"));
-      const changesBuffer = await promisify(fs.readFile)(path.join(__dirname, "../CHANGES.md"));
+      const nightlyPostBuffer = await fileStorage.read("deployment/nightly/POST.md");
+      const changesBuffer = await fileStorage.read("CHANGES.md");
       post.set({
         title: "Nightly: " + moment().format("MMMM Do YYYY"),
         body: nightlyPostBuffer.toString() + changesBuffer.toString(),

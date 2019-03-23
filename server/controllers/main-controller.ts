@@ -5,9 +5,7 @@
  * @module controllers/main-controller
  */
 
-import * as fs from "fs";
-import * as path from "path";
-import { promisify } from "util";
+import fileStorage from "server/core/file-storage";
 import cache from "../core/cache";
 import constants from "../core/constants";
 import enums from "../core/enums";
@@ -339,8 +337,7 @@ async function chat(req, res) {
  */
 async function changes(req, res) {
   res.locals.pageTitle = "Site changes";
-
-  res.locals.changes = (await promisify(fs.readFile)(path.join(__dirname, "../CHANGES.md"))).toString();
+  res.locals.changes = fileStorage.read("CHANGES.md");
 
   res.render("changes", {
     sidebar: await settingService.findArticlesSidebar(),

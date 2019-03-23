@@ -36,8 +36,6 @@ export default {
   createFolderIfMissing,
 };
 
-const SOURCES_ROOT = path.join(__dirname, "..");
-
 // Leading bytes for common image formats.
 // See https://stackoverflow.com/a/8475542/1213677 and https://github.com/sindresorhus/file-type/blob/master/index.js
 const IMAGE_HEADER_MAGIC_TO_TYPE = {
@@ -150,7 +148,8 @@ async function savePictureUpload(fileUploadOrPath, targetPathWithoutExtension, o
 
   await createFolderIfMissing(path.dirname(absoluteTargetPath));
   const res = await resize(filePath, absoluteTargetPath, fileExtension, options);
-  return { ...res, finalPath: url.resolve("/", path.relative(SOURCES_ROOT, absoluteTargetPath + "." + res.format)) };
+  return { ...res, finalPath: url.resolve("/",
+    path.relative(constants.ROOT_PATH, absoluteTargetPath + "." + res.format)) };
 }
 
 async function resize(sourcePath, targetPathWithoutExtension, fileExtension, options: any = {}) {
@@ -260,11 +259,7 @@ async function remove(documentPath) {
 }
 
 function toAbsolutePath(anyPath) {
-  if (anyPath.indexOf(SOURCES_ROOT) === -1) {
-    return path.join(SOURCES_ROOT, anyPath);
-  } else {
-    return anyPath;
-  }
+  return path.resolve(constants.ROOT_PATH, anyPath);
 }
 
 /**

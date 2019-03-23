@@ -24,7 +24,8 @@ export default {
  */
 async function findArticle(articleName) {
   if (config.DEBUG_ARTICLES) {
-    const article = await promisify(fs.readFile)(path.join(__dirname, "../articles", articleName + ".md"));
+    const article = await promisify(fs.readFile)
+      (path.join(constants.ROOT_PATH, "server/articles", articleName + ".md"));
     if (article) {
       return article.toString();
     }

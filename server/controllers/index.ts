@@ -10,7 +10,8 @@ import * as csurf from "csurf";
 import * as multer from "multer";
 import * as path from "path";
 import * as randomKey from "random-key";
-import config from "../core/config";
+import config from "server/core/config";
+import constants from "server/core/constants";
 import adminController from "./admin-controller";
 import apiController from "./api-controller";
 import articleController from "./article-controller";
@@ -169,7 +170,7 @@ function initUploadMiddleware() {
   // Multipart form parser
   const uploadStorage = multer.diskStorage({
     destination(req, file, cb) {
-      cb(null, path.join(__dirname, "..", config.DATA_PATH, "tmp"));
+      cb(null, path.resolve(constants.ROOT_PATH, config.DATA_PATH, "tmp"));
     },
     filename(req, file, cb) {
       file.filename = randomKey.generate() + "-" + file.originalname;

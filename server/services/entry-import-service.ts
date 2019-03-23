@@ -17,6 +17,7 @@ import entryImporterItch from "./entry-importers/itch";
 import entryImporterLDJam from "./entry-importers/ldjam";
 import entryImporterLudumDare from "./entry-importers/ludumdare";
 import eventService from "./event-service";
+import constants from "server/core/constants";
 
 /**
  * Importers spec:
@@ -155,7 +156,7 @@ async function createOrUpdateEntry(user, importerId, profileIdentifier, entryId)
       let temporaryPath: string|boolean = false;
       try {
         const extension = path.extname(url.parse(entryDetails.picture).pathname) || "";
-        temporaryPath = path.join(__dirname, "..", config.DATA_PATH, "tmp", entryReference.id + extension);
+        temporaryPath = path.resolve(constants.ROOT_PATH, config.DATA_PATH, "tmp", entryReference.id + extension);
       } catch (e) {
         log.warn("Failed to detect picture file name of " + entryDetails.picture, e);
       }

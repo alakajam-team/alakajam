@@ -14,6 +14,12 @@ const startDate = Date.now();
 import config from "./core/config";
 import log from "./core/log";
 
+if (__filename.includes(".js")) {
+  // Fix root-relative import paths from build
+  // tslint:disable-next-line: no-var-requires
+  require("module-alias/register");
+}
+
 log.warn("Starting server...");
 if (config.DEBUG_TRACE_REQUESTS) {
   process.env.DEBUG = "express:*";
@@ -131,7 +137,9 @@ async function initFilesLayout() {
   try {
     configureBrowserRefresh();
   } catch (e) {
-    // Nothing (dev-only dependency)
+    if (DEV_ENVIRONMENT) {
+      log.error(e.message);
+    }
   }
 
   // Run CSS and JS build (or bootstrap sources watcher in dev mode)
@@ -147,7 +155,7 @@ async function initFilesLayout() {
 function configureBrowserRefresh() {
   const browserRefreshClient = require("browser-refresh-client");
 
-  const CLIENT_RESOURCES = "/templates/** /static/**";
+  const CLIENT_RESOURCES = "*.html *.js *.css *.png *.jpg *.gif";
 
   // Configure for client-side resources
   if (config.DEBUG_REFRESH_BROWSER) {

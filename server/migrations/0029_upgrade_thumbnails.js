@@ -2,6 +2,7 @@ const promisify = require("promisify-node");
 const fs = promisify("fs");
 const path = promisify("path");
 
+const constants = require("../core/constants").default;
 const log = require("../core/log").default;
 const models = require("../core/models").default;
 const eventService = require("../services/event-service").default;
@@ -17,8 +18,8 @@ exports.up = async function(knex, Promise) {
         i++;
         if (entry.picturePreviews().length > 0) {
           u++;
-          let movedFile = path.join(__dirname, "..", entry.picturePreviews()[0].replace(".", "-old."));
-          await fs.rename(path.join(__dirname, "..", entry.picturePreviews()[0]), movedFile);
+          let movedFile = path.join(constants.ROOT_PATH, entry.picturePreviews()[0].replace(".", "-old."));
+          await fs.rename(path.join(constants.ROOT_PATH, entry.picturePreviews()[0]), movedFile);
           await eventService.setEntryPicture(entry, movedFile);
           await entry.save();
           await fs.unlink(movedFile);
