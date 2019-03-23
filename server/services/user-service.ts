@@ -5,6 +5,7 @@
  * @module services/user-service
  */
 
+import * as bookshelf from "bookshelf";
 import * as crypto from "crypto";
 import * as path from "path";
 import * as randomKey from "random-key";
@@ -141,7 +142,7 @@ async function searchByName(fragment, options: any = {}) {
  * @param password {string} unencrypted password (will be hashed before storage)
  * @returns {User|string} the created user, or an error message
  */
-async function register(email, name, password) {
+async function register(email, name, password): Promise<bookshelf.Model<any>|string> {
   if (!name.match(USERNAME_VALIDATION_REGEX)) {
     return "Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.";
   }

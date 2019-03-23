@@ -8,10 +8,9 @@ import * as path from "path";
 import config from "./config";
 import constants from "./constants";
 
-export default {
-
-  directory: path.join(constants.ROOT_PATH, "server/migrations"),
-
+// CommonJS export for knex cli support
+module.exports = {
+  directory: path.resolve(constants.ROOT_PATH, "server/migrations"),
   development: {
     client: config.DB_TYPE,
     connection: {

@@ -1,5 +1,7 @@
-const log = require("../core/log").default;
-const config = require("../core/config").default;
+
+require("module-alias/register");
+const log = require("server/core/log").default;
+const config = require("server/core/config").default;
 
 exports.up = async function(knex, Promise) {
   await knex.schema.alterTable("tag", function(table) {

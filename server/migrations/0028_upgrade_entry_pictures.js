@@ -1,7 +1,8 @@
 /**
  * Store the number of ratings the entry received
  */
-const config = require("../core/config").default;
+require("module-alias/register");
+const config = require("server/core/config").default;
 
 exports.up = async function(knex, Promise) {
   try {

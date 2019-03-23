@@ -7,9 +7,9 @@
 
 import * as path from "path";
 import config from "./config";
-import knexfile from "./knexfile";
-import log from "./log";
 import constants from "./constants";
+import * as knexfile from "./knexfile";
+import log from "./log";
 
 export default initBookshelf();
 
@@ -19,10 +19,9 @@ function initBookshelf() {
 
   /**
    * Updates the database to the latest version
-   * @param  {boolean} withSamples
    * @return {string} the previous DB version, or "none"
    */
-  bookshelf.initDatabase = async (withSamples): Promise<"none"|string> => {
+  bookshelf.initDatabase = async (): Promise<"none"|string> => {
     log.info("Upgrading database...");
     const previousVersion = await knex.migrate.currentVersion();
     await knex.migrate.latest(knexfile);

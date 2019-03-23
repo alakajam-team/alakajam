@@ -2,10 +2,11 @@ const promisify = require("promisify-node");
 const fs = promisify("fs");
 const path = promisify("path");
 
-const constants = require("../core/constants").default;
-const log = require("../core/log").default;
-const models = require("../core/models").default;
-const eventService = require("../services/event-service").default;
+require("module-alias/register");
+const constants = require("server/core/constants").default;
+const log = require("server/core/log").default;
+const models = require("server/core/models").default;
+const eventService = require("server/services/event-service").default;
 
 exports.up = async function(knex, Promise) {
   try {

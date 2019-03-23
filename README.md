@@ -4,35 +4,58 @@
 
 Requirement: NodeJS 7.6+
 
-* `npm install --no-optional` (*)
-* `node server.js`
-* Browse to `http://localhost:8000`
+1. `npm install --no-optional` (*)
+2. `npm run start:ts`
+3. Browse to `http://localhost:8000`
+4. You can login as `administrator`/`administrator`
 
-There is a default admin user (`administrator`/`administrator`).
-
-For better performance, consider editing `config.js` to set up a PostgreSQL database.
+For better performance, consider editing `config.js` to set up a PostgreSQL database.  
+See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional documentation.
 
 > (*) If `npm install --no-optional` failed to install `sqlite3`, retry with flag `--build-from-source`.
 
-## Developer tools
-
-Prerequisites: `npm install -g knex standard browser-refresh node-inspector jsdoc mocha`
+## Available commands
 
 ### Recommended
 
-* `browser-refresh server.js`: Launches the app, and makes the server and browser refresh when needed upon file changes.
-* `standard`: Validates the code style. Run `githooks/install.sh` to trigger validation automatically before committing.
+* `npm run start:ts` Launches the server without needing to compile it first. Every TypeScript change will trigger a server restart. (Uses `ts-node-dev`)
+* `npm run start:refresh` Alternative that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (Uses `tsc` + `browser-refresh`)
+* `npm run lint` Checks your code for errors and fixes the most obvious ones.
 
-### Other
+### Other tools
 
-* `node-debug server.js`: Launches the app in debug mode.
-* `npm run-script docs`: Generates the JS documentation in the `docs/` folder.
-* `mocha tests/`: Runs unit tests.
-* `DEBUG=express:*`: Enables debugging of routes and performance (must be set before launching the server).
-
-See also [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional developer documentation.
+* `npm run start` Starts the TypeScript server. Needs to be built first.
+* `npm run start:debug` Launches the server in debug mode. Needs to be built first. Prefer using the embedded debugger of your code editor (see example for VSCode below).
+* `npm run build` Builds the TypeScript server.
+* `npm run build:watch` Builds the TypeScript server and watches for changes.
+* `npm run test` Runs all unit tests.
+* `npm run migrate:latest` `npm run migrate:rollback` `npm run migrate:currentVersion` Knex migration commands.
+* `npm run docs` Generates the code documentation.
 
 ## How do I...
+
+#### ...Debug the code with VSCode
+
+Put this in `.vscode/launch.json`:
+
+```
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Alakajam!",
+      "type": "node",
+      "request": "launch",
+      "args": ["${workspaceFolder}\\server\\index.ts"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register", "-r", "tsconfig-paths/register"],
+      "sourceMaps": true,
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector",
+      "outputCapture": "std"
+    }
+  ]
+}
+```
 
 #### ...Reset the data
 
