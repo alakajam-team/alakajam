@@ -4,6 +4,8 @@
  * @module core/constants
  */
 
+import { sync as findUp } from "find-up";
+import * as path from "path";
 import config from "./config";
 
 const PERMISSION_READ = "read";
@@ -32,6 +34,9 @@ const SETTING_EVENT_THEME_SUGGESTIONS = "event_theme_suggestions";
 const SETTING_EVENT_OPEN_VOTING = "event_open_voting";
 
 export default {
+  // Paths
+  ROOT_PATH: path.dirname(findUp("package.json")),
+
   // Settings
   SETTING_FEATURED_EVENT_NAME,
   SETTING_FEATURED_POST_ID,

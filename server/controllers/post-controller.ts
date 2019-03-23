@@ -22,7 +22,7 @@ export default {
 
   postMiddleware,
 
-  posts,
+  viewPosts,
 
   editPost,
   savePost,
@@ -63,7 +63,7 @@ async function postMiddleware(req, res, next) {
 /**
  * General paginated posts browsing
  */
-async function posts(req, res) {
+async function viewPosts(req, res) {
   // Fetch posts
   let specialPostType = forms.sanitizeString(req.query.special_post_type) || null;
   if (specialPostType === "all") {
@@ -71,7 +71,7 @@ async function posts(req, res) {
   }
   const eventId = forms.sanitizeString(req.query.event_id) || undefined;
   const userId = forms.sanitizeString(req.query.user_id) || undefined;
-  const currentPage = forms.isId(req.query.p) ? parseInt(req.query.p) : 1;
+  const currentPage = forms.isId(req.query.p) ? parseInt(req.query.p, 10) : 1;
   const posts = await postService.findPosts({
     specialPostType,
     eventId,
@@ -168,7 +168,8 @@ async function savePost(req, res) {
   let post = res.locals.post;
 
   // Check permissions
-  if ((post && securityService.canUserWrite(res.locals.user, post, { allowMods: true })) || (!post && res.locals.user)) {
+  if ((post && securityService.canUserWrite(res.locals.user,
+      post, { allowMods: true })) || (!post && res.locals.user)) {
     let redirectToView = false;
     const title = forms.sanitizeString(req.body.title);
     const body = forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_POST });
@@ -437,16 +438,15 @@ async function handleSaveComment(reqBody, currentUser, currentNode, baseUrl, cur
 
     // Cache invalidation: comment feed and unread notifications of users associated with the post/entry
     const userRoles = currentNode.related("userRoles");
-    userRoles.forEach(function(userRole) {
+    userRoles.forEach((userRole) => {
       const userCache = cache.user(userRole.get("user_name"));
       userCache.del("toUserCollection");
       userCache.del("unreadNotifications");
     });
 
     // Cache invalidation: Users @mentioned in the comment
-    const commentBody = comment.get("body");
     if (typeof commentBody === "string") {
-      commentBody.split(" ").forEach(function(word) {
+      commentBody.split(" ").forEach((word) => {
         if (word.length > 0 && word[0] === "@") {
           const userCache = cache.user(word.slice(1));
           userCache.del("toUserCollection");

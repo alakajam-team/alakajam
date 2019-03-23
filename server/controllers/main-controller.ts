@@ -41,12 +41,12 @@ async function anyPageMiddleware(req, res, next) {
   // Fetch current user
   let userTask = null;
   if (req.session.userId) {
-    userTask = userService.findById(req.session.userId).then(function(user) {
+    userTask = userService.findById(req.session.userId).then((user) => {
       res.locals.user = user;
 
       // Fetch comment to edit
       if (req.query.editComment && forms.isId(req.query.editComment)) {
-        return postService.findCommentById(req.query.editComment).then(async function(comment) {
+        return postService.findCommentById(req.query.editComment).then(async (comment) => {
           if (comment && (securityService.canUserWrite(user, comment, { allowMods: true }) ||
               await postService.isOwnAnonymousComment(comment, user))) {
             res.locals.editComment = comment;
@@ -106,7 +106,8 @@ async function index(req, res) {
         eventSchedule = eventSchedule.concat(fetchedEventsCollection.models);
         featuredEventIndex = eventSchedule.findIndex((event) => event.get("id") === res.locals.featuredEvent.get("id"));
         // Make sure we have the featured event + at least one past event (or we have run out of events)
-      } while ((featuredEventIndex === -1 || featuredEventIndex >= eventSchedule.length - 1) && fetchedEventsCollection.length > 0);
+      } while ((featuredEventIndex === -1 || featuredEventIndex >= eventSchedule.length - 1)
+        && fetchedEventsCollection.length > 0);
 
       const startIndex = Math.max(0, featuredEventIndex - 2);
       context.eventSchedule = eventSchedule.slice(startIndex, startIndex + 5);
@@ -117,13 +118,13 @@ async function index(req, res) {
 
     // Gather featured entries
     let suggestedEntriesTask = null;
-    if (res.locals.featuredEvent &&
-      [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(res.locals.featuredEvent.get("status_results"))) {
+    if (res.locals.featuredEvent && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
+        .includes(res.locals.featuredEvent.get("status_results"))) {
       suggestedEntriesTask = eventService.findGames({
         eventId: res.locals.featuredEvent.get("id"),
         pageSize: 4,
         notReviewedById: res.locals.user ? res.locals.user.get("id") : undefined,
-      }).then(function(suggestedEntriesCollection) {
+      }).then((suggestedEntriesCollection) => {
         context.suggestedEntries = suggestedEntriesCollection.models;
       })
         .catch(res.traceAndShowErrorPage);
@@ -147,7 +148,8 @@ async function index(req, res) {
       })
       .catch(res.traceAndShowErrorPage);
 
-    await Promise.all([featuredAnnouncementTask, suggestedEntriesTask, postsTask, featuredPostTask]); // Parallelize fetching everything
+    // Parallelize fetching everything
+    await Promise.all([featuredAnnouncementTask, suggestedEntriesTask, postsTask, featuredPostTask]);
 
     cache.general.set("home_page", context, 10 /* 10 seconds */);
   }
@@ -242,7 +244,7 @@ async function games(req, res) {
     const canVoteInEvent = await eventRatingService.canVoteInEvent(user, featuredEvent);
     if (canVoteInEvent || securityService.isMod(user)) {
       rescueEntries = (await eventService.findRescueEntries(featuredEvent, user)).models;
-      requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, "10"), 10);
+      requiredVotes = await settingService.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
     }
   }
   const entriesCollection = await eventService.findGames(searchOptions);
@@ -276,7 +278,7 @@ async function people(req, res) {
   // Parse query
   let currentPage = 1;
   if (forms.isId(req.query.p)) {
-    currentPage = parseInt(req.query.p);
+    currentPage = parseInt(req.query.p, 10);
   }
   const searchOptions: any = {
     pageSize: PAGE_SIZE,
@@ -296,7 +298,7 @@ async function people(req, res) {
   const eventsCollection = await eventService.findEvents({ statusNot: enums.EVENT.STATUS.PENDING });
   let searchedEvent = null;
   if (searchOptions.eventId) {
-    searchedEvent = eventsCollection.findWhere({ id: parseInt(searchOptions.eventId) });
+    searchedEvent = eventsCollection.findWhere({ id: parseInt(searchOptions.eventId, 10) });
   }
 
   res.render("people", {

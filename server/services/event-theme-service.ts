@@ -41,7 +41,8 @@ async function isThemeVotingAllowed(event) {
     event.get("status_theme") === enums.EVENT.STATUS_THEME.VOTING) {
     const votingAllowedCacheKey = event.get("name") + "_event_voting_allowed_";
     if (cache.general.get(votingAllowedCacheKey) === undefined) {
-      const themeIdeasRequired = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, "10"));
+      const themeIdeasRequired = await settingService.findNumber(
+        constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, 10);
       const themeIdeaCount = await models.Theme.where({
         event_id: event.get("id"),
       }).count();
@@ -87,7 +88,7 @@ async function saveThemeIdeas(user, event, ideas) {
   // Compare form with the existing user themes
   const existingThemes = await findThemeIdeasByUser(user, event);
   for (const existingTheme of existingThemes.models) {
-    const ideaFound = ideas.find((idea) => parseInt(idea.id) === existingTheme.get("id"));
+    const ideaFound = ideas.find((idea) => parseInt(idea.id, 10) === existingTheme.get("id"));
     if (!ideaFound || ideaFound.title !== existingTheme.get("title")) {
       if (existingTheme.get("status") === enums.THEME.STATUS.ACTIVE ||
           existingTheme.get("status") === enums.THEME.STATUS.DUPLICATE) {
@@ -112,7 +113,7 @@ async function saveThemeIdeas(user, event, ideas) {
   await Promise.all(tasks);
 
   // Create themes
-  const maxThemeSuggestions = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_SUGGESTIONS, "3"));
+  const maxThemeSuggestions = await settingService.findNumber(constants.SETTING_EVENT_THEME_SUGGESTIONS, 3);
   for (const idea of ideasToCreate) {
     if (ideasSubmitted < maxThemeSuggestions) {
       const theme = new models.Theme({
@@ -290,7 +291,8 @@ async function saveVote(user, event, themeId, score, options: any = {}) {
 
   if (expectedStatus === enums.THEME.STATUS.ACTIVE && voteCreated) {
     // Eliminate lowest themes every x votes. No need for DB calls, just count in-memory
-    const eliminationThreshold = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, "10"));
+    const eliminationThreshold = await settingService.findNumber(
+      constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 10);
     let uptimeVotes = cache.general.get("uptime_votes") || 0;
     if (uptimeVotes % eliminationThreshold === 0) {
       _eliminateLowestThemes(event);
@@ -321,8 +323,10 @@ function computeWilsonBounds(positive, total) {
 }
 
 async function _eliminateLowestThemes(event) {
-  const eliminationMinNotes = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, "5"));
-  const eliminationThreshold = parseFloat(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, "0.58"));
+  const eliminationMinNotes = await settingService.findNumber(
+    constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5);
+  const eliminationThreshold = await settingService.findNumber(
+    constants.SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58);
 
   const battleReadyThemesQuery = await models.Theme.where({
     event_id: event.get("id"),
@@ -344,7 +348,8 @@ async function _eliminateLowestThemes(event) {
       .fetchAll();
 
     await event.load("details");
-    const eliminatedThemes = loserThemes.slice(0, Math.min(battleReadyThemeCount - constants.SHORTLIST_SIZE, loserThemes.length));
+    const eliminatedThemes = loserThemes.slice(0,
+      Math.min(battleReadyThemeCount - constants.SHORTLIST_SIZE, loserThemes.length));
     for (const eliminatedTheme of eliminatedThemes) {
       await _eliminateTheme(eliminatedTheme, event.related("details"));
     }
@@ -380,7 +385,7 @@ async function saveShortlistVotes(user, event, ids) {
     score--;
   }
 
-  await db.transaction(async function(t) {
+  await db.transaction(async (t) => {
     const saveOptions = { transacting: t };
     for (const result of results) {
       if (result.theme) { result.theme.save(null, saveOptions); }
@@ -391,7 +396,7 @@ async function saveShortlistVotes(user, event, ids) {
 
 async function countShortlistVotes(event) {
   return cache.getOrFetch(cache.general, "shortlist_votes_" + event.get("name"),
-    async function() {
+    async () => {
       return models.ThemeVote
         .where({
           event_id: event.get("id"),
@@ -413,7 +418,7 @@ async function findAllThemes(event, options: any = {}) {
 }
 
 async function findBestThemes(event) {
-  const eliminationMinNotes = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, "5"));
+  const eliminationMinNotes = await settingService.findNumber(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5);
   return models.Theme.where({
     event_id: event.get("id"),
   })
@@ -437,17 +442,17 @@ async function computeShortlist(event) {
   // Mark all themes as out
   const allThemesCollection = await findAllThemes(event, { shortlistEligible: true });
   await event.load("details");
-  await db.transaction(async function(t) {
+  await db.transaction(async (t) => {
     // FIXME Transaction unused
-    allThemesCollection.each(function(theme) {
+    allThemesCollection.each((theme) => {
       _eliminateTheme(theme, event.related("details"), { eliminatedOnShortlistRating: true });
     });
   });
 
   // Compute new shortlist
   const bestThemeCollection = await findBestThemes(event);
-  await db.transaction(async function(t) {
-    bestThemeCollection.each(function(theme) {
+  await db.transaction(async (t) => {
+    bestThemeCollection.each((theme) => {
       theme.set("status", enums.THEME.STATUS.SHORTLIST);
       theme.save(null, { transacting: t });
     });
@@ -490,8 +495,9 @@ function computeEliminatedShortlistThemes(event) {
   let eliminated = 0;
 
   const shortlistEliminationInfo = event.related("details").get("shortlist_elimination");
-  if (shortlistEliminationInfo.start && shortlistEliminationInfo.delay && parseInt(shortlistEliminationInfo.delay) > 0) {
-    const delay = parseInt(shortlistEliminationInfo.delay);
+  if (shortlistEliminationInfo.start && shortlistEliminationInfo.delay
+      && parseInt(shortlistEliminationInfo.delay, 10) > 0) {
+    const delay = parseInt(shortlistEliminationInfo.delay, 10);
     const eliminationDate = moment(shortlistEliminationInfo.start);
     const now = moment();
 
@@ -519,8 +525,8 @@ function computeNextShortlistEliminationTime(event) {
 
     if (now.isBefore(nextEliminationDate)) {
       return nextEliminationDate;
-    } else if (shortlistEliminationInfo.delay && parseInt(shortlistEliminationInfo.delay) > 0) {
-      const delay = parseInt(shortlistEliminationInfo.delay);
+    } else if (shortlistEliminationInfo.delay && parseInt(shortlistEliminationInfo.delay, 10) > 0) {
+      const delay = parseInt(shortlistEliminationInfo.delay, 10);
 
       // We can eliminate at most 7 themes (leaving 3 until the reveal)
       while (nextEliminationDate.isBefore(now) && alreadyEliminated < 7) {

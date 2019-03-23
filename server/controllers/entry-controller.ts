@@ -98,7 +98,7 @@ async function viewEntry(req, res) {
   const entryVotes = await eventRatingService.countEntryVotes(entry);
   let minEntryVotes = null;
   if (res.locals.user && securityService.canUserWrite(res.locals.user, entry)) {
-    minEntryVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, "10"));
+    minEntryVotes = await settingService.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
   }
 
   let editableAnonComments = null;
@@ -135,7 +135,8 @@ async function viewEntry(req, res) {
 }
 
 async function editEntry(req, res) {
-  let { entry, event, user } = res.locals;
+  const { event, user } = res.locals;
+  let entry = res.locals.entry;
 
   // Security checks
   if (!user) {
@@ -223,7 +224,8 @@ async function editEntry(req, res) {
 
     let statusHighScore = "off";
     if (req.body["enable-high-score"] === "on") {
-      statusHighScore = req.body["high-score-reversed"] ? enums.ENTRY.STATUS_HIGH_SCORE.REVERSED : enums.ENTRY.STATUS_HIGH_SCORE.NORMAL;
+      statusHighScore = req.body["high-score-reversed"]
+        ? enums.ENTRY.STATUS_HIGH_SCORE.REVERSED : enums.ENTRY.STATUS_HIGH_SCORE.NORMAL;
     }
 
     entry.set({
@@ -297,7 +299,8 @@ async function editEntry(req, res) {
       errorMessages.push("Too many links (max allowed: around 7)");
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
       errorMessages.push("Submissions are closed for this event");
-    } else if (req.body.division && !isExternalEvent && event && !forms.isIn(req.body.division, Object.keys(event.get("divisions")))) {
+    } else if (req.body.division && !isExternalEvent && event
+        && !forms.isIn(req.body.division, Object.keys(event.get("divisions")))) {
       errorMessages.push("Invalid division");
     }
 
@@ -326,7 +329,8 @@ async function editEntry(req, res) {
       if (isCreation || securityService.canUserManage(user, entry, { allowMods: true })) {
         let division = req.body.division || eventService.getDefaultDivision(event);
         if (event &&
-          (event.get("status_entry") === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED || event.get("status_entry") === enums.EVENT.STATUS_ENTRY.CLOSED)) {
+          (event.get("status_entry") === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED
+            || event.get("status_entry") === enums.EVENT.STATUS_ENTRY.CLOSED)) {
           if (!entry.has("division")) {
             // New entries are all unranked
             division = enums.DIVISION.UNRANKED;
@@ -350,10 +354,13 @@ async function editEntry(req, res) {
       }
 
       // Save entry: Persist changes and side effects
-      const eventCountRefreshNeeded = event && (isCreation || entry.hasChanged("division") || entry.hasChanged("published_at"));
+      const eventCountRefreshNeeded = event
+        && (isCreation || entry.hasChanged("division") || entry.hasChanged("published_at"));
       await entryDetails.save();
-      if (entry.hasChanged("status_high_score") && entry.get("status_high_score") !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
-        highscoreService.refreshEntryRankings(entry); // corner case: owner toggles lower-is-better after some scores are submitted
+      if (entry.hasChanged("status_high_score")
+          && entry.get("status_high_score") !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
+        // corner case: owner toggles lower-is-better after some scores are submitted
+        highscoreService.refreshEntryRankings(entry);
       }
       entry.set("published_at", entry.get("published_at") || new Date());
       await entry.save();
@@ -392,7 +399,7 @@ async function deleteEntry(req, res) {
 
   if (user && entry && securityService.canUserManage(user, entry, { allowMods: true })) {
     await entry.load("posts");
-    entry.related("posts").forEach(async function(post) {
+    entry.related("posts").forEach(async (post) => {
       post.set("entry_id", null);
       await post.save();
     });
@@ -419,7 +426,7 @@ async function leaveEntry(req, res) {
   if (user && entry) {
     // Remove requesting user posts from the entry
     await entry.load("posts");
-    entry.related("posts").forEach(async function(post) {
+    entry.related("posts").forEach(async (post) => {
       if (post.get("author_user_id") === user.get("id")) {
         post.set("entry_id", null);
         await post.save();
@@ -428,7 +435,7 @@ async function leaveEntry(req, res) {
 
     // Remove requesting user from the team
     const newTeamMembers = [];
-    entry.related("userRoles").each(function(userRole) {
+    entry.related("userRoles").each((userRole) => {
       if (userRole.get("user_id") !== user.get("id")) {
         newTeamMembers.push(userRole.get("user_id"));
       }
@@ -569,7 +576,8 @@ async function submitScore(req, res) {
     } else {
       if (req.file || req.body["upload-delete"]) {
         const proofPath = `/scores/${entry.get("id")}/${entryScore.get("user_id")}`;
-        const result = await fileStorage.savePictureToModel(entryScore, "proof", req.file, req.body["upload-delete"], proofPath);
+        const result = await fileStorage.savePictureToModel(entryScore,
+          "proof", req.file, req.body["upload-delete"], proofPath);
         if (result.error) {
           errorMessage = result.error;
         }

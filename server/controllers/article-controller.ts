@@ -10,18 +10,18 @@ import articleService from "../services/article-service";
 import settingService from "../services/setting-service";
 
 export default {
-  api,
-  article,
+  getArticleJson,
+  viewArticle,
 };
 
 /**
  * Articles
  */
-async function api(req, res) {
+async function getArticleJson(req, res) {
   _renderArticle("api", res);
 }
 
-async function article(req, res) {
+async function viewArticle(req, res) {
   _renderArticle(slug(req.params.name), res);
 }
 
@@ -31,7 +31,7 @@ async function _renderArticle(name, res) {
   // Find featured article
   const findArticleTask = articleService.findArticle(
     res.locals.articleName,
-  ).then(async function(article) {
+  ).then(async (article) => {
     if (article) {
       const lines = article.split("\n");
       res.locals.articleName = lines.shift();
@@ -40,7 +40,7 @@ async function _renderArticle(name, res) {
   });
 
   const settingArticlesTask = settingService.findArticlesSidebar()
-    .then(function(sidebar) {
+    .then((sidebar) => {
       res.locals.sidebar = sidebar;
     });
 

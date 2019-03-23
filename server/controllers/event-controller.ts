@@ -112,7 +112,7 @@ async function handleGameSearch(req, res, searchOptions: any = {}) {
   searchOptions.pageSize = 20;
   searchOptions.page = 1;
   if (forms.isId(req.query.p)) {
-    searchOptions.page = parseInt(req.query.p);
+    searchOptions.page = parseInt(req.query.p, 10);
   }
 
   // Text search
@@ -120,7 +120,7 @@ async function handleGameSearch(req, res, searchOptions: any = {}) {
 
   // User search
   if (forms.isId(req.query.user)) {
-    searchOptions.userId = parseInt(req.query.user);
+    searchOptions.userId = parseInt(req.query.user, 10);
     searchOptions.user = await userService.findById(searchOptions.userId);
   }
 
@@ -144,7 +144,7 @@ async function handleGameSearch(req, res, searchOptions: any = {}) {
   // Platforms
   if (req.query.platforms) {
     let platforms = (Array.isArray(req.query.platforms)) ? req.query.platforms : [req.query.platforms];
-    platforms = platforms.map((str) => parseInt(str));
+    platforms = platforms.map((str) => parseInt(str, 10));
     if (platforms.includes(NaN)) {
       platforms = [];
       log.error("Invalid platform query: " + req.query.platforms);
@@ -155,7 +155,7 @@ async function handleGameSearch(req, res, searchOptions: any = {}) {
   // Tags
   if (req.query.tags) {
     let tagIds = (Array.isArray(req.query.tags)) ? req.query.tags : [req.query.tags];
-    tagIds = tagIds.map((str) => parseInt(str));
+    tagIds = tagIds.map((str) => parseInt(str, 10));
     if (tagIds.includes(NaN)) {
       tagIds = [];
       log.error("Invalid tag query: " + req.query.tags);
@@ -199,7 +199,8 @@ async function viewDefaultPage(req, res) {
   const { event } = res.locals;
 
   let page;
-  if (![enums.EVENT.STATUS_TOURNAMENT.OFF, enums.EVENT.STATUS_TOURNAMENT.DISABLED].includes(event.get("status_tournament"))) {
+  if (![enums.EVENT.STATUS_TOURNAMENT.OFF, enums.EVENT.STATUS_TOURNAMENT.DISABLED]
+      .includes(event.get("status_tournament"))) {
     if (event.get("status_tournament") === enums.EVENT.STATUS_TOURNAMENT.RESULTS) {
       page = "tournament-leaderboard";
     } else {
@@ -238,7 +239,7 @@ async function viewEventAnnouncements(req, res) {
 /**
  * Browse event posts
  */
-async function viewEventPosts(req, res) {
+async function viewEventPosts(_, res) {
   res.locals.pageTitle += " | Posts";
 
   const postsCollection = await postService.findPosts({
@@ -266,10 +267,10 @@ async function viewEventThemes(req, res) {
     res.errorPage(404);
   } else {
     let context: any = {
-      maxThemeSuggestions: parseInt(await settingService.find(
-        constants.SETTING_EVENT_THEME_SUGGESTIONS, "3"), 10),
-      eliminationMinNotes: parseInt(await settingService.find(
-        constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, "5"), 10),
+      maxThemeSuggestions: await settingService.findNumber(
+        constants.SETTING_EVENT_THEME_SUGGESTIONS, 3),
+      eliminationMinNotes: await settingService.findNumber(
+        constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
       infoMessage: null,
     };
 
@@ -281,7 +282,7 @@ async function viewEventThemes(req, res) {
         if (req.body.action === "ideas") {
           // Gather ideas data
           const ideas = [];
-          for (let i = 0; i < parseInt(req.body["idea-rows"]); i++) {
+          for (let i = 0; i < parseInt(req.body["idea-rows"], 10); i++) {
             const idField = req.body["idea-id[" + i + "]"];
             if (forms.isId(idField) || !idField) {
               ideas.push({
@@ -295,10 +296,10 @@ async function viewEventThemes(req, res) {
         } else if (req.body.action === "vote") {
           if (forms.isId(req.body["theme-id"]) && (req.body.upvote !== undefined || req.body.downvote !== undefined)) {
             const score = (req.body.upvote !== undefined) ? 1 : -1;
-            await eventThemeService.saveVote(res.locals.user, event, parseInt(req.body["theme-id"]), score);
+            await eventThemeService.saveVote(res.locals.user, event, parseInt(req.body["theme-id"], 10), score);
           }
         } else if (req.body.action === "shortlist" && req.body["shortlist-votes"]) {
-          const ids = req.body["shortlist-votes"].split(",").map((id) => parseInt(id));
+          const ids = req.body["shortlist-votes"].split(",").map((id) => parseInt(id, 10));
           let validIds = true;
           for (const id of ids) {
             if (!forms.isId(id)) {
@@ -343,7 +344,7 @@ async function viewEventThemes(req, res) {
             context.sampleThemes = sampleThemesCollection.models;
             context.votingAllowed = true;
           } else {
-            context.ideasRequired = parseInt(await settingService.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, "10"));
+            context.ideasRequired = await settingService.findNumber(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, 10);
             context.votingAllowed = false;
           }
         } else if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED].includes(statusTheme)) {
@@ -352,7 +353,8 @@ async function viewEventThemes(req, res) {
       }
 
       // State-specific data
-      if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED, enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
+      if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED,
+          enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
         context.shortlistVotes = await eventThemeService.countShortlistVotes(event);
       }
       if (statusTheme === enums.EVENT.STATUS_THEME.RESULTS) {
@@ -367,8 +369,8 @@ async function viewEventThemes(req, res) {
           const shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(res.locals.user, event);
           if (shortlistVotesCollection.length === shortlistCollection.length) {
             context.userRanks = {};
-            shortlistVotesCollection.each(function(vote) {
-              context.userRanks[vote.get("theme_id")] = 11 - parseInt(vote.get("score"));
+            shortlistVotesCollection.each((vote) => {
+              context.userRanks[vote.get("theme_id")] = 11 - parseInt(vote.get("score"), 10);
             });
           }
         }
@@ -409,13 +411,15 @@ async function _generateShortlistInfo(event, user = null) {
   const shortlistVotesCollection = user ? await eventThemeService.findThemeShortlistVotes(user, event) : null;
   if (shortlistVotesCollection) {
     info.scoreByTheme = {};
-    shortlistVotesCollection.each(function(vote) {
+    shortlistVotesCollection.each((vote) => {
       info.scoreByTheme[vote.get("theme_id")] = vote.get("score");
       if (vote.get("score") === 9) {
         info.hasRankedShortlist = true;
       }
     });
-    info.activeShortlist.sort((t1, t2) => (info.scoreByTheme[t2.get("id")] || 0) - (info.scoreByTheme[t1.get("id")] || 0));
+    info.activeShortlist.sort((t1, t2) => {
+      return (info.scoreByTheme[t2.get("id")] || 0) - (info.scoreByTheme[t1.get("id")] || 0);
+    });
   }
 
   // Randomize active shortlist if no vote or anonymous
@@ -456,7 +460,7 @@ async function viewEventGames(req, res) {
       rescueEntries = (await eventService.findRescueEntries(event, user)).models;
     }
   }
-  const requiredVotes = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, "10"));
+  const requiredVotes = await settingService.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
   const entriesCollection = await eventService.findGames(searchOptions);
   const platformCollection = await platformService.fetchAll();
 
@@ -490,18 +494,18 @@ async function viewEventRatings(req, res) {
     enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get("status_results"))) {
     const voteHistoryCollection = await eventRatingService.findVoteHistory(res.locals.user.get("id"), event,
       { withRelated: ["entry.details", "entry.userRoles"] });
-    const categoryTitles = event.related("details").get("category_titles");
+    const categoryTitles: string[] = event.related("details").get("category_titles");
     const divisions = Object.keys(event.get("divisions"));
 
     const votesPerCategory = [];
-    for (const i in categoryTitles) {
-      const categoryIndex = parseInt(i) + 1;
-      const voteFilter = function(division) {
-        return function(vote, vote2) {
+    categoryTitles.forEach((_, i) => {
+      const categoryIndex = i + 1;
+      const voteFilter = (division) => {
+        return (vote, vote2) => {
           return vote.get("vote_" + categoryIndex) > 0 && vote.related("entry").get("division") === division;
         };
       };
-      const voteSorter = function(vote, vote2) {
+      const voteSorter = (vote, vote2) => {
         return vote2.get("vote_" + categoryIndex) - vote.get("vote_" + categoryIndex);
       };
 
@@ -517,7 +521,7 @@ async function viewEventRatings(req, res) {
         title: categoryTitles[i],
         votesPerDivision,
       });
-    }
+    });
 
     res.render("event/view-event-ratings", {
       votesPerCategory,
@@ -567,7 +571,7 @@ async function viewEventResults(req, res) {
     });
   } else {
     if (forms.isInt(req.query.sortBy) && req.query.sortBy > 0 && req.query.sortBy <= constants.MAX_CATEGORY_COUNT) {
-      sortedBy = parseInt(req.query.sortBy);
+      sortedBy = parseInt(req.query.sortBy, 10);
     }
 
     // Gather entries rankings
@@ -782,7 +786,8 @@ async function editEvent(req, res) {
           infoMessage = "Event results cleared.";
         }
       }
-      if (event.hasChanged("status_tournament") && event.previous("status_tournament") === enums.EVENT.STATUS_TOURNAMENT.OFF) {
+      if (event.hasChanged("status_tournament")
+          && event.previous("status_tournament") === enums.EVENT.STATUS_TOURNAMENT.OFF) {
         // Pre-fill leaderboard with people who were already in the high scores
         eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
       }
@@ -856,10 +861,10 @@ async function editEventThemes(req, res) {
   const event = res.locals.event;
   const shortlistCollection = await eventThemeService.findShortlist(event);
   const context: any = {
-    eliminationMinNotes: parseInt(await settingService.find(
-      constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, "5"), 10),
-    eliminationThreshold: parseFloat(await settingService.find(
-      constants.SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, "0.58")),
+    eliminationMinNotes: await settingService.findNumber(
+      constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
+    eliminationThreshold: await settingService.findNumber(
+      constants.SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58),
     shortlist: shortlistCollection.models,
     eliminatedShortlistThemes: eventThemeService.computeEliminatedShortlistThemes(event),
   };
@@ -942,14 +947,14 @@ async function editEventEntries(req, res) {
 
   // Gather info for karma details
   const entriesById = {};
-  entriesCollection.each(function(entry) {
+  entriesCollection.each((entry) => {
     entriesById[entry.get("id")] = entry;
   });
   const detailedEntryInfo: any = {};
   const usersById = {};
   if (forms.isId(req.query.entryDetails) && entriesById[req.query.entryDetails]) {
     const eventUsersCollection = await userService.findUsers({ eventId: event.get("id") });
-    eventUsersCollection.each(function(user) {
+    eventUsersCollection.each((user) => {
       usersById[user.get("id")] = user;
     });
 
@@ -957,7 +962,7 @@ async function editEventEntries(req, res) {
     await entry.load(["comments", "votes"]);
     detailedEntryInfo.id = req.query.entryDetails;
     detailedEntryInfo.given = await eventRatingService.computeKarmaGivenByUserAndEntry(entry, event);
-    detailedEntryInfo.received = await eventRatingService.computeKarmaReceivedByUser(entry, event);
+    detailedEntryInfo.received = await eventRatingService.computeKarmaReceivedByUser(entry);
     detailedEntryInfo.total = eventRatingService.computeKarma(detailedEntryInfo.received.total,
       detailedEntryInfo.given.total);
   }
@@ -1074,7 +1079,7 @@ async function ajaxFindThemes(req, res) {
 async function ajaxSaveVote(req, res) {
   if (forms.isId(req.body.id) && (req.body.upvote !== undefined || req.body.downvote !== undefined)) {
     const score = (req.body.upvote !== undefined) ? 1 : -1;
-    await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(req.body.id), score);
+    await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(req.body.id, 10), score);
   }
   res.type("text/plain"); // Keeps Firefox from parsing the empty response as XML and logging an error.
   res.end("");

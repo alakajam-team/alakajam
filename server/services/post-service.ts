@@ -79,12 +79,14 @@ function getFirstPicture(model) {
 async function findPosts(options: any = {}) {
   let postCollection = await models.Post;
   postCollection = postCollection.query((qb) => {
-    if (options.specialPostType !== undefined) { qb = qb.where("special_post_type", options.specialPostType); }
+    if (options.specialPostType !== undefined) {
+      qb = qb.where("special_post_type", options.specialPostType);
+    }
     if (!options.allowHidden) {
-      qb.where((qb) => {
-        qb = qb.where("special_post_type", "<>", "hidden");
+      qb.where((qb2) => {
+        qb2 = qb2.where("special_post_type", "<>", "hidden");
         if (!options.specialPostType) {
-          qb.orWhere("special_post_type", null);
+          qb2.orWhere("special_post_type", null);
         }
       });
     } else {

@@ -916,7 +916,7 @@ async function findEntryInvitesForUser(user, options) {
 }
 
 async function findRescueEntries(event, user, options: any = {}) {
-  const minRatings = parseInt(await settingService.find(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, "10"), 10);
+  const minRatings = await settingService.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
 
   if (options.pageSize === undefined) { options.pageSize = 4; }
   if (options.withRelated === undefined) { options.withRelated = ["details", "userRoles"]; }
@@ -963,8 +963,8 @@ async function refreshEventReferences(event) {
 async function refreshEntryPlatforms(entry) {
   const tasks = [];
   await entry.load("platforms");
-  entry.related("platforms").each(async (entry) => {
-    tasks.push(entry.destroy());
+  entry.related("platforms").each(async (platform) => {
+    tasks.push(platform.destroy());
   });
   const platformStrings = entry.get("platforms");
   if (platformStrings) {

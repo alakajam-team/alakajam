@@ -2,23 +2,15 @@ const path = require('path')
 
 const rootPathTo = pathFromRoot => path.resolve(__dirname, pathFromRoot)
 
-const outputPath = rootPathTo('static/js')
+const outputPath = rootPathTo('dist/client/js')
 
 const babelOptions = {
   presets: [
     [
       '@babel/preset-env',
       {
-        // Add polyfills for only those features that we use, like Array.find,
-        // and only if they're not available on our set of target browsers (see
-        // "browserslist" in package.json):
-        // https://babeljs.io/blog/2017/12/27/nearing-the-7.0-release
-        //
-        // Note that this requires Babel >= 7, still in beta at the time of
-        // writing (2018-06-10), so most of the documentation you'll find for
-        // this feature is not up to date. This one is:
-        // https://new.babeljs.io/docs/en/next/babel-preset-env.html#usebuiltins
-        useBuiltIns: 'usage'
+        useBuiltIns: 'usage',
+        corejs: 'core-js@3'
       }
     ]
   ],

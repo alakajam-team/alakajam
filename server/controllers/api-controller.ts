@@ -29,23 +29,23 @@ const PUBLIC_ATTRIBUTES_COMMENT = ["id", "user_id", "parent_id", "body", "create
 const DETAILED_ENTRY_OPTIONS = { withRelated: ["comments", "details", "userRoles.user", "event"] };
 
 export default {
-  featuredEvent,
-  eventTimeline,
-  event,
-  eventShortlist,
-  entry,
-  user,
-  userLatestEntry,
-  userSearch,
+  getFeaturedEvent,
+  getEventTimeline,
+  getEvent,
+  getEventShortlist,
+  getEntry,
+  getUser,
+  getUserLatestEntry,
+  getUserSearch,
 };
 
 /**
  * Data about the currently featured event
  */
-async function featuredEvent(req, res) {
+async function getFeaturedEvent(req, res) {
   if (res.locals.featuredEvent) {
     req.params.event = res.locals.featuredEvent.get("id");
-    return event(req, res);
+    return getEvent(req, res);
   } else {
     _renderJson(req, res, 404, { error: "No featured event" });
   }
@@ -54,7 +54,7 @@ async function featuredEvent(req, res) {
 /**
  * Event timeline
  */
-async function eventTimeline(req, res) {
+async function getEventTimeline(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -84,7 +84,7 @@ async function eventTimeline(req, res) {
 /**
  * Data about a specific event
  */
-async function event(req, res) {
+async function getEvent(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -152,7 +152,7 @@ async function event(req, res) {
 /**
  * Data about the theme shortlist of an event
  */
-async function eventShortlist(req, res) {
+async function getEventShortlist(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -174,7 +174,7 @@ async function eventShortlist(req, res) {
       // Build data
       const rawShortlist = [];
       shortlist.chain()
-        .forEach(function(theme, i) {
+        .forEach((theme, i) => {
           const rank = i + 1;
           const eliminated = eliminatedThemes > 10 - rank;
           rawShortlist.push({
@@ -186,9 +186,9 @@ async function eventShortlist(req, res) {
         .value();
 
       // Obfuscate order for active themes
-      const active = rawShortlist.filter((themeInfo) => !themeInfo.eliminated);
-      const eliminated = rawShortlist.filter((themeInfo) => themeInfo.eliminated);
-      json.shortlist = lodash.shuffle(active).concat(eliminated);
+      const activeShortlist = rawShortlist.filter((themeInfo) => !themeInfo.eliminated);
+      const eliminatedShortlist = rawShortlist.filter((themeInfo) => themeInfo.eliminated);
+      json.shortlist = lodash.shuffle(activeShortlist).concat(eliminatedShortlist);
       json.nextElimination = eventThemeService.computeNextShortlistEliminationTime(event);
     } else {
       json = { error: "Event does not have a theme shortlist" };
@@ -205,7 +205,7 @@ async function eventShortlist(req, res) {
 /**
  * Data about a specific entry
  */
-async function entry(req, res) {
+async function getEntry(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -259,7 +259,7 @@ function _getDetailedEntryJson(entry) {
 /**
  * Data about a specific user
  */
-async function user(req, res) {
+async function getUser(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -286,7 +286,7 @@ async function user(req, res) {
   _renderJson(req, res, status, json);
 }
 
-async function userLatestEntry(req, res) {
+async function getUserLatestEntry(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -313,14 +313,14 @@ async function userLatestEntry(req, res) {
   _renderJson(req, res, status, json);
 }
 
-async function userSearch(req, res) {
+async function getUserSearch(req, res) {
   let json: any = {};
   let status = 200;
 
   let page = 0;
   try {
     if (req.query.page) {
-      page = Math.max(0, parseInt(req.query.page));
+      page = Math.max(0, parseInt(req.query.page, 10));
     }
   } catch (e) {
     json = { error: "Invalid page number" };

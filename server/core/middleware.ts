@@ -33,7 +33,6 @@ import fileStorage from "./file-storage";
 import forms from "./forms";
 import log from "./log";
 
-const ROOT_PATH = path.join(__dirname, "..");
 const LAUNCH_TIME = new Date().getTime();
 
 export default {
@@ -64,7 +63,8 @@ async function configure(app) {
   await userService.loadPasswordRecoveryCache(app);
 
   // Static files
-  app.use("/static", express.static(path.join(ROOT_PATH, "/static")));
+  app.use("/static", express.static(path.join(constants.ROOT_PATH, "/static")));
+  app.use("/static", express.static(path.join(constants.ROOT_PATH, "/dist/client")));
 
   // Session management
   const sessionKey = await findOrCreateSessionKey();
@@ -72,7 +72,7 @@ async function configure(app) {
   app.use(await createSessionMiddleware());
 
   // Templating
-  app.set("views", path.join(ROOT_PATH, "/templates"));
+  app.set("views", path.join(constants.ROOT_PATH, "/server/templates"));
   const nj = expressNunjucks(app, {
     watch: app.locals.devMode,
     noCache: app.locals.devMode,

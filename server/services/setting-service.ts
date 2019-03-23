@@ -10,8 +10,11 @@ import constants from "../core/constants";
 import log from "../core/log";
 import * as models from "../core/models";
 
+type DefaultValueEval = () => string;
+
 export default {
   find,
+  findNumber,
   findArticlesSidebar,
   save,
 };
@@ -23,7 +26,7 @@ export default {
  *   If a function is passed, it will be evaluated first.
  * @returns {void}
  */
-async function find(key, defaultValue = null) {
+async function find(key, defaultValue?: string|DefaultValueEval) {
   if (!cache.settings.get(key)) {
     if (!key) {
       throw new Error("Undefined key, you might have forgotten to declare a constant");
@@ -39,6 +42,11 @@ async function find(key, defaultValue = null) {
   } else {
     return defaultValue;
   }
+}
+
+async function findNumber(key: string, defaultValue: number) {
+  const settingValue = await find(key, defaultValue.toString());
+  return parseFloat(settingValue);
 }
 
 async function findArticlesSidebar() {

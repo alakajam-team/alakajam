@@ -97,7 +97,7 @@ async function findEntryVote(user, entry) {
  * @param  {array(number)} voteData
  * @return {void}
  */
-async function saveEntryVote(user, entry, event, voteData) {
+async function saveEntryVote(user, entry, event, voteData: number[]) {
   await entry.load(["details", "event.details"]);
   const eventDetails = event.related("details");
 
@@ -117,16 +117,16 @@ async function saveEntryVote(user, entry, event, voteData) {
 
   let hasActualVote = false;
   const optouts = entry.related("details").get("optouts") || [];
-  for (const i in voteData) {
-    const categoryIndex = (parseInt(i) + 1);
-    if (!forms.isFloat(voteData[i], { min: 0, max: 10 }) ||
+  voteData.forEach((value, index) => {
+    const categoryIndex = index + 1;
+    if (!forms.isFloat(value, { min: 0, max: 10 }) ||
         optouts.includes(eventDetails.get("category_titles")[categoryIndex - 1])) {
-      voteData[i] = 0;
+      voteData[index] = 0;
     }
 
-    vote.set("vote_" + categoryIndex, voteData[i] || 0);
-    hasActualVote = hasActualVote || voteData[i] > 0;
-  }
+    vote.set("vote_" + categoryIndex, value || 0);
+    hasActualVote = hasActualVote || value > 0;
+  });
 
   let refreshRequired = true;
   if (hasActualVote) {
@@ -231,8 +231,8 @@ async function refreshEntryRatings(entry) {
 
   // Only give a rating if the entry has enough votes (tolerate being a bit under the minimum)
   const entryDetails = entry.related("details");
-  const requiredRatings = Math.floor(0.8 * parseInt(await settingService.find(
-      constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, "1"), 10));
+  const requiredRatings = Math.floor(0.8 * await settingService.findNumber(
+      constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1));
   for (const categoryIndex of categoryIndexes) {
     let averageRating;
     if (ratingCount[categoryIndex] >= requiredRatings) {
@@ -256,9 +256,9 @@ function _range(from, to) {
  * @param  {object} options (optional) force
  * @return {void}
  */
-async function refreshEntryKarma(entry, event, options: any = {}) {
+async function refreshEntryKarma(entry, event) {
   await entry.load(["details", "comments", "userRoles", "votes"]);
-  const received = (await computeKarmaReceivedByUser(entry, event)).total;
+  const received = (await computeKarmaReceivedByUser(entry)).total;
   const given = (await computeKarmaGivenByUserAndEntry(entry, event)).total;
   await entry.save({ karma: computeKarma(received, given) }, { patch: true });
 
@@ -267,7 +267,7 @@ async function refreshEntryKarma(entry, event, options: any = {}) {
 }
 
 /* Compute received score */
-async function computeKarmaReceivedByUser(entry, event) {
+async function computeKarmaReceivedByUser(entry) {
   const receivedByUser = {};
   for (const comment of entry.related("comments").models) {
     // Earn up to 3 points per user from comments
@@ -286,10 +286,10 @@ async function computeKarmaReceivedByUser(entry, event) {
     receivedByUser,
     total: 0,
   };
-  for (const userId in receivedByUser) {
+  Object.keys(receivedByUser).forEach((userId) => {
     // Pick the highest score among comments & votes on each user
     result.total += Math.max(receivedByUser[userId].commentKarma || 0, receivedByUser[userId].voteKarma || 0);
-  }
+  });
   return result;
 }
 
@@ -328,10 +328,10 @@ async function computeKarmaGivenByUserAndEntry(entry, event) {
     givenByUserAndEntry,
     total: 0,
   };
-  for (const key in givenByUserAndEntry) {
+  Object.keys(givenByUserAndEntry).forEach((key) => {
     // Pick the highest score among comments & votes on each user
     result.total += Math.max(givenByUserAndEntry[key].commentKarma || 0, givenByUserAndEntry[key].voteKarma || 0);
-  }
+  });
 
   return result;
 }

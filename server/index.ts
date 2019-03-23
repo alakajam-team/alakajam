@@ -42,7 +42,7 @@ if (process.env.NODE_ENV !== "production") {
 const DEV_ENVIRONMENT = process.env.NODE_ENV === "development";
 const SOURCES_ROOT = path.dirname(findUp.sync("package.json"));
 const CSS_INDEX_SRC_FOLDER = path.join(SOURCES_ROOT, "./client/css/");
-const CSS_INDEX_DEST_FOLDER = path.join(SOURCES_ROOT, "./static/css/");
+const CSS_INDEX_DEST_FOLDER = path.join(SOURCES_ROOT, "./dist/client/css/");
 const CSS_PLUGINS = [
   // tslint:disable: no-var-requires
   require("postcss-import"),
@@ -96,7 +96,7 @@ function catchErrorsAndSignals() {
     _doGracefulShutdown(null, 1);
   });
   process.on("unhandledRejection", (error) => {
-    console.error(`XXX Unhandled promise rejection: ${error.message}\n${error.stack}`);
+    // tslint:disable-next-line: no-console
     log.error(`Unhandled promise rejection: ${error.message}\n${error.stack}`);
   });
 
@@ -166,7 +166,7 @@ function configureBrowserRefresh() {
 }
 
 async function buildCSS(watch = false) {
-  await _createFolderIfMissing(path.join(SOURCES_ROOT, CSS_INDEX_DEST_FOLDER));
+  await _createFolderIfMissing(CSS_INDEX_DEST_FOLDER);
   if (watch) {
     log.info("Setting up automatic CSS build...");
   } else {
@@ -185,9 +185,9 @@ async function buildCSS(watch = false) {
 
 async function buildJS(watch = false) {
   const env = process.env.NODE_ENV || "development";
-  const webpackConfig = require("./webpack." + env);
+  const webpackConfig = require(path.join(SOURCES_ROOT, "./webpack." + env + ".js"));
 
-  await _createFolderIfMissing(path.join(SOURCES_ROOT, webpackConfig.output.path));
+  await _createFolderIfMissing(webpackConfig.output.path);
 
   const compiler = webpack(webpackConfig);
 

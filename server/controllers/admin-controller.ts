@@ -283,14 +283,14 @@ async function adminPlatforms(req, res) {
 
   // Count entries by platform
   const platformCollection = await platformService.fetchAll();
-  const entryCount = {};
+  const entryCountByPlatform = {};
   for (const platform of platformCollection.models) {
-    entryCount[platform.get("id")] = await platformService.countEntriesByPlatform(platform);
+    entryCountByPlatform[platform.get("id")] = await platformService.countEntriesByPlatform(platform);
   }
 
   res.render("admin/admin-platforms", {
     platforms: platformCollection.models,
-    entryCount,
+    entryCount: entryCountByPlatform,
     editPlatform,
     errorMessage,
   });

@@ -129,7 +129,7 @@ function getPermissionsEqualOrAbove(permission) {
   if (permissionIndex !== -1) {
     return constants.ORDERED_PERMISSIONS.slice(permissionIndex);
   } else {
-    throw new Error("Unknown permission: " + permission 
+    throw new Error("Unknown permission: " + permission
       + " (allowed: " + constants.ORDERED_PERMISSIONS.join(",") + ")");
   }
 }

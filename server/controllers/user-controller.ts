@@ -289,7 +289,8 @@ async function dashboardSettings(req, res) {
           website: req.body.website,
           twitter: forms.sanitizeString(req.body.twitter.replace("@", "")),
         });
-        dashboardUserDetails.set("body", forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_USER_DETAILS }));
+        dashboardUserDetails.set("body", forms.sanitizeMarkdown(req.body.body,
+          { maxLength: constants.MAX_BODY_USER_DETAILS }));
         await dashboardUserDetails.save();
 
         if (dashboardUser.hasChanged("title")) {
@@ -298,7 +299,8 @@ async function dashboardSettings(req, res) {
 
         if (req.file || req.body["avatar-delete"]) {
           const avatarPath = "/user/" + dashboardUser.get("id");
-          await fileStorage.savePictureToModel(dashboardUser, "avatar", req.file, req.body["avatar-delete"], avatarPath, { maxDiagonal: 500 });
+          await fileStorage.savePictureToModel(dashboardUser, "avatar", req.file,
+            req.body["avatar-delete"], avatarPath, { maxDiagonal: 500 });
         }
 
         await dashboardUser.save();
@@ -325,7 +327,8 @@ async function dashboardPassword(req, res) {
     // Change password form
     if (!res.locals.dashboardAdminMode && !req.body.password) {
       errorMessage = "You must enter your current password";
-    } else if (!res.locals.dashboardAdminMode && !await userService.authenticate(dashboardUser.get("name"), req.body.password)) {
+    } else if (!res.locals.dashboardAdminMode
+        && !await userService.authenticate(dashboardUser.get("name"), req.body.password)) {
       errorMessage = "Current password is incorrect";
     } else if (!req.body["new-password"]) {
       errorMessage = "You must enter a new password";
@@ -368,21 +371,25 @@ async function dashboardEntryImport(req, res) {
       try {
         let result;
         for (const entryId of entryIds) {
-          result = await entryImportService.createOrUpdateEntry(res.locals.user, context.importer, importerProfileIdentifier, entryId);
+          result = await entryImportService.createOrUpdateEntry(res.locals.user, context.importer,
+            importerProfileIdentifier, entryId);
           if (result.error) {
             throw new Error(result.error);
           }
         }
-        context.infoMessage = "Successfully imported " + entryIds.length + " " + (entryIds.length === 1 ? "entry" : "entries") + "!";
+        context.infoMessage = "Successfully imported " + entryIds.length + " "
+          + (entryIds.length === 1 ? "entry" : "entries") + "!";
       } catch (e) {
-        context.errorMessage = "Error happened during entry import: " + e.message + ". Import may have been partially done, please check your Entries page.";
+        context.errorMessage = "Error happened during entry import: " + e.message
+          + ". Import may have been partially done, please check your Entries page.";
       }
     } else if (entryIds.length > 0) {
       context.errorMessage = "You must confirm the games are yours before importing them (see checkbox at the bottom).";
     }
 
     if (importerProfileIdentifier) {
-      context.entryReferences = await entryImportService.fetchEntryReferences(res.locals.user, context.importer, importerProfileIdentifier);
+      context.entryReferences = await entryImportService.fetchEntryReferences(
+        res.locals.user, context.importer, importerProfileIdentifier);
     }
   }
 
@@ -407,7 +414,8 @@ async function doRegister(req, res) {
   if (!(req.body.name && req.body.password && req.body.email)) {
     errorMessage = "A field is missing";
   } else if (!forms.isUsername(req.body.name)) {
-    errorMessage = 'Your usename is too weird (either too short, or has special chars other than "_" or "-", or starts with a number)';
+    errorMessage = "Your usename is too weird (either too short,"
+      + "or has special chars other than '_' or '-', or starts with a number)";
   } else if (req.body.password !== req.body["password-bis"]) {
     errorMessage = "Passwords do not match";
   } else if (!req.body.captcha || req.body.captcha.trim().toLowerCase()[0] !== "y") {

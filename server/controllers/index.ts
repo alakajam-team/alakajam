@@ -133,7 +133,7 @@ export default {
     // Posts
 
     // Matches both post and posts
-    router.get("/posts?", postController.posts);
+    router.get("/posts?", postController.viewPosts);
 
     router.get("/post/create", csrf, postController.editPost);
     router.post("/post/create", csrf, postController.savePost);
@@ -148,19 +148,19 @@ export default {
 
     // Articles
 
-    router.get("/article/:name", articleController.article);
+    router.get("/article/:name", articleController.viewArticle);
 
     // JSON API
 
-    router.get("/api", articleController.api);
-    router.get("/api/featuredEvent", apiController.featuredEvent);
-    router.get("/api/event", apiController.eventTimeline);
-    router.get("/api/event/:event", apiController.event);
-    router.get("/api/event/:event/shortlist", apiController.eventShortlist);
-    router.get("/api/entry/:entry", apiController.entry);
-    router.get("/api/user", apiController.userSearch);
-    router.get("/api/user/:user", apiController.user);
-    router.get("/api/user/:user/latestEntry", apiController.userLatestEntry);
+    router.get("/api", articleController.getArticleJson);
+    router.get("/api/featuredEvent", apiController.getFeaturedEvent);
+    router.get("/api/event", apiController.getEventTimeline);
+    router.get("/api/event/:event", apiController.getEvent);
+    router.get("/api/event/:event/shortlist", apiController.getEventShortlist);
+    router.get("/api/entry/:entry", apiController.getEntry);
+    router.get("/api/user", apiController.getUserSearch);
+    router.get("/api/user/:user", apiController.getUser);
+    router.get("/api/user/:user/latestEntry", apiController.getUserLatestEntry);
   },
 
 };
