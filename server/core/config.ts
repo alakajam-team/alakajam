@@ -4,7 +4,7 @@ import * as path from "path";
 import log from "./log";
 
 interface Config {
-  SERVER_PORT: string;
+  SERVER_PORT: number;
   ROOT_URL: string;
   STATIC_ROOT_URL: false|string;
 

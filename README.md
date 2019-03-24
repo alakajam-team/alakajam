@@ -28,9 +28,14 @@ See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional do
 * `npm run start:debug` Launches the server in debug mode. Needs to be built first. Prefer using the embedded debugger of your code editor (see example for VSCode below).
 * `npm run build` Builds the TypeScript server.
 * `npm run build:watch` Builds the TypeScript server and watches for changes.
-* `npm run test` Runs all unit tests.
-* `npm run migrate:latest` `npm run migrate:rollback` `npm run migrate:currentVersion` Knex migration commands.
-* `npm run docs` Generates the code documentation.
+* `npm run test` Runs all unit + end to end tests.
+* `npm run test:unit` Runs all unit tests. (based on mocha + chai)
+* `npm run test:e2e` Runs all end-to-end tests. (based on cypress) 
+* `npm run test:cypress` Launches Cypress for end-to-end test development.
+* `npm run migrate:latest` Migrate database to latest version. (based on knex)
+* `npm run migrate:rollback` Cancel latest database migration.
+* `npm run migrate:currentVersion` Display current database version.
+* `npm run docs` Generates the code documentation. (based on typedoc)
 
 ## How do I...
 

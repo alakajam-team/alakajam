@@ -5,12 +5,16 @@ const path = promisify("path");
 require("module-alias/register");
 const constants = require("server/core/constants").default;
 const log = require("server/core/log").default;
-const models = require("server/core/models").default;
+const models = require("server/core/models");
 const eventService = require("server/services/event-service").default;
 
 exports.up = async function(knex, Promise) {
   try {
     let entries = await models.Entry.where({}).orderBy("id", "ASC").fetchAll();
+    if (entries.length === 0) {
+      return;
+    }
+    
     log.info("Generate Thumbnails for " + entries.length + " entries.");
     let i = 0;
     let u = 0;

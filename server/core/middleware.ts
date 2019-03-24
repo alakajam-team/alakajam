@@ -65,6 +65,9 @@ async function configure(app) {
   // Static files
   app.use("/static", express.static(path.join(constants.ROOT_PATH, "/static")));
   app.use("/static", express.static(path.join(constants.ROOT_PATH, "/dist/client")));
+  if (!config.UPLOADS_PATH.startsWith("static/uploads/")) {
+    app.use("/" + config.UPLOADS_PATH, express.static(path.resolve(constants.ROOT_PATH, config.UPLOADS_PATH)));
+  }
 
   // Session management
   const sessionKey = await findOrCreateSessionKey();
