@@ -1,8 +1,8 @@
 {% extends "event/_page-event.html" %}
-{% import "event/_macros-event.html" as eventMacros %}
-{% import "entry/_macros-score.html" as scoreMacros %}
-{% import "user/_macros-user.html" as userMacros %}
-{% import "_macros-form.html" as formMacros %}
+{% import "event/_macros-event.html" as eventMacros with context %}
+{% import "entry/_macros-score.html" as scoreMacros with context %}
+{% import "user/_macros-user.html" as userMacros with context %}
+{% import "_macros-form.html" as formMacros with context %}
 
 {% block body %}
 {{ super() }}
@@ -49,16 +49,26 @@
       {% endif %}
     </div>
   </div>
-  <div class="game-grid tournament">
-    {% for entry in entries %}
-    <div class="game-grid-entry">
-      {{ eventMacros.entryThumb(entry) }}
-      <div class="entry-thumb__form">
-        {{ scoreMacros.highScoresLinks(entry, user, path) }}
+  <div class="row">
+    <div class="col-md-9 col-sm-12">
+      <div class="game-grid-3 tournament">
+        {% for entry in entries %}
+        <div class="game-grid-entry">
+          {{ eventMacros.entryThumb(entry) }}
+          <div class="entry-thumb__form">
+            {{ scoreMacros.highScoresLinks(entry, user, path) }}
+          </div>
+          {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')]) }}
+        </div>
+        {% endfor %}
       </div>
-      {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')]) }}
     </div>
-    {% endfor %}
+    <div class="col-md-3 sm-hidden">
+      <h2>Recent scores</h2>
+      {% for entryScore in activeEntries %}
+        {{ scoreMacros.highScoreThumb(entryScore) }}
+      {% endfor %}
+    </div>
   </div>
   <div class="row">
     <div class="col-xs-12">

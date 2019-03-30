@@ -611,6 +611,7 @@ async function viewEventTournamentGames (req, res) {
 
   context.userScoresMap = user ? await highScoreService.findUserScoresMapByEntry(user.get('id'), context.entries) : {}
   context.tournamentScore = user ? await eventTournamentService.findOrCreateTournamentScore(event.get('id'), user.get('id')) : null
+  context.activeEntries = (await highScoreService.findRecentlyActiveEntries({ eventId: event.get('id'), limit: 10 })).models
 
   res.render('event/view-event-tourn-games', context)
 }

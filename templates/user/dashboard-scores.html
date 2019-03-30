@@ -1,8 +1,8 @@
 {% extends "user/_page-dashboard.html" %}
-{% import "_macros-form.html" as formMacros %}
-{% import "event/_macros-event.html" as entryMacros %}
-{% import "entry/_macros-score.html" as scoreMacros %}
-{% import "user/_macros-user.html" as userMacros%}
+{% import "_macros-form.html" as formMacros with context %}
+{% import "event/_macros-event.html" as entryMacros with context %}
+{% import "entry/_macros-score.html" as scoreMacros with context %}
+{% import "user/_macros-user.html" as userMacros  with context %}
  
 {% block dashboardBody %}
 
@@ -71,23 +71,8 @@
 
   <div class="col-md-4">
     <h2>Recent scores</h2>
-    {% for entryScore in activeEntries %} {% set entry = entryScore.related('entry') %}
-    <div class="featured">
-      <div style="width: 100%; margin: 0 0 -10px -10px">
-        {{ userMacros.userThumb(entryScore.related('user'), { fullWidth: true }) }}
-      </div>
-      <div class="spacing">
-        Claimed
-        <b>{{ scoreMacros.printRanking(entryScore.get('ranking'), { onlyMedal: true }) }} 
-          {{ entryScore.get('ranking') | ordinal }} place</b> on
-        <a href="{{ buildUrl(entry, 'entry') }}">{{ entry.get('title') }}</a>
-        with
-        <b><a href="{{ buildUrl(entry, 'entry', 'scores') }}">
-          {{ scoreMacros.printScore(entry, entryScore, { showEditLink: entryScore.get('user_id') === user.get('id') }) }}</a></b>
-        <br />
-        <span style="font-size: 0.8rem">{{ entryScore.get('updated_at') | relativeTime }}</span>
-      </div>
-    </div>
+    {% for entryScore in activeEntries %}
+      {{ scoreMacros.highScoreThumb(entryScore) }}
     {% endfor %}
   </div>
 </div>

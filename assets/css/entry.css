@@ -6,15 +6,11 @@
   grid-template-columns: repeat(1, 1fr);
   grid-gap: 20px;
   padding-bottom: 20px;
-}
-
-@media (min-width: 576px) {
-  .game-grid {
+  
+  @media (min-width: 576px) {
     grid-template-columns: repeat(2, 1fr);
   }
-}
-@media (min-width: 992px) {
-  .game-grid {
+  @media (min-width: 992px) {
     grid-template-columns: repeat(3, 1fr);
   }
 }
@@ -27,6 +23,21 @@
   .game-grid, .container .home-grid.game-grid {
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 30px;
+  }
+}
+
+.game-grid-3 {
+  /* Variant supporting up to 3 columns only */
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-gap: 20px;
+  padding-bottom: 20px;
+  
+  @media (min-width: 576px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

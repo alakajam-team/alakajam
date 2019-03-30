@@ -22,7 +22,7 @@
 
 {% macro highScores(entry, scoreCollection, userScore = null, options = {}) %}
 {% set highScoreType = entry.related('details').get('high_score_type') %}
-{% set unit = highScoreType if not ['number', time'].includes(highScoreType) %}
+{% set unit = highScoreType if not ['number', 'time'].includes(highScoreType) %}
 {% set colspan = 4 + (1 if options.showDates else 0) + (1 if options.showActiveToggles else 0) %}
 <table class="table">
   <thead>
@@ -145,5 +145,25 @@
   </table>
   </div>
 </div>
+{% endmacro %}
 
+
+{% macro highScoreThumb(entryScore) %}
+  {% set entry = entryScore.related('entry') %}
+  <div class="featured">
+    <div style="width: 100%; margin: 0 0 -10px -10px">
+      {{ userMacros.userThumb(entryScore.related('user'), { fullWidth: true }) }}
+    </div>
+    <div class="spacing">
+      Claimed
+      <b>{{ printRanking(entryScore.get('ranking'), { onlyMedal: true }) }} 
+        {{ entryScore.get('ranking') | ordinal }} place</b> on
+      <a href="{{ buildUrl(entry, 'entry') }}">{{ entry.get('title') }}</a>
+      with
+      <b><a href="{{ buildUrl(entry, 'entry', 'scores') }}">
+        {{ printScore(entry, entryScore, { showEditLink: entryScore.get('user_id') === user.get('id') }) }}</a></b>
+      <br />
+      <span style="font-size: 0.8rem">{{ entryScore.get('updated_at') | relativeTime }}</span>
+    </div>
+  </div>
 {% endmacro %}
