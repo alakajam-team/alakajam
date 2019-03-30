@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    branches:
+      only:
+        - typescript
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run test
