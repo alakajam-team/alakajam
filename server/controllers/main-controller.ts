@@ -337,7 +337,7 @@ async function chat(req, res) {
  */
 async function changes(req, res) {
   res.locals.pageTitle = "Site changes";
-  res.locals.changes = fileStorage.read("CHANGES.md");
+  res.locals.changes = await fileStorage.read("CHANGES.md");
 
   res.render("changes", {
     sidebar: await settingService.findArticlesSidebar(),
