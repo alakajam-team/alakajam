@@ -8,7 +8,8 @@
       "dist/**",
       "data/**",
       "static/**",
-      "templates/**"
+      "templates/**",
+      "**/*.d.ts"
     ]
   },
   "jsRules": {},
