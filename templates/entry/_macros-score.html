@@ -161,7 +161,7 @@
       <a href="{{ buildUrl(entry, 'entry') }}">{{ entry.get('title') }}</a>
       with
       <b><a href="{{ buildUrl(entry, 'entry', 'scores') }}">
-        {{ printScore(entry, entryScore, { showEditLink: entryScore.get('user_id') === user.get('id') }) }}</a></b>
+        {{ printScore(entry, entryScore, { showEditLink: user and entryScore.get('user_id') === user.get('id') }) }}</a></b>
       <br />
       <span style="font-size: 0.8rem">{{ entryScore.get('updated_at') | relativeTime }}</span>
     </div>
