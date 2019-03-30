@@ -21,7 +21,7 @@ const entryImportTtl = 3 * 60; // 3 minutes
 let Cache: any = NodeCache;
 if (config.DEBUG_DISABLE_CACHE) {
   Cache = () => {
-    const fastExpiryCache = new NodeCache({ stdTTL: 1 });
+    const fastExpiryCache = new Cache({ stdTTL: 1 });
 
     this.get = (key) => fastExpiryCache.get(key);
     this.set = (key, value) => fastExpiryCache.set(key, value); // Ignore any custom TTL
@@ -32,13 +32,13 @@ if (config.DEBUG_DISABLE_CACHE) {
 }
 
 const cacheMap = {
-  general: new Cache({ stdTTL: generalTtl }),
-  users: new Cache({ stdTTL: usersTtl }),
-  settings: new Cache({ stdTTL: settingsTtl }),
-  eventsById: new Cache({ stdTTL: eventsTtl }),
-  eventsByName: new Cache({ stdTTL: eventsTtl }),
-  articles: new Cache({ stdTTL: articlesTtl }),
-  entryImport: new Cache({ stdTTL: entryImportTtl }),
+  general: new Cache({ stdTTL: generalTtl }) as NodeCache,
+  users: new Cache({ stdTTL: usersTtl }) as NodeCache,
+  settings: new Cache({ stdTTL: settingsTtl }) as NodeCache,
+  eventsById: new Cache({ stdTTL: eventsTtl }) as NodeCache,
+  eventsByName: new Cache({ stdTTL: eventsTtl }) as NodeCache,
+  articles: new Cache({ stdTTL: articlesTtl }) as NodeCache,
+  entryImport: new Cache({ stdTTL: entryImportTtl }) as NodeCache,
 };
 
 export default {
@@ -60,8 +60,9 @@ export default {
  * @param  {User|string} userModel User model, or directly the user name
  * @return {PrefixedNodeCache} cache
  */
-function user(userModel) {
-  return new PrefixedNodeCache(cacheMap.users, (typeof userModel === "string") ? userModel : userModel.get("name"));
+function user(userModel): NodeCache {
+  return new PrefixedNodeCache(cacheMap.users,
+      (typeof userModel === "string") ? userModel : userModel.get("name")) as any;
 }
 
 class PrefixedNodeCache {

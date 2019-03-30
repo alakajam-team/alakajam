@@ -26,7 +26,7 @@ export default {
  *   If a function is passed, it will be evaluated first.
  * @returns {void}
  */
-async function find(key, defaultValue?: string|DefaultValueEval) {
+async function find(key, defaultValue?: string|DefaultValueEval): Promise<string> {
   if (!cache.settings.get(key)) {
     if (!key) {
       throw new Error("Undefined key, you might have forgotten to declare a constant");
@@ -34,7 +34,7 @@ async function find(key, defaultValue?: string|DefaultValueEval) {
     const settingModel = await models.Setting.where("key", key).fetch();
     cache.settings.set(key, settingModel ? settingModel.get("value") : undefined);
   }
-  const value = cache.settings.get(key);
+  const value = cache.settings.get<string>(key);
   if (value) {
     return value;
   } else if (typeof defaultValue === "function") {
