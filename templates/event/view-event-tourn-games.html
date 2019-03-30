@@ -58,7 +58,9 @@
           <div class="entry-thumb__form">
             {{ scoreMacros.highScoresLinks(entry, user, path) }}
           </div>
+          <div style="display: flex">
           {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')]) }}
+          </div>
         </div>
         {% endfor %}
       </div>
