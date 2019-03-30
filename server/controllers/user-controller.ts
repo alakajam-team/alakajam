@@ -110,10 +110,10 @@ async function dashboardFeed(req, res) {
 
   // if an entry is not in the cache it will return undefined
   const userCache = cache.user(dashboardUser);
-  let byUserCollection = userCache.get("byUserCollection");
-  let toUserCollection = userCache.get("toUserCollection");
-  let latestEntry = userCache.get("latestEntry");
-  let latestPostsCollection = userCache.get("latestPostsCollection");
+  let byUserCollection = userCache.get<any>("byUserCollection");
+  let toUserCollection = userCache.get<any>("toUserCollection");
+  let latestEntry = userCache.get<any>("latestEntry");
+  let latestPostsCollection = userCache.get<any>("latestPostsCollection");
 
   if (!byUserCollection) {
     byUserCollection = await postService.findCommentsByUser(dashboardUser);

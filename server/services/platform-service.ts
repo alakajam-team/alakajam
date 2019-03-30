@@ -63,7 +63,7 @@ async function fetchAllNames() {
 }
 
 /** Fetch all platform instances. */
-async function fetchAll() {
+async function fetchAll(): Promise<any> {
   if (!cache.general.get("platforms")) {
     cache.general.set("platforms",
       await models.Platform.forge()

@@ -1,3 +1,5 @@
+// tslint:disable: max-classes-per-file
+
 /**
  * Cache configuration
  *
@@ -20,14 +22,14 @@ const entryImportTtl = 3 * 60; // 3 minutes
 
 let Cache: any = NodeCache;
 if (config.DEBUG_DISABLE_CACHE) {
-  Cache = () => {
-    const fastExpiryCache = new Cache({ stdTTL: 1 });
+  Cache = class {
+    private fastExpiryCache = new NodeCache({ stdTTL: 1 });
 
-    this.get = (key) => fastExpiryCache.get(key);
-    this.set = (key, value) => fastExpiryCache.set(key, value); // Ignore any custom TTL
-    this.del = (key) => fastExpiryCache.del(key);
-    this.keys = () => ({});
-    this.getStats = () => ({});
+    public get = (key) => this.fastExpiryCache.get(key);
+    public set = (key, value) => this.fastExpiryCache.set(key, value); // Ignore any custom TTL
+    public del = (key) => this.fastExpiryCache.del(key);
+    public keys = () => ({});
+    public getStats = () => ({});
   };
 }
 

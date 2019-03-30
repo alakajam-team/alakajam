@@ -80,7 +80,7 @@ async function anyPageMiddleware(req, res, next) {
  * Home page
  */
 async function index(req, res) {
-  let context = cache.general.get("home_page");
+  let context = cache.general.get<any>("home_page");
 
   if (!context) {
     context = {};

@@ -130,7 +130,7 @@ async function findEventByName(name) {
       .fetch({ withRelated: ["details"] });
     cache.eventsByName.set(name, event);
   }
-  return cache.eventsByName.get(name);
+  return cache.eventsByName.get<any>(name);
 }
 
 /**

@@ -293,7 +293,7 @@ async function saveVote(user, event, themeId, score, options: any = {}) {
     // Eliminate lowest themes every x votes. No need for DB calls, just count in-memory
     const eliminationThreshold = await settingService.findNumber(
       constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 10);
-    let uptimeVotes = cache.general.get("uptime_votes") || 0;
+    let uptimeVotes: number = cache.general.get("uptime_votes") || 0;
     if (uptimeVotes % eliminationThreshold === 0) {
       _eliminateLowestThemes(event);
     }
