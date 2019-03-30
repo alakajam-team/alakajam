@@ -69,7 +69,7 @@
 
 <div class="event-table {{ event.get('status') }}">
   <div class="event-table__header">
-    {%- if featuredEvent.get('logo') -%}
+    {%- if featuredEvent and featuredEvent.get('logo') -%}
     <a href="{{ buildUrl(event, 'event') }}"><!--
       --><img src="{{ event.get('logo') }}" class="event-table__logo no-border" /><!--
   --></a>

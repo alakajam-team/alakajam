@@ -1,6 +1,6 @@
 {
   "baseUrl": "http://localhost:8001",
-  "fixturesFolder": false,
   "pluginsFile": false,
+  "supportFile": "cypress/support/index.ts",
   "video": false
 }

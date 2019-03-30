@@ -703,8 +703,8 @@ async function findGames(options: any = {}) {
           .where(function() {
             this.where("event.status", enums.EVENT.STATUS.CLOSED).orWhereNull("event.status");
           })
-          .orderByRaw("entry_details.rating_1 DESC "
-            + ((config.DB_TYPE === "postgresql") ? "NULLS LAST" : "IS NOT NULL"))
+          .orderByRaw("entry_details.rating_1 "
+            + ((config.DB_TYPE === "postgresql") ? "DESC NULLS LAST" : "IS NULL DESC"))
           .orderBy("entry.karma", "DESC");
       });
     } else if (options.sortByRanking) {

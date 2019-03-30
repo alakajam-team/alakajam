@@ -25,7 +25,7 @@ describe("People page", () => {
     people.results.should("not.contain", "Administrator");
 
     people.cancel.click();
-    people.title.should("contain", "(2)");
+    people.title.should("contain", "(3)");
     people.results.should("contain", "Administrator");
   });
 
@@ -34,7 +34,7 @@ describe("People page", () => {
 
     people.withEntriesCheckbox.click();
     people.form.submit();
-    people.title.should("contain", "(1)");
+    people.title.should("contain", "(2)");
     people.results.should("not.contain", "gandalf");
     people.results.should("contain", "Administrator");
   });

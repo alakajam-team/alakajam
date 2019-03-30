@@ -1,0 +1,17 @@
+{
+  "dashboard-home": "/dashboard/feed",
+  "dashboard-entries": "/dashboard/entries",
+  "dashboard-posts": "/dashboard/posts",
+  "dashboard-scores": "/dashboard/scores",
+  "dashboard-settings": "/dashboard/settings",
+  "dashboard-password": "/dashboard/password",
+  "dashboard-entry-import": "/dashboard/entry-import",
+
+  "post-create": "/post/create",
+  "post-create-with-params": "/post/create?eventId=1&special_post_type=announcement",
+
+  "entry-create": "/submissions-open/create-entry",
+  "entry-edit": "/external-entry/5/my-external-entry/edit",
+  "entry-submit-score": "/external-entry/5/my-external-entry/submit-score?redirectTo=%2Fexternal-entry%2F5%2Fmy-external-entry%2F",
+  "entry-manage-scores": "/external-entry/5/my-external-entry/edit-scores"
+}
