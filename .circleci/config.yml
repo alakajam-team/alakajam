@@ -5,7 +5,7 @@ jobs:
       only:
         - typescript
     docker:
-      - image: circleci/node:latest
+      - image: cypress/base:10
     steps:
       - checkout
       - run: npm install
