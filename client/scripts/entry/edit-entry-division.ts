@@ -14,7 +14,7 @@ export default function editEntryDivision() {
       $input.prop("checked", active);
       $el.toggleClass("active", active);
     });
-    $entryDivisions.find(divisionButtonSelector).click(function(ev) {
+    $entryDivisions.find(divisionButtonSelector).click(function() {
       // XXX avoid depending on IDs outside our own component
       $("#edit-team").toggleClass("hidden", $(this).find("input").val() === "solo");
       $("#edit-optouts").toggleClass("hidden", $(this).find("input").val() === "unranked");

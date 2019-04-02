@@ -45,7 +45,7 @@ export default function editEntryLinks() {
       refreshLinksView();
     });
 
-    $linksContainer.on("click", removeLinkSelector, () => {
+    $linksContainer.on("click", removeLinkSelector, function() {
       refreshLinksModel();
       links.splice($(this).attr("data-row"), 1);
       if (links.length === 0) {

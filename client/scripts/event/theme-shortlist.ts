@@ -13,7 +13,7 @@ export default function themeShortlist() {
     animation: 100,
     onUpdate() {
       const votes = [];
-      $shortlist.find("li").each(() => {
+      $shortlist.find("li").each(function() {
         votes.push($(this).attr("data-theme-id"));
       });
       $shortlistVotes.val(votes);
