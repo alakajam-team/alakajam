@@ -11,7 +11,7 @@
   "post-create-with-params": "/post/create?eventId=1&special_post_type=announcement",
 
   "entry-create": "/submissions-open/create-entry",
-  "entry-edit": "/external-entry/5/my-external-entry/edit",
-  "entry-submit-score": "/external-entry/5/my-external-entry/submit-score?redirectTo=%2Fexternal-entry%2F5%2Fmy-external-entry%2F",
-  "entry-manage-scores": "/external-entry/5/my-external-entry/edit-scores"
+  "entry-edit": "/submissions-open/4/my-game/edit",
+  "entry-submit-score": "/external-entry/5/my-external-entry/submit-score",
+  "entry-manage-scores": "/submissions-open/4/my-game/edit-scores"
 }

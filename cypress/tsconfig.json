@@ -11,5 +11,8 @@
   ],
   "exclude": [
     "**/*.d.ts"
+  ],
+  "files": [
+    "support/index.d.ts"
   ]
 }

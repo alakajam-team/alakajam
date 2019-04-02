@@ -15,7 +15,6 @@
   "user-profile": "/user/administrator",
 
   "api-home": "/api",
-  "api-events-json": "/api/event",
   "api-events-example": "/api/event?pretty=true",
 
   "post": "/post/1/plog-post",
