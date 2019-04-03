@@ -47,7 +47,7 @@ interface Config {
   DEBUG_TRACE_SLOW_REQUESTS: number;
 }
 
-const SOURCES_ROOT = path.dirname(findUp.sync("package.json"));
+const SOURCES_ROOT = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 const CONFIG_PATH = path.join(SOURCES_ROOT, "config.js");
 const CONFIG_SAMPLE_PATH = path.join(SOURCES_ROOT, "config.sample.js");
 

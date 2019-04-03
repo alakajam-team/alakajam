@@ -35,7 +35,7 @@ const SETTING_EVENT_OPEN_VOTING = "event_open_voting";
 
 export default {
   // Paths
-  ROOT_PATH: path.dirname(findUp("package.json")),
+  ROOT_PATH: path.dirname(findUp("package.json", { cwd: __dirname })),
 
   // Settings
   SETTING_FEATURED_EVENT_NAME,

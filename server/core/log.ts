@@ -18,7 +18,7 @@ import * as path from "path";
 import * as util from "util";
 import { config as winstonConfig, Logger, transports } from "winston";
 
-const sourcesRoot = path.dirname(findUp("package.json"));
+const sourcesRoot = path.dirname(findUp("package.json", { cwd: __dirname }));
 
 let level = "info";
 try {

@@ -46,7 +46,7 @@ if (process.env.NODE_ENV !== "production") {
   process.env.NODE_ENV = "development";
 }
 const DEV_ENVIRONMENT = process.env.NODE_ENV === "development";
-const SOURCES_ROOT = path.dirname(findUp.sync("package.json"));
+const SOURCES_ROOT = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 const CSS_INDEX_SRC_FOLDER = path.join(SOURCES_ROOT, "./client/css/");
 const CSS_INDEX_DEST_FOLDER = path.join(SOURCES_ROOT, "./dist/client/css/");
 const CSS_PLUGINS = [
