@@ -23,7 +23,7 @@ See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional do
 * `npm run start` Launches the server for development. Every TypeScript change will trigger a server restart. (based on ts-node-dev)
 * `npm run start:refresh` Alternative that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)
 * `npm run start:debug` Launches the server in debug mode. Prefer using the embedded debugger of your code editor (see example for VSCode further below).
-* `npm run lint` Checks your code for errors, and fixes the most obvious ones.
+* `npm run lint` Checks your code for errors, and fixes the most obvious ones. Run `githooks/install.sh` to trigger validation automatically before committing.
 
 ### Automated tests
 
