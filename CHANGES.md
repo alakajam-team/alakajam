@@ -2,6 +2,24 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### April 2019
+
+* Migrate website sources from JavaScript to TypeScript
+
+### March 2019
+
+* Reworked user profile using tabs
+* Display unranked games in the event results page
+* Display recent scores near the tournament game list
+* People page: display how many entries users have
+* Display pending invites in the entry page (only visible to the owner)
+* Support searching games with high scores support
+* Replace divisions selector when searching games
+* Better consistency of Markdown renderer with editor preview
+* Ludum Dare game importer improvements
+* Add press kit page
+* Accept donations
+
 ### February 2019
 
 * Generate thumbnails on games to make pages much lighter
