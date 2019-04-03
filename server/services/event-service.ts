@@ -464,11 +464,11 @@ function setTeamMembers(currentUser, entry, userIds) {
         .del();
     } else {
       // Remove removed user posts from the entry
-      await entry.load("posts");
+      await entry.load("posts", { transacting: transaction });
       entry.related("posts").forEach(async (post) => {
         if (!userIds.includes(post.get("author_user_id"))) {
           post.set("entry_id", null);
-          await post.save();
+          post.save(null, { transacting: transaction });
         }
       });
 
@@ -605,7 +605,8 @@ async function acceptInvite(user, entry) {
         });
       }
 
-      await postService.attachPostsToEntry(entry.get("event_id"), user.get("id"), entry.get("id"));
+      await postService.attachPostsToEntry(entry.get("event_id"), user.get("id"), entry.get("id"),
+        { transacting: transaction });
 
       await userRole.save(null, { transacting: transaction });
       await deleteInvite(user, entry, { transacting: transaction });

@@ -112,6 +112,7 @@ async function findPosts(options: any = {}) {
   return postCollection.fetchPage({
     pageSize: 10,
     page: options.page,
+    transacting: options.transacting,
     withRelated: ["author", "userRoles"],
   });
 }
@@ -374,18 +375,18 @@ async function deleteComment(comment) {
  * @param  {number} entryId
  * @return {void}
  */
-async function attachPostsToEntry(eventId, userId, entryId) {
+async function attachPostsToEntry(eventId, userId, entryId, options: { transacting?: any } = {}) {
   // Attach posts from same event
   const posts = await findPosts({
     eventId,
     userId,
     specialPostType: null,
-  });
-  const promises = [];
-  posts.each(async (post) => {
-    post.set("entry_id", entryId);
-    promises.push(post.save());
+    transacting: options.transacting
   });
 
-  return Promise.all(promises);
+  const savePromises = posts.map(async (post) => {
+    post.set("entry_id", entryId);
+    return post.save(null, options);
+  });
+  return Promise.all(savePromises);
 }

@@ -15,11 +15,11 @@ if (!urlToPoll) {
   process.exit(1);
 }
 
-console.log(`Polling ${urlToPoll}...`);
+console.log(`Polling ${urlToPoll} (timeout = ${timeout})...`);
 requestRetry({
     url: urlToPoll,
     maxAttempts: Math.ceil(timeout / 2.),
-    retryDelay: 2
+    retryDelay: 2000
   }, (err) => {
     if (err) {
       console.log(`ERROR: ${urlToPoll} failed to respond`, err);

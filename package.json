@@ -38,7 +38,7 @@
     "@babel/preset-typescript": "^7.3.3",
     "babel-loader": "^8.0.5",
     "body-parser": "^1.18.3",
-    "bookshelf": "^0.10.4",
+    "bookshelf": "^0.14.2",
     "bookshelf-cascade-delete": "^2.0.1",
     "cheerio": "^1.0.0-rc.2",
     "connect-session-knex": "^1.4.0",
