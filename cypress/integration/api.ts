@@ -1,4 +1,4 @@
-function navigateEndpointList(fixtureName: string) {
+function navigateEndpointList(fixtureName) {
   cy.fixture(fixtureName).then((pages) => {
     Object.keys(pages).forEach((pageName) => {
       const page = pages[pageName];
