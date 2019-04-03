@@ -18,8 +18,9 @@
   text-decoration: none;
   color: #ccc; }
 
-.flip-clock-wrapper a:hover {f
-  color: #fff; }
+.flip-clock-wrapper a:hover {
+  color: #fff;
+}
 
 .flip-clock-wrapper ul {
   list-style: none; }

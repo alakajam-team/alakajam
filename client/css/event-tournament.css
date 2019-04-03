@@ -1,8 +1,8 @@
- /**
+/**
  * Event tournament styles
  */
 
-.tournament-ranking {
+ .tournament-ranking {
   font-weight: bold;
   color: var(--text);
 }
@@ -31,7 +31,7 @@
 }
 
 /* Event tournament game grid is not perfect, when css-grid-2 will be ready we can use https://www.w3.org/TR/css-grid-2/#subgrids*/
-.tournament.game-grid {
+.tournament.game-grid, .tournament.game-grid-3 {
   & .entry-thumb {
     flex: none;
     &__author {
