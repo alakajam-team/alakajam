@@ -1,0 +1,44 @@
+/**
+ * Event tournament styles
+ */
+
+ .tournament-ranking {
+  font-weight: bold;
+  color: var(--text);
+}
+
+.tournament-user-banner {
+  margin-bottom: 0;
+  width: 100%;
+  padding: 10px;
+
+  &__user {
+    padding-top: 10px;
+  }
+
+  &__ranking {
+    padding-right: 20px;
+
+    & h1 {
+      margin-bottom: -5px;
+    }
+  }
+
+  &__buttons {
+    text-align: right;
+    padding-right: 10px;
+  }
+}
+
+/* Event tournament game grid is not perfect, when css-grid-2 will be ready we can use https://www.w3.org/TR/css-grid-2/#subgrids*/
+.tournament.game-grid, .tournament.game-grid-3 {
+  & .entry-thumb {
+    flex: none;
+    &__author {
+      min-height: 2rem;
+    }
+  }
+  & .table {
+    flex:1;
+  }
+}

@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    branches:
+      only:
+        - typescript
+    docker:
+      - image: cypress/base:10
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run test

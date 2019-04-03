@@ -1,0 +1,9 @@
+{
+  "api-featured-events": "/api/featuredEvent",
+  "api-events": "/api/event",
+  "api-event": "/api/event/submissions-open",
+  "api-entry": "/api/entry/4",
+  "api-users": "/api/user",
+  "api-user": "/api/user/dumbledore",
+  "api-user-entry": "/api/user/dumbledore/latestEntry"
+}

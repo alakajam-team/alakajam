@@ -1,0 +1,30 @@
+{
+  "home": "/",
+  "events": "/events",
+  "games": "/games",
+  "people": "/people",
+  "people-mods": "/people/mods",
+  "chat": "/chat",
+  "changelog": "/changes",
+  "docs-home": "/article/docs",
+
+  "register": "/register",
+  "login": "/login",
+  "password-recovery-request": "/passwordRecoveryRequest",
+
+  "user-profile": "/user/administrator",
+
+  "api-home": "/api",
+  "api-events-example": "/api/event?pretty=true",
+
+  "post": "/post/1/plog-post",
+
+  "event": "/submissions-open",
+  "event-news": "/submissions-open/announcements",
+  "event-posts": "/submissions-open/posts",
+  "event-theme-voting": "/theme-voting/themes",
+  "event-entries": "/submissions-open/games",
+
+  "entry-view": "/external-entry/5/my-external-entry/",
+  "entry-scores": "/external-entry/5/my-external-entry/scores"
+}

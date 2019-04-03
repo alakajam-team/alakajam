@@ -1,12 +1,19 @@
+.*
 node_modules/
-assets/
+client/
+cypress/
 data/
+deployment/
 docs/
-static/uploads
-tests/
-tmp/
-.git/
-.DS_Store/
+githooks/
+server/index.ts
+server/articles/
+server/controllers/
+server/core/
+server/migrations/
+server/services/
+server/migrations/
+static/uploads/
 
 *.log
 *.out

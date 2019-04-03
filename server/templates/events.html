@@ -1,0 +1,118 @@
+{% extends "_page.html" %}
+{% import "event/_macros-event.html" as eventMacros %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10">
+      <h1>Events <span class="count">({{ open.length + pending.length + closedAlakajam.length + closedOther.length }})</span></h1>
+      {% if open.length > 0 %}
+      <div class="events-block events-block__live">
+        <h2><span class="fas fa-play-circle"></span> On now!</h2>
+        {% for event in open %}
+          {{ eventTable(event, featuredEntries[event.get('id')]) }}
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      {% if pending.length > 0 %}
+      <div class="events-block events-block__pending">
+        <h2><span class="fas fa-calendar"></span> Upcoming</h2>
+        {% for event in pending %}
+          {{ eventTable(event, featuredEntries[event.get('id')]) }}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="panel page-tabs">
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a href="#alakajam_events" data-toggle="tab">
+              <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Past Alakajam! events</h2>
+            </a>
+          </li>
+          <li>
+            <a href="#other_events" data-toggle="tab">
+              <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Other events</h2>
+            </a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          {% if closedAlakajam.length > 0 %}
+          <div id="alakajam_events" class="events-block events-block__closed tab-pane fade active in">
+            
+            {% for event in closedAlakajam %}
+              {{ eventTable(event, featuredEntries[event.get('id')]) }}
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if closedOther.length > 0 %}
+          <div id="other_events" class="events-block events-block__closed tab-pane fade">
+            {% for event in closedOther %}
+              {{ eventTable(event, featuredEntries[event.get('id')], { noResults: true }) }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% macro eventTable(event, featuredEntries, options = {}) %}
+
+<div class="event-table {{ event.get('status') }}">
+  <div class="event-table__header">
+    {%- if featuredEvent and featuredEvent.get('logo') -%}
+    <a href="{{ buildUrl(event, 'event') }}"><!--
+      --><img src="{{ event.get('logo') }}" class="event-table__logo no-border" /><!--
+  --></a>
+    {%- endif -%}
+    <a href="{{ buildUrl(event, 'event') }}" class="event-table__title">
+      {{ event.get('title') }} 
+      {% if event.get('status') === 'closed' %}
+        <span class="count">({{ event.get('entry_count') }} entries)</span>
+      {% endif %}
+      <div class="event-table__dates">
+        {{ event.get('display_dates') or '(dates unknown)' }}
+      </div>
+    </a>
+    {%- if event.get('display_theme') -%}
+      <div class="event-table__theme">
+        <span class="event-table__theme-label">Theme</span>
+        {{ event.get('display_theme') }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {% if not options.noResults and (featuredEntries.solo or featuredEntries.ranked) %}
+  <div class="event-table__entries">
+    <div class="row">
+      <div class="col-sm-6">
+      {% for entry in (featuredEntries.solo or featuredEntries.ranked) %}
+        <div class="event-table__entry">
+          {{ eventMacros.entrySmallThumb(entry) }}
+          <span class="entry-results__category-medal medal{{ loop.index }}"></span>
+        </div>
+      {% endfor %}
+      </div>
+      <div class="col-sm-6">
+      {% for entry in featuredEntries.team %}
+        <div class="event-table__entry">
+          {{ eventMacros.entrySmallThumb(entry) }}
+          <span class="entry-results__category-medal medal{{ loop.index }}"></span>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endmacro %}

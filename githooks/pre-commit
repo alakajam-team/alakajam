@@ -9,7 +9,7 @@ function xargs-r() {
     { echo -n "$path"; echo -ne "\0"; cat; } | xargs $@
   fi
 }
-git diff -z --name-only --cached --relative | grep -z '\.jsx\?$' | xargs-r -0 -t standard
+git diff -z --name-only --cached --relative | grep -z '\.tsx\?$' | xargs-r -0 -t node ./node_modules/tslint/bin/tslint
 if [[ $? -ne 0 ]]; then
   echo 'JavaScript Standard Style errors were detected. Aborting commit.'
   exit 1
