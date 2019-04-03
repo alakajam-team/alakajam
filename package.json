@@ -20,8 +20,9 @@
     "migrate:currentVersion": "knex migrate:currentVersion --knexfile dist/server/core/knexfile.js --cwd server/",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "mocha -r ts-node/register -r tsconfig-paths/register server/**/*.spec.ts --exit",
-    "test:e2e": "concurrently --kill-others \"npm run start:e2e\" \"node deployment/pollurl/pollurl.js http://localhost:8001 && cypress run\"",
+    "test:e2e": "start-server-and-test start:e2e http://localhost:8001 test:cypress:run",
     "test:cypress": "cypress open",
+    "test:cypress:run": "cypress run",
     "docs": "typedoc --out dist/docs"
   },
   "repository": {
@@ -122,6 +123,7 @@
     "file-loader": "^2.0.0",
     "mocha": "^6.0.2",
     "sinon": "^7.3.1",
+    "start-server-and-test": "^1.7.13",
     "ts-node": "^7.0.1",
     "ts-node-dev": "^1.0.0-pre.32",
     "tsconfig-paths": "^3.8.0",
