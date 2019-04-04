@@ -3,6 +3,7 @@ const fs = promisify("fs");
 const path = promisify("path");
 
 require("module-alias/register");
+const config = require("server/core/config").default;
 const constants = require("server/core/constants").default;
 const log = require("server/core/log").default;
 const models = require("server/core/models");
@@ -10,7 +11,13 @@ const eventService = require("server/services/event-service").default;
 
 exports.up = async function(knex, Promise) {
   try {
-    let entries = await models.Entry.where({}).orderBy("id", "ASC").fetchAll();
+    let entries
+    if (config.DB_TYPE === "sqlite3") {
+      entries = [] // Bookshelf unsupported due to having a single connection
+    } else {
+      entries = await models.Entry.where({}).orderBy("id", "ASC").fetchAll();
+    }
+
     if (entries.length === 0) {
       return;
     }
