@@ -1,7 +1,5 @@
-import * as fs from "fs";
 import * as moment from "moment";
-import * as path from "path";
-import { promisify } from "util";
+
 import eventRatingService from "../services/event-rating-service";
 import eventService from "../services/event-service";
 import eventThemeService from "../services/event-theme-service";

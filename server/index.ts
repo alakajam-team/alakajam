@@ -82,7 +82,7 @@ async function createApp() {
   app.locals.devMode = DEV_ENVIRONMENT;
   const previousVersion = await db.initDatabase();
   if (previousVersion === "none") {
-    await require("./core/db-init").insertInitialData(app.locals.devMode && config.DEBUG_INSERT_SAMPLES);
+    await require("./core/db-init").insertInitialData(config.DEBUG_INSERT_SAMPLES);
   }
   await middleware.configure(app);
 
