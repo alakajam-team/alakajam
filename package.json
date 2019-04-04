@@ -9,8 +9,8 @@
     "start:refresh": "concurrently --kill-others \"npm run build:watch\" \"browser-refresh\"",
     "start:e2e": "node ./node_modules/ts-node-dev/bin/ts-node-dev -r tsconfig-paths/register server/test/index-e2e.ts",
     "start:debug": "tsc && node --nolazy -r ts-node/register -r tsconfig-paths/register --inspect-brk dist/server/index.js",
-    "deployment:build": "tsc",
-    "deployment:build-watch": "tsc -w",
+    "deployment:build": "tsc --build tsconfig.build.json",
+    "deployment:build-watch": "npm run deployment:build -- -w",
     "deployment:start": "node dist/server/index.js",
     "lint": "npm run lint:server && npm run lint:client",
     "lint:server": "tslint --project tsconfig.json --fix",
@@ -87,6 +87,7 @@
     "sqlite3": "^4.0.6",
     "striptags": "^3.0.1",
     "turndown": "^4.0.2",
+    "typescript": "^3.4.1",
     "uglifyjs-webpack-plugin": "^1.3.0",
     "validator": "^7.0.0",
     "webpack": "^4.29.3",
@@ -130,7 +131,6 @@
     "tsconfig-paths": "^3.8.0",
     "tslint": "^5.15.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.4.1",
     "url-loader": "^1.1.2"
   },
   "browserslist": [
