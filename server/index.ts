@@ -34,7 +34,7 @@ import * as findUp from "find-up";
 import * as fs from "fs";
 import * as mkdirp from "mkdirp";
 import * as path from "path";
-import * as postcssWatch from "postcss-watch";
+import * as postcssWalk from "postcss-walk";
 import * as util from "util";
 import * as webpack from "webpack";
 
@@ -46,9 +46,9 @@ if (process.env.NODE_ENV !== "production") {
   process.env.NODE_ENV = "development";
 }
 const DEV_ENVIRONMENT = process.env.NODE_ENV === "development";
-const SOURCES_ROOT = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
-const CSS_INDEX_SRC_FOLDER = path.join(SOURCES_ROOT, "./client/css/");
-const CSS_INDEX_DEST_FOLDER = path.join(SOURCES_ROOT, "./dist/client/css/");
+const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
+const CSS_INDEX_SRC_FOLDER = path.join(ROOT_PATH, "./client/css/");
+const CSS_INDEX_DEST_FOLDER = path.join(ROOT_PATH, "./dist/client/css/");
 const CSS_PLUGINS = [
   // tslint:disable: no-var-requires
   require("postcss-import"),
@@ -130,8 +130,8 @@ function catchErrorsAndSignals() {
  */
 async function initFilesLayout() {
   // Create data folders
-  await _createFolderIfMissing(path.join(SOURCES_ROOT, config.DATA_PATH, "/tmp"));
-  await _createFolderIfMissing(path.join(SOURCES_ROOT, config.UPLOADS_PATH));
+  await _createFolderIfMissing(path.join(ROOT_PATH, config.DATA_PATH, "/tmp"));
+  await _createFolderIfMissing(path.join(ROOT_PATH, config.UPLOADS_PATH));
 
   // Configure browser-refresh
   try {
@@ -144,6 +144,7 @@ async function initFilesLayout() {
 
   // Run CSS and JS build (or bootstrap sources watcher in dev mode)
   if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
+    process.chdir(ROOT_PATH);
     await buildCSS(DEV_ENVIRONMENT);
     await buildJS(DEV_ENVIRONMENT);
   }
@@ -184,9 +185,9 @@ async function buildCSS(watch = false) {
     log.info("Building CSS...");
   }
 
-  postcssWatch({
-    input: _postcssWatchPathFix(CSS_INDEX_SRC_FOLDER),
-    output: _postcssWatchPathFix(CSS_INDEX_DEST_FOLDER),
+  postcssWalk({
+    input: _postcssWalkPathFix(CSS_INDEX_SRC_FOLDER),
+    output: _postcssWalkPathFix(CSS_INDEX_DEST_FOLDER),
     plugins: CSS_PLUGINS,
     copyAssets: ["png"],
     log: DEV_ENVIRONMENT,
@@ -196,7 +197,7 @@ async function buildCSS(watch = false) {
 
 async function buildJS(watch = false) {
   const env = process.env.NODE_ENV || "development";
-  const webpackConfig = require(path.join(SOURCES_ROOT, "./webpack." + env + ".js"));
+  const webpackConfig = require(path.join(ROOT_PATH, "./webpack." + env + ".js"));
 
   await _createFolderIfMissing(webpackConfig.output.path);
 
@@ -238,10 +239,10 @@ async function buildJS(watch = false) {
 }
 
 /**
- * A postcss-watch bug converts input paths to output paths incorrectly depending on the folder syntax
+ * A postcss-walk bug converts input paths to output paths incorrectly depending on the folder syntax
  */
-function _postcssWatchPathFix(anyPath) {
-  return path.relative(process.cwd(), anyPath).replace(/\\/g, "/");
+function _postcssWalkPathFix(anyPath) {
+  return path.relative(ROOT_PATH, anyPath).replace(/\\/g, "/");
 }
 
 /**
