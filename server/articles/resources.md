@@ -88,5 +88,4 @@ This page compiles a list of **free** resources for making games, especially for
 
 | Name | Description |
 | -------- | -------- |
-| **Code:** [Learning Programming and Game Design](https://taxandbusinessonline.villanova.edu/master-of-science-in-analytics/learning-programming-and-game-design) | A list of easy tutorials and articles to learn the basics of programming... And start making games! Also covers plenty of related topics, from video game history to programming jobs. Perfect for beginners curious about game development. |
 | **Art:** [Ctrl+Paint](https://www.ctrlpaint.com/library/) | An excellent and extensive collection of videos about drawing in general, then digital painting in particular. Whatever art style you are interested in, these can help you improve your art skills. |
