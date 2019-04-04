@@ -7,7 +7,7 @@
 
 exports.up = async function(knex, Promise) {
   try {
-    await knex.schema.createTableIfNotExists("setting", function(table) {
+    await knex.schema.createTable("setting", function(table) {
       table.string("key").primary();
       table.string("value");
       table.timestamps();
@@ -15,7 +15,7 @@ exports.up = async function(knex, Promise) {
 
     // User
 
-    await knex.schema.createTableIfNotExists("user", function(table) {
+    await knex.schema.createTable("user", function(table) {
       table.increments("id").primary();
       table.string("name").unique().notNullable();
       table.string("title");
@@ -28,14 +28,14 @@ exports.up = async function(knex, Promise) {
       table.timestamps();
     });
 
-    await knex.schema.createTableIfNotExists("user_details", function(table) {
+    await knex.schema.createTable("user_details", function(table) {
       table.increments("id").primary();
       table.integer("user_id").references("user.id").unique();
       table.string("body", 10000);
       table.string("social_links", 1000);
     });
 
-    await knex.schema.createTableIfNotExists("user_role", function(table) {
+    await knex.schema.createTable("user_role", function(table) {
       table.increments("id").primary();
       table.integer("user_id").references("user.id").notNullable();
       table.string("user_name").notNullable();
@@ -50,7 +50,7 @@ exports.up = async function(knex, Promise) {
 
     // Event
 
-    await knex.schema.createTableIfNotExists("event", function(table) {
+    await knex.schema.createTable("event", function(table) {
       table.increments("id").primary();
       table.string("name").unique().notNullable();
       table.string("title").notNullable();
@@ -65,7 +65,7 @@ exports.up = async function(knex, Promise) {
       table.timestamps();
     });
 
-    await knex.schema.createTableIfNotExists("entry", function(table) {
+    await knex.schema.createTable("entry", function(table) {
       table.increments("id").primary();
       table.integer("event_id").references("event.id");
       table.string("event_name");
@@ -80,7 +80,7 @@ exports.up = async function(knex, Promise) {
       table.timestamps();
     });
 
-    await knex.schema.createTableIfNotExists("entry_details", function(table) {
+    await knex.schema.createTable("entry_details", function(table) {
       table.increments("id").primary();
       table.integer("entry_id").references("entry.id").unique().notNullable();
       table.string("body", 10000);
@@ -88,7 +88,7 @@ exports.up = async function(knex, Promise) {
 
     // Posts
 
-    await knex.schema.createTableIfNotExists("post", function(table) {
+    await knex.schema.createTable("post", function(table) {
       table.increments("id").primary();
       table.integer("author_user_id").references("user.id").notNullable();
       table.string("name").notNullable();
@@ -102,7 +102,7 @@ exports.up = async function(knex, Promise) {
       table.timestamps();
     });
 
-    await knex.schema.createTableIfNotExists("comment", function(table) {
+    await knex.schema.createTable("comment", function(table) {
       table.increments("id").primary();
       table.integer("node_id").notNullable();
       table.string("node_type").notNullable();

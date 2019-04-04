@@ -11,7 +11,6 @@
 
   &__title {
     @apply --main-font;
-    font-weight: bold;
     margin: 0;
     padding-bottom: 5px;
     color: var(--text);

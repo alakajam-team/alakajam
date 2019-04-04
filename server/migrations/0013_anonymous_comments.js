@@ -27,7 +27,7 @@ exports.up = async function(knex, Promise) {
     "social_links": "",
   });
 
-  await knex.schema.createTableIfNotExists("anonymous_comment_user", function(table) {
+  await knex.schema.createTable("anonymous_comment_user", function(table) {
     table.integer("comment_id");
     table.integer("user_id");
   });

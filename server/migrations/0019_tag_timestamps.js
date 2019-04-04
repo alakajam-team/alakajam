@@ -16,14 +16,14 @@ exports.up = async function(knex, Promise) {
 
   // Create new tables (SQLite doesn't support adding default values to an existing table)
 
-  await knex.schema.createTableIfNotExists("tag", (table) => {
+  await knex.schema.createTable("tag", (table) => {
     table.increments("id").primary();
     table.string("value", 50).notNullable().index().unique();
     table.timestamps(false, true); // Use a datetime and default to NOW()
     table.index(["created_at"]);
   });
 
-  await knex.schema.createTableIfNotExists("entry_tag", (table) => {
+  await knex.schema.createTable("entry_tag", (table) => {
     table.integer("entry_id").references("entry.id").notNullable();
     table.integer("tag_id").references("tag.id").notNullable();
     table.unique(["entry_id", "tag_id"]);

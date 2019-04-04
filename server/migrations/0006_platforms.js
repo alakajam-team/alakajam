@@ -10,7 +10,7 @@ exports.up = async function(knex, Promise) {
     await knex.schema.table("entry", function(table) {
       table.string("platforms", 1000);
     });
-    await knex.schema.createTableIfNotExists("entry_platform", function(table) {
+    await knex.schema.createTable("entry_platform", function(table) {
       table.increments("id").primary();
       table.integer("entry_id").references("entry.id").notNullable();
       table.string("platform", 50).index();

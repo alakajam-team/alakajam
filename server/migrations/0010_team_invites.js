@@ -4,7 +4,7 @@
 
 exports.up = async function(knex, Promise) {
   try {
-    await knex.schema.createTableIfNotExists("entry_invite", function(table) {
+    await knex.schema.createTable("entry_invite", function(table) {
       table.increments("id").primary();
       table.integer("entry_id").references("entry.id").notNullable();
       table.integer("invited_user_id").references("user.id").notNullable();

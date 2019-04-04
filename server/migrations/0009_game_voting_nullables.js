@@ -42,7 +42,7 @@ exports.up = async function(knex, Promise) {
       table.timestamps();
     });
 
-    await knex.schema.createTableIfNotExists("entry_vote", function(table) {
+    await knex.schema.createTable("entry_vote", function(table) {
       table.increments("id").primary();
       table.integer("entry_id").references("entry.id").notNullable();
       table.integer("event_id").references("event.id").notNullable();

@@ -7,7 +7,7 @@ const config = require("server/core/config").default;
 
 exports.up = async function(knex, Promise) {
   try {
-    await knex.schema.createTableIfNotExists("event_preset", (table) => {
+    await knex.schema.createTable("event_preset", (table) => {
       table.increments("id").primary();
       table.string("title");
       table.string("status");
@@ -19,7 +19,7 @@ exports.up = async function(knex, Promise) {
       table.string("countdown_config", 1000);
     });
 
-    await knex.schema.createTableIfNotExists("event_template", (table) => {
+    await knex.schema.createTable("event_template", (table) => {
       table.increments("id").primary();
       table.string("title");
       table.string("event_title");

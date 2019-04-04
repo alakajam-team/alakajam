@@ -4,7 +4,7 @@
 
 exports.up = async function(knex, Promise) {
   try {
-    await knex.schema.createTableIfNotExists("entry_score", function(table) {
+    await knex.schema.createTable("entry_score", function(table) {
       table.increments("id").primary();
       table.integer("user_id").references("user.id").notNullable();
       table.integer("entry_id").references("entry.id").notNullable();
@@ -15,7 +15,7 @@ exports.up = async function(knex, Promise) {
       table.timestamps();
     });
 
-    await knex.schema.createTableIfNotExists("tournament_entry", function(table) {
+    await knex.schema.createTable("tournament_entry", function(table) {
       table.increments("id").primary();
       table.integer("event_id").references("event.id").notNullable(); // NB. Usually not the same event as the entry's!
       table.integer("entry_id").references("entry.id").notNullable();
@@ -24,7 +24,7 @@ exports.up = async function(knex, Promise) {
       table.timestamps();
     });
 
-    await knex.schema.createTableIfNotExists("tournament_score", function(table) {
+    await knex.schema.createTable("tournament_score", function(table) {
       table.increments("id").primary();
       table.integer("event_id").references("event.id").notNullable();
       table.integer("user_id").references("user.id").notNullable();

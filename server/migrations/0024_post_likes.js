@@ -4,7 +4,7 @@
 
 exports.up = async function(knex, Promise) {
   try {
-    await knex.schema.createTableIfNotExists("like", function(table) {
+    await knex.schema.createTable("like", function(table) {
       table.increments("id").primary();
       table.string("type").notNullable();
       table.integer("user_id").references("user.id").notNullable();

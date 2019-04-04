@@ -1,5 +1,5 @@
 exports.up = async function(knex, Promise) {
-  await knex.schema.createTableIfNotExists("platform", (table) => {
+  await knex.schema.createTable("platform", (table) => {
     table.increments("id").primary();
     table.string("name", 32).notNullable().index().unique();
     table.timestamps(false, true); // Use a datetime and default to NOW()
