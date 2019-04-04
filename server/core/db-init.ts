@@ -158,7 +158,7 @@ export async function insertInitialData(samples) {
       published_at: new Date(),
     });
     if (samples === "nightly") {
-      const nightlyPostBuffer = await fileStorage.read("deployment/nightly/POST.md");
+      const nightlyPostBuffer = await fileStorage.read("deployment/NIGHTLY_POST.md");
       const changesBuffer = await fileStorage.read("CHANGES.md");
       post.set({
         title: "Nightly: " + moment().format("MMMM Do YYYY"),
