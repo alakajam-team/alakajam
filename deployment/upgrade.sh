@@ -5,6 +5,12 @@ cd "$(dirname "$0")/.."
 
 PM2_APP_NAME=${1:-alakajam}
 
+if [ `git rev-parse --abbrev-ref HEAD` != "master" ]; then
+  echo "This scripts only supports the server being on the 'master' branch. Please upgrade manually."
+  exit 1
+fi
+exit 0
+
 if [ "${2}" = "--reset" ]; then
   echo "Resetting $PM2_APP_NAME data..."
   rm -rf data
@@ -12,9 +18,9 @@ if [ "${2}" = "--reset" ]; then
 fi
 
 echo "Upgrading $PM2_APP_NAME..."
-git checkout -- package-lock.json
+git checkout -- .
 git fetch
-git reset --hard origin
+git reset --hard origin/master
 npm install --production
 npm run deployment:build
 
