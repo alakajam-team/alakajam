@@ -63,81 +63,68 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<img src="https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/logo.png" width="250" />
-				<p><a href="https://circleci.com/gh/alakajam-team/alakajam/tree/master"><img src="https://circleci.com/gh/alakajam-team/alakajam/tree/master.svg?style=svg" alt="CircleCI"></a></p>
-				<h2 id="initial-setup">Initial setup</h2>
-				<p>Requirement: NodeJS 7.6+</p>
-				<ol>
-					<li><code>npm install --no-optional</code> (*)</li>
-					<li><code>npm run start</code></li>
-					<li>Browse to <code>http://localhost:8000</code></li>
-					<li>You can login as <code>administrator</code>/<code>administrator</code></li>
-				</ol>
-				<p>For better performance, consider editing <code>config.js</code> to set up a PostgreSQL database.<br>See <a href="https://github.com/alakajam-team/alakajam/wiki">the wiki</a> for additional documentation.</p>
-				<blockquote>
-					<p>(*) If <code>npm install --no-optional</code> failed to install <code>sqlite3</code>, retry with flag <code>--build-from-source</code>.</p>
-				</blockquote>
-				<h2 id="available-commands">Available commands</h2>
-				<h3 id="recommended-for-development">Recommended for development</h3>
-				<ul>
-					<li><code>npm run start</code> Launches the server for development. Every TypeScript change will trigger a server restart. (based on ts-node-dev)</li>
-					<li><code>npm run start:refresh</code> Alternative that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)</li>
-					<li><code>npm run start:debug</code> Launches the server in debug mode. Prefer using the embedded debugger of your code editor (see example for VSCode further below).</li>
-					<li><code>npm run lint</code> Checks your code for errors, and fixes the most obvious ones. Run <code>githooks/install.sh</code> to trigger validation automatically before committing.</li>
-				</ul>
-				<h3 id="automated-tests">Automated tests</h3>
-				<ul>
-					<li><code>npm run start:e2e</code> Launches the server with a special database for end-to-end testing. More in the Cypress folder readme.</li>
-					<li><code>npm run test</code> Runs all unit + end to end tests.</li>
-					<li><code>npm run test:unit</code> Runs all unit tests. (based on mocha + chai)</li>
-					<li><code>npm run test:e2e</code> Runs all end-to-end tests. (based on cypress) </li>
-					<li><code>npm run cypress</code> Launches Cypress for end-to-end test development.</li>
-				</ul>
-				<h3 id="javascript-build">JavaScript build</h3>
-				<ul>
-					<li><code>npm run deployment:build</code> Builds the TypeScript server.</li>
-					<li><code>npm run deployment:build-watch</code> Builds the TypeScript server and watches for changes.</li>
-					<li><code>npm run deployment:start</code> Starts the TypeScript server. Needs to be built first.</li>
-				</ul>
-				<h3 id="other-tools">Other tools</h3>
-				<ul>
-					<li><code>npm run migrate:latest</code> Migrate database to latest version. Useful for migration development. (based on knex)</li>
-					<li><code>npm run migrate:rollback</code> Cancel latest database migration. Useful for migration development.</li>
-					<li><code>npm run migrate:currentVersion</code> Display current database version.</li>
-					<li><code>npm run docs</code> Generates the code documentation. (based on typedoc)</li>
-				</ul>
-				<h2 id="how-do-i-">How do I...</h2>
-				<h4 id="-debug-the-code-with-vscode">...Debug the code with VSCode</h4>
-				<p>Put this in <code>.vscode/launch.json</code>:</p>
-				<pre><code>{
-  <span class="hljs-attr">"version"</span>: <span class="hljs-string">"0.2.0"</span>,
-  <span class="hljs-attr">"configurations"</span>: [
-    {
-      <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Debug Alakajam!"</span>,
-      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"node"</span>,
-      <span class="hljs-attr">"request"</span>: <span class="hljs-string">"launch"</span>,
-      <span class="hljs-attr">"args"</span>: [<span class="hljs-string">"${workspaceFolder}\\server\\index.ts"</span>],
-      <span class="hljs-attr">"runtimeArgs"</span>: [<span class="hljs-string">"--nolazy"</span>, <span class="hljs-string">"-r"</span>, <span class="hljs-string">"ts-node/register"</span>, <span class="hljs-string">"-r"</span>, <span class="hljs-string">"tsconfig-paths/register"</span>],
-      <span class="hljs-attr">"sourceMaps"</span>: <span class="hljs-literal">true</span>,
-      <span class="hljs-attr">"cwd"</span>: <span class="hljs-string">"${workspaceRoot}"</span>,
-      <span class="hljs-attr">"protocol"</span>: <span class="hljs-string">"inspector"</span>,
-      <span class="hljs-attr">"outputCapture"</span>: <span class="hljs-string">"std"</span>
-    }
-  ]
-}</code></pre><h4 id="-reset-the-data">...Reset the data</h4>
-				<ol>
-					<li>Delete the <code>data/</code> and <code>static/uploads</code> folders.</li>
-					<li>If using PostgreSQL, empty your database (example: <code>drop schema public cascade; create schema public;</code>).</li>
-				</ol>
-				<h4 id="-enable-picture-resizing">...Enable picture resizing</h4>
-				<p>Run <code>npm install</code> without the <code>--no-optional</code> flag to try and set up the <code>sharp</code> dependency. If it fails to install (especially on Windows), follow the instructions to install the <a href="http://sharp.dimens.io/en/stable/install/">sharp dependencies</a>, then try <code>npm install</code> again.</p>
-			</div>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>External modules</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_admin_controller_.html" class="tsd-kind-icon">"controllers/admin-<wbr>controller"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_api_controller_.html" class="tsd-kind-icon">"controllers/api-<wbr>controller"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_article_controller_.html" class="tsd-kind-icon">"controllers/article-<wbr>controller"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_entry_controller_.html" class="tsd-kind-icon">"controllers/entry-<wbr>controller"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_event_controller_.html" class="tsd-kind-icon">"controllers/event-<wbr>controller"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_index_.html" class="tsd-kind-icon">"controllers/index"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_main_controller_.html" class="tsd-kind-icon">"controllers/main-<wbr>controller"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_post_controller_.html" class="tsd-kind-icon">"controllers/post-<wbr>controller"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_templating_.html" class="tsd-kind-icon">"controllers/templating"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_controllers_user_controller_.html" class="tsd-kind-icon">"controllers/user-<wbr>controller"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_cache_.html" class="tsd-kind-icon">"core/cache"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_config_.html" class="tsd-kind-icon">"core/config"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_constants_.html" class="tsd-kind-icon">"core/constants"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_db_.html" class="tsd-kind-icon">"core/db"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_db_init_.html" class="tsd-kind-icon">"core/db-<wbr>init"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_enums_.html" class="tsd-kind-icon">"core/enums"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_file_storage_.html" class="tsd-kind-icon">"core/file-<wbr>storage"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_forms_.html" class="tsd-kind-icon">"core/forms"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_knexfile_.html" class="tsd-kind-icon">"core/knexfile"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_log_.html" class="tsd-kind-icon">"core/log"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_middleware_.html" class="tsd-kind-icon">"core/middleware"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_core_models_.html" class="tsd-kind-icon">"core/models"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_index_.html" class="tsd-kind-icon">"index"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_article_service_.html" class="tsd-kind-icon">"services/article-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_entry_import_service_.html" class="tsd-kind-icon">"services/entry-<wbr>import-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_entry_importers_entry_importer_tools_.html" class="tsd-kind-icon">"services/entry-<wbr>importers/entry-<wbr>importer-<wbr>tools"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_entry_importers_itch_.html" class="tsd-kind-icon">"services/entry-<wbr>importers/itch"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_entry_importers_ldjam_.html" class="tsd-kind-icon">"services/entry-<wbr>importers/ldjam"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_entry_importers_ludumdare_.html" class="tsd-kind-icon">"services/entry-<wbr>importers/ludumdare"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_event_rating_service_.html" class="tsd-kind-icon">"services/event-<wbr>rating-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_event_service_.html" class="tsd-kind-icon">"services/event-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_event_theme_service_.html" class="tsd-kind-icon">"services/event-<wbr>theme-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_event_tournament_service_.html" class="tsd-kind-icon">"services/event-<wbr>tournament-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_highscore_service_.html" class="tsd-kind-icon">"services/highscore-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_like_service_.html" class="tsd-kind-icon">"services/like-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_mail_service_.html" class="tsd-kind-icon">"services/mail-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_notification_service_.html" class="tsd-kind-icon">"services/notification-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_platform_service_.html" class="tsd-kind-icon">"services/platform-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_post_service_.html" class="tsd-kind-icon">"services/post-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_security_service_.html" class="tsd-kind-icon">"services/security-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_setting_service_.html" class="tsd-kind-icon">"services/setting-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_tag_service_.html" class="tsd-kind-icon">"services/tag-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_services_user_service_.html" class="tsd-kind-icon">"services/user-<wbr>service"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_test_index_e2e_.html" class="tsd-kind-icon">"test/index-<wbr>e2e"</a></li>
+								<li class="tsd-kind-external-module"><a href="modules/_test_user_service_spec_.html" class="tsd-kind-icon">"test/user-<wbr>service.spec"</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
+					<li class="globals current ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
