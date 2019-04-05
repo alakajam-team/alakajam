@@ -11,7 +11,7 @@
 
 const startDate = Date.now();
 
-import config from "./core/config";
+import config, * as configUtils from "./core/config";
 import log from "./core/log";
 
 if (__filename.includes(".js")) {
@@ -130,8 +130,8 @@ function catchErrorsAndSignals() {
  */
 async function initFilesLayout() {
   // Create data folders
-  await _createFolderIfMissing(path.resolve(ROOT_PATH, config.DATA_PATH, "tmp"));
-  await _createFolderIfMissing(path.resolve(ROOT_PATH, config.DATA_PATH, "uploads"));
+  await _createFolderIfMissing(configUtils.tmpPathAbsolute());
+  await _createFolderIfMissing(configUtils.uploadsPathAbsolute());
 
   // Configure browser-refresh
   try {

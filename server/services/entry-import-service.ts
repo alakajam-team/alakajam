@@ -7,11 +7,10 @@
 import * as download from "download";
 import * as fs from "fs";
 import * as path from "path";
-import constants from "server/core/constants";
 import * as url from "url";
 import { promisify } from "util";
 import cache from "../core/cache";
-import config from "../core/config";
+import * as configUtils from "../core/config";
 import enums from "../core/enums";
 import log from "../core/log";
 import entryImporterItch from "./entry-importers/itch";
@@ -156,7 +155,7 @@ async function createOrUpdateEntry(user, importerId, profileIdentifier, entryId)
       let temporaryPath: string|boolean = false;
       try {
         const extension = path.extname(url.parse(entryDetails.picture).pathname) || "";
-        temporaryPath = path.resolve(constants.ROOT_PATH, config.DATA_PATH, "tmp", entryReference.id + extension);
+        temporaryPath = path.join(configUtils.dataPathAbsolute(), "tmp", entryReference.id + extension);
       } catch (e) {
         log.warn("Failed to detect picture file name of " + entryDetails.picture, e);
       }

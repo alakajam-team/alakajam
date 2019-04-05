@@ -25,7 +25,7 @@ import controllers from "../controllers";
 import templating from "../controllers/templating";
 import settingService from "../services/setting-service";
 import userService from "../services/user-service";
-import config from "./config";
+import config, * as configUtils from "./config";
 import constants from "./constants";
 import db from "./db";
 import enums from "./enums";
@@ -65,7 +65,7 @@ async function configure(app) {
   // Static files
   app.use("/static", express.static(path.join(constants.ROOT_PATH, "/static")));
   app.use("/dist/client", express.static(path.join(constants.ROOT_PATH, "/dist/client")));
-  app.use("/data/uploads", express.static(path.join(config.DATA_PATH, "/uploads")));
+  app.use("/data/uploads", express.static(configUtils.uploadsPathAbsolute()));
 
   // Session management
   const sessionKey = await findOrCreateSessionKey();

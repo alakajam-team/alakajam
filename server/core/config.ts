@@ -3,47 +3,55 @@ import * as fs from "fs";
 import * as path from "path";
 import log from "./log";
 
+export {
+  dataPathAbsolute,
+  uploadsPathAbsolute,
+  tmpPathAbsolute
+};
+
+const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
+
 interface Config {
-  SERVER_PORT: number;
-  ROOT_URL: string;
-  STATIC_ROOT_URL: false|string;
+  readonly SERVER_PORT: number;
+  readonly ROOT_URL: string;
+  readonly STATIC_ROOT_URL: false|string;
 
   // File storage
-  DATA_PATH: string;
+  readonly DATA_PATH: string;
 
   // Database
-  DB_TYPE: "sqlite3"|"postgresql";
-  DB_HOST: string;
-  DB_USER: string;
-  DB_PASSWORD: string;
-  DB_NAME: string;
-  DB_SQLITE_FILENAME?: string;
+  readonly DB_TYPE: "sqlite3"|"postgresql";
+  readonly DB_HOST: string;
+  readonly DB_USER: string;
+  readonly DB_PASSWORD: string;
+  readonly DB_NAME: string;
+  readonly DB_SQLITE_FILENAME?: string;
 
   // Emails
-  SMTP_HOST: string;
-  SMTP_PORT: number;
-  SMTP_USERNAME: string;
-  SMTP_PASSWORD: string;
+  readonly SMTP_HOST: string;
+  readonly SMTP_PORT: number;
+  readonly SMTP_USERNAME: string;
+  readonly SMTP_PASSWORD: string;
 
   // Misc
-  GOOGLE_ANALYTICS_ID: string;
-  SECURE_SESSION_COOKIES: boolean;
+  readonly GOOGLE_ANALYTICS_ID: string;
+  readonly SECURE_SESSION_COOKIES: boolean;
 
   // Debug: general options
-  DEBUG_INSERT_SAMPLES: boolean;
-  DEBUG_DISABLE_CACHE: boolean;
-  DEBUG_REFRESH_BROWSER: boolean;
-  DEBUG_ADMIN: boolean;
-  DEBUG_TEST_MAILER: boolean;
-  DEBUG_DISABLE_STARTUP_BUILD: boolean;
-  DEBUG_ARTICLES: boolean;
+  readonly DEBUG_INSERT_SAMPLES: boolean;
+  readonly DEBUG_DISABLE_CACHE: boolean;
+  readonly DEBUG_REFRESH_BROWSER: boolean;
+  readonly DEBUG_ADMIN: boolean;
+  readonly DEBUG_TEST_MAILER: boolean;
+  readonly DEBUG_DISABLE_STARTUP_BUILD: boolean;
+  readonly DEBUG_ARTICLES: boolean;
 
   // Debug: trace options
-  LOG_LEVEL: "none"|"error"|"warn"|"info"|"debug";
-  DEBUG_TRACE_SQL: boolean;
-  DEBUG_TRACE_SLOW_SQL: number;
-  DEBUG_TRACE_REQUESTS: boolean;
-  DEBUG_TRACE_SLOW_REQUESTS: number;
+  readonly LOG_LEVEL: "none"|"error"|"warn"|"info"|"debug";
+  readonly DEBUG_TRACE_SQL: boolean;
+  readonly DEBUG_TRACE_SLOW_SQL: number;
+  readonly DEBUG_TRACE_REQUESTS: boolean;
+  readonly DEBUG_TRACE_SLOW_REQUESTS: number;
 }
 
 const SOURCES_ROOT = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
@@ -70,3 +78,15 @@ for (const key in configSample) {
 }
 
 export default config;
+
+function dataPathAbsolute() {
+  return path.resolve(ROOT_PATH, config.DATA_PATH);
+}
+
+function uploadsPathAbsolute() {
+  return path.join(dataPathAbsolute(), "uploads");
+}
+
+function tmpPathAbsolute() {
+  return path.join(dataPathAbsolute(), "tmp");
+}

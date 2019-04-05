@@ -8,7 +8,7 @@ const config = require("server/core/config").default;
 const constants = require("server/core/constants").default;
 
 const STATIC_UPLOADS = path.join(constants.ROOT_PATH, "static/uploads");
-const DATA_UPLOADS = path.join(config.DATA_PATH, "uploads");
+const DATA_UPLOADS = path.join(path.resolve(constants.ROOT_PATH, config.DATA_PATH), "uploads");
 
 exports.up = async function(knex, Promise) {
   try {

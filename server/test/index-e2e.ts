@@ -7,10 +7,12 @@ import log from "../core/log";
 
 // Patch config for using e2e DB
 log.info("Launching server with forced end-to-end configuration");
-config.DB_TYPE = "sqlite3";
-config.DB_SQLITE_FILENAME = "cypress/e2e.sqlite";
-config.SERVER_PORT = 8001;
-config.ROOT_URL = "http://localhost:8001";
-config.DATA_PATH = "cypress";
+
+const editableConfig = config as any;
+editableConfig.DB_TYPE = "sqlite3";
+editableConfig.DB_SQLITE_FILENAME = "cypress/e2e.sqlite";
+editableConfig.SERVER_PORT = 8001;
+editableConfig.ROOT_URL = "http://localhost:8001";
+editableConfig.DATA_PATH = "cypress";
 
 import "../index";

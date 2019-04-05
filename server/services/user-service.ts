@@ -9,7 +9,7 @@ import * as bookshelf from "bookshelf";
 import * as crypto from "crypto";
 import * as path from "path";
 import * as randomKey from "random-key";
-import config from "../core/config";
+import config, * as configUtils from "../core/config";
 import constants from "../core/constants";
 import db from "../core/db";
 import fileStorage from "../core/file-storage";
@@ -41,7 +41,7 @@ export default {
 const USERNAME_VALIDATION_REGEX = /^[a-zA-Z][-\w]+$/g;
 const USERNAME_MIN_LENGTH = 3;
 const PASSWORD_MIN_LENGTH = 6;
-const PASSWORD_RECOVERY_TOKENS_FILE = path.join(config.DATA_PATH, "password-recovery.json");
+const PASSWORD_RECOVERY_TOKENS_FILE = path.join(configUtils.dataPathAbsolute(), "password-recovery.json");
 const PASSWORD_RECOVERY_LINK_MAX_AGE = 24 * 3600000; /* 1 day */
 
 /**

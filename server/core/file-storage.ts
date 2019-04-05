@@ -11,7 +11,7 @@ import * as mkdirp from "mkdirp";
 import * as path from "path";
 import * as url from "url";
 import { promisify } from "util";
-import config from "./config";
+import * as configUtils from "./config";
 import constants from "./constants";
 import log from "./log";
 
@@ -36,7 +36,6 @@ export default {
   createFolderIfMissing,
 };
 
-const UPLOADS_PATH = path.join(config.DATA_PATH, "uploads");
 // Leading bytes for common image formats.
 // See https://stackoverflow.com/a/8475542/1213677 and https://github.com/sindresorhus/file-type/blob/master/index.js
 const IMAGE_HEADER_MAGIC_TO_TYPE = {
@@ -140,7 +139,7 @@ async function savePictureUpload(fileUploadOrPath, targetPathWithoutExtension, o
   if (!(await isValidPicture(filePath))) {
     return { error: "Invalid picture type (allowed: PNG GIF JPG)" };
   }
-  let actualTargetPath = path.join(UPLOADS_PATH,
+  let actualTargetPath = path.join(configUtils.uploadsPathAbsolute(),
     targetPathWithoutExtension.replace(/^[\\/]/, "")); // remove leading slash
   actualTargetPath += (options.suffix || "");
   const absoluteTargetPath = toAbsolutePath(actualTargetPath);
@@ -150,7 +149,7 @@ async function savePictureUpload(fileUploadOrPath, targetPathWithoutExtension, o
   return {
     ...res,
     finalPath: url.resolve(constants.UPLOADS_WEB_PATH,
-      path.relative(UPLOADS_PATH, absoluteTargetPath + "." + res.format))
+      path.relative(configUtils.uploadsPathAbsolute(), absoluteTargetPath + "." + res.format))
   };
 }
 
@@ -260,8 +259,12 @@ async function remove(documentPath) {
   }
 }
 
-function toAbsolutePath(anyPath) {
-  return path.resolve(constants.ROOT_PATH, anyPath);
+function toAbsolutePath(anyPath: string) {
+  if (anyPath.startsWith(constants.UPLOADS_WEB_PATH)) {
+    return path.join(configUtils.uploadsPathAbsolute(), path.relative(constants.UPLOADS_WEB_PATH, anyPath));
+  } else {
+    return path.resolve(constants.ROOT_PATH, anyPath);
+  }
 }
 
 /**
