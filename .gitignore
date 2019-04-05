@@ -6,24 +6,20 @@ config.js
 dist/
 
 # Docs
-docs/*.html
-docs/*/
+docs/
 
 # Data
-data*/
+data/
 coverage/
-tests/data/
-static/uploads/
 *.log
 *.out
 *.pid
-/.*
 
 # OS-specific garbage
 .DS_Store
 *~
 
 # Misc
-*.psd
 .vscode
 yarn.lock
+.nyc_output

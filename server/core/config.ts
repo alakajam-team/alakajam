@@ -18,7 +18,7 @@ interface Config {
   DB_USER: string;
   DB_PASSWORD: string;
   DB_NAME: string;
-  DB_SQLITE_FILENAME: string;
+  DB_SQLITE_FILENAME?: string;
 
   // Emails
   SMTP_HOST: string;
