@@ -36,6 +36,7 @@ export default {
   createFolderIfMissing,
 };
 
+const UPLOADS_PATH = path.join(config.DATA_PATH, "uploads");
 // Leading bytes for common image formats.
 // See https://stackoverflow.com/a/8475542/1213677 and https://github.com/sindresorhus/file-type/blob/master/index.js
 const IMAGE_HEADER_MAGIC_TO_TYPE = {
@@ -139,17 +140,18 @@ async function savePictureUpload(fileUploadOrPath, targetPathWithoutExtension, o
   if (!(await isValidPicture(filePath))) {
     return { error: "Invalid picture type (allowed: PNG GIF JPG)" };
   }
-  let actualTargetPath = targetPathWithoutExtension.replace(/^[\\/]/, ""); // remove leading slash
-  if (actualTargetPath.indexOf(config.UPLOADS_PATH) === -1) {
-    actualTargetPath = path.join(config.UPLOADS_PATH, actualTargetPath);
-  }
+  let actualTargetPath = path.join(UPLOADS_PATH,
+    targetPathWithoutExtension.replace(/^[\\/]/, "")); // remove leading slash
   actualTargetPath += (options.suffix || "");
   const absoluteTargetPath = toAbsolutePath(actualTargetPath);
 
   await createFolderIfMissing(path.dirname(absoluteTargetPath));
   const res = await resize(filePath, absoluteTargetPath, fileExtension, options);
-  return { ...res, finalPath: url.resolve("/",
-    path.relative(constants.ROOT_PATH, absoluteTargetPath + "." + res.format)) };
+  return {
+    ...res,
+    finalPath: url.resolve(constants.UPLOADS_WEB_PATH,
+      path.relative(UPLOADS_PATH, absoluteTargetPath + "." + res.format))
+  };
 }
 
 async function resize(sourcePath, targetPathWithoutExtension, fileExtension, options: any = {}) {

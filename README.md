@@ -73,7 +73,7 @@ Put this in `.vscode/launch.json`:
 
 #### ...Reset the data
 
-1. Delete the `data/` and `static/uploads` folders.
+1. Delete the `data/` folder.
 2. If using PostgreSQL, empty your database (example: `drop schema public cascade; create schema public;`).
 
 #### ...Enable picture resizing

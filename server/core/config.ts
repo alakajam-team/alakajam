@@ -10,7 +10,6 @@ interface Config {
 
   // File storage
   DATA_PATH: string;
-  UPLOADS_PATH: string;
 
   // Database
   DB_TYPE: "sqlite3"|"postgresql";

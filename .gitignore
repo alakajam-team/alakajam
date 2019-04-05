@@ -11,6 +11,7 @@ docs/
 # Data
 data/
 coverage/
+cypress/tmp
 *.log
 *.out
 *.pid

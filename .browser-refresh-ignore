@@ -12,8 +12,6 @@ server/controllers/
 server/core/
 server/migrations/
 server/services/
-server/migrations/
-static/uploads/
 
 *.log
 *.out

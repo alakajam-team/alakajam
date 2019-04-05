@@ -55,7 +55,7 @@
   <link rel="icon" type="image/png" href="{{ staticUrl('/static/images/favicon196.png') }}" sizes="196x196" />
   <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet" />
   {% block styles %}{% endblock %}
-  <link rel="stylesheet" type="text/css" href="{{ staticUrl('/static/css/index.css?' + launchTime) }}" />
+  <link rel="stylesheet" type="text/css" href="{{ staticUrl('/dist/client/css/index.css?' + launchTime) }}" />
   <script type="text/javascript">
     // Google Analytics
     {% if config.GOOGLE_ANALYTICS_ID %}
@@ -200,7 +200,7 @@
   {% if browserRefreshUrl %}
   <script src="{{ browserRefreshUrl }}"></script>
   {% endif %}
-  <script type="text/javascript" src="{{ staticUrl('/static/scripts/site.js?' + launchTime) }}"></script>
+  <script type="text/javascript" src="{{ staticUrl('/dist/client/scripts/site.js?' + launchTime) }}"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

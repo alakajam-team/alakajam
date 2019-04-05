@@ -8,6 +8,8 @@ import { sync as findUp } from "find-up";
 import * as path from "path";
 import config from "./config";
 
+const ROOT_PATH = path.dirname(findUp("package.json", { cwd: __dirname }));
+
 const PERMISSION_READ = "read";
 const PERMISSION_WATCH = "watch";
 const PERMISSION_WRITE = "write";
@@ -35,7 +37,8 @@ const SETTING_EVENT_OPEN_VOTING = "event_open_voting";
 
 export default {
   // Paths
-  ROOT_PATH: path.dirname(findUp("package.json", { cwd: __dirname })),
+  ROOT_PATH,
+  UPLOADS_WEB_PATH: "/data/uploads/",
 
   // Settings
   SETTING_FEATURED_EVENT_NAME,

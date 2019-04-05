@@ -7,13 +7,14 @@
   color: white;
 }
 
-body, p {
-  @apply --main-font;
-}
-
 html {
+  @apply --main-font;
   height: 100%;
   font-size: 15px;
+}
+
+body, p {
+  @apply --main-font;
 }
 
 body {

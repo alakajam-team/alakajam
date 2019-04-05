@@ -14,7 +14,6 @@ exit 0
 if [ "${2}" = "--reset" ]; then
   echo "Resetting $PM2_APP_NAME data..."
   rm -rf data
-  rm -rf static/uploads
 fi
 
 echo "Upgrading $PM2_APP_NAME..."

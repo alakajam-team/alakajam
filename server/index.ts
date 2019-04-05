@@ -34,7 +34,7 @@ import * as findUp from "find-up";
 import * as fs from "fs";
 import * as mkdirp from "mkdirp";
 import * as path from "path";
-import * as postcssWalk from "postcss-walk";
+import * as postcssWatch from "postcss-watch";
 import * as util from "util";
 import * as webpack from "webpack";
 
@@ -47,8 +47,8 @@ if (process.env.NODE_ENV !== "production") {
 }
 const DEV_ENVIRONMENT = process.env.NODE_ENV === "development";
 const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
-const CSS_INDEX_SRC_FOLDER = path.join(ROOT_PATH, "./client/css/");
-const CSS_INDEX_DEST_FOLDER = path.join(ROOT_PATH, "./dist/client/css/");
+const CLIENT_SRC_FOLDER = path.join(ROOT_PATH, "./client/");
+const CLIENT_DEST_FOLDER = path.join(ROOT_PATH, "./dist/client/");
 const CSS_PLUGINS = [
   // tslint:disable: no-var-requires
   require("postcss-import"),
@@ -130,8 +130,8 @@ function catchErrorsAndSignals() {
  */
 async function initFilesLayout() {
   // Create data folders
-  await _createFolderIfMissing(path.join(ROOT_PATH, config.DATA_PATH, "/tmp"));
-  await _createFolderIfMissing(path.join(ROOT_PATH, config.UPLOADS_PATH));
+  await _createFolderIfMissing(path.resolve(ROOT_PATH, config.DATA_PATH, "tmp"));
+  await _createFolderIfMissing(path.resolve(ROOT_PATH, config.DATA_PATH, "uploads"));
 
   // Configure browser-refresh
   try {
@@ -145,7 +145,7 @@ async function initFilesLayout() {
   // Run CSS and JS build (or bootstrap sources watcher in dev mode)
   if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
     process.chdir(ROOT_PATH);
-    await buildCSS(DEV_ENVIRONMENT);
+    await buildStyles(DEV_ENVIRONMENT);
     await buildJS(DEV_ENVIRONMENT);
   }
 }
@@ -177,19 +177,19 @@ function configureBrowserRefresh() {
   }
 }
 
-async function buildCSS(watch = false) {
-  await _createFolderIfMissing(CSS_INDEX_DEST_FOLDER);
+async function buildStyles(watch = false) {
+  await _createFolderIfMissing(CLIENT_DEST_FOLDER);
   if (watch) {
     log.info("Setting up automatic CSS build...");
   } else {
     log.info("Building CSS...");
   }
 
-  postcssWalk({
-    input: _postcssWalkPathFix(CSS_INDEX_SRC_FOLDER),
-    output: _postcssWalkPathFix(CSS_INDEX_DEST_FOLDER),
+  postcssWatch({
+    input: _postcssWatchPathFix(CLIENT_SRC_FOLDER),
+    output: _postcssWatchPathFix(CLIENT_DEST_FOLDER),
     plugins: CSS_PLUGINS,
-    copyAssets: ["png"],
+    copyAssets: ["png", "gif", "svg", "ttf", "woff", "woff2", "eot"],
     log: DEV_ENVIRONMENT,
     watch,
   });
@@ -241,7 +241,7 @@ async function buildJS(watch = false) {
 /**
  * A postcss-walk bug converts input paths to output paths incorrectly depending on the folder syntax
  */
-function _postcssWalkPathFix(anyPath) {
+function _postcssWatchPathFix(anyPath) {
   return path.relative(ROOT_PATH, anyPath).replace(/\\/g, "/");
 }
 

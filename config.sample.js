@@ -6,7 +6,6 @@ module.exports = {
 
   // File storage
   DATA_PATH: 'data/',
-  UPLOADS_PATH: 'static/uploads/',
 
   // Database: SQLite
   DB_TYPE: 'sqlite3',

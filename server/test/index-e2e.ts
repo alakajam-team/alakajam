@@ -11,6 +11,6 @@ config.DB_TYPE = "sqlite3";
 config.DB_SQLITE_FILENAME = "cypress/e2e.sqlite";
 config.SERVER_PORT = 8001;
 config.ROOT_URL = "http://localhost:8001";
-config.UPLOADS_PATH = "cypress/uploads";
+config.DATA_PATH = "cypress";
 
 import "../index";
