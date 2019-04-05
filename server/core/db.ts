@@ -24,7 +24,7 @@ function initBookshelf() {
   bookshelf.initDatabase = async (): Promise<"none"|string> => {
     log.info("Upgrading database...");
     const previousVersion = await knex.migrate.currentVersion();
-    await knex.migrate.latest(knexfile);
+    await knex.migrate.latest((knexfile as any).development.migrations);
     const newVersion = await knex.migrate.currentVersion();
 
     if (previousVersion !== newVersion) {

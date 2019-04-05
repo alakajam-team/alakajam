@@ -10,22 +10,21 @@ import constants from "./constants";
 
 // CommonJS export for knex cli support
 module.exports = {
-  directory: path.resolve(constants.ROOT_PATH, "server/migrations"),
   development: {
     client: config.DB_TYPE,
     connection: {
-      filename: config.DB_SQLITE_FILENAME,
+      filename: config.DB_SQLITE_FILENAME ? path.resolve(constants.ROOT_PATH, config.DB_SQLITE_FILENAME) : undefined,
       database: config.DB_NAME,
       user: config.DB_USER,
-      password: config.DB_PASSWORD,
+      password: config.DB_PASSWORD
     },
     pool: {
       min: 2,
-      max: 10,
+      max: 10
     },
     migrations: {
-      tableName: "knex_migrations",
-    },
-  },
-
+      directory: path.resolve(constants.ROOT_PATH, "server/migrations"),
+      tableName: "knex_migrations"
+    }
+  }
 };

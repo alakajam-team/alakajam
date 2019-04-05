@@ -20,9 +20,10 @@
     "test:e2e": "start-server-and-test start:e2e http://localhost:8001 cypress:run",
     "cypress": "cypress open",
     "cypress:run": "cypress run",
-    "migrate:latest": "knex migrate:latest --knexfile dist/server/core/knexfile.js --cwd server/",
-    "migrate:rollback": "knex migrate:rollback --knexfile dist/server/core/knexfile.js --cwd server/",
-    "migrate:currentVersion": "knex migrate:currentVersion --knexfile dist/server/core/knexfile.js --cwd server/",
+    "knex": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/knex/bin/cli.js --knexfile server/core/knexfile.ts",
+    "migrate:latest": "npm run knex -- migrate:latest",
+    "migrate:rollback": "npm run knex -- migrate:rollback",
+    "migrate:currentVersion": "npm run knex -- migrate:currentVersion",
     "docs": "typedoc --out dist/docs"
   },
   "repository": {
