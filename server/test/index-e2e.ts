@@ -14,5 +14,6 @@ editableConfig.DB_SQLITE_FILENAME = "cypress/e2e.sqlite";
 editableConfig.SERVER_PORT = 8001;
 editableConfig.ROOT_URL = "http://localhost:8001";
 editableConfig.DATA_PATH = "cypress";
+editableConfig.DEBUG_ADMIN = true;
 
 import "../index";

@@ -15,6 +15,7 @@ cypress/tmp
 *.log
 *.out
 *.pid
+*.backup
 
 # OS-specific garbage
 .DS_Store
