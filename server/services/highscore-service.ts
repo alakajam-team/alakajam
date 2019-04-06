@@ -150,15 +150,19 @@ async function findEntriesLastActivity(entryIds) {
 /**
  * Finds the most recently active entry scores
  */
-async function findRecentlyActiveEntries(limit = 10) {
+async function findRecentlyActiveEntries(options: { limit?: number, eventId?: number } = {}) {
   const entryScoreIds = await db.knex.select("entry_score.id")
     .from(function() {
-      this.distinct("entry_id")
-        .max("updated_at as max_updated_at")
-        .from("entry_score")
-        .groupBy("entry_id")
+      const qb = this.distinct("entry_score.entry_id")
+        .max("entry_score.updated_at as max_updated_at")
+        .from("entry_score");
+      if (options.eventId) {
+        qb.leftJoin("tournament_entry", "tournament_entry.entry_id", "entry_score.entry_id")
+          .where("tournament_entry.event_id", options.eventId);
+      }
+      qb.groupBy("entry_score.entry_id")
         .orderBy("max_updated_at", "DESC")
-        .limit(limit)
+        .limit(options.limit || 10)
         .as("active");
     })
     .innerJoin("entry_score", function() {
@@ -280,7 +284,7 @@ async function refreshEntryRankings(entry, triggeringEntryScore = null, options:
   if (activeTournamentEvent) {
     const triggeringUserId = options.triggeringUserId || (triggeringEntryScore
         ? triggeringEntryScore.get("user_id") : null);
-    eventTournamentService.refreshTournamentScores(module.exports, activeTournamentEvent,
+    eventTournamentService.refreshTournamentScores(module.exports.default, activeTournamentEvent,
       triggeringUserId, impactedEntryScores, options);
   }
 

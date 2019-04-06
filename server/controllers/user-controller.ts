@@ -210,7 +210,7 @@ async function dashboardScores(req, res) {
   const sortedBy = forms.sanitizeString(req.query.sortBy) || "updated_at";
 
   const userScoresCollection = await highScoreService.findUserScores(res.locals.user.get("id"), { sortBy: sortedBy });
-  const activeEntriesCollection = await highScoreService.findRecentlyActiveEntries(5);
+  const activeEntriesCollection = await highScoreService.findRecentlyActiveEntries({ limit: 5 });
   const entriesLastActivity = await highScoreService.findEntriesLastActivity(
     userScoresCollection.map((entryScore) => entryScore.get("entry_id")));
 

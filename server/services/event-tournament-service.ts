@@ -197,8 +197,6 @@ async function _refreshTournamentRankings(event) {
     const tournamentEntries = await findTournamentEntries(event, { statusTournamentAllowed });
     const tScores = await models.TournamentScore
       .where("event_id", event.get("id"))
-      .orderBy("score", "DESC")
-      .orderBy("updated_at")
       .fetchAll();
 
     // Break ties
@@ -208,16 +206,20 @@ async function _refreshTournamentRankings(event) {
       if (!prev[score]) { prev[score] = []; }
       prev[score].push(current);
       return prev;
-    }, []);
+    }, {});
     let tScoresWithoutTies = [];
-    tScoreGroups.forEach((score) => {
-      // 2. Sort tied scores
-      tScoreGroups[score].sort((a, b) => {
-        return _tieBreakScore(b, tournamentEntries).localeCompare(_tieBreakScore(a, tournamentEntries));
-      });
+    // 2. Explore ties to merge them back, highest scores first
+    Object.keys(tScoreGroups)
+      .map(parseFloat)
+      .sort((score1, score2) => score2 - score1)
+      .forEach((score) => {
+        const tScoreGroup = tScoreGroups[score];
 
-      // 3. Append them back to the list
-      tScoresWithoutTies = tScoresWithoutTies.concat(tScoreGroups[score]);
+        // 3. Sort tied scores
+        tScoreGroup.sort((a, b) => {
+          return _tieBreakScore(b, tournamentEntries).localeCompare(_tieBreakScore(a, tournamentEntries));
+        });
+        tScoresWithoutTies = tScoresWithoutTies.concat(tScoreGroup);
     });
 
     let ranking = 1;
@@ -257,7 +259,7 @@ function _tieBreakScore(tScore, tournamentEntries) {
   let points = 0;
   const suffix = [];
   if (scoreData) {
-    scoreData.forEach((entryId) => {
+    Object.keys(scoreData).forEach((entryId) => {
       const ranking = scoreData[entryId].ranking;
       if (ranking <= 10) {
         points += Math.pow(10, 10 - ranking);
