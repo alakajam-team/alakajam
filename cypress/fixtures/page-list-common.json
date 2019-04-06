@@ -24,7 +24,14 @@
   "event-posts": "/submissions-open/posts",
   "event-theme-voting": "/theme-voting/themes",
   "event-entries": "/submissions-open/games",
+  "event-ratings": "/game-ratings/ratings",
 
-  "entry-view": "/external-entry/5/my-external-entry/",
-  "entry-scores": "/external-entry/5/my-external-entry/scores"
+  "entry-view": "/submissions-open/4/my-game/",
+  "entry-view-external": "/external-entry/5/my-external-entry/",
+  "entry-scores": "/external-entry/5/my-external-entry/scores",
+  "entry-rate": "/game-ratings/8/rate-me/",
+  "entry-with-team": "/game-ratings/11/team-game/",
+
+  "tournament-games": "/live-tournament/tournament-games",
+  "tournament-leaderboard": "/live-tournament/tournament-leaderboard"
 }
