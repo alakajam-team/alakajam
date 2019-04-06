@@ -7,7 +7,7 @@ function navigateEndpointList(fixtureName) {
   });
 }
 
-describe("Navigation", () => {
+describe("API", () => {
 
   it("should trigger no errors when accessing endpoints", () => {
     navigateEndpointList("api-list.json");

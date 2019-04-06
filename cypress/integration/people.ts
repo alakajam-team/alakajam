@@ -32,7 +32,7 @@ describe("People page", () => {
 
     people.withEntriesCheckbox.click();
     people.form.submit();
-    people.results.should("not.contain", "gandalf");
+    people.results.should("not.contain", "noentries");
     people.results.should("contain", "Administrator");
   });
 });
