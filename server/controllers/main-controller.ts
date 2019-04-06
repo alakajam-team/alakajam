@@ -24,7 +24,7 @@ import eventController from "./event-controller";
 export default {
   anyPageMiddleware,
 
-  index,
+  home,
   events,
   games,
   people,
@@ -79,7 +79,7 @@ async function anyPageMiddleware(req, res, next) {
 /**
  * Home page
  */
-async function index(req, res) {
+async function home(req, res) {
   let context = cache.general.get<any>("home_page");
 
   if (!context) {
@@ -98,7 +98,7 @@ async function index(req, res) {
       let featuredEventIndex;
       let fetchedEventsCollection;
       let eventSchedule = [];
-      let page = 0;
+      let page = 1;
       do {
         fetchedEventsCollection = await eventService.findEvents({ pageSize: 10, page: page++ });
         eventSchedule = eventSchedule.concat(fetchedEventsCollection.models);

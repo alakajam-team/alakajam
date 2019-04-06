@@ -44,7 +44,7 @@ export default {
 
     // General
 
-    router.get("/", mainController.index);
+    router.get("/", mainController.home);
     router.get("/events", mainController.events);
     router.get("/games", mainController.games);
     router.get("/people", mainController.people);
