@@ -5,7 +5,9 @@
  * @module core/db
  */
 
+import * as fs from "fs";
 import * as path from "path";
+import { promisify } from "util";
 import config from "./config";
 import constants from "./constants";
 import * as knexfile from "./knexfile";
@@ -13,8 +15,10 @@ import log from "./log";
 
 export default initBookshelf();
 
+const BACKUP_PATH = config.DB_SQLITE_FILENAME ? config.DB_SQLITE_FILENAME + ".backup" : undefined;
+
 function initBookshelf() {
-  const knex = createKnexInstance();
+  let knex = createKnexInstance();
   const bookshelf = createBookshelfInstance(knex);
 
   /**
@@ -45,6 +49,41 @@ function initBookshelf() {
       rollbackResult = await knex.migrate.rollback();
     } while (rollbackResult[0] !== 0);
   };
+
+  bookshelf.backup = async () => {
+    _assertSQLite();
+    await promisify(fs.copyFile)(config.DB_SQLITE_FILENAME, BACKUP_PATH);
+  };
+
+  bookshelf.getBackupDate = async () => {
+    _assertSQLite();
+    if (await promisify(fs.exists)(BACKUP_PATH)) {
+      const stat = await promisify(fs.stat)(BACKUP_PATH);
+      return stat.mtime;
+    } else {
+      return false;
+    }
+  };
+
+  bookshelf.restore = async (sessionStore) => {
+    _assertSQLite();
+    await knex.destroy();
+    await promisify(fs.copyFile)(BACKUP_PATH, config.DB_SQLITE_FILENAME);
+    sessionStore.knex = bookshelf.knex = knex = createKnexInstance();
+  };
+
+  bookshelf.deleteBackup = async () => {
+    _assertSQLite();
+    if (await promisify(fs.exists)(BACKUP_PATH)) {
+      await promisify(fs.unlink)(BACKUP_PATH);
+    }
+  };
+
+  function _assertSQLite() {
+    if (config.DB_TYPE !== "sqlite3") {
+      throw new Error("Interactive backups are only supported for SQLite");
+    }
+  }
 
   return bookshelf;
 }

@@ -473,11 +473,21 @@ async function adminDev(req, res) {
           }
         });
         infoMessage = 'The last 30 created users now have their password set to "password".';
+      } else if (req.body.backup) {
+        await db.backup();
+        infoMessage = "Backup created.";
+      } else if (req.body.restore) {
+        await db.restore(res.app.locals.sessionStore);
+        infoMessage = "Backup restored.";
+      } else if (req.body["delete-backup"]) {
+        await db.deleteBackup();
+        infoMessage = "Backup deleted.";
       }
     }
     res.render("admin/admin-dev", {
       infoMessage,
       errorMessage,
+      backupDate: await db.getBackupDate()
     });
   } else {
     res.errorPage(403, "Page only available in development mode");

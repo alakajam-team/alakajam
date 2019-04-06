@@ -11,6 +11,19 @@
   <div class="form-group">
     <input type="submit" name="db-reset" class="btn btn-danger" onclick="return confirm('Reset the whole DB?')" value="Reset database" /> Empties then regenerates the database, re-creating samples depending on your local config.
   </div>
+  
+  {% if config.DB_TYPE === "sqlite3" %}
+    <div class="form-group">
+      <input type="submit" name="backup" class="btn btn-danger" value="Backup database" /> Backup the database (SQLite only)
+    </div>
+    {% if backupDate %}
+      <div class="form-group">
+        <input type="submit" name="restore" class="btn btn-danger" value="Restore backup" />
+        <input type="submit" name="delete-backup" class="btn btn-danger" value="Delete backup" />
+        Backup date: <b>{{ backupDate | dateTime }}</b>
+      </div>
+    {% endif %}
+  {% endif %}
 </form>
 
 

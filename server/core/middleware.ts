@@ -70,7 +70,8 @@ async function configure(app) {
   // Session management
   const sessionKey = await findOrCreateSessionKey();
   app.use(cookies.express([sessionKey]));
-  app.use(await createSessionMiddleware());
+  app.locals.sessionStore = createSessionStore();
+  app.use(await createSessionMiddleware(app.locals.sessionStore));
 
   // Templating
   app.set("views", path.join(constants.ROOT_PATH, "/server/templates"));
@@ -280,7 +281,7 @@ function cleanupFormFilesCallback(req, res) {
   };
 }
 
-async function createSessionMiddleware() {
+async function createSessionMiddleware(sessionStore) {
   promisifySession();
 
   return expressSession({
@@ -293,7 +294,7 @@ async function createSessionMiddleware() {
     resave: false,
     saveUninitialized: false,
     secret: await getOrCreateSessionSecret(),
-    store: createSessionStore(),
+    store: sessionStore,
   });
 }
 
