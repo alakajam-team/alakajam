@@ -115,7 +115,7 @@
     & .navbar-brand__hover {
       width: 1px; /* force preload */
       height: 1px;
-      background: url('/static/images/brand_hover.svg');
+      background: url('/static/images/brand.svg');
       background-size: contain;
       background-repeat: no-repeat;
     }
