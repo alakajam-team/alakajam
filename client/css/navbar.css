@@ -105,7 +105,7 @@
       float: left;
       width: 220px;
       height: var(--navbar-mobile-height);
-      background: url('/static/images/alakavista.png');
+      background: url('/static/images/brand.svg');
       background-size: contain;
       background-repeat: no-repeat;
       margin-top: 4px;
@@ -115,7 +115,7 @@
     & .navbar-brand__hover {
       width: 1px; /* force preload */
       height: 1px;
-      background: url('/static/images/alakavista.png');
+      background: url('/static/images/brand_hover.svg');
       background-size: contain;
       background-repeat: no-repeat;
     }

@@ -15,15 +15,15 @@
 
   --white-lighter: color(white alpha(90%));
   
-  --main: #bdaa00;
-  --main-light: color(var(--main) lightness(46%));
+  --main: #ddbf12;
+  --main-light: color(var(--main) lightness(50%));
   --main-lighter: color(var(--main) lightness(85%));
   --main-lightest: color(var(--main) alpha(10%));
   --main-dark: color(var(--main) lightness(32%));
   --main-transparent: color(var(--main) alpha(10%));
   
-  --alt: #fd53f2;
-  --alt-light: #f471d8;
+  --alt: #fd538c;
+  --alt-light: #f4717c;
   --alt-lighter: color(var(--alt) alpha(25%));
   --alt-lightest: #ffded6;
   --alt-dark: color(var(--alt) lightness(42%));
@@ -46,11 +46,11 @@
   /* Fonts */
   
   --main-font: {
-    font-family: 'Courier New', Courier, monospace;
-    letter-spacing: 0;
+    font-family: 'Courier New', 'Courier', monospace;
+    letter-spacing: -0.5px;
   };
   --alt-font: {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-family: 'Fredoka One', cursive, sans-serif;
     letter-spacing: 1px;
   };
   --shadow: {
