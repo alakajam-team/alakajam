@@ -560,7 +560,7 @@ async function viewEventResults(req, res) {
     context = await cache.getOrFetch(cache.general, cacheKey, async () => {
       const findGameOptions = {
         eventId: res.locals.event.get("id"),
-        divisions: enums.DIVISION.UNRANKED,
+        divisions: [enums.DIVISION.UNRANKED],
       };
       const games = await eventService.findGames(findGameOptions);
       return {
