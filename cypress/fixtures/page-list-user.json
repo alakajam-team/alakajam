@@ -13,6 +13,7 @@
   "entry-create": "/submissions-open/create-entry",
   "entry-edit": "/submissions-open/4/my-game/edit",
   "entry-submit-score": "/external-entry/5/my-external-entry/submit-score",
-  "entry-manage-scores": "/submissions-open/4/my-game/edit-scores"
+  "entry-manage-scores": "/submissions-open/4/my-game/edit-scores",
 
+  "event-ratings": "/game-ratings/ratings"
 }

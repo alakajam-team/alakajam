@@ -23,8 +23,10 @@
   "event-news": "/submissions-open/announcements",
   "event-posts": "/submissions-open/posts",
   "event-theme-voting": "/theme-voting/themes",
+  "event-theme-shortlist": "/theme-shortlist/themes",
   "event-entries": "/submissions-open/games",
-  "event-ratings": "/game-ratings/ratings",
+  "event-results": "/results-out/results?sortBy=1&division=solo",
+  "event-results-unranked": "/results-out/results?sortBy=1&division=unranked",
 
   "entry-view": "/submissions-open/4/my-game/",
   "entry-view-external": "/external-entry/5/my-external-entry/",
