@@ -43,9 +43,9 @@
     <td>
       <a class="btn btn-primary btn-sm" href="?edit={{ platform.get('id') }}">Edit</a>
       {% if entryCount[platform.get('id')] === 0 %}
-        <a class="btn btn-default btn-sm" href="?delete={{ platform.get('id') }}" onclick="return confirm('This cannot be reverted. Continue?')">Delete</a>
+        <a class="btn btn-danger btn-sm" href="?delete={{ platform.get('id') }}" onclick="return confirm('This cannot be reverted. Continue?')">Delete</a>
       {% else %}
-        <span class="btn btn-default btn-sm disabled">Delete</span> {{ formMacros.tooltip('Platforms used by entries cannot be deleted. Run manual DB queries to fix that before deletion.') }}
+        <span class="btn btn-danger btn-sm disabled">Delete</span> {{ formMacros.tooltip('Platforms used by entries cannot be deleted. Run manual DB queries to fix that before deletion.') }}
       {% endif %}
     </td>
   </tr>

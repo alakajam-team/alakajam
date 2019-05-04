@@ -317,10 +317,10 @@
           <div class="col-xs-6">
             {% if entry.has('id') %}
               {% if isEntryOwner or isMod(user) %}
-                <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'delete') }}" onclick="return confirm('Delete the entry? This cannot be reverted!')">Delete</a> 
+                <a class="btn btn-danger" href="{{ buildUrl(entry, 'entry', 'delete') }}" onclick="return confirm('Delete the entry? This cannot be reverted!')">Delete</a> 
               {% endif %}
               {% if not isEntryOwner %}
-                <a class="btn btn-default" href="{{ buildUrl(entry, 'entry', 'leave') }}" onclick="return confirm('Leave the team? This cannot be reverted, unless the team owner takes you back!')">Leave the team</a>
+                <a class="btn btn-danger" href="{{ buildUrl(entry, 'entry', 'leave') }}" onclick="return confirm('Leave the team? This cannot be reverted, unless the team owner takes you back!')">Leave the team</a>
               {% endif %}
             {% endif %}
           </div>
