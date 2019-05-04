@@ -115,7 +115,10 @@ a[name] {
 
 img.preview {
   max-width: 100%;
-  max-height: 150px;
+
+  &.upload-pending {
+    border: 2px dashed var(--neutral);
+  }
 }
 img.no-border:hover, a:hover img.no-border {
   border: 0;

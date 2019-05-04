@@ -22,17 +22,16 @@
 
 {% macro pictureInput(name, value, options = {}) %}
 {# Setting options.model to any DB model is recommended to let the macro tweak the picture URL ie. prevent caching issues #}
-<div class="{{ 'well' if not options.noPanel }}">
+<div class="js-picture-input {{ 'well' if not options.noPanel }}">
   <p>
     <input type="file" name="{{ name }}" class="btn"/>
     <input type="hidden" name="{{ name }}" value="{{ value }}"/>
   </p>
-  {% if value or options.defaultValue %}
   <p>
     {% set displayValue = value or options.defaultValue %}
-    <img src="{{ pictureUrl(displayValue, options.model) if options.model else displayValue }}" style="max-width: 100%" />
+    <img class="preview js-picture-input-preview"
+      src="{{ pictureUrl(displayValue, options.model) if options.model else displayValue }}" style="{{ 'display: none' if not displayValue }}" />
   </p>
-  {% endif %}
   {% if value %}
   <label><input type="checkbox" name="{{ name }}-delete" /> Delete picture</label>
   {% endif %}

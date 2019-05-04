@@ -11,6 +11,7 @@ import fixedDigits from "./common/fixed-digits";
 import formSubmit from "./common/form-submit";
 import icheck from "./common/icheck";
 import lazyImages from "./common/lazy-images";
+import pictureInput from "./common/picture-input";
 import radioTextField from "./common/radio-text-field";
 import select from "./common/select";
 import showHide from "./common/show-hide";
@@ -53,6 +54,7 @@ $(function domReady() {
   formSubmit();
   icheck();
   lazyImages(".js-lazy, .user-contents img");
+  pictureInput();
   radioTextField();
   select();
   showHide(".js-show", ".js-hide");
