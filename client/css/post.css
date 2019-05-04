@@ -217,15 +217,24 @@
     border-left: 3px solid var(--borders);
     color: color(var(--text-light) alpha(0%));
     font-size: 1rem;
-    padding: 5px 10px;
-    transition: color 0.3s;
+    margin: 5px 0;
+    padding: 3px 10px;
+    transition: 0.3s;
+    max-height: 30px;
+    max-width: 100px;
+    overflow: hidden;
+    cursor: help;
+
     &::before {
-      color: var(--alt-lighter);
+      color: var(--alt-light);
       content: 'Spoiler';
       display: block;
     }
     &:hover {
       color: color(var(--text-light));
+      max-height: inherit;
+      max-width: inherit;
+      overflow: auto;
     }
   }
   

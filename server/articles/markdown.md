@@ -193,11 +193,11 @@ This is a paragraph of text with an image on the right. This is a paragraph of t
 
 #### Code ####
 
-    <p class="spoiler">Trinity snapes Tyler Durden!</p>
+    <div class="spoiler">Trinity snapes Tyler Durden!</div>
 
 #### Result ####
 
-<p class="spoiler">Trinity snapes Tyler Durden!</p>
+<div class="spoiler">Trinity snapes Tyler Durden!</div>
 
 ## <a name="alignment"></a>Alignment ##
 

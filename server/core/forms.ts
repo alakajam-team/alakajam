@@ -262,19 +262,21 @@ function parseJson(str, options: any = {}) {
  * @return {string}
  */
 function markdownToHtml(markdown) {
-  // Github-style mentions parsing
-  // (adapted from https://github.com/showdownjs/showdown/blob/master/src/subParsers/makehtml/anchors.js)
-  markdown = (markdown || "").replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,'[\]()]|\s|$)/gmi,
-  (wm, st, escape, mentions, username) => {
-    if (escape === "\\") {
-      return st + mentions;
-    } else {
-      return st +
-        '<a href="' + config.ROOT_URL + "/user/" + username + '">' +
-        mentions.replace(/_/g, "\\_") + // Don't trigger italics tags
-        "</a>";
-    }
-  });
+  markdown = (markdown || "")
+      // Automatically enable markdown inside HTML tags (not <p> because it messes things up)
+    .replace(/< ?(div|table|tr|td|th|ul|li|h[1-5])/gi, '<$1 markdown="1" ')
+      // Github-style mentions parsing
+      // (adapted from https://github.com/showdownjs/showdown/blob/master/src/subParsers/makehtml/anchors.js)
+    .replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,'[\]()]|\s|$)/gmi, (wm, st, escape, mentions, username) => {
+      if (escape === "\\") {
+        return st + mentions;
+      } else {
+        return st +
+          '<a href="' + config.ROOT_URL + "/user/" + username + '">' +
+          mentions.replace(/_/g, "\\_") + // Don't trigger italics tags
+          "</a>";
+      }
+    });
 
   const unsafeHtml = showdownConverter.makeHtml(markdown);
   const safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)

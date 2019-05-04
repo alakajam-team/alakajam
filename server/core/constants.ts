@@ -84,9 +84,10 @@ export default {
   ALLOWED_POST_TAGS: [
     "b", "i", "em", "strong", "a", "u", "del", "code", "br", "hr", "iframe", "img", "h1", "h2", "h3", "h4", "h5", "h6",
     "p", "blockquote", "pre", "ul", "ol", "li", "video", "source", "table", "thead", "tbody", "tr", "th", "td",
-    "progress",
+    "progress", "div",
   ],
   ALLOWED_POST_ATTRIBUTES: {
+    div: ["class"],
     p: ["class"],
     a: ["href", "class", "name"],
     iframe: [
