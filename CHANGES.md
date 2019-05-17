@@ -5,6 +5,8 @@
 ### April 2019
 
 * Migrate website sources from JavaScript to TypeScript
+* Preview pictures before they are uploaded
+* Improve spoiler tag in posts
 
 ### March 2019
 
