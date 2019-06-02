@@ -271,7 +271,11 @@ function defaultArticleSidebar() {
                 {
                     "title": "Timelapses",
                     "url": "/article/gjt-timelapses"
-                }
+                },
+                {
+                  "title": "Practical tips",
+                  "url": "/article/gjt-practical-tips"
+                }                
             ]
         },
         {
