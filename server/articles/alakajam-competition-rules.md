@@ -37,9 +37,9 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
     * Procedurally generated assets ;
     * Your engine's default appearance for UI elements ;
     * Pre-made game author & engine splash screens.
-* **Audio asset reuse:** You must make your audio assets during the event, even if you opt-out of the audio category. However:
-    * You can reuse existing sounds for SFX. You can also reuse *short* samples for music (including drums and other sampled instruments), but reusing whole music tracks is not allowed ;
-    * You can create assets from sound generation or speech synthesis tools.
+* **Audio asset reuse:** You must make your own music during the event, even if you opt-out of the audio category. However:
+    * While creating sounds yourself is encouraged (eg. with the help of [sound generation tools](https://alakajam.com/article/resources#audio), musical instruments, or microphones), reusing existing sound effects is tolerated.
+    * You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed ;
 * **Post-jam changes:** From the minute the jam ends, you are not allowed to add any features, assets or contents to your game. While you're supposed to have properly tested your game, stuff happens, so we do allow to:
     * Package or improve the packaging of your game ;
     * Port your game to other platforms ;
