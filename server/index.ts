@@ -34,9 +34,7 @@ import * as findUp from "find-up";
 import * as fs from "fs";
 import * as mkdirp from "mkdirp";
 import * as path from "path";
-import * as postcssWatch from "postcss-watch";
 import * as util from "util";
-import * as webpack from "webpack";
 
 /**
  * Local constants
@@ -49,12 +47,6 @@ const DEV_ENVIRONMENT = process.env.NODE_ENV === "development";
 const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 const CLIENT_SRC_FOLDER = path.join(ROOT_PATH, "./client/");
 const CLIENT_DEST_FOLDER = path.join(ROOT_PATH, "./dist/client/");
-const CSS_PLUGINS = [
-  // tslint:disable: no-var-requires
-  require("postcss-import"),
-  require("postcss-cssnext"),
-  // tslint:enable: no-var-requires
-];
 
 /**
  * App launch!
@@ -178,6 +170,10 @@ function configureBrowserRefresh() {
 }
 
 async function buildStyles(watch = false) {
+  const postcssWatch = require("postcss-watch");
+  const postcssImport = require("postcss-import");
+  const postcssCssnext = require("postcss-cssnext");
+
   await _createFolderIfMissing(CLIENT_DEST_FOLDER);
   if (watch) {
     log.info("Setting up automatic CSS build...");
@@ -188,7 +184,7 @@ async function buildStyles(watch = false) {
   postcssWatch({
     input: _postcssWatchPathFix(CLIENT_SRC_FOLDER),
     output: _postcssWatchPathFix(CLIENT_DEST_FOLDER),
-    plugins: CSS_PLUGINS,
+    plugins: [ postcssImport, postcssCssnext ],
     copyAssets: ["png", "gif", "svg", "ttf", "woff", "woff2", "eot"],
     log: DEV_ENVIRONMENT,
     watch,
@@ -196,6 +192,8 @@ async function buildStyles(watch = false) {
 }
 
 async function buildJS(watch = false) {
+  const webpack =  require("webpack");
+
   const env = process.env.NODE_ENV || "development";
   const webpackConfig = require(path.join(ROOT_PATH, "./webpack." + env + ".js"));
 
