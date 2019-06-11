@@ -168,7 +168,7 @@ export const UserRole = bookshelf.model("UserRole", {
  * | string | logo | Path to a logo picture
  * | string | event_preset_id | Currently used state preset
  * | string | status | General status: 'pending', 'open' or 'closed' (not null)
- * | string | status_rules | Event rules status: 'disabled', 'off', or a post ID (not null)
+ * | string | status_rules | Event rules status: 'off', or a post ID, or an URL (not null)
  * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'closed', 'results', or a post ID (not null)
  * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
  * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'voting_rescue', results', or a post ID (not null)

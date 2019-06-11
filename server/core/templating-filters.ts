@@ -1,5 +1,6 @@
 import * as leftPad from "left-pad";
 import * as moment from "moment";
+import * as slug from "slug";
 import constants from "./constants";
 import forms from "./forms";
 
@@ -111,6 +112,10 @@ export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("shuffle", (arr) => {
     return arr && Array.isArray(arr) ? arr.sort(() => 0.5 - Math.random()) : arr;
+  });
+
+  nunjucksEnvironment.addFilter("slug", (str: string) => {
+    return slug(str);
   });
 
 }

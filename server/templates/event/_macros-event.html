@@ -158,7 +158,7 @@
   
     <div class="nav">
       {{- eventLink(event, null, 'announcements', 'News', 'thumbtack', path) -}}
-      {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post'), 'Rules', 'info-circle', path) -}}
+      {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'info-circle', path) -}}
       {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
       
       {%- set statusTournament = event.get('status_tournament') -%}

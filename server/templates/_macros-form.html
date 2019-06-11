@@ -52,10 +52,11 @@
 
 {% macro radio(name, value, label, modelProperty, options = {}) %}
   {% set value = modelProperty if options.textFieldEnabled else value %}
-  <label for="{{ name }}-{{ value }}">
-    <input type="radio" id="{{ name }}-{{ value }}" class="js-radio" name="{{ name }}" value="{{ value }}" {{ 'checked="checked"' if value and modelProperty === value }} />
+  {% set inputId = name + '-' + value | slug %}
+  <label for="{{ inputId }}">
+    <input type="radio" id="{{ inputId }}" class="js-radio" name="{{ name }}" value="{{ value }}" {{ 'checked="checked"' if value and modelProperty === value }} />
     {% if options.textField %}
-      <input type="text" class="js-radio-text-field" data-target="{{ name }}-{{ value }}" placeholder="{{ options.placeholder }}" />
+      <input type="text" class="js-radio-text-field" data-target="{{ inputId }}" placeholder="{{ options.placeholder }}" />
     {% else %}
     <span class="radio-label">{{ label }}</span>
     {% endif %}

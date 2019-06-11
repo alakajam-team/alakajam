@@ -691,9 +691,6 @@ async function editEvent(req, res) {
       errorMessage = "Invalid event preset ID";
     } else if (!forms.isIn(req.body.status, enums.EVENT.STATUS)) {
       errorMessage = "Invalid status";
-    } else if (!forms.isIn(req.body["status-rules"], enums.EVENT.STATUS_RULES) &&
-        !forms.isId(req.body["status-rules"])) {
-      errorMessage = "Invalid welcome/rules post status";
     } else if (!forms.isIn(req.body["status-theme"], enums.EVENT.STATUS_THEME) &&
         !forms.isId(req.body["status-theme"])) {
       errorMessage = "Invalid theme status";

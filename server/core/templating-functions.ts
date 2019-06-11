@@ -32,7 +32,7 @@ export default {
   canUserWrite: security.canUserWrite,
   canUserManage: security.canUserManage,
   isAdmin: security.isAdmin,
-  isMod: security.isMod,
+  isMod: security.isMod
 };
 
 /**

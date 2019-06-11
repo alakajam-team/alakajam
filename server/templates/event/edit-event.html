@@ -62,7 +62,7 @@
         {{ formMacros.radio('status-rules', 'off', 'Off',
           event.get('status_rules') if event else 'off') }}
         {{ formMacros.radio('status-rules', '', '', 
-          event.get('status_rules') if event, { textField: true, placeholder: 'Post ID', textFieldEnabled: isId(event.get('status_rules')) if event}) }}
+          event.get('status_rules') if event, { textField: true, placeholder: 'Post ID or URL', textFieldEnabled: event and event.get('status_rules') and event.get('status_rules') !== 'off'}) }}
         </div>
       </div>
     </div>
