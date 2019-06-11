@@ -603,26 +603,24 @@ async function viewEventTournamentGames(req, res) {
     return;
   }
 
-  const cacheKey = "event-" + event.get("name") + "-tournament-games";
-  const context = await cache.getOrFetch(cache.general, cacheKey, async () => {
-    const tournamentEntries = await eventTournamentService.findTournamentEntries(event, { withDetails: true });
-    const entries = tournamentEntries.map((tEntry) => tEntry.related("entry"));
-    const highScoresMap = await highScoreService.findHighScoresMap(entries);
-    return {
-      entries,
-      highScoresMap,
-    };
-  }, 10 /* 10 seconds */);
-
-  context.userScoresMap = user ? await highScoreService.findUserScoresMapByEntry(user.get("id"), context.entries) : {};
-  context.tournamentScore = user ? await eventTournamentService.findOrCreateTournamentScore(
+  const tournamentEntries = await eventTournamentService.findTournamentEntries(event, { withDetails: true });
+  const entries = tournamentEntries.map((tEntry) => tEntry.related("entry"));
+  const highScoresMap = await highScoreService.findHighScoresMap(entries);
+  const userScoresMap = user ? await highScoreService.findUserScoresMapByEntry(user.get("id"), entries) : {};
+  const tournamentScore = user ? await eventTournamentService.findOrCreateTournamentScore(
     event.get("id"), user.get("id")) : null;
-  context.activeEntries = (await highScoreService.findRecentlyActiveEntries({
+  const activeEntries = (await highScoreService.findRecentlyActiveEntries({
       eventId: event.get("id"),
       limit: 10
     })).models;
 
-  res.render("event/view-event-tourn-games", context);
+  res.render("event/view-event-tourn-games", {
+    entries,
+    highScoresMap,
+    userScoresMap,
+    tournamentScore,
+    activeEntries
+  });
 }
 
 /**
