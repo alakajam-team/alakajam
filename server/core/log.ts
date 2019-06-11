@@ -23,7 +23,7 @@ const sourcesRoot = path.dirname(findUp("package.json", { cwd: __dirname }));
 let level = "info";
 try {
   // tslint:disable-next-line: no-var-requires
-  const config = require("./config");
+  const config = require(path.resolve(sourcesRoot, "config"));
   level = config.LOG_LEVEL;
 } catch (e) {
   // Nothing (config file might not be created yet)

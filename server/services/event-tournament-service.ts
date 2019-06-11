@@ -36,7 +36,7 @@ async function findActiveTournament(options: any = {}) {
       .fetch({ withRelated: ["tournamentEntries"] });
   });
 }
-// activeTournamentPlaying
+
 async function findActiveTournamentPlaying(entryId, options: any = {}) {
   if (entryId) {
     const activeTournamentEvent = await findActiveTournament(options);
