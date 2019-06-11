@@ -12,8 +12,8 @@ import db from "../core/db";
 import enums from "../core/enums";
 import fileStorage from "../core/file-storage";
 import * as models from "../core/models";
+import security from "../core/security";
 import postService from "./post-service";
-import securityService from "./security-service";
 import settingService from "./setting-service";
 
 export default {
@@ -574,7 +574,7 @@ async function acceptInvite(user, entry) {
 
       // Create or promote role
       if (userRole) {
-        const isInviteForHigherPermission = securityService.getPermissionsEqualOrAbove(userRole.get("permission"))
+        const isInviteForHigherPermission = security.getPermissionsEqualOrAbove(userRole.get("permission"))
           .includes(invite.get("permission"));
         if (isInviteForHigherPermission) {
           userRole.set("permission", invite.get("permission"));

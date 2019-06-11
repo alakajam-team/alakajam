@@ -11,10 +11,10 @@ import * as url from "url";
 import config from "../core/config";
 import enums from "../core/enums";
 import forms from "../core/forms";
+import { buildUrl } from "../core/templating-functions";
 import eventService from "../services/event-service";
 import eventThemeService from "../services/event-theme-service";
 import userService from "../services/user-service";
-import { buildUrl } from "./templating";
 
 const PUBLIC_ATTRIBUTES_EVENT = ["id", "name", "title", "display_dates", "display_theme", "status", "status_theme",
   "status_entry", "status_results", "countdown_config"];

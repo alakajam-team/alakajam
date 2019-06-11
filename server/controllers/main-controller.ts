@@ -10,13 +10,13 @@ import cache from "../core/cache";
 import constants from "../core/constants";
 import enums from "../core/enums";
 import forms from "../core/forms";
+import security from "../core/security";
 import eventRatingService from "../services/event-rating-service";
 import eventService from "../services/event-service";
 import likeService from "../services/like-service";
 import notificationService from "../services/notification-service";
 import platformService from "../services/platform-service";
 import postService from "../services/post-service";
-import securityService from "../services/security-service";
 import settingService from "../services/setting-service";
 import userService from "../services/user-service";
 import eventController from "./event-controller";
@@ -45,7 +45,7 @@ async function anyPageMiddleware(req, res, next) {
       // Fetch comment to edit
       if (req.query.editComment && forms.isId(req.query.editComment)) {
         return postService.findCommentById(req.query.editComment).then(async (comment) => {
-          if (comment && (securityService.canUserWrite(user, comment, { allowMods: true }) ||
+          if (comment && (security.canUserWrite(user, comment, { allowMods: true }) ||
               await postService.isOwnAnonymousComment(comment, user))) {
             res.locals.editComment = comment;
           }
@@ -240,7 +240,7 @@ async function games(req, res) {
   let requiredVotes = null;
   if (featuredEvent && featuredEvent.get("status_results") === "voting_rescue") {
     const canVoteInEvent = await eventRatingService.canVoteInEvent(user, featuredEvent);
-    if (canVoteInEvent || securityService.isMod(user)) {
+    if (canVoteInEvent || security.isMod(user)) {
       rescueEntries = (await eventService.findRescueEntries(featuredEvent, user)).models;
       requiredVotes = await settingService.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
     }

@@ -10,12 +10,12 @@ import constants from "../core/constants";
 import db from "../core/db";
 import forms from "../core/forms";
 import * as models from "../core/models";
+import security from "../core/security";
+import templating from "../core/templating-functions";
 import eventRatingService from "../services/event-rating-service";
 import eventService from "../services/event-service";
 import likeService from "../services/like-service";
 import postService from "../services/post-service";
-import securityService from "../services/security-service";
-import templating from "./templating";
 
 export default {
   handleSaveComment,
@@ -113,7 +113,7 @@ async function viewPost(req, res) {
   // Check permissions
   const post = res.locals.post;
   if (postService.isPast(res.locals.post.get("published_at")) ||
-      securityService.canUserRead(res.locals.user, post, { allowMods: true })) {
+      security.canUserRead(res.locals.user, post, { allowMods: true })) {
     // Fetch comments and likes
     const context: any = await buildPostContext(post);
     context.sortedComments = await postService.findCommentsSortedForDisplay(post);
@@ -140,7 +140,7 @@ async function editPost(req, res) {
   }
 
   const createMode = !res.locals.post;
-  if (createMode || securityService.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
+  if (createMode || security.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
     if (createMode) {
       const post = new models.Post();
       post.set("special_post_type", forms.sanitizeString(req.query.special_post_type) || null);
@@ -168,7 +168,7 @@ async function savePost(req, res) {
   let post = res.locals.post;
 
   // Check permissions
-  if ((post && securityService.canUserWrite(res.locals.user,
+  if ((post && security.canUserWrite(res.locals.user,
       post, { allowMods: true })) || (!post && res.locals.user)) {
     let redirectToView = false;
     const title = forms.sanitizeString(req.body.title);
@@ -204,7 +204,7 @@ async function savePost(req, res) {
       post.set("title", title);
       post.set("body", body);
       const specialPostType = req.query.special_post_type || req.body["special-post-type"] || null;
-      if (securityService.isMod(res.locals.user)) {
+      if (security.isMod(res.locals.user)) {
         validateSpecialPostType(specialPostType, res.locals.user);
         post.set("special_post_type", specialPostType);
       }
@@ -285,7 +285,7 @@ function validateSpecialPostType(specialPostType, user) {
   if (specialPostType && constants.SPECIAL_POST_TYPES.indexOf(specialPostType) === -1) {
     throw new Error("invalid special post type: " + specialPostType);
   }
-  if (specialPostType && !securityService.isMod(user)) {
+  if (specialPostType && !security.isMod(user)) {
     throw new Error("non-mod " + user.get("name") + " attempted to create a " + specialPostType + " post");
   }
 }
@@ -293,7 +293,7 @@ function validateSpecialPostType(specialPostType, user) {
 async function deletePost(req, res) {
   const { user, post } = res.locals;
 
-  if (user && post && securityService.canUserManage(user, post, { allowMods: true })) {
+  if (user && post && security.canUserManage(user, post, { allowMods: true })) {
     await postService.deletePost(post);
   }
   res.redirect("/");
@@ -306,10 +306,10 @@ async function watchPost(req, res) {
   const { user, post } = res.locals;
 
   if (user) {
-    if (securityService.isUserWatching(user, post)) {
-      await securityService.removeUserRight(user, post, constants.PERMISSION_WATCH);
+    if (security.isUserWatching(user, post)) {
+      await security.removeUserRight(user, post, constants.PERMISSION_WATCH);
     } else {
-      await securityService.addUserRight(user, post, "post", constants.PERMISSION_WATCH);
+      await security.addUserRight(user, post, "post", constants.PERMISSION_WATCH);
     }
   }
 
@@ -378,7 +378,7 @@ async function handleSaveComment(reqBody, currentUser, currentNode, baseUrl, cur
   if (reqBody.id) {
     if (forms.isId(reqBody.id)) {
       comment = await postService.findCommentById(reqBody.id);
-      hasWritePermissions = securityService.canUserManage(currentUser, comment, { allowMods: true }) ||
+      hasWritePermissions = security.canUserManage(currentUser, comment, { allowMods: true }) ||
           (comment && await postService.isOwnAnonymousComment(comment, currentUser));
     }
 

@@ -6,10 +6,9 @@
  */
 
 import * as url from "url";
-import config from "../core/config";
-import forms from "../core/forms";
-import postService from "../services/post-service";
-import securityService from "../services/security-service";
+import config from "./config";
+import forms from "./forms";
+import security from "./security";
 
 const DASHBOARD_PAGES = ["feed", "entries", "posts", "scores", "invite", "settings", "password", "entry-import"];
 const ALTERNATE_STATIC_ROOT_URL = url.resolve(config.ROOT_URL, "static/");
@@ -25,16 +24,34 @@ export default {
 
   isId: forms.isId,
 
-  isPast: postService.isPast,
-  wasEdited: postService.wasEdited,
+  isPast,
+  wasEdited,
 
-  isUserWatching: securityService.isUserWatching,
-  canUserRead: securityService.canUserRead,
-  canUserWrite: securityService.canUserWrite,
-  canUserManage: securityService.canUserManage,
-  isAdmin: securityService.isAdmin,
-  isMod: securityService.isMod,
+  isUserWatching: security.isUserWatching,
+  canUserRead: security.canUserRead,
+  canUserWrite: security.canUserWrite,
+  canUserManage: security.canUserManage,
+  isAdmin: security.isAdmin,
+  isMod: security.isMod,
 };
+
+/**
+ * Indicates if a date is already past
+ * @param  {number}  time
+ * @return {Boolean}
+ */
+export function isPast(time) {
+  return time && (new Date().getTime() - time) > 0;
+}
+
+/**
+ * Tells whether a model has been edited > 1 hour after its creation
+ * @param  {Model} model Any model with timestamps
+ * @return {bool}
+ */
+export function wasEdited(model) {
+  return model.get("updated_at") - model.get("created_at") > 3600 * 1000;
+}
 
 export function buildUrl(model, type, page = null, options: any = {}) {
   try {

@@ -5,9 +5,8 @@
  * @module services/security-service
  */
 
-import constants from "../core/constants";
-import log from "../core/log";
-import * as models from "../core/models";
+import constants from "./constants";
+import * as models from "./models";
 
 export default {
   isUserWatching,

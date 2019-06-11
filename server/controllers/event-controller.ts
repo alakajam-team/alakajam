@@ -5,13 +5,14 @@
  * @module controllers/event-controller
  */
 
-import templating from "../controllers/templating";
 import cache from "../core/cache";
 import constants from "../core/constants";
 import enums from "../core/enums";
 import fileStorage from "../core/file-storage";
 import forms from "../core/forms";
 import log from "../core/log";
+import security from "../core/security";
+import templating from "../core/templating-functions";
 import eventRatingService from "../services/event-rating-service";
 import eventService from "../services/event-service";
 import eventThemeService from "../services/event-theme-service";
@@ -20,7 +21,6 @@ import highScoreService from "../services/highscore-service";
 import likeService from "../services/like-service";
 import platformService from "../services/platform-service";
 import postService from "../services/post-service";
-import securityService from "../services/security-service";
 import settingService from "../services/setting-service";
 import tagService from "../services/tag-service";
 import userService from "../services/user-service";
@@ -456,7 +456,7 @@ async function viewEventGames(req, res) {
   let rescueEntries = [];
   if (event.get("status_results") === "voting_rescue") {
     const canVoteInEvent = await eventRatingService.canVoteInEvent(user, event);
-    if (canVoteInEvent || securityService.isMod(user)) {
+    if (canVoteInEvent || security.isMod(user)) {
       rescueEntries = (await eventService.findRescueEntries(event, user)).models;
     }
   }
@@ -655,7 +655,7 @@ async function viewEventTournamentLeaderboard(req, res) {
 }
 
 async function pickEventTemplate(req, res) {
-  if (!securityService.isMod(res.locals.user)) {
+  if (!security.isMod(res.locals.user)) {
     res.errorPage(403);
     return;
   }
@@ -669,7 +669,7 @@ async function pickEventTemplate(req, res) {
  * Edit or create an event
  */
 async function editEvent(req, res) {
-  if (!securityService.isMod(res.locals.user)) {
+  if (!security.isMod(res.locals.user)) {
     res.errorPage(403);
     return;
   }
@@ -854,7 +854,7 @@ async function editEvent(req, res) {
 async function editEventThemes(req, res) {
   res.locals.pageTitle += " | Themes";
 
-  if (!securityService.isMod(res.locals.user)) {
+  if (!security.isMod(res.locals.user)) {
     res.errorPage(403);
     return;
   }
@@ -929,7 +929,7 @@ async function editEventThemes(req, res) {
 async function editEventEntries(req, res) {
   res.locals.pageTitle += " | Entries";
 
-  if (!securityService.isMod(res.locals.user)) {
+  if (!security.isMod(res.locals.user)) {
     res.errorPage(403);
     return;
   }
@@ -985,7 +985,7 @@ async function editEventTournamentGames(req, res) {
 
   const { user, event } = res.locals;
 
-  if (!securityService.isMod(user)) {
+  if (!security.isMod(user)) {
     res.errorPage(403);
     return;
   }
@@ -1047,7 +1047,7 @@ async function editEventTournamentGames(req, res) {
  * Delete an event
  */
 async function deleteEvent(req, res) {
-  if (!securityService.isAdmin(res.locals.user)) {
+  if (!security.isAdmin(res.locals.user)) {
     res.errorPage(403);
     return;
   }

@@ -10,12 +10,12 @@ import constants from "../core/constants";
 import enums from "../core/enums";
 import fileStorage from "../core/file-storage";
 import forms from "../core/forms";
+import security from "../core/security";
 import entryImportService from "../services/entry-import-service";
 import eventService from "../services/event-service";
 import highScoreService from "../services/highscore-service";
 import likeService from "../services/like-service";
 import postService from "../services/post-service";
-import securityService from "../services/security-service";
 import userService from "../services/user-service";
 
 export default {
@@ -47,7 +47,7 @@ async function dashboardMiddleware(req, res, next) {
   if (!res.locals.user || res.locals.user === undefined) {
     res.errorPage(403, "You are not logged in.");
   } else {
-    if (req.query.user && securityService.isAdmin(res.locals.user) &&
+    if (req.query.user && security.isAdmin(res.locals.user) &&
         req.query.user !== res.locals.user.get("name")) {
       res.locals.dashboardUser = await userService.findByName(forms.sanitizeString(req.query.user));
       res.locals.dashboardAdminMode = true;

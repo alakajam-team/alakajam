@@ -10,7 +10,7 @@ import config from "../core/config";
 import constants from "../core/constants";
 import db from "../core/db";
 import * as models from "../core/models";
-import securityService from "../services/security-service";
+import security from "../core/security";
 
 const FIRST_PICTURE_REGEXP = /(?:!\[.*?\]\((.*?)\)|src="([^"]+)")/;
 
@@ -101,7 +101,7 @@ async function findPosts(options: any = {}) {
           "user_role.user_id": options.userId,
           "user_role.node_type": "post",
         })
-        .whereIn("permission", securityService.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE));
+        .whereIn("permission", security.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE));
     }
 
     if (!options.allowDrafts) { qb = qb.where("published_at", "<=", new Date()); }

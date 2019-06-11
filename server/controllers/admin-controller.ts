@@ -10,11 +10,11 @@ import constants from "../core/constants";
 import db from "../core/db";
 import forms from "../core/forms";
 import log from "../core/log";
+import security from "../core/security";
 import eventService from "../services/event-service";
 import likeService from "../services/like-service";
 import platformService from "../services/platform-service";
 import postService from "../services/post-service";
-import securityService from "../services/security-service";
 import settingService from "../services/setting-service";
 import tagService from "../services/tag-service";
 import userService from "../services/user-service";
@@ -38,7 +38,7 @@ export default {
 async function adminMiddleware(req, res, next) {
   res.locals.pageTitle = "Mod dashboard";
 
-  if (!config.DEBUG_ADMIN && !securityService.isMod(res.locals.user)) {
+  if (!config.DEBUG_ADMIN && !security.isMod(res.locals.user)) {
     res.errorPage(403);
   } else {
     next();
@@ -226,7 +226,7 @@ async function adminEventTemplates(req, res) {
  * Admin only: Platforms management
  */
 async function adminPlatforms(req, res) {
-  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+  if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }
 
@@ -300,7 +300,7 @@ async function adminPlatforms(req, res) {
  * Admin only: Tags management
  */
 async function adminTags(req, res) {
-  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+  if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }
 
@@ -342,7 +342,7 @@ async function adminTags(req, res) {
  * Admin only: settings management
  */
 async function adminSettings(req, res) {
-  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+  if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }
 
@@ -414,7 +414,7 @@ async function adminSettings(req, res) {
  * Admin only: users management
  */
 async function adminUsers(req, res) {
-  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+  if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }
 
@@ -429,7 +429,7 @@ async function adminUsers(req, res) {
  * Admin only: server status
  */
 async function adminStatus(req, res) {
-  if (!config.DEBUG_ADMIN && !securityService.isAdmin(res.locals.user)) {
+  if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }
 
@@ -456,7 +456,7 @@ async function adminStatus(req, res) {
  * Admin only: developer tools
  */
 async function adminDev(req, res) {
-  if (res.app.locals.devMode && (config.DEBUG_ADMIN || securityService.isAdmin(res.locals.user))) {
+  if (res.app.locals.devMode && (config.DEBUG_ADMIN || security.isAdmin(res.locals.user))) {
     let infoMessage = "";
     let errorMessage = "";
     if (req.method === "POST") {

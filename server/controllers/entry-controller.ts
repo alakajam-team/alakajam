@@ -11,6 +11,8 @@ import enums from "../core/enums";
 import fileStorage from "../core/file-storage";
 import forms from "../core/forms";
 import * as models from "../core/models";
+import security from "../core/security";
+import templating from "../core/templating-functions";
 import eventRatingService from "../services/event-rating-service";
 import eventService from "../services/event-service";
 import eventTournamentService from "../services/event-tournament-service";
@@ -18,11 +20,9 @@ import highscoreService from "../services/highscore-service";
 import likeService from "../services/like-service";
 import platformService from "../services/platform-service";
 import postService from "../services/post-service";
-import securityService from "../services/security-service";
 import settingService from "../services/setting-service";
 import tagService from "../services/tag-service";
 import postController from "./post-controller";
-import templating from "./templating";
 
 export default {
   entryMiddleware,
@@ -87,7 +87,7 @@ async function viewEntry(req, res) {
   let vote;
   let canVote = false;
   if (res.locals.user && eventVote &&
-      !securityService.canUserWrite(res.locals.user, entry)) {
+      !security.canUserWrite(res.locals.user, entry)) {
     canVote = await eventRatingService.canVoteOnEntry(res.locals.user, entry);
     if (canVote) {
       vote = await eventRatingService.findEntryVote(res.locals.user, entry);
@@ -97,7 +97,7 @@ async function viewEntry(req, res) {
   // Count votes
   const entryVotes = await eventRatingService.countEntryVotes(entry);
   let minEntryVotes = null;
-  if (res.locals.user && securityService.canUserWrite(res.locals.user, entry)) {
+  if (res.locals.user && security.canUserWrite(res.locals.user, entry)) {
     minEntryVotes = await settingService.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
   }
 
@@ -167,7 +167,7 @@ async function editEntry(req, res) {
     });
   }
 
-  if (entry.get("id") && !securityService.canUserWrite(user, entry, { allowMods: true })) {
+  if (entry.get("id") && !security.canUserWrite(user, entry, { allowMods: true })) {
     res.errorPage(403);
     return;
   }
@@ -326,7 +326,7 @@ async function editEntry(req, res) {
       }
 
       // Manager-only changes
-      if (isCreation || securityService.canUserManage(user, entry, { allowMods: true })) {
+      if (isCreation || security.canUserManage(user, entry, { allowMods: true })) {
         let division = req.body.division || eventService.getDefaultDivision(event);
         if (event &&
           (event.get("status_entry") === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED
@@ -397,7 +397,7 @@ async function editEntry(req, res) {
 async function deleteEntry(req, res) {
   const { entry, event, user } = res.locals;
 
-  if (user && entry && securityService.canUserManage(user, entry, { allowMods: true })) {
+  if (user && entry && security.canUserManage(user, entry, { allowMods: true })) {
     await entry.load("posts");
     entry.related("posts").forEach(async (post) => {
       post.set("entry_id", null);
@@ -639,7 +639,7 @@ async function editScores(req, res) {
   if (!user) {
     res.redirect("/login?redirect=" + req.url);
     return;
-  } else if (!securityService.canUserWrite(user, entry, { allowMods: true })) {
+  } else if (!security.canUserWrite(user, entry, { allowMods: true })) {
     res.errorPage(403);
     return;
   } else if (entry.get("status_high_score") === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {

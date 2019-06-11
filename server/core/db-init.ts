@@ -275,7 +275,7 @@ function defaultArticleSidebar() {
                 {
                   "title": "Practical tips",
                   "url": "/article/gjt-practical-tips"
-                }                
+                }
             ]
         },
         {

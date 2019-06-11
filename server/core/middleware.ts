@@ -16,22 +16,19 @@ import * as cookies from "cookies";
 import * as express from "express";
 import * as expressNunjucks from "express-nunjucks";
 import * as expressSession from "express-session";
-import * as leftPad from "left-pad";
-import * as moment from "moment";
 import * as path from "path";
 import * as randomKey from "random-key";
 import { promisify } from "util";
 import controllers from "../controllers";
-import templating from "../controllers/templating";
 import settingService from "../services/setting-service";
 import userService from "../services/user-service";
 import config, * as configUtils from "./config";
 import constants from "./constants";
 import db from "./db";
-import enums from "./enums";
 import fileStorage from "./file-storage";
-import forms from "./forms";
 import log from "./log";
+import * as templatingFilters from "./templating-filters";
+import * as templatingGlobals from "./templating-globals";
 
 const LAUNCH_TIME = new Date().getTime();
 
@@ -80,118 +77,13 @@ async function configure(app) {
     noCache: app.locals.devMode,
   });
 
-  // Templating: custom filters
-  nj.env.addGlobal("browserRefreshUrl", process.env.BROWSER_REFRESH_URL);
-  nj.env.addGlobal("constants", constants);
-  nj.env.addGlobal("enums", enums);
-  nj.env.addGlobal("devMode", app.locals.devMode);
-  nj.env.addGlobal("launchTime", LAUNCH_TIME);
-  nj.env.addGlobal("context", function() {
-    // lets devs display the whole templating context with
-    // {{ context() | prettyDump | safe }}
-    this.ctx.constants = constants;
-    this.ctx.enums = enums;
-    this.ctx.devMode = app.locals.devMode;
-    this.ctx.launchTime = LAUNCH_TIME;
-    return this.ctx;
+  // Templating: custom globals and filters
+  templatingGlobals.configure({
+    devMode: app.locals.devMode,
+    launchTime: LAUNCH_TIME,
+    nunjucksEnvironment: nj.env
   });
-
-  Object.keys(templating).forEach((functionName) => {
-    nj.env.addGlobal(functionName, templating[functionName]);
-  });
-
-  nj.env.addFilter("keys", (obj) => {
-    return Object.keys(obj);
-  });
-  nj.env.addFilter("values", (obj) => {
-    return Object.values(obj);
-  });
-  nj.env.addFilter("stringify", (obj) => {
-    return JSON.stringify(obj);
-  });
-  nj.env.addFilter("pretty", (obj) => {
-    if (typeof obj === "object") {
-      return JSON.stringify(obj, null, 2);
-    } else {
-      return obj;
-    }
-  });
-  nj.env.addFilter("dump", (obj) => {
-    // Override default behavior to prevent escaping non-objects
-    if (typeof obj === "object") {
-      return JSON.stringify(obj);
-    } else {
-      return obj;
-    }
-  });
-  nj.env.addFilter("prettyDump", (obj) => {
-    return "<pre>" + JSON.stringify(obj, null, 2) + "</pre>";
-  });
-  nj.env.addFilter("markdown", (str) => {
-    return forms.markdownToHtml(str);
-  });
-  nj.env.addFilter("markdownUnescape", (str) => {
-    return str ? str.replace(/&amp;/g, "&").replace(/&quot;/g, '"') : null;
-  });
-  nj.env.addFilter("date", (date, format) => {
-    if (date) {
-      return moment(date).utc().format(format || constants.DATE_FORMAT);
-    } else {
-      return "";
-    }
-  });
-  nj.env.addFilter("dateTime", (date) => {
-    if (date) {
-      return moment(date).utc().format(constants.DATE_TIME_FORMAT);
-    } else {
-      return "";
-    }
-  });
-  nj.env.addFilter("featuredEventDateTime", (date) => {
-    if (date) {
-      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) + " UTC";
-    } else {
-      return "";
-    }
-  });
-  nj.env.addFilter("relativeTime", (date) => {
-    return moment(date).utc().fromNow();
-  });
-  nj.env.addFilter("duration", (durationInSeconds) => {
-    const minutes = Math.floor(durationInSeconds / 60);
-    const seconds = durationInSeconds - minutes * 60;
-    return minutes + "'" + leftPad(seconds.toFixed(3).replace(".", '"'), 6, "0");
-  });
-  nj.env.addFilter("ordinal", (n) => {
-    // source: https://stackoverflow.com/a/12487454
-    const s = ["th", "st", "nd", "rd"];
-    const v = n % 100;
-    return n + (s[(v - 20) % 10] || s[v] || s[0]);
-  });
-  nj.env.addFilter("digits", (n, digits) => {
-    if (typeof n === "string") {
-      n = parseFloat(n);
-    }
-    if (typeof n === "number") {
-      return n.toFixed(digits).toString();
-    } else {
-      return null;
-    }
-  });
-  nj.env.addFilter("leftpad", (n, toLength, char) => {
-    return n ? leftPad(n, toLength, char) : "";
-  });
-  nj.env.addFilter("paginationBasePath", (pagePath) => {
-    let basePath = pagePath.replace(/[?&]p=[^&]*/g, "");
-    if (!basePath.includes("?")) {
-      basePath += "?";
-    }
-    return basePath;
-  });
-
-  nj.env.addFilter("shuffle", (arr) => {
-    return arr && Array.isArray(arr) ? arr.sort(() => 0.5 - Math.random()) : arr;
-  });
+  templatingFilters.configure(nj.env);
 
   // Body parsers config
   app.use(bodyParser.urlencoded({ extended: false }));
