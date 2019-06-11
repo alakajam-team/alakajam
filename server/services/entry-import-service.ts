@@ -72,7 +72,7 @@ function getAvailableImporters() {
 async function fetchEntryReferences(user, importerId, profileIdentifier) {
   // Fetch and cache entry list
   const cacheKey = importerId + "-" + profileIdentifier;
-  const entryReferences = await cache.getOrFetch(cache.entryImport, cacheKey, async () => {
+  const entryReferences = await cache.getOrFetch<any>(cache.entryImport, cacheKey, async () => {
     try {
       const importer = _getImporter(importerId);
       if (importer) {

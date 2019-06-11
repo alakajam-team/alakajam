@@ -68,28 +68,28 @@ function user(userModel): NodeCache {
 }
 
 class PrefixedNodeCache {
-  private cache: any;
+  private cache: NodeCache;
   private fullPrefix: string;
 
-  constructor(cache, prefix) {
+  constructor(cache: NodeCache, prefix: string) {
     this.cache = cache;
     this.fullPrefix = prefix.toLowerCase() + "_";
   }
-  public get(key) {
-    return this.cache.get(this.fullPrefix + key);
+  public get<T>(key: string) {
+    return this.cache.get<T>(this.fullPrefix + key);
   }
-  public set(key, value, ttl?) {
-    return this.cache.set(this.fullPrefix + key, value, ttl);
+  public set<T>(key: string, value: T, ttl?: number) {
+    return this.cache.set<T>(this.fullPrefix + key, value, ttl);
   }
-  public del(key) {
+  public del(key: string) {
     return this.cache.del(this.fullPrefix + key);
   }
 }
 
-async function getOrFetch(cache, key, asyncFetch, ttl?) {
-  if (!cache.get(key)) {
+async function getOrFetch<T>(cache: NodeCache, key: string, asyncFetch: () => Promise<T>, ttl?: number): Promise<T> {
+  if (!cache.get<T>(key)) {
     const result = await asyncFetch();
-    cache.set(key, result, ttl);
+    cache.set<T>(key, result, ttl);
   }
-  return cache.get(key);
+  return cache.get<T>(key);
 }
