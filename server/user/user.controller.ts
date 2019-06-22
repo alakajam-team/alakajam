@@ -11,7 +11,7 @@ import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import security from "server/core/security";
-import highScoreService from "server/entry/highscore/highscore.service";
+import highScoreService from "server/entry/highscore/entry-highscore.service";
 import entryImportService from "server/entry/import/entry-import.service";
 import eventService from "server/event/event.service";
 import likeService from "server/post/like/like.service";

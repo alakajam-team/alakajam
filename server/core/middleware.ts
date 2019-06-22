@@ -19,8 +19,8 @@ import * as expressSession from "express-session";
 import * as path from "path";
 import * as randomKey from "random-key";
 import settings from "server/core/settings";
-import { createErrorRenderingMiddleware, errorPage } from "server/error/error.middleware";
-import controllers from "server/routes";
+import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
+import { routes } from "server/routes";
 import userService from "server/user/user.service";
 import { promisify } from "util";
 import config, * as configUtils from "./config";
@@ -133,7 +133,7 @@ async function configure(app) {
   });
 
   // Routing: Views
-  controllers.initRoutes(app);
+  routes(app);
 
   // Routing: 500/404
   app.use(createErrorRenderingMiddleware(app.locals.devMode));

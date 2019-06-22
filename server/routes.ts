@@ -1,11 +1,5 @@
 // tslint:disable: max-line-length
 
-/**
- * Controllers listing
- *
- * @module controllers
- */
-
 import * as csurf from "csurf";
 import * as multer from "multer";
 import * as randomKey from "random-key";
@@ -24,7 +18,13 @@ import { adminUsers } from "./admin/users/admin-users.controller";
 import apiController from "./api/api.controller";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
-import entryController from "./entry/entry.controller";
+import { acceptInvite as inviteAccept, declineInvite as inviteDecline } from "./entry/entry-invite.controller";
+import { apiSearchForExternalEvents, apiSearchForTags, apiSearchForTeammate, entryView, saveCommentOrVote as entrySaveCommentOrVote } from "./entry/entry.controller";
+import { entryMiddleware } from "./entry/entry.middleware";
+import { entryHighscoreSubmit } from "./entry/highscore/entry-highscore-submit.controller";
+import { entryHighscores } from "./entry/highscore/entry-highscores.controller";
+import { entryHighscoreManages as entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
+import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
 import eventController from "./event/event.controller";
 import { eventDelete, eventManage, eventManageEntries, eventManageTemplate, eventManageThemes, eventManageTournament } from "./event/manage/event-manage.controller";
 import { chat } from "./explore/chat.controller";
@@ -34,15 +34,19 @@ import { peopleMods } from "./explore/people-mods.controller";
 import { people } from "./explore/people.controller";
 import { globalMiddleware } from "./global.middleware";
 import { home } from "./home/home.controller";
-import postController from "./post/post.controller";
+import { commentSave } from "./post/comment/comment.controller";
+import { likePost } from "./post/like/like.controller";
+import { postDelete, postEdit, postSave } from "./post/manage/post-manage.controller";
+import { postView } from "./post/post-view.controller";
+import { postWatch } from "./post/post-watch.controller";
+import { postMiddleware } from "./post/post.middleware";
+import { postsView } from "./post/posts-view.controller";
 import userController from "./user/user.controller";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
 
-export default {
-
-  initRoutes(app) {
+export function routes(app) {
     // Using express-promise-router instead of the default express.Router
     // allows our routes to return rejected promises to trigger the error
     // handling.
@@ -54,10 +58,10 @@ export default {
     router.use("*", globalMiddleware);
     router.use("/admin*", adminMiddleware);
     // Why `{0,}` instead of `*`? See: https://github.com/expressjs/express/issues/2495
-    router.use("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?/:rest*?", entryController.entryMiddleware);
+    router.use("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?/:rest*?", entryMiddleware);
     router.use("/:eventName([^/]{0,}-[^/]{0,})", eventController.eventMiddleware);
-    router.use("/post/:postId", postController.postMiddleware);
-    router.use("/post/:postId/*", postController.postMiddleware);
+    router.use("/post/:postId", postMiddleware);
+    router.use("/post/:postId/*", postMiddleware);
     router.use("/dashboard*", userController.dashboardMiddleware);
 
     // General
@@ -107,22 +111,22 @@ export default {
     // Entries & Events
 
     const entryFormParser = upload.single("picture");
-    router.get("/events/ajax-find-external-event", entryController.searchForExternalEvents);
-    router.get("/tags/ajax-find-tags", entryController.searchForTags);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/create-entry", csrf, entryController.editEntry);
-    router.post("/:eventName([^/]{0,}-[^/]{0,})/create-entry", entryFormParser, csrf, entryController.editEntry);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/ajax-find-team-mate", entryController.searchForTeamMate);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?", csrf, entryController.viewEntry);
-    router.post("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?", csrf, entryController.saveCommentOrVote);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit", csrf, entryController.editEntry);
-    router.post("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit", entryFormParser, csrf, entryController.editEntry);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete", csrf, entryController.deleteEntry);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/leave", csrf, entryController.leaveEntry);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/accept-invite", csrf, entryController.acceptInvite);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/decline-invite", csrf, entryController.declineInvite);
-    router.all("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/submit-score", upload.single("upload"), csrf, entryController.submitScore);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/scores", entryController.viewScores);
-    router.all("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit-scores", csrf, entryController.editScores);
+    router.get("/events/ajax-find-external-event", apiSearchForExternalEvents);
+    router.get("/tags/ajax-find-tags", apiSearchForTags);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/create-entry", csrf, entryManage);
+    router.post("/:eventName([^/]{0,}-[^/]{0,})/create-entry", entryFormParser, csrf, entryManage);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/ajax-find-team-mate", apiSearchForTeammate);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?", csrf, entryView);
+    router.post("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?", csrf, entrySaveCommentOrVote);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit", csrf, entryManage);
+    router.post("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit", entryFormParser, csrf, entryManage);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete", csrf, entryDelete);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/leave", csrf, entryLeave);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/accept-invite", csrf, inviteAccept);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/decline-invite", csrf, inviteDecline);
+    router.all("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/submit-score", upload.single("upload"), csrf, entryHighscoreSubmit);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/scores", entryHighscores);
+    router.all("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit-scores", csrf, entryHighscoresManage);
 
     const eventFormParser = upload.fields([{ name: "logo", maxCount: 1 }, { name: "banner", maxCount: 1 }]);
     router.get("/pick_event_template", csrf, eventManageTemplate);
@@ -149,18 +153,18 @@ export default {
 
     // Posts
 
-    router.get("/posts?", postController.viewPosts);
+    router.get("/posts?", postsView);
 
-    router.get("/post/create", csrf, postController.editPost);
-    router.post("/post/create", csrf, postController.savePost);
-    router.get("/post/:postId", csrf, postController.viewPost);
-    router.get("/post/:postId(\\d+)/:postName?", csrf, postController.viewPost);
-    router.post("/post/:postId(\\d+)/:postName?", csrf, postController.saveComment);
-    router.post("/post/:postId(\\d+)/:postName/edit", csrf, postController.savePost);
-    router.get("/post/:postId(\\d+)/:postName/edit", csrf, postController.editPost);
-    router.get("/post/:postId(\\d+)/:postName/delete", csrf, postController.deletePost);
-    router.post("/post/:postId(\\d+)/:postName/watch", csrf, postController.watchPost);
-    router.post("/post/:postId(\\d+)/:postName/like", postController.likePost);
+    router.get("/post/create", csrf, postEdit);
+    router.post("/post/create", csrf, postSave);
+    router.get("/post/:postId", csrf, postView);
+    router.get("/post/:postId(\\d+)/:postName?", csrf, postView);
+    router.post("/post/:postId(\\d+)/:postName?", csrf, commentSave);
+    router.post("/post/:postId(\\d+)/:postName/edit", csrf, postSave);
+    router.get("/post/:postId(\\d+)/:postName/edit", csrf, postEdit);
+    router.get("/post/:postId(\\d+)/:postName/delete", csrf, postDelete);
+    router.post("/post/:postId(\\d+)/:postName/watch", csrf, postWatch);
+    router.post("/post/:postId(\\d+)/:postName/like", likePost);
 
     // Articles
 
@@ -177,9 +181,7 @@ export default {
     router.get("/api/user", apiController.getUserSearch);
     router.get("/api/user/:user", apiController.getUser);
     router.get("/api/user/:user/latestEntry", apiController.getUserLatestEntry);
-  },
-
-};
+}
 
 function initUploadMiddleware() {
   // Multipart form parser

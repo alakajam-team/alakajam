@@ -13,7 +13,7 @@ import log from "server/core/log";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import templating from "server/core/templating-functions";
-import highScoreService from "server/entry/highscore/highscore.service";
+import highScoreService from "server/entry/highscore/entry-highscore.service";
 import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
