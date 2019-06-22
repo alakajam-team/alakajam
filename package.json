@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ./node_modules/ts-node-dev/bin/ts-node-dev -r tsconfig-paths/register server/index.ts",
     "start:refresh": "concurrently --kill-others \"npm run build:watch\" \"browser-refresh\"",
-    "start:e2e": "node ./node_modules/ts-node-dev/bin/ts-node-dev -r tsconfig-paths/register server/test/index-e2e.ts",
+    "start:e2e": "node ./node_modules/ts-node-dev/bin/ts-node-dev -r tsconfig-paths/register server/e2e.ts",
     "start:debug": "tsc && node --nolazy -r ts-node/register -r tsconfig-paths/register --inspect-brk dist/server/index.js",
     "deployment:build": "tsc --build tsconfig.build.json",
     "deployment:build-watch": "npm run deployment:build -- -w",

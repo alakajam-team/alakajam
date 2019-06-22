@@ -8,6 +8,7 @@ import templating from "server/core/templating-functions";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import postService from "server/post/post.service";
+import commentService from "./comment.service";
 
 /**
  * Save or delete a comment
@@ -46,9 +47,9 @@ export async function handleSaveComment(reqBody, currentUser, currentNode, baseU
   let userId = null;
   if (reqBody.id) {
     if (forms.isId(reqBody.id)) {
-      comment = await postService.findCommentById(reqBody.id);
+      comment = await commentService.findCommentById(reqBody.id);
       hasWritePermissions = security.canUserManage(currentUser, comment, { allowMods: true }) ||
-          (comment && await postService.isOwnAnonymousComment(comment, currentUser));
+          (comment && await commentService.isOwnAnonymousComment(comment, currentUser));
     }
 
     if (hasWritePermissions) {
@@ -56,7 +57,7 @@ export async function handleSaveComment(reqBody, currentUser, currentNode, baseU
         // Delete comment
         nodeType = comment.get("node_type");
         userId = comment.get("user_id");
-        await postService.deleteComment(comment);
+        await commentService.deleteComment(comment);
       } else {
         // Update comment
         comment.set("body", commentBody);
@@ -68,7 +69,7 @@ export async function handleSaveComment(reqBody, currentUser, currentNode, baseU
   } else {
     isCreation = true;
     hasWritePermissions = true;
-    comment = await postService.createComment(currentUser, currentNode, commentBody, reqBody["comment-anonymously"]);
+    comment = await commentService.createComment(currentUser, currentNode, commentBody, reqBody["comment-anonymously"]);
   }
 
   // Comment repercussions

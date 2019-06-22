@@ -3,9 +3,9 @@ import forms from "server/core/forms";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import eventService from "server/event/event.service";
-import postService from "server/post/post.service";
 import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
+import commentService from "./post/comment/comment.service";
 
 export async function globalMiddleware(req, res, next) {
   res.locals.path = req.originalUrl;
@@ -18,9 +18,9 @@ export async function globalMiddleware(req, res, next) {
 
       // Fetch comment to edit
       if (req.query.editComment && forms.isId(req.query.editComment)) {
-        return postService.findCommentById(req.query.editComment).then(async (comment) => {
+        return commentService.findCommentById(req.query.editComment).then(async (comment) => {
           if (comment && (security.canUserWrite(user, comment, { allowMods: true }) ||
-              await postService.isOwnAnonymousComment(comment, user))) {
+              await commentService.isOwnAnonymousComment(comment, user))) {
             res.locals.editComment = comment;
           }
         });

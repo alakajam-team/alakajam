@@ -6,7 +6,7 @@ import highscoreService from "server/entry/highscore/entry-highscore.service";
 /**
  * Moderate high scores
  */
-export async function entryHighscoreManages(req, res) {
+export async function entryHighscoresManage(req, res) {
   const { user, entry } = res.locals;
 
   if (!user) {

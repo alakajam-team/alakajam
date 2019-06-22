@@ -18,15 +18,28 @@ import { adminUsers } from "./admin/users/admin-users.controller";
 import apiController from "./api/api.controller";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
-import { acceptInvite as inviteAccept, declineInvite as inviteDecline } from "./entry/entry-invite.controller";
-import { apiSearchForExternalEvents, apiSearchForTags, apiSearchForTeammate, entryView, saveCommentOrVote as entrySaveCommentOrVote } from "./entry/entry.controller";
+import { inviteAccept, inviteDecline } from "./entry/entry-invite.controller";
+import { apiSearchForExternalEvents, apiSearchForTags, apiSearchForTeammate, entrySaveCommentOrVote, entryView } from "./entry/entry-view.controller";
 import { entryMiddleware } from "./entry/entry.middleware";
 import { entryHighscoreSubmit } from "./entry/highscore/entry-highscore-submit.controller";
 import { entryHighscores } from "./entry/highscore/entry-highscores.controller";
-import { entryHighscoreManages as entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
+import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
 import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
-import eventController from "./event/event.controller";
-import { eventDelete, eventManage, eventManageEntries, eventManageTemplate, eventManageThemes, eventManageTournament } from "./event/manage/event-manage.controller";
+import { viewEventAnnouncements } from "./event/event-announcements.controller";
+import { viewEventGames } from "./event/event-games.controller";
+import { viewEventPosts } from "./event/event-posts.controller";
+import { viewDefaultPage } from "./event/event-root.controller";
+import { eventMiddleware } from "./event/event.middleware";
+import { eventManageEntries } from "./event/manage/event-manage-entries.controller";
+import { eventManageTemplate } from "./event/manage/event-manage-template.controller";
+import { eventManageThemes } from "./event/manage/event-manage-themes.controller";
+import { eventManageTournament } from "./event/manage/event-manage-tournament.controller";
+import { eventDelete, eventManage } from "./event/manage/event-manage.controller";
+import { viewEventRatings } from "./event/rating/event-ratings.controller";
+import { viewEventResults } from "./event/rating/event-results.controller";
+import { ajaxFindThemes, ajaxSaveThemeVote, viewEventThemes } from "./event/theme/event-themes.controller";
+import { viewEventTournamentGames } from "./event/tournament/tournament-games.controller";
+import { viewEventTournamentLeaderboard } from "./event/tournament/tournament-leaderboard.controller";
 import { chat } from "./explore/chat.controller";
 import { events } from "./explore/events.controller";
 import { games } from "./explore/games.controller";
@@ -41,7 +54,20 @@ import { postView } from "./post/post-view.controller";
 import { postWatch } from "./post/post-watch.controller";
 import { postMiddleware } from "./post/post.middleware";
 import { postsView } from "./post/posts-view.controller";
-import userController from "./user/user.controller";
+import { login, loginForm } from "./user/authentication/login.controller";
+import { logout } from "./user/authentication/logout.controller";
+import { passwordRecoveryRequest } from "./user/authentication/password-recovery-request.controller";
+import { passwordRecovery } from "./user/authentication/password-recovery.controller";
+import { register, registerForm } from "./user/authentication/register.controller";
+import { dashboardEntries } from "./user/dashboard/dashboard-entries.controller";
+import { dashboardEntryImport } from "./user/dashboard/dashboard-entry-import.controller";
+import { dashboardFeed } from "./user/dashboard/dashboard-feed.controller";
+import { dashboardPassword } from "./user/dashboard/dashboard-password.controller";
+import { dashboardPosts } from "./user/dashboard/dashboard-posts.controller";
+import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
+import { dashboardSettings } from "./user/dashboard/dashboard-settings.controller";
+import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
+import { userProfile } from "./user/user-profile.controller";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
@@ -59,10 +85,10 @@ export function routes(app) {
     router.use("/admin*", adminMiddleware);
     // Why `{0,}` instead of `*`? See: https://github.com/expressjs/express/issues/2495
     router.use("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?/:rest*?", entryMiddleware);
-    router.use("/:eventName([^/]{0,}-[^/]{0,})", eventController.eventMiddleware);
+    router.use("/:eventName([^/]{0,}-[^/]{0,})", eventMiddleware);
     router.use("/post/:postId", postMiddleware);
     router.use("/post/:postId/*", postMiddleware);
-    router.use("/dashboard*", userController.dashboardMiddleware);
+    router.use("/dashboard*", dashboardMiddleware);
 
     // General
 
@@ -77,23 +103,23 @@ export function routes(app) {
 
     // Users
 
-    router.get("/register", csrf, userController.registerForm);
-    router.post("/register", csrf, userController.doRegister);
-    router.get("/login", csrf, userController.loginForm);
-    router.post("/login", csrf, userController.doLogin);
-    router.get("/logout", csrf, userController.doLogout);
-    router.all("/passwordRecoveryRequest", csrf, userController.passwordRecoveryRequest);
-    router.all("/passwordRecovery", csrf, userController.passwordRecovery);
+    router.get("/register", csrf, registerForm);
+    router.post("/register", csrf, register);
+    router.get("/login", csrf, loginForm);
+    router.post("/login", csrf, login);
+    router.get("/logout", csrf, logout);
+    router.all("/passwordRecoveryRequest", csrf, passwordRecoveryRequest);
+    router.all("/passwordRecovery", csrf, passwordRecovery);
 
-    router.all("/dashboard(/feed)?", csrf, userController.dashboardFeed);
-    router.all("/dashboard/entries", csrf, userController.dashboardEntries);
-    router.all("/dashboard/posts", csrf, userController.dashboardPosts);
-    router.all("/dashboard/scores", csrf, userController.dashboardScores);
-    router.get("/dashboard/settings", csrf, userController.dashboardSettings);
-    router.post("/dashboard/settings", upload.single("avatar"), csrf, userController.dashboardSettings);
-    router.all("/dashboard/password", csrf, userController.dashboardPassword);
-    router.all("/dashboard/entry-import", csrf, userController.dashboardEntryImport);
-    router.get("/user/:name", csrf, userController.viewUserProfile);
+    router.all("/dashboard(/feed)?", csrf, dashboardFeed);
+    router.all("/dashboard/entries", csrf, dashboardEntries);
+    router.all("/dashboard/posts", csrf, dashboardPosts);
+    router.all("/dashboard/scores", csrf, dashboardScores);
+    router.get("/dashboard/settings", csrf, dashboardSettings);
+    router.post("/dashboard/settings", upload.single("avatar"), csrf, dashboardSettings);
+    router.all("/dashboard/password", csrf, dashboardPassword);
+    router.all("/dashboard/entry-import", csrf, dashboardEntryImport);
+    router.get("/user/:name", csrf, userProfile);
 
     // Mod dashboard
 
@@ -132,18 +158,17 @@ export function routes(app) {
     router.get("/pick_event_template", csrf, eventManageTemplate);
     router.get("/create_event", csrf, eventManage);
     router.post("/create_event", eventFormParser, csrf, eventManage);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})", eventController.viewDefaultPage);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", eventController.viewEventAnnouncements);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/posts", eventController.viewEventPosts);
-    router.all("/:eventName([^/]{0,}-[^/]{0,})/themes", csrf, eventController.viewEventThemes);
-    router.all("/:eventName([^/]{0,}-[^/]{0,})/ajax-find-themes", eventController.ajaxFindThemes);
-    router.all("/:eventName([^/]{0,}-[^/]{0,})/ajax-save-vote", eventController.ajaxSaveVote);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/games", csrf, eventController.viewEventGames);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/ratings", csrf, eventController.viewEventRatings);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/results", eventController.viewEventResults);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-games", csrf, eventController.viewEventTournamentGames);
-    router.post("/:eventName([^/]{0,}-[^/]{0,})/tournament-games", csrf, eventController.submitTournamentGame);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-leaderboard", eventController.viewEventTournamentLeaderboard);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})", viewDefaultPage);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventAnnouncements);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/posts", viewEventPosts);
+    router.all("/:eventName([^/]{0,}-[^/]{0,})/themes", csrf, viewEventThemes);
+    router.all("/:eventName([^/]{0,}-[^/]{0,})/ajax-find-themes", ajaxFindThemes);
+    router.all("/:eventName([^/]{0,}-[^/]{0,})/ajax-save-vote", ajaxSaveThemeVote);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/games", csrf, viewEventGames);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/ratings", csrf, viewEventRatings);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/results", viewEventResults);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-games", csrf, viewEventTournamentGames);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-leaderboard", viewEventTournamentLeaderboard);
     router.get("/:eventName([^/]{0,}-[^/]{0,})/edit", csrf, eventManage);
     router.post("/:eventName([^/]{0,}-[^/]{0,})/edit", eventFormParser, csrf, eventManage);
     router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventManageThemes);

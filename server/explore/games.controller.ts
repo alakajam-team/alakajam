@@ -2,7 +2,7 @@ import constants from "server/core/constants";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import platformService from "server/entry/platform/platform.service";
-import eventController from "server/event/event.controller";
+import { handleGameSearch } from "server/event/event-games.controller";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 
@@ -15,7 +15,7 @@ export async function games(req, res) {
   const { user, featuredEvent } = res.locals;
 
   // Parse query
-  const searchOptions: any = await eventController.handleGameSearch(req, res);
+  const searchOptions: any = await handleGameSearch(req, res);
 
   // Fetch info
   // TODO Parallelize tasks

@@ -3,7 +3,7 @@ import cache from "server/core/cache";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
 import settings from "server/core/settings";
-import eventController from "server/event/event.controller";
+import { handleEventUserShortcuts } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -84,7 +84,7 @@ export async function home(req, res) {
     cache.general.set("home_page", context, 10 /* 10 seconds */);
   }
 
-  await eventController.handleEventUserShortcuts(res, res.locals.featuredEvent);
+  await handleEventUserShortcuts(res, res.locals.featuredEvent);
 
   if (res.locals.user) {
     const allPagePosts = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);

@@ -1,6 +1,7 @@
 import * as moment from "moment";
 import settings from "server/core/settings";
 import eventThemeService from "server/event/theme/event-theme.service";
+import commentService from "server/post/comment/comment.service";
 import eventService from "../event/event.service";
 import eventRatingService from "../event/rating/event-rating.service";
 import postService from "../post/post.service";
@@ -166,7 +167,7 @@ export async function insertInitialData(samples) {
     event2.set("status_rules", post.get("id"));
     await event2.save();
 
-    await postService.createComment(entrantUser, post, "I'm in!");
+    await commentService.createComment(entrantUser, post, "I'm in!");
     await postService.refreshCommentCount(post);
 
     // Planned 3rd event

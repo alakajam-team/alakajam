@@ -11,7 +11,7 @@ import enums from "server/core/enums";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
-import postService from "server/post/post.service";
+import commentService from "server/post/comment/comment.service";
 import eventService from "../event.service";
 
 export default {
@@ -300,7 +300,7 @@ async function computeKarmaGivenByUserAndEntry(entry, event) {
   for (const userRole of userRoles.models) {
     // Earn up to 3 points per user from comments
     const userId = userRole.get("user_id");
-    const givenComments = await postService.findCommentsByUserAndEvent(userId, event.get("id"));
+    const givenComments = await commentService.findCommentsByUserAndEvent(userId, event.get("id"));
     for (const givenComment of givenComments.models) {
       const key = userId + "_to_" + givenComment.get("node_id");
       givenByUserAndEntry[key] = givenByUserAndEntry[key] || {

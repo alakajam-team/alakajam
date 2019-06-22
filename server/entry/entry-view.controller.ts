@@ -9,6 +9,7 @@ import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
 import { handleSaveComment } from "server/post/comment/comment.controller";
+import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 
@@ -44,7 +45,7 @@ export async function entryView(req, res) {
 
   let editableAnonComments = null;
   if (res.locals.user && entry.get("allow_anonymous")) {
-    editableAnonComments = await postService.findOwnAnonymousCommentIds(res.locals.user, entry.get("id"), "entry");
+    editableAnonComments = await commentService.findOwnAnonymousCommentIds(res.locals.user, entry.get("id"), "entry");
   }
 
   const posts = await postService.findPosts({
@@ -59,7 +60,7 @@ export async function entryView(req, res) {
   }
 
   res.render("entry/entry", {
-    sortedComments: await postService.findCommentsSortedForDisplay(entry),
+    sortedComments: await commentService.findCommentsSortedForDisplay(entry),
     editableAnonComments,
     posts,
     entryVotes,
@@ -78,7 +79,7 @@ export async function entryView(req, res) {
 /**
  * Saves a comment or vote made to an entry
  */
-export async function saveCommentOrVote(req, res) {
+export async function entrySaveCommentOrVote(req, res) {
   const { entry, event, user } = res.locals;
 
   // Security checks
