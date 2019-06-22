@@ -13,31 +13,33 @@ import config from "../core/config";
 import constants from "../core/constants";
 import log from "../core/log";
 
-export default {
-  findArticle,
-};
+export class ArticleService {
 
-/**
- * Finds one article by its name
- * @param  {string} article name (slug)
- * @return {string} markdown content
- */
-async function findArticle(articleName) {
-  if (config.DEBUG_ARTICLES) {
-    const article = await promisify(fs.readFile)
-      (path.join(constants.ROOT_PATH, "server/articles", articleName + ".md"));
-    if (article) {
-      return article.toString();
-    }
-  } else {
-    return cache.getOrFetch(cache.articles, articleName, async () => {
-      let result = null;
-      try {
-        result = await requestPromise(constants.ARTICLES_ROOT_URL + articleName + ".md");
-      } catch (e) {
-        log.warn("Article not found: " + articleName);
+  /**
+   * Finds one article by its name
+   * @param  {string} article name (slug)
+   * @return {string} markdown content
+   */
+  public async findArticle(articleName: string): Promise<string|null> {
+    if (config.DEBUG_ARTICLES) {
+      const article = await promisify(fs.readFile)
+        (path.join(constants.ROOT_PATH, "server/articles", articleName + ".md"));
+      if (article) {
+        return article.toString();
       }
-      return result;
-    });
+    } else {
+      return cache.getOrFetch(cache.articles, articleName, async () => {
+        let result = null;
+        try {
+          result = await requestPromise(constants.ARTICLES_ROOT_URL + articleName + ".md");
+        } catch (e) {
+          log.warn("Article not found: " + articleName);
+        }
+        return result;
+      });
+    }
   }
+
 }
+
+export default new ArticleService();

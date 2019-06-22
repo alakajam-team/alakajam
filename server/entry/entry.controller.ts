@@ -14,6 +14,7 @@ import * as models from "server/core/models";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import templating from "server/core/templating-functions";
+import highscoreService from "server/entry/highscore/highscore.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
@@ -21,8 +22,7 @@ import eventTournamentService from "server/event/tournament/tournament.service";
 import likeService from "server/post/like/like.service";
 import postController from "server/post/post.controller";
 import postService from "server/post/post.service";
-import highscoreService from "./highscore/highscore-service";
-import platformService from "./platform/platform-service";
+import platformService from "./platform/platform.service";
 
 export default {
   entryMiddleware,

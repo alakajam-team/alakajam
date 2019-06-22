@@ -7,7 +7,7 @@ import forms from "server/core/forms";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import templating from "server/core/templating-functions";
-import highScoreService from "server/entry/highscore/highscore-service";
+import highScoreService from "server/entry/highscore/highscore.service";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import eventThemeService from "server/event/theme/event-theme.service";

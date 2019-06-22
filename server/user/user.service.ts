@@ -17,7 +17,7 @@ import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
 import eventService from "../event/event.service";
-import mailService from "./mail/mail-service";
+import mailService from "./mail/mail.service";
 
 export default {
   findUsers,

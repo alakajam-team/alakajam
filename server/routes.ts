@@ -10,7 +10,17 @@ import * as csurf from "csurf";
 import * as multer from "multer";
 import * as randomKey from "random-key";
 import * as configUtils from "server/core/config";
-import adminController from "./admin/admin.controller";
+import { adminHome } from "./admin/admin-home.controller";
+import { adminMiddleware } from "./admin/admin.middleware";
+import { adminDev } from "./admin/dev/admin-dev.controller";
+import { adminEventPresets } from "./admin/event-presets/admin-event-presets.controller";
+import { adminEventTemplates } from "./admin/event-templates/admin-event-templates.controller";
+import { adminEvents } from "./admin/events/admin-events.controller";
+import { adminPlatforms } from "./admin/platforms/admin-platforms.controller";
+import { adminSettings } from "./admin/settings/admin-settings.controller";
+import { adminStatus } from "./admin/status/admin-status.controller";
+import { adminTags } from "./admin/tags/admin-tags.controller";
+import { adminUsers } from "./admin/users/admin-users.controller";
 import apiController from "./api/api.controller";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
@@ -42,7 +52,7 @@ export default {
     // Run all middleware before any actual route handlers
 
     router.use("*", globalMiddleware);
-    router.use("/admin*", adminController.adminMiddleware);
+    router.use("/admin*", adminMiddleware);
     // Why `{0,}` instead of `*`? See: https://github.com/expressjs/express/issues/2495
     router.use("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?/:rest*?", entryController.entryMiddleware);
     router.use("/:eventName([^/]{0,}-[^/]{0,})", eventController.eventMiddleware);
@@ -83,16 +93,16 @@ export default {
 
     // Mod dashboard
 
-    router.get("/admin", csrf, adminController.adminHome);
-    router.get("/admin/events", csrf, adminController.adminEvents);
-    router.all("/admin/event-presets", csrf, adminController.adminEventPresets);
-    router.all("/admin/event-templates", csrf, adminController.adminEventTemplates);
-    router.all("/admin/platforms", csrf, adminController.adminPlatforms);
-    router.all("/admin/tags", csrf, adminController.adminTags);
-    router.all("/admin/settings", csrf, adminController.adminSettings);
-    router.get("/admin/users", csrf, adminController.adminUsers);
-    router.all("/admin/dev", csrf, adminController.adminDev);
-    router.all("/admin/status", csrf, adminController.adminStatus);
+    router.get("/admin", csrf, adminHome);
+    router.get("/admin/events", csrf, adminEvents);
+    router.all("/admin/event-presets", csrf, adminEventPresets);
+    router.all("/admin/event-templates", csrf, adminEventTemplates);
+    router.all("/admin/platforms", csrf, adminPlatforms);
+    router.all("/admin/tags", csrf, adminTags);
+    router.all("/admin/settings", csrf, adminSettings);
+    router.get("/admin/users", csrf, adminUsers);
+    router.all("/admin/dev", csrf, adminDev);
+    router.all("/admin/status", csrf, adminStatus);
 
     // Entries & Events
 

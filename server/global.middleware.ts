@@ -4,7 +4,7 @@ import security from "server/core/security";
 import settings from "server/core/settings";
 import eventService from "server/event/event.service";
 import postService from "server/post/post.service";
-import notificationService from "server/user/notification/notification-service";
+import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
 
 export async function globalMiddleware(req, res, next) {
