@@ -26,7 +26,7 @@ export async function postView(req, res) {
       context.pageImage = templating.staticUrl(context.pageImage);
     }
 
-    res.render("post/post", context);
+    res.render("post/post-view", context);
   } else {
     res.errorPage(403);
   }

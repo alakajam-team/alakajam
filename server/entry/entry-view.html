@@ -3,7 +3,7 @@
 {% import "user/user.macros.html" as userMacros %}
 {% import "event/event.macros.html" as eventMacros %}
 {% import "macros/form.macros.html" as formMacros %}
-{% import "entry/highscore/highscore.macros.html" as scoreMacros %}
+{% import "entry/highscore/entry-highscore.macros.html" as scoreMacros %}
 
 {% macro ratingCountPhrase(entry, entryVotes) %}
   <p>This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> rating{{ 's' if entryVotes !== 1 }} so far.</p>

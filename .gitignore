@@ -12,6 +12,7 @@
 /data
 /coverage
 /cypress/tmp
+/cypress/screenshots
 *.log
 *.out
 *.pid

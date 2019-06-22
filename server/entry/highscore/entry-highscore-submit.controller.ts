@@ -124,5 +124,5 @@ export async function entryHighscoreSubmit(req, res) {
     }
   }
 
-  res.render("entry/entry-highscores-submit", context);
+  res.render("entry/highscore/entry-highscore-submit", context);
 }

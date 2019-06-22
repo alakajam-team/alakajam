@@ -6,7 +6,7 @@ import log from "server/core/log";
  * @param devMode
  */
 export function createErrorRenderingMiddleware(devMode: boolean) {
-  return (error, req, res) => {
+  return (error, req, res, next) => {
     if (!error) {
       errorPage(req, res, 404, undefined, devMode);
     } else {

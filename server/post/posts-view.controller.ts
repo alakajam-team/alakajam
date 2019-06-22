@@ -42,7 +42,7 @@ export async function postsView(req, res) {
     paginationBaseUrl += "&user_id=" + userId;
   }
 
-  res.render("posts", {
+  res.render("post/posts-view", {
     posts: posts.models,
     userLikes: await likeService.findUserLikeInfo(posts, res.locals.user),
     title,

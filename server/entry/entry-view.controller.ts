@@ -59,7 +59,7 @@ export async function entryView(req, res) {
     userLikes = await likeService.findUserLikeInfo(posts, user);
   }
 
-  res.render("entry/entry", {
+  res.render("entry/entry-view", {
     sortedComments: await commentService.findCommentsSortedForDisplay(entry),
     editableAnonComments,
     posts,
