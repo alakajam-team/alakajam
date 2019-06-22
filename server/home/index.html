@@ -1,0 +1,236 @@
+
+{% extends "base.html" %}
+{% import "event/event.macros.html" as eventMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
+{% import "user/_macros-user.html" as userMacros %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block body %}
+
+{% set featuredEventBanner = featuredEvent.related('details').get('banner') if featuredEvent %}
+{{ eventMacros.eventBanner(featuredEvent) }}
+
+<script type="text/javascript">
+  // Custom announcement height limit and expand/collapse button
+  // Script inlined for immediate loading
+  function postExpandCollapse(postClass, maxAnnouncementHeight) {
+    var announcementEl = findByClass(postClass)
+    if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
+      announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
+      var expandBarEl = findByClass('expand-bar', postClass)
+      expandBarEl.setAttribute('style', 'display: block')
+      expandBarEl.onclick = function (e) {
+        if (announcementEl.className.indexOf('expanded') !== -1) {
+          announcementEl.className = announcementEl.className.replace(' expanded', '')
+        } else {
+          announcementEl.className += ' expanded'
+        }
+        e.preventDefault()
+        return false
+      }
+    } else {
+      findByClass('expand-bar', postClass).remove()
+    }
+  }
+  
+  function findByClass(className, parentClassName) {
+    var parent = parentClassName ? findByClass(parentClassName) : document
+    var elements = parent.getElementsByClassName(className)
+    return (elements.length > 0) ? elements[0] : null
+  }
+</script>
+
+<div class="container {{ 'event-banner-offset' if featuredEventBanner }}">
+  {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') if featuredEvent %}
+  {% if shortlistEliminationInfo.stream %}
+  <div class="row">
+    <div class="col-xs-12">
+      <div style="margin-bottom: 20px">
+        <div id="twitch-embed"></div>
+      </div>
+      <script src="https://embed.twitch.tv/embed/v1.js"></script>
+      <script type="text/javascript">
+        new Twitch.Embed("twitch-embed", {
+          width: '100%',
+          height: 500,
+          channel: "{{ shortlistEliminationInfo.stream }}"
+        });
+      </script>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row">
+    {% if not user %}
+    <div class="home-welcome">
+      <img class="home-welcome__icon" src="{{ staticUrl('/static/images/welcome.png') }}" />
+      <div class="home-welcome__title">New website unlocked</div>
+       Welcome to <div class="home-welcome__brand">Alakajam!</div>, a game making community. We host informal game jams!
+       <a class="home-welcome__more" href="/article/docs">Learn&nbsp;more</a>
+    </div>
+    {% endif %}
+
+    {% if featuredPost %}
+    <div class="col-lg-offset-1 col-lg-10">
+      <div class="js-featured-post expandable">
+        {{ postMacros.post(featuredPost, {readingUser: user, readingUserLikes: userLikes}) }}
+        {{ formMacros.expandCollapse({ manualScripting: true }) }}
+      </div>
+      <script type="text/javascript">
+        postExpandCollapse('js-featured-post', 450)
+      </script>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="row">
+    <div class="col-md-9">
+      {% if featuredEvent %}
+        {{ eventMacros.eventJumbo(featuredEvent, user, userEntry) }}
+        {% if featuredEventAnnouncement %}
+          <div class="home-jumbo__contents event-banner-panel">
+          {% if featuredEventAnnouncement.get('body').indexOf('<iframe') === 0 %}
+              {{ postMacros.post(featuredEventAnnouncement, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
+              {{ featuredEventAnnouncement.get('body') | markdown | safe }}
+          {% else %}
+            <div class="home-jumbo__announcement expandable">
+              {{ postMacros.post(featuredEventAnnouncement, {hideDate: true, readingUser: user, readingUserLikes: userLikes}) }}
+              {{ formMacros.expandCollapse({ manualScripting: true }) }}
+            </div>
+          {% endif %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if not featuredEvent and not featuredPost %}
+        <h1 class="text-center">Next event not announced yet.</h1>
+      {% endif %}
+    </div>
+    
+    <div id="js-event-sidebar" class="col-md-3 event-banner-panel">
+      {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
+      {% if featuredLinks and featuredLinks.length > 0 %}
+        <div class="home-featured-links">
+          <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
+            <span class="fas fa-info-circle"></span>
+            Special pages
+          </div>
+        {% for featuredLink in featuredLinks %}
+          <a class="home-featured-link" href="{{ featuredLink.link }}">
+            <span class="fas {{ featuredLink.icon }}"></span>
+            <span class="home-featured-link__title">{{ featuredLink.title }}</span>
+          </a>
+        {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="home-scheduled-events visible-md visible-lg">
+        <div class="horizontal-bar" style="margin-top: 0; margin-bottom: 10px">
+          <span class="fas fa-calendar"></span>
+          Event calendar
+        </div>
+
+        {% set compactCalendar = featuredLinks and featuredLinks.length > 0 %}
+        {% for event in eventSchedule %}
+          {{ featuredLink(event, featuredEvent) if not compactCalendar or event.get('status') !== 'closed' }}
+        {% endfor %}
+        <div class="home-scheduled-event">
+          <a class="home-scheduled-event__title" href="/events">More...</a>
+        </div>
+      </div>
+
+      <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
+        <span class="fas fa-angle-right"></span>
+        Social media & more
+      </div>
+      <div class="home-jumbo__social">
+        {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
+        {{ socialLink('IRC', '/chat', 'irc.svg') }}
+        {{ socialLink('Discord', 'https://discord.gg/yZPBpTn', 'discord.svg') }}
+        {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
+        {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
+        {{ socialLink('Paypal', 'https://alakajam.com/post/1070/finances-of-the-alakajam-association', 'paypal.svg') }}
+      </div>
+    </div>
+  </div>
+  {% if featuredEventAnnouncement %}
+    <script type="text/javascript">
+      var announcement = findByClass('home-jumbo__announcement')
+      var sidebar = document.getElementById('js-event-sidebar')
+      var remainingHeight = sidebar.clientHeight - announcement.offsetTop - 10
+      postExpandCollapse('home-jumbo__announcement', Math.max(remainingHeight, 265))
+    </script>
+  {% endif %}
+
+  {% if suggestedEntries and suggestedEntries.length > 0 %}
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="horizontal-bar">
+        Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
+      </div>
+      <div class="home-grid game-grid">
+      {% for entry in suggestedEntries %}
+        <div class="home-entry game-grid-entry">
+        {{ eventMacros.entryThumb(entry) }}
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+    
+  {% if posts.length > 0 %}
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10">
+        <div class="horizontal-bar">Latest posts</div>
+
+        {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost) if user and featuredEvent }}
+        <div class="spacing"></div>
+
+        {% for post in posts %}
+          <div class="expandable">
+            {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+            {{ formMacros.expandCollapse() }}
+          </div>
+        {% endfor %}
+        {{ formMacros.pagination(1, pageCount, '/posts') }}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% macro featuredLink (event, featuredEvent) %}
+  {% set mainEvent = event.get('title').includes('Alakajam') %}
+  <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }} {{ 'main' if mainEvent }}">
+    <div class="home-scheduled-event__arrow"></div>
+    <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
+      {% if mainEvent %}
+        <img src="{{ staticUrl('/static/images/favicon16.png') }}" class="home-scheduled-event__logo no-border" />
+      {% endif %}
+      {{ event.get('title') }}
+    </a>
+    <div>
+      <span class="home-scheduled-event__dates">
+        {{ event.get('display_dates') }} 
+      </span>
+      {% if event.get('status') === 'closed' %}
+        - <a href="{{ buildUrl(event, 'event') }}" class="home-scheduled-event__entries">{{ event.get('entry_count') }} entries</a>
+      {% endif %}
+    </div>
+    <div class="home-scheduled-event__label">
+      {% if event.get('status') === 'open' %}
+        <span class="label label-danger">On now!</span>
+      {% elseif event.get('status') === 'pending' %}
+        <span class="label label-default">Up next!</span>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro socialLink (title, url, iconName) %}
+  <a href="{{ url }}" class="has-tooltip" data-toggle="tooltip" data-original-title="{{ title }}">
+    <img src="{{ staticUrl('/static/images/social/' + iconName) }}" class="footer__icon no-border" /> 
+  </a>
+{% endmacro %}

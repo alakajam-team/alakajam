@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% import "event/event.macros.html" as eventMacros %}
+{% import "post/_macros-post.html" as postMacros with context %}
+{% import "_macros-form.html" as formMacros %}
+
+{% import "entry/_macros-score.html" as scoreMacros %}
+{% import "event/event.macros.html" as entryMacros %}
+
+{% block body %}
+
+<div class="container profile">
+  <div class="row">
+    <div class="col-md-4 col-lg-3">
+      {% if profileUser.get('avatar') %}
+      <img src="{{ pictureUrl(profileUser.get('avatar'), profileUser) }}" class="profile__avatar" />
+      {% else %}
+      <img src="{{ staticUrl('/static/images/default-avatar.png') }}" class="profile__avatar" />
+      {% endif %}
+
+      <h1 class="profile__title">
+        {{ profileUser.get('title') }}
+      </h1>
+      <h3 class="profile__name">
+        {{ profileUser.get('name') }}
+        <span class="profile__id">
+          #{{ profileUser.get('id') }}
+        </span>
+      </h3>
+      <p class="profile__joined">
+        Joined {{ profileUser.get('created_at') | relativeTime }}
+      </p>
+
+      {% if profileUser.get('is_admin') %}
+      <p class="profile__admin">
+        <img src="{{ staticUrl('/static/images/adminbadge.png') }}" class="profile__admin" />
+      </p>
+      {% elseif profileUser.get('is_mod') %}
+      <p class="profile__mod">
+        <img src="{{ staticUrl('/static/images/modbadge.png') }}" class="profile__mod" />
+      </p>
+      {% endif %}
+
+      {% if user and (user.get('id') == profileUser.get('id')) %}
+      <a href="{{ buildUrl(user, 'user', 'feed') }}" class="btn btn-default">View dashboard</a>
+      {% endif %}
+
+      <div class="spacing">
+        {% set socialLinks = profileUser.related('details').get('social_links') %}
+        {% if socialLinks.website %}
+          <div class="profile__social-link">
+            <a href="{{ socialLinks.website }}">
+              <span class="fas fa-home" style="color: black; font-size: 24px"></span> Website
+            </a>
+          </div>
+        {% endif %}
+        {% if socialLinks.twitter %}
+          <div class="profile__social-link">
+            <a href="https://www.twitter.com/{{ socialLinks.twitter }}">
+              <img src="{{ staticUrl('/static/images/social/twitter.svg') }}" class="no-border" style="width: 32px" /> Twitter
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-md-8 col-lg-9">
+      {% if profileUser.related('details').get('body') %}
+      <h2>Bio</h2>
+      <div class="featured">
+        {{ profileUser.related('details').get('body') | markdown | safe }}
+      </div>
+      <div class="spacing"></div>
+      {% endif %}
+
+      <div class="panel page-tabs">
+        <ul class="nav nav-tabs nav-justified" style="margin-top: 30px; margin-bottom: 10px">
+          <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#entries" data-tab-selector="#js-entries">Alakajam! games ({{alakajamEntries.length + otherEntries.length}})</a></li>
+          {% if externalEntries.length > 0 %}
+          <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#entries-ext" data-tab-selector="#js-entries-ext">Other games ({{externalEntries.length}})</a></li>
+          {% endif %}
+          <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#posts" data-tab-selector="#js-posts">Blog posts ({{posts.pagination.rowCount}})</a></li>
+          <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#posts" data-tab-selector="#js-scores">High scores ({{userScores.length}})</a></li>
+        </ul>
+        <div id="js-entries" class="tab-content js-tab">
+          {% if alakajamEntries.length > 0 or otherEntries.length > 0 %}
+            {% if alakajamEntries.length > 0 %}
+            <h2>Main events</h2>
+              <div class="game-grid">
+                {% for entry in alakajamEntries %}
+                  <div class="game-grid-entry">
+                    {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if otherEntries.length > 0 %}
+            <h2>Special events</h2>
+              <div class="game-grid">
+                {% for entry in otherEntries %}
+                  <div class="game-grid-entry">
+                    {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% else %}
+            <div class="well">{{ profileUser.get('title') }} didn't submit games... Yet!</div>
+          {% endif %}
+        </div>
+        <div id="js-entries-ext" class="tab-content js-tab">
+          <div class="game-grid">
+            {% for entry in externalEntries %}
+              <div class="game-grid-entry">
+                {{ eventMacros.entryThumb(entry, { showEvent: true }) }}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div id="js-posts" class="tab-content js-tab">
+          {% if posts.models.length > 0 %}
+            {% for post in posts.models %}
+              {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+              <div class="spacing"></div>
+            {% endfor %}
+
+            {{ formMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id')) }}
+          {% else %}
+          <div class="well">{{ profileUser.get('title') }} didn't write posts... Yet!</div>
+          {% endif %}
+        </div>
+        <div id="js-scores" class="tab-content js-tab">
+          <h1>High scores</h1>
+          <div style="line-height: 40px">
+            <div class="row">
+              <div class="col-sm-4">
+                {% set totalMedals = (medals[1] or 0) + (medals[2] or 0) + (medals[3] or 0) %}
+                {% if totalMedals > 0 %}
+                  <div>
+                    {{ scoreMacros.printRanking(1) }} x{{ medals[1] or 0 }}
+                    {{ scoreMacros.printRanking(2) }} x{{ medals[2] or 0 }}
+                    {{ scoreMacros.printRanking(3) }} x{{ medals[3] or 0 }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+      
+          {% if userScores.length > 0 %}
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Game</th>
+                <th>Score</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for userScore in userScores %} {% set entry = userScore.related('entry') %}
+              <tr>
+                <td>{{ scoreMacros.printRanking(userScore.get('ranking')) }}</td>
+                <td style="max-width: 200px">{{ entryMacros.entrySmallThumb(entry) }}</td>
+                <td>
+                  <b>{{ scoreMacros.printScore(entry, userScore, { showEditLink: false }) }}</b>
+                </td>
+                <td style="font-size: 0.8rem">{{ userScore.get('updated_at') | date }}</td>
+                <td>
+                  <b>{{ scoreMacros.printProof(userScore) }}</b>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+            <p>No score submitted yet!</p>
+            <p><a class="btn btn-primary" href="/games?highScoresSupport=on">Find games with high scores</a></p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% macro linkSortBy(id, label, sortedBy) %}
+<a href="?sortBy={{ id }}" class="btn btn-sm btn-default {{ 'disabled' if sortedBy === id }}">{{ label }}</a>
+{% endmacro %} 

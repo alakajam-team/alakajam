@@ -18,10 +18,10 @@ import * as expressNunjucks from "express-nunjucks";
 import * as expressSession from "express-session";
 import * as path from "path";
 import * as randomKey from "random-key";
+import settings from "server/core/settings";
+import controllers from "server/routes";
+import userService from "server/user/user.service";
 import { promisify } from "util";
-import settingService from "../legacy/services/setting-service";
-import userService from "../legacy/services/user-service";
-import controllers from "../routes";
 import config, * as configUtils from "./config";
 import constants from "./constants";
 import db from "./db";
@@ -191,10 +191,10 @@ async function createSessionMiddleware(sessionStore) {
 }
 
 async function getOrCreateSessionSecret() {
-  let secret = await settingService.find(constants.SETTING_SESSION_SECRET);
+  let secret = await settings.find(constants.SETTING_SESSION_SECRET);
   if (!secret) {
     secret = randomKey.generate();
-    await settingService.save(constants.SETTING_SESSION_SECRET, secret);
+    await settings.save(constants.SETTING_SESSION_SECRET, secret);
   }
   return secret;
 }
@@ -226,10 +226,10 @@ function promisifySession() {
 }
 
 async function findOrCreateSessionKey() {
-  let sessionKey = await settingService.find(constants.SETTING_SESSION_KEY);
+  let sessionKey = await settings.find(constants.SETTING_SESSION_KEY);
   if (!sessionKey) {
     sessionKey = randomKey.generate();
-    await settingService.save(constants.SETTING_SESSION_KEY, sessionKey);
+    await settings.save(constants.SETTING_SESSION_KEY, sessionKey);
   }
   return sessionKey;
 }

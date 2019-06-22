@@ -1,11 +1,10 @@
 import * as moment from "moment";
-
-import eventRatingService from "../legacy/services/event-rating-service";
-import eventService from "../legacy/services/event-service";
-import eventThemeService from "../legacy/services/event-theme-service";
-import postService from "../legacy/services/post-service";
-import settingService from "../legacy/services/setting-service";
-import userService from "../legacy/services/user-service";
+import settings from "server/core/settings";
+import eventThemeService from "server/event/event-theme.service";
+import eventRatingService from "../event/event-rating.service";
+import eventService from "../event/event.service";
+import postService from "../post/post.service";
+import userService from "../user/user.service";
 import constants from "./constants";
 import db from "./db";
 import enums from "./enums";
@@ -30,11 +29,11 @@ export async function insertInitialData(samples) {
   });
   await adminUser.save();
 
-  await settingService.save(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1);
-  await settingService.save(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 5);
-  await settingService.save(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 1);
-  await settingService.save(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, 5);
-  await settingService.save(constants.SETTING_ARTICLE_SIDEBAR, defaultArticleSidebar());
+  await settings.save(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1);
+  await settings.save(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 5);
+  await settings.save(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 1);
+  await settings.save(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, 5);
+  await settings.save(constants.SETTING_ARTICLE_SIDEBAR, defaultArticleSidebar());
 
   // Samples
 
@@ -95,7 +94,7 @@ export async function insertInitialData(samples) {
     });
     await event2Details.save();
 
-    await settingService.save(constants.SETTING_FEATURED_EVENT_NAME, "2nd-alakajam");
+    await settings.save(constants.SETTING_FEATURED_EVENT_NAME, "2nd-alakajam");
 
     eventThemeService.saveThemeIdeas(entrantUser, event2, [
       { title: "Alone" },

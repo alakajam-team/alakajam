@@ -1,0 +1,82 @@
+{% extends "event/_page-event.html" %}
+{% import "event/event.macros.html" as eventMacros with context %}
+{% import "entry/_macros-score.html" as scoreMacros with context %}
+{% import "user/_macros-user.html" as userMacros with context %}
+{% import "_macros-form.html" as formMacros with context %}
+
+{% block body %}
+{{ super() }}
+
+{% if user %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
+      <div class="action-banner">
+        <div class="action-banner__title">Your ranking</div>
+        <table class="panel tournament-user-banner">  
+          <tr>
+            <td class="tournament-user-banner__user">{{ userMacros.userThumb(user, { fullWidth: true }) }}</td>
+            <td class="tournament-user-banner__ranking">
+              <h1>{{ (tournamentScore.get('ranking') or (event.get('entry_count') + 1)) | ordinal }}</h1>
+              <span class="count"> out of {{ event.get('entry_count') }}</span>
+            </td>
+            <td>
+              <h3>{{ (tournamentScore.get('score') or 0) | int }} pts.</h3>
+            </td>
+            <td class="tournament-user-banner__buttons hidden-xs">
+              <a href="{{ buildUrl(event, 'event', 'tournament-leaderboard') }}" class="btn btn-default">View in leaderboard</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="spacing"></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <h1>Tournament games <span class="count">({{ entries.length }})</span></h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      {% if ['closed', 'results'].includes(event.get('status_tournament')) %}
+        <p class="featured"><b>Note:</b> This tournament is closed. New high scores will appear here, but will no longer impact the tournament points and rankings.</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-9 col-sm-12">
+      <div class="game-grid-3 tournament">
+        {% for entry in entries %}
+        <div class="game-grid-entry">
+          {{ eventMacros.entryThumb(entry) }}
+          <div class="entry-thumb__form">
+            {{ scoreMacros.highScoresLinks(entry, user, path) }}
+          </div>
+          <div style="display: flex">
+          {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')]) }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-md-3 sm-hidden">
+      <h2>Recent scores</h2>
+      {% for entryScore in activeEntries %}
+        {{ scoreMacros.highScoreThumb(entryScore) }}
+      {% endfor %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      {{ scoreMacros.pointsDistributionLegend(constants.TOURNAMENT_POINTS_DISTRIBUTION) }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

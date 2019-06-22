@@ -1,17 +1,17 @@
 # Local files
-node_modules/
-config.js
+/node_modules
+/config.js
 
 # Generated output
-dist/
+/dist
 
 # Docs
-docs/
+/docs
 
 # Data
-data/
-coverage/
-cypress/tmp
+/data
+/coverage
+/cypress/tmp
 *.log
 *.out
 *.pid

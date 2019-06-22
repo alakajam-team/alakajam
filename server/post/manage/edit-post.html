@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% import "_macros-form.html" as formMacros %}
+
+{% block body %}
+
+<div class="container">
+<div class="row">
+<div class="col-lg-offset-1 col-lg-10">
+
+  <h1 id="title-display"></h1>
+  
+  <form method="post" class="js-warn-on-unsaved-changes">
+    {{ csrfToken() | safe }}
+        
+    {% if errorMessage %}
+      <div class="alert alert-warning">{{ errorMessage }}</div>
+    {% endif %}
+
+    <div class="form-group input-group-lg">
+      <label for="title">Title</label>
+      <input type="text" class="form-control js-sync-text" name="title" value="{{ post.get('title') }}" required="required"
+        data-sync-text-display-selector="#title-display"
+        data-sync-text-default="{{ specialPostType | capitalize if specialPostType else 'Blog post' }}">
+    </div>
+    
+    <div class="form-group">
+      {% if isMod(user) %}
+        <select name="special-post-type" class="js-select form-control"
+           data-placeholder="Special post type" data-allow-clear="true">
+          <option value=""></option>
+          {% for type in constants.SPECIAL_POST_TYPES %}
+            <option value="{{ type }}" {{ 'selected' if type === specialPostType }}>{{ type | capitalize }}</option>
+          {% endfor %}
+        </select>
+      {% elseif specialPostType %}
+        <div class="post__special-type">
+          <span class="post__special-type-label">
+            <span class="hidden-xs visible-sm visible-md visible-lg">
+              {{ specialPostType | upper }}
+            </span>
+            <span class="visible-xs hidden-sm">
+              <span class="fas fa-thumbtack"></span>
+            </span>
+          </span>
+        </div>
+      {% endif %}
+    </div>
+
+
+    <div class="form-group">
+      <label>Related event</label>
+      <div class="form-inline">
+        {{ formMacros.select('event-id', allEvents, relatedEvent.get('id') if relatedEvent, { nullable: true }) }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="body">Body</label>
+      {{ formMacros.editor('body', post.get('body')) }}
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4">
+        {% if post.has('id') %}
+        <a class="btn btn-danger" onclick="return confirm('Delete the post? This cannot be reverted!')" href="{{ buildUrl(post, 'post', 'delete') }}">Delete</a> 
+        {% endif %}
+      </div>
+      <div class="col-xs-8 post__actions text-right">
+        {% if post.get('published_at') %}
+        <input type="submit" class="btn btn-primary" name="save" value="Save changes" />
+        <input type="submit" class="btn btn-default" name="unpublish" value="Unpublish" />
+        {% else %}
+        <input type="submit" class="btn btn-primary" name="publish" value="Save and publish now" />
+        <input type="submit" class="btn btn-default" name="save-draft" value="Save draft" />
+        {% endif %}
+        <input type="button" class="btn btn-default js-show js-hide" name="save" value="Schedule..." data-show-selector=".post__schedule" data-hide-selector=".post__actions" />
+        <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
+      </div>
+      <div class="col-xs-8 post__schedule text-right form-inline">
+        <div class="form-group">
+          <label for="published-at">Publication date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)</label>
+          {{ formMacros.dateTimePicker('published-at', post.get('published_at')) }}
+        </div>
+        <div class="form-group">
+          <input type="submit" class="btn btn-primary" name="save-custom" value="Schedule" />
+          <input type="button" class="btn btn-default js-show js-hide" value="Back..." data-show-selector=".post__actions" data-hide-selector=".post__schedule" />
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+</div>
+</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %} 
+{{ formMacros.editorScripts() }}
+{% endblock %}

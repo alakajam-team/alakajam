@@ -10,14 +10,20 @@ import * as csurf from "csurf";
 import * as multer from "multer";
 import * as randomKey from "random-key";
 import * as configUtils from "server/core/config";
-import articleController from "./article/article.controller";
-import adminController from "./legacy/controllers/admin-controller";
-import apiController from "./legacy/controllers/api-controller";
-import entryController from "./legacy/controllers/entry-controller";
-import eventController from "./legacy/controllers/event-controller";
-import mainController from "./legacy/controllers/main-controller";
-import postController from "./legacy/controllers/post-controller";
-import userController from "./legacy/controllers/user-controller";
+import adminController from "./admin/admin.controller";
+import apiController from "./api/api.controller";
+import { chat } from "./chat/chat.controller";
+import { articleApiRoot, articleView } from "./docs/article.controller";
+import { changes } from "./docs/changes/changes.controller";
+import entryController from "./entry/entry.controller";
+import { games } from "./entry/games.controller";
+import eventController from "./event/event.controller";
+import { events } from "./event/events.controller";
+import { globalMiddleware } from "./global.middleware";
+import { home } from "./home/home.controller";
+import postController from "./post/post.controller";
+import { people, peopleMods } from "./user/people.controller";
+import userController from "./user/user.controller";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
@@ -33,7 +39,7 @@ export default {
 
     // Run all middleware before any actual route handlers
 
-    router.use("*", mainController.anyPageMiddleware);
+    router.use("*", globalMiddleware);
     router.use("/admin*", adminController.adminMiddleware);
     // Why `{0,}` instead of `*`? See: https://github.com/expressjs/express/issues/2495
     router.use("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?/:rest*?", entryController.entryMiddleware);
@@ -44,14 +50,14 @@ export default {
 
     // General
 
-    router.get("/", mainController.home);
-    router.get("/events", mainController.events);
-    router.get("/games", mainController.games);
-    router.get("/people", mainController.people);
-    router.get("/people/mods", mainController.peopleMods);
-    router.get("/user", mainController.people);
-    router.get("/chat", mainController.chat);
-    router.get("/changes", mainController.changes);
+    router.get("/", home);
+    router.get("/events", events);
+    router.get("/games", games);
+    router.get("/people", people);
+    router.get("/people/mods", peopleMods);
+    router.get("/user", people);
+    router.get("/chat", chat);
+    router.get("/changes", changes);
 
     // Users
 
@@ -147,11 +153,11 @@ export default {
 
     // Articles
 
-    router.get("/article/:name", articleController.viewArticle);
+    router.get("/article/:name", articleView);
 
     // JSON API
 
-    router.get("/api", articleController.getArticleJson);
+    router.get("/api", articleApiRoot);
     router.get("/api/featuredEvent", apiController.getFeaturedEvent);
     router.get("/api/event", apiController.getEventTimeline);
     router.get("/api/event/:event", apiController.getEvent);

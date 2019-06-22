@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% import "user/_macros-user.html" as userMacros %}
+
+{% block body %}
+
+{% set options = { dashboardAdminMode: dashboardAdminMode } %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-4 col-md-3">
+      <div class="list-group">
+        <div class="list-group-item">
+          <h4 style="margin: 0">User dashboard</h4>
+        </div>
+        <div class="list-group-item">
+          {{ userMacros.userThumb(dashboardUser, { fullWidth: true, centered: true }) }}
+        </div>
+        {{ dashboardLink(dashboardUser, 'feed', 'Home', options) }}
+        {{ dashboardLink(dashboardUser, 'entries', 'Entries', options) }}
+        {{ dashboardLink(dashboardUser, 'posts', 'Posts', options) }}
+        {{ dashboardLink(dashboardUser, 'scores', 'Scores', options) }}
+        {{ dashboardLink(dashboardUser, 'settings', 'Settings', options) }}
+        {{ dashboardLink(dashboardUser, 'password', 'Change password', options) }}
+      </div>
+    </div>
+    <div class="col-sm-8 col-md-9">
+      {% if dashboardAdminMode %}
+        <h2 style="margin-bottom: 20px">
+          <span class="label label-danger">
+            <span class="fas fa-user"></span> 
+            {{ dashboardUser.get('title') }}
+          </span>
+        </h2>
+      {% endif %}
+
+      {% if infoMessage %}
+        <div class="alert alert-info">{{ infoMessage }}</div>
+      {% endif %}
+      {% if errorMessage %}
+        <div class="alert alert-warning">{{ errorMessage }}</div>
+      {% endif %}
+
+      {% block dashboardBody %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% macro dashboardLink(dashboardUser, page, label, options) %}
+  {% set url = buildUrl(dashboardUser, 'user', page, options) %}
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path.indexOf(url) === 0 }} 
+    {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">{{ label }}</a>
+{% endmacro %}
