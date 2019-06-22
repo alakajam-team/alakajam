@@ -1,8 +1,8 @@
 import * as moment from "moment";
 import settings from "server/core/settings";
-import eventThemeService from "server/event/event-theme.service";
-import eventRatingService from "../event/event-rating.service";
+import eventThemeService from "server/event/theme/event-theme.service";
 import eventService from "../event/event.service";
+import eventRatingService from "../event/rating/event-rating.service";
 import postService from "../post/post.service";
 import userService from "../user/user.service";
 import constants from "./constants";

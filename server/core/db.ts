@@ -55,12 +55,16 @@ function initBookshelf() {
     await promisify(fs.copyFile)(config.DB_SQLITE_FILENAME, BACKUP_PATH);
   };
 
-  bookshelf.getBackupDate = async () => {
-    _assertSQLite();
-    if (await promisify(fs.exists)(BACKUP_PATH)) {
-      const stat = await promisify(fs.stat)(BACKUP_PATH);
-      return stat.mtime;
-    } else {
+  bookshelf.getBackupDate = async (): Promise<Date|false> => {
+    try {
+      _assertSQLite();
+      if (await promisify(fs.exists)(BACKUP_PATH)) {
+        const stat = await promisify(fs.stat)(BACKUP_PATH);
+        return stat.mtime;
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   };

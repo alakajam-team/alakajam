@@ -12,17 +12,19 @@ import * as randomKey from "random-key";
 import * as configUtils from "server/core/config";
 import adminController from "./admin/admin.controller";
 import apiController from "./api/api.controller";
-import { chat } from "./chat/chat.controller";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
 import entryController from "./entry/entry.controller";
-import { games } from "./entry/games.controller";
 import eventController from "./event/event.controller";
-import { events } from "./event/events.controller";
+import { eventDelete, eventManage, eventManageEntries, eventManageTemplate, eventManageThemes, eventManageTournament } from "./event/manage/event-manage.controller";
+import { chat } from "./explore/chat.controller";
+import { events } from "./explore/events.controller";
+import { games } from "./explore/games.controller";
+import { peopleMods } from "./explore/people-mods.controller";
+import { people } from "./explore/people.controller";
 import { globalMiddleware } from "./global.middleware";
 import { home } from "./home/home.controller";
 import postController from "./post/post.controller";
-import { people, peopleMods } from "./user/people.controller";
 import userController from "./user/user.controller";
 
 const upload = initUploadMiddleware();
@@ -113,9 +115,9 @@ export default {
     router.all("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit-scores", csrf, entryController.editScores);
 
     const eventFormParser = upload.fields([{ name: "logo", maxCount: 1 }, { name: "banner", maxCount: 1 }]);
-    router.get("/pick_event_template", csrf, eventController.pickEventTemplate);
-    router.get("/create_event", csrf, eventController.editEvent);
-    router.post("/create_event", eventFormParser, csrf, eventController.editEvent);
+    router.get("/pick_event_template", csrf, eventManageTemplate);
+    router.get("/create_event", csrf, eventManage);
+    router.post("/create_event", eventFormParser, csrf, eventManage);
     router.get("/:eventName([^/]{0,}-[^/]{0,})", eventController.viewDefaultPage);
     router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", eventController.viewEventAnnouncements);
     router.get("/:eventName([^/]{0,}-[^/]{0,})/posts", eventController.viewEventPosts);
@@ -128,16 +130,15 @@ export default {
     router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-games", csrf, eventController.viewEventTournamentGames);
     router.post("/:eventName([^/]{0,}-[^/]{0,})/tournament-games", csrf, eventController.submitTournamentGame);
     router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-leaderboard", eventController.viewEventTournamentLeaderboard);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/edit", csrf, eventController.editEvent);
-    router.post("/:eventName([^/]{0,}-[^/]{0,})/edit", eventFormParser, csrf, eventController.editEvent);
-    router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventController.editEventThemes);
-    router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-entries", csrf, eventController.editEventEntries);
-    router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-tournament-games", csrf, eventController.editEventTournamentGames);
-    router.get("/:eventName([^/]{0,}-[^/]{0,})/delete", csrf, eventController.deleteEvent);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/edit", csrf, eventManage);
+    router.post("/:eventName([^/]{0,}-[^/]{0,})/edit", eventFormParser, csrf, eventManage);
+    router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventManageThemes);
+    router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-entries", csrf, eventManageEntries);
+    router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-tournament-games", csrf, eventManageTournament);
+    router.get("/:eventName([^/]{0,}-[^/]{0,})/delete", csrf, eventDelete);
 
     // Posts
 
-    // Matches both post and posts
     router.get("/posts?", postController.viewPosts);
 
     router.get("/post/create", csrf, postController.editPost);

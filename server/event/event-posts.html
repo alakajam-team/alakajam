@@ -1,0 +1,31 @@
+{% extends "event/_page-event.html" %}
+{% import "post/post.macros.html" as postMacros with context %}
+{% import "macros/form.macros.html" as formMacros %}
+
+{% block body %}
+{{ super() }}
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10">
+      <div class="{{ 'spacing' if user }}">
+        {% for post in posts %}
+          <div class="expandable">
+            {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+            {{ formMacros.expandCollapse() }}
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if posts.length > 0 %}
+        {{ formMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
+      {% else %}
+        <div class="well">
+          No posts yet.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

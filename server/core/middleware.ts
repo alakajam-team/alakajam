@@ -19,6 +19,7 @@ import * as expressSession from "express-session";
 import * as path from "path";
 import * as randomKey from "random-key";
 import settings from "server/core/settings";
+import { createErrorRenderingMiddleware, errorPage } from "server/error/error.middleware";
 import controllers from "server/routes";
 import userService from "server/user/user.service";
 import { promisify } from "util";
@@ -135,21 +136,7 @@ async function configure(app) {
   controllers.initRoutes(app);
 
   // Routing: 500/404
-  app.use(function renderErrors(error, req, res, next) {
-    if (!error) {
-      errorPage(req, res, 404, undefined, app.locals.devMode);
-    } else {
-      if (error.code === "EBADCSRFTOKEN") {
-        // Replace the default error message from csurf by something more user friendly.
-        error.message = "Invalid CSRF token. Your session may have expired. Please go back and try again.";
-      } else if (error.code === "LIMIT_FILE_SIZE") {
-        // Same with multer's upload size limit
-        error.statusCode = 400;
-        error.message = "Attachment is too large, please go back and check the size limit";
-      }
-      errorPage(req, res, error.statusCode || 500, error, app.locals.devMode);
-    }
-  });
+  app.use(createErrorRenderingMiddleware(app.locals.devMode));
 }
 
 function cleanupFormFilesCallback(req, res) {
@@ -232,46 +219,4 @@ async function findOrCreateSessionKey() {
     await settings.save(constants.SETTING_SESSION_KEY, sessionKey);
   }
   return sessionKey;
-}
-
-/*
- * Middleware displaying an error page
- * code = HTTP error code
- * error = Error object or string message (optional)
- */
-function errorPage(req, res, code, error, devMode) {
-  const stack = devMode ? error && error.stack : undefined;
-  let message = (typeof error === "object") ? error.message : error;
-  let title;
-  switch (code) {
-    case 404:
-      title = "Page not found";
-      break;
-    case 403:
-      title = "Forbidden";
-      break;
-    case 500:
-      title = "Internal error";
-      if (!devMode) {
-        message = "Something went wrong, sorry about that.";
-      }
-      break;
-    default:
-      title = "Error";
-  }
-
-  // Internal error logging
-  if (code !== 404 && code !== 403) {
-    log.error(`HTTP ${code}: ${message}` + (error ? "\n" + error.stack : ""));
-  }
-
-  // Page rendering
-  res.status(code);
-  res.render("error", {
-    code,
-    title,
-    message,
-    stack,
-    path: req.originalUrl, // Needed by _page.html, normally added by anyPageMiddleware
-  });
 }

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% import "post/_macros-post.html" as postMacros with context %}
-{% import "user/_macros-user.html" as userMacros %}
+{% import "post/post.macros.html" as postMacros with context %}
+{% import "user/user.macros.html" as userMacros %}
 {% import "event/event.macros.html" as eventMacros %}
-{% import "_macros-form.html" as formMacros %}
-{% import "entry/_macros-score.html" as scoreMacros %}
+{% import "macros/form.macros.html" as formMacros %}
+{% import "entry/highscore/highscore.macros.html" as scoreMacros %}
 
 {% macro ratingCountPhrase(entry, entryVotes) %}
   <p>This <strong>{{ entry.get('division') | capitalize }}</strong> entry has received <strong>{{ entryVotes }}</strong> rating{{ 's' if entryVotes !== 1 }} so far.</p>

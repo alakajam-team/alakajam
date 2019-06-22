@@ -1,0 +1,61 @@
+{% extends "event/manage/event-manage.base.html" %}
+{% import "macros/form.macros.html" as formMacros %}
+{% import "event/event.macros.html" as eventMacros %}
+
+{% block editEventBody %}
+
+<h1>{{ event.get('title') }} tournament games <span class="count">({{ tournamentEntries.length or '0' }})</span></h1>
+
+<p>This page lets you manage the games for which high scores are counted in the tournament's leaderboard.</p>
+
+{% set canRefreshResult = ['playing', 'closed'].includes(event.get('status_tournament')) %}
+{% if canRefreshResult %}
+  <form method="post" class="form-inline">
+    <p>
+      {{ csrfToken() | safe }}
+      <input type="submit" name="refresh" class="btn btn-primary" value="Refresh all tournament scores" 
+        onclick="return confirm('Refresh all tournament scores?')" /> 
+    </p>
+  </form>
+{% elseif event.get('status_tournament') === 'results' %}
+  <p class="featured"><b>Note:</b> The tournament results are out. The options for refreshing the scores/rankings have been disabled.</p>
+{% endif %}
+
+<div class="game-grid edit-event-tourn">
+  {% for tournamentEntry in tournamentEntries %}
+    {% set entry = tournamentEntry.related('entry') %}
+    <div class="game-grid-entry">
+      {{ eventMacros.entryThumb(entry) }}
+      {% if entry.get('status_high_score') === 'off' %} 
+        <div class="entry-thumb__form"><span class="label label-danger">High scores are not enabled</span></div>
+      {% endif %}
+      <form method="post" class="form-inline form-group" style="margin-top: 5px">
+        {{ csrfToken() | safe }}
+        <input type="hidden" name="id" value="{{ entry.get('id') }}" />
+        <label for="ordering">Order&nbsp;</label>
+        <input type="text" name="ordering" class="form-control" value="{{ tournamentEntry.get('ordering') }}" style="max-width: 50px"  />
+        <button type="submit" name="update" class="btn btn-primary">
+          <span class="fas fa-save"></span>
+        </button>
+        {% if canRefreshResult %}
+        <button type="submit" name="refresh" class="btn btn-default" onclick="return confirm('Refresh all tournament scores involving &quot;{{ entry.get('title').replace('\'', '\\\'') | escape }}&quot;?')">
+          <span class="fas fa-sync"></span>
+        </button>
+        {% endif %}
+        <button type="submit" name="remove" class="btn btn-default" onclick="return confirm('Remove &quot;{{ entry.get('title') | escape }}&quot; from the tournament?')">
+          <span class="fas fa-trash"></span>
+        </button>
+      </form>
+    </div>
+  {% endfor %}
+  <div class="game-grid-entry">
+  <h3>Add game</h3>
+  <form method="post" class="form-inline">
+    {{ csrfToken() | safe }}
+    <input type="number" name="add" class="form-control" placeholder="Entry ID" style="max-width: 120px" />
+    <input type="submit" class="btn btn-primary" value="Add" /> 
+  </form>
+  </div>
+</div>
+
+{% endblock %}

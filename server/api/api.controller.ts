@@ -11,8 +11,8 @@ import config from "server/core/config";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import { buildUrl } from "server/core/templating-functions";
-import eventThemeService from "server/event/event-theme.service";
 import eventService from "server/event/event.service";
+import eventThemeService from "server/event/theme/event-theme.service";
 import * as url from "url";
 import userService from "../user/user.service";
 
@@ -349,7 +349,7 @@ function _renderJson(req, res, statusCode, json) {
   res.status(statusCode);
   if (req.query.pretty) {
     res.locals.pageTitle = "API Preview for " + req.path;
-    res.render("api/pretty", { apiPath: req.path, json });
+    res.render("api/api-pretty", { apiPath: req.path, json });
   } else {
     res.json(json);
   }

@@ -1,8 +1,8 @@
-{% extends "user/_page-dashboard.html" %}
-{% import "_macros-form.html" as formMacros with context %}
+{% extends "user/dashboard/dashboard.base.html" %}
+{% import "macros/form.macros.html" as formMacros with context %}
 {% import "event/event.macros.html" as entryMacros with context %}
-{% import "entry/_macros-score.html" as scoreMacros with context %}
-{% import "user/_macros-user.html" as userMacros  with context %}
+{% import "entry/highscore/highscore.macros.html" as scoreMacros with context %}
+{% import "user/user.macros.html" as userMacros  with context %}
  
 {% block dashboardBody %}
 

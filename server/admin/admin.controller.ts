@@ -13,10 +13,10 @@ import log from "server/core/log";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import platformService from "../entry/platform/platform-service";
+import tagService from "../entry/tag/tag.service";
 import eventService from "../event/event.service";
-import likeService from "../like/like.service";
+import likeService from "../post/like/like.service";
 import postService from "../post/post.service";
-import tagService from "../tag/tag.service";
 import userService from "../user/user.service";
 
 export default {

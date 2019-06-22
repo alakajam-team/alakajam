@@ -8,7 +8,6 @@
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
-import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import security from "server/core/security";
@@ -16,14 +15,14 @@ import settings from "server/core/settings";
 import templating from "server/core/templating-functions";
 import highScoreService from "server/entry/highscore/highscore-service";
 import platformService from "server/entry/platform/platform-service";
-import eventTournamentService from "server/event/event-tournament.service";
-import likeService from "server/like/like.service";
+import tagService from "server/entry/tag/tag.service";
+import eventTournamentService from "server/event/tournament/tournament.service";
+import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
-import tagService from "server/tag/tag.service";
 import userService from "server/user/user.service";
-import eventRatingService from "./event-rating.service";
-import eventThemeService from "./event-theme.service";
 import eventService from "./event.service";
+import eventRatingService from "./rating/event-rating.service";
+import eventThemeService from "./theme/event-theme.service";
 
 export default {
   handleEventUserShortcuts,
@@ -42,13 +41,6 @@ export default {
   viewEventTournamentGames,
   submitTournamentGame,
   viewEventTournamentLeaderboard,
-
-  pickEventTemplate,
-  editEvent,
-  editEventThemes,
-  editEventEntries,
-  editEventTournamentGames,
-  deleteEvent,
 
   ajaxFindThemes,
   ajaxSaveVote,
@@ -230,7 +222,7 @@ async function viewEventAnnouncements(req, res) {
     specialPostType: "announcement",
   });
 
-  res.render("event/view-event-announcements", {
+  res.render("event/event-announcements", {
     posts,
     userLikes: await likeService.findUserLikeInfo(posts, res.locals.user),
   });
@@ -247,7 +239,7 @@ async function viewEventPosts(_, res) {
   });
   await postsCollection.load(["entry", "event"]);
 
-  res.render("event/view-event-posts", {
+  res.render("event/event-posts", {
     posts: postsCollection.models,
     pageCount: postsCollection.pagination.pageCount,
     userLikes: await likeService.findUserLikeInfo(postsCollection, res.locals.user),
@@ -379,7 +371,7 @@ async function viewEventThemes(req, res) {
       await event.load("details");
     }
 
-    res.render("event/view-event-themes", context);
+    res.render("event/theme/event-themes", context);
   }
 }
 
@@ -472,7 +464,7 @@ async function viewEventGames(req, res) {
     voteHistory = voteHistoryCollection.models;
   }
 
-  res.render("event/view-event-games", {
+  res.render("event/event-games", {
     rescueEntries,
     requiredVotes,
     entriesCollection,
@@ -586,7 +578,7 @@ async function viewEventResults(req, res) {
     });
   }
 
-  res.render("event/view-event-results", context);
+  res.render("event/rating/event-results", context);
 }
 
 /**
@@ -614,7 +606,7 @@ async function viewEventTournamentGames(req, res) {
       limit: 10
     })).models;
 
-  res.render("event/view-event-tourn-games", {
+  res.render("event/tournament/tournament-games", {
     entries,
     highScoresMap,
     userScoresMap,
@@ -648,413 +640,10 @@ async function viewEventTournamentLeaderboard(req, res) {
 
   const tEntries = await eventTournamentService.findTournamentEntries(event);
 
-  res.render("event/view-event-tourn-leaderboard", {
+  res.render("event/tournament/tournament-leaderboard", {
     tournamentScores: (await eventTournamentService.findTournamentScores(event)).models,
     entries: tEntries.map((tEntry) => tEntry.related("entry")),
   });
-}
-
-async function pickEventTemplate(req, res) {
-  if (!security.isMod(res.locals.user)) {
-    res.errorPage(403);
-    return;
-  }
-
-  res.render("event/pick-event-template", {
-    eventTemplates: (await eventService.findEventTemplates()).models,
-  });
-}
-
-/**
- * Edit or create an event
- */
-async function editEvent(req, res) {
-  if (!security.isMod(res.locals.user)) {
-    res.errorPage(403);
-    return;
-  }
-
-  let errorMessage = res.locals.errorMessage;
-  let infoMessage = "";
-  let redirected = false;
-  let event = res.locals.event;
-
-  if (req.body && req.body.name && req.body.title) {
-    const creation = !event;
-
-    // TODO Fields should not be reset if validation fails
-    if (!forms.isSlug(req.body.name)) {
-      errorMessage = "Name is not a valid slug";
-    } else if (req.body.name.indexOf("-") === -1) {
-      errorMessage = "Name must contain at least one hyphen (-)";
-    } else if (req.body["event-preset-id"] && !forms.isInt(req.body["event-preset-id"])) {
-      errorMessage = "Invalid event preset ID";
-    } else if (!forms.isIn(req.body.status, enums.EVENT.STATUS)) {
-      errorMessage = "Invalid status";
-    } else if (!forms.isIn(req.body["status-theme"], enums.EVENT.STATUS_THEME) &&
-        !forms.isId(req.body["status-theme"])) {
-      errorMessage = "Invalid theme status";
-    } else if (!forms.isIn(req.body["status-entry"], enums.EVENT.STATUS_ENTRY)) {
-      errorMessage = "Invalid entry status";
-    } else if (!forms.isIn(req.body["status-results"], enums.EVENT.STATUS_RESULTS) &&
-        !forms.isId(req.body["status-results"])) {
-      errorMessage = "Invalid results status";
-    } else if (!forms.isIn(req.body["status-tournament"], enums.EVENT.STATUS_TOURNAMENT)) {
-      errorMessage = "Invalid tournament status";
-    } else if (event) {
-      const matchingEventsCollection = await eventService.findEvents({ name: req.body.name });
-      for (const matchingEvent of matchingEventsCollection.models) {
-        if (event.id !== matchingEvent.id) {
-          errorMessage = "Another event with the same exists";
-        }
-      }
-    }
-    if (!errorMessage) {
-      try {
-        req.body.divisions = JSON.parse(req.body.divisions || "{}");
-      } catch (e) {
-        errorMessage = "Invalid divisions JSON";
-      }
-    }
-    if (!errorMessage) {
-      try {
-        req.body["category-titles"] = JSON.parse(req.body["category-titles"] || "[]");
-        if (req.body["category-titles"].length > constants.MAX_CATEGORY_COUNT) {
-          errorMessage = "Events cannot have more than " + constants.MAX_CATEGORY_COUNT + " rating categories";
-        }
-      } catch (e) {
-        errorMessage = "Invalid rating category JSON";
-      }
-    }
-    if (!errorMessage) {
-      try {
-        req.body.links = JSON.parse(req.body.links || "[]");
-      } catch (e) {
-        errorMessage = "Invalid links JSON";
-      }
-    }
-    if (!errorMessage && (req.files.logo || req.body["logo-delete"])) {
-      const file = req.files.logo ? req.files.logo[0] : null;
-      const result = await fileStorage.savePictureToModel(event, "logo", file,
-        req.body["logo-delete"], `/events/${event.get("name")}/logo`, { maxDiagonal: 1000 });
-      if (result.error) {
-        errorMessage = result.error;
-      }
-    }
-
-    if (!errorMessage) {
-      if (creation) {
-        event = eventService.createEvent();
-      }
-
-      const previousName = event.get("name");
-      event.set({
-        title: forms.sanitizeString(req.body.title),
-        name: req.body.name,
-        display_dates: forms.sanitizeString(req.body["display-dates"]),
-        display_theme: forms.sanitizeString(req.body["display-theme"]),
-        started_at: forms.parseDateTime(req.body["started-at"]),
-        divisions: req.body.divisions,
-        event_preset_id: req.body["event-preset-id"] || null,
-        status: req.body.status,
-        status_rules: req.body["status-rules"],
-        status_theme: req.body["status-theme"],
-        status_entry: req.body["status-entry"],
-        status_results: req.body["status-results"],
-        status_tournament: req.body["status-tournament"],
-        countdown_config: {
-          message: forms.sanitizeString(req.body["countdown-message"]),
-          link: forms.sanitizeString(req.body["countdown-link"]),
-          date: forms.parseDateTime(req.body["countdown-date"]),
-          phrase: forms.sanitizeString(req.body["countdown-phrase"]),
-          enabled: req.body["countdown-enabled"] === "on",
-        },
-      });
-
-      // Triggers
-      if (event.hasChanged("status_theme") && event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST) {
-        await eventThemeService.computeShortlist(event);
-        infoMessage = "Theme shortlist computed.";
-      }
-      if (event.hasChanged("status_results")) {
-        if (event.get("status_results") === enums.EVENT.STATUS_RESULTS.RESULTS) {
-          await eventRatingService.computeRankings(event);
-          infoMessage = "Event results computed.";
-        } else if (event.previous("status_results") === enums.EVENT.STATUS_RESULTS.RESULTS) {
-          await eventRatingService.clearRankings(event);
-          infoMessage = "Event results cleared.";
-        }
-      }
-      if (event.hasChanged("status_tournament")
-          && event.previous("status_tournament") === enums.EVENT.STATUS_TOURNAMENT.OFF) {
-        // Pre-fill leaderboard with people who were already in the high scores
-        eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
-      }
-
-      // Caches clearing
-      cache.general.del("active-tournament-event");
-      const nameChanged = event.hasChanged("name");
-      event = await event.save();
-      cache.eventsById.del(event.get("id"));
-      cache.eventsByName.del(event.get("name"));
-      if (nameChanged && previousName) {
-        await eventService.refreshEventReferences(event);
-        cache.eventsByName.del(previousName);
-      }
-
-      // Event details update
-      const eventDetails = event.related("details");
-      eventDetails.set({
-        links: req.body.links,
-        category_titles: req.body["category-titles"],
-      });
-      if (req.files.banner || req.body["banner-delete"]) {
-        const file = req.files.banner ? req.files.banner[0] : null;
-        const result = await fileStorage.savePictureToModel(eventDetails, "banner", file,
-          req.body["banner-delete"], `/events/${event.get("name")}/banner`, { maxDiagonal: 3000 });
-        if (result.error) {
-          errorMessage = result.error;
-        }
-      }
-      await eventDetails.save();
-
-      if (creation) {
-        res.redirect(templating.buildUrl(event, "event", "edit"));
-        redirected = true;
-      }
-    }
-  }
-
-  if (!redirected) {
-    // Initialize event (optionally from template)
-    if (!event) {
-      let eventTemplate = null;
-      if (forms.isId(req.query["event-template-id"])) {
-        eventTemplate = await eventService.findEventTemplateById(parseInt(req.query["event-template-id"], 10));
-      }
-      event = eventService.createEvent(eventTemplate);
-    }
-
-    // Render
-    res.render("event/edit-event", {
-      event,
-      eventPresetsData: (await eventService.findEventPresets()).toJSON(),
-      infoMessage,
-      errorMessage,
-    });
-  }
-}
-
-/**
- * Manage the event's submitted themes
- */
-async function editEventThemes(req, res) {
-  res.locals.pageTitle += " | Themes";
-
-  if (!security.isMod(res.locals.user)) {
-    res.errorPage(403);
-    return;
-  }
-
-  // Init context
-  const event = res.locals.event;
-  const shortlistCollection = await eventThemeService.findShortlist(event);
-  const context: any = {
-    eliminationMinNotes: await settings.findNumber(
-      constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
-    eliminationThreshold: await settings.findNumber(
-      constants.SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58),
-    shortlist: shortlistCollection.models,
-    eliminatedShortlistThemes: eventThemeService.computeEliminatedShortlistThemes(event),
-  };
-
-  if (req.method === "POST") {
-    if (forms.isId(req.body.id)) {
-      // Save theme title
-      const theme = await eventThemeService.findThemeById(req.body.id);
-      if (theme) {
-        theme.set("title", forms.sanitizeString(req.body.title));
-        await theme.save();
-      }
-    } else if (req.body.elimination) {
-      // Save shortlist elimination settings
-      const eventDetails = event.related("details");
-      const sanitizedDelay = forms.isInt(req.body["elimination-delay"])
-        ? parseInt(req.body["elimination-delay"], 10) : 8;
-      eventDetails.set("shortlist_elimination", {
-        start: forms.parseDateTime(req.body["elimination-start-date"]),
-        delay: sanitizedDelay,
-        body: forms.sanitizeMarkdown(req.body["elimination-body"]),
-        stream: forms.sanitizeString(req.body.stream),
-      });
-      await eventDetails.save();
-      cache.eventsById.del(event.get("id"));
-      cache.eventsByName.del(event.get("name"));
-    }
-  }
-
-  if (forms.isId(req.query.edit)) {
-    // Edit theme title
-    context.editTheme = await eventThemeService.findThemeById(req.query.edit);
-  } else if (forms.isId(req.query.ban)) {
-    // Ban theme
-    const theme = await eventThemeService.findThemeById(req.query.ban);
-    if (theme) {
-      theme.set("status", enums.THEME.STATUS.BANNED);
-      await theme.save();
-    }
-  } else if (forms.isId(req.query.unban)) {
-    // Unban theme
-    const theme = await eventThemeService.findThemeById(req.query.unban);
-    if (theme) {
-      theme.set("status", (event.get("status_theme") === enums.EVENT.STATUS_THEME.VOTING)
-        ? enums.THEME.STATUS.ACTIVE : enums.THEME.STATUS.OUT);
-      await theme.save();
-    }
-  }
-
-  // Fetch themes list at the end to make sure all changes are visible
-  const themesCollection = await eventThemeService.findAllThemes(event);
-  context.themes = themesCollection.models;
-
-  res.render("event/edit-event-themes", context);
-}
-
-/**
- * Browse event entries
- */
-async function editEventEntries(req, res) {
-  res.locals.pageTitle += " | Entries";
-
-  if (!security.isMod(res.locals.user)) {
-    res.errorPage(403);
-    return;
-  }
-
-  const event = res.locals.event;
-
-  // Find all entries
-  const findGameOptions: any = {
-    eventId: event.get("id"),
-    pageSize: null,
-    withRelated: ["userRoles", "details"],
-  };
-  if (req.query.orderBy === "ratingCount") {
-    findGameOptions.sortByRatingCount = true;
-  }
-  const entriesCollection = await eventService.findGames(findGameOptions);
-
-  // Gather info for karma details
-  const entriesById = {};
-  entriesCollection.each((entry) => {
-    entriesById[entry.get("id")] = entry;
-  });
-  const detailedEntryInfo: any = {};
-  const usersById = {};
-  if (forms.isId(req.query.entryDetails) && entriesById[req.query.entryDetails]) {
-    const eventUsersCollection = await userService.findUsers({ eventId: event.get("id") });
-    eventUsersCollection.each((user) => {
-      usersById[user.get("id")] = user;
-    });
-
-    const entry = entriesById[req.query.entryDetails];
-    await entry.load(["comments", "votes"]);
-    detailedEntryInfo.id = req.query.entryDetails;
-    detailedEntryInfo.given = await eventRatingService.computeKarmaGivenByUserAndEntry(entry, event);
-    detailedEntryInfo.received = await eventRatingService.computeKarmaReceivedByUser(entry);
-    detailedEntryInfo.total = eventRatingService.computeKarma(detailedEntryInfo.received.total,
-      detailedEntryInfo.given.total);
-  }
-
-  res.render("event/edit-event-entries", {
-    entries: entriesCollection.models,
-    entriesById,
-    usersById,
-    detailedEntryInfo,
-  });
-}
-
-/**
- * Manage tournament games
- */
-async function editEventTournamentGames(req, res) {
-  res.locals.pageTitle += " | Tournament games";
-
-  const { user, event } = res.locals;
-
-  if (!security.isMod(user)) {
-    res.errorPage(403);
-    return;
-  }
-
-  let errorMessage;
-  if (req.method === "POST") {
-    // Add to tournament
-    if (req.body.add !== undefined) {
-      if (forms.isId(req.body.add)) {
-        const entry = await eventService.findEntryById(req.body.add);
-        if (entry) {
-          await eventTournamentService.addTournamentEntry(event.get("id"), entry.get("id"));
-          eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry]);
-        } else {
-          errorMessage = "Entry not found with ID " + req.body.add;
-        }
-      } else {
-        errorMessage = "Invalid entry ID";
-      }
-    }
-
-    // Update order
-    if (req.body.update !== undefined && forms.isId(req.body.id)) {
-      if (forms.isInt(req.body.ordering)) {
-        const entry = await eventService.findEntryById(req.body.id);
-        if (entry) {
-          await eventTournamentService.saveTournamentEntryOrdering(event.get("id"), entry.get("id"), req.body.ordering);
-        }
-      } else {
-        errorMessage = "Invalid order";
-      }
-    }
-
-    // Remove from tournament
-    if (req.body.remove !== undefined && forms.isId(req.body.id)) {
-      const entry = await eventService.findEntryById(req.body.id);
-      if (entry) {
-        await eventTournamentService.removeTournamentEntry(event.get("id"), entry.get("id"));
-        eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry]);
-      }
-    }
-
-    // Refresh scores
-    if (req.body.refresh || req.body["refresh-all"]) {
-      const onlyRefreshEntries = (!req.body["refresh-all"] && forms.isId(req.body.refresh))
-        ? [await eventService.findEntryById(req.body.id)] : null;
-      await eventTournamentService.recalculateAllTournamentScores(highScoreService, event, onlyRefreshEntries);
-    }
-  }
-
-  // Load tournament entries
-  res.render("event/edit-event-tourn-games", {
-    tournamentEntries: await eventTournamentService.findTournamentEntries(event),
-    errorMessage,
-  });
-}
-
-/**
- * Delete an event
- */
-async function deleteEvent(req, res) {
-  if (!security.isAdmin(res.locals.user)) {
-    res.errorPage(403);
-    return;
-  }
-
-  if (res.locals.event.get("status") === enums.EVENT.STATUS.PENDING) {
-    await res.locals.event.destroy();
-    res.redirect("/events");
-  } else {
-    res.errorPage(403, "Only pending events can be deleted");
-  }
 }
 
 /**

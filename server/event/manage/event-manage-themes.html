@@ -1,0 +1,176 @@
+{% extends "event/manage/event-manage.base.html" %}
+{% import "macros/form.macros.html" as formMacros %}
+{% import "event/event.macros.html" as eventMacros %}
+
+{% block styles %}
+<style type="text/css">
+.table td {
+  max-width: 200px;
+}
+</style>
+{% endblock %}
+
+{% block editEventBody %}
+
+<h1>{{ event.get('title') }} themes <span class="count">({{ themes.length }})</span></h1>
+
+{% if ['shortlist', 'closed', 'results'].includes(event.get('status_theme')) %}
+<div class="horizontal-bar">
+  Shortlist
+</div>
+<table class="table sortable">
+<thead>
+  <tr>
+  <th>Theme</th>
+  <th data-sort-default aria-sort="ascending">Score</th>
+</tr>
+</thead>
+<tbody>
+{% for theme in shortlist %}
+  <tr>
+    <td>
+      {% if event.get('status_theme') === 'shortlist' %}
+        <span class="label">R E D A C T E D</span>
+      {% else %}
+        {{ theme.get('title') }}
+      {% endif %}
+    </td>
+    <td><strong>{{ theme.get('score') }}</strong></td>
+  </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+<div class="horizontal-bar">
+  Shortlist elimination
+</div>
+
+{% set eventDetails = event.related('details') %}
+<p>This optional feature lets you eliminate shortlisted themes one by one in the hours preceding the jam launch.</p>
+<p>
+  Current state: 
+    {% if eventDetails.get('shortlist_elimination').start %}
+      <span class="label label-success">Enabled</span>
+      <b>(shortlist themes eliminated: {{ eliminatedShortlistThemes }})</b>
+    {% else %}
+      <span class="label">Disabled</span>
+    {% endif %}
+</b>
+
+<form method="post" class="js-warn-on-unsaved-changes">
+  {{ csrfToken() | safe }}
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="start-date">Start date {{ formMacros.tooltip('Specify when the first of the shortlisted themes is eliminated. Eliminations will stop when 3 themes remain. If the date is unset, feature is disabled.') }}</label>
+        {{
+          formMacros.dateTimePicker(
+            'elimination-start-date',
+            eventDetails.get('shortlist_elimination').start,
+            {
+              classes: 'js-show-if-nonempty',
+              attrs: { 'data-show-if-nonempty-selector': '#elimination-details' }
+            })
+          }}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="title">Minutes between eliminations</label>
+        <input type="text" class="form-control" name="elimination-delay" value="{{ eventDetails.get('shortlist_elimination').delay }}" />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="stream">Twitch channel to display on front page</label>
+        <input type="text" class="form-control" name="stream" value="{{ eventDetails.get('shortlist_elimination').stream }}" placeholder="Channel name (e.g. DanaePlays)" />
+      </div>
+    </div>
+  </div>
+  <div id="elimination-details" class="form-group">
+    <label for="elimination-body">Banner {{ formMacros.tooltip('Displayed at the top of the page') }}</label>
+    {{ formMacros.editor('elimination-body', eventDetails.get('shortlist_elimination').body) }}
+  </div>
+  <div class="form-group">
+    <input type="submit" name="elimination" class="btn btn-primary" value="Save changes" />
+  </div>
+</form>
+
+<div class="horizontal-bar">
+  Submitted themes
+</div>
+
+<p>Themes are eliminated when they are no longer <span class="label">New</span> ({{ eliminationMinNotes }} votes or more) and their Elimination Rating gets under <strong>{{ (eliminationThreshold * 100) | digits(1) }}%</strong>.</p>
+
+<table class="table sortable">
+<thead>
+  <tr>
+    <th>#</th>
+    <th>Theme<th>
+    <th>Status</th>
+    <th>Votes</th>
+    <th>Positive %</th>
+    <th width="70" data-sort-default>Elim. Rat. {{ formMacros.tooltip('High bound of a Wilson interval calculation. Smaller means confidently worse theme.') }}</th>
+    <th width="70">Shortlist Rat. {{ formMacros.tooltip('Low bound of a Wilson interval calculation. Higher means confidently better theme.') }}</th>
+    <th data-sort-method="none">Actions</th>
+  </tr>
+</thead>
+<tbody>
+{% for theme in themes %}
+  {% if theme.get('status') !== 'shortlist' %}
+  <tr>
+  <td class="legend">#{{ theme.get('id') }}</td>
+  <td>
+    <a name="{{ theme.get('id') }}"></a>
+    {% if editTheme and editTheme.get('id') === theme.get('id') %}
+      <form method="post" action="?#{{ theme.get('id') }}" class="form-inline">
+        {{ csrfToken() | safe }}
+        <input type="hidden" name="id" value="{{ editTheme.get('id') }}" />
+        <input type="text" name="title" class="form-control" value="{{ editTheme.get('title') }}" />
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a href="?#{{ theme.get('id') }}" class="btn btn-default">Cancel</a>
+      </form>
+    {% elseif theme.get('status') !== 'banned' %}
+      {{ theme.get('title') }}
+    {% else %}
+      <span style="text-decoration: line-through">{{ theme.get('title') }}</span>
+    {% endif %}
+  <td>
+  <td>
+    {{ eventMacros.eventThemeStatus(theme, {uncensored: true}) }}
+    {% if theme.get('status') === 'active' and theme.get('notes') < eliminationMinNotes %}
+      <div class="label" title="New themes cannot be eliminated">New</div>
+    {% endif %}
+  </td>
+  <td data-sort="{{ theme.get('notes') }}">{{ (theme.get('score') + theme.get('notes'))/2 }} / {{ theme.get('notes') }}</td>
+  <td>{{ (50 + (theme.get('normalized_score') or 0) * 50.0) | digits(1) }}%
+  <td>
+    <strong style="{{ 'color: grey' if ['out', 'banned'].includes(theme.get('status')) }}">{{ (theme.get('rating_elimination') * 100.) | digits(1) }}%</strong>
+  </td>
+  <td>
+    <strong style="{{ 'color: grey' if ['out', 'banned'].includes(theme.get('status')) }}">{{ (theme.get('rating_shortlist') * 100.) | digits(1) }}%</strong>
+  </td>
+  <td>
+    <a href="?edit={{ theme.get('id') }}#{{ theme.get('id') }}" class="btn btn-xs btn-default">
+      <span class="fas fa-pencil-alt"></span>
+    </a>
+    {% if theme.get('status') !== 'banned' %}
+      <a href="?ban={{ theme.get('id') }}#{{ theme.get('id') }}" class="btn btn-xs btn-default">Ban</a>
+    {% else %}
+      <a href="?unban={{ theme.get('id') }}#{{ theme.get('id') }}" class="btn btn-xs btn-default">Unban</a>
+    {% endif %}
+  </td>
+  </tr>
+  {% endif %}
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+{{ formMacros.editorScripts() }}
+{% endblock %}

@@ -14,7 +14,7 @@ import security from "server/core/security";
 import highScoreService from "server/entry/highscore/highscore-service";
 import entryImportService from "server/entry/import/entry-import-service";
 import eventService from "server/event/event.service";
-import likeService from "server/like/like.service";
+import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import userService from "./user.service";
 
@@ -146,7 +146,7 @@ async function dashboardFeed(req, res) {
   }
 
   // TODO Limit at the SQL-level
-  res.render("user/dashboard-feed", {
+  res.render("user/dashboard/dashboard-feed", {
     byUser: byUserCollection.take(20),
     toUser: toUserCollection.take(20),
     latestEntry,
@@ -175,7 +175,7 @@ async function dashboardEntries(req, res) {
     }
   });
 
-  res.render("user/dashboard-entries", {
+  res.render("user/dashboard/dashboard-entries", {
     alakajamEntries,
     otherEntries,
     externalEntries,
@@ -196,7 +196,7 @@ async function dashboardPosts(req, res) {
   });
   const draftPosts = allPostsCollection.where({ published_at: null });
 
-  res.render("user/dashboard-posts", {
+  res.render("user/dashboard/dashboard-posts", {
     publishedPosts: allPostsCollection.difference(draftPosts),
     draftPosts,
     newPostEvent,
@@ -220,7 +220,7 @@ async function dashboardScores(req, res) {
       entriesLastActivity[score2.get("entry_id")] - entriesLastActivity[score1.get("entry_id")]);
   }
 
-  res.render("user/dashboard-scores", {
+  res.render("user/dashboard/dashboard-scores", {
     userScores,
     activeEntries: activeEntriesCollection.models,
     entriesLastActivity,
@@ -308,7 +308,7 @@ async function dashboardSettings(req, res) {
     }
   }
 
-  res.render("user/dashboard-settings", {
+  res.render("user/dashboard/dashboard-settings", {
     errorMessage,
     infoMessage,
   });
@@ -345,7 +345,7 @@ async function dashboardPassword(req, res) {
     }
   }
 
-  res.render("user/dashboard-password", {
+  res.render("user/dashboard/dashboard-password", {
     errorMessage,
     infoMessage,
   });
@@ -393,7 +393,7 @@ async function dashboardEntryImport(req, res) {
     }
   }
 
-  res.render("user/dashboard-entry-import", context);
+  res.render("user/dashboard/dashboard-entry-import", context);
 }
 
 /**
@@ -401,7 +401,7 @@ async function dashboardEntryImport(req, res) {
  */
 async function registerForm(req, res) {
   res.locals.pageTitle = "Register";
-  res.render("register");
+  res.render("user/authentication/register");
 }
 
 /**
@@ -431,7 +431,7 @@ async function doRegister(req, res) {
 
   if (errorMessage) {
     req.body.errorMessage = errorMessage;
-    res.render("register", req.body);
+    res.render("user/authentication/register", req.body);
   }
 }
 
@@ -441,7 +441,7 @@ async function doRegister(req, res) {
 async function loginForm(req, res) {
   res.locals.pageTitle = "Login";
 
-  res.render("login", {
+  res.render("user/authentication/login", {
     redirect: forms.sanitizeString(req.query.redirect),
   });
 }
@@ -476,7 +476,7 @@ async function doLogin(req, res) {
   if (!context.errorMessage && context.redirect) {
     res.redirect(context.redirect);
   } else {
-    res.render("login", context);
+    res.render("user/authentication/login", context);
   }
 }
 
@@ -516,7 +516,7 @@ async function passwordRecoveryRequest(req, res) {
     }
   }
 
-  res.render("password-recovery-request", {
+  res.render("user/authentication/password-recovery-request", {
     errorMessage,
   });
 }
@@ -551,7 +551,7 @@ async function passwordRecovery(req, res) {
     }
   }
 
-  res.render("password-recovery", {
+  res.render("user/authentication/password-recovery", {
     errorMessage,
   });
 }

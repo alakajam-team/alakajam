@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% import "macros/tabs.macros.html" as tabsMacros with context %}
+{% import "user/user.macros.html" as userMacros %}
+
+{% block body %}
+
+  <div class="container">
+    {{ tabsMacros.people() }}
+
+    <div class="row spacing">
+      <div class="col-xs-12">
+        <h2>Administrators</h2>
+      </div>
+    </div>
+    <div class="row">
+      {% for admin in admins %}
+        {{ userMacros.userThumb(admin) }}
+      {% endfor %}
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <h2>Moderators</h2>
+      </div>
+    </div>
+    <div class="row">
+      {% for mod in mods %}
+        {{ userMacros.userThumb(mod) }}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

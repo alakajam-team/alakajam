@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<style type="text/css">
+.parameter {
+  padding-right: 10px;
+  vertical-align: top
+}
+.parameter-description {
+  font-size: 0.85rem;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+<h1>{{ apiPath }}</h1>
+
+<p><a href="/api">View API documentation</a></p>
+
+{{ json | prettyDump | safe }}
+
+</div>
+
+{% endblock %}

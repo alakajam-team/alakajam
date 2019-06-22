@@ -10,7 +10,7 @@ import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
-import eventTournamentService from "server/event/event-tournament.service";
+import eventTournamentService from "server/event/tournament/tournament.service";
 
 export default {
   findHighScores,

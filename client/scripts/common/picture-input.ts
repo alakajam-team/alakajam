@@ -1,6 +1,6 @@
 
 /**
- * Automatically triggered on all picture inputs (see _macros-form.html)
+ * Automatically triggered on all picture inputs (see macros/form.macros.html)
  * Supports previewing a picture before it is actually uploaded
  */
 

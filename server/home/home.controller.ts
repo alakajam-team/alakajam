@@ -5,7 +5,7 @@ import enums from "server/core/enums";
 import settings from "server/core/settings";
 import eventController from "server/event/event.controller";
 import eventService from "server/event/event.service";
-import likeService from "server/like/like.service";
+import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 
 /**
@@ -91,5 +91,5 @@ export async function home(req, res) {
     res.locals.userLikes = await likeService.findUserLikeInfo(allPagePosts, res.locals.user);
   }
 
-  res.render("index", context);
+  res.render("home/home", context);
 }

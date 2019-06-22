@@ -14,13 +14,13 @@ import * as models from "server/core/models";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import templating from "server/core/templating-functions";
-import eventTournamentService from "server/event/event-tournament.service";
-import eventRatingService from "../event/event-rating.service";
-import eventService from "../event/event.service";
-import likeService from "../like/like.service";
-import postController from "../post/post.controller";
-import postService from "../post/post.service";
-import tagService from "../tag/tag.service";
+import tagService from "server/entry/tag/tag.service";
+import eventService from "server/event/event.service";
+import eventRatingService from "server/event/rating/event-rating.service";
+import eventTournamentService from "server/event/tournament/tournament.service";
+import likeService from "server/post/like/like.service";
+import postController from "server/post/post.controller";
+import postService from "server/post/post.service";
 import highscoreService from "./highscore/highscore-service";
 import platformService from "./platform/platform-service";
 
@@ -379,7 +379,7 @@ async function editEntry(req, res) {
     }
   }
 
-  res.render("entry/edit-entry", {
+  res.render("entry/manage/entry-manage", {
     entry,
     members: await eventService.findTeamMembers(entry, res.locals.user),
     allPlatforms: await platformService.fetchAllNames(),
@@ -661,7 +661,7 @@ async function editScores(req, res) {
     }
   }
 
-  res.render("entry/edit-scores", {
+  res.render("entry/manage/entry-manage-scores", {
     highScoresCollection: await highscoreService.findHighScores(entry, {
       fetchAll: true,
       withSuspended: true,

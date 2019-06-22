@@ -12,9 +12,9 @@ import forms from "server/core/forms";
 import * as models from "server/core/models";
 import security from "server/core/security";
 import templating from "server/core/templating-functions";
-import eventRatingService from "../event/event-rating.service";
 import eventService from "../event/event.service";
-import likeService from "../like/like.service";
+import eventRatingService from "../event/rating/event-rating.service";
+import likeService from "./like/like.service";
 import postService from "./post.service";
 
 export default {
@@ -331,7 +331,7 @@ async function likePost(req, res) {
   }
 
   if (req.body.ajax) {
-    res.render("post/ajax-likes", {
+    res.render("post/like/ajax-likes", {
       post: await postService.findPostById(post.get("id")),
       userLikes: await likeService.findUserLikeInfo([post], user),
     });

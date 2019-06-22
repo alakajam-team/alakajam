@@ -11,7 +11,7 @@ import forms from "./forms";
 import security from "./security";
 
 const DASHBOARD_PAGES = ["feed", "entries", "posts", "scores", "invite", "settings", "password", "entry-import"];
-const ALTERNATE_STATIC_ROOT_URL = url.resolve(config.ROOT_URL, "static/");
+const ALTERNATE_STATIC_ROOT_URL = config.ROOT_URL;
 
 export default {
   buildUrl,
