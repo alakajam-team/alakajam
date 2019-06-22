@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import "post/post.macros.html" as postMacros with context %}
+{% import "macros/sidebar.macros.html" as sidebarMacros with context %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    {% if sidebar %}
+      <div class="col-sm-4 col-md-3">
+        {{ sidebarMacros.sidebar(sidebar, path, { class: 'articles-sidebar' }) }}
+      </div>
+    {% endif %}
+    <div class="col-sm-8 col-md-9">
+      <h1>{{ articleName }}</h1>
+      <div class="post panel">
+        <div class="post__body panel-body user-contents">
+          {{ articleBody | markdown | safe }}
+        </div>
+      </div>
+  </div>
+</div>
+{% endblock %}
+
+{% macro sideBarLinks(title, sidebarLinks) %}
+  {% if sidebarLinks %}
+    <div class="list-group">
+      <div class="list-group-item">
+        <h3 style="margin: 0">{{ title }}</h3>
+      </div>
+      {% for link in sidebarLinks %}
+        {{ helpLink(link.title, link.url) }}
+        {% for subLink in link.subLinks %}
+          {{ helpSubLink(subLink.title, subLink.url) }}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro helpLink(label, url) %}
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">
+    <h4 style="margin: 0">{{ label }}</h4>
+  </a>
+{% endmacro %}
+
+{% macro helpSubLink(label, url) %}
+  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">
+    <span style="margin-left: 15px">{{ label }}</span>
+  </a>
+{% endmacro %}

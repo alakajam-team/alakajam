@@ -1,0 +1,261 @@
+{% import "macros/form.macros.html" as formMacros %}
+{% import "event/event.macros.html" as eventMacros %}
+
+{# Allowed options: readingUser readingUserLikes hideHeading hideBody hideDetails showId allowMods commentsAnchorLinks #}
+{% macro post(post, options = {}) %}
+
+<div class="post">
+
+  {% set author = post.related('author') %}
+  {% set postUrl = buildUrl(post, 'post') %}
+
+  {% if not options.hideHeading %}
+    {% set h = 'h4' if options.hideBody or options.hideDetails else 'h1' %}
+    {% set specialPostType = post.get('special_post_type') %}
+    <{{h}}>
+      <div class="row">
+        <div class="col-xs-12">
+          <a name="p{{ post.get('id') }}" class="anchor" />
+          <a href="{{ buildUrl(post, 'post') }}" class="post__title">
+            {{ post.get('title') }}
+          </a>
+          {% if canUserWrite(options.readingUser, post, options) %}
+            <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
+          {% endif %}
+          <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
+            <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}
+          </a>
+          <span class="js-like">
+            {{ postLikes(post, options) }}
+          </span>
+          {% if options.showId %}
+            <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </{{h}}>
+  {% endif %}
+  
+  {% if not options.hideDetails %}
+  <div class="panel">
+    <div class="post__details">
+      <a href="{{ buildUrl(author, 'user') }}">
+        {% if author.get('avatar') %}
+          <img src="{{ pictureUrl(author.get('avatar'), author) }}" class="post__avatar" /> 
+        {% else %}
+          <img src="{{ staticUrl('/static/images/default-avatar.png') }}" class="post__avatar" /> 
+        {% endif %}
+        {{ author.get('title') }} 
+      </a>
+      {% if not options.hideDate %}
+      <span>
+         • {% if isPast(post.get('published_at')) %}
+          <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('published_at') | dateTime }}">{{ post.get('published_at') | relativeTime }}</span>
+        {% elseif post.get('published_at') %}
+          <span class="badge">Scheduled</span> for {{ post.get('published_at') | dateTime }}
+        {% else %}
+          <span class="badge">Draft</span>
+        {% endif %}
+      </span>
+      {% endif %}
+
+      {% set relatedEvent = post.related('event') if post.related('event') %}
+      {% set relatedEntry = post.related('entry') %}
+      {%- if relatedEvent.get('id') -%}
+        on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
+      {% endif -%}
+      {%- if relatedEntry.get('id') -%}
+        <span style="display: inline-block;">
+          entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">
+            {%- if relatedEntry.pictureIcon() -%}
+              <img data-src="{{ pictureUrl(relatedEntry.pictureIcon(), relatedEntry) }}" class="no-border js-lazy" style="max-height: 32px; margin-top: -2px;" />
+            {%- endif %}
+            {{ relatedEntry.get('title') -}}
+          </a>
+        </span>
+      {%- endif -%}
+    </div>
+    
+    {% if not options.hideBody %}
+      <div class="post__body panel-body user-contents">
+        {{ post.get('body') | markdown | safe }}
+      </div>
+    {% endif %}
+
+    {% if not options.hideBody and not options.commentsAnchorLinks %}
+    <div class="post__footer">
+      <a href="{{ buildUrl(post, 'post', '#comments') }}">
+        <span class="fas fa-comments"></span>
+        {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
+      </a>
+    </div>
+    {% endif %}
+
+    {% if options.hideBody %}
+      <div class="spacing"></div>
+    {% endif %}
+  </div>
+  
+  {% endif %}
+  
+</div>
+
+{% endmacro %}
+
+{% macro postLikes (post, options = {}) %}
+  <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('like_count') or 0 }} gem{{ 's' if post.get('like_count') != -1 }}">
+    {% if options.readingUser %}
+    {% if options.readingUser.get('id') == post.get('author_user_id') %}
+      <span class="post__like-count liked">
+        <span class="{{ enums.LIKES['like'].icon_liked }}"></span> {{ post.get('like_count') or 0 }}
+      </span>
+    {% elseif options.readingUserLikes %}
+    {% set liked = options.readingUserLikes[post.get('id')] if options.readingUserLikes %}
+      {% set likeType = enums.LIKES[liked] if (liked and enums.LIKES[liked]) else enums.LIKES['like'] %}
+      {% set likeIcon = likeType.icon_liked if liked else likeType.icon_unliked %}
+      <form method="post" action="{{ buildUrl(post, 'post', 'like') }}?redirect={{ path | urlencode }}#p{{ post.get('id') }}" class="post__like-count {{ 'liked' if liked }}">
+        <input type="hidden" name="{{ 'unlike' if liked else 'like' }}" value="like" />
+        <button type="submit" class="js-like-button" data-post-id="{{ post.get('id') }}" data-post-name="{{ post.get('name') }}" data-liked="{{ liked }}">
+          <span class="{{ likeIcon }}"></span> {{ post.get('like_count') or 0 }}
+        </button>
+      </form>
+    {% endif %}
+    {% else %}
+    <a href="/login?redirect={{ path }}" class="post__like-count">
+      <span class="{{ enums.LIKES['like'].icon_unliked }}"></span> {{ post.get('like_count') or 0 }}
+    </a>
+    {% endif %}
+    <i class="js-like-spinner fas fa-spinner fa-spin legend hidden" title="Saving…"></i>
+  </span>
+{% endmacro %}
+
+
+{% macro comments(comments, options = {}) %}
+{% for comment in comments %}
+  {% if options.readingUser and options.editComment and options.editComment.id === comment.id %}
+    {{ commentEditor(comment, options.csrfToken, options) }}
+  {% else %}
+    {% set author = comment.related('user') %}
+    {% set node = comment.related('node') %}
+    {% set isOwnAnonComment = options.editableAnonComments and options.editableAnonComments.includes(comment.get('id')) %}
+    <div class="row comment {{ 'unread' if options.highlightNewerThan and options.highlightNewerThan < comment.get('created_at') }}">
+      {% if options.linkToNode and not lastLinkedNode or node != lastLinkedNode %}
+      <div class="col-xs-12">
+        <h4><a href="{{ buildUrl(node, comment.get('node_type')) }}#c{{ comment.id }}">{{ node.get('title') }}</a></h4>
+        {% set lastLinkedNode = node %}
+      </div>
+      {% endif %}
+      <div class="col-xs-offset-1 col-xs-11">
+        <a class="anchor" name="c{{ comment.id if comment }}"></a>
+        <div class="comment__details">
+          {% if isOwnAnonComment %}
+          <a href="{{ buildUrl(options.readingUser, 'user') }}">
+            <div class="comment__avatar-container">
+              {% if options.readingUser.get('avatar') %}
+              <img src="{{ pictureUrl(options.readingUser.get('avatar'), options.readingUser) }}" /> 
+              {% else %}
+              <img src="{{ staticUrl('/static/images/default-avatar.png') }}" />
+              {% endif %}
+            </div>
+            {{ options.readingUser.get('title') }} <span style="color: black">(as Anonymous)</span>
+          </a>
+          {% else %} 
+            {% if author.get('name') != 'anonymous' %}
+              <a href="{{ buildUrl(author, 'user') }}">
+            {% endif %}
+              <div class="comment__avatar-container">
+                {% if author.get('avatar') %}
+                <img src="{{ pictureUrl(author.get('avatar'), author) }}" /> 
+                {% else %}
+                <img src="{{ staticUrl('/static/images/default-avatar.png') }}" />
+                {% endif %}
+              </div>
+              {{ author.get('title') }}
+          {% endif %}
+          {% if author.get('name') != 'anonymous' %}
+           </a>
+          {% endif %}
+          {{ '(@' + author.get('name') + ')' if author.get('title') and author.get('name').toLowerCase() !== author.get('title').toLowerCase() }}
+          • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime }}">{{ comment.get('created_at') | relativeTime }}</span>
+          {% if wasEdited(comment) %}
+          • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
+          {% endif %}
+          {% if comment and not options.linkToNode %}
+          • <a href="#c{{ comment.id }}"><i class="fas fa-link" aria-hidden="true"></i></a>
+          {% endif %}
+          {% if not options.readOnly and (canUserWrite(options.readingUser, comment, options) or isOwnAnonComment)  %}
+          <a class="btn btn-default btn-xs pull-right" href="{{ buildUrl(comment, 'comment', 'edit') }}"><span class="fas fa-pencil-alt"></span></a>
+          {% endif %}
+        </div>
+        <div class="comment__body panel user-contents">
+            {{ comment.get('body') | markdown | safe }}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}
+
+{% if comments.length === 0 %}
+<div class="well">No comments.</div>
+{% endif %}
+
+{{ commentEditor(null, options.csrfToken, options) if not options.readOnly }}
+
+<style type="text/css">
+  .CodeMirror, .CodeMirror-scroll {
+    min-height: 120px;
+  }
+</style>
+
+{% endmacro %}
+
+
+{% macro commentEditor(comment, csrfToken, options) %}
+{% set user = comment.related('user') if (comment and comment.related('user')) else options.readingUser %}
+{% set showAnon = options.allowAnonymous and not comment %}
+{% if user %}
+
+<form method="post" action="{{ buildUrl(comment, 'comment', 'edit') }}" class="comment js-warn-on-unsaved-changes">
+  {{ csrfToken() | safe }}
+  <input type="hidden" name="action" value="comment" />
+  <input type="hidden" name="id" value="{{ comment.id if comment }}" />
+  <a class="anchor" name="c{{ comment.id if comment }}"></a>
+  <div class="row">
+    <div class="col-xs-offset-1 col-xs-11">
+      <div class="comment__details">
+        <div class="comment__avatar-container">
+          {% if user.get('avatar') %}
+          <img src="{{ user.get('avatar') }}" /> 
+          {% else %}
+          <img src="{{ staticUrl('/static/images/default-avatar.png') }}" />
+          {% endif %}
+        </div>
+        {{ user.get('title') }}
+      </div>
+      <div class="{{ 'well' if comment and comment.id }}" style="margin-bottom: 10px">
+        {{ formMacros.editor('body', comment.get('body') if comment) }}
+
+        <div class="comment__actions">
+          <div class="pull-right">
+            <input type="submit" name="save" class="btn btn-primary" value="Save" />
+            {% if comment and comment.id %}
+              <a href="{{ buildUrl(comment, 'comment') }}" class="btn btn-default">Cancel</a>
+            {% endif %}
+          </div>
+          {% if comment and comment.id %}
+          <input type="submit" name="delete" class="btn btn-default" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"
+            onclick="return confirm('Delete this comment?')" />
+          {% endif %}
+          {% if showAnon and not user.get('disallow_anonymous') %}
+            {{ formMacros.check('comment-anonymously', 'Comment anonymously', null, { noMargin: true }) }}
+            (<a href="/article/faq#anon-comment" target="_blank">why?</a>)
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% else %}
+<a class="btn btn-primary" href="/login?redirect={{ path }}">Login to comment</a>
+{% endif %}
+{% endmacro %}

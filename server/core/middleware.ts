@@ -19,9 +19,9 @@ import * as expressSession from "express-session";
 import * as path from "path";
 import * as randomKey from "random-key";
 import { promisify } from "util";
-import controllers from "../controllers";
-import settingService from "../services/setting-service";
-import userService from "../services/user-service";
+import settingService from "../legacy/services/setting-service";
+import userService from "../legacy/services/user-service";
+import controllers from "../routes";
 import config, * as configUtils from "./config";
 import constants from "./constants";
 import db from "./db";
@@ -71,7 +71,7 @@ async function configure(app) {
   app.use(await createSessionMiddleware(app.locals.sessionStore));
 
   // Templating
-  app.set("views", path.join(constants.ROOT_PATH, "/server/templates"));
+  app.set("views", path.join(constants.ROOT_PATH, "/server"));
   const nj = expressNunjucks(app, {
     watch: app.locals.devMode,
     noCache: app.locals.devMode,

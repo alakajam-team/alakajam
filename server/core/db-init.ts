@@ -1,11 +1,11 @@
 import * as moment from "moment";
 
-import eventRatingService from "../services/event-rating-service";
-import eventService from "../services/event-service";
-import eventThemeService from "../services/event-theme-service";
-import postService from "../services/post-service";
-import settingService from "../services/setting-service";
-import userService from "../services/user-service";
+import eventRatingService from "../legacy/services/event-rating-service";
+import eventService from "../legacy/services/event-service";
+import eventThemeService from "../legacy/services/event-theme-service";
+import postService from "../legacy/services/post-service";
+import settingService from "../legacy/services/setting-service";
+import userService from "../legacy/services/user-service";
 import constants from "./constants";
 import db from "./db";
 import enums from "./enums";
