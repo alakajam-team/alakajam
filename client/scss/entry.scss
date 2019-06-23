@@ -50,7 +50,7 @@
 /* Entry thumb */
 
 .entry-thumb {
-  @apply --shadow;
+  @include shadow;
   display: flex;
   flex:1;
   flex-direction: column;
@@ -64,12 +64,12 @@
     display: block;
     padding-top: 56.25%;
     width: 100%;
-    background-color: var(--main-dark);
+    background-color: $main-dark;
     background-size: cover;
     background-position: center;
   }
   & a:hover &__picture {
-    border: 4px solid var(--alt);
+    border: 4px solid $alt;
     padding-top: calc(56.25% - 8px);
   }
 
@@ -94,7 +94,7 @@
   }
   & a:hover &__description {
     color: white;
-    background-color: var(--alt);
+    background-color: $alt;
     transition: 0.3s;
   }
 
@@ -120,22 +120,22 @@
 
   &__author {
     padding-left: 10px;
-    color: var(--text);
+    color: $text;
     line-height: 1.0rem;
     flex:1;
   }
   
   &__event {
     float: left;
-    color: var(--text-light);
+    color: $text-light;
     font-size: 0.8rem;
     
     & a {
       font-weight: bold;
-      color: var(--text-light);
+      color: $text-light;
       
       &:hover {
-        color: var(--alt-dark);
+        color: $alt-dark;
       }
     }
   }
@@ -146,7 +146,7 @@
     margin: 0 10px;
     white-space: nowrap;
     overflow: hidden;
-    color: var(--text-light);
+    color: $text-light;
 
     & .fas {
       margin-left: 3px;
@@ -154,7 +154,7 @@
   }
 
   &__karma {
-    color: var(--text-light);
+    color: $text-light;
     float: left;
     font-weight: bold;
     vertical-align: bottom;
@@ -169,7 +169,7 @@
 
 
 .entry-small-thumb {
-  @apply --shadow;
+  @include shadow;
   position: relative;
   display: block;
   background-color: white;
@@ -184,13 +184,13 @@
     float: left;
     width: 60px;
     height: 60px;
-    background-color: var(--main-dark);
+    background-color: $main-dark;
     background-size: cover;
     background-position: center;
     transition: 0.3s;
   }
   & a:hover &__picture {
-    border: 4px solid var(--alt);
+    border: 4px solid $alt;
     transition: 0.1s;
   }
   
@@ -216,7 +216,7 @@
   &__author {
     font-size: 0.85rem;
     line-height: 0.8rem;
-    color: var(--text);
+    color: $text;
   }
 }
 
@@ -224,7 +224,7 @@
   padding: 15px;
   padding-bottom: 0;
   margin-bottom: 10px;
-  background-color: var(--borders);
+  background-color: $borders;
 }
 
 /* Entry page */
@@ -232,13 +232,13 @@
 .entry {
 
   &__picture {
-    @apply --shadow;
+    @include shadow;
     position: relative;
     margin-bottom: 20px;
     text-align: center;
     min-height: 40px; /* for medals */
     padding-bottom: 56.25%; /* 16/9 ratio */
-    background-color: var(--text);
+    background-color: $text;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -281,7 +281,7 @@
     display: table;
     width: 100%;
     margin-top: 10px;
-    color: var(--text-light);
+    color: $text-light;
     font-weight: bold;
   }
   &__info-label {
@@ -312,10 +312,10 @@
   font-size: 1.5rem;
   font-weight: bold;
   background-color: white;
-  border: 1px solid var(--borders);
+  border: 1px solid $borders;
   padding: 10px 0;
   margin-bottom: 10px;
-  color: var(--text);
+  color: $text;
   width: 176px;
   
   & .fas,
@@ -328,7 +328,7 @@
   &__legend {
     font-size: 0.85rem;
     font-weight: normal;
-    color: var(--text-light);
+    color: $text-light;
   }
   &.active &__legend {
     color: white;
@@ -336,8 +336,8 @@
 
 }
 .entry__divisions .entry-division.active {
-  background-color: var(--main-dark);
-  border-color: var(--main-dark);
+  background-color: $main-dark;
+  border-color: $main-dark;
   color: white;
 }
 @media(max-width: 991px) {
@@ -347,13 +347,13 @@
 }
 
 .entry-voting {
-  @apply --shadow;
-  background-color: var(--borders);
+  @include shadow;
+  background-color: $borders;
   margin-bottom: 20px;
 
   &__header {
     padding: 10px;
-    background-color: var(--alt);
+    background-color: $alt;
     color: white;
   }
 
@@ -381,7 +381,7 @@
     text-align: right;
     
     &.confirmed {
-      color: var(--alt-dark);
+      color: $alt-dark;
     }
   }
 
@@ -404,18 +404,18 @@
     }
 
     & .fas.confirmed {
-      color: var(--alt-dark);
+      color: $alt-dark;
     }
   }
   
   &__score {
-    background-color: var(--borders);
+    background-color: $borders;
     padding: 5px 10px;
     margin-bottom: 20px;
     vertical-align: middle;
 
     & .zero {
-      color: var(--text-lightest);
+      color: $text-lightest;
     }
   }
   &__score-title {
@@ -460,7 +460,7 @@
 /* High score tables */
 
 .highscore-medal {
-  @apply --sprite2;
+  @include sprite2;
   display: inline-block;
   width: 16px;
   height: 16px;
@@ -477,20 +477,20 @@
 }
 
 .highscore-banner {
-  @apply --shadow;
+  @include shadow;
   display: block;
-  background-color: var(--alt);
+  background-color: $alt;
   color: white;
   padding: 6px;
   text-align: center;
 
   &:hover {
-    background-color: var(--alt-dark);
+    background-color: $alt-dark;
     color: white;
   }
 
   &__title {
-    @apply --alt-font;
+    @include alt-font;
     font-size: 1.3rem;
   }
 }

@@ -13,15 +13,15 @@
 }
 
 .navbar-default {
-  @apply --header-shadow;
-  @apply --transition;
-  background-color: var(--main);
+  @include header-shadow;
+  @include transition;
+  background-color: $main;
   border: none;
   font-size: 2rem;
 
   @media (min-width: 768px) {
     &.shrink  {
-      min-height: var(--navbar-shrinked-height);
+      min-height: $navbar-shrinked-height;
 
       & .navbar-header,
       & .navbar-nav > li > a,
@@ -29,10 +29,10 @@
       & .navbar-nav > li > div,
       & .navbar-avatar-wrapper,
       & .nav a {
-        @apply --transition;
+        @include transition;
         padding-top: 0;
-        height: var(--navbar-shrinked-height);
-        line-height: var(--navbar-shrinked-height);
+        height: $navbar-shrinked-height;
+        line-height: $navbar-shrinked-height;
       }
 
       & .live__dates,
@@ -64,10 +64,10 @@
       & .event-header .container,
       & .event-header__name,
       & .nav .event-header__link {
-        @apply --transition;
+        @include transition;
         padding-top: 0 !important;
-        height: var(--eventbar-shrinked-height);
-        line-height: var(--eventbar-shrinked-height);
+        height: $eventbar-shrinked-height;
+        line-height: $eventbar-shrinked-height;
       }
 
       & .nav .event-header__link .fas {
@@ -98,13 +98,13 @@
   /* Nav logo */
 
   & .navbar-header {
-    @apply --transition;
-    height: var(--navbar-mobile-height);
+    @include transition;
+    height: $navbar-mobile-height;
 
     & .navbar-brand {
       float: left;
       width: 220px;
-      height: var(--navbar-mobile-height);
+      height: $navbar-mobile-height;
       background: url('/static/images/brand.svg');
       margin-top: 4px;
       padding: 0;
@@ -118,7 +118,7 @@
     
     & .navbar-brand:hover .navbar-brand__hover {
       width: 220px;
-      height: var(--navbar-mobile-height);
+      height: $navbar-mobile-height;
     }
     
     @media (max-width: 350px) {
@@ -131,7 +131,7 @@
     }
 
     & .navbar-profile-mobile {
-      height: var(--navbar-mobile-height);
+      height: $navbar-mobile-height;
     }
   }
 
@@ -146,7 +146,7 @@
 
       &.active > a {
         background-color: white;
-        color: var(--main);
+        color: $main;
       }
 
       & > a, & > div {
@@ -154,32 +154,32 @@
       }
 
       & > a, &.active > a, & > div {
-        @apply --transition;
+        @include transition;
         font-size: 1.1rem;
         padding: 0 10px;
-        line-height: var(--navbar-height);
-        height: var(--navbar-height);
+        line-height: $navbar-height;
+        height: $navbar-height;
 
         &:hover {
-          background-color: var(--main-light);
+          background-color: $main-light;
         }
       }
 
       &.live a {
-        background-color: var(--main-light);
-        line-height: calc(var(--navbar-height) / 3);
+        background-color: $main-light;
+        line-height: calc($navbar-height) / 3;
         padding: 0 15px;
-        padding-top: calc(var(--navbar-height) / 6);
+        padding-top: calc($navbar-height) / 6;
         font-size: 1rem;
         margin-right: 20px;
 
         &:hover {
           background-color: white;
-          color: var(--alt-dark);
+          color: $alt-dark;
         }
 
         & .live__event {
-          @apply --alt-font;
+          @include alt-font;
           vertical-align: middle;
           display: inline-block;
           margin: 2px 0 4px 0;
@@ -187,17 +187,17 @@
           white-space: nowrap;
         }
         & .live__dates {
-          @apply --main-font;
+          @include main-font;
           font-size: 0.8rem;
         }
       }
 
       &.live.active a {
         background-color: white;
-        color: var(--alt);
+        color: $alt;
 
         & .live__dates {
-          color: var(--text-light);
+          color: $text-light;
         }
       }
 
@@ -254,15 +254,15 @@
 
   & .navbar-avatar-wrapper {
     position: relative;
-    height: var(--navbar-height);
-    line-height: var(--navbar-height);
+    height: $navbar-height;
+    line-height: $navbar-height;
     width: 36px;
     display: inline-block;
   }
 
   & .navbar-unread-notifications {
     position: absolute;
-    background-color: var(--neutral);
+    background-color: $neutral;
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -275,20 +275,20 @@
     line-height: 20px;
     
     &.unread {
-      background-color: var(--alt);
+      background-color: $alt;
     }
   }
 
 }
 
 .event-header {
-  @apply --header-shadow;
-  @apply --transition;
+  @include header-shadow;
+  @include transition;
   box-sizing: border-box;
   width: 100%;
   background-color: white;
-  color: var(--alt);
-  height: var(--eventbar-height);
+  color: $alt;
+  height: $eventbar-height;
   position: relative;
 
   &__info {
@@ -304,7 +304,7 @@
   }
 
   &__name {
-    @apply --alt-font;
+    @include alt-font;
     display: block;
     box-sizing: border-box;
     font-size: 1.3rem;
@@ -325,7 +325,7 @@
   &__dates {
     display: block;
     font-size: .8rem;
-    color: var(--text-light);
+    color: $text-light;
     line-height: .8rem;
     margin-top: -2px;
   }
@@ -333,7 +333,7 @@
   &__links {
     vertical-align: top;
     display: inline-block;
-    line-height: var(--eventbar-height);
+    line-height: $eventbar-height;
   }
   @media (max-width: 767px) {
     &__links {
@@ -347,8 +347,8 @@
     vertical-align: top;
     padding: 0 15px;
     margin: 0;
-    height: var(--eventbar-height);
-    line-height: var(--eventbar-height);
+    height: $eventbar-height;
+    line-height: $eventbar-height;
     font-size: 1.3rem;
     text-align: center;
 
@@ -364,7 +364,7 @@
     
     @media (min-width: 992px) {
       text-align: left;
-      line-height: var(--eventbar-height);
+      line-height: $eventbar-height;
       font-size: 1rem;
       padding: 0 11px;
       
@@ -374,15 +374,15 @@
     }
     
     &:hover {
-      background-color: var(--alt-transparent);
+      background-color: $alt-transparent;
     }
 
     &.active {
-      border-bottom: 4px solid var(--alt);
+      border-bottom: 4px solid $alt;
     }
 
     &.disabled {
-      color: var(--text-lighter);
+      color: $text-lighter;
       cursor: default;
       &:hover {
         background-color: inherit;
@@ -396,21 +396,21 @@
 }
 
 .event-navbar {
-  @apply --transition;
+  @include transition;
   position: relative;
   margin-bottom: 0;
   position: inherit;
-  height: var(--eventbar-height);
+  height: $eventbar-height;
 
   @media (max-width: 767px) {
     & .navbar-collapse {
       position: absolute;
-      top: var(--eventbar-height);
+      top: $eventbar-height;
       left: 0;
       right: 0;
       border: 0;
       width: 100%;
-      border-top: 1px solid var(--borders);
+      border-top: 1px solid $borders;
       
       &.collapsing, &.in {
         background-color: white;
@@ -427,17 +427,17 @@
   
   & .navbar-toggle, & .navbar-toggle:hover, & .navbar-toggle:focus {
     margin-top: 6px;
-    border-color: var(--alt);
+    border-color: $alt;
     
     & .icon-bar {
-      background-color: var(--alt);
+      background-color: $alt;
     }
   }
   & .navbar-toggle:hover {
-    color: var(--alt-dark);
+    color: $alt-dark;
   }
   & .navbar-toggle:hover .icon-bar {
-    background-color: var(--alt-dark);
+    background-color: $alt-dark;
   }
   
   @media (max-width: 767px) {
@@ -450,16 +450,16 @@
 .moderation-bar {
   margin: -21px 0 20px 0;
   width: 100%;
-  background-color: var(--moderation-dark);
+  background-color: $moderation-dark;
 
   @media (max-width: 767px) {
     margin-top: -31px;
   }
 
   & .btn {
-    background-color: var(--moderation-dark);
-    border-color: var(--moderation-dark);
-    color: var(--moderation-text);
+    background-color: $moderation-dark;
+    border-color: $moderation-dark;
+    color: $moderation-text;
     padding: 0px 5px;
     font-size: 12px;
     line-height: 1.5;
@@ -467,8 +467,8 @@
     margin-right: 5px;
 
     &:hover {
-      background-color: var(--moderation);
-      border-color: var(--moderation);
+      background-color: $moderation;
+      border-color: $moderation;
     }
   }
 }

@@ -26,7 +26,7 @@
   }
 
   &__name {
-    color: var(--text-light);
+    color: $text-light;
     font-weight: normal;
   }
 
@@ -35,7 +35,7 @@
   }
 
   &__joined {
-    color: var(--text-light);
+    color: $text-light;
   }
 
   &__social-link {
@@ -114,7 +114,7 @@
   }
 
   &__title {
-    @apply --alt-font;
+    @include alt-font;
     font-size: 1.4rem;
     line-height: 1.6rem;
     padding-left: 60px;
@@ -127,7 +127,7 @@
   &__name {
     font-size: 0.85rem;
     font-weight: bold;
-    color: var(--text-light);
+    color: $text-light;
     padding-left: 60px;
     margin-top: -3px;
   }
@@ -135,14 +135,14 @@
     float: right;
     font-size: 0.85rem;
     font-weight: bold;
-    color: var(--text);
+    color: $text;
     padding: 0 25px 0 5px;
     margin-top: -3px;
   }
   &__entries {
     font-size: 0.75rem;
     font-weight: bold;
-    color: var(--text-light);
+    color: $text-light;
     padding-left: 60px;
 
     & img {

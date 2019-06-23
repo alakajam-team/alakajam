@@ -3,13 +3,13 @@
  */
 
 .home-welcome {
-  @apply --shadow;
+  @include shadow;
   position: relative;
   padding: 10px;
   padding-left: 100px;
   margin: 10px 0px 20px 15px;
-  background-color: var(--main-lighter);
-  border-left: 10px solid var(--main);
+  background-color: $main-lighter;
+  border-left: 10px solid $main;
   font-size: 1.2rem;
 
   &__icon {
@@ -23,18 +23,18 @@
   }
 
   &__brand {
-    @apply --alt-font;
+    @include alt-font;
     display: inline;
     letter-spacing: 0px;
   }
 
   &__more {
-    color: var(--main-dark);
+    color: $main-dark;
     font-weight: bold;
     text-decoration: underline;
 
     &:hover {
-      color: var(--text);
+      color: $text;
       text-decoration: underline;
     }
   }
@@ -42,7 +42,7 @@
 }
 
 .home-jumbo {
-  @apply --shadow;
+  @include shadow;
   position: relative;
   
   & .event-table {
@@ -58,7 +58,7 @@
 
   &__links {
     background-color: white;
-    border-top: 1px solid var(--borders);
+    border-top: 1px solid $borders;
 
     & .event-header__link {      
       line-height: 40px;
@@ -74,15 +74,15 @@
     display: block;
     color: white;
     padding: 10px;
-    background-color: var(--alt);
+    background-color: $alt;
 
     &:hover {
-      background-color: var(--alt-dark);
+      background-color: $alt-dark;
       color: white;
     }
 
     & h2 {
-      @apply --alt-font;
+      @include alt-font;
       font-size: 2.2rem;
       font-weight: normal;
       line-height: 2.3rem;
@@ -106,7 +106,7 @@
   &__details {
     color: white;
     padding: 10px;
-    background-color: var(--neutral);
+    background-color: $neutral;
   }
   
   &__countdown {
@@ -118,7 +118,7 @@
     width: 332px;
     
     & .flip .inn {
-      background-color: var(--text)
+      background-color: $text
     }
     & .flip-clock-label {
       display: none;
@@ -158,10 +158,10 @@
       margin-bottom: 0;
     }
     & h1 > a {
-      color: var(--text);
+      color: $text;
       
       &:hover {
-        color: var(--alt-dark);
+        color: $alt-dark;
       }
     }
   }
@@ -194,15 +194,15 @@
   &__footer {
     height: 50px;
     padding: 10px;
-    color: var(--text-lighter);
+    color: $text-lighter;
   }
 }
 
 .home-scheduled-events .horizontal-bar a {
-  color: var(--text-lighter);
+  color: $text-lighter;
 
   &:hover {
-    color: var(--text-light);
+    color: $text-light;
   }
 }
 
@@ -226,7 +226,7 @@
   }
 
   &__title {
-    color: var(--alt);
+    color: $alt;
     font-weight: bold;
     line-height: 1.5rem;
   }
@@ -244,11 +244,11 @@
     height: 0; 
     border-top: 20px solid transparent;
     border-bottom: 20px solid transparent;
-    border-right: 20px solid var(--alt);
+    border-right: 20px solid $alt;
   }
 
   & &__entries {
-    color: var(--text-light);
+    color: $text-light;
   }
 
   &__label {
@@ -281,7 +281,7 @@
   font-weight: bold;
   top: 0px;
   transition: 0.1s;
-  color: var(--text);
+  color: $text;
 
   & .fas,
   & .far,
@@ -289,7 +289,7 @@
     font-size: 1.6rem;
     padding-right: 10px;
     width: 32px;
-    color: var(--alt);
+    color: $alt;
   }
 
   &:hover {

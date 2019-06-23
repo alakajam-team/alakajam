@@ -2,29 +2,32 @@
  * Main tags customization, reusable classes & other general stuff.
  */
 
+@import "./variables.scss";
+
 ::selection {
-  background: var(--text-lighter);
+  background: $text-lighter;
   color: white;
 }
 
 html {
-  @apply --main-font;
+  @include main-font;
   height: 100%;
   font-size: 15px;
 }
 
-body, p {
-  @apply --main-font;
+body,
+p {
+  @include main-font;
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--text);
+  background-color: $bg;
+  color: $text;
   height: 100%;
-  padding-top: calc(var(--navbar-height) + 20px);
+  padding-top: calc($navbar-height) + 20px;
 }
 body.in-event {
-  padding-top: calc(var(--navbar-height) + var(--eventbar-height) + 20px);
+  padding-top: calc($navbar-height) + var(--eventbar-height) + 20px;
 }
 
 div {
@@ -32,15 +35,15 @@ div {
 }
 
 h1 {
-  @apply --alt-font;
+  @include alt-font;
   margin: 0 0 15px 0;
   font-size: 2.2rem;
   font-weight: normal;
   letter-spacing: 1px;
-  color: var(--text);
-  
+  color: $text;
+
   & a {
-    color: var(--text);
+    color: $text;
   }
 }
 h2 {
@@ -55,7 +58,7 @@ h3 {
 h4 {
   font-size: 1.2rem;
   margin: 0 0 10px 0;
-  color: var(--text-light);
+  color: $text-light;
 }
 
 textarea.form-control {
@@ -78,28 +81,29 @@ select[readonly].select2-hidden-accessible + .select2-container {
 
   & .select2-selection {
     background-color: #aab2bd;
-    opacity: .65;
+    opacity: 0.65;
     box-shadow: none;
   }
 
-  & .select2-selection__arrow, & .select2-selection__clear {
+  & .select2-selection__arrow,
+  & .select2-selection__clear {
     display: none;
   }
 }
 
 a {
-  color: var(--alt);
-  
+  color: $alt;
+
   & img {
     border: 0;
   }
-  
+
   &:hover {
-    color: var(--alt-dark);
+    color: $alt-dark;
     text-decoration: none;
-    
+
     & img {
-      border: 4px solid var(--alt);
+      border: 4px solid $alt;
       transition: 0.1s;
     }
   }
@@ -117,10 +121,11 @@ img.preview {
   max-width: 100%;
 
   &.upload-pending {
-    border: 2px dashed var(--neutral);
+    border: 2px dashed $neutral;
   }
 }
-img.no-border:hover, a:hover img.no-border {
+img.no-border:hover,
+a:hover img.no-border {
   border: 0;
 }
 
@@ -142,7 +147,9 @@ img.no-border:hover, a:hover img.no-border {
   }
 }
 
-.editor-toolbar.fullscreen, .CodeMirror-fullscreen, .editor-preview-side { 
+.editor-toolbar.fullscreen,
+.CodeMirror-fullscreen,
+.editor-preview-side {
   z-index: 2000;
 }
 
@@ -162,7 +169,8 @@ a.has-tooltip {
   cursor: pointer;
 }
 
-.radio-label, .checkbox-label {
+.radio-label,
+.checkbox-label {
   margin: 0 10px 0 2px;
   font-weight: normal;
 }
@@ -171,16 +179,17 @@ input.date-picker {
   width: 200px;
 }
 
-input[type=number].no-spinner {
+input[type="number"].no-spinner {
   /* https://stackoverflow.com/a/4298216/1213677 */
   -moz-appearance: textfield;
-  &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
 }
 
-input[type=submit][data-disabled] {
+input[type="submit"][data-disabled] {
   /* Disable form submission after the first click */
   cursor: default;
   pointer-events: none;
@@ -188,15 +197,16 @@ input[type=submit][data-disabled] {
 }
 
 .btn {
-  @apply --main-font;
+  @include main-font;
   border-radius: 2px;
 }
 .btn-alt {
-  background-color: var(--alt);
+  background-color: $alt;
   border: 0;
 
-  &:hover, &:active {
-    background-color: var(--alt-dark);
+  &:hover,
+  &:active {
+    background-color: $alt-dark;
   }
 }
 
@@ -204,9 +214,10 @@ input[type=submit][data-disabled] {
   margin-top: 0;
   margin-bottom: 10px;
 
-  & .disabled a, & .disabled a:hover {
-    background-color: var(--borders);
-    color: var(--neutral);
+  & .disabled a,
+  & .disabled a:hover {
+    background-color: $borders;
+    color: $neutral;
   }
 }
 
@@ -214,8 +225,8 @@ input[type=submit][data-disabled] {
   width: 100%;
   margin: 20px 0;
   font-weight: bold;
-  color: var(--text-lighter);
-  border-bottom: 1px solid var(--text-lighter);
+  color: $text-lighter;
+  border-bottom: 1px solid $text-lighter;
 
   & .btn {
     display: inline-block;
@@ -225,28 +236,28 @@ input[type=submit][data-disabled] {
 }
 
 .featured {
-  background-color: var(--neutral-lightest);
-  border: 1px solid var(--neutral-lighter);
-  box-shadow: 1px 1px 2px var(--neutral-lighter);
+  background-color: $neutral-lightest;
+  border: 1px solid $neutral-lighter;
+  box-shadow: 1px 1px 2px $neutral-lighter;
   padding: 20px;
   margin-bottom: 20px;
 
   &.live {
-    background-color: var(--alt-lightest);
-    border: 1px solid var(--alt-lighter);
-    box-shadow: 1px 1px 2px var(--alt-lighter);
+    background-color: $alt-lightest;
+    border: 1px solid $alt-lighter;
+    box-shadow: 1px 1px 2px $alt-lighter;
   }
 }
 
-
-.count { /* deprecated, use legend */
-  @apply --main-font;
-  color: var(--text-light);
+.count {
+  /* deprecated, use legend */
+  @include main-font;
+  color: $text-light;
   font-size: 0.8em;
   font-weight: bold;
 }
 .legend {
-  color: var(--text-light);
+  color: $text-light;
   font-size: 0.75em;
   font-weight: bold;
 }
@@ -257,10 +268,10 @@ input[type=submit][data-disabled] {
 }
 
 .expandable {
-  position: relative; 
+  position: relative;
   overflow: hidden;
   margin-bottom: 20px;
-  
+
   & .expand-bar {
     display: none; /* will be enabled with JS */
     cursor: pointer;
@@ -270,17 +281,17 @@ input[type=submit][data-disabled] {
     right: 0;
     z-index: 100;
     height: 30px;
-    border-top: 1px solid var(--borders);
+    border-top: 1px solid $borders;
     background-color: white;
     text-align: center;
     line-height: 30px;
     vertical-align: middle;
     font-weight: bold;
-    color: var(--alt);
+    color: $alt;
     box-shadow: 0px -3px 8px rgba(0, 0, 0, 0.15);
-    
+
     &:hover {
-      color: var(--alt-dark);
+      color: $alt-dark;
     }
   }
 
@@ -290,7 +301,7 @@ input[type=submit][data-disabled] {
 
   &.expanded {
     max-height: none !important;
-    
+
     & .expand-bar {
       background-color: transparent;
       box-shadow: none;
@@ -311,7 +322,7 @@ input[type=submit][data-disabled] {
 
 .sidebar {
   & h3 {
-    margin: 0
+    margin: 0;
   }
 }
 .articles-sidebar .sidebar__link {
@@ -330,10 +341,10 @@ input[type=submit][data-disabled] {
 
 /* Warning box */
 .warning-box {
-  @apply --shadow;
+  @include shadow;
   padding: 10px;
-  background-color: var(--moderation);
-  color: var(--moderation-text);
+  background-color: $moderation;
+  color: $moderation-text;
   border-radius: 4px;
 }
 
@@ -350,13 +361,13 @@ input[type=submit][data-disabled] {
 }
 
 .big-table {
-  @apply --shadow;
-  background-color: var(--borders);
+  @include shadow;
+  background-color: $borders;
   margin-bottom: 20px;
 
   &__header {
     padding: 10px;
-    background-color: var(--main);
+    background-color: $main;
     color: white;
     font-weight: bold;
     font-size: 1.4rem;
@@ -371,15 +382,15 @@ input[type=submit][data-disabled] {
   }
 }
 
-.table > tbody > tr.active >td {
-  background-color: #FAFAFA;
+.table > tbody > tr.active > td {
+  background-color: #fafafa;
 }
 
 .wrap-fix {
   /* source: https://stackoverflow.com/a/42166932 */
   display: flex;
   flex-wrap: wrap;
-  width:100%;
+  width: 100%;
 }
 
 .show-if-saving {
@@ -414,7 +425,7 @@ input[type=submit][data-disabled] {
 
 .in-event .anchor {
   position: absolute;
-  top: calc(-60px - var(--eventbar-height));
+  top: calc(-60px - $eventbar-height);
 }
 .comment .anchor {
   top: 0 !important;
@@ -425,9 +436,9 @@ table.sortable {
     cursor: pointer;
     user-select: none;
   }
-  
+
   & th:not(.no-sort):after {
-    content: '';
+    content: "";
     float: right;
     margin-top: 7px;
     border-width: 0 4px 4px;
@@ -437,18 +448,18 @@ table.sortable {
     opacity: 0;
     user-select: none;
   }
-  
-  & th[aria-sort=ascending]:not(.no-sort):after {
+
+  & th[aria-sort="ascending"]:not(.no-sort):after {
     border-bottom: none;
     border-width: 4px 4px 0;
   }
-  
-  & th[aria-sort]:not([data-sort-method=none]):after {
+
+  & th[aria-sort]:not([data-sort-method="none"]):after {
     visibility: visible;
     opacity: 0.4;
   }
-  
-  & th:not([data-sort-method=none]):hover:after {
+
+  & th:not([data-sort-method="none"]):hover:after {
     visibility: visible;
     opacity: 1;
   }
@@ -457,56 +468,54 @@ table.sortable {
 .panel.page-tabs {
   box-shadow: none;
   background-color: transparent;
-    
+
   @media (min-width: 768px) {
     & .nav.nav-tabs {
-      background-color: var(--bg);
-      border-bottom: 1px solid var(--tabs);
-      
+      background-color: $bg;
+      border-bottom: 1px solid $tabs;
+
       & > li {
         border: 0;
         margin-bottom: -1px;
 
         & > a {
-          border: 0 solid var(--tabs);
+          border: 0 solid $tabs;
         }
-        
+
         &.active > a {
           background-color: transparent !important;
           border-width: 1px;
-          border-bottom-color: var(--bg);
+          border-bottom-color: $bg;
         }
       }
-
     }
   }
 }
 
-:root {
-  --progress-bar {
-    background-color: #DDD;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2) inset;
-  }
-  --progress-value {
-    background-color: var(--main-dark);
-    border-radius: 4px 0 0 4px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset;
-  }
+@mixin progress-bar {
+  background-color: #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) inset;
 }
+@mixin progress-value {
+  background-color: $main-dark;
+  border-radius: 4px 0 0 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) inset;
+}
+
 progress {
   appearance: none;
   border: none;
   height: 25px;
   width: 100%;
-  @apply(--progress-bar);
+  @include progress-bar;
 }
 progress[value]::-webkit-progress-bar {
-  @apply(--progress-bar);
+  @include progress-bar;
 }
 progress[value]::-webkit-progress-value {
-  @apply(--progress-value);
+  @include progress-value;
 }
 progress[value]::-moz-progress-bar {
-  @apply(--progress-value);
+  @include progress-value;
 }

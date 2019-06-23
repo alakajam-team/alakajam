@@ -33,7 +33,7 @@ export default {
   read,
   write,
   remove,
-  createFolderIfMissing,
+  createFolderIfMissing
 };
 
 // Leading bytes for common image formats.

@@ -1,0 +1,81 @@
+/**
+ * CSS Variables
+ */
+
+/* Main colors */
+
+$bg: #eee;
+$borders: #dadada;
+$tabs: #bbb;
+$text: #1f3038;
+$text-light: change-color($text, $alpha: .7);
+$text-lighter: change-color($text, $alpha: .4);
+$text-lightest: change-color($text, $alpha: .3);
+
+$white-lighter: change-color(white, $alpha: .9);
+
+$main: #00abd6;
+$main-light: change-color($main, $lightness: .46);
+$main-lighter: change-color($main, $lightness: .85);
+$main-lightest: change-color($main, $alpha: .1);
+$main-dark: change-color($main, $lightness: .32);
+$main-transparent: change-color($main, $alpha: .1);
+
+$alt: #f2536d;
+$alt-light: #f47171;
+$alt-lighter: change-color($alt, $alpha: .25);
+$alt-lightest: #ffded6;
+$alt-dark: change-color($alt, $lightness: .42);
+$alt-transparent: change-color($alt, $alpha: .1);
+
+$neutral: #999;
+$neutral-dark: change-color($neutral, $lightness: .40);
+$neutral-light: change-color($neutral, $alpha: .7);
+$neutral-lighter: change-color($neutral, $alpha: .25);
+$neutral-lightest: change-color($neutral, $alpha: .1);
+
+/* Mod / Admin colors */
+
+$moderation: $neutral;
+$moderation-light: $neutral-lighter;
+$moderation-lightest: $neutral-lightest;
+$moderation-dark: $neutral-light;
+$moderation-text: change-color(white, $alpha: .9);
+
+/* Mixins */
+
+@mixin main-font {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: 0;
+}
+@mixin alt-font {
+  font-family: "Fredoka One", "Arial Black", sans-serif;
+  letter-spacing: 1px;
+}
+@mixin shadow {
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+}
+@mixin header-shadow {
+  box-shadow: 0px 8px 4px -6px rgba(0, 0, 0, 0.15);
+}
+@mixin sprite2 {
+  background: url("/static/images/spritesheet2.png");
+  background-position: 0 0;
+  background-repeat: no-repeat;
+}
+@mixin sprite4 {
+  background: url("/static/images/spritesheet4.png");
+  background-position: 0 0;
+  background-repeat: no-repeat;
+}
+@mixin transition {
+  transition: all 0.2s;
+}
+
+/* UI elements */
+
+$navbar-height: 60px;
+$navbar-mobile-height: 50px;
+$navbar-shrinked-height: 40px;
+$eventbar-height: 50px;
+$eventbar-shrinked-height: 36px;

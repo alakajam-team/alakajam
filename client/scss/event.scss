@@ -6,7 +6,7 @@
 
 .action-banner {
   padding: 10px;
-  background-color: var(--borders);
+  background-color: $borders;
   max-width: 945px;
   
   &__info {
@@ -16,7 +16,7 @@
   &__title {
     vertical-align: top;
     padding-bottom: 5px;
-    color: var(--text);
+    color: $text;
     font-weight: bold;
     font-size: 1.3rem;
     height: 35px;
@@ -28,7 +28,7 @@
   }
 
   &__post {
-    @apply --shadow;
+    @include shadow;
     background-color: white;
     height: 60px;
     padding: 5px;
@@ -36,7 +36,7 @@
     width: 100%;
 
     & a {
-      @apply --alt-font;
+      @include alt-font;
       font-size: 1.4rem;
       line-height: 1.4rem;
     }
@@ -55,12 +55,12 @@
   }
 
   &__live {
-    color: var(--alt-dark);
+    color: $alt-dark;
   }
 }
 
 .event-table {
-  @apply --shadow;
+  @include shadow;
   margin-top: 10px;
 
   &__header {
@@ -71,7 +71,7 @@
   &__logo {
     vertical-align: top;
     height: 60px;
-    border-right: 1px solid var(--borders);
+    border-right: 1px solid $borders;
 
     @media (max-width: 767px) {
       display: none;
@@ -79,7 +79,7 @@
   }
 
   &__title {
-    @apply --alt-font;
+    @include alt-font;
     display: inline-block;
     line-height: 42px;
     height: 60px;
@@ -93,19 +93,19 @@
     line-height: normal;
   }
   &.pending &__title {
-    background-color: var(--main);
+    background-color: $main;
     color: white;
 
     &:hover {
-      background-color: var(--main-dark);
+      background-color: $main-dark;
     }
   }
   &.open &__title {
-    background-color: var(--alt);
+    background-color: $alt;
     color: white;
 
     &:hover {
-      background-color: var(--alt-dark);
+      background-color: $alt-dark;
     }
   }
 
@@ -135,28 +135,28 @@
   }
 
   &__status {
-    @apply --main-font;
+    @include main-font;
     font-size: 0.8rem;
     vertical-align: middle;
   }
   
   &__dates {
-    @apply --main-font;
+    @include main-font;
     font-weight: normal;
     font-size: 0.8rem;
-    color: var(--text);
+    color: $text;
     line-height: 1rem;
     margin-top: -5px;
     border-radius: 0;
     width: 100%;
   }
   &.pending &__dates, &.open &__dates {
-    color: var(--white-lighter);
+    color: $white-lighter;
   }
 
   &__entries {
     padding: 15px;
-    background-color: var(--borders);
+    background-color: $borders;
   }
 
   &__entry {
@@ -246,7 +246,7 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    background: linear-gradient(to bottom, transparent 20%, var(--bg) 100%);
+    background: linear-gradient(to bottom, transparent 20%, $bg) 100%;
   }
 
   @media (max-width: 767px) {
@@ -264,8 +264,8 @@
 
 .event-banner-panel {
   @media (min-width: 768px) {
-    @apply --shadow;
+    @include shadow;
     padding: 10px;
-    background-color: color(var(--bg) alpha(85%));
+    background-color: change-color($bg, $alpha: .85);
   }
 }

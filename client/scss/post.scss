@@ -2,6 +2,8 @@
  * Blog posts, comments & Markdown content in general
  */
 
+@import "./variables.scss";
+
 .post {
   & h1 {
     font-weight: normal;
@@ -10,19 +12,19 @@
   }
 
   &__title {
-    @apply --main-font;
+    @include main-font;
     font-weight: bold;
     margin: 0;
     padding-bottom: 5px;
-    color: var(--text);
+    color: $text;
       
     &:hover {
-      color: var(--alt-dark);
+      color: $alt-dark;
     }
   }
 
   &__comment-count {
-    color: var(--alt);
+    color: $alt;
     font-size: 1.5rem;
     white-space: nowrap;
   }
@@ -31,7 +33,7 @@
     display: inline-block;
     font-size: 1.5rem;
     white-space: nowrap;
-    color: var(--text-light);
+    color: $text-light;
 
     & button {
       border: none;
@@ -39,7 +41,7 @@
     }
 
     &:hover, &.liked {
-      color: var(--alt);
+      color: $alt;
     }
   }
 
@@ -49,7 +51,7 @@
   }
 
   &__details {
-    border-bottom: 1px solid var(--borders);
+    border-bottom: 1px solid $borders;
     line-height: 36px;
     font-weight: bold;
     padding-right: 10px;
@@ -66,7 +68,7 @@
   }
 
   &__date {
-    color: var(--text-lighter);
+    color: $text-lighter;
   }
 
   &__avatar {
@@ -81,10 +83,10 @@
   }
 
   &__special-type {
-    @apply --main-font;
+    @include main-font;
     display: block;
     font-weight: bold;
-    background-color: var(--moderation-dark);
+    background-color: $moderation-dark;
     white-space: nowrap;
     text-align: center;
   }
@@ -122,8 +124,8 @@
   }
 
   &.unread {
-    background-color: var(--alt-lightest);
-    border: 1px solid var(--alt-lighter);
+    background-color: $alt-lightest;
+    border: 1px solid $alt-lighter;
     padding-top: 10px;
     margin-bottom: 5px;
   }
@@ -165,7 +167,7 @@
   overflow: hidden;
 
   & h1 {
-    @apply --main-font;
+    @include main-font;
     font-weight: bold;
     display: inline-block;
     clear: both;
@@ -173,7 +175,7 @@
     padding-bottom: 3px;
     margin-bottom: 15px;
     font-size: 2.0rem;
-    border-bottom: 1px solid var(--neutral-light);
+    border-bottom: 1px solid $neutral-light;
 
     &:first-child {
       margin-top: 0;
@@ -193,7 +195,7 @@
     margin-bottom: 10px;
     font-size: 1.4rem;
     font-weight: normal;
-    color: var(--text-light);
+    color: $text-light;
     
     &:first-child {
       margin-top: 0;
@@ -204,18 +206,18 @@
     margin-bottom: 7px;
     font-size: 1.1rem;
     font-weight: normal;
-    color: var(--text-light);
+    color: $text-light;
   }
 
   & blockquote {
     padding: 5px 10px;
     font-size: 1rem;
-    color: var(--text-light);
+    color: $text-light;
   }
   
   & .spoiler {
-    border-left: 3px solid var(--borders);
-    color: color(var(--text-light) alpha(0%));
+    border-left: 3px solid $borders;
+    color: change-color($text-light, $alpha: 0);
     font-size: 1rem;
     margin: 5px 0;
     padding: 3px 10px;
@@ -226,12 +228,12 @@
     cursor: help;
 
     &::before {
-      color: var(--alt-light);
+      color: $alt-light;
       content: 'Spoiler';
       display: block;
     }
     &:hover {
-      color: color(var(--text-light));
+      color: color($text-light);
       max-height: inherit;
       max-width: inherit;
       overflow: auto;
@@ -272,14 +274,14 @@
     border-spacing: 0;
 
     & td, & th {
-      border: 1px solid var(--borders);
+      border: 1px solid $borders;
       padding: 6px;
     }
 
     & th {
       padding-top: 11px;
       padding-bottom: 11px;
-      background-color: var(--main-light);
+      background-color: $main-light;
       color: white;
     }
   }
@@ -293,4 +295,3 @@
     margin-right: 0;
   }
 }
-

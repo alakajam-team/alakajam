@@ -1671,17 +1671,20 @@ blockquote {
 .navbar-form {
   padding: 0 !important;
 }
-
+/*
 .navbar-default {
 }
 .navbar-default .navbar-brand, .navbar-default .navbar-link, .navbar-default .btn-link {
 }
+*/
 .navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus, .navbar-default .navbar-link:hover, .navbar-default .btn-link:hover, .navbar-default .btn-link:focus {
   color: white;
   background-color: transparent;
 }
+/*
 .navbar-default .navbar-text, .navbar-default .navbar-nav > li > a {  
 }
+*/
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
   color: white;
 }

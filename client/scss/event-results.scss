@@ -9,18 +9,18 @@
     font-size: 1.5rem;
     font-weight: bold;
     padding: 8px 30px;
-    background-color: var(--main);
+    background-color: $main;
   }
 
   &__category {
     font-size: 1.2rem;
     padding: 8px 15px;
-    background-color: var(--main);
+    background-color: $main;
   }
 }
 
 .results-podium {
-  @apply --shadow;
+  @include shadow;
   background-color: #DDD;
   margin-bottom: 20px;
 
@@ -33,11 +33,11 @@
   }
 
   &__title {
-    @apply --alt-font;
+    @include alt-font;
     font-weight: normal;
     font-size: 2.0rem;
     text-align: center;
-    background-color: var(--alt);
+    background-color: $alt;
     color: white;
     padding: 10px;
 
@@ -50,13 +50,13 @@
       border-radius: 4px;
 
       &:hover {
-        background-color: var(--alt-dark);
+        background-color: $alt-dark;
       }
     }
   }
 
   &__counter {
-    @apply --main-font;
+    @include main-font;
     display: block;
     font-size: 1.4rem;
     font-weight: bold;
@@ -82,7 +82,7 @@
       margin: 10px 0 15px 0;
     }
     &::after {
-      @apply --sprite4;
+      @include sprite4;
       background-position: -256px -64px;
       content: '';
       display: block;
@@ -157,13 +157,13 @@
 
 /* Results on entry page */
 .entry-results {
-  @apply --shadow;
-  background-color: var(--borders);
+  @include shadow;
+  background-color: $borders;
   margin-bottom: 20px;
 
   &__header {
     padding: 10px;
-    background-color: var(--main);
+    background-color: $main;
     color: white;
   }
 
@@ -194,7 +194,7 @@
   }
 
   &__category-medal {
-    @apply --sprite2;
+    @include sprite2;
     display: inline-block;
     height: 32px;
     position: absolute;
@@ -214,70 +214,14 @@
     }
 
     /* Per-rating-category medals */
-    /* TODO once we have SCSS support, it can be simplified to:
     $medal-category-y: -240px -273px -307px -341px -375px -409px;
     $medal-ranking-x: -133px -167px -201px;
     @for $category from 1 through length($medal-category-y) {
       @for $ranking from 1 through length($medal-ranking-x) {
-        .medal-category-#{$category}.medal-ranking-#{$ranking} {
+        &.medal-category-#{$category}.medal-ranking-#{$ranking} {
           background-position: nth($medal-ranking-x, $ranking) nth($medal-category-y, $category);
         }
       }
-    }
-    */
-    &.medal-category-1.medal-ranking-1 {
-      background-position: -133px -240px;
-    }
-    &.medal-category-1.medal-ranking-2 {
-      background-position: -167px -240px;
-    }
-    &.medal-category-1.medal-ranking-3 {
-      background-position: -201px -240px;
-    }
-    &.medal-category-2.medal-ranking-1 {
-      background-position: -133px -273px;
-    }
-    &.medal-category-2.medal-ranking-2 {
-      background-position: -167px -273px;
-    }
-    &.medal-category-2.medal-ranking-3 {
-      background-position: -201px -273px;
-    }
-    &.medal-category-3.medal-ranking-1 {
-      background-position: -133px -307px;
-    }
-    &.medal-category-3.medal-ranking-2 {
-      background-position: -167px -307px;
-    }
-    &.medal-category-3.medal-ranking-3 {
-      background-position: -201px -307px;
-    }
-    &.medal-category-4.medal-ranking-1 {
-      background-position: -133px -341px;
-    }
-    &.medal-category-4.medal-ranking-2 {
-      background-position: -167px -341px;
-    }
-    &.medal-category-4.medal-ranking-3 {
-      background-position: -201px -341px;
-    }
-    &.medal-category-5.medal-ranking-1 {
-      background-position: -133px -375px;
-    }
-    &.medal-category-5.medal-ranking-2 {
-      background-position: -167px -375px;
-    }
-    &.medal-category-5.medal-ranking-3 {
-      background-position: -201px -375px;
-    }
-    &.medal-category-6.medal-ranking-1 {
-      background-position: -133px -409px;
-    }
-    &.medal-category-6.medal-ranking-2 {
-      background-position: -167px -409px;
-    }
-    &.medal-category-6.medal-ranking-3 {
-      background-position: -201px -409px;
     }
   }
 
