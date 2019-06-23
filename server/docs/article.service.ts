@@ -15,6 +15,10 @@ import log from "../core/log";
 
 export class ArticleService {
 
+  private readonly ARTICLES_DATA_PATH = path.resolve(constants.ROOT_PATH, "server/docs/articles-data");
+
+  private readonly readFilePromise = promisify(fs.readFile);
+
   /**
    * Finds one article by its name
    * @param  {string} article name (slug)
@@ -22,8 +26,7 @@ export class ArticleService {
    */
   public async findArticle(articleName: string): Promise<string|null> {
     if (config.DEBUG_ARTICLES) {
-      const article = await promisify(fs.readFile)
-        (path.join(constants.ROOT_PATH, "server/articles", articleName + ".md"));
+      const article = await this.readFilePromise(path.resolve(this.ARTICLES_DATA_PATH, articleName + ".md"));
       if (article) {
         return article.toString();
       }

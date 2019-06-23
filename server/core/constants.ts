@@ -148,7 +148,7 @@ export default {
   MAX_BODY_COMMENT: 10000,
 
   // Misc
-  ARTICLES_ROOT_URL: "https://raw.githubusercontent.com/alakajam-team/alakajam/master/server/articles/",
+  ARTICLES_ROOT_URL: "https://raw.githubusercontent.com/alakajam-team/alakajam/master/server/docs/article-data/",
   PAYPAL_BUTTON: `<form action="https://www.paypal.com/cgi-bin/webscr"
         method="post" target="_top" style="display: inline">
     <input type="hidden" name="cmd" value="_s-xclick" />

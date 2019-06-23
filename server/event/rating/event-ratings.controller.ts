@@ -42,7 +42,7 @@ export async function viewEventRatings(req, res) {
       });
     });
 
-    res.render("event/view-event-ratings", {
+    res.render("event/rating/event-ratings", {
       votesPerCategory,
       ratingCount: voteHistoryCollection.length,
     });
