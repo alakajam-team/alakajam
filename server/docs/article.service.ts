@@ -15,7 +15,7 @@ import log from "../core/log";
 
 export class ArticleService {
 
-  private readonly ARTICLES_DATA_PATH = path.resolve(constants.ROOT_PATH, "server/docs/articles-data");
+  private readonly ARTICLES_DATA_PATH = path.resolve(constants.ROOT_PATH, "server/docs/article-data");
 
   private readonly readFilePromise = promisify(fs.readFile);
 
