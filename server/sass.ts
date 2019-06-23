@@ -9,7 +9,7 @@ import { promisify } from "util";
 import fileStorage from "./core/file-storage";
 import log from "./core/log";
 
-class SassBuildService {
+class SassBuilder {
 
   private readonly ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
   private readonly CLIENT_SRC_FOLDER = path.join(this.ROOT_PATH, "./client/");
@@ -19,8 +19,28 @@ class SassBuildService {
 
   private writeFileAsync = promisify(writeFile);
 
-  public initialize({ watch = false }): void {
-    if (watch) {
+  public async initialize({ watch = false }): Promise<[sass.Result, string[]] | undefined> {
+    if (!watch) {
+      log.info("Building SASS...");
+
+      const { resolve: sassResolve, reject: sassReject, promise: sassPromise }
+        = this.createDeferredPromise<sass.Result>();
+      const { resolve: assetsResolve, reject: assetsReject, promise: assetsPromise }
+        = this.createDeferredPromise<string[]>();
+
+      this.sassBuild(sassResolve, sassReject);
+      this.copyAssets({
+        assetsPath: this.ASSETS_GLOBS,
+        reject: assetsReject,
+        resolve: (files) => {
+          log.info(`Copied ${files.length} static assets to ${this.CLIENT_DEST_FOLDER}`);
+          assetsResolve();
+        }
+      });
+
+      return Promise.all([sassPromise, assetsPromise]);
+
+    } else {
       log.info("Setting up automatic SASS build...");
       const sassWatcher = chokidar.watch("**/*.scss", { cwd: this.CLIENT_SRC_FOLDER });
       sassWatcher.on("all", debounce(this.sassBuild.bind(this), 500));
@@ -29,23 +49,13 @@ class SassBuildService {
       assetWatcher.on("all", (eventName: string, assetPath: string) => {
         this.copyAssets({
           assetsPath: assetPath,
-          callback: () => { log.info(`Copied ${assetPath}`); }
+          resolve: () => { log.info(`Copied ${assetPath}`); }
         });
-      });
-
-    } else {
-      log.info("Building SASS...");
-      this.sassBuild();
-      this.copyAssets({
-        assetsPath: this.ASSETS_GLOBS,
-        callback: (files) => {
-          log.info(`Copied ${files.length} static assets to ${this.CLIENT_DEST_FOLDER}`);
-        }
       });
     }
   }
 
-  private sassBuild() {
+  private sassBuild(resolve?: (result: sass.Result) => void, reject?: (cause?: any) => void) {
     fileStorage.createFolderIfMissing(this.CLIENT_DEST_FOLDER);
     const inputFile = path.resolve(this.CLIENT_SRC_FOLDER, "scss/index.scss");
     const outputFile = path.resolve(this.CLIENT_DEST_FOLDER, "css/index.css");
@@ -56,15 +66,17 @@ class SassBuildService {
     }, async (error, result) => {
       if (error) {
         log.error(error.message, error.stack);
+        if (typeof reject === "function") { reject(error); }
       } else {
         await this.writeFileAsync(outputFile, result.css);
         log.info(`Built CSS to ${outputFile} (${result.css.length / 1000.}kb)`);
+        if (typeof resolve === "function") { resolve(result); }
       }
     });
   }
 
-  private copyAssets({ assetsPath, callback }:
-    { assetsPath?: string | string[], callback?: (files: any[]) => void }) {
+  private copyAssets({ assetsPath, reject, resolve }:
+    { assetsPath?: string | string[], reject?: (reason: any) => void, resolve?: (files: string[]) => void }) {
     copy(
       assetsPath,
       this.CLIENT_DEST_FOLDER,
@@ -72,15 +84,26 @@ class SassBuildService {
       (error: Error, files: any[]) => {
         if (error) {
           log.error(error.message, error.stack);
+          if (typeof reject === "function") { reject(error); }
         } else {
-          callback(files);
+          if (typeof resolve === "function") { resolve(files); }
         }
       });
   }
 
+  private createDeferredPromise<T>() {
+    let resolve: (value?: unknown) => void;
+    let reject: (reason?: any) => void;
+    const promise = new Promise<T>((resolveFn, rejectFn) => {
+      resolve = resolveFn;
+      reject = rejectFn;
+    });
+    return { resolve, reject, promise };
+  }
+
 }
 
-const instance = new SassBuildService();
+const instance = new SassBuilder();
 export default instance;
 
 // Standalone execution

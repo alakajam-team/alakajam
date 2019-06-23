@@ -35,7 +35,8 @@ import * as fs from "fs";
 import * as mkdirp from "mkdirp";
 import * as path from "path";
 import * as util from "util";
-import sassBuild from "./sass";
+import sassBuilder from "./sass";
+import webpackBuilder from "./webpack";
 
 /**
  * Local constants
@@ -136,8 +137,10 @@ async function initFilesLayout() {
   // Run CSS and JS build (or bootstrap sources watcher in dev mode)
   if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
     process.chdir(ROOT_PATH);
-    sassBuild.initialize({ watch: DEV_ENVIRONMENT });
-    await buildJS(DEV_ENVIRONMENT);
+    await Promise.all([
+      sassBuilder.initialize({ watch: DEV_ENVIRONMENT }),
+      webpackBuilder.initialize({ watch: DEV_ENVIRONMENT })
+    ]);
   }
 }
 
@@ -166,51 +169,6 @@ function configureBrowserRefresh() {
     browserRefreshClient
       .enableSpecialReload(CLIENT_RESOURCES, { autoRefresh: false });
   }
-}
-
-async function buildJS(watch = false) {
-  const webpack =  require("webpack");
-
-  const env = process.env.NODE_ENV || "development";
-  const webpackConfig = require(path.join(ROOT_PATH, "./webpack." + env + ".js"));
-
-  await _createFolderIfMissing(webpackConfig.output.path);
-
-  const compiler = webpack(webpackConfig);
-
-  await new Promise((resolve) => {
-    function callback(err, stats) {
-      // https://webpack.js.org/api/node/#error-handling
-
-      if (err) {
-        // This means an error in webpack or its configuration, not an error in
-        // the compiled sources.
-        log.error(err.stack || err);
-        if (err.details) {
-          log.error(err.details);
-        }
-        return;
-      }
-
-      let logMethod = log.info.bind(log);
-      if (stats.hasErrors()) {
-        logMethod = log.error.bind(log);
-      } else if (stats.hasWarnings()) {
-        logMethod = log.warn.bind(log);
-      }
-      logMethod(stats.toString(webpackConfig.stats));
-
-      resolve();
-    }
-
-    if (watch) {
-      log.info("Setting up automatic JS build...");
-      compiler.watch(webpackConfig.watchOptions || {}, callback);
-    } else {
-      log.info("Building JS...");
-      compiler.run(callback);
-    }
-  });
 }
 
 /**
