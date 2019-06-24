@@ -17,6 +17,7 @@
 *.out
 *.pid
 *.backup
+*.stackdump
 
 # OS-specific garbage
 .DS_Store
