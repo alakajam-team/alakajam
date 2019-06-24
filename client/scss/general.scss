@@ -24,10 +24,10 @@ body {
   background-color: $bg;
   color: $text;
   height: 100%;
-  padding-top: calc($navbar-height) + 20px;
+  padding-top: calc(#{$navbar-height} + 20px);
 }
 body.in-event {
-  padding-top: calc($navbar-height) + var(--eventbar-height) + 20px;
+  padding-top: calc(#{$navbar-height} + #{$eventbar-height} + 20px);
 }
 
 div {
@@ -425,7 +425,7 @@ input[type="submit"][data-disabled] {
 
 .in-event .anchor {
   position: absolute;
-  top: calc(-60px - $eventbar-height);
+  top: calc(-60px - #{$eventbar-height});
 }
 .comment .anchor {
   top: 0 !important;

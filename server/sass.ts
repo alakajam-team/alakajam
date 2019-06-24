@@ -49,7 +49,7 @@ class SassBuilder {
       assetWatcher.on("all", (eventName: string, assetPath: string) => {
         this.copyAssets({
           assetsPath: assetPath,
-          resolve: () => { log.info(`Copied ${assetPath}`); }
+          resolve: () => { log.debug(`Copied ${assetPath}`); }
         });
       });
     }

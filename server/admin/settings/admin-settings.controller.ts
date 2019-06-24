@@ -43,12 +43,13 @@ export async function adminSettings(req, res) {
   // Gather editable settings
   const editableSettings = [];
   for (const key of constants.EDITABLE_SETTINGS) {
-    editableSettings.push({
+    const editableSetting = {
       key,
       value: await settings.find(key),
-    });
+    };
+    editableSettings.push(editableSetting);
     if (!currentEditValue && req.query.edit && key === req.query.edit) {
-      currentEditValue = settings[editableSettings.length - 1].value;
+      currentEditValue = editableSetting.value;
     }
   }
 

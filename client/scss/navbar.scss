@@ -167,9 +167,9 @@
 
       &.live a {
         background-color: $main-light;
-        line-height: calc($navbar-height) / 3;
+        line-height: calc(#{$navbar-height} / 3);
         padding: 0 15px;
-        padding-top: calc($navbar-height) / 6;
+        padding-top: calc(#{$navbar-height} / 6);
         font-size: 1rem;
         margin-right: 20px;
 
