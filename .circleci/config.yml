@@ -8,6 +8,7 @@ jobs:
       - image: cypress/base:10
     steps:
       - checkout
-      - run: npm install
+      - run: npm ci
+      - run: npm deployment:build
       - run: npm run test:unit
       - run: npm run test:e2e

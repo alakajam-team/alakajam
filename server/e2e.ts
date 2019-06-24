@@ -15,5 +15,6 @@ editableConfig.SERVER_PORT = 8001;
 editableConfig.ROOT_URL = "http://localhost:8001";
 editableConfig.DATA_PATH = "cypress";
 editableConfig.DEBUG_ADMIN = true;
+editableConfig.DEBUG_DISABLE_STARTUP_BUILD = true;
 
 import "./index";
