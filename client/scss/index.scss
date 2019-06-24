@@ -3,11 +3,11 @@
  */
 
 @import "node_modules/bootstrap/dist/css/bootstrap.min";
-@import "./lib/bootstrap-datetimepicker.min";
+@import "node_modules/easymde/dist/easymde.min";
+@import "node_modules/select2/dist/css/select2.min";
 @import "./lib/fontawesome-all.min";
-@import "./lib/select2.min";
 @import "./lib/select2-bootstrap.min";
-@import "./lib/easymde.min";
+@import "./lib/bootstrap-datetimepicker.min";
 
 /**
  * Customized libraries
