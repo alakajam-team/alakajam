@@ -2,11 +2,20 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### June 2019
+
+* Major code refactoring (reorganize and split source files, switch from CSSNext to SASS)
+* Add "Voxel's practical tips" article to the docs
+
+### May 2019
+
+* Preview pictures before they are uploaded
+* Improve spoiler tag in posts
+* Give delete buttons a consistent look throughout the site
+
 ### April 2019
 
 * Migrate website sources from JavaScript to TypeScript
-* Preview pictures before they are uploaded
-* Improve spoiler tag in posts
 
 ### March 2019
 

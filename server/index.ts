@@ -35,8 +35,6 @@ import * as fs from "fs";
 import * as mkdirp from "mkdirp";
 import * as path from "path";
 import * as util from "util";
-import sassBuilder from "./sass";
-import webpackBuilder from "./webpack";
 
 /**
  * Local constants
@@ -138,8 +136,8 @@ async function initFilesLayout() {
   if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
     process.chdir(ROOT_PATH);
     await Promise.all([
-      sassBuilder.initialize({ watch: DEV_ENVIRONMENT }),
-      webpackBuilder.initialize({ watch: DEV_ENVIRONMENT })
+      require("./sass").default.initialize({ watch: DEV_ENVIRONMENT }),
+      require("./webpack").default.initialize({ watch: DEV_ENVIRONMENT })
     ]);
   }
 }
