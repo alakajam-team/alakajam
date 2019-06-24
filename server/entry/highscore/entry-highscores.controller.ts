@@ -18,7 +18,7 @@ export async function entryHighscores(req, res) {
     entryScore = await highscoreService.findEntryScore(user.get("id"), entry.get("id"));
   }
 
-  res.render("entry/entry-highscores", {
+  res.render("entry/highscore/entry-highscores", {
     entryScore,
     highScoresCollection: await highscoreService.findHighScores(entry, { fetchAll: true }),
     tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get("id")),
