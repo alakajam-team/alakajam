@@ -1,5 +1,6 @@
 {% extends "admin/admin.base.html" %}
 {% import "post/post.macros.html" as postMacros with context %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
 
 {% block adminBody %}
 
@@ -22,6 +23,8 @@
   <h2>Published</h2>
 {% endif %}
 
+{{ navigationMacros.pagination(currentPage, pageCount, '/admin?') }}
+
 {% for post in publishedPosts %}
   {{ postMacros.post(post, {allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes }) }}
 {% endfor %}
@@ -29,5 +32,7 @@
 {% if publishedPosts.length === 0 %}
   <div class="well">Nothing yet!</div>
 {% endif %}
+
+{{ navigationMacros.pagination(currentPage, pageCount, '/admin?') }}
 
 {% endblock %}

@@ -4,8 +4,8 @@ import * as csurf from "csurf";
 import * as multer from "multer";
 import * as randomKey from "random-key";
 import * as configUtils from "server/core/config";
-import { adminHome } from "./admin/admin-home.controller";
 import { adminMiddleware } from "./admin/admin.middleware";
+import { adminAnnouncements } from "./admin/announcements/admin-announcements.controller";
 import { adminDev } from "./admin/dev/admin-dev.controller";
 import { adminEventPresets } from "./admin/event-presets/admin-event-presets.controller";
 import { adminEventTemplates } from "./admin/event-templates/admin-event-templates.controller";
@@ -123,7 +123,7 @@ export function routes(app) {
 
     // Mod dashboard
 
-    router.get("/admin", csrf, adminHome);
+    router.get("/admin", csrf, adminAnnouncements);
     router.get("/admin/events", csrf, adminEvents);
     router.all("/admin/event-presets", csrf, adminEventPresets);
     router.all("/admin/event-templates", csrf, adminEventTemplates);

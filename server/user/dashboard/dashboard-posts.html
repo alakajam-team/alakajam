@@ -26,6 +26,8 @@
     <h2>Published</h2>
   {% endif %}
 
+  {{ navigationMacros.pagination(currentPage, pageCount, '/dashboard/posts?') }}
+
   {% for post in publishedPosts %}
     <div class="expandable">
       {{ postMacros.post(post, { allowMods: true, readingUser: user, readingUserLikes: {} }) }}
@@ -36,6 +38,8 @@
   {% if publishedPosts.length === 0 %}
     <div class="well">No posts yet.</div>
   {% endif %}
+
+  {{ navigationMacros.pagination(currentPage, pageCount, '/dashboard/posts?') }}
 
   </div>
 </div>

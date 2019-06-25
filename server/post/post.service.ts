@@ -60,7 +60,16 @@ function getFirstPicture(model) {
  * @param  {object} options among "specialPostType allowHidden allowDrafts eventId entryId userId"
  * @return {array(Post)}
  */
-async function findPosts(options: any = {}) {
+async function findPosts(options: {
+      specialPostType?: string,
+      allowHidden?: boolean,
+      allowDrafts?: boolean,
+      eventId?: number|string,
+      entryId?: number|string,
+      userId?: number|string,
+      page?: number,
+      transacting?: any
+    } = {}) {
   let postCollection = await models.Post;
   postCollection = postCollection.query((qb) => {
     if (options.specialPostType !== undefined) {

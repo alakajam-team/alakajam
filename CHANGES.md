@@ -5,6 +5,7 @@
 ### June 2019
 
 * Major code refactoring (reorganize and split source files, switch from CSSNext to SASS)
+* User dashboard: enable pagination to browse older blog posts
 * Add "Voxel's practical tips" article to the docs
 
 ### May 2019
