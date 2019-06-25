@@ -1,10 +1,9 @@
 {% extends "base.html" %}
+{% import "macros/form.macros.html" as formMacros %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
+{% import "entry/highscore/entry-highscore.macros.html" as scoreMacros %}
 {% import "event/event.macros.html" as eventMacros %}
 {% import "post/post.macros.html" as postMacros with context %}
-{% import "macros/form.macros.html" as formMacros %}
-
-{% import "entry/highscore/entry-highscore.macros.html" as scoreMacros %}
-{% import "event/event.macros.html" as entryMacros %}
 
 {% block body %}
 
@@ -124,7 +123,7 @@
               <div class="spacing"></div>
             {% endfor %}
 
-            {{ formMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id')) }}
+            {{ navigationMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id')) }}
           {% else %}
           <div class="well">{{ profileUser.get('title') }} didn't write posts... Yet!</div>
           {% endif %}
@@ -161,7 +160,7 @@
               {% for userScore in userScores %} {% set entry = userScore.related('entry') %}
               <tr>
                 <td>{{ scoreMacros.printRanking(userScore.get('ranking')) }}</td>
-                <td style="max-width: 200px">{{ entryMacros.entrySmallThumb(entry) }}</td>
+                <td style="max-width: 200px">{{ eventMacros.entrySmallThumb(entry) }}</td>
                 <td>
                   <b>{{ scoreMacros.printScore(entry, userScore, { showEditLink: false }) }}</b>
                 </td>

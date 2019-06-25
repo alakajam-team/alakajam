@@ -2,6 +2,7 @@
 {% import "event/event.macros.html" as eventMacros %}
 {% import "macros/form.macros.html" as formMacros %}
 {% import "macros/games-search.macros.html" as gamesSearchMacros %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
 
 {% block body %}
 
@@ -54,7 +55,7 @@
         {% endif %}
       {% endif %}
 
-      {{ formMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
+      {{ navigationMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
       
       <div class="game-grid">
       {% for entry in entriesCollection.models %}
@@ -64,7 +65,7 @@
       {% endfor %}
       </div>
       
-      {{ formMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
+      {{ navigationMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
     </div>
   </div>
 </div>

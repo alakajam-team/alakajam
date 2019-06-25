@@ -2,6 +2,7 @@
 {% import "user/user.macros.html" as userMacros %}
 {% import "macros/form.macros.html" as formMacros %}
 {% import "macros/tabs.macros.html" as tabsMacros with context %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
 
 {% block body %}
 
@@ -49,7 +50,7 @@
         </div>
       {% endif %}
       
-      {{ formMacros.pagination(currentPage, pageCount, path) }}
+      {{ navigationMacros.pagination(currentPage, pageCount, path) }}
       
       <div class="row user-thumbs">
         {% for someUser in users %}

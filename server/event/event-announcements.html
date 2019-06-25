@@ -1,6 +1,7 @@
 {% extends "event/_page-event.html" %}
 {% import "post/post.macros.html" as postMacros with context %}
 {% import "macros/form.macros.html" as formMacros %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
 
 {% block body %}
 
@@ -40,7 +41,7 @@
       {% endfor %}
 
       {% if posts.models.length > 0 %}
-        {{ formMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=announcement&event_id=' + event.get('id')) }}
+        {{ navigationMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=announcement&event_id=' + event.get('id')) }}
       {% else %}
       <div class="well">
         No announcements yet.

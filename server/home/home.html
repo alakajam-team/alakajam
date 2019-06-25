@@ -4,6 +4,7 @@
 {% import "post/post.macros.html" as postMacros with context %}
 {% import "user/user.macros.html" as userMacros %}
 {% import "macros/form.macros.html" as formMacros %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
 
 {% block body %}
 
@@ -74,7 +75,7 @@
     <div class="col-lg-offset-1 col-lg-10">
       <div class="js-featured-post expandable">
         {{ postMacros.post(featuredPost, {readingUser: user, readingUserLikes: userLikes}) }}
-        {{ formMacros.expandCollapse({ manualScripting: true }) }}
+        {{ navigationMacros.expandCollapse({ manualScripting: true }) }}
       </div>
       <script type="text/javascript">
         postExpandCollapse('js-featured-post', 450)
@@ -95,7 +96,7 @@
           {% else %}
             <div class="home-jumbo__announcement expandable">
               {{ postMacros.post(featuredEventAnnouncement, {hideDate: true, readingUser: user, readingUserLikes: userLikes}) }}
-              {{ formMacros.expandCollapse({ manualScripting: true }) }}
+              {{ navigationMacros.expandCollapse({ manualScripting: true }) }}
             </div>
           {% endif %}
           </div>
@@ -190,10 +191,10 @@
         {% for post in posts %}
           <div class="expandable">
             {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
-            {{ formMacros.expandCollapse() }}
+            {{ navigationMacros.expandCollapse() }}
           </div>
         {% endfor %}
-        {{ formMacros.pagination(1, pageCount, '/posts') }}
+        {{ navigationMacros.pagination(1, pageCount, '/posts') }}
     </div>
   </div>
   {% endif %}

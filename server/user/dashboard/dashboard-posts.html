@@ -1,6 +1,7 @@
 {% extends "user/dashboard/dashboard.base.html" %}
 {% import "post/post.macros.html" as postMacros with context %}
 {% import "macros/form.macros.html" as formMacros %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
 
 {% block dashboardBody %}
 
@@ -18,7 +19,7 @@
     {% for post in draftPosts %}
       <div class="expandable">
         {{ postMacros.post(post, { allowMods: true, readingUser: user, readingUserLikes: {} }) }}
-        {{ formMacros.expandCollapse() }}
+        {{ navigationMacros.expandCollapse() }}
       </div>
     {% endfor %}
 
@@ -28,7 +29,7 @@
   {% for post in publishedPosts %}
     <div class="expandable">
       {{ postMacros.post(post, { allowMods: true, readingUser: user, readingUserLikes: {} }) }}
-      {{ formMacros.expandCollapse() }}
+      {{ navigationMacros.expandCollapse() }}
     </div>
   {% endfor %}
 

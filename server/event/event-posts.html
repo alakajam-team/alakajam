@@ -1,6 +1,7 @@
 {% extends "event/_page-event.html" %}
 {% import "post/post.macros.html" as postMacros with context %}
 {% import "macros/form.macros.html" as formMacros %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
 
 {% block body %}
 {{ super() }}
@@ -12,13 +13,13 @@
         {% for post in posts %}
           <div class="expandable">
             {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
-            {{ formMacros.expandCollapse() }}
+            {{ navigationMacros.expandCollapse() }}
           </div>
         {% endfor %}
       </div>
 
       {% if posts.length > 0 %}
-        {{ formMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
+        {{ navigationMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
       {% else %}
         <div class="well">
           No posts yet.
