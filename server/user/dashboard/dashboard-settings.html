@@ -15,15 +15,15 @@
   <div class="form-group">
     <label for="name">Special permissions</label>
     <div>
-      {{ formMacros.radio('special-permissions', 'none', 'None', 'none' if not isMod(dashboardUser)) }}
-      {{ formMacros.radio('special-permissions', 'mod', 'Moderator', 'mod' if isMod(dashboardUser) and not isAdmin(dashboardUser)) }}
-      {{ formMacros.radio('special-permissions', 'admin', 'Administrator', 'admin' if isAdmin(dashboardUser)) }}
+      {{ formMacros.radio('special_permissions', 'none', 'None', 'none' if not isMod(dashboardUser)) }}
+      {{ formMacros.radio('special_permissions', 'mod', 'Moderator', 'mod' if isMod(dashboardUser) and not isAdmin(dashboardUser)) }}
+      {{ formMacros.radio('special_permissions', 'admin', 'Administrator', 'admin' if isAdmin(dashboardUser)) }}
     </div>
   </div>
   <div class="form-group">
     <label for="name">Anonymous posts</label>
     <div>
-      {{ formMacros.check('disallow-anonymous', 'Disallow posting anonymously', dashboardUser.get('disallow_anonymous')) }}
+      {{ formMacros.check('disallow_anonymous', 'Disallow posting anonymously', dashboardUser.get('disallow_anonymous')) }}
     </div>
   </div>
   <div class="form-group">

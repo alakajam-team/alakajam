@@ -1,17 +1,23 @@
 import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
+import { anyRule, rule, validateObject } from "server/core/forms-validation";
+import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
-import { logout } from "../authentication/logout.controller";
+
+export async function dashboardSettingsGet(req, res) {
+  await res.locals.dashboardUser.load("details");
+
+  res.render("user/dashboard/dashboard-settings");
+}
 
 /**
- * Manage general user info
+ * Manage general user info44
  */
-export async function dashboardSettings(req, res) {
+export async function dashboardSettingsPost(req, res) {
   await res.locals.dashboardUser.load("details");
 
   let errorMessage = res.locals.errorMessage;
-  const infoMessage = "";
 
   if (req.method === "POST") {
     const dashboardUser = res.locals.dashboardUser;
@@ -30,25 +36,24 @@ export async function dashboardSettings(req, res) {
         errorMessage = result.error;
       }
     } else {
-      if (!forms.isEmail(req.body.email)) {
-        errorMessage = "Invalid email";
-      } else if (req.body.social_web && !forms.isURL(req.body.social_web)) {
-        errorMessage = "Invalid URL";
-      } else if (!res.locals.dashboardAdminMode && req.body["special-permissions"]) {
-        errorMessage = "Not allowed to change special permissions on this user";
-      } else if (!res.locals.dashboardAdminMode && req.body["disallow-anonymous"]) {
-        errorMessage = "Not allows to change anonymous comments settings on this user";
-      } else if (req.file && !(await fileStorage.isValidPicture(req.file.path))) {
-        errorMessage = "Invalid picture format (allowed: PNG GIF JPG)";
-      }
+      errorMessage = await validateObject(req.body, {
+        email: anyRule([forms.isNotSet, forms.isEmail], "Invalid email"),
+        website: anyRule([forms.isNotSet, forms.isURL], "Invalid URL"),
+        special_permissions: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
+          "Not allowed to change special permissions on this user"),
+        disallow_anonymous: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
+          "Not allowed to change anonymous comments settings on this user"),
+        file: anyRule([forms.isNotSet, (f) => fileStorage.isValidPicture(f.path)],
+          "Invalid picture format (allowed: PNG GIF JPG)")
+      });
 
       if (!errorMessage) {
         // General settings form
         dashboardUser.set("title", forms.sanitizeString(req.body.title || dashboardUser.get("name")));
         dashboardUser.set("email", req.body.email);
-        if (req.body["special-permissions"]) {
-          const isMod = req.body["special-permissions"] === "mod" || req.body["special-permissions"] === "admin";
-          const isAdmin = req.body["special-permissions"] === "admin";
+        if (req.body.special_permissions) {
+          const isMod = ["mod", "admin"].includes(req.body.special_permissions);
+          const isAdmin = req.body.special_permissions === "admin";
           dashboardUser.set({
             is_mod: isMod ? "true" : "",
             is_admin: isAdmin ? "true" : "",
@@ -56,7 +61,7 @@ export async function dashboardSettings(req, res) {
         }
 
         if (res.locals.dashboardAdminMode) {
-          dashboardUser.set("disallow_anonymous", req.body["disallow-anonymous"] === "on");
+          dashboardUser.set("disallow_anonymous", req.body.disallow_anonymous === "on");
         }
 
         const dashboardUserDetails = dashboardUser.related("details");
@@ -83,8 +88,7 @@ export async function dashboardSettings(req, res) {
     }
   }
 
-  res.render("user/dashboard/dashboard-settings", {
-    errorMessage,
-    infoMessage,
-  });
+  res.locals.errorMessage = errorMessage;
+
+  await dashboardSettingsGet(req, res);
 }

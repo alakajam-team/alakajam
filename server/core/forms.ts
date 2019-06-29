@@ -34,6 +34,9 @@ export default {
   isSlug,
   isIn,
   isLengthValid,
+  isSet,
+  isNotSet,
+  isTrue,
 
   parseDateTime,
   parseJson,
@@ -218,6 +221,14 @@ function isLengthValid(input, maxLength = 255) {
   } else {
     return input.toString().length <= maxLength;
   }
+}
+
+function isSet(input: any) {
+  return input !== undefined;
+}
+
+function isNotSet(input: any) {
+  return input === undefined;
 }
 
 /**

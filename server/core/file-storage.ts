@@ -70,7 +70,7 @@ async function getImageType(filepath) {
  * @param {string} path
  * @returns {bool} whather the specified path is a valid picture
  */
-async function isValidPicture(picturePath) {
+async function isValidPicture(picturePath: string) {
   if (await exists(picturePath)) {
     return (await getImageType(picturePath)) !== undefined;
   } else {
