@@ -100,18 +100,18 @@ async function configure(app) {
     /* Allows anyone to display an error page.
      * Calling render() after an errorPage() is tolerated an will be a no-op, although it would be bad practice.
      */
-    res.errorPage = (code, error) => {
+    res.errorPage = (code: number, error?: Error) => {
       errorPage(req, res, code, error, app.locals.devMode);
       res.alreadyRenderedWithError = true;
     };
 
     /* Shorthand for rendering errors on promise failures.
-     * Calling render() after a traceAndShowErrorPage() is tolerated an will be a no-op,
+     * Calling render() after a traceAndShowErrorPage() is tolerated and will be a no-op,
      * although it would be bad practice. (This method helps catching rejections properly on promises
      * that are *asynchronously* awaited, eg. while awaiting other services in the middle of preparing a Promise.all().
      * You should prefer refactoring your code rather than use this)
      */
-    res.traceAndShowErrorPage = (error) => {
+    res.traceAndShowErrorPage = (error?: Error) => {
       errorPage(req, res, 500, error, app.locals.devMode);
       res.alreadyRenderedWithError = true;
     };

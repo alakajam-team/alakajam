@@ -13,9 +13,9 @@ export default {
   countUnreadNotifications,
 };
 
-async function countUnreadNotifications(user) {
+async function countUnreadNotifications(user): Promise<number> {
   const userCache = cache.user(user);
-  let unreadNotifications = userCache.get("unreadNotifications");
+  let unreadNotifications = userCache.get("unreadNotifications") as number;
   if (unreadNotifications === undefined) {
     const commentsCollection = await commentService.findCommentsToUser(user, { notificationsLastRead: true });
     const invitesCollection = await eventService.findEntryInvitesForUser(user, { notificationsLastRead: true });

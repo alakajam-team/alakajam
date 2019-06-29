@@ -36,7 +36,6 @@ export default {
   isLengthValid,
   isSet,
   isNotSet,
-  isTrue,
 
   parseDateTime,
   parseJson,

@@ -1,3 +1,5 @@
+import { Model } from "bookshelf";
+import { NextFunction, Request, Response } from "express";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
 import security from "server/core/security";
@@ -7,7 +9,47 @@ import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
 import commentService from "./post/comment/comment.service";
 
-export async function globalMiddleware(req, res, next) {
+export interface GlobalLocals {
+  /**
+   * Current local path.
+   * Available everywhere.
+   */
+  readonly path: string;
+
+  /**
+   * The title to set on the current page.
+   * Available and settable everywhere.
+   */
+  pageTitle: string;
+
+  /**
+   * Current logged in user (undefined if logged out).
+   * Available everywhere.
+   */
+  readonly user?: Model<any>;
+
+  /**
+   * The number of unread notifications for the current logged in user (undefined if logged out).
+   * Available everywhere.
+   */
+  readonly unreadNotifications?: number;
+
+  /**
+   * The model of the currently featured event.
+   * Available everywhere.
+   */
+  readonly featuredEvent: Model<any>;
+
+  /**
+   * The model of the currently edited comment.
+   * Available everywhere.
+   */
+  readonly editComment: Model<any>;
+
+  [key: string]: any;
+}
+
+export async function globalMiddleware(req: Request, res: Response, next: NextFunction) {
   res.locals.path = req.originalUrl;
 
   // Fetch current user

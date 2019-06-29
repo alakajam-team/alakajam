@@ -31,8 +31,8 @@ export function createErrorRenderingMiddleware(devMode: boolean) {
  * @param error object or string message (optional)
  * @param devMode
  */
-export function errorPage(req: Request, res: Response, code: number, error?: Error, devMode?: boolean) {
-  const stack = devMode ? error && error.stack : undefined;
+export function errorPage(req: Request, res: Response, code: number, error?: Error|string, devMode?: boolean) {
+  const stack = (devMode && typeof error === "object") ? error.stack : undefined;
   let message = (typeof error === "object") ? error.message : error;
   let title;
   switch (code) {
@@ -54,7 +54,7 @@ export function errorPage(req: Request, res: Response, code: number, error?: Err
 
   // Internal error logging
   if (code !== 404 && code !== 403) {
-    log.error(`HTTP ${code}: ${message}` + (error ? "\n" + error.stack : ""));
+    log.error(`HTTP ${code}: ${message}` + ((error && typeof error === "object") ? "\n" + error.stack : ""));
   }
 
   // Page rendering

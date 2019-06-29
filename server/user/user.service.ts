@@ -204,7 +204,7 @@ async function authenticate(name, password) {
  * Deletes an user, but only if it doesn't have any entries.
  * @param {User} user
  */
-async function deleteUser(user) {
+async function deleteUser(user): Promise<{ error?: string }> {
   const entries = await eventService.findUserEntries(user);
   if (entries.length === 0) {
     const userId = user.get("id");
