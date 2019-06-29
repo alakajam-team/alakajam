@@ -6,14 +6,16 @@
   "dashboard-settings": "/dashboard/settings",
   "dashboard-password": "/dashboard/password",
   "dashboard-entry-import": "/dashboard/entry-import",
-
+  
   "post-create": "/post/create",
   "post-create-with-params": "/post/create?eventId=1&special_post_type=announcement",
-
+  
   "entry-create": "/submissions-open/create-entry",
   "entry-edit": "/submissions-open/4/my-game/edit",
   "entry-submit-score": "/external-entry/5/my-external-entry/submit-score",
   "entry-manage-scores": "/submissions-open/4/my-game/edit-scores",
+  
+  "event-ratings": "/game-ratings/ratings",
 
-  "event-ratings": "/game-ratings/ratings"
+  "logout": "/logout"
 }

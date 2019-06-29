@@ -6,7 +6,7 @@ export async function logout(req, res) {
 
   await req.session.regeneratePromisified();
   res.locals.user = null;
-  res.render("login", {
+  res.render("user/authentication/login", {
     infoMessage: "Logout successful.",
   });
 }
