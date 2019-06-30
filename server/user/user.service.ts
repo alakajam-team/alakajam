@@ -1,4 +1,3 @@
-
 /**
  * User service
  *
@@ -16,6 +15,8 @@ import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
+import { User } from "server/entity/user.entity";
+import { FindOneOptions, getRepository } from "typeorm";
 import eventService from "../event/event.service";
 import mailService from "./mail/mail.service";
 
@@ -90,16 +91,15 @@ export class UserService {
 
   /**
    * Fetches a user
-   * @param name {name} name
-   * @returns {User}
    */
-  public async findByName(name) {
-    // XXX Case-insensitive search
-    if (config.DB_TYPE === "postgresql") {
-      return models.User.where("name", "ILIKE", name).fetch({ withRelated: "details" });
-    } else {
-      return models.User.where("name", "LIKE", name).fetch({ withRelated: "details" });
-    }
+  public async findByName(name: string, options: FindOneOptions<User> = {}): Promise<User> {
+    const like = config.DB_TYPE === "sqlite3" ? "LIKE" : "ILIKE"; // Case insensitive search
+    const userRepository = getRepository(User);
+    return userRepository.findOne({
+      where: `User.name ${like} '${name}'`,
+      relations: ["details"],
+      ...options
+    });
   }
 
   /**
@@ -200,6 +200,11 @@ export class UserService {
           + "before deleting your account."
       };
     }
+  }
+
+  public async save(user: User) {
+    const repository = getRepository(User);
+    await repository.save(user);
   }
 
   /**

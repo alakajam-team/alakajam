@@ -78,6 +78,7 @@ async function createApp() {
   if (previousVersion === "none") {
     await require("./core/db-init").insertInitialData(config.DEBUG_INSERT_SAMPLES);
   }
+  await require("./core/db-typeorm").default.connect();
   await middleware.configure(app);
 
   app.listen(config.SERVER_PORT, () => {

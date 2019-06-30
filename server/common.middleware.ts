@@ -23,6 +23,12 @@ export interface CommonLocals {
   pageTitle: string;
 
   /**
+   * The description to set on the current page, for search engines and social media cards.
+   * Available and settable everywhere.
+   */
+  pageDescription; string;
+
+  /**
    * Current logged in user (undefined if logged out).
    * Available everywhere.
    */
