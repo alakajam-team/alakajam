@@ -223,11 +223,11 @@ function promisifySession() {
   const Session = (expressSession as any).Session;
   ["regenerate", "destroy", "reload", "save"].forEach((funcName) => {
     const originalFunction = Session.prototype[funcName];
-    const promisifiedFunction = promisify(function(callback) { originalFunction.call(this, callback); });
-    Object.defineProperty(Session.prototype, funcName + "Promisified", {
+    const asyncFunction = promisify(function(callback) { originalFunction.call(this, callback); });
+    Object.defineProperty(Session.prototype, funcName + "Async", {
       configurable: true,
       enumerable: false,
-      value: promisifiedFunction,
+      value: asyncFunction,
       writable: false,
     });
   });

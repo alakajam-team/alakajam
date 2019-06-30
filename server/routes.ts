@@ -54,7 +54,7 @@ import { postView } from "./post/post-view.controller";
 import { postWatch } from "./post/post-watch.controller";
 import { postMiddleware } from "./post/post.middleware";
 import { postsView } from "./post/posts-view.controller";
-import { login, loginForm } from "./user/authentication/login.controller";
+import { loginGet, loginPost } from "./user/authentication/login.controller";
 import { logout } from "./user/authentication/logout.controller";
 import { passwordRecoveryRequest } from "./user/authentication/password-recovery-request.controller";
 import { passwordRecovery } from "./user/authentication/password-recovery.controller";
@@ -105,8 +105,8 @@ export function routes(app) {
 
     router.get("/register", csrf, registerForm);
     router.post("/register", csrf, register);
-    router.get("/login", csrf, loginForm);
-    router.post("/login", csrf, login);
+    router.get("/login", csrf, loginGet);
+    router.post("/login", csrf, loginPost);
     router.get("/logout", csrf, logout);
     router.all("/passwordRecoveryRequest", csrf, passwordRecoveryRequest);
     router.all("/passwordRecovery", csrf, passwordRecovery);

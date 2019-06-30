@@ -1,7 +1,6 @@
-import constants from "server/core/constants";
 import forms from "server/core/forms";
 import userService from "server/user/user.service";
-import { login } from "./login.controller";
+import { loginPost } from "./login.controller";
 
 /**
  * Register form
@@ -32,7 +31,7 @@ export async function register(req, res) {
     if (typeof result === "string") {
       errorMessage = result;
     } else {
-      login(req, res);
+      loginPost(req, res);
     }
   }
 

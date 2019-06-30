@@ -1,11 +1,14 @@
+import { Request } from "express";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
+import { GlobalLocals } from "server/global.middleware";
+import { CustomResponse, RenderContext } from "server/types";
 import userService from "server/user/user.service";
 
 /**
  * Login form
  */
-export async function loginForm(req, res) {
+export async function loginGet(req: Request, res: CustomResponse<GlobalLocals>) {
   res.locals.pageTitle = "Login";
 
   res.render("user/authentication/login", {
@@ -16,10 +19,10 @@ export async function loginForm(req, res) {
 /**
  * Login
  */
-export async function login(req, res) {
+export async function loginPost(req: Request, res: CustomResponse<GlobalLocals>) {
   res.locals.pageTitle = "Login";
 
-  const context: any = {
+  const context: RenderContext = {
     redirect: forms.sanitizeString(req.body.redirect),
   };
   if (req.body.name && req.body.password) {
@@ -32,7 +35,7 @@ export async function login(req, res) {
       if (req.body["remember-me"]) {
         req.session.cookie.maxAge = constants.REMEMBER_ME_MAX_AGE;
       }
-      await req.session.savePromisified();
+      await req.session.saveAsync();
     } else {
       context.errorMessage = "Authentication failed";
     }
