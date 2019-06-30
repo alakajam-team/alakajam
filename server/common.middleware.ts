@@ -9,6 +9,11 @@ import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
 import commentService from "./post/comment/comment.service";
 
+export interface NotificationMessage {
+  type: "success" | "info" | "warning" | "danger";
+  message: string;
+}
+
 export interface CommonLocals {
   /**
    * Current local path.
@@ -26,7 +31,13 @@ export interface CommonLocals {
    * The description to set on the current page, for search engines and social media cards.
    * Available and settable everywhere.
    */
-  pageDescription; string;
+  pageDescription: string;
+
+  /**
+   * Messages to notify to the user in the top-right corner of the screen when the page loads.
+   * Available and settable everywhere.
+   */
+  notifications: NotificationMessage[];
 
   /**
    * Current logged in user (undefined if logged out).
@@ -57,6 +68,7 @@ export interface CommonLocals {
 
 export async function commonMiddleware(req: Request, res: Response, next: NextFunction) {
   res.locals.path = req.originalUrl;
+  res.locals.notifications = [];
 
   // Fetch current user
   let userTask = null;

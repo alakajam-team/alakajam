@@ -22,6 +22,8 @@ class SassBuilder {
   private writeFileAsync = promisify(writeFile);
 
   public async initialize({ watch = false }): Promise<[sass.Result, string[]] | undefined> {
+    await fileStorage.createFolderIfMissing(path.resolve(this.CLIENT_DEST_FOLDER, "css"));
+
     if (!watch) {
       log.info("Building SASS...");
 

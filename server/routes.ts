@@ -62,7 +62,7 @@ import { register, registerForm } from "./user/authentication/register.controlle
 import { dashboardEntries } from "./user/dashboard/dashboard-entries.controller";
 import { dashboardEntryImport } from "./user/dashboard/dashboard-entry-import.controller";
 import { dashboardFeed } from "./user/dashboard/dashboard-feed.controller";
-import { dashboardPassword } from "./user/dashboard/dashboard-password.controller";
+import { dashboardPasswordGet, dashboardPasswordPost } from "./user/dashboard/dashboard-password.controller";
 import { dashboardPosts } from "./user/dashboard/dashboard-posts.controller";
 import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
@@ -117,7 +117,8 @@ export function routes(app) {
     router.all("/dashboard/scores", csrf, dashboardScores);
     router.get("/dashboard/settings", csrf, dashboardSettingsGet);
     router.post("/dashboard/settings", upload.single("avatar"), csrf, dashboardSettingsPost);
-    router.all("/dashboard/password", csrf, dashboardPassword);
+    router.get("/dashboard/password", csrf, dashboardPasswordGet);
+    router.post("/dashboard/password", csrf, dashboardPasswordPost);
     router.all("/dashboard/entry-import", csrf, dashboardEntryImport);
     router.get("/user/:name", csrf, userProfile);
 

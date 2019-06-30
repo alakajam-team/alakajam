@@ -1413,6 +1413,9 @@ blockquote {
  * alert
  * --------------------------------------------------
  */
+.alert {
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, .25);
+}
 .alert h4 {
   margin-bottom: 10px;
   font-weight: bold;
@@ -1421,8 +1424,9 @@ blockquote {
   color: black;
 }
 .alert-info {
-  background-color: #7cd1ef;
-  border: #4fc1e9;
+  background-color: #BBB;
+  border: #999;
+  color: white;
 }
 .alert-warning {
   background-color: #ffdd87;
@@ -1430,7 +1434,8 @@ blockquote {
 }
 .alert-danger {
   background-color: #f2838f;
-  border: #ed5565;
+  border: #c94451;
+  color: #822;
 }
 .alert-success {
   background-color: #b9df90;

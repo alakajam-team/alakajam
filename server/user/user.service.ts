@@ -168,7 +168,7 @@ export class UserService {
    * @param password {string} clear password (will be hashed & compared to the DB entry)
    * @returns {User} The models.User, or false if the authentication failed
    */
-  public async authenticate(name, password) {
+  public async authenticate(name, password): Promise<BookshelfModel | false> {
     const user = await models.User.query((query) => {
       query
         .where(db.knex.raw("LOWER(name)"), name.toLowerCase())

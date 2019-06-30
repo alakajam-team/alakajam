@@ -1,6 +1,6 @@
 export type Validator = (value: any) => Promise<undefined | string> | undefined | string;
 
-export type TestFunction = (value?: any) => Promise<boolean> | boolean;
+export type TestFunction = (value?: any) => Promise<any> | any;
 
 export async function validateObject(object: object, validators: {[key: string]: Validator})
     : Promise<undefined | string> {
@@ -42,7 +42,7 @@ export function rule(testFunction: TestFunction, errorMessage?: string): Validat
 export function allRules(testFunctions: TestFunction[], errorMessage?: string): Validator {
   return async (value?: any) => {
     for (const testFunction of testFunctions) {
-      if (await testFunction(value) === false) {
+      if (!(await testFunction(value))) {
         return _errorMessage(value, errorMessage);
       }
     }
@@ -59,7 +59,7 @@ export function allRules(testFunctions: TestFunction[], errorMessage?: string): 
 export function anyRule(testFunctions: TestFunction[], errorMessage?: string): Validator {
   return async (value?: any) => {
     for (const testFunction of testFunctions) {
-      if (await testFunction(value) === true) {
+      if (await testFunction(value)) {
         return undefined;
       }
     }

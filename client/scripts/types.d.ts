@@ -6,6 +6,9 @@ interface JQuery {
   select2: any;
   tooltip: any;
 }
+interface JQueryStatic {
+  notify: any;
+}
 
 declare const _: any;
 declare const CodeMirror: any;
