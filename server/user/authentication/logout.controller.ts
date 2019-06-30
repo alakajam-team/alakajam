@@ -1,11 +1,10 @@
-import { Request } from "express";
-import { GlobalLocals } from "server/global.middleware";
-import { CustomResponse } from "server/types";
+import { CommonLocals } from "server/common.middleware";
+import { CustomRequest, CustomResponse } from "server/types";
 
 /**
  * Logout
  */
-export async function logout(req: Request, res: CustomResponse<GlobalLocals>) {
+export async function logout(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "Login";
 
   await req.session.regenerateAsync();

@@ -8,6 +8,8 @@ import log from "./log";
 
 /**
  * Connection to a relational database (PostgreSQL or SQLite), through the TypeORM library.
+ *
+ * /!\ Work in progress. The goal is to progressively migrate from Bookshelf to TypeORM.
  */
 export class DB {
 

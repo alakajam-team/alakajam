@@ -3,19 +3,19 @@ import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import { anyRule, validateObject } from "server/core/forms-validation";
-import { CustomResponse } from "server/types";
+import { CustomRequest, CustomResponse } from "server/types";
 import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
 import { DashboardLocals } from "./dashboard.middleware";
 
-export async function dashboardSettingsGet(req: Request, res: CustomResponse<DashboardLocals>) {
+export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   res.render("user/dashboard/dashboard-settings");
 }
 
 /**
  * Manage general user info
  */
-export async function dashboardSettingsPost(req: Request, res: CustomResponse<DashboardLocals>) {
+export async function dashboardSettingsPost(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   if (req.body.delete) {
     await _handleDeletion(req, res);
   } else {
@@ -23,7 +23,7 @@ export async function dashboardSettingsPost(req: Request, res: CustomResponse<Da
   }
 }
 
-async function _handleSave(req: Request, res: CustomResponse<DashboardLocals>) {
+async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const dashboardUser = res.locals.dashboardUser;
   const oldTitle = dashboardUser.title;
 
@@ -77,7 +77,7 @@ async function _handleSave(req: Request, res: CustomResponse<DashboardLocals>) {
   await dashboardSettingsGet(req, res);
 }
 
-async function _handleDeletion(req: Request, res: CustomResponse<DashboardLocals>) {
+async function _handleDeletion(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const deletingOwnAccount = res.locals.user.get("id") === res.locals.dashboardUser.id;
   const result = await userService.deleteUser(res.locals.dashboardUser);
 

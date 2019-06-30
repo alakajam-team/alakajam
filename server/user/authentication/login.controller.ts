@@ -1,14 +1,13 @@
-import { Request } from "express";
+import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
-import { GlobalLocals } from "server/global.middleware";
-import { CustomResponse, RenderContext } from "server/types";
+import { CustomRequest, CustomResponse, RenderContext } from "server/types";
 import userService from "server/user/user.service";
 
 /**
  * Login form
  */
-export async function loginGet(req: Request, res: CustomResponse<GlobalLocals>) {
+export async function loginGet(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "Login";
 
   res.render("user/authentication/login", {
@@ -19,12 +18,13 @@ export async function loginGet(req: Request, res: CustomResponse<GlobalLocals>) 
 /**
  * Login
  */
-export async function loginPost(req: Request, res: CustomResponse<GlobalLocals>) {
+export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "Login";
 
   const context: RenderContext = {
     redirect: forms.sanitizeString(req.body.redirect),
   };
+
   if (req.body.name && req.body.password) {
     const user = await userService.authenticate(req.body.name, req.body.password);
     if (user) {

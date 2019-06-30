@@ -1,20 +1,26 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { CommonLocals } from "./common.middleware";
 
-declare global {
-    namespace Express {
-        interface ExpressSessionAsync extends Session {
-            // Customized in middleware.ts > promisifySession()
-            regenerateAsync(): Promise<void>;
-            destroyAsync(): Promise<void>;
-            reloadAsync(): Promise<void>;
-            saveAsync(): Promise<void>;
-        }
-        
-        export interface Request {
-            session?: ExpressSessionAsync;
-        }
-    }
+export interface NotificationMessage {
+  type: "success" | "info" | "warning" | "danger";
+  message: string;
+}
+
+export interface CustomExpressSession extends Express.Session {
+  // Customized in middleware.ts > promisifySession()
+  regenerateAsync(): Promise<void>;
+  destroyAsync(): Promise<void>;
+  reloadAsync(): Promise<void>;
+  saveAsync(): Promise<void>;
+
+  // Session contents
+  userId: number;
+  notifications: NotificationMessage[];
+}
+
+export interface CustomRequest extends Request {
+  session: CustomExpressSession;
+  csrfToken: () => string;
 }
 
 export interface CustomResponse<T extends CommonLocals> extends Response {
@@ -25,4 +31,4 @@ export interface CustomResponse<T extends CommonLocals> extends Response {
   traceAndShowErrorPage(error?: Error): void;
 }
 
-export type RenderContext = {[key: string]: any};
+export type RenderContext = { [key: string]: any };

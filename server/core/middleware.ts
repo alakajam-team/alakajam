@@ -14,13 +14,14 @@ import * as bodyParser from "body-parser";
 import * as connectSessionKnex from "connect-session-knex";
 import * as cookies from "cookies";
 import * as express from "express";
-import * as nunjucks from "nunjucks";
 import * as expressSession from "express-session";
+import * as nunjucks from "nunjucks";
 import * as path from "path";
 import * as randomKey from "random-key";
 import settings from "server/core/settings";
 import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
 import { routes } from "server/routes";
+import { CustomRequest } from "server/types";
 import userService from "server/user/user.service";
 import { promisify } from "util";
 import config, * as configUtils from "./config";
@@ -40,12 +41,12 @@ export default {
 /*
  * Setup app middleware
  */
-async function configure(app) {
+async function configure(app: express.Application) {
   app.locals.config = config;
 
   // Slow requests logging
   if (config.DEBUG_TRACE_SLOW_REQUESTS > -1) {
-    app.use((req, res, next) => {
+    app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
       const start = Date.now();
       res.once("finish", () => {
         const totalTime = Date.now() - start;
@@ -93,7 +94,7 @@ async function configure(app) {
   });
 
   // Templating: rendering context
-  app.use(function templateTooling(req, res, next) {
+  app.use(function templateTooling(req: CustomRequest, res: any, next: express.NextFunction) {
     /* Allows anyone to display an error page.
      * Calling render() after an errorPage() is tolerated an will be a no-op, although it would be bad practice.
      */
@@ -126,6 +127,15 @@ async function configure(app) {
       }
     };
 
+    const nativeRedirect = res.redirect;
+    res.redirect = (...args) => {
+      if (res.locals.notifications.length > 0) {
+        // Store the notifications until the next page
+        req.session.notifications = res.locals.notifications;
+      }
+      nativeRedirect.apply(res, args);
+    };
+
     next();
   });
 
@@ -137,7 +147,7 @@ async function configure(app) {
 }
 
 function setupNunjucks(app) {
-  const loader = new nunjucks.FileSystemLoader(app.get('views'), {
+  const loader = new nunjucks.FileSystemLoader(app.get("views"), {
     watch: app.locals.devMode,
     noCache: app.locals.devMode,
   });
@@ -148,11 +158,11 @@ function setupNunjucks(app) {
     env.render(path.extname(this.name) ? this.name : this.name + this.ext, ctx, cb);
   };
 
-  let engineName = app.get('view engine');
+  let engineName = app.get("view engine");
 
   if (!engineName) {
-    engineName = 'html';
-    app.set('view engine', engineName);
+    engineName = "html";
+    app.set("view engine", engineName);
   }
 
   app.engine(engineName, engine);
@@ -160,7 +170,7 @@ function setupNunjucks(app) {
   return env;
 }
 
-function cleanupFormFilesCallback(req, res) {
+function cleanupFormFilesCallback(req: express.Request, res: express.Response) {
   return async function cleanupFormFiles() {
     if (res.locals.form) {
       res.locals.form.files.forEach((key) => {

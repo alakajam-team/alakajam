@@ -1,9 +1,9 @@
-import { NextFunction, Request } from "express";
+import { NextFunction } from "express";
 import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import security from "server/core/security";
 import { User } from "server/entity/user.entity";
-import { CustomResponse } from "server/types";
+import { CustomRequest, CustomResponse } from "server/types";
 import userService from "../user.service";
 
 export interface DashboardLocals extends CommonLocals {
@@ -19,7 +19,7 @@ export interface DashboardLocals extends CommonLocals {
   readonly dashboardAdminMode: boolean;
 }
 
-export async function dashboardMiddleware(req: Request, res: CustomResponse<CommonLocals>, next: NextFunction) {
+export async function dashboardMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction) {
   res.locals.pageTitle = "User dashboard";
 
   if (!res.locals.user || res.locals.user === undefined) {

@@ -28,7 +28,7 @@ export async function insertInitialData(samples) {
     title: "Administrator",
     is_admin: true,
   });
-  await adminUser.save();
+  await userService.save(adminUser);
 
   await settings.save(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1);
   await settings.save(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 5);

@@ -1,17 +1,16 @@
-import { Request } from "express";
 import forms from "server/core/forms";
 import { anyRule, rule, validateObject } from "server/core/forms-validation";
-import { CustomResponse } from "server/types";
+import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 import { DashboardLocals } from "./dashboard.middleware";
 
-export async function dashboardPasswordGet(req: Request, res: CustomResponse<DashboardLocals>) {
+export async function dashboardPasswordGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   res.render("user/dashboard/dashboard-password");
 }
 /**
  * Manage user profile contents
  */
-export async function dashboardPasswordPost(req: Request, res: CustomResponse<DashboardLocals>) {
+export async function dashboardPasswordPost(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const dashboardUser = res.locals.dashboardUser;
 
   let errorMessage = await validateObject(req.body, {
@@ -38,5 +37,5 @@ export async function dashboardPasswordPost(req: Request, res: CustomResponse<Da
     res.locals.notifications.push({ type: "danger", message: errorMessage });
   }
 
-  await dashboardPasswordGet(req, res);
+  res.redirect(req.url);
 }

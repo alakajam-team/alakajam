@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
 import security from "server/core/security";
@@ -8,11 +8,7 @@ import eventService from "server/event/event.service";
 import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
 import commentService from "./post/comment/comment.service";
-
-export interface NotificationMessage {
-  type: "success" | "info" | "warning" | "danger";
-  message: string;
-}
+import { CustomRequest, NotificationMessage } from "./types";
 
 export interface CommonLocals {
   /**
@@ -66,9 +62,12 @@ export interface CommonLocals {
   [key: string]: any;
 }
 
-export async function commonMiddleware(req: Request, res: Response, next: NextFunction) {
+export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction) {
   res.locals.path = req.originalUrl;
-  res.locals.notifications = [];
+
+  // Restore notifications from session
+  res.locals.notifications = req.session.notifications || [];
+  req.session.notifications = [];
 
   // Fetch current user
   let userTask = null;
