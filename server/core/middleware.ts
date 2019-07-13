@@ -199,7 +199,7 @@ function createSessionStore() {
 function promisifySession() {
   // For each session method that takes a callback, add a promisified variant
   // as well. Make sure these are not enumerable to avoid confusing anything.
-  const Session = expressSession.Session;
+  const Session = (expressSession as any).Session;
   ["regenerate", "destroy", "reload", "save"].forEach((funcName) => {
     const originalFunction = Session.prototype[funcName];
     const promisifiedFunction = promisify(function(callback) { originalFunction.call(this, callback); });
