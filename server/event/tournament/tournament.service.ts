@@ -202,7 +202,7 @@ async function _refreshTournamentRankings(event) {
     // Break ties
     const tScoreGroups = tScores.models.reduce((prev, current) => {
       // 1. Regroup ties together
-      const score = current.get("score");
+      const score = parseFloat(current.get("score"));
       if (!prev[score]) { prev[score] = []; }
       prev[score].push(current);
       return prev;
