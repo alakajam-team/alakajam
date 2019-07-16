@@ -26,7 +26,7 @@ export async function eventManageTournament(req, res) {
         const entry = await eventService.findEntryById(req.body.add);
         if (entry) {
           await eventTournamentService.addTournamentEntry(event.get("id"), entry.get("id"));
-          eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry]);
+          eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
         } else {
           errorMessage = "Entry not found with ID " + req.body.add;
         }
@@ -52,15 +52,13 @@ export async function eventManageTournament(req, res) {
       const entry = await eventService.findEntryById(req.body.id);
       if (entry) {
         await eventTournamentService.removeTournamentEntry(event.get("id"), entry.get("id"));
-        eventTournamentService.recalculateAllTournamentScores(highScoreService, event, [entry]);
+        eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
       }
     }
 
     // Refresh scores
-    if (req.body.refresh || req.body["refresh-all"]) {
-      const onlyRefreshEntries = (!req.body["refresh-all"] && forms.isId(req.body.refresh))
-        ? [await eventService.findEntryById(req.body.id)] : null;
-      await eventTournamentService.recalculateAllTournamentScores(highScoreService, event, onlyRefreshEntries);
+    if (req.body["refresh-all"]) {
+      await eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
     }
   }
 

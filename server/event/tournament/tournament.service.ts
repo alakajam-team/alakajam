@@ -165,7 +165,7 @@ async function refreshTournamentScoresForUser(highScoreService, eventId, entries
 
   // (Re)-calculate score info
   let totalScore = 0;
-  const entryScores = tournamentScore.get("entry_scores") || {};
+  const entryScores = {};
   const entryScoresMap = await highScoreService.findUserScoresMapByEntry(userId, entries);
   Object.keys(entryScoresMap).forEach((entryId) => {
     const entryScore = entryScoresMap[entryId];
@@ -277,29 +277,22 @@ function _tieBreakScore(tScore, tournamentEntries) {
   return leftPad(points, 10, "0") + "|" + suffix.join("-");
 }
 
-async function recalculateAllTournamentScores(highScoreService, event, onlyForEntries = []) {
+async function recalculateAllTournamentScores(highScoreService, event) {
   // Pick entries for which to fetch scores
   const tournamentEntries = await findTournamentEntries(event);
-  const fullRefresh = !onlyForEntries || onlyForEntries.length === 0;
-  let refreshScoresForEntries = onlyForEntries;
-  if (fullRefresh) {
-    refreshScoresForEntries = tournamentEntries.map((tEntry) => tEntry.related("entry"));
-  }
+  const entries = tournamentEntries.map((tEntry) => tEntry.related("entry"));
 
   // List all users having entry scores
   const entryUserIds = await db.knex("entry_score")
-    .where("entry_id", "IN", refreshScoresForEntries.map((entry) => entry.get("id")))
+    .where("entry_id", "IN", entries.map((entry) => entry.get("id")))
     .select("user_id")
     .distinct();
 
   // Append all users having a score in the tournament (might no longer have entry scores)
-  let tournamentUserIds = [];
-  if (fullRefresh) {
-    tournamentUserIds = await db.knex("tournament_score")
+  const tournamentUserIds = await db.knex("tournament_score")
       .where("event_id", event.get("id"))
       .select("user_id")
       .distinct();
-  }
 
   // Request tournament score refresh for each user
   const allUserIds = entryUserIds.map((data) => data.user_id);
@@ -307,7 +300,7 @@ async function recalculateAllTournamentScores(highScoreService, event, onlyForEn
     if (allUserIds.indexOf(data.user_id) === -1) { allUserIds.push(data.user_id); }
   }
   for (const userId of allUserIds) {
-    await refreshTournamentScoresForUser(highScoreService, event.get("id"), refreshScoresForEntries, userId);
+    await refreshTournamentScoresForUser(highScoreService, event.get("id"), entries, userId);
   }
   await _refreshTournamentRankings(event);
 }

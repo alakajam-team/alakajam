@@ -37,11 +37,6 @@
         <button type="submit" name="update" class="btn btn-primary">
           <span class="fas fa-save"></span>
         </button>
-        {% if canRefreshResult %}
-        <button type="submit" name="refresh" class="btn btn-default" onclick="return confirm('Refresh all tournament scores involving &quot;{{ entry.get('title').replace('\'', '\\\'') | escape }}&quot;?')">
-          <span class="fas fa-sync"></span>
-        </button>
-        {% endif %}
         <button type="submit" name="remove" class="btn btn-default" onclick="return confirm('Remove &quot;{{ entry.get('title') | escape }}&quot; from the tournament?')">
           <span class="fas fa-trash"></span>
         </button>
