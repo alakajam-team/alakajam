@@ -14,29 +14,28 @@ Requirement: NodeJS 7.6+
 For better performance, consider editing `config.js` to set up a PostgreSQL database.  
 See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional documentation.
 
-> (*) If `npm install --no-optional` failed to install `sqlite3`, retry with flag `--build-from-source`.
+> (*) If npm fails to install `sqlite3`, retry with flag `--build-from-source`.
 
 ## Available commands
 
 ### Recommended for development
 
-* `npm run start` Launches the server for development. Every TypeScript change will trigger a server restart. (based on ts-node-dev)
+* `npm start` Launches the server for development. Every TypeScript change will trigger a server restart. (based on ts-node-dev)
 * `npm run start:refresh` Alternative that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)
 * `npm run start:debug` Launches the server in debug mode. Prefer using the embedded debugger of your code editor (see example for VSCode further below).
 * `npm run lint` Checks your code for errors, and fixes the most obvious ones. Run `githooks/install.sh` to trigger validation automatically before committing.
 
 ### Automated tests
 
-* `npm run start:e2e` Launches the server with a special database for end-to-end testing. More in the Cypress folder readme.
 * `npm run test` Runs all unit + end to end tests.
 * `npm run test:unit` Runs all unit tests. (based on mocha + chai)
 * `npm run test:e2e` Runs all end-to-end tests. (based on cypress) 
+* `npm run start:e2e` Launches the server with a special database for end-to-end testing. More in the Cypress folder readme.
 * `npm run cypress` Launches Cypress for end-to-end test development.
 
 ### JavaScript build
 
 * `npm run deployment:build` Builds the TypeScript server.
-* `npm run deployment:build-watch` Builds the TypeScript server and watches for changes.
 * `npm run deployment:start` Starts the TypeScript server. Needs to be built first.
 
 ### Other tools
