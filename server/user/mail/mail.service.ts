@@ -71,7 +71,7 @@ async function sendMail(app, user, subject, template, context = {}) {
 
     const mergedContext = Object.assign({ rootUrl: config.ROOT_URL }, context);
 
-    app.render("mail/" + template, mergedContext, (err, html) => {
+    app.render("user/mail/" + template, mergedContext, (err, html) => {
       if (!err) {
         const textVersion = forms.htmlToText(html);
 
