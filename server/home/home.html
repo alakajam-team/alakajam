@@ -161,7 +161,8 @@
       var announcement = findByClass('home-jumbo__announcement')
       var sidebar = document.getElementById('js-event-sidebar')
       var remainingHeight = sidebar.clientHeight - announcement.offsetTop - 10
-      postExpandCollapse('home-jumbo__announcement', Math.max(remainingHeight, 265))
+      var announcementHeight = Math.max(remainingHeight, 265)
+      postExpandCollapse('home-jumbo__announcement', {{ 0 if shrinkedJumbo else 'announcementHeight' }})
     </script>
   {% endif %}
 
