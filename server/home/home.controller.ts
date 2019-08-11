@@ -78,8 +78,18 @@ export async function home(req, res) {
       })
       .catch(res.traceAndShowErrorPage);
 
+    const shrinkedJumboSettingTask = settings.findNumber(constants.SETTING_HOME_SHRINKED_JUMBO, 0)
+      .then((value) => context.shrinkedJumbo = value)
+      .catch(res.traceAndShowErrorPage);
+
     // Parallelize fetching everything
-    await Promise.all([featuredAnnouncementTask, suggestedEntriesTask, postsTask, featuredPostTask]);
+    await Promise.all([
+      featuredAnnouncementTask,
+      suggestedEntriesTask,
+      postsTask,
+      featuredPostTask,
+      shrinkedJumboSettingTask
+    ]);
 
     cache.general.set("home_page", context, 10 /* 10 seconds */);
   }

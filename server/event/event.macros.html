@@ -229,10 +229,10 @@
   </div>
 {% endmacro %}
 
-{% macro eventShortcutMyPost(user, event, userPost) %}
+{% macro eventShortcutMyPost(user, event, userPost, options = {}) %}
   <div class="action-banner">
     <div class="action-banner__title">
-      Your last post
+      {{ 'Your last post' if not options.buttonsOnly }}
       <div class="pull-right">
         {% if userPost %}
           <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">
@@ -247,6 +247,7 @@
         <a href="{{ buildUrl(user, 'user', 'posts') }}" class="btn btn-alt">My posts</a>
       </div>
     </div>
+    {% if not options.buttonsOnly %}
     <div class="action-banner__post">
       {% if userPost %}
         <a href="{{ buildUrl(userPost, 'post') }}">{{ userPost.get('title') }}</a>
@@ -254,5 +255,6 @@
         <div class="text-center"><h4 style="padding-top: 13px">No post</h4></div>
       {% endif %}
     </div>
+    {% endif %}
   </div>
 {% endmacro %}

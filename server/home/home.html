@@ -133,7 +133,9 @@
 
         {% set compactCalendar = featuredLinks and featuredLinks.length > 0 %}
         {% for event in eventSchedule %}
-          {{ featuredLink(event, featuredEvent) if not compactCalendar or event.get('status') !== 'closed' }}
+          {% set hideForCompactCalendar = compactCalendar and event.get('status') === 'closed' %}
+          {% set hideForShrinkedJumbo = shrinkedJumbo and event.get('status') !== 'open' %}
+          {{ featuredLink(event, featuredEvent) if not hideForCompactCalendar and not hideForShrinkedJumbo }}
         {% endfor %}
         <div class="home-scheduled-event">
           <a class="home-scheduled-event__title" href="/events">More...</a>
@@ -185,7 +187,8 @@
     <div class="col-lg-offset-1 col-lg-10">
         <div class="horizontal-bar">Latest posts</div>
 
-        {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost) if user and featuredEvent }}
+        {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost, { buttonsOnly: shrinkedJumbo })
+            if user and featuredEvent }}
         <div class="spacing"></div>
 
         {% for post in posts %}
