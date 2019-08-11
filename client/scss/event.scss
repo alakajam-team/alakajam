@@ -8,6 +8,12 @@
   padding: 10px;
   background-color: $borders;
   max-width: 945px;
+
+  &.shrinked {
+    background-color: transparent;
+    padding: 0;
+    margin: -15px 0;
+  }
   
   &__info {
     padding-right: 10px;

@@ -230,7 +230,7 @@
 {% endmacro %}
 
 {% macro eventShortcutMyPost(user, event, userPost, options = {}) %}
-  <div class="{{ 'action-banner' if not options.buttonsOnly }}">
+  <div class="action-banner {{ 'buttons-only' if not options.buttonsOnly }}">
     <div class="action-banner__title">
       {{ 'Your last post' if not options.buttonsOnly }}
       <div class="pull-right">
