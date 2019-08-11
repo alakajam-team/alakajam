@@ -1,6 +1,6 @@
 
 {% extends "base.html" %}
-{% import "event/event.macros.html" as eventMacros %}
+{% import "event/event.macros.html" as eventMacros with context %}
 {% import "post/post.macros.html" as postMacros with context %}
 {% import "user/user.macros.html" as userMacros %}
 {% import "macros/form.macros.html" as formMacros %}
@@ -78,7 +78,7 @@
         {{ navigationMacros.expandCollapse({ manualScripting: true }) }}
       </div>
       <script type="text/javascript">
-        postExpandCollapse('js-featured-post', 450)
+        postExpandCollapse('js-featured-post', {{ 0 if shrinkedJumbo else 450 }})
       </script>
     </div>
     {% endif %}
@@ -87,7 +87,7 @@
   <div class="row">
     <div class="col-md-9">
       {% if featuredEvent %}
-        {{ eventMacros.eventJumbo(featuredEvent, user, userEntry) }}
+        {{ eventMacros.eventJumbo(featuredEvent, user, userEntry, { shrinkedJumbo: shrinkedJumbo }) }}
         {% if featuredEventAnnouncement %}
           <div class="home-jumbo__contents event-banner-panel">
           {% if featuredEventAnnouncement.get('body').indexOf('<iframe') === 0 %}

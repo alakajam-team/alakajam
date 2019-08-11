@@ -93,7 +93,7 @@
 </div>
 {% endmacro %}
 
-{% macro eventJumbo (event, user, userEntry) %}
+{% macro eventJumbo (event, user, userEntry, options = {}) %}
 <div class="home-jumbo {{ event.get('status') }}">
   <div class="home-jumbo__call-container">
   {% set rawHypeLink = event.get('countdown_config').link %}
@@ -138,7 +138,7 @@
   {% endif %}
   </div>
 
-  {% if user and event and event.get('status_entry') !== 'off' %}
+  {% if user and event and event.get('status_entry') !== 'off' and not options.shrinkedJumbo %}
     {{ eventShortcutMyEntry(user, event, userEntry) }}
   {% endif %}
 </div>
