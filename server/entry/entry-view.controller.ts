@@ -104,7 +104,7 @@ export async function entrySaveCommentOrVote(req, res) {
     if (await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)) {
       await eventRatingService.saveEntryVote(res.locals.user, res.locals.entry, res.locals.event, votes);
     }
-    entry(req, res);
+    entryView(req, res);
   }
 }
 
