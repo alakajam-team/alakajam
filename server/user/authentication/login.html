@@ -34,12 +34,14 @@
                 </label>
               </div>
             </div>
-            <div class="pull-right">
+            <div class="form-group">
+              <input type="hidden" name="redirect" value="{{ redirect }}" />
+              <button type="submit" class="btn btn-primary btn-block btn-lg">Submit</button>
+            </div>
+            <div class="text-right">
               <a href="/register" class="btn btn-sm btn-default">I don't have an account</a>
               <a href="/passwordRecoveryRequest" class="btn btn-sm btn-default">I forgot my password</a>
             </div>
-            <input type="hidden" name="redirect" value="{{ redirect }}" />
-            <button type="submit" class="btn btn-primary">Submit</button>
           </form>
           {% else %}
           <p>You are logged in as <b>{{ user.get('name') }}.</b></p>
