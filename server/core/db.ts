@@ -29,11 +29,18 @@ function initBookshelf() {
   bookshelf.initDatabase = async (): Promise<"none"|string> => {
     log.info("Upgrading database...");
 
-    // Migrating the migrations table... Switch file names to TypeScript
+    // Migrating the migrations table... Switch file names between TypeScript & JavaScript to please knex
+    // Will possibly be made irrelevant with https://github.com/tgriesser/knex/issues/2756
     const migrationsTableName = (knexfile as any).development.migrations.tableName;
-    await knex(migrationsTableName).update({
-      name: knex.raw("REPLACE(name, '.js', '.ts')")
-    });
+    if (__filename.endsWith(".js")) {
+      await knex(migrationsTableName).update({
+        name: knex.raw("REPLACE(name, '.ts', '.js')")
+      });
+    } else {
+      await knex(migrationsTableName).update({
+        name: knex.raw("REPLACE(name, '.js', '.ts')")
+      });
+    }
 
     const previousVersion = await knex.migrate.currentVersion();
     await knex.migrate.latest((knexfile as any).development.migrations);
