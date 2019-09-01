@@ -7,7 +7,7 @@ const config = require("server/core/config").default;
 const constants = require("server/core/constants").default;
 const log = require("server/core/log").default;
 const models = require("server/core/models");
-const eventService = require("server/services/event-service").default;
+const eventService = require("server/event/event.service").default;
 
 exports.up = async function(knex, Promise) {
   try {
