@@ -13,6 +13,11 @@ if (config.DB_SQLITE_FILENAME) {
   filename = path.resolve(constants.ROOT_PATH, config.DB_SQLITE_FILENAME);
 }
 
+let migrationsDirectory = path.resolve(constants.ROOT_PATH, "server/migrations");
+if (__filename.endsWith(".js")) {
+  migrationsDirectory = path.resolve(constants.ROOT_PATH, "dist/server/migrations");
+}
+
 // CommonJS export for knex cli support
 module.exports = {
   development: {
@@ -28,7 +33,7 @@ module.exports = {
       max: 10
     },
     migrations: {
-      directory: path.resolve(constants.ROOT_PATH, "server/migrations"),
+      directory: migrationsDirectory,
       tableName: "knex_migrations"
     }
   }

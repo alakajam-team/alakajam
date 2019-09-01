@@ -1,14 +1,18 @@
 
-require("module-alias/register");
-const log = require("server/core/log").default;
-const config = require("server/core/config").default;
+if (__filename.endsWith(".js")) {
+  // tslint:disable-next-line: no-var-requires
+  require("module-alias/register");
+}
 
-exports.up = async function(knex, Promise) {
-  await knex.schema.alterTable("tag", function(table) {
+import config from "server/core/config";
+import log from "server/core/log";
+
+exports.up = async (knex) => {
+  await knex.schema.alterTable("tag", (table) => {
     table.dropIndex("value");
     table.dropUnique("value");
   });
-  await knex.schema.alterTable("entry_tag", function(table) {
+  await knex.schema.alterTable("entry_tag", (table) => {
     table.dropUnique(["entry_id", "tag_id"]);
   });
   await knex.schema.renameTable("entry_tag", "entry_tag_old");
@@ -31,18 +35,18 @@ exports.up = async function(knex, Promise) {
 
   // Copy data
 
-  let tags = await knex("tag_old").select("*");
-  let entryTags = await knex("entry_tag_old").select("*");
+  const tags = await knex("tag_old").select("*");
+  const entryTags = await knex("entry_tag_old").select("*");
 
   log.info("Migrating " + tags.length + " existing tags...");
 
-  for (let tag of tags) {
+  for (const tag of tags) {
     await knex("tag").insert({
       id: tag.id,
       value: tag.value,
     });
   }
-  for (let entryTag of entryTags) {
+  for (const entryTag of entryTags) {
     await knex("entry_tag").insert({
       entry_id: entryTag.entry_id,
       tag_id: entryTag.tag_id,
@@ -59,9 +63,9 @@ exports.up = async function(knex, Promise) {
   await knex.schema.dropTable("tag_old");
 };
 
-exports.down = async function(knex, Promise) {
+exports.down = async (knex) => {
   // Not a real rollback but at least this migration is replayable
-  await knex.schema.alterTable("tag", function(table) {
+  await knex.schema.alterTable("tag", (table) => {
     table.dropIndex("created_at");
   });
 };

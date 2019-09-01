@@ -4,29 +4,19 @@
 
 Every time you need to change the database model, add a new file using the `<incremental ID>_<feature>.js` format, using the same structure:
 
-```
+```typescript
 /**
- * [[Feature description]]
+ * [[Migration description]]
  */
 
-exports.up = async function (knex, Promise) {
-  try {
-    // [[Table changes]]
-    
-    Promise.resolve()
-  } catch (e) {
-    Promise.reject(e)
-  }
+import * as Knex from "knex";
+
+exports.up = async (knex: Knex) => {
+  // [[Table changes]]
 }
 
-exports.down = async function (knex, Promise) {
-  try {
-    // [[Table rollbacks]]
-    
-    Promise.resolve()
-  } catch (e) {
-    Promise.reject(e)
-  }
+exports.down = async (knex: Knex) => {
+  // [[Table rollbacks]]
 }
 ```
 

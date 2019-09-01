@@ -2,9 +2,8 @@
  * Like system for posts
  */
 
-exports.up = async function(knex, Promise) {
-  try {
-    await knex.schema.createTable("like", function(table) {
+exports.up = async (knex) => {
+    await knex.schema.createTable("like", (table) => {
       table.increments("id").primary();
       table.string("type").notNullable();
       table.integer("user_id").references("user.id").notNullable();
@@ -13,28 +12,16 @@ exports.up = async function(knex, Promise) {
       table.index(["node_id", "node_type"]);
       table.timestamps();
     });
-    await knex.schema.table("post", function(table) {
+    await knex.schema.table("post", (table) => {
       table.integer("like_count").notNullable().defaultTo(0);
       table.string("like_details", 500).notNullable().defaultTo("[]");
     });
-    Promise.resolve();
-  } catch (e) {
-    console.log(e.message);
-    Promise.reject(e);
-  }
 };
 
-exports.down = async function(knex, Promise) {
-  try {
+exports.down = async (knex) => {
     await knex.schema.dropTableIfExists("like");
-    await knex.schema.table("post", function(table) {
+    await knex.schema.table("post", (table) => {
       table.dropColumn("like_count");
       table.dropColumn("like_details");
     });
-
-    Promise.resolve();
-  } catch (e) {
-    console.log(e.message);
-    Promise.reject(e);
-  }
 };

@@ -2,11 +2,15 @@
  * Add `event_id` field to `user_role` table.
  */
 
-require("module-alias/register");
-const config = require("server/core/config").default;
+if (__filename.endsWith(".js")) {
+  // tslint:disable-next-line: no-var-requires
+  require("module-alias/register");
+}
 
-exports.up = async function(knex, Promise) {
-  await knex.schema.table("user_role", function(table) {
+import config from "server/core/config";
+
+exports.up = async (knex) => {
+  await knex.schema.table("user_role", (table) => {
     table.integer("event_id").references("event.id");
   });
 
@@ -58,8 +62,8 @@ exports.up = async function(knex, Promise) {
       AND user_role.event_id IS NULL`);
 };
 
-exports.down = async function(knex, Promise) {
-  await knex.schema.table("user_role", function(table) {
+exports.down = async (knex) => {
+  await knex.schema.table("user_role", (table) => {
     table.dropColumn("event_id");
   });
 };
