@@ -56,13 +56,13 @@ class SassBuilder {
   }
 
   private sassBuild(resolve?: (result: sass.Result) => void, reject?: (cause?: any) => void) {
-    fileStorage.createFolderIfMissing(this.CLIENT_DEST_FOLDER);
+    fileStorage.createFolderIfMissing(path.resolve(this.CLIENT_DEST_FOLDER, "css"));
     const inputFile = path.resolve(this.CLIENT_SRC_FOLDER, "scss/index.scss");
     const outputFile = path.resolve(this.CLIENT_DEST_FOLDER, "css/index.css");
 
     sass.render({
       file: inputFile,
-      includePaths: [this.ROOT_PATH, path.resolve(this.CLIENT_SRC_FOLDER, "css")]
+      includePaths: [this.ROOT_PATH, path.resolve(this.CLIENT_SRC_FOLDER, "scss")]
     }, async (error, result) => {
       if (error) {
         log.error(error.message, error.stack);
