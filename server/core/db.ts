@@ -19,6 +19,7 @@ const BACKUP_PATH = config.DB_SQLITE_FILENAME ? config.DB_SQLITE_FILENAME + ".ba
 
 function initBookshelf() {
   let knex = createKnexInstance();
+
   const bookshelf = createBookshelfInstance(knex);
 
   /**
@@ -27,6 +28,13 @@ function initBookshelf() {
    */
   bookshelf.initDatabase = async (): Promise<"none"|string> => {
     log.info("Upgrading database...");
+
+    // Migrating the migrations table... Switch file names to TypeScript
+    const migrationsTableName = (knexfile as any).development.migrations.tableName;
+    await knex(migrationsTableName).update({
+      name: knex.raw("REPLACE(name, '.js', '.ts')")
+    });
+
     const previousVersion = await knex.migrate.currentVersion();
     await knex.migrate.latest((knexfile as any).development.migrations);
     const newVersion = await knex.migrate.currentVersion();
