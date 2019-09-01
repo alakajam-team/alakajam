@@ -233,7 +233,7 @@
       display: block;
     }
     &:hover {
-      color: color($text-light);
+      color: $text-light;
       max-height: inherit;
       max-width: inherit;
       overflow: auto;
