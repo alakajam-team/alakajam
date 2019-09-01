@@ -1,6 +1,8 @@
 Alakajam! competition rules
 The *Alakajam!* competitions let people make a video game from scratch in a week-end, then play and rate each other! All games are made around a theme chosen by the community.
 
+![](https://static.alakajam.com/static/presskit/images/schedule-infographic.png)
+
 ## Divisions
 
 Anyone can enter in any of the following divisions:
