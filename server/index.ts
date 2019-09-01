@@ -24,6 +24,10 @@ log.warn("Starting server...");
 if (config.DEBUG_TRACE_REQUESTS) {
   process.env.DEBUG = "express:*";
 }
+if (config.DEBUG_LONG_PROMISE_TRACES) {
+  // tslint:disable-next-line: no-var-requires
+  require("longjohn");
+}
 
 /**
  * Initial dependencies
@@ -90,12 +94,11 @@ async function createApp() {
  */
 function catchErrorsAndSignals() {
   // Display unhandled errors more nicely
-  process.on("uncaughtException", (error) => {
+  process.on("uncaughtException", (error: Error) => {
     log.error(`Uncaught exception: ${error.message}\n${error.stack}`);
     _doGracefulShutdown(null, 1);
   });
-  process.on("unhandledRejection", (error) => {
-    // tslint:disable-next-line: no-console
+  process.on("unhandledRejection", async (error: any) => {
     log.error(`Unhandled promise rejection: ${error.message}\n${error.stack}`);
   });
 

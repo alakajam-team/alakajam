@@ -45,6 +45,7 @@ interface Config {
   readonly DEBUG_TEST_MAILER: boolean;
   readonly DEBUG_DISABLE_STARTUP_BUILD: boolean;
   readonly DEBUG_ARTICLES: boolean;
+  readonly DEBUG_LONG_PROMISE_TRACES: boolean;
 
   // Debug: trace options
   readonly LOG_LEVEL: "none"|"error"|"warn"|"info"|"debug";
