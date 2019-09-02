@@ -31,15 +31,19 @@ function initBookshelf() {
 
     // Migrating the migrations table... Switch file names between TypeScript & JavaScript to please knex
     // Will possibly be made irrelevant with https://github.com/tgriesser/knex/issues/2756
-    const migrationsTableName = (knexfile as any).development.migrations.tableName;
-    if (__filename.endsWith(".js")) {
-      await knex(migrationsTableName).update({
-        name: knex.raw("REPLACE(name, '.ts', '.js')")
-      });
-    } else {
-      await knex(migrationsTableName).update({
-        name: knex.raw("REPLACE(name, '.js', '.ts')")
-      });
+    try {
+      const migrationsTableName = (knexfile as any).development.migrations.tableName;
+      if (__filename.endsWith(".js")) {
+        await knex(migrationsTableName).update({
+          name: knex.raw("REPLACE(name, '.ts', '.js')")
+        });
+      } else {
+        await knex(migrationsTableName).update({
+          name: knex.raw("REPLACE(name, '.js', '.ts')")
+        });
+      }
+    } catch (e) {
+      // NOP
     }
 
     const previousVersion = await knex.migrate.currentVersion();
