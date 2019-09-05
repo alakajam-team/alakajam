@@ -24,22 +24,22 @@ export class ArticleService {
    * @param  {string} article name (slug)
    * @return {string} markdown content
    */
-  public async findArticle(articleName: string): Promise<string|null> {
-    if (config.DEBUG_ARTICLES) {
-      const article = await this.readFilePromise(path.resolve(this.ARTICLES_DATA_PATH, articleName + ".md"));
-      if (article) {
-        return article.toString();
-      }
-    } else {
-      return cache.getOrFetch(cache.articles, articleName, async () => {
-        let result = null;
-        try {
-          result = await requestPromise(constants.ARTICLES_ROOT_URL + articleName + ".md");
-        } catch (e) {
-          log.warn("Article not found: " + articleName);
+  public async findArticle(articleName: string): Promise<string | undefined> {
+    try {
+      if (config.DEBUG_ARTICLES) {
+        const article = await this.readFilePromise(path.resolve(this.ARTICLES_DATA_PATH, articleName + ".md"));
+        if (article) {
+          return article.toString();
         }
-        return result;
-      });
+      } else {
+        return cache.getOrFetch(cache.articles, articleName, async () => {
+          let result = null;
+          result = await requestPromise(constants.ARTICLES_ROOT_URL + articleName + ".md");
+          return result;
+        });
+      }
+    } catch (e) {
+      log.warn("Article not found: " + articleName);
     }
   }
 

@@ -21,31 +21,3 @@
   </div>
 </div>
 {% endblock %}
-
-{% macro sideBarLinks(title, sidebarLinks) %}
-  {% if sidebarLinks %}
-    <div class="list-group">
-      <div class="list-group-item">
-        <h3 style="margin: 0">{{ title }}</h3>
-      </div>
-      {% for link in sidebarLinks %}
-        {{ helpLink(link.title, link.url) }}
-        {% for subLink in link.subLinks %}
-          {{ helpSubLink(subLink.title, subLink.url) }}
-        {% endfor %}
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endmacro %}
-
-{% macro helpLink(label, url) %}
-  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">
-    <h4 style="margin: 0">{{ label }}</h4>
-  </a>
-{% endmacro %}
-
-{% macro helpSubLink(label, url) %}
-  <a href="{{ url }}" class="list-group-item {{ 'active' if path === url}} {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">
-    <span style="margin-left: 15px">{{ label }}</span>
-  </a>
-{% endmacro %}

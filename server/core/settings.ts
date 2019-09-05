@@ -49,16 +49,22 @@ async function findNumber(key: string, defaultValue: number) {
   return parseFloat(settingValue);
 }
 
-async function findArticlesSidebar() {
+async function findArticlesSidebar(category: "about" | "docs"): Promise<object[]> {
   const articlesSidebar = await find(constants.SETTING_ARTICLE_SIDEBAR);
   if (articlesSidebar) {
+    let sidebar;
     try {
-      return JSON.parse(articlesSidebar).sidebar;
+      sidebar = JSON.parse(articlesSidebar);
+      if (sidebar[category]) {
+        return sidebar[category];
+      } else {
+        log.error(`Malformed JSON. No "${category}" article category found`);
+      }
     } catch (e) {
       log.error("Malformed JSON. Can't load articles links");
     }
   }
-  return null;
+  return [];
 }
 
 /**

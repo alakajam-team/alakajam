@@ -193,7 +193,8 @@ export function routes(app) {
 
     // Articles
 
-    router.get("/article/:name", articleView);
+    router.get("/article/:category", articleView);
+    router.get("/article/:category/:name", articleView);
 
     // JSON API
 

@@ -206,75 +206,29 @@ export async function insertInitialData(samples) {
 
 function defaultArticleSidebar() {
   return `{
-    "sidebar": [
+    "about": [
         {
             "title": "General",
             "links": [
                 {
                     "title": "Welcome",
-                    "url": "/article/docs"
+                    "url": "/article/about"
                 },
                 {
                     "title": "F.A.Q.",
-                    "url": "/article/faq"
-                },
-                {
-                    "title": "Game making resources",
-                    "url": "/article/resources"
+                    "url": "/article/about/faq"
                 },
                 {
                     "title": "Press kit",
-                    "url": "/article/press-kit"
+                    "url": "/article/about/press-kit"
                 },
                 {
                     "title": "Contributing",
-                    "url": "/article/contributing"
+                    "url": "/article/about/contributing"
                 },
                 {
                     "title": "Privacy policy",
-                    "url": "/article/privacy-policy"
-                }
-            ]
-        },
-        {
-            "title": "Events rules",
-            "links": [
-                {
-                    "title": "Alakajam!",
-                    "url": "/article/alakajam-competition-rules"
-                },
-                {
-                    "title": "Kajam",
-                    "url": "/article/kajam-rules"
-                },
-                {
-                    "title": "Feedback Fortnight",
-                    "url": "/article/feedback-fortnight-rules"
-                }
-            ]
-        },
-        {
-            "title": "Game jam tips",
-            "links": [
-                {
-                    "title": "Managing scope",
-                    "url": "/article/gjt-scope"
-                },
-                {
-                    "title": "Skills",
-                    "url": "/article/gjt-skills"
-                },
-                {
-                    "title": "Social media",
-                    "url": "/article/gjt-social"
-                },
-                {
-                    "title": "Timelapses",
-                    "url": "/article/gjt-timelapses"
-                },
-                {
-                  "title": "Practical tips",
-                  "url": "/article/gjt-practical-tips"
+                    "url": "/article/about/privacy-policy"
                 }
             ]
         },
@@ -282,19 +236,72 @@ function defaultArticleSidebar() {
             "title": "Behind the scenes",
             "links": [
                 {
-                    "title": "JSON API",
-                    "url": "/api"
-                },
-                {
                     "title": "Site changelog",
                     "url": "/changes"
                 },
                 {
                     "title": "NPO constitution",
-                    "url": "/article/constitution"
+                    "url": "/article/about/npo-constitution"
                 }
             ]
         }
+    ],
+    "docs": [
+      {
+          "title": "Game jam tips",
+          "links": [
+              {
+                  "title": "Game making resources",
+                  "url": "/article/docs/resources"
+              },
+              {
+                  "title": "Managing scope",
+                  "url": "/article/docs/gjt-scope"
+              },
+              {
+                  "title": "Skills",
+                  "url": "/article/docs/gjt-skills"
+              },
+              {
+                  "title": "Social media",
+                  "url": "/article/docs/gjt-social"
+              },
+              {
+                  "title": "Timelapses",
+                  "url": "/article/docs/gjt-timelapses"
+              },
+              {
+                "title": "Practical tips",
+                "url": "/article/docs/gjt-practical-tips"
+              }
+          ]
+      },
+      {
+          "title": "Events rules",
+          "links": [
+              {
+                  "title": "Alakajam!",
+                  "url": "/article/docs/alakajam-competition-rules"
+              },
+              {
+                  "title": "Kajam",
+                  "url": "/article/docs/kajam-rules"
+              },
+              {
+                  "title": "Feedback Fortnight",
+                  "url": "/article/docs/feedback-fortnight-rules"
+              }
+          ]
+      },
+      {
+          "title": "Tools",
+          "links": [
+              {
+                  "title": "JSON API",
+                  "url": "/api"
+              }
+          ]
+      }
     ]
 }`;
 }

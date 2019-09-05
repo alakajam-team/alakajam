@@ -7,6 +7,6 @@ export async function changes(req, res) {
   res.locals.changes = await fileStorage.read("CHANGES.md");
 
   res.render("docs/changes/changes", {
-    sidebar: await settings.findArticlesSidebar(),
+    sidebar: await settings.findArticlesSidebar("about"),
   });
 }

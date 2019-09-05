@@ -2,6 +2,10 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### September 2019
+
+* Split Docs section into Docs and About
+
 ### June 2019
 
 * Major code refactoring (reorganize and split source files, switch from CSSNext to SASS)
