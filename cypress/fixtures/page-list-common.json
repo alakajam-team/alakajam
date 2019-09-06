@@ -6,7 +6,8 @@
   "people-mods": "/people/mods",
   "chat": "/chat",
   "changelog": "/changes",
-  "docs-home": "/article/docs",
+  "about-home": "/article/about",
+  "docs-resources": "/article/docs/resources",
 
   "register": "/register",
   "login": "/login",
