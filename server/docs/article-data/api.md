@@ -16,3 +16,4 @@ JSON API
 | [`/api/user`](/api/user?title=Jamician&pretty=true) | `?title` A display name to search for <br />`?page` A page number (page size is 30), starts with 1. | Searches for users. |
 | [`/api/user/:user`](/api/user/voxel?pretty=true) | `user` A user ID, or their name | Fetches a specific user. |
 | [`/api/user/:user/latestEntry`](/api/user/voxel/latestEntry?pretty=true) | `user` A user ID, or their name | Fetches a specific user's latest entry, with similarly detailed information as the main entry endpoint. |
+| [`/api/theme/:theme`](/api/theme/Floating%20Islands?pretty=true) | `theme` A theme name | Fetches stats about the history of a theme. |

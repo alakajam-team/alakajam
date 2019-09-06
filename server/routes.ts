@@ -15,7 +15,7 @@ import { adminSettings } from "./admin/settings/admin-settings.controller";
 import { adminStatus } from "./admin/status/admin-status.controller";
 import { adminTags } from "./admin/tags/admin-tags.controller";
 import { adminUsers } from "./admin/users/admin-users.controller";
-import apiController from "./api/api.controller";
+import * as apiController from "./api/api.controller";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
 import { inviteAccept, inviteDecline } from "./entry/entry-invite.controller";
@@ -207,6 +207,7 @@ export function routes(app) {
     router.get("/api/user", apiController.getUserSearch);
     router.get("/api/user/:user", apiController.getUser);
     router.get("/api/user/:user/latestEntry", apiController.getUserLatestEntry);
+    router.get("/api/theme/:theme", apiController.getThemeStats);
 }
 
 function initUploadMiddleware() {

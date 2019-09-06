@@ -5,8 +5,10 @@
  * @module services/event-theme-service
  */
 
+import { Model } from "bookshelf";
 import * as moment from "moment";
 import cache from "server/core/cache";
+import { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
@@ -19,6 +21,7 @@ export default {
 
   findThemeById,
   findThemeIdeasByUser,
+  findThemesByTitle,
   saveThemeIdeas,
 
   findThemeVotesHistory,
@@ -30,6 +33,7 @@ export default {
 
   findAllThemes,
   findBestThemes,
+  findThemeRanking,
   findShortlist,
   computeShortlist,
   computeEliminatedShortlistThemes,
@@ -71,6 +75,12 @@ async function findThemeIdeasByUser(user, event) {
   })
     .orderBy("id")
     .fetchAll();
+}
+
+async function findThemesByTitle(title: string, fetchOptions = {}): Promise<Array<Model<any>>> {
+  return models.Theme.where("title", ilikeOperator(), title)
+    .orderBy("created_at")
+    .fetchAll(fetchOptions);
 }
 
 /**
@@ -356,18 +366,17 @@ async function _eliminateLowestThemes(event) {
   }
 }
 
-async function _eliminateTheme(theme, eventDetails, options: any = {}) {
-  let betterThemeQuery = models.Theme.where("event_id", eventDetails.get("event_id"));
-  if (options.eliminatedOnShortlistRating) {
-    betterThemeQuery = betterThemeQuery.where("rating_shortlist", ">", theme.get("rating_shortlist"));
-  } else {
-    betterThemeQuery = betterThemeQuery.where("rating_elimination", ">", theme.get("rating_elimination"));
-  }
-  const betterThemeCount = await betterThemeQuery.count(null, options);
+async function _eliminateTheme(
+    theme: Model<any>,
+    eventDetails: Model<any>,
+    options: { eliminatedOnShortlistRating?: boolean } = {}): Promise<void> {
+  // Compute ranking as %-age because new submissions would make this number irrelevant
+  const themeRanking = await findThemeRanking(theme, { useShortlistRating: options.eliminatedOnShortlistRating });
+  const rankingPercent = 1.0 * themeRanking / (eventDetails.get("theme_count") || 1);
 
   theme.set({
     status: enums.THEME.STATUS.OUT,
-    ranking: 1.0 * betterThemeCount / (eventDetails.get("theme_count") || 1),
+    ranking: rankingPercent
   });
   await theme.save(null, options);
 }
@@ -429,6 +438,30 @@ async function findBestThemes(event) {
     .fetchPage({ pageSize: constants.SHORTLIST_SIZE });
 }
 
+async function findThemeRanking(
+    theme: Model<any>,
+    options: { useShortlistRating?: boolean } = {}): Promise<number> {
+  let betterThemeQuery = models.Theme.where("event_id", theme.get("event_id"));
+
+  if (theme.get("status") === enums.THEME.STATUS.SHORTLIST) {
+    betterThemeQuery = betterThemeQuery.where("score", ">", theme.get("score"));
+  } else if (parseFloat(theme.get("rating_shortlist")) === 0 && parseFloat(theme.get("rating_elimination")) === 1) {
+    // Retro-compatibility with old system
+    betterThemeQuery = betterThemeQuery.where("normalized_score", ">", theme.get("normalized_score"));
+  } else if (options.useShortlistRating) {
+    betterThemeQuery = betterThemeQuery.where("rating_shortlist", ">", theme.get("rating_shortlist"));
+  } else {
+    betterThemeQuery = betterThemeQuery.where("rating_elimination", ">", theme.get("rating_elimination"));
+  }
+
+  const betterThemeCount = await betterThemeQuery.count(null, options);
+  return parseInt(betterThemeCount, 10) + 1;
+}
+
+/**
+ * Retrieves the theme shortlist sorted from best to worst
+ * @param event Event
+ */
 async function findShortlist(event) {
   return models.Theme.where({
     event_id: event.get("id"),

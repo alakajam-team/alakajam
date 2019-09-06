@@ -5,6 +5,8 @@
  * @module controllers/api-controller
  */
 
+import { Model } from "bookshelf";
+import { Request } from "express";
 import * as lodash from "lodash";
 import * as moment from "moment";
 import config from "server/core/config";
@@ -13,6 +15,8 @@ import forms from "server/core/forms";
 import { buildUrl } from "server/core/templating-functions";
 import eventService from "server/event/event.service";
 import eventThemeService from "server/event/theme/event-theme.service";
+import { GlobalLocals } from "server/global.middleware";
+import { CustomResponse } from "server/types";
 import * as url from "url";
 import userService from "../user/user.service";
 
@@ -28,21 +32,10 @@ const PUBLIC_ATTRIBUTES_COMMENT = ["id", "user_id", "parent_id", "body", "create
 
 const DETAILED_ENTRY_OPTIONS = { withRelated: ["comments", "details", "userRoles.user", "event"] };
 
-export default {
-  getFeaturedEvent,
-  getEventTimeline,
-  getEvent,
-  getEventShortlist,
-  getEntry,
-  getUser,
-  getUserLatestEntry,
-  getUserSearch,
-};
-
 /**
  * Data about the currently featured event
  */
-async function getFeaturedEvent(req, res) {
+export async function getFeaturedEvent(req, res) {
   if (res.locals.featuredEvent) {
     req.params.event = res.locals.featuredEvent.get("id");
     return getEvent(req, res);
@@ -54,7 +47,7 @@ async function getFeaturedEvent(req, res) {
 /**
  * Event timeline
  */
-async function getEventTimeline(req, res) {
+export async function getEventTimeline(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -84,7 +77,7 @@ async function getEventTimeline(req, res) {
 /**
  * Data about a specific event
  */
-async function getEvent(req, res) {
+export async function getEvent(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -152,7 +145,7 @@ async function getEvent(req, res) {
 /**
  * Data about the theme shortlist of an event
  */
-async function getEventShortlist(req, res) {
+export async function getEventShortlist(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -205,7 +198,7 @@ async function getEventShortlist(req, res) {
 /**
  * Data about a specific entry
  */
-async function getEntry(req, res) {
+export async function getEntry(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -259,7 +252,7 @@ function _getDetailedEntryJson(entry) {
 /**
  * Data about a specific user
  */
-async function getUser(req, res) {
+export async function getUser(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -286,7 +279,7 @@ async function getUser(req, res) {
   _renderJson(req, res, status, json);
 }
 
-async function getUserLatestEntry(req, res) {
+export async function getUserLatestEntry(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -313,7 +306,7 @@ async function getUserLatestEntry(req, res) {
   _renderJson(req, res, status, json);
 }
 
-async function getUserSearch(req, res) {
+export async function getUserSearch(req, res) {
   let json: any = {};
   let status = 200;
 
@@ -343,6 +336,31 @@ async function getUserSearch(req, res) {
   }
 
   _renderJson(req, res, status, json);
+}
+
+export async function getThemeStats(req: Request, res: CustomResponse<GlobalLocals>) {
+  const title = forms.sanitizeString(req.params.theme);
+  const themes = await eventThemeService.findThemesByTitle(title, {
+    withRelated: ["event.details"]
+  });
+
+  const themesStats = [];
+  for (const theme of themes) {
+    const event = theme.related("event") as Model<any>;
+    const themeStats: {ranking?: number, eventTitle?: string} = {
+      eventTitle: event.get("title")
+    };
+    if (theme.get("ranking") && theme.get("status") !== enums.THEME.STATUS.SHORTLIST) {
+      // Use rough ranking estimate
+      themeStats.ranking = Math.floor(theme.get("ranking") * event.related("details").get("theme_count"));
+    } else {
+      // Use true ranking (needed for shortlisted themes at least)
+      themeStats.ranking = await eventThemeService.findThemeRanking(theme, { useShortlistRating: true });
+    }
+    themesStats.push(themeStats);
+  }
+
+  _renderJson(req, res, 200, themesStats);
 }
 
 function _renderJson(req, res, statusCode, json) {

@@ -6,7 +6,8 @@ import log from "./log";
 export {
   dataPathAbsolute,
   uploadsPathAbsolute,
-  tmpPathAbsolute
+  tmpPathAbsolute,
+  ilikeOperator,
 };
 
 const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
@@ -90,4 +91,8 @@ function uploadsPathAbsolute() {
 
 function tmpPathAbsolute() {
   return path.join(dataPathAbsolute(), "tmp");
+}
+
+function ilikeOperator() {
+  return config.DB_TYPE === "sqlite3" ? "like" : "ilike";
 }
