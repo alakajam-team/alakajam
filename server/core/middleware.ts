@@ -14,7 +14,7 @@ import * as bodyParser from "body-parser";
 import * as connectSessionKnex from "connect-session-knex";
 import * as cookies from "cookies";
 import * as express from "express";
-import * as expressNunjucks from "express-nunjucks";
+import * as nunjucks from "nunjucks";
 import * as expressSession from "express-session";
 import * as path from "path";
 import * as randomKey from "random-key";
@@ -73,18 +73,15 @@ async function configure(app) {
 
   // Templating
   app.set("views", path.join(constants.ROOT_PATH, "/server"));
-  const nj = expressNunjucks(app, {
-    watch: app.locals.devMode,
-    noCache: app.locals.devMode,
-  });
+  const njEnv = setupNunjucks(app);
 
   // Templating: custom globals and filters
   templatingGlobals.configure({
     devMode: app.locals.devMode,
     launchTime: LAUNCH_TIME,
-    nunjucksEnvironment: nj.env
+    nunjucksEnvironment: njEnv
   });
-  templatingFilters.configure(nj.env);
+  templatingFilters.configure(njEnv);
 
   // Body parsers config
   app.use(bodyParser.urlencoded({ extended: false }));
@@ -137,6 +134,30 @@ async function configure(app) {
 
   // Routing: 500/404
   app.use(createErrorRenderingMiddleware(app.locals.devMode));
+}
+
+function setupNunjucks(app) {
+  const loader = new nunjucks.FileSystemLoader(app.get('views'), {
+    watch: app.locals.devMode,
+    noCache: app.locals.devMode,
+  });
+
+  const env = new nunjucks.Environment(loader, {});
+
+  const engine = function(filePath, ctx, cb) {
+    env.render(path.extname(this.name) ? this.name : this.name + this.ext, ctx, cb);
+  };
+
+  let engineName = app.get('view engine');
+
+  if (!engineName) {
+    engineName = 'html';
+    app.set('view engine', engineName);
+  }
+
+  app.engine(engineName, engine);
+
+  return env;
 }
 
 function cleanupFormFilesCallback(req, res) {

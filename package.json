@@ -54,7 +54,6 @@
     "download": "^6.2.5",
     "easymde": "^2.8.0",
     "express": "^4.17.1",
-    "express-nunjucks": "^2.2.3",
     "express-promise-router": "^1.1.1",
     "express-session": "^1.16.2",
     "find-up": "^3.0.0",
