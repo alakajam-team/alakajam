@@ -17,6 +17,14 @@
     padding: 8px 15px;
     background-color: $main;
   }
+
+  &__division, &__category {
+    &.active, &.active:hover, &.active:active, &.active:focus {
+      background-color: $main-dark;
+      border-color: #3bafda;
+      cursor: default;
+    }
+  }
 }
 
 .results-podium {

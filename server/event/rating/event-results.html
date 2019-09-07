@@ -82,7 +82,7 @@
     <span class="btn-group" style="margin-right: 20px">
       {% for division in ['solo','team','unranked'] %}
         <a href="?sortBy={{ selectedCategoryIndex }}&amp;division={{ division }}" type="button" 
-            class="btn btn-primary results-links__division {{ 'disabled' if selectedDivision === division }}">
+            class="btn btn-primary results-links__division {{ 'active' if selectedDivision === division }}">
           <span class="{{ constants.DIVISION_ICONS[division] }}"></span>
           {{ division | capitalize }}
         </a>
@@ -92,7 +92,7 @@
       <span class="btn-group">
         {% for title in categoryTitles %}
           <a href="?sortBy={{ loop.index }}&amp;division={{ division }}" type="button" 
-              class="btn btn-primary results-links__category {{ 'disabled' if selectedCategoryIndex === loop.index }}">
+              class="btn btn-primary results-links__category {{ 'active' if selectedCategoryIndex === loop.index }}">
             {{ categoryTitles[loop.index - 1] }}
           </a>
         {% endfor %}
