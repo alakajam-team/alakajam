@@ -58,10 +58,10 @@ async function findArticlesSidebar(category: "about" | "docs"): Promise<object[]
       if (sidebar[category]) {
         return sidebar[category];
       } else {
-        log.error(`Malformed JSON. No "${category}" article category found`);
+        log.error(`Invalid SETTING_ARTICLE_SIDEBAR setting: no "${category}" article category found`);
       }
     } catch (e) {
-      log.error("Malformed JSON. Can't load articles links");
+      log.error("Invalid SETTING_ARTICLE_SIDEBAR setting: malformed JSON");
     }
   }
   return [];
