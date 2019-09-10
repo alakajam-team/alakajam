@@ -10,7 +10,8 @@
     "experimentalDecorators": true,
     "types": ["node", "mocha"],
     "typeRoots": [
-      "server/"
+      "server/",
+      "./node_modules/@types"
     ]
   },
   "include": [

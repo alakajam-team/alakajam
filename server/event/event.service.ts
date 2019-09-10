@@ -15,6 +15,7 @@ import * as models from "server/core/models";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import postService from "server/post/post.service";
+import { CollectionAny } from "bookshelf";
 
 export default {
   createEvent,
@@ -844,7 +845,7 @@ async function findEntryById(id, options: any = {}) {
  * @param  {User} user
  * @return {array(Entry)|null}
  */
-async function findUserEntries(user) {
+async function findUserEntries(user): Promise<CollectionAny> {
   const entriesCollection = await models.Entry.query((qb) => {
     qb.distinct()
       .innerJoin("user_role", "entry.id", "user_role.node_id")

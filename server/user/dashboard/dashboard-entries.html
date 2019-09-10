@@ -3,7 +3,20 @@
 
 {% block dashboardBody %}
 
-<h1>Entries</h1>
+{% if featuredEvent %}
+  <h1>{{ featuredEvent.get('title') }} entry</h1>
+  <div class="container-fluid no-padding">
+    <div class="row">
+      <div class="col-lg-6">
+        {{ eventMacros.eventShortcutMyEntry(user, featuredEvent, featuredEventEntry) }}
+      </div>
+    </div>
+  </div>
+  <div class="spacing"></div>
+  <h1>All entries</h1>
+{% else %}
+  <h1>Entries</h1>
+{% endif %}
 
 <div class="form-group">
   <a href="{{ buildUrl(user, 'user', 'entry-import') }}" class="btn btn-primary">Import entries from external sites</a>
