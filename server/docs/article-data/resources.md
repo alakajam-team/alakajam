@@ -53,7 +53,6 @@ This page compiles a list of **free** resources for making games, especially for
 | [TIC-80](https://tic.computer/) | Fantasy console, similar to the popular but paid Pico-8. Customizable palette. Open Source.|
 | [PhaserJS](https://phaser.io) | JavaScript framework to make 2D games for the browser. Open source. |
 | [Twine](https://twinery.org) | Engine for writing interactive stories with no code at all. Open Source. |
-| [RPGBoss](http://rpgboss.com/) | RPG Maker clone, for creating RPGs without code. Open source. |
 | [PuzzleScript](https://www.puzzlescript.net/) | Online puzzle game engine using a concise custom language. Open source. |
 
 ## <a name="assets"></a>Free assets
