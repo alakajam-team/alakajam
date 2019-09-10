@@ -6,7 +6,7 @@
   "main": "dist/server/index.js",
   "scripts": {
     "start": "node ./node_modules/ts-node-dev/bin/ts-node-dev -r tsconfig-paths/register server/index.ts",
-    "start:refresh": "concurrently --kill-others \"npm run build:watch\" \"browser-refresh\"",
+    "start:refresh": "concurrently --kill-others \"npm run build:server -- -w\" \"browser-refresh\"",
     "start:e2e": "node ./node_modules/ts-node-dev/bin/ts-node-dev -r tsconfig-paths/register server/e2e.ts",
     "start:debug": "tsc && node --nolazy -r ts-node/register -r tsconfig-paths/register --inspect-brk dist/server/index.js",
     "build:css": "node -r ts-node/register server/sass.ts",

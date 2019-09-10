@@ -8,11 +8,7 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["node", "mocha"],
-    "typeRoots": [
-      "server/",
-      "./node_modules/@types"
-    ]
+    "typeRoots": ["types", "node_modules/@types"]
   },
   "include": [
     "server/**/*.ts"
