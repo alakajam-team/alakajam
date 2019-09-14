@@ -475,16 +475,21 @@ async function computeShortlist(event) {
   // Mark all themes as out
   const allThemesCollection = await findAllThemes(event, { shortlistEligible: true });
   await event.load("details");
-  allThemesCollection.each((theme) => {
-    _eliminateTheme(theme, event.related("details"), { eliminatedOnShortlistRating: true });
+  await db.transaction(async (t) => {
+    // FIXME Transaction unused
+    allThemesCollection.each((theme) => {
+      _eliminateTheme(theme, event.related("details"), { eliminatedOnShortlistRating: true });
+    });
   });
 
   // Compute new shortlist
   const bestThemeCollection = await findBestThemes(event);
-  for (const theme of bestThemeCollection.models) {
-    theme.set("status", enums.THEME.STATUS.SHORTLIST);
-    await theme.save(null);
-  }
+  await db.transaction(async (t) => {
+    bestThemeCollection.each((theme) => {
+      theme.set("status", enums.THEME.STATUS.SHORTLIST);
+      theme.save(null, { transacting: t });
+    });
+  });
 }
 
 async function _refreshEventThemeStats(event) {
