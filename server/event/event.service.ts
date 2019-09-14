@@ -5,6 +5,7 @@
  * @module services/event-service
  */
 
+import { CollectionAny } from "bookshelf";
 import cache from "server/core/cache";
 import config from "server/core/config";
 import constants from "server/core/constants";
@@ -15,7 +16,6 @@ import * as models from "server/core/models";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import postService from "server/post/post.service";
-import { CollectionAny } from "bookshelf";
 
 export default {
   createEvent,
@@ -469,7 +469,7 @@ function setTeamMembers(currentUser, entry, userIds) {
       entry.related("posts").forEach(async (post) => {
         if (!userIds.includes(post.get("author_user_id"))) {
           post.set("entry_id", null);
-          post.save(null, { transacting: transaction });
+          await post.save(null, { transacting: transaction });
         }
       });
 
@@ -536,7 +536,7 @@ function setTeamMembers(currentUser, entry, userIds) {
         await invite.save(null, { transacting: transaction });
 
         if (toCreateUserRow.id === currentUser.get("id")) {
-          acceptInvite(currentUser, entry);
+          await acceptInvite(currentUser, entry);
         } else {
           numAdded++;
           cache.user(toCreateUserRow.name).del("unreadNotifications");
@@ -656,17 +656,20 @@ async function deleteEntry(entry) {
     await post.save();
   });
 
-  await db.transaction(async (t) => {
+  await db.transaction(async (transaction) => {
     // Delete user roles & comments manually (because no cascading)
-    await entry.load(["userRoles.user", "comments.user"], { transacting: t });
+    await entry.load(["userRoles.user", "comments.user"], { transacting: transaction });
+
+    const destroyQueries: Array<Promise<void>> = [];
     entry.related("userRoles").each((userRole) => {
       cache.user(userRole.related("user")).del("latestEntry");
-      userRole.destroy({ transacting: t });
+      destroyQueries.push(userRole.destroy({ transacting: transaction }));
     });
     entry.related("comments").each((comment) => {
       cache.user(comment.related("user")).del("byUserCollection");
-      comment.destroy({ transacting: t });
+      destroyQueries.push(comment.destroy({ transacting: transaction }));
     });
+    await Promise.all(destroyQueries);
 
     // Delete pictures
     if (entry.picturePreviews().length > 0) {
@@ -680,7 +683,7 @@ async function deleteEntry(entry) {
     }
 
     // Delete entry
-    await entry.destroy({ transacting: t });
+    await entry.destroy({ transacting: transaction });
   });
 }
 
