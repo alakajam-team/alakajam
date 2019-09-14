@@ -394,13 +394,10 @@ async function saveShortlistVotes(user, event, ids) {
     score--;
   }
 
-  await db.transaction(async (t) => {
-    const saveOptions = { transacting: t };
-    for (const result of results) {
-      if (result.theme) { result.theme.save(null, saveOptions); }
-      if (result.vote) { result.vote.save(null, saveOptions); }
-    }
-  });
+  for (const result of results) {
+    if (result.theme) { result.theme.save(); }
+    if (result.vote) { result.vote.save(); }
+  }
 }
 
 async function countShortlistVotes(event) {
