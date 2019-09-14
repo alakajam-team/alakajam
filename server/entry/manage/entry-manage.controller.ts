@@ -6,6 +6,7 @@ import forms from "server/core/forms";
 import * as models from "server/core/models";
 import security from "server/core/security";
 import templating from "server/core/templating-functions";
+import entryTeamService from "server/entry/entry-team.service";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
@@ -221,7 +222,7 @@ export async function entryManage(req, res) {
 
         res.locals.infoMessage = "";
         if (teamMembers !== null) {
-          const teamChanges = await eventService.setTeamMembers(user, entry, teamMembers);
+          const teamChanges = await entryTeamService.setTeamMembers(user, entry, teamMembers);
           if (teamChanges.numAdded > 0) {
             res.locals.infoMessage += teamChanges.numAdded + " user(s) have been sent an invite to join your team. ";
           }
@@ -259,7 +260,7 @@ export async function entryManage(req, res) {
 
   res.render("entry/manage/entry-manage", {
     entry,
-    members: await eventService.findTeamMembers(entry, res.locals.user),
+    members: await entryTeamService.findTeamMembers(entry, res.locals.user),
     allPlatforms: await platformService.fetchAllNames(),
     entryPlatforms: entry.get("platforms"),
     external: !res.locals.event,
@@ -318,7 +319,7 @@ export async function entryLeave(req, res) {
         newTeamMembers.push(userRole.get("user_id"));
       }
     });
-    await eventService.setTeamMembers(user, entry, newTeamMembers);
+    await entryTeamService.setTeamMembers(user, entry, newTeamMembers);
 
     cache.user(user).del("latestEntry");
   }
