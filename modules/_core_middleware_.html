@@ -83,10 +83,10 @@
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_middleware_.html#configure" class="tsd-kind-icon">configure</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_middleware_.html#createsessionmiddleware" class="tsd-kind-icon">create<wbr>Session<wbr>Middleware</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_middleware_.html#createsessionstore" class="tsd-kind-icon">create<wbr>Session<wbr>Store</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_middleware_.html#errorpage" class="tsd-kind-icon">error<wbr>Page</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_middleware_.html#findorcreatesessionkey" class="tsd-kind-icon">find<wbr>OrCreate<wbr>Session<wbr>Key</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_middleware_.html#getorcreatesessionsecret" class="tsd-kind-icon">get<wbr>OrCreate<wbr>Session<wbr>Secret</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_middleware_.html#promisifysession" class="tsd-kind-icon">promisify<wbr>Session</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_middleware_.html#setupnunjucks" class="tsd-kind-icon">setup<wbr>Nunjucks</a></li>
 							</ul>
 						</section>
 					</div>
@@ -100,7 +100,7 @@
 					<div class="tsd-signature tsd-kind-icon">LAUNCH_<wbr>TIME<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;new Date().getTime()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/middleware.ts#L36">core/middleware.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/middleware.ts#L34">core/middleware.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -117,7 +117,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/middleware.ts#L264">core/middleware.ts:264</a></li>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/middleware.ts#L163">core/middleware.ts:163</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -143,7 +143,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/middleware.ts#L45">core/middleware.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/middleware.ts#L43">core/middleware.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -160,16 +160,22 @@
 					<a name="createsessionmiddleware" class="tsd-anchor"></a>
 					<h3>create<wbr>Session<wbr>Middleware</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Session<wbr>Middleware<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Session<wbr>Middleware<span class="tsd-signature-symbol">(</span>sessionStore<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">RequestHandler</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/middleware.ts#L285">core/middleware.ts:285</a></li>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/middleware.ts#L184">core/middleware.ts:184</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sessionStore: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">RequestHandler</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -183,45 +189,10 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/middleware.ts#L311">core/middleware.ts:311</a></li>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/middleware.ts#L210">core/middleware.ts:210</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="errorpage" class="tsd-anchor"></a>
-					<h3>error<wbr>Page</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">error<wbr>Page<span class="tsd-signature-symbol">(</span>req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, res<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, devMode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/middleware.ts#L351">core/middleware.ts:351</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>req: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>res: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>code: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>error: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>devMode: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -235,7 +206,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/middleware.ts#L337">core/middleware.ts:337</a></li>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/middleware.ts#L236">core/middleware.ts:236</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -252,7 +223,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/middleware.ts#L302">core/middleware.ts:302</a></li>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/middleware.ts#L201">core/middleware.ts:201</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -269,10 +240,33 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/middleware.ts#L321">core/middleware.ts:321</a></li>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/middleware.ts#L220">core/middleware.ts:220</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="setupnunjucks" class="tsd-anchor"></a>
+					<h3>setup<wbr>Nunjucks</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">setup<wbr>Nunjucks<span class="tsd-signature-symbol">(</span>app<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Environment</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/middleware.ts#L139">core/middleware.ts:139</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>app: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Environment</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -307,9 +301,6 @@
 						<a href="_core_middleware_.html#createsessionstore" class="tsd-kind-icon">create<wbr>Session<wbr>Store</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_core_middleware_.html#errorpage" class="tsd-kind-icon">error<wbr>Page</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_core_middleware_.html#findorcreatesessionkey" class="tsd-kind-icon">find<wbr>OrCreate<wbr>Session<wbr>Key</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
@@ -317,6 +308,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_core_middleware_.html#promisifysession" class="tsd-kind-icon">promisify<wbr>Session</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_core_middleware_.html#setupnunjucks" class="tsd-kind-icon">setup<wbr>Nunjucks</a>
 					</li>
 				</ul>
 			</nav>

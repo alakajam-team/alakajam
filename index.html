@@ -76,28 +76,27 @@
 				</ol>
 				<p>For better performance, consider editing <code>config.js</code> to set up a PostgreSQL database.<br>See <a href="https://github.com/alakajam-team/alakajam/wiki">the wiki</a> for additional documentation.</p>
 				<blockquote>
-					<p>(*) If <code>npm install --no-optional</code> failed to install <code>sqlite3</code>, retry with flag <code>--build-from-source</code>.</p>
+					<p>(*) If npm fails to install <code>sqlite3</code>, retry with flag <code>--build-from-source</code>.</p>
 				</blockquote>
 				<h2 id="available-commands">Available commands</h2>
 				<h3 id="recommended-for-development">Recommended for development</h3>
 				<ul>
-					<li><code>npm run start</code> Launches the server for development. Every TypeScript change will trigger a server restart. (based on ts-node-dev)</li>
+					<li><code>npm start</code> Launches the server for development. Every TypeScript change will trigger a server restart. (based on ts-node-dev)</li>
 					<li><code>npm run start:refresh</code> Alternative that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)</li>
 					<li><code>npm run start:debug</code> Launches the server in debug mode. Prefer using the embedded debugger of your code editor (see example for VSCode further below).</li>
 					<li><code>npm run lint</code> Checks your code for errors, and fixes the most obvious ones. Run <code>githooks/install.sh</code> to trigger validation automatically before committing.</li>
 				</ul>
 				<h3 id="automated-tests">Automated tests</h3>
 				<ul>
-					<li><code>npm run start:e2e</code> Launches the server with a special database for end-to-end testing. More in the Cypress folder readme.</li>
 					<li><code>npm run test</code> Runs all unit + end to end tests.</li>
 					<li><code>npm run test:unit</code> Runs all unit tests. (based on mocha + chai)</li>
 					<li><code>npm run test:e2e</code> Runs all end-to-end tests. (based on cypress) </li>
+					<li><code>npm run start:e2e</code> Launches the server with a special database for end-to-end testing. More in the Cypress folder readme.</li>
 					<li><code>npm run cypress</code> Launches Cypress for end-to-end test development.</li>
 				</ul>
 				<h3 id="javascript-build">JavaScript build</h3>
 				<ul>
 					<li><code>npm run deployment:build</code> Builds the TypeScript server.</li>
-					<li><code>npm run deployment:build-watch</code> Builds the TypeScript server and watches for changes.</li>
 					<li><code>npm run deployment:start</code> Starts the TypeScript server. Needs to be built first.</li>
 				</ul>
 				<h3 id="other-tools">Other tools</h3>
@@ -127,7 +126,7 @@
   ]
 }</code></pre><h4 id="-reset-the-data">...Reset the data</h4>
 				<ol>
-					<li>Delete the <code>data/</code> and <code>static/uploads</code> folders.</li>
+					<li>Delete the <code>data/</code> folder.</li>
 					<li>If using PostgreSQL, empty your database (example: <code>drop schema public cascade; create schema public;</code>).</li>
 				</ol>
 				<h4 id="-enable-picture-resizing">...Enable picture resizing</h4>
@@ -141,34 +140,40 @@
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_admin_controller_.html">"controllers/admin-<wbr>controller"</a>
+						<a href="modules/_admin_admin_middleware_.html">"admin/admin.middleware"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_api_controller_.html">"controllers/api-<wbr>controller"</a>
+						<a href="modules/_admin_announcements_admin_announcements_controller_.html">"admin/announcements/admin-<wbr>announcements.controller"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_article_controller_.html">"controllers/article-<wbr>controller"</a>
+						<a href="modules/_admin_dev_admin_dev_controller_.html">"admin/dev/admin-<wbr>dev.controller"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_entry_controller_.html">"controllers/entry-<wbr>controller"</a>
+						<a href="modules/_admin_event_presets_admin_event_presets_controller_.html">"admin/event-<wbr>presets/admin-<wbr>event-<wbr>presets.controller"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_event_controller_.html">"controllers/event-<wbr>controller"</a>
+						<a href="modules/_admin_event_templates_admin_event_templates_controller_.html">"admin/event-<wbr>templates/admin-<wbr>event-<wbr>templates.controller"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_index_.html">"controllers/index"</a>
+						<a href="modules/_admin_events_admin_events_controller_.html">"admin/events/admin-<wbr>events.controller"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_main_controller_.html">"controllers/main-<wbr>controller"</a>
+						<a href="modules/_admin_platforms_admin_platforms_controller_.html">"admin/platforms/admin-<wbr>platforms.controller"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_post_controller_.html">"controllers/post-<wbr>controller"</a>
+						<a href="modules/_admin_settings_admin_settings_controller_.html">"admin/settings/admin-<wbr>settings.controller"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_templating_.html">"controllers/templating"</a>
+						<a href="modules/_admin_status_admin_status_controller_.html">"admin/status/admin-<wbr>status.controller"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_controllers_user_controller_.html">"controllers/user-<wbr>controller"</a>
+						<a href="modules/_admin_tags_admin_tags_controller_.html">"admin/tags/admin-<wbr>tags.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_admin_users_admin_users_controller_.html">"admin/users/admin-<wbr>users.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_api_controller_.html">"api/api.controller"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_core_cache_.html">"core/cache"</a>
@@ -195,6 +200,9 @@
 						<a href="modules/_core_forms_.html">"core/forms"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/_core_forms_validation_.html">"core/forms-<wbr>validation"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/_core_knexfile_.html">"core/knexfile"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -207,73 +215,349 @@
 						<a href="modules/_core_models_.html">"core/models"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/_core_security_.html">"core/security"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_core_settings_.html">"core/settings"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_core_templating_filters_.html">"core/templating-<wbr>filters"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_core_templating_functions_.html">"core/templating-<wbr>functions"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_core_templating_globals_.html">"core/templating-<wbr>globals"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_docs_article_controller_.html">"docs/article.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_docs_article_service_.html">"docs/article.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_docs_changes_changes_controller_.html">"docs/changes/changes.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_e2e_.html">"e2e"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_entry_invite_controller_.html">"entry/entry-<wbr>invite.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_entry_view_controller_.html">"entry/entry-<wbr>view.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_entry_middleware_.html">"entry/entry.middleware"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_highscore_entry_highscore_submit_controller_.html">"entry/highscore/entry-<wbr>highscore-<wbr>submit.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_highscore_entry_highscore_service_.html">"entry/highscore/entry-<wbr>highscore.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_highscore_entry_highscores_controller_.html">"entry/highscore/entry-<wbr>highscores.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_import_entry_import_service_.html">"entry/import/entry-<wbr>import.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_import_importer_entry_importer_tools_.html">"entry/import/importer/entry-<wbr>importer-<wbr>tools"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_import_importer_itch_.html">"entry/import/importer/itch"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_import_importer_ldjam_.html">"entry/import/importer/ldjam"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_import_importer_ludumdare_.html">"entry/import/importer/ludumdare"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_manage_entry_manage_scores_controller_.html">"entry/manage/entry-<wbr>manage-<wbr>scores.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_manage_entry_manage_controller_.html">"entry/manage/entry-<wbr>manage.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_platform_platform_service_.html">"entry/platform/platform.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_entry_tag_tag_service_.html">"entry/tag/tag.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_error_middleware_.html">"error.middleware"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_event_announcements_controller_.html">"event/event-<wbr>announcements.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_event_games_controller_.html">"event/event-<wbr>games.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_event_posts_controller_.html">"event/event-<wbr>posts.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_event_root_controller_.html">"event/event-<wbr>root.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_event_middleware_.html">"event/event.middleware"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_event_service_.html">"event/event.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_manage_event_manage_entries_controller_.html">"event/manage/event-<wbr>manage-<wbr>entries.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_manage_event_manage_template_controller_.html">"event/manage/event-<wbr>manage-<wbr>template.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_manage_event_manage_themes_controller_.html">"event/manage/event-<wbr>manage-<wbr>themes.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_manage_event_manage_tournament_controller_.html">"event/manage/event-<wbr>manage-<wbr>tournament.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_manage_event_manage_controller_.html">"event/manage/event-<wbr>manage.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_manage_event_manage_macros_controller_.html">"event/manage/event-<wbr>manage.macros.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_rating_event_rating_service_.html">"event/rating/event-<wbr>rating.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_rating_event_ratings_controller_.html">"event/rating/event-<wbr>ratings.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_rating_event_results_controller_.html">"event/rating/event-<wbr>results.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_theme_event_theme_service_.html">"event/theme/event-<wbr>theme.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_theme_event_themes_controller_.html">"event/theme/event-<wbr>themes.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_tournament_tournament_games_controller_.html">"event/tournament/tournament-<wbr>games.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_tournament_tournament_leaderboard_controller_.html">"event/tournament/tournament-<wbr>leaderboard.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_event_tournament_tournament_service_.html">"event/tournament/tournament.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_explore_chat_controller_.html">"explore/chat.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_explore_events_controller_.html">"explore/events.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_explore_games_controller_.html">"explore/games.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_explore_people_mods_controller_.html">"explore/people-<wbr>mods.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_explore_people_controller_.html">"explore/people.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_global_middleware_.html">"global.middleware"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_home_home_controller_.html">"home/home.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/_index_.html">"index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_article_service_.html">"services/article-<wbr>service"</a>
+						<a href="modules/_migrations_0001_init_.html">"migrations/0001_<wbr>init"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_entry_import_service_.html">"services/entry-<wbr>import-<wbr>service"</a>
+						<a href="modules/_migrations_0002_feedback_score_.html">"migrations/0002_<wbr>feedback-<wbr>score"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_entry_importers_entry_importer_tools_.html">"services/entry-<wbr>importers/entry-<wbr>importer-<wbr>tools"</a>
+						<a href="modules/_migrations_0003_notification_last_read_.html">"migrations/0003_<wbr>notification_<wbr>last_<wbr>read"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_entry_importers_itch_.html">"services/entry-<wbr>importers/itch"</a>
+						<a href="modules/_migrations_0004_event_rules_entry_resize_.html">"migrations/0004_<wbr>event-<wbr>rules_<wbr>entry-<wbr>resize"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_entry_importers_ldjam_.html">"services/entry-<wbr>importers/ldjam"</a>
+						<a href="modules/_migrations_0005_theme_voting_.html">"migrations/0005_<wbr>theme_<wbr>voting"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_entry_importers_ludumdare_.html">"services/entry-<wbr>importers/ludumdare"</a>
+						<a href="modules/_migrations_0006_platforms_.html">"migrations/0006_<wbr>platforms"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_event_rating_service_.html">"services/event-<wbr>rating-<wbr>service"</a>
+						<a href="modules/_migrations_0007_setting_length_.html">"migrations/0007_<wbr>setting_<wbr>length"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_event_service_.html">"services/event-<wbr>service"</a>
+						<a href="modules/_migrations_0008_add_event_id_to_user_role_.html">"migrations/0008_<wbr>add_<wbr>event_<wbr>id_<wbr>to_<wbr>user_<wbr>role"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_event_theme_service_.html">"services/event-<wbr>theme-<wbr>service"</a>
+						<a href="modules/_migrations_0009_game_voting_nullables_.html">"migrations/0009_<wbr>game_<wbr>voting_<wbr>nullables"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_event_tournament_service_.html">"services/event-<wbr>tournament-<wbr>service"</a>
+						<a href="modules/_migrations_0010_team_invites_.html">"migrations/0010_<wbr>team_<wbr>invites"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_highscore_service_.html">"services/highscore-<wbr>service"</a>
+						<a href="modules/_migrations_0011_theme_elimination_.html">"migrations/0011_<wbr>theme_<wbr>elimination"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_like_service_.html">"services/like-<wbr>service"</a>
+						<a href="modules/_migrations_0012_platform_table_.html">"migrations/0012_<wbr>platform_<wbr>table"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_mail_service_.html">"services/mail-<wbr>service"</a>
+						<a href="modules/_migrations_0013_anonymous_comments_.html">"migrations/0013_<wbr>anonymous_<wbr>comments"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_notification_service_.html">"services/notification-<wbr>service"</a>
+						<a href="modules/_migrations_0013_theme_ranking_.html">"migrations/0013_<wbr>theme_<wbr>ranking"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_platform_service_.html">"services/platform-<wbr>service"</a>
+						<a href="modules/_migrations_0014_longer_posts_.html">"migrations/0014_<wbr>longer_<wbr>posts"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_post_service_.html">"services/post-<wbr>service"</a>
+						<a href="modules/_migrations_0015_entry_rating_count_.html">"migrations/0015_<wbr>entry_<wbr>rating_<wbr>count"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_security_service_.html">"services/security-<wbr>service"</a>
+						<a href="modules/_migrations_0016_event_divisions_counters_.html">"migrations/0016_<wbr>event_<wbr>divisions_<wbr>counters"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_setting_service_.html">"services/setting-<wbr>service"</a>
+						<a href="modules/_migrations_0017_event_shortlist_elimination_.html">"migrations/0017_<wbr>event_<wbr>shortlist_<wbr>elimination"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_tag_service_.html">"services/tag-<wbr>service"</a>
+						<a href="modules/_migrations_0018_tag_table_.html">"migrations/0018_<wbr>tag_<wbr>table"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_services_user_service_.html">"services/user-<wbr>service"</a>
+						<a href="modules/_migrations_0019_tag_timestamps_.html">"migrations/0019_<wbr>tag_<wbr>timestamps"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_test_index_e2e_.html">"test/index-<wbr>e2e"</a>
+						<a href="modules/_migrations_0020_tournament_.html">"migrations/0020_<wbr>tournament"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_test_user_service_spec_.html">"test/user-<wbr>service.spec"</a>
+						<a href="modules/_migrations_0021_event_pictures_.html">"migrations/0021_<wbr>event_<wbr>pictures"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_0022_user_name_case_.html">"migrations/0022_<wbr>user_<wbr>name_<wbr>case"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_0023_karma_.html">"migrations/0023_<wbr>karma"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_0024_post_likes_.html">"migrations/0024_<wbr>post_<wbr>likes"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_0025_event_started_at_.html">"migrations/0025_<wbr>event_<wbr>started_<wbr>at"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_0026_event_templates_presets_.html">"migrations/0026_<wbr>event_<wbr>templates_<wbr>presets"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_0027_theme_wilson_.html">"migrations/0027_<wbr>theme_<wbr>wilson"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_0028_upgrade_entry_pictures_.html">"migrations/0028_<wbr>upgrade_<wbr>entry_<wbr>pictures"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_0029_upgrade_thumbnails_.html">"migrations/0029_<wbr>upgrade_<wbr>thumbnails"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_0030_uploads_in_data_.html">"migrations/0030_<wbr>uploads_<wbr>in_<wbr>data"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_comment_comment_controller_.html">"post/comment/comment.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_comment_comment_service_.html">"post/comment/comment.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_like_like_controller_.html">"post/like/like.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_like_like_service_.html">"post/like/like.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_manage_post_manage_controller_.html">"post/manage/post-<wbr>manage.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_post_view_controller_.html">"post/post-<wbr>view.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_post_watch_controller_.html">"post/post-<wbr>watch.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_post_middleware_.html">"post/post.middleware"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_post_service_.html">"post/post.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_post_posts_view_controller_.html">"post/posts-<wbr>view.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_.html">"routes"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_sass_.html">"sass"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_authentication_login_controller_.html">"user/authentication/login.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_authentication_logout_controller_.html">"user/authentication/logout.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_authentication_password_recovery_request_controller_.html">"user/authentication/password-<wbr>recovery-<wbr>request.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_authentication_password_recovery_controller_.html">"user/authentication/password-<wbr>recovery.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_authentication_register_controller_.html">"user/authentication/register.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_dashboard_dashboard_entries_controller_.html">"user/dashboard/dashboard-<wbr>entries.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_dashboard_dashboard_entry_import_controller_.html">"user/dashboard/dashboard-<wbr>entry-<wbr>import.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_dashboard_dashboard_feed_controller_.html">"user/dashboard/dashboard-<wbr>feed.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_dashboard_dashboard_password_controller_.html">"user/dashboard/dashboard-<wbr>password.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_dashboard_dashboard_posts_controller_.html">"user/dashboard/dashboard-<wbr>posts.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_dashboard_dashboard_scores_controller_.html">"user/dashboard/dashboard-<wbr>scores.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_dashboard_dashboard_settings_controller_.html">"user/dashboard/dashboard-<wbr>settings.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_dashboard_dashboard_middleware_.html">"user/dashboard/dashboard.middleware"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_mail_mail_service_.html">"user/mail/mail.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_notification_notification_service_.html">"user/notification/notification.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_user_profile_controller_.html">"user/user-<wbr>profile.controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_user_service_.html">"user/user.service"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_user_user_service_spec_.html">"user/user.service.spec"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_webpack_.html">"webpack"</a>
 					</li>
 				</ul>
 			</nav>

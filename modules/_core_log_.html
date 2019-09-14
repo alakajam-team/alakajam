@@ -89,7 +89,7 @@
 					<div class="tsd-signature tsd-kind-icon">level<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;info&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/log.ts#L23">core/log.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/log.ts#L23">core/log.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -99,7 +99,7 @@
 					<div class="tsd-signature tsd-kind-icon">log<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LoggerInstance</span><span class="tsd-signature-symbol"> =&nbsp;new Logger({level,transports: [new transports.Console({colorize: true,timestamp: () &#x3D;&gt; moment().format(&quot;YYYY-MM-DD hh:mm:ss.SSS&quot;),formatter: (options) &#x3D;&gt; {// Figure out the logging caller location// XXX slow and hacky approachlet location &#x3D; &quot;?&quot;;const lines &#x3D; new Error().stack.split(&quot;\n&quot;);for (const line of lines) {if (line.indexOf(sourcesRoot) !&#x3D;&#x3D; -1 &amp;&amp;line.indexOf(__filename) &#x3D;&#x3D;&#x3D; -1 &amp;&amp;line.indexOf(&quot;node_modules&quot;) &#x3D;&#x3D;&#x3D; -1) {const locInfo &#x3D; line.replace(/(.*\()/g, &quot;&quot;).replace(process.cwd(), &quot;&quot;).split(/[ :]/g);location &#x3D; locInfo[locInfo.length - 3].replace(&quot;\\&quot;, &quot;&quot;) +&quot;:&quot; + locInfo[locInfo.length - 2];break;}}// Build the logging lineconst prefix &#x3D; options.timestamp() + &quot; &quot; + options.level.toUpperCase() + &quot; (&quot; + location + &quot;)&quot;;const message &#x3D; options.message ? (&quot; &quot; + util.format(options.message)) : &quot;&quot;;return winstonConfig.colorize(options.level, prefix) + message;},})]})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/log.ts#L35">core/log.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/log.ts#L35">core/log.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -109,7 +109,7 @@
 					<div class="tsd-signature tsd-kind-icon">sources<wbr>Root<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;path.dirname(findUp(&quot;package.json&quot;, { cwd: __dirname }))</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/log.ts#L21">core/log.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/log.ts#L21">core/log.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>

@@ -81,9 +81,19 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_config_.html#config_path" class="tsd-kind-icon">CONFIG_<wbr>PATH</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_config_.html#config_sample_path" class="tsd-kind-icon">CONFIG_<wbr>SAMPLE_<wbr>PATH</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_config_.html#root_path" class="tsd-kind-icon">ROOT_<wbr>PATH</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_config_.html#sources_root" class="tsd-kind-icon">SOURCES_<wbr>ROOT</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_core_config_.html#config-1" class="tsd-kind-icon">config</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_config_.html#configsample" class="tsd-kind-icon">config<wbr>Sample</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_config_.html#datapathabsolute" class="tsd-kind-icon">data<wbr>Path<wbr>Absolute</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_config_.html#ilikeoperator" class="tsd-kind-icon">ilike<wbr>Operator</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_config_.html#tmppathabsolute" class="tsd-kind-icon">tmp<wbr>Path<wbr>Absolute</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_config_.html#uploadspathabsolute" class="tsd-kind-icon">uploads<wbr>Path<wbr>Absolute</a></li>
 							</ul>
 						</section>
 					</div>
@@ -97,7 +107,7 @@
 					<div class="tsd-signature tsd-kind-icon">CONFIG_<wbr>PATH<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;path.join(SOURCES_ROOT, &quot;config.js&quot;)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/config.ts#L51">core/config.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L60">core/config.ts:60</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -107,7 +117,17 @@
 					<div class="tsd-signature tsd-kind-icon">CONFIG_<wbr>SAMPLE_<wbr>PATH<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;path.join(SOURCES_ROOT, &quot;config.sample.js&quot;)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/config.ts#L52">core/config.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L61">core/config.ts:61</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="root_path" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> ROOT_<wbr>PATH</h3>
+					<div class="tsd-signature tsd-kind-icon">ROOT_<wbr>PATH<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;path.dirname(findUp.sync(&quot;package.json&quot;, { cwd: __dirname }))</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L13">core/config.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -117,7 +137,7 @@
 					<div class="tsd-signature tsd-kind-icon">SOURCES_<wbr>ROOT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;path.dirname(findUp.sync(&quot;package.json&quot;, { cwd: __dirname }))</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/config.ts#L50">core/config.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L59">core/config.ts:59</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -127,7 +147,7 @@
 					<div class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_config_.config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol"> =&nbsp;require(CONFIG_PATH) as Config</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/config.ts#L62">core/config.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L71">core/config.ts:71</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -137,9 +157,83 @@
 					<div class="tsd-signature tsd-kind-icon">config<wbr>Sample<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_config_.config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol"> =&nbsp;require(CONFIG_SAMPLE_PATH) as Config</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/config.ts#L63">core/config.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L72">core/config.ts:72</a></li>
 						</ul>
 					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="datapathabsolute" class="tsd-anchor"></a>
+					<h3>data<wbr>Path<wbr>Absolute</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">data<wbr>Path<wbr>Absolute<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L84">core/config.ts:84</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="ilikeoperator" class="tsd-anchor"></a>
+					<h3>ilike<wbr>Operator</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">ilike<wbr>Operator<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"like"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"ilike"</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L96">core/config.ts:96</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">"like"</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">"ilike"</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="tmppathabsolute" class="tsd-anchor"></a>
+					<h3>tmp<wbr>Path<wbr>Absolute</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">tmp<wbr>Path<wbr>Absolute<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L92">core/config.ts:92</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="uploadspathabsolute" class="tsd-anchor"></a>
+					<h3>uploads<wbr>Path<wbr>Absolute</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">uploads<wbr>Path<wbr>Absolute<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/config.ts#L88">core/config.ts:88</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -166,6 +260,9 @@
 						<a href="_core_config_.html#config_sample_path" class="tsd-kind-icon">CONFIG_<wbr>SAMPLE_<wbr>PATH</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_core_config_.html#root_path" class="tsd-kind-icon">ROOT_<wbr>PATH</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_core_config_.html#sources_root" class="tsd-kind-icon">SOURCES_<wbr>ROOT</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
@@ -173,6 +270,18 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_core_config_.html#configsample" class="tsd-kind-icon">config<wbr>Sample</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_core_config_.html#datapathabsolute" class="tsd-kind-icon">data<wbr>Path<wbr>Absolute</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_core_config_.html#ilikeoperator" class="tsd-kind-icon">ilike<wbr>Operator</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_core_config_.html#tmppathabsolute" class="tsd-kind-icon">tmp<wbr>Path<wbr>Absolute</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_core_config_.html#uploadspathabsolute" class="tsd-kind-icon">uploads<wbr>Path<wbr>Absolute</a>
 					</li>
 				</ul>
 			</nav>

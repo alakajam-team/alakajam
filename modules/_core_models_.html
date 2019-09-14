@@ -111,7 +111,7 @@
 					<div class="tsd-signature tsd-kind-icon">Comment<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;Comment&quot;, {tableName: &quot;comment&quot;,hasTimestamps: true,// Relationsnode() {return this.morphTo(&quot;node&quot;, [&quot;node_type&quot;, &quot;node_id&quot;], &quot;Entry&quot;, &quot;Post&quot;);},user() {return this.belongsTo(&quot;User&quot;, &quot;user_id&quot;, &quot;id&quot;);},parentComment() {return this.belongsTo(&quot;Comment&quot;, &quot;parent_id&quot;, &quot;id&quot;);},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L946">core/models.ts:946</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L946">core/models.ts:946</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -180,7 +180,7 @@
 					<div class="tsd-signature tsd-kind-icon">Entry<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;Entry&quot;, {tableName: &quot;entry&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,// Relationsdetails() {return this.hasOne(&quot;EntryDetails&quot;, &quot;entry_id&quot;);},event() {return this.belongsTo(&quot;Event&quot;, &quot;event_id&quot;);},userRoles() {return this.morphMany(&quot;UserRole&quot;, &quot;node&quot;, [&quot;node_type&quot;, &quot;node_id&quot;]);},comments() {return this.morphMany(&quot;Comment&quot;, &quot;node&quot;, [&quot;node_type&quot;, &quot;node_id&quot;]);},entryPlatforms() {return this.hasMany(&quot;EntryPlatform&quot;, &quot;entry_id&quot;);},votes() {return this.hasMany(&quot;EntryVote&quot;, &quot;entry_id&quot;);},invites() {return this.hasMany(&quot;EntryInvite&quot;, &quot;entry_id&quot;);},tags() {return this.belongsToMany(&quot;Tag&quot;, &quot;entry_tag&quot;, &quot;entry_id&quot;, &quot;tag_id&quot;);},posts() {return this.hasMany(&quot;Post&quot;, &quot;entry_id&quot;);},scores() {return this.hasMany(&quot;EntryScore&quot;, &quot;entry_id&quot;);},// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);this.on(&quot;saving&quot;, (model) &#x3D;&gt; {model.set(&quot;name&quot;, forms.slug(model.get(&quot;title&quot;) || &quot;&quot;).toLowerCase() || &quot;unnamed&quot;);});attrs &#x3D; attrs || {};attrs.links &#x3D; attrs.links || [];attrs.pictures &#x3D; attrs.pictures || [];attrs.platforms &#x3D; attrs.platforms || [];return attrs;},parse: function parse(attrs) {if (attrs.links) { attrs.links &#x3D; JSON.parse(attrs.links); }if (attrs.pictures) { attrs.pictures &#x3D; JSON.parse(attrs.pictures); }if (attrs.platforms) { attrs.platforms &#x3D; JSON.parse(attrs.platforms); }return attrs;},format: function format(attrs) {if (attrs &amp;&amp; attrs.links) { attrs.links &#x3D; JSON.stringify(attrs.links); }if (attrs &amp;&amp; attrs.pictures) { attrs.pictures &#x3D; JSON.stringify(attrs.pictures); }if (attrs &amp;&amp; attrs.platforms) { attrs.platforms &#x3D; JSON.stringify(attrs.platforms); }return attrs;},// HelperssortedUserRoles() {return this.related(&quot;userRoles&quot;).sortBy((userRole) &#x3D;&gt; {// List owners first, otherwise sort alphabeticallyif (userRole.get(&quot;permission&quot;) &#x3D;&#x3D;&#x3D; &quot;manage&quot;) {return &quot; &quot; + userRole.get(&quot;user_title&quot;);} else {return userRole.get(&quot;user_title&quot;);}});},picturePreviews() {if (this.has(&quot;pictures&quot;) &amp;&amp; this.get(&quot;pictures&quot;).previews) {return this.get(&quot;pictures&quot;).previews;} else {return [];}},pictureThumbnail() {if (this.has(&quot;pictures&quot;)) {return this.get(&quot;pictures&quot;).thumbnail;} else {return undefined;}},pictureIcon() {if (this.has(&quot;pictures&quot;)) {return this.get(&quot;pictures&quot;).icon;} else {return undefined;}},}, {// Cascadingdependents: [&quot;details&quot;, &quot;entryPlatforms&quot;, &quot;votes&quot;, &quot;invites&quot;, &quot;tags&quot;, &quot;scores&quot;], // &#x27;comments&#x27;, &#x27;userRoles&#x27; removed because of issue #93})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L400">core/models.ts:400</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L400">core/models.ts:400</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -294,7 +294,7 @@
 					<div class="tsd-signature tsd-kind-icon">Entry<wbr>Details<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;EntryDetails&quot;, {tableName: &quot;entry_details&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,entry() {return this.belongsTo(&quot;Entry&quot;, &quot;entry_id&quot;);},// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);attrs &#x3D; attrs || {};attrs.optouts &#x3D; attrs.optouts || [];return attrs;},parse: function parse(attrs) {if (attrs.optouts) { attrs.optouts &#x3D; JSON.parse(attrs.optouts); }return attrs;},format: function format(attrs) {if (attrs &amp;&amp; attrs.optouts) { attrs.optouts &#x3D; JSON.stringify(attrs.optouts); }return attrs;},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L521">core/models.ts:521</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L521">core/models.ts:521</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -378,7 +378,7 @@
 					<div class="tsd-signature tsd-kind-icon">Entry<wbr>Invite<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;EntryInvite&quot;, {tableName: &quot;entry_invite&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,entry() {return this.belongsTo(&quot;Entry&quot;, &quot;entry_id&quot;);},invited() {return this.belongsTo(&quot;User&quot;, &quot;invited_user_id&quot;);},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L658">core/models.ts:658</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L658">core/models.ts:658</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -427,7 +427,7 @@
 					<div class="tsd-signature tsd-kind-icon">Entry<wbr>Platform<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;EntryPlatform&quot;, {tableName: &quot;entry_platform&quot;,idAttribute: &quot;id&quot;,entry() {return this.belongsTo(&quot;Entry&quot;, &quot;entry_id&quot;);},platform() {return this.belongsTo(&quot;Platform&quot;, &quot;platform_id&quot;);},// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);attrs &#x3D; attrs || {};return attrs;},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L571">core/models.ts:571</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L571">core/models.ts:571</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -466,7 +466,7 @@
 					<div class="tsd-signature tsd-kind-icon">Entry<wbr>Score<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;EntryScore&quot;, {tableName: &quot;entry_score&quot;,hasTimestamps: true,// Relationsuser() {return this.belongsTo(&quot;User&quot;, &quot;user_id&quot;);},entry() {return this.belongsTo(&quot;Entry&quot;, &quot;entry_id&quot;);},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L767">core/models.ts:767</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L767">core/models.ts:767</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -530,7 +530,7 @@
 					<div class="tsd-signature tsd-kind-icon">Entry<wbr>Tag<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;EntryTag&quot;, {tableName: &quot;entry_tag&quot;,})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L614">core/models.ts:614</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L614">core/models.ts:614</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -540,7 +540,7 @@
 					<div class="tsd-signature tsd-kind-icon">Entry<wbr>Vote<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;EntryVote&quot;, {tableName: &quot;entry_vote&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,entry() {return this.belongsTo(&quot;Entry&quot;, &quot;entry_id&quot;);},event() {return this.belongsTo(&quot;Event&quot;, &quot;event_id&quot;);},user() {return this.belongsTo(&quot;User&quot;, &quot;user_id&quot;);},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L631">core/models.ts:631</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L631">core/models.ts:631</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -599,7 +599,7 @@
 					<div class="tsd-signature tsd-kind-icon">Event<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;Event&quot;, {tableName: &quot;event&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,// Relationsdetails() {return this.hasOne(&quot;EventDetails&quot;, &quot;event_id&quot;);},entries() {return this.hasMany(&quot;Entry&quot;, &quot;event_id&quot;);},tournamentEntries() {return this.hasMany(&quot;TournamentEntry&quot;, &quot;event_id&quot;);},preset() {return this.hasOne(&quot;EventPreset&quot;, &quot;event_preset_id&quot;);},// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);attrs &#x3D; attrs || {};attrs.countdown_config &#x3D; attrs.countdown_config || {};attrs.cron_config &#x3D; attrs.cron_config || {};attrs.divisions &#x3D; attrs.divisions || {};return attrs;},parse: function parse(attrs) {if (attrs.countdown_config) { attrs.countdown_config &#x3D; JSON.parse(attrs.countdown_config); }if (attrs.cron_config) { attrs.cron_config &#x3D; JSON.parse(attrs.cron_config); }if (attrs.divisions) { attrs.divisions &#x3D; JSON.parse(attrs.divisions); }return attrs;},format: function format(attrs) {if (attrs &amp;&amp; attrs.countdown_config) { attrs.countdown_config &#x3D; JSON.stringify(attrs.countdown_config); }if (attrs &amp;&amp; attrs.cron_config) { attrs.cron_config &#x3D; JSON.stringify(attrs.cron_config); }if (attrs &amp;&amp; attrs.divisions) { attrs.divisions &#x3D; JSON.stringify(attrs.divisions); }return attrs;},}, {// Cascadingdependents: [&quot;details&quot;, &quot;entries&quot;],})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L183">core/models.ts:183</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L183">core/models.ts:183</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -657,7 +657,7 @@
 								<tr>
 									<td>string</td>
 									<td>status_rules</td>
-									<td>Event rules status: &#39;disabled&#39;, &#39;off&#39;, or a post ID (not null)</td>
+									<td>Event rules status: &#39;off&#39;, or a post ID, or an URL (not null)</td>
 								</tr>
 								<tr>
 									<td>string</td>
@@ -718,7 +718,7 @@
 					<div class="tsd-signature tsd-kind-icon">Event<wbr>Details<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;EventDetails&quot;, {tableName: &quot;event_details&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,// Relationsevent() {return this.belongsTo(&quot;Event&quot;, &quot;event_id&quot;);},// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);attrs &#x3D; attrs || {};attrs.category_titles &#x3D; attrs.category_titles || [];attrs.division_counts &#x3D; attrs.division_counts || [];attrs.shortlist_elimination &#x3D; attrs.shortlist_elimination || {};attrs.links &#x3D; attrs.links || {};return attrs;},parse: function parse(attrs) {if (attrs.category_titles) { attrs.category_titles &#x3D; JSON.parse(attrs.category_titles); }if (attrs.division_counts) { attrs.division_counts &#x3D; JSON.parse(attrs.division_counts); }if (attrs.shortlist_elimination) { attrs.shortlist_elimination &#x3D; JSON.parse(attrs.shortlist_elimination); }if (attrs.links) { attrs.links &#x3D; JSON.parse(attrs.links); }return attrs;},format: function format(attrs) {if (attrs &amp;&amp; attrs.category_titles) { attrs.category_titles &#x3D; JSON.stringify(attrs.category_titles); }if (attrs &amp;&amp; attrs.division_counts) { attrs.division_counts &#x3D; JSON.stringify(attrs.division_counts); }if (attrs &amp;&amp; attrs.shortlist_elimination) { attrs.shortlist_elimination &#x3D; JSON.stringify(attrs.shortlist_elimination); }if (attrs &amp;&amp; attrs.links) { attrs.links &#x3D; JSON.stringify(attrs.links); }return attrs;},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L248">core/models.ts:248</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L248">core/models.ts:248</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -802,7 +802,7 @@
 					<div class="tsd-signature tsd-kind-icon">Event<wbr>Preset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;EventPreset&quot;, {tableName: &quot;event_preset&quot;,idAttribute: &quot;id&quot;,// Relationsevents() {return this.hasMany(&quot;Event&quot;, &quot;event_preset_id&quot;);},// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);attrs &#x3D; attrs || {};attrs.countdown_config &#x3D; attrs.countdown_config || {};return attrs;},parse: function parse(attrs) {if (attrs.countdown_config) { attrs.countdown_config &#x3D; JSON.parse(attrs.countdown_config); }return attrs;},format: function format(attrs) {if (attrs &amp;&amp; attrs.countdown_config) { attrs.countdown_config &#x3D; JSON.stringify(attrs.countdown_config); }return attrs;},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L301">core/models.ts:301</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L301">core/models.ts:301</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -871,7 +871,7 @@
 					<div class="tsd-signature tsd-kind-icon">Event<wbr>Template<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;EventTemplate&quot;, {tableName: &quot;event_template&quot;,idAttribute: &quot;id&quot;,// Relationspreset() {return this.hasOne(&quot;EventPreset&quot;, &quot;event_preset_id&quot;);},// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);attrs &#x3D; attrs || {};attrs.links &#x3D; attrs.links || [];attrs.divisions &#x3D; attrs.divisions || {};attrs.category_titles &#x3D; attrs.category_titles || [];return attrs;},parse: function parse(attrs) {if (attrs.links) { attrs.links &#x3D; JSON.parse(attrs.links); }if (attrs.divisions) { attrs.divisions &#x3D; JSON.parse(attrs.divisions); }if (attrs.category_titles) { attrs.category_titles &#x3D; JSON.parse(attrs.category_titles); }return attrs;},format: function format(attrs) {if (attrs &amp;&amp; attrs.links) { attrs.links &#x3D; JSON.stringify(attrs.links); }if (attrs &amp;&amp; attrs.divisions) { attrs.divisions &#x3D; JSON.stringify(attrs.divisions); }if (attrs &amp;&amp; attrs.category_titles) { attrs.category_titles &#x3D; JSON.stringify(attrs.category_titles); }return attrs;},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L342">core/models.ts:342</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L342">core/models.ts:342</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -930,7 +930,7 @@
 					<div class="tsd-signature tsd-kind-icon">Like<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;Like&quot;, {tableName: &quot;like&quot;,hasTimestamps: true,// Relationsnode() {return this.morphTo(&quot;node&quot;, [&quot;node_type&quot;, &quot;node_id&quot;], &quot;Post&quot;);},user() {return this.belongsTo(&quot;User&quot;, &quot;user_id&quot;, &quot;id&quot;);},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L976">core/models.ts:976</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L976">core/models.ts:976</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -989,7 +989,7 @@
 					<div class="tsd-signature tsd-kind-icon">Platform<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;Platform&quot;, {tableName: &quot;platform&quot;,idAttribute: &quot;id&quot;,})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L557">core/models.ts:557</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L557">core/models.ts:557</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1023,7 +1023,7 @@
 					<div class="tsd-signature tsd-kind-icon">Post<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;Post&quot;, {tableName: &quot;post&quot;,hasTimestamps: true,// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);this.on(&quot;saving&quot;, () &#x3D;&gt; {this.trigger(&quot;titleChanged&quot;);});this.on(&quot;titleChanged&quot;, function() {this.set(&quot;name&quot;, forms.slug(this.get(&quot;title&quot;) || &quot;&quot;).toLowerCase());});attrs &#x3D; attrs || {};attrs.like_details &#x3D; attrs.like_details || {};return attrs;},parse: function parse(attrs) {if (attrs.like_details) { attrs.like_details &#x3D; JSON.parse(attrs.like_details); }return attrs;},format: function format(attrs) {if (attrs &amp;&amp; attrs.like_details) { attrs.like_details &#x3D; JSON.stringify(attrs.like_details); }return attrs;},// Relationsentry() {return this.belongsTo(&quot;Entry&quot;, &quot;entry_id&quot;);},event() {return this.belongsTo(&quot;Event&quot;, &quot;event_id&quot;);},author() {return this.belongsTo(&quot;User&quot;, &quot;author_user_id&quot;);},userRoles() {// TODO isn&#x27;t it sufficient to specify either &#x27;node&#x27; or [&#x27;node_type&#x27;, &#x27;node_id&#x27;]?return this.morphMany(&quot;UserRole&quot;, &quot;node&quot;, [&quot;node_type&quot;, &quot;node_id&quot;]);},comments() {return this.morphMany(&quot;Comment&quot;, &quot;node&quot;, [&quot;node_type&quot;, &quot;node_id&quot;]);},likes() {return this.morphMany(&quot;Like&quot;, &quot;node&quot;, [&quot;node_type&quot;, &quot;node_id&quot;]);},}, {// Cascadingdependents: [&quot;likes&quot;], // &#x27;comments&#x27;, &#x27;userRoles&#x27; removed because of issue #93})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L876">core/models.ts:876</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L876">core/models.ts:876</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1117,7 +1117,7 @@
 					<div class="tsd-signature tsd-kind-icon">Setting<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;Setting&quot;, {tableName: &quot;setting&quot;,idAttribute: &quot;key&quot;,hasTimestamps: true,})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L27">core/models.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L27">core/models.ts:27</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1161,7 +1161,7 @@
 					<div class="tsd-signature tsd-kind-icon">Tag<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;Tag&quot;, {tableName: &quot;tag&quot;,idAttribute: &quot;id&quot;,entries() {return this.belongsToMany(&quot;Entry&quot;, &quot;entry_tag&quot;, &quot;tag_id&quot;, &quot;entry_id&quot;);},entryJoins() {return this.hasMany(&quot;EntryTag&quot;, &quot;tag_id&quot;);},}, {// Cascadingdependents: [&quot;entryJoins&quot;],})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L599">core/models.ts:599</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L599">core/models.ts:599</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1195,7 +1195,7 @@
 					<div class="tsd-signature tsd-kind-icon">Theme<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;Theme&quot;, {tableName: &quot;theme&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,// Relationsevent() {return this.belongsTo(&quot;Event&quot;, &quot;event_id&quot;);},user() {return this.belongsTo(&quot;User&quot;, &quot;user_id&quot;);},votes() {return this.hasMany(&quot;ThemeVote&quot;, &quot;theme_id&quot;);},}, {// Cascadingdependents: [&quot;votes&quot;],})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L696">core/models.ts:696</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L696">core/models.ts:696</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1294,7 +1294,7 @@
 					<div class="tsd-signature tsd-kind-icon">Theme<wbr>Vote<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;ThemeVote&quot;, {tableName: &quot;theme_vote&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,// Relationstheme() {return this.belongsTo(&quot;Theme&quot;, &quot;theme_id&quot;);},event() {return this.belongsTo(&quot;Event&quot;, &quot;event_id&quot;);},user() {return this.belongsTo(&quot;User&quot;, &quot;user_id&quot;);},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L731">core/models.ts:731</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L731">core/models.ts:731</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1353,7 +1353,7 @@
 					<div class="tsd-signature tsd-kind-icon">Tournament<wbr>Entry<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;TournamentEntry&quot;, {tableName: &quot;tournament_entry&quot;,hasTimestamps: true,// Relationsentry() {return this.belongsTo(&quot;Entry&quot;, &quot;entry_id&quot;);},event() {return this.belongsTo(&quot;Event&quot;, &quot;event_id&quot;);},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L793">core/models.ts:793</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L793">core/models.ts:793</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1407,7 +1407,7 @@
 					<div class="tsd-signature tsd-kind-icon">Tournament<wbr>Score<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;TournamentScore&quot;, {tableName: &quot;tournament_score&quot;,hasTimestamps: true,// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);attrs &#x3D; attrs || {};attrs.entry_scores &#x3D; attrs.entry_scores || {};return attrs;},parse: function parse(attrs) {if (attrs.entry_scores) { attrs.entry_scores &#x3D; JSON.parse(attrs.entry_scores); }return attrs;},format: function format(attrs) {if (attrs &amp;&amp; attrs.entry_scores) { attrs.entry_scores &#x3D; JSON.stringify(attrs.entry_scores); }return attrs;},// Relationsuser() {return this.belongsTo(&quot;User&quot;, &quot;user_id&quot;);},event() {return this.belongsTo(&quot;Event&quot;, &quot;event_id&quot;);},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L821">core/models.ts:821</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L821">core/models.ts:821</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1471,7 +1471,7 @@
 					<div class="tsd-signature tsd-kind-icon">User<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;User&quot;, {tableName: &quot;user&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,details() {return this.hasOne(&quot;UserDetails&quot;, &quot;user_id&quot;);},roles() {return this.hasMany(&quot;UserRole&quot;, &quot;user_id&quot;);},posts() {return this.hasMany(&quot;Post&quot;, &quot;author_user_id&quot;);},comments() {return this.hasMany(&quot;Comment&quot;, &quot;user_id&quot;);},likes() {return this.hasMany(&quot;Like&quot;, &quot;user_id&quot;);},entryScores() {return this.hasMany(&quot;EntryScore&quot;, &quot;user_id&quot;);},tournamentScores() {return this.hasMany(&quot;TournamentScore&quot;, &quot;user_id&quot;);},}, {// Cascadingdependents: [&quot;details&quot;, &quot;roles&quot;, &quot;entryScores&quot;, &quot;tournamentScores&quot;, &quot;comments&quot;, &quot;posts&quot;],})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L56">core/models.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L56">core/models.ts:56</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1560,7 +1560,7 @@
 					<div class="tsd-signature tsd-kind-icon">User<wbr>Details<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;UserDetails&quot;, {tableName: &quot;user_details&quot;,idAttribute: &quot;id&quot;,// Relationsuser() {return this.belongsTo(&quot;User&quot;, &quot;user_id&quot;);},// Listenersinitialize: function initialize(attrs) {modelPrototype.initialize.call(this);attrs &#x3D; attrs || {};attrs.social_links &#x3D; attrs.social_links || [];return attrs;},parse: function parse(attrs) {if (attrs.social_links) { attrs.social_links &#x3D; JSON.parse(attrs.social_links); }return attrs;},format: function format(attrs) {if (attrs &amp;&amp; attrs.social_links) { attrs.social_links &#x3D; JSON.stringify(attrs.social_links); }return attrs;},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L97">core/models.ts:97</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L97">core/models.ts:97</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1604,7 +1604,7 @@
 					<div class="tsd-signature tsd-kind-icon">User<wbr>Role<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.model(&quot;UserRole&quot;, {tableName: &quot;user_role&quot;,idAttribute: &quot;id&quot;,hasTimestamps: true,user() {return this.belongsTo(&quot;User&quot;, &quot;user_id&quot;);},node() {return this.morphTo(&quot;node&quot;, [&quot;node_type&quot;, &quot;node_id&quot;], &quot;Entry&quot;, &quot;Post&quot;);},})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L141">core/models.ts:141</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L141">core/models.ts:141</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -1678,7 +1678,7 @@
 					<div class="tsd-signature tsd-kind-icon">model<wbr>Prototype<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;bookshelf.Model.prototype</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/c68f0c1/server/core/models.ts#L13">core/models.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/alakajam-team/alakajam/blob/a611bbc/server/core/models.ts#L13">core/models.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
