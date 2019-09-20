@@ -534,8 +534,8 @@ function computeEliminatedShortlistThemes(event) {
     const eliminationDate = moment(shortlistEliminationInfo.start);
     const now = moment();
 
-    // We can eliminate at most 7 themes (leaving 3 until the reveal)
-    while (eliminationDate.isBefore(now) && eliminated < 7) {
+    // We can eliminate at most 8 themes (leaving 2 until the reveal)
+    while (eliminationDate.isBefore(now) && eliminated < 8) {
       eliminationDate.add(delay, "minutes");
       eliminated++;
     }
