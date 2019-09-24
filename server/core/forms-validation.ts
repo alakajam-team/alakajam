@@ -34,7 +34,7 @@ export function rule(testFunction: TestFunction, errorMessage?: string): Validat
 }
 
 /**
- * Accepts a given value only if it satisfies the specified test.
+ * Accepts a given value only if it satisfies ALL specified tests.
  * Note: if the field is not set, the test function might fail and trigger an error (= required field).
  * @param testFunction
  * @param errorMessage
@@ -51,7 +51,7 @@ export function allRules(testFunctions: TestFunction[], errorMessage?: string): 
 }
 
 /**
- * Accepts a given value only if it satisfies the specified test.
+ * Accepts a given value only if it satisfies one of the specified tests.
  * Note: if the field is not set, the test function might fail and trigger an error (= required field).
  * @param testFunction
  * @param errorMessage

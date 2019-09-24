@@ -223,11 +223,11 @@ function isLengthValid(input, maxLength = 255) {
 }
 
 function isSet(input: any) {
-  return input !== undefined;
+  return input !== undefined && input.trim() !== "";
 }
 
 function isNotSet(input: any) {
-  return input === undefined;
+  return input === undefined || input.trim() === "";
 }
 
 /**
