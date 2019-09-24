@@ -33,7 +33,7 @@ export async function dashboardSettingsPost(req: Request, res: CustomResponse<Da
 async function _handleSave(req: Request, res: CustomResponse<DashboardLocals>) {
   res.locals.errorMessage = await validateObject(req.body, {
     email: anyRule([forms.isNotSet, forms.isEmail], "Invalid email"),
-    website: anyRule([forms.isNotSet, forms.isURL], "Invalid URL"),
+    website: anyRule([forms.isNotSet, forms.isURL], "Account website has an invalid URL"),
     special_permissions: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
       "Not allowed to change special permissions on this user"),
     disallow_anonymous: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
