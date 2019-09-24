@@ -17,10 +17,10 @@ export async function adminDev(req, res) {
         infoMessage = "DB reset done (current version : " + newVersion + ").";
       } else if (req.body["replace-passwords"]) {
         const users = await userService.findUsers({ pageSize: 30 });
-        await db.transaction(async (t) => {
+        await db.transaction(async (transaction) => {
           for (const user of users.models) {
             userService.setPassword(user, "password");
-            await user.save(null, { transacting: t });
+            await user.save(null, { transacting: transaction });
           }
         });
         infoMessage = 'The last 30 created users now have their password set to "password".';

@@ -3,6 +3,7 @@ import forms from "server/core/forms";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import templating from "server/core/templating-functions";
+import entryTeamService from "server/entry/entry-team.service";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
@@ -130,7 +131,7 @@ export async function apiSearchForTeammate(req, res) {
       entry = await eventService.findEntryById(req.query.entryId);
     }
 
-    const matches = await eventService.searchForTeamMembers(nameFragment,
+    const matches = await entryTeamService.searchForTeamMembers(nameFragment,
       res.locals.event ? res.locals.event.id : null, entry);
 
     const entryId = entry ? entry.get("id") : -1;

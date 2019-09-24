@@ -14,6 +14,10 @@ function refreshImporterForm() {
     } else {
       $("#js-profile").show();
     }
+    $("#submit").removeAttr("disabled");
+
+  } else {
+    $("#submit").attr("disabled", "disabled");
   }
 }
 

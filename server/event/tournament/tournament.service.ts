@@ -223,16 +223,16 @@ async function _refreshTournamentRankings(event) {
     });
 
     let ranking = 1;
-    await db.transaction(async (t) => {
+    await db.transaction(async (transaction) => {
       for (const tScore of tScoresWithoutTies) {
         if (parseFloat(tScore.get("score")) > 0) {
           if (tScore.get("ranking") !== ranking) {
             tScore.set("ranking", ranking);
-            tScore.save(null, { transacting: t });
+            await tScore.save(null, { transacting: transaction });
           }
           ranking++;
         } else {
-          tScore.destroy({ transacting: t });
+          await tScore.destroy({ transacting: transaction });
         }
       }
     });

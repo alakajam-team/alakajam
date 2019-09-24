@@ -253,12 +253,12 @@ async function refreshEntryRankings(entry, triggeringEntryScore = null, options:
     .orderBy("updated_at")
     .fetchAll();
 
-  await db.transaction(async (t) => {
+  await db.transaction(async (transaction) => {
     let ranking = 1;
     for (const score of scores.models) {
       if (score.get("ranking") !== ranking) {
         score.set("ranking", ranking);
-        score.save(null, { transacting: t });
+        await score.save(null, { transacting: transaction });
         if (score.get("active")) {
           impactedEntryScores.push(score);
         }

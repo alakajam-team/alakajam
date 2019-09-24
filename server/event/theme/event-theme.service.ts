@@ -5,7 +5,7 @@
  * @module services/event-theme-service
  */
 
-import { Model } from "bookshelf";
+import { Model, SaveOptions } from "bookshelf";
 import * as moment from "moment";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
@@ -369,7 +369,7 @@ async function _eliminateLowestThemes(event) {
 async function _eliminateTheme(
     theme: Model<any>,
     eventDetails: Model<any>,
-    options: { eliminatedOnShortlistRating?: boolean } = {}): Promise<void> {
+    options: { eliminatedOnShortlistRating?: boolean } & SaveOptions = {}): Promise<void> {
   // Compute ranking as %-age because new submissions would make this number irrelevant
   const themeRanking = await findThemeRanking(theme, { useShortlistRating: options.eliminatedOnShortlistRating });
   const rankingPercent = 1.0 * themeRanking / (eventDetails.get("theme_count") || 1);
@@ -394,11 +394,11 @@ async function saveShortlistVotes(user, event, ids) {
     score--;
   }
 
-  await db.transaction(async (t) => {
-    const saveOptions = { transacting: t };
+  await db.transaction(async (transaction) => {
+    const saveOptions = { transacting: transaction };
     for (const result of results) {
-      if (result.theme) { result.theme.save(null, saveOptions); }
-      if (result.vote) { result.vote.save(null, saveOptions); }
+      if (result.theme) { await result.theme.save(null, saveOptions); }
+      if (result.vote) { await result.vote.save(null, saveOptions); }
     }
   });
 }
@@ -475,20 +475,20 @@ async function computeShortlist(event) {
   // Mark all themes as out
   const allThemesCollection = await findAllThemes(event, { shortlistEligible: true });
   await event.load("details");
-  await db.transaction(async (t) => {
-    // FIXME Transaction unused
-    allThemesCollection.each((theme) => {
-      _eliminateTheme(theme, event.related("details"), { eliminatedOnShortlistRating: true });
-    });
+  await db.transaction(async (transaction) => {
+    for (const theme of allThemesCollection.models) {
+      await _eliminateTheme(theme, event.related("details"),
+        { eliminatedOnShortlistRating: true, transacting: transaction });
+    }
   });
 
   // Compute new shortlist
   const bestThemeCollection = await findBestThemes(event);
-  await db.transaction(async (t) => {
-    bestThemeCollection.each((theme) => {
+  await db.transaction(async (transaction) => {
+    for (const theme of bestThemeCollection.models) {
       theme.set("status", enums.THEME.STATUS.SHORTLIST);
-      theme.save(null, { transacting: t });
-    });
+      await theme.save(null, { transacting: transaction });
+    }
   });
 }
 
@@ -534,8 +534,8 @@ function computeEliminatedShortlistThemes(event) {
     const eliminationDate = moment(shortlistEliminationInfo.start);
     const now = moment();
 
-    // We can eliminate at most 7 themes (leaving 3 until the reveal)
-    while (eliminationDate.isBefore(now) && eliminated < 7) {
+    // We can eliminate at most 8 themes (leaving 2 until the reveal)
+    while (eliminationDate.isBefore(now) && eliminated < 8) {
       eliminationDate.add(delay, "minutes");
       eliminated++;
     }

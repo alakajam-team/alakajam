@@ -44,7 +44,8 @@ This page compiles a list of **free** resources for making games, especially for
 | [Unity](https://unity3d.com)  | Popular and feature-rich engine, both for 3D and 2D games. Requires programming in C#. Free version has few limitations and plenty to work with. |
 | [Unreal Engine](https://www.unrealengine.com/en-US/blog)  | Popular and feature-rich engine specialized in 3D games. Supports a quite accessible, visual scripting language called Blueprints. And good old C++. |
 | [Godot Engine](https://godotengine.org/)  | Powerful engine for 3D and 2D games. Uses a Python-like language. Open Source. |
-| [Game Pencil](http://gamepencil.pawbyte.com/) | A new cross-platform engine inspired by Unity & Game Maker, except Open Source. Uses JS scripting. |
+| [Game Pencil](http://gamepencil.pawbyte.com/) | A cross-platform 2D engine inspired by Unity & Game Maker, except Open Source. Uses JS scripting. |
+| [PlayCanvas](https://playcanvas.com) | A web-based, collaborative 3D engine, think Google Docs except for game making. Free to use as long for public projects. Multi-platform. |
 | [GDevelop](http://www.compilgames.net) | 2D game engine letting you write logic without knowledge of coding. Open Source. |
 | [Stencyl](http://www.stencyl.com/) | 2D game engine that uses visual blocks instead of code. Free version lets you publish for the web. |
 | [Scratch](https://scratch.mit.edu/) | Very accessible, and even kid-friendly engine for creating visual stories, animations and games. |
@@ -52,7 +53,6 @@ This page compiles a list of **free** resources for making games, especially for
 | [TIC-80](https://tic.computer/) | Fantasy console, similar to the popular but paid Pico-8. Customizable palette. Open Source.|
 | [PhaserJS](https://phaser.io) | JavaScript framework to make 2D games for the browser. Open source. |
 | [Twine](https://twinery.org) | Engine for writing interactive stories with no code at all. Open Source. |
-| [RPGBoss](http://rpgboss.com/) | RPG Maker clone, for creating RPGs without code. Open source. |
 | [PuzzleScript](https://www.puzzlescript.net/) | Online puzzle game engine using a concise custom language. Open source. |
 
 ## <a name="assets"></a>Free assets

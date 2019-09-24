@@ -180,7 +180,7 @@
     margin-top: 5px;
     margin-bottom: 10px;
 
-    & img {
+    & > a > img {
       height: 42px;
     }
   }
@@ -189,6 +189,9 @@
       padding-left: 16px;
       text-align: center;
     }
+  }
+  &__social-legend {
+    text-align: center;
   }
 
   &__footer {
