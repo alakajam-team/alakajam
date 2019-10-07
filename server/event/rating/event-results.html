@@ -142,15 +142,15 @@
       <div class="row results-podium-row">
         {% set entryThumbOptions = { hideMedals: categoryTitles.length === 1 } %}
         {% if rankings.length > 0 and division !== enums.DIVISION.UNRANKED %}
-          <div class="col-sm-4 first results-podium__step">
+          <div class="col-sm-4 position-{{ rankings[0].related('details').get('ranking_' + sortedBy) }} results-podium__step">
             {{ eventMacros.entryThumb(rankings[0], entryThumbOptions) }}
           </div>
-          <div class="col-sm-4 second {{ 'results-podium__step' if rankings.length >= 2 }}">
+          <div class="col-sm-4 position-{{ rankings[1].related('details').get('ranking_' + sortedBy)}} {{ 'results-podium__step' if rankings.length >= 2 }}">
             {% if rankings.length >= 2 %}
               {{ eventMacros.entryThumb(rankings[1], entryThumbOptions) }}
             {% endif %}
           </div>
-          <div class="col-sm-4 third {{ 'results-podium__step' if rankings.length >= 3 }}">
+          <div class="col-sm-4 position-{{ rankings[2].related('details').get('ranking_' + sortedBy) }} {{ 'results-podium__step' if rankings.length >= 3 }}">
             {% if rankings.length >= 3 %}
               {{ eventMacros.entryThumb(rankings[2], entryThumbOptions) }}
             {% endif %}

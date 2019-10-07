@@ -110,17 +110,17 @@
       }
     }
 
-    &.first {
+    &.position-1 {
       margin-top: 15px;
       padding-bottom: 15px;
       &::after {
         margin-top: -50px;
       }
     }
-    &.second::after {
+    &.position-2::after {
       background-position: -256px -192px;
     }
-    &.third::after {
+    &.position-3::after {
       background-position: -256px -320px;
     }
   }
@@ -143,13 +143,13 @@
   }
   
   @media (min-width: 768px) {
-    & .first {
+    & .position-1 {
       order:2;
     }
-    & .second {
+    & .position-2 {
       order:1;
     }
-    & .third {
+    & .position-3 {
       order:3;
     }
   }
