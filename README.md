@@ -35,8 +35,8 @@ See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional do
 
 ### JavaScript build
 
-* `npm run deployment:build` Builds the TypeScript server.
-* `npm run deployment:start` Starts the TypeScript server. Needs to be built first.
+* `npm run build` Builds the TypeScript server.
+* `npm run start:production` Starts the TypeScript server. Needs to be built first.
 
 ### Other tools
 

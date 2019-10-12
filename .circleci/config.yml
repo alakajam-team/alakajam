@@ -9,6 +9,6 @@ jobs:
     steps:
       - checkout
       - run: npm ci
-      - run: npm run deployment:build
+      - run: npm run build
       - run: npm run test:unit
       - run: npm run test:e2e
