@@ -63,7 +63,8 @@
 </p>
 
 <ol>
-<table class="table">
+<table class="table sortable">
+<thead>
 <tr>
 <th></th>
 <th>Game</th>
@@ -72,6 +73,8 @@
 <th>Votes</th>
 <th>Actions</th>
 </tr>
+</thead>
+<tbody>
 {% for entry in entries %}
   <tr>
     <td>
@@ -86,6 +89,7 @@
     <td><a href="?entryDetails={{ entry.get('id') }}&amp;orderBy={{ orderBy }}" class="btn btn-default">Details</a></td>
   </tr>
 {% endfor %}
+</tbody>
 </table>
 </ol>
 

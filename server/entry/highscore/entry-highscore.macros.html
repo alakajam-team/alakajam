@@ -104,7 +104,8 @@
   {%- if ranking > 3 -%}
     {{- ranking if not options.onlyMedal -}}
   {%- else -%}
-    <span class="highscore-medal ranking-{{ ranking }}"></span>
+    {# Text in span needed for proper table sorting #}
+    <span class="highscore-medal ranking-{{ ranking }}">{{ ranking }}</span>
   {%- endif -%}
 {% endmacro %}
 
