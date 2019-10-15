@@ -7,6 +7,7 @@ import forms from "server/core/forms";
 import security from "server/core/security";
 import templating from "server/core/templating-functions";
 import highScoreService from "server/entry/highscore/entry-highscore.service";
+import eventPresetService from "server/event/event-preset.service";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import eventThemeService from "server/event/theme/event-theme.service";
@@ -185,7 +186,7 @@ export async function eventManage(req, res) {
     // Render
     res.render("event/manage/event-manage", {
       event,
-      eventPresetsData: (await eventService.findEventPresets()).toJSON(),
+      eventPresetsData: (await eventPresetService.findEventPresets()).toJSON(),
       infoMessage,
       errorMessage,
     });

@@ -1,4 +1,4 @@
-import { Model } from "bookshelf";
+import { Model, BookshelfModel } from "bookshelf";
 import { Request } from "express";
 import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
@@ -43,7 +43,7 @@ async function _handleSave(req: Request, res: CustomResponse<DashboardLocals>) {
   });
 
   if (!res.locals.errorMessage) {
-    const dashboardUser = res.locals.dashboardUser as Model<any>;
+    const dashboardUser = res.locals.dashboardUser;
 
     // Admin mode
     if (res.locals.dashboardAdminMode) {
@@ -59,7 +59,7 @@ async function _handleSave(req: Request, res: CustomResponse<DashboardLocals>) {
     }
 
     // Save account info + bio
-    const dashboardUserDetails = dashboardUser.related("details") as Model<any>;
+    const dashboardUserDetails = dashboardUser.related("details") as BookshelfModel;
     dashboardUser.set({
       title: forms.sanitizeString(req.body.title || dashboardUser.get("name")),
       email: req.body.email

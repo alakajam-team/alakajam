@@ -1,4 +1,4 @@
-import { Model } from "bookshelf";
+import { Model, BookshelfModel } from "bookshelf";
 import { NextFunction, Request, Response } from "express";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
@@ -26,7 +26,7 @@ export interface CommonLocals {
    * Current logged in user (undefined if logged out).
    * Available everywhere.
    */
-  readonly user?: Model<any>;
+  readonly user?: BookshelfModel;
 
   /**
    * The number of unread notifications for the current logged in user (undefined if logged out).
@@ -38,13 +38,13 @@ export interface CommonLocals {
    * The model of the currently featured event.
    * Available everywhere.
    */
-  readonly featuredEvent: Model<any>;
+  readonly featuredEvent: BookshelfModel;
 
   /**
    * The model of the currently edited comment.
    * Available everywhere.
    */
-  readonly editComment: Model<any>;
+  readonly editComment: BookshelfModel;
 
   [key: string]: any;
 }

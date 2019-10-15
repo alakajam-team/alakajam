@@ -18,7 +18,7 @@ export async function adminDev(req, res) {
       } else if (req.body["replace-passwords"]) {
         const users = await userService.findUsers({ pageSize: 30 });
         await db.transaction(async (transaction) => {
-          for (const user of users.models) {
+          for (const user of (users as any).models) {
             userService.setPassword(user, "password");
             await user.save(null, { transacting: transaction });
           }

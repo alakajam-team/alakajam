@@ -5,7 +5,7 @@
  * @module services/event-service
  */
 
-import { CollectionAny } from "bookshelf";
+import { BookshelfCollection } from "bookshelf";
 import cache from "server/core/cache";
 import config from "server/core/config";
 import constants from "server/core/constants";
@@ -29,11 +29,6 @@ export default {
   findEventTemplates,
   findEventTemplateById,
   deleteEventTemplate,
-
-  createEventPreset,
-  findEventPresets,
-  findEventPresetById,
-  deleteEventPreset,
 
   createEntry,
   setEntryPicture,
@@ -203,61 +198,6 @@ async function findEventTemplateById(id) {
  */
 async function deleteEventTemplate(eventTemplate) {
   return eventTemplate.destroy();
-}
-
-/**
- * Creates an empty, unpersisted event preset.
- * @param {EventPreset} referencePreset Optional reference preset to clone data from
- */
-function createEventPreset(referencePreset = null) {
-  const eventPreset = new models.EventPreset({
-    countdown_config: { date: new Date(0) },
-  });
-  if (referencePreset) {
-    const overrideAttributes = {
-      id: null,
-      title: (referencePreset.get("title") || "") + " (copy)",
-    };
-    eventPreset.set("countdown_config",
-      Object.assign({}, referencePreset.get("countdown_config"), eventPreset.get("countdown_config")));
-    eventPreset.set(Object.assign({}, referencePreset.attributes, overrideAttributes));
-  }
-  return eventPreset;
-}
-
-/**
- * Finds all event presets.
- */
-async function findEventPresets() {
-  return models.EventPreset
-    .forge()
-    .orderBy("title")
-    .fetchAll();
-}
-
-/**
- * Finds an event preset.
- * @param {number} id
- */
-async function findEventPresetById(id) {
-  return models.EventPreset
-    .where({ id })
-    .fetch({ withRelated: ["events"] });
-}
-
-/**
- * Deletes an event preset after making sure no event is currently using it.
- * @param {EventPreset} eventPreset
- */
-async function deleteEventPreset(eventPreset) {
-  await eventPreset.load("events");
-  const eventsUsingPreset = eventPreset.related("events").length;
-  if (eventsUsingPreset > 0) {
-    throw new Error(`Cannot delete preset ${eventPreset.get("title")} `
-      + `because ${eventsUsingPreset} events depend on it`);
-  } else {
-    return eventPreset.destroy();
-  }
 }
 
 /**
@@ -568,7 +508,7 @@ async function findEntryById(id, options: any = {}) {
  * @param  {User} user
  * @return {array(Entry)|null}
  */
-async function findUserEntries(user): Promise<CollectionAny> {
+async function findUserEntries(user): Promise<BookshelfCollection> {
   const entriesCollection = await models.Entry.query((qb) => {
     qb.distinct()
       .innerJoin("user_role", "entry.id", "user_role.node_id")

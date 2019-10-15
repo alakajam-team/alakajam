@@ -1,4 +1,4 @@
-import { Model } from "bookshelf";
+import { Model, BookshelfModel } from "bookshelf";
 import { NextFunction, Request } from "express";
 import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
@@ -11,7 +11,7 @@ export interface DashboardLocals extends CommonLocals {
    * The model of the currently edited user.
    * Usually identical to `user`, but moderators and admins can edit other users than themselves.
    */
-  readonly dashboardUser: Model<any>;
+  readonly dashboardUser: BookshelfModel;
 
   /**
    * Whether the dashboard is being viewed as a mod/admin (browsing someone else than themselves).

@@ -5,7 +5,7 @@
  * @module controllers/api-controller
  */
 
-import { Model } from "bookshelf";
+import { Model, BookshelfModel } from "bookshelf";
 import { Request } from "express";
 import * as lodash from "lodash";
 import * as moment from "moment";
@@ -346,7 +346,7 @@ export async function getThemeStats(req: Request, res: CustomResponse<CommonLoca
 
   const themesStats = [];
   for (const theme of themes) {
-    const event = theme.related("event") as Model<any>;
+    const event = theme.related("event") as BookshelfModel;
     if (event.get("status_theme") === enums.EVENT.STATUS_THEME.RESULTS) {
       const themeStats: {ranking?: number, eventTitle?: string} = {
         eventTitle: event.get("title")

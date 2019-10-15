@@ -5,7 +5,7 @@
  * @module services/event-theme-service
  */
 
-import { Model, SaveOptions } from "bookshelf";
+import { Model, SaveOptions, BookshelfModel } from "bookshelf";
 import * as moment from "moment";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
@@ -77,7 +77,7 @@ async function findThemeIdeasByUser(user, event) {
     .fetchAll();
 }
 
-async function findThemesByTitle(title: string, fetchOptions = {}): Promise<Array<Model<any>>> {
+async function findThemesByTitle(title: string, fetchOptions = {}): Promise<BookshelfModel[]> {
   return models.Theme.where("title", ilikeOperator(), title)
     .orderBy("created_at")
     .fetchAll(fetchOptions);
@@ -367,8 +367,8 @@ async function _eliminateLowestThemes(event) {
 }
 
 async function _eliminateTheme(
-    theme: Model<any>,
-    eventDetails: Model<any>,
+    theme: BookshelfModel,
+    eventDetails: BookshelfModel,
     options: { eliminatedOnShortlistRating?: boolean } & SaveOptions = {}): Promise<void> {
   // Compute ranking as %-age because new submissions would make this number irrelevant
   const themeRanking = await findThemeRanking(theme, { useShortlistRating: options.eliminatedOnShortlistRating });
@@ -439,7 +439,7 @@ async function findBestThemes(event) {
 }
 
 async function findThemeRanking(
-    theme: Model<any>,
+    theme: BookshelfModel,
     options: { useShortlistRating?: boolean } = {}): Promise<number> {
   let betterThemeQuery = models.Theme.where("event_id", theme.get("event_id"));
 

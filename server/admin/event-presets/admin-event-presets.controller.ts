@@ -1,5 +1,5 @@
 import forms from "server/core/forms";
-import eventService from "../../event/event.service";
+import eventPresetService from "server/event/event-preset.service";
 
 /**
  * Event presets management
@@ -9,13 +9,13 @@ export async function adminEventPresets(req, res) {
   let editEventPreset = null;
   const editEventPresetId = req.query.edit || req.body.id;
   if (forms.isId(editEventPresetId)) {
-    editEventPreset = await eventService.findEventPresetById(parseInt(editEventPresetId, 10));
+    editEventPreset = await eventPresetService.findEventPresetById(parseInt(editEventPresetId, 10));
   } else if (req.query.create !== undefined) {
     let referencePreset = null;
     if (forms.isId(req.query.reference)) {
-      referencePreset = await eventService.findEventPresetById(parseInt(req.query.reference, 10));
+      referencePreset = await eventPresetService.findEventPresetById(parseInt(req.query.reference, 10));
     }
-    editEventPreset = eventService.createEventPreset(referencePreset);
+    editEventPreset = eventPresetService.createEventPreset(referencePreset);
   }
 
   // Apply changes
@@ -23,7 +23,7 @@ export async function adminEventPresets(req, res) {
   if (req.method === "POST") {
     if (req.body.delete !== undefined) {
       // Delete model
-      await eventService.deleteEventPreset(editEventPreset);
+      await eventPresetService.deleteEventPreset(editEventPreset);
       editEventPreset = null;
     } else {
       // Validation / Compute deadline offset
@@ -42,7 +42,7 @@ export async function adminEventPresets(req, res) {
       }
 
       // Update model (without saving yet)
-      editEventPreset = editEventPreset || eventService.createEventPreset();
+      editEventPreset = editEventPreset || eventPresetService.createEventPreset();
       editEventPreset.set({
         title: forms.sanitizeString(req.body.title),
         status: forms.sanitizeString(req.body.status),
@@ -69,7 +69,7 @@ export async function adminEventPresets(req, res) {
   }
 
   // Render page
-  const eventPresetsCollection = await eventService.findEventPresets();
+  const eventPresetsCollection = await eventPresetService.findEventPresets();
   const context: any = {
     eventPresets: eventPresetsCollection.models,
     editEventPreset,

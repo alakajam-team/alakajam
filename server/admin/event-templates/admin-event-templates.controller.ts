@@ -1,4 +1,5 @@
 import forms from "server/core/forms";
+import eventPresetService from "server/event/event-preset.service";
 import eventService from "server/event/event.service";
 
 /**
@@ -53,7 +54,7 @@ export async function adminEventTemplates(req, res) {
   }
 
   // Render page
-  const eventPresetsCollection = await eventService.findEventPresets();
+  const eventPresetsCollection = await eventPresetService.findEventPresets();
   const eventTemplatesCollection = await eventService.findEventTemplates();
   res.render("admin/event-templates/admin-event-templates", {
     eventPresets: eventPresetsCollection.models,

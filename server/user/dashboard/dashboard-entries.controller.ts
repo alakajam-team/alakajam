@@ -1,4 +1,4 @@
-import { ModelAny } from "bookshelf";
+import { BookshelfModel } from "bookshelf";
 import { Request } from "express";
 import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
@@ -13,9 +13,9 @@ export async function dashboardEntries(req: Request, res: CustomResponse<CommonL
 
   const entryCollection = await eventService.findUserEntries(user);
 
-  const alakajamEntries: ModelAny[] = [];
-  const otherEntries: ModelAny[] = [];
-  const externalEntries: ModelAny[] = [];
+  const alakajamEntries: BookshelfModel[] = [];
+  const otherEntries: BookshelfModel[] = [];
+  const externalEntries: BookshelfModel[] = [];
   entryCollection.models.forEach((entry) => {
     if (entry.get("external_event") != null) {
       externalEntries.push(entry);
