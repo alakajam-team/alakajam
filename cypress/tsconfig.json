@@ -7,7 +7,7 @@
     "types": ["cypress"]
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts", "**/*.js"
   ],
   "exclude": [
     "**/*.d.ts"

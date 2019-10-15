@@ -104,6 +104,7 @@
     "sharp": "^0.21.3"
   },
   "devDependencies": {
+    "@cypress/webpack-preprocessor": "^4.1.0",
     "@fortawesome/fontawesome-free": "^5.10.2",
     "@types/body-parser": "^1.17.1",
     "@types/bookshelf": "^0.13.3",
@@ -133,6 +134,7 @@
     "mocha": "^6.2.0",
     "sinon": "^7.4.2",
     "start-server-and-test": "^1.10.0",
+    "ts-loader": "^6.2.0",
     "ts-node": "^7.0.1",
     "ts-node-dev": "^1.0.0-pre.42",
     "tsconfig-paths": "^3.8.0",
