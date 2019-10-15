@@ -101,8 +101,8 @@ async function findUserScores(userId, options: any = {}) {
     case "ranking":
       query = query.orderBy("ranking");
       break;
-    case "updated_at":
-      query = query.orderBy("updated_at", "DESC");
+    case "submited_at":
+      query = query.orderBy("submited_at", "DESC");
       break;
     default:
   }
@@ -136,15 +136,15 @@ async function findUserScoresMapByEntry(userId, entries) {
 async function findEntriesLastActivity(entryIds) {
   const rows = await db.knex("entry_score")
     .select("entry_id")
-    .max("updated_at as max_updated_at")
+    .max("submitted_at as max_submitted_at")
     .groupBy("entry_id")
     .where("entry_id", "in", entryIds);
 
-  const entryIdToUpdatedAt = {};
+  const entryIdToSubmittedAt = {};
   rows.forEach((row) => {
-    entryIdToUpdatedAt[row.entry_id] = row.max_updated_at;
+    entryIdToSubmittedAt[row.entry_id] = row.max_submitted_at;
   });
-  return entryIdToUpdatedAt;
+  return entryIdToSubmittedAt;
 }
 
 /**
@@ -154,26 +154,26 @@ async function findRecentlyActiveEntries(options: { limit?: number, eventId?: nu
   const entryScoreIds = await db.knex.select("entry_score.id")
     .from(function() {
       const qb = this.distinct("entry_score.entry_id")
-        .max("entry_score.updated_at as max_updated_at")
+        .max("entry_score.submitted_at as max_submitted_at")
         .from("entry_score");
       if (options.eventId) {
         qb.leftJoin("tournament_entry", "tournament_entry.entry_id", "entry_score.entry_id")
           .where("tournament_entry.event_id", options.eventId);
       }
       qb.groupBy("entry_score.entry_id")
-        .orderBy("max_updated_at", "DESC")
+        .orderBy("max_submitted_at", "DESC")
         .limit(options.limit || 10)
         .as("active");
     })
     .innerJoin("entry_score", function() {
-      this.on("entry_score.updated_at", "=", "active.max_updated_at")
+      this.on("entry_score.submitted_at", "=", "active.max_submitted_at")
         .andOn("entry_score.entry_id", "=", "active.entry_id");
     })
-    .orderBy("active.max_updated_at", "DESC");
+    .orderBy("active.max_submitted_at", "DESC");
 
   return models.EntryScore
     .where("id", "IN", entryScoreIds.map((row) => row.id))
-    .orderBy("updated_at", "DESC")
+    .orderBy("submitted_at", "DESC")
     .fetchAll({ withRelated: ["entry.details", "user"] }); // PERF: Entry details required to format scores
 }
 
@@ -203,7 +203,10 @@ async function submitEntryScore(entryScore, entry) {
       }
 
       // Save score
-      entryScore.set("active", true);
+      entryScore.set({
+        active: true,
+        submitted_at: new Date()
+      });
       await entryScore.save();
 
       // Refresh rankings
@@ -250,7 +253,7 @@ async function refreshEntryRankings(entry, triggeringEntryScore = null, options:
   const scores = await models.EntryScore
     .where("entry_id", entry.get("id"))
     .orderBy("score", _rankingDir(entry))
-    .orderBy("updated_at")
+    .orderBy("submitted_at")
     .fetchAll();
 
   await db.transaction(async (transaction) => {

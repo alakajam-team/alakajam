@@ -5,7 +5,7 @@ import highScoreService from "server/entry/highscore/entry-highscore.service";
  * Manage user entries
  */
 export async function dashboardScores(req, res) {
-  const sortedBy = forms.sanitizeString(req.query.sortBy) || "updated_at";
+  const sortedBy = forms.sanitizeString(req.query.sortBy) || "submitted_at";
 
   const userScoresCollection = await highScoreService.findUserScores(res.locals.user.get("id"), { sortBy: sortedBy });
   const activeEntriesCollection = await highScoreService.findRecentlyActiveEntries({ limit: 5 });

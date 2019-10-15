@@ -761,6 +761,7 @@ export const ThemeVote = bookshelf.model("ThemeVote", {
  * | decimal | score | Score ([-999.999.999.999,999;999.999.999.999,999], not null)
  * | string | proof | URL of the proof picture or video
  * | integer | ranking | User ranking on that entry
+ * | date | submitted_at | Submission time (not null)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
