@@ -3,8 +3,8 @@ import cache from "server/core/cache";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import forms from "server/core/forms";
+import links from "server/core/links";
 import security from "server/core/security";
-import templating from "server/core/templating-functions";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import postService from "server/post/post.service";
@@ -15,7 +15,7 @@ import commentService from "./comment.service";
  */
 export async function commentSave(req, res) {
   const redirectUrl = await handleSaveComment(req.body, res.locals.user, res.locals.post,
-    templating.buildUrl(res.locals.post, "post"));
+    links.routeUrl(res.locals.post, "post"));
   res.redirect(redirectUrl);
 }
 
@@ -135,7 +135,7 @@ export async function handleSaveComment(reqBody, currentUser, currentNode, baseU
 
     // Redirect to anchor
     if (!isDeletion) {
-      redirectUrl += templating.buildUrl(comment, "comment");
+      redirectUrl += links.routeUrl(comment, "comment");
     }
   }
 

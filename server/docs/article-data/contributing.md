@@ -24,7 +24,8 @@ All Alakajam! events are run by volunteers from the community. Helping with that
 
 *NB. If you're wondering what it takes to run an event... In terms of duties, it's pretty simple: we have a document with all the steps written down so you can easily prepare for what is needed when. Most tasks are done on the website itself, through an admin menu where you can control which post is pinned, what the current countdown is for, and what the status of the ongoing jam is. Depending on your interest, you could also help advertise/animate the event, for instance by running our [Twitter account](https://twitter.com/alakajambang).*
 
-*So in short nothing too complicated. The core of all this is  we just like the idea of putting forward a community member each event, rather than have the same faces around every time :)*
+*So in short nothing too complicated. The core of all this is we just like the idea of putting forward a community member each event, rather than have the same faces around every time :)*
+
 ## Web design
 
 Have good web design skills? We love you already. We feel the website is still far from perfect in terms of looks and navigation, so getting website mockups with ideas for improving Alakajam! would be super valuable.

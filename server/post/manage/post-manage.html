@@ -62,7 +62,7 @@
     <div class="row">
       <div class="col-xs-4">
         {% if post.has('id') %}
-        <a class="btn btn-danger" onclick="return confirm('Delete the post? This cannot be reverted!')" href="{{ buildUrl(post, 'post', 'delete') }}">Delete</a> 
+        <a class="btn btn-danger" onclick="return confirm('Delete the post? This cannot be reverted!')" href="{{ routeUrl(post, 'post', 'delete') }}">Delete</a> 
         {% endif %}
       </div>
       <div class="col-xs-8 post__actions text-right">

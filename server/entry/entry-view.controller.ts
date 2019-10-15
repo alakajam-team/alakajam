@@ -1,8 +1,8 @@
 import constants from "server/core/constants";
 import forms from "server/core/forms";
+import links from "server/core/links";
 import security from "server/core/security";
 import settings from "server/core/settings";
-import templating from "server/core/templating-functions";
 import entryTeamService from "server/entry/entry-team.service";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import tagService from "server/entry/tag/tag.service";
@@ -92,7 +92,7 @@ export async function entrySaveCommentOrVote(req, res) {
   if (req.body.action === "comment") {
     // Save comment
     const redirectUrl = await handleSaveComment(
-      req.body, user, entry, templating.buildUrl(entry, "entry"), event);
+      req.body, user, entry, links.routeUrl(entry, "entry"), event);
     res.redirect(redirectUrl);
   } else if (req.body.action === "vote") {
     // Save vote

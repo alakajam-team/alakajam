@@ -5,18 +5,18 @@
       <div class="col-xs-12">
         <a href="/admin" class="btn"><span class="fas fa-wrench"></span> Mod dashboard</a>
         
-        {{ moderationLink('Edit event', 'calendar', buildUrl(context.event, 'event', 'edit')) if context.event.id and (not context.featuredEvent or context.event.id != context.featuredEvent.id) }}
-        {{ moderationLink('Edit featured event', 'calendar', buildUrl(context.featuredEvent, 'event', 'edit')) if context.featuredEvent.id }}
-        {{ moderationLink('Create event', 'calendar', buildUrl(null, 'event', 'template')) if context.path === '/events' }}
+        {{ moderationLink('Edit event', 'calendar', routeUrl(context.event, 'event', 'edit')) if context.event.id and (not context.featuredEvent or context.event.id != context.featuredEvent.id) }}
+        {{ moderationLink('Edit featured event', 'calendar', routeUrl(context.featuredEvent, 'event', 'edit')) if context.featuredEvent.id }}
+        {{ moderationLink('Create event', 'calendar', routeUrl(null, 'event', 'template')) if context.path === '/events' }}
 
-        {{ moderationLink('Create announcement', 'pencil-alt', buildUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'announcement' })) if context.event.id }}
+        {{ moderationLink('Create announcement', 'pencil-alt', routeUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'announcement' })) if context.event.id }}
         
-        {{ moderationLink('Edit post', 'pencil-alt', buildUrl(context.post, 'post', 'edit')) if context.post.id }}
-        {{ moderationLink('Edit entry', 'chess-rook', buildUrl(context.entry, 'entry', 'edit')) if context.entry.id }}
+        {{ moderationLink('Edit post', 'pencil-alt', routeUrl(context.post, 'post', 'edit')) if context.post.id }}
+        {{ moderationLink('Edit entry', 'chess-rook', routeUrl(context.entry, 'entry', 'edit')) if context.entry.id }}
 		
         {% if isAdmin %}
-			{{ moderationLink('Edit user', 'user', buildUrl(context.profileUser, 'user', 'settings', {dashboardAdminMode: true})) if context.profileUser }}
-			{{ moderationLink('Edit user', 'user', buildUrl(context.dashboardUser, 'user', 'settings', {dashboardAdminMode: true})) if context.dashboardUser }}
+			{{ moderationLink('Edit user', 'user', routeUrl(context.profileUser, 'user', 'settings', {dashboardAdminMode: true})) if context.profileUser }}
+			{{ moderationLink('Edit user', 'user', routeUrl(context.dashboardUser, 'user', 'settings', {dashboardAdminMode: true})) if context.dashboardUser }}
         {% endif %}
 
       </div>

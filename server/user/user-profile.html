@@ -40,7 +40,7 @@
       {% endif %}
 
       {% if user and (user.get('id') == profileUser.get('id')) %}
-      <a href="{{ buildUrl(user, 'user', 'feed') }}" class="btn btn-default">View dashboard</a>
+      <a href="{{ routeUrl(user, 'user', 'feed') }}" class="btn btn-default">View dashboard</a>
       {% endif %}
 
       <div class="spacing">

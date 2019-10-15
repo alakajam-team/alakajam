@@ -922,7 +922,7 @@ export const Post = bookshelf.model("Post", {
   },
   likes() {
     return this.morphMany("Like", "node", ["node_type", "node_id"]);
-  },
+  }
 }, {
   // Cascading
   dependents: ["likes"], // 'comments', 'userRoles' removed because of issue #93
@@ -958,6 +958,18 @@ export const Comment = bookshelf.model("Comment", {
   parentComment() {
     return this.belongsTo("Comment", "parent_id", "id");
   },
+
+  // Methods
+
+  /**
+   * Tells whether a model has been edited > 1 hour after its creation
+   * @param  {Model} model Any model with timestamps
+   * @return {bool}
+   */
+  wasEdited(): boolean {
+    return this.get("updated_at") - this.get("created_at") > 3600 * 1000;
+  }
+
 });
 
 /**

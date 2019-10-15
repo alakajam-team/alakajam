@@ -1,5 +1,5 @@
 import enums from "server/core/enums";
-import templatingFunctions from "server/core/templating-functions";
+import links from "server/core/links";
 
 /**
  * Root event page, redirects to its entries
@@ -25,5 +25,5 @@ export async function viewDefaultPage(req, res) {
     page = "announcements";
   }
 
-  res.redirect(templatingFunctions.buildUrl(res.locals.event, "event", page));
+  res.redirect(links.routeUrl(res.locals.event, "event", page));
 }

@@ -5,7 +5,7 @@
  * @module services/event-theme-service
  */
 
-import { Model, SaveOptions, BookshelfModel } from "bookshelf";
+import { BookshelfModel, SaveOptions } from "bookshelf";
 import * as moment from "moment";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";

@@ -2,7 +2,7 @@
 
 {% macro entryThumb(entry, options = {}) %}
 <div class="entry-thumb">
-  <a href="{{ buildUrl(entry, 'entry') }}">
+  <a href="{{ routeUrl(entry, 'entry') }}">
     {% if entry.get('description') %}
     <div class="entry-thumb__description-container">
       <div class="entry-thumb__description">{{ entry.get('description') }}</div>
@@ -29,7 +29,7 @@
   </a>
   <div class="entry-thumb__author" >by 
     {% for userRole in entry.sortedUserRoles() -%}
-     <a href="{{ buildUrl(userRole, 'user') }}">
+     <a href="{{ routeUrl(userRole, 'user') }}">
       {{- userRole.get('user_title') -}}
      </a>{{- ', ' if not loop.last -}}
     {%- endfor %}
@@ -38,7 +38,7 @@
     {% if options.showEvent %}
       <span class="entry-thumb__event">
         {% if entry.get('event_id') %}
-          on <a href="{{ buildUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
+          on <a href="{{ routeUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
         {% elseif entry.get('external_event') %}
           on {{ entry.get('external_event') }}
         {% endif %}
@@ -63,15 +63,15 @@
   {% if entry and entry.get('id') %}
     {% set picturePath = entry.pictureIcon() %}
     <div class="entry-small-thumb__details">
-      <a href="{{ buildUrl(entry, 'entry') }}">
+      <a href="{{ routeUrl(entry, 'entry') }}">
         <div class="entry-small-thumb__picture js-lazy" data-src="{{ pictureUrl(picturePath, entry) if picturePath else staticUrl('/static/images/default-entry.png') }}"></div>
-        <div class="entry-small-thumb__title"  href="{{ buildUrl(entry, 'entry') }}">
+        <div class="entry-small-thumb__title"  href="{{ routeUrl(entry, 'entry') }}">
           {{ entry.get('title') }}
         </div>
       </a>
       <div class="entry-small-thumb__author" >by 
       {% for userRole in entry.sortedUserRoles() %}
-       <a href="{{ buildUrl(userRole, 'user') }}">
+       <a href="{{ routeUrl(userRole, 'user') }}">
         {{ userRole.get('user_title') }}
        </a>{{ ', ' if not loop.last }}
       {% endfor %}
@@ -99,7 +99,7 @@
   {% set rawHypeLink = event.get('countdown_config').link %}
   {% set animatedCountdown = event.get('countdown_config').enabled %}
   {% if rawHypeLink %}
-    {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else buildUrl(event, 'event', rawHypeLink) %}
+    {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
     <a class="home-jumbo__call" href="{{ hypeLink }}">
       <div class="row">
         <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
@@ -158,7 +158,7 @@
   
     <div class="nav">
       {{- eventLink(event, null, 'announcements', 'News', 'thumbtack', path) -}}
-      {{- eventLink(event, 'status_rules', buildUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'info-circle', path) -}}
+      {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'info-circle', path) -}}
       {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
       
       {%- set statusTournament = event.get('status_tournament') -%}
@@ -180,7 +180,7 @@
 
 {% macro eventLink (event, statusField, targetPath, label, icon, currentPath, options = {}) %}
 {%- if not statusField or event.get(statusField) !== 'disabled' -%}
-  {%- set targetUrl = targetPath if targetPath.includes('/') else buildUrl(event, 'event', targetPath) -%}
+  {%- set targetUrl = targetPath if targetPath.includes('/') else routeUrl(event, 'event', targetPath) -%}
   <a href="{{ targetUrl }}" class="event-header__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
       {{ 'disabled' if statusField and (not (event.get(statusField)|int)) and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
     <span class="fas fa-{{ icon }}"></span> <span class="hidden-xs">{{ label | safe }}</span>
@@ -212,11 +212,11 @@
       Your entry
       <div class="pull-right">
          {% if userEntry %}
-           <a href="{{ buildUrl(userEntry, 'entry', 'edit') }}" class="btn btn-alt">Edit entry</a>
+           <a href="{{ routeUrl(userEntry, 'entry', 'edit') }}" class="btn btn-alt">Edit entry</a>
          {% elseif event.get('status') !== 'open' or (event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked') %}
            <a href="#"class="btn btn-sm btn-default disabled">Create entry</a>
          {% else %}
-           <a href="{{ buildUrl(event, 'event', 'create-entry') }}" class="btn btn-alt">Create entry</a>
+           <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-alt">Create entry</a>
          {% endif %}
       </div>
     </div>
@@ -235,22 +235,22 @@
       {{ 'Your last post' if not options.buttonsOnly }}
       <div class="pull-right">
         {% if userPost %}
-          <a href="{{ buildUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">
+          <a href="{{ routeUrl(userPost, 'post', 'edit') }}" class="btn btn-alt">
             <span class="fas fa-pencil-alt"></span>
             <span class="hidden-xs hidden-sm">Edit</span>
           </a>
         {% endif %}
-        <a href="{{ buildUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-alt">
+        <a href="{{ routeUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-alt">
           <span class="fas fa-plus"></span>
           <span class="hidden-xs hidden-sm">Create</span>
         </a>
-        <a href="{{ buildUrl(user, 'user', 'posts') }}" class="btn btn-alt">My posts</a>
+        <a href="{{ routeUrl(user, 'user', 'posts') }}" class="btn btn-alt">My posts</a>
       </div>
     </div>
     {% if not options.buttonsOnly %}
     <div class="action-banner__post">
       {% if userPost %}
-        <a href="{{ buildUrl(userPost, 'post') }}">{{ userPost.get('title') }}</a>
+        <a href="{{ routeUrl(userPost, 'post') }}">{{ userPost.get('title') }}</a>
       {% else %}
         <div class="text-center"><h4 style="padding-top: 13px">No post</h4></div>
       {% endif %}

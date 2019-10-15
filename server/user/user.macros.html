@@ -4,7 +4,7 @@
 {% macro userThumb(user, options = {}) %}
 <div class="user-thumb {{ 'full-width' if options.fullWidth else 'col-sm-4' }} {{ 'centered' if options.centered }} {{ 'pending' if options.pending }}">
     <div class="user-thumb__title">
-      <a href="{{ buildUrl(user, 'user') }}">
+      <a href="{{ routeUrl(user, 'user') }}">
         <div class="user-thumb__avatar">
           {% if user.get('avatar') %}
             <img src="{{ pictureUrl(user.get('avatar'), user) }}" />
@@ -33,7 +33,7 @@
 {% endmacro %}
 
 {% macro userAvatar(user) %}
-<a href="{{ buildUrl(user, 'user') }}">
+<a href="{{ routeUrl(user, 'user') }}">
   {% if user.get('avatar') %}
     <img src="{{ pictureUrl(user.get('avatar'), user) }}" />
   {% else %}
@@ -43,5 +43,5 @@
 {% endmacro %}
 
 {% macro userLink(user) %}
-<a href="{{ buildUrl(user, 'user') }}">@{{ user.get('title') }}</a>
+<a href="{{ routeUrl(user, 'user') }}">@{{ user.get('title') }}</a>
 {% endmacro %}

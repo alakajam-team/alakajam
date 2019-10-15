@@ -34,7 +34,7 @@
 {% endblock %}
 
 {% macro editEventLink(event, createdEvent, page, label, options) %}
-  {% set url = buildUrl(event, 'event', page) %}
+  {% set url = routeUrl(event, 'event', page) %}
   <a href="{{ url }}" class="list-group-item 
     {{ 'active' if path === url and createdEvent}} 
     {{ 'list-group-item-primary' if path === url and createdEvent}}

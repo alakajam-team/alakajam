@@ -3,7 +3,7 @@
 
 {% macro userMenu(user, unreadNotifications) %}
 <div href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-  <a class="navbar-avatar-wrapper" href="{{ buildUrl(user, 'user', 'feed') }}" onclick="arguments[0].stopPropagation()">
+  <a class="navbar-avatar-wrapper" href="{{ routeUrl(user, 'user', 'feed') }}" onclick="arguments[0].stopPropagation()">
     {% if user.get('avatar') %}
     <img src="{{ pictureUrl(user.get('avatar'), user) }}" class="navbar-avatar" />
     {% else %}
@@ -16,14 +16,14 @@
   <span class="navbar-profile hidden-xs hidden-sm hidden-md">{{ user.get('title') }}</span> <span class="caret hidden-xs"></span>
 </div>
 <ul class="dropdown-menu">
-  <li><a href="{{ buildUrl(user, 'user', 'feed') }}">Dashboard</a></li>
-  <li><a href="{{ buildUrl(user, 'user') }}">Public profile</a></li>
-  <li><a href="{{ buildUrl(user, 'user', 'entries') }}">My entries</a></li>
+  <li><a href="{{ routeUrl(user, 'user', 'feed') }}">Dashboard</a></li>
+  <li><a href="{{ routeUrl(user, 'user') }}">Public profile</a></li>
+  <li><a href="{{ routeUrl(user, 'user', 'entries') }}">My entries</a></li>
    <li class="divider"></li> 
-  <li><a href="{{ buildUrl(null, 'post', 'create') }}">Create post</a></li>
-  <li><a href="{{ buildUrl(user, 'user', 'posts') }}">My posts</a></li>
+  <li><a href="{{ routeUrl(null, 'post', 'create') }}">Create post</a></li>
+  <li><a href="{{ routeUrl(user, 'user', 'posts') }}">My posts</a></li>
    <li class="divider"></li> 
-   <li><a href="{{ buildUrl(user, 'user', 'scores') }}">My scores</a></li>
+   <li><a href="{{ routeUrl(user, 'user', 'scores') }}">My scores</a></li>
     <li class="divider"></li> 
   <li><a href="/logout">Logout</a></li>
 </ul>
@@ -96,7 +96,7 @@
         <ul class="nav navbar-nav">
           {% if featuredEvent and (not event or featuredEvent.get('id') !== event.get('id')) %}
           <li class="hidden-sm hidden-xs live {{ 'active' if isInFeaturedEvent }}">
-            <a href="{{ buildUrl(featuredEvent, 'event') }}">
+            <a href="{{ routeUrl(featuredEvent, 'event') }}">
               <div class="live__event">
                 {{ featuredEvent.get('title') }}
                 <div class="live__dates">
@@ -130,7 +130,7 @@
       <div class="event-header">
         <div class="container">
           <div class="event-header__info">
-            <a href="{{ buildUrl(event, 'event', 'announcements') }}" class="event-header__name">
+            <a href="{{ routeUrl(event, 'event', 'announcements') }}" class="event-header__name">
               {{ event.get('title') }}
             </a>
             <div class="event-header__dates">

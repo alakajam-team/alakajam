@@ -1,12 +1,4 @@
-import cache from "server/core/cache";
-import constants from "server/core/constants";
-import db from "server/core/db";
-import forms from "server/core/forms";
-import * as models from "server/core/models";
-import security from "server/core/security";
-import templating from "server/core/templating-functions";
-import eventService from "../../event/event.service";
-import eventRatingService from "../../event/rating/event-rating.service";
+import links from "server/core/links";
 import likeService from "../like/like.service";
 import postService from "../post.service";
 
@@ -30,6 +22,6 @@ export async function likePost(req, res) {
       userLikes: await likeService.findUserLikeInfo([post], user),
     });
   } else {
-    res.redirect(req.query.redirect || templating.buildUrl(post, "post"));
+    res.redirect(req.query.redirect || links.routeUrl(post, "post"));
   }
 }

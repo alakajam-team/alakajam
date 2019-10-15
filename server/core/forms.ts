@@ -36,6 +36,7 @@ export default {
   isLengthValid,
   isSet,
   isNotSet,
+  isPast,
 
   parseDateTime,
   parseJson,
@@ -228,6 +229,15 @@ function isSet(input: any) {
 
 function isNotSet(input: any) {
   return input === undefined || input.trim() === "";
+}
+
+/**
+ * Indicates if a date is already past
+ * @param  {number}  time
+ * @return {Boolean}
+ */
+function isPast(time) {
+  return time && (new Date().getTime() - time) > 0;
 }
 
 /**

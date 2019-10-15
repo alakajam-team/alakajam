@@ -1,4 +1,4 @@
-import { Model, BookshelfModel } from "bookshelf";
+import { BookshelfModel } from "bookshelf";
 import { NextFunction, Request } from "express";
 import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";

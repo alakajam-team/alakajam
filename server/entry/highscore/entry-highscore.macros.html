@@ -2,10 +2,10 @@
 
 {% macro highScoresLinks(entry, user, path, options = {}) %}
   {% if not options.hideSubmitButton %}
-    <a href="{{ buildUrl(entry, 'entry', 'submit-score') }}?redirectTo={{ path | urlencode }}" class="btn btn-primary">Submit score</a>
+    <a href="{{ routeUrl(entry, 'entry', 'submit-score') }}?redirectTo={{ path | urlencode }}" class="btn btn-primary">Submit score</a>
   {% endif %}
   {% if canUserWrite(user, entry, { allowMods: true }) %}
-    <a href="{{ buildUrl(entry, 'entry', 'edit-scores') }}" class="btn btn-default">
+    <a href="{{ routeUrl(entry, 'entry', 'edit-scores') }}" class="btn btn-default">
       <span class="fas fa-cog"></span>
     </a>
   {% endif %}
@@ -13,7 +13,7 @@
 
 {% macro tournamentEventBanner(tournamentEvent) %}
 {% if tournamentEvent %}
-  <a href="{{ buildUrl(tournamentEvent, 'event') }}" class="highscore-banner">
+  <a href="{{ routeUrl(tournamentEvent, 'event') }}" class="highscore-banner">
     <div>This game is currently featured in the</div>
     <div class="highscore-banner__title">{{ tournamentEvent.get('title') }}</div>
   </a>
@@ -83,7 +83,7 @@
   {% endif %}
   {% if scoreCollection.length > 0 and not options.hideViewAllScores %}
     <td colspan="{{ colspan }}" class="text-center">
-      <a href="{{ buildUrl(entry, 'entry', 'scores') }}">View all <b>{{ scoreCollection.pagination.rowCount or scoreCollection.length }}</b> scores</a>
+      <a href="{{ routeUrl(entry, 'entry', 'scores') }}">View all <b>{{ scoreCollection.pagination.rowCount or scoreCollection.length }}</b> scores</a>
     </td>
   {% endif %}
 
@@ -113,7 +113,7 @@
   {%- set highScoreType = entry.related('details').get('high_score_type') -%}
   {{- (score.get('score') | duration) if highScoreType === 'time' else (score.get('score') | float) }} {{ highScoreType if not ['number', 'time'].includes(highScoreType) -}}
   {% if options.showEditLink %}
-  <a href="{{ buildUrl(entry, 'entry', 'submit-score') }}">
+  <a href="{{ routeUrl(entry, 'entry', 'submit-score') }}">
     <span class="fas fa-edit"></span>
   </a>
   {% endif %}
@@ -159,9 +159,9 @@
       Claimed
       <b>{{ printRanking(entryScore.get('ranking'), { onlyMedal: true }) }} 
         {{ entryScore.get('ranking') | ordinal }} place</b> on
-      <a href="{{ buildUrl(entry, 'entry') }}">{{ entry.get('title') }}</a>
+      <a href="{{ routeUrl(entry, 'entry') }}">{{ entry.get('title') }}</a>
       with
-      <b><a href="{{ buildUrl(entry, 'entry', 'scores') }}">
+      <b><a href="{{ routeUrl(entry, 'entry', 'scores') }}">
         {{ printScore(entry, entryScore, { showEditLink: user and entryScore.get('user_id') === user.get('id') }) }}</a></b>
       <br />
       <span style="font-size: 0.8rem">{{ entryScore.get('updated_at') | relativeTime }}</span>

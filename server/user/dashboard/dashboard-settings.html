@@ -5,7 +5,7 @@
 
 <h1>Settings</h1>
 
-<form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode, query: 'upload=avatar' }) }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
+<form action="{{ routeUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode, query: 'upload=avatar' }) }}" method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
 {{ csrfToken() | safe }}
 
 {% if dashboardAdminMode %}
@@ -91,7 +91,7 @@
 
 <h2 class="spacing">Danger zone</h2>
 
-<form action="{{ buildUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}" method="post">
+<form action="{{ routeUrl(dashboardUser, 'user', 'settings', { dashboardAdminMode: dashboardAdminMode }) }}" method="post">
   {{ csrfToken() | safe }}
   <div class="form-group">
     <input type="submit" name="delete" class="btn btn-danger" value="Delete account"

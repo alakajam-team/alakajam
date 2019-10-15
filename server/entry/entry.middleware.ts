@@ -1,4 +1,5 @@
 import forms from "server/core/forms";
+import links from "server/core/links";
 import templating from "server/core/templating-functions";
 import eventService from "server/event/event.service";
 
@@ -20,7 +21,7 @@ export async function entryMiddleware(req, res, next) {
 
   if (req.params.eventName !== "external-entry" &&
       (req.params.eventName !== entry.get("event_name") || req.params.entryName !== entry.get("name"))) {
-    res.redirect(templating.buildUrl(entry, "entry", req.params.rest));
+    res.redirect(links.routeUrl(entry, "entry", req.params.rest));
     return;
   }
 

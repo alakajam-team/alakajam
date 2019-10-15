@@ -14,7 +14,7 @@
 <tbody>
   {% for someUser in users %}
   <tr>
-    <td><a href="{{ buildUrl(someUser, 'user') }}">{{ someUser.get('title') }}</a></td>
+    <td><a href="{{ routeUrl(someUser, 'user') }}">{{ someUser.get('title') }}</a></td>
     <td>{{ someUser.get('name') }}</td>
     <td>
       {% if isAdmin(someUser) %}
@@ -23,7 +23,7 @@
         <span class="label label-warning">Moderator</span>
       {% endif %}
     </td>
-    <td><a class="btn btn-primary btn-sm" href="{{ buildUrl(someUser, 'user', 'settings', { dashboardAdminMode: true }) }}">Edit</a></td>
+    <td><a class="btn btn-primary btn-sm" href="{{ routeUrl(someUser, 'user', 'settings', { dashboardAdminMode: true }) }}">Edit</a></td>
   </tr>
   {% endfor %}
 </tbody>

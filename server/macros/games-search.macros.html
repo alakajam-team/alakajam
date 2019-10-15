@@ -39,7 +39,7 @@
       <div class="form-group">
         <label for="platforms">Tags</label>
         <select name="tags" class="form-control js-tags-select" multiple="multiple"
-                data-find-tags-url="{{ buildUrl(null, 'tags', 'ajax-find-tags') }}">
+                data-find-tags-url="{{ routeUrl(null, 'tags', 'ajax-find-tags') }}">
           {% for tagInfo in context.searchOptions.tags %}
             <option value="{{ tagInfo.id }}" selected>{{ tagInfo.value }}</option>
           {% endfor %}

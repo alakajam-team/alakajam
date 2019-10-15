@@ -7,7 +7,7 @@
 <div class="post">
 
   {% set author = post.related('author') %}
-  {% set postUrl = buildUrl(post, 'post') %}
+  {% set postUrl = routeUrl(post, 'post') %}
 
   {% if not options.hideHeading %}
     {% set h = 'h4' if options.hideBody or options.hideDetails else 'h1' %}
@@ -16,13 +16,13 @@
       <div class="row">
         <div class="col-xs-12">
           <a name="p{{ post.get('id') }}" class="anchor" />
-          <a href="{{ buildUrl(post, 'post') }}" class="post__title">
+          <a href="{{ routeUrl(post, 'post') }}" class="post__title">
             {{ post.get('title') }}
           </a>
           {% if canUserWrite(options.readingUser, post, options) %}
-            <a class="btn btn-default btn-sm" href="{{ buildUrl(post, 'post', 'edit') }}">Edit</a>
+            <a class="btn btn-default btn-sm" href="{{ routeUrl(post, 'post', 'edit') }}">Edit</a>
           {% endif %}
-          <a href="{{ '#comments' if options.commentsAnchorLinks else buildUrl(post, 'post', '#comments') }}" class="post__comment-count">
+          <a href="{{ '#comments' if options.commentsAnchorLinks else routeUrl(post, 'post', '#comments') }}" class="post__comment-count">
             <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}
           </a>
           <span class="js-like">
@@ -39,7 +39,7 @@
   {% if not options.hideDetails %}
   <div class="panel">
     <div class="post__details">
-      <a href="{{ buildUrl(author, 'user') }}">
+      <a href="{{ routeUrl(author, 'user') }}">
         {% if author.get('avatar') %}
           <img src="{{ pictureUrl(author.get('avatar'), author) }}" class="post__avatar" /> 
         {% else %}
@@ -62,11 +62,11 @@
       {% set relatedEvent = post.related('event') if post.related('event') %}
       {% set relatedEntry = post.related('entry') %}
       {%- if relatedEvent.get('id') -%}
-        on <a href="{{ buildUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
+        on <a href="{{ routeUrl(relatedEvent, 'event') }}">{{ relatedEvent.get('title') }}</a>
       {% endif -%}
       {%- if relatedEntry.get('id') -%}
         <span style="display: inline-block;">
-          entry <a href="{{ buildUrl(relatedEntry, 'entry') }}">
+          entry <a href="{{ routeUrl(relatedEntry, 'entry') }}">
             {%- if relatedEntry.pictureIcon() -%}
               <img data-src="{{ pictureUrl(relatedEntry.pictureIcon(), relatedEntry) }}" class="no-border js-lazy" style="max-height: 32px; margin-top: -2px;" />
             {%- endif %}
@@ -84,7 +84,7 @@
 
     {% if not options.hideBody and not options.commentsAnchorLinks %}
     <div class="post__footer">
-      <a href="{{ buildUrl(post, 'post', '#comments') }}">
+      <a href="{{ routeUrl(post, 'post', '#comments') }}">
         <span class="fas fa-comments"></span>
         {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
       </a>
@@ -113,7 +113,7 @@
     {% set liked = options.readingUserLikes[post.get('id')] if options.readingUserLikes %}
       {% set likeType = enums.LIKES[liked] if (liked and enums.LIKES[liked]) else enums.LIKES['like'] %}
       {% set likeIcon = likeType.icon_liked if liked else likeType.icon_unliked %}
-      <form method="post" action="{{ buildUrl(post, 'post', 'like') }}?redirect={{ path | urlencode }}#p{{ post.get('id') }}" class="post__like-count {{ 'liked' if liked }}">
+      <form method="post" action="{{ routeUrl(post, 'post', 'like') }}?redirect={{ path | urlencode }}#p{{ post.get('id') }}" class="post__like-count {{ 'liked' if liked }}">
         <input type="hidden" name="{{ 'unlike' if liked else 'like' }}" value="like" />
         <button type="submit" class="js-like-button" data-post-id="{{ post.get('id') }}" data-post-name="{{ post.get('name') }}" data-liked="{{ liked }}">
           <span class="{{ likeIcon }}"></span> {{ post.get('like_count') or 0 }}
@@ -141,7 +141,7 @@
     <div class="row comment {{ 'unread' if options.highlightNewerThan and options.highlightNewerThan < comment.get('created_at') }}">
       {% if options.linkToNode and not lastLinkedNode or node != lastLinkedNode %}
       <div class="col-xs-12">
-        <h4><a href="{{ buildUrl(node, comment.get('node_type')) }}#c{{ comment.id }}">{{ node.get('title') }}</a></h4>
+        <h4><a href="{{ routeUrl(node, comment.get('node_type')) }}#c{{ comment.id }}">{{ node.get('title') }}</a></h4>
         {% set lastLinkedNode = node %}
       </div>
       {% endif %}
@@ -149,7 +149,7 @@
         <a class="anchor" name="c{{ comment.id if comment }}"></a>
         <div class="comment__details">
           {% if isOwnAnonComment %}
-          <a href="{{ buildUrl(options.readingUser, 'user') }}">
+          <a href="{{ routeUrl(options.readingUser, 'user') }}">
             <div class="comment__avatar-container">
               {% if options.readingUser.get('avatar') %}
               <img src="{{ pictureUrl(options.readingUser.get('avatar'), options.readingUser) }}" /> 
@@ -161,7 +161,7 @@
           </a>
           {% else %} 
             {% if author.get('name') != 'anonymous' %}
-              <a href="{{ buildUrl(author, 'user') }}">
+              <a href="{{ routeUrl(author, 'user') }}">
             {% endif %}
               <div class="comment__avatar-container">
                 {% if author.get('avatar') %}
@@ -177,14 +177,14 @@
           {% endif %}
           {{ '(@' + author.get('name') + ')' if author.get('title') and author.get('name').toLowerCase() !== author.get('title').toLowerCase() }}
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime }}">{{ comment.get('created_at') | relativeTime }}</span>
-          {% if wasEdited(comment) %}
+          {% if comment.wasEdited() %}
           • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime }}">edited</span>
           {% endif %}
           {% if comment and not options.linkToNode %}
           • <a href="#c{{ comment.id }}"><i class="fas fa-link" aria-hidden="true"></i></a>
           {% endif %}
           {% if not options.readOnly and (canUserWrite(options.readingUser, comment, options) or isOwnAnonComment)  %}
-          <a class="btn btn-default btn-xs pull-right" href="{{ buildUrl(comment, 'comment', 'edit') }}"><span class="fas fa-pencil-alt"></span></a>
+          <a class="btn btn-default btn-xs pull-right" href="{{ routeUrl(comment, 'comment', 'edit') }}"><span class="fas fa-pencil-alt"></span></a>
           {% endif %}
         </div>
         <div class="comment__body panel user-contents">
@@ -215,7 +215,7 @@
 {% set showAnon = options.allowAnonymous and not comment %}
 {% if user %}
 
-<form method="post" action="{{ buildUrl(comment, 'comment', 'edit') }}" class="comment js-warn-on-unsaved-changes">
+<form method="post" action="{{ routeUrl(comment, 'comment', 'edit') }}" class="comment js-warn-on-unsaved-changes">
   {{ csrfToken() | safe }}
   <input type="hidden" name="action" value="comment" />
   <input type="hidden" name="id" value="{{ comment.id if comment }}" />
@@ -239,7 +239,7 @@
           <div class="pull-right">
             <input type="submit" name="save" class="btn btn-primary" value="Save" />
             {% if comment and comment.id %}
-              <a href="{{ buildUrl(comment, 'comment') }}" class="btn btn-default">Cancel</a>
+              <a href="{{ routeUrl(comment, 'comment') }}" class="btn btn-default">Cancel</a>
             {% endif %}
           </div>
           {% if comment and comment.id %}

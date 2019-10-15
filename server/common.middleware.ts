@@ -1,4 +1,4 @@
-import { Model, BookshelfModel } from "bookshelf";
+import { BookshelfModel } from "bookshelf";
 import { NextFunction, Request, Response } from "express";
 import constants from "server/core/constants";
 import forms from "server/core/forms";

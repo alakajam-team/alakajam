@@ -3,9 +3,9 @@ import constants from "server/core/constants";
 import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
+import links from "server/core/links";
 import * as models from "server/core/models";
 import security from "server/core/security";
-import templating from "server/core/templating-functions";
 import entryTeamService from "server/entry/entry-team.service";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import platformService from "server/entry/platform/platform.service";
@@ -25,7 +25,7 @@ export async function entryManage(req, res) {
     const existingEntry = await eventService.findUserEntryForEvent(user, event.id);
     if (existingEntry) {
       // User with an entry went to the creation URL, redirect him
-      res.redirect(templating.buildUrl(existingEntry, "entry", "edit"));
+      res.redirect(links.routeUrl(existingEntry, "entry", "edit"));
       return;
     } else if (!eventService.areSubmissionsAllowed(event)) {
       res.errorPage(403, "Submissions are closed for this event");
@@ -57,13 +57,13 @@ export async function entryManage(req, res) {
   if (req.method === "POST") {
     // Parse form data
     const isExternalEvent = req.body["external-event"] !== undefined || !event;
-    let links = [];
+    let entryLinks = [];
     let i = 0;
     if (req.body["submit-links"]) {
       while (req.body["url" + i] || req.body["label" + i]) {
         const label = forms.sanitizeString(req.body["label" + i]);
         const url = req.body["url" + i];
-        links.push({
+        entryLinks.push({
           label,
           url,
         });
@@ -71,7 +71,7 @@ export async function entryManage(req, res) {
       }
     } else {
       // If the client-side JS didn't have the time to load, don't change the links
-      links = entry.get("links") || [];
+      entryLinks = entry.get("links") || [];
     }
 
     let platforms = null;
@@ -163,12 +163,12 @@ export async function entryManage(req, res) {
 
     // Save entry: Validate form data
     i = 0;
-    for (const link of links) {
+    for (const entryLink of entryLinks) {
       i++;
-      if (!forms.isURL(link.url)) {
-        errorMessages.push(`Link #${i} '${link.label}' is invalid. Url <${link.url}> is not a valid url.`);
-      } else if (!link.label) {
-        errorMessages.push(`Link #${i} <${link.url}> is invalid. Label is required.`);
+      if (!forms.isURL(entryLink.url)) {
+        errorMessages.push(`Link #${i} '${entryLink.label}' is invalid. Url <${entryLink.url}> is not a valid url.`);
+      } else if (!entryLink.label) {
+        errorMessages.push(`Link #${i} <${entryLink.url}> is invalid. Label is required.`);
       }
     }
 
@@ -253,7 +253,7 @@ export async function entryManage(req, res) {
       await entry.load(["userRoles.user", "comments", "details", "tags"]);
 
       // Save entry: Redirect to view upon success
-      res.redirect(templating.buildUrl(entry, "entry"));
+      res.redirect(links.routeUrl(entry, "entry"));
       return;
     }
   }
@@ -290,9 +290,9 @@ export async function entryDelete(req, res) {
   }
 
   if (event) {
-    res.redirect(templating.buildUrl(event, "event"));
+    res.redirect(links.routeUrl(event, "event"));
   } else {
-    res.redirect(templating.buildUrl(user, "user", "entries"));
+    res.redirect(links.routeUrl(user, "user", "entries"));
   }
 }
 
@@ -325,8 +325,8 @@ export async function entryLeave(req, res) {
   }
 
   if (res.locals.event) {
-    res.redirect(templating.buildUrl(res.locals.event, "event"));
+    res.redirect(links.routeUrl(res.locals.event, "event"));
   } else {
-    res.redirect(templating.buildUrl(res.locals.user, "user", "entries"));
+    res.redirect(links.routeUrl(res.locals.user, "user", "entries"));
   }
 }

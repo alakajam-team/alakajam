@@ -215,7 +215,7 @@
   {% set mainEvent = event.get('title').includes('Alakajam') %}
   <div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }} {{ 'main' if mainEvent }}">
     <div class="home-scheduled-event__arrow"></div>
-    <a class="home-scheduled-event__title" href="{{ buildUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
+    <a class="home-scheduled-event__title" href="{{ routeUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
       {% if mainEvent %}
         <img src="{{ staticUrl('/static/images/favicon16.png') }}" class="home-scheduled-event__logo no-border" />
       {% endif %}
@@ -226,7 +226,7 @@
         {{ event.get('display_dates') }} 
       </span>
       {% if event.get('status') === 'closed' %}
-        - <a href="{{ buildUrl(event, 'event') }}" class="home-scheduled-event__entries">{{ event.get('entry_count') }} entries</a>
+        - <a href="{{ routeUrl(event, 'event') }}" class="home-scheduled-event__entries">{{ event.get('entry_count') }} entries</a>
       {% endif %}
     </div>
     <div class="home-scheduled-event__label">

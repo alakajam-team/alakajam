@@ -4,8 +4,8 @@ import constants from "server/core/constants";
 import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
+import links from "server/core/links";
 import security from "server/core/security";
-import templating from "server/core/templating-functions";
 import highScoreService from "server/entry/highscore/entry-highscore.service";
 import eventPresetService from "server/event/event-preset.service";
 import eventService from "server/event/event.service";
@@ -167,7 +167,7 @@ export async function eventManage(req, res) {
       await eventDetails.save();
 
       if (creation) {
-        res.redirect(templating.buildUrl(event, "event", "edit"));
+        res.redirect(links.routeUrl(event, "event", "edit"));
         redirected = true;
       }
     }

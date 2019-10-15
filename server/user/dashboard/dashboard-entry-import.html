@@ -16,7 +16,7 @@
 
 <p>This tool helps you import entries from other websites. If you don't find the site you're looking for, you can still use the manual form.</p>
 <a href="/external-entry/create-entry" class="btn btn-default">Create entry manually</a>
-<a href="{{ buildUrl(user, 'user', 'entries') }}" class="btn btn-default">Back to Entries</a>
+<a href="{{ routeUrl(user, 'user', 'entries') }}" class="btn btn-default">Back to Entries</a>
 
 <form method="post">
   {{ csrfToken() | safe }}

@@ -17,7 +17,7 @@
       {% set inviteEntry = invite.related('entry') %}
       <h3>
         {% if inviteEntry.get('event_id') %}
-          <a href="{{ buildUrl(inviteEntry.related('event'), 'event') }}">{{ inviteEntry.related('event').get('title') }}</a>
+          <a href="{{ routeUrl(inviteEntry.related('event'), 'event') }}">{{ inviteEntry.related('event').get('title') }}</a>
         {% else %}
           <strong>{{ inviteEntry.get('external_event') }}</strong>
         {% endif %}
@@ -29,8 +29,8 @@
         <div class="col-xs-8 col-xs-offset-2">
           {{ eventMacros.entrySmallThumb(inviteEntry) }}
           <div class="text-right spacing">
-            <a href="{{ buildUrl(inviteEntry, 'entry', 'accept-invite') }}" class="btn btn-primary">Accept</a>
-            <a href="{{ buildUrl(inviteEntry, 'entry', 'decline-invite') }}" class="btn btn-default">Decline</a>
+            <a href="{{ routeUrl(inviteEntry, 'entry', 'accept-invite') }}" class="btn btn-primary">Accept</a>
+            <a href="{{ routeUrl(inviteEntry, 'entry', 'decline-invite') }}" class="btn btn-default">Decline</a>
           </div>
         </div>
       </div>
@@ -54,7 +54,7 @@
       <div class="well">No entry yet.</div>
     {% endif %}
     <div style="margin: 10px 0 20px 0; clear: both">
-      <a href="{{ buildUrl(dashboardUser, 'user', 'entries') }}" class="btn btn-default">All entries</a>
+      <a href="{{ routeUrl(dashboardUser, 'user', 'entries') }}" class="btn btn-default">All entries</a>
     </div>
     
     <div class="horizontal-bar">Latest posts</div>
@@ -71,8 +71,8 @@
     <div class="well">No posts yet.</div>
     {% endif %}
     <div style="margin-top: -10px; margin-bottom: 10px">
-      <a href="{{ buildUrl(dashboardUser, 'user', 'posts') }}" class="btn btn-default">All posts</a>
-      <a href="{{ buildUrl(null, 'post', 'create') }}" class="btn btn-primary">Create post</a>
+      <a href="{{ routeUrl(dashboardUser, 'user', 'posts') }}" class="btn btn-default">All posts</a>
+      <a href="{{ routeUrl(null, 'post', 'create') }}" class="btn btn-primary">Create post</a>
     </div>
     
     <div class="horizontal-bar">Latest comments</div>

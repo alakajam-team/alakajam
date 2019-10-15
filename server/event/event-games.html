@@ -19,7 +19,7 @@
           <h4 style="margin: 0">Recently rated</h4>
         </div>
         <div class="list-group-item">
-          <p><a href="{{ buildUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>
+          <p><a href="{{ routeUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>
           {% for vote in voteHistory %}
           <p>
             {{ eventMacros.entrySmallThumb(vote.related('entry')) }}

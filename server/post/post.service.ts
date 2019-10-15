@@ -1,7 +1,5 @@
 import cache from "server/core/cache";
-import config from "server/core/config";
 import constants from "server/core/constants";
-import db from "server/core/db";
 import * as models from "server/core/models";
 import security from "server/core/security";
 
@@ -9,7 +7,6 @@ const FIRST_PICTURE_REGEXP = /(?:!\[.*?\]\((.*?)\)|src="([^"]+)")/;
 
 export default {
   isPast,
-  wasEdited,
   getFirstPicture,
 
   findPosts,
@@ -31,15 +28,6 @@ export default {
  */
 function isPast(time) {
   return time && (new Date().getTime() - time) > 0;
-}
-
-/**
- * Tells whether a model has been edited > 1 hour after its creation
- * @param  {Model} model Any model with timestamps
- * @return {bool}
- */
-function wasEdited(model) {
-  return model.get("updated_at") - model.get("created_at") > 3600 * 1000;
 }
 
 /**

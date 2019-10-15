@@ -11,7 +11,7 @@
   <div class="col-lg-10">
 
   <div class="form-group">
-    <a href="{{ buildUrl(null, 'post', 'create', {eventId: newPostEvent.get('id')}) if newPostEvent }}" class="btn btn-primary">Create post</a>
+    <a href="{{ routeUrl(null, 'post', 'create', {eventId: newPostEvent.get('id')}) if newPostEvent }}" class="btn btn-primary">Create post</a>
   </div>
 
   {% if draftPosts.length > 0 %}

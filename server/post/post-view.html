@@ -23,7 +23,7 @@
       <h2 class="spacing">
         Comments <span class="legend">({{ post.get('comment_count') or '0' }})</span>
         {% if user %}
-        <form method="post" class="comment__subscribe" action="{{ buildUrl(post, 'post', 'watch') }}">
+        <form method="post" class="comment__subscribe" action="{{ routeUrl(post, 'post', 'watch') }}">
           {{ csrfToken() | safe }}
           <!-- Being subscribed to a post = having a user right. Only allow removing the right-->
           {% if isUserWatching(user, post) %}

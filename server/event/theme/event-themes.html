@@ -86,7 +86,7 @@
               <input type="hidden" name="action" value="ideas" />
               <input type="hidden" name="idea-rows" value="{{ ideaRows }}" />
               <input type="submit" class="btn btn-primary" value="Save" />
-              <a href="{{ buildUrl(event, 'event', 'themes') }}" class="btn btn-default">Cancel</a>
+              <a href="{{ routeUrl(event, 'event', 'themes') }}" class="btn btn-default">Cancel</a>
             </div>
           </div>
         </form>
@@ -124,8 +124,8 @@
             <div class="panel theme-vote">
               {% if votingAllowed %}
                 <div id="js-theme-vote"
-                  data-find-themes-url="{{ buildUrl(event, 'event', 'ajax-find-themes') }}"
-                  data-save-vote-url="{{ buildUrl(event, 'event', 'ajax-save-vote') }}">
+                  data-find-themes-url="{{ routeUrl(event, 'event', 'ajax-find-themes') }}"
+                  data-save-vote-url="{{ routeUrl(event, 'event', 'ajax-save-vote') }}">
                 </div>
               {% else %}
                 Voting will start when at least {{ ideasRequired }} ideas are submitted.

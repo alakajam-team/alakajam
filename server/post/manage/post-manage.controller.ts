@@ -2,9 +2,9 @@
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
+import links from "server/core/links";
 import * as models from "server/core/models";
 import security from "server/core/security";
-import templating from "server/core/templating-functions";
 import eventService from "server/event/event.service";
 import { buildPostContext } from "../post-view.controller";
 import postService from "../post.service";
@@ -130,7 +130,7 @@ export async function postSave(req, res) {
 
     // Render
     if (redirectToView) {
-      res.redirect(templating.buildUrl(post, "post")); // TODO move buildUrl to routing-service
+      res.redirect(links.routeUrl(post, "post")); // TODO move route to routing-service
     } else {
       const context: any = await buildPostContext(post);
       context.errorMessage = errorMessage;

@@ -14,14 +14,14 @@
        <div class="hidden-xs">
          <h3>Adding games</h3>
          <p>Users can submit entries made during any game jam. You can add your own 
-            <a href="{{ buildUrl(user, 'user', 'entries') }}">from your Dashboard</a>.
+            <a href="{{ routeUrl(user, 'user', 'entries') }}">from your Dashboard</a>.
          </p>
        </div>
     </div>
     <div class="col-sm-8 col-md-9">
       <h1>
         {% if searchedEvent %}
-          <a href="{{ buildUrl(featuredEvent, 'event', 'games' if searchedEvent.get('status_entry') !== 'off' else 'posts') }}">{{ searchedEvent.get('title') }}</a>
+          <a href="{{ routeUrl(featuredEvent, 'event', 'games' if searchedEvent.get('status_entry') !== 'off' else 'posts') }}">{{ searchedEvent.get('title') }}</a>
         {% endif %}
         Games 
         {{ 'from external events' if searchOptions.eventId|dump === 'null' }}

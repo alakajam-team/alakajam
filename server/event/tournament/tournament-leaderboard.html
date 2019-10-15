@@ -43,7 +43,7 @@
           <th>User</th>
           {% for entry in entries %}
           <th class="text-center visible-md visible-lg" style="width: 80px">
-            <a href="{{ buildUrl(entry, 'entry') }}">
+            <a href="{{ routeUrl(entry, 'entry') }}">
               <img src="{{ entry.pictureIcon() if entry.pictureIcon() }}" style="max-height:60px" title="{{ entry.get('title') }}" />
             </a>
           </th>
@@ -64,7 +64,7 @@
                 <td class="text-center visible-md visible-lg">
                   {% if entryScores[entry.get('id')] %}
                     {% set ranking = entryScores[entry.get('id')].ranking %}
-                    <a href="{{ buildUrl(entry, 'entry', 'scores') }}#score-rank-{{ ranking }}" class="tournament-ranking">
+                    <a href="{{ routeUrl(entry, 'entry', 'scores') }}#score-rank-{{ ranking }}" class="tournament-ranking">
                       {{ scoreMacros.printRanking(ranking) }}
                     </a>
                   {% endif %}

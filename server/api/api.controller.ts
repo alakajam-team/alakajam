@@ -5,7 +5,7 @@
  * @module controllers/api-controller
  */
 
-import { Model, BookshelfModel } from "bookshelf";
+import { BookshelfModel } from "bookshelf";
 import { Request } from "express";
 import * as lodash from "lodash";
 import * as moment from "moment";
@@ -13,7 +13,7 @@ import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
-import { buildUrl } from "server/core/templating-functions";
+import links from "server/core/links";
 import eventService from "server/event/event.service";
 import eventThemeService from "server/event/theme/event-theme.service";
 import { CustomResponse } from "server/types";
@@ -68,7 +68,7 @@ export async function getEventTimeline(req, res) {
 
   json = events.map((event) => {
     const eventJson = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT);
-    eventJson.url = url.resolve(config.ROOT_URL, buildUrl(event, "event"));
+    eventJson.url = url.resolve(config.ROOT_URL, links.routeUrl(event, "event"));
     return eventJson;
   });
   _renderJson(req, res, status, json);
@@ -90,7 +90,7 @@ export async function getEvent(req, res) {
 
   if (event) {
     json = _getAttributes(event, PUBLIC_ATTRIBUTES_EVENT);
-    json.url = url.resolve(config.ROOT_URL, buildUrl(event, "event"));
+    json.url = url.resolve(config.ROOT_URL, links.routeUrl(event, "event"));
 
     if (json.countdown_config && json.countdown_config.date) {
       let result = json.title + " " + json.countdown_config.phrase;
@@ -226,7 +226,7 @@ export async function getEntry(req, res) {
  */
 function _getDetailedEntryJson(entry) {
   const json = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY);
-  json.url = url.resolve(config.ROOT_URL, buildUrl(entry, "entry"));
+  json.url = url.resolve(config.ROOT_URL, links.routeUrl(entry, "entry"));
 
   const entryDetails = entry.related("details");
   Object.assign(json, _getAttributes(entryDetails, PUBLIC_ATTRIBUTES_ENTRY_DETAILS));
@@ -265,7 +265,7 @@ export async function getUser(req, res) {
 
   if (user) {
     json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER);
-    json.url = url.resolve(config.ROOT_URL, buildUrl(user, "user"));
+    json.url = url.resolve(config.ROOT_URL, links.routeUrl(user, "user"));
 
     json.entries = [];
     for (const entry of (await eventService.findUserEntries(user)).models) {
@@ -296,7 +296,7 @@ export async function getUserLatestEntry(req, res) {
     const entry = await eventService.findLatestUserEntry(user);
     if (entry) {
       json.latest_entry = _getDetailedEntryJson(await eventService.findLatestUserEntry(user, DETAILED_ENTRY_OPTIONS));
-      json.latest_entry.url = url.resolve(config.ROOT_URL, buildUrl(entry, "entry"));
+      json.latest_entry.url = url.resolve(config.ROOT_URL, links.routeUrl(entry, "entry"));
     }
   } else {
     json = { error: "User not found" };
@@ -330,7 +330,7 @@ export async function getUserSearch(req, res) {
     json.users = [];
     for (const user of users.models) {
       const userJson = _getAttributes(user, PUBLIC_ATTRIBUTES_USER);
-      userJson.url = url.resolve(config.ROOT_URL, buildUrl(user, "user"));
+      userJson.url = url.resolve(config.ROOT_URL, links.routeUrl(user, "user"));
       json.users.push(userJson);
     }
   }
