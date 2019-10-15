@@ -110,7 +110,7 @@ export async function entryManage(req, res) {
     entry.set({
       title: forms.sanitizeString(req.body.title),
       description: forms.sanitizeString(req.body.description),
-      links,
+      links: entryLinks,
       allow_anonymous: req.body["anonymous-enabled"] === "on",
       status_high_score: statusHighScore,
     });
@@ -174,7 +174,7 @@ export async function entryManage(req, res) {
 
     if (isPlayedInTournament && statusHighScore === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
       errorMessages.push("Cannot disable high scores while the game is featured in an active tournament");
-    } else if (!forms.isLengthValid(links, 1000)) {
+    } else if (!forms.isLengthValid(entryLinks, 1000)) {
       errorMessages.push("Too many links (max allowed: around 7)");
     } else if (!entry && !isExternalEvent && !eventService.areSubmissionsAllowed(event)) {
       errorMessages.push("Submissions are closed for this event");
