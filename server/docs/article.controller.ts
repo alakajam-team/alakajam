@@ -6,22 +6,22 @@
  */
 
 import { Request } from "express";
+import { CommonLocals } from "server/common.middleware";
 import settings from "server/core/settings";
-import { GlobalLocals } from "server/global.middleware";
 import { CustomResponse } from "server/types";
 import * as slug from "slug";
 import articleService from "./article.service";
 
-export async function articleApiRoot(req: Request, res: CustomResponse<GlobalLocals>): Promise<void> {
+export async function articleApiRoot(req: Request, res: CustomResponse<CommonLocals>): Promise<void> {
   return _renderArticle(res, "docs", "api");
 }
 
-export async function articleView(req: Request, res: CustomResponse<GlobalLocals>): Promise<void> {
+export async function articleView(req: Request, res: CustomResponse<CommonLocals>): Promise<void> {
   return _renderArticle(res, slug(req.params.category), slug(req.params.name || ""));
 }
 
 async function _renderArticle(
-    res: CustomResponse<GlobalLocals>,
+    res: CustomResponse<CommonLocals>,
     category: "about" | "docs",
     name: string): Promise<void> {
   res.locals.articleName = name || category;

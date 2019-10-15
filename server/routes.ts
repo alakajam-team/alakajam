@@ -16,6 +16,7 @@ import { adminStatus } from "./admin/status/admin-status.controller";
 import { adminTags } from "./admin/tags/admin-tags.controller";
 import { adminUsers } from "./admin/users/admin-users.controller";
 import * as apiController from "./api/api.controller";
+import { commonMiddleware } from "./common.middleware";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
 import { inviteAccept, inviteDecline } from "./entry/entry-invite.controller";
@@ -45,7 +46,6 @@ import { events } from "./explore/events.controller";
 import { games } from "./explore/games.controller";
 import { peopleMods } from "./explore/people-mods.controller";
 import { people } from "./explore/people.controller";
-import { globalMiddleware } from "./global.middleware";
 import { home } from "./home/home.controller";
 import { commentSave } from "./post/comment/comment.controller";
 import { likePost } from "./post/like/like.controller";
@@ -81,7 +81,7 @@ export function routes(app) {
 
     // Run all middleware before any actual route handlers
 
-    router.use("*", globalMiddleware);
+    router.use("*", commonMiddleware);
     router.use("/admin*", adminMiddleware);
     // Why `{0,}` instead of `*`? See: https://github.com/expressjs/express/issues/2495
     router.use("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?/:rest*?", entryMiddleware);

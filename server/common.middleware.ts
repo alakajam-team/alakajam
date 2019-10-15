@@ -9,7 +9,7 @@ import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
 import commentService from "./post/comment/comment.service";
 
-export interface GlobalLocals {
+export interface CommonLocals {
   /**
    * Current local path.
    * Available everywhere.
@@ -49,7 +49,7 @@ export interface GlobalLocals {
   [key: string]: any;
 }
 
-export async function globalMiddleware(req: Request, res: Response, next: NextFunction) {
+export async function commonMiddleware(req: Request, res: Response, next: NextFunction) {
   res.locals.path = req.originalUrl;
 
   // Fetch current user

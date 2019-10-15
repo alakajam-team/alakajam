@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { GlobalLocals } from "./global.middleware";
+import { CommonLocals } from "./common.middleware";
 
-export interface CustomResponse<T extends GlobalLocals> extends Response {
+export interface CustomResponse<T extends CommonLocals> extends Response {
   locals: T;
 
   // Custom methods registered on middleware.ts

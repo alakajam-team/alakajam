@@ -1,9 +1,3 @@
-/**
- * Blog post service.
- *
- * @module services/post-service
- */
-
 import * as fs from "fs";
 import * as path from "path";
 import * as requestPromise from "request-promise-native";

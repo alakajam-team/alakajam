@@ -1,12 +1,12 @@
 import { Model } from "bookshelf";
 import { NextFunction, Request } from "express";
+import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import security from "server/core/security";
-import { GlobalLocals } from "server/global.middleware";
 import { CustomResponse } from "server/types";
 import userService from "../user.service";
 
-export interface DashboardLocals extends GlobalLocals {
+export interface DashboardLocals extends CommonLocals {
   /**
    * The model of the currently edited user.
    * Usually identical to `user`, but moderators and admins can edit other users than themselves.
@@ -19,8 +19,7 @@ export interface DashboardLocals extends GlobalLocals {
   readonly dashboardAdminMode: boolean;
 }
 
-export async function dashboardMiddleware(req: Request, res: CustomResponse<GlobalLocals>, next: NextFunction) {
-
+export async function dashboardMiddleware(req: Request, res: CustomResponse<CommonLocals>, next: NextFunction) {
   res.locals.pageTitle = "User dashboard";
 
   if (!res.locals.user || res.locals.user === undefined) {

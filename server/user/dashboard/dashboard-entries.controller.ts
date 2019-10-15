@@ -1,14 +1,14 @@
-import { Model, ModelAny } from "bookshelf";
+import { ModelAny } from "bookshelf";
 import { Request } from "express";
+import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import eventService from "server/event/event.service";
-import { GlobalLocals } from "server/global.middleware";
 import { CustomResponse } from "server/types";
 
 /**
  * Manage user entries
  */
-export async function dashboardEntries(req: Request, res: CustomResponse<GlobalLocals>) {
+export async function dashboardEntries(req: Request, res: CustomResponse<CommonLocals>) {
   const { user, featuredEvent } = res.locals;
 
   const entryCollection = await eventService.findUserEntries(user);

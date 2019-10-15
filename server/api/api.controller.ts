@@ -9,13 +9,13 @@ import { Model } from "bookshelf";
 import { Request } from "express";
 import * as lodash from "lodash";
 import * as moment from "moment";
+import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import { buildUrl } from "server/core/templating-functions";
 import eventService from "server/event/event.service";
 import eventThemeService from "server/event/theme/event-theme.service";
-import { GlobalLocals } from "server/global.middleware";
 import { CustomResponse } from "server/types";
 import * as url from "url";
 import userService from "../user/user.service";
@@ -338,7 +338,7 @@ export async function getUserSearch(req, res) {
   _renderJson(req, res, status, json);
 }
 
-export async function getThemeStats(req: Request, res: CustomResponse<GlobalLocals>) {
+export async function getThemeStats(req: Request, res: CustomResponse<CommonLocals>) {
   const title = forms.sanitizeString(req.params.theme);
   const themes = await eventThemeService.findThemesByTitle(title, {
     withRelated: ["event.details"]

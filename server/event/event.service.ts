@@ -140,6 +140,7 @@ async function findEvents(options: {
     ignoreTournaments?: boolean
     sortDatesAscending?: "ASC" | "DESC",
     pageSize?: number,
+    page?: number
   } = {}) {
   let query = models.Event.forge()
     .orderBy("started_at", options.sortDatesAscending ? "ASC" : "DESC");
