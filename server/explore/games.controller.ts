@@ -31,7 +31,7 @@ export async function games(req, res) {
   const entriesCollection = await eventService.findGames(searchOptions);
   const platformCollection = await platformService.fetchAll();
 
-  const eventsCollection = await eventService.findEvents();
+  const eventsCollection = await eventService.findEvents({ ignoreTournaments: true });
   let searchedEvent = null;
   if (searchOptions.eventId) {
     searchedEvent = eventsCollection.findWhere({ id: parseInt(searchOptions.eventId, 10) });

@@ -133,12 +133,22 @@ async function findEventByName(name) {
  * @param {object} options Allowed: status name sortDatesAscending
  * @returns {array(Event)}
  */
-async function findEvents(options: any = {}) {
+async function findEvents(options: {
+    name?: string,
+    status?: string,
+    statusNot?: string,
+    ignoreTournaments?: boolean
+    sortDatesAscending?: "ASC" | "DESC",
+    pageSize?: number,
+  } = {}) {
   let query = models.Event.forge()
     .orderBy("started_at", options.sortDatesAscending ? "ASC" : "DESC");
   if (options.status) { query = query.where("status", options.status); }
   if (options.statusNot) { query = query.where("status", "<>", options.statusNot); }
   if (options.name) { query = query.where("name", options.name); }
+  if (options.ignoreTournaments) {
+    query = query.where("status_tournament", "=", enums.EVENT.STATUS_TOURNAMENT.DISABLED);
+  }
   if (options.pageSize) {
     return query.fetchPage(options);
   } else {
