@@ -1,6 +1,6 @@
 # Site changelog
 
-> You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
+> You can help with the site development by joining us on [Github](https://github.com/alakajam-team/alakajam)!
 
 ### October 2019
 

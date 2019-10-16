@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/mkalam-alami/alakajam/master/static/images/logo.png" width="250" />
+<img src="https://raw.githubusercontent.com/alakajam-team/alakajam/master/static/images/logo.png" width="250" />
 
 [![CircleCI](https://circleci.com/gh/alakajam-team/alakajam/tree/master.svg?style=svg)](https://circleci.com/gh/alakajam-team/alakajam/tree/master)
 
