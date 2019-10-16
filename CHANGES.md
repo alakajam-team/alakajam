@@ -2,9 +2,15 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/mkalam-alami/alakajam)!
 
+### October 2019
+
+* Make podium pages support ties
+* Fix high score submission times (were updated every time the score ranking changed)
+
 ### September 2019
 
 * Split Docs section into Docs and About
+* Entry importer: improve presentation
 
 ### June 2019
 
