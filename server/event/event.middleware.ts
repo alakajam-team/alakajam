@@ -30,16 +30,13 @@ export async function eventMiddleware(req, res, next) {
   next();
 }
 
-export function handleEventUserShortcuts(res, targetEvent) {
+export function handleEventUserShortcuts(res, targetEvent, options: { postFromAnyEvent?: boolean } = {}) {
   if (targetEvent && res.locals.user) {
-    let entryTask: any = true;
-    let userPostTask: any = true;
-
-    entryTask = eventService.findUserEntryForEvent(res.locals.user, targetEvent.get("id"))
+    const entryTask = eventService.findUserEntryForEvent(res.locals.user, targetEvent.get("id"))
       .then((userEntry) => { res.locals.userEntry = userEntry; });
-    userPostTask = postService.findPost({
+    const userPostTask = postService.findPost({
       userId: res.locals.user.id,
-      eventId: targetEvent.id,
+      eventId: options.postFromAnyEvent ? undefined : targetEvent.id,
       specialPostType: null,
     })
       .then((userPost) => { res.locals.userPost = userPost; });

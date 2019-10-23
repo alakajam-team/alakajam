@@ -49,7 +49,7 @@ export async function home(req, res) {
     // Gather featured entries
     let suggestedEntriesTask = null;
     if (res.locals.featuredEvent && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
-        .includes(res.locals.featuredEvent.get("status_results"))) {
+      .includes(res.locals.featuredEvent.get("status_results"))) {
       suggestedEntriesTask = eventService.findGames({
         eventId: res.locals.featuredEvent.get("id"),
         pageSize: 4,
@@ -94,7 +94,7 @@ export async function home(req, res) {
     cache.general.set("home_page", context, 10 /* 10 seconds */);
   }
 
-  await handleEventUserShortcuts(res, res.locals.featuredEvent);
+  await handleEventUserShortcuts(res, res.locals.featuredEvent, { postFromAnyEvent: true });
 
   if (res.locals.user) {
     const allPagePosts = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);
