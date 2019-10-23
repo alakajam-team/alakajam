@@ -215,10 +215,6 @@ function defaultArticleSidebar() {
                     "url": "/article/about"
                 },
                 {
-                    "title": "F.A.Q.",
-                    "url": "/article/about/faq"
-                },
-                {
                     "title": "Press kit",
                     "url": "/article/about/press-kit"
                 },
@@ -290,6 +286,10 @@ function defaultArticleSidebar() {
               {
                   "title": "Feedback Fortnight",
                   "url": "/article/docs/feedback-fortnight-rules"
+              },
+              {
+                  "title": "F.A.Q.",
+                  "url": "/article/docs/faq"
               }
           ]
       },

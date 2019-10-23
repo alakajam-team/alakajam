@@ -8,12 +8,19 @@
 <div class="col-lg-offset-1 col-lg-10">
 
   <h1 id="title-display"></h1>
-  
+
   <form method="post" class="js-warn-on-unsaved-changes">
     {{ csrfToken() | safe }}
         
     {% if errorMessage %}
       <div class="alert alert-warning">{{ errorMessage }}</div>
+    {% endif %}
+  
+    {% if featuredEvent and ['voting', 'voting_rescue'].includes(featuredEvent.get('status_results')) %}
+      <div class="alert alert-warning">
+        <p class="alert-title"><i class="fas fa-exclamation-triangle"></i> During the voting phase...</p>
+        <p>Please do not make advertising posts that purely ask for votes. The preferred way to get votes is to <a href="/article/docs/faq/">increase your karma</a>. Post-mortems, technical articles and other interesting contents about your jam participation are welcome!</p>
+      </div>
     {% endif %}
 
     <div class="form-group input-group-lg">

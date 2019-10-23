@@ -218,6 +218,11 @@ input[type="submit"][data-disabled] {
   }
 }
 
+.alert-title {
+  font-weight: bold;
+  display: block;
+}
+
 .pagination {
   margin-top: 0;
   margin-bottom: 10px;
