@@ -2,6 +2,7 @@ import * as chokidar from "chokidar";
 import * as copy from "copy";
 import * as findUp from "find-up";
 import { writeFile } from "fs";
+import { copySync } from "fs-extra";
 import { debounce, intersection } from "lodash";
 import * as path from "path";
 import * as sass from "sass";
@@ -16,6 +17,7 @@ class SassBuilder {
   private readonly CLIENT_DEST_FOLDER = path.join(this.ROOT_PATH, "./dist/client/");
   private readonly ASSETS_GLOBS = ["png", "gif", "svg", "ttf", "woff", "woff2", "eot"]
     .map((ext) => "./**/*." + ext);
+  private readonly FA_WEBFONTS_FOLDER = path.join(this.ROOT_PATH, "./node_modules/@fortawesome/fontawesome-free/webfonts/");
 
   private writeFileAsync = promisify(writeFile);
 
@@ -53,6 +55,14 @@ class SassBuilder {
         });
       });
     }
+
+    this.copyWebfonts();
+  }
+
+  private copyWebfonts() {
+    const WEBFONTS_PATH = "webfonts"; // the Font Awesome CSS needs this exact path
+    copySync(this.FA_WEBFONTS_FOLDER, path.join(this.CLIENT_DEST_FOLDER, WEBFONTS_PATH));
+    log.debug(`Copied ${WEBFONTS_PATH}`);
   }
 
   private sassBuild(resolve?: (result: sass.Result) => void, reject?: (cause?: any) => void) {
