@@ -129,6 +129,7 @@
     "mocha": "^6.2.2",
     "sinon": "^7.5.0",
     "start-server-and-test": "^1.10.6",
+    "ts-loader": "^6.2.1",
     "ts-node": "^7.0.1",
     "ts-node-dev": "^1.0.0-pre.43",
     "tsconfig-paths": "^3.9.0",
