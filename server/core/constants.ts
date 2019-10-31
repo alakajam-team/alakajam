@@ -128,7 +128,7 @@ export default {
     solo: "fas fa-user",
     team: "fas fa-users",
     ranked: "fas fa-flag-checkered",
-    unranked: "far fa-hand-peace",
+    unranked: "fas fa-hat-wizard",
   },
 
   // Events
