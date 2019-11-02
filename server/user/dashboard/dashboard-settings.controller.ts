@@ -1,8 +1,7 @@
-import { Request } from "express";
 import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
-import { anyRule, validateObject } from "server/core/forms-validation";
+import { anyRule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
@@ -46,7 +45,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
   }
 
   // Validate changes
-  res.locals.errorMessage = await validateObject(req.body, {
+  const errorNotifications = await validateForm(req.body, {
     email: anyRule([forms.isNotSet, forms.isEmail], "Invalid email"),
     website: anyRule([forms.isNotSet, forms.isURL], "Account website has an invalid URL"),
     special_permissions: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
@@ -57,7 +56,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
       "Invalid picture format (allowed: PNG GIF JPG)")
   });
 
-  if (!res.locals.errorMessage) {
+  if (errorNotifications.length === 0) {
     // Persist avatar
     if (req.file || req.body["avatar-delete"]) {
       const avatarPath = "/user/" + dashboardUser.id;
@@ -72,6 +71,8 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
     if (dashboardUser.title !== oldTitle) {
       await userService.refreshUserReferences(dashboardUser);
     }
+  } else {
+    res.locals.notifications.push(...errorNotifications);
   }
 
   await dashboardSettingsGet(req, res);
@@ -89,6 +90,10 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
     }
     return;
   } else {
-    res.locals.errorMessage = result.error;
+    res.locals.notifications.push({
+      type: "danger",
+      title: "Could not delete account",
+      message: result.error
+    });
   }
 }

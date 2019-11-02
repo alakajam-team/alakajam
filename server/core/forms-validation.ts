@@ -1,9 +1,11 @@
+import { NotificationMessage } from "server/types";
+
 export type Validator = (value: any) => Promise<undefined | string> | undefined | string;
 
 export type TestFunction = (value?: any) => Promise<any> | any;
 
-export async function validateObject(object: object, validators: {[key: string]: Validator})
-    : Promise<undefined | string> {
+export async function validateForm(object: object, validators: {[key: string]: Validator})
+    : Promise<NotificationMessage[]> {
   const results: Array<undefined | string> = [];
   for (const key of Object.keys(validators)) {
     results.push(await validators[key](object[key]));
@@ -11,9 +13,12 @@ export async function validateObject(object: object, validators: {[key: string]:
   const errors = results.filter((result) => result !== undefined);
 
   if (errors.length === 0) {
-    return undefined;
+    return [];
   } else {
-    return errors.join(", ");
+    return errors.map((errorMessage) => ({
+      type: "danger",
+      message: errorMessage
+    }));
   }
 }
 

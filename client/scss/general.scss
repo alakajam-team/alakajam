@@ -165,9 +165,32 @@ a:hover img.no-border {
   background-color: white;
 }
 
+// Bootstrap notifications
 [data-notify="container"] {
-  padding: 20px;
-  font-size: 16px;
+  padding: 10px;
+  font-size: 1.2rem;
+}
+[data-notify="title"] {
+  font-weight: bold;
+  clear: both;
+}
+[data-notify="message"] {
+  display: block;
+}
+[data-notify="dismiss"] {
+  display: block;
+  width: 100%;
+  position: absolute;
+  font-size: 0;
+  color: transparent;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.animated.fastest {
+  -webkit-animation-duration: 100ms;
+  animation-duration: 100ms;
 }
 
 .code {
@@ -221,11 +244,6 @@ input[type="submit"][data-disabled] {
   &:active {
     background-color: $alt-dark;
   }
-}
-
-.alert-title {
-  font-weight: bold;
-  display: block;
 }
 
 .pagination {

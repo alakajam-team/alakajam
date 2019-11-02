@@ -1,5 +1,5 @@
 import forms from "server/core/forms";
-import { anyRule, rule, validateObject } from "server/core/forms-validation";
+import { anyRule, rule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 import { DashboardLocals } from "./dashboard.middleware";
@@ -13,7 +13,7 @@ export async function dashboardPasswordGet(req: CustomRequest, res: CustomRespon
 export async function dashboardPasswordPost(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const dashboardUser = res.locals.dashboardUser;
 
-  let errorMessage = await validateObject(req.body, {
+  const errorNotifications = await validateForm(req.body, {
     "password": anyRule([
       () => res.locals.dashboardAdminMode,
       (value) => userService.authenticate(dashboardUser.name, value)
@@ -23,18 +23,18 @@ export async function dashboardPasswordPost(req: CustomRequest, res: CustomRespo
   });
 
   // Change password form
-  if (!errorMessage) {
+  if (errorNotifications.length === 0) {
     const result = userService.setPassword(dashboardUser, req.body["new-password"]);
     if (result !== true) {
-      errorMessage = result;
+      errorNotifications.push({ type: "danger", message: result });
     } else {
       await userService.save(dashboardUser);
       res.locals.notifications.push({ type: "success", message: "Password change successful" });
     }
   }
 
-  if (errorMessage) {
-    res.locals.notifications.push({ type: "danger", message: errorMessage });
+  if (errorNotifications.length > 0) {
+    res.locals.notifications.push(...errorNotifications);
   }
 
   res.redirect(req.url);

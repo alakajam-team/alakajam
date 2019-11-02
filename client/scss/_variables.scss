@@ -17,7 +17,6 @@ $white-lighter: change-color(white, $alpha: .9);
 $main: #00abd6;
 $main-light: change-color($main, $lightness: 46%);
 $main-lighter: change-color($main, $lightness: 85%);
-$main-lightest: change-color($main, $alpha: .1);
 $main-dark: change-color($main, $lightness: 32%);
 $main-transparent: change-color($main, $alpha: .1);
 

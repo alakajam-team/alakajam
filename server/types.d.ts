@@ -3,6 +3,7 @@ import { CommonLocals } from "./common.middleware";
 
 export interface NotificationMessage {
   type: "success" | "info" | "warning" | "danger";
+  title?: string;
   message: string;
 }
 

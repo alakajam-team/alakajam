@@ -1,5 +1,11 @@
+/*
+ * Bootstrap Notify integration
+ * https://github.com/mouse0270/bootstrap-notify
+ */
+
 interface NotificationMessage {
-  type: "success" | "info" | "warning" | "error";
+  type: "success" | "info" | "warning" | "danger";
+  title?: string;
   message: string;
 }
 
@@ -15,16 +21,22 @@ export default function(selector: string) {
 
   for (const notification of notifications) {
     $.notify({
+      title: notification.title,
       message: notification.message
     }, {
       type: notification.type,
+      placement: {
+        from: "top",
+        align: ["warning", "danger"].includes(notification.type) ? "center" : "right"
+      },
       delay: 3000 + notification.message.length * 50,
+      mouse_over: "pause",
       offset: {
-        x: 15,
-        y: 75
+        x: 0,
+        y: 120
       },
       animate: {
-        enter: "animated fadeInDown faster",
+        enter: "animated fadeIn fastest",
         exit: "animated fadeOut fast"
       }
     });
