@@ -1,11 +1,11 @@
-import { NotificationMessage } from "server/types";
+import { Alert } from "server/types";
 
 export type Validator = (value: any) => Promise<undefined | string> | undefined | string;
 
 export type TestFunction = (value?: any) => Promise<any> | any;
 
 export async function validateForm(object: object, validators: {[key: string]: Validator})
-    : Promise<NotificationMessage[]> {
+    : Promise<Alert[]> {
   const results: Array<undefined | string> = [];
   for (const key of Object.keys(validators)) {
     results.push(await validators[key](object[key]));

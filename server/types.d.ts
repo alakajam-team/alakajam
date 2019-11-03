@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { CommonLocals } from "./common.middleware";
 
-export interface NotificationMessage {
+export interface Alert {
   type: "success" | "info" | "warning" | "danger";
+  floating?: boolean;
   title?: string;
   message: string;
 }
@@ -16,7 +17,7 @@ export interface CustomExpressSession extends Express.Session {
 
   // Session contents
   userId: number;
-  notifications: NotificationMessage[];
+  alerts: Alert[];
 }
 
 export interface CustomRequest extends Request {

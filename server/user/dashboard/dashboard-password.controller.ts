@@ -13,7 +13,7 @@ export async function dashboardPasswordGet(req: CustomRequest, res: CustomRespon
 export async function dashboardPasswordPost(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const dashboardUser = res.locals.dashboardUser;
 
-  const errorNotifications = await validateForm(req.body, {
+  const formAlerts = await validateForm(req.body, {
     "password": anyRule([
       () => res.locals.dashboardAdminMode,
       (value) => userService.authenticate(dashboardUser.name, value)
@@ -23,18 +23,18 @@ export async function dashboardPasswordPost(req: CustomRequest, res: CustomRespo
   });
 
   // Change password form
-  if (errorNotifications.length === 0) {
+  if (formAlerts.length === 0) {
     const result = userService.setPassword(dashboardUser, req.body["new-password"]);
     if (result !== true) {
-      errorNotifications.push({ type: "danger", message: result });
+      formAlerts.push({ type: "danger", message: result });
     } else {
       await userService.save(dashboardUser);
-      res.locals.notifications.push({ type: "success", message: "Password change successful" });
+      res.locals.alerts.push({ type: "success", message: "Password change successful" });
     }
   }
 
-  if (errorNotifications.length > 0) {
-    res.locals.notifications.push(...errorNotifications);
+  if (formAlerts.length > 0) {
+    res.locals.alerts.push(...formAlerts);
   }
 
   res.redirect(req.url);

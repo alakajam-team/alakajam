@@ -12,7 +12,7 @@
     "start:production": "node dist/server/index.js",
     "build": "npm run build:css && npm run build:client && npm run build:server",
     "build:css": "node -r ts-node/register server/sass.ts",
-    "build:sass": "npm run build:css",
+    "build:sass": "echo 'Did you mean build:css?'",
     "build:client": "node -r ts-node/register server/webpack.ts",
     "build:server": "tsc --build tsconfig.build.json",
     "lint": "npm run lint:server && npm run lint:client",

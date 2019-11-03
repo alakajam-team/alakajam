@@ -44,6 +44,11 @@ export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLo
   }
 
   if (!context.errorMessage && context.redirect) {
+    res.locals.alerts.push({
+      type: "success",
+      message: "Login successful",
+      floating: true
+    });
     res.redirect(context.redirect);
   } else {
     res.render("user/authentication/login", context);

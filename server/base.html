@@ -67,7 +67,7 @@
       ga('send', 'pageview');
     {% endif %}
   </script>
-  <script id="js-notifications" type="application/json">{{ notifications | dump | safe }}</script>
+  <script id="js-alerts" type="application/json">{{ alerts | dump | safe }}</script>
 </head>
 {% set inEvent = event and event.get('id') %}
 <body {{ 'class=in-event' if inEvent }}>

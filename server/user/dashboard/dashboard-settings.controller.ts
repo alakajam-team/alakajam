@@ -71,8 +71,13 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
     if (dashboardUser.title !== oldTitle) {
       await userService.refreshUserReferences(dashboardUser);
     }
+
+    res.locals.alerts.push({
+      type: "success",
+      message: "Settings have been saved"
+    });
   } else {
-    res.locals.notifications.push(...errorNotifications);
+    res.locals.alerts.push(...errorNotifications);
   }
 
   await dashboardSettingsGet(req, res);
@@ -90,7 +95,7 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
     }
     return;
   } else {
-    res.locals.notifications.push({
+    res.locals.alerts.push({
       type: "danger",
       title: "Could not delete account",
       message: result.error

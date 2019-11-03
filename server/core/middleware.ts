@@ -129,9 +129,9 @@ async function configure(app: express.Application) {
 
     const nativeRedirect = res.redirect;
     res.redirect = (...args) => {
-      if (res.locals.notifications.length > 0) {
+      if (res.locals.alerts.length > 0) {
         // Store the notifications until the next page
-        req.session.notifications = res.locals.notifications;
+        req.session.alerts = res.locals.alerts;
       }
       nativeRedirect.apply(res, args);
     };

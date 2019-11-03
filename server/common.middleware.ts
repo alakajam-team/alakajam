@@ -8,7 +8,7 @@ import eventService from "server/event/event.service";
 import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
 import commentService from "./post/comment/comment.service";
-import { CustomRequest, NotificationMessage } from "./types";
+import { Alert, CustomRequest } from "./types";
 
 export interface CommonLocals {
   /**
@@ -30,10 +30,10 @@ export interface CommonLocals {
   pageDescription: string;
 
   /**
-   * Messages to notify to the user in the top-right corner of the screen when the page loads.
+   * Messages to notify to the user in the top of the screen when the page loads.
    * Available and settable everywhere.
    */
-  notifications: NotificationMessage[];
+  alerts: Alert[];
 
   /**
    * Current logged in user (undefined if logged out).
@@ -66,8 +66,8 @@ export async function commonMiddleware(req: CustomRequest, res: Response, next: 
   res.locals.path = req.originalUrl;
 
   // Restore notifications from session
-  res.locals.notifications = req.session.notifications || [];
-  req.session.notifications = [];
+  res.locals.alerts = req.session.alerts || [];
+  req.session.alerts = [];
 
   // Fetch current user
   let userTask = null;
