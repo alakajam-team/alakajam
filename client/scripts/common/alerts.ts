@@ -63,7 +63,8 @@ export default function(selector: string) {
       animate: {
         enter: "animated fadeInDown faster",
         exit: "animated fadeOut fast"
-      }
+      },
+      z_index: 1029
     });
   }
 }

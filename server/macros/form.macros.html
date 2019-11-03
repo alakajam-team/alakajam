@@ -115,7 +115,7 @@
       {% if alert.title %}
       <div class="alert-title">{{ alert.title }}</div>
       {% endif %}
-      <div class="alert-message">{{ alert.message }}</div>
+      {{ alert.message }}
     </div>
   {% endif %}
   {% endfor %}

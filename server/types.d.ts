@@ -21,6 +21,10 @@ export interface CustomExpressSession extends Express.Session {
 }
 
 export interface CustomRequest extends Request {
+  /**
+   * The user session, the object can be used to store any data we want to retain across the user session.
+   * Be careful to save it (with session.saveAsync()) if you set anything, otherwise it will make the server stateful.
+   */
   session: CustomExpressSession;
   csrfToken: () => string;
 }

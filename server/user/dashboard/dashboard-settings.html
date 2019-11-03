@@ -44,13 +44,13 @@
 
     <div class="form-group">
       <label for="name">Email address</label>{{ formMacros.tooltip('Only used for password recovery. Any upcoming feature involving emails will be opt-in.', { placement: 'right' }) }}
-      <input type="text" class="form-control" id="email" name="email" placeholder="Email address" value="{{ dashboardUser.get('email') }}" required="required" />
+      <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ dashboardUser.get('email') }}" required="required" />
     </div>
 
     {% set socialLinks = dashboardUser.related('details').get('social_links') %}
     <div class="form-group">
       <label for="name">Website</label>
-      <input type="text" class="form-control" id="website" name="website" placeholder="http://" value="{{ socialLinks.website }}" />
+      <input type="url" class="form-control" id="website" name="website" placeholder="http://" value="{{ socialLinks.website }}" />
     </div>
 
     <div class="form-group">

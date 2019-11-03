@@ -42,7 +42,7 @@ export async function userProfile(req, res) {
       posts,
       userScores: scores.models,
       medals: scores.countBy((userScore) => userScore.get("ranking")),
-      userLikes: await likeService.findUserLikeInfo(posts, res.locals.user),
+      userLikes: await likeService.findUserLikeInfo(posts, res.locals.user)
     });
   } else {
     res.errorPage(404, "No user exists with name " + req.params.name);

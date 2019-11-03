@@ -65,9 +65,13 @@ export interface CommonLocals {
 export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction) {
   res.locals.path = req.originalUrl;
 
-  // Restore notifications from session
-  res.locals.alerts = req.session.alerts || [];
-  req.session.alerts = [];
+  // Init alerts, restore them from the session if needed
+  res.locals.alerts = [];
+  if (req.session.alerts && req.session.alerts.length > 0) {
+    res.locals.alerts = req.session.alerts || [];
+    req.session.alerts = [];
+    await req.session.saveAsync();
+  }
 
   // Fetch current user
   let userTask = null;

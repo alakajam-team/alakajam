@@ -45,7 +45,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
   }
 
   // Validate changes
-  const errorNotifications = await validateForm(req.body, {
+  const formAlerts = await validateForm(req.body, {
     email: anyRule([forms.isNotSet, forms.isEmail], "Invalid email"),
     website: anyRule([forms.isNotSet, forms.isURL], "Account website has an invalid URL"),
     special_permissions: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
@@ -56,7 +56,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
       "Invalid picture format (allowed: PNG GIF JPG)")
   });
 
-  if (errorNotifications.length === 0) {
+  if (!formAlerts) {
     // Persist avatar
     if (req.file || req.body["avatar-delete"]) {
       const avatarPath = "/user/" + dashboardUser.id;
@@ -77,7 +77,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
       message: "Settings have been saved"
     });
   } else {
-    res.locals.alerts.push(...errorNotifications);
+    res.locals.alerts.push(...formAlerts);
   }
 
   await dashboardSettingsGet(req, res);

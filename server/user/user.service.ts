@@ -93,10 +93,9 @@ export class UserService {
    * Fetches a user
    */
   public async findByName(name: string, options: FindOneOptions<User> = {}): Promise<User> {
-    const like = config.DB_TYPE === "sqlite3" ? "LIKE" : "ILIKE"; // Case insensitive search
     const userRepository = getRepository(User);
     return userRepository.findOne({
-      where: `User.name ${like} '${name}'`,
+      where: `User.name ${configUtils.ilikeOperator()} '${name}'`,
       relations: ["details"],
       ...options
     });

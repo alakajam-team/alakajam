@@ -5,7 +5,7 @@ export type Validator = (value: any) => Promise<undefined | string> | undefined 
 export type TestFunction = (value?: any) => Promise<any> | any;
 
 export async function validateForm(object: object, validators: {[key: string]: Validator})
-    : Promise<Alert[]> {
+    : Promise<Alert[] | undefined> {
   const results: Array<undefined | string> = [];
   for (const key of Object.keys(validators)) {
     results.push(await validators[key](object[key]));
@@ -13,7 +13,7 @@ export async function validateForm(object: object, validators: {[key: string]: V
   const errors = results.filter((result) => result !== undefined);
 
   if (errors.length === 0) {
-    return [];
+    return undefined;
   } else {
     return errors.map((errorMessage) => ({
       type: "danger",
@@ -40,15 +40,15 @@ export function rule(testFunction: TestFunction, errorMessage?: string): Validat
 
 /**
  * Accepts a given value only if it satisfies ALL specified tests.
- * Note: if the field is not set, the test function might fail and trigger an error (= required field).
  * @param testFunction
  * @param errorMessage
  */
-export function allRules(testFunctions: TestFunction[], errorMessage?: string): Validator {
+export function allRules(...validators: Validator[]): Validator {
   return async (value?: any) => {
-    for (const testFunction of testFunctions) {
-      if (!(await testFunction(value))) {
-        return _errorMessage(value, errorMessage);
+    for (const validator of validators) {
+      const result = await validator(value);
+      if (result) {
+        return result;
       }
     }
     return undefined;
@@ -56,8 +56,8 @@ export function allRules(testFunctions: TestFunction[], errorMessage?: string): 
 }
 
 /**
- * Accepts a given value only if it satisfies one of the specified tests.
- * Note: if the field is not set, the test function might fail and trigger an error (= required field).
+ * Accepts a given value only if it satisfies at least one of the specified tests.
+ * Example: to make an email optional, use `anyRule([forms.isNotSet, forms.isEmail], "Invalid email")`
  * @param testFunction
  * @param errorMessage
  */

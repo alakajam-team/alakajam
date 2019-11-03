@@ -23,7 +23,7 @@ export async function dashboardPasswordPost(req: CustomRequest, res: CustomRespo
   });
 
   // Change password form
-  if (formAlerts.length === 0) {
+  if (!formAlerts) {
     const result = userService.setPassword(dashboardUser, req.body["new-password"]);
     if (result !== true) {
       formAlerts.push({ type: "danger", message: result });
@@ -31,9 +31,7 @@ export async function dashboardPasswordPost(req: CustomRequest, res: CustomRespo
       await userService.save(dashboardUser);
       res.locals.alerts.push({ type: "success", message: "Password change successful" });
     }
-  }
-
-  if (formAlerts.length > 0) {
+  } else {
     res.locals.alerts.push(...formAlerts);
   }
 

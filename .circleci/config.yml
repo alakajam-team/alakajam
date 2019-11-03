@@ -1,10 +1,6 @@
 version: 2
 jobs:
   build:
-    branches:
-      only:
-        - master
-        - typeorm
     docker:
       - image: cypress/base:10
     steps:

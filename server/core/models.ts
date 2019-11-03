@@ -4,7 +4,7 @@
 /**
  * Bookshelf models
  *
- * /!\ To be deprecated/retired progressively. The goal is to progressively migrate from Bookshelf to TypeORM.
+ * NB. To be deprecated/retired someday. The goal is to progressively migrate from Bookshelf to TypeORM.
  *
  * @module core/models
  */

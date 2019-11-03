@@ -25,11 +25,19 @@ export class User extends TimestampedEntity {
   @Column({ nullable: true })
   public avatar: string;
 
+  /**
+   * "true" if set ("1" on SQLite), "" or NULL otherwise.
+   * TODO Migrate to boolean
+   */
   @Column({ default: false })
-  public is_mod: string; // XXX "true" or ""
+  public is_mod: string;
 
+  /**
+   * "true" if set ("1" on SQLite), "" or NULL otherwise.
+   * TODO Migrate to boolean
+   */
   @Column({ default: false })
-  public is_admin: string; // XXX "true" or ""
+  public is_admin: string;
 
   @Column({ default: false })
   public disallow_anonymous: boolean;
