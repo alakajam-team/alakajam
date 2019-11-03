@@ -1,7 +1,7 @@
 /* tslint:disable:variable-name */
 
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BookshelfCompatible } from "./bookshelf-compatible.entity";
+import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
 import { User } from "./user.entity";
 
@@ -9,7 +9,7 @@ import { User } from "./user.entity";
  * Extended user information, mostly containing the user profile page.
  */
 @Entity()
-export class UserDetails extends BookshelfCompatible {
+export class UserDetails extends BookshelfCompatibleEntity {
 
   @PrimaryGeneratedColumn()
   public id: number;

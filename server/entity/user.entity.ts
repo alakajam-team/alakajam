@@ -1,14 +1,14 @@
 /* tslint:disable:variable-name */
 
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Timestamped } from "./timestamped.entity";
+import { TimestampedEntity } from "./timestamped.entity";
 import { UserDetails } from "./user-details.entity";
 
 /**
  * User account information.
  */
 @Entity()
-export class User extends Timestamped {
+export class User extends TimestampedEntity {
 
   @PrimaryGeneratedColumn()
   public id: number;

@@ -48,9 +48,10 @@ export async function insertInitialData(samples) {
     entrantUser.set({
       title: "Entrant",
     });
-    await entrantUser.related("details").set({
+    entrantUser.related("details").set({
       body: "I am definitely **not** a robot.",
-    }).save();
+    });
+    userService.save(entrantUser);
 
     // 1st event
 

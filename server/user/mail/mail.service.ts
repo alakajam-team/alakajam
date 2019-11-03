@@ -48,7 +48,8 @@ if (!config.DEBUG_TEST_MAILER) {
         },
       });
     } else {
-      log.error(err.message);
+      log.error("Failed to inizialize fake nodemailer account. Their service might be temporarily down.",
+        err.message);
     }
   });
 }

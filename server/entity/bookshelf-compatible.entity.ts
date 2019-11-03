@@ -1,4 +1,4 @@
-export abstract class BookshelfCompatible {
+export abstract class BookshelfCompatibleEntity {
 
   public get(key: string): any {
     return this[key];
