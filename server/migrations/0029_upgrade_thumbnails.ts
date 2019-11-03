@@ -3,18 +3,14 @@ if (__filename.endsWith(".js")) {
   require("module-alias/register");
 }
 
-import * as fsNative from "fs";
-import * as pathNative from "path";
-import * as promisify from "promisify-node";
+import * as fs from "fs-extra";
+import * as path from "path";
 
 import config from "server/core/config";
 import constants from "server/core/constants";
 import log from "server/core/log";
 import * as models from "server/core/models";
 import eventService from "server/event/event.service";
-
-const fs = promisify(fsNative);
-const path = promisify(pathNative);
 
 exports.up = async (knex) => {
   let entries;
