@@ -12,5 +12,8 @@
   },
   "include": [
     "server/**/*.ts"
+  ],
+  "files": [
+    "server/types.d.ts"
   ]
 }

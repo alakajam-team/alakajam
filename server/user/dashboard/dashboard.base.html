@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "user/user.macros.html" as userMacros %}
+{% import "macros/form.macros.html" as formMacros %}
 
 {% block body %}
 
@@ -39,6 +40,8 @@
       {% if errorMessage %}
         <div class="alert alert-warning">{{ errorMessage }}</div>
       {% endif %}
+
+      {{ formMacros.alerts(alerts) }}
 
       {% block dashboardBody %}{% endblock %}
     </div>

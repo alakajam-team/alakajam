@@ -1,15 +1,14 @@
-import { Request } from "express";
 import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
 import db from "server/core/db";
 import security from "server/core/security";
-import { CustomResponse } from "server/types";
+import { CustomRequest, CustomResponse } from "server/types";
 import userService from "../../user/user.service";
 
 /**
  * Admin only: developer tools
  */
-export async function adminDev(req: Request, res: CustomResponse<CommonLocals>) {
+export async function adminDev(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   if (res.app.locals.devMode && (config.DEBUG_ADMIN || security.isAdmin(res.locals.user))) {
     let infoMessage = "";
     let errorMessage = "";

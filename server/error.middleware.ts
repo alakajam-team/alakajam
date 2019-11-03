@@ -1,5 +1,6 @@
-import { Application, Request, Response } from "express";
+import { Response } from "express";
 import log from "server/core/log";
+import { CustomRequest } from "./types";
 
 /**
  * Routing: 500/404
@@ -31,7 +32,7 @@ export function createErrorRenderingMiddleware(devMode: boolean) {
  * @param error object or string message (optional)
  * @param devMode
  */
-export function errorPage(req: Request, res: Response, code: number, error?: Error|string, devMode?: boolean) {
+export function errorPage(req: CustomRequest, res: Response, code: number, error?: Error|string, devMode?: boolean) {
   const stack = (devMode && typeof error === "object") ? error.stack : undefined;
   let message = (typeof error === "object") ? error.message : error;
   let title;

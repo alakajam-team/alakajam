@@ -143,6 +143,9 @@ function createKnexInstance() {
     knex.on("query", (request) => {
       queryTimes[request.__knexUid] = Date.now();
     });
+    knex.on("query-error", (error, obj) => {
+      log.error(error, obj);
+    });
     knex.on("query-response", (_, request) => {
       if (queryTimes[request.__knexUid]) {
         const totalTime = Date.now() - queryTimes[request.__knexUid];

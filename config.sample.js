@@ -37,7 +37,7 @@ module.exports = {
   DEBUG_DISABLE_CACHE: true, // Prevents caching pages for performance optimisation
   DEBUG_REFRESH_BROWSER: true, // Refreshes the browser automatically upon code changes
   DEBUG_ADMIN: false, // Lets you access the admin back-end even when logged out
-  DEBUG_TEST_MAILER: true, // Uses a mailer requiring no config (might not work but emails are logged)
+  DEBUG_TEST_MAILER: true, // Uses the fake https://ethereal.email/ mailer (emails are also logged in console)
   DEBUG_DISABLE_STARTUP_BUILD: false, // Makes the server start faster by not rebuilding the client JS/CSS
   DEBUG_ARTICLES: true, // Uses the local version of the articles rather than downloading them from Github
   DEBUG_LONG_PROMISE_TRACES: false, // Enables better stack traces for Promises, at a performance and stability (Knex support) cost
@@ -47,5 +47,5 @@ module.exports = {
   DEBUG_TRACE_SQL: false, // Traces all SQL calls
   DEBUG_TRACE_SLOW_SQL: -1, // Traces SQL calls taking more than the specified time (in milliseconds, use -1 to disable)
   DEBUG_TRACE_REQUESTS: false, // Enables Express debug mode to trace request routes & timing
-  DEBUG_TRACE_SLOW_REQUESTS: -1 // Traces HTTP requests calls taking more than the specified time (in milliseconds, use -1 to disable)
+  DEBUG_TRACE_SLOW_REQUESTS: -1, // Traces HTTP requests calls taking more than the specified time (in milliseconds, use -1 to disable)
 }

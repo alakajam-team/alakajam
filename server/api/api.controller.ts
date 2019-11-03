@@ -6,7 +6,6 @@
  */
 
 import { BookshelfModel } from "bookshelf";
-import { Request } from "express";
 import * as lodash from "lodash";
 import * as moment from "moment";
 import { CommonLocals } from "server/common.middleware";
@@ -16,7 +15,7 @@ import forms from "server/core/forms";
 import links from "server/core/links";
 import eventService from "server/event/event.service";
 import eventThemeService from "server/event/theme/event-theme.service";
-import { CustomResponse } from "server/types";
+import { CustomRequest, CustomResponse } from "server/types";
 import * as url from "url";
 import userService from "../user/user.service";
 
@@ -338,7 +337,7 @@ export async function getUserSearch(req, res) {
   _renderJson(req, res, status, json);
 }
 
-export async function getThemeStats(req: Request, res: CustomResponse<CommonLocals>) {
+export async function getThemeStats(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   const title = forms.sanitizeString(req.params.theme);
   const themes = await eventThemeService.findThemesByTitle(title, {
     withRelated: ["event.details"]

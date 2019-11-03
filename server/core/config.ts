@@ -3,13 +3,6 @@ import * as fs from "fs";
 import * as path from "path";
 import log from "./log";
 
-export {
-  dataPathAbsolute,
-  uploadsPathAbsolute,
-  tmpPathAbsolute,
-  ilikeOperator,
-};
-
 const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 
 interface Config {
@@ -81,18 +74,41 @@ for (const key in configSample) {
 
 export default config;
 
-function dataPathAbsolute() {
+/**
+ * Root data path
+ */
+export function dataPathAbsolute() {
   return path.resolve(ROOT_PATH, config.DATA_PATH);
 }
 
-function uploadsPathAbsolute() {
+/**
+ * User uploads storage folder
+ */
+export function uploadsPathAbsolute() {
   return path.join(dataPathAbsolute(), "uploads");
 }
 
-function tmpPathAbsolute() {
+/**
+ * Temporary files folder
+ */
+export function tmpPathAbsolute() {
   return path.join(dataPathAbsolute(), "tmp");
 }
 
-function ilikeOperator() {
+/**
+ * Static files, output of the client build
+ */
+export function clientBuildPathAbsolute() {
+  return path.join(ROOT_PATH, "/dist/client");
+}
+
+/**
+ * Static files, non-build (images, etc.)
+ */
+export function staticPathAbsolute() {
+  return path.join(ROOT_PATH, "/static");
+}
+
+export function ilikeOperator() {
   return config.DB_TYPE === "sqlite3" ? "like" : "ilike";
 }

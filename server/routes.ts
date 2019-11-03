@@ -54,7 +54,7 @@ import { postView } from "./post/post-view.controller";
 import { postWatch } from "./post/post-watch.controller";
 import { postMiddleware } from "./post/post.middleware";
 import { postsView } from "./post/posts-view.controller";
-import { login, loginForm } from "./user/authentication/login.controller";
+import { loginGet, loginPost } from "./user/authentication/login.controller";
 import { logout } from "./user/authentication/logout.controller";
 import { passwordRecoveryRequest } from "./user/authentication/password-recovery-request.controller";
 import { passwordRecovery } from "./user/authentication/password-recovery.controller";
@@ -62,7 +62,7 @@ import { register, registerForm } from "./user/authentication/register.controlle
 import { dashboardEntries } from "./user/dashboard/dashboard-entries.controller";
 import { dashboardEntryImport } from "./user/dashboard/dashboard-entry-import.controller";
 import { dashboardFeed } from "./user/dashboard/dashboard-feed.controller";
-import { dashboardPassword } from "./user/dashboard/dashboard-password.controller";
+import { dashboardPasswordGet, dashboardPasswordPost } from "./user/dashboard/dashboard-password.controller";
 import { dashboardPosts } from "./user/dashboard/dashboard-posts.controller";
 import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
@@ -105,8 +105,8 @@ export function routes(app) {
 
     router.get("/register", csrf, registerForm);
     router.post("/register", csrf, register);
-    router.get("/login", csrf, loginForm);
-    router.post("/login", csrf, login);
+    router.get("/login", csrf, loginGet);
+    router.post("/login", csrf, loginPost);
     router.get("/logout", csrf, logout);
     router.all("/passwordRecoveryRequest", csrf, passwordRecoveryRequest);
     router.all("/passwordRecovery", csrf, passwordRecovery);
@@ -117,7 +117,8 @@ export function routes(app) {
     router.all("/dashboard/scores", csrf, dashboardScores);
     router.get("/dashboard/settings", csrf, dashboardSettingsGet);
     router.post("/dashboard/settings", upload.single("avatar"), csrf, dashboardSettingsPost);
-    router.all("/dashboard/password", csrf, dashboardPassword);
+    router.get("/dashboard/password", csrf, dashboardPasswordGet);
+    router.post("/dashboard/password", csrf, dashboardPasswordPost);
     router.all("/dashboard/entry-import", csrf, dashboardEntryImport);
     router.get("/user/:name", csrf, userProfile);
 

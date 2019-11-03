@@ -28,7 +28,7 @@ export async function insertInitialData(samples) {
     title: "Administrator",
     is_admin: true,
   });
-  await adminUser.save();
+  await userService.save(adminUser);
 
   await settings.save(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1);
   await settings.save(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 5);
@@ -48,9 +48,10 @@ export async function insertInitialData(samples) {
     entrantUser.set({
       title: "Entrant",
     });
-    await entrantUser.related("details").set({
+    entrantUser.related("details").set({
       body: "I am definitely **not** a robot.",
-    }).save();
+    });
+    userService.save(entrantUser);
 
     // 1st event
 

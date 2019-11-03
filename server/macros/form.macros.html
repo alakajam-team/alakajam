@@ -104,3 +104,20 @@
   {% endfor %}
 </select>
 {% endmacro %}
+
+{# ======== ALERTS ========= #}
+
+{% macro alerts(alerts) %}
+<div id="js-alerts-inline">
+  {% for alert in alerts %}
+  {% if not alert.floating %}
+    <div class="alert alert-{{ alert.type or 'info' }}">
+      {% if alert.title %}
+      <div class="alert-title">{{ alert.title }}</div>
+      {% endif %}
+      {{ alert.message }}
+    </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endmacro %}

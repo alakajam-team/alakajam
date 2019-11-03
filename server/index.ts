@@ -75,6 +75,7 @@ async function createApp() {
 
   app.locals.devMode = DEV_ENVIRONMENT;
   const previousVersion = await db.initDatabase();
+  await require("./core/db-typeorm").default.connect();
   if (previousVersion === "none") {
     await require("./core/db-init").insertInitialData(config.DEBUG_INSERT_SAMPLES);
   }

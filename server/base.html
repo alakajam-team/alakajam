@@ -67,6 +67,7 @@
       ga('send', 'pageview');
     {% endif %}
   </script>
+  <script id="js-alerts" type="application/json">{{ alerts | dump | safe }}</script>
 </head>
 {% set inEvent = event and event.get('id') %}
 <body {{ 'class=in-event' if inEvent }}>
@@ -194,6 +195,7 @@
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/jquery.lazy.min.js') }}"></script>
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/bootstrap.min.js') }}"></script>
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/bootstrap-datetimepicker.min.js') }}"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/scripts/bootstrap-notify.min.js') }}"></script>
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/icheck.min.js') }}"></script>
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/select2.full.min.js') }}"></script>
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/lodash.min.js') }}"></script>

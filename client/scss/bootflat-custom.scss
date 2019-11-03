@@ -1,3 +1,5 @@
+@import 'variables';
+
 /*
  * bootflat 2.0.4
  *
@@ -1413,6 +1415,11 @@ blockquote {
  * alert
  * --------------------------------------------------
  */
+.alert {
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, .25);
+  position: relative;
+  max-width: 900px;
+}
 .alert h4 {
   margin-bottom: 10px;
   font-weight: bold;
@@ -1420,21 +1427,27 @@ blockquote {
 .alert-dismissable .close {
   color: black;
 }
+.alert-title {
+  font-weight: bold;
+  display: block;
+}
 .alert-info {
-  background-color: #7cd1ef;
-  border: #4fc1e9;
+  background-color: $main-lighter;
+  border-color: $main;
+  color: $main-dark;
 }
 .alert-warning {
   background-color: #ffdd87;
-  border: #ffce54;
+  border-color: #c48c00;
 }
 .alert-danger {
-  background-color: #f2838f;
-  border: #ed5565;
+  background-color: #ffa8a8;
+  border-color: #c94451;
+  color: #822;
 }
 .alert-success {
   background-color: #b9df90;
-  border: #a0d468;
+  border-color: #6bb120;
 }
 .alert .alert-link {
   text-decoration: underline;
@@ -1455,6 +1468,21 @@ blockquote {
   text-decoration: none;
   filter: alpha(opacity=40);
   opacity: .4;
+}
+.alert .close {
+  display: block;
+  width: 100%;
+  position: absolute;
+  font-size: 0;
+  color: transparent;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.animated.fastest {
+  -webkit-animation-duration: 100ms;
+  animation-duration: 100ms;
 }
 
 /**

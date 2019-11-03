@@ -14,13 +14,15 @@ import * as bodyParser from "body-parser";
 import * as connectSessionKnex from "connect-session-knex";
 import * as cookies from "cookies";
 import * as express from "express";
-import * as nunjucks from "nunjucks";
+import { Application, NextFunction, Request, Response } from "express";
 import * as expressSession from "express-session";
+import * as nunjucks from "nunjucks";
 import * as path from "path";
 import * as randomKey from "random-key";
 import settings from "server/core/settings";
 import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
 import { routes } from "server/routes";
+import { CustomRequest } from "server/types";
 import userService from "server/user/user.service";
 import { promisify } from "util";
 import config, * as configUtils from "./config";
@@ -40,12 +42,12 @@ export default {
 /*
  * Setup app middleware
  */
-async function configure(app) {
+async function configure(app: Application) {
   app.locals.config = config;
 
   // Slow requests logging
   if (config.DEBUG_TRACE_SLOW_REQUESTS > -1) {
-    app.use((req, res, next) => {
+    app.use((req: Request, res: Response, next: NextFunction) => {
       const start = Date.now();
       res.once("finish", () => {
         const totalTime = Date.now() - start;
@@ -61,8 +63,8 @@ async function configure(app) {
   await userService.loadPasswordRecoveryCache(app);
 
   // Static files
-  app.use("/static", express.static(path.join(constants.ROOT_PATH, "/static")));
-  app.use("/dist/client", express.static(path.join(constants.ROOT_PATH, "/dist/client")));
+  app.use("/static", express.static(configUtils.staticPathAbsolute()));
+  app.use("/dist/client", express.static(configUtils.clientBuildPathAbsolute()));
   app.use("/data/uploads", express.static(configUtils.uploadsPathAbsolute()));
 
   // Session management
@@ -85,7 +87,7 @@ async function configure(app) {
 
   // Body parsers config
   app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(async (req, res, next) => {
+  app.use(async (req: Request, res: Response, next: NextFunction) => {
     // Multer auto cleanup (actual Multer middleware is declared at initUploadMiddleware())
     res.on("finish", cleanupFormFilesCallback(req, res));
     res.on("close", cleanupFormFilesCallback(req, res));
@@ -93,7 +95,7 @@ async function configure(app) {
   });
 
   // Templating: rendering context
-  app.use(function templateTooling(req, res, next) {
+  app.use(function templateTooling(req: CustomRequest, res: any, next: NextFunction) {
     /* Allows anyone to display an error page.
      * Calling render() after an errorPage() is tolerated an will be a no-op, although it would be bad practice.
      */
@@ -126,6 +128,16 @@ async function configure(app) {
       }
     };
 
+    const nativeRedirect = res.redirect;
+    res.redirect = async (...args) => {
+      if (res.locals.alerts.length > 0) {
+        // Store the notifications until the next page
+        req.session.alerts = res.locals.alerts;
+        await req.session.saveAsync();
+      }
+      nativeRedirect.apply(res, args);
+    };
+
     next();
   });
 
@@ -137,7 +149,7 @@ async function configure(app) {
 }
 
 function setupNunjucks(app) {
-  const loader = new nunjucks.FileSystemLoader(app.get('views'), {
+  const loader = new nunjucks.FileSystemLoader(app.get("views"), {
     watch: app.locals.devMode,
     noCache: app.locals.devMode,
   });
@@ -148,11 +160,11 @@ function setupNunjucks(app) {
     env.render(path.extname(this.name) ? this.name : this.name + this.ext, ctx, cb);
   };
 
-  let engineName = app.get('view engine');
+  let engineName = app.get("view engine");
 
   if (!engineName) {
-    engineName = 'html';
-    app.set('view engine', engineName);
+    engineName = "html";
+    app.set("view engine", engineName);
   }
 
   app.engine(engineName, engine);
@@ -160,7 +172,7 @@ function setupNunjucks(app) {
   return env;
 }
 
-function cleanupFormFilesCallback(req, res) {
+function cleanupFormFilesCallback(req: Request, res: Response) {
   return async function cleanupFormFiles() {
     if (res.locals.form) {
       res.locals.form.files.forEach((key) => {
@@ -219,15 +231,15 @@ function createSessionStore() {
 
 function promisifySession() {
   // For each session method that takes a callback, add a promisified variant
-  // as well. Make sure these are not enumerable to avoid confusing anything.
+  // as well. Make sure these are not enumerable to avoid messing up with anything.
   const Session = (expressSession as any).Session;
   ["regenerate", "destroy", "reload", "save"].forEach((funcName) => {
     const originalFunction = Session.prototype[funcName];
-    const promisifiedFunction = promisify(function(callback) { originalFunction.call(this, callback); });
-    Object.defineProperty(Session.prototype, funcName + "Promisified", {
+    const asyncFunction = promisify(function(callback) { originalFunction.call(this, callback); });
+    Object.defineProperty(Session.prototype, funcName + "Async", {
       configurable: true,
       enumerable: false,
-      value: promisifiedFunction,
+      value: asyncFunction,
       writable: false,
     });
   });

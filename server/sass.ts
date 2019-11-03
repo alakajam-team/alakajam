@@ -22,6 +22,8 @@ class SassBuilder {
   private writeFileAsync = promisify(writeFile);
 
   public async initialize({ watch = false }): Promise<[sass.Result, string[]] | undefined> {
+    this.copyWebfonts();
+
     if (!watch) {
       log.info("Building SASS...");
 
@@ -55,8 +57,6 @@ class SassBuilder {
         });
       });
     }
-
-    this.copyWebfonts();
   }
 
   private copyWebfonts() {

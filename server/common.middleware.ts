@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
 import security from "server/core/security";
@@ -8,6 +8,7 @@ import eventService from "server/event/event.service";
 import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
 import commentService from "./post/comment/comment.service";
+import { Alert, CustomRequest } from "./types";
 
 export interface CommonLocals {
   /**
@@ -21,6 +22,18 @@ export interface CommonLocals {
    * Available and settable everywhere.
    */
   pageTitle: string;
+
+  /**
+   * The description to set on the current page, for search engines and social media cards.
+   * Available and settable everywhere.
+   */
+  pageDescription: string;
+
+  /**
+   * Messages to notify to the user in the top of the screen when the page loads.
+   * Available and settable everywhere.
+   */
+  alerts: Alert[];
 
   /**
    * Current logged in user (undefined if logged out).
@@ -49,8 +62,16 @@ export interface CommonLocals {
   [key: string]: any;
 }
 
-export async function commonMiddleware(req: Request, res: Response, next: NextFunction) {
+export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction) {
   res.locals.path = req.originalUrl;
+
+  // Init alerts, restore them from the session if needed
+  res.locals.alerts = [];
+  if (req.session.alerts && req.session.alerts.length > 0) {
+    res.locals.alerts = req.session.alerts || [];
+    req.session.alerts = [];
+    await req.session.saveAsync();
+  }
 
   // Fetch current user
   let userTask = null;

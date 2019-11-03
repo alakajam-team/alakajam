@@ -2,6 +2,7 @@ import cache from "server/core/cache";
 import eventService from "server/event/event.service";
 import commentService from "server/post/comment/comment.service";
 import postService from "server/post/post.service";
+import userService from "../user.service";
 
 /**
  * View comment feed
@@ -41,7 +42,7 @@ export async function dashboardFeed(req, res) {
   const notificationsLastRead = dashboardUser.get("notifications_last_read");
   if (!res.locals.dashboardAdminMode) {
     dashboardUser.set("notifications_last_read", new Date());
-    await dashboardUser.save();
+    await userService.save(dashboardUser);
     userCache.del("unreadNotifications");
     res.locals.unreadNotifications = 0;
   }

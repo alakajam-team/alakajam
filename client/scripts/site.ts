@@ -2,6 +2,7 @@
  * JavaScript bundle root to be served up to the browser.
  */
 
+import alerts from "./common/alerts";
 import checkAllNone from "./common/check-all-none";
 import datePicker from "./common/date-picker";
 import disabledLinks from "./common/disabled-links";
@@ -54,6 +55,7 @@ $(function domReady() {
   formSubmit();
   icheck();
   lazyImages(".js-lazy, .user-contents img");
+  alerts("#js-alerts");
   pictureInput();
   radioTextField();
   select();
