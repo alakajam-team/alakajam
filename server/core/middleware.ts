@@ -62,8 +62,8 @@ async function configure(app: express.Application) {
   await userService.loadPasswordRecoveryCache(app);
 
   // Static files
-  app.use("/static", express.static(path.join(constants.ROOT_PATH, "/static")));
-  app.use("/dist/client", express.static(path.join(constants.ROOT_PATH, "/dist/client")));
+  app.use("/static", express.static(configUtils.staticPathAbsolute()));
+  app.use("/dist/client", express.static(configUtils.clientBuildPathAbsolute()));
   app.use("/data/uploads", express.static(configUtils.uploadsPathAbsolute()));
 
   // Session management
