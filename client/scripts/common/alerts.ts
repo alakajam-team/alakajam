@@ -14,7 +14,7 @@ const INLINE_ALERTS_SELECTOR = "#js-alerts-inline";
 
 function makeInlineAlertsDismissable() {
   const inlineAlerts = $(".alert", $(INLINE_ALERTS_SELECTOR));
-  inlineAlerts.css({ cursor: "pointer "});
+  inlineAlerts.css({ cursor: "pointer" });
   inlineAlerts.click((e) => {
     $(e.delegateTarget).fadeOut(300);
   });
