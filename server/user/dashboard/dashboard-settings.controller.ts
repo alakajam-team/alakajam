@@ -5,6 +5,7 @@ import { anyRule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
+import userTimezoneService from "../user-timezone.service";
 import { DashboardLocals } from "./dashboard.middleware";
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
@@ -20,6 +21,10 @@ export async function dashboardSettingsPost(req: CustomRequest, res: CustomRespo
   } else {
     await _handleSave(req, res);
   }
+}
+
+export async function dashboardSettingsApiTimezones(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+  res.json(await userTimezoneService.getAllTimeZones());
 }
 
 async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>) {

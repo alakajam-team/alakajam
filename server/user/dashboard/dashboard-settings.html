@@ -47,6 +47,13 @@
       <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ dashboardUser.get('email') }}" required="required" />
     </div>
 
+    <div class="form-group">
+      <label for="title">Timezone</label>
+      <select id="js-select-timezone" class="form-control" multiple="true">
+        <!--<option value="3620194" selected="selected">select2/select2</option>-->
+      </select>
+    </div>
+
     {% set socialLinks = dashboardUser.related('details').get('social_links') %}
     <div class="form-group">
       <label for="name">Website</label>

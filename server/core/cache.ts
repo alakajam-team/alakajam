@@ -9,16 +9,19 @@
 import * as NodeCache from "node-cache";
 import config from "./config";
 
+export const TTL_ONE_DAY = 24 * 60 * 3600;
+export const TTL_ONE_MINUTE = 60;
+
 /*
  * Caches declaration
  * stdTTL: (default: 0) the standard ttl as number in seconds for every generated cache element. 0 = unlimited
  */
-const generalTtl = 24 * 60 * 3600; // one day
-const usersTtl = 10 * 60; // 10 minutes
-const eventsTtl = 24 * 60 * 3600; // one day
-const settingsTtl = 24 * 60 * 3600; // one day
-const articlesTtl = 24 * 60 * 3600; // one day
-const entryImportTtl = 3 * 60; // 3 minutes
+const generalTtl = TTL_ONE_DAY;
+const usersTtl = 10 * TTL_ONE_MINUTE;
+const eventsTtl = TTL_ONE_DAY;
+const settingsTtl = TTL_ONE_DAY;
+const articlesTtl = TTL_ONE_DAY;
+const entryImportTtl = 3 * TTL_ONE_MINUTE;
 
 let Cache: any = NodeCache;
 if (config.DEBUG_DISABLE_CACHE) {

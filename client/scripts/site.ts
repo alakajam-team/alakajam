@@ -42,6 +42,7 @@ import themeShortlist from "./event/theme-shortlist";
 import themeVotes from "./event/theme-votes";
 import like from "./post/like";
 import dashboardEntryImport from "./user/dashboard-entry-import";
+import dashboardSettingsTimezone from "./user/dashboard-settings-timezone";
 
 $(function domReady() {
 
@@ -95,4 +96,5 @@ $(function domReady() {
 
   // User
   dashboardEntryImport();
+  dashboardSettingsTimezone();
 });
