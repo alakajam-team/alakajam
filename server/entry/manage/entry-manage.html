@@ -235,7 +235,8 @@
         <div class="form-group">
           <label for="body">Detailed description</label>
           <div class="user-contents user-contents__editor">
-            {{ formMacros.editor('body', entryDetails.get('body'), 'entry-details-' + entry.get('id')) }}
+            {% set autosaveId = 'entry-details|' + user.get('name') + '|' + (event.get('name') if event else 'external-event') + '|' + entry.get('id') %}
+            {{ formMacros.editor('body', entryDetails.get('body'), autosaveId) }}
           </div>
         </div>
         <div class="form-group">
