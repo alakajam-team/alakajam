@@ -7,7 +7,7 @@ interface Alert {
   type: "success" | "info" | "warning" | "danger";
   title?: string;
   message: string;
-  floating: boolean;
+  floating?: boolean;
 }
 
 const INLINE_ALERTS_SELECTOR = "#js-alerts-inline";
