@@ -7,8 +7,6 @@
  */
 export default function editor(mdSelector, cmSelector) {
   $(mdSelector).each(function() {
-    const $this = $(this);
-    const autosaveId = $this.attr("data-autosave-id");
     const mde = new EasyMDE({
       element: this,
       autoDownloadFontAwesome: false,
@@ -45,11 +43,7 @@ export default function editor(mdSelector, cmSelector) {
           title: "Markdown guide"
         }],
       status: false,
-      forceSync: true, // Save all changes immediately to underlying textarea. Needed for warnOnUnsavedChanges.
-      autosave: {
-        enabled: !!autosaveId,
-        uniqueId: autosaveId
-      }
+      forceSync: true // Save all changes immediately to underlying textarea. Needed for warnOnUnsavedChanges.
     });
     mde.codemirror.setOption("extraKeys", {
       Home: "goLineLeft",

@@ -1,7 +1,7 @@
 {# ======== MARKDOWN EDITOR ========= #}
 
 {% macro editor(editorName, editorContents, autosaveId = '') %}
-<textarea class="form-control easymde-editor" name="{{ editorName }}" data-autosave-id="{{ autosaveId }}">{{ editorContents | markdownUnescape }}</textarea>
+<textarea class="form-control easymde-editor" name="{{ editorName }}">{{ editorContents | markdownUnescape }}</textarea>
 {% endmacro %}
 
 {% macro editorScripts() %}
