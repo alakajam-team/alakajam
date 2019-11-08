@@ -70,6 +70,18 @@ const sanitizeHtmlOptions = {
   allowedTags: constants.ALLOWED_POST_TAGS,
   allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
   allowedClasses: {}, // see below
+  transformTags: {
+    iframe: (tagName, attribs) => {
+      if (attribs.src) {
+        // Use cookie-free Youtube host
+        attribs.src = attribs.src.replace("youtube.com", "youtube-nocookie.com");
+      }
+      return {
+        tagName,
+        attribs
+      };
+    }
+  },
   exclusiveFilter(frame) {
     if (frame.tag === "iframe") {
       const srcUrl = url.parse(frame.attribs.src);
@@ -154,7 +166,7 @@ function isUsername(str) {
  */
 function isId(value) {
   return value && ((typeof value === "number" && value % 1 === 0 && value > 0 && value < MAX_POSTGRESQL_INTEGER) ||
-      validator.isInt(value, { min: 1, max: MAX_POSTGRESQL_INTEGER }));
+    validator.isInt(value, { min: 1, max: MAX_POSTGRESQL_INTEGER }));
 }
 
 /**
@@ -281,13 +293,13 @@ function parseJson(str, options: any = {}) {
  * @param  {string} markdown
  * @return {string}
  */
-function markdownToHtml(markdown) {
+function markdownToHtml(markdown: string) {
   markdown = (markdown || "")
-      // Automatically enable markdown inside HTML tags (not <p> because it messes things up)
+    // Automatically enable markdown inside HTML tags (not <p> because it messes things up)
     .replace(/< ?(div|table|tr|td|th|ul|li|h[1-5])/gi, '<$1 markdown="1" ')
-      // Github-style mentions parsing
-      // (adapted from https://github.com/showdownjs/showdown/blob/master/src/subParsers/makehtml/anchors.js)
-    .replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,'[\]()]|\s|$)/gmi, (wm, st, escape, mentions, username) => {
+    // Github-style mentions parsing
+    // (adapted from https://github.com/showdownjs/showdown/blob/master/src/subParsers/makehtml/anchors.js)
+    .replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,'[\]()]|\s|$)/gmi, (text, st, escape, mentions, username) => {
       if (escape === "\\") {
         return st + mentions;
       } else {

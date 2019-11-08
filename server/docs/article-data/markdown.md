@@ -163,13 +163,9 @@ Hello, @wan!
 
 ## <a name="embeds"></a>Embeds ##
 
-The `<iframe>` tag is allowed from whitelisted hosts:
+The `<iframe>` tag is allowed from YouTube videos. You can use this to embed media in your post.
 
-* `gfycat.com`
-* `vimeo.com`
-* `youtube.com`
-
-You can use this to embed media in your post.
+> NB. While YouTube has an option to disable tracking cookies, most other site embeds (Soundcloud, Vimeo etc.) don't; that's why embeds are quite restricted. This lets us be RGPD-compliant without having to host one of those ugly "Accept cookies" banners.
 
 ## <a name="images"></a>Images ##
 

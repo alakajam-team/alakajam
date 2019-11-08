@@ -105,7 +105,9 @@ export default {
     "pull-left", "pull-right", "text-left", "text-center", "text-right",
     "spoiler", "indent", "btn", "btn-default", "btn-primary",
   ],
-  ALLOWED_IFRAME_HOSTS: ["player.vimeo.com", "www.youtube.com", "gfycat.com", "i.imgur.com", "w.soundcloud.com"],
+  ALLOWED_IFRAME_HOSTS: [
+    "www.youtube-nocookie.com"
+  ],
   ANONYMOUS_USER_ID: -1,
 
   // Dates
