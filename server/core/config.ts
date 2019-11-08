@@ -28,7 +28,6 @@ interface Config {
   readonly SMTP_PASSWORD: string;
 
   // Misc
-  readonly GOOGLE_ANALYTICS_ID: string;
   readonly SECURE_SESSION_COOKIES: boolean;
 
   // Debug: general options
