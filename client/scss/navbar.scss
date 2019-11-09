@@ -47,7 +47,7 @@
 
       & a.navbar-brand {
         width: 32px;
-        margin-top: 4px; /* Vertically center the logo when the navbar shrink */
+        margin-top: 4px; /* Vertically center the logo when the navbar shrinks */
       }
 
       & .navbar-unread-notifications {
@@ -108,6 +108,11 @@
       background: url('/static/images/brand.svg');
       margin-top: 4px;
       padding: 0;
+      
+      @media (max-width: 767px) {
+        margin-top: 0;
+        max-height: 46px;
+      }
     }
       
     & .navbar-brand__hover {
@@ -162,6 +167,11 @@
 
         &:hover {
           background-color: $main-light;
+        }
+
+        @media (max-width: 767px) {
+          line-height: $navbar-shrinked-height;
+          height: $navbar-shrinked-height;
         }
       }
 
