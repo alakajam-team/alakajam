@@ -37,7 +37,11 @@
     </div>
     {% endfor %}
 
-    {{ postMacros.comments(toUser, { readingUser: user, readOnly: true, linkToNode: true, highlightNewerThan: notificationsLastRead }) }}
+    {% if toUser.length > 0 %}
+      {{ postMacros.comments(toUser, { readingUser: user, readOnly: true, linkToNode: true, highlightNewerThan: notificationsLastRead }) }}
+    {% else %}
+      <div class="well">No notifications yet.</div>
+    {% endif %}
   </div>
   <div class="col-md-5 col-lg-6">
     <h1>Shortcuts</h1>

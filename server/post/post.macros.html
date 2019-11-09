@@ -196,7 +196,7 @@
 {% endfor %}
 
 {% if comments.length === 0 %}
-<div class="well">No comments.</div>
+<div class="well">No comments yet.</div>
 {% endif %}
 
 {{ commentEditor(null, options.csrfToken, options) if not options.readOnly }}

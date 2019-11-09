@@ -1,6 +1,7 @@
 // tslint:disable: max-line-length
 
 import * as csurf from "csurf";
+import * as expressPromiseRouter from "express-promise-router";
 import * as multer from "multer";
 import * as randomKey from "random-key";
 import * as configUtils from "server/core/config";
@@ -58,7 +59,7 @@ import { loginGet, loginPost } from "./user/authentication/login.controller";
 import { logout } from "./user/authentication/logout.controller";
 import { passwordRecoveryRequest } from "./user/authentication/password-recovery-request.controller";
 import { passwordRecovery } from "./user/authentication/password-recovery.controller";
-import { register, registerForm } from "./user/authentication/register.controller";
+import registerController from "./user/authentication/register.controller";
 import { dashboardEntries } from "./user/dashboard/dashboard-entries.controller";
 import { dashboardEntryImport } from "./user/dashboard/dashboard-entry-import.controller";
 import { dashboardFeed } from "./user/dashboard/dashboard-feed.controller";
@@ -76,7 +77,7 @@ export function routes(app) {
     // Using express-promise-router instead of the default express.Router
     // allows our routes to return rejected promises to trigger the error
     // handling.
-    const router = require("express-promise-router")();
+    const router = expressPromiseRouter();
     app.use(router);
 
     // Run all middleware before any actual route handlers
@@ -103,8 +104,8 @@ export function routes(app) {
 
     // Users
 
-    router.get("/register", csrf, registerForm);
-    router.post("/register", csrf, register);
+    router.get("/register", csrf, registerController.registerForm.bind(registerController));
+    router.post("/register", csrf, registerController.register.bind(registerController));
     router.get("/login", csrf, loginGet);
     router.post("/login", csrf, loginPost);
     router.get("/logout", csrf, logout);

@@ -20,11 +20,7 @@ import { FindOneOptions, getRepository } from "typeorm";
 import eventService from "../event/event.service";
 import mailService from "./mail/mail.service";
 
-const USERNAME_VALIDATION_REGEX = /^[a-zA-Z][-\w]+$/g;
-const USERNAME_MIN_LENGTH = 3;
-const PASSWORD_MIN_LENGTH = 6;
-const PASSWORD_RECOVERY_TOKENS_FILE = path.join(configUtils.dataPathAbsolute(), "password-recovery.json");
-const PASSWORD_RECOVERY_LINK_MAX_AGE = 24 * 3600000; /* 1 day */
+const PASSWORD_RECOVERY_TOKENS_PATH = path.join(configUtils.dataPathAbsolute(), "password-recovery.json");
 
 export class UserService {
 
@@ -125,11 +121,11 @@ export class UserService {
    * @returns {User|string} the created user, or an error message
    */
   public async register(email, name, password): Promise<BookshelfModel | string> {
-    if (!name.match(USERNAME_VALIDATION_REGEX)) {
+    if (!name.match(constants.USERNAME_VALIDATION_REGEX)) {
       return "Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.";
     }
-    if (name.length < USERNAME_MIN_LENGTH) {
-      return "Username length must be at least " + USERNAME_MIN_LENGTH;
+    if (name.length < constants.USERNAME_MIN_LENGTH) {
+      return "Username length must be at least " + constants.USERNAME_MIN_LENGTH;
     }
     const caseInsensitiveUsernameMatch = await models.User.query((query) => {
       query.whereRaw("LOWER(name) LIKE '%' || LOWER(?) || '%' ", name);
@@ -241,8 +237,8 @@ export class UserService {
   }
 
   public async loadPasswordRecoveryCache(app) {
-    if (await fileStorage.exists(PASSWORD_RECOVERY_TOKENS_FILE)) {
-      const rawFile = await fileStorage.read(PASSWORD_RECOVERY_TOKENS_FILE);
+    if (await fileStorage.exists(PASSWORD_RECOVERY_TOKENS_PATH)) {
+      const rawFile = await fileStorage.read(PASSWORD_RECOVERY_TOKENS_PATH);
       app.locals.passwordRecoveryTokens = JSON.parse(rawFile);
     } else {
       app.locals.passwordRecoveryTokens = {};
@@ -266,9 +262,9 @@ export class UserService {
       const token = randomKey.generate(32);
       passwordRecoveryTokens[token] = {
         userId: user.get("id"),
-        expires: Date.now() + PASSWORD_RECOVERY_LINK_MAX_AGE,
+        expires: Date.now() + constants.PASSWORD_RECOVERY_LINK_MAX_AGE,
       };
-      fileStorage.write(PASSWORD_RECOVERY_TOKENS_FILE, passwordRecoveryTokens);
+      fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, passwordRecoveryTokens);
 
       // Send email
       const context = {
@@ -300,7 +296,7 @@ export class UserService {
         if (success) {
           await user.save();
           delete app.locals.passwordRecoveryTokens[token];
-          fileStorage.write(PASSWORD_RECOVERY_TOKENS_FILE, app.locals.passwordRecoveryTokens);
+          fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, app.locals.passwordRecoveryTokens);
         }
         return success;
       } else {
@@ -317,8 +313,8 @@ export class UserService {
    * @returns {boolean|string} true, or an error message
    */
   private validatePassword(password) {
-    if (password.length < PASSWORD_MIN_LENGTH) {
-      return "Password length must be at least " + PASSWORD_MIN_LENGTH;
+    if (password.length < constants.PASSWORD_MIN_LENGTH) {
+      return "Password length must be at least " + constants.PASSWORD_MIN_LENGTH;
     } else {
       return true;
     }

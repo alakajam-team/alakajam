@@ -4,11 +4,11 @@ export type Validator = (value: any) => Promise<undefined | string> | undefined 
 
 export type TestFunction = (value?: any) => Promise<any> | any;
 
-export async function validateForm(object: object, validators: {[key: string]: Validator})
+export async function validateForm(reqBody: object, validators: {[fieldName: string]: Validator})
     : Promise<Alert[] | undefined> {
   const results: Array<undefined | string> = [];
   for (const key of Object.keys(validators)) {
-    results.push(await validators[key](object[key]));
+    results.push(await validators[key](reqBody[key]));
   }
   const errors = results.filter((result) => result !== undefined);
 

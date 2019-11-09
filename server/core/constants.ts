@@ -67,6 +67,12 @@ export default {
   // Sessions
   REMEMBER_ME_MAX_AGE: 30 * 24 * 3600000 /* 30 days */,
 
+  // User accounts
+  USERNAME_VALIDATION_REGEX: /^[a-zA-Z][-\w]+$/g,
+  USERNAME_MIN_LENGTH: 3,
+  PASSWORD_MIN_LENGTH: 6,
+  PASSWORD_RECOVERY_LINK_MAX_AGE: 24 * 3600000, /* 1 day */
+
   // Security
   PERMISSION_READ,
   PERMISSION_WATCH,
@@ -144,7 +150,7 @@ export default {
   PICTURE_OPTIONS_THUMB_PORTRAIT: { maxWidth: 350, maxHeight: 180, fit: "contain", suffix: "-thumb" },
   PICTURE_OPTIONS_ICON: { maxWidth: 60, maxHeight: 60, fit: "cover", suffix: "-icon" },
 
-  // Limits
+  // Field size limits
   MAX_BODY_ANY: 100000,
   MAX_BODY_POST: 100000,
   MAX_BODY_USER_DETAILS: 100000,
