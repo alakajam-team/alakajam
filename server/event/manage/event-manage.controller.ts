@@ -101,7 +101,7 @@ export async function eventManage(req, res) {
         name: req.body.name,
         display_dates: forms.sanitizeString(req.body["display-dates"]),
         display_theme: forms.sanitizeString(req.body["display-theme"]),
-        started_at: forms.parseDateTime(req.body["started-at"]),
+        started_at: forms.parsePickerDateTime(req.body["started-at"]),
         divisions: req.body.divisions,
         event_preset_id: req.body["event-preset-id"] || null,
         status: req.body.status,
@@ -113,7 +113,7 @@ export async function eventManage(req, res) {
         countdown_config: {
           message: forms.sanitizeString(req.body["countdown-message"]),
           link: forms.sanitizeString(req.body["countdown-link"]),
-          date: forms.parseDateTime(req.body["countdown-date"]),
+          date: forms.parsePickerDateTime(req.body["countdown-date"]),
           phrase: forms.sanitizeString(req.body["countdown-phrase"]),
           enabled: req.body["countdown-enabled"] === "on",
         },

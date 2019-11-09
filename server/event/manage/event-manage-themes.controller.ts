@@ -44,7 +44,7 @@ export async function eventManageThemes(req, res) {
       const sanitizedDelay = forms.isInt(req.body["elimination-delay"])
         ? parseInt(req.body["elimination-delay"], 10) : 8;
       eventDetails.set("shortlist_elimination", {
-        start: forms.parseDateTime(req.body["elimination-start-date"]),
+        start: forms.parsePickerDateTime(req.body["elimination-start-date"]),
         delay: sanitizedDelay,
         body: forms.sanitizeMarkdown(req.body["elimination-body"]),
         stream: forms.sanitizeString(req.body.stream),

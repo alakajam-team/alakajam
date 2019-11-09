@@ -119,7 +119,7 @@ export async function entryManage(req, res) {
       entry.set({
         event_id: null,
         event_name: null,
-        published_at: forms.parseDateTime(req.body["published-at"]) || null,
+        published_at: forms.parsePickerDateTime(req.body["published-at"]) || null,
         external_event: forms.sanitizeString(req.body["external-event"]),
       });
     }

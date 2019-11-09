@@ -72,7 +72,8 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
       "Not allowed to change anonymous comments settings on this user"),
     file: anyRule([forms.isNotSet, (f) => fileStorage.isValidPicture(f.path)],
       "Invalid picture format (allowed: PNG GIF JPG)"),
-    timezone: rule(userTimezoneService.isValidTimeZone.bind(userTimezoneService), "Invalid timezone")
+    timezone: anyRule([forms.isNotSet, userTimezoneService.isValidTimeZone.bind(userTimezoneService)],
+      "Invalid timezone")
   });
 
   if (!formAlerts) {

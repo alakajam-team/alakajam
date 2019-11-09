@@ -1,6 +1,7 @@
 
 import cache from "server/core/cache";
 import constants from "server/core/constants";
+import { createLuxonDate, ZONE_UTC } from "server/core/formats";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import * as models from "server/core/models";
@@ -50,10 +51,11 @@ export async function postSave(req, res) {
     const title = forms.sanitizeString(req.body.title);
     const body = forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_POST });
     let errorMessage = null;
-    let customPublishDate = null;
+    let customPublishDate: Date | false = false;
 
     if (req.body["save-custom"]) {
-      customPublishDate = forms.parseDateTime(req.body["published-at"]);
+      customPublishDate = forms.parsePickerDateTime(
+          req.body["published-at"], { zone: res.locals.user.get("timezone") });
       if (!customPublishDate) {
         errorMessage = "Invalid scheduling time";
       }
@@ -118,7 +120,8 @@ export async function postSave(req, res) {
         post.set("published_at", null);
         redirectToView = false;
       } else if (customPublishDate) {
-        post.set("published_at", customPublishDate);
+        const localPublishDate = createLuxonDate(customPublishDate, { zone: res.locals.user.get("timezone") });
+        post.set("published_at", localPublishDate.setZone(ZONE_UTC).toJSDate());
       }
 
       // Save

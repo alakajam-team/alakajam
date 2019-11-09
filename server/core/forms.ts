@@ -5,7 +5,7 @@
  */
 
 import * as htmlToText from "html-to-text";
-import * as moment from "moment";
+import * as luxon from "luxon";
 import * as nunjucks from "nunjucks";
 import * as removeMarkdown from "remove-markdown";
 import * as sanitizeHtml from "sanitize-html";
@@ -17,6 +17,7 @@ import * as url from "url";
 import * as validator from "validator";
 import config from "./config";
 import constants from "./constants";
+import { ZONE_UTC } from "./formats";
 
 export default {
   sanitizeString,
@@ -38,7 +39,7 @@ export default {
   isNotSet,
   isPast,
 
-  parseDateTime,
+  parsePickerDateTime,
   parseJson,
 
   markdownToHtml,
@@ -256,12 +257,13 @@ function isPast(time: number) {
  * Converts a string built in a date time picker to an actual date
  * which can be stored in a model
  */
-function parseDateTime(str) {
-  const momentDate = moment.utc(str, constants.PICKER_DATE_TIME_FORMAT);
-  if (momentDate.isValid()) {
-    return momentDate.toDate();
+function parsePickerDateTime(str: string, options: luxon.DateTimeOptions = {}): Date | false {
+  options.zone = options.zone || ZONE_UTC;
+  const luxonDate = luxon.DateTime.fromFormat(str, constants.PICKER_DATE_TIME_FORMAT, options);
+  if (luxonDate.isValid) {
+    return luxonDate.toJSDate();
   } else {
-    return null;
+    return false;
   }
 }
 

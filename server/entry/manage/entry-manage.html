@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% import "macros/form.macros.html" as formMacros %}
-{% import "macros/games-search.macros.html" as gamesSearchMacros %}
+{% import "macros/form.macros.html" as formMacros with context %}
+{% import "macros/games-search.macros.html" as gamesSearchMacros with context %}
 
 {% block styles %}
 <style type="text/css">
@@ -129,7 +129,7 @@
           <div class="col-md-6">
             <div class="form-group">
               <label for="title">Entry publication date</label>
-              {{ formMacros.dateTimePicker('published-at', entry.get('published_at'), { minView: '2', serverFormat: 'YYYY-MM-DD', pickerFormat: 'yyyy-mm-dd' }) }}
+              {{ formMacros.dateTimePicker('published-at', entry.get('published_at'), { minView: '2', serverFormat: 'yyyy-MM-dd', pickerFormat: 'yyyy-mm-dd' }) }}
             </div>
           </div>
         </div>
