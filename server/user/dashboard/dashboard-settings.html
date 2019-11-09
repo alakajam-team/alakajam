@@ -49,8 +49,11 @@
 
     <div class="form-group">
       <label for="title">Timezone</label>
-      <select id="js-select-timezone" class="form-control" multiple="true">
-        <!--<option value="3620194" selected="selected">select2/select2</option>-->
+      <select name="timezone" class="form-control js-select" data-allow-clear="true" data-placeholder="Type a city or country name">
+        <option value=""></option>
+        {% for timezone in timezones %}
+          <option value="{{ timezone.id }}" {{ 'selected' if dashboardUser.timezone == timezone.id }}>{{ timezone.label }}</option>
+        {% endfor %}
       </select>
     </div>
 

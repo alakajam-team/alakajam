@@ -3,7 +3,6 @@
  * Utilities made available in all templates
  */
 
-import { BookshelfModel } from "bookshelf";
 import forms from "./forms";
 import links from "./links";
 import security from "./security";

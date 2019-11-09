@@ -25,6 +25,9 @@ export class User extends TimestampedEntity {
   @Column({ nullable: true })
   public avatar: string;
 
+  @Column({ nullable: true })
+  public timezone: string;
+
   /**
    * "true" if set ("1" on SQLite), "" or NULL otherwise.
    * TODO Migrate to boolean

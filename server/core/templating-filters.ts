@@ -1,8 +1,11 @@
 import * as leftPad from "left-pad";
+import * as luxon from "luxon";
 import * as moment from "moment";
 import * as slug from "slug";
 import constants from "./constants";
 import forms from "./forms";
+
+luxon.Settings.defaultZoneName = "utc";
 
 export function configure(nunjucksEnvironment) {
 

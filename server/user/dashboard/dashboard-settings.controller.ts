@@ -5,11 +5,16 @@ import { anyRule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
-import userTimezoneService from "../user-timezone.service";
+import userTimezoneService, { TimeZone } from "../user-timezone.service";
 import { DashboardLocals } from "./dashboard.middleware";
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
-  res.render("user/dashboard/dashboard-settings");
+  const timezoneData = await userTimezoneService.getAllTimeZones();
+  const timezones = timezoneData.map((timezone) => ({ id: timezone.id, label: formatTimezone(timezone) }));
+
+  res.render("user/dashboard/dashboard-settings", {
+    timezones
+  });
 }
 
 /**
@@ -23,8 +28,15 @@ export async function dashboardSettingsPost(req: CustomRequest, res: CustomRespo
   }
 }
 
-export async function dashboardSettingsApiTimezones(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
-  res.json(await userTimezoneService.getAllTimeZones());
+function formatTimezone(timezone: TimeZone): string {
+  const continentSeparatorIndex = timezone.id.indexOf("/");
+  const continent = (continentSeparatorIndex !== -1) ? timezone.id.slice(0, continentSeparatorIndex) : undefined;
+  const country = timezone.countryName;
+  const city = ((continentSeparatorIndex !== -1) ? timezone.id.slice(continentSeparatorIndex + 1) : timezone.id)
+    .replace(/\_/g, " ");
+
+  const formattedContinent = continent ? `${continent} > ` : "";
+  return `${formattedContinent}${country} > ${city} [${timezone.offsetName}]`;
 }
 
 async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
@@ -34,6 +46,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
   // Apply form changes
   dashboardUser.title = forms.sanitizeString(req.body.title || dashboardUser.name);
   dashboardUser.email = req.body.email;
+  dashboardUser.timezone = forms.sanitizeString(req.body.timezone);
   dashboardUser.details.body = forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_USER_DETAILS });
   dashboardUser.details.social_links = {
     website: req.body.website,
