@@ -5,6 +5,8 @@ import { CustomRequest, CustomResponse } from "server/types";
 import userServiceSingleton, { UserService } from "server/user/user.service";
 import { loginPost } from "./login.controller";
 
+export const TEMPLATE_REGISTER = "user/authentication/register";
+
 export class RegisterController {
 
   constructor(private userService: UserService = userServiceSingleton) { }
@@ -14,7 +16,7 @@ export class RegisterController {
    */
   public async registerForm(req: CustomRequest, res: CustomResponse<CommonLocals>) {
     res.locals.pageTitle = "Register";
-    res.render("user/authentication/register");
+    res.render(TEMPLATE_REGISTER);
   }
 
   /**
@@ -53,7 +55,7 @@ export class RegisterController {
       res.locals.alerts.push(...formAlerts);
     }
 
-    res.render("user/authentication/register", req.body);
+    res.render(TEMPLATE_REGISTER, req.body);
   }
 
 }

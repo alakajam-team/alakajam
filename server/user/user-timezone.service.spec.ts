@@ -6,7 +6,7 @@ import userTimezoneService from "./user-timezone.service";
 
 const PARIS_TIMEZONE = "Europe/Paris";
 
-describe("User Timezone Service", () => {
+describe("User time zone service", () => {
 
   it("should return timezones with the matching country and offset names", async () => {
     const timezones = await userTimezoneService.getAllTimeZones();
