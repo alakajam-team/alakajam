@@ -2563,6 +2563,7 @@ a.list-group-item-danger.active, a.list-group-item-danger:hover, a.list-group-it
 .dropdown-menu {
   background-color: #434a54;
   border: none;
+  z-index: 1032; // above alerts
 }
 .dropdown-menu .dropdown-header {
   padding: 5px 20px;
