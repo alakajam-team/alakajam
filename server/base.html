@@ -18,13 +18,12 @@
 <ul class="dropdown-menu">
   <li><a href="{{ routeUrl(user, 'user', 'feed') }}">Dashboard</a></li>
   <li><a href="{{ routeUrl(user, 'user') }}">Public profile</a></li>
+  <li><a href="{{ routeUrl(user, 'user', 'settings') }}">Settings</a></li>
+  <li class="divider"></li> 
   <li><a href="{{ routeUrl(user, 'user', 'entries') }}">My entries</a></li>
-   <li class="divider"></li> 
-  <li><a href="{{ routeUrl(null, 'post', 'create') }}">Create post</a></li>
   <li><a href="{{ routeUrl(user, 'user', 'posts') }}">My posts</a></li>
-   <li class="divider"></li> 
-   <li><a href="{{ routeUrl(user, 'user', 'scores') }}">My scores</a></li>
-    <li class="divider"></li> 
+  <li><a href="{{ routeUrl(user, 'user', 'scores') }}">My scores</a></li>
+  <li class="divider"></li> 
   <li><a href="/logout">Logout</a></li>
 </ul>
 {% endmacro %}
