@@ -106,12 +106,9 @@
           <h2>{{ event.get('countdown_config').message }}</h2>
           <div class="home-jumbo__call-details">
             {% if event.get('display_theme') %}
-              <span class="fas fa-lightbulb"></span> <b>Theme:</b> {{ event.get('display_theme') }}
-              <span style="margin-right: 10px"></span>
+            <div><span class="fas fa-lightbulb"></span> <b>Theme:</b> {{ event.get('display_theme') }}</div>
             {% endif %}
-            {% if event.get('countdown_config').phrase %}
-              <span class="fas fa-calendar-alt"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
-            {% endif %}
+            {{ eventJumboCountdownPhrase(event, user) }}
           </div>
         </div>
       </div>
@@ -124,9 +121,7 @@
     <div class="home-jumbo__details">
       <div class="row">
         <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
-          {% if event.get('countdown_config').phrase %}
-            <span class="fas fa-calendar-alt"></span> {{ event.get('countdown_config').phrase }} {{ event.get('countdown_config').date | featuredEventDateTime }}
-          {% endif %}
+          {{ eventJumboCountdownPhrase(event, user) }}
         </div>
         {% if animatedCountdown %}
           <div class="col-md-6">
@@ -142,6 +137,15 @@
     {{ eventShortcutMyEntry(user, event, userEntry) }}
   {% endif %}
 </div>
+{% endmacro %}
+
+{% macro eventJumboCountdownPhrase(event, user) %}
+  {% if event.get('countdown_config').phrase %}
+    <span class="fas fa-calendar-alt"></span> 
+    {{ event.get('countdown_config').phrase }} 
+    {{ event.get('countdown_config').date | featuredEventDateTime(user) }}
+    {{ "(" + user.get("timezone") + ")" if user and user.get("timezone") }}
+  {% endif %}
 {% endmacro %}
 
 {% macro eventLinks (event, path, options = {}) %}

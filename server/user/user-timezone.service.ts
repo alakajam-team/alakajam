@@ -12,6 +12,11 @@ export class UserTimeZoneService {
     }, TTL_ONE_DAY);
   }
 
+  public async isValidTimeZone(str: string): Promise<boolean> {
+    const allTimeZones = await this.getAllTimeZones();
+    return allTimeZones.some((timezone) => timezone.id === str);
+  }
+
   private countryToTimezones(country: CountryTimeZones): TimeZone[] {
     return country.timezones
       .map((timezoneId) => {

@@ -17,4 +17,9 @@ describe("User time zone service", () => {
     expect(parisTimezone.offsetName).to.equal(DateTime.utc().setZone(PARIS_TIMEZONE).offsetNameShort);
   });
 
+  it("should recognize invalid timezones", async () => {
+    expect(await userTimezoneService.isValidTimeZone("hello I am a legit time zone")).to.be.false;
+    expect(await userTimezoneService.isValidTimeZone("Europe/Paris")).to.be.true;
+  });
+
 });

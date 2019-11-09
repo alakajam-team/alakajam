@@ -129,7 +129,7 @@
           <div class="col-md-6">
             <div class="form-group">
               <label for="title">Entry publication date</label>
-              {{ formMacros.dateTimePicker('published-at', entry.get('published_at'), { minView: '2', momentFormat: 'YYYY-MM-DD', pickerFormat: 'yyyy-mm-dd' }) }}
+              {{ formMacros.dateTimePicker('published-at', entry.get('published_at'), { minView: '2', serverFormat: 'YYYY-MM-DD', pickerFormat: 'yyyy-mm-dd' }) }}
             </div>
           </div>
         </div>

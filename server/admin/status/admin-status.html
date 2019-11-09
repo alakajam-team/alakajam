@@ -52,7 +52,7 @@
       {% for key in cache.keys() %}
       <tr>
         <td>{{ key }}</td>
-        <td>{{ cache.getTtl(key) | dateTime }}</td>
+        <td>{{ cache.getTtl(key) | dateTime(user) }}</td>
         <td style="max-width: 500px; overflow: auto">
           {% if not constants.CONFIDENTIAL_CACHE_KEYS.includes(key) %}
             {% set value = cache.get(key) | prettyDump %}

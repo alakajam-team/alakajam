@@ -248,7 +248,7 @@ function isNotSet(input: any) {
  * @param  {number}  time
  * @return {Boolean}
  */
-function isPast(time) {
+function isPast(time: number) {
   return time && (new Date().getTime() - time) > 0;
 }
 

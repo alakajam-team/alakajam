@@ -1,7 +1,7 @@
 import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
-import { anyRule, validateForm } from "server/core/forms-validation";
+import { anyRule, rule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
@@ -64,14 +64,15 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
 
   // Validate changes
   const formAlerts = await validateForm(req.body, {
-    email: anyRule([forms.isNotSet, forms.isEmail], "Invalid email"),
+    email: rule(forms.isEmail, "Invalid email"),
     website: anyRule([forms.isNotSet, forms.isURL], "Account website has an invalid URL"),
     special_permissions: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
       "Not allowed to change special permissions on this user"),
     disallow_anonymous: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
       "Not allowed to change anonymous comments settings on this user"),
     file: anyRule([forms.isNotSet, (f) => fileStorage.isValidPicture(f.path)],
-      "Invalid picture format (allowed: PNG GIF JPG)")
+      "Invalid picture format (allowed: PNG GIF JPG)"),
+    timezone: rule(userTimezoneService.isValidTimeZone.bind(userTimezoneService), "Invalid timezone")
   });
 
   if (!formAlerts) {

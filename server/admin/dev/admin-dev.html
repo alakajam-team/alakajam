@@ -20,7 +20,7 @@
       <div class="form-group">
         <input type="submit" name="restore" class="btn btn-danger" value="Restore backup" />
         <input type="submit" name="delete-backup" class="btn btn-danger" value="Delete backup" />
-        Backup date: <b>{{ backupDate | dateTime }}</b>
+        Backup date: <b>{{ backupDate | dateTime(user) }}</b>
       </div>
     {% endif %}
   {% endif %}
