@@ -117,10 +117,11 @@ export default {
   ANONYMOUS_USER_ID: -1,
 
   // Dates
-  DATE_FORMAT: "MMMM Do YYYY",
-  DATE_TIME_FORMAT: "MMMM Do YYYY, h:mma",
+  ORDINAL_DAY_TOKEN: "#",
+  DATE_FORMAT: "MMMM # yyyy",
+  DATE_TIME_FORMAT: "MMMM # yyyy, h:mma",
   PICKER_DATE_TIME_FORMAT: "YYYY-MM-DD HH:mm",
-  FEATURED_EVENT_DATE_FORMAT: "MMM. Do, ha",
+  FEATURED_EVENT_DATE_FORMAT: "MMM. #, ha",
 
   // Entries
   ENTRY_PLATFORM_DEFAULT_ICON: "far fa-file",

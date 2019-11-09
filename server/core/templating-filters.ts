@@ -1,6 +1,5 @@
 import * as leftPad from "left-pad";
 import * as luxon from "luxon";
-import * as moment from "moment";
 import * as slug from "slug";
 import constants from "./constants";
 import forms from "./forms";
@@ -50,9 +49,10 @@ export function configure(nunjucksEnvironment) {
     return str ? str.replace(/&amp;/g, "&").replace(/&quot;/g, '"') : null;
   });
 
-  nunjucksEnvironment.addFilter("date", (date, format) => {
+  nunjucksEnvironment.addFilter("date", (date: Date, format?: string) => {
     if (date) {
-      return moment(date).utc().format(format || constants.DATE_FORMAT);
+      const formatted = luxon.DateTime.fromJSDate(date).toFormat(constants.DATE_FORMAT);
+      return postProcessDateFormat(date, formatted);
     } else {
       return "";
     }
@@ -60,7 +60,8 @@ export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("dateTime", (date) => {
     if (date) {
-      return moment(date).utc().format(constants.DATE_TIME_FORMAT);
+      const formatted = luxon.DateTime.fromJSDate(date).toFormat(constants.DATE_TIME_FORMAT);
+      return postProcessDateFormat(date, formatted);
     } else {
       return "";
     }
@@ -68,27 +69,24 @@ export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("featuredEventDateTime", (date) => {
     if (date) {
-      return moment(date).utc().format(constants.FEATURED_EVENT_DATE_FORMAT) + " UTC";
+      const formatted = luxon.DateTime.fromJSDate(date).toFormat(constants.FEATURED_EVENT_DATE_FORMAT);
+      return postProcessDateFormat(date, formatted) + " UTC";
     } else {
       return "";
     }
   });
 
   nunjucksEnvironment.addFilter("relativeTime", (date) => {
-    return moment(date).utc().fromNow();
+    return luxon.DateTime.fromJSDate(date).toRelative();
   });
+
   nunjucksEnvironment.addFilter("duration", (durationInSeconds) => {
     const minutes = Math.floor(durationInSeconds / 60);
     const seconds = durationInSeconds - minutes * 60;
     return minutes + "'" + leftPad(seconds.toFixed(3).replace(".", '"'), 6, "0");
   });
 
-  nunjucksEnvironment.addFilter("ordinal", (n) => {
-    // source: https://stackoverflow.com/a/12487454
-    const s = ["th", "st", "nd", "rd"];
-    const v = n % 100;
-    return n + (s[(v - 20) % 10] || s[v] || s[0]);
-  });
+  nunjucksEnvironment.addFilter("ordinal", ordinal);
 
   nunjucksEnvironment.addFilter("digits", (n, digits) => {
     if (typeof n === "string") {
@@ -121,4 +119,18 @@ export function configure(nunjucksEnvironment) {
     return slug(str);
   });
 
+}
+
+function postProcessDateFormat(date: Date, formattedDate: string): string {
+  return formattedDate
+    .replace(constants.ORDINAL_DAY_TOKEN, ordinal(date.getDate()))
+    .replace(/(AM)$/, "am")
+    .replace(/(PM)$/, "pm");
+}
+
+export function ordinal(n): string {
+  // source: https://stackoverflow.com/a/12487454
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
