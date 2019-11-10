@@ -2,9 +2,19 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/alakajam-team/alakajam)!
 
+### November 2019
+
+* Let users set their timezone in their settings to adapt all displayed dates
+* Reorganize user menu links
+* Make the "hamburger" user menu look better on mobile
+* Drop support for post embeds that don't let us disable tracking cookies (Vimeo, Soundcloud, etc.)
+* Remove Google Analytics completely
+
 ### October 2019
 
 * Make podium pages support ties
+* Display a warning to prevent asking for votes during voting phases
+* Replace unranked jam icon to a wizard hat
 * Fix high score submission times (were updated every time the score ranking changed)
 
 ### September 2019
