@@ -87,10 +87,10 @@
         <div class="form-group">
           <label for="published-at">
             Publication date
-            (in {{ user.get('timezone') or 'UTC' -}}
+            (in {{ user.get('timezone') | timezone or 'UTC' -}}
             {%- if not user.get('timezone') %}
-              <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-default btn-xs" target="_blank">
-                <i class="fa fa-cog"></i>
+              <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-default btn-xs">
+                <span class="fa fa-cog"></span>
               </a>
             {%- endif -%}
             )

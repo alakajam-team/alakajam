@@ -9,11 +9,8 @@ import userTimezoneService, { TimeZone } from "../user-timezone.service";
 import { DashboardLocals } from "./dashboard.middleware";
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
-  const timezoneData = await userTimezoneService.getAllTimeZones();
-  const timezones = timezoneData.map((timezone) => ({ id: timezone.id, label: formatTimezone(timezone) }));
-
   res.render("user/dashboard/dashboard-settings", {
-    timezones
+    timezones: await userTimezoneService.getAllTimeZonesAsOptions()
   });
 }
 
@@ -26,17 +23,6 @@ export async function dashboardSettingsPost(req: CustomRequest, res: CustomRespo
   } else {
     await _handleSave(req, res);
   }
-}
-
-function formatTimezone(timezone: TimeZone): string {
-  const continentSeparatorIndex = timezone.id.indexOf("/");
-  const continent = (continentSeparatorIndex !== -1) ? timezone.id.slice(0, continentSeparatorIndex) : undefined;
-  const country = timezone.countryName;
-  const city = ((continentSeparatorIndex !== -1) ? timezone.id.slice(continentSeparatorIndex + 1) : timezone.id)
-    .replace(/\_/g, " ");
-
-  const formattedContinent = continent ? `${continent} > ` : "";
-  return `${formattedContinent}${country} > ${city} [${timezone.offsetName}]`;
 }
 
 async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>) {

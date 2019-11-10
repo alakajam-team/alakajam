@@ -76,6 +76,11 @@ export function configure(nunjucksEnvironment) {
     return minutes + "'" + leftPad(seconds.toFixed(3).replace(".", '"'), 6, "0");
   });
 
+  nunjucksEnvironment.addFilter("timezone", (timezoneId: string) => {
+    // Exemple: "America/Sao_Paulo". Let's just clean up the underscores.
+    return timezoneId.replace(/\_/g, " ");
+  });
+
   nunjucksEnvironment.addFilter("ordinal", formats.ordinal);
 
   nunjucksEnvironment.addFilter("digits", (n: string | number, digits: number) => {

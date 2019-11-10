@@ -1,5 +1,6 @@
 {% extends "user/dashboard/dashboard.base.html" %}
 {% import "macros/form.macros.html" as formMacros with context %}
+{% import "user/dashboard/dashboard.macros.html" as userDashboardMacros with context %}
 
 {% block dashboardBody %}
 
@@ -47,15 +48,7 @@
       <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ dashboardUser.get('email') }}" required="required" />
     </div>
 
-    <div class="form-group">
-      <label for="title">Timezone</label>
-      <select name="timezone" class="form-control js-select" data-allow-clear="true" data-placeholder="Type a city or country name">
-        <option value=""></option>
-        {% for timezone in timezones %}
-          <option value="{{ timezone.id }}" {{ 'selected' if dashboardUser.timezone == timezone.id }}>{{ timezone.label }}</option>
-        {% endfor %}
-      </select>
-    </div>
+    {{ userDashboardMacros.timezoneField(timezones, dashboardUser.get('timezone')) }}
 
     {% set socialLinks = dashboardUser.related('details').get('social_links') %}
     <div class="form-group">

@@ -3,6 +3,7 @@ import forms from "server/core/forms";
 import { allRules, rule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import userServiceSingleton, { UserService } from "server/user/user.service";
+import userTimezoneService from "../user-timezone.service";
 import { loginPost } from "./login.controller";
 
 export const TEMPLATE_REGISTER = "user/authentication/register";
@@ -16,7 +17,10 @@ export class RegisterController {
    */
   public async registerForm(req: CustomRequest, res: CustomResponse<CommonLocals>) {
     res.locals.pageTitle = "Register";
-    res.render(TEMPLATE_REGISTER);
+    res.render(TEMPLATE_REGISTER, {
+      ...req.body,
+      timezones: await userTimezoneService.getAllTimeZonesAsOptions()
+    });
   }
 
   /**
@@ -42,20 +46,28 @@ export class RegisterController {
 
     if (!formAlerts) {
       const result = await this.userService.register(req.body.email, req.body.name, req.body.password);
-      if (typeof result === "string") {
+
+      if (typeof result === "object") {
+        if (req.body.timezone) {
+          const user = result;
+          user.set("timezone", forms.sanitizeString(req.body.timezone));
+          await user.save();
+        }
+        loginPost(req, res);
+        return;
+
+      } else {
         res.locals.alerts.push({
           type: "danger",
           message: result
         });
-      } else {
-        loginPost(req, res);
-        return;
       }
+
     } else {
       res.locals.alerts.push(...formAlerts);
     }
 
-    res.render(TEMPLATE_REGISTER, req.body);
+    this.registerForm(req, res);
   }
 
 }

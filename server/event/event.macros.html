@@ -100,7 +100,7 @@
   {% set animatedCountdown = event.get('countdown_config').enabled %}
   {% if rawHypeLink %}
     {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
-    <a class="home-jumbo__call" href="{{ hypeLink }}">
+    <div class="home-jumbo__call" onclick="window.location = '{{ hypeLink }}'">
       <div class="row">
         <div class="col-xs-11 {{ 'col-md-6' if animatedCountdown }}">
           <h2>{{ event.get('countdown_config').message }}</h2>
@@ -116,7 +116,7 @@
         <span class="home-jumbo__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></span>
       {% endif %}
       <span class="fas fa-angle-right home-jumbo__call-arrow visible-xs visible-sm"></span>
-    </a>
+    </div>
   {% elseif event.get('countdown_config').phrase %}
     <div class="home-jumbo__details">
       <div class="row">
@@ -144,7 +144,12 @@
     <span class="fas fa-calendar-alt"></span> 
     {{ event.get('countdown_config').phrase }} 
     {{ event.get('countdown_config').date | featuredEventDateTime(user) }}
-    {{ "(" + user.get("timezone") + ")" if user and user.get("timezone") }}
+    {% if user %}
+    {{ "(" + (user.get("timezone") | timezone) + ")" if user and user.get("timezone") }}
+    <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-default btn-xs">
+      <span class="fa fa-cog"></span>
+    </a>
+    {% endif %}
   {% endif %}
 {% endmacro %}
 
