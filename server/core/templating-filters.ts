@@ -78,7 +78,7 @@ export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("timezone", (timezoneId: string) => {
     // Exemple: "America/Sao_Paulo". Let's just clean up the underscores.
-    return timezoneId.replace(/\_/g, " ");
+    return (typeof timezoneId === "string") ? timezoneId.replace(/\_/g, " ") : timezoneId;
   });
 
   nunjucksEnvironment.addFilter("ordinal", formats.ordinal);
