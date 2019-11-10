@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import * as luxon from "luxon";
 import settings from "server/core/settings";
 import eventThemeService from "server/event/theme/event-theme.service";
 import commentService from "server/post/comment/comment.service";
@@ -10,6 +10,7 @@ import constants from "./constants";
 import db from "./db";
 import enums from "./enums";
 import fileStorage from "./file-storage";
+import { formatDate } from "./formats";
 import log from "./log";
 
 /**
@@ -85,7 +86,7 @@ export async function insertInitialData(samples) {
       status_results: enums.EVENT.STATUS_RESULTS.VOTING,
       countdown_config: {
         phrase: "starts",
-        date: moment().add(1, "days").toDate(),
+        date: luxon.DateTime.local().plus({ days: 1 }).toJSDate(),
         enabled: false,
       },
     });
@@ -160,7 +161,7 @@ export async function insertInitialData(samples) {
       const nightlyPostBuffer = await fileStorage.read("deployment/NIGHTLY_POST.md");
       const changesBuffer = await fileStorage.read("CHANGES.md");
       post.set({
-        title: "Nightly: " + moment().format("MMMM Do YYYY"),
+        title: "Nightly: " + formatDate(Date.now(), undefined, constants.DATE_FORMAT),
         body: nightlyPostBuffer.toString() + changesBuffer.toString(),
       });
     }

@@ -2,7 +2,7 @@
  * Move uploads to data/ folder
  */
 
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as Knex from "knex";
 import * as path from "path";
 import config from "server/core/config";
@@ -21,14 +21,18 @@ exports.up = async (knex: Knex) => {
   await knex("post").update("body", knex.raw("replace(body, '/static/uploads', '/data/uploads')"));
 
   try {
-    fs.renameSync(STATIC_UPLOADS, DATA_UPLOADS);
+    await fs.rename(STATIC_UPLOADS, DATA_UPLOADS);
   } catch (e) {
     log.warn(`Failed to move uploads folder from ${STATIC_UPLOADS} to ${DATA_UPLOADS}`);
   }
 };
 
 exports.down = async (knex: Knex) => {
-  fs.renameSync(DATA_UPLOADS, STATIC_UPLOADS);
+  try {
+    await fs.rename(DATA_UPLOADS, STATIC_UPLOADS);
+  } catch (e) {
+    log.warn(`Failed to move uploads folder from ${DATA_UPLOADS} to ${STATIC_UPLOADS}`);
+  }
 
   await knex("event").update("logo", knex.raw("replace(logo, '/data/uploads', '/static/uploads')"));
   await knex("event_details").update("banner", knex.raw("replace(banner, '/data/uploads', '/static/uploads')"));

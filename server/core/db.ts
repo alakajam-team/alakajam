@@ -116,26 +116,8 @@ function initBookshelf() {
  * @return {Knex}
  */
 function createKnexInstance() {
-  const knexOptions: any = {
-    client: config.DB_TYPE,
-    useNullAsDefault: true,
-  };
-
-  if (config.DB_TYPE === "sqlite3") {
-    knexOptions.connection = {
-      filename: path.resolve(constants.ROOT_PATH, config.DB_SQLITE_FILENAME)
-    };
-  } else {
-    knexOptions.connection = {
-      host: config.DB_HOST,
-      user: config.DB_USER,
-      password: config.DB_PASSWORD,
-      database: config.DB_NAME,
-      charset: "utf8",
-    };
-  }
-
-  const knex = require("knex")(knexOptions);
+  const knexConfig = (knexfile as any).development;
+  const knex = require("knex")(knexConfig);
 
   const traceSqlThreshold = config.DEBUG_TRACE_SQL ? 0 : config.DEBUG_TRACE_SLOW_SQL;
   if (traceSqlThreshold >= 0) {

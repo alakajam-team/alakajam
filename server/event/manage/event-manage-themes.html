@@ -63,14 +63,15 @@
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">
-        <label for="start-date">Start date {{ formMacros.tooltip('Specify when the first of the shortlisted themes is eliminated. Eliminations will stop when 3 themes remain. If the date is unset, feature is disabled.') }}</label>
+        <label for="start-date">Start date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>) {{ formMacros.tooltip('Specify when the first of the shortlisted themes is eliminated. Eliminations will stop when 3 themes remain. If the date is unset, feature is disabled.') }}</label>
         {{
           formMacros.dateTimePicker(
             'elimination-start-date',
             eventDetails.get('shortlist_elimination').start,
             {
               classes: 'js-show-if-nonempty',
-              attrs: { 'data-show-if-nonempty-selector': '#elimination-details' }
+              attrs: { 'data-show-if-nonempty-selector': '#elimination-details' },
+              forceUTC: true
             })
           }}
       </div>

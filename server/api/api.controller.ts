@@ -7,10 +7,10 @@
 
 import { BookshelfModel } from "bookshelf";
 import * as lodash from "lodash";
-import * as moment from "moment";
 import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
 import enums from "server/core/enums";
+import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import eventService from "server/event/event.service";
@@ -94,27 +94,14 @@ export async function getEvent(req, res) {
     if (json.countdown_config && json.countdown_config.date) {
       let result = json.title + " " + json.countdown_config.phrase;
 
-      let countdownMs = moment(json.countdown_config.date).valueOf() - Date.now();
-      if (countdownMs > 0) {
-        const days = Math.floor(countdownMs / (24 * 3600000));
-        countdownMs -= days * (24 * 3600000);
-        const hours = Math.floor(countdownMs / 3600000);
-        countdownMs -= hours * 3600000;
-        const minutes = Math.floor(countdownMs / 60000);
-        countdownMs -= minutes * 60000;
-        const seconds = Math.floor(countdownMs / 1000);
-
+      const msCountdown = createLuxonDate(json.countdown_config.date).diffNow();
+      if (msCountdown.milliseconds > 0) {
         result += " in ";
-        if (minutes > 0 || hours > 0 || days > 0) {
-          if (hours > 0 || days > 0) {
-            if (days > 0) {
-              result += days + " day" + (days !== 1 ? "s" : "") + ", ";
-            }
-            result += hours + " hour" + (hours !== 1 ? "s" : "") + ", ";
-          }
-          result += minutes + " minute" + (minutes !== 1 ? "s" : "") + " and ";
-        }
-        result += seconds + " second" + (seconds !== 1 ? "s" : "");
+        const countdown = msCountdown.shiftTo("days", "hours", "minutes", "seconds", "milliseconds");
+        if (countdown.days > 0) { result += `${countdown.days} day${countdown.days !== 1 ? "s" : ""} `; }
+        if (countdown.hours > 0) { result += `${countdown.hours} hour${countdown.hours !== 1 ? "s" : ""} `; }
+        if (countdown.minutes > 0) { result += `${countdown.minutes} minute${countdown.minutes !== 1 ? "s" : ""} `; }
+        result += `${countdown.seconds} second${countdown.seconds !== 1 ? "s" : ""}`;
       } else {
         result += " now!";
       }

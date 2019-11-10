@@ -79,7 +79,7 @@
 {% macro dateTimePicker(name, value, options = {}) %}
   <input type="datetime" name="{{ name }}"
     class="form-control date-picker js-date-picker {{ options.classes or '' }}"
-    value="{{ value | date(user, { format: options.serverFormat or 'yyyy-MM-dd HH:mm' }) }}" 
+    value="{{ value | date(user if not options.forceUTC, { format: options.serverFormat or 'yyyy-MM-dd HH:mm' }) }}" 
     data-format="{{ options.pickerFormat or 'yyyy-mm-dd hh:ii' }}"
     {% if options.minView %} data-min-view="{{ options.minView }}" {% endif %}
     {% if options.maxView %} data-max-view="{{ options.maxView }}" {% endif %}

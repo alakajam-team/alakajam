@@ -6,15 +6,18 @@
  */
 
 import { BookshelfModel, SaveOptions } from "bookshelf";
-import * as moment from "moment";
+import * as luxon from "luxon";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
+import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
+
+const MAX_ELIMINATED_THEMES = 8;
 
 export default {
   isThemeVotingAllowed,
@@ -101,7 +104,7 @@ async function saveThemeIdeas(user, event, ideas) {
     const ideaFound = ideas.find((idea) => parseInt(idea.id, 10) === existingTheme.get("id"));
     if (!ideaFound || ideaFound.title !== existingTheme.get("title")) {
       if (existingTheme.get("status") === enums.THEME.STATUS.ACTIVE ||
-          existingTheme.get("status") === enums.THEME.STATUS.DUPLICATE) {
+        existingTheme.get("status") === enums.THEME.STATUS.DUPLICATE) {
         themesToDelete.push(existingTheme);
       }
     } else {
@@ -367,9 +370,9 @@ async function _eliminateLowestThemes(event) {
 }
 
 async function _eliminateTheme(
-    theme: BookshelfModel,
-    eventDetails: BookshelfModel,
-    options: { eliminatedOnShortlistRating?: boolean } & SaveOptions = {}): Promise<void> {
+  theme: BookshelfModel,
+  eventDetails: BookshelfModel,
+  options: { eliminatedOnShortlistRating?: boolean } & SaveOptions = {}): Promise<void> {
   // Compute ranking as %-age because new submissions would make this number irrelevant
   const themeRanking = await findThemeRanking(theme, { useShortlistRating: options.eliminatedOnShortlistRating });
   const rankingPercent = 1.0 * themeRanking / (eventDetails.get("theme_count") || 1);
@@ -439,8 +442,8 @@ async function findBestThemes(event) {
 }
 
 async function findThemeRanking(
-    theme: BookshelfModel,
-    options: { useShortlistRating?: boolean } = {}): Promise<number> {
+  theme: BookshelfModel,
+  options: { useShortlistRating?: boolean } = {}): Promise<number> {
   let betterThemeQuery = models.Theme.where("event_id", theme.get("event_id"));
 
   if (theme.get("status") === enums.THEME.STATUS.SHORTLIST) {
@@ -529,14 +532,14 @@ function computeEliminatedShortlistThemes(event) {
 
   const shortlistEliminationInfo = event.related("details").get("shortlist_elimination");
   if (shortlistEliminationInfo.start && shortlistEliminationInfo.delay
-      && parseInt(shortlistEliminationInfo.delay, 10) > 0) {
-    const delay = parseInt(shortlistEliminationInfo.delay, 10);
-    const eliminationDate = moment(shortlistEliminationInfo.start);
-    const now = moment();
+    && parseInt(shortlistEliminationInfo.delay, 10) > 0) {
+    const delayInMinutes = parseInt(shortlistEliminationInfo.delay, 10);
+    let eliminationDate = createLuxonDate(shortlistEliminationInfo.start);
+    const now = luxon.DateTime.local();
 
-    // We can eliminate at most 8 themes (leaving 2 until the reveal)
-    while (eliminationDate.isBefore(now) && eliminated < 8) {
-      eliminationDate.add(delay, "minutes");
+    // Don't allow eliminating all themes
+    while (eliminationDate < now && eliminated < MAX_ELIMINATED_THEMES) {
+      eliminationDate = eliminationDate.plus({ minute: delayInMinutes });
       eliminated++;
     }
   }
@@ -549,25 +552,25 @@ function computeEliminatedShortlistThemes(event) {
  * @return moment time
  */
 function computeNextShortlistEliminationTime(event) {
-  let alreadyEliminated = 0;
+  let eliminated = 0;
 
   const shortlistEliminationInfo = event.related("details").get("shortlist_elimination");
   if (shortlistEliminationInfo.start) {
-    const nextEliminationDate = moment(shortlistEliminationInfo.start);
-    const now = moment();
+    let nextEliminationDate = createLuxonDate(shortlistEliminationInfo.start);
+    const now = luxon.DateTime.local();
 
-    if (now.isBefore(nextEliminationDate)) {
+    if (now < nextEliminationDate) {
       return nextEliminationDate;
     } else if (shortlistEliminationInfo.delay && parseInt(shortlistEliminationInfo.delay, 10) > 0) {
-      const delay = parseInt(shortlistEliminationInfo.delay, 10);
+      const delayInMinutes = parseInt(shortlistEliminationInfo.delay, 10);
 
-      // We can eliminate at most 7 themes (leaving 3 until the reveal)
-      while (nextEliminationDate.isBefore(now) && alreadyEliminated < 7) {
-        nextEliminationDate.add(delay, "minutes");
-        alreadyEliminated++;
+      // Don't allow eliminating all themes
+      while (nextEliminationDate < now && eliminated < MAX_ELIMINATED_THEMES) {
+        nextEliminationDate = nextEliminationDate.plus({ minute: delayInMinutes });
+        eliminated++;
       }
 
-      if (alreadyEliminated < 7) {
+      if (eliminated < MAX_ELIMINATED_THEMES) {
         return nextEliminationDate;
       }
     }

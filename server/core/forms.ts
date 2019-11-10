@@ -17,7 +17,7 @@ import * as url from "url";
 import * as validator from "validator";
 import config from "./config";
 import constants from "./constants";
-import { ZONE_UTC } from "./formats";
+import { createLuxonDate } from "./formats";
 
 export default {
   sanitizeString,
@@ -40,6 +40,7 @@ export default {
   isPast,
 
   parsePickerDateTime,
+  parsePickerDate,
   parseJson,
 
   markdownToHtml,
@@ -257,14 +258,18 @@ function isPast(time: number) {
  * Converts a string built in a date time picker to an actual date
  * which can be stored in a model
  */
-function parsePickerDateTime(str: string, options: luxon.DateTimeOptions = {}): Date | false {
-  options.zone = options.zone || ZONE_UTC;
-  const luxonDate = luxon.DateTime.fromFormat(str, constants.PICKER_DATE_TIME_FORMAT, options);
-  if (luxonDate.isValid) {
-    return luxonDate.toJSDate();
-  } else {
-    return false;
-  }
+function parsePickerDateTime(formattedDate: string, options: luxon.DateTimeOptions = {}): Date | false {
+  const luxonDate = createLuxonDate(formattedDate, options, constants.PICKER_DATE_TIME_FORMAT);
+  return (luxonDate.isValid) ? luxonDate.toJSDate() : false;
+}
+
+/**
+ * Converts a string built in a date picker to an actual date
+ * which can be stored in a model
+ */
+function parsePickerDate(formattedDate: string, options: luxon.DateTimeOptions = {}): Date | false {
+  const luxonDate = createLuxonDate(formattedDate, options, constants.PICKER_DATE_FORMAT);
+  return (luxonDate.isValid) ? luxonDate.toJSDate() : false;
 }
 
 /**

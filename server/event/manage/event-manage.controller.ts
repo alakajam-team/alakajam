@@ -101,7 +101,7 @@ export async function eventManage(req, res) {
         name: req.body.name,
         display_dates: forms.sanitizeString(req.body["display-dates"]),
         display_theme: forms.sanitizeString(req.body["display-theme"]),
-        started_at: forms.parsePickerDateTime(req.body["started-at"]),
+        started_at: forms.parsePickerDate(req.body["started-at"]),
         divisions: req.body.divisions,
         event_preset_id: req.body["event-preset-id"] || null,
         status: req.body.status,

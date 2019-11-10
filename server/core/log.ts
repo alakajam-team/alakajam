@@ -13,17 +13,18 @@
  */
 
 import { sync as findUp } from "find-up";
-import * as moment from "moment";
+import * as luxon from "luxon";
 import * as path from "path";
 import * as util from "util";
 import { config as winstonConfig, Logger, transports } from "winston";
 
-const sourcesRoot = path.dirname(findUp("package.json", { cwd: __dirname }));
+const SOURCES_ROOT = path.dirname(findUp("package.json", { cwd: __dirname }));
+const LOCAL_TIME_ZONE = new luxon.LocalZone();
 
 let level = "info";
 try {
   // tslint:disable-next-line: no-var-requires
-  const config = require(path.resolve(sourcesRoot, "config"));
+  const config = require(path.resolve(SOURCES_ROOT, "config"));
   level = config.LOG_LEVEL;
 } catch (e) {
   // Nothing (config file might not be created yet)
@@ -37,14 +38,14 @@ const log = new Logger({
   transports: [
     new transports.Console({
       colorize: true,
-      timestamp: () => moment().format("YYYY-MM-DD hh:mm:ss.SSS"),
+      timestamp: () => luxon.DateTime.local().setZone(LOCAL_TIME_ZONE).toFormat("yyyy-MM-dd HH:mm:ss.SSS"),
       formatter: (options) => {
         // Figure out the logging caller location
         // XXX slow and hacky approach
         let location = "?";
         const lines = new Error().stack.split("\n");
         for (const line of lines) {
-          if (line.indexOf(sourcesRoot) !== -1 &&
+          if (line.indexOf(SOURCES_ROOT) !== -1 &&
               line.indexOf(__filename) === -1 &&
               line.indexOf("node_modules") === -1) {
             const locInfo = line.replace(/(.*\()/g, "")

@@ -120,6 +120,7 @@ export default {
   ORDINAL_DAY_TOKEN: "#",
   DATE_FORMAT: "MMMM # yyyy",
   DATE_TIME_FORMAT: "MMMM # yyyy, h:mma",
+  PICKER_DATE_FORMAT: "yyyy-MM-dd",
   PICKER_DATE_TIME_FORMAT: "yyyy-MM-dd HH:mm",
   FEATURED_EVENT_DATE_FORMAT: "MMM. #, ha",
 

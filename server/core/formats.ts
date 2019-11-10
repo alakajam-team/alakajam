@@ -6,13 +6,20 @@ export const ZONE_UTC = "utc";
 
 luxon.Settings.defaultZoneName = ZONE_UTC;
 
-export function createLuxonDate(date: string | number | Date, options: luxon.DateTimeOptions = {}): luxon.DateTime {
+export function createLuxonDate(
+    date: string | number | Date,
+    options: luxon.DateTimeOptions = {},
+    format?: string): luxon.DateTime {
   options.zone = options.zone || ZONE_UTC;
 
   if (typeof date === "number") {
     return luxon.DateTime.fromMillis(date, options);
   } else if (typeof date === "string") {
-    return luxon.DateTime.fromISO(date, options);
+    if (format) {
+      return luxon.DateTime.fromFormat(date, format, options);
+    } else {
+      return luxon.DateTime.fromISO(date, options);
+    }
   } else {
     return luxon.DateTime.fromJSDate(date, options);
   }

@@ -22,11 +22,14 @@ if (__filename.endsWith(".js")) {
 module.exports = {
   development: {
     client: config.DB_TYPE,
+    useNullAsDefault: true,
     connection: {
       filename,
-      database: config.DB_NAME,
+      host: config.DB_HOST,
       user: config.DB_USER,
-      password: config.DB_PASSWORD
+      password: config.DB_PASSWORD,
+      database: config.DB_NAME,
+      charset: "utf8"
     },
     pool: {
       min: 2,
