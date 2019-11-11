@@ -1,3 +1,4 @@
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
@@ -274,16 +275,17 @@ export async function entryManage(req, res) {
  * Deletes an entry
  */
 export async function entryDelete(req, res) {
-  const { entry, event, user } = res.locals;
+  const { entry, event, user }: { [key: string]: BookshelfModel } = res.locals;
 
   if (user && entry && security.canUserManage(user, entry, { allowMods: true })) {
     await entry.load("posts");
-    entry.related("posts").forEach(async (post) => {
+    const posts = entry.related("posts") as BookshelfCollection;
+    posts.forEach(async (post) => {
       post.set("entry_id", null);
       await post.save();
     });
     await eventService.deleteEntry(entry);
-    if (event) {
+    if (event && event.get(status) !== enums.EVENT.STATUS.CLOSED) {
       eventService.refreshEventCounts(event); // No need to await
     }
     cache.user(res.locals.user).del("latestEntry");
