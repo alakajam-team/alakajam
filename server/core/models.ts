@@ -626,7 +626,7 @@ export const EntryTag = bookshelf.model("EntryTag", {
  * | integer | entry_id | Entry ID (not null)
  * | integer | event_id | Event ID (not null)
  * | integer | user_id | User ID (not null)
- * | decimal | vote_1 .. 4 | Vote for categories 1 to 4 ([-999.99,999.99])
+ * | decimal | vote_1 .. 6 | Vote for categories 1 to 6 ([-999.99,999.99])
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
