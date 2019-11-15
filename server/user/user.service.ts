@@ -10,6 +10,7 @@ import * as randomKey from "random-key";
 import config, * as configUtils from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
+import { ILike } from "server/core/db-typeorm-ilike";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
@@ -85,7 +86,7 @@ export class UserService {
   public async findByName(name: string, options: FindOneOptions<User> = {}): Promise<User> {
     const userRepository = getRepository(User);
     return userRepository.findOne({
-      where: `User.name ${configUtils.ilikeOperator()} '${name}'`,
+      where: { name: ILike(name) },
       relations: ["details"],
       ...options
     });
@@ -100,10 +101,10 @@ export class UserService {
    *
    * Note: all searches will be case-sensitive if developing with SQLite.
    */
-  public async searchByName(fragment, options: any = {}) {
-    const comparator = (options.caseSensitive || config.DB_TYPE !== "postgresql") ? "LIKE" : constants.DB_ILIKE;
+  public async searchByName(fragment, options: any = {}): Promise<BookshelfModel[]> {
+    const comparator = (options.caseSensitive) ? "LIKE" : configUtils.ilikeOperator();
     return models.User.where("name", comparator, `%${fragment}%`).fetchAll({
-      withRelated: options.related,
+      withRelated: options.related
     });
   }
 

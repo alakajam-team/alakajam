@@ -1,5 +1,5 @@
 import * as path from "path";
-import { Connection, ConnectionOptions, createConnection } from "typeorm";
+import { Connection, ConnectionOptions, createConnection, getConnection } from "typeorm";
 import { BaseConnectionOptions } from "typeorm/connection/BaseConnectionOptions";
 import config from "./config";
 import constants from "./constants";
@@ -20,11 +20,19 @@ export class DB {
   private connectionInstance: Connection = null;
 
   public get connection() {
-    if (this.connectionInstance == null) { throw new Error("no DB connection, please call connect() first"); }
+    if (this.connectionInstance == null) {
+      throw new Error("no DB connection, please call connect() first");
+    }
     return this.connectionInstance;
   }
 
   public async connect() {
+    if (getConnection()) {
+      this.connectionInstance = getConnection();
+      log.warn("TypeORM is already connected");
+      return;
+    }
+
     const baseConnectionOptions: BaseConnectionOptions = {
       type: null,
       synchronize: false,
