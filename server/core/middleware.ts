@@ -23,7 +23,7 @@ import settings from "server/core/settings";
 import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
 import { routes } from "server/routes";
 import { CustomRequest } from "server/types";
-import userService from "server/user/user.service";
+import passwordRecoveryService from "server/user/password-recovery/password-recovery.service";
 import { promisify } from "util";
 import config, * as configUtils from "./config";
 import constants from "./constants";
@@ -60,7 +60,7 @@ async function configure(app: Application) {
   }
 
   // In-memory data
-  await userService.loadPasswordRecoveryCache(app);
+  await passwordRecoveryService.loadPasswordRecoveryCache(app);
 
   // Static files
   app.use("/static", express.static(configUtils.staticPathAbsolute()));

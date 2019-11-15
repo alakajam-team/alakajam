@@ -1,4 +1,5 @@
 import userService from "server/user/user.service";
+import passwordRecoveryService from "../password-recovery/password-recovery.service";
 
 /**
  * Password change page, following the click on a password recovery link.
@@ -11,7 +12,7 @@ export async function passwordRecovery(req, res) {
     return;
   }
 
-  if (userService.validatePasswordRecoveryToken(res.app, req.query.token)) {
+  if (passwordRecoveryService.validatePasswordRecoveryToken(res.app, req.query.token)) {
     res.locals.token = true;
 
     if (req.method === "POST") {
@@ -20,7 +21,7 @@ export async function passwordRecovery(req, res) {
       } else if (req.body["new-password"] !== req.body["new-password-bis"]) {
         errorMessage = "New passwords do not match";
       } else {
-        const result = await userService.setPasswordUsingToken(res.app, req.query.token, req.body["new-password"]);
+        const result = await passwordRecoveryService.recoverPasswordUsingToken(res.app, req.query.token, req.body["new-password"]);
         if (result === true) {
           res.locals.success = true;
         } else {

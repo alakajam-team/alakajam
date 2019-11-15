@@ -6,21 +6,16 @@
 
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as crypto from "crypto";
-import * as path from "path";
 import * as randomKey from "random-key";
 import config, * as configUtils from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
-import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
 import { User } from "server/entity/user.entity";
 import { FindOneOptions, getRepository } from "typeorm";
 import eventService from "../event/event.service";
-import mailService from "./mail/mail.service";
-
-const PASSWORD_RECOVERY_TOKENS_PATH = path.join(configUtils.dataPathAbsolute(), "password-recovery.json");
 
 export class UserService {
 
@@ -233,77 +228,6 @@ export class UserService {
       userRole.set("user_name", user.get("name"));
       userRole.set("user_title", user.get("title"));
       await userRole.save();
-    }
-  }
-
-  public async loadPasswordRecoveryCache(app) {
-    if (await fileStorage.exists(PASSWORD_RECOVERY_TOKENS_PATH)) {
-      const rawFile = await fileStorage.read(PASSWORD_RECOVERY_TOKENS_PATH);
-      app.locals.passwordRecoveryTokens = JSON.parse(rawFile);
-    } else {
-      app.locals.passwordRecoveryTokens = {};
-    }
-  }
-
-  public async sendPasswordRecoveryEmail(app, email) {
-    // Make sure the user exists
-    const user = await models.User.where("email", email).fetch();
-    if (user) {
-      // Routine work: clear expired tokens
-      const passwordRecoveryTokens = app.locals.passwordRecoveryTokens;
-      const now = Date.now();
-      for (const key in passwordRecoveryTokens) {
-        if (passwordRecoveryTokens[key].expires < now) {
-          delete passwordRecoveryTokens[key];
-        }
-      }
-
-      // Create token
-      const token = randomKey.generate(32);
-      passwordRecoveryTokens[token] = {
-        userId: user.get("id"),
-        expires: Date.now() + constants.PASSWORD_RECOVERY_LINK_MAX_AGE,
-      };
-      fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, passwordRecoveryTokens);
-
-      // Send email
-      const context = {
-        user,
-        token,
-      };
-      await mailService.sendMail(app, user, "Your password recovery link", "email-password-recovery", context);
-    }
-  }
-
-  public validatePasswordRecoveryToken(app, token) {
-    return app.locals.passwordRecoveryTokens[token] &&
-      app.locals.passwordRecoveryTokens[token].expires > Date.now();
-  }
-
-  /**
-   *
-   * @param {App} app
-   * @param {string} token
-   * @param {string} password
-   * @returns {boolean|string} true or an error message
-   */
-  public async setPasswordUsingToken(app, token, password) {
-    if (this.validatePasswordRecoveryToken(app, token)) {
-      const userId = app.locals.passwordRecoveryTokens[token].userId;
-      const user = await this.findById(userId);
-      if (user) {
-        const success = this.setPassword(user, password);
-        if (success) {
-          await user.save();
-          delete app.locals.passwordRecoveryTokens[token];
-          fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, app.locals.passwordRecoveryTokens);
-        }
-        return success;
-      } else {
-        return "This user does not exist";
-      }
-    } else {
-      return "Invalid password recovery token";
     }
   }
 

@@ -1,6 +1,6 @@
 
 import forms from "server/core/forms";
-import userService from "server/user/user.service";
+import passwordRecoveryService from "../password-recovery/password-recovery.service";
 
 export async function passwordRecoveryRequest(req, res) {
   let errorMessage = null;
@@ -17,7 +17,7 @@ export async function passwordRecoveryRequest(req, res) {
 
     if (!errorMessage) {
       try {
-        await userService.sendPasswordRecoveryEmail(res.app, req.body.email);
+        await passwordRecoveryService.sendPasswordRecoveryEmail(res.app, req.body.email);
         res.locals.success = true;
       } catch (err) {
         errorMessage = err.message;
