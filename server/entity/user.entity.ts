@@ -57,6 +57,10 @@ export class User extends TimestampedEntity {
   @OneToOne((type) => UserDetails, (userDetails) => userDetails.user, { nullable: false })
   public details: UserDetails;
 
+  public dependents(): Array<keyof this> {
+    return [ "details" ];
+  }
+
   // Missing: Posts
 
 }

@@ -81,9 +81,12 @@ export const User = bookshelf.model("User", {
   tournamentScores() {
     return this.hasMany("TournamentScore", "user_id");
   },
+  themeVotes() {
+    return this.hasMany("ThemeVote", "user_id");
+  },
 }, {
   // Cascading
-  dependents: ["details", "roles", "entryScores", "tournamentScores", "comments", "posts"],
+  dependents: ["details", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes"],
 });
 
 /**

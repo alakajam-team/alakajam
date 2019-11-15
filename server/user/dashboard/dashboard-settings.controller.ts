@@ -2,14 +2,16 @@ import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import { anyRule, rule, validateForm } from "server/core/forms-validation";
+import eventService from "server/event/event.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
-import userTimezoneService, { TimeZone } from "../user-timezone.service";
+import userTimezoneService from "../user-timezone.service";
 import { DashboardLocals } from "./dashboard.middleware";
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   res.render("user/dashboard/dashboard-settings", {
+    ...req.body,
     timezones: await userTimezoneService.getAllTimeZonesAsOptions()
   });
 }
@@ -91,7 +93,8 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
 
 async function _handleDeletion(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const deletingOwnAccount = res.locals.user.get("id") === res.locals.dashboardUser.id;
-  const result = await userService.deleteUser(res.locals.dashboardUser);
+  const userEntries = await eventService.findUserEntries(res.locals.dashboardUser);
+  const result = await userService.deleteUser(res.locals.dashboardUser, userEntries);
 
   if (!result.error) {
     if (deletingOwnAccount) {
@@ -99,12 +102,12 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
     } else {
       res.redirect("/people");
     }
-    return;
   } else {
     res.locals.alerts.push({
       type: "danger",
       title: "Could not delete account",
       message: result.error
     });
+    await dashboardSettingsGet(req, res);
   }
 }

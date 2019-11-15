@@ -15,7 +15,6 @@ import log from "server/core/log";
 import * as models from "server/core/models";
 import { User } from "server/entity/user.entity";
 import { FindOneOptions, getRepository } from "typeorm";
-import eventService from "../event/event.service";
 
 export class UserService {
 
@@ -177,11 +176,11 @@ export class UserService {
    * Deletes an user, but only if it doesn't have any entries.
    * @param {User} user
    */
-  public async deleteUser(user): Promise<{ error?: string }> {
-    const entries = await eventService.findUserEntries(user);
-    if (entries.length === 0) {
-      const userId = user.get("id");
-      await user.destroy(); // XXX Comment/entry counters are not refreshed
+  public async deleteUser(user: User, userEntries: BookshelfCollection): Promise<{ error?: string }> {
+    if (userEntries.length === 0) {
+      const userId = user.id;
+      const bookshelfUser = await models.User.where("id", user.id).fetch();
+      await bookshelfUser.destroy(); // XXX Comment/entry counters are not refreshed
       log.info("User %s has been deleted", userId);
       return {};
     } else {
