@@ -1,7 +1,8 @@
 // tslint:disable: no-unused-expression
 
 import { expect } from "chai";
-import { DateTime } from "luxon" ;
+import { DateTime } from "luxon";
+import "module-alias/register";
 import userTimezoneService from "./user-timezone.service";
 
 const PARIS_TIMEZONE = "Europe/Paris";

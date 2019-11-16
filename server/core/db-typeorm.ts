@@ -36,14 +36,17 @@ export class DB {
   }
 
   public async connect(options: Partial<BaseConnectionOptions> = {}) {
-    const logging: LoggerOptions = config.DEBUG_TRACE_SQL ? "all" : ["error"];
+    let logging: LoggerOptions = config.DEBUG_TRACE_SQL ? "all" : ["error"];
+    if (options.logging !== undefined) {
+      logging = options.logging;
+    }
 
     const baseConnectionOptions: BaseConnectionOptions = {
       type: null,
       synchronize: false,
       entities: [this.ENTITIES_PATH],
       logging,
-      logger: (options.logging || logging) ? dbTypeormLogger : undefined,
+      logger: logging ? dbTypeormLogger : undefined,
       ...options
     };
 

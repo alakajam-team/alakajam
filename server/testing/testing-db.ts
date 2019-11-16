@@ -5,7 +5,7 @@ import db from "server/core/db";
 import { insertInitialData } from "server/core/db-init";
 import dbTypeorm from "server/core/db-typeorm";
 
-export const DB_TEST_TIMEOUT = 10000;
+export const DB_TEST_TIMEOUT = 5000;
 
 export const startTestDB = async () => {
   require("server/testing/testing-db-config");

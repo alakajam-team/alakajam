@@ -1,6 +1,7 @@
 // tslint:disable: no-unused-expression
 
 import { expect } from "chai";
+import "module-alias/register";
 import { isAlertPresent } from "server/testing/assertions";
 import { mockRequest, mockResponse } from "server/testing/mocks";
 import { UserService } from "server/user/user.service";
