@@ -12,7 +12,7 @@
 import bookshelf from "./db";
 import forms from "./forms";
 
-const modelPrototype = bookshelf.Model.prototype;
+const modelPrototype = bookshelf.Model.prototype as any;
 
 // TODO Set up BaseModel to make code more concise
 

@@ -5,7 +5,7 @@
  * @module services/event-theme-service
  */
 
-import { BookshelfModel, SaveOptions } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, SaveOptions } from "bookshelf";
 import * as luxon from "luxon";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
@@ -191,7 +191,7 @@ async function findThemeVotesHistory(user, event, options: any = {}) {
  * @param user {User} (optional) user model
  * @param event {Event} event model
  */
-async function findThemesToVoteOn(user, event) {
+async function findThemesToVoteOn(user, event): Promise<BookshelfCollection> {
   let query = models.Theme;
   if (user) {
     query = query.query((qb) => {
@@ -220,10 +220,10 @@ async function findThemesToVoteOn(user, event) {
     const sortedThemes = themesCollection.sortBy((theme) => theme.get("notes"));
     const themesToVoteOn = sortedThemes.splice(0, 10);
     const shuffledThemes = new db.Collection(themesToVoteOn).shuffle();
-    return new db.Collection(shuffledThemes);
+    return new db.Collection(shuffledThemes) as BookshelfCollection;
   } else {
     // Only serve themes in batches, otherwise it gives away when a person submitted its 3 themes
-    return new db.Collection();
+    return new db.Collection() as BookshelfCollection;
   }
 }
 

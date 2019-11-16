@@ -5,9 +5,9 @@
  * @module services/event-service
  */
 
-import { BookshelfCollection } from "bookshelf";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
-import config from "server/core/config";
+import config, { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
@@ -296,7 +296,7 @@ async function searchForExternalEvents(nameFragment) {
   const results = await db.knex("entry")
     .distinct()
     .select("external_event")
-    .where("external_event", (config.DB_TYPE === "postgresql") ? "ILIKE" : "LIKE", `%${nameFragment}%`);
+    .where("external_event", ilikeOperator(), `%${nameFragment}%`);
 
   const formattedResults = [];
   for (const result of results) {
@@ -390,7 +390,7 @@ async function findGames(options: any = {}) {
 
   // Filters
   if (options.search) {
-    query = query.where("entry.title", (config.DB_TYPE === "postgresql") ? "ILIKE" : "LIKE", `%${options.search}%`);
+    query = query.where("entry.title", ilikeOperator(), `%${options.search}%`);
   }
   if (options.eventId !== undefined) { query = query.where("entry.event_id", options.eventId); }
   if (options.platforms) {
@@ -525,7 +525,7 @@ async function findUserEntries(user): Promise<BookshelfCollection> {
   const entriesWithoutPublicationDate = entriesCollection.filter((entry) => !entry.get("published_at"));
   return new db.Collection(entriesCollection
     .difference(entriesWithoutPublicationDate)
-    .concat(entriesWithoutPublicationDate));
+    .concat(entriesWithoutPublicationDate)) as BookshelfCollection;
 }
 
 /**
@@ -726,7 +726,7 @@ function _computeRawCommentKarma(comment) {
  * @param  {Event} event
  * @return {void}
  */
-async function refreshEventCounts(event) {
+async function refreshEventCounts(event: BookshelfModel) {
   const countByDivision = await db.knex("entry")
     .count("* as count").select("division")
     .where("event_id", event.get("id"))
@@ -736,7 +736,7 @@ async function refreshEventCounts(event) {
   let totalCount = 0;
   const divisionCounts = {};
   for (const row of countByDivision) {
-    const count = parseInt(row.count, 10);
+    const count = parseInt(row.count as string, 10);
     divisionCounts[row.division] = count;
     totalCount += count;
   }
@@ -748,7 +748,7 @@ async function refreshEventCounts(event) {
     event.set("entry_count", totalCount);
     await event.save(null, { transacting: transaction });
 
-    const details = event.related("details");
+    const details = event.related("details") as BookshelfModel;
     details.set("division_counts", divisionCounts);
     await details.save(null, { transacting: transaction });
 

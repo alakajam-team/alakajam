@@ -81,9 +81,6 @@ export default {
   ORDERED_PERMISSIONS,
   CONFIDENTIAL_CACHE_KEYS: [SETTING_SESSION_KEY],
 
-  // Database
-  DB_ILIKE: config.DB_TYPE.startsWith("sqlite") ? "LIKE" : "ILIKE",
-
   // Posts
   SPECIAL_POST_TYPE_ANNOUNCEMENT,
   SPECIAL_POST_TYPE_HIDDEN,

@@ -5,29 +5,40 @@
  * @module core/db
  */
 
-import * as fs from "fs";
-import * as path from "path";
-import { promisify } from "util";
+import * as Bookshelf from "bookshelf";
+import * as fs from "fs-extra";
+import * as Knex from "knex";
 import config from "./config";
-import constants from "./constants";
 import * as knexfile from "./knexfile";
 import log from "./log";
+
+export type DB = Bookshelf & {
+  initDatabase: (options?: {silent?: boolean}) => Promise<"none"|string>;
+  emptyDatabase: () => Promise<void>;
+  backup: () => Promise<void>;
+  getBackupDate: () => Promise<Date|false>;
+  restore: (sessionStore) => Promise<void>;
+  deleteBackup: () => Promise<void>;
+  model: (...args) => any; // Bookshelf registry plugin
+};
 
 export default initBookshelf();
 
 const BACKUP_PATH = config.DB_SQLITE_FILENAME ? config.DB_SQLITE_FILENAME + ".backup" : undefined;
 
-function initBookshelf() {
+function initBookshelf(): DB {
   let knex = createKnexInstance();
 
-  const bookshelf = createBookshelfInstance(knex);
+  const bookshelf = createBookshelfInstance(knex) as DB;
 
   /**
    * Updates the database to the latest version
    * @return {string} the previous DB version, or "none"
    */
-  bookshelf.initDatabase = async (): Promise<"none"|string> => {
-    log.info("Upgrading database...");
+  bookshelf.initDatabase = async (options: {silent?: boolean} = {}): Promise<"none"|string> => {
+    if (!options.silent) {
+      log.info("Upgrading database...");
+    }
 
     // Migrating the migrations table... Switch file names between TypeScript & JavaScript to please knex
     // Will possibly be made irrelevant with https://github.com/tgriesser/knex/issues/2756
@@ -50,35 +61,41 @@ function initBookshelf() {
     await knex.migrate.latest((knexfile as any).development.migrations);
     const newVersion = await knex.migrate.currentVersion();
 
-    if (previousVersion !== newVersion) {
-      log.info("Upgraded database from version " + previousVersion + " to " + newVersion);
-    } else {
-      log.info("Database is already at version " + newVersion);
+    if (!options.silent) {
+      if (previousVersion !== newVersion) {
+        log.info("Upgraded database from version " + previousVersion + " to " + newVersion);
+      } else {
+        log.info("Database is already at version " + newVersion);
+      }
     }
+
     return previousVersion;
   };
 
   /**
-   * Downgrades the database until it is emptied.
+   * Disconnects from the database and deletes it.
    * @return {void}
    */
   bookshelf.emptyDatabase = async () => {
-    let rollbackResult;
-    do {
-      rollbackResult = await knex.migrate.rollback();
-    } while (rollbackResult[0] !== 0);
+    if (knex) {
+      await knex.destroy();
+      knex = null;
+    }
+    if (fs.existsSync(config.DB_SQLITE_FILENAME)) {
+      await fs.unlinkSync(config.DB_SQLITE_FILENAME);
+    }
   };
 
   bookshelf.backup = async () => {
     _assertSQLite();
-    await promisify(fs.copyFile)(config.DB_SQLITE_FILENAME, BACKUP_PATH);
+    await fs.copyFile(config.DB_SQLITE_FILENAME, BACKUP_PATH);
   };
 
   bookshelf.getBackupDate = async (): Promise<Date|false> => {
     try {
       _assertSQLite();
-      if (await promisify(fs.exists)(BACKUP_PATH)) {
-        const stat = await promisify(fs.stat)(BACKUP_PATH);
+      if (await fs.existsSync(BACKUP_PATH)) {
+        const stat = await fs.stat(BACKUP_PATH);
         return stat.mtime;
       } else {
         return false;
@@ -91,14 +108,14 @@ function initBookshelf() {
   bookshelf.restore = async (sessionStore) => {
     _assertSQLite();
     await knex.destroy();
-    await promisify(fs.copyFile)(BACKUP_PATH, config.DB_SQLITE_FILENAME);
-    sessionStore.knex = bookshelf.knex = knex = createKnexInstance();
+    await fs.copyFile(BACKUP_PATH, config.DB_SQLITE_FILENAME);
+    sessionStore.knex = bookshelf.knex = knex = createKnexInstance() as any;
   };
 
   bookshelf.deleteBackup = async () => {
     _assertSQLite();
-    if (await promisify(fs.exists)(BACKUP_PATH)) {
-      await promisify(fs.unlink)(BACKUP_PATH);
+    if (await fs.pathExists(BACKUP_PATH)) {
+      await fs.unlink(BACKUP_PATH);
     }
   };
 
@@ -115,7 +132,7 @@ function initBookshelf() {
  * Knex (SQL builder) init
  * @return {Knex}
  */
-function createKnexInstance() {
+function createKnexInstance(): Knex {
   const knexConfig = (knexfile as any).development;
   const knex = require("knex")(knexConfig);
 
@@ -147,8 +164,8 @@ function createKnexInstance() {
  * @param  {Knex} knex
  * @return {void}
  */
-function createBookshelfInstance(knex) {
-  const bookshelf = require("bookshelf")(knex);
+function createBookshelfInstance(knex: Knex) {
+  const bookshelf = Bookshelf(knex as any);
   bookshelf.plugin("registry");
   bookshelf.plugin("pagination");
   bookshelf.plugin(require("bookshelf-cascade-delete"));

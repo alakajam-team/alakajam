@@ -15,7 +15,7 @@ export async function adminDev(req: CustomRequest, res: CustomResponse<CommonLoc
     if (req.method === "POST") {
       if (req.body["db-reset"]) {
         await db.emptyDatabase();
-        const newVersion = await db.initDatabase(config.DEBUG_INSERT_SAMPLES);
+        const newVersion = await db.initDatabase();
         infoMessage = "DB reset done (current version : " + newVersion + ").";
       } else if (req.body["replace-passwords"]) {
         const users = await userService.findUsers({ pageSize: 30 });

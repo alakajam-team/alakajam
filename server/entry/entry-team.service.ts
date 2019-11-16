@@ -1,6 +1,6 @@
 
 import cache from "server/core/cache";
-import config from "server/core/config";
+import config, { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
@@ -47,7 +47,7 @@ export class EntryTeamService {
       .select("user.id", "user.title", "user.avatar", "entered.node_id")
       .from("user")
       .leftJoin(alreadyEntered.as("entered"), "user.id", "=", "entered.user_id")
-      .where("name", (config.DB_TYPE === "postgresql") ? "ILIKE" : "LIKE", `%${nameFragment}%`);
+      .where("name", ilikeOperator(), `%${nameFragment}%`) as any;
   }
 
   public async findTeamMembers(entry, user = null) {
@@ -237,7 +237,7 @@ export class EntryTeamService {
               .where({
                 "entry_invite.invited_user_id": user.get("id"),
                 "entry.event_id": entry.get("event_id"),
-              });
+              }) as any;
             await transaction("entry_invite")
               .whereIn("id", inviteIds.map((row) => row.id))
               .del();

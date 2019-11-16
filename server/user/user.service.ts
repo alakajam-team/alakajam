@@ -7,7 +7,7 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as crypto from "crypto";
 import * as randomKey from "random-key";
-import config, * as configUtils from "server/core/config";
+import * as configUtils from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import { ILike } from "server/core/db-typeorm-ilike";
@@ -27,7 +27,7 @@ export class UserService {
     let query = models.User.forge()
       .where("name", "!=", "anonymous");
     if (options.search) {
-      query = query.where("title", (config.DB_TYPE === "postgresql") ? "ILIKE" : "LIKE", "%" + options.search + "%");
+      query = query.where("title", configUtils.ilikeOperator(), "%" + options.search + "%");
     }
     if (options.eventId) {
       query = query.query((qb) => {

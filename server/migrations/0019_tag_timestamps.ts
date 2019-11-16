@@ -38,8 +38,6 @@ exports.up = async (knex) => {
   const tags = await knex("tag_old").select("*");
   const entryTags = await knex("entry_tag_old").select("*");
 
-  log.info("Migrating " + tags.length + " existing tags...");
-
   for (const tag of tags) {
     await knex("tag").insert({
       id: tag.id,

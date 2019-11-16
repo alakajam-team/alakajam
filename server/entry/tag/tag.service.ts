@@ -1,4 +1,4 @@
-import config from "server/core/config";
+import { ilikeOperator } from "server/core/config";
 import db from "server/core/db";
 import * as models from "server/core/models";
 
@@ -21,7 +21,7 @@ export default {
  */
 async function searchTags(nameFragment) {
   const results = await db.knex("tag")
-    .where("value", (config.DB_TYPE === "postgresql") ? "ILIKE" : "LIKE", `${nameFragment}%`);
+    .where("value", ilikeOperator(), `${nameFragment}%`);
 
   const formattedResults = [];
   for (const result of results) {

@@ -18,7 +18,7 @@ import log from "./log";
  * @param {bool|string} samples true to add samples, 'nightly' to add the special nighly post
  * @returns {void}
  */
-export async function insertInitialData(samples) {
+export async function insertInitialData(samples: boolean | "nightly") {
   const knex = db.knex;
 
   // Mandatory admin account & important settings

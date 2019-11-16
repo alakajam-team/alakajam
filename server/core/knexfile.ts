@@ -18,8 +18,7 @@ if (__filename.endsWith(".js")) {
   migrationsDirectory = path.resolve(constants.ROOT_PATH, "dist/server/migrations");
 }
 
-// CommonJS export for knex cli support
-module.exports = {
+const knexfile = {
   development: {
     client: config.DB_TYPE,
     useNullAsDefault: true,
@@ -40,4 +39,16 @@ module.exports = {
       tableName: "knex_migrations"
     }
   }
-};
+} as any;
+
+if (config.DB_SQLITE_FILENAME.includes(":memory:")) {
+  knexfile.development.connection = config.DB_SQLITE_FILENAME;
+  knexfile.development.pool = {
+    min: 1,
+    max: 1,
+    idleTimeoutMillis: 24 * 3600 * 1000
+  };
+}
+
+// CommonJS export for knex cli support
+module.exports = knexfile;

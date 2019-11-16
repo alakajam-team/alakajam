@@ -1,6 +1,7 @@
 import * as path from "path";
 import { Connection, ConnectionOptions, createConnection, getConnection } from "typeorm";
 import { BaseConnectionOptions } from "typeorm/connection/BaseConnectionOptions";
+import { LoggerOptions } from "typeorm/logger/LoggerOptions";
 import config from "./config";
 import constants from "./constants";
 import dbTypeormLogger from "./db-typeorm-logger";
@@ -26,19 +27,26 @@ export class DB {
     return this.connectionInstance;
   }
 
-  public async connect() {
-    if (getConnection()) {
-      this.connectionInstance = getConnection();
-      log.warn("TypeORM is already connected");
-      return;
+  public async closeAnyConnection() {
+    try {
+      await getConnection().close();
+    } catch (e) {
+      // Connection not found
+    }
+  }
+
+  public async connect(options: {silent?: boolean} = {}) {
+    let logging: LoggerOptions = config.DEBUG_TRACE_SQL ? "all" : ["error"];
+    if (options.silent) {
+      logging = false;
     }
 
     const baseConnectionOptions: BaseConnectionOptions = {
       type: null,
       synchronize: false,
       entities: [this.ENTITIES_PATH],
-      logging: config.DEBUG_TRACE_SQL ? "all" : ["error"],
-      logger: dbTypeormLogger
+      logging,
+      logger: logging ? dbTypeormLogger : undefined,
     };
 
     let connectionOptions: ConnectionOptions;
@@ -60,7 +68,9 @@ export class DB {
     }
 
     this.connectionInstance = await createConnection(connectionOptions);
-    log.info("TypeORM connection initialized");
+    if (!options.silent) {
+      log.info("TypeORM connection initialized");
+    }
   }
 }
 

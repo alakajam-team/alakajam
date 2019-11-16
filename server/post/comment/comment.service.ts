@@ -1,4 +1,4 @@
-import config from "server/core/config";
+import config, { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import * as models from "server/core/models";
@@ -85,8 +85,7 @@ async function findCommentsToUser(user, options: any = {}) {
       .andWhere("comment.user_id", "<>", user.id)
       .andWhere("comment.updated_at", ">", notificationsLastRead)
       .andWhere("comment.updated_at", ">", db.knex.raw("user_role.created_at"))
-      .orWhere("body", (config.DB_TYPE === "sqlite3" ? "like" : "ilike"),
-        "%@" + user.get("name") + "%"); // TODO Use special mention/notification table filled on write
+      .orWhere("body", ilikeOperator(), "%@" + user.get("name") + "%");
   })
     .where("comment.updated_at", ">", notificationsLastRead)
     .orderBy("created_at", "DESC")
@@ -101,14 +100,14 @@ async function findCommentsToUser(user, options: any = {}) {
  * @return {array(number)}
  */
 async function findOwnAnonymousCommentIds(user, nodeId, nodeType) {
-  const results = db.knex("anonymous_comment_user")
+  const results = await db.knex("anonymous_comment_user")
     .select("anonymous_comment_user.comment_id")
     .leftJoin("comment", "comment.id", "anonymous_comment_user.comment_id")
     .where({
       "anonymous_comment_user.user_id": user.get("id"),
       "comment.node_id": nodeId,
       "comment.node_type": nodeType,
-    });
+    }) as any;
   return results.map((row) => row.comment_id);
 }
 
@@ -126,7 +125,7 @@ async function isOwnAnonymousComment(comment, user) {
         comment_id: comment.get("id"),
         user_id: user.get("id"),
       });
-    return parseInt(result[0].count, 10) > 0;
+    return parseInt(result[0].count as string, 10) > 0;
   } else {
     return false;
   }

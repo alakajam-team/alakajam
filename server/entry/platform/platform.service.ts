@@ -6,6 +6,7 @@
  */
 
 import cache from "server/core/cache";
+import { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import log from "server/core/log";
@@ -30,7 +31,7 @@ export default {
  * @returns {Bookshelf.Collection} platforms matching the search.
  */
 function searchPlatforms(nameFragment) {
-  return models.Platform.where("name", constants.DB_ILIKE, `%${nameFragment}%`);
+  return models.Platform.where("name", ilikeOperator(), `%${nameFragment}%`);
 }
 
 /**
