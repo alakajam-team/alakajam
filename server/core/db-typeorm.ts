@@ -35,18 +35,16 @@ export class DB {
     }
   }
 
-  public async connect(options: {silent?: boolean} = {}) {
-    let logging: LoggerOptions = config.DEBUG_TRACE_SQL ? "all" : ["error"];
-    if (options.silent) {
-      logging = false;
-    }
+  public async connect(options: Partial<BaseConnectionOptions> = {}) {
+    const logging: LoggerOptions = config.DEBUG_TRACE_SQL ? "all" : ["error"];
 
     const baseConnectionOptions: BaseConnectionOptions = {
       type: null,
       synchronize: false,
       entities: [this.ENTITIES_PATH],
       logging,
-      logger: logging ? dbTypeormLogger : undefined,
+      logger: (options.logging || logging) ? dbTypeormLogger : undefined,
+      ...options
     };
 
     let connectionOptions: ConnectionOptions;
@@ -68,7 +66,7 @@ export class DB {
     }
 
     this.connectionInstance = await createConnection(connectionOptions);
-    if (!options.silent) {
+    if (options.logging !== false) {
       log.info("TypeORM connection initialized");
     }
   }

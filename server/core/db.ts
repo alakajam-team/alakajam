@@ -40,6 +40,10 @@ function initBookshelf(): DB {
       log.info("Upgrading database...");
     }
 
+    if (!knex) {
+      (bookshelf as any).knex = knex = createKnexInstance();
+    }
+
     // Migrating the migrations table... Switch file names between TypeScript & JavaScript to please knex
     // Will possibly be made irrelevant with https://github.com/tgriesser/knex/issues/2756
     try {

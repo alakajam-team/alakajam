@@ -1,14 +1,14 @@
 // tslint:disable: no-unused-expression
 
 import { expect } from "chai";
-import { closeTestDB, startTestDB } from "server/testing/testing-db";
+import { closeTestDB, DB_TEST_TIMEOUT, startTestDB } from "server/testing/testing-db";
 import userService from "./user.service";
 
-describe.only("User service", function() {
-  this.timeout(10000);
+describe("User service", function() {
+  this.timeout(DB_TEST_TIMEOUT);
 
   before(async () => {
-    await startTestDB();
+     await startTestDB();
   });
 
   after(async () => {

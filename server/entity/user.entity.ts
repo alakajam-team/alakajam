@@ -32,14 +32,14 @@ export class User extends TimestampedEntity {
    * "true" if set ("1" on SQLite), "" or NULL otherwise.
    * TODO Migrate to boolean
    */
-  @Column({ default: false })
+  @Column({ default: false, nullable: true })
   public is_mod: string;
 
   /**
    * "true" if set ("1" on SQLite), "" or NULL otherwise.
    * TODO Migrate to boolean
    */
-  @Column({ default: false })
+  @Column({ default: false, nullable: true })
   public is_admin: string;
 
   @Column({ default: false })

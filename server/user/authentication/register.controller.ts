@@ -3,14 +3,16 @@ import forms from "server/core/forms";
 import { allRules, rule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import userServiceSingleton, { UserService } from "server/user/user.service";
-import userTimezoneService from "../user-timezone.service";
+import userTimezoneServiceSingleton, { UserTimeZoneService } from "../user-timezone.service";
 import { loginPost } from "./login.controller";
 
 export const TEMPLATE_REGISTER = "user/authentication/register";
 
 export class RegisterController {
 
-  constructor(private userService: UserService = userServiceSingleton) { }
+  constructor(
+    private userService: UserService = userServiceSingleton,
+    private userTimezoneService: UserTimeZoneService = userTimezoneServiceSingleton) { }
 
   /**
    * Register form
@@ -19,7 +21,7 @@ export class RegisterController {
     res.locals.pageTitle = "Register";
     res.render(TEMPLATE_REGISTER, {
       ...req.body,
-      timezones: await userTimezoneService.getAllTimeZonesAsOptions()
+      timezones: await this.userTimezoneService.getAllTimeZonesAsOptions()
     });
   }
 

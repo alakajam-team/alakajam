@@ -41,14 +41,5 @@ const knexfile = {
   }
 } as any;
 
-if (config.DB_SQLITE_FILENAME.includes(":memory:")) {
-  knexfile.development.connection = config.DB_SQLITE_FILENAME;
-  knexfile.development.pool = {
-    min: 1,
-    max: 1,
-    idleTimeoutMillis: 24 * 3600 * 1000
-  };
-}
-
 // CommonJS export for knex cli support
 module.exports = knexfile;

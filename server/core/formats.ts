@@ -4,6 +4,7 @@ import constants from "./constants";
 
 export const ZONE_UTC = "utc";
 
+luxon.Settings.defaultLocale = "en";
 luxon.Settings.defaultZoneName = ZONE_UTC;
 
 export function createLuxonDate(
