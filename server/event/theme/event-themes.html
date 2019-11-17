@@ -269,11 +269,6 @@
   <% } else { %>
    <p>No more themes to vote on!</p>
    <p>If you leave this page open, it will refresh every five minutes.</p>
-   <p><i>(Last checked: 
-      <% var date = new Date()
-        var hours = ('0' + date.getHours()).slice(-2)
-        var minutes = ('0' + date.getMinutes()).slice(-2)
-        print(hours + ':' + minutes) %>)</i></p>
   <% } %>
 </script>
 

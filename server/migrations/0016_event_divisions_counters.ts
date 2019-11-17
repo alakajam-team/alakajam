@@ -1,3 +1,5 @@
+import { createLuxonDate } from "server/core/formats";
+
 /**
  * Event divisions map & entry counters
  */
@@ -25,7 +27,7 @@ exports.up = async (knex) => {
     .count()
     .select("division", "event_id")
     .whereNotNull("event_id")
-    .where("published_at", "<=", new Date())
+    .where("published_at", "<=", createLuxonDate().toJSDate())
     .groupBy("division", "event_id");
   const countsByEvent = new Set();
   for (const row of rows) {

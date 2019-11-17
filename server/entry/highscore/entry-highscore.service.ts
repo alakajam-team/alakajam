@@ -10,6 +10,7 @@ import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
+import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
 import eventTournamentService from "server/event/tournament/tournament.service";
@@ -211,7 +212,7 @@ async function submitEntryScore(entryScore, entry) {
       // Save score
       entryScore.set({
         active: true,
-        submitted_at: new Date()
+        submitted_at: createLuxonDate().toJSDate()
       });
       await entryScore.save();
 

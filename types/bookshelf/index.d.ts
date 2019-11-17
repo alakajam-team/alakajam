@@ -14,6 +14,11 @@ declare module "bookshelf" {
     pictureIcon: () => string | undefined;
   }
 
+  class PostBookshelfModel extends BookshelfModel {
+    userRoles: () => BookshelfCollection;
+  }
+  
+
   /*
    * Original typings do not support the "registry" and "pagination" plugins
    * (NB. Sep 13, 2019: could arrive soon now that they are integrated into the core in v1.0.0)

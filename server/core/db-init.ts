@@ -11,7 +11,7 @@ import constants from "./constants";
 import db from "./db";
 import enums from "./enums";
 import fileStorage from "./file-storage";
-import { formatDate } from "./formats";
+import { createLuxonDate, formatDate } from "./formats";
 import log from "./log";
 
 /**
@@ -112,7 +112,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
 
     userEntry = await eventService.createEntry(entrantUser, event2);
     userEntry.set("title", "Game 1");
-    userEntry.set("published_at", new Date());
+    userEntry.set("published_at", createLuxonDate().toJSDate());
     await userEntry.save();
 
     for (let i = 2; i <= 10; i++) {
@@ -120,7 +120,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
       const otherUser = await userService.findByName("entrant" + i);
       const otherEntry = await eventService.createEntry(otherUser, event2);
       otherEntry.set("title", "Game " + i);
-      otherEntry.set("published_at", new Date());
+      otherEntry.set("published_at", createLuxonDate().toJSDate());
       await otherEntry.save();
     }
     for (let i = 2; i <= 10; i++) {
@@ -146,7 +146,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
       body: "This is my second game and I'm really excited.",
       event_id: event2.get("id"),
       entry_id: userEntry.get("id"),
-      published_at: new Date(),
+      published_at: createLuxonDate().toJSDate(),
     });
     await post.save();
 
@@ -156,7 +156,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
       body: "The theme is `You are not alone`. Have fun!",
       event_id: event2.get("id"),
       special_post_type: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
-      published_at: new Date(),
+      published_at: createLuxonDate().toJSDate(),
     });
     if (samples === "nightly") {
       const nightlyPostBuffer = await fileStorage.read("deployment/NIGHTLY_POST.md");

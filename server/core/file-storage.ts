@@ -13,6 +13,7 @@ import * as url from "url";
 import { promisify } from "util";
 import * as configUtils from "./config";
 import constants from "./constants";
+import { createLuxonDate } from "./formats";
 import log from "./log";
 
 let sharp = null;
@@ -110,7 +111,7 @@ async function savePictureToModel(model, attribute, fileUpload, deleteFile,
       if (result.finalPath === previousPath) {
         // Make sure to change the last_updated date, because it is used
         // on picture URLs as a query string to clear the client cache
-        model.set("updated_at", new Date());
+        model.set("updated_at", createLuxonDate().toJSDate());
       } else {
         model.set(attribute, result.finalPath);
       }

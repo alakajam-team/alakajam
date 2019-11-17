@@ -5,7 +5,7 @@
  * @module controllers/api-controller
  */
 
-import { BookshelfModel, BookshelfCollection } from "bookshelf";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as lodash from "lodash";
 import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";

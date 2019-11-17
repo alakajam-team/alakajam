@@ -33,7 +33,7 @@ import log from "./log";
 import * as templatingFilters from "./templating-filters";
 import * as templatingGlobals from "./templating-globals";
 
-const LAUNCH_TIME = new Date().getTime();
+const LAUNCH_TIME = Date.now();
 
 export default {
   configure,

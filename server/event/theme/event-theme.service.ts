@@ -501,7 +501,7 @@ async function _refreshEventThemeStats(event) {
   const eventDetails = event.related("details");
 
   // Throttled: updates every 5 seconds max
-  if (eventDetails.get("updated_at") < new Date().getTime() - 5000) {
+  if (eventDetails.get("updated_at") < createLuxonDate().minus({ second: 5 }).toMillis()) {
     eventDetails.set("theme_count",
       await models.Theme.where({
         event_id: event.get("id"),

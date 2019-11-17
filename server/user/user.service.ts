@@ -4,6 +4,7 @@
  * @module services/user-service
  */
 
+import Bluebird = require("bluebird");
 import { BookshelfCollection, BookshelfModel, FetchPageOptions } from "bookshelf";
 import * as crypto from "crypto";
 import * as randomKey from "random-key";
@@ -16,7 +17,6 @@ import log from "server/core/log";
 import * as models from "server/core/models";
 import { User } from "server/entity/user.entity";
 import { FindOneOptions, getRepository } from "typeorm";
-import Bluebird = require("bluebird");
 
 export class UserService {
 

@@ -13,6 +13,7 @@ import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
+import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
 import postService from "server/post/post.service";
@@ -258,7 +259,7 @@ async function setEntryPicture(entry, file) {
   const picturePath = "/entry/" + entry.get("id");
   const result = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_DEFAULT);
   if (!result.error) {
-    entry.set("updated_at", new Date());
+    entry.set("updated_at", createLuxonDate().toJSDate());
     // Thumbnails creation
     let resultThumbnail;
     if (result && result.width >= result.height * 1.1) {
@@ -737,7 +738,7 @@ async function refreshEventCounts(event: BookshelfModel) {
   const countByDivision = await db.knex("entry")
     .count("* as count").select("division")
     .where("event_id", event.get("id"))
-    .where("published_at", "<=", new Date())
+    .where("published_at", "<=", createLuxonDate().toJSDate())
     .groupBy("division");
 
   let totalCount = 0;

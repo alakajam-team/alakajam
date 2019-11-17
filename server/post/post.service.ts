@@ -1,5 +1,7 @@
+import { BookshelfCollection, BookshelfModel, PostBookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
+import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
 import security from "server/core/security";
 
@@ -57,9 +59,8 @@ async function findPosts(options: {
       userId?: number|string,
       page?: number,
       transacting?: any
-    } = {}) {
-  let postCollection = await models.Post;
-  postCollection = postCollection.query((qb) => {
+    } = {}): Promise<BookshelfCollection> {
+  const query = await models.Post.query((qb) => {
     if (options.specialPostType !== undefined) {
       qb = qb.where("special_post_type", options.specialPostType);
     }
@@ -88,9 +89,10 @@ async function findPosts(options: {
     if (!options.allowDrafts) { qb = qb.where("published_at", "<=", new Date()); }
     return qb;
   });
-  postCollection.orderBy("published_at", "DESC");
 
-  return postCollection.fetchPage({
+  query.orderBy("published_at", "DESC");
+
+  return query.fetchPage({
     pageSize: 10,
     page: options.page,
     transacting: options.transacting,
@@ -109,13 +111,13 @@ async function findPostById(postId) {
  * @return {Post}
  */
 async function findPost(options: any = {}) {
-  let query = models.Post;
+  let query = models.Post as BookshelfModel;
   if (options.id) { query = query.where("id", options.id); }
   if (options.name) { query = query.where("name", options.name); }
   if (options.eventId) { query = query.where("event_id", options.eventId); }
   if (options.userId) { query = query.where("author_user_id", options.userId); }
   if (options.specialPostType !== undefined) { query = query.where("special_post_type", options.specialPostType); }
-  if (!options.allowDrafts) { query = query.where("published_at", "<=", new Date()); }
+  if (!options.allowDrafts) { query = query.where("published_at", "<=", createLuxonDate().toMillis()); }
   return query
     .orderBy("published_at", "desc")
     .fetch({ withRelated: ["author", "userRoles"] });
@@ -129,7 +131,7 @@ async function findPost(options: any = {}) {
 async function findLatestAnnouncement(options: any = {}) {
   let query = models.Post
     .where("special_post_type", constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
-    .where("published_at", "<=", new Date());
+    .where("published_at", "<=", createLuxonDate().toMillis());
   if (options.eventId) {
     query = query.where("event_id", options.eventId);
   }
@@ -148,7 +150,7 @@ async function createPost(user, eventId = null) {
     author_user_id: user.get("id"),
     name: "",
     title: "",
-  });
+  }) as PostBookshelfModel;
   await post.save(); // otherwise the user role won't have a node_id
 
   await post.userRoles().create({
