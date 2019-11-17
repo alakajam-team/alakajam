@@ -1,4 +1,6 @@
-import config, { ilikeOperator } from "server/core/config";
+import * as Bluebird from "bluebird";
+import { BookshelfCollection } from "bookshelf";
+import { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import * as models from "server/core/models";
@@ -49,7 +51,7 @@ async function findCommentsByUser(user) {
  * @param  {integer} eventId
  * @return {Collection(Comment)}
  */
-async function findCommentsByUserAndEvent(userId, eventId) {
+async function findCommentsByUserAndEvent(userId, eventId): Promise<BookshelfCollection> {
   return models.Comment.query((qb) => {
     qb.innerJoin("entry", "comment.node_id", "entry.id")
       .where({
@@ -58,7 +60,7 @@ async function findCommentsByUserAndEvent(userId, eventId) {
         "entry.event_id": eventId,
       });
   })
-    .fetchAll();
+    .fetchAll() as Bluebird<BookshelfCollection>;
 }
 
 /**
@@ -87,7 +89,7 @@ async function findCommentsToUser(user, options: any = {}) {
       .andWhere("comment.updated_at", ">", db.knex.raw("user_role.created_at"))
       .orWhere("body", ilikeOperator(), "%@" + user.get("name") + "%");
   })
-    .where("comment.updated_at", ">", notificationsLastRead)
+    .where("comment.updated_at", ">", notificationsLastRead.getTime())
     .orderBy("created_at", "DESC")
     .fetchAll({ withRelated: ["user", "node"] });
 }

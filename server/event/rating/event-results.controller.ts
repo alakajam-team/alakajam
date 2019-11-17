@@ -1,3 +1,4 @@
+import { BookshelfCollection } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
@@ -37,7 +38,7 @@ export async function viewEventResults(req, res) {
         eventId: res.locals.event.get("id"),
         divisions: [enums.DIVISION.UNRANKED],
       };
-      const games = await eventService.findGames(findGameOptions);
+      const games = await eventService.findGames(findGameOptions) as BookshelfCollection;
       return {
         rankings: games.models,
         sortedBy,

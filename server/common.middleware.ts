@@ -30,6 +30,11 @@ export interface CommonLocals {
   pageDescription: string;
 
   /**
+   * The main page picture, to be used in social media integration.
+   */
+  pageImage: string;
+
+  /**
    * Messages to notify to the user in the top of the screen when the page loads.
    * Available and settable everywhere.
    */

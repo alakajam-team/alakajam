@@ -5,6 +5,8 @@
  * @module services/event-rating-service
  */
 
+import * as Bluebird from "bluebird";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
@@ -73,7 +75,7 @@ async function countEntryVotes(entry) {
   const result = await models.EntryVote
     .where("entry_id", entry.get("id"))
     .count();
-  return parseInt(result, 10);
+  return parseInt(result.toString(), 10);
 }
 
 /**
@@ -171,7 +173,7 @@ async function findVoteHistory(userId, event, options: any = {}) {
   } else {
     return query.fetchAll({
       withRelated: options.withRelated || ["entry.userRoles"],
-    });
+    }) as Bluebird<BookshelfCollection>;
   }
 }
 
@@ -181,7 +183,7 @@ async function findVoteHistory(userId, event, options: any = {}) {
  * @param  {number} categoryIndex
  * @return {Collection(Entry)}
  */
-async function findEntryRankings(event, division, categoryIndex) {
+async function findEntryRankings(event, division, categoryIndex): Promise<BookshelfCollection> {
   if (categoryIndex > 0 && categoryIndex <= constants.MAX_CATEGORY_COUNT) {
     return models.Entry.query((qb) => {
       return qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
@@ -192,7 +194,7 @@ async function findEntryRankings(event, division, categoryIndex) {
         .whereNotNull("entry_details.ranking_" + categoryIndex)
         .orderBy("entry_details.ranking_" + categoryIndex)
         .orderBy("entry.id", "desc");
-    }).fetchAll({ withRelated: ["userRoles", "details"] });
+    }).fetchAll({ withRelated: ["userRoles", "details"] }) as Bluebird<BookshelfCollection>;
   } else {
     throw new Error("Invalid category index: " + categoryIndex);
   }
@@ -357,7 +359,7 @@ async function computeRankings(event) {
     .where("division", "<>", enums.DIVISION.UNRANKED)
     .fetchAll({
       withRelated: ["details", "votes"],
-    });
+    }) as BookshelfCollection;
 
   // For each ranking category...
   const categoryCount = event.related("details").get("category_titles").length;
@@ -373,7 +375,7 @@ async function computeRankings(event) {
       // For each entry, best to worst...
       const divisionEntries = sortedEntries.filter((entry) => entry.get("division") === division);
       for (const entry of divisionEntries) {
-        const details = entry.related("details");
+        const details = entry.related("details") as BookshelfModel;
 
         // Rank it, if it has an average rating if the given category
         if (details.get("rating_" + categoryIndex) >= 1) {
@@ -393,7 +395,8 @@ async function computeRankings(event) {
 
   return db.transaction(async (transaction) => {
     for (const entry of rankedEntries.models) {
-      await entry.related("details").save(null, { transacting: transaction });
+      const entryDetails = entry.related("details") as BookshelfModel;
+      await entryDetails.save(null, { transacting: transaction });
     }
   });
 }
@@ -404,14 +407,14 @@ async function clearRankings(event) {
     .where("entry.division", "<>", enums.DIVISION.UNRANKED)
     .fetchAll({
       withRelated: ["details", "votes"],
-    });
+    }) as BookshelfCollection;
 
   const categoryCount = event.related("details").get("category_titles").length;
   const categoryIndexes = _range(1, categoryCount);
 
   return db.transaction(async (transaction) => {
     for (const entry of entries.models) {
-      const entryDetails = entry.related("details");
+      const entryDetails = entry.related("details") as BookshelfModel;
       for (const categoryIndex of categoryIndexes) {
         entryDetails.set("ranking_" + categoryIndex, null);
       }

@@ -5,7 +5,7 @@
  * @module controllers/api-controller
  */
 
-import { BookshelfModel } from "bookshelf";
+import { BookshelfModel, BookshelfCollection } from "bookshelf";
 import * as lodash from "lodash";
 import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
@@ -153,7 +153,7 @@ export async function getEventShortlist(req, res) {
       // Build data
       const rawShortlist = [];
       shortlist.chain()
-        .forEach((theme, i) => {
+        .forEach((theme: BookshelfModel, i: number) => {
           const rank = i + 1;
           const eliminated = eliminatedThemes > 10 - rank;
           rawShortlist.push({
@@ -311,7 +311,7 @@ export async function getUserSearch(req, res) {
       search: req.query.title,
       pageSize: 30,
       page,
-    });
+    }) as BookshelfCollection;
 
     json.users = [];
     for (const user of users.models) {
@@ -331,7 +331,7 @@ export async function getThemeStats(req: CustomRequest, res: CustomResponse<Comm
   });
 
   const themesStats = [];
-  for (const theme of themes) {
+  for (const theme of themes.models) {
     const event = theme.related("event") as BookshelfModel;
     if (event.get("status_theme") === enums.EVENT.STATUS_THEME.RESULTS) {
       const themeStats: {ranking?: number, eventTitle?: string} = {

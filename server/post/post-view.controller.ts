@@ -1,5 +1,8 @@
+import { BookshelfModel } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import security from "server/core/security";
 import templating from "server/core/templating-functions";
+import { CustomRequest, CustomResponse } from "server/types";
 import eventService from "../event/event.service";
 import commentService from "./comment/comment.service";
 import likeService from "./like/like.service";
@@ -8,22 +11,18 @@ import postService from "./post.service";
 /**
  * View a blog post
  */
-export async function postView(req, res) {
+export async function postView(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   // Check permissions
-  const post = res.locals.post;
-  if (postService.isPast(res.locals.post.get("published_at")) ||
-      security.canUserRead(res.locals.user, post, { allowMods: true })) {
+  const { post, user } = res.locals;
+  if (postService.isPast(post.get("published_at")) ||
+      security.canUserRead(user, post, { allowMods: true })) {
     // Fetch comments and likes
-    const context: any = await buildPostContext(post);
-    context.sortedComments = await commentService.findCommentsSortedForDisplay(post);
-    if (res.locals.user) {
-      context.userLikes = await likeService.findUserLikeInfo([post], res.locals.user);
-    }
+    const context = await buildPostContext(post, user);
 
     // Guess social thumbnail pic
-    context.pageImage = postService.getFirstPicture(post);
-    if (context.pageImage && context.pageImage.indexOf("://") === -1) {
-      context.pageImage = templating.staticUrl(context.pageImage);
+    res.locals.pageImage = postService.getFirstPicture(post);
+    if (res.locals.pageImage && res.locals.pageImage.indexOf("://") === -1) {
+      res.locals.pageImage = templating.staticUrl(res.locals.pageImage);
     }
 
     res.render("post/post-view", context);
@@ -32,18 +31,31 @@ export async function postView(req, res) {
   }
 }
 
-export async function buildPostContext(post) {
-  // Fetch related event & entry info
-  const context: any = {
+/**
+ * Fetch related event, entry, comments & current user likes
+ */
+export async function buildPostContext(post: BookshelfModel, currentUser: BookshelfModel) {
+  const context = {
     post,
     allEvents: (await eventService.findEvents()).models,
+    relatedEvent: undefined,
+    relatedEntry: undefined,
+    specialPostType: undefined,
+    sortedComments: undefined,
+    userLikes: undefined
   };
+
   if (post.get("event_id")) {
     context.relatedEvent = await eventService.findEventById(post.get("event_id"));
   }
-  if (post.related("entry").id && !post.get("special_post_type")) {
-    context.relatedEntry = post.related("entry");
+  const relatedEntry = post.related("entry") as BookshelfModel;
+  if (relatedEntry.id && !post.get("special_post_type")) {
+    context.relatedEntry = relatedEntry;
   }
   context.specialPostType = post.get("special_post_type");
+  context.sortedComments = await commentService.findCommentsSortedForDisplay(post);
+  if (currentUser) {
+    context.userLikes = await likeService.findUserLikeInfo([post], currentUser);
+  }
   return context;
 }

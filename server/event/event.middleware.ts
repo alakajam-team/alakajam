@@ -1,10 +1,26 @@
+import { BookshelfModel } from "bookshelf";
+import { NextFunction } from "express";
+import { CommonLocals } from "server/common.middleware";
 import eventService from "server/event/event.service";
 import postService from "server/post/post.service";
+import { CustomRequest, CustomResponse } from "server/types";
+
+export interface EventLocals extends CommonLocals {
+  /**
+   * The current browsed event.
+   */
+  readonly event: BookshelfModel;
+
+  /**
+   * The latest announcement for the current event.
+   */
+  readonly latestEventAnnouncement: BookshelfModel;
+}
 
 /**
  * Fetches the event & optionally the user's entry
  */
-export async function eventMiddleware(req, res, next) {
+export async function eventMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction) {
   if (req.baseUrl.indexOf("/external-entry") !== 0) {
     const event = await eventService.findEventByName(req.params.eventName);
     res.locals.event = event;
@@ -30,7 +46,10 @@ export async function eventMiddleware(req, res, next) {
   next();
 }
 
-export function handleEventUserShortcuts(res, targetEvent, options: { postFromAnyEvent?: boolean } = {}) {
+export function handleEventUserShortcuts(
+    res: CustomResponse<CommonLocals>,
+    targetEvent: BookshelfModel,
+    options: { postFromAnyEvent?: boolean } = {}) {
   if (targetEvent && res.locals.user) {
     const entryTask = eventService.findUserEntryForEvent(res.locals.user, targetEvent.get("id"))
       .then((userEntry) => { res.locals.userEntry = userEntry; });

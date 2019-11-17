@@ -1,3 +1,4 @@
+import { BookshelfCollection } from "bookshelf";
 import forms from "server/core/forms";
 import eventService from "server/event/event.service";
 import postService from "server/post/post.service";
@@ -22,7 +23,7 @@ export async function dashboardPosts(req: CustomRequest, res: CustomResponse<Das
     allowDrafts: true,
     page: currentPage
   });
-  const draftPosts = allPostsCollection.where({ published_at: null });
+  const draftPosts = allPostsCollection.where({ published_at: null }) as BookshelfCollection;
 
   res.render("user/dashboard/dashboard-posts", {
     publishedPosts: allPostsCollection.difference(draftPosts),

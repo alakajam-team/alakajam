@@ -5,6 +5,8 @@
  * @module services/highscore-service
  */
 
+import Bluebird = require("bluebird");
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
@@ -34,7 +36,7 @@ export default {
   refreshEntryRankings,
 };
 
-async function findHighScores(entry, options: any = {}) {
+async function findHighScores(entry, options: any = {}): Promise<BookshelfCollection> {
   const query = models.EntryScore.where("entry_id", entry.get("id"));
   if (!options.withSuspended) {
     query.where("active", true);
@@ -45,7 +47,7 @@ async function findHighScores(entry, options: any = {}) {
     withRelated: ["user"],
   };
   if (options.fetchAll) {
-    return query.fetchAll(fetchOptions);
+    return query.fetchAll(fetchOptions) as Bluebird<BookshelfCollection>;
   } else {
     fetchOptions.pageSize = 10;
     return query.fetchPage(fetchOptions);
@@ -93,10 +95,10 @@ async function findEntryScoreById(id, options: any = {}) {
 /**
  * Retrieves all user scores
  */
-async function findUserScores(userId, options: any = {}) {
+async function findUserScores(userId, options: any = {}): Promise<BookshelfCollection> {
   if (!userId) { return null; }
 
-  let query = models.EntryScore.where("user_id", userId);
+  let query = models.EntryScore.where("user_id", userId) as BookshelfModel;
   switch (options.sortBy) {
     case "ranking":
       query = query.orderBy("ranking");
@@ -108,18 +110,20 @@ async function findUserScores(userId, options: any = {}) {
   }
 
   // PERF: Entry details required to format scores
-  return query.fetchAll({ withRelated: options.related || ["entry.userRoles", "entry.details"] });
+  return query.fetchAll({
+    withRelated: options.related || ["entry.userRoles", "entry.details"]
+  }) as Bluebird<BookshelfCollection>;
 }
 
 /**
  * Finds all scores submitted by a user to the specified entry array or collection
  */
-async function findUserScoresMapByEntry(userId, entries) {
+async function findUserScoresMapByEntry(userId, entries): Promise<Record<number, BookshelfModel>> {
   if (!userId || !entries) { return null; }
 
   entries = entries.models || entries; // Accept collections or arrays
 
-  const entriesToScore = {};
+  const entriesToScore: Record<number, BookshelfModel> = {};
   const entryScores = await models.EntryScore
     .where("user_id", userId)
     .where("entry_id", "in", entries.map((entry) => entry.get("id")))
@@ -150,7 +154,8 @@ async function findEntriesLastActivity(entryIds) {
 /**
  * Finds the most recently active entry scores
  */
-async function findRecentlyActiveEntries(options: { limit?: number, eventId?: number } = {}) {
+async function findRecentlyActiveEntries(
+    options: { limit?: number, eventId?: number } = {}): Promise<BookshelfCollection> {
   const entryScoreIds = await db.knex.select("entry_score.id")
     .from(function() {
       const qb = this.distinct("entry_score.entry_id")
@@ -171,10 +176,11 @@ async function findRecentlyActiveEntries(options: { limit?: number, eventId?: nu
     })
     .orderBy("active.max_submitted_at", "DESC");
 
+  // PERF: Entry details required to format scores
   return models.EntryScore
     .where("id", "IN", entryScoreIds.map((row) => row.id))
     .orderBy("submitted_at", "DESC")
-    .fetchAll({ withRelated: ["entry.details", "user"] }); // PERF: Entry details required to format scores
+    .fetchAll({ withRelated: ["entry.details", "user"] }) as Bluebird<BookshelfCollection>;
 }
 
 /**
@@ -196,7 +202,7 @@ async function submitEntryScore(entryScore, entry) {
           .where("entry_id", entry.get("id"))
           .where("score", _rankingOperator(entry), entryScore.get("score"))
           .count();
-        const ranking = parseInt(higherScoreCount, 10) + 1;
+        const ranking = parseInt(higherScoreCount.toString(), 10) + 1;
         if (ranking <= 10) {
           return { error: "Pic or it didn't happen! You need a screenshot to get in the Top 10 :)" };
         }
@@ -246,15 +252,16 @@ async function deleteAllEntryScores(entry) {
   await refreshEntryRankings(entry);
 }
 
-async function refreshEntryRankings(entry, triggeringEntryScore = null, options: any = {}) {
-  let updatedEntryScore = null;
+async function refreshEntryRankings(
+    entry, triggeringEntryScore = null, options: any = {}): Promise<BookshelfModel | undefined> {
+  let updatedEntryScore: BookshelfModel | undefined;
   const impactedEntryScores = [];
 
   const scores = await models.EntryScore
     .where("entry_id", entry.get("id"))
     .orderBy("score", _rankingDir(entry))
     .orderBy("submitted_at")
-    .fetchAll();
+    .fetchAll() as BookshelfCollection;
 
   await db.transaction(async (transaction) => {
     let ranking = 1;

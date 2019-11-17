@@ -1,3 +1,4 @@
+import { BookshelfModel } from "bookshelf";
 import * as luxon from "luxon";
 import settings from "server/core/settings";
 import eventThemeService from "server/event/theme/event-theme.service";
@@ -91,7 +92,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
       },
     });
     await event2.save();
-    const event2Details = event2.related("details");
+    const event2Details = event2.related("details") as BookshelfModel;
     event2Details.set({
       category_titles: ["Overall", "Graphics", "Audio", "Gameplay", "Originality", "Theme"],
     });

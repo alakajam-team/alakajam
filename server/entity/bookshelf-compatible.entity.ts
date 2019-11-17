@@ -1,4 +1,4 @@
-import { getConnection, getManager, ObjectType } from "typeorm";
+import { getManager, ObjectType } from "typeorm";
 
 export interface DependentEntity {
   entity: ObjectType<any>;

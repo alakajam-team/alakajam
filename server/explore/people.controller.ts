@@ -1,4 +1,5 @@
 
+import { BookshelfCollection } from "bookshelf";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import eventService from "server/event/event.service";
@@ -31,7 +32,7 @@ export async function people(req, res) {
   }
 
   // Fetch info
-  const usersCollection = await userService.findUsers(searchOptions);
+  const usersCollection = await userService.findUsers(searchOptions) as BookshelfCollection;
   const eventsCollection = await eventService.findEvents({ statusNot: enums.EVENT.STATUS.PENDING });
   let searchedEvent = null;
   if (searchOptions.eventId) {

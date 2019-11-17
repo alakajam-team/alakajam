@@ -4,7 +4,7 @@
  * @module services/user-service
  */
 
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, FetchPageOptions } from "bookshelf";
 import * as crypto from "crypto";
 import * as randomKey from "random-key";
 import * as configUtils from "server/core/config";
@@ -16,60 +16,9 @@ import log from "server/core/log";
 import * as models from "server/core/models";
 import { User } from "server/entity/user.entity";
 import { FindOneOptions, getRepository } from "typeorm";
+import Bluebird = require("bluebird");
 
 export class UserService {
-
-  /**
-   * Fetches users
-   * @returns {Collection(User)}
-   */
-  public async findUsers(options: any = {}): Promise<BookshelfCollection> {
-    let query = models.User.forge()
-      .where("name", "!=", "anonymous");
-    if (options.search) {
-      query = query.where("title", configUtils.ilikeOperator(), "%" + options.search + "%");
-    }
-    if (options.eventId) {
-      query = query.query((qb) => {
-        qb.distinct()
-          .leftJoin("user_role", "user_role.user_id", "user.id")
-          .where("user_role.event_id", options.eventId);
-      });
-    }
-    if (options.entriesCount && !options.count) {
-      const subQuery = models.User.forge().query((qb) => {
-        qb.count("user_role.user_id as entries_count")
-          .count("user_role.event_id as akj_entries_count")
-          .select("user.id")
-          .leftJoin("user_role", function() {
-            this.on("user_role.user_id", "=", "user.id")
-              .andOn("user_role.node_type", "like", db.knex.raw("?", ["entry"]));
-          })
-          .groupBy("user.id")
-          .as("c");
-      });
-
-      query = query.query((qb) => {
-        qb.leftJoin(subQuery.query().as("c"), "c.id", "user.id");
-        qb.select("user.*", "c.entries_count", "c.akj_entries_count");
-        if (options.withEntries) {
-          qb.where("c.entries_count", ">", 0);
-        }
-      });
-    }
-    if (options.isMod) { query.where("is_mod", true); }
-    if (options.isAdmin) { query.where("is_admin", true); }
-
-    if (options.count) {
-      return query.count(options);
-    } else if (options.page !== undefined || options.pageSize) {
-      return query.orderBy("created_at", "DESC")
-        .fetchPage(options);
-    } else {
-      if (options.orderBy) { query.orderBy(options.orderBy, options.orderByDesc ? "DESC" : "ASC"); }
-      return query.fetchAll(options);
-    }
-  }
 
   /**
    * Fetches a user
@@ -101,11 +50,68 @@ export class UserService {
    *
    * Note: all searches will be case-sensitive if developing with SQLite.
    */
-  public async searchByName(fragment, options: any = {}): Promise<BookshelfModel[]> {
+  public async searchByName(fragment, options: any = {}): Promise<BookshelfCollection> {
     const comparator = (options.caseSensitive) ? "LIKE" : configUtils.ilikeOperator();
     return models.User.where("name", comparator, `%${fragment}%`).fetchAll({
       withRelated: options.related
-    });
+    }) as Bluebird<BookshelfCollection>;
+  }
+
+  /**
+   * Fetches users
+   * @returns {Collection(User)}
+   */
+  public async findUsers(
+      options: {
+        search?: boolean, eventId?: boolean, entriesCount?: boolean, count?: boolean, withEntries?: boolean,
+        isMod?: boolean, isAdmin?: boolean, orderBy?: string, orderByDesc?: boolean
+      } & FetchPageOptions = {}): Promise<BookshelfCollection | string | number> {
+    let query = new models.User()
+      .where("name", "!=", "anonymous");
+    if (options.search) {
+      query = query.where("title", configUtils.ilikeOperator(), "%" + options.search + "%");
+    }
+    if (options.eventId) {
+      query = query.query((qb) => {
+        qb.distinct()
+          .leftJoin("user_role", "user_role.user_id", "user.id")
+          .where("user_role.event_id", options.eventId);
+      });
+    }
+
+    if (options.entriesCount && !options.count) {
+      const subQuery = models.User.forge<BookshelfModel>().query((qb) => {
+        qb.count("user_role.user_id as entries_count")
+          .count("user_role.event_id as akj_entries_count")
+          .select("user.id")
+          .leftJoin("user_role", function() {
+            this.on("user_role.user_id", "=", "user.id")
+              .andOn("user_role.node_type", "like", db.knex.raw("?", ["entry"]));
+          })
+          .groupBy("user.id")
+          .as("c");
+      });
+
+      query = query.query((qb) => {
+        qb.leftJoin(subQuery.query().as("c"), "c.id", "user.id");
+        qb.select("user.*", "c.entries_count", "c.akj_entries_count");
+        if (options.withEntries) {
+          qb.where("c.entries_count", ">", 0);
+        }
+      });
+    }
+    if (options.isMod) { query.where("is_mod", true); }
+    if (options.isAdmin) { query.where("is_admin", true); }
+
+    if (options.count) {
+      return query.count();
+    } else if (options.page !== undefined || options.pageSize) {
+      return query.orderBy("created_at", "DESC")
+        .fetchPage(options);
+    } else {
+      if (options.orderBy) { query.orderBy(options.orderBy, options.orderByDesc ? "DESC" : "ASC"); }
+      return query.fetchAll(options) as Bluebird<BookshelfCollection>;
+    }
   }
 
   /**
@@ -161,7 +167,7 @@ export class UserService {
   public async authenticate(name, password): Promise<BookshelfModel | false> {
     const user = await models.User.query((query) => {
       query
-        .where(db.knex.raw("LOWER(name)"), name.toLowerCase())
+        .where(db.knex.raw("LOWER(name)") as any, name.toLowerCase())
         .orWhere("email", name);
     }).fetch();
     if (user) {
@@ -223,7 +229,9 @@ export class UserService {
    */
   public async refreshUserReferences(user) {
     // TODO Transaction
-    const userRolesCollection = await models.UserRole.where("user_id", user.get("id")).fetchAll();
+    const userRolesCollection = await models.UserRole
+      .where("user_id", user.get("id"))
+      .fetchAll() as BookshelfCollection;
     for (const userRole of userRolesCollection.models) {
       userRole.set("user_name", user.get("name"));
       userRole.set("user_title", user.get("title"));

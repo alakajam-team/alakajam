@@ -5,7 +5,8 @@
  * @module services/event-theme-service
  */
 
-import { BookshelfCollection, BookshelfModel, SaveOptions } from "bookshelf";
+import * as Bluebird from "bluebird";
+import { BookshelfCollection, BookshelfModel, SaveOptions, SyncOptions } from "bookshelf";
 import * as luxon from "luxon";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
@@ -71,19 +72,19 @@ async function findThemeById(id) {
  * @param event {Event} event model
  * @param ideas {array(object)} An array of exactly 3 ideas (all fields optional): [{label, id}]
  */
-async function findThemeIdeasByUser(user, event) {
+async function findThemeIdeasByUser(user, event): Promise<BookshelfCollection> {
   return models.Theme.where({
     user_id: user.get("id"),
     event_id: event.get("id"),
   })
     .orderBy("id")
-    .fetchAll();
+    .fetchAll() as Bluebird<BookshelfCollection>;
 }
 
-async function findThemesByTitle(title: string, fetchOptions = {}): Promise<BookshelfModel[]> {
+async function findThemesByTitle(title: string, fetchOptions = {}): Promise<BookshelfCollection> {
   return models.Theme.where("title", ilikeOperator(), title)
     .orderBy("created_at")
-    .fetchAll(fetchOptions);
+    .fetchAll(fetchOptions) as Bluebird<BookshelfCollection>;
 }
 
 /**
@@ -155,7 +156,7 @@ async function _handleDuplicates(theme) {
   let query = models.Theme.where({
     slug: theme.get("slug"),
     event_id: theme.get("event_id"),
-  });
+  }) as BookshelfModel;
   if (theme.get("id")) {
     query = query.where("id", "<>", theme.get("id"));
   }
@@ -192,7 +193,7 @@ async function findThemeVotesHistory(user, event, options: any = {}) {
  * @param event {Event} event model
  */
 async function findThemesToVoteOn(user, event): Promise<BookshelfCollection> {
-  let query = models.Theme;
+  let query = models.Theme as BookshelfModel;
   if (user) {
     query = query.query((qb) => {
       qb.leftOuterJoin("theme_vote", function() {
@@ -348,7 +349,7 @@ async function _eliminateLowestThemes(event) {
     .where("notes", ">=", eliminationMinNotes);
 
   // Make sure we have at least enough themes to fill our shortlist before removing some
-  const battleReadyThemeCount = await battleReadyThemesQuery.count();
+  const battleReadyThemeCount = parseInt((await battleReadyThemesQuery.count()).toString(), 10);
   if (battleReadyThemeCount > constants.SHORTLIST_SIZE) {
     const loserThemes = await models.Theme.where({
       event_id: event.get("id"),
@@ -358,7 +359,7 @@ async function _eliminateLowestThemes(event) {
       .where("rating_elimination", "<", eliminationThreshold)
       .orderBy("rating_elimination")
       .orderBy("created_at", "desc")
-      .fetchAll();
+      .fetchAll() as BookshelfCollection;
 
     await event.load("details");
     const eliminatedThemes = loserThemes.slice(0,
@@ -418,15 +419,15 @@ async function countShortlistVotes(event) {
     }, 10 * 60 /* 10 min TTL */);
 }
 
-async function findAllThemes(event, options: any = {}) {
-  let query = models.Theme.where("event_id", event.get("id"));
+async function findAllThemes(event, options: any = {}): Promise<BookshelfCollection> {
+  let query = models.Theme.where("event_id", event.get("id")) as BookshelfModel;
   if (options.shortlistEligible) {
     query = query.where("status", "<>", enums.THEME.STATUS.OUT)
       .where("status", "<>", enums.THEME.STATUS.BANNED);
   }
   return query.orderBy("normalized_score", "DESC")
     .orderBy("created_at")
-    .fetchAll();
+    .fetchAll() as Bluebird<BookshelfCollection>;
 }
 
 async function findBestThemes(event) {
@@ -443,8 +444,8 @@ async function findBestThemes(event) {
 
 async function findThemeRanking(
   theme: BookshelfModel,
-  options: { useShortlistRating?: boolean } = {}): Promise<number> {
-  let betterThemeQuery = models.Theme.where("event_id", theme.get("event_id"));
+  options: { useShortlistRating?: boolean } & SyncOptions = {}): Promise<number> {
+  let betterThemeQuery = models.Theme.where("event_id", theme.get("event_id")) as BookshelfModel;
 
   if (theme.get("status") === enums.THEME.STATUS.SHORTLIST) {
     betterThemeQuery = betterThemeQuery.where("score", ">", theme.get("score"));
@@ -458,25 +459,25 @@ async function findThemeRanking(
   }
 
   const betterThemeCount = await betterThemeQuery.count(null, options);
-  return parseInt(betterThemeCount, 10) + 1;
+  return parseInt(betterThemeCount.toString(), 10) + 1;
 }
 
 /**
  * Retrieves the theme shortlist sorted from best to worst
  * @param event Event
  */
-async function findShortlist(event) {
+async function findShortlist(event): Promise<BookshelfCollection> {
   return models.Theme.where({
     event_id: event.get("id"),
     status: "shortlist",
   })
     .orderBy("score", "DESC")
-    .fetchAll();
+    .fetchAll() as Bluebird<BookshelfCollection>;
 }
 
 async function computeShortlist(event) {
   // Mark all themes as out
-  const allThemesCollection = await findAllThemes(event, { shortlistEligible: true });
+  const allThemesCollection = await findAllThemes(event, { shortlistEligible: true }) as BookshelfCollection;
   await event.load("details");
   await db.transaction(async (transaction) => {
     for (const theme of allThemesCollection.models) {

@@ -1,3 +1,4 @@
+import { BookshelfCollection } from "bookshelf";
 import enums from "server/core/enums";
 import eventService from "../event/event.service";
 
@@ -37,7 +38,7 @@ export async function events(req, res) {
             sortByRanking: true,
             pageSize: 6,
             withRelated: ["details", "userRoles"],
-          });
+          }) as BookshelfCollection;
           const topEntriesByDivision = {};
           topEntries.forEach((entry) => {
             const division = entry.get("division");

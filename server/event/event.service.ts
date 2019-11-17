@@ -5,7 +5,8 @@
  * @module services/event-service
  */
 
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import * as Bluebird from "bluebird";
+import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, FetchAllOptions, FetchPageOptions, SortOrder } from "bookshelf";
 import cache from "server/core/cache";
 import config, { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
@@ -77,7 +78,7 @@ function createEvent(template = null) {
       event_preset_id: template.get("event_preset_id"),
       divisions: template.get("divisions") || event.get("divisions"),
     });
-    const details = event.related("details");
+    const details = event.related("details") as BookshelfModel;
     details.set({
       links: template.get("links"),
       category_titles: template.get("category_titles"),
@@ -136,9 +137,9 @@ async function findEvents(options: {
     sortDatesAscending?: "ASC" | "DESC",
     pageSize?: number,
     page?: number
-  } = {}) {
-  let query = models.Event.forge()
-    .orderBy("started_at", options.sortDatesAscending ? "ASC" : "DESC");
+  } & FetchAllOptions = {}): Promise<BookshelfCollection> {
+  let query = new models.Event()
+    .orderBy("started_at", options.sortDatesAscending ? "ASC" : "DESC") as BookshelfModel;
   if (options.status) { query = query.where("status", options.status); }
   if (options.statusNot) { query = query.where("status", "<>", options.statusNot); }
   if (options.name) { query = query.where("name", options.name); }
@@ -148,7 +149,7 @@ async function findEvents(options: {
   if (options.pageSize) {
     return query.fetchPage(options);
   } else {
-    return query.fetchAll(options);
+    return query.fetchAll(options) as Bluebird<BookshelfCollection>;
   }
 }
 
@@ -158,7 +159,7 @@ async function findEvents(options: {
  * @returns {Event} The earliest pending event OR the currently open event OR the last closed event.
  */
 async function findEventByStatus(status) {
-  let sortOrder = "ASC";
+  let sortOrder: SortOrder = "ASC";
   if (status === enums.EVENT.STATUS.CLOSED) {
     sortOrder = "DESC";
   }
@@ -177,11 +178,10 @@ function createEventTemplate() {
 /**
  * Finds all event templates.
  */
-async function findEventTemplates() {
-  return models.EventTemplate
-    .forge()
+async function findEventTemplates(): Promise<BookshelfCollection> {
+  return new models.EventTemplate()
     .orderBy("title")
-    .fetchAll();
+    .fetchAll() as Bluebird<BookshelfCollection>;
 }
 
 /**
@@ -226,7 +226,9 @@ async function createEntry(user, event) {
   }
 
   await entry.save(); // otherwise the user role won't have a node_id
-  await entry.userRoles().create({
+
+  const userRoles = entry.related("userRoles") as BookshelfCollection;
+  await userRoles.create({
     user_id: user.get("id"),
     user_name: user.get("name"),
     user_title: user.get("title"),
@@ -351,10 +353,15 @@ async function deleteEntry(entry) {
  * @param options {object} nameFragment eventId userId platforms tags pageSize page
  *                         withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
  */
-async function findGames(options: any = {}) {
-  let query = models.Entry.forge().query((qb) => {
+async function findGames(
+    options: {
+      count?: boolean, sortByRatingCount?: boolean, sortByRating?: boolean, sortByRanking?: boolean, eventId?: number,
+      search?: string, platforms?: string[], tags?: Array<{id: number}>, divisions?: string[], notReviewedById?: string,
+      userId?: number, highScoresSupport?: boolean
+    } & FetchPageOptions = {}): Promise<BookshelfCollection | number | string> {
+  let query = new models.Entry().query((qb) => {
     return qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id");
-  });
+  }) as BookshelfModel;
 
   // Sorting
   if (!options.count) {
@@ -471,7 +478,7 @@ async function findGames(options: any = {}) {
   } else if (options.pageSize) {
     return query.fetchPage(options);
   } else {
-    return query.fetchAll(options);
+    return query.fetchAll(options) as Bluebird<BookshelfCollection>;
   }
 }
 
@@ -496,11 +503,11 @@ async function findLatestEntries() {
  * @param id {id} models.Entry ID
  * @returns {Entry}
  */
-async function findEntryById(id, options: any = {}) {
+async function findEntryById(id, options: any = {}): Promise<EntryBookshelfModel> {
   if (!options.withRelated) {
     options.withRelated = ["details", "event", "userRoles", "tags"];
   }
-  return models.Entry.where("id", id).fetch(options);
+  return models.Entry.where("id", id).fetch(options) as Bluebird<EntryBookshelfModel>;
 }
 
 /**
@@ -524,7 +531,7 @@ async function findUserEntries(user): Promise<BookshelfCollection> {
   // Move entries without a publication date to the end (otherwise nulls would be first)
   const entriesWithoutPublicationDate = entriesCollection.filter((entry) => !entry.get("published_at"));
   return new db.Collection(entriesCollection
-    .difference(entriesWithoutPublicationDate)
+    .difference(...entriesWithoutPublicationDate)
     .concat(entriesWithoutPublicationDate)) as BookshelfCollection;
 }
 
@@ -568,7 +575,7 @@ async function findUserEntryForEvent(user, eventId) {
   }).fetch({ withRelated: ["userRoles"] });
 }
 
-async function findEntryInvitesForUser(user, options) {
+async function findEntryInvitesForUser(user, options): Promise<BookshelfCollection> {
   let notificationsLastRead = new Date(0);
   if (options.notificationsLastRead && user.get("notifications_last_read") !== undefined) {
     notificationsLastRead = new Date(user.get("notifications_last_read"));
@@ -576,8 +583,8 @@ async function findEntryInvitesForUser(user, options) {
 
   return models.EntryInvite
     .where("invited_user_id", user.get("id"))
-    .where("created_at", ">", notificationsLastRead)
-    .fetchAll(options);
+    .where("created_at", ">", notificationsLastRead.getTime())
+    .fetchAll(options) as Bluebird<BookshelfCollection>;
 }
 
 async function findRescueEntries(event, user, options: any = {}) {
@@ -608,7 +615,7 @@ async function countEntriesByEvent(event) {
   const count = await models.Entry
     .where("event_id", event.get("id"))
     .count();
-  return parseInt(count, 10);
+  return parseInt(count.toString(), 10);
 }
 
 /**
@@ -618,7 +625,7 @@ async function countEntriesByEvent(event) {
  */
 async function refreshEventReferences(event) {
   // TODO Transaction
-  const entryCollection = await models.Entry.where("event_id", event.id).fetchAll();
+  const entryCollection = await models.Entry.where("event_id", event.id).fetchAll() as BookshelfCollection;
   for (const entry of entryCollection.models) {
     entry.set("event_name", event.get("name"));
     await entry.save();

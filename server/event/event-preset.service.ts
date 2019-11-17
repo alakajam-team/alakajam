@@ -1,3 +1,4 @@
+import * as Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as models from "server/core/models";
 
@@ -28,9 +29,8 @@ export class EventPresetService {
    */
   public async findEventPresets(): Promise<BookshelfCollection> {
     return models.EventPreset
-      .forge()
       .orderBy("title")
-      .fetchAll();
+      .fetchAll() as Bluebird<BookshelfCollection>;
   }
 
   /**
@@ -47,7 +47,7 @@ export class EventPresetService {
    * Deletes an event preset after making sure no event is currently using it.
    * @param {EventPreset} eventPreset
    */
-  public async deleteEventPreset(eventPreset: BookshelfModel): Promise<void> {
+  public async deleteEventPreset(eventPreset: BookshelfModel): Promise<any> {
     await eventPreset.load("events");
     const eventsUsingPreset = (eventPreset.related("events") as any).length;
     if (eventsUsingPreset > 0) {

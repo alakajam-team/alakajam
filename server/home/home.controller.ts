@@ -1,4 +1,5 @@
 
+import { BookshelfCollection } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
@@ -54,7 +55,7 @@ export async function home(req, res) {
         eventId: res.locals.featuredEvent.get("id"),
         pageSize: 4,
         notReviewedById: res.locals.user ? res.locals.user.get("id") : undefined,
-      }).then((suggestedEntriesCollection) => {
+      }).then((suggestedEntriesCollection: BookshelfCollection) => {
         context.suggestedEntries = suggestedEntriesCollection.models;
       })
         .catch(res.traceAndShowErrorPage);

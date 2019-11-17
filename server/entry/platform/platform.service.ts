@@ -5,9 +5,10 @@
  * @module services/platform-service
  */
 
+import * as Bluebird from "bluebird";
+import { BookshelfCollection } from "bookshelf";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
-import constants from "server/core/constants";
 import db from "server/core/db";
 import log from "server/core/log";
 import * as models from "server/core/models";
@@ -48,8 +49,8 @@ async function fetchById(id) {
  *
  * @param {string[]} names the platform names to fetch by.
  */
-function fetchMultipleNamed(names) {
-  return models.Platform.query((qb) => qb.whereIn("name", names)).fetchAll();
+function fetchMultipleNamed(names): Promise<BookshelfCollection> {
+  return models.Platform.query((qb) => qb.whereIn("name", names)).fetchAll() as Bluebird<BookshelfCollection>;
 }
 
 /**
@@ -58,20 +59,20 @@ function fetchMultipleNamed(names) {
  * @returns {Promise<string[]>} a promise which resolves with the names.
  */
 async function fetchAllNames() {
-  const names = (await db.knex("platform").select("name")).map(({ name }) => name);
+  const names = (await db.knex("platform").select("name")).map(({name}: { name: string }) => name);
   names.sort();
   return names;
 }
 
 /** Fetch all platform instances. */
-async function fetchAll(): Promise<any> {
+async function fetchAll(): Promise<BookshelfCollection> {
   if (!cache.general.get("platforms")) {
     cache.general.set("platforms",
-      await models.Platform.forge()
+      await new models.Platform()
         .orderBy("name")
         .fetchAll());
   }
-  return cache.general.get("platforms");
+  return cache.general.get<BookshelfCollection>("platforms");
 }
 
 /**
@@ -80,11 +81,11 @@ async function fetchAll(): Promise<any> {
  * @param  {Platform} platform
  * @return {number}
  */
-async function countEntriesByPlatform(platform) {
+async function countEntriesByPlatform(platform): Promise<number> {
   const count = await models.EntryPlatform
     .where("platform_id", platform.get("id"))
     .count();
-  return parseInt(count, 10);
+  return parseInt(count.toString(), 10);
 }
 
 /**

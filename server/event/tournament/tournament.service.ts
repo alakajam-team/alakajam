@@ -5,6 +5,8 @@
  * @module services/event-tournament-service
  */
 
+import * as Bluebird from "bluebird";
+import { BookshelfCollection } from "bookshelf";
 import * as leftPad from "left-pad";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
@@ -41,8 +43,8 @@ async function findActiveTournamentPlaying(entryId, options: any = {}) {
   if (entryId) {
     const activeTournamentEvent = await findActiveTournament(options);
     if (activeTournamentEvent) {
-      const tEntries = activeTournamentEvent.related("tournamentEntries").models;
-      for (const tEntry of tEntries) {
+      const tEntriesCollection = activeTournamentEvent.related("tournamentEntries") as BookshelfCollection;
+      for (const tEntry of tEntriesCollection.models) {
         if (tEntry.get("entry_id") === entryId) {
           return activeTournamentEvent;
         }
@@ -100,12 +102,12 @@ async function findOrCreateTournamentScore(eventId, userId) {
   return tScore;
 }
 
-async function findTournamentScores(event) {
+async function findTournamentScores(event): Promise<BookshelfCollection> {
   return models.TournamentScore
     .where("event_id", event.get("id"))
     .where("score", ">", 0)
     .orderBy("ranking")
-    .fetchAll({ withRelated: ["user"] });
+    .fetchAll({ withRelated: ["user"] }) as Bluebird<BookshelfCollection>;
 }
 
 async function refreshTournamentScores(highScoreService, event, triggeringUserId = null,
@@ -197,7 +199,7 @@ async function _refreshTournamentRankings(event) {
     const tournamentEntries = await findTournamentEntries(event, { statusTournamentAllowed });
     const tScores = await models.TournamentScore
       .where("event_id", event.get("id"))
-      .fetchAll();
+      .fetchAll() as BookshelfCollection;
 
     // Break ties
     const tScoreGroups = tScores.models.reduce((prev, current) => {

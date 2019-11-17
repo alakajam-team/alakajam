@@ -1,4 +1,5 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
@@ -13,8 +14,9 @@ import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
+import { CustomRequest, CustomResponse } from "server/types";
 
-export async function entryManage(req, res) {
+export async function entryManage(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   const { event, user } = res.locals;
   let entry = res.locals.entry;
 

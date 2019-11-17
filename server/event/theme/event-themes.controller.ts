@@ -1,3 +1,4 @@
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
@@ -78,7 +79,8 @@ export async function viewEventThemes(req, res) {
 
         if (statusTheme === enums.EVENT.STATUS_THEME.VOTING) {
           if (await eventThemeService.isThemeVotingAllowed(event)) {
-            const votesHistoryCollection = await eventThemeService.findThemeVotesHistory(res.locals.user, event);
+            const votesHistoryCollection = await eventThemeService.findThemeVotesHistory(
+                res.locals.user, event) as BookshelfCollection;
             context.votesHistory = votesHistoryCollection.models;
             context.votingAllowed = true;
           } else {
@@ -152,11 +154,12 @@ export async function _generateShortlistInfo(event, user = null) {
   const eliminatedShortlistThemes = eventThemeService.computeEliminatedShortlistThemes(event);
 
   // Split shortlist
-  const info: any = {
+  const info = {
     activeShortlist: shortlistCollection.slice(0, shortlistCollection.length - eliminatedShortlistThemes),
     eliminatedShortlist: eliminatedShortlistThemes > 0 ? shortlistCollection.slice(-eliminatedShortlistThemes) : [],
     randomizedShortlist: false,
     hasRankedShortlist: false,
+    scoreByTheme: undefined
   };
 
   // Sort active shortlist by user score
@@ -180,7 +183,7 @@ export async function _generateShortlistInfo(event, user = null) {
       .chain()
       .slice(0, shortlistCollection.length - eliminatedShortlistThemes)
       .shuffle()
-      .value();
+      .value() as BookshelfModel[];
     info.randomizedShortlist = true;
   }
 

@@ -1,3 +1,5 @@
+import * as Bluebird from "bluebird";
+import { BookshelfCollection } from "bookshelf";
 import { ilikeOperator } from "server/core/config";
 import db from "server/core/db";
 import * as models from "server/core/models";
@@ -47,8 +49,8 @@ async function fetchById(id, options: any = {}) {
  *
  * @param {number} id
  */
-async function fetchByIds(ids) {
-  return models.Tag.where("id", "in", ids).fetchAll();
+async function fetchByIds(ids): Promise<BookshelfCollection> {
+  return models.Tag.where("id", "in", ids).fetchAll() as Bluebird<BookshelfCollection>;
 }
 
 /**

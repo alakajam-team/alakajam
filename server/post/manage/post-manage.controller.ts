@@ -35,7 +35,7 @@ export async function postEdit(req, res) {
     }
 
     // Fetch related event info
-    res.render("post/manage/post-manage", await buildPostContext(res.locals.post));
+    res.render("post/manage/post-manage", await buildPostContext(res.locals.post, res.locals.user));
   } else {
     res.errorPage(403);
   }
@@ -135,7 +135,7 @@ export async function postSave(req, res) {
     if (redirectToView) {
       res.redirect(links.routeUrl(post, "post")); // TODO move route to routing-service
     } else {
-      const context: any = await buildPostContext(post);
+      const context: any = await buildPostContext(post, res.locals.user);
       context.errorMessage = errorMessage;
       res.render("post/manage/post-manage", context);
     }

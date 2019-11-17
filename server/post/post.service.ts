@@ -144,14 +144,13 @@ async function findLatestAnnouncement(options: any = {}) {
  * @return {Post}
  */
 async function createPost(user, eventId = null) {
-  // TODO Better use of Bookshelf API
-  const post = new models.Post();
-  post.set({
+  const post = new models.Post({
     author_user_id: user.get("id"),
     name: "",
     title: "",
   });
   await post.save(); // otherwise the user role won't have a node_id
+
   await post.userRoles().create({
     user_id: user.get("id"),
     user_name: user.get("name"),

@@ -1,4 +1,5 @@
 
+import { BookshelfCollection } from "bookshelf";
 import forms from "server/core/forms";
 import security from "server/core/security";
 import eventService from "server/event/event.service";
@@ -27,7 +28,7 @@ export async function eventManageEntries(req, res) {
   if (req.query.orderBy === "ratingCount") {
     findGameOptions.sortByRatingCount = true;
   }
-  const entriesCollection = await eventService.findGames(findGameOptions);
+  const entriesCollection = await eventService.findGames(findGameOptions) as BookshelfCollection;
 
   // Gather info for karma details
   const entriesById = {};
@@ -37,7 +38,7 @@ export async function eventManageEntries(req, res) {
   const detailedEntryInfo: any = {};
   const usersById = {};
   if (forms.isId(req.query.entryDetails) && entriesById[req.query.entryDetails]) {
-    const eventUsersCollection = await userService.findUsers({ eventId: event.get("id") });
+    const eventUsersCollection = await userService.findUsers({ eventId: event.get("id") }) as BookshelfCollection;
     eventUsersCollection.each((user) => {
       usersById[user.get("id")] = user;
     });
