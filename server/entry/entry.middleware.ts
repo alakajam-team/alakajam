@@ -1,4 +1,4 @@
-import { BookshelfModel } from "bookshelf";
+import { EntryBookshelfModel } from "bookshelf";
 import { NextFunction } from "express";
 import forms from "server/core/forms";
 import links from "server/core/links";
@@ -11,7 +11,7 @@ export interface EntryLocals extends EventLocals {
   /**
    * The current browsed entry.
    */
-  readonly entry: BookshelfModel;
+  readonly entry: EntryBookshelfModel;
 }
 
 /**

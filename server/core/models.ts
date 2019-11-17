@@ -30,6 +30,7 @@ export const Setting = bookshelf.model("Setting", {
   tableName: "setting",
   idAttribute: "key",
   hasTimestamps: true,
+  requireFetch: false
 });
 
 // ===============================================================
@@ -59,6 +60,7 @@ export const User = bookshelf.model("User", {
   tableName: "user",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   details() {
     return this.hasOne("UserDetails", "user_id");
@@ -147,6 +149,7 @@ export const UserRole = bookshelf.model("UserRole", {
   tableName: "user_role",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   user() {
     return this.belongsTo("User", "user_id");
@@ -189,6 +192,7 @@ export const Event = bookshelf.model("Event", {
   tableName: "event",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Relations
 
@@ -254,6 +258,7 @@ export const EventDetails = bookshelf.model("EventDetails", {
   tableName: "event_details",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Relations
 
@@ -406,6 +411,7 @@ export const Entry = bookshelf.model("Entry", {
   tableName: "entry",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Relations
 
@@ -527,6 +533,7 @@ export const EntryDetails = bookshelf.model("EntryDetails", {
   tableName: "entry_details",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   entry() {
     return this.belongsTo("Entry", "entry_id");
@@ -637,6 +644,7 @@ export const EntryVote = bookshelf.model("EntryVote", {
   tableName: "entry_vote",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   entry() {
     return this.belongsTo("Entry", "entry_id");
@@ -664,6 +672,7 @@ export const EntryInvite = bookshelf.model("EntryInvite", {
   tableName: "entry_invite",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   entry() {
     return this.belongsTo("Entry", "entry_id");
@@ -702,6 +711,7 @@ export const Theme = bookshelf.model("Theme", {
   tableName: "theme",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Relations
 
@@ -737,6 +747,7 @@ export const ThemeVote = bookshelf.model("ThemeVote", {
   tableName: "theme_vote",
   idAttribute: "id",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Relations
 
@@ -773,6 +784,7 @@ export const ThemeVote = bookshelf.model("ThemeVote", {
 export const EntryScore = bookshelf.model("EntryScore", {
   tableName: "entry_score",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Relations
 
@@ -799,6 +811,7 @@ export const EntryScore = bookshelf.model("EntryScore", {
 export const TournamentEntry = bookshelf.model("TournamentEntry", {
   tableName: "tournament_entry",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Relations
 
@@ -827,6 +840,7 @@ export const TournamentEntry = bookshelf.model("TournamentEntry", {
 export const TournamentScore = bookshelf.model("TournamentScore", {
   tableName: "tournament_score",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Listeners
 
@@ -882,6 +896,7 @@ export const TournamentScore = bookshelf.model("TournamentScore", {
 export const Post = bookshelf.model("Post", {
   tableName: "post",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Listeners
 
@@ -952,6 +967,7 @@ export const Post = bookshelf.model("Post", {
 export const Comment = bookshelf.model("Comment", {
   tableName: "comment",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Relations
 
@@ -994,6 +1010,7 @@ export const Comment = bookshelf.model("Comment", {
 export const Like = bookshelf.model("Like", {
   tableName: "like",
   hasTimestamps: true,
+  requireFetch: false,
 
   // Relations
 

@@ -26,7 +26,7 @@ export async function dashboardPosts(req: CustomRequest, res: CustomResponse<Das
   const draftPosts = allPostsCollection.where({ published_at: null }) as BookshelfCollection;
 
   res.render("user/dashboard/dashboard-posts", {
-    publishedPosts: allPostsCollection.difference(draftPosts),
+    publishedPosts: allPostsCollection.filter((post) => !draftPosts.includes(post)),
     draftPosts,
     newPostEvent,
     currentPage,

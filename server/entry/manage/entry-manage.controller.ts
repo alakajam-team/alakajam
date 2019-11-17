@@ -1,4 +1,4 @@
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
@@ -15,8 +15,9 @@ import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import { EntryLocals } from "../entry.middleware";
 
-export async function entryManage(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function entryManage(req: CustomRequest, res: CustomResponse<EntryLocals>) {
   const { event, user } = res.locals;
   let entry = res.locals.entry;
 
@@ -40,13 +41,13 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<Common
         event_name: res.locals.event.get("name"),
         division: event.get("status_entry") === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED
           ? enums.DIVISION.UNRANKED : eventService.getDefaultDivision(event),
-      });
+      }) as EntryBookshelfModel;
     }
   } else if (!entry) {
     // Creation (external event)
     entry = new models.Entry({
       division: "solo",
-    });
+    }) as EntryBookshelfModel;
   }
 
   if (entry.get("id") && !security.canUserWrite(user, entry, { allowMods: true })) {
@@ -156,7 +157,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<Common
       highScoreType = forms.sanitizeString(req.body["custom-unit"], { maxLength: 20 });
     }
 
-    const entryDetails = entry.related("details");
+    const entryDetails = entry.related("details") as BookshelfModel;
     entryDetails.set({
       optouts,
       body: forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_ENTRY_DETAILS }),
@@ -196,8 +197,8 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<Common
         teamMembers = req.body.members.map((s) => parseInt(s, 10));
         let ownerId;
         if (!isCreation) {
-          ownerId = entry.related("userRoles")
-            .findWhere({ permission: constants.PERMISSION_MANAGE })
+          ownerId = (entry.related("userRoles") as BookshelfCollection)
+            .find((userRole) => userRole.permission === constants.PERMISSION_MANAGE)
             .get("user_id");
         } else {
           ownerId = res.locals.user.get("id");
@@ -267,7 +268,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<Common
     allPlatforms: await platformService.fetchAllNames(),
     entryPlatforms: entry.get("platforms"),
     external: !res.locals.event,
-    tags: entry.related("tags").map((tag) => ({ id: tag.id, value: tag.get("value") })),
+    tags: (entry.related("tags") as BookshelfCollection).map((tag) => ({ id: tag.id, value: tag.get("value") })),
     isPlayedInTournament,
     errorMessages,
   });
@@ -276,7 +277,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<Common
 /**
  * Deletes an entry
  */
-export async function entryDelete(req, res) {
+export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryLocals>) {
   const { entry, event, user }: { [key: string]: BookshelfModel } = res.locals;
 
   if (user && entry && security.canUserManage(user, entry, { allowMods: true })) {
@@ -318,7 +319,7 @@ export async function entryLeave(req, res) {
 
     // Remove requesting user from the team
     const newTeamMembers = [];
-    entry.related("userRoles").each((userRole) => {
+    entry.related("userRoles").forEach((userRole) => {
       if (userRole.get("user_id") !== user.get("id")) {
         newTeamMembers.push(userRole.get("user_id"));
       }

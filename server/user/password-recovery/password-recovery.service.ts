@@ -5,6 +5,7 @@ import * as randomKey from "random-key";
 import * as configUtils from "server/core/config";
 import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
+import { createLuxonDate } from "server/core/formats";
 import mailer from "server/core/mailer";
 import * as models from "server/core/models";
 import userService from "../user.service";
@@ -20,7 +21,7 @@ export class PasswordRecoveryService {
     if (user) {
       // Routine work: clear expired tokens
       const passwordRecoveryTokens = app.locals.passwordRecoveryTokens;
-      const now = Date.now();
+      const now = createLuxonDate().toMillis();
       for (const key in passwordRecoveryTokens) {
         if (passwordRecoveryTokens[key].expires < now) {
           delete passwordRecoveryTokens[key];
@@ -31,7 +32,7 @@ export class PasswordRecoveryService {
       const token = randomKey.generate(32);
       passwordRecoveryTokens[token] = {
         userId: user.get("id"),
-        expires: Date.now() + constants.PASSWORD_RECOVERY_LINK_MAX_AGE,
+        expires: createLuxonDate().toMillis() + constants.PASSWORD_RECOVERY_LINK_MAX_AGE,
       };
       fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, passwordRecoveryTokens);
 

@@ -36,7 +36,7 @@ export async function people(req, res) {
   const eventsCollection = await eventService.findEvents({ statusNot: enums.EVENT.STATUS.PENDING });
   let searchedEvent = null;
   if (searchOptions.eventId) {
-    searchedEvent = eventsCollection.findWhere({ id: parseInt(searchOptions.eventId, 10) });
+    searchedEvent = eventsCollection.filter((event) => event.id === parseInt(searchOptions.eventId, 10));
   }
 
   res.render("explore/people", {

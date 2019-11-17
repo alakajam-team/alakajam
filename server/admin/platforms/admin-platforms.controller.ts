@@ -30,7 +30,7 @@ export async function adminPlatforms(req, res) {
       if (platform) {
         const duplicateCollection = await platformService.fetchMultipleNamed(platform.get("name"));
         let isDuplicate = false;
-        duplicateCollection.each((potentialDuplicate) => {
+        duplicateCollection.forEach((potentialDuplicate) => {
           isDuplicate = isDuplicate || platform.get("id") !== potentialDuplicate.get("id");
         });
         if (!isDuplicate) {

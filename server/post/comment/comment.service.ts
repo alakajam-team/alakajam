@@ -39,10 +39,10 @@ async function findCommentsSortedForDisplay(node) {
  * @param  {User} user
  * @return {Collection(Comment)}
  */
-async function findCommentsByUser(user) {
+async function findCommentsByUser(user): Promise<BookshelfCollection> {
   return models.Comment.where("user_id", user.id)
     .orderBy("created_at", "DESC")
-    .fetchAll({ withRelated: ["user", "node"] });
+    .fetchAll({ withRelated: ["user", "node"] }) as Bluebird<BookshelfCollection>;
 }
 
 /**
@@ -70,7 +70,7 @@ async function findCommentsByUserAndEvent(userId, eventId): Promise<BookshelfCol
  * @param  {Object} options among "notificationsLastRead"
  * @return {Collection(Comment)}
  */
-async function findCommentsToUser(user, options: any = {}) {
+async function findCommentsToUser(user, options: any = {}): Promise<BookshelfCollection> {
   // let's view any notifs in the last x mins
 
   let notificationsLastRead = new Date(0);
@@ -89,9 +89,9 @@ async function findCommentsToUser(user, options: any = {}) {
       .andWhere("comment.updated_at", ">", db.knex.raw("user_role.created_at"))
       .orWhere("body", ilikeOperator(), "%@" + user.get("name") + "%");
   })
-    .where("comment.updated_at", ">", notificationsLastRead.getTime())
+    .where("comment.updated_at", ">", notificationsLastRead as any)
     .orderBy("created_at", "DESC")
-    .fetchAll({ withRelated: ["user", "node"] });
+    .fetchAll({ withRelated: ["user", "node"] }) as Bluebird<BookshelfCollection>;
 }
 
 /**

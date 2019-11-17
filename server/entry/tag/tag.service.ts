@@ -75,7 +75,7 @@ async function updateEntryTags(entry, tagInfo) {
     .filter((intId) => !isNaN(intId) && intId > 0);
   const tagLabels = tagInfo.filter((label) => isNaN(parseInt(label, 10)) && label.trim());
   const actuallyExistingTags = await models.Tag.where("value", "in", tagLabels).fetchAll();
-  actuallyExistingTags.each((tag) => {
+  actuallyExistingTags.forEach((tag) => {
     tagIds.push(tag.get("id"));
     tagLabels.splice(tagLabels.indexOf(tag.get("value")), 1);
   });

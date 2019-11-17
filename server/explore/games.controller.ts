@@ -34,7 +34,7 @@ export async function games(req, res) {
   const eventsCollection = await eventService.findEvents({ ignoreTournaments: true });
   let searchedEvent = null;
   if (searchOptions.eventId) {
-    searchedEvent = eventsCollection.findWhere({ id: parseInt(searchOptions.eventId, 10) });
+    searchedEvent = eventsCollection.find((event) => event.id === parseInt(searchOptions.eventId, 10));
   }
 
   res.render("explore/games", {

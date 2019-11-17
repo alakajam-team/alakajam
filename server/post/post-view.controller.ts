@@ -53,9 +53,12 @@ export async function buildPostContext(post: BookshelfModel, currentUser: Booksh
     context.relatedEntry = relatedEntry;
   }
   context.specialPostType = post.get("special_post_type");
-  context.sortedComments = await commentService.findCommentsSortedForDisplay(post);
-  if (currentUser) {
-    context.userLikes = await likeService.findUserLikeInfo([post], currentUser);
+  
+  if (post.id) {
+    context.sortedComments = await commentService.findCommentsSortedForDisplay(post);
+    if (currentUser) {
+      context.userLikes = await likeService.findUserLikeInfo([post], currentUser);
+    }
   }
   return context;
 }

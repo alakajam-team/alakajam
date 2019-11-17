@@ -65,7 +65,7 @@ async function findHighScoresMap(entries) {
   return highScoresMap;
 }
 
-async function createEntryScore(userId, entryId) {
+async function createEntryScore(userId: number, entryId: number): Promise<BookshelfModel> {
   const entryScore = new models.EntryScore({
     user_id: userId,
     entry_id: entryId,
@@ -74,13 +74,13 @@ async function createEntryScore(userId, entryId) {
   return entryScore;
 }
 
-async function findEntryScore(userId, entryId) {
+async function findEntryScore(userId: number, entryId: number): Promise<BookshelfModel | null> {
   if (userId && entryId) {
     return models.EntryScore.where({
       user_id: userId,
       entry_id: entryId,
     })
-      .fetch({ withRelated: ["user"] });
+      .fetch({ withRelated: ["user"], require: false });
   } else {
     return null;
   }

@@ -86,7 +86,7 @@ async function findPosts(options: {
         .whereIn("permission", security.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE));
     }
 
-    if (!options.allowDrafts) { qb = qb.where("published_at", "<=", new Date()); }
+    if (!options.allowDrafts) { qb = qb.where("published_at", "<=", createLuxonDate().toJSDate()); }
     return qb;
   });
 
@@ -117,7 +117,7 @@ async function findPost(options: any = {}) {
   if (options.eventId) { query = query.where("event_id", options.eventId); }
   if (options.userId) { query = query.where("author_user_id", options.userId); }
   if (options.specialPostType !== undefined) { query = query.where("special_post_type", options.specialPostType); }
-  if (!options.allowDrafts) { query = query.where("published_at", "<=", createLuxonDate().toMillis()); }
+  if (!options.allowDrafts) { query = query.where("published_at", "<=", createLuxonDate().toJSDate() as any); }
   return query
     .orderBy("published_at", "desc")
     .fetch({ withRelated: ["author", "userRoles"] });
@@ -131,7 +131,7 @@ async function findPost(options: any = {}) {
 async function findLatestAnnouncement(options: any = {}) {
   let query = models.Post
     .where("special_post_type", constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
-    .where("published_at", "<=", createLuxonDate().toMillis());
+    .where("published_at", "<=", createLuxonDate().toJSDate() as any);
   if (options.eventId) {
     query = query.where("event_id", options.eventId);
   }
@@ -180,11 +180,11 @@ async function refreshCommentCount(node) {
  */
 async function deletePost(post) {
   await post.load(["userRoles.user", "comments.user"]);
-  post.related("userRoles").each((userRole) => {
+  post.related("userRoles").forEach((userRole) => {
     cache.user(userRole.related("user")).del("latestPostsCollection");
     userRole.destroy();
   });
-  post.related("comments").each((comment) => {
+  post.related("comments").forEach((comment) => {
     cache.user(comment.related("user")).del("byUserCollection");
     comment.destroy();
   });

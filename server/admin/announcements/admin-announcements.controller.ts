@@ -1,3 +1,4 @@
+import { BookshelfCollection } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
@@ -20,11 +21,11 @@ export async function adminAnnouncements(req: CustomRequest, res: CustomResponse
     allowDrafts: true,
     page: currentPage
   });
-  const draftPosts = allPostsCollection.where({ published_at: null });
+  const draftPosts = allPostsCollection.where({ published_at: null }) as BookshelfCollection;
 
   res.render("admin/announcements/admin-announcements", {
     draftPosts,
-    publishedPosts: allPostsCollection.difference(draftPosts),
+    publishedPosts: allPostsCollection.filter((post) => !draftPosts.includes(post)),
     userLikes: await likeService.findUserLikeInfo(allPostsCollection, res.locals.user),
     currentPage,
     pageCount: allPostsCollection.pagination.pageCount

@@ -1,5 +1,6 @@
 import { BookshelfModel } from "bookshelf";
 import * as leftPad from "left-pad";
+import * as lodash from "lodash";
 import * as slug from "slug";
 import constants from "./constants";
 import * as formats from "./formats";
@@ -107,7 +108,7 @@ export function configure(nunjucksEnvironment) {
   });
 
   nunjucksEnvironment.addFilter("shuffle", (arr: any[]) => {
-    return arr && Array.isArray(arr) ? arr.sort(() => 0.5 - Math.random()) : arr;
+    return arr && Array.isArray(arr) ? lodash.shuffle(arr) : arr;
   });
 
   nunjucksEnvironment.addFilter("slug", (str: string) => {

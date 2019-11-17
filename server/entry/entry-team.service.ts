@@ -62,7 +62,7 @@ export class EntryTeamService {
           invite: false,
         }));
 
-      entry.related("invites").each((invite) => {
+      entry.related("invites").forEach((invite) => {
         members.push({
           id: invite.get("invited_user_id"),
           text: invite.get("invited_user_title"),

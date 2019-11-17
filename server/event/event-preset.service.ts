@@ -29,6 +29,7 @@ export class EventPresetService {
    */
   public async findEventPresets(): Promise<BookshelfCollection> {
     return models.EventPreset
+      .forge<BookshelfModel>()
       .orderBy("title")
       .fetchAll() as Bluebird<BookshelfCollection>;
   }

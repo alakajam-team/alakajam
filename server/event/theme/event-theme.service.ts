@@ -7,6 +7,7 @@
 
 import * as Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel, SaveOptions, SyncOptions } from "bookshelf";
+import * as lodash from "lodash";
 import * as luxon from "luxon";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
@@ -219,24 +220,23 @@ async function findThemesToVoteOn(user, event): Promise<BookshelfCollection> {
     // This helps new themes catch up with the pack fast, while being much better randomized
     // than just showing the themes with the least notes.
     const sortedThemes = themesCollection.sortBy((theme) => theme.get("notes"));
-    const themesToVoteOn = sortedThemes.splice(0, 10);
-    const shuffledThemes = new db.Collection(themesToVoteOn).shuffle();
-    return new db.Collection(shuffledThemes) as BookshelfCollection;
+    const themesToVoteOn = lodash.shuffle(sortedThemes.splice(0, 10));
+    return new db.Collection(themesToVoteOn) as BookshelfCollection;
   } else {
     // Only serve themes in batches, otherwise it gives away when a person submitted its 3 themes
     return new db.Collection() as BookshelfCollection;
   }
 }
 
-async function findThemeShortlistVotes(user, event) {
+async function findThemeShortlistVotes(user, event): Promise<BookshelfCollection> {
   const shortlistCollection = await findShortlist(event);
   const shortlistIds = [];
-  shortlistCollection.each((theme) => shortlistIds.push(theme.get("id")));
+  shortlistCollection.forEach((theme) => shortlistIds.push(theme.get("id")));
   return models.ThemeVote.where({
     user_id: user.get("id"),
   })
     .where("theme_id", "IN", shortlistIds)
-    .fetchAll();
+    .fetchAll() as Bluebird<BookshelfCollection>;
 }
 
 /**
@@ -501,7 +501,7 @@ async function _refreshEventThemeStats(event) {
   const eventDetails = event.related("details");
 
   // Throttled: updates every 5 seconds max
-  if (eventDetails.get("updated_at") < createLuxonDate().minus({ second: 5 }).toMillis()) {
+  if (eventDetails.get("updated_at") < createLuxonDate().minus({ second: 5 }).toJSDate()) {
     eventDetails.set("theme_count",
       await models.Theme.where({
         event_id: event.get("id"),

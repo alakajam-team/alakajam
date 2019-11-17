@@ -123,7 +123,7 @@ export async function viewEventThemes(req, res) {
           const shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(res.locals.user, event);
           if (shortlistVotesCollection.length === shortlistCollection.length) {
             context.userRanks = {};
-            shortlistVotesCollection.each((vote) => {
+            shortlistVotesCollection.forEach((vote) => {
               context.userRanks[vote.get("theme_id")] = 11 - parseInt(vote.get("score"), 10);
             });
           }
@@ -166,7 +166,7 @@ export async function _generateShortlistInfo(event, user = null) {
   const shortlistVotesCollection = user ? await eventThemeService.findThemeShortlistVotes(user, event) : null;
   if (shortlistVotesCollection) {
     info.scoreByTheme = {};
-    shortlistVotesCollection.each((vote) => {
+    shortlistVotesCollection.forEach((vote) => {
       info.scoreByTheme[vote.get("theme_id")] = vote.get("score");
       if (vote.get("score") === 9) {
         info.hasRankedShortlist = true;

@@ -207,13 +207,13 @@ async function deleteEventTemplate(eventTemplate) {
  * @param  {Event} event
  * @return {Entry}
  */
-async function createEntry(user, event) {
+async function createEntry(user, event): Promise<EntryBookshelfModel> {
   const entry = new models.Entry({
     name: "untitled",
     title: "",
     comment_count: 0,
     pictures: "{previews: []}",
-  });
+  }) as EntryBookshelfModel;
 
   if (event) {
     const eventId = event.get("id");
@@ -314,7 +314,7 @@ async function searchForExternalEvents(nameFragment) {
 async function deleteEntry(entry) {
   // Unlink posts (not in transaction to prevent foreign key errors)
   const posts = await postService.findPosts({ entryId: entry.get("id") });
-  posts.each(async (post) => {
+  posts.forEach(async (post) => {
     post.set("entry_id", null);
     await post.save();
   });
@@ -324,11 +324,11 @@ async function deleteEntry(entry) {
     await entry.load(["userRoles.user", "comments.user"], { transacting: transaction });
 
     const destroyQueries: Array<Promise<void>> = [];
-    entry.related("userRoles").each((userRole) => {
+    entry.related("userRoles").forEach((userRole) => {
       cache.user(userRole.related("user")).del("latestEntry");
       destroyQueries.push(userRole.destroy({ transacting: transaction }));
     });
-    entry.related("comments").each((comment) => {
+    entry.related("comments").forEach((comment) => {
       cache.user(comment.related("user")).del("byUserCollection");
       destroyQueries.push(comment.destroy({ transacting: transaction }));
     });
@@ -532,7 +532,7 @@ async function findUserEntries(user): Promise<BookshelfCollection> {
   // Move entries without a publication date to the end (otherwise nulls would be first)
   const entriesWithoutPublicationDate = entriesCollection.filter((entry) => !entry.get("published_at"));
   return new db.Collection(entriesCollection
-    .difference(...entriesWithoutPublicationDate)
+    .filter((entry) => !entriesWithoutPublicationDate.includes(entry))
     .concat(entriesWithoutPublicationDate)) as BookshelfCollection;
 }
 
@@ -584,7 +584,7 @@ async function findEntryInvitesForUser(user, options): Promise<BookshelfCollecti
 
   return models.EntryInvite
     .where("invited_user_id", user.get("id"))
-    .where("created_at", ">", notificationsLastRead.getTime())
+    .where("created_at", ">", notificationsLastRead as any)
     .fetchAll(options) as Bluebird<BookshelfCollection>;
 }
 
@@ -636,7 +636,7 @@ async function refreshEventReferences(event) {
 async function refreshEntryPlatforms(entry) {
   const tasks = [];
   await entry.load("platforms");
-  entry.related("platforms").each(async (platform) => {
+  entry.related("platforms").forEach(async (platform) => {
     tasks.push(platform.destroy());
   });
   const platformStrings = entry.get("platforms");

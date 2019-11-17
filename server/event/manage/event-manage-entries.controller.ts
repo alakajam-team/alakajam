@@ -32,14 +32,14 @@ export async function eventManageEntries(req, res) {
 
   // Gather info for karma details
   const entriesById = {};
-  entriesCollection.each((entry) => {
+  entriesCollection.forEach((entry) => {
     entriesById[entry.get("id")] = entry;
   });
   const detailedEntryInfo: any = {};
   const usersById = {};
   if (forms.isId(req.query.entryDetails) && entriesById[req.query.entryDetails]) {
     const eventUsersCollection = await userService.findUsers({ eventId: event.get("id") }) as BookshelfCollection;
-    eventUsersCollection.each((user) => {
+    eventUsersCollection.forEach((user) => {
       usersById[user.get("id")] = user;
     });
 

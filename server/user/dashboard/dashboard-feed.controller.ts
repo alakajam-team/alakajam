@@ -1,3 +1,4 @@
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import eventService from "server/event/event.service";
 import commentService from "server/post/comment/comment.service";
@@ -12,10 +13,10 @@ export async function dashboardFeed(req, res) {
 
   // if an entry is not in the cache it will return undefined
   const userCache = cache.user(dashboardUser);
-  let byUserCollection = userCache.get<any>("byUserCollection");
-  let toUserCollection = userCache.get<any>("toUserCollection");
-  let latestEntry = userCache.get<any>("latestEntry");
-  let latestPostsCollection = userCache.get<any>("latestPostsCollection");
+  let byUserCollection = userCache.get<BookshelfCollection>("byUserCollection");
+  let toUserCollection = userCache.get<BookshelfCollection>("toUserCollection");
+  let latestEntry = userCache.get<BookshelfModel>("latestEntry");
+  let latestPostsCollection = userCache.get<BookshelfCollection>("latestPostsCollection");
 
   if (!byUserCollection) {
     byUserCollection = await commentService.findCommentsByUser(dashboardUser);
@@ -49,10 +50,10 @@ export async function dashboardFeed(req, res) {
 
   // TODO Limit at the SQL-level
   res.render("user/dashboard/dashboard-feed", {
-    byUser: byUserCollection.take(20),
-    toUser: toUserCollection.take(20),
+    byUser: byUserCollection.slice(0, 20),
+    toUser: toUserCollection.slice(0, 20),
     latestEntry,
-    latestPosts: latestPostsCollection.take(3),
+    latestPosts: latestPostsCollection.slice(0, 3),
     invites: invitesCollection.models,
     notificationsLastRead,
   });

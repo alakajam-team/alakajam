@@ -221,7 +221,7 @@ async function refreshEntryRatings(entry) {
     ratingSum[categoryIndex] = 0;
   }
 
-  votes.each((vote) => {
+  votes.forEach((vote) => {
     for (const categoryIndex of categoryIndexes) {
       const rating = parseFloat(vote.get("vote_" + categoryIndex) || 0);
       if (rating !== 0) {

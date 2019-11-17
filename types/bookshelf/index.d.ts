@@ -43,6 +43,7 @@ declare module "bookshelf" {
     difference(arrayValue: BookshelfModel | BookshelfModel[] | BookshelfCollection): BookshelfModel[];
     slice(begin?: number, end?: number): BookshelfModel[];
     chain(): LoDashExplicitObjectWrapper<any>;
+		includes(value: any, fromIndex?: number): boolean;
 
     models?: BookshelfModel[];
     pagination?: {
