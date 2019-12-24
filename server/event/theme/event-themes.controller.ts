@@ -1,4 +1,4 @@
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { BookshelfCollection } from "bookshelf";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
@@ -6,6 +6,7 @@ import settings from "server/core/settings";
 import eventThemeService from "server/event/theme/event-theme.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
+import * as lodash from "lodash";
 
 /**
  * Browse event theme voting
@@ -177,13 +178,10 @@ export async function _generateShortlistInfo(event, user = null) {
     });
   }
 
-  // Randomize active shortlist if no vote or anonymous
+  // Shuffle active shortlist if no vote or anonymous
   if (!shortlistVotesCollection || shortlistVotesCollection.length === 0) {
-    info.activeShortlist = shortlistCollection
-      .chain()
-      .slice(0, shortlistCollection.length - eliminatedShortlistThemes)
-      .shuffle()
-      .value() as BookshelfModel[];
+    info.activeShortlist = lodash.shuffle(
+      shortlistCollection.slice(0, shortlistCollection.length - eliminatedShortlistThemes));
     info.randomizedShortlist = true;
   }
 
