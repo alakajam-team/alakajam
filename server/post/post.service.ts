@@ -167,10 +167,10 @@ async function createPost(user, eventId = null) {
  * Updates the comment count on the given node and saves it.
  * @param {Post|Entry} node
  */
-async function refreshCommentCount(node) {
+async function refreshCommentCount(node: BookshelfModel): Promise<void> {
   await node.load("comments");
-  const commentCount = node.related("comments").size();
-  await node.save({ comment_count: commentCount }, { patch: true });
+  const comments = node.related("comments") as BookshelfCollection;
+  await node.save({ comment_count: comments.length }, { patch: true });
 }
 
 /**

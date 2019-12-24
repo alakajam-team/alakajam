@@ -120,7 +120,7 @@ export const UserDetails = bookshelf.model("UserDetails", {
     return attrs;
   },
   parse: function parse(attrs) {
-    if (attrs.social_links) { attrs.social_links = JSON.parse(attrs.social_links); }
+    if (attrs && attrs.social_links) { attrs.social_links = JSON.parse(attrs.social_links); }
     return attrs;
   },
   format: function format(attrs) {
@@ -220,15 +220,19 @@ export const Event = bookshelf.model("Event", {
     return attrs;
   },
   parse: function parse(attrs) {
-    if (attrs.countdown_config) { attrs.countdown_config = JSON.parse(attrs.countdown_config); }
-    if (attrs.cron_config) { attrs.cron_config = JSON.parse(attrs.cron_config); }
-    if (attrs.divisions) { attrs.divisions = JSON.parse(attrs.divisions); }
+    if (attrs) {
+      if (attrs.countdown_config) { attrs.countdown_config = JSON.parse(attrs.countdown_config); }
+      if (attrs.cron_config) { attrs.cron_config = JSON.parse(attrs.cron_config); }
+      if (attrs.divisions) { attrs.divisions = JSON.parse(attrs.divisions); }
+    }
     return attrs;
   },
   format: function format(attrs) {
-    if (attrs && attrs.countdown_config) { attrs.countdown_config = JSON.stringify(attrs.countdown_config); }
-    if (attrs && attrs.cron_config) { attrs.cron_config = JSON.stringify(attrs.cron_config); }
-    if (attrs && attrs.divisions) { attrs.divisions = JSON.stringify(attrs.divisions); }
+    if (attrs) {
+      if (attrs.countdown_config) { attrs.countdown_config = JSON.stringify(attrs.countdown_config); }
+      if (attrs.cron_config) { attrs.cron_config = JSON.stringify(attrs.cron_config); }
+      if (attrs.divisions) { attrs.divisions = JSON.stringify(attrs.divisions); }
+    }
     return attrs;
   },
 }, {
@@ -278,17 +282,21 @@ export const EventDetails = bookshelf.model("EventDetails", {
     return attrs;
   },
   parse: function parse(attrs) {
-    if (attrs.category_titles) { attrs.category_titles = JSON.parse(attrs.category_titles); }
-    if (attrs.division_counts) { attrs.division_counts = JSON.parse(attrs.division_counts); }
-    if (attrs.shortlist_elimination) { attrs.shortlist_elimination = JSON.parse(attrs.shortlist_elimination); }
-    if (attrs.links) { attrs.links = JSON.parse(attrs.links); }
+    if (attrs) {
+      if (attrs.category_titles) { attrs.category_titles = JSON.parse(attrs.category_titles); }
+      if (attrs.division_counts) { attrs.division_counts = JSON.parse(attrs.division_counts); }
+      if (attrs.shortlist_elimination) { attrs.shortlist_elimination = JSON.parse(attrs.shortlist_elimination); }
+      if (attrs.links) { attrs.links = JSON.parse(attrs.links); }
+    }
     return attrs;
   },
   format: function format(attrs) {
-    if (attrs && attrs.category_titles) { attrs.category_titles = JSON.stringify(attrs.category_titles); }
-    if (attrs && attrs.division_counts) { attrs.division_counts = JSON.stringify(attrs.division_counts); }
-    if (attrs && attrs.shortlist_elimination) { attrs.shortlist_elimination = JSON.stringify(attrs.shortlist_elimination); }
-    if (attrs && attrs.links) { attrs.links = JSON.stringify(attrs.links); }
+    if (attrs) {
+      if (attrs.category_titles) { attrs.category_titles = JSON.stringify(attrs.category_titles); }
+      if (attrs.division_counts) { attrs.division_counts = JSON.stringify(attrs.division_counts); }
+      if (attrs.shortlist_elimination) { attrs.shortlist_elimination = JSON.stringify(attrs.shortlist_elimination); }
+      if (attrs.links) { attrs.links = JSON.stringify(attrs.links); }
+    }
     return attrs;
   },
 });
@@ -327,7 +335,7 @@ export const EventPreset = bookshelf.model("EventPreset", {
     return attrs;
   },
   parse: function parse(attrs) {
-    if (attrs.countdown_config) { attrs.countdown_config = JSON.parse(attrs.countdown_config); }
+    if (attrs && attrs.countdown_config) { attrs.countdown_config = JSON.parse(attrs.countdown_config); }
     return attrs;
   },
   format: function format(attrs) {
@@ -370,15 +378,19 @@ export const EventTemplate = bookshelf.model("EventTemplate", {
     return attrs;
   },
   parse: function parse(attrs) {
-    if (attrs.links) { attrs.links = JSON.parse(attrs.links); }
-    if (attrs.divisions) { attrs.divisions = JSON.parse(attrs.divisions); }
-    if (attrs.category_titles) { attrs.category_titles = JSON.parse(attrs.category_titles); }
+    if (attrs) {
+      if (attrs.links) { attrs.links = JSON.parse(attrs.links); }
+      if (attrs.divisions) { attrs.divisions = JSON.parse(attrs.divisions); }
+      if (attrs.category_titles) { attrs.category_titles = JSON.parse(attrs.category_titles); }
+    }
     return attrs;
   },
   format: function format(attrs) {
-    if (attrs && attrs.links) { attrs.links = JSON.stringify(attrs.links); }
-    if (attrs && attrs.divisions) { attrs.divisions = JSON.stringify(attrs.divisions); }
-    if (attrs && attrs.category_titles) { attrs.category_titles = JSON.stringify(attrs.category_titles); }
+    if (attrs) {
+      if (attrs.links) { attrs.links = JSON.stringify(attrs.links); }
+      if (attrs.divisions) { attrs.divisions = JSON.stringify(attrs.divisions); }
+      if (attrs.category_titles) { attrs.category_titles = JSON.stringify(attrs.category_titles); }
+    }
     return attrs;
   },
 });
@@ -460,15 +472,19 @@ export const Entry = bookshelf.model("Entry", {
     return attrs;
   },
   parse: function parse(attrs) {
-    if (attrs.links) { attrs.links = JSON.parse(attrs.links); }
-    if (attrs.pictures) { attrs.pictures = JSON.parse(attrs.pictures); }
-    if (attrs.platforms) { attrs.platforms = JSON.parse(attrs.platforms); }
+    if (attrs) {
+      if (attrs.links) { attrs.links = JSON.parse(attrs.links); }
+      if (attrs.pictures) { attrs.pictures = JSON.parse(attrs.pictures); }
+      if (attrs.platforms) { attrs.platforms = JSON.parse(attrs.platforms); }
+    }
     return attrs;
   },
   format: function format(attrs) {
-    if (attrs && attrs.links) { attrs.links = JSON.stringify(attrs.links); }
-    if (attrs && attrs.pictures) { attrs.pictures = JSON.stringify(attrs.pictures); }
-    if (attrs && attrs.platforms) { attrs.platforms = JSON.stringify(attrs.platforms); }
+    if (attrs) {
+      if (attrs.links) { attrs.links = JSON.stringify(attrs.links); }
+      if (attrs.pictures) { attrs.pictures = JSON.stringify(attrs.pictures); }
+      if (attrs.platforms) { attrs.platforms = JSON.stringify(attrs.platforms); }
+    }
     return attrs;
   },
 
@@ -548,7 +564,7 @@ export const EntryDetails = bookshelf.model("EntryDetails", {
     return attrs;
   },
   parse: function parse(attrs) {
-    if (attrs.optouts) { attrs.optouts = JSON.parse(attrs.optouts); }
+    if (attrs && attrs.optouts) { attrs.optouts = JSON.parse(attrs.optouts); }
     return attrs;
   },
   format: function format(attrs) {
@@ -851,7 +867,7 @@ export const TournamentScore = bookshelf.model("TournamentScore", {
     return attrs;
   },
   parse: function parse(attrs) {
-    if (attrs.entry_scores) { attrs.entry_scores = JSON.parse(attrs.entry_scores); }
+    if (attrs && attrs.entry_scores) { attrs.entry_scores = JSON.parse(attrs.entry_scores); }
     return attrs;
   },
   format: function format(attrs) {
@@ -906,7 +922,7 @@ export const Post = bookshelf.model("Post", {
     this.on("saving", () => {
       this.trigger("titleChanged");
     });
-    this.on("titleChanged", function() {
+    this.on("titleChanged", function () {
       this.set("name", forms.slug(this.get("title") || "").toLowerCase());
     });
 
@@ -915,7 +931,7 @@ export const Post = bookshelf.model("Post", {
     return attrs;
   },
   parse: function parse(attrs) {
-    if (attrs.like_details) { attrs.like_details = JSON.parse(attrs.like_details); }
+    if (attrs && attrs.like_details) { attrs.like_details = JSON.parse(attrs.like_details); }
     return attrs;
   },
   format: function format(attrs) {
