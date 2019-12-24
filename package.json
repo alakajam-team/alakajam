@@ -72,7 +72,7 @@
     "multer": "^1.4.2",
     "node-cache": "^4.2.1",
     "nodemailer": "^6.3.1",
-    "npm": "^6.12.1",
+    "npm": "^6.13.4",
     "null-loader": "^3.0.0",
     "nunjucks": "^3.1.7",
     "pg": "^6.1.2",
