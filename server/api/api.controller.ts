@@ -152,7 +152,7 @@ export async function getEventShortlist(req, res) {
 
       // Build data
       const rawShortlist = [];
-      shortlist.chain()
+      shortlist
         .forEach((theme: BookshelfModel, i: number) => {
           const rank = i + 1;
           const eliminated = eliminatedThemes > 10 - rank;
@@ -161,8 +161,7 @@ export async function getEventShortlist(req, res) {
             eliminated,
             ranking: eliminated ? rank : undefined,
           });
-        })
-        .value();
+        });
 
       // Obfuscate order for active themes
       const activeShortlist = rawShortlist.filter((themeInfo) => !themeInfo.eliminated);
