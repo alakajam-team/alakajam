@@ -14,6 +14,8 @@
     <a href="{{ routeUrl(null, 'post', 'create', {eventId: newPostEvent.get('id')}) if newPostEvent }}" class="btn btn-primary">Create post</a>
   </div>
 
+  {{ navigationMacros.pagination(currentPage, pageCount, '/dashboard/posts?') }}
+
   {% if draftPosts.length > 0 %}
     <h2>Drafts</h2>
     {% for post in draftPosts %}
@@ -25,8 +27,6 @@
 
     <h2>Published</h2>
   {% endif %}
-
-  {{ navigationMacros.pagination(currentPage, pageCount, '/dashboard/posts?') }}
 
   {% for post in publishedPosts %}
     <div class="expandable">

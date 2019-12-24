@@ -1,4 +1,4 @@
-import { BookshelfCollection } from "bookshelf";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
@@ -21,7 +21,7 @@ export async function adminAnnouncements(req: CustomRequest, res: CustomResponse
     allowDrafts: true,
     page: currentPage
   });
-  const draftPosts = allPostsCollection.where({ published_at: null }) as BookshelfCollection;
+  const draftPosts = allPostsCollection.filter((post) => !post.get("published_at"));
 
   res.render("admin/announcements/admin-announcements", {
     draftPosts,

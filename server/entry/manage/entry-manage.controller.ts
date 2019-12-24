@@ -198,7 +198,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
         let ownerId;
         if (!isCreation) {
           ownerId = (entry.related("userRoles") as BookshelfCollection)
-            .find((userRole) => userRole.permission === constants.PERMISSION_MANAGE)
+            .find((userRole) => userRole.get("permission") === constants.PERMISSION_MANAGE)
             .get("user_id");
         } else {
           ownerId = res.locals.user.get("id");

@@ -23,7 +23,7 @@ export async function dashboardPosts(req: CustomRequest, res: CustomResponse<Das
     allowDrafts: true,
     page: currentPage
   });
-  const draftPosts = allPostsCollection.where({ published_at: null }) as BookshelfCollection;
+  const draftPosts = allPostsCollection.filter((post) => !post.get("published_at"));
 
   res.render("user/dashboard/dashboard-posts", {
     publishedPosts: allPostsCollection.filter((post) => !draftPosts.includes(post)),
