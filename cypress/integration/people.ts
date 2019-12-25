@@ -1,38 +1,30 @@
-class PeoplePage {
-  get title() { return cy.get("h1"); }
-  get results() { return cy.get(".user-thumbs"); }
-  get form() { return cy.get("form"); }
-  get nameField() { return cy.get("input[name=search]"); }
-  get withEntriesCheckbox() { return cy.get("input[name=withEntries]"); }
-  get cancel() { return cy.get("a.btn-default"); }
-}
+import * as site from "../support/page-objects";
 
 describe("People page", () => {
-  const people = new PeoplePage();
+  const peoplePage = site.people;
+
+  beforeEach(() => {
+    peoplePage.visit();
+  })
 
   it("lists users", () => {
-    cy.visit("/people");
-    people.results.should("contain", "Administrator");
+    peoplePage.results.should("contain", "Administrator");
   });
 
   it("lets search users by name, then reset the search", () => {
-    cy.visit("/people");
+    peoplePage.nameField.type("gandalf");
+    peoplePage.form.submit();
+    peoplePage.results.should("contain", "gandalf");
+    peoplePage.results.should("not.contain", "Administrator");
 
-    people.nameField.type("gandalf");
-    people.form.submit();
-    people.results.should("contain", "gandalf");
-    people.results.should("not.contain", "Administrator");
-
-    people.cancel.click();
-    people.results.should("contain", "Administrator");
+    peoplePage.cancel.click();
+    peoplePage.results.should("contain", "Administrator");
   });
 
   it("lets filter out users without entries", () => {
-    cy.visit("/people");
-
-    people.withEntriesCheckbox.click();
-    people.form.submit();
-    people.results.should("not.contain", "noentries");
-    people.results.should("contain", "Administrator");
+    peoplePage.withEntriesCheckbox.click();
+    peoplePage.form.submit();
+    peoplePage.results.should("not.contain", "noentries");
+    peoplePage.results.should("contain", "Administrator");
   });
 });

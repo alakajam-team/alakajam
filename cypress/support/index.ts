@@ -1,16 +1,19 @@
-Cypress.Commands.add("login", (username = "administrator", password = "administrator") => {
-  cy.visit("/login");
-  cy.get("#name").type(username);
-  cy.get("#password").type(password);
-  cy.get("form").submit();
+import * as site from "./page-objects";
+
+Cypress.Commands.add("loginAs", (username) => {
+  cy.clearCookies();
+  site.login.visit();
+  site.login.name.type(username);
+  site.login.password.type(username); // For all e2e tests, passwords are set as the username
+  site.login.form.submit();
 });
 
 Cypress.Commands.add("backupDB", () => {
-  cy.visit("/admin/dev");
-  cy.get("input[name=backup]").click();
+  site.adminDev.visit();
+  site.adminDev.backupButton.click();
 });
 
 Cypress.Commands.add("restoreDB", () => {
-  cy.visit("/admin/dev");
-  cy.get("input[name=restore]").click();
+  site.adminDev.visit();
+  site.adminDev.restoreButton.click();
 });

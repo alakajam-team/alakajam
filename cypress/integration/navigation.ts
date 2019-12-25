@@ -1,29 +1,21 @@
-function navigatePageList(fixtureName: string) {
-  cy.fixture(fixtureName).then((pages) => {
-    Object.keys(pages).forEach((pageName) => {
-      const page = pages[pageName];
-      cy.visit(page);
-    });
-  });
-}
+import { USER_ADMINISTRATOR, USER_DUMBLEDORE } from "../support/data";
+import * as site from "../support/page-objects";
 
 describe("Navigation", () => {
 
   it("should trigger no errors as an administrator", () => {
-    cy.login("administrator", "administrator");
-
-    navigatePageList("page-list-admin.json");
+    cy.loginAs(USER_ADMINISTRATOR);
+    cy.fixture("page-list-admin.json").then(site.visitAllPages);
   });
 
   it("should trigger no errors as a simple user", () => {
-    cy.login("dumbledore", "dumbledore");
-
-    navigatePageList("page-list-user.json");
-    navigatePageList("page-list-common.json");
+    cy.loginAs(USER_DUMBLEDORE);
+    cy.fixture("page-list-user.json").then(site.visitAllPages);
+    cy.fixture("page-list-common.json").then(site.visitAllPages);
   });
 
   it("should trigger no errors as an anonymous user", () => {
-    navigatePageList("page-list-common.json");
+    cy.fixture("page-list-common.json").then(site.visitAllPages);
   });
 
 });

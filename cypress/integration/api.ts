@@ -1,16 +1,10 @@
-function navigateEndpointList(fixtureName: string) {
-  cy.fixture(fixtureName).then((pages) => {
-    Object.keys(pages).forEach((pageName) => {
-      const page = pages[pageName];
-      cy.request(page);
-    });
-  });
-}
+
+import * as site from "../support/page-objects";
 
 describe("API", () => {
 
   it("should trigger no errors when accessing endpoints", () => {
-    navigateEndpointList("api-list.json");
+    cy.fixture("api-list.json").then(site.requestAllURLs);
   });
 
 });
