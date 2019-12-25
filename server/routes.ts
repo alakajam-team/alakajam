@@ -4,7 +4,7 @@ import * as csurf from "csurf";
 import * as expressPromiseRouter from "express-promise-router";
 import * as multer from "multer";
 import * as randomKey from "random-key";
-import * as configUtils from "server/core/config";
+import config, * as configUtils from "server/core/config";
 import { adminMiddleware } from "./admin/admin.middleware";
 import { adminAnnouncements } from "./admin/announcements/admin-announcements.controller";
 import { adminDev } from "./admin/dev/admin-dev.controller";
@@ -69,9 +69,15 @@ import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
+import { RequestHandler } from "express";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
+const csrfDisabled: RequestHandler = (req, res, next) => {
+  req.csrfToken = () => "";
+  next();
+};
+const csrfIfNotDebug = config.DEBUG_ADMIN ? [csrfDisabled] : [csrf];
 
 export function routes(app) {
     // Using express-promise-router instead of the default express.Router
@@ -133,7 +139,7 @@ export function routes(app) {
     router.all("/admin/tags", csrf, adminTags);
     router.all("/admin/settings", csrf, adminSettings);
     router.get("/admin/users", csrf, adminUsers);
-    router.all("/admin/dev", csrf, adminDev);
+    router.all("/admin/dev", ...csrfIfNotDebug, adminDev);
     router.all("/admin/status", csrf, adminStatus);
 
     // Entries & Events

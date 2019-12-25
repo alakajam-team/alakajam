@@ -35,6 +35,7 @@ export async function adminDev(req: CustomRequest, res: CustomResponse<CommonLoc
           errorMessage = "A backup already exists, please delete it first";
         }
       } else if (req.body.restore) {
+        console.log("restoer!!!!")
         await db.restore(res.app.locals.sessionStore);
         infoMessage = "Backup restored.";
       } else if (req.body["delete-backup"]) {

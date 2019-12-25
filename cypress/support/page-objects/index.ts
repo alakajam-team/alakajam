@@ -1,20 +1,41 @@
-export { default as login } from "./login.po";
-export { default as adminDev } from "./admin-dev.po";
-export { default as post } from "./post.po";
-export { default as people } from "./people.po";
+import adminDevPo from "./admin-dev.po";
+import * as dashboardPo from "./dashboard";
+import loginPo from "./login.po";
+import peoplePo from "./people.po";
+import postEditPo from "./post-edit.po";
+import postPo from "./post.po";
+import userMenuPo from "./user-menu.po";
 
-export function getEditor({ index }: { index: number } = { index: 0 }) {
-    return cy.get(".CodeMirror textarea").eq(index);
+class SitePO {
+
+    get post() {
+        return postPo;
+    }
+    get postEdit() {
+        return postEditPo;
+    }
+    get people() {
+        return peoplePo;
+    }
+    get dashboard() {
+        return dashboardPo;
+    }
+    get userMenu() {
+        return userMenuPo;
+    }
+    get login() {
+        return loginPo;
+    }
+    get adminDev() {
+        return adminDevPo;
+    }
+
+    // Utilities
+
+    getEditor({ index }: { index: number } = { index: 0 }) {
+        return cy.get(".CodeMirror textarea").eq(index);
+    }
+
 }
 
-export function visitAllPages(pages: Record<string, string>) {
-    Object.keys(pages).forEach((pageName) => {
-        cy.visit(pages[pageName]);
-    });
-}
-
-export function requestAllURLs(pages: Record<string, string>) {
-    Object.keys(pages).forEach((pageName) => {
-        cy.request(pages[pageName]);
-    });
-}
+export default new SitePO();

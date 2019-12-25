@@ -2,7 +2,10 @@
  * Entry point for the end-to-end test server
  */
 
+import * as fs from "fs";
+import * as path from "path";
 import config from "./core/config";
+import constants from "./core/constants";
 import log from "./core/log";
 
 // Patch config for using e2e DB
@@ -16,5 +19,9 @@ editableConfig.ROOT_URL = "http://localhost:8001";
 editableConfig.DATA_PATH = "cypress";
 editableConfig.DEBUG_ADMIN = true;
 editableConfig.DEBUG_DISABLE_STARTUP_BUILD = true;
+
+// Initialize backup for restoration throughout tests
+const DB_SQLITE_PATH = path.resolve(constants.ROOT_PATH, editableConfig.DB_SQLITE_FILENAME);
+fs.copyFileSync(DB_SQLITE_PATH, DB_SQLITE_PATH + ".backup");
 
 import "./index";

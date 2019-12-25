@@ -12,6 +12,10 @@ class LoginPO {
         return cy.get("#password");
     }
 
+    get rememberMe() {
+        return cy.get("input[type=checkbox]");
+    }
+
     get form() {
         return cy.get("form");
     }
