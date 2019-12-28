@@ -18,7 +18,6 @@ class PeoplePO {
 
     get nameField() {
         return cy.get("input[name=search]");
-
     }
 
     get withEntriesCheckbox() {

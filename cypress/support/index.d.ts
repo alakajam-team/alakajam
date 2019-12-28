@@ -5,5 +5,7 @@ declare namespace Cypress {
     clearEditor: () => Chainable;
     typeInEditor: (contents: string) => Chainable;
     acceptFutureConfirms: () => Chainable;
+    select2Dropdown: (contents: string) => Chainable;
+    select2Search: (contents: string) => Chainable;
   }
 }

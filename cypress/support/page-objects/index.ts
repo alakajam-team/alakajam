@@ -1,5 +1,6 @@
 import adminDevPo from "./admin-dev.po";
 import * as dashboardPo from "./dashboard";
+import gamesPo from "./games.po";
 import loginPo from "./login.po";
 import peoplePo from "./people.po";
 import postEditPo from "./post-edit.po";
@@ -28,6 +29,9 @@ class SitePO {
     }
     get adminDev() {
         return adminDevPo;
+    }
+    get games() {
+        return gamesPo;
     }
 
     // Utilities

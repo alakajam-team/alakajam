@@ -404,17 +404,13 @@ async function findGames(
   if (options.platforms) {
     query = query.query((qb) => {
       return qb.leftJoin("entry_platform", "entry_platform.entry_id", "entry.id")
-        .whereIn("entry_platform.platform_id", options.platforms)
-        .groupBy("entry.id", "entry_details.rating_1", "entry.karma", "entry.created_at",
-          "entry.division", "entry_details.ranking_1", "entry_details.rating_count"); // all order by opts must appear
+        .whereIn("entry_platform.platform_id", options.platforms);
     });
   }
   if (options.tags) {
     query = query.query((qb) => {
       return qb.leftJoin("entry_tag", "entry_tag.entry_id", "entry.id")
-        .whereIn("entry_tag.tag_id", options.tags.map((tag) => tag.id))
-        .groupBy("entry.id", "entry_details.rating_1", "entry.karma", "entry.created_at",
-          "entry.division", "entry_details.ranking_1", "entry_details.rating_count"); // all order by opts must appear
+        .whereIn("entry_tag.tag_id", options.tags.map((tag) => tag.id));
     });
   }
   if (options.divisions) {
