@@ -247,7 +247,7 @@ async function refreshEntryRatings(entry) {
   await entryDetails.save();
 }
 
-function _range(from, to) {
+function _range(from: number, to: number) {
   return Array.from(new Array(to), (x, i) => i + from);
 }
 
@@ -347,7 +347,7 @@ function computeKarma(received, given) {
   return Math.floor(Math.max(0, 74 + 8.5 * Math.sqrt(10 + Math.min(given, 100)) - received));
 }
 
-async function computeRankings(event) {
+async function computeRankings(event: BookshelfModel) {
   const rankedDivisions = Object.keys(event.get("divisions"));
   if (rankedDivisions.length === 0) {
     return;
@@ -393,7 +393,7 @@ async function computeRankings(event) {
     }
   }
 
-  return db.transaction(async (transaction) => {
+ return db.transaction(async (transaction) => {
     for (const entry of rankedEntries.models) {
       const entryDetails = entry.related("details") as BookshelfModel;
       await entryDetails.save(null, { transacting: transaction });
@@ -401,24 +401,22 @@ async function computeRankings(event) {
   });
 }
 
-async function clearRankings(event) {
-  const entries = await models.Entry
+async function clearRankings(event: BookshelfModel) {
+  const entryDetailsCollection = await models.EntryDetails
+    .query((qb) => qb.leftJoin("entry", "entry_details.entry_id", "entry.id"))
     .where("entry.event_id", event.get("id"))
     .where("entry.division", "<>", enums.DIVISION.UNRANKED)
-    .fetchAll({
-      withRelated: ["details", "votes"],
-    }) as BookshelfCollection;
+    .fetchAll() as BookshelfCollection;
 
-  const categoryCount = event.related("details").get("category_titles").length;
+  const categoryCount: number = event.related("details").get("category_titles").length;
   const categoryIndexes = _range(1, categoryCount);
 
+  const attributesPatch: Record<string, any> = {};
+  categoryIndexes.forEach(index => attributesPatch["ranking_" + index] = null);
+
   return db.transaction(async (transaction) => {
-    for (const entry of entries.models) {
-      const entryDetails = entry.related("details") as BookshelfModel;
-      for (const categoryIndex of categoryIndexes) {
-        entryDetails.set("ranking_" + categoryIndex, null);
-      }
-      await entryDetails.save(null, { transacting: transaction });
+    for (const entryDetails of entryDetailsCollection.models) {
+      entryDetails.save(attributesPatch, { patch: true, transacting: transaction });
     }
   });
 }

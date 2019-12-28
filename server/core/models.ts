@@ -12,8 +12,6 @@
 import bookshelf from "./db";
 import forms from "./forms";
 
-const modelPrototype = bookshelf.Model.prototype as any;
-
 // TODO Set up BaseModel to make code more concise
 
 /**
@@ -114,7 +112,7 @@ export const UserDetails = bookshelf.model("UserDetails", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
     attrs = attrs || {};
     attrs.social_links = attrs.social_links || [];
     return attrs;
@@ -212,7 +210,7 @@ export const Event = bookshelf.model("Event", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
     attrs = attrs || {};
     attrs.countdown_config = attrs.countdown_config || {};
     attrs.cron_config = attrs.cron_config || {};
@@ -273,7 +271,7 @@ export const EventDetails = bookshelf.model("EventDetails", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
     attrs = attrs || {};
     attrs.category_titles = attrs.category_titles || [];
     attrs.division_counts = attrs.division_counts || [];
@@ -329,7 +327,7 @@ export const EventPreset = bookshelf.model("EventPreset", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
     attrs = attrs || {};
     attrs.countdown_config = attrs.countdown_config || {};
     return attrs;
@@ -370,7 +368,7 @@ export const EventTemplate = bookshelf.model("EventTemplate", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
     attrs = attrs || {};
     attrs.links = attrs.links || [];
     attrs.divisions = attrs.divisions || {};
@@ -461,7 +459,7 @@ export const Entry = bookshelf.model("Entry", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
     this.on("saving", (model) => {
       model.set("name", forms.slug(model.get("title") || "").toLowerCase() || "unnamed");
     });
@@ -558,7 +556,7 @@ export const EntryDetails = bookshelf.model("EntryDetails", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
     attrs = attrs || {};
     attrs.optouts = attrs.optouts || [];
     return attrs;
@@ -610,7 +608,7 @@ export const EntryPlatform = bookshelf.model("EntryPlatform", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
     attrs = attrs || {};
     return attrs;
   },
@@ -861,7 +859,7 @@ export const TournamentScore = bookshelf.model("TournamentScore", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
     attrs = attrs || {};
     attrs.entry_scores = attrs.entry_scores || {};
     return attrs;
@@ -917,7 +915,7 @@ export const Post = bookshelf.model("Post", {
   // Listeners
 
   initialize: function initialize(attrs) {
-    modelPrototype.initialize.call(this);
+    this.constructor.__super__.initialize.apply(this, arguments);
 
     this.on("saving", () => {
       this.trigger("titleChanged");

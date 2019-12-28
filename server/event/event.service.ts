@@ -360,9 +360,8 @@ async function findGames(
       search?: string, platforms?: string[], tags?: Array<{id: number}>, divisions?: string[], notReviewedById?: string,
       userId?: number, highScoresSupport?: boolean
     } & FetchPageOptions = {}): Promise<BookshelfCollection | number | string> {
-  let query = new models.Entry().query((qb) => {
-    return qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id");
-  }) as BookshelfModel;
+  let query = new models.Entry()
+    .query((qb) => qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")) as BookshelfModel;
 
   // Sorting
   if (!options.count) {
