@@ -11,6 +11,8 @@ import postEditPo from "./post-edit.po";
 import postPo from "./post.po";
 import registerPo from "./register.po";
 import userMenuPo from "./user-menu.po";
+import entrySubmitScorePo from "./entry-highscore-submit.po";
+import entryHighscoreSubmitPo from "./entry-highscore-submit.po";
 
 class SitePO {
 
@@ -24,6 +26,10 @@ class SitePO {
     
     get entryEdit() {
         return entryEditPo;
+    }
+
+    get entryHighscoreSubmit() {
+        return entryHighscoreSubmitPo;
     }
 
     get event() {

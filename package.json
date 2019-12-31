@@ -131,6 +131,7 @@
     "chai": "^4.2.0",
     "concurrently": "^4.1.2",
     "cypress": "^3.5.0",
+    "cypress-file-upload": "^3.5.1",
     "knex": "^0.20.2",
     "mocha": "^6.2.2",
     "sinon": "^7.5.0",

@@ -9,11 +9,15 @@ class EntrySubmitScorePO {
     }
 
     get proofPictureField() {
-        return cy.get("input[name=upload]");
+        return cy.get("input[type=file][name=upload]");
     }
 
     get saveButton() {
         return cy.get(".btn-primary");
+    }
+
+    get deleteButton() {
+        return cy.get("input[name=delete]");
     }
 
 }

@@ -1,3 +1,4 @@
+import 'cypress-file-upload';
 import { DEFAULT_PICTURE } from "./data";
 import po from "./page-objects";
 
@@ -61,16 +62,21 @@ function chooseSelect2Option(subject: any, contents: any, typingFunction: () => 
     .click();
 }
 
-Cypress.Commands.add("dropFile", { prevSubject: true }, (subject, fixture, contentType) => {
-  Cypress.Blob.base64StringToBlob(fixture || DEFAULT_PICTURE, contentType || "image/png").then((blob) => {
-    cy.get(subject).trigger("drop", createBlobDropEvent(blob))
+Cypress.Commands.add("dropFile", { prevSubject: true }, (subject, fixture, mimeType) => {
+  const fileName = fixture || DEFAULT_PICTURE;
+  cy.fixture(fileName).then(fileContent => {
+    cy.get(subject).upload({
+      fileContent,
+      fileName,
+      mimeType: mimeType || "image/png"
+    });
   });
 });
 
-function createBlobDropEvent(blob: Blob) {
+function createFileDropEvent(file: File) {
   return {
     dataTransfer: {
-      files: [blob]
+      files: [file]
     }
   };
 }

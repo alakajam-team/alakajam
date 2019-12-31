@@ -1,8 +1,7 @@
-import { USER_DUMBLEDORE, DUMBLEDORE_ENTRY_WITHOUT_COMMENTS } from "../support/data";
+import { DUMBLEDORE_ENTRY_EMPTY_HIGHSCORES, DUMBLEDORE_ENTRY_TEAM_DIVISION, DUMBLEDORE_ENTRY_WITHOUT_COMMENTS, USER_DUMBLEDORE, USER_GANDALF } from "../support/data";
 import po from "../support/page-objects";
 
-const entry = po.entry;
-const entryEdit = po.entryEdit;
+const { entry, entryEdit, entryHighscoreSubmit } = po;
 const myEntries = po.dashboard.entries;
 
 describe("Entry", () => {
@@ -54,6 +53,50 @@ describe("Entry", () => {
 
     entry.commentCounter.should("contain.text", "(1)");
     entry.comments.should("contain.text", "Welcome to the comments section");
+  });
+  
+  it.only("supports inviting someone to our team", () => {
+    entryEdit.visit(DUMBLEDORE_ENTRY_TEAM_DIVISION);
+
+    entryEdit.teamMembersSelect2Search.select2Search("gandalf");
+    entryEdit.saveButton.click();
+
+    cy.loginAs(USER_GANDALF);
+    cy.visit("/"); // XXX notifications don't appear upon login, only on the next page
+    po.userMenu.notificationCount.should("contain.text", "1");
+    po.userMenu.avatar.click();
+    po.dashboard.feed.inviteAcceptButton.click();
+
+    entryEdit.visit(DUMBLEDORE_ENTRY_TEAM_DIVISION);
+    entryEdit.titleField.clear().type("Better game title");
+    entryEdit.saveButton.click();
+  });
+
+  it("supports submitting, updating and deleting high scores", () => {
+    entry.visit(DUMBLEDORE_ENTRY_EMPTY_HIGHSCORES);
+
+    entry.highScoreSubmitButton.click();
+    entryHighscoreSubmit.scoreField.type("999");
+    entryHighscoreSubmit.proofPictureField.dropFile();
+    entryHighscoreSubmit.saveButton.click();
+
+    entry.highScores.should("contain.text", "1 score");
+    entry.highScores.should("contain.text", USER_DUMBLEDORE);
+    entry.highScores.should("contain.text", "999");
+
+    entry.highScoreSubmitButton.click();
+    entryHighscoreSubmit.scoreField.clear().type("1000");
+    entryHighscoreSubmit.saveButton.click();
+    
+    entry.highScores.should("contain.text", "1 score");
+    entry.highScores.should("contain.text", USER_DUMBLEDORE);
+    entry.highScores.should("contain.text", "1000");
+
+    entry.highScoreSubmitButton.click();
+    cy.acceptFutureConfirms();
+    entryHighscoreSubmit.deleteButton.click();
+
+    entry.highScores.should("not.contain.text", USER_DUMBLEDORE);
   });
 
 });

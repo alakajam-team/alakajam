@@ -70,7 +70,7 @@ class EntryPO {
     }
 
     get highScores() {
-        return cy.get("table.table tr");
+        return cy.get("table.table tbody tr");
     }
 
     get highScoreSubmitButton() {

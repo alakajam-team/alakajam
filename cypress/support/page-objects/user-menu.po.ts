@@ -1,7 +1,7 @@
 class UserMenuPO {
 
     get avatar() {
-        return cy.get(".navbar-avatar");
+        return cy.get(".dropdown .navbar-avatar");
     }
 
     get notificationCount() {

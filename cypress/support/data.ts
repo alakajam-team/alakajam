@@ -10,6 +10,7 @@ export const ADMIN_POST_WITHOUT_COMMENTS = 3;
 export const USER_DUMBLEDORE = "dumbledore";
 export const DUMBLEDORE_ENTRY_WITHOUT_COMMENTS = { eventName: "external-entry", entryId: 19 };
 export const DUMBLEDORE_ENTRY_EMPTY_HIGHSCORES = { eventName: "external-entry", entryId: 19 };
+export const DUMBLEDORE_ENTRY_TEAM_DIVISION = { eventName: "external-entry", entryId: 19 };
 
 export const USER_GANDALF = "gandalf";
 

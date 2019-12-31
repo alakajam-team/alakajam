@@ -3,7 +3,7 @@ import site from ".";
 class EntryEditPO {
 
     visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
-        cy.visit(`/${eventName}/${entryId}/edit`);
+        cy.visit(`/${eventName}/${entryId}/test-entry/edit`);
     }
 
     get titleField() {
