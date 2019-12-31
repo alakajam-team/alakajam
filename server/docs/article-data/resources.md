@@ -39,21 +39,38 @@ This page compiles a list of **free** resources for making games, especially for
 
 ## <a name="engines"></a>Game engines/frameworks
 
+**General purpose engines**
+
 | Name | Description |
 | -------- | -------- |
+| [Godot Engine](https://godotengine.org/)  | Powerful engine for 3D and 2D games. Uses a Python-like language. Open Source. |
 | [Unity](https://unity3d.com)  | Popular and feature-rich engine, both for 3D and 2D games. Requires programming in C#. Free version has few limitations and plenty to work with. |
 | [Unreal Engine](https://www.unrealengine.com/en-US/blog)  | Popular and feature-rich engine specialized in 3D games. Supports a quite accessible, visual scripting language called Blueprints. And good old C++. |
-| [Godot Engine](https://godotengine.org/)  | Powerful engine for 3D and 2D games. Uses a Python-like language. Open Source. |
-| [Game Pencil](http://gamepencil.pawbyte.com/) | A cross-platform 2D engine inspired by Unity & Game Maker, except Open Source. Uses JS scripting. |
-| [PlayCanvas](https://playcanvas.com) | A web-based, collaborative 3D engine, think Google Docs except for game making. Free to use as long for public projects. Multi-platform. |
-| [GDevelop](http://www.compilgames.net) | 2D game engine letting you write logic without knowledge of coding. Open Source. |
-| [Stencyl](http://www.stencyl.com/) | 2D game engine that uses visual blocks instead of code. Free version lets you publish for the web. |
-| [Scratch](https://scratch.mit.edu/) | Very accessible, and even kid-friendly engine for creating visual stories, animations and games. |
-| [Löve2D](https://love2d.org) | Popular 2D game framework built to be easy to use. Uses the accessible Lua language. Open source. |
 | [TIC-80](https://tic.computer/) | Fantasy console, similar to the popular but paid Pico-8. Customizable palette. Open Source.|
-| [PhaserJS](https://phaser.io) | JavaScript framework to make 2D games for the browser. Open source. |
-| [Twine](https://twinery.org) | Engine for writing interactive stories with no code at all. Open Source. |
+| [Stencyl](http://www.stencyl.com/) | 2D game engine that uses visual blocks instead of code. Free version lets you publish for the web. |
+| [GDevelop](http://www.compilgames.net) | 2D game engine letting you write logic without knowledge of coding. Open Source. |
+| [Game Pencil](http://gamepencil.pawbyte.com/) | A cross-platform 2D engine inspired by Unity & Game Maker, except Open Source. Uses JS scripting. |
+| [PlayCanvas](https://playcanvas.com) | Web-based, collaborative 3D engine, think Google Docs except for game making. Free to use for public projects. Multi-platform. |
+| [GB Studio](https://www.gbstudio.dev/) | Game Boy ROM creation engine, also exports to the web and mobile. No coding required, open source. |
+
+**Genre-specific engines**
+
+| Name | Description |
+| -------- | -------- |
+| [Twine](https://twinery.org) | Popular engine for writing interactive stories without code. Version 2 is web-based. Open Source. |
+| [Bitsy](https://ledoux.itch.io/bitsy) | Web-based visual engine for little pixel art adventure games. | 
+| [Ren'Py](https://www.renpy.org/) | A popular visual novel tool, using a simple scripting language. Also supports Python scripting. Open source. |
 | [PuzzleScript](https://www.puzzlescript.net/) | Online puzzle game engine using a concise custom language. Open source. |
+| [Scratch](https://scratch.mit.edu/) | Very accessible, and even kid-friendly engine for creating visual stories, animations and games. |
+| [Flickgame](https://www.flickgame.org/) | Barebones pixel art editor and point-and-click engine, uses a color code system as hyperlinks. Open source. |
+
+**Beginner-friendly frameworks**
+
+| Name | Description |
+| -------- | -------- |
+| [Löve2D](https://love2d.org) | Popular 2D game framework built to be easy to use. Uses the accessible Lua language. Open source. |
+| [PhaserJS](https://phaser.io) | JavaScript framework to make 2D games for the browser. Open source. |
+| [LibGDX](https://libgdx.badlogicgames.com/) | Cross-platform Java framework with lots of features for both 2D and 3D. Open source. |
 
 ## <a name="assets"></a>Free assets
 
