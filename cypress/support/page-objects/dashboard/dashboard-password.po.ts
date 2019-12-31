@@ -26,7 +26,6 @@ class DashboardPasswordPO {
         return cy.get("input[type=submit]");
     }
 
-
 }
 
 export default new DashboardPasswordPO();

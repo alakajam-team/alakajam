@@ -1,8 +1,8 @@
-import dashboardPostsPo from "./dashboard-posts";
-import dashboardFeedPo from "./dashboard-feed";
-import dashboardPasswordPo from "./dashboard-password";
-import dashboardEntriesPo from "./dashboard-entries";
-import dashboardSettingsPo from "./dashboard-settings";
+import dashboardPostsPo from "./dashboard-posts.po";
+import dashboardFeedPo from "./dashboard-feed.po";
+import dashboardPasswordPo from "./dashboard-password.po";
+import dashboardEntriesPo from "./dashboard-entries.po";
+import dashboardSettingsPo from "./dashboard-settings.po";
 
 class DashboardPO {
 
