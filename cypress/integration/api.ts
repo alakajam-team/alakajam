@@ -6,7 +6,7 @@ function requestAllURLs(pages: Record<string, string>) {
 
 describe("API", () => {
 
-  it("should trigger no errors when accessing endpoints", () => {
+  it("triggers no errors when accessing endpoints", () => {
     cy.fixture("api-list.json").then(requestAllURLs);
   });
 

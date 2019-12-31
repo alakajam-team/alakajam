@@ -10,14 +10,14 @@ function commentCountersShouldContain(value: string) {
   post.commentSectionTitle.should("contain", value);
 }
 
-describe("Posts", () => {
+describe("Post", () => {
 
   beforeEach(() => {
     cy.restoreDB();
     cy.loginAs(USER_DUMBLEDORE);
   });
 
-  it("supports creating, editing and deleting posts", () => {
+  it("supports creation, edito and deletion", () => {
     myPosts.visit();
     myPosts.createPostButton.click();
 

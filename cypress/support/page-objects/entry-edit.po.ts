@@ -78,11 +78,11 @@ class EntryEditPO {
         return cy.get("textarea[name=high-score-instructions]");
     }
 
-    get deleteEntryButton() {
-        return cy.get(".bth-danger");
+    get entryDeleteButton() {
+        return cy.get(".btn-danger");
     }
 
-    get saveEntryButton() {
+    get saveButton() {
         return cy.get("input[type=submit]");
     }
 

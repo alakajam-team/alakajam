@@ -8,18 +8,18 @@ function visitAllPages(pages: Record<string, string>) {
 
 describe("Navigation", () => {
 
-  it("should trigger no errors as an administrator", () => {
+  it("triggers no errors as an administrator", () => {
     cy.loginAs(USER_ADMINISTRATOR);
     cy.fixture("page-list-admin.json").then(visitAllPages);
   });
 
-  it("should trigger no errors as a simple user", () => {
+  it("triggers no errors as a simple user", () => {
     cy.loginAs(USER_DUMBLEDORE);
     cy.fixture("page-list-user.json").then(visitAllPages);
     cy.fixture("page-list-common.json").then(visitAllPages);
   });
 
-  it("should trigger no errors as an anonymous user", () => {
+  it("triggers no errors as an anonymous user", () => {
     cy.fixture("page-list-common.json").then(visitAllPages);
   });
 

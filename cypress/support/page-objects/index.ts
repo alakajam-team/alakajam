@@ -1,5 +1,5 @@
 import adminDevPo from "./admin-dev.po";
-import * as dashboardPo from "./dashboard";
+import dashboardPo from "./dashboard";
 import entryEditPo from "./entry-edit.po";
 import entryPo from "./entry.po";
 import eventEditPo from "./event-edit.po";
