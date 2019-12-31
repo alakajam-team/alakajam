@@ -1,4 +1,3 @@
-import site from "..";
 
 class DashboardPostsPO {
 
@@ -6,8 +5,8 @@ class DashboardPostsPO {
         cy.visit(`/dashboard/posts`);
     }
 
-    get createPostButton() {
-        return cy.get(".btn-primary");
+    get postTitles() {
+        return cy.get(".post__title");
     }
 
 }

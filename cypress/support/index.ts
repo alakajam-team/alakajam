@@ -1,10 +1,11 @@
+import { DEFAULT_PICTURE } from "./data";
 import po from "./page-objects";
 
-Cypress.Commands.add("loginAs", (username) => {
+Cypress.Commands.add("loginAs", (username: string, password?: string) => {
   cy.clearCookies();
   po.login.visit();
   po.login.name.type(username);
-  po.login.password.type(username); // For all e2e tests, passwords are set as the username
+  po.login.password.type(password || username); // For all e2e tests, default passwords are set as the username
   po.login.rememberMe.click(); // Make sessions persist after DB restorations
   po.login.form.submit();
 });
@@ -58,4 +59,18 @@ function chooseSelect2Option(subject: any, contents: any, typingFunction: () => 
   cy.get(".select2-results__option")
     .first()
     .click();
+}
+
+Cypress.Commands.add("dropFile", { prevSubject: true }, (subject, fixture, contentType) => {
+  Cypress.Blob.base64StringToBlob(fixture || DEFAULT_PICTURE, contentType || "image/png").then((blob) => {
+    cy.get(subject).trigger("drop", createBlobDropEvent(blob))
+  });
+});
+
+function createBlobDropEvent(blob: Blob) {
+  return {
+    dataTransfer: {
+      files: [blob]
+    }
+  };
 }

@@ -1,4 +1,5 @@
 import { BookshelfCollection } from "bookshelf";
+import * as lodash from "lodash";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
@@ -6,7 +7,6 @@ import settings from "server/core/settings";
 import eventThemeService from "server/event/theme/event-theme.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
-import * as lodash from "lodash";
 
 /**
  * Browse event theme voting

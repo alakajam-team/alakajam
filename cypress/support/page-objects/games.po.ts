@@ -1,8 +1,4 @@
-class PeoplePO {
-
-    visit() {
-        cy.visit("/games");
-    }
+export class GameSearchBlockPO {
 
     get title() {
         return cy.get("h1");
@@ -46,4 +42,12 @@ class PeoplePO {
 
 }
 
-export default new PeoplePO();
+class GamesPO extends GameSearchBlockPO {
+
+    visit() {
+        cy.visit("/games");
+    }
+
+}
+
+export default new GamesPO();

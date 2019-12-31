@@ -1,6 +1,14 @@
 class UserMenuPO {
 
-    get open() {
+    get avatar() {
+        return cy.get(".navbar-avatar");
+    }
+
+    get notificationCount() {
+        return cy.get(".navbar-unread-notifications");
+    }
+
+    get openButton() {
         return cy.get(".dropdown-toggle");
     }
     

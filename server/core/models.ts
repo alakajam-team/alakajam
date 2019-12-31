@@ -920,7 +920,7 @@ export const Post = bookshelf.model("Post", {
     this.on("saving", () => {
       this.trigger("titleChanged");
     });
-    this.on("titleChanged", function () {
+    this.on("titleChanged", function() {
       this.set("name", forms.slug(this.get("title") || "").toLowerCase());
     });
 

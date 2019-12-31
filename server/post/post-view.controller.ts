@@ -53,7 +53,7 @@ export async function buildPostContext(post: BookshelfModel, currentUser: Booksh
     context.relatedEntry = relatedEntry;
   }
   context.specialPostType = post.get("special_post_type");
-  
+
   if (post.id) {
     context.sortedComments = await commentService.findCommentsSortedForDisplay(post);
     if (currentUser) {

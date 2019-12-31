@@ -1,6 +1,7 @@
 // tslint:disable: max-line-length
 
 import * as csurf from "csurf";
+import { RequestHandler } from "express";
 import * as expressPromiseRouter from "express-promise-router";
 import * as multer from "multer";
 import * as randomKey from "random-key";
@@ -69,7 +70,6 @@ import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
-import { RequestHandler } from "express";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();

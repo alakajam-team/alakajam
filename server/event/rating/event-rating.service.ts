@@ -393,7 +393,7 @@ async function computeRankings(event: BookshelfModel) {
     }
   }
 
- return db.transaction(async (transaction) => {
+  return db.transaction(async (transaction) => {
     for (const entry of rankedEntries.models) {
       const entryDetails = entry.related("details") as BookshelfModel;
       await entryDetails.save(null, { transacting: transaction });
@@ -412,7 +412,7 @@ async function clearRankings(event: BookshelfModel) {
   const categoryIndexes = _range(1, categoryCount);
 
   const attributesPatch: Record<string, any> = {};
-  categoryIndexes.forEach(index => attributesPatch["ranking_" + index] = null);
+  categoryIndexes.forEach((index) => attributesPatch["ranking_" + index] = null);
 
   return db.transaction(async (transaction) => {
     for (const entryDetails of entryDetailsCollection.models) {
