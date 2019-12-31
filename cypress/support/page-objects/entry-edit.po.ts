@@ -54,7 +54,7 @@ class EntryEditPO {
         return cy.get(".js-add-link");
     }
 
-    bodyEditor() {
+    get bodyEditor() {
         return site.getEditor();
     }
 
@@ -67,11 +67,11 @@ class EntryEditPO {
     }
 
     get highScoresOffRadio() {
-        return cy.get("#enable-high-score-off");
+        return cy.get("label[for=enable-high-score-off]");
     }
 
     get highScoresOnRadio() {
-        return cy.get("#enable-high-score-on");
+        return cy.get("label[for=enable-high-score-on]");
     }
 
     get highScoresInstructionsField() {

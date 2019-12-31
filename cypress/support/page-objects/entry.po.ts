@@ -28,7 +28,7 @@ class EntryPO {
     }
 
     get description() {
-        return cy.get("entry__description");
+        return cy.get(".entry__description");
     }
 
     get body() {

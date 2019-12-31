@@ -143,7 +143,7 @@ async function setEntryPlatforms(entry, platforms) {
       await Promise.all(promises);
     });
   } catch (e) {
-    log.error("Failed to update entry platforms");
-    log.error(e);
+    log.error("Failed to update entry platforms: " + e.message);
+    log.error(e.stack);
   }
 }
