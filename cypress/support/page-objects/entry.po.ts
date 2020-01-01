@@ -1,5 +1,3 @@
-import site from ".";
-
 class EntryPO {
 
     public visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
@@ -108,7 +106,7 @@ class EntryPO {
     }
 
     get commentEditor() {
-        return site.getEditor();
+        return cy.getEditor();
     }
 
 }

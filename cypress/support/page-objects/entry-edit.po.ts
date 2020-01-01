@@ -1,5 +1,3 @@
-import site from ".";
-
 class EntryEditPO {
 
     public visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
@@ -55,7 +53,7 @@ class EntryEditPO {
     }
 
     get bodyEditor() {
-        return site.getEditor();
+        return cy.getEditor();
     }
 
     get platformsSelect2Search() {

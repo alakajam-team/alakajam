@@ -1,30 +1,29 @@
-import po from "../support/page-objects";
+import peoplePo from "../support/page-objects/people.po";
 
 describe("People page", () => {
-  const people = po.people;
 
   beforeEach(() => {
-    people.visit();
+    peoplePo.visit();
   });
 
   it("lists users", () => {
-    people.results.should("contain", "Administrator");
+    peoplePo.results.should("contain", "Administrator");
   });
 
   it("lets search users by name, then reset the search", () => {
-    people.nameField.type("gandalf");
-    people.form.submit();
-    people.results.should("contain", "gandalf");
-    people.results.should("not.contain", "Administrator");
+    peoplePo.nameField.type("gandalf");
+    peoplePo.form.submit();
+    peoplePo.results.should("contain", "gandalf");
+    peoplePo.results.should("not.contain", "Administrator");
 
-    people.cancel.click();
-    people.results.should("contain", "Administrator");
+    peoplePo.cancel.click();
+    peoplePo.results.should("contain", "Administrator");
   });
 
   it("lets filter out users without entries", () => {
-    people.withEntriesCheckbox.click();
-    people.form.submit();
-    people.results.should("not.contain", "noentries");
-    people.results.should("contain", "Administrator");
+    peoplePo.withEntriesCheckbox.click();
+    peoplePo.form.submit();
+    peoplePo.results.should("not.contain", "noentries");
+    peoplePo.results.should("contain", "Administrator");
   });
 });

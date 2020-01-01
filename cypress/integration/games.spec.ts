@@ -1,77 +1,76 @@
 import { USER_DUMBLEDORE } from "../support/data";
-import po from "../support/page-objects";
+import gamesPo from "../support/page-objects/games.po";
 
 describe("Games page", () => {
-  const games = po.games;
 
   beforeEach(() => {
-    games.visit();
+    gamesPo.visit();
   });
 
   it("lists games made during an event", () => {
-    games.eventSelect.select2Dropdown("results out");
-    games.applyButton.click();
+    gamesPo.eventSelect.select2Dropdown("results out");
+    gamesPo.applyButton.click();
 
-    games.gamesList.should("contain.text", "Game search test #1");
+    gamesPo.gamesList.should("contain.text", "Game search test #1");
   });
 
   it("lists games made for an external event", () => {
-    games.eventSelect.select2Dropdown("external");
-    games.applyButton.click();
+    gamesPo.eventSelect.select2Dropdown("external");
+    gamesPo.applyButton.click();
 
-    games.gamesList.should("contain.text", "Game search test #2");
+    gamesPo.gamesList.should("contain.text", "Game search test #2");
   });
 
   it("lists games for a user", () => {
-    games.userSelect.select2Dropdown("Administrator");
-    games.applyButton.click();
+    gamesPo.userSelect2Dropdown.select2Dropdown("Administrator");
+    gamesPo.applyButton.click();
 
-    games.title.should("contain", "made by Administrator");
-    games.gamesList.should("contain.text", "Administrator");
+    gamesPo.title.should("contain", "made by Administrator");
+    gamesPo.gamesList.should("contain.text", "Administrator");
   });
 
   it("lists games searched by title", () => {
-    games.titleField.type("Game search test #1");
-    games.applyButton.click();
+    gamesPo.titleField.type("Game search test #1");
+    gamesPo.applyButton.click();
 
-    games.gamesList.should("contain.text", "Game search test #1");
+    gamesPo.gamesList.should("contain.text", "Game search test #1");
   });
 
   it("lists games by platform", () => {
-    games.platformSelect.select2Search("Linux");
-    games.applyButton.click();
+    gamesPo.platformSelect.select2Search("Linux");
+    gamesPo.applyButton.click();
 
-    games.gamesList.should("contain.text", "Game search test #1");
+    gamesPo.gamesList.should("contain.text", "Game search test #1");
   });
 
   it("lists games by tag", () => {
-    games.tagSelect.select2Search("platformer");
-    games.applyButton.click();
+    gamesPo.tagSelect.select2Search("platformer");
+    gamesPo.applyButton.click();
 
-    games.gamesList.should("contain.text", "Game search test #1");
+    gamesPo.gamesList.should("contain.text", "Game search test #1");
   });
 
   it("lists games with high score support", () => {
-    games.highScoreSupportCheckbox.click();
-    games.applyButton.click();
+    gamesPo.highScoreSupportCheckbox.click();
+    gamesPo.applyButton.click();
 
-    games.gamesList.should("contain.text", "Game search test #1");
+    gamesPo.gamesList.should("contain.text", "Game search test #1");
   });
 
   it("supports complex searches", () => {
     cy.loginAs(USER_DUMBLEDORE);
-    games.visit();
+    gamesPo.visit();
 
-    games.eventSelect.select2Dropdown("results out");
-    games.titleField.type("Game search test #1");
-    games.userSelect.select2Dropdown("Administrator");
-    games.platformSelect.select2Search("Linux");
-    games.tagSelect.select2Search("platformer");
-    games.hideReviewedCheckbox.click();
-    games.highScoreSupportCheckbox.click();
-    games.applyButton.click();
+    gamesPo.eventSelect.select2Dropdown("results out");
+    gamesPo.titleField.type("Game search test #1");
+    gamesPo.userSelect2Dropdown.select2Dropdown("Administrator");
+    gamesPo.platformSelect.select2Search("Linux");
+    gamesPo.tagSelect.select2Search("platformer");
+    gamesPo.hideReviewedCheckbox.click();
+    gamesPo.highScoreSupportCheckbox.click();
+    gamesPo.applyButton.click();
 
-    games.gamesList.should("contain.text", "Game search test #1");
+    gamesPo.gamesList.should("contain.text", "Game search test #1");
   });
 
 });

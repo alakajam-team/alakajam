@@ -5,10 +5,11 @@ import {
   USER_DUMBLEDORE,
   USER_GANDALF
 } from "../support/data";
-import po from "../support/page-objects";
-
-const { entry, entryEdit, entryHighscoreSubmit } = po;
-const myEntries = po.dashboard.entries;
+import dashboardPo from "../support/page-objects/dashboard.po";
+import entryEditPo from "../support/page-objects/entry-edit.po";
+import entryPo from "../support/page-objects/entry.po";
+import headerPo from "../support/page-objects/header.po";
+import entryHighscoreSubmitPo from "../support/page-objects/entry-highscore-submit.po";
 
 describe("Entry", () => {
 
@@ -22,89 +23,89 @@ describe("Entry", () => {
   });
 
   it("supports creation, edition and deletion", () => {
-    myEntries.visit();
-    myEntries.createEntryButton.click();
+    dashboardPo.entries.visit();
+    dashboardPo.entries.createEntryButton.click();
 
-    entryEdit.titleField.type("My unfinished game");
-    entryEdit.descriptionField.type("The best game ever");
-    entryEdit.divisionButton("Solo").click();
-    entryEdit.linkLabelFields.first().type("Web");
-    entryEdit.linkUrlFields.first().type("http://example.com");
-    entryEdit.bodyEditor.typeInEditor("It will be a MMORPG");
-    entryEdit.platformsSelect2Search.select2Search("Web");
-    entryEdit.tagsSelect2Search.select2Search("MMORPG");
-    entryEdit.highScoresOnRadio.click();
-    entryEdit.saveButton.click();
+    entryEditPo.titleField.type("My unfinished game");
+    entryEditPo.descriptionField.type("The best game ever");
+    entryEditPo.divisionButton("Solo").click();
+    entryEditPo.linkLabelFields.first().type("Web");
+    entryEditPo.linkUrlFields.first().type("http://example.com");
+    entryEditPo.bodyEditor.typeInEditor("It will be a MMORPG");
+    entryEditPo.platformsSelect2Search.select2Search("Web");
+    entryEditPo.tagsSelect2Search.select2Search("MMORPG");
+    entryEditPo.highScoresOnRadio.click();
+    entryEditPo.saveButton.click();
 
-    entry.entryTitle.should("contain.text", "My unfinished game");
-    entry.description.should("contain.text", "The best game ever");
-    entry.entryInfos.should("contain.text", "MMORPG");
-    entry.body.should("contain.text", "It will be a MMORPG");
-    entry.highScoreSubmitButton.should("exist");
+    entryPo.entryTitle.should("contain.text", "My unfinished game");
+    entryPo.description.should("contain.text", "The best game ever");
+    entryPo.entryInfos.should("contain.text", "MMORPG");
+    entryPo.body.should("contain.text", "It will be a MMORPG");
+    entryPo.highScoreSubmitButton.should("exist");
 
-    entry.entryEditButton.click();
-    entryEdit.titleField.clear().type("My finished game");
-    entryEdit.bodyEditor.clearEditor().typeInEditor("It's a platformer");
-    entryEdit.saveButton.click();
+    entryPo.entryEditButton.click();
+    entryEditPo.titleField.clear().type("My finished game");
+    entryEditPo.bodyEditor.clearEditor().typeInEditor("It's a platformer");
+    entryEditPo.saveButton.click();
 
-    entry.entryTitle.should("contain.text", "My finished game");
-    entry.body.should("contain.text", "It's a platformer");
+    entryPo.entryTitle.should("contain.text", "My finished game");
+    entryPo.body.should("contain.text", "It's a platformer");
 
-    entry.entryEditButton.click();
-    entryEdit.entryDeleteButton.click();
+    entryPo.entryEditButton.click();
+    entryEditPo.entryDeleteButton.click();
   });
 
   it("supports adding comments", () => {
-    entry.visit(DUMBLEDORE_ENTRY_WITHOUT_COMMENTS);
+    entryPo.visit(DUMBLEDORE_ENTRY_WITHOUT_COMMENTS);
 
-    entry.commentEditor.typeInEditor("Welcome to the comments section");
-    entry.commentSaveButton.click();
+    entryPo.commentEditor.typeInEditor("Welcome to the comments section");
+    entryPo.commentSaveButton.click();
 
-    entry.commentCounter.should("contain.text", "(1)");
-    entry.comments.should("contain.text", "Welcome to the comments section");
+    entryPo.commentCounter.should("contain.text", "(1)");
+    entryPo.comments.should("contain.text", "Welcome to the comments section");
   });
 
   it("supports inviting someone to our team", () => {
-    entryEdit.visit(DUMBLEDORE_ENTRY_TEAM_DIVISION);
+    entryEditPo.visit(DUMBLEDORE_ENTRY_TEAM_DIVISION);
 
-    entryEdit.teamMembersSelect2Search.select2Search("gandalf");
-    entryEdit.saveButton.click();
+    entryEditPo.teamMembersSelect2Search.select2Search("gandalf");
+    entryEditPo.saveButton.click();
 
     cy.loginAs(USER_GANDALF);
     cy.visit("/"); // XXX notifications don't appear upon login, only on the next page
-    po.header.notificationCount.should("contain.text", "1");
-    po.header.avatar.click();
-    po.dashboard.feed.inviteAcceptButton.click();
+    headerPo.notificationCount.should("contain.text", "1");
+    headerPo.avatar.click();
+    dashboardPo.feed.inviteAcceptButton.click();
 
-    entryEdit.visit(DUMBLEDORE_ENTRY_TEAM_DIVISION);
-    entryEdit.titleField.clear().type("Better game title");
-    entryEdit.saveButton.click();
+    entryEditPo.visit(DUMBLEDORE_ENTRY_TEAM_DIVISION);
+    entryEditPo.titleField.clear().type("Better game title");
+    entryEditPo.saveButton.click();
   });
 
   it("supports submitting, updating and deleting high scores", () => {
-    entry.visit(DUMBLEDORE_ENTRY_EMPTY_HIGHSCORES);
+    entryPo.visit(DUMBLEDORE_ENTRY_EMPTY_HIGHSCORES);
 
-    entry.highScoreSubmitButton.click();
-    entryHighscoreSubmit.scoreField.type("999");
-    entryHighscoreSubmit.proofPictureField.dropFile();
-    entryHighscoreSubmit.saveButton.click();
+    entryPo.highScoreSubmitButton.click();
+    entryHighscoreSubmitPo.scoreField.type("999");
+    entryHighscoreSubmitPo.proofPictureField.dropFile();
+    entryHighscoreSubmitPo.saveButton.click();
 
-    entry.highScores.should("contain.text", "1 score");
-    entry.highScores.should("contain.text", USER_DUMBLEDORE);
-    entry.highScores.should("contain.text", "999");
+    entryPo.highScores.should("contain.text", "1 score");
+    entryPo.highScores.should("contain.text", USER_DUMBLEDORE);
+    entryPo.highScores.should("contain.text", "999");
 
-    entry.highScoreSubmitButton.click();
-    entryHighscoreSubmit.scoreField.clear().type("1000");
-    entryHighscoreSubmit.saveButton.click();
+    entryPo.highScoreSubmitButton.click();
+    entryHighscoreSubmitPo.scoreField.clear().type("1000");
+    entryHighscoreSubmitPo.saveButton.click();
 
-    entry.highScores.should("contain.text", "1 score");
-    entry.highScores.should("contain.text", USER_DUMBLEDORE);
-    entry.highScores.should("contain.text", "1000");
+    entryPo.highScores.should("contain.text", "1 score");
+    entryPo.highScores.should("contain.text", USER_DUMBLEDORE);
+    entryPo.highScores.should("contain.text", "1000");
 
-    entry.highScoreSubmitButton.click();
-    entryHighscoreSubmit.deleteButton.click();
+    entryPo.highScoreSubmitButton.click();
+    entryHighscoreSubmitPo.deleteButton.click();
 
-    entry.highScores.should("not.contain.text", USER_DUMBLEDORE);
+    entryPo.highScores.should("not.contain.text", USER_DUMBLEDORE);
   });
 
 });

@@ -1,19 +1,19 @@
 import "cypress-file-upload";
 import { DEFAULT_PICTURE } from "./data";
-import po from "./page-objects";
+import loginPo from "./page-objects/login.po";
 
 Cypress.Commands.add("loginAs", (username: string, password?: string) => {
   cy.clearCookies();
-  po.login.visit();
-  po.login.nameField.type(username);
-  po.login.passwordField.type(password || username); // For all e2e tests, default passwords are set as the username
-  po.login.rememberMeField.click(); // Make sessions persist after DB restorations
-  po.login.submitButton.click();
+  loginPo.visit();
+  loginPo.nameField.type(username);
+  loginPo.passwordField.type(password || username); // For all e2e tests, default passwords are set as the username
+  loginPo.rememberMeField.click(); // Make sessions persist after DB restorations
+  loginPo.submitButton.click();
 });
 
 Cypress.Commands.add("logout", () => {
   cy.clearCookies();
-  po.login.visit();
+  loginPo.visit();
 });
 
 Cypress.Commands.add("clearEditor", { prevSubject: true }, (subject) => {
@@ -86,7 +86,6 @@ function createFileDropEvent(file: File) {
   };
 }
 
-
 Cypress.Commands.add("scrollElementsToScreenCenter", () => {
   Cypress.on('scrolled', $el => {
     $el.get(0).scrollIntoView({
@@ -94,4 +93,8 @@ Cypress.Commands.add("scrollElementsToScreenCenter", () => {
       inline: 'center'
     });
   });
+});
+
+Cypress.Commands.add("getEditor", { prevSubject: true }, (subject, index) => {
+  return cy.get(".CodeMirror textarea").eq(index || 0);
 });

@@ -1,5 +1,3 @@
-import site from "..";
-
 class DashboardEntriesPO {
 
     public visit() {

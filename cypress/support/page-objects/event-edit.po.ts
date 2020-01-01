@@ -1,6 +1,4 @@
-import gamesPo, { GameSearchBlockPO } from "./games.po";
-
-class EventEdit {
+class EventEditPO {
 
     public visit({ eventName, page }: {
         eventName: string,
@@ -53,4 +51,4 @@ class EventEdit {
 
 }
 
-export default new EventEdit();
+export default new EventEditPO();

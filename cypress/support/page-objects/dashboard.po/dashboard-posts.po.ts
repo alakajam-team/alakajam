@@ -1,4 +1,3 @@
-
 class DashboardPostsPO {
 
     public visit() {

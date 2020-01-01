@@ -1,7 +1,5 @@
 import { EVENT_NAME_THEME_SHORTLIST, EVENT_NAME_THEME_VOTING, USER_DUMBLEDORE } from "../support/data";
-import po from "../support/page-objects";
-
-const { event } = po;
+import eventPo from "../support/page-objects/event.po";
 
 describe("Event: Themes", () => {
 
@@ -15,31 +13,31 @@ describe("Event: Themes", () => {
   });
 
   it("supports changing submitted themes", () => {
-    event.visit({ eventName: EVENT_NAME_THEME_VOTING, page: "themes" });
+    eventPo.visit({ eventName: EVENT_NAME_THEME_VOTING, page: "themes" });
 
-    event.themeIdeaManageButton.click();
-    event.themeIdeaDeleteButtons.first().click();
-    event.themeIdeaFields.first().clear().type("A much better theme idea");
-    event.themeIdeasSaveButton.click();
+    eventPo.themeIdeaManageButton.click();
+    eventPo.themeIdeaDeleteButtons.first().click();
+    eventPo.themeIdeaFields.first().clear().type("A much better theme idea");
+    eventPo.themeIdeasSaveButton.click();
 
-    event.themeIdeas.should("contain.text", "A much better theme idea");
+    eventPo.themeIdeas.should("contain.text", "A much better theme idea");
   });
 
   it("saves theme votes", () => {
-    event.visit({ eventName: EVENT_NAME_THEME_VOTING, page: "themes" });
+    eventPo.visit({ eventName: EVENT_NAME_THEME_VOTING, page: "themes" });
 
-    event.themeUpvote.click();
-    event.themePastVotes.should("have.length", 1);
+    eventPo.themeUpvote.click();
+    eventPo.themePastVotes.should("have.length", 1);
 
-    event.themeDownvote.click();
-    event.themePastVotes.should("have.length", 2);
+    eventPo.themeDownvote.click();
+    eventPo.themePastVotes.should("have.length", 2);
   });
 
   it("saves theme shortlist votes", () => {
-    event.visit({ eventName: EVENT_NAME_THEME_SHORTLIST, page: "themes" });
+    eventPo.visit({ eventName: EVENT_NAME_THEME_SHORTLIST, page: "themes" });
 
-    event.enableThemeShortlistSubmitButton();
-    event.themeShortlistSubmitButton.click();
+    eventPo.enableThemeShortlistSubmitButton();
+    eventPo.themeShortlistSubmitButton.click();
   });
 
 });

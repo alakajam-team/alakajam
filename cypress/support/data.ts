@@ -13,6 +13,7 @@ export const USER_DUMBLEDORE = "dumbledore";
 export const DUMBLEDORE_ENTRY_WITHOUT_COMMENTS = { eventName: "external-entry", entryId: 19 };
 export const DUMBLEDORE_ENTRY_EMPTY_HIGHSCORES = { eventName: "external-entry", entryId: 19 };
 export const DUMBLEDORE_ENTRY_TEAM_DIVISION = { eventName: "external-entry", entryId: 19 };
+export const DUMBLEDORE_ENTRY_NAME_SUBMISSIONS_OPEN = "My game";
 
 /**
  * Other user without any special rights

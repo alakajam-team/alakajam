@@ -12,7 +12,7 @@ export class GameSearchBlockPO {
         return cy.get("select[name=eventId]");
     }
 
-    get userSelect() {
+    get userSelect2Dropdown() {
         return cy.get("select[name=user]");
     }
 

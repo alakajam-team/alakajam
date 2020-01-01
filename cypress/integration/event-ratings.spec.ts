@@ -1,7 +1,5 @@
 import { GANDALF_RANKED_GAME, USER_DUMBLEDORE } from "../support/data";
-import po from "../support/page-objects";
-
-const { entry } = po;
+import entryPo from "../support/page-objects/entry.po";
 
 describe("Event: Ratings", () => {
 
@@ -15,14 +13,14 @@ describe("Event: Ratings", () => {
   });
 
   it("supports changing submitted themes", () => {
-    entry.visit(GANDALF_RANKED_GAME);
+    entryPo.visit(GANDALF_RANKED_GAME);
 
     cy.scrollElementsToScreenCenter();
-    entry.votingStar("Awesomeness", 5).click();
-    entry.votingStar("Beauty", 8).click();
+    entryPo.votingStar("Awesomeness", 5).click();
+    entryPo.votingStar("Beauty", 8).click();
 
-    entry.votingRow("Awesomeness").should("contain.text", "5");
-    entry.votingRow("Beauty").should("contain.text", "8");
+    entryPo.votingRow("Awesomeness").should("contain.text", "5");
+    entryPo.votingRow("Beauty").should("contain.text", "8");
   });
 
 });

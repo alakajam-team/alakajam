@@ -3,6 +3,7 @@ declare namespace Cypress {
     restoreDB: () => Chainable;
     loginAs: (username: string, password?: string) => Chainable;
     logout: () => Chainable;
+    getEditor: (index?: number) => Chainable;
     clearEditor: () => Chainable;
     typeInEditor: (contents: string) => Chainable;
     acceptFutureConfirms: () => Chainable;

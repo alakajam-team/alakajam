@@ -1,5 +1,3 @@
-import site from "..";
-
 class DashboardSettingsPO {
 
     public visit() {
@@ -31,7 +29,7 @@ class DashboardSettingsPO {
     }
 
     get bioEditor() {
-        return site.getEditor();
+        return cy.getEditor();
     }
 
     get saveButton() {

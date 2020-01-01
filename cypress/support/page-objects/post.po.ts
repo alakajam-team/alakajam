@@ -1,5 +1,3 @@
-import site from ".";
-
 class PostPO {
 
     public visit({ postId }: { postId: number | string }) {
@@ -62,7 +60,7 @@ class PostPO {
     }
 
     get commentEditor() {
-        return site.getEditor();
+        return cy.getEditor();
     }
 
 }
