@@ -24,19 +24,19 @@ class EventEditPO {
     // General > Status tab
 
     public themeVotingStatusRadio(status: "disabled" | "off" | "voting" | "shortlist" | "closed" | "results") {
-        return cy.get(`input[#status-theme-${status}]`);
+        return cy.get(`[for=status-theme-${status}]`);
     }
 
     public entrySubmissionStatusRadio(status: "off" | "open" | "open_unranked" | "closed") {
-        return cy.get(`input[#status-entry-${status}]`);
+        return cy.get(`[for=status-entry-${status}]`);
     }
 
     public entryResultsStatusRadio(status: "disabled" | "off" | "voting" | "voting_rescue" | "results") {
-        return cy.get(`input[#status-entry-${status}]`);
+        return cy.get(`[for=status-results-${status}]`);
     }
 
     public tournamentStatusRadio(status: "disabled" | "off" | "submission" | "playing" | "closed" | "results") {
-        return cy.get(`input[#status-entry-${status}]`);
+        return cy.get(`[for=status-tournament-${status}]`);
     }
 
     // Common
@@ -47,6 +47,10 @@ class EventEditPO {
 
     get deleteEventButton() {
         return cy.get(".btn-danger");
+    }
+
+    get alert() {
+        return cy.get(".alert");
     }
 
 }

@@ -57,8 +57,17 @@ class EventPO {
     get themePastVotes() {
         return cy.get(".theme-past");
     }
+
+    get themeResults() {
+        return cy.get(".themes__results");
+    }
+
+    get themeShortlistWinner() {
+        return cy.get(".winner .theme-shortlist-line__label");
+    }
+
     get themeShortlistThemes() {
-        return cy.get(".theme-shortlist-line draggable");
+        return cy.get(".theme-shortlist-line__label");
     }
 
     get themeShortlistSubmitButton() {
@@ -66,7 +75,7 @@ class EventPO {
     }
 
     public enableThemeShortlistSubmitButton() {
-        cy.window().then(window => {
+        cy.window().then((window) => {
             const submitButton = window.document.querySelector("#js-shortlist-submit");
             submitButton?.removeAttribute("disabled");
             submitButton?.setAttribute("class", "btn");

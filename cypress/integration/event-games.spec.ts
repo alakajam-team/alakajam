@@ -3,8 +3,8 @@ import eventPo from "../support/page-objects/event.po";
 
 describe("Event: Game search", () => {
 
-  it("support search games", () => {
-    eventPo.visit({ eventName: EVENT_NAME_SUBMISSIONS_OPEN, page: "games" })
+  it("support searching games", () => {
+    eventPo.visit({ eventName: EVENT_NAME_SUBMISSIONS_OPEN, page: "games" });
     eventPo.games.titleField.type(DUMBLEDORE_ENTRY_NAME_SUBMISSIONS_OPEN);
     eventPo.games.userSelect2Dropdown.select2Dropdown(USER_DUMBLEDORE);
     eventPo.games.applyButton.click();

@@ -7,9 +7,9 @@ import {
 } from "../support/data";
 import dashboardPo from "../support/page-objects/dashboard.po";
 import entryEditPo from "../support/page-objects/entry-edit.po";
+import entryHighscoreSubmitPo from "../support/page-objects/entry-highscore-submit.po";
 import entryPo from "../support/page-objects/entry.po";
 import headerPo from "../support/page-objects/header.po";
-import entryHighscoreSubmitPo from "../support/page-objects/entry-highscore-submit.po";
 
 describe("Entry", () => {
 

@@ -23,8 +23,8 @@ describe("Event: Tournament", () => {
 
     /*
       Expected high scores:
-      #	User	          Score	
-      1	@Dumbledore     500 pixels	
+      #	User	          Score
+      1	@Dumbledore     500 pixels
       2 @Gandalf        300 pixels <<<<
       3	@Administrator  150 pixels
     */
@@ -41,9 +41,9 @@ describe("Event: Tournament", () => {
 
     /*
       Expected high scores:
-      #	User	          Score	
+      #	User	          Score
       1 @Gandalf        900 pixels <<<<
-      2	@Dumbledore     500 pixels	
+      2	@Dumbledore     500 pixels
       3	@Administrator  150 pixels
     */
 
@@ -60,12 +60,12 @@ describe("Event: Tournament", () => {
     entryHighscoreSubmitPo.proofPictureField.dropFile();
     entryHighscoreSubmitPo.saveButton.click();
 
-    /* 
+    /*
       Expected high scores for 2nd game:
-      #	User	Time	
+      #	User	Time
       2 @Gandalf        5'00"000 <<<<
-      1	@Administrator	5'59"140	
-      2	@Dumbledore   	6'50"100	
+      1	@Administrator	5'59"140
+      2	@Dumbledore   	6'50"100
     */
 
     eventPo.visit({ eventName: EVENT_NAME_LIVE_TOURNAMENT, page: "tournament-leaderboard" });

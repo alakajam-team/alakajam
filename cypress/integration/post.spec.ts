@@ -1,7 +1,7 @@
 import { ADMIN_POST_WITHOUT_COMMENTS, USER_DUMBLEDORE } from "../support/data";
-import postPo from "../support/page-objects/post.po";
-import postEditPo from "../support/page-objects/post-edit.po";
 import dashboardPo from "../support/page-objects/dashboard.po";
+import postEditPo from "../support/page-objects/post-edit.po";
+import postPo from "../support/page-objects/post.po";
 
 function commentCountersShouldContain(value: string) {
   postPo.commentCounter.should("contain", value);

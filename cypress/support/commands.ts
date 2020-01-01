@@ -2,6 +2,17 @@ import "cypress-file-upload";
 import { DEFAULT_PICTURE } from "./data";
 import loginPo from "./page-objects/login.po";
 
+Cypress.Commands.add("restoreDB", () => {
+  cy.request({
+    method: "POST",
+    url: "/admin/dev",
+    body: "restore=1",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+  });
+});
+
 Cypress.Commands.add("loginAs", (username: string, password?: string) => {
   cy.clearCookies();
   loginPo.visit();
@@ -24,10 +35,6 @@ Cypress.Commands.add("clearEditor", { prevSubject: true }, (subject) => {
 
 Cypress.Commands.add("typeInEditor", { prevSubject: true }, (subject, contents) => {
   cy.get(subject).type(contents, { force: true });
-});
-
-Cypress.Commands.add("restoreDB", () => {
-  cy.request("POST", "/admin/dev", "restore=1");
 });
 
 Cypress.Commands.add("acceptFutureConfirms", () => {
@@ -78,23 +85,15 @@ Cypress.Commands.add("dropFile", { prevSubject: true }, (subject, fixture, mimeT
   });
 });
 
-function createFileDropEvent(file: File) {
-  return {
-    dataTransfer: {
-      files: [file]
-    }
-  };
-}
-
 Cypress.Commands.add("scrollElementsToScreenCenter", () => {
-  Cypress.on('scrolled', $el => {
+  Cypress.on("scrolled", ($el) => {
     $el.get(0).scrollIntoView({
-      block: 'center',
-      inline: 'center'
+      block: "center",
+      inline: "center"
     });
   });
 });
 
-Cypress.Commands.add("getEditor", { prevSubject: true }, (subject, index) => {
+Cypress.Commands.add("getEditor", (index) => {
   return cy.get(".CodeMirror textarea").eq(index || 0);
 });
