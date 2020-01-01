@@ -2,7 +2,7 @@ import site from "..";
 
 class DashboardEntriesPO {
 
-    visit() {
+    public visit() {
         cy.visit(`/dashboard/entries`);
     }
 

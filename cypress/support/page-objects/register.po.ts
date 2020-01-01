@@ -1,11 +1,11 @@
 class RegisterPO {
 
-    visit() {
+    public visit() {
         cy.visit("/register");
     }
 
     get alert() {
-        return cy.get(".alert")
+        return cy.get(".alert");
     }
 
     get name() {
@@ -31,7 +31,7 @@ class RegisterPO {
     get captchaAreYouHuman() {
         return cy.get("input[name=captcha]");
     }
-    
+
     get rememberMe() {
         return cy.get("input[type=checkbox]");
     }

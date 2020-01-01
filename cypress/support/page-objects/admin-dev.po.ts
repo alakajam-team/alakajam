@@ -1,11 +1,11 @@
 class AdminDevPO {
 
-    visit() {
+    public visit() {
         cy.visit("/admin/dev");
     }
 
     get alert() {
-        return cy.get(".alert")
+        return cy.get(".alert");
     }
 
     get backupButton() {

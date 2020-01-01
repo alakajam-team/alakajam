@@ -2,10 +2,10 @@ import site from ".";
 
 class PostEditPO {
 
-    visit({ postId }: { postId: number | string }) {
+    public visit({ postId }: { postId: number | string }) {
         cy.visit(`/post/${postId}/edit`);
     }
-    
+
     // Header
 
     get titlePreview() {
@@ -13,7 +13,7 @@ class PostEditPO {
     }
 
     // Body
-    
+
     get titleInput() {
         return cy.get("input[name=title]");
     }

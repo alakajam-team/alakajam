@@ -1,6 +1,6 @@
 class UserProfilePO {
-    
-    visit(userName: string) {
+
+    public visit(userName: string) {
         cy.visit(`/user/${userName}`);
     }
 
@@ -39,7 +39,7 @@ class UserProfilePO {
     get tabContents() {
         return cy.get(".tab-content");
     }
-    
+
 }
 
 export default new UserProfilePO();

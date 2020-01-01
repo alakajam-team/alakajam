@@ -1,7 +1,7 @@
-import dashboardPostsPo from "./dashboard-posts.po";
+import dashboardEntriesPo from "./dashboard-entries.po";
 import dashboardFeedPo from "./dashboard-feed.po";
 import dashboardPasswordPo from "./dashboard-password.po";
-import dashboardEntriesPo from "./dashboard-entries.po";
+import dashboardPostsPo from "./dashboard-posts.po";
 import dashboardSettingsPo from "./dashboard-settings.po";
 
 class DashboardPO {
@@ -29,7 +29,7 @@ class DashboardPO {
     get changePassword() {
         return dashboardPasswordPo;
     }
-    
+
 }
 
 export default new DashboardPO();

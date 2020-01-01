@@ -17,6 +17,10 @@ describe("Post", () => {
     cy.loginAs(USER_DUMBLEDORE);
   });
 
+  afterEach(() => {
+    cy.restoreDB();
+  });
+
   it("supports creation, edito and deletion", () => {
     myPosts.visit();
     myPosts.createPostButton.click();

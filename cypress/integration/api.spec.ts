@@ -1,6 +1,6 @@
 function requestAllURLs(pages: Record<string, string>) {
   Object.keys(pages).forEach((pageName) => {
-      cy.request(pages[pageName]);
+    cy.request(pages[pageName]);
   });
 }
 

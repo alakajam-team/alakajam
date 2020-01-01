@@ -2,7 +2,7 @@ import gamesPo, { GameSearchBlockPO } from "./games.po";
 
 class EventEdit {
 
-    visit({ eventName, page }: {
+    public visit({ eventName, page }: {
         eventName: string,
         page?: "edit" | "edit#state" | "edit-themes" | "edit-entries" | "edit-tournament-games"
     }) {
@@ -25,20 +25,20 @@ class EventEdit {
 
     // General > Status tab
 
-    themeVotingStatusRadio(status: "disabled" | "off" | "voting" | "shortlist" | "closed" | "results") {
-        return cy.get(`input[#status-theme-${status}]`)
+    public themeVotingStatusRadio(status: "disabled" | "off" | "voting" | "shortlist" | "closed" | "results") {
+        return cy.get(`input[#status-theme-${status}]`);
     }
 
-    entrySubmissionStatusRadio(status: "off" | "open" | "open_unranked" | "closed") {
-        return cy.get(`input[#status-entry-${status}]`)
+    public entrySubmissionStatusRadio(status: "off" | "open" | "open_unranked" | "closed") {
+        return cy.get(`input[#status-entry-${status}]`);
     }
 
-    entryResultsStatusRadio(status: "disabled" | "off" | "voting" | "voting_rescue" | "results") {
-        return cy.get(`input[#status-entry-${status}]`)
+    public entryResultsStatusRadio(status: "disabled" | "off" | "voting" | "voting_rescue" | "results") {
+        return cy.get(`input[#status-entry-${status}]`);
     }
 
-    tournamentStatusRadio(status: "disabled" | "off" | "submission" | "playing" | "closed" | "results") {
-        return cy.get(`input[#status-entry-${status}]`)
+    public tournamentStatusRadio(status: "disabled" | "off" | "submission" | "playing" | "closed" | "results") {
+        return cy.get(`input[#status-entry-${status}]`);
     }
 
     // Common

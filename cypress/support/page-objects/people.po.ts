@@ -1,6 +1,6 @@
 class PeoplePO {
 
-    visit() {
+    public visit() {
         cy.visit("/people");
     }
 

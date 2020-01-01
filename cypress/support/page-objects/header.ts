@@ -11,15 +11,15 @@ class HeaderPO {
     get openButton() {
         return cy.get(".dropdown-toggle");
     }
-    
+
     get dashboardLink() {
         return cy.get(".dropdown-menu a").eq(1);
     }
-    
+
     get settingsLink() {
         return cy.get("a[href=/dashboard/settings]");
     }
-    
+
     get myEntriesLink() {
         return cy.get("a[href=/dashboard/entries]");
     }
@@ -35,7 +35,7 @@ class HeaderPO {
     get logoutLink() {
         return cy.get("a[href=/logout]");
     }
-    
+
 }
 
 export default new HeaderPO();

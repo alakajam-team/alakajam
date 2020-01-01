@@ -2,11 +2,11 @@ import site from ".";
 
 class EntryPO {
 
-    visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
+    public visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
         cy.visit(`/${eventName}/${entryId}`);
     }
 
-    writeNewComment(body: string) {
+    public writeNewComment(body: string) {
         this.commentEditor.type(body, { force: true });
         this.commentSaveButton.click();
     }
@@ -20,7 +20,7 @@ class EntryPO {
     get entryEditButton() {
         return cy.get("h1 .btn-default");
     }
-    
+
     // Body
 
     get entryInfos() {
@@ -39,23 +39,23 @@ class EntryPO {
         return cy.get(".entry-results__body");
     }
 
-    votingRow(categoryTitle: string): Cypress.Chainable<JQuery<HTMLElement>> {
+    public votingRow(categoryTitle: string): Cypress.Chainable<JQuery<HTMLElement>> {
         return cy.get(".entry-voting__category-title")
             .contains(categoryTitle)
-            .parent()
+            .parent();
     }
 
-    votingRanking(categoryTitle: string) {
+    public votingRanking(categoryTitle: string) {
         this.votingRow(categoryTitle)
             .find(".entry-results__category-ranking");
     }
 
-    votingRating(categoryTitle: string) {
+    public votingRating(categoryTitle: string) {
         this.votingRow(categoryTitle)
             .find(".entry-results__category-rating");
     }
 
-    votingStar(categoryTitle: string, rating: number) {
+    public votingStar(categoryTitle: string, rating: number) {
         this.votingRow(categoryTitle)
             .find(".js-star")
             .eq(rating + 1);
@@ -86,7 +86,7 @@ class EntryPO {
     get commentSectionTitle() {
         return cy.get("h2");
     }
-    
+
     get commentCounter() {
         return cy.get("h2 > i");
     }

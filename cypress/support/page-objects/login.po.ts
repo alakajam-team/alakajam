@@ -1,23 +1,23 @@
 class LoginPO {
 
-    visit() {
+    public visit() {
         cy.visit("/login");
     }
 
-    get name() {
+    get nameField() {
         return cy.get("#name");
     }
 
-    get password() {
+    get passwordField() {
         return cy.get("#password");
     }
 
-    get rememberMe() {
+    get rememberMeField() {
         return cy.get("input[type=checkbox]");
     }
 
-    get form() {
-        return cy.get("form");
+    get submitButton() {
+        return cy.get("button[type=submit]");
     }
 
 }

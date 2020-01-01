@@ -5,7 +5,7 @@ describe("People page", () => {
 
   beforeEach(() => {
     people.visit();
-  })
+  });
 
   it("lists users", () => {
     people.results.should("contain", "Administrator");

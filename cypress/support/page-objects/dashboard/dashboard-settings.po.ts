@@ -2,7 +2,7 @@ import site from "..";
 
 class DashboardSettingsPO {
 
-    visit() {
+    public visit() {
         cy.visit(`/dashboard/settings`);
     }
 

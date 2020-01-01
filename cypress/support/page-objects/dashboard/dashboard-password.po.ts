@@ -1,28 +1,26 @@
-import site from "..";
-
 class DashboardPasswordPO {
 
-    visit() {
+    public visit() {
         cy.visit(`/dashboard/password`);
     }
 
     get alert() {
-        return cy.get(".alert")
+        return cy.get(".alert");
     }
 
     get currentPasswordField() {
-        return cy.get("input[name=password]}");
+        return cy.get("input[name=password]");
     }
 
     get newPasswordField() {
-        return cy.get("input[name=new-password]}");
+        return cy.get("input[name=new-password]");
     }
 
     get newPasswordBisField() {
-        return cy.get("input[name=new-password-bis]}");
+        return cy.get("input[name=new-password-bis]");
     }
 
-    get chagePasswordButton() {
+    get saveButton() {
         return cy.get("input[type=submit]");
     }
 

@@ -2,11 +2,11 @@ import site from ".";
 
 class PostPO {
 
-    visit({ postId }: { postId: number | string }) {
+    public visit({ postId }: { postId: number | string }) {
         cy.visit(`/post/${postId}`);
     }
 
-    writeNewComment(body: string) {
+    public writeNewComment(body: string) {
         this.commentEditor.type(body, { force: true });
         this.commentSaveButton.click();
     }
@@ -24,7 +24,7 @@ class PostPO {
     get commentCounter() {
         return cy.get(".post__comment-count");
     }
-    
+
     get likeCounter() {
         return cy.get(".js-like-button");
     }
@@ -44,7 +44,7 @@ class PostPO {
     get commentSectionTitle() {
         return cy.get("h2");
     }
-    
+
     get commentEditButton() {
         return cy.get(".comment__details .fa-pencil-alt").first();
     }

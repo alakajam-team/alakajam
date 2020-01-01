@@ -1,7 +1,7 @@
 
 class DashboardPostsPO {
 
-    visit() {
+    public visit() {
         cy.visit(`/dashboard/posts`);
     }
 

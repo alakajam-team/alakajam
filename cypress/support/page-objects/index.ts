@@ -23,7 +23,7 @@ class SitePO {
     get entry() {
         return entryPo;
     }
-    
+
     get entryEdit() {
         return entryEditPo;
     }
@@ -43,7 +43,7 @@ class SitePO {
     get post() {
         return postPo;
     }
-    
+
     get postEdit() {
         return postEditPo;
     }
@@ -81,7 +81,7 @@ class SitePO {
 
     // Utilities
 
-    getEditor({ index }: { index: number } = { index: 0 }) {
+    public getEditor({ index }: { index: number } = { index: 0 }) {
         return cy.get(".CodeMirror textarea").eq(index);
     }
 

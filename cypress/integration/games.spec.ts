@@ -6,7 +6,7 @@ describe("Games page", () => {
 
   beforeEach(() => {
     games.visit();
-  })
+  });
 
   it("lists games made during an event", () => {
     games.eventSelect.select2Dropdown("results out");

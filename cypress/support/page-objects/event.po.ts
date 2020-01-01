@@ -2,7 +2,7 @@ import gamesPo, { GameSearchBlockPO } from "./games.po";
 
 class EventPO {
 
-    visit({ eventName, page }: {
+    public visit({ eventName, page }: {
         eventName: string,
         page?: "announcements" | "posts" | "themes" | "games" | "tournament-games" | "tournament-leaderboard"
     }) {
@@ -49,7 +49,7 @@ class EventPO {
         return cy.get("#js-shortlist-submit");
     }
 
-    enableThemeShortlistSubmitButton() {
+    public enableThemeShortlistSubmitButton() {
         cy.exec(`
             $("#js-shortlist-submit")
                 .removeAttr("disabled")

@@ -1,4 +1,10 @@
-import { DUMBLEDORE_ENTRY_EMPTY_HIGHSCORES, DUMBLEDORE_ENTRY_TEAM_DIVISION, DUMBLEDORE_ENTRY_WITHOUT_COMMENTS, USER_DUMBLEDORE, USER_GANDALF } from "../support/data";
+import {
+  DUMBLEDORE_ENTRY_EMPTY_HIGHSCORES,
+  DUMBLEDORE_ENTRY_TEAM_DIVISION,
+  DUMBLEDORE_ENTRY_WITHOUT_COMMENTS,
+  USER_DUMBLEDORE,
+  USER_GANDALF
+} from "../support/data";
 import po from "../support/page-objects";
 
 const { entry, entryEdit, entryHighscoreSubmit } = po;
@@ -9,6 +15,10 @@ describe("Entry", () => {
   beforeEach(() => {
     cy.restoreDB();
     cy.loginAs(USER_DUMBLEDORE);
+  });
+
+  afterEach(() => {
+    cy.restoreDB();
   });
 
   it("supports creation, edition and deletion", () => {
@@ -42,7 +52,7 @@ describe("Entry", () => {
 
     entry.entryEditButton.click();
     entryEdit.entryDeleteButton.click();
-  })
+  });
 
   it("supports adding comments", () => {
     entry.visit(DUMBLEDORE_ENTRY_WITHOUT_COMMENTS);
@@ -53,7 +63,7 @@ describe("Entry", () => {
     entry.commentCounter.should("contain.text", "(1)");
     entry.comments.should("contain.text", "Welcome to the comments section");
   });
-  
+
   it("supports inviting someone to our team", () => {
     entryEdit.visit(DUMBLEDORE_ENTRY_TEAM_DIVISION);
 
@@ -86,12 +96,12 @@ describe("Entry", () => {
     entry.highScoreSubmitButton.click();
     entryHighscoreSubmit.scoreField.clear().type("1000");
     entryHighscoreSubmit.saveButton.click();
-    
+
     entry.highScores.should("contain.text", "1 score");
     entry.highScores.should("contain.text", USER_DUMBLEDORE);
     entry.highScores.should("contain.text", "1000");
 
-    entry.highScoreSubmitButton.click();    
+    entry.highScoreSubmitButton.click();
     entryHighscoreSubmit.deleteButton.click();
 
     entry.highScores.should("not.contain.text", USER_DUMBLEDORE);

@@ -1,14 +1,19 @@
-import 'cypress-file-upload';
+import "cypress-file-upload";
 import { DEFAULT_PICTURE } from "./data";
 import po from "./page-objects";
 
 Cypress.Commands.add("loginAs", (username: string, password?: string) => {
   cy.clearCookies();
   po.login.visit();
-  po.login.name.type(username);
-  po.login.password.type(password || username); // For all e2e tests, default passwords are set as the username
-  po.login.rememberMe.click(); // Make sessions persist after DB restorations
-  po.login.form.submit();
+  po.login.nameField.type(username);
+  po.login.passwordField.type(password || username); // For all e2e tests, default passwords are set as the username
+  po.login.rememberMeField.click(); // Make sessions persist after DB restorations
+  po.login.submitButton.click();
+});
+
+Cypress.Commands.add("logout", () => {
+  cy.clearCookies();
+  po.login.visit();
 });
 
 Cypress.Commands.add("clearEditor", { prevSubject: true }, (subject) => {
@@ -53,7 +58,7 @@ function chooseSelect2Option(subject: any, contents: any, typingFunction: () => 
   typingFunction();
   cy.get(".select2-results__option")
     .should(($el) => {
-      expect($el.text().search(new RegExp(contents, 'i')),
+      expect($el.text().search(new RegExp(contents, "i")),
         `could not find select2 option containing '${contents}'`
       ).to.be.greaterThan(-1);
     });
@@ -64,7 +69,7 @@ function chooseSelect2Option(subject: any, contents: any, typingFunction: () => 
 
 Cypress.Commands.add("dropFile", { prevSubject: true }, (subject, fixture, mimeType) => {
   const fileName = fixture || DEFAULT_PICTURE;
-  cy.fixture(fileName).then(fileContent => {
+  cy.fixture(fileName).then((fileContent) => {
     cy.get(subject).upload({
       fileContent,
       fileName,

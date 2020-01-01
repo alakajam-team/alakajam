@@ -2,7 +2,7 @@ import site from ".";
 
 class EntryEditPO {
 
-    visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
+    public visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
         cy.visit(`/${eventName}/${entryId}/test-entry/edit`);
     }
 
@@ -13,12 +13,12 @@ class EntryEditPO {
     get descriptionField() {
         return cy.get("input[name=description]");
     }
-    
+
     get divisionButtons() {
         return cy.get(".entry__divisions");
     }
 
-    divisionButton(divisionName: string) {
+    public divisionButton(divisionName: string) {
         return this.divisionButtons.contains(divisionName);
     }
 
@@ -29,7 +29,7 @@ class EntryEditPO {
     get teamMembersSelect2Search() {
         return cy.get("select[name=members]");
     }
-    
+
     get graphicsOptout() {
         return cy.get("#edit-optouts label").eq(0);
     }
@@ -49,7 +49,7 @@ class EntryEditPO {
     get linkDeleteButtons() {
         return cy.get(".js-remove-link");
     }
-    
+
     get addLinkButton() {
         return cy.get(".js-add-link");
     }

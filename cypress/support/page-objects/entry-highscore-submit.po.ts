@@ -1,6 +1,6 @@
 class EntrySubmitScorePO {
 
-    visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
+    public visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
         cy.visit(`/${eventName}/${entryId}/submit-score`);
     }
 
