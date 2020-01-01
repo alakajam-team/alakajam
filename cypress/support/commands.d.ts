@@ -9,5 +9,6 @@ declare namespace Cypress {
     select2Dropdown: (contents: string) => Chainable;
     select2Search: (contents: string) => Chainable;
     dropFile: (fixture?: string, contentType?: string) => Chainable;
+    scrollElementsToScreenCenter: () => Chainable;
   }
 }

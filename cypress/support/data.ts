@@ -14,12 +14,16 @@ export const DUMBLEDORE_ENTRY_WITHOUT_COMMENTS = { eventName: "external-entry", 
 export const DUMBLEDORE_ENTRY_EMPTY_HIGHSCORES = { eventName: "external-entry", entryId: 19 };
 export const DUMBLEDORE_ENTRY_TEAM_DIVISION = { eventName: "external-entry", entryId: 19 };
 
+/**
+ * Other user without any special rights
+ */
 export const USER_GANDALF = "gandalf";
-
-export const DEFAULT_PICTURE = "picture.jpg";
+export const GANDALF_RANKED_GAME = { eventName: "game-ratings", entryId: 11 };
 
 export const EVENT_NAME_THEME_VOTING = "theme-voting";
 export const EVENT_NAME_THEME_SHORTLIST = "theme-shortlist";
 export const EVENT_NAME_SUBMISSIONS_OPEN = "submissions-open";
 export const EVENT_NAME_GAME_RATINGS = "game-ratings";
 export const EVENT_NAME_LIVE_TOURNAMENT = "live-tournament";
+
+export const DEFAULT_PICTURE = "picture.jpg";

@@ -85,3 +85,13 @@ function createFileDropEvent(file: File) {
     }
   };
 }
+
+
+Cypress.Commands.add("scrollElementsToScreenCenter", () => {
+  Cypress.on('scrolled', $el => {
+    $el.get(0).scrollIntoView({
+      block: 'center',
+      inline: 'center'
+    });
+  });
+});

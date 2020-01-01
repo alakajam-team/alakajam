@@ -35,8 +35,8 @@ class EntryPO {
         return cy.get(".post");
     }
 
-    get votingResultsBlock() {
-        return cy.get(".entry-results__body");
+    get votingBlock() {
+        return cy.get(".entry-voting, .entry-results");
     }
 
     public votingRow(categoryTitle: string): Cypress.Chainable<JQuery<HTMLElement>> {
@@ -46,19 +46,19 @@ class EntryPO {
     }
 
     public votingRanking(categoryTitle: string) {
-        this.votingRow(categoryTitle)
+        return this.votingRow(categoryTitle)
             .find(".entry-results__category-ranking");
     }
 
     public votingRating(categoryTitle: string) {
-        this.votingRow(categoryTitle)
+        return this.votingRow(categoryTitle)
             .find(".entry-results__category-rating");
     }
 
     public votingStar(categoryTitle: string, rating: number) {
-        this.votingRow(categoryTitle)
+        return this.votingRow(categoryTitle)
             .find(".js-star")
-            .eq(rating + 1);
+            .eq(rating);
     }
 
     get links() {
