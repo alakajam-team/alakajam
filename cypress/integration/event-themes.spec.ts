@@ -14,7 +14,7 @@ describe("Event: Themes", () => {
     cy.restoreDB();
   });
 
-  it.only("supports changing submitted themes", () => {
+  it("supports changing submitted themes", () => {
     event.visit({ eventName: EVENT_NAME_THEME_VOTING, page: "themes" });
 
     event.themeIdeaManageButton.click();
