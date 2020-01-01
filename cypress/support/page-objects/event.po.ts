@@ -27,7 +27,19 @@ class EventPO {
     }
 
     get themeIdeaManageButton() {
-        return cy.get(".themes__idea .btn-primary");
+        return cy.get("#js-view-themes .btn-primary[type=submit]");
+    }
+
+    get themeIdeaFields() {
+        return cy.get(".themes__idea input[type=text]");
+    }
+
+    get themeIdeaDeleteButtons() {
+        return cy.get(".themes__idea .js-idea-delete");
+    }
+
+    get themeIdeasSaveButton() {
+        return cy.get("#js-manage-themes .btn-primary");
     }
 
     get themeVoteLabel() {
@@ -42,6 +54,9 @@ class EventPO {
         return cy.get("#js-downvote");
     }
 
+    get themePastVotes() {
+        return cy.get(".theme-past");
+    }
     get themeShortlistThemes() {
         return cy.get(".theme-shortlist-line draggable");
     }
@@ -51,11 +66,11 @@ class EventPO {
     }
 
     public enableThemeShortlistSubmitButton() {
-        cy.exec(`
-            $("#js-shortlist-submit")
-                .removeAttr("disabled")
-                .removeClass("disabled");
-        `);
+        cy.window().then(window => {
+            const submitButton = window.document.querySelector("#js-shortlist-submit");
+            submitButton?.removeAttribute("disabled");
+            submitButton?.setAttribute("class", "btn");
+        });
     }
 
 }
