@@ -45,6 +45,7 @@ class PostEditPO {
     }
 
     get deleteButton() {
+        cy.acceptFutureConfirms();
         return cy.get(".btn-danger");
     }
 

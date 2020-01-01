@@ -37,7 +37,6 @@ describe("Post", () => {
     post.postBody.should("contain", "Hacked my own post");
 
     post.postEditButton.click();
-    cy.acceptFutureConfirms();
     postEdit.deleteButton.click();
   });
 

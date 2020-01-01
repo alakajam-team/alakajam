@@ -38,6 +38,11 @@ class DashboardSettingsPO {
         return cy.get(".btn-primary").first();
     }
 
+    get deleteAccountButton() {
+        cy.acceptFutureConfirms();
+        return cy.get(".btn-danger");
+    }
+
 }
 
 export default new DashboardSettingsPO();

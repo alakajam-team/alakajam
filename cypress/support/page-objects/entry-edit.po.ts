@@ -79,6 +79,7 @@ class EntryEditPO {
     }
 
     get entryDeleteButton() {
+        cy.acceptFutureConfirms();
         return cy.get(".btn-danger");
     }
 

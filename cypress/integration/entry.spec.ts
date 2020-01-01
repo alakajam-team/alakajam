@@ -41,7 +41,6 @@ describe("Entry", () => {
     entry.body.should("contain.text", "It's a platformer");
 
     entry.entryEditButton.click();
-    cy.acceptFutureConfirms();
     entryEdit.entryDeleteButton.click();
   })
 
@@ -92,8 +91,7 @@ describe("Entry", () => {
     entry.highScores.should("contain.text", USER_DUMBLEDORE);
     entry.highScores.should("contain.text", "1000");
 
-    entry.highScoreSubmitButton.click();
-    cy.acceptFutureConfirms();
+    entry.highScoreSubmitButton.click();    
     entryHighscoreSubmit.deleteButton.click();
 
     entry.highScores.should("not.contain.text", USER_DUMBLEDORE);

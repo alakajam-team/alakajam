@@ -17,6 +17,7 @@ class EntrySubmitScorePO {
     }
 
     get deleteButton() {
+        cy.acceptFutureConfirms();
         return cy.get("input[name=delete]");
     }
 

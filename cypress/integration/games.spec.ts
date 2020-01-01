@@ -1,7 +1,7 @@
 import { USER_DUMBLEDORE } from "../support/data";
 import po from "../support/page-objects";
 
-describe("People page", () => {
+describe("Games page", () => {
   const games = po.games;
 
   beforeEach(() => {

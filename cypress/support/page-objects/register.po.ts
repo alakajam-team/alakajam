@@ -28,7 +28,7 @@ class RegisterPO {
         return cy.get("input[name=password-bis]");
     }
 
-    get captcha() {
+    get captchaAreYouHuman() {
         return cy.get("input[name=captcha]");
     }
     
