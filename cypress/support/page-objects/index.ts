@@ -1,23 +1,23 @@
 import adminDevPo from "./admin-dev.po";
 import dashboardPo from "./dashboard";
 import entryEditPo from "./entry-edit.po";
+import entryHighscoreSubmitPo from "./entry-highscore-submit.po";
 import entryPo from "./entry.po";
 import eventEditPo from "./event-edit.po";
 import eventPo from "./event.po";
 import gamesPo from "./games.po";
+import headerPo from "./header";
 import loginPo from "./login.po";
 import peoplePo from "./people.po";
 import postEditPo from "./post-edit.po";
 import postPo from "./post.po";
 import registerPo from "./register.po";
-import userMenuPo from "./user-menu.po";
-import entrySubmitScorePo from "./entry-highscore-submit.po";
-import entryHighscoreSubmitPo from "./entry-highscore-submit.po";
+import userProfilePo from "./user-profile";
 
 class SitePO {
 
-    get userMenu() {
-        return userMenuPo;
+    get header() {
+        return headerPo;
     }
 
     get entry() {
@@ -58,6 +58,10 @@ class SitePO {
 
     get games() {
         return gamesPo;
+    }
+
+    get userProfile() {
+        return userProfilePo;
     }
 
     /**

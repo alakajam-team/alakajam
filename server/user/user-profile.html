@@ -78,7 +78,7 @@
           <li role="presentation" class="js-tab-container active"><a class="js-tab-button" href="#entries-ext" data-tab-selector="#js-entries-ext">Other games ({{externalEntries.length}})</a></li>
           {% endif %}
           <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#posts" data-tab-selector="#js-posts">Blog posts ({{posts.pagination.rowCount}})</a></li>
-          <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#posts" data-tab-selector="#js-scores">High scores ({{userScores.length}})</a></li>
+          <li role="presentation" class="js-tab-container"><a class="js-tab-button" href="#scores" data-tab-selector="#js-scores">High scores ({{userScores.length}})</a></li>
         </ul>
         <div id="js-entries" class="tab-content js-tab">
           {% if alakajamEntries.length > 0 or otherEntries.length > 0 %}

@@ -54,7 +54,7 @@ describe("Entry", () => {
     entry.comments.should("contain.text", "Welcome to the comments section");
   });
   
-  it.only("supports inviting someone to our team", () => {
+  it("supports inviting someone to our team", () => {
     entryEdit.visit(DUMBLEDORE_ENTRY_TEAM_DIVISION);
 
     entryEdit.teamMembersSelect2Search.select2Search("gandalf");
@@ -62,8 +62,8 @@ describe("Entry", () => {
 
     cy.loginAs(USER_GANDALF);
     cy.visit("/"); // XXX notifications don't appear upon login, only on the next page
-    po.userMenu.notificationCount.should("contain.text", "1");
-    po.userMenu.avatar.click();
+    po.header.notificationCount.should("contain.text", "1");
+    po.header.avatar.click();
     po.dashboard.feed.inviteAcceptButton.click();
 
     entryEdit.visit(DUMBLEDORE_ENTRY_TEAM_DIVISION);

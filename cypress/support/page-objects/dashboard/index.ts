@@ -6,6 +6,10 @@ import dashboardSettingsPo from "./dashboard-settings.po";
 
 class DashboardPO {
 
+    get sidebarAvatar() {
+        return cy.get(".list-group-item .user-thumb__avatar");
+    }
+
     get feed() {
         return dashboardFeedPo;
     }

@@ -13,6 +13,6 @@
     "**/*.d.ts"
   ],
   "files": [
-    "support/index.d.ts"
+    "support/commands.d.ts"
   ]
 }

@@ -1,4 +1,4 @@
-class UserMenuPO {
+class HeaderPO {
 
     get avatar() {
         return cy.get(".dropdown .navbar-avatar");
@@ -38,4 +38,4 @@ class UserMenuPO {
     
 }
 
-export default new UserMenuPO();
+export default new HeaderPO();

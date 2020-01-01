@@ -54,7 +54,7 @@ export class User extends TimestampedEntity {
   @Column({ nullable: true })
   public notifications_last_read: Date;
 
-  @OneToOne((type) => UserDetails, (userDetails) => userDetails.user, { nullable: false })
+  @OneToOne((type) => UserDetails, (userDetails) => userDetails.user, { nullable: false, cascade: true })
   public details: UserDetails;
 
   public dependents(): Array<keyof this> {
