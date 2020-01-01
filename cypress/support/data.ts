@@ -3,6 +3,8 @@
  */
 export const USER_ADMINISTRATOR = "administrator";
 export const ADMIN_POST_WITHOUT_COMMENTS = 3;
+export const ADMIN_TOURNAMENT_GAME_1 = { eventName: "external-entry", entryId: 6 };
+export const ADMIN_TOURNAMENT_GAME_2 = { eventName: "external-entry", entryId: 7 };
 
 /**
  * User without any special rights

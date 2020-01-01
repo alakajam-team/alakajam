@@ -1,4 +1,5 @@
-import gamesPo, { GameSearchBlockPO } from "./games.po";
+import { GameSearchBlockPO } from "./games-search-block.po";
+import gamesPo from "./games.po";
 
 class EventPO {
 
@@ -10,7 +11,7 @@ class EventPO {
     }
 
     get tournamentRankings() {
-        return cy.get("table.table tr");
+        return cy.get("table.table tbody tr");
     }
 
     get postsTitles() {
