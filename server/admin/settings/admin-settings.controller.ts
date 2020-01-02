@@ -1,20 +1,22 @@
+import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import security from "server/core/security";
 import settings from "server/core/settings";
-import { EDITABLE_SETTINGS } from "server/core/settings-keys";
+import { EDITABLE_SETTINGS, EditableSetting } from "server/core/settings-keys";
+import { CustomRequest, CustomResponse } from "server/types";
 
 /**
  * Admin only: settings management
  */
-export async function adminSettings(req, res) {
+export async function adminSettings(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }
 
   // Save changed setting
-  let currentEditValue;
+  let currentEditValue: string | undefined;
   if (req.method === "POST") {
     const editableSetting = EDITABLE_SETTINGS.find((setting) => setting.key === req.body.key);
     if (editableSetting) {
@@ -42,7 +44,7 @@ export async function adminSettings(req, res) {
   }
 
   // Gather editable settings
-  const editableSettings = [];
+  const editableSettings: Array<EditableSetting & { value: string }> = [];
   for (const editableSetting of EDITABLE_SETTINGS) {
     const editableSettingWithValue = {
       ...editableSetting,
@@ -55,7 +57,7 @@ export async function adminSettings(req, res) {
   }
 
   // Fetch setting to edit (and make JSON pretty)
-  let editSetting;
+  let editSetting: EditableSetting & { value: string } | undefined;
   if (req.query.edit && forms.isSlug(req.query.edit)) {
     const editableSetting = EDITABLE_SETTINGS.find((setting) => setting.key === req.query.edit);
     if (editableSetting?.isJson) {

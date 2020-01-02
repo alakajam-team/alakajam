@@ -1,24 +1,27 @@
+import { BookshelfModel } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import config from "server/core/config";
 import forms from "server/core/forms";
 import security from "server/core/security";
+import { CustomRequest, CustomResponse } from "server/types";
 import platformService from "../../entry/platform/platform.service";
 
 /**
  * Admin only: Platforms management
  */
-export async function adminPlatforms(req, res) {
+export async function adminPlatforms(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }
 
-  let errorMessage = null;
+  let errorMessage: string | null = null;
 
   // Save changed platform
   if (req.method === "POST") {
     const name = forms.sanitizeString(req.body.name);
     if (name) {
-      let platform = null;
+      let platform: BookshelfModel | null = null;
 
       if (forms.isId(req.body.id)) {
         platform = await platformService.fetchById(req.body.id);
@@ -56,7 +59,7 @@ export async function adminPlatforms(req, res) {
   }
 
   // Fetch platform to edit
-  let editPlatform;
+  let editPlatform: BookshelfModel;
   if (forms.isId(req.query.edit)) {
     editPlatform = await platformService.fetchById(req.query.edit);
   } else if (req.query.create) {
@@ -65,7 +68,7 @@ export async function adminPlatforms(req, res) {
 
   // Count entries by platform
   const platformCollection = await platformService.fetchAll();
-  const entryCountByPlatform = {};
+  const entryCountByPlatform: Record<number, number> = {};
   for (const platform of platformCollection.models) {
     entryCountByPlatform[platform.get("id")] = await platformService.countEntriesByPlatform(platform);
   }

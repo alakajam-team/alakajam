@@ -1,11 +1,13 @@
+import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import config from "server/core/config";
 import security from "server/core/security";
+import { CustomRequest, CustomResponse } from "server/types";
 
 /**
  * Admin only: server status
  */
-export async function adminStatus(req, res) {
+export async function adminStatus(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }

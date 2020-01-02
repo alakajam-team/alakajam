@@ -6,15 +6,13 @@
  */
 
 import * as Bluebird from "bluebird";
-import { BookshelfCollection } from "bookshelf";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
-import { ilikeOperator } from "server/core/config";
 import db from "server/core/db";
 import log from "server/core/log";
 import * as models from "server/core/models";
 
 export default {
-  searchPlatforms,
   fetchById,
   fetchAllNames,
   fetchAll,
@@ -26,37 +24,21 @@ export default {
 };
 
 /**
- * Search for a platform by name.
- *
- * @param {string} nameFragment a fragment of the name.
- * @returns {Bookshelf.Collection} platforms matching the search.
- */
-function searchPlatforms(nameFragment) {
-  return models.Platform.where("name", ilikeOperator(), `%${nameFragment}%`);
-}
-
-/**
  * Fetch platform by ID
- *
- * @param {number} id
  */
-async function fetchById(id) {
+async function fetchById(id: number): Promise<BookshelfModel> {
   return models.Platform.where({ id }).fetch();
 }
 
 /**
  * Fetch platforms by name (case-insensitive except in SQLite).
- *
- * @param {string[]} names the platform names to fetch by.
  */
-function fetchMultipleNamed(names): Promise<BookshelfCollection> {
+function fetchMultipleNamed(names: string[]): Promise<BookshelfCollection> {
   return models.Platform.query((qb) => qb.whereIn("name", names)).fetchAll() as Bluebird<BookshelfCollection>;
 }
 
 /**
  * Load all platform names.
- *
- * @returns {Promise<string[]>} a promise which resolves with the names.
  */
 async function fetchAllNames() {
   const names = (await db.knex("platform").select("name")).map(({name}: { name: string }) => name);
@@ -77,11 +59,8 @@ async function fetchAll(): Promise<BookshelfCollection> {
 
 /**
  * Counts the number of entries using a given platform
- *
- * @param  {Platform} platform
- * @return {number}
  */
-async function countEntriesByPlatform(platform): Promise<number> {
+async function countEntriesByPlatform(platform: BookshelfModel): Promise<number> {
   const count = await models.EntryPlatform
     .where("platform_id", platform.get("id"))
     .count();
@@ -90,22 +69,16 @@ async function countEntriesByPlatform(platform): Promise<number> {
 
 /**
  * Creates a platform
- * @param  {string} name
- * @return {Platform}
  */
-function createPlatform(name) {
+function createPlatform(name: string): BookshelfModel {
   return new models.Platform({ name });
 }
 
 /**
  * Set the platforms of an entry.
  * The data is duplicated on `entry.platforms` (for quick access) and the `entry_platform` table (for search queries).
- *
- * @param {models.Entry} entry the entry instance.
- * @param {models.Platform[]} platforms the platforms to set.
- * @returns {Promise} a promise which resolves when complete.
  */
-async function setEntryPlatforms(entry, platforms) {
+async function setEntryPlatforms(entry: BookshelfModel, platforms: BookshelfModel[]) {
   const entryId = entry.get("id");
   const platformNames = platforms.map((p) => p.get("name"));
   const platformIds = platforms.map((p) => p.id);

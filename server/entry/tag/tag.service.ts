@@ -128,7 +128,7 @@ async function updateEntryTags(entry, tagInfo) {
   });
 }
 
-async function fetchTagStats(options: any = {}) {
+async function fetchTagStats(options: { orderByDate?: boolean } = {}) {
   return db.knex("entry_tag")
     .select("tag.id", "tag.value", "tag.created_at", db.knex.raw("count(*) as count"))
     .leftJoin("tag", "entry_tag.tag_id", "tag.id")

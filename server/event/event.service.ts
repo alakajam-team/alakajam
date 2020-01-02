@@ -74,7 +74,7 @@ function createEvent(template = null) {
       team: "48 hours<br />Everything from scratch",
       unranked: "72 hours<br />No rankings, just feedback",
     },
-  });
+  }) as BookshelfModel;
   if (template) {
     event.set({
       title: template.get("event_title"),
@@ -95,7 +95,7 @@ function areSubmissionsAllowed(event) {
       ([enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get("status_entry")));
 }
 
-function getDefaultDivision(event) {
+function getDefaultDivision(event): string {
   return Object.keys(event.get("divisions"))[0];
 }
 
@@ -104,27 +104,25 @@ function getDefaultDivision(event) {
  * @param id {id} models.Event ID
  * @returns {Event}
  */
-async function findEventById(id) {
+async function findEventById(id: number) {
   if (!cache.eventsById.get(id)) {
     const event = await models.Event.where("id", id)
       .fetch({ withRelated: ["details"] });
     cache.eventsById.set(id, event);
   }
-  return cache.eventsById.get(id);
+  return cache.eventsById.get<BookshelfModel>(id);
 }
 
 /**
  * Fetches an models.Event by its name, with all its Entries.
- * @param id {id} models.Event name
- * @returns {Event}
  */
-async function findEventByName(name) {
+async function findEventByName(name: string) {
   if (!cache.eventsByName.get(name)) {
     const event = await models.Event.where("name", name)
       .fetch({ withRelated: ["details"] });
     cache.eventsByName.set(name, event);
   }
-  return cache.eventsByName.get<any>(name);
+  return cache.eventsByName.get<BookshelfModel>(name);
 }
 
 /**
@@ -161,7 +159,7 @@ async function findEvents(options: {
  * @param globalStatus {string} One of "pending", "open", "closed"
  * @returns {Event} The earliest pending event OR the currently open event OR the last closed event.
  */
-async function findEventByStatus(status) {
+async function findEventByStatus(status): Promise<BookshelfModel> {
   let sortOrder: SortOrder = "ASC";
   if (status === enums.EVENT.STATUS.CLOSED) {
     sortOrder = "DESC";
@@ -174,7 +172,7 @@ async function findEventByStatus(status) {
 /**
  * Creates an empty, unpersisted event template.
  */
-function createEventTemplate() {
+function createEventTemplate(): BookshelfModel {
   return new models.EventTemplate();
 }
 

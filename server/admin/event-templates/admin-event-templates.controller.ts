@@ -1,13 +1,16 @@
+import { BookshelfModel } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import eventPresetService from "server/event/event-preset.service";
 import eventService from "server/event/event.service";
+import { CustomRequest, CustomResponse } from "server/types";
 
 /**
  * Event templates management
  */
-export async function adminEventTemplates(req, res) {
+export async function adminEventTemplates(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   // Find template to edit
-  let editEventTemplate = null;
+  let editEventTemplate: BookshelfModel | null = null;
   const editEventTemplateId = req.query.edit || req.body.id;
   if (forms.isId(editEventTemplateId)) {
     editEventTemplate = await eventService.findEventTemplateById(parseInt(editEventTemplateId, 10));
@@ -16,7 +19,7 @@ export async function adminEventTemplates(req, res) {
   }
 
   // Apply changes
-  let errorMessage = null;
+  let errorMessage: string | null = null;
   if (req.method === "POST") {
     if (req.body.delete !== undefined) {
       // Delete model

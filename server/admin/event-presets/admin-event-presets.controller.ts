@@ -1,12 +1,15 @@
+import { BookshelfModel } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import eventPresetService from "server/event/event-preset.service";
+import { CustomRequest, CustomResponse } from "server/types";
 
 /**
  * Event presets management
  */
-export async function adminEventPresets(req, res) {
+export async function adminEventPresets(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   // Find template to edit
-  let editEventPreset = null;
+  let editEventPreset: BookshelfModel | null = null;
   const editEventPresetId = req.query.edit || req.body.id;
   if (forms.isId(editEventPresetId)) {
     editEventPreset = await eventPresetService.findEventPresetById(parseInt(editEventPresetId, 10));
@@ -19,7 +22,7 @@ export async function adminEventPresets(req, res) {
   }
 
   // Apply changes
-  let errorMessage = null;
+  let errorMessage: string | null = null;
   if (req.method === "POST") {
     if (req.body.delete !== undefined) {
       // Delete model
@@ -70,7 +73,7 @@ export async function adminEventPresets(req, res) {
 
   // Render page
   const eventPresetsCollection = await eventPresetService.findEventPresets();
-  const context: any = {
+  const context: Record<string, any> = {
     eventPresets: eventPresetsCollection.models,
     editEventPreset,
   };
