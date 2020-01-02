@@ -1,5 +1,4 @@
 import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "bookshelf";
-import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
@@ -8,6 +7,8 @@ import forms from "server/core/forms";
 import links from "server/core/links";
 import * as models from "server/core/models";
 import security from "server/core/security";
+import settings from "server/core/settings";
+import { SETTING_EVENT_TOURNAMENT_ADVERTISING } from "server/core/settings-keys";
 import entryTeamService from "server/entry/entry-team.service";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import platformService from "server/entry/platform/platform.service";
@@ -270,6 +271,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
     external: !res.locals.event,
     tags: (entry.related("tags") as BookshelfCollection).map((tag) => ({ id: tag.id, value: tag.get("value") })),
     isPlayedInTournament,
+    tournamentAdvertising: await settings.find(SETTING_EVENT_TOURNAMENT_ADVERTISING),
     errorMessages,
   });
 }

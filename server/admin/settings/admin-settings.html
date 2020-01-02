@@ -10,7 +10,11 @@
   <p>{{ editSetting.description }}</p>
   <div class="form-group">
     <label for="value">Value</label>
-    <textarea name="value" class="form-control {{ 'json-setting codemirror' if editSetting.isJson }}">{{ editSetting.value }}</textarea>
+    {% if editSetting.isMarkdown %}
+      {{ formMacros.editor('value', editSetting.value) }}
+    {% else %}
+      <textarea name="value" class="form-control {{ 'json-setting codemirror' if editSetting.isJson }}">{{ editSetting.value }}</textarea>
+    {% endif %}
   </div>
   <div class="form-group">
     {{ csrfToken() | safe }}
@@ -39,7 +43,9 @@
       <span class="legend">{{ setting.description }}</span>
     </td>
     <td style="width: 50%">
-      {% if setting.isJson %}
+      {% if setting.isMarkdown %}
+        <div class="panel">{{ setting.value | markdown | safe }}</div>
+      {% elseif setting.isJson %}
         <textarea class="codemirror" readonly>{{ setting.value }}</textarea>
       {% elseif setting.value %}
         <code style="max-width: 500px">{{ setting.value }}</code>
@@ -56,5 +62,6 @@
 {% endblock %}
 
 {% block scripts %} 
+  {{ formMacros.editorScripts() }}
   {{ formMacros.codeMirrorScripts() }}
 {% endblock %}

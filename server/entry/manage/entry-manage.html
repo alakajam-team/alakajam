@@ -259,6 +259,10 @@
 
         <div class="horizontal-bar" style="margin-top: 40px">High scores</div>
 
+        {% if tournamentAdvertising %}
+        <div class="alert alert-info">{{ tournamentAdvertising | markdown | safe }}</div>
+        {% endif %}
+
         <div class="form-group">
           <label for="enable-high-score">Enable high scores {{ formMacros.tooltip('Players will be able to submit their scores with a screenshot as proof.') }}</label>
           <div>
