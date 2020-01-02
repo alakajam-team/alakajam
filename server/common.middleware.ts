@@ -1,12 +1,12 @@
 import { BookshelfModel } from "bookshelf";
 import { NextFunction, Response } from "express";
-import constants from "server/core/constants";
 import forms from "server/core/forms";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import eventService from "server/event/event.service";
 import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
+import { SETTING_FEATURED_EVENT_NAME } from "./core/settings-keys";
 import commentService from "./post/comment/comment.service";
 import { Alert, CustomRequest } from "./types";
 
@@ -96,8 +96,8 @@ export async function commonMiddleware(req: CustomRequest, res: Response, next: 
     });
   }
 
-  // Fetch featured event
-  const featuredEventTask = settings.find(constants.SETTING_FEATURED_EVENT_NAME)
+  // Fetch featured events
+  const featuredEventTask = settings.find(SETTING_FEATURED_EVENT_NAME)
     .then((featuredEventName) => {
       if (featuredEventName) {
         return eventService.findEventByName(featuredEventName);

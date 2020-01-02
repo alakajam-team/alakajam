@@ -1,9 +1,9 @@
 
 import { BookshelfCollection } from "bookshelf";
 import cache from "server/core/cache";
-import constants from "server/core/constants";
 import enums from "server/core/enums";
 import settings from "server/core/settings";
+import { SETTING_FEATURED_POST_ID, SETTING_HOME_SHRINKED_JUMBO } from "server/core/settings-keys";
 import { handleEventUserShortcuts } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
 import likeService from "server/post/like/like.service";
@@ -71,7 +71,7 @@ export async function home(req, res) {
       .catch(res.traceAndShowErrorPage);
 
     // Find featured post
-    const featuredPostTask = settings.find(constants.SETTING_FEATURED_POST_ID)
+    const featuredPostTask = settings.find(SETTING_FEATURED_POST_ID)
       .then(async (featuredPostId) => {
         if (featuredPostId) {
           context.featuredPost = await postService.findPostById(featuredPostId);
@@ -79,8 +79,8 @@ export async function home(req, res) {
       })
       .catch(res.traceAndShowErrorPage);
 
-    const shrinkedJumboSettingTask = settings.findNumber(constants.SETTING_HOME_SHRINKED_JUMBO, 0)
-      .then((value) => context.shrinkedJumbo = value)
+    const shrinkedJumboSettingTask = settings.find(SETTING_HOME_SHRINKED_JUMBO, "false")
+      .then((value) => context.shrinkedJumbo = value.toLowerCase() === "true")
       .catch(res.traceAndShowErrorPage);
 
     // Parallelize fetching everything

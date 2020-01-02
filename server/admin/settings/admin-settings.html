@@ -5,18 +5,16 @@
 
 <h1>Settings</h1>
 {% if editSetting %}
-<form action="/admin/settings" method="post">
-  {{ csrfToken() | safe }}
-  <div class="form-group">
-    <label for="key">Key</label>
-    <p>{{ editSetting.key }}</p>
-    <input type="hidden" name="key" value="{{ editSetting.key }}" class="form-control" />
-  </div>
+<form action="/admin/settings" method="post" class="well">
+  <h2>{{ editSetting.key }}</h2>
+  <p>{{ editSetting.description }}</p>
   <div class="form-group">
     <label for="value">Value</label>
-    <textarea name="value" class="form-control {{ 'json-setting codemirror' if editSetting.jsonSetting }}">{{ editSetting.value }}</textarea>
+    <textarea name="value" class="form-control {{ 'json-setting codemirror' if editSetting.isJson }}">{{ editSetting.value }}</textarea>
   </div>
   <div class="form-group">
+    {{ csrfToken() | safe }}
+    <input type="hidden" name="key" value="{{ editSetting.key }}" class="form-control" />
     <input type="submit" class="btn btn-primary" value="Save" />
   </div>
 </form>
@@ -24,15 +22,24 @@
 
 <table class="table sortable">
 <thead>
-  <th>Key</th>
+  <th>Setting</th>
   <th>Value</th>
 </thead>
 <tbody>
   {% for setting in settings %}
+  {% if setting.category != currentCategory %}
+    {% set currentCategory = setting.category %}
+    <tr>
+      <td colspan="3"><h2>{{ currentCategory }}</h2></td>
+    </tr>
+  {% endif %}
   <tr>
-    <td>{{ setting.key }}</td>
     <td>
-      {% if constants.JSON_EDIT_SETTINGS.indexOf(setting.key) !== -1 %}
+      {{ setting.key }}<br />
+      <span class="legend">{{ setting.description }}</span>
+    </td>
+    <td style="width: 50%">
+      {% if setting.isJson %}
         <textarea class="codemirror" readonly>{{ setting.value }}</textarea>
       {% elseif setting.value %}
         <code style="max-width: 500px">{{ setting.value }}</code>

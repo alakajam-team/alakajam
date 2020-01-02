@@ -30,6 +30,7 @@ import constants from "./constants";
 import db from "./db";
 import fileStorage from "./file-storage";
 import log from "./log";
+import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
 import * as templatingFilters from "./templating-filters";
 import * as templatingGlobals from "./templating-globals";
 
@@ -211,10 +212,10 @@ async function createSessionMiddleware(sessionStore) {
 }
 
 async function getOrCreateSessionSecret() {
-  let secret = await settings.find(constants.SETTING_SESSION_SECRET);
+  let secret = await settings.find(SETTING_SESSION_SECRET);
   if (!secret) {
     secret = randomKey.generate();
-    await settings.save(constants.SETTING_SESSION_SECRET, secret);
+    await settings.save(SETTING_SESSION_SECRET, secret);
   }
   return secret;
 }
@@ -246,10 +247,10 @@ function promisifySession() {
 }
 
 async function findOrCreateSessionKey() {
-  let sessionKey = await settings.find(constants.SETTING_SESSION_KEY);
+  let sessionKey = await settings.find(SETTING_SESSION_KEY);
   if (!sessionKey) {
     sessionKey = randomKey.generate();
-    await settings.save(constants.SETTING_SESSION_KEY, sessionKey);
+    await settings.save(SETTING_SESSION_KEY, sessionKey);
   }
   return sessionKey;
 }

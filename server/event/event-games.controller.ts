@@ -1,9 +1,9 @@
-import constants from "server/core/constants";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import security from "server/core/security";
 import settings from "server/core/settings";
+import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
@@ -35,7 +35,7 @@ export async function viewEventGames(req, res) {
       rescueEntries = (await eventService.findRescueEntries(event, user)).models;
     }
   }
-  const requiredVotes = await settings.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
+  const requiredVotes = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
   const entriesCollection = await eventService.findGames(searchOptions);
   const platformCollection = await platformService.fetchAll();
 

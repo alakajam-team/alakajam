@@ -16,6 +16,7 @@ import fileStorage from "server/core/file-storage";
 import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
+import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import postService from "server/post/post.service";
 
 export default {
@@ -584,7 +585,7 @@ async function findEntryInvitesForUser(user, options): Promise<BookshelfCollecti
 }
 
 async function findRescueEntries(event, user, options: any = {}) {
-  const minRatings = await settings.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
+  const minRatings = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
 
   if (options.pageSize === undefined) { options.pageSize = 4; }
   if (options.withRelated === undefined) { options.withRelated = ["details", "userRoles"]; }

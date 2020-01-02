@@ -1,10 +1,10 @@
 
 import cache from "server/core/cache";
-import constants from "server/core/constants";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import security from "server/core/security";
 import settings from "server/core/settings";
+import { SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_ELIMINATION_THRESHOLD } from "server/core/settings-keys";
 import eventThemeService from "server/event/theme/event-theme.service";
 
 /**
@@ -23,9 +23,9 @@ export async function eventManageThemes(req, res) {
   const shortlistCollection = await eventThemeService.findShortlist(event);
   const context: any = {
     eliminationMinNotes: await settings.findNumber(
-      constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
+      SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
     eliminationThreshold: await settings.findNumber(
-      constants.SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58),
+      SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58),
     shortlist: shortlistCollection.models,
     eliminatedShortlistThemes: eventThemeService.computeEliminatedShortlistThemes(event),
   };

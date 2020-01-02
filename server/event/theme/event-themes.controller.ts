@@ -1,9 +1,13 @@
 import { BookshelfCollection } from "bookshelf";
 import * as lodash from "lodash";
-import constants from "server/core/constants";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import settings from "server/core/settings";
+import {
+  SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
+  SETTING_EVENT_THEME_IDEAS_REQUIRED,
+  SETTING_EVENT_THEME_SUGGESTIONS
+} from "server/core/settings-keys";
 import eventThemeService from "server/event/theme/event-theme.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -22,9 +26,9 @@ export async function viewEventThemes(req, res) {
   } else {
     let context: any = {
       maxThemeSuggestions: await settings.findNumber(
-        constants.SETTING_EVENT_THEME_SUGGESTIONS, 3),
+        SETTING_EVENT_THEME_SUGGESTIONS, 3),
       eliminationMinNotes: await settings.findNumber(
-        constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
+        SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
       infoMessage: null,
     };
 
@@ -81,11 +85,11 @@ export async function viewEventThemes(req, res) {
         if (statusTheme === enums.EVENT.STATUS_THEME.VOTING) {
           if (await eventThemeService.isThemeVotingAllowed(event)) {
             const votesHistoryCollection = await eventThemeService.findThemeVotesHistory(
-                res.locals.user, event) as BookshelfCollection;
+              res.locals.user, event) as BookshelfCollection;
             context.votesHistory = votesHistoryCollection.models;
             context.votingAllowed = true;
           } else {
-            context.ideasRequired = await settings.find(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, "10");
+            context.ideasRequired = await settings.find(SETTING_EVENT_THEME_IDEAS_REQUIRED, "10");
             context.votingAllowed = false;
           }
         } else if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED].includes(statusTheme)) {
@@ -99,7 +103,7 @@ export async function viewEventThemes(req, res) {
             context.sampleThemes = sampleThemesCollection.models;
             context.votingAllowed = true;
           } else {
-            context.ideasRequired = await settings.findNumber(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, 10);
+            context.ideasRequired = await settings.findNumber(SETTING_EVENT_THEME_IDEAS_REQUIRED, 10);
             context.votingAllowed = false;
           }
         } else if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED].includes(statusTheme)) {
@@ -109,7 +113,7 @@ export async function viewEventThemes(req, res) {
 
       // State-specific data
       if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED,
-          enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
+      enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
         context.shortlistVotes = await eventThemeService.countShortlistVotes(event);
       }
       if (statusTheme === enums.EVENT.STATUS_THEME.RESULTS) {

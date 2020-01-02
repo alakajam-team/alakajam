@@ -1,8 +1,8 @@
-import constants from "server/core/constants";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
 import settings from "server/core/settings";
+import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import entryTeamService from "server/entry/entry-team.service";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import tagService from "server/entry/tag/tag.service";
@@ -41,7 +41,7 @@ export async function entryView(req, res) {
   const entryVotes = await eventRatingService.countEntryVotes(entry);
   let minEntryVotes = null;
   if (res.locals.user && security.canUserWrite(res.locals.user, entry)) {
-    minEntryVotes = await settings.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
+    minEntryVotes = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
   }
 
   let editableAnonComments = null;

@@ -6,9 +6,9 @@
  */
 
 import cache from "server/core/cache";
-import constants from "server/core/constants";
 import log from "server/core/log";
 import * as models from "server/core/models";
+import { SETTING_ARTICLE_SIDEBAR } from "./settings-keys";
 
 type DefaultValueEval = () => string;
 
@@ -45,7 +45,7 @@ export class Settings {
   }
 
   public async findArticlesSidebar(category: "about" | "docs"): Promise<object[]> {
-    const articlesSidebar = await this.find(constants.SETTING_ARTICLE_SIDEBAR);
+    const articlesSidebar = await this.find(SETTING_ARTICLE_SIDEBAR);
     if (articlesSidebar) {
       let sidebar;
       try {

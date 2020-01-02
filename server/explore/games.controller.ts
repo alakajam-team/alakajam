@@ -1,6 +1,6 @@
-import constants from "server/core/constants";
 import security from "server/core/security";
 import settings from "server/core/settings";
+import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import platformService from "server/entry/platform/platform.service";
 import { handleGameSearch } from "server/event/event-games.controller";
 import eventService from "server/event/event.service";
@@ -25,7 +25,7 @@ export async function games(req, res) {
     const canVoteInEvent = await eventRatingService.canVoteInEvent(user, featuredEvent);
     if (canVoteInEvent || security.isMod(user)) {
       rescueEntries = (await eventService.findRescueEntries(featuredEvent, user)).models;
-      requiredVotes = await settings.findNumber(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
+      requiredVotes = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
     }
   }
   const entriesCollection = await eventService.findGames(searchOptions);

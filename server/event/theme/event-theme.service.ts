@@ -18,6 +18,13 @@ import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
+import {
+  SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
+  SETTING_EVENT_THEME_ELIMINATION_MODULO,
+  SETTING_EVENT_THEME_ELIMINATION_THRESHOLD,
+  SETTING_EVENT_THEME_IDEAS_REQUIRED,
+  SETTING_EVENT_THEME_SUGGESTIONS
+} from "server/core/settings-keys";
 
 const MAX_ELIMINATED_THEMES = 8;
 
@@ -51,7 +58,7 @@ async function isThemeVotingAllowed(event) {
     const votingAllowedCacheKey = event.get("name") + "_event_voting_allowed_";
     if (cache.general.get(votingAllowedCacheKey) === undefined) {
       const themeIdeasRequired = await settings.findNumber(
-        constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, 10);
+        SETTING_EVENT_THEME_IDEAS_REQUIRED, 10);
       const themeIdeaCount = await models.Theme.where({
         event_id: event.get("id"),
       }).count();
@@ -128,7 +135,7 @@ async function saveThemeIdeas(user, event, ideas) {
   await Promise.all(tasks);
 
   // Create themes
-  const maxThemeSuggestions = await settings.findNumber(constants.SETTING_EVENT_THEME_SUGGESTIONS, 3);
+  const maxThemeSuggestions = await settings.findNumber(SETTING_EVENT_THEME_SUGGESTIONS, 3);
   for (const idea of ideasToCreate) {
     if (ideasSubmitted < maxThemeSuggestions) {
       const theme = new models.Theme({
@@ -306,7 +313,7 @@ async function saveVote(user, event, themeId, score, options: any = {}) {
   if (expectedStatus === enums.THEME.STATUS.ACTIVE && voteCreated) {
     // Eliminate lowest themes every x votes. No need for DB calls, just count in-memory
     const eliminationThreshold = await settings.findNumber(
-      constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 10);
+      SETTING_EVENT_THEME_ELIMINATION_MODULO, 10);
     let uptimeVotes: number = cache.general.get("uptime_votes") || 0;
     if (uptimeVotes % eliminationThreshold === 0) {
       _eliminateLowestThemes(event);
@@ -338,9 +345,9 @@ function computeWilsonBounds(positive, total) {
 
 async function _eliminateLowestThemes(event) {
   const eliminationMinNotes = await settings.findNumber(
-    constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5);
+    SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5);
   const eliminationThreshold = await settings.findNumber(
-    constants.SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58);
+    SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58);
 
   const battleReadyThemesQuery = await models.Theme.where({
     event_id: event.get("id"),
@@ -431,7 +438,7 @@ async function findAllThemes(event, options: any = {}): Promise<BookshelfCollect
 }
 
 async function findBestThemes(event) {
-  const eliminationMinNotes = await settings.findNumber(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5);
+  const eliminationMinNotes = await settings.findNumber(SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5);
   return models.Theme.where({
     event_id: event.get("id"),
   })

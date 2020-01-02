@@ -13,6 +13,7 @@ import enums from "server/core/enums";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
+import { SETTING_EVENT_OPEN_VOTING, SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import commentService from "server/post/comment/comment.service";
 import eventService from "../event.service";
 
@@ -59,7 +60,7 @@ async function canVoteInEvent(user, event) {
  */
 async function canVoteOnEntry(user, entry) {
   if (user && areVotesAllowed(entry.related("event"))) {
-    const openVoting = await settings.find(constants.SETTING_EVENT_OPEN_VOTING, "false");
+    const openVoting = await settings.find(SETTING_EVENT_OPEN_VOTING, "false");
     if (openVoting && openVoting.toLowerCase() === "true") {
       return true;
     } else {
@@ -234,7 +235,7 @@ async function refreshEntryRatings(entry) {
   // Only give a rating if the entry has enough votes (tolerate being a bit under the minimum)
   const entryDetails = entry.related("details");
   const requiredRatings = Math.floor(0.8 * await settings.findNumber(
-      constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1));
+      SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1));
   for (const categoryIndex of categoryIndexes) {
     let averageRating;
     if (ratingCount[categoryIndex] >= requiredRatings) {

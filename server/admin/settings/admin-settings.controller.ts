@@ -1,9 +1,9 @@
 import config from "server/core/config";
-import constants from "server/core/constants";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import security from "server/core/security";
 import settings from "server/core/settings";
+import { EDITABLE_SETTINGS } from "server/core/settings-keys";
 
 /**
  * Admin only: settings management
@@ -16,9 +16,10 @@ export async function adminSettings(req, res) {
   // Save changed setting
   let currentEditValue;
   if (req.method === "POST") {
-    if (constants.EDITABLE_SETTINGS.indexOf(req.body.key) !== -1) {
+    const editableSetting = EDITABLE_SETTINGS.find((setting) => setting.key === req.body.key);
+    if (editableSetting) {
       let save = true;
-      if (constants.JSON_EDIT_SETTINGS.indexOf(req.body.key) !== -1) {
+      if (editableSetting.isJson) {
         try {
           // Minimize JSON
           req.body.value = JSON.stringify(JSON.parse(req.body.value));
@@ -42,22 +43,22 @@ export async function adminSettings(req, res) {
 
   // Gather editable settings
   const editableSettings = [];
-  for (const key of constants.EDITABLE_SETTINGS) {
-    const editableSetting = {
-      key,
-      value: await settings.find(key),
+  for (const editableSetting of EDITABLE_SETTINGS) {
+    const editableSettingWithValue = {
+      ...editableSetting,
+      value: await settings.find(editableSetting.key),
     };
-    editableSettings.push(editableSetting);
-    if (!currentEditValue && req.query.edit && key === req.query.edit) {
-      currentEditValue = editableSetting.value;
+    editableSettings.push(editableSettingWithValue);
+    if (!currentEditValue && req.query.edit && editableSetting.key === req.query.edit) {
+      currentEditValue = editableSettingWithValue.value;
     }
   }
 
   // Fetch setting to edit (and make JSON pretty)
   let editSetting;
   if (req.query.edit && forms.isSlug(req.query.edit)) {
-    const jsonSetting = constants.JSON_EDIT_SETTINGS.indexOf(req.query.edit) !== -1;
-    if (jsonSetting) {
+    const editableSetting = EDITABLE_SETTINGS.find((setting) => setting.key === req.query.edit);
+    if (editableSetting?.isJson) {
       try {
         currentEditValue = JSON.stringify(JSON.parse(currentEditValue), null, 4);
       } catch (e) {
@@ -66,9 +67,8 @@ export async function adminSettings(req, res) {
     }
 
     editSetting = {
-      key: req.query.edit,
-      value: currentEditValue,
-      jsonSetting,
+      ...editableSetting,
+      value: currentEditValue
     };
   }
 

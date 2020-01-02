@@ -13,6 +13,14 @@ import enums from "./enums";
 import fileStorage from "./file-storage";
 import { createLuxonDate, formatDate } from "./formats";
 import log from "./log";
+import {
+  SETTING_ARTICLE_SIDEBAR,
+  SETTING_EVENT_REQUIRED_ENTRY_VOTES,
+  SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
+  SETTING_EVENT_THEME_ELIMINATION_MODULO,
+  SETTING_EVENT_THEME_IDEAS_REQUIRED,
+  SETTING_FEATURED_EVENT_NAME
+} from "./settings-keys";
 
 /**
  * Inserts sample data in the database.
@@ -32,11 +40,11 @@ export async function insertInitialData(samples: boolean | "nightly") {
   });
   await userService.save(adminUser);
 
-  await settings.save(constants.SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1);
-  await settings.save(constants.SETTING_EVENT_THEME_ELIMINATION_MODULO, 5);
-  await settings.save(constants.SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 1);
-  await settings.save(constants.SETTING_EVENT_THEME_IDEAS_REQUIRED, 5);
-  await settings.save(constants.SETTING_ARTICLE_SIDEBAR, defaultArticleSidebar());
+  await settings.save(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1);
+  await settings.save(SETTING_EVENT_THEME_ELIMINATION_MODULO, 5);
+  await settings.save(SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 1);
+  await settings.save(SETTING_EVENT_THEME_IDEAS_REQUIRED, 5);
+  await settings.save(SETTING_ARTICLE_SIDEBAR, defaultArticleSidebar());
 
   // Samples
 
@@ -98,7 +106,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
     });
     await event2Details.save();
 
-    await settings.save(constants.SETTING_FEATURED_EVENT_NAME, "2nd-alakajam");
+    await settings.save(SETTING_FEATURED_EVENT_NAME, "2nd-alakajam");
 
     eventThemeService.saveThemeIdeas(entrantUser, event2, [
       { title: "Alone" },
