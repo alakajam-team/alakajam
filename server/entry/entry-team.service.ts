@@ -1,11 +1,10 @@
 
 import cache from "server/core/cache";
-import config, { ilikeOperator } from "server/core/config";
-import constants from "server/core/constants";
+import { ilikeOperator } from "server/core/config";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import * as models from "server/core/models";
-import security from "server/core/security";
+import security, { SECURITY_PERMISSION_MANAGE, SECURITY_PERMISSION_WRITE } from "server/core/security";
 import postService from "server/post/post.service";
 
 export class EntryTeamService {
@@ -58,7 +57,7 @@ export class EntryTeamService {
           id: role.get("user_id"),
           text: role.get("user_title") || role.get("user_name"),
           avatar: role.related("user").get("avatar"),
-          locked: role.get("permission") === constants.PERMISSION_MANAGE,
+          locked: role.get("permission") === SECURITY_PERMISSION_MANAGE,
           invite: false,
         }));
 
@@ -100,7 +99,7 @@ export class EntryTeamService {
       if (entry.get("division") === enums.DIVISION.SOLO) {
         // Force only keeping the owner role
         numRemoved = await transaction("user_role")
-          .whereNot("permission", constants.PERMISSION_MANAGE)
+          .whereNot("permission", SECURITY_PERMISSION_MANAGE)
           .andWhere({
             node_type: "entry",
             node_id: entryId,
@@ -179,7 +178,7 @@ export class EntryTeamService {
             entry_id: entryId,
             invited_user_id: toCreateUserRow.id,
             invited_user_title: toCreateUserRow.title || toCreateUserRow.name,
-            permission: constants.PERMISSION_WRITE,
+            permission: SECURITY_PERMISSION_WRITE,
           });
           await invite.save(null, { transacting: transaction });
 

@@ -6,7 +6,7 @@ import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import * as models from "server/core/models";
-import security from "server/core/security";
+import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_TOURNAMENT_ADVERTISING } from "server/core/settings-keys";
 import entryTeamService from "server/entry/entry-team.service";
@@ -199,7 +199,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
         let ownerId;
         if (!isCreation) {
           ownerId = (entry.related("userRoles") as BookshelfCollection)
-            .find((userRole) => userRole.get("permission") === constants.PERMISSION_MANAGE)
+            .find((userRole) => userRole.get("permission") === SECURITY_PERMISSION_MANAGE)
             .get("user_id");
         } else {
           ownerId = res.locals.user.get("id");

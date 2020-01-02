@@ -5,55 +5,54 @@
  * @module services/security-service
  */
 
-import constants from "./constants";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import enums from "./enums";
 import * as models from "./models";
+
+export const SECURITY_PERMISSION_READ = "read";
+export const SECURITY_PERMISSION_WATCH = "watch";
+export const SECURITY_PERMISSION_WRITE = "write";
+export const SECURITY_PERMISSION_MANAGE = "manage";
+
+export type SecurityPermission = "read" | "watch" | "write" | "manage";
+
+export interface SecurityOptions {
+  allowMods?: boolean;
+  allowAdmins?: boolean;
+}
 
 export class Security {
 
+  private readonly ORDERED_PERMISSIONS: SecurityPermission[] = ["read", "watch", "write", "manage"];
+
   /**
-   * Checks if a user is watching the given model
-   * @param  {User} user (optional)
-   * @param  {Entry|Post|Comment} model
-   * @return {boolean}
+   * Checks if a user is watching the given model for receiving notifications
    */
-  public isUserWatching(user, model) {
-    return this.canUser(user, model, constants.PERMISSION_WATCH);
+  public isUserWatching(user: BookshelfModel, model: BookshelfModel): boolean {
+    return this.canUser(user, model, "watch");
+  }
+
+  public canUserRead(user: BookshelfModel, model: BookshelfModel, options: SecurityOptions = {}) {
+    return this.canUser(user, model, "read", options);
+  }
+
+  public canUserWrite(user: BookshelfModel, model: BookshelfModel, options: SecurityOptions = {}): boolean {
+    return this.canUser(user, model, "write", options);
+  }
+
+  public canUserManage(user: BookshelfModel, model: BookshelfModel, options: SecurityOptions = {}): boolean {
+    return this.canUser(user, model, "manage", options);
   }
 
   /**
-   * Checks if a user can read the given model
-   * @param  {User} user (optional)
-   * @param  {Entry|Post|Comment} model
-   * @param  {object} options (optional) allowMods allowAdmins
-   * @return {boolean}
+   * Checks if a user has sufficient rights for the given model.
+   * Warning: Always returns false if no model is given.
    */
-  public canUserRead(user, model, options: any = {}) {
-    return this.canUser(user, model, constants.PERMISSION_READ, options);
-  }
-
-  /**
-   * Checks if a user can write in the given model
-   * @param  {User} user (optional)
-   * @param  {Entry|Post|Comment} model
-   * @param  {object} options (optional) allowMods allowAdmins
-   * @return {boolean}
-   */
-  public canUserWrite(user, model, options: any = {}) {
-    return this.canUser(user, model, constants.PERMISSION_WRITE, options);
-  }
-
-  /**
-   * Checks if a user can manage the given model. Always returns false if no model is given.
-   * @param  {User} (optional) user
-   * @param  {Entry|Post|Comment} (optional) model
-   * @param  {object} options (optional) allowMods allowAdmins
-   * @return {boolean}
-   */
-  public canUserManage(user, model, options: any = {}) {
-    return this.canUser(user, model, constants.PERMISSION_MANAGE, options);
-  }
-
-  public canUser(user, model, permission, options: any = {}) {
+  public canUser(
+      user: BookshelfModel,
+      model: BookshelfModel,
+      permission: SecurityPermission,
+      options: SecurityOptions = {}): boolean {
     if (!user || !model) {
       return false;
     }
@@ -61,25 +60,34 @@ export class Security {
       return true;
     }
 
-    // Comments
+    // Comment
     if (model.get("user_id")) {
-      if (permission === constants.PERMISSION_READ) {
-        return this.canUser(user, model.related("node"), permission, options);
+      if (permission === "read") {
+        return this.canUser(user, model.related("node") as BookshelfModel, permission, options);
       } else {
         return model.get("user_id") === user.get("id");
       }
     }
 
-    // User/Posts (permission-based)
+    // Event (mods can only edit pending/open events)
+    if (model.get("status")) {
+      if (permission === "read") {
+        return true;
+      } else {
+        return model.get("status") === enums.EVENT.STATUS.CLOSED ? this.isAdmin(user) : this.isMod(user);
+      }
+    }
+
+    // User/Post (permission-based)
     if (!model.relations.userRoles) {
       throw new Error("Model does not have user roles");
     }
     const acceptPermissions = this.getPermissionsEqualOrAbove(permission);
-    const allUserRoles = model.related("userRoles");
+    const allUserRoles = model.related("userRoles") as BookshelfCollection;
     if (acceptPermissions && allUserRoles) {
-      const userRoles = allUserRoles.where({
+      const userRoles: BookshelfModel[] = allUserRoles.where({
         user_id: user.get("id"),
-      });
+      }) as any;
       for (const userRole of userRoles) {
         if (acceptPermissions.includes(userRole.get("permission"))) {
           return true;
@@ -89,60 +97,43 @@ export class Security {
     return false;
   }
 
-  /**
-   * @param  {User}  user
-   * @return {boolean}
-   */
-  public isMod(user) {
+  public isMod(user: BookshelfModel) {
     return user && (user.get("is_mod") || user.get("is_admin"));
   }
 
-  /**
-   * @param  {User}  user
-   * @return {boolean}
-   */
-  public isAdmin(user, options: any = {}) {
+  public isAdmin(user: BookshelfModel) {
     return user && user.get("is_admin");
   }
 
-  /**
-   * @param  {string} permission
-   * @return {array(string)}
-   */
-  public getPermissionsEqualOrAbove(permission) {
-    const permissionIndex = constants.ORDERED_PERMISSIONS.indexOf(permission);
+  public getPermissionsEqualOrAbove(permission: SecurityPermission): SecurityPermission[] {
+    const permissionIndex = this.ORDERED_PERMISSIONS.indexOf(permission);
     if (permissionIndex !== -1) {
-      return constants.ORDERED_PERMISSIONS.slice(permissionIndex);
+      return this.ORDERED_PERMISSIONS.slice(permissionIndex);
     } else {
       throw new Error("Unknown permission: " + permission
-        + " (allowed: " + constants.ORDERED_PERMISSIONS.join(",") + ")");
+        + " (allowed: " + this.ORDERED_PERMISSIONS.join(",") + ")");
     }
   }
 
-  /**
-   * @param {array(string)} permissions
-   * @return {string}
-   */
-  public getHighestPermission(permissions) {
+  public getHighestPermission(permissions: SecurityPermission[]): string {
     const highestIndex = permissions
-      .map((permission) => constants.ORDERED_PERMISSIONS.indexOf(permission))
+      .map((permission) => this.ORDERED_PERMISSIONS.indexOf(permission))
       .reduce((index1, index2) => Math.max(index1, index2), -1);
-    return constants.ORDERED_PERMISSIONS[highestIndex];
+    return this.ORDERED_PERMISSIONS[highestIndex];
   }
 
   /**
-   * Adds a user right to a node
-   * @param  {User} user
-   * @param  {Entry|Post} node
-   * @param  {string} nodeType (entry|post)
-   * @param  {string} permission
-   * @return {boolean}
+   * Adds a user right to a node.
    */
-  public async addUserRight(user, node, nodeType, permission) {
+  public async addUserRight(
+    user: BookshelfModel,
+    node: BookshelfModel,
+    nodeType: "post" | "entry",
+    permission: SecurityPermission): Promise<void> {
     await node.load("userRoles");
 
     // Check if present already
-    const userRoles = node.related("userRoles");
+    const userRoles = node.related("userRoles") as BookshelfCollection;
     const matchingRole = userRoles.find((userRole) => {
       return userRole.get("user_name") === user.get("name") &&
         userRole.get("permission") === permission;
@@ -170,15 +161,14 @@ export class Security {
 
   /**
    * Removes a user right from a node. If the permission does not match exactly, does nothing.
-   * @param  {User} user
-   * @param  {Entry|Post} node
-   * @param  {string} permission
-   * @return {boolean}
    */
-  public async removeUserRight(user, node, permission) {
+  public async removeUserRight(
+      user: BookshelfModel,
+      node: BookshelfModel,
+      permission: SecurityPermission): Promise<void> {
     await node.load("userRoles");
 
-    const userRoles = node.related("userRoles");
+    const userRoles = node.related("userRoles") as BookshelfCollection;
     const matchingRole = userRoles.find((userRole) => {
       return userRole.get("user_name") === user.get("name") &&
         userRole.get("permission") === permission;

@@ -1,4 +1,5 @@
 
+import { BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
@@ -12,12 +13,17 @@ import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import eventThemeService from "server/event/theme/event-theme.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EventLocals } from "../event.middleware";
 
 /**
  * Edit or create an event
  */
-export async function eventManage(req, res) {
-  if (!security.isMod(res.locals.user)) {
+export async function eventManage(req: CustomRequest, res: CustomResponse<EventLocals>) {
+  const { user } = res.locals;
+  let { event } = res.locals;
+
+  if (!security.canUserManage(user, event) && !security.isAdmin(user)) {
     res.errorPage(403);
     return;
   }
@@ -25,10 +31,10 @@ export async function eventManage(req, res) {
   let errorMessage = res.locals.errorMessage;
   let infoMessage = "";
   let redirected = false;
-  let event = res.locals.event;
 
   if (req.body && req.body.name && req.body.title) {
     const creation = !event;
+    const files = req.files as Record<string, Express.Multer.File[]>;
 
     // TODO Fields should not be reset if validation fails
     if (!forms.isSlug(req.body.name)) {
@@ -81,8 +87,8 @@ export async function eventManage(req, res) {
         errorMessage = "Invalid links JSON";
       }
     }
-    if (!errorMessage && (req.files.logo || req.body["logo-delete"])) {
-      const file = req.files.logo ? req.files.logo[0] : null;
+    if (!errorMessage && (files.logo || req.body["logo-delete"])) {
+      const file = files.logo ? files.logo[0] : null;
       const result = await fileStorage.savePictureToModel(event, "logo", file,
         req.body["logo-delete"], `/events/${event.get("name")}/logo`, { maxDiagonal: 1000 });
       if (result.error) {
@@ -151,13 +157,13 @@ export async function eventManage(req, res) {
       }
 
       // Event details update
-      const eventDetails = event.related("details");
+      const eventDetails = event.related("details") as BookshelfModel;
       eventDetails.set({
         links: req.body.links,
         category_titles: req.body["category-titles"],
       });
-      if (req.files.banner || req.body["banner-delete"]) {
-        const file = req.files.banner ? req.files.banner[0] : null;
+      if (files.banner || req.body["banner-delete"]) {
+        const file = files.banner ? files.banner[0] : null;
         const result = await fileStorage.savePictureToModel(eventDetails, "banner", file,
           req.body["banner-delete"], `/events/${event.get("name")}/banner`, { maxDiagonal: 3000 });
         if (result.error) {
@@ -196,7 +202,7 @@ export async function eventManage(req, res) {
 /**
  * Delete an event
  */
-export async function eventDelete(req, res) {
+export async function eventDelete(req: CustomRequest, res: CustomResponse<EventLocals>) {
   if (!security.isAdmin(res.locals.user)) {
     res.errorPage(403);
     return;

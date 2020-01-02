@@ -3,7 +3,7 @@ import cache from "server/core/cache";
 import constants from "server/core/constants";
 import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
-import security from "server/core/security";
+import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 
 const FIRST_PICTURE_REGEXP = /(?:!\[.*?\]\((.*?)\)|src="([^"]+)")/;
 
@@ -83,7 +83,7 @@ async function findPosts(options: {
           "user_role.user_id": options.userId,
           "user_role.node_type": "post",
         })
-        .whereIn("permission", security.getPermissionsEqualOrAbove(constants.PERMISSION_WRITE));
+        .whereIn("permission", security.getPermissionsEqualOrAbove("write"));
     }
 
     if (!options.allowDrafts) { qb = qb.where("published_at", "<=", createLuxonDate().toJSDate()); }
@@ -158,7 +158,7 @@ async function createPost(user, eventId = null) {
     user_name: user.get("name"),
     user_title: user.get("title"),
     event_id: eventId,
-    permission: constants.PERMISSION_MANAGE,
+    permission: SECURITY_PERMISSION_MANAGE,
   });
   return post;
 }

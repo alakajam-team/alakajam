@@ -5,7 +5,7 @@
       <div class="col-xs-12">
         <a href="/admin" class="btn"><span class="fas fa-wrench"></span> Mod dashboard</a>
         
-        {{ moderationLink('Edit event', 'calendar', routeUrl(context.event, 'event', 'edit')) if context.event.id and (not context.featuredEvent or context.event.id != context.featuredEvent.id) }}
+        {{ moderationLink('Edit event', 'calendar', routeUrl(context.event, 'event', 'edit')) if context.event.id and canUserWrite(context.user, context.event) and (not context.featuredEvent or context.event.id != context.featuredEvent.id) }}
         {{ moderationLink('Edit featured event', 'calendar', routeUrl(context.featuredEvent, 'event', 'edit')) if context.featuredEvent.id }}
         {{ moderationLink('Create event', 'calendar', routeUrl(null, 'event', 'template')) if context.path === '/events' }}
 

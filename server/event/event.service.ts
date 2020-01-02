@@ -15,6 +15,7 @@ import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
 import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
+import { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import postService from "server/post/post.service";
@@ -235,7 +236,7 @@ async function createEntry(user, event): Promise<EntryBookshelfModel> {
     user_name: user.get("name"),
     user_title: user.get("title"),
     event_id: event ? event.get("id") : null,
-    permission: constants.PERMISSION_MANAGE,
+    permission: SECURITY_PERMISSION_MANAGE,
   });
 
   const entryDetails = new models.EntryDetails({
