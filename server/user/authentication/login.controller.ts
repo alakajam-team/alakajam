@@ -1,7 +1,7 @@
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
-import { CustomRequest, CustomResponse, RenderContext } from "server/types";
+import { Alert, CustomRequest, CustomResponse, RenderContext } from "server/types";
 import userService from "server/user/user.service";
 
 /**
@@ -24,12 +24,13 @@ export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLo
   const context: RenderContext = {
     redirect: forms.sanitizeString(req.body.redirect),
   };
+  const errors: Alert[] = [];
 
   if (req.body.name && req.body.password) {
     const user = await userService.authenticate(req.body.name, req.body.password);
     if (user) {
       context.user = user;
-      context.infoMessage = "Authentication successful";
+      res.locals.alerts.push({ type: "success", message: "Authentication successful" });
 
       req.session.userId = user.get("id");
       if (req.body["remember-me"]) {
@@ -37,13 +38,13 @@ export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLo
       }
       await req.session.saveAsync();
     } else {
-      context.errorMessage = "Authentication failed";
+      errors.push({ type: "danger", message: "Authentication failed. Please try again or reset your password." });
     }
   } else {
-    context.errorMessage = "Username or password missing";
+    errors.push({ type: "danger", message: "Username or password missing" });
   }
 
-  if (!context.errorMessage && context.redirect) {
+  if (errors.length === 0 && context.redirect) {
     res.locals.alerts.push({
       type: "success",
       message: "Login successful",
@@ -51,6 +52,7 @@ export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLo
     });
     res.redirect(context.redirect);
   } else {
+    res.locals.alerts.push(...errors);
     res.render("user/authentication/login", context);
   }
 }

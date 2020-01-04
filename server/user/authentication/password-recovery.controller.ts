@@ -1,11 +1,12 @@
-import userService from "server/user/user.service";
+import { CommonLocals } from "server/common.middleware";
+import { CustomRequest, CustomResponse } from "server/types";
 import passwordRecoveryService from "../password-recovery/password-recovery.service";
 
 /**
  * Password change page, following the click on a password recovery link.
  */
-export async function passwordRecovery(req, res) {
-  let errorMessage = null;
+export async function passwordRecovery(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  let errorMessage: string | null = null;
 
   if (res.locals.user) {
     res.redirect("/");
@@ -31,7 +32,9 @@ export async function passwordRecovery(req, res) {
     }
   }
 
-  res.render("user/authentication/password-recovery", {
-    errorMessage,
-  });
+  if (errorMessage) {
+    res.locals.alerts.push({ type: "danger", message: errorMessage });
+  }
+
+  res.render("user/authentication/password-recovery");
 }

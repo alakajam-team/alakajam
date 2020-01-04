@@ -5,50 +5,45 @@
 {% block body %}
 
 <div class="container">
-  <div class="row">
-    <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-      <div class="panel login">
+  <div class="card register-card">
+    <div class="card-body">
+      <h1>Register</h1>
 
-        <div class="well">
-          <h1>Register</h1>
+      {{ formMacros.alerts(alerts) }}
 
-          {{ formMacros.alerts(alerts) }}
-
-          <form method="post" action="/register">
-            {{ csrfToken() | safe }}
-            <div class="form-group">
-              <label for="username">Username</label>
-              <input type="text" class="form-control" id="name" name="name" value="{{ name }}" required="required" />
-            </div>
-            <div class="form-group">
-              <label for="username">Email address</label>
-              <p class="legend">Only used for password recovery or exceptional circumstances. Any upcoming feature involving emails will be opt-in.</p>
-              <input type="email" class="form-control" id="email" name="email" value="{{ email }}" required="required" />
-            </div>
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" class="form-control" id="password" name="password" placeholder="Type at least {{ constants.PASSWORD_MIN_LENGTH}} characters" required="required" />
-            </div>
-            <div class="form-group">
-              <label for="password-bis">Repeat password</label>
-              <input type="password" class="form-control" id="password-bis" name="password-bis" required="required" />
-            </div>
-            {{ userDashboardMacros.timezoneField(timezones, timezone) }}
-            <div class="form-group">
-              <label for="captcha">Are you human? (yes or no)</label>
-              <input type="text" class="form-control" id="captcha" name="captcha" value="{{ captcha }}" required="required" />
-            </div>
-            <div class="form-group">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="remember-me"> Remember me
-                </label>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </form>
+      <form method="post" action="/register">
+        {{ csrfToken() | safe }}
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" id="name" name="name" value="{{ name }}" required="required" />
         </div>
-      </div>
+        <div class="form-group">
+          <label for="username">Email address</label>
+          <p class="legend">Only used for password recovery or exceptional circumstances. Any upcoming feature involving emails will be opt-in.</p>
+          <input type="email" class="form-control" id="email" name="email" value="{{ email }}" required="required" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Type at least {{ constants.PASSWORD_MIN_LENGTH}} characters" required="required" />
+        </div>
+        <div class="form-group">
+          <label for="password-bis">Repeat password</label>
+          <input type="password" class="form-control" id="password-bis" name="password-bis" required="required" />
+        </div>
+        {{ userDashboardMacros.timezoneField(timezones, timezone) }}
+        <div class="form-group">
+          <label for="captcha">Are you human? (yes or no)</label>
+          <input type="text" class="form-control" id="captcha" name="captcha" value="{{ captcha }}" required="required" />
+        </div>
+        <div class="form-group">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" name="remember-me"> Remember me
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
     </div>
   </div>
 </div>

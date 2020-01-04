@@ -2,12 +2,14 @@
  * User pages & user macros
  */
 
-/* Login form */
+/* Login-related forms */
 
-.login {
+.login-card, .register-card, .password-reset-card {
   max-width: 500px;
   margin: auto;
+}
 
+.login-card, .password-reset-card {
   @media (min-width: 768px) {
     margin: 100px auto;
   }
