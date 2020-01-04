@@ -1,5 +1,6 @@
 export default function datePicker(selector) {
-  $(selector).each((i, element) => {
+  // TODO Migrate
+  /*$(selector).each((i, element) => {
     const $element = $(element);
     $element.datetimepicker({
       format: $element.attr("data-format"), // XXX lib should have picked the attribute itself
@@ -9,5 +10,5 @@ export default function datePicker(selector) {
       zIndex: 1050
     });
   });
-  $.fn.datetimepicker.dates.en.today = "Now";
+  $.fn.datetimepicker.dates.en.today = "Now";*/
 }

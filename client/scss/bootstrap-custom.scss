@@ -1,0 +1,25 @@
+@import "_variables";
+
+$theme-colors: (
+  "primary": $main
+);
+
+.container {
+  max-width: 1200px !important;
+}
+
+.list-group {
+  & a {
+    color: $text;
+
+    &:hover {
+      color: $text;
+      background-color: $main-lighter;
+    }
+  }
+
+  & h1, & h2, & h3, & h4 {
+    font-weight: bold;
+    margin: 0;
+  }
+}

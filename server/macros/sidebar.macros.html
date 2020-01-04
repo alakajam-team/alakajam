@@ -10,7 +10,7 @@
   {% if sidebarLinks %}
     <div class="list-group sidebar">
       <div class="list-group-item">
-        <h3 style="margin: 0">{{ title }}</h3>
+        <h3>{{ title }}</h3>
       </div>
       {% for link in sidebarLinks %}
         {{ sidebarLink(link.title, link.url, path) }}
@@ -19,6 +19,7 @@
         {% endfor %}
       {% endfor %}
     </div>
+    <div class="spacing"></div>
   {% endif %}
 {% endmacro %}
 

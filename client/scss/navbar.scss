@@ -5,177 +5,106 @@
  * - The yellow moderator bar
  */
 
-.nav-tabs.nav-justified {
-  display: flex;
-}
-.nav-tabs.nav-justified>li {
-  flex: 1;
-}
+$navbar-height: 60px;
+$navbar-mobile-height: 50px;
+$navbar-mobile-item-height: 40px;
+$navbar-brand-height: 50px;
+$event-navbar-height: 50px;
 
-.navbar-default {
+.navbar#main-header {
   @include header-shadow;
-  @include transition;
-  background-color: $main;
-  border: none;
-  font-size: 2rem;
+  padding: 0;
+  font-size: 1.1rem;
+  
+  @include media-breakpoint-up(md) {
+    height: $navbar-height;
 
-  @media (min-width: 768px) {
-    &.shrink  {
-      min-height: $navbar-shrinked-height;
-
-      & .navbar-header,
-      & .navbar-nav > li > a,
-      & .navbar-nav > li.active > a,
-      & .navbar-nav > li > div,
-      & .navbar-avatar-wrapper,
-      & .nav a {
-        @include transition;
-        padding-top: 0;
-        height: $navbar-shrinked-height;
-        line-height: $navbar-shrinked-height;
-      }
-
-      & .live__dates,
-      & .navbar-profile,
-      & .navbar-header .navbar-brand__hover {
-        display: none;
-      }
-
-      & .navbar-avatar  {
-        width: 30px;
-      }
-
-      & a.navbar-brand {
-        width: 32px;
-        margin-top: 4px; /* Vertically center the logo when the navbar shrinks */
-      }
-
-      & .navbar-unread-notifications {
-        top: 3px;
-      }
-
-
-      & .navbar-header .navbar-brand {
-        background-image: url("/static/images/favicon32.png");
-        background-repeat: no-repeat;
-      }
-
-      & .event-header,
-      & .event-header .container,
-      & .event-header__name,
-      & .nav .event-header__link {
-        @include transition;
-        padding-top: 0 !important;
-        height: $eventbar-shrinked-height;
-        line-height: $eventbar-shrinked-height;
-      }
-
-      & .nav .event-header__link .fas {
-        @media (min-width: 768px) {
-          display: none;
-        }
-        
-        @media (min-width: 992px) {
-          display: inline;
-        }
-      }
-
-      & .event-header__link.active {
-        border-bottom-width: 3px;
-      }
-
-      & .event-header__announcement-info,
-      & .event-header__dates {
-        display: none;
-      }
+    .navbar-collapse {
+      flex-grow: 0;
     }
   }
 
-  &.has-event-header {
+  &.has-event-navbar {
     box-shadow: none;
   }
 
-  /* Nav logo */
+  /* Main header > Logo */
 
-  & .navbar-header {
-    @include transition;
-    height: $navbar-mobile-height;
-
+  & .navbar-brand {
+    float: left;
+    width: 220px;
+    height: $navbar-brand-height;
+    background: url('/static/images/brand.svg');
+    padding: 0;
+  }
+    
+  & .navbar-brand__hover {
+    width: 1px; /* force preload */
+    height: 1px;
+    background: url('/static/images/brand_hover.svg');
+  }
+  
+  & .navbar-brand:hover .navbar-brand__hover {
+    width: 220px;
+    height: $navbar-brand-height;
+  }
+  
+  @include media-breakpoint-down(md) {
     & .navbar-brand {
-      float: left;
-      width: 220px;
-      height: $navbar-mobile-height;
-      background: url('/static/images/brand.svg');
-      margin-top: 4px;
-      padding: 0;
-      
-      @media (max-width: 767px) {
-        margin-top: 0;
-        max-height: 46px;
-      }
+      width: 42px;
     }
-      
     & .navbar-brand__hover {
-      width: 1px; /* force preload */
-      height: 1px;
-      background: url('/static/images/brand_hover.svg');
-    }
-    
-    & .navbar-brand:hover .navbar-brand__hover {
-      width: 220px;
-      height: $navbar-mobile-height;
-    }
-    
-    @media (max-width: 350px) {
-      & .navbar-brand {
-        width: 42px;
-      }
-      & .navbar-brand__hover {
-        display: none;
-      }
-    }
-
-    & .navbar-profile-mobile {
-      height: $navbar-mobile-height;
+      display: none;
     }
   }
 
-  /* Nav links */
+  /* Main header > Nav links */
 
-  & .navbar-nav {
-    @media (min-width: 768px) {
-      float: right;
-    }
+  & #navbar-dropdown > .navbar-nav {
+    & > .nav-item {
+      height: $navbar-mobile-item-height;
 
-    & > li {
-
-      &.active > a {
-        background-color: white;
-        color: $main;
-      }
-
-      & > a, & > div {
+      & > .nav-link {
+        padding: 0;
         color: white;
       }
+      &.active {
+        background-color: white;
 
-      & > a, &.active > a, & > div {
+        & > .nav-link {
+        color: $main;
+        }
+      }
+
+      &, &.active {
         @include transition;
         font-size: 1.1rem;
         padding: 0 10px;
-        line-height: $navbar-height;
-        height: $navbar-height;
+        height: $navbar-mobile-item-height;
+        line-height: $navbar-mobile-item-height;
+
+        @include media-breakpoint-up(md) {
+          line-height: $navbar-height;
+          height: $navbar-height;
+        }
 
         &:hover {
           background-color: $main-light;
-        }
 
-        @media (max-width: 767px) {
-          line-height: $navbar-shrinked-height;
-          height: $navbar-shrinked-height;
+          & > a {
+            color: white;
+          }
+        }
+      }
+      &.button-item {
+        padding-right: 0;
+        
+        &:hover {
+          background-color: transparent;
         }
       }
 
-      &.live a {
+      &.live {
         background-color: $main-light;
         line-height: calc(#{$navbar-height} / 3);
         padding: 0 15px;
@@ -185,7 +114,10 @@
 
         &:hover {
           background-color: white;
-          color: $alt-dark;
+
+          & a {
+            color: $alt-dark;
+          }
         }
 
         & .live__event {
@@ -202,7 +134,7 @@
         }
       }
 
-      &.live.active a {
+      &.live.active {
         background-color: white;
         color: $alt;
 
@@ -211,41 +143,36 @@
         }
       }
 
-      &.nav-login {
-        color: white;
-        font-size: 0.9rem;
-        padding: 0 15px;
-
-        & a {
-          display: inline-block;
-          padding: 0 5px;
-        }
-      }
-      @media (max-width: 767px) {
-        &.nav-login {
-          padding-left: 5px;
-        }
-      }
-
-      & a img:hover {
+      & img:hover {
         border: 4px solid white;
       }
 
       @media (max-width: 1199px) {
-        &.live a {
+        &.live {
           max-width: 180px;
         }
 
-        &.live a > .live__event{
+        &.live .live__event {
           width: 100%;
           overflow: hidden;
           text-overflow: ellipsis;
         }
       }
+
+      & .dropdown {
+        & button {
+          font-weight: bold;
+          padding: 0.3rem 0.6rem;
+          border-radius: 4px;
+        }
+        & .dropdown-menu {
+          line-height: normal;
+        }
+      }
     }
   }
 
-  /* User profile menu */
+  /* Main header > user profile menu */
 
   & .navbar-profile-mobile {
     margin-top: -7px;
@@ -264,10 +191,9 @@
 
   & .navbar-avatar-wrapper {
     position: relative;
-    height: $navbar-height;
-    line-height: $navbar-height;
     width: 36px;
     display: inline-block;
+    margin-right: 3px;
   }
 
   & .navbar-unread-notifications {
@@ -277,8 +203,8 @@
     height: 20px;
     border-radius: 50%;
     text-align: center;
-    top: 9px;
-    right: -5px;
+    top: -3px;
+    right: -3px;
     color: white;
     font-size: 0.8rem;
     font-weight: bold;
@@ -291,16 +217,24 @@
 
 }
 
-.event-header {
+.event-navbar {
   @include header-shadow;
   @include transition;
   box-sizing: border-box;
   width: 100%;
   background-color: white;
   color: $alt;
-  height: $eventbar-height;
   position: relative;
 
+  @include media-breakpoint-up(md) {
+    height: $event-navbar-height;
+  }
+
+  & .navbar-toggler {
+    float: left !important;
+    margin-right: 10px;
+  }
+  
   &__info {
     display: inline-block;
     margin-right: 30px;
@@ -343,7 +277,7 @@
   &__links {
     vertical-align: top;
     display: inline-block;
-    line-height: $eventbar-height;
+    line-height: $event-navbar-height;
   }
   @media (max-width: 767px) {
     &__links {
@@ -357,10 +291,15 @@
     vertical-align: top;
     padding: 0 15px;
     margin: 0;
-    height: $eventbar-height;
-    line-height: $eventbar-height;
+    height: $event-navbar-height;
+    line-height: $event-navbar-height;
     font-size: 1.3rem;
     text-align: center;
+    color: $alt !important;
+
+    &.disabled {
+     color: $neutral-light !important;
+    }
 
     @media (min-width: 768px) {
       font-size: 1rem;
@@ -374,7 +313,7 @@
     
     @media (min-width: 992px) {
       text-align: left;
-      line-height: $eventbar-height;
+      line-height: $event-navbar-height;
       font-size: 1rem;
       padding: 0 11px;
       
@@ -401,70 +340,14 @@
   }
     
   &__link-label {
-    color: red;
-  }
-}
-
-.event-navbar {
-  @include transition;
-  position: relative;
-  margin-bottom: 0;
-  position: inherit;
-  height: $eventbar-height;
-
-  @media (max-width: 767px) {
-    & .navbar-collapse {
-      position: absolute;
-      top: $eventbar-height;
-      left: 0;
-      right: 0;
-      border: 0;
-      width: 100%;
-      border-top: 1px solid $borders;
-      
-      &.collapsing, &.in {
-        background-color: white;
-      }
-    }
-  }
-  
-  &__dropdown {
-    margin: 10px 15px 0 0;
-    padding: 5px 10px;
-    font-size: 1.5rem;
-    line-height: 0;
-  }
-  
-  & .navbar-toggle, & .navbar-toggle:hover, & .navbar-toggle:focus {
-    margin-top: 6px;
-    border-color: $alt;
-    
-    & .icon-bar {
-      background-color: $alt;
-    }
-  }
-  & .navbar-toggle:hover {
-    color: $alt-dark;
-  }
-  & .navbar-toggle:hover .icon-bar {
-    background-color: $alt-dark;
-  }
-  
-  @media (max-width: 767px) {
-    & .navbar-collapse {
-      box-shadow: 0px 5px 3px -3px rgba(0, 0, 0, 0.3);
-    }
+    color: $alt;
   }
 }
 
 .moderation-bar {
-  margin: -21px 0 20px 0;
   width: 100%;
   background-color: $moderation-dark;
-
-  @media (max-width: 767px) {
-    margin-top: -31px;
-  }
+  margin-top: -3px;
 
   & .btn {
     background-color: $moderation-dark;

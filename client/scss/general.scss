@@ -24,18 +24,10 @@ body {
   background-color: $bg;
   color: $text;
   height: 100%;
-  padding-top: calc(#{$navbar-height} + 20px);
-}
-body.in-event {
-  padding-top: calc(#{$navbar-height} + #{$eventbar-height} + 20px);
 }
 
-div {
-  box-sizing: border-box;
-}
-
-.no-padding {
-  padding: 0 !important;
+.body {
+  margin-top: 20px;
 }
 
 h1 {
@@ -112,14 +104,6 @@ a {
     }
   }
 }
-a[name] {
-  position: absolute;
-  margin-top: -75px;
-}
-.in-event a[name] {
-  position: absolute;
-  margin-top: -135px;
-}
 
 img.preview {
   max-width: 100%;
@@ -135,6 +119,17 @@ a:hover img.no-border {
 
 .spacing {
   margin-top: 20px;
+}
+
+blockquote {
+  border-left: 3px solid $neutral-light;
+  padding: 10px 20px;
+  margin: 0 0 20px;
+  font-size: 17.5px;
+
+  & > p:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .CodeMirror {
@@ -363,6 +358,14 @@ input[type="submit"][data-disabled] {
 }
 
 .footer {
+  border-top: 1px solid $neutral-lighter;
+  padding: 20px 0;
+  margin-top: 40px;
+
+  & a {
+    color: $neutral;
+  }
+
   &__link {
     margin-right: 10px;
     display: inline-block;
@@ -454,14 +457,6 @@ input[type="submit"][data-disabled] {
 }
 .form-saving-error .show-if-saving-error {
   display: block;
-}
-
-.in-event .anchor {
-  position: absolute;
-  top: calc(-60px - #{$eventbar-height});
-}
-.comment .anchor {
-  top: 0 !important;
 }
 
 table.sortable {

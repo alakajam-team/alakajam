@@ -17,7 +17,6 @@ import radioTextField from "./common/radio-text-field";
 import select from "./common/select";
 import showHide from "./common/show-hide";
 import showIfNonempty from "./common/show-if-nonempty";
-import shrinkNnavbar from "./common/shrink-navbar";
 import sortableTable from "./common/sortable-table";
 import syncSlug from "./common/sync-slug";
 import syncText from "./common/sync-text";
@@ -62,7 +61,6 @@ $(function domReady() {
   select();
   showHide(".js-show", ".js-hide");
   showIfNonempty(".js-show-if-nonempty");
-  shrinkNnavbar();
   sortableTable();
   syncSlug(".js-sync-slug");
   syncText();

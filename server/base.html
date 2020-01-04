@@ -2,30 +2,44 @@
 {% import "event/event.macros.html" as eventMacros %}
 
 {% macro userMenu(user, unreadNotifications) %}
-<div href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-  <a class="navbar-avatar-wrapper" href="{{ routeUrl(user, 'user', 'feed') }}" onclick="arguments[0].stopPropagation()">
-    {% if user.get('avatar') %}
-    <img src="{{ pictureUrl(user.get('avatar'), user) }}" class="navbar-avatar" />
-    {% else %}
-    <img src="{{ staticUrl('/static/images/default-avatar.png') }}" class="navbar-avatar" />
-    {% endif %}
-    <div class="navbar-unread-notifications {{ 'unread' if (unreadNotifications > 0) }}">
-      {{ unreadNotifications }}
-    </div>
-  </a>
-  <span class="navbar-profile hidden-xs hidden-sm hidden-md">{{ user.get('title') }}</span> <span class="caret hidden-xs"></span>
+<div class="dropdown">
+  <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="collapse" data-target="#navbar-user-dropdown" aria-haspopup="true" aria-expanded="false">
+    <a class="navbar-avatar-wrapper" href="{{ routeUrl(user, 'user', 'feed') }}" onclick="arguments[0].stopPropagation()">
+      {% if user.get('avatar') %}
+      <img src="{{ pictureUrl(user.get('avatar'), user) }}" class="navbar-avatar" />
+      {% else %}
+      <img src="{{ staticUrl('/static/images/default-avatar.png') }}" class="navbar-avatar" />
+      {% endif %}
+      <div class="navbar-unread-notifications {{ 'unread' if (unreadNotifications > 0) }}">
+        {{ unreadNotifications }}
+      </div>
+    </a>
+    {{ user.get('title') }}
+  </button>
+  <div class="dropdown-menu dropdown-menu-right" id="navbar-user-dropdown">
+    <a class="dropdown-item" href="{{ routeUrl(user, 'user', 'feed') }}">Dashboard</a>
+    <a class="dropdown-item" href="{{ routeUrl(user, 'user') }}">Public profile</a>
+    <a class="dropdown-item" href="{{ routeUrl(user, 'user', 'settings') }}">Settings</a class="dropdown-item">
+    <div class="dropdown-divider"></div> 
+    <a class="dropdown-item" href="{{ routeUrl(user, 'user', 'entries') }}">My entries</a class="dropdown-item">
+    <a class="dropdown-item" href="{{ routeUrl(user, 'user', 'posts') }}">My posts</a class="dropdown-item">
+    <a class="dropdown-item" href="{{ routeUrl(user, 'user', 'scores') }}">My scores</a class="dropdown-item">
+    <div class="dropdown-divider"></div> 
+    <a class="dropdown-item" href="/logout">Logout</a class="dropdown-item">
+  </div>
 </div>
-<ul class="dropdown-menu">
-  <li><a href="{{ routeUrl(user, 'user', 'feed') }}">Dashboard</a></li>
-  <li><a href="{{ routeUrl(user, 'user') }}">Public profile</a></li>
-  <li><a href="{{ routeUrl(user, 'user', 'settings') }}">Settings</a></li>
-  <li class="divider"></li> 
-  <li><a href="{{ routeUrl(user, 'user', 'entries') }}">My entries</a></li>
-  <li><a href="{{ routeUrl(user, 'user', 'posts') }}">My posts</a></li>
-  <li><a href="{{ routeUrl(user, 'user', 'scores') }}">My scores</a></li>
-  <li class="divider"></li> 
-  <li><a href="/logout">Logout</a></li>
-</ul>
+{% endmacro %}
+
+{% macro eventLink (event, statusField, targetPath, label, icon, currentPath, options = {}) %}
+{%- if not statusField or event.get(statusField) !== 'disabled' -%}
+  {%- set targetUrl = targetPath if targetPath.includes('/') else routeUrl(event, 'event', targetPath) -%}
+  <li class="nav-item">
+    <a href="{{ targetUrl }}" class="nav-link event-navbar__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
+        {{ 'disabled' if statusField and (not (event.get(statusField)|int)) and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
+      <span class="fas fa-{{ icon }}"></span> <span class="hidden-xs">{{ label | safe }}</span>
+    </a>
+  </li>
+{%- endif -%}
 {% endmacro %}
 
 <!doctype html>
@@ -37,7 +51,7 @@
   <title>{{ pageTitle }}</title>
 
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@AlakajamBang" />
   <meta name="twitter:title" content="{{ pageTitle if pageTitle else 'Alakajam!' }}" />
@@ -58,34 +72,23 @@
   <script id="js-alerts" type="application/json">{{ alerts | dump | safe }}</script>
 </head>
 {% set inEvent = event and event.get('id') %}
-<body {{ 'class=in-event' if inEvent }}>
-  {% set showModerationBar = user and (user.get('is_mod') or user.get('is_admin')) %}
+<body>
 
-  <nav class="navbar navbar-default navbar-fixed-top {{ 'has-event-header' if inEvent }}">
-    <div class="container">
-      {# ==== Main header (mobile) ==== #}
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
-          <span class="sr-only"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/"><div class="navbar-brand__hover"></div></a>
-      
-        {% if user %}
-        <div class="visible-xs pull-right navbar-profile-mobile">
-          {{ userMenu(user, unreadNotifications) }}
-        </div>
-        {% endif %}
-      </div>
-      
-      {# ==== Main header (desktop) ==== #}
-      <div class="collapse navbar-collapse" id="navbar-collapse">
-        <ul class="nav navbar-nav">
+  {# ==== Main header ==== #}
+  
+  <nav id="main-header" class="navbar navbar-dark bg-primary navbar-expand-md {{ 'has-event-navbar' if inEvent }}">
+    <div class="container justify-content-between">
+      <a class="navbar-brand" href="/"><div class="navbar-brand__hover"></div></a>
+    
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-dropdown" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbar-dropdown">
+        <ul class="navbar-nav">
           {% if featuredEvent and (not event or featuredEvent.get('id') !== event.get('id')) %}
-          <li class="hidden-sm hidden-xs live {{ 'active' if isInFeaturedEvent }}">
-            <a href="{{ routeUrl(featuredEvent, 'event') }}">
+          <li class="nav-item d-none d-xl-block live {{ 'active' if isInFeaturedEvent }}">
+            <a class="nav-link" href="{{ routeUrl(featuredEvent, 'event') }}">
               <div class="live__event">
                 {{ featuredEvent.get('title') }}
                 <div class="live__dates">
@@ -96,55 +99,94 @@
           </li>
           {% endif %}
 
-          <li class="{{ 'active' if path == '/events' }}"><a href="/events">Events</a></li>
-          <li class="{{ 'active' if path.indexOf('/games') === 0 }}"><a href="/games">Games</a></li>
-          <li class="{{ 'active' if path.indexOf('/people') === 0 }}"><a href="/people">People</a></li>
-          <li class="hidden-xs {{ 'active' if path == '/chat' }}"><a href="/chat">Chat</a></li>
-          <li class="{{ 'active' if path.indexOf('/article/docs') === 0 or path.indexOf('/api') === 0 }}"><a href="/article/docs/alakajam-competition-rules">Docs</a></li>
-          <li class="{{ 'active' if path.indexOf('/article/about') === 0 or path === '/changes' }}"><a href="/article/about">About</a></li>
+          <li class="nav-item {{ 'active' if path == '/events' }}"><a class="nav-link" href="/events">Events</a></li>
+          <li class="nav-item {{ 'active' if path.indexOf('/games') === 0 }}"><a class="nav-link" href="/games">Games</a></li>
+          <li class="nav-item {{ 'active' if path.indexOf('/people') === 0 }}"><a class="nav-link" href="/people">People</a></li>
+          <li class="nav-item d-none d-sm-block {{ 'active' if path == '/chat' }}"><a class="nav-link" href="/chat">Chat</a></li>
+          <li class="nav-item {{ 'active' if path.indexOf('/article/docs') === 0 or path.indexOf('/api') === 0 }}"><a class="nav-link" href="/article/docs/alakajam-competition-rules">Docs</a></li>
+          <li class="nav-item {{ 'active' if path.indexOf('/article/about') === 0 or path === '/changes' }}"><a class="nav-link" href="/article/about">About</a></li>
           {% if user %}
-            <li class="visible-xs {{ 'active' if path == '/logout' }}"><a href="/logout">Logout</a></li>
-            <li class="dropdown hidden-xs">
-            {{ userMenu(user, unreadNotifications) }}
+            <li class="nav-item d-md-none {{ 'active' if path === '/logout' }}"><a class="nav-link" href="/logout">Logout</a></li>
+            <li class="nav-item button-item d-none d-md-block">
+              {{ userMenu(user, unreadNotifications) }}
             </li>
           {% else %}
-            <li class="nav-login"><a href="/login{{ '?redirect=' + (path|urlencode) if path !== '/logout' }}"><b>Login</b></a> or <a href="/register"><b>Register</b></a></li>
+            <li class="nav-item button-item">
+              <a class="nav-link" href="/login{{ '?redirect=' + (path|urlencode) if path !== '/logout' }}">
+                <button class="btn btn-outline-light">Login</button>
+              </a>
+            </li>
+            <li class="nav-item button-item">
+              <a class="nav-link" href="/register">
+                <button class="btn btn-outline-light">Register</button>
+              </a>
+            </li>
           {% endif %}
         </ul>
       </div>
     </div>
-
-    {# ==== Event header ==== #}
-    {% if inEvent %}
-      <div class="event-header">
-        <div class="container">
-          <div class="event-header__info">
-            <a href="{{ routeUrl(event, 'event', 'announcements') }}" class="event-header__name">
-              {{ event.get('title') }}
-            </a>
-            <div class="event-header__dates">
-              {{ event.get('display_dates') }}
-            </div>
-          </div>
-          <div class="event-header__links">
-            {{ eventMacros.eventLinks(event, path, { collapse: true }) }}
-          </div>
-        </div>
-      </div>
-    {% endif %}
   </nav>
 
-  {% if showModerationBar %}
+
+  {# ==== Event header ==== #}
+
+  {% if inEvent %}
+    <nav class="event-navbar navbar navbar-light navbar-expand-md justify-content-between">
+      <div class="container">
+        <div class="event-navbar__info">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-event-dropdown" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle event navigation">
+            <i class="fas fa-caret-down"></i>
+          </button>
+
+          <a href="{{ routeUrl(event, 'event', 'announcements') }}" class="event-navbar__name">
+            {{ event.get('title') }}
+          </a>
+          <div class="event-navbar__dates">
+            {{ event.get('display_dates') }}
+          </div>
+        </div>
+        
+        <div class="collapse navbar-collapse" id="navbar-event-dropdown">
+          <ul class="navbar-nav">
+            {{- eventLink(event, null, 'announcements', 'News', 'thumbtack', path) -}}
+            {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'info-circle', path) -}}
+            {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
+            
+            {%- set statusTournament = event.get('status_tournament') -%}
+            {%- if not statusTournament or statusTournament === 'disabled' -%}
+              {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'lightbulb', path) -}}
+              {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'chess-rook', path) -}}
+              {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: ['results'] }) -}}
+            {%- else -%}
+              {{- eventLink(event, 'status_tournament', 'tournament-games', 'Games', 'chess-rook', path) -}}
+              {{- eventLink(event, 'status_tournament', 'tournament-leaderboard', 'Leaderboard', 'th-list', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
+            {%- endif -%}
+          </ul>
+        </div>
+      </div>
+    </nav>
+  {% endif %}
+
+
+  {# ==== Mod header ==== #}
+  
+  {% if user and (user.get('is_mod') or user.get('is_admin')) %}
     {{ adminMacros.moderationBar(context(), user.get('is_admin')) }}
   {% endif %}
 
+
+  {# ==== Body ==== #}
+  
   <div class="body">
     {% block body %}{% endblock %}
   </div>
 
-  <footer class="container">
-    <div class="row footer">
-      <div class="col-xs-6">
+
+  {# ==== Footer ==== #}
+  
+  <footer class="container footer">
+    <div class="row">
+      <div class="col">
         <a href="https://twitter.com/AlakajamBang" class="footer__link">
           <img src="{{ staticUrl('/static/images/social/black-twitter.svg') }}" class="footer__icon no-border" /> 
           <strong>@AlakajamBang</strong>
@@ -166,13 +208,13 @@
           <img src="{{ staticUrl('/static/images/social/black-github.svg') }}" class="footer__icon no-border" /> 
         </a>
       </div>
-      <div class="col-xs-6 text-right">
-        <p>
+      <div class="col text-right">
+        <p class="m-1">
           Made with love by the <a href="https://github.com/alakajam-team/alakajam/graphs/contributors">Alakajam! contributors</a> | <a href="/article/privacy-policy">Privacy Policy</a>  | <a href="/article/docs">Contact</a>
         </p>
         {% if devMode %}
         <p>
-          <span class="label label-default has-tooltip" data-toggle="tooltip" data-placement="top" title="" data-original-title="Set `NODE_ENV=production` in production for security and performance">Server launched in development mode</span>
+          <span class="badge badge-light has-tooltip" data-toggle="tooltip" data-placement="top" title="" data-original-title="Set `NODE_ENV=production` in production for security and performance">Server launched in development mode</span>
         </p>
         {% endif %}
       </div>
@@ -181,8 +223,9 @@
 
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/jquery.min.js') }}"></script>
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/jquery.lazy.min.js') }}"></script>
-  <script type="text/javascript" src="{{ staticUrl('/static/scripts/bootstrap.min.js') }}"></script>
-  <script type="text/javascript" src="{{ staticUrl('/static/scripts/bootstrap-datetimepicker.min.js') }}"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/scripts/moment.min.js') }}"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/scripts/bootstrap.bundle.min.js') }}"></script>
+  <script type="text/javascript" src="{{ staticUrl('/static/scripts/tempusdominus-bootstrap-4.min.js') }}"></script>
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/bootstrap-notify.min.js') }}"></script>
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/icheck.min.js') }}"></script>
   <script type="text/javascript" src="{{ staticUrl('/static/scripts/select2.full.min.js') }}"></script>

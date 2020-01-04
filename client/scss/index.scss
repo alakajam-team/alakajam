@@ -1,20 +1,20 @@
 /**
- * Libraries
+ * Bootstrap
  */
 
-@import "node_modules/bootstrap/dist/css/bootstrap.min";
+@import "./bootstrap-custom.scss";
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min";
+@import "node_modules/tempusdominus-bootstrap-4/build/css/tempusdominus-bootstrap-4.min";
+
+/**
+ * Other libraries
+ */
+
 @import "node_modules/easymde/dist/easymde.min";
 @import "node_modules/select2/dist/css/select2.min";
 @import "node_modules/@fortawesome/fontawesome-free/css/all.min";
-@import "./lib/select2-bootstrap.min";
-@import "./lib/bootstrap-datetimepicker.min";
 @import "./lib/animate";
-
-/**
- * Customized libraries
- */
-
-@import "./bootflat-custom.scss";
 @import "./flipclock-custom.scss";
 
 /**

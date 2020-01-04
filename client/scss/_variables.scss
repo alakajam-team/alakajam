@@ -70,11 +70,3 @@ $moderation-text: change-color(white, $alpha: .9);
 @mixin transition {
   transition: all 0.2s;
 }
-
-/* UI elements */
-
-$navbar-height: 60px;
-$navbar-mobile-height: 50px;
-$navbar-shrinked-height: 40px;
-$eventbar-height: 50px;
-$eventbar-shrinked-height: 36px;

@@ -5,8 +5,11 @@
 /* Login form */
 
 .login {
+  max-width: 500px;
+  margin: auto;
+
   @media (min-width: 768px) {
-    margin: 100px 0;
+    margin: 100px auto;
   }
 }
 
