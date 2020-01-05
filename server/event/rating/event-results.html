@@ -41,7 +41,7 @@
       {% for entry in rankings %}
         {% if division !== enums.DIVISION.UNRANKED %}
           <div class="row">
-            <div class="col-xs-1 text-right">
+            <div class="col-1 text-right">
               {% if not currentRanking or currentRanking !== entry.related('details').get('ranking_' + sortedBy) %}
                 {% set currentRanking = entry.related('details').get('ranking_' + sortedBy) %}
                 <h2>{{ currentRanking | ordinal }}</h2>
@@ -138,7 +138,7 @@
   </h2>
 
   <div class="row">
-    <div class="col-md-offset-1 col-md-10 col-xs-12">
+    <div class="col-md-offset-1 col-md-10 col-12">
       <div class="row results-podium-row">
         {% set entryThumbOptions = { hideMedals: categoryTitles.length === 1 } %}
         {% if rankings.length > 0 and division !== enums.DIVISION.UNRANKED %}
@@ -156,16 +156,16 @@
             {% endif %}
           </div>
         {% elseif rankings.length > 0 and division == enums.DIVISION.UNRANKED %}
-          <h2 class="col-xs-12 text-center">Random Highlights</h2>
-          <div class="col-sm-4 col-xs-10 first unranked">
+          <h2 class="col-12 text-center">Random Highlights</h2>
+          <div class="col-sm-4 col-10 first unranked">
             {{ eventMacros.entryThumb(rankings[0], entryThumbOptions) }}
           </div>
-          <div class="col-sm-4 col-xs-10 second unranked">
+          <div class="col-sm-4 col-10 second unranked">
             {% if rankings.length >= 2 %}
               {{ eventMacros.entryThumb(rankings[1], entryThumbOptions) }}
             {% endif %}
           </div>
-          <div class="col-sm-4 col-xs-10 third unranked">
+          <div class="col-sm-4 col-10 third unranked">
             {% if rankings.length >= 3 %}
               {{ eventMacros.entryThumb(rankings[2], entryThumbOptions) }}
             {% endif %}

@@ -15,7 +15,7 @@
 <h1>{{ event.get('title') }} entries <span class="count">({{ entries.length }})</span></h1>
 
 {% if detailedEntryInfo.id %}
-<div class="well">
+<div class="card card-body">
   {% set entry = entriesById[detailedEntryInfo.id] %}
   <h2>Karma details: {{ entry.get('title') }}</h2>
 

@@ -12,7 +12,7 @@
     <a href="?create" class="btn btn-primary">Create</a> 
   </p>
 {% else %}
-  <div class="well">
+  <div class="card card-body">
     <h2><span id="preset-header"></span></h2>
     <form method="post" action="?">
       {{ csrfToken() | safe }}

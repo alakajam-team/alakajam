@@ -36,7 +36,7 @@
   <li class="nav-item">
     <a href="{{ targetUrl }}" class="nav-link event-navbar__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
         {{ 'disabled' if statusField and (not (event.get(statusField)|int)) and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
-      <span class="fas fa-{{ icon }}"></span> <span class="hidden-xs">{{ label | safe }}</span>
+      <span class="fas fa-{{ icon }}"></span> <span class="d-none d-sm-block">{{ label | safe }}</span>
     </a>
   </li>
 {%- endif -%}

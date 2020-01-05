@@ -3,61 +3,50 @@
 
 {% block body %}
 
-<div class="container">
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-      <h1>Events <span class="count">({{ open.length + pending.length + closedAlakajam.length + closedOther.length }})</span></h1>
-      {% if open.length > 0 %}
-      <div class="events-block events-block__live">
-        <h2><span class="fas fa-play-circle"></span> On now!</h2>
-        {% for event in open %}
-          {{ eventTable(event, featuredEntries[event.get('id')]) }}
-        {% endfor %}
-      </div>
-      {% endif %}
-      
-      {% if pending.length > 0 %}
-      <div class="events-block events-block__pending">
-        <h2><span class="fas fa-calendar"></span> Upcoming</h2>
-        {% for event in pending %}
-          {{ eventTable(event, featuredEntries[event.get('id')]) }}
-        {% endfor %}
-      </div>
-      {% endif %}
+<div class="container" style="width: 900px">
+  <h1>Events <span class="count">({{ open.length + pending.length + closedAlakajam.length + closedOther.length }})</span></h1>
+  {% if open.length > 0 %}
+  <div class="events-block events-block__live">
+    <h2><span class="fas fa-play-circle"></span> On now!</h2>
+    {% for event in open %}
+      {{ eventTable(event, featuredEntries[event.get('id')]) }}
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+  {% if pending.length > 0 %}
+  <div class="events-block events-block__pending">
+    <h2><span class="fas fa-calendar"></span> Upcoming</h2>
+    {% for event in pending %}
+      {{ eventTable(event, featuredEntries[event.get('id')]) }}
+    {% endfor %}
+  </div>
+  {% endif %}
 
-      <div class="panel page-tabs">
-        <ul class="nav nav-tabs">
-          <li class="active">
-            <a href="#alakajam_events" data-toggle="tab">
-              <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Past Alakajam! events</h2>
-            </a>
-          </li>
-          <li>
-            <a href="#other_events" data-toggle="tab">
-              <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Other events</h2>
-            </a>
-          </li>
-        </ul>
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" href="#alakajam_events" data-toggle="tab">
+        <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Past Alakajam! events</h2>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#other_events" data-toggle="tab">
+        <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Other events</h2>
+      </a>
+    </li>
+  </ul>
 
-        <div class="tab-content">
-          {% if closedAlakajam.length > 0 %}
-          <div id="alakajam_events" class="events-block events-block__closed tab-pane fade active in">
-            
-            {% for event in closedAlakajam %}
-              {{ eventTable(event, featuredEntries[event.get('id')]) }}
-            {% endfor %}
-          </div>
-          {% endif %}
+  <div class="tab-content">
+    <div id="alakajam_events" class="events-block events-block__closed tab-pane fade show active">
+      {% for event in closedAlakajam %}
+        {{ eventTable(event, featuredEntries[event.get('id')]) }}
+      {% endfor %}
+    </div>
 
-          {% if closedOther.length > 0 %}
-          <div id="other_events" class="events-block events-block__closed tab-pane fade">
-            {% for event in closedOther %}
-              {{ eventTable(event, featuredEntries[event.get('id')], { noResults: true }) }}
-            {% endfor %}
-          </div>
-          {% endif %}
-        </div>
-      </div>
+    <div id="other_events" class="events-block events-block__closed tab-pane fade">
+      {% for event in closedOther %}
+        {{ eventTable(event, featuredEntries[event.get('id')], { noResults: true }) }}
+      {% endfor %}
     </div>
   </div>
 </div>

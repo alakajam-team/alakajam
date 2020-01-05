@@ -11,7 +11,7 @@
     <div class="col-sm-4 col-md-3">
        {{ gamesSearchMacros.searchForm(context()) }}
        
-       <div class="hidden-xs">
+       <div class="d-none d-sm-block">
          <h3>Adding games</h3>
          <p>Users can submit entries made during any game jam. You can add your own 
             <a href="{{ routeUrl(user, 'user', 'entries') }}">from your Dashboard</a>.
@@ -31,7 +31,7 @@
 
       {% if featuredEvent and searchedEvent and featuredEvent.get('id') === searchedEvent.get('id') %}
         {% if featuredEvent.get('status_results') === 'voting' or featuredEvent.get('status_results') === 'voting_rescue' %}
-        <div class="well" style="padding: 6px">
+        <div class="card card-body" style="padding: 6px">
         <b><img src="{{ staticUrl('/static/images/favicon16.png') }}" /> Rating phase in progress</b><br />
         All jam entrants are invited to rate other people's games. Everyone else can still play and post comments.
         </div>

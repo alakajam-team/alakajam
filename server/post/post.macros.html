@@ -5,7 +5,6 @@
 {% macro post(post, options = {}) %}
 
 <div class="post">
-
   {% set author = post.related('author') %}
   {% set postUrl = routeUrl(post, 'post') %}
 
@@ -13,31 +12,27 @@
     {% set h = 'h4' if options.hideBody or options.hideDetails else 'h1' %}
     {% set specialPostType = post.get('special_post_type') %}
     <{{h}}>
-      <div class="row">
-        <div class="col-xs-12">
-          <a name="p{{ post.get('id') }}" class="anchor" />
-          <a href="{{ routeUrl(post, 'post') }}" class="post__title">
-            {{ post.get('title') }}
-          </a>
-          {% if canUserWrite(options.readingUser, post, options) %}
-            <a class="btn btn-default btn-sm" href="{{ routeUrl(post, 'post', 'edit') }}">Edit</a>
-          {% endif %}
-          <a href="{{ '#comments' if options.commentsAnchorLinks else routeUrl(post, 'post', '#comments') }}" class="post__comment-count">
-            <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}
-          </a>
-          <span class="js-like">
-            {{ postLikes(post, options) }}
-          </span>
-          {% if options.showId %}
-            <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
-          {% endif %}
-        </div>
-      </div>
+      <a name="p{{ post.get('id') }}" class="anchor" />
+      <a href="{{ routeUrl(post, 'post') }}" class="post__title">
+        {{ post.get('title') }}
+      </a>
+      {% if canUserWrite(options.readingUser, post, options) %}
+        <a class="btn btn-default btn-sm" href="{{ routeUrl(post, 'post', 'edit') }}">Edit</a>
+      {% endif %}
+      <a href="{{ '#comments' if options.commentsAnchorLinks else routeUrl(post, 'post', '#comments') }}" class="post__comment-count">
+        <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}
+      </a>
+      <span class="js-like">
+        {{ postLikes(post, options) }}
+      </span>
+      {% if options.showId %}
+        <span style="font-family: monospace; font-size: 1rem">ID={{ post.get('id') }}</span>
+      {% endif %}
     </{{h}}>
   {% endif %}
   
   {% if not options.hideDetails %}
-  <div class="panel">
+  <div class="card">
     <div class="post__details">
       <a href="{{ routeUrl(author, 'user') }}">
         {% if author.get('avatar') %}
@@ -125,7 +120,7 @@
       <span class="{{ enums.LIKES['like'].icon_unliked }}"></span> {{ post.get('like_count') or 0 }}
     </a>
     {% endif %}
-    <i class="js-like-spinner fas fa-spinner fa-spin legend hidden" title="Saving…"></i>
+    <i class="js-like-spinner fas fa-spinner fa-spin legend d-none" title="Saving…"></i>
   </span>
 {% endmacro %}
 
@@ -140,12 +135,12 @@
     {% set isOwnAnonComment = options.editableAnonComments and options.editableAnonComments.includes(comment.get('id')) %}
     <div class="row comment {{ 'unread' if options.highlightNewerThan and options.highlightNewerThan < comment.get('created_at') }}">
       {% if options.linkToNode and not lastLinkedNode or node != lastLinkedNode %}
-      <div class="col-xs-12">
+      <div class="col-12">
         <h4><a href="{{ routeUrl(node, comment.get('node_type')) }}#c{{ comment.id }}">{{ node.get('title') }}</a></h4>
         {% set lastLinkedNode = node %}
       </div>
       {% endif %}
-      <div class="col-xs-offset-1 col-xs-11">
+      <div class="col-offset-1 col-11">
         <a class="anchor" name="c{{ comment.id if comment }}"></a>
         <div class="comment__details">
           {% if isOwnAnonComment %}
@@ -187,7 +182,7 @@
           <a class="btn btn-default btn-xs pull-right" href="{{ routeUrl(comment, 'comment', 'edit') }}"><span class="fas fa-pencil-alt"></span></a>
           {% endif %}
         </div>
-        <div class="comment__body panel user-contents">
+        <div class="card card-body comment__body user-contents">
             {{ comment.get('body') | markdown | safe }}
         </div>
       </div>
@@ -196,7 +191,7 @@
 {% endfor %}
 
 {% if comments.length === 0 %}
-<div class="well">No comments yet.</div>
+<div class="card card-body mb-3">No comments yet.</div>
 {% endif %}
 
 {{ commentEditor(null, options.csrfToken, options) if not options.readOnly }}
@@ -221,7 +216,7 @@
   <input type="hidden" name="id" value="{{ comment.id if comment }}" />
   <a class="anchor" name="c{{ comment.id if comment }}"></a>
   <div class="row">
-    <div class="col-xs-offset-1 col-xs-11">
+    <div class="col-offset-1 col-11">
       <div class="comment__details">
         <div class="comment__avatar-container">
           {% if user.get('avatar') %}

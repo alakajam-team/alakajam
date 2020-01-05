@@ -159,7 +159,7 @@
             {% endif %}
           </div>
           
-          <div id="edit-team" class="{{ 'hidden' if entry.get('division') === 'solo' }} js-edit-entry-team"
+          <div id="edit-team" class="{{ 'd-none' if entry.get('division') === 'solo' }} js-edit-entry-team"
               data-find-team-mate-url="{{ routeUrl(event, 'event', 'ajax-find-team-mate') }}"
               data-entry-id="{{ entry.get('id') or '' }}">
             <div id="result-box" class="form-group" style="display:none;">
@@ -185,7 +185,7 @@
               and event.related('details').get('category_titles').includes('Graphics') %}
             {% set canEditOptouts = isEntryOwner or isMod(user) %}
             {% set optouts = entryDetails.get('optouts') %}
-            <div id="edit-optouts" class="{{ 'hidden' if entry.get('division') === 'unranked' }}">
+            <div id="edit-optouts" class="{{ 'd-none' if entry.get('division') === 'unranked' }}">
               <div class="form-group" title="{{ 'Only the entry owner can change this setting' if not canEditOptouts }}">
                 <label>Opt-outs (<a href="/article/faq#optouts" target="_blank">help</a>)</label>
                 <div>
@@ -222,10 +222,10 @@
             {% for linkIndex in range(0, linkCount) %}
               {% set link = entry.get('links')[linkIndex] if entry.get('links').length > linkIndex else {} %}
               <div class="row" style="margin-bottom: 5px">
-                <div class="col-xs-3">
+                <div class="col-3">
                   <input type="text" name="label{{ loop.index0 }}" class="js-link-label form-control" placeholder="Label" value="{{ link.label }}" />
                 </div>
-                <div class="col-xs-8">
+                <div class="col-8">
                   <input type="url" class="js-link-url form-control" name="url{{ loop.index0 }}" placeholder="URL" value="{{ link.url }}">
                 </div>
               </div>
@@ -318,7 +318,7 @@
     <div class="row">
       <div class="col-lg-8 col-md-7">
         <div class="row">
-          <div class="col-xs-6">
+          <div class="col-6">
             {% if entry.has('id') %}
               {% if isEntryOwner or isMod(user) %}
                 <a class="btn btn-danger" href="{{ routeUrl(entry, 'entry', 'delete') }}" onclick="return confirm('Delete the entry? This cannot be reverted!')">Delete</a> 
@@ -328,7 +328,7 @@
               {% endif %}
             {% endif %}
           </div>
-          <div class="col-xs-6 text-right">
+          <div class="col-6 text-right">
             <input type="submit" class="btn btn-primary" value="Save changes" />
             <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
           </div>
@@ -368,13 +368,13 @@
       <div class="{{ icon }}"></div>
       <input type="radio" name="division" value="{{ value }}" autocomplete="off" {{ 'checked' if value === currentValue }}>
       {{ title }}
-      <div class="entry-division__legend hidden-xs hidden-sm">{{ legend | safe }}</div>
+      <div class="entry-division__legend d-none d-sm-block d-none d-md-block">{{ legend | safe }}</div>
     </label>
   {% else %}
     <div class="btn entry-division {{ 'active' if value === currentValue else 'disabled' }}" title="{{ tooltipMessage }}">
       <div class="{{ icon }}"></div>
       {{ title }}
-      <div class="entry-division__legend hidden-xs hidden-sm">{{ legend | safe }}</div>
+      <div class="entry-division__legend d-none d-sm-block d-none d-md-block">{{ legend | safe }}</div>
     </div>
   {% endif %}
 {% endmacro %}

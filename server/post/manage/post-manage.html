@@ -42,10 +42,10 @@
       {% elseif specialPostType %}
         <div class="post__special-type">
           <span class="post__special-type-label">
-            <span class="hidden-xs visible-sm visible-md visible-lg">
+            <span class="d-none d-sm-block visible-sm visible-md visible-lg">
               {{ specialPostType | upper }}
             </span>
-            <span class="visible-xs hidden-sm">
+            <span class="visible-xs d-none d-md-block">
               <span class="fas fa-thumbtack"></span>
             </span>
           </span>
@@ -67,12 +67,12 @@
     </div>
 
     <div class="row">
-      <div class="col-xs-4">
+      <div class="col-4">
         {% if post.has('id') %}
         <a class="btn btn-danger" onclick="return confirm('Delete the post? This cannot be reverted!')" href="{{ routeUrl(post, 'post', 'delete') }}">Delete</a> 
         {% endif %}
       </div>
-      <div class="col-xs-8 post__actions text-right">
+      <div class="col-8 post__actions text-right">
         {% if post.get('published_at') %}
         <input type="submit" class="btn btn-primary" name="save" value="Save changes" />
         <input type="submit" class="btn btn-default" name="unpublish" value="Unpublish" />
@@ -83,7 +83,7 @@
         <input type="button" class="btn btn-default js-show js-hide" name="save" value="Schedule..." data-show-selector=".post__schedule" data-hide-selector=".post__actions" />
         <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
       </div>
-      <div class="col-xs-8 post__schedule text-right form-inline">
+      <div class="col-8 post__schedule text-right form-inline">
         <div class="form-group">
           <label for="published-at">
             Publication date

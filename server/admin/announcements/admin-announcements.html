@@ -30,7 +30,7 @@
 {% endfor %}
 
 {% if publishedPosts.length === 0 %}
-  <div class="well">Nothing yet!</div>
+  <div class="card card-body">Nothing yet!</div>
 {% endif %}
 
 {{ navigationMacros.pagination(currentPage, pageCount, '/admin?') }}

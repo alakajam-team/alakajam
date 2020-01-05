@@ -13,7 +13,7 @@
     <h1>Notifications <span class="fas fa-info-circle has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="This feed lists all comments people wrote on your entries and posts, plus any comments mentioning &quot;@{{ user.get('name') }}&quot;." style="font-size: 1rem"></span></h1>
 
     {% for invite in invites %}
-    <div data-test="invites" class="well">
+    <div data-test="invites" class="card card-body">
       {% set inviteEntry = invite.related('entry') %}
       <h3>
         {% if inviteEntry.get('event_id') %}
@@ -26,7 +26,7 @@
         
       </p>
       <div class="row">
-        <div class="col-xs-8 col-xs-offset-2">
+        <div class="col-8 col-offset-2">
           {{ eventMacros.entrySmallThumb(inviteEntry) }}
           <div class="text-right spacing">
             <a href="{{ routeUrl(inviteEntry, 'entry', 'accept-invite') }}" class="btn btn-primary">Accept</a>
@@ -40,7 +40,7 @@
     {% if toUser.length > 0 %}
       {{ postMacros.comments(toUser, { readingUser: user, readOnly: true, linkToNode: true, highlightNewerThan: notificationsLastRead }) }}
     {% else %}
-      <div data-test="notifications" class="well">No notifications yet.</div data-test="invites">
+      <div data-test="notifications" class="card card-body">No notifications yet.</div data-test="invites">
     {% endif %}
   </div>
   <div class="col-md-5 col-lg-6">
@@ -55,7 +55,7 @@
         </div>
       </div>
     {% else %}
-      <div class="well">No entry yet.</div>
+      <div class="card card-body">No entry yet.</div>
     {% endif %}
     <div style="margin: 10px 0 20px 0; clear: both">
       <a href="{{ routeUrl(dashboardUser, 'user', 'entries') }}" class="btn btn-default">All entries</a>
@@ -72,7 +72,7 @@
     </div>
     
     {% if latestPosts.length === 0 %}
-    <div class="well">No posts yet.</div>
+    <div class="card card-body">No posts yet.</div>
     {% endif %}
     <div style="margin-top: -10px; margin-bottom: 10px">
       <a href="{{ routeUrl(dashboardUser, 'user', 'posts') }}" class="btn btn-default">All posts</a>

@@ -21,7 +21,7 @@
       {% if posts.length > 0 %}
         {{ navigationMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
       {% else %}
-        <div class="well">
+        <div class="card card-body">
           No posts yet.
         </div>
       {% endif %}

@@ -43,7 +43,7 @@
       {% if posts.models.length > 0 %}
         {{ navigationMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=announcement&event_id=' + event.get('id')) }}
       {% else %}
-      <div class="well">
+      <div class="card card-body">
         No announcements yet.
       </div>
       {% endif %}

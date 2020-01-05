@@ -23,14 +23,14 @@
           {% for division, votes in votesCategory.votesPerDivision %}
             <div class="col-sm-6">
               <div class="row">
-                <div class="col-xs-10 col-xs-offset-2"><h4>{{ division | capitalize }} entries <span class="count">({{ votes.length }})</span></h4></div>
+                <div class="col-10 col-offset-2"><h4>{{ division | capitalize }} entries <span class="count">({{ votes.length }})</span></h4></div>
               </div>
               <div class="row">
               {% for vote in votes %}
-                <div class="col-xs-2">
+                <div class="col-2">
                   <div class="event-ratings__score">{{ vote.get('vote_' + categoryIndex) }}</div>
                 </div>
-                <div class="col-xs-10 event-ratings__entry">
+                <div class="col-10 event-ratings__entry">
                   {{ eventMacros.entrySmallThumb(vote.related('entry'), { noShadow: true }) }}
                 </div>
               {% endfor %}

@@ -30,6 +30,13 @@ body {
   margin-top: 20px;
 }
 
+.container.thin {
+  max-width: 975px !important;
+}
+.container.thinner {
+  max-width: 500px !important;
+}
+
 h1 {
   @include alt-font;
   margin: 0 0 15px 0;
@@ -490,33 +497,6 @@ table.sortable {
   & th:not([data-sort-method="none"]):hover:after {
     visibility: visible;
     opacity: 1;
-  }
-}
-
-.panel.page-tabs {
-  box-shadow: none;
-  background-color: transparent;
-
-  @media (min-width: 768px) {
-    & .nav.nav-tabs {
-      background-color: $bg;
-      border-bottom: 1px solid $tabs;
-
-      & > li {
-        border: 0;
-        margin-bottom: -1px;
-
-        & > a {
-          border: 0 solid $tabs;
-        }
-
-        &.active > a {
-          background-color: transparent !important;
-          border-width: 1px;
-          border-bottom-color: $bg;
-        }
-      }
-    }
   }
 }
 

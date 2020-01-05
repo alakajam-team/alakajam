@@ -5,7 +5,7 @@
 
 <h1>Settings</h1>
 {% if editSetting %}
-<form action="/admin/settings" method="post" class="well">
+<form action="/admin/settings" method="post" class="card card-body">
   <h2>{{ editSetting.key }}</h2>
   <p>{{ editSetting.description }}</p>
   <div class="form-group">
@@ -44,7 +44,7 @@
     </td>
     <td style="width: 50%">
       {% if setting.isMarkdown %}
-        <div class="panel">{{ setting.value | markdown | safe }}</div>
+        <div class="card">{{ setting.value | markdown | safe }}</div>
       {% elseif setting.isJson %}
         <textarea class="codemirror" readonly>{{ setting.value }}</textarea>
       {% elseif setting.value %}

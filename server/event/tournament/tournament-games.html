@@ -10,10 +10,10 @@
 {% if user %}
 <div class="container">
   <div class="row">
-    <div class="col-xs-12 col-md-8 col-md-offset-2">
+    <div class="col-12 col-md-8 col-md-offset-2">
       <div class="action-banner">
         <div class="action-banner__title">Your ranking</div>
-        <table class="panel tournament-user-banner">  
+        <table class="card tournament-user-banner">  
           <tr>
             <td class="tournament-user-banner__user">{{ userMacros.userThumb(user, { fullWidth: true }) }}</td>
             <td class="tournament-user-banner__ranking">
@@ -23,7 +23,7 @@
             <td>
               <h3>{{ (tournamentScore.get('score') or 0) | int }} pts.</h3>
             </td>
-            <td class="tournament-user-banner__buttons hidden-xs">
+            <td class="tournament-user-banner__buttons d-none d-sm-block">
               <a href="{{ routeUrl(event, 'event', 'tournament-leaderboard') }}" class="btn btn-default">View in leaderboard</a>
             </td>
           </tr>
@@ -37,13 +37,13 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       <h1>Tournament games <span class="count">({{ entries.length }})</span></h1>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       {% if ['closed', 'results'].includes(event.get('status_tournament')) %}
         <p class="featured"><b>Note:</b> This tournament is closed. New high scores will appear here, but will no longer impact the tournament points and rankings.</p>
       {% endif %}
@@ -65,7 +65,7 @@
         {% endfor %}
       </div>
     </div>
-    <div class="col-md-3 sm-hidden">
+    <div class="col-md-3 d-none d-md-block">
       <h2>Recent scores</h2>
       {% for entryScore in activeEntries %}
         {{ scoreMacros.highScoreThumb(entryScore) }}
@@ -73,7 +73,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       {{ scoreMacros.pointsDistributionLegend(constants.TOURNAMENT_POINTS_DISTRIBUTION) }}
     </div>
   </div>

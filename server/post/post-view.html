@@ -5,46 +5,41 @@
 
 {% block body %}
 
-<div class="container">
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-      {% if not post.get('published_at') %}
-        <div class="alert alert-warning"><strong>Draft post</strong> Other users can't see it until it is published.</div>
-      {% elseif not isPast(post.get('published_at')) %}
-        <div class="alert alert-warning"><strong>Pending post</strong> Other users can't see it until {{ post.get('published_at') | relativeTime }}.</div>
+<div class="container thin">
+  {% if not post.get('published_at') %}
+  <div class="alert alert-warning"><strong>Draft post</strong> Other users can't see it until it is published.</div>
+  {% elseif not isPast(post.get('published_at')) %}
+  <div class="alert alert-warning"><strong>Pending post</strong> Other users can't see it until
+    {{ post.get('published_at') | relativeTime }}.</div>
+  {% endif %}
+
+  {{ postMacros.post(post, {commentsAnchorLinks: true, readingUser: user, readingUserLikes: userLikes}) }}
+
+  <a class="anchor" name="comments"></a>
+  <h2 class="spacing">
+    Comments <span class="legend">({{ post.get('comment_count') or '0' }})</span>
+    {% if user %}
+    <form method="post" class="comment__subscribe" action="{{ routeUrl(post, 'post', 'watch') }}">
+      {{ csrfToken() | safe }}
+      <!-- Being subscribed to a post = having a user right. Only allow removing the right-->
+      {% if isUserWatching(user, post) %}
+      {% if canUserWrite(user, post) %}
+      <span class="fas fa-check"></span> Subscribed
+      {% else %}
+      <button type="submit" class="btn btn-default btn-sm"><span class="fas fa-minus"></span> Unsubscribe</button>
       {% endif %}
-      
-      {{ postMacros.post(post, {commentsAnchorLinks: true, readingUser: user, readingUserLikes: userLikes}) }}
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-      <a class="anchor" name="comments"></a>
-      <h2 class="spacing">
-        Comments <span class="legend">({{ post.get('comment_count') or '0' }})</span>
-        {% if user %}
-        <form method="post" class="comment__subscribe" action="{{ routeUrl(post, 'post', 'watch') }}">
-          {{ csrfToken() | safe }}
-          <!-- Being subscribed to a post = having a user right. Only allow removing the right-->
-          {% if isUserWatching(user, post) %}
-            {% if canUserWrite(user, post) %}
-              <span class="fas fa-check"></span> Subscribed
-            {% else %}
-              <button type="submit" class="btn btn-default btn-sm"><span class="fas fa-minus"></span> Unsubscribe</button>
-            {% endif %}
-          {% else %}
-            <button type="submit" class="btn btn-default btn-sm"><span class="fas fa-plus"></span> Subscribe</button>
-          {% endif %}
-        </form>
-        {% endif %}
-      </h2>
-      {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, allowMods: true, editComment: editComment }) }}
-    </div>
-  </div>
+      {% else %}
+      <button type="submit" class="btn btn-default btn-sm"><span class="fas fa-plus"></span> Subscribe</button>
+      {% endif %}
+    </form>
+    {% endif %}
+  </h2>
+
+  {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, allowMods: true, editComment: editComment }) }}
 </div>
 
 {% endblock %}
 
-{% block scripts %} 
-  {{ formMacros.editorScripts() }}
+{% block scripts %}
+{{ formMacros.editorScripts() }}
 {% endblock %}

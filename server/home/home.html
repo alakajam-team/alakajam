@@ -45,7 +45,7 @@
   {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') if featuredEvent %}
   {% if shortlistEliminationInfo.stream %}
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       <div style="margin-bottom: 20px">
         <div id="twitch-embed"></div>
       </div>
@@ -173,7 +173,7 @@
 
   {% if user and suggestedEntries and suggestedEntries.length > 0 %}
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       <div class="horizontal-bar">
         Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
       </div>

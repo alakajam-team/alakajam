@@ -160,9 +160,9 @@
                     {{ ranking | ordinal }}
                   </a>
                 </div>
-                <div class="entry-results__category-rating hidden-xs">{{ (percentage | digits(0)) + '%' if percentage > 0 }}</div>
+                <div class="entry-results__category-rating d-none d-sm-block">{{ (percentage | digits(0)) + '%' if percentage > 0 }}</div>
                 <div class="entry-results__category-rating">{{ rating | digits(3) }}</div>
-                <div class="entry-results__category-stars hidden-xs">
+                <div class="entry-results__category-stars d-none d-sm-block">
                   {%- for i in range(1, 11) -%}
                     <span class="fa-lg {{ 'fas fa-star' if i <= rating|round(0) else 'far fa-star' }}"></span>
                   {%- endfor -%}
@@ -238,13 +238,13 @@
           </a>
         {% endfor %}
         {% if entry.get('links').length === 0 or not entry.get('links')[0].url %}
-          <div class="well">No links yet.</div>
+          <div class="card card-body">No links yet.</div>
         {% endif %}
       </div>
 
       <h3 style="margin-top: 20px">Author{{ 's' if entry.related('userRoles').models.length > 1 }}</h3>
 
-      <div class="well" style="padding-bottom: 5px">
+      <div class="card card-body" style="padding-bottom: 5px">
         <div class="row">
           {% for userRole in entry.sortedUserRoles() %}
             {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}

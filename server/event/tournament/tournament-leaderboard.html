@@ -11,14 +11,14 @@
 
 <div class="container {{ 'event-banner-offset' if hasEventBanner }}">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       {% if event.get('status_tournament') === 'results' %}
         {{ podium(tournamentScores) }}
       {% endif %}
       
       {% if event.get('status_tournament') === 'closed' %}
         {{ podium() }}
-        <p class="well">Moderators are currently making a final review of the high scores before revealing the tournament winners. The results will be out soon!</p>
+        <p class="card card-body">Moderators are currently making a final review of the high scores before revealing the tournament winners. The results will be out soon!</p>
       {% endif %}
       
       {% if ['closed', 'results'].includes(event.get('status_tournament')) %}
@@ -30,7 +30,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       {% if not ['closed', 'results'].includes(event.get('status_tournament')) %}
         <h1>Tournament leaderboard</h1>
       {% endif %}
@@ -96,7 +96,7 @@
   <h2 class="results-podium__title">Tournament leaderboard</h2>
 
   <div class="row">
-    <div class="col-md-offset-1 col-md-10 col-xs-12">
+    <div class="col-md-offset-1 col-md-10 col-12">
       <div class="row results-podium-row">
         {% set entryThumbOptions = { hideMedals: categoryTitles.length === 1 } %}
         {% set ranking = 1 %}
@@ -129,7 +129,7 @@
 {% macro podiumScore(tournamentScore) %}
 <div class="row">
   {{ userMacros.userThumb(tournamentScore.related('user'), { fullWidth: true, centered: true }) }}
-  <div class="col-xs-12">
+  <div class="col-12">
     <h2 class="text-center tournament-score">{{ tournamentScore.get('score') | int }} pts.</h2>
   </div>
 </div>
