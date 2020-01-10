@@ -79,5 +79,5 @@
 
 {% endblock %}
 {% macro linkSortBy(id, label, sortedBy) %}
-<a href="?sortBy={{ id }}" class="btn btn-sm btn-default {{ 'disabled' if sortedBy === id }}">{{ label }}</a>
+<a href="?sortBy={{ id }}" class="btn btn-sm btn-outline-primary {{ 'disabled' if sortedBy === id }}">{{ label }}</a>
 {% endmacro %} 

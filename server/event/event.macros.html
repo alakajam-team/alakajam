@@ -146,7 +146,7 @@
     {{ event.get('countdown_config').date | featuredEventDateTime(user) }}
     {% if user %}
     {{ "(" + (user.get("timezone") | timezone) + ")" if user and user.get("timezone") }}
-    <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-default btn-xs">
+    <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-primary btn-sm">
       <span class="fa fa-cog"></span>
     </a>
     {% endif %}
@@ -179,7 +179,7 @@
          {% if userEntry %}
            <a href="{{ routeUrl(userEntry, 'entry', 'edit') }}" class="btn btn-alt">Edit entry</a>
          {% elseif event.get('status') !== 'open' or (event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked') %}
-           <a href="#"class="btn btn-sm btn-default disabled">Create entry</a>
+           <a href="#"class="btn btn-sm btn-outline-primary disabled">Create entry</a>
          {% else %}
            <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-alt">Create entry</a>
          {% endif %}

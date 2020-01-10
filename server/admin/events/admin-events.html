@@ -6,7 +6,7 @@
 
 {% if user.get('is_admin') %}
   <a href="{{ routeUrl(null, 'event', 'create') }}" class="btn btn-primary">Create</a> 
-  <a class="btn btn-default" href="/admin/settings?edit=featured_event_name">Select featured event</a>
+  <a class="btn btn-outline-primary" href="/admin/settings?edit=featured_event_name">Select featured event</a>
 {% endif %}
 
 <table class="table sortable" style="margin-top: 10px">

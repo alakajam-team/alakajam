@@ -13,7 +13,7 @@ class DashboardFeedPO {
     }
 
     get inviteDeclineButton() {
-        return cy.get("[data-test=invites] .btn-default");
+        return cy.get("[data-test=invites] .btn-outline-primary");
     }
 
     get notifications() {

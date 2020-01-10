@@ -6,10 +6,10 @@
 export default function init(showButtonSelector, hideButtonSelector) {
   $(showButtonSelector).click((event) => {
     const showElementSelector = $(event.target).attr("data-show-selector");
-    $(showElementSelector).show();
+    $(showElementSelector).removeClass("d-none");
   });
   $(hideButtonSelector).click((event) => {
     const hideElementSelector = $(event.target).attr("data-hide-selector");
-    $(hideElementSelector).hide();
+    $(hideElementSelector).addClass("d-none");
   });
 }

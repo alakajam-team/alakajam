@@ -10,7 +10,7 @@
   <h2>Tag usage: {{ detailedTag.get('value') }}</h2>
 
   <p>
-    <a class="btn btn-default btn-sm" href="?delete={{ detailedTag.get('id') }}&amp;sortBy={{ sortBy }}"
+    <a class="btn btn-outline-primary btn-sm" href="?delete={{ detailedTag.get('id') }}&amp;sortBy={{ sortBy }}"
       onclick="return confirm('This cannot be reverted. The tag will be removed from all entries using it. Continue?')">
       Delete this tag
     </a>
@@ -29,8 +29,8 @@
 
 <div class="form-group">
 <div class="form-inline">
-  <a href="?sortBy=date" class="btn btn-default" {{ 'disabled' if sortBy === 'date' }}>Sort by date</a>
-  <a href="?" class="btn btn-default" {{ 'disabled' if not sortBy }}>Sort by usage</a>
+  <a href="?sortBy=date" class="btn btn-outline-primary" {{ 'disabled' if sortBy === 'date' }}>Sort by date</a>
+  <a href="?" class="btn btn-outline-primary" {{ 'disabled' if not sortBy }}>Sort by usage</a>
 </div>
 </div>
 
@@ -46,7 +46,7 @@
     <td><a href="?view={{ tag.id }}&amp;sortBy={{ sortBy }}">{{ tag.value }}</a></td>
     <td>{{ tag.count }}</td>
     <td>
-      <a class="btn btn-default btn-sm" href="?view={{ tag.id }}&amp;sortBy={{ sortBy }}">Details</a>
+      <a class="btn btn-outline-primary btn-sm" href="?view={{ tag.id }}&amp;sortBy={{ sortBy }}">Details</a>
     </td>
   </tr>
   {% endfor %}

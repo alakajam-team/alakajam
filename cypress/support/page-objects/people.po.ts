@@ -25,7 +25,7 @@ class PeoplePO {
     }
 
     get cancel() {
-        return cy.get("a.btn-default");
+        return cy.get("a.btn-outline-primary");
     }
 
 }

@@ -58,8 +58,8 @@
 {% endif %}
 
 <p>
-  <a href="?orderBy=karma" class="btn btn-default">Order by Karma</a>
-  <a href="?orderBy=ratingCount" class="btn btn-default">Order by rating count</a>
+  <a href="?orderBy=karma" class="btn btn-outline-primary">Order by Karma</a>
+  <a href="?orderBy=ratingCount" class="btn btn-outline-primary">Order by rating count</a>
 </p>
 
 <ol>
@@ -86,7 +86,7 @@
     <td>{{ entry.get('division') | capitalize }}</td>
     <td>{{ entry.get('karma') }}</td>
     <td>{{ entry.related('details').get('rating_count') if entry.get('division') !== 'unranked' else 'N.A.' }}</td>
-    <td><a href="?entryDetails={{ entry.get('id') }}&amp;orderBy={{ orderBy }}" class="btn btn-default">Details</a></td>
+    <td><a href="?entryDetails={{ entry.get('id') }}&amp;orderBy={{ orderBy }}" class="btn btn-outline-primary">Details</a></td>
   </tr>
 {% endfor %}
 </tbody>

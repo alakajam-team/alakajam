@@ -21,7 +21,7 @@
       <h1>
         {{ entry.get('title') }} 
         {% if canUserWrite(user, entry) %}
-          <a class="btn btn-default" href="{{ routeUrl(entry, 'entry', 'edit') }}">Edit</a>
+          <a class="btn btn-outline-primary" href="{{ routeUrl(entry, 'entry', 'edit') }}">Edit</a>
         {% endif %}
         {% if external %}
           <h2 style="margin-top: -5px; margin-bottom: 20px">
@@ -66,7 +66,7 @@
           <div class="entry-voting">
             <h2 class="entry-voting__header">
               <div class="pull-right">
-                <a href="{{ routeUrl(event, 'event', 'ratings') }}" class="btn btn-default btn-xs">Manage my ratings</a>
+                <a href="{{ routeUrl(event, 'event', 'ratings') }}" class="btn btn-outline-primary btn-sm">Manage my ratings</a>
               </div>
               Game ratings
             </h2>
@@ -215,7 +215,7 @@
         <span class="entry__info-label">Tags</span>
         <div class="entry__info-value" style="width: 215px">
           {% for tag in entry.related('tags').models %}
-            <a href="/games?eventId=&amp;tags={{ tag.get('id') }}" class="btn btn-xs">{{ tag.get('value') }}</a>
+            <a href="/games?eventId=&amp;tags={{ tag.get('id') }}" class="btn btn-sm">{{ tag.get('value') }}</a>
           {% endfor %}
         </div>
       </div>
@@ -229,7 +229,7 @@
 
       <div class="entry__links">
         {% if canUserWrite(user, entry) %}
-          <a class="btn btn-default" href="{{ routeUrl(entry, 'entry', 'edit') }}">Edit entry</a>
+          <a class="btn btn-outline-primary" href="{{ routeUrl(entry, 'entry', 'edit') }}">Edit entry</a>
         {% endif %}
         {% for link in entry.get('links') %}
           <a class="btn btn-primary" href="{{ link.url }}" target="_blank">

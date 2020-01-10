@@ -78,10 +78,6 @@
     vertical-align: top;
   }
 
-  &__schedule {
-    display: none;
-  }
-
   &__special-type {
     @include main-font;
     display: block;
@@ -102,7 +98,7 @@
     max-width: 100%;
   }
 
-  & .panel {
+  & .card {
     margin-bottom: 0;
   }
 

@@ -26,10 +26,10 @@
       {% if canUserWrite(user, post) %}
       <span class="fas fa-check"></span> Subscribed
       {% else %}
-      <button type="submit" class="btn btn-default btn-sm"><span class="fas fa-minus"></span> Unsubscribe</button>
+      <button type="submit" class="btn btn-secondary btn-sm"><span class="fas fa-minus"></span> Unsubscribe</button>
       {% endif %}
       {% else %}
-      <button type="submit" class="btn btn-default btn-sm"><span class="fas fa-plus"></span> Subscribe</button>
+      <button type="submit" class="btn btn-secondary btn-sm"><span class="fas fa-plus"></span> Subscribe</button>
       {% endif %}
     </form>
     {% endif %}

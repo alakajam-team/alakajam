@@ -17,7 +17,7 @@
         {{ post.get('title') }}
       </a>
       {% if canUserWrite(options.readingUser, post, options) %}
-        <a class="btn btn-default btn-sm" href="{{ routeUrl(post, 'post', 'edit') }}">Edit</a>
+        <a class="btn btn-outline-primary btn-sm" href="{{ routeUrl(post, 'post', 'edit') }}">Edit</a>
       {% endif %}
       <a href="{{ '#comments' if options.commentsAnchorLinks else routeUrl(post, 'post', '#comments') }}" class="post__comment-count">
         <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}
@@ -72,7 +72,7 @@
     </div>
     
     {% if not options.hideBody %}
-      <div class="post__body panel-body user-contents">
+      <div class="post__body card-body user-contents">
         {{ post.get('body') | markdown | safe }}
       </div>
     {% endif %}
@@ -133,16 +133,16 @@
     {% set author = comment.related('user') %}
     {% set node = comment.related('node') %}
     {% set isOwnAnonComment = options.editableAnonComments and options.editableAnonComments.includes(comment.get('id')) %}
-    <div class="row comment {{ 'unread' if options.highlightNewerThan and options.highlightNewerThan < comment.get('created_at') }}">
+    <div class="row comment mb-3 {{ 'unread' if options.highlightNewerThan and options.highlightNewerThan < comment.get('created_at') }}">
       {% if options.linkToNode and not lastLinkedNode or node != lastLinkedNode %}
       <div class="col-12">
-        <h4><a href="{{ routeUrl(node, comment.get('node_type')) }}#c{{ comment.id }}">{{ node.get('title') }}</a></h4>
+        <h3><a href="{{ routeUrl(node, comment.get('node_type')) }}#c{{ comment.id }}">{{ node.get('title') }}</a></h3>
         {% set lastLinkedNode = node %}
       </div>
       {% endif %}
-      <div class="col-offset-1 col-11">
+      <div class="offset-1 col-11">
         <a class="anchor" name="c{{ comment.id if comment }}"></a>
-        <div class="comment__details">
+        <div class="comment__details d-flex">
           {% if isOwnAnonComment %}
           <a href="{{ routeUrl(options.readingUser, 'user') }}">
             <div class="comment__avatar-container">
@@ -171,15 +171,15 @@
            </a>
           {% endif %}
           {{ '(@' + author.get('name') + ')' if author.get('title') and author.get('name').toLowerCase() !== author.get('title').toLowerCase() }}
-          • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime(user) }}">{{ comment.get('created_at') | relativeTime }}</span>
+          <span>&nbsp;•&nbsp;</span><span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime(user) }}">{{ comment.get('created_at') | relativeTime }}</span>
           {% if comment.wasEdited() %}
-          • <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime(user) }}">edited</span>
+          <span>&nbsp;•&nbsp;</span><span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime(user) }}">edited</span>
           {% endif %}
           {% if comment and not options.linkToNode %}
-          • <a href="#c{{ comment.id }}"><i class="fas fa-link" aria-hidden="true"></i></a>
+          <span>&nbsp;•&nbsp;</span><a href="#c{{ comment.id }}"><i class="fas fa-link" aria-hidden="true"></i></a>
           {% endif %}
           {% if not options.readOnly and (canUserWrite(options.readingUser, comment, options) or isOwnAnonComment)  %}
-          <a class="btn btn-default btn-xs pull-right" href="{{ routeUrl(comment, 'comment', 'edit') }}"><span class="fas fa-pencil-alt"></span></a>
+          <a class="btn btn-outline-primary btn-sm ml-auto" href="{{ routeUrl(comment, 'comment', 'edit') }}"><span class="fas fa-pencil-alt"></span></a>
           {% endif %}
         </div>
         <div class="card card-body comment__body user-contents">
@@ -216,7 +216,7 @@
   <input type="hidden" name="id" value="{{ comment.id if comment }}" />
   <a class="anchor" name="c{{ comment.id if comment }}"></a>
   <div class="row">
-    <div class="col-offset-1 col-11">
+    <div class="offset-1 col-11">
       <div class="comment__details">
         <div class="comment__avatar-container">
           {% if user.get('avatar') %}
@@ -227,18 +227,18 @@
         </div>
         {{ user.get('title') }}
       </div>
-      <div class="{{ 'well' if comment and comment.id }}" style="margin-bottom: 10px">
+      <div class="{{ 'well' if comment and comment.id }} mb-3">
         {{ formMacros.editor('body', comment.get('body') if comment) }}
 
         <div class="comment__actions">
-          <div class="pull-right">
+          <div class="float-right">
             <input type="submit" name="save" class="btn btn-primary" value="Save" />
             {% if comment and comment.id %}
-              <a href="{{ routeUrl(comment, 'comment') }}" class="btn btn-default">Cancel</a>
+              <a href="{{ routeUrl(comment, 'comment') }}" class="btn btn-outline-primary">Cancel</a>
             {% endif %}
           </div>
           {% if comment and comment.id %}
-          <input type="submit" name="delete" class="btn btn-default" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"
+          <input type="submit" name="delete" class="btn btn-danger" value="Delete" visibility="{{ 'hidden' if not comment or not comment.id }}"
             onclick="return confirm('Delete this comment?')" />
           {% endif %}
           {% if showAnon and not user.get('disallow_anonymous') %}

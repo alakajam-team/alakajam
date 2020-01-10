@@ -57,7 +57,7 @@
           {% if not constants.CONFIDENTIAL_CACHE_KEYS.includes(key) %}
             {% set value = cache.get(key) | prettyDump %}
             {% if value.length > 100 %}
-              <input type="button" class="btn btn-sm btn-default" value="Toggle" onclick="$('#{{ key }}').toggle()" />
+              <input type="button" class="btn btn-sm btn-outline-primary" value="Toggle" onclick="$('#{{ key }}').toggle()" />
               <div id="{{ key }}" style="display: none">
                 {{ value | safe }}
               </div>

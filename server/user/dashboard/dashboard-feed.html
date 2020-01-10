@@ -26,11 +26,11 @@
         
       </p>
       <div class="row">
-        <div class="col-8 col-offset-2">
+        <div class="col-8 offset-2">
           {{ eventMacros.entrySmallThumb(inviteEntry) }}
           <div class="text-right spacing">
             <a href="{{ routeUrl(inviteEntry, 'entry', 'accept-invite') }}" class="btn btn-primary">Accept</a>
-            <a href="{{ routeUrl(inviteEntry, 'entry', 'decline-invite') }}" class="btn btn-default">Decline</a>
+            <a href="{{ routeUrl(inviteEntry, 'entry', 'decline-invite') }}" class="btn btn-outline-primary">Decline</a>
           </div>
         </div>
       </div>
@@ -58,24 +58,25 @@
       <div class="card card-body">No entry yet.</div>
     {% endif %}
     <div style="margin: 10px 0 20px 0; clear: both">
-      <a href="{{ routeUrl(dashboardUser, 'user', 'entries') }}" class="btn btn-default">All entries</a>
+      <a href="{{ routeUrl(dashboardUser, 'user', 'entries') }}" class="btn btn-outline-primary">All entries</a>
     </div>
     
     <div class="horizontal-bar">Latest posts</div>
     
     <div class="list-group">
     {% for post in latestPosts %}
-      <div class="list-group-item" style="margin-bottom: -10px">
+      <div class="list-group-item">
         {{ postMacros.post(post, { hideDetails: true, readingUser: user, readingUserLikes: {} }) }}
       </div>
     {% endfor %}
     </div>
     
     {% if latestPosts.length === 0 %}
-    <div class="card card-body">No posts yet.</div>
+      <div class="card card-body">No posts yet.</div>
     {% endif %}
-    <div style="margin-top: -10px; margin-bottom: 10px">
-      <a href="{{ routeUrl(dashboardUser, 'user', 'posts') }}" class="btn btn-default">All posts</a>
+    
+    <div class="mt-2">
+      <a href="{{ routeUrl(dashboardUser, 'user', 'posts') }}" class="btn btn-outline-primary">All posts</a>
       <a href="{{ routeUrl(null, 'post', 'create') }}" class="btn btn-primary">Create post</a>
     </div>
     

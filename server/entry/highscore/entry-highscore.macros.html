@@ -5,7 +5,7 @@
     <a href="{{ routeUrl(entry, 'entry', 'submit-score') }}?redirectTo={{ path | urlencode }}" class="btn btn-primary">Submit score</a>
   {% endif %}
   {% if canUserWrite(user, entry, { allowMods: true }) %}
-    <a href="{{ routeUrl(entry, 'entry', 'edit-scores') }}" class="btn btn-default">
+    <a href="{{ routeUrl(entry, 'entry', 'edit-scores') }}" class="btn btn-outline-primary">
       <span class="fas fa-cog"></span>
     </a>
   {% endif %}
@@ -49,10 +49,10 @@
           <td class="text-right">
             {% if score.get('active') %}
               <span class="label label-success">Active</span>
-              &nbsp;<input type="submit" name="suspend-{{ score.get('id') }}" class="btn btn-default btn-sm" onclick="return confirm('Suspend the score of {{ score.related('user').get('title') }}?')" value="Suspend" />
+              &nbsp;<input type="submit" name="suspend-{{ score.get('id') }}" class="btn btn-outline-primary btn-sm" onclick="return confirm('Suspend the score of {{ score.related('user').get('title') }}?')" value="Suspend" />
             {% else %}
               <span class="label label-warning">Suspended</span>
-              &nbsp;<input type="submit" name="restore-{{ score.get('id') }}" class="btn btn-default btn-sm" onclick="return confirm('Restore the score of {{ score.related('user').get('title') }}?')" value="Restore" />
+              &nbsp;<input type="submit" name="restore-{{ score.get('id') }}" class="btn btn-outline-primary btn-sm" onclick="return confirm('Restore the score of {{ score.related('user').get('title') }}?')" value="Restore" />
             {% endif %}
           </td>
         {% endif %}

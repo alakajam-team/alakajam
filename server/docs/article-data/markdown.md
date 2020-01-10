@@ -226,12 +226,12 @@ This is a paragraph of text with an image on the right. This is a paragraph of t
 
 #### Code ####
 
-    <a href="#buttons" class="btn btn-default">Normal button</a>    
+    <a href="#buttons" class="btn btn-outline-primary">Normal button</a>    
     <a href="#buttons" class="btn btn-primary">Important button</a>
 
 #### Result ####
 
-<a href="#buttons" class="btn btn-default">Normal button</a>    
+<a href="#buttons" class="btn btn-outline-primary">Normal button</a>    
 <a href="#buttons" class="btn btn-primary">Important button</a>
 
 ## <a name="progress"></a>Progress bars ##

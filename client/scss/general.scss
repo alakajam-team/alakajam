@@ -162,6 +162,10 @@ blockquote {
   background-color: #F5F5F5;
   padding: 10px;
 }
+.editor-toolbar .float-left, .editor-toolbar .float-right {
+  // Accidental Bootstrap clash
+  float: inherit !important;
+}
 
 .datetimepicker {
   background-color: white;

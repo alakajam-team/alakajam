@@ -16,7 +16,7 @@ class PostPO {
     }
 
     get postEditButton() {
-        return cy.get(".post .btn-default");
+        return cy.get(".post .btn-outline-primary");
     }
 
     get commentCounter() {

@@ -56,7 +56,7 @@ export default {
   },
   ALLOWED_POST_CLASSES: [
     "pull-left", "pull-right", "text-left", "text-center", "text-right",
-    "spoiler", "indent", "btn", "btn-default", "btn-primary",
+    "spoiler", "indent", "btn", "btn-outline-primary", "btn-primary",
   ],
   ALLOWED_IFRAME_HOSTS: [
     "www.youtube-nocookie.com"

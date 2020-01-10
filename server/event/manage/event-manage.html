@@ -76,14 +76,14 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="logo">Logo</label>
-        {{ formMacros.pictureInput('logo', event.get('logo') if event, { noPanel: true, model: event }) }}
+        {{ formMacros.pictureInput('logo', event.get('logo') if event, { noCard: true, model: event }) }}
       </div>
     </div>
     <div class="col-md-6">
       <div class="form-group">
         <label for="logo">Banner</label>
         {% set eventDetails = event.related('details') if event %}
-        {{ formMacros.pictureInput('banner', eventDetails.get('banner') if eventDetails, { noPanel: true, model: eventDetails }) }}
+        {{ formMacros.pictureInput('banner', eventDetails.get('banner') if eventDetails, { noCard: true, model: eventDetails }) }}
       </div>
     </div>
   </div>
@@ -108,8 +108,8 @@
     <label for="logo">Advanced state form</label>
     <div>
       <div id="js-edit-event-status-toggles" class="btn-group">
-        <input type="button" class="btn btn-default {{ 'active' if not event or event.get('event_preset_id') }}" value="Hide" />
-        <input type="button" class="btn btn-default {{ 'active' if event and not event.get('event_preset_id') }}" value="Show" />
+        <input type="button" class="btn btn-outline-primary {{ 'active' if not event or event.get('event_preset_id') }}" value="Hide" />
+        <input type="button" class="btn btn-outline-primary {{ 'active' if event and not event.get('event_preset_id') }}" value="Show" />
       </div>
     </div>
   </div>
@@ -138,7 +138,7 @@
       <div class="col-md-8 text-right">
         <!-- TODO Publish -->
         <input type="submit" class="btn btn-primary" value="Save changes" />
-        <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
+        <a class="btn btn-outline-primary" href="#" onclick="history.back()">Cancel</a> 
       </div>
     </div>
   </div>

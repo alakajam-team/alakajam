@@ -75,7 +75,7 @@
                   placeholder="Idea #{{ index + 1 }}" value="{{ userTheme.get('title') if userTheme }}" />
                 {% if userTheme %}
                   {% if userTheme.get('status') === 'duplicate' or userTheme.get('status') === 'active' %}
-                    <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-default"><span class="fas fa-trash"></span></button>
+                    <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-outline-primary"><span class="fas fa-trash"></span></button>
                   {% endif %}
                 {% endif %}
                 <input type="hidden" name="idea-id[{{ index }}]" value="{{ userTheme.get('id') if userTheme }}" />
@@ -86,7 +86,7 @@
               <input type="hidden" name="action" value="ideas" />
               <input type="hidden" name="idea-rows" value="{{ ideaRows }}" />
               <input type="submit" class="btn btn-primary" value="Save" />
-              <a href="{{ routeUrl(event, 'event', 'themes') }}" class="btn btn-default">Cancel</a>
+              <a href="{{ routeUrl(event, 'event', 'themes') }}" class="btn btn-outline-primary">Cancel</a>
             </div>
           </div>
         </form>
@@ -143,8 +143,8 @@
                           {{ csrfToken() | safe }}
                           <input type="hidden" name="action" value="vote" />
                           <input type="hidden" name="theme-id" value="{{ vote.get('theme_id') }}" />
-                          <button name="upvote" class="btn {{ 'btn-success' if vote.get('score') > 0 else 'btn-default' }} btn-xs"><span class="fas fa-arrow-up"></span></button>
-                          <button name="downvote" class="btn {{ 'btn-danger' if vote.get('score') < 0 else 'btn-default' }} btn-xs"><span class="fas fa-arrow-down"></span></button>
+                          <button name="upvote" class="btn {{ 'btn-success' if vote.get('score') > 0 else 'btn-outline-primary' }} btn-sm"><span class="fas fa-arrow-up"></span></button>
+                          <button name="downvote" class="btn {{ 'btn-danger' if vote.get('score') < 0 else 'btn-outline-primary' }} btn-sm"><span class="fas fa-arrow-down"></span></button>
                         </form>
                       </td><td class="theme-past__label">
                         {{ vote.related('theme').get('title') }}
@@ -259,8 +259,8 @@
       {{ csrfToken() | safe }}
       <input type="hidden" name="action" value="vote" />
       <input type="hidden" name="theme-id" id="js-theme-id" value="<%- theme.id %>" />
-      <button id="js-upvote" name="upvote" class="btn btn-default"><span class="fas fa-arrow-up"></span></button>
-      <button id="js-downvote" name="downvote" class="btn btn-default"><span class="fas fa-arrow-down"></span></button>
+      <button id="js-upvote" name="upvote" class="btn btn-outline-primary"><span class="fas fa-arrow-up"></span></button>
+      <button id="js-downvote" name="downvote" class="btn btn-outline-primary"><span class="fas fa-arrow-down"></span></button>
     </form>
   </td><td id="js-theme-title" class="theme-vote__label">
     <%- theme.title %>
@@ -281,8 +281,8 @@
           {{ csrfToken() | safe }}
           <input type="hidden" name="action" value="vote" />
           <input type="hidden" name="theme-id" value="<%- theme.id %>" />
-          <button name="upvote" class="btn <%- theme.upvote ? 'btn-success' : 'btn-default' %> btn-xs"><span class="fas fa-arrow-up"></span></button>
-          <button name="downvote" class="btn <%- theme.downvote ? 'btn-danger' : 'btn-default' %> btn-xs"><span class="fas fa-arrow-down"></span></button>
+          <button name="upvote" class="btn <%- theme.upvote ? 'btn-success' : 'btn-outline-primary' %> btn-sm"><span class="fas fa-arrow-up"></span></button>
+          <button name="downvote" class="btn <%- theme.downvote ? 'btn-danger' : 'btn-outline-primary' %> btn-sm"><span class="fas fa-arrow-down"></span></button>
         </form>
       </td><td class="theme-past__label">
         <%- theme.title %>

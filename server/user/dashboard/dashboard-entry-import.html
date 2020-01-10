@@ -15,8 +15,8 @@
 <h1>External entry importer</h1>
 
 <p>This tool helps you import entries from other websites. If you don't find the site you're looking for, you can still use the manual form.</p>
-<a href="/external-entry/create-entry" class="btn btn-default">Create entry manually</a>
-<a href="{{ routeUrl(user, 'user', 'entries') }}" class="btn btn-default">Back to Entries</a>
+<a href="/external-entry/create-entry" class="btn btn-outline-primary">Create entry manually</a>
+<a href="{{ routeUrl(user, 'user', 'entries') }}" class="btn btn-outline-primary">Back to Entries</a>
 
 <form method="post">
   {{ csrfToken() | safe }}
@@ -77,9 +77,9 @@
 
               <p>Please check the games you want to import.</p>
               <p>
-                <input type="button" class="btn btn-default btn-sm js-check-all" value="Check all"
+                <input type="button" class="btn btn-outline-primary btn-sm js-check-all" value="Check all"
                       data-check-all-selector=".js-import-checkbox"/>
-                <input type="button" class="btn btn-default btn-sm js-check-none" value="Uncheck all"
+                <input type="button" class="btn btn-outline-primary btn-sm js-check-none" value="Uncheck all"
                       data-check-none-selector=".js-import-checkbox"/>
               </p>
               <table class="table">

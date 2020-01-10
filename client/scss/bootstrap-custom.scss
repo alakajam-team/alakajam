@@ -9,7 +9,7 @@ $theme-colors: (
 }
 
 .list-group {
-  & a {
+  & > a {
     color: $text;
 
     &:hover {

@@ -40,7 +40,7 @@
       {% endif %}
 
       {% if user and (user.get('id') == profileUser.get('id')) %}
-      <a href="{{ routeUrl(user, 'user', 'feed') }}" class="btn btn-default">View dashboard</a>
+      <a href="{{ routeUrl(user, 'user', 'feed') }}" class="btn btn-outline-primary">View dashboard</a>
       {% endif %}
 
       <div class="spacing">
@@ -185,5 +185,5 @@
 {% endblock %}
 
 {% macro linkSortBy(id, label, sortedBy) %}
-<a href="?sortBy={{ id }}" class="btn btn-sm btn-default {{ 'disabled' if sortedBy === id }}">{{ label }}</a>
+<a href="?sortBy={{ id }}" class="btn btn-sm btn-outline-primary {{ 'disabled' if sortedBy === id }}">{{ label }}</a>
 {% endmacro %} 

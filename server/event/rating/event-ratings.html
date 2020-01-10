@@ -23,7 +23,7 @@
           {% for division, votes in votesCategory.votesPerDivision %}
             <div class="col-sm-6">
               <div class="row">
-                <div class="col-10 col-offset-2"><h4>{{ division | capitalize }} entries <span class="count">({{ votes.length }})</span></h4></div>
+                <div class="col-10 offset-2"><h4>{{ division | capitalize }} entries <span class="count">({{ votes.length }})</span></h4></div>
               </div>
               <div class="row">
               {% for vote in votes %}

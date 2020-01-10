@@ -3,10 +3,7 @@
 
 {% block body %}
 
-<div class="container">
-<div class="row">
-<div class="col-lg-offset-1 col-lg-10">
-
+<div class="container thin">
   <h1 id="title-display"></h1>
 
   <form method="post" class="js-warn-on-unsaved-changes">
@@ -53,7 +50,6 @@
       {% endif %}
     </div>
 
-
     <div class="form-group">
       <label>Related event</label>
       <div class="form-inline">
@@ -66,30 +62,30 @@
       {{ formMacros.editor('body', post.get('body')) }}
     </div>
 
-    <div class="row">
-      <div class="col-4">
+    <div class="d-flex">
+      <div>
         {% if post.has('id') %}
         <a class="btn btn-danger" onclick="return confirm('Delete the post? This cannot be reverted!')" href="{{ routeUrl(post, 'post', 'delete') }}">Delete</a> 
         {% endif %}
       </div>
-      <div class="col-8 post__actions text-right">
+      <div class="ml-auto post__actions text-right">
         {% if post.get('published_at') %}
         <input type="submit" class="btn btn-primary" name="save" value="Save changes" />
-        <input type="submit" class="btn btn-default" name="unpublish" value="Unpublish" />
+        <input type="submit" class="btn btn-outline-secondary" name="unpublish" value="Unpublish" />
         {% else %}
         <input type="submit" class="btn btn-primary" name="publish" value="Save and publish now" />
-        <input type="submit" class="btn btn-default" name="save-draft" value="Save draft" />
+        <input type="submit" class="btn btn-outline-secondary" name="save-draft" value="Save draft" />
         {% endif %}
-        <input type="button" class="btn btn-default js-show js-hide" name="save" value="Schedule..." data-show-selector=".post__schedule" data-hide-selector=".post__actions" />
-        <a class="btn btn-default" href="#" onclick="history.back()">Cancel</a> 
+        <input type="button" class="btn btn-outline-secondary js-show js-hide" name="save" value="Schedule..." data-show-selector=".post__schedule" data-hide-selector=".post__actions" />
+        <a class="btn btn-outline-secondary" href="#" onclick="history.back()">Cancel</a> 
       </div>
-      <div class="col-8 post__schedule text-right form-inline">
+      <div class="ml-auto post__schedule text-right form-inline d-none">
         <div class="form-group">
-          <label for="published-at">
+          <label for="published-at" class="mr-1">
             Publication date
             (in {{ user.get('timezone') | timezone or 'UTC' -}}
             {%- if not user.get('timezone') %}
-              <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-default btn-xs">
+              <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-secondary btn-sm">
                 <span class="fa fa-cog"></span>
               </a>
             {%- endif -%}
@@ -98,16 +94,14 @@
           {{ formMacros.dateTimePicker('published-at', post.get('published_at')) }}
         </div>
         <div class="form-group">
-          <input type="submit" class="btn btn-primary" name="save-custom" value="Schedule" />
-          <input type="button" class="btn btn-default js-show js-hide" value="Back..." data-show-selector=".post__actions" data-hide-selector=".post__schedule" />
+          <input type="submit" class="btn btn-primary mx-1" name="save-custom" value="Schedule" />
+          <input type="button" class="btn btn-outline-secondary js-show js-hide" value="Back..." data-show-selector=".post__actions" data-hide-selector=".post__schedule" />
         </div>
       </div>
     </div>
   </div>
 </form>
 
-</div>
-</div>
 </div>
 
 {% endblock %}

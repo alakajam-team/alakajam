@@ -16,7 +16,7 @@ class EntryPO {
     }
 
     get entryEditButton() {
-        return cy.get("h1 .btn-default");
+        return cy.get("h1 .btn-outline-primary");
     }
 
     // Body

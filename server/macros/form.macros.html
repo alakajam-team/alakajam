@@ -22,9 +22,9 @@
 
 {% macro pictureInput(name, value, options = {}) %}
 {# Setting options.model to any DB model is recommended to let the macro tweak the picture URL ie. prevent caching issues #}
-<div class="js-picture-input {{ 'well' if not options.noPanel }}">
+<div class="js-picture-input {{ 'card card-body' if not options.noCard }}">
   <p>
-    <input type="file" name="{{ name }}" class="btn"/>
+    <input type="file" name="{{ name }}" class="btn btn-secondary btn-block"/>
     <input type="hidden" name="{{ name }}" value="{{ value }}"/>
   </p>
   <p>
@@ -93,7 +93,7 @@
 {# ======== SELECT ========= #}
 
 {% macro select(name, models, selectedValue, options = {}) %}
-<select name="{{ name }}" class="form-control">
+<select name="{{ name }}" class="js-select form-control">
   {% if options.nullable %}
   <option value="" {{ 'selected' if not selectedValue }}></option>
   {% endif %}
