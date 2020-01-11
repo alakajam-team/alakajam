@@ -19,7 +19,7 @@ describe("Post", () => {
     cy.restoreDB();
   });
 
-  it("supports creation, edito and deletion", () => {
+  it("supports creation, edition and deletion", () => {
     dashboardPo.posts.visit();
     dashboardPo.posts.createPostButton.click();
 

@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <form id="js-manage-themes" method="post" style="display: none" class="js-warn-on-unsaved-changes">
+      <form id="js-manage-themes" method="post" class="js-warn-on-unsaved-changes d-none">
         {{ csrfToken() | safe }}
 
         <h2>Theme ideas </h2>
@@ -68,20 +68,20 @@
           {% set ideaRows = max(userThemes.length, maxThemeSuggestions) %}
           {% for index in range(0, ideaRows) %} 
             {% set userTheme = userThemes[index] if userThemes.length > index %}
-            <div class="themes__idea form-group {{ 'form-inline' if userTheme }}">
+            <div class="themes__idea {{ 'form-inline' if userTheme }}">
               <input type="text" id="idea-title-{{ index }}" name="idea-title[{{ index }}]" 
                 class="form-control input-lg" {{ 'readonly="readonly"' if userTheme }} 
                 placeholder="Idea #{{ index + 1 }}" value="{{ userTheme.get('title') if userTheme }}" />
               {% if userTheme %}
                 {% if userTheme.get('status') === 'duplicate' or userTheme.get('status') === 'active' %}
-                  <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-outline-primary"><span class="fas fa-trash"></span></button>
+                  <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-outline-danger"><span class="fas fa-trash"></span></button>
                 {% endif %}
               {% endif %}
               <input type="hidden" name="idea-id[{{ index }}]" value="{{ userTheme.get('id') if userTheme }}" />
               {{ themeDetails(userTheme) if userTheme }}
             </div>
           {% endfor %}
-          <div class="form-group themes__idea" style="margin-top: -15px">
+          <div class="form-group themes__idea mt-0 mb-0">
             <input type="hidden" name="action" value="ideas" />
             <input type="hidden" name="idea-rows" value="{{ ideaRows }}" />
             <input type="submit" class="btn btn-primary" value="Save" />

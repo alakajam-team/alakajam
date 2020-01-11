@@ -12,7 +12,7 @@ describe("Event: Ratings", () => {
     cy.restoreDB();
   });
 
-  it("supports changing submitted themes", () => {
+  it("supports changing ratings", () => {
     entryPo.visit(GANDALF_RANKED_GAME);
 
     cy.scrollElementsToScreenCenter();
