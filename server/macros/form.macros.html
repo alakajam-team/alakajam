@@ -77,16 +77,18 @@
 {# ======== DATE TIME PICKER ========= #}
 
 {% macro dateTimePicker(name, value, options = {}) %}
-  <input type="datetime" name="{{ name }}"
-    class="form-control date-picker js-date-picker {{ options.classes or '' }}"
-    value="{{ value | date(user if not options.forceUTC, { format: options.serverFormat or 'yyyy-MM-dd HH:mm' }) }}" 
-    data-format="{{ options.pickerFormat or 'yyyy-mm-dd hh:ii' }}"
-    {% if options.minView %} data-min-view="{{ options.minView }}" {% endif %}
-    {% if options.maxView %} data-max-view="{{ options.maxView }}" {% endif %}
-    {% for key, value in options.attrs %}
-      {{ key }}="{{ value }}"
-    {% endfor %}
-    />
+<div class="form-group">
+  <div class="js-date-picker input-group date" id="datetimepicker-{{ name }}" data-target-input="nearest"
+      data-format="{{ options.pickerFormat or 'YYYY-MM-DD HH:mm' }}">
+    <input type="text" name="{{ name }}"
+      class="form-control datetimepicker-input {{ options.classes or '' }}"
+      value="{{ value | date(user if not options.forceUTC, { format: options.serverFormat or 'yyyy-MM-dd HH:mm' }) }}" 
+      data-target="#datetimepicker-{{ name }}" />
+    <div class="input-group-append" data-target="#datetimepicker-{{ name }}" data-toggle="datetimepicker">
+      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+    </div>
+  </div>
+</div>
 {% endmacro %}
 
 

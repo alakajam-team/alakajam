@@ -81,7 +81,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label for="title">Event start date {{ formMacros.tooltip('The jam start date. Used to sort events, but also to let state presets guess deadlines correctly.') }}</label>
-            {{ formMacros.dateTimePicker('started-at', event.get('started_at') if event, { minView: '2', serverFormat: 'yyyy-MM-dd', pickerFormat: 'yyyy-mm-dd' }) }}
+            {{ formMacros.dateTimePicker('started-at', event.get('started_at') if event, { serverFormat: 'yyyy-MM-dd', pickerFormat: 'YYYY-MM-DD' }) }}
           </div>
         </div>
       </div>

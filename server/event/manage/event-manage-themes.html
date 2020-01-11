@@ -64,16 +64,10 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="start-date">Start date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>) {{ formMacros.tooltip('Specify when the first of the shortlisted themes is eliminated. Eliminations will stop when 3 themes remain. If the date is unset, feature is disabled.') }}</label>
-        {{
-          formMacros.dateTimePicker(
+        {{ formMacros.dateTimePicker(
             'elimination-start-date',
             eventDetails.get('shortlist_elimination').start,
-            {
-              classes: 'js-show-if-nonempty',
-              attrs: { 'data-show-if-nonempty-selector': '#elimination-details' },
-              forceUTC: true
-            })
-          }}
+            { forceUTC: true }) }}
       </div>
     </div>
     <div class="col-md-6">
@@ -91,7 +85,7 @@
       </div>
     </div>
   </div>
-  <div id="elimination-details" class="form-group">
+  <div class="form-group">
     <label for="elimination-body">Banner {{ formMacros.tooltip('Displayed at the top of the page') }}</label>
     {{ formMacros.editor('elimination-body', eventDetails.get('shortlist_elimination').body) }}
   </div>
