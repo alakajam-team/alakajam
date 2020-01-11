@@ -43,7 +43,7 @@
 {# ======== TOOLTIPS ========= #}
 
 {% macro tooltip(title, options = {}) %}
- <span class="fas fa-info-circle has-tooltip" data-toggle="tooltip" data-placement="{{ options.placement or 'top' }}" data-original-title="{{ title }}" style="font-size: 0.8rem"></span>
+ <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="{{ options.placement or 'top' }}" title="{{ title }}" style="font-size: 0.8rem"></span>
 {% endmacro %}
 
 

@@ -10,7 +10,7 @@
 </div>
 <div class="row">
   <div class="col-md-7 col-lg-6">
-    <h1>Notifications <span class="fas fa-info-circle has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="This feed lists all comments people wrote on your entries and posts, plus any comments mentioning &quot;@{{ user.get('name') }}&quot;." style="font-size: 1rem"></span></h1>
+    <h1>Notifications <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="This feed lists all comments people wrote on your entries and posts, plus any comments mentioning &quot;@{{ user.get('name') }}&quot;." style="font-size: 1rem"></span></h1>
 
     {% for invite in invites %}
     <div data-test="invites" class="card card-body">

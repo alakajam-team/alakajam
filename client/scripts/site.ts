@@ -64,7 +64,7 @@ $(function domReady() {
   syncSlug(".js-sync-slug");
   syncText();
   tagsSelect();
-  tooltips(".has-tooltip");
+  tooltips("[data-toggle=tooltip]");
   userSelect();
   warnOnUnsavedChanges(".js-warn-on-unsaved-changes");
 

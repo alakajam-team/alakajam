@@ -45,8 +45,8 @@
       </span>
     {% endif %}
     {% if options.showKarma %}
-      <span class="entry-thumb__karma has-tooltip" data-toggle="tooltip"
-          data-original-title="Rate and review other games to increase your karma, and get featured higher on the list!">
+      <span class="entry-thumb__karma" data-toggle="tooltip"
+          title="Rate and review other games to increase your karma, and get featured higher on the list!">
         Karma: {{ entry.get('karma') | digits(0) }} 
       </span>
     {% endif %}
@@ -155,7 +155,7 @@
 
 {% macro entryPlatformIcon(platform, options = {}) %}
   {% set icon = constants.ENTRY_PLATFORM_ICONS[platform] or constants.ENTRY_PLATFORM_DEFAULT_ICON %}
-  <span class="{{ icon }} has-tooltip" data-toggle="tooltip" data-placement="top" data-original-title="{{ platform }}"></span> {{ platform if not options.hideLabel }}
+  <span class="{{ icon }}" data-toggle="tooltip" data-placement="top" title="{{ platform }}"></span> {{ platform if not options.hideLabel }}
 {% endmacro %}
 
 {% macro eventThemeStatus (event, options = {}) %}

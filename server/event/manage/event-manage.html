@@ -140,7 +140,7 @@
         {% if event.get('status') === 'pending' %}
           <a href="{{ routeUrl(event, 'event', 'delete') }}" onclick="return confirm('Do you really want to delete this event? This cannot be undone.')" class="btn btn-danger {{ 'disabled' if not user.get('is_admin') }}" {{ 'title="Only admins can delete events"' if not user.get('is_admin') }}>Delete</a>
         {% else %}
-          <div class="btn btn-danger has-tooltip disabled" title data-placement="top" data-toggle="tooltip" data-original-title="Only pending events can be deleted">Delete</div>
+          <div class="btn btn-danger disabled" title data-placement="top" data-toggle="tooltip" title="Only pending events can be deleted">Delete</div>
         {% endif %}
       {% endif %}
     </div>

@@ -45,7 +45,7 @@
       {% if not options.hideDate %}
       <span>
          • {% if isPast(post.get('published_at')) %}
-          <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('published_at') | dateTime(user) }}">{{ post.get('published_at') | relativeTime }}</span>
+          <span data-toggle="tooltip" title="{{ post.get('published_at') | dateTime(user) }}">{{ post.get('published_at') | relativeTime }}</span>
         {% elseif post.get('published_at') %}
           <span class="badge">Scheduled</span> for {{ post.get('published_at') | dateTime(user) }}
         {% else %}
@@ -98,7 +98,7 @@
 {% endmacro %}
 
 {% macro postLikes (post, options = {}) %}
-  <span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ post.get('like_count') or 0 }} gem{{ 's' if post.get('like_count') != -1 }}">
+  <span data-toggle="tooltip" title="{{ post.get('like_count') or 0 }} gem{{ 's' if post.get('like_count') != -1 }}">
     {% if options.readingUser %}
     {% if options.readingUser.get('id') == post.get('author_user_id') %}
       <span class="post__like-count liked">
@@ -171,9 +171,9 @@
            </a>
           {% endif %}
           {{ '(@' + author.get('name') + ')' if author.get('title') and author.get('name').toLowerCase() !== author.get('title').toLowerCase() }}
-          <span>&nbsp;•&nbsp;</span><span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('created_at') | dateTime(user) }}">{{ comment.get('created_at') | relativeTime }}</span>
+          <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip" title="{{ comment.get('created_at') | dateTime(user) }}">{{ comment.get('created_at') | relativeTime }}</span>
           {% if comment.wasEdited() %}
-          <span>&nbsp;•&nbsp;</span><span class="has-tooltip" data-toggle="tooltip" data-original-title="{{ comment.get('updated_at') | dateTime(user) }}">edited</span>
+          <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip" title="{{ comment.get('updated_at') | dateTime(user) }}">edited</span>
           {% endif %}
           {% if comment and not options.linkToNode %}
           <span>&nbsp;•&nbsp;</span><a href="#c{{ comment.id }}"><i class="fas fa-link" aria-hidden="true"></i></a>

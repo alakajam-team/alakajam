@@ -200,10 +200,10 @@ blockquote {
   font-weight: bold;
 }
 
-.has-tooltip {
+[data-toggle=tooltip] {
   cursor: help;
 }
-a.has-tooltip {
+a[data-toggle=tooltip] {
   cursor: pointer;
 }
 
