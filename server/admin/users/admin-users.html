@@ -18,9 +18,9 @@
     <td>{{ someUser.get('name') }}</td>
     <td>
       {% if isAdmin(someUser) %}
-        <span class="label label-danger">Administrator</span>
+        <span class="badge badge-danger">Administrator</span>
       {% elseif isMod(someUser) %}
-        <span class="label label-warning">Moderator</span>
+        <span class="badge badge-warning">Moderator</span>
       {% endif %}
     </td>
     <td><a class="btn btn-primary btn-sm" href="{{ routeUrl(someUser, 'user', 'settings', { dashboardAdminMode: true }) }}">Edit</a></td>
@@ -30,16 +30,3 @@
 </table>
 
 {% endblock %}
-
-{% macro status(value) %}
-  {% if value === 'open' or value === 'on' %}
-    {% set class = 'info' %}
-  {% elseif value === 'off' %}
-    {% set class = 'warning' %}
-  {% elseif value === 'disabled' %}
-    {% set class = '' %}
-  {% else %}
-    {% set class = 'default' %}
-  {% endif %}
-  <span class="label label-{{ class }}">{{ value }}</span>
-{% endmacro %}

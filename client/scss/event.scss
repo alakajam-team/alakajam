@@ -230,6 +230,7 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
+  z-index: -1;
 }
 
 .event-banner__origin {
@@ -257,14 +258,6 @@
 
   @media (max-width: 767px) {
     display: none;
-  }
-}
-
-.event-banner-offset {
-  padding-top: 150px;
-
-  @media (max-width: 767px) {
-    padding-top: 0;
   }
 }
 

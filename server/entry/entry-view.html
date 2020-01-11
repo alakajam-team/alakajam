@@ -160,9 +160,9 @@
                     {{ ranking | ordinal }}
                   </a>
                 </div>
-                <div class="entry-results__category-rating d-none d-sm-block">{{ (percentage | digits(0)) + '%' if percentage > 0 }}</div>
+                <div class="entry-results__category-rating d-none d-sm-inline-block">{{ (percentage | digits(0)) + '%' if percentage > 0 }}</div>
                 <div class="entry-results__category-rating">{{ rating | digits(3) }}</div>
-                <div class="entry-results__category-stars d-none d-sm-block">
+                <div class="entry-results__category-stars d-none d-sm-inline-block">
                   {%- for i in range(1, 11) -%}
                     <span class="fa-lg {{ 'fas fa-star' if i <= rating|round(0) else 'far fa-star' }}"></span>
                   {%- endfor -%}
@@ -187,7 +187,7 @@
       <h3>Info</h3>
 
       {% if entry.get('description') %}
-      <div class="well entry__description user-contents">
+      <div class="card card-body entry__description user-contents">
         {{ entry.get('description') }}
       </div>
       {% endif %}
@@ -215,7 +215,7 @@
         <span class="entry__info-label">Tags</span>
         <div class="entry__info-value" style="width: 215px">
           {% for tag in entry.related('tags').models %}
-            <a href="/games?eventId=&amp;tags={{ tag.get('id') }}" class="btn btn-sm">{{ tag.get('value') }}</a>
+            <a href="/games?eventId=&amp;tags={{ tag.get('id') }}" class="btn btn-secondary btn-sm">{{ tag.get('value') }}</a>
           {% endfor %}
         </div>
       </div>
@@ -244,7 +244,7 @@
 
       <h3 style="margin-top: 20px">Author{{ 's' if entry.related('userRoles').models.length > 1 }}</h3>
 
-      <div class="card card-body" style="padding-bottom: 5px">
+      <div class="card card-body pb-2">
         <div class="row">
           {% for userRole in entry.sortedUserRoles() %}
             {{ userMacros.userThumb(userRole.related('user'), { fullWidth: true }) }}
@@ -258,7 +258,7 @@
       </div>
 
       {% if entry.get('status_high_score') !== 'off' %}
-        <h3 name="high-scores">High scores {{ scoreMacros.highScoresLinks(entry, user, path) }}</h3>
+        <h3 name="high-scores" class="mt-4">High scores {{ scoreMacros.highScoresLinks(entry, user, path) }}</h3>
         {{ scoreMacros.tournamentEventBanner(tournamentEvent) }}
         {{ scoreMacros.highScores(entry, highScoresCollection, userScore) }}
       {% endif %}

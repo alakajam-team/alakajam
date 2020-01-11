@@ -227,7 +227,7 @@
         </div>
         {{ user.get('title') }}
       </div>
-      <div class="{{ 'well' if comment and comment.id }} mb-3">
+      <div class="{{ 'card card-body' if comment and comment.id }} mb-3">
         {{ formMacros.editor('body', comment.get('body') if comment) }}
 
         <div class="comment__actions">

@@ -41,11 +41,10 @@
   }
 </script>
 
-<div class="container {{ 'event-banner-offset' if featuredEventBanner }}">
+<div class="container">
   {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') if featuredEvent %}
   {% if shortlistEliminationInfo.stream %}
-  <div class="row">
-    <div class="col-12">
+  <div>
       <div style="margin-bottom: 20px">
         <div id="twitch-embed"></div>
       </div>
@@ -57,40 +56,37 @@
           channel: "{{ shortlistEliminationInfo.stream }}"
         });
       </script>
-    </div>
   </div>
   {% endif %}
 
-  <div class="row">
-    {% if not user %}
-    <div class="home-welcome">
-      <img class="home-welcome__icon" src="{{ staticUrl('/static/images/welcome.png') }}" />
-      <div class="home-welcome__title">New website unlocked</div>
-       Welcome to <div class="home-welcome__brand">Alakajam!</div>, a game making community. We host informal game jams!
-       <a class="home-welcome__more" href="/article/docs">Learn&nbsp;more</a>
-    </div>
-    {% endif %}
-
-    {% if featuredPost %}
-    <div class="col-lg-offset-1 col-lg-10">
-      <div class="js-featured-post expandable">
-        {{ postMacros.post(featuredPost, {readingUser: user, readingUserLikes: userLikes}) }}
-        {{ navigationMacros.expandCollapse({ manualScripting: true }) }}
-      </div>
-      <script type="text/javascript">
-        postExpandCollapse('js-featured-post', {{ 0 if shrinkedJumbo else 450 }})
-      </script>
-    </div>
-    {% endif %}
+  {% if not user %}
+  <div class="home-welcome">
+    <img class="home-welcome__icon" src="{{ staticUrl('/static/images/welcome.png') }}" />
+    <div class="home-welcome__title">New website unlocked</div>
+      Welcome to <div class="home-welcome__brand">Alakajam!</div>, a game making community. We host informal game jams!
+      <a class="home-welcome__more" href="/article/docs">Learn&nbsp;more</a>
   </div>
+  {% endif %}
 
+  {% if featuredPost %}
+  <div class="js-featured-post expandable">
+    {{ postMacros.post(featuredPost, {readingUser: user, readingUserLikes: userLikes}) }}
+    {{ navigationMacros.expandCollapse({ manualScripting: true }) }}
+  </div>
+  <script type="text/javascript">
+    postExpandCollapse('js-featured-post', {{ 0 if shrinkedJumbo else 450 }})
+  </script>
+  {% endif %}
+</div>
+
+<div class="container">
   <div class="row">
     <div class="col-md-9">
       {% if featuredEvent %}
         {{ eventMacros.eventJumbo(featuredEvent, user, userEntry, { shrinkedJumbo: shrinkedJumbo }) }}
         {% if featuredEventAnnouncement %}
           <div class="home-jumbo__contents event-banner-panel">
-          {% if featuredEventAnnouncement.get('body').indexOf('<iframe') === 0 %}
+          {% if featuredEventAnnouncement.get('body').indexOf('&lt;iframe') === 0 %}
               {{ postMacros.post(featuredEventAnnouncement, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
               {{ featuredEventAnnouncement.get('body') | markdown | safe }}
           {% else %}
@@ -107,7 +103,7 @@
         <h1 class="text-center">Next event not announced yet.</h1>
       {% endif %}
     </div>
-    
+
     <div id="js-event-sidebar" class="col-md-3 event-banner-panel">
       {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
       {% if featuredLinks and featuredLinks.length > 0 %}
@@ -159,56 +155,51 @@
           </a>
         </div>
       </div>
-    </div>
-  </div>
-  {% if featuredEventAnnouncement %}
-    <script type="text/javascript">
-      var announcement = findByClass('home-jumbo__announcement')
-      var sidebar = document.getElementById('js-event-sidebar')
-      var remainingHeight = sidebar.clientHeight - announcement.offsetTop - 10
-      var announcementHeight = Math.max(remainingHeight, {{ 0 if shrinkedJumbo else 265 }})
-      postExpandCollapse('home-jumbo__announcement', announcementHeight)
-    </script>
-  {% endif %}
 
-  {% if user and suggestedEntries and suggestedEntries.length > 0 %}
-  <div class="row">
-    <div class="col-12">
-      <div class="horizontal-bar">
-        Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
-      </div>
-      <div class="home-grid game-grid">
-      {% for entry in suggestedEntries %}
-        <div class="home-entry game-grid-entry">
-        {{ eventMacros.entryThumb(entry) }}
-        </div>
-      {% endfor %}
-      </div>
+      {% if featuredEventAnnouncement %}
+        <script type="text/javascript">
+          var announcement = findByClass('home-jumbo__announcement')
+          var sidebar = document.getElementById('js-event-sidebar')
+          var remainingHeight = sidebar.clientHeight - announcement.offsetTop - 10
+          var announcementHeight = Math.max(remainingHeight, {{ 0 if shrinkedJumbo else 265 }})
+          postExpandCollapse('home-jumbo__announcement', announcementHeight)
+        </script>
+      {% endif %}
     </div>
   </div>
+</div>
+
+
+<div class="container thin">
+  {% if user and suggestedEntries and suggestedEntries.length > 0 %}
+    <div class="horizontal-bar">
+      Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
+    </div>
+    <div class="home-grid game-grid">
+    {% for entry in suggestedEntries %}
+      <div class="home-entry game-grid-entry">
+      {{ eventMacros.entryThumb(entry) }}
+      </div>
+    {% endfor %}
+    </div>
   {% endif %}
     
   {% if posts.length > 0 %}
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-        <div class="horizontal-bar">Latest posts</div>
+    <div class="horizontal-bar">Latest posts</div>
 
-        {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost, { buttonsOnly: shrinkedJumbo })
-            if user and featuredEvent }}
-        <div class="spacing"></div>
+    {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost, { buttonsOnly: shrinkedJumbo })
+        if user and featuredEvent }}
+    <div class="spacing"></div>
 
-        {% for post in posts %}
-          <div class="expandable">
-            {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
-            {{ navigationMacros.expandCollapse() }}
-          </div>
-        {% endfor %}
-        {{ navigationMacros.pagination(1, pageCount, '/posts') }}
-    </div>
-  </div>
+    {% for post in posts %}
+      <div class="expandable">
+        {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+        {{ navigationMacros.expandCollapse() }}
+      </div>
+    {% endfor %}
+    {{ navigationMacros.pagination(1, pageCount, '/posts') }}
   {% endif %}
 </div>
-
 {% endblock %}
 
 {% macro featuredLink (event, featuredEvent) %}
@@ -231,9 +222,9 @@
     </div>
     <div class="home-scheduled-event__label">
       {% if event.get('status') === 'open' %}
-        <span class="badge badge-danger">On now!</span>
+        <span class="badge badge-secondary">On now!</span>
       {% elseif event.get('status') === 'pending' %}
-        <span class="badge badge-secondary">Up next!</span>
+        <span class="badge badge-light">Up next!</span>
       {% endif %}
     </div>
   </div>

@@ -6,27 +6,23 @@
 {% block body %}
 {{ super() }}
 
-<div class="container">
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10">
-      <div class="{{ 'spacing' if user }}">
-        {% for post in posts %}
-          <div class="expandable">
-            {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
-            {{ navigationMacros.expandCollapse() }}
-          </div>
-        {% endfor %}
+<div class="container thin">
+  <div class="{{ 'spacing' if user }}">
+    {% for post in posts %}
+      <div class="expandable">
+        {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+        {{ navigationMacros.expandCollapse() }}
       </div>
-
-      {% if posts.length > 0 %}
-        {{ navigationMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
-      {% else %}
-        <div class="card card-body">
-          No posts yet.
-        </div>
-      {% endif %}
-    </div>
+    {% endfor %}
   </div>
+
+  {% if posts.length > 0 %}
+    {{ navigationMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}
+  {% else %}
+    <div class="card card-body">
+      No posts yet.
+    </div>
+  {% endif %}
 </div>
 
 {% endblock %}
