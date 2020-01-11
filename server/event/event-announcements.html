@@ -8,18 +8,12 @@
 {% set hasEventBanner = event.related('details').get('banner') %}
 {{ eventMacros.eventBanner(event) }}
 
-<div class="container {{ 'event-banner-offset' if hasEventBanner }}">
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10" style="margin-bottom: 20px">
-      {{ eventMacros.eventJumbo(event, user, userEntry) }}
-    </div>
-  </div>
+<div class="container thin {{ 'event-banner-offset' if hasEventBanner }}">
+  {{ eventMacros.eventJumbo(event, user, userEntry) }}
 
   {% set featuredLinks = event.related('details').get('links') %}
   {% if featuredLinks and featuredLinks.length > 0 %}
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10 well" style="padding: 10px 30px">
-      <div class="row">
+  <div class="px-3 py-5">
       {% for featuredLink in featuredLinks %}
         <div class="col-sm-6 col-md-4">
         <a class="home-featured-link" style="max-width: 600px; margin-right: 20px; display: inline-block" href="{{ featuredLink.link }}">
@@ -28,13 +22,10 @@
         </a>
         </div>
       {% endfor %}
-      </div>
-    </div>
   </div>
   {% endif %}
 
-  <div class="row">
-    <div class="col-lg-offset-1 col-lg-10 {{ 'event-banner-panel' if eventBanner }}" style=" {{ 'padding-top: 10px' if eventBanner }}">
+  <div class="{{ 'event-banner-panel' if eventBanner }} {{ 'pt-3' if eventBanner }}">
       {% for post in posts.models %}
         {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
         <div class="spacing"></div>
@@ -47,7 +38,6 @@
         No announcements yet.
       </div>
       {% endif %}
-    </div>
   </div>
 </div>
 

@@ -32,7 +32,7 @@
 
       {% if entryScore.get('ranking') %}
         <div class="featured">
-          <h4 style="margin: 0">Current ranking: <span class="label label-default">{{ entryScore.get('ranking') | ordinal }}</span></h4>
+          <h4 style="margin: 0">Current ranking: <span class="badge badge-secondary">{{ entryScore.get('ranking') | ordinal }}</span></h4>
         </div>
       {% endif %}
 

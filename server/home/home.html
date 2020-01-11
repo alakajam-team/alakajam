@@ -231,9 +231,9 @@
     </div>
     <div class="home-scheduled-event__label">
       {% if event.get('status') === 'open' %}
-        <span class="label label-danger">On now!</span>
+        <span class="badge badge-danger">On now!</span>
       {% elseif event.get('status') === 'pending' %}
-        <span class="label label-default">Up next!</span>
+        <span class="badge badge-secondary">Up next!</span>
       {% endif %}
     </div>
   </div>

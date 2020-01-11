@@ -48,10 +48,10 @@
         {% if options.showActiveToggles %}
           <td class="text-right">
             {% if score.get('active') %}
-              <span class="label label-success">Active</span>
+              <span class="badge badge-success">Active</span>
               &nbsp;<input type="submit" name="suspend-{{ score.get('id') }}" class="btn btn-outline-primary btn-sm" onclick="return confirm('Suspend the score of {{ score.related('user').get('title') }}?')" value="Suspend" />
             {% else %}
-              <span class="label label-warning">Suspended</span>
+              <span class="badge badge-warning">Suspended</span>
               &nbsp;<input type="submit" name="restore-{{ score.get('id') }}" class="btn btn-outline-primary btn-sm" onclick="return confirm('Restore the score of {{ score.related('user').get('title') }}?')" value="Restore" />
             {% endif %}
           </td>

@@ -27,7 +27,7 @@
     <div class="game-grid-entry">
       {{ eventMacros.entryThumb(entry) }}
       {% if entry.get('status_high_score') === 'off' %} 
-        <div class="entry-thumb__form"><span class="label label-danger">High scores are not enabled</span></div>
+        <div class="entry-thumb__form"><span class="badge badge-danger">High scores are not enabled</span></div>
       {% endif %}
       <form method="post" class="form-inline form-group" style="margin-top: 5px">
         {{ csrfToken() | safe }}

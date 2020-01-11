@@ -53,7 +53,7 @@
     {% for platform in entry.get('platforms') %}
       {{ entryPlatformIcon(platform, { hideLabel: true }) }}
     {% endfor %}
-    <span class="label label-default label-xs">{{ entry.get('division') | capitalize }}</span>
+    <span class="badge badge-secondary badge-sm">{{ entry.get('division') | capitalize }}</span>
   </div>
 </div>
 {% endmacro %}
@@ -159,8 +159,8 @@
 {% endmacro %}
 
 {% macro eventThemeStatus (event, options = {}) %}
-  <span class="label {{ 'label-success' if event.get('status') == 'shortlist' }} 
-      {{ 'label-default' if event.get('status') == 'active' }}"><!--
+  <span class="badge {{ 'badge-success' if event.get('status') == 'shortlist' }} 
+      {{ 'badge-secondary' if event.get('status') == 'active' }}"><!--
     -->{% if event.get('status') === 'banned' %}<!--
       -->{{ 'Banned' if options.uncensored else 'Out' }}<!--
     -->{% elseif event.get('status') === 'duplicate' %}<!--

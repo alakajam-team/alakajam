@@ -113,10 +113,10 @@
                     </td>
                     <td>
                       {% if entryReference.existingEntry %}
-                        <p><span class="label label-warning">Yes, entry will be updated</span></p>
+                        <p><span class="badge badge-warning">Yes, entry will be updated</span></p>
                         {{ eventMacros.entrySmallThumb(entryReference.existingEntry) }}
                       {% else %}
-                        <span class="label label-default">No</span>
+                        <span class="badge badge-secondary">No</span>
                       {% endif %}
                     </td>
                   </tr>
@@ -124,7 +124,7 @@
                 </tbody>
               </table>
 
-              <div class="form-group well">
+              <div class="form-group card card-body">
                 <label>
                   <input type="checkbox" name="run" class="form-control js-checkbox" required />
                   &nbsp;I confirm those games are mine. If I change my mind, I will have to delete them one by one. Let's import them!

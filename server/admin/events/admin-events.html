@@ -24,7 +24,7 @@
         <td><a href="{{ routeUrl(event, 'event') }}">{{ event.get('title') }}</a></td>
         <td><code>{{ event.get('name') }}</code></td>
         <td>{{ event.get('started_at') | date }}</td>
-        <td>{{ statusLabel(event.get('status')) }}</td>
+        <td>{{ statusBadge(event.get('status')) }}</td>
         <td><a class="btn btn-primary btn-sm" href="{{ routeUrl(event, 'event', 'edit') }}">Edit</a></td>
       </tr>
     {% endif %}
@@ -34,7 +34,7 @@
 
 {% endblock %}
 
-{% macro statusLabel(value) %}
+{% macro statusBadge(value) %}
   {% if value === 'open' %}
     {% set class = 'info' %}
   {% elseif value === 'pending' %}
@@ -42,5 +42,5 @@
   {% else %}
     {% set class = 'default' %}
   {% endif %}
-  <span class="label label-{{ class }}">{{ value }}</span>
+  <span class="badge badge-{{ class }}">{{ value }}</span>
 {% endmacro %}
