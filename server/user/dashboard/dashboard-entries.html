@@ -23,57 +23,21 @@
   <a data-test="create" href="/external-entry/create-entry" class="btn btn-primary">Create external entry manually</a>
 </div>
 
-<div class="game-grid">
-  {% for entry in entries %}
-    <div class="game-grid-entry">
-      {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
-      <div class="entry-thumb__form">
-        <a href="{{ routeUrl(entry, 'entry', 'edit') }}" class="btn btn-light"><span class="fas fa-pencil-alt"></span></a>
-      </div>
-    </div>
-  {% endfor %}
-</div>
+{{ listEntries(entries) }}
 
 {% if alakajamEntries.length > 0 %}
-<h2>Alakajam! entries ({{alakajamEntries.length}})</h2>
-  <div class="game-grid">
-    {% for entry in alakajamEntries %}
-      <div class="game-grid-entry">
-        {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
-        <div class="entry-thumb__form">
-          <a href="{{ routeUrl(entry, 'entry', 'edit') }}" class="btn btn-light"><span class="fas fa-pencil-alt"></span></a>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
+  <h2>Alakajam! entries ({{alakajamEntries.length}})</h2>
+  {{ listEntries(alakajamEntries) }}
 {% endif %}
 
 {% if otherEntries.length > 0 %}
-<h2>Special events ({{otherEntries.length}})</h2>
-  <div class="game-grid">
-    {% for entry in otherEntries %}
-      <div class="game-grid-entry">
-        {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
-        <div class="entry-thumb__form">
-          <a href="{{ routeUrl(entry, 'entry', 'edit') }}" class="btn btn-light"><span class="fas fa-pencil-alt"></span></a>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
+  <h2>Special events ({{otherEntries.length}})</h2>
+  {{ listEntries(otherEntries) }}
 {% endif %}
 
 {% if externalEntries.length > 0 %}
-<h2>External Entries ({{externalEntries.length}})</h2>
-  <div class="game-grid">
-    {% for entry in externalEntries %}
-      <div class="game-grid-entry">
-        {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
-        <div class="entry-thumb__form">
-          <a href="{{ routeUrl(entry, 'entry', 'edit') }}" class="btn btn-light"><span class="fas fa-pencil-alt"></span></a>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
+  <h2>External Entries ({{externalEntries.length}})</h2>
+  {{ listEntries(externalEntries) }}
 {% endif %}
 
 {% if alakajamEntries.length + otherEntries.length + externalEntries.length === 0 %}
@@ -81,3 +45,17 @@
 {% endif %}
 
 {% endblock %}
+
+
+{% macro listEntries(entries) %}
+<div class="game-grid">
+  {% for entry in entries %}
+    <div class="game-grid-entry">
+      {{ eventMacros.entryThumb(entry, {showEvent: true}) }}
+      <div class="entry-thumb__form">
+        <a href="{{ routeUrl(entry, 'entry', 'edit') }}" class="btn btn-sm btn-primary"><span class="fas fa-pencil-alt"></span></a>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endmacro %}

@@ -7,16 +7,16 @@
 {% block body %}
 {{ super() }}
 
-<div class="container-fluid {{ 'spacing' if user }}">
+<div class="container-fluid">
   <div class="row">
 
     <div class="col-sm-3">
       {{ gamesSearchMacros.searchForm(context(), {fixedEvent: true}) }}
 
       {% if user and ['voting', 'voting_rescue', 'results'].includes(event.get('status_results')) %}
-      <div class="list-group">
+      <div class="list-group mt-3">
         <div class="list-group-item">
-          <h4 style="margin: 0">Recently rated</h4>
+          <h4>Recently rated</h4>
         </div>
         <div class="list-group-item">
           <p><a href="{{ routeUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>

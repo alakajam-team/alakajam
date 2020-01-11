@@ -7,7 +7,7 @@
   position: relative;
   padding: 10px;
   padding-left: 100px;
-  margin: 10px 0px 20px 15px;
+  margin: 10px 0px 20px 0;
   background-color: $main-lighter;
   border-left: 10px solid $main;
   font-size: 1.2rem;
@@ -65,7 +65,6 @@
       height: 40px;
     }
   }
-
 
   &__call-container {
     position: relative;
@@ -145,10 +144,6 @@
         padding-left: 0;
       }
     }
-  }
-
-  &__contents {
-    margin-top: 15px;
   }
 
   &__announcement {

@@ -241,10 +241,23 @@ input[type="submit"][data-disabled] {
 .btn-alt {
   background-color: $alt;
   border: 0;
+  color: white;
 
   &:hover,
   &:active {
     background-color: $alt-dark;
+    color: white;
+  }
+}
+.btn-outline-alt {
+  background-color: transparent;
+  border: 1px solid $alt;
+  color: $alt;
+
+  &:hover,
+  &:active {
+    border-color: $alt-dark;
+    color: $alt-dark;
   }
 }
 
@@ -369,9 +382,13 @@ input[type="submit"][data-disabled] {
 }
 
 .footer {
-  border-top: 1px solid $neutral-lighter;
-  padding: 20px 0;
   margin-top: 40px;
+  min-height: 400px;
+
+  & .container {
+    padding: 20px 0;
+    border-top: 1px solid $neutral-lighter;
+  }
 
   & a {
     color: $neutral;

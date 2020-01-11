@@ -80,8 +80,8 @@
 </div>
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-9">
+  <div class="row no-gutters">
+    <div class="col-md-9 pr-3">
       {% if featuredEvent %}
         {{ eventMacros.eventJumbo(featuredEvent, user, userEntry, { shrinkedJumbo: shrinkedJumbo }) }}
         {% if featuredEventAnnouncement %}
@@ -104,68 +104,70 @@
       {% endif %}
     </div>
 
-    <div id="js-event-sidebar" class="col-md-3 event-banner-panel">
-      {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
-      {% if featuredLinks and featuredLinks.length > 0 %}
-        <div class="home-featured-links">
-          <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
-            <span class="fas fa-info-circle"></span>
-            Special pages
+    <div id="js-event-sidebar" class="col-md-3">
+      <div class="event-banner-panel">
+        {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
+        {% if featuredLinks and featuredLinks.length > 0 %}
+          <div class="home-featured-links">
+            <div class="horizontal-bar my-3">
+              <span class="fas fa-info-circle"></span>
+              Special pages
+            </div>
+          {% for featuredLink in featuredLinks %}
+            <a class="home-featured-link" href="{{ featuredLink.link }}">
+              <span class="fas {{ featuredLink.icon }}"></span>
+              <span class="home-featured-link__title">{{ featuredLink.title }}</span>
+            </a>
+          {% endfor %}
           </div>
-        {% for featuredLink in featuredLinks %}
-          <a class="home-featured-link" href="{{ featuredLink.link }}">
-            <span class="fas {{ featuredLink.icon }}"></span>
-            <span class="home-featured-link__title">{{ featuredLink.title }}</span>
-          </a>
-        {% endfor %}
-        </div>
-      {% endif %}
+        {% endif %}
 
-      <div class="home-scheduled-events visible-md visible-lg">
-        <div class="horizontal-bar" style="margin-top: 0; margin-bottom: 10px">
-          <span class="fas fa-calendar"></span>
-          Event calendar
+        <div class="home-scheduled-events visible-md visible-lg">
+          <div class="horizontal-bar" style="margin-top: 0; margin-bottom: 10px">
+            <span class="fas fa-calendar"></span>
+            Event calendar
+          </div>
+
+          {% set compactCalendar = featuredLinks and featuredLinks.length > 0 %}
+          {% for event in eventSchedule %}
+            {% set hideForCompactCalendar = compactCalendar and event.get('status') === 'closed' %}
+            {% set hideForShrinkedJumbo = shrinkedJumbo and event.get('status') !== 'open' %}
+            {{ featuredLink(event, featuredEvent) if not hideForCompactCalendar and not hideForShrinkedJumbo }}
+          {% endfor %}
+          <div class="home-scheduled-event">
+            <a class="home-scheduled-event__title" href="/events">More...</a>
+          </div>
         </div>
 
-        {% set compactCalendar = featuredLinks and featuredLinks.length > 0 %}
-        {% for event in eventSchedule %}
-          {% set hideForCompactCalendar = compactCalendar and event.get('status') === 'closed' %}
-          {% set hideForShrinkedJumbo = shrinkedJumbo and event.get('status') !== 'open' %}
-          {{ featuredLink(event, featuredEvent) if not hideForCompactCalendar and not hideForShrinkedJumbo }}
-        {% endfor %}
-        <div class="home-scheduled-event">
-          <a class="home-scheduled-event__title" href="/events">More...</a>
+        <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
+          <span class="fas fa-angle-right"></span>
+          Social media & more
         </div>
-      </div>
-
-      <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
-        <span class="fas fa-angle-right"></span>
-        Social media & more
-      </div>
-      <div class="home-jumbo__social">
-        {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
-        {{ socialLink('Discord', 'https://discord.gg/yZPBpTn', 'discord.svg') }}
-        {{ socialLink('IRC', '/chat', 'irc.svg') }}
-        {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
-        {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
-        {{ socialLink('Paypal', 'https://alakajam.com/post/1070/finances-of-the-alakajam-association', 'paypal.svg') }}
-        <div class="home-jumbo__social-legend">
-          <a href="https://twitter.com/search?q=%23alakajam&f=live">
-            <img src="{{ staticUrl('/static/images/social/black-twitter.svg') }}" class="no-border" width="16"> #alakajam 
-          </a>
+        <div class="home-jumbo__social">
+          {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
+          {{ socialLink('Discord', 'https://discord.gg/yZPBpTn', 'discord.svg') }}
+          {{ socialLink('IRC', '/chat', 'irc.svg') }}
+          {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
+          {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
+          {{ socialLink('Paypal', 'https://alakajam.com/post/1070/finances-of-the-alakajam-association', 'paypal.svg') }}
+          <div class="home-jumbo__social-legend">
+            <a href="https://twitter.com/search?q=%23alakajam&f=live">
+              <img src="{{ staticUrl('/static/images/social/black-twitter.svg') }}" class="no-border" width="16"> #alakajam 
+            </a>
+          </div>
         </div>
       </div>
-
-      {% if featuredEventAnnouncement %}
-        <script type="text/javascript">
-          var announcement = findByClass('home-jumbo__announcement')
-          var sidebar = document.getElementById('js-event-sidebar')
-          var remainingHeight = sidebar.clientHeight - announcement.offsetTop - 10
-          var announcementHeight = Math.max(remainingHeight, {{ 0 if shrinkedJumbo else 265 }})
-          postExpandCollapse('home-jumbo__announcement', announcementHeight)
-        </script>
-      {% endif %}
     </div>
+
+    {% if featuredEventAnnouncement %}
+      <script type="text/javascript">
+        var announcement = findByClass('home-jumbo__announcement')
+        var sidebar = document.getElementById('js-event-sidebar')
+        var remainingHeight = sidebar.clientHeight - announcement.offsetTop - 10
+        var announcementHeight = Math.max(remainingHeight, {{ 0 if shrinkedJumbo else 265 }})
+        postExpandCollapse('home-jumbo__announcement', announcementHeight)
+      </script>
+    {% endif %}
   </div>
 </div>
 

@@ -146,7 +146,7 @@
     {{ event.get('countdown_config').date | featuredEventDateTime(user) }}
     {% if user %}
     {{ "(" + (user.get("timezone") | timezone) + ")" if user and user.get("timezone") }}
-    <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-primary btn-sm">
+    <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-light btn-sm">
       <span class="fa fa-cog"></span>
     </a>
     {% endif %}
@@ -174,16 +174,23 @@
 {% macro eventShortcutMyEntry(user, event, userEntry) %}
   <div class="action-banner">
     <div class="action-banner__title">
-      Your entry
-      <span class="ml-2">
+      <span class="mr-2">Your entry</span>
       {% if userEntry %}
-        <a href="{{ routeUrl(userEntry, 'entry', 'edit') }}" class="btn btn-sm btn-primary">Edit entry</a>
+        <a href="{{ routeUrl(userEntry, 'entry', 'edit') }}" class="btn btn-sm btn-primary">
+          <span class="fas fa-pencil-alt"></span>
+          Edit entry
+        </a>
       {% elseif event.get('status') !== 'open' or (event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked') %}
-        <a href="#"class="btn btn-sm btn-outline-primary disabled">Create entry</a>
+        <a href="#"class="btn btn-sm btn-outline-primary disabled">
+          <span class="fas fa-plus"></span>
+          Create entry
+        </a>
       {% else %}
-        <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-sm btn-primary">Create entry</a>
+        <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-sm btn-primary">
+          <span class="fas fa-plus"></span>
+          Create entry
+        </a>
       {% endif %}
-      </span>
     </div>
     {% if event.get('status_entry') === 'closed' %}
       {% set customMessage = "Entry submissions are closed" %}
@@ -196,23 +203,24 @@
 
 {% macro eventShortcutMyPost(user, event, userPost, options = {}) %}
   <div class="action-banner {{ 'buttons-only' if options.buttonsOnly }}">
-    <div class="action-banner__title d-flex">
+    <div class="action-banner__title">
       {% if not options.buttonsOnly %}
-        <div>{{ 'Your last post' if not options.buttonsOnly }}</div>
+        <span class="mr-2">{{ 'Your last post' if not options.buttonsOnly }}</span>
       {% endif %}
-      <div class="ml-auto">
-        {% if userPost %}
-          <a href="{{ routeUrl(userPost, 'post', 'edit') }}" class="btn btn-sm btn-primary">
-            <span class="fas fa-pencil-alt"></span>
-            <span class="d-none d-sm-inline">Edit</span>
-          </a>
-        {% endif %}
-        <a href="{{ routeUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-sm btn-primary">
-          <span class="fas fa-plus"></span>
-          <span class="d-none d-sm-inline">Create</span>
+      {% if userPost %}
+        <a href="{{ routeUrl(userPost, 'post', 'edit') }}" class="btn btn-sm btn-primary mr-1">
+          <span class="fas fa-pencil-alt"></span>
+          <span class="d-none d-lg-inline">Edit</span>
         </a>
-        <a href="{{ routeUrl(user, 'user', 'posts') }}" class="btn btn-sm btn-primary">My posts</a>
-      </div>
+      {% endif %}
+      <a href="{{ routeUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-sm btn-primary mr-1">
+        <span class="fas fa-plus"></span>
+        <span class="d-none d-lg-inline">Create</span>
+      </a>
+      <a href="{{ routeUrl(user, 'user', 'posts') }}" class="btn btn-sm btn-primary d-none d-md-inline-block">
+        <span class="fas fa-folder"></span>
+        My posts
+      </a>
     </div>
     {% if not options.buttonsOnly %}
     <div class="action-banner__post">

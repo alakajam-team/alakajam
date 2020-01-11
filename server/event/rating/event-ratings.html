@@ -5,20 +5,20 @@
 {{ super() }}
 
 <div class="container event-ratings">
-  <div class="row">
-    <h1>Ratings <span class="count">({{ ratingCount }})</span></h1>
-    <ul class="nav nav-tabs">
-      {% for votesCategory in votesPerCategory %}
-        <li id="js-tab-container-{{ votesCategory.title }}" role="presentation" class="js-tab-container {{ 'active' if loop.index === 1 }}">
-          <a class="js-tab-button" data-tab-selector="#js-tab-{{ votesCategory.title }}" href="#">
-            <h3>{{ votesCategory.title }}</h3>
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
+  <h1>Ratings <span class="count">({{ ratingCount }})</span></h1>
+  <ul class="nav nav-tabs">
+    {% for votesCategory in votesPerCategory %}
+      <li role="presentation" class="nav-item">
+        <a class="nav-link {{ 'active' if loop.index === 1 }}" data-toggle="tab" href="#tab-{{ votesCategory.title }}">
+          <h3>{{ votesCategory.title }}</h3>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+  <div class="tab-content">
     {% for votesCategory in votesPerCategory %}
       {% set categoryIndex = loop.index %}
-      <div id="js-tab-{{ votesCategory.title }}" class="js-tab event-ratings__tab {{ 'js-tab-active' if categoryIndex === 1 }}">
+      <div id="tab-{{ votesCategory.title }}" class="event-ratings__tab tab-pane show {{ 'active' if categoryIndex === 1 }}">
         <div class="row">
           {% for division, votes in votesCategory.votesPerDivision %}
             <div class="col-sm-6">

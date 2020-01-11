@@ -17,7 +17,10 @@
         {{ post.get('title') }}
       </a>
       {% if canUserWrite(options.readingUser, post, options) %}
-        <a class="btn btn-outline-primary btn-sm" href="{{ routeUrl(post, 'post', 'edit') }}">Edit</a>
+        <a class="btn btn-outline-secondary btn-sm" href="{{ routeUrl(post, 'post', 'edit') }}">
+          <span class="fas fa-pencil-alt"></span>
+          <span class="d-none d-md-inline">Edit</span>
+        </a>
       {% endif %}
       <a href="{{ '#comments' if options.commentsAnchorLinks else routeUrl(post, 'post', '#comments') }}" class="post__comment-count">
         <span class="fas fa-comments"></span> {{ post.get('comment_count') or 0 }}

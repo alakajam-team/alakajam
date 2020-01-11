@@ -6,8 +6,8 @@
 
 .action-banner {
   padding: 10px;
+  margin-bottom: 15px;
   background-color: $borders;
-  max-width: 945px;
 
   &.buttons-only {
     background-color: transparent;
@@ -206,7 +206,6 @@
   }
 
   &__tab {
-    background-color: white;
     padding: 10px;
     padding-top: 20px;
   }

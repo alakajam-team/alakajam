@@ -14,7 +14,7 @@ $theme-colors: (
 
     &:hover {
       color: $text;
-      background-color: $main-lighter;
+      background-color: $neutral-lightest;
     }
   }
 
@@ -41,4 +41,12 @@ $theme-colors: (
       }
     }
   }
+}
+
+.nav-link:focus {
+  outline: none;
+}
+
+.card-header > :last-child {
+  margin-bottom: 0;
 }

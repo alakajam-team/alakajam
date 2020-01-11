@@ -7,14 +7,12 @@
 {{ super() }}
 
 <div class="container thin">
-  <div class="{{ 'spacing' if user }}">
-    {% for post in posts %}
-      <div class="expandable">
-        {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
-        {{ navigationMacros.expandCollapse() }}
-      </div>
-    {% endfor %}
-  </div>
+  {% for post in posts %}
+    <div class="expandable">
+      {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+      {{ navigationMacros.expandCollapse() }}
+    </div>
+  {% endfor %}
 
   {% if posts.length > 0 %}
     {{ navigationMacros.pagination(1, pageCount, '/posts?event_id=' + event.get('id')) }}

@@ -7,24 +7,38 @@
 <h1>Platforms</h1>
 
 {% if editPlatform %}
-<form action="/admin/platforms" method="post">
-  {{ csrfToken() | safe }}
-  <div class="form-group">
-    <label for="id">ID</label>
-    <p>{{ editPlatform.get('id') or 'N.A.' }}</p>
-    <input type="hidden" name="id" value="{{ editPlatform.get('id') }}" />
+<form action="/admin/platforms" method="post" class="card">
+  <div class="card-header">
+    <div class="float-right">
+      {% if entryCount[editPlatform.get('id')] === 0 %}
+      <a class="btn btn-danger btn-sm" href="?delete={{ editPlatform.get('id') }}" onclick="return confirm('This cannot be reverted. Continue?')">Delete</a>
+    {% else %}
+      <span class="btn btn-danger btn-sm disabled">Delete</span> {{ formMacros.tooltip('Platforms used by entries cannot be deleted. Run manual DB queries to fix that before deletion.') }}
+    {% endif %}
+    </div>
+    <h2>{{ editPlatform.get('name') }}</h2>
   </div>
-  <div class="form-group">
-    <label for="name">Name</label>
-    <input type="text" name="name" value="{{ editPlatform.get('name') }}" class="form-control" />
-  </div>
-  <div class="form-group">
-    <input type="submit" class="btn btn-primary" value="Save" />
-    <a href="?" class="btn btn-outline-primary">Cancel</a>
+  <div class="card-body">
+    <div class="form-group">
+      <label for="id">ID</label>
+      <p>{{ editPlatform.get('id') or 'N.A.' }}</p>
+      <input type="hidden" name="id" value="{{ editPlatform.get('id') }}" />
+    </div>
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" name="name" value="{{ editPlatform.get('name') }}" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      {{ csrfToken() | safe }}
+      <input type="submit" class="btn btn-primary" value="Save" />
+      <a href="?" class="btn btn-outline-primary">Cancel</a>
+    </div>
   </div>
 </form>
+
 {% else %}
-  <p><a class="btn btn-outline-primary" href="?create=true">Create platform</a></p>
+  <p><a class="btn btn-primary" href="?create=true">Create platform</a></p>
 {% endif %}
 
 <table class="table sortable">
@@ -42,11 +56,6 @@
     <td>{{ entryCount[platform.get('id')] }}</td>
     <td>
       <a class="btn btn-primary btn-sm" href="?edit={{ platform.get('id') }}">Edit</a>
-      {% if entryCount[platform.get('id')] === 0 %}
-        <a class="btn btn-danger btn-sm" href="?delete={{ platform.get('id') }}" onclick="return confirm('This cannot be reverted. Continue?')">Delete</a>
-      {% else %}
-        <span class="btn btn-danger btn-sm disabled">Delete</span> {{ formMacros.tooltip('Platforms used by entries cannot be deleted. Run manual DB queries to fix that before deletion.') }}
-      {% endif %}
     </td>
   </tr>
   {% endfor %}
