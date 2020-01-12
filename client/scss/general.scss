@@ -207,6 +207,13 @@ a[data-toggle=tooltip] {
   cursor: pointer;
 }
 
+.cursor-default {
+  cursor: default;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .radio-label,
 .checkbox-label {
   margin: 0 10px 0 2px;
@@ -263,10 +270,19 @@ input[type="submit"][data-disabled] {
 
 .pagination {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 
-  & .disabled a,
-  & .disabled a:hover {
+  & .page-link {
+    color: $alt;
+  }
+
+  & .active .page-link {
+    background-color: $alt;
+    border-color: $alt;
+  }
+
+  & .disabled .page-link,
+  & .disabled .page-link:hover {
     background-color: $borders;
     color: $neutral;
   }

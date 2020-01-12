@@ -102,7 +102,7 @@
     {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
     <div class="home-jumbo__call" onclick="window.location = '{{ hypeLink }}'">
       <div class="row">
-        <div class="col-11 {{ 'col-md-6' if animatedCountdown }}">
+        <div class="col-11 {{ 'col-lg-6' if animatedCountdown }}">
           <h2>{{ event.get('countdown_config').message }}</h2>
           <div class="home-jumbo__call-details">
             {% if event.get('display_theme') %}
@@ -120,7 +120,7 @@
   {% elseif event.get('countdown_config').phrase %}
     <div class="home-jumbo__details">
       <div class="row">
-        <div class="col-11 {{ 'col-md-6' if animatedCountdown }}">
+        <div class="col-11 {{ 'col-lg-6' if animatedCountdown }}">
           {{ eventJumboCountdownPhrase(event, user) }}
         </div>
         {% if animatedCountdown %}
@@ -202,12 +202,13 @@
 {% endmacro %}
 
 {% macro eventShortcutMyPost(user, event, userPost, options = {}) %}
-  <div class="action-banner {{ 'buttons-only' if options.buttonsOnly }}">
+  <div class="action-banner {{ '
+  ' if options.buttonsOnly }}">
     <div class="action-banner__title">
       {% if not options.buttonsOnly %}
         <span class="mr-2">{{ 'Your last post' if not options.buttonsOnly }}</span>
       {% endif %}
-      {% if userPost %}
+      {% if userPost and not options.buttonsOnly %}
         <a href="{{ routeUrl(userPost, 'post', 'edit') }}" class="btn btn-sm btn-primary mr-1">
           <span class="fas fa-pencil-alt"></span>
           <span class="d-none d-lg-inline">Edit</span>

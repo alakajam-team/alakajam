@@ -101,7 +101,8 @@
 {% endmacro %}
 
 {% macro postLikes (post, options = {}) %}
-  <span data-toggle="tooltip" title="{{ post.get('like_count') or 0 }} gem{{ 's' if post.get('like_count') != -1 }}">
+  <span data-toggle="tooltip" class="cursor-default" 
+      title="{{ post.get('like_count') or 0 }} gem{{ 's' if post.get('like_count') != -1 }}">
     {% if options.readingUser %}
     {% if options.readingUser.get('id') == post.get('author_user_id') %}
       <span class="post__like-count liked">

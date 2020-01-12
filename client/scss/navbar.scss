@@ -252,10 +252,11 @@ $event-navbar-height: 50px;
     display: block;
     box-sizing: border-box;
     font-size: 1.3rem;
-    line-height: 1.5rem;
+    line-height: 1.3rem;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    margin-top: 2px;
 
     @media (min-width: 768px) {
       max-width: 250px;
@@ -271,7 +272,6 @@ $event-navbar-height: 50px;
     display: block;
     font-size: .8rem;
     color: $text-light;
-    line-height: .8rem;
     margin-top: -2px;
   }
   

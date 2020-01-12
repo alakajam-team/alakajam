@@ -43,7 +43,7 @@
 {# ======== TOOLTIPS ========= #}
 
 {% macro tooltip(title, options = {}) %}
- <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="{{ options.placement or 'top' }}" title="{{ title }}" style="font-size: 0.8rem"></span>
+ <span class="fas fa-info-circle {{ options.class or 'mx-1' }}" data-toggle="tooltip" data-placement="{{ options.placement or 'top' }}" title="{{ title }}" style="font-size: 0.8rem"></span>
 {% endmacro %}
 
 
@@ -55,7 +55,7 @@
   <label for="{{ inputId }}">
     <input type="radio" id="{{ inputId }}" class="js-radio" name="{{ name }}" value="{{ value }}" {{ 'checked="checked"' if value and modelProperty === value }} />
     {% if options.textField %}
-      <input type="text" class="js-radio-text-field" data-target="{{ inputId }}" placeholder="{{ options.placeholder }}" />
+      <input type="text" class="js-radio-text-field ml-1" data-target="{{ inputId }}" placeholder="{{ options.placeholder }}" />
     {% else %}
     <span class="radio-label">{{ label }}</span>
     {% endif %}

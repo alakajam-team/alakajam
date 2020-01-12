@@ -112,7 +112,7 @@
   &__countdown {
     display: none;
     position: absolute;
-    right: 0;
+    right: 30px;
     top: 50%;
     margin-top: -20px;
     width: 332px;
@@ -124,7 +124,7 @@
       display: none;
     }
   }
-  @media (max-width: 991px) {
+  @include media-breakpoint-down(lg) {
     &__countdown {
       position: static;
       margin: 0;
@@ -135,7 +135,7 @@
     }
   }
 
-  @media (min-width: 768px) {
+  @include media-breakpoint-up(sm) {
     &__shortcuts {
       & > div:first-child {
         padding-right: 0;

@@ -2,6 +2,13 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/alakajam-team/alakajam)!
 
+### January 2020
+
+* Migrate website to Bootstrap 4 (minor visual changes in all pages)
+* Support adding a little ad in the entry form to suggest entering the game to the next tournament
+* Improve presentation of the admin settings page
+* Set up automated tests on most website features, so that we can quickly detect regressions
+
 ### November 2019
 
 * Let users set their timezone in their settings to adapt all displayed dates

@@ -221,7 +221,7 @@
             {% set linkCount = entry.get('links').length if (entry.get('links').length > 3) else 3 %}
             {% for linkIndex in range(0, linkCount) %}
               {% set link = entry.get('links')[linkIndex] if entry.get('links').length > linkIndex else {} %}
-              <div class="row" style="margin-bottom: 5px">
+              <div class="row mb-1">
                 <div class="col-3">
                   <input type="text" name="label{{ loop.index0 }}" class="js-link-label form-control" placeholder="Label" value="{{ link.label }}" />
                 </div>
@@ -341,8 +341,8 @@
 <script id="js-links-template" type="text/template">
   <input type="hidden" name="submit-links" value="true" />
   <% for (var i in links) { %>
-    <div class="js-link" style="margin-bottom: 5px">
-        <div class="draggable" style="width: 3%; display: inline-block; cursor: pointer">
+    <div class="js-link mb-1">
+        <div class="draggable cursor-pointer d-inline-block" style="width: 3%">
           <span class="fas fa-bars"></span> 
         </div>
         <div style="width: 25%; display: inline-block">

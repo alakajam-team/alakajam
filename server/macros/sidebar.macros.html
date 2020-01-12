@@ -31,6 +31,6 @@
 
 {% macro sidebarSubLink(label, url, path) %}
   <a href="{{ url }}" class="list-group-item sidebar__link {{ 'active' if path === url }} {{ 'list-group-item-danger' if options.dashboardAdminMode and path === url}}">
-    <span style="margin-left: 15px">{{ label }}</span>
+    <span class="ml-3">{{ label }}</span>
   </a>
 {% endmacro %}

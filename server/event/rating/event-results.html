@@ -48,7 +48,7 @@
             <h2>{{ currentRanking | ordinal }}</h2>
           {% endif %}
         </div>
-        <div class="col-sm-{{ 11 - categoryTitles.length }}" style="margin-bottom: 5px">
+        <div class="col-sm-{{ 11 - categoryTitles.length }} mb-1">
           {{ eventMacros.entrySmallThumb(entry) }}
         </div>
         {% for title in categoryTitles %}
@@ -61,14 +61,14 @@
         {% endfor %}
       </div>
     {% else %}
-      <div class="col-sm-6" style="margin-bottom: 5px">
+      <div class="col-sm-6 mb-1">
         {{ eventMacros.entrySmallThumb(entry) }}
       </div>
     {% endif %}
   {% endfor %}
 
   <div class="row">
-    <div class="col-sm-12" style="margin-top: 15px;">
+    <div class="col-sm-12 mt-3">
       {{ pageLinks(event.get('divisions'), categoryTitles, division, sortedBy) }}
     </div>
   </div>

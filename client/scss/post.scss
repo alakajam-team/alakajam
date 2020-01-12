@@ -33,14 +33,14 @@
     display: inline-block;
     font-size: 1.5rem;
     white-space: nowrap;
-    color: $text-light;
 
     & button {
+      color: $text-light;
       border: none;
       background: none;
     }
 
-    &:hover, &.liked {
+    &:hover button, &.liked button {
       color: $alt;
     }
   }

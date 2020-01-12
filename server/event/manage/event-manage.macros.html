@@ -18,43 +18,55 @@
   </div>
 
   <div class="form-group">
-    <label>Call to action</label>
+    <b>Call to action</b>
     <div class="form-inline">
-    Message
-    <input type="text" class="form-control" style="min-width: 250px" name="countdown-message" value="{{ event.get('countdown_config').message if event }}" />
-    Link page {{ formMacros.tooltip('Among "themes", "posts", "games", "results", or an absolute path like "/post/create"')}}
-    <input type="text" class="form-control" name="countdown-link" value="{{ event.get('countdown_config').link if event }}" />
-    </div>
-  </div>
-  <div class="form-group">
-    <label>Next deadline</label>
-    <div class="form-inline">
-    Phrase {{ formMacros.tooltip('For instance: "ends", "voting starts"... or directly "starts January 31st" if the date is not set.') }} 
-    <input type="text" class="form-control" name="countdown-phrase" value="{{ event.get('countdown_config').phrase if event }}" />
-    {% if options.countdownOffset %}
-      Offset from start
-      <input type="text" name="countdown-offset-d" class="form-control" style="width: 50px" value="{{ options.countdownOffset.d or '0' }}" />d
-      <input type="text" name="countdown-offset-h" class="form-control" style="width: 50px" value="{{ options.countdownOffset.h or '0' }}" />h
-      <input type="text" name="countdown-offset-m" class="form-control" style="width: 50px" value="{{ options.countdownOffset.m or '0' }}" />m
-      &nbsp;
-    {% else %}
-      Date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)
-      {{ formMacros.dateTimePicker('countdown-date', event.get('countdown_config').date if event) }}
-    {% endif %}
-    <label><input type="checkbox" class="form-control js-checkbox" name="countdown-enabled" {{ 'checked="checked"' if event and event.get('countdown_config').enabled }} />
-    Animated countdown</label>
+      <div class="form-group mr-3">
+        <label class="mr-1" for="countdown-message">Message</label>
+        <input type="text" class="form-control" style="min-width: 250px" name="countdown-message" value="{{ event.get('countdown_config').message if event }}" />
+      </div>
+      <div class="form-group">
+        <label for="countdown-link">Link page {{ formMacros.tooltip('Among "themes", "posts", "games", "results", or an absolute path like "/post/create"') }}</label>
+        <input type="text" class="form-control" name="countdown-link" value="{{ event.get('countdown_config').link if event }}" />
+      </div>
     </div>
   </div>
 
+  <div class="form-group">
+    <b>Next deadline</b>
+    <div class="form-inline">
+      <div class="form-group mr-3">
+        <label>Phrase {{ formMacros.tooltip('For instance: "ends", "voting starts"... or directly "starts January 31st" if the date is not set.') }}</label>
+        <input type="text" class="form-control" name="countdown-phrase" value="{{ event.get('countdown_config').phrase if event }}" />
+      </div>
+      <div class="form-group mr-3">
+        {% if options.countdownOffset %}
+          <label class="mr-1">Offset from start</label>
+          <input type="text" name="countdown-offset-d" class="form-control" style="width: 50px" value="{{ options.countdownOffset.d or '0' }}" />d
+          <input type="text" name="countdown-offset-h" class="form-control" style="width: 50px" value="{{ options.countdownOffset.h or '0' }}" />h
+          <input type="text" name="countdown-offset-m" class="form-control" style="width: 50px" value="{{ options.countdownOffset.m or '0' }}" />m
+          &nbsp;
+        {% else %}
+          <label class="mr-1">Date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)</label>
+          {{ formMacros.dateTimePicker('countdown-date', event.get('countdown_config').date if event) }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" class="form-control js-checkbox" name="countdown-enabled" 
+            {{ 'checked="checked"' if event and event.get('countdown_config').enabled }} />
+          Animated countdown
+        </label>
+      </div>
+    </div>
+  </div>
 {% endmacro %}
 
 {% macro stateForm (event) %}
-
   <div class="horizontal-bar">Global</div>
 
   <div class="form-group">
-    <label for="status">Global status</label>
-    <div>
+    <label for="status"><b>Global status</b></label>
+    <div class="form-inline">
     {{ formMacros.radio('status', 'pending', 'Pending', 
       event.get('status') if event else 'pending') }}
     {{ formMacros.radio('status', 'open', 'Open', 
@@ -67,8 +79,8 @@
   <div id="js-edit-event-status-jam">
     <div class="horizontal-bar">Game jam</div>
     <div class="form-group">
-      <label for="status-theme">Theme voting status</label>
-      <div>
+      <label for="status-theme"><b>Theme voting status</b></label>
+      <div class="form-inline">
       {{ formMacros.radio('status-theme', 'disabled', 'Disabled', 
         event.get('status_theme') if event else 'disabled') }}
       {{ formMacros.radio('status-theme', 'off', 'Off', 
@@ -86,8 +98,8 @@
       </div>
     </div>
     <div class="form-group">
-      <label for="status-entry">Entry submission status</label>
-      <div>
+      <label for="status-entry"><b>Entry submission status</b></label>
+      <div class="form-inline">
       {{ formMacros.radio('status-entry', 'off', 'Off', 
         event.get('status_entry') if event else 'off') }}
       {{ formMacros.radio('status-entry', 'open', 'Open',
@@ -99,8 +111,8 @@
       </div>
     </div>
     <div class="form-group">
-      <label for="status-results">Event results status</label>
-      <div>
+      <label for="status-results"><b>Event results status</b></label>
+      <div class="form-inline">
       {{ formMacros.radio('status-results', 'disabled', 'Disabled',
         event.get('status_results') if event else 'disabled') }}
       {{ formMacros.radio('status-results', 'off', 'Off',
@@ -117,22 +129,24 @@
     </div>
   </div>
   
-  <div id="js-appearance" class="form-group">
+  <div id="js-appearance">
     <div class="horizontal-bar">Tournament</div>
-    <label for="status-theme">Tournament status</label>
-    <div>
-    {{ formMacros.radio('status-tournament', 'disabled', 'Disabled', 
-      event.get('status_tournament') if event else 'disabled') }}
-    {{ formMacros.radio('status-tournament', 'off', 'Off', 
-      event.get('status_tournament') if event) }}
-    {{ formMacros.radio('status-tournament', 'submission', 'Submission', 
-      event.get('status_tournament') if event) }}
-    {{ formMacros.radio('status-tournament', 'playing', 'Playing', 
-      event.get('status_tournament') if event) }}
-    {{ formMacros.radio('status-tournament', 'closed', 'Closed', 
-      event.get('status_tournament') if event) }}
-    {{ formMacros.radio('status-tournament', 'results', 'Tournament results', 
-      event.get('status_tournament') if event) }}
+    <div class="form-group">
+      <label for="status-theme"><b>Tournament status</b></label>
+      <div class="form-inline">
+      {{ formMacros.radio('status-tournament', 'disabled', 'Disabled', 
+        event.get('status_tournament') if event else 'disabled') }}
+      {{ formMacros.radio('status-tournament', 'off', 'Off', 
+        event.get('status_tournament') if event) }}
+      {{ formMacros.radio('status-tournament', 'submission', 'Submission', 
+        event.get('status_tournament') if event) }}
+      {{ formMacros.radio('status-tournament', 'playing', 'Playing', 
+        event.get('status_tournament') if event) }}
+      {{ formMacros.radio('status-tournament', 'closed', 'Closed', 
+        event.get('status_tournament') if event) }}
+      {{ formMacros.radio('status-tournament', 'results', 'Tournament results', 
+        event.get('status_tournament') if event) }}
+      </div>
     </div>
   </div>
 {% endmacro %}

@@ -242,7 +242,7 @@
         {% endif %}
       </div>
 
-      <h3 style="margin-top: 20px">Author{{ 's' if entry.related('userRoles').models.length > 1 }}</h3>
+      <h3 class="mt-4">Author{{ 's' if entry.related('userRoles').models.length > 1 }}</h3>
 
       <div class="card card-body pb-2">
         <div class="row">
@@ -264,7 +264,7 @@
       {% endif %}
 
       {% if posts.models.length > 0 %}
-        <h3>Related posts</h3>
+        <h3 class="mt-4">Related posts</h3 class="mt-4">
         <div class="list-group">
         {% for post in posts.models %}
           <div class="list-group-item" style="margin-bottom: -10px">
