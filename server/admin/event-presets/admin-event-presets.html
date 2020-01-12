@@ -33,7 +33,7 @@
         <button name="save" type="submit" class="btn btn-primary">Save</button>
         <a href="?" class="btn btn-outline-primary">Cancel</a>
         {% if editEventPreset.get('id') %}
-          <div class="pull-right">
+          <div class="float-right">
             <input type="hidden" name="id" value="{{ editEventPreset.get('id') }}" />
             <button type="submit" class="btn btn-danger" name="delete" onclick="return confirm('Delete this preset?')">Delete</button>
           </div>

@@ -55,7 +55,7 @@ export default {
     progress: ["value", "max", "width"]
   },
   ALLOWED_POST_CLASSES: [
-    "pull-left", "pull-right", "text-left", "text-center", "text-right",
+    "float-left", "float-right", "pull-left", "pull-right", "text-left", "text-center", "text-right",
     "spoiler", "indent", "btn", "btn-outline-primary", "btn-primary",
   ],
   ALLOWED_IFRAME_HOSTS: [

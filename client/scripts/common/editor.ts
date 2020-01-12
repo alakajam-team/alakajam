@@ -14,7 +14,7 @@ export default function editor(mdSelector, cmSelector) {
       toolbar: ["bold", "italic", "heading", "|",
         {
           name: "float-left",
-          action: alignText("pull-left"),
+          action: alignText("float-left"),
           className: "fas fa-align-left",
           title: "Float left"
         },
@@ -26,7 +26,7 @@ export default function editor(mdSelector, cmSelector) {
         },
         {
           name: "float-right",
-          action: alignText("pull-right"),
+          action: alignText("float-right"),
           className: "fas fa-align-right",
           title: "Float right"
         },

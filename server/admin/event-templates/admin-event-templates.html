@@ -42,7 +42,7 @@
       {{ editEventMacros.jamConfigForm(editEventTemplate, editEventTemplate) }}
       <div class="form-group">
         {% if editEventTemplate.get('id') %}
-          <div class="pull-right">
+          <div class="float-right">
             <input type="hidden" name="id" value="{{ editEventTemplate.get('id') }}" />
             <button type="submit" class="btn btn-danger" name="delete" onclick="return confirm('Delete this template?')">Delete</button>
           </div>

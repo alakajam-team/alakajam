@@ -282,11 +282,11 @@
     }
   }
   
-  & .pull-left {
+  & .float-left, & .pull-left {
     margin: 15px;
     margin-left: 0;
   }
-  & .pull-right {
+  & .float-right, & .pull-left {
     margin: 15px;
     margin-right: 0;
   }
