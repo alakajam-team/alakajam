@@ -8,7 +8,7 @@
 {% set hasEventBanner = event.related('details').get('banner') %}
 {{ eventMacros.eventBanner(event) }}
 
-<div class="container thin">
+<div class="container thin {{ 'event-banner-offset' if hasEventBanner }}">
   {{ eventMacros.eventJumbo(event, user, userEntry) }}
 
   {% set featuredLinks = event.related('details').get('links') %}

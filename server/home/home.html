@@ -41,7 +41,7 @@
   }
 </script>
 
-<div class="container">
+<div class="container {{ 'event-banner-offset' if featuredEventBanner }}">
   {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') if featuredEvent %}
   {% if shortlistEliminationInfo.stream %}
   <div>
@@ -104,8 +104,8 @@
       {% endif %}
     </div>
 
-    <div id="js-event-sidebar" class="col-md-3">
-      <div class="event-banner-panel">
+    <div class="col-md-3">
+      <div id="js-event-sidebar" class="event-banner-panel">
         {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
         {% if featuredLinks and featuredLinks.length > 0 %}
           <div class="home-featured-links">
@@ -164,7 +164,7 @@
         var announcement = findByClass('home-jumbo__announcement')
         var sidebar = document.getElementById('js-event-sidebar')
         var remainingHeight = sidebar.clientHeight - announcement.offsetTop - 10
-        var announcementHeight = Math.max(remainingHeight, {{ 0 if shrinkedJumbo else 265 }})
+        var announcementHeight = Math.max(remainingHeight, {{ 0 if shrinkedJumbo else 255 }})
         postExpandCollapse('home-jumbo__announcement', announcementHeight)
       </script>
     {% endif %}

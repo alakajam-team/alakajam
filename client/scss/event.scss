@@ -260,6 +260,14 @@
   }
 }
 
+.event-banner-offset {
+  padding-top: 150px;
+
+  @media (max-width: 767px) {
+    padding-top: 0;
+  }
+}
+
 .event-banner-panel {
   @media (min-width: 768px) {
     @include shadow;

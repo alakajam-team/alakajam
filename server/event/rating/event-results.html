@@ -13,7 +13,7 @@
 {% endif %}
 
 {% if resultsPost %}
-<div class="container thin">
+<div class="container thin {{ 'event-banner-offset' if hasEventBanner }}">
   {{ postMacros.post(resultsPost, {readingUser: user, readingUserLikes: userLikes}) }}
 </div>
 {% else %} 
