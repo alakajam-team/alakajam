@@ -63,7 +63,7 @@ async function createApp() {
   catchErrorsAndSignals();
   await initFilesLayout();
 
-  const middleware = require("./core/middleware").default;
+  const middleware = require("./core/middleware");
   const db = require("./core/db").default;
 
   const app = express();

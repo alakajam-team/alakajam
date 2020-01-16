@@ -1,0 +1,243 @@
+
+{% extends "base.html" %}
+{% import "macros/jumbotron.macros.html" as jumbotronMacros with context %}
+{% import "event/event.macros.html" as eventMacros with context %}
+{% import "post/post.macros.html" as postMacros with context %}
+{% import "user/user.macros.html" as userMacros %}
+{% import "macros/form.macros.html" as formMacros with context %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
+
+{% block body %}
+
+<script type="text/javascript">
+  // Custom announcement height limit and expand/collapse button
+  // Script inlined for immediate loading
+  function postExpandCollapse(postClass, maxAnnouncementHeight) {
+    var announcementEl = findByClass(postClass)
+    if (announcementEl.offsetHeight > maxAnnouncementHeight + 50) {
+      announcementEl.setAttribute('style', 'max-height: ' + maxAnnouncementHeight + 'px')
+      var expandBarEl = findByClass('expand-bar', postClass)
+      expandBarEl.setAttribute('style', 'display: block')
+      expandBarEl.onclick = function (e) {
+        if (announcementEl.className.indexOf('expanded') !== -1) {
+          announcementEl.className = announcementEl.className.replace(' expanded', '')
+        } else {
+          announcementEl.className += ' expanded'
+        }
+        e.preventDefault()
+        return false
+      }
+    } else {
+      findByClass('expand-bar', postClass).remove()
+    }
+  }
+  
+  function findByClass(className, parentClassName) {
+    var parent = parentClassName ? findByClass(parentClassName) : document
+    var elements = parent.getElementsByClassName(className)
+    return (elements.length > 0) ? elements[0] : null
+  }
+</script>
+
+{% if featuredEvent %}
+  {{ jumbotronMacros.eventJumbotron(featuredEvent) }}
+{% endif %}
+
+<!--
+<div class="container {{ 'event-banner-offset' if featuredEventBanner }}">
+  {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') if featuredEvent %}
+  {% if shortlistEliminationInfo.stream %}
+  <div>
+      <div style="margin-bottom: 20px">
+        <div id="twitch-embed"></div>
+      </div>
+      <script src="https://embed.twitch.tv/embed/v1.js"></script>
+      <script type="text/javascript">
+        new Twitch.Embed("twitch-embed", {
+          width: '100%',
+          height: 500,
+          channel: "{{ shortlistEliminationInfo.stream }}"
+        });
+      </script>
+  </div>
+  {% endif %}
+
+  {% if not user %}
+  <div class="home-welcome">
+    <img class="home-welcome__icon" src="{{ staticUrl('/static/images/welcome.png') }}" />
+    <div class="home-welcome__title">New website unlocked</div>
+      Welcome to <div class="home-welcome__brand">Alakajam!</div>, a game making community. We host informal game jams!
+      <a class="home-welcome__more" href="/article/docs">Learn&nbsp;more</a>
+  </div>
+  {% endif %}
+
+  {% if featuredPost %}
+  <div class="js-featured-post expandable">
+    {{ postMacros.post(featuredPost, {readingUser: user, readingUserLikes: userLikes}) }}
+    {{ navigationMacros.expandCollapse({ manualScripting: true }) }}
+  </div>
+  <script type="text/javascript">
+    postExpandCollapse('js-featured-post', {{ 0 if shrinkedJumbo else 450 }})
+  </script>
+  {% endif %}
+</div>
+
+<div class="container">
+  <div class="row no-gutters">
+    <div class="col-md-9 pr-3">
+      {% if featuredEvent %}
+         eventMacros.eventJumbo(featuredEvent, user, userEntry, { shrinkedJumbo: shrinkedJumbo }) }}
+        {% if featuredEventAnnouncement %}
+          <div class="home-jumbo__contents event-banner-panel">
+          {% if featuredEventAnnouncement.get('body').indexOf('&lt;iframe') === 0 %}
+              {{ postMacros.post(featuredEventAnnouncement, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
+              {{ featuredEventAnnouncement.get('body') | markdown | safe }}
+          {% else %}
+            <div class="home-jumbo__announcement expandable">
+              {{ postMacros.post(featuredEventAnnouncement, {hideDate: true, readingUser: user, readingUserLikes: userLikes}) }}
+              {{ navigationMacros.expandCollapse({ manualScripting: true }) }}
+            </div>
+          {% endif %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if not featuredEvent and not featuredPost %}
+        <h1 class="text-center">Next event not announced yet.</h1>
+      {% endif %}
+    </div>
+
+    <div class="col-md-3">
+      <div id="js-event-sidebar" class="event-banner-panel">
+        {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
+        {% if featuredLinks and featuredLinks.length > 0 %}
+          <div class="home-featured-links">
+            <div class="horizontal-bar my-3">
+              <span class="fas fa-info-circle"></span>
+              Special pages
+            </div>
+          {% for featuredLink in featuredLinks %}
+            <a class="home-featured-link" href="{{ featuredLink.link }}">
+              <span class="fas {{ featuredLink.icon }}"></span>
+              <span class="home-featured-link__title">{{ featuredLink.title }}</span>
+            </a>
+          {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="home-scheduled-events visible-md visible-lg">
+          <div class="horizontal-bar" style="margin-top: 0; margin-bottom: 10px">
+            <span class="fas fa-calendar"></span>
+            Event calendar
+          </div>
+  
+          {% set compactCalendar = featuredLinks and featuredLinks.length > 0 %}
+          {% for event in eventSchedule %}
+            {% set hideForCompactCalendar = compactCalendar and event.get('status') === 'closed' %}
+            {% set hideForShrinkedJumbo = shrinkedJumbo and event.get('status') !== 'open' %}
+            {{ featuredLink(event, featuredEvent) if not hideForCompactCalendar and not hideForShrinkedJumbo }}
+          {% endfor %}
+          <div class="home-scheduled-event">
+            <a class="home-scheduled-event__title" href="/events">More...</a>
+          </div>
+        </div>
+
+        <div class="horizontal-bar" style="margin-top: 10px; margin-bottom: 10px">
+          <span class="fas fa-angle-right"></span>
+          Social media & more
+        </div>
+        <div class="home-jumbo__social">
+          {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
+          {{ socialLink('Discord', 'https://discord.gg/yZPBpTn', 'discord.svg') }}
+          {{ socialLink('IRC', '/chat', 'irc.svg') }}
+          {{ socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg') }}
+          {{ socialLink('Github', 'https://github.com/alakajam-team', 'github.svg') }}
+          {{ socialLink('Paypal', 'https://alakajam.com/post/1070/finances-of-the-alakajam-association', 'paypal.svg') }}
+          <div class="home-jumbo__social-legend">
+            <a href="https://twitter.com/search?q=%23alakajam&f=live">
+              <img src="{{ staticUrl('/static/images/social/black-twitter.svg') }}" class="no-border" width="16"> #alakajam 
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if featuredEventAnnouncement %}
+      <script type="text/javascript">
+        var announcement = findByClass('home-jumbo__announcement')
+        var sidebar = document.getElementById('js-event-sidebar')
+        var remainingHeight = sidebar.clientHeight - announcement.offsetTop - 10
+        var announcementHeight = Math.max(remainingHeight, {{ 0 if shrinkedJumbo else 255 }})
+        postExpandCollapse('home-jumbo__announcement', announcementHeight)
+      </script>
+    {% endif %}
+  </div>
+</div>
+
+
+<div class="container thin">
+  {% if user and suggestedEntries and suggestedEntries.length > 0 %}
+    <div class="horizontal-bar">
+      Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
+    </div>
+    <div class="home-grid game-grid">
+    {% for entry in suggestedEntries %}
+      <div class="home-entry game-grid-entry">
+      {{ eventMacros.entryThumb(entry) }}
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %}
+    
+  {% if posts.length > 0 %}
+    <div class="horizontal-bar">Latest posts</div>
+
+    {{ eventMacros.eventShortcutMyPost(user, featuredEvent, userPost, { buttonsOnly: shrinkedJumbo })
+        if user and featuredEvent }}
+    <div class="spacing"></div>
+
+    {% for post in posts %}
+      <div class="expandable">
+        {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+        {{ navigationMacros.expandCollapse() }}
+      </div>
+    {% endfor %}
+    {{ navigationMacros.pagination(1, pageCount, '/posts') }}
+  {% endif %}
+</div>
+-->
+{% endblock %}
+
+{% macro featuredLink (event, featuredEvent) %}
+{% set mainEvent = event.get('title').includes('Alakajam') %}
+<div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }} {{ 'main' if mainEvent }}">
+  <div class="home-scheduled-event__arrow"></div>
+  <a class="home-scheduled-event__title" href="{{ routeUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
+    {% if mainEvent %}
+      <img src="{{ staticUrl('/static/images/favicon16.png') }}" class="home-scheduled-event__logo no-border" />
+    {% endif %}
+    {{ event.get('title') }}
+  </a>
+  <div>
+    <span class="home-scheduled-event__dates">
+      {{ event.get('display_dates') }} 
+    </span>
+    {% if event.get('status') === 'closed' %}
+      - <a href="{{ routeUrl(event, 'event') }}" class="home-scheduled-event__entries">{{ event.get('entry_count') }} entries</a>
+    {% endif %}
+  </div>
+  <div class="home-scheduled-event__label">
+    {% if event.get('status') === 'open' %}
+      <span class="badge badge-secondary">On now!</span>
+    {% elseif event.get('status') === 'pending' %}
+      <span class="badge badge-light">Up next!</span>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro socialLink (title, url, iconName) %}
+<a href="{{ url }}" data-toggle="tooltip" title="{{ title }}">
+  <img src="{{ staticUrl('/static/images/social/' + iconName) }}" class="footer__icon no-border" /> 
+</a>
+{% endmacro %}

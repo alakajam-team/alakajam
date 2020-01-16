@@ -49,6 +49,7 @@ import { games } from "./explore/games.controller";
 import { peopleMods } from "./explore/people-mods.controller";
 import { people } from "./explore/people.controller";
 import { home } from "./home/home.controller";
+import { home2 } from "./home/home2.controller";
 import { commentSave } from "./post/comment/comment.controller";
 import { likePost } from "./post/like/like.controller";
 import { postDelete, postEdit, postSave } from "./post/manage/post-manage.controller";
@@ -100,6 +101,7 @@ export function routes(app) {
     // General
 
     router.get("/", home);
+    router.get("/home2", home2);
     router.get("/events", events);
     router.get("/games", games);
     router.get("/people", people);

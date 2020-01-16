@@ -36,14 +36,10 @@ import * as templatingGlobals from "./templating-globals";
 
 const LAUNCH_TIME = Date.now();
 
-export default {
-  configure,
-};
-
 /*
  * Setup app middleware
  */
-async function configure(app: Application) {
+export async function configure(app: Application) {
   app.locals.config = config;
 
   // Slow requests logging
@@ -109,7 +105,7 @@ async function configure(app: Application) {
      * Calling render() after a traceAndShowErrorPage() is tolerated and will be a no-op,
      * although it would be bad practice. (This method helps catching rejections properly on promises
      * that are *asynchronously* awaited, eg. while awaiting other services in the middle of preparing a Promise.all().
-     * You should prefer refactoring your code rather than use this)
+     * Using custom logic to handle errors is usually cleaner than using this.)
      */
     res.traceAndShowErrorPage = (error?: Error) => {
       errorPage(req, res, 500, error, app.locals.devMode);
@@ -147,6 +143,13 @@ async function configure(app: Application) {
 
   // Routing: 500/404
   app.use(createErrorRenderingMiddleware(app.locals.devMode));
+}
+
+export function logErrorAndReturn(value: any) {
+  return (reason: any) => {
+    log.error(reason);
+    return value;
+  };
 }
 
 function setupNunjucks(app) {

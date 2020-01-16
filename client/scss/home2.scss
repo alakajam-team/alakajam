@@ -1,0 +1,33 @@
+/**
+ * Home page v2
+ */
+
+.event-jumbotron, .home-jumbotron {
+  margin-top: -$body-margin;
+  padding: 30px;
+  background-size: cover;
+}
+
+.jumbotron-invite {
+  background-color: $alt;
+  cursor: pointer;
+  color: white;
+
+  &:hover {
+    background-color: $alt-dark;
+  }
+
+  &__title {
+    color: white;
+    font-size: 1.7rem;
+    margin-bottom: 0;
+  }
+
+  &__details {
+    
+  }
+  
+  &__countdown {
+    
+  }
+}

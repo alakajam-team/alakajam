@@ -38,7 +38,7 @@ export async function eventMiddleware(req: CustomRequest, res: CustomResponse<Co
 
       const announcementTask = postService.findLatestAnnouncement({ eventId: event.id })
         .then((announcement) => { res.locals.latestEventAnnouncement = announcement; });
-      const userShortcutTasks = handleEventUserShortcuts(res, res.locals.event);
+      const userShortcutTasks = loadUserShortcutsContext(res, res.locals.event);
 
       await Promise.all([announcementTask, userShortcutTasks]);
     }
@@ -46,7 +46,7 @@ export async function eventMiddleware(req: CustomRequest, res: CustomResponse<Co
   next();
 }
 
-export function handleEventUserShortcuts(
+export function loadUserShortcutsContext(
     res: CustomResponse<CommonLocals>,
     targetEvent: BookshelfModel,
     options: { postFromAnyEvent?: boolean } = {}) {

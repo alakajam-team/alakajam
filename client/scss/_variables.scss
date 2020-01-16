@@ -41,6 +41,10 @@ $moderation-lightest: $neutral-lightest;
 $moderation-dark: $neutral-light;
 $moderation-text: change-color(white, $alpha: .9);
 
+/* Shared sizes */
+
+$body-margin: 20px;
+
 /* Mixins */
 
 @mixin main-font {

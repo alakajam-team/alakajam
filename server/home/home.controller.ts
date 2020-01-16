@@ -4,7 +4,7 @@ import cache from "server/core/cache";
 import enums from "server/core/enums";
 import settings from "server/core/settings";
 import { SETTING_FEATURED_POST_ID, SETTING_HOME_SHRINKED_JUMBO } from "server/core/settings-keys";
-import { handleEventUserShortcuts } from "server/event/event.middleware";
+import { loadUserShortcutsContext } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -95,7 +95,7 @@ export async function home(req, res) {
     cache.general.set("home_page", context, 10 /* 10 seconds */);
   }
 
-  await handleEventUserShortcuts(res, res.locals.featuredEvent, { postFromAnyEvent: true });
+  await loadUserShortcutsContext(res, res.locals.featuredEvent, { postFromAnyEvent: true });
 
   if (res.locals.user) {
     const allPagePosts = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);

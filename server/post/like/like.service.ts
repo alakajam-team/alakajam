@@ -8,6 +8,7 @@
 import db from "server/core/db";
 import enums from "server/core/enums";
 import * as models from "server/core/models";
+import { BookshelfModel } from "bookshelf";
 
 export default {
   isValidLikeType,
@@ -29,7 +30,7 @@ function isValidLikeType(likeType) {
  * - Make sure the nodes array size has a reasonable max value or the SQL might overflow (IN clause).
  * @returns {object} An object where keys are node IDs, and values are the type of like.
  */
-async function findUserLikeInfo(nodes, user) {
+async function findUserLikeInfo(nodes: BookshelfModel[], user: BookshelfModel) {
   nodes = nodes.filter((node) => !!node);
   if (nodes.length === 0 || !user) {
     return {};
@@ -43,7 +44,7 @@ async function findUserLikeInfo(nodes, user) {
     })
     .where("node_id", "IN", nodes.map((node) => node.get("id")));
 
-  const result = {};
+  const result: Record<number, string> = {};
   likeData.forEach((likeRow) => {
     result[likeRow.node_id] = likeRow.type;
   });
