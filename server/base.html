@@ -106,6 +106,7 @@
           <li class="nav-item {{ 'active' if path.indexOf('/article/docs') === 0 or path.indexOf('/api') === 0 }}"><a class="nav-link" href="/article/docs/alakajam-competition-rules">Docs</a></li>
           <li class="nav-item {{ 'active' if path.indexOf('/article/about') === 0 or path === '/changes' }}"><a class="nav-link" href="/article/about">About</a></li>
           {% if user %}
+            <li class="nav-item d-md-none {{ 'active' if path.indexOf('/dashboard') === 0 }}"><a class="nav-link" href="/dashboard">Dashboard</a></li>
             <li class="nav-item d-md-none {{ 'active' if path === '/logout' }}"><a class="nav-link" href="/logout">Logout</a></li>
             <li class="nav-item button-item d-none d-md-block">
               {{ userMenu(user, unreadNotifications) }}

@@ -56,7 +56,7 @@
         {% endif %}
       </div>
       {% if entry.related('details').get('body') %}
-      <div class="card card-body post user-contents">
+      <div class="card card-body post user-contents mb-3">
         {{ entry.related('details').get('body') | markdown | safe }}
       </div>
       {% endif %}
@@ -66,7 +66,7 @@
           <div class="entry-voting">
             <h2 class="entry-voting__header">
               <div class="float-right">
-                <a href="{{ routeUrl(event, 'event', 'ratings') }}" class="btn btn-outline-primary btn-sm">Manage my ratings</a>
+                <a href="{{ routeUrl(event, 'event', 'ratings') }}" class="btn btn-outline-light btn-sm">Manage my ratings</a>
               </div>
               Game ratings
             </h2>
@@ -215,7 +215,7 @@
         <span class="entry__info-label">Tags</span>
         <div class="entry__info-value" style="width: 215px">
           {% for tag in entry.related('tags').models %}
-            <a href="/games?eventId=&amp;tags={{ tag.get('id') }}" class="btn btn-secondary btn-sm">{{ tag.get('value') }}</a>
+            <a href="/games?eventId=&amp;tags={{ tag.get('id') }}" class="btn btn-outline-secondary btn-sm ml-1 mb-1">{{ tag.get('value') }}</a>
           {% endfor %}
         </div>
       </div>
@@ -276,7 +276,7 @@
     </div>
     <div class="col-md-8">
       {% if entry.get('allow_anonymous') and user and not user.get('disallow_anonymous') %}
-        <p class="float-right" style="line-height: 30px">This entry welcomes anonymous comments (<a href="/article/faq#anon-comment" target="_blank">help</a>)</p>
+        <p class="float-right my-1">This entry welcomes anonymous comments (<a href="/article/faq#anon-comment" target="_blank">help</a>)</p>
       {% endif %}
       <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
       {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, allowMods: true, editComment: editComment, 

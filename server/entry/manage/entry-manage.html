@@ -352,21 +352,21 @@
           <input type="url" class="js-link-url form-control" data-row="<%- i %>" name="url<%- i %>" placeholder="URL" value="<%- links[i].url %>">
         </div>
         <div style="width: 5%; display: inline-block">
-          <input type="button" class="js-remove-link btn btn-sm" data-row="<%- i %>" value="x" />
+          <input type="button" class="js-remove-link btn btn-sm btn-outline-secondary" data-row="<%- i %>" value="x" />
         </div>
       </div>
     </div>
   <% } %>
-  <input type="button" class="js-add-link btn btn-sm" value="Add link" />
+  <input type="button" class="js-add-link btn btn-sm btn-outline-secondary" value="Add link" />
 </script>
 
 {% endblock %}
 
 {% macro divisionButton(title, legend, icon, value, currentValue, canEditDivision, tooltipMessage) %}
   {% if canEditDivision %}
-    <label class="btn entry-division js-division-button {{ 'active' if value === currentValue }}">
+    <label class="btn entry-division js-division-button {{ 'active' if value === currentValue }}" role="button">
       <div class="{{ icon }}"></div>
-      <input type="radio" name="division" value="{{ value }}" autocomplete="off" {{ 'checked' if value === currentValue }}>
+      <input type="radio" name="division" value="{{ value }}" autocomplete="off" class="d-none" {{ 'checked' if value === currentValue }}>
       {{ title }}
       <div class="entry-division__legend d-none d-sm-block d-none d-md-block">{{ legend | safe }}</div>
     </label>
