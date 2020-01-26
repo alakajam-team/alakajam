@@ -40,7 +40,7 @@ import { eventManageTournament } from "./event/manage/event-manage-tournament.co
 import { eventDelete, eventManage } from "./event/manage/event-manage.controller";
 import { viewEventRatings } from "./event/rating/event-ratings.controller";
 import { viewEventResults } from "./event/rating/event-results.controller";
-import { ajaxFindThemes, ajaxSaveThemeVote, viewEventThemes } from "./event/theme/event-themes.controller";
+import { ajaxFindThemes, ajaxSaveThemeVote, eventThemes } from "./event/theme/event-themes.controller";
 import { viewEventTournamentGames } from "./event/tournament/tournament-games.controller";
 import { viewEventTournamentLeaderboard } from "./event/tournament/tournament-leaderboard.controller";
 import { chat } from "./explore/chat.controller";
@@ -169,7 +169,7 @@ export function routes(app) {
     router.get("/:eventName([^/]{0,}-[^/]{0,})", viewDefaultPage);
     router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventAnnouncements);
     router.get("/:eventName([^/]{0,}-[^/]{0,})/posts", viewEventPosts);
-    router.all("/:eventName([^/]{0,}-[^/]{0,})/themes", csrf, viewEventThemes);
+    router.all("/:eventName([^/]{0,}-[^/]{0,})/themes", csrf, eventThemes);
     router.all("/:eventName([^/]{0,}-[^/]{0,})/ajax-find-themes", ajaxFindThemes);
     router.all("/:eventName([^/]{0,}-[^/]{0,})/ajax-save-vote", ajaxSaveThemeVote);
     router.get("/:eventName([^/]{0,}-[^/]{0,})/games", csrf, viewEventGames);

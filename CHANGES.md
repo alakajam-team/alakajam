@@ -241,7 +241,7 @@
 * Feedback Score system for sorting entries
 * Alakajam! links look pretty when shared on Twitter
 
-## [11 June 2017: 1st Feedback Fortnight launch](https://alakajam.com/1st-feedback-fortnight)
+## [11 July 2017: 1st Feedback Fortnight launch](https://alakajam.com/1st-feedback-fortnight)
 
 ### June 2017
 

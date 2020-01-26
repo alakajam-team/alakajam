@@ -343,7 +343,9 @@ export async function getThemeStats(req: CustomRequest, res: CustomResponse<Comm
         // Use true ranking (needed for shortlisted themes at least)
         themeStats.ranking = await eventThemeService.findThemeRanking(theme, { useShortlistRating: true });
       }
-      themesStats.push(themeStats);
+      if (theme.get("notes") > 0) { // Ignore themes that haven't received any votes (eg. duplicates)
+        themesStats.push(themeStats);
+      }
     }
   }
 

@@ -11,11 +11,13 @@ import {
 import eventThemeService from "server/event/theme/event-theme.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EventLocals } from "../event.middleware";
 
 /**
- * Browse event theme voting
+ * Submit themes to an event, view and vote on other themes
  */
-export async function viewEventThemes(req, res) {
+export async function eventThemes(req: CustomRequest, res: CustomResponse<EventLocals>) {
   res.locals.pageTitle += " | Themes";
 
   const event = res.locals.event;
@@ -39,7 +41,7 @@ export async function viewEventThemes(req, res) {
       if (req.method === "POST" && res.locals.user) {
         if (req.body.action === "ideas") {
           // Gather ideas data
-          const ideas = [];
+          const ideas: Array<{id?: string, title: string}> = [];
           for (let i = 0; i < parseInt(req.body["idea-rows"], 10); i++) {
             const idField = req.body["idea-id[" + i + "]"];
             if (forms.isId(idField) || !idField) {

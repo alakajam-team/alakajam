@@ -97,15 +97,18 @@ async function findThemesByTitle(title: string, fetchOptions = {}): Promise<Book
 
 /**
  * Saves the theme ideas of an user for an event
- * @param user {User} user model
- * @param event {Event} event model
- * @param ideas {array(object)} An array of exactly 3 ideas: [{title, id}]. Not filling the title
+ * @param user user model
+ * @param event event model
+ * @param ideas An array of exactly 3 ideas: [{title, id}]. Not filling the title
  * deletes the idea, not filling the ID creates one instead of updating it.
  */
-async function saveThemeIdeas(user, event, ideas) {
-  const ideasToKeep = [];
-  const ideasToCreate = [];
-  const themesToDelete = [];
+async function saveThemeIdeas(
+    user: BookshelfModel,
+    event: BookshelfModel,
+    ideas: Array<{id?: string, title: string}>): Promise<void> {
+  const ideasToKeep: Array<{id?: string, title: string}> = [];
+  const ideasToCreate: Array<{id?: string, title: string}> = [];
+  const themesToDelete: BookshelfModel[] = [];
 
   // Compare form with the existing user themes
   const existingThemes = await findThemeIdeasByUser(user, event);
@@ -127,7 +130,7 @@ async function saveThemeIdeas(user, event, ideas) {
   }
 
   // Delete obsolete themes
-  const tasks = [];
+  const tasks: Array<Promise<any>> = [];
   let ideasSubmitted = existingThemes.models.length - themesToDelete.length;
   for (const themeToDelete of themesToDelete) {
     tasks.push(themeToDelete.destroy());
@@ -158,7 +161,7 @@ async function saveThemeIdeas(user, event, ideas) {
 /**
  * Sets the theme status to "duplicate" if another theme is identical
  */
-async function _handleDuplicates(theme) {
+async function _handleDuplicates(theme: BookshelfModel): Promise<void> {
   theme.set("slug", forms.slug(theme.get("title")));
 
   let query = models.Theme.where({
