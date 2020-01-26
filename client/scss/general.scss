@@ -165,10 +165,7 @@ blockquote {
 .editor-toolbar .float-left, .editor-toolbar .float-right {
   // Accidental Bootstrap clash
   float: inherit !important;
-}
-
-.datetimepicker {
-  background-color: white;
+  margin: 0 !important;
 }
 
 // Bootstrap notifications
