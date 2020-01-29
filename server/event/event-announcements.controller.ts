@@ -14,6 +14,6 @@ export async function viewEventAnnouncements(req, res) {
 
   res.render("event/event-announcements", {
     posts,
-    userLikes: await likeService.findUserLikeInfo(posts, res.locals.user),
+    userLikes: await likeService.findUserLikeInfo(posts.models, res.locals.user),
   });
 }

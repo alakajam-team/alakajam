@@ -71,6 +71,7 @@ import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
+import constants from "server/core/constants";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
@@ -235,7 +236,7 @@ function initUploadMiddleware() {
     storage: uploadStorage,
     limits: {
       fields: 1000,
-      fileSize: 2 * 1024 * 1024,
+      fileSize: constants.MAX_UPLOAD_SIZE,
       files: 20,
       parts: 2000,
     },

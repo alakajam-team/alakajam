@@ -18,7 +18,7 @@ export async function dashboardEntries(req: CustomRequest, res: CustomResponse<C
   entryCollection.models.forEach((entry) => {
     if (entry.get("external_event") != null) {
       externalEntries.push(entry);
-    } else if (entry.related("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
+    } else if (entry.related<BookshelfModel>("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
       alakajamEntries.push(entry);
     } else {
       otherEntries.push(entry);

@@ -57,7 +57,7 @@ export async function entryView(req, res) {
   let userLikes = null;
   if (user) {
     userScore = await highscoreService.findEntryScore(user.get("id"), entry.get("id"));
-    userLikes = await likeService.findUserLikeInfo(posts, user);
+    userLikes = await likeService.findUserLikeInfo(posts.models, user);
   }
 
   res.render("entry/entry-view", {

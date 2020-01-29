@@ -148,7 +148,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
       }
     }
 
-    let post = await postService.createPost(entrantUser, event2.get("id"));
+    let post = await postService.createPost(entrantUser as any, event2.get("id"));
     post.set({
       title: "I'm in!",
       body: "This is my second game and I'm really excited.",
@@ -158,7 +158,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
     });
     await post.save();
 
-    post = await postService.createPost(adminUser, event2.get("id"));
+    post = await postService.createPost(adminUser as any, event2.get("id"));
     post.set({
       title: "Event started!",
       body: "The theme is `You are not alone`. Have fun!",

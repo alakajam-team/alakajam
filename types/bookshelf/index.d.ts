@@ -7,17 +7,26 @@ declare module "bookshelf" {
    * Alakajam-specific model typings
    */
 
-  class EntryBookshelfModel extends BookshelfModel {
+  class NodeBookshelfModel extends BookshelfModel {
+    likes: () => BookshelfCollection;
+    userRoles: () => BookshelfCollection;
+    comments: () => BookshelfModel;
+  }
+
+  class EntryBookshelfModel extends NodeBookshelfModel {
+    details: () => BookshelfModel;
     sortedUserRoles: () => BookshelfModel[];
     picturePreviews: () => any[];
     pictureThumbnail: () => string | undefined;
     pictureIcon: () => string | undefined;
   }
 
-  class PostBookshelfModel extends BookshelfModel {
-    userRoles: () => BookshelfCollection;
+  class PostBookshelfModel extends NodeBookshelfModel {
+    entry: () => BookshelfModel;
+    event: () => BookshelfModel;
+    author: () => BookshelfModel;
   }
-  
+
 
   /*
    * Original typings do not support the "registry" and "pagination" plugins
@@ -33,18 +42,24 @@ declare module "bookshelf" {
     offset?: number;
     debug?: boolean;
   }
+
   class BookshelfModel extends Model<BookshelfModel> {
+		related<T>(relation: string): T;
+		related<R extends Model<any>>(relation: string): R | Collection<R>;
     relations?: Record<string, any>;
-    fetchPage?: (options: FetchPageOptions) => Promise<BookshelfCollection>;
+    fetchPage?<T extends BookshelfModel>(options: FetchPageOptions): Promise<BookshelfCollectionOf<T>>;
   }
 
-  class BookshelfCollection extends Collection<BookshelfModel> {
-    where(match: { [key: string]: any }, firstOnly?: boolean): BookshelfModel | BookshelfCollection;
-    difference(arrayValue: BookshelfModel | BookshelfModel[] | BookshelfCollection): BookshelfModel[];
-    slice(begin?: number, end?: number): BookshelfModel[];
-		includes(value: any, fromIndex?: number): boolean;
+  class BookshelfCollection extends BookshelfCollectionOf<BookshelfModel> { }
 
-    models?: BookshelfModel[];
+  class BookshelfCollectionOf<T extends BookshelfModel> extends Collection<BookshelfModel> {
+    where(match: { [key: string]: any }, firstOnly?: boolean): T | BookshelfCollection;
+    difference(arrayValue: T[] | BookshelfCollectionOf<T>): T[];
+		difference(...values: T[]): T[];
+    slice(begin?: number, end?: number): T[];
+    includes(value: any, fromIndex?: number): boolean;
+
+    models?: T[];
     pagination?: {
       rowCount: number;
       pageCount: number;
@@ -52,4 +67,5 @@ declare module "bookshelf" {
       pageSize: number;
     };
   }
+
 }

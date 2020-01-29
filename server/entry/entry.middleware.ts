@@ -1,4 +1,4 @@
-import { EntryBookshelfModel } from "bookshelf";
+import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import { NextFunction } from "express";
 import forms from "server/core/forms";
 import links from "server/core/links";
@@ -25,7 +25,8 @@ export async function entryMiddleware(req: CustomRequest, res: CustomResponse<Ev
   }
   res.locals.entry = entry;
   res.locals.pageTitle = entry.get("title");
-  res.locals.pageDescription = entry.get("description") || forms.markdownToText(entry.related("details").get("body"));
+  res.locals.pageDescription = entry.get("description")
+    || forms.markdownToText(entry.related<BookshelfModel>("details").get("body"));
 
   if (entry.picturePreviews().length > 0) {
     res.locals.pageImage = templating.staticUrl(entry.picturePreviews()[0]);

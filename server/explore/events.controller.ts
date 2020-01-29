@@ -1,4 +1,4 @@
-import { BookshelfCollection } from "bookshelf";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import enums from "server/core/enums";
 import eventService from "../event/event.service";
 
@@ -45,7 +45,8 @@ export async function events(req, res) {
             if (!topEntriesByDivision[division]) {
               topEntriesByDivision[division] = [];
             }
-            if (topEntriesByDivision[division].length < 3 && entry.related("details").get("ranking_1")) {
+            if (topEntriesByDivision[division].length < 3
+               && entry.related<BookshelfModel>("details").get("ranking_1")) {
               topEntriesByDivision[division].push(entry);
             }
           });

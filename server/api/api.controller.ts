@@ -338,7 +338,7 @@ export async function getThemeStats(req: CustomRequest, res: CustomResponse<Comm
       };
       if (theme.get("ranking") && theme.get("status") !== enums.THEME.STATUS.SHORTLIST) {
         // Use rough ranking estimate
-        themeStats.ranking = Math.floor(theme.get("ranking") * event.related("details").get("theme_count"));
+        themeStats.ranking = Math.floor(theme.get("ranking") * event.related<BookshelfModel>("details").get("theme_count"));
       } else {
         // Use true ranking (needed for shortlisted themes at least)
         themeStats.ranking = await eventThemeService.findThemeRanking(theme, { useShortlistRating: true });

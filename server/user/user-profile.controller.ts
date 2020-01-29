@@ -1,3 +1,4 @@
+import { BookshelfModel, PostBookshelfModel } from "bookshelf";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import highScoreService from "server/entry/highscore/entry-highscore.service";
@@ -27,7 +28,7 @@ export async function userProfile(req, res) {
     entries.models.forEach((entry) => {
       if (entry.get("external_event") != null) {
         externalEntries.push(entry);
-      } else if (entry.related("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
+      } else if (entry.related<BookshelfModel>("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
         alakajamEntries.push(entry);
       } else {
         otherEntries.push(entry);
@@ -42,7 +43,7 @@ export async function userProfile(req, res) {
       posts,
       userScores: scores.models,
       medals: scores.countBy((userScore) => userScore.get("ranking")),
-      userLikes: await likeService.findUserLikeInfo(posts, res.locals.user)
+      userLikes: await likeService.findUserLikeInfo(posts.models as PostBookshelfModel[], res.locals.user)
     });
   } else {
     res.errorPage(404, "No user exists with name " + req.params.name);

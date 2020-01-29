@@ -363,7 +363,7 @@ async function computeRankings(event: BookshelfModel) {
     }) as BookshelfCollection;
 
   // For each ranking category...
-  const categoryCount = event.related("details").get("category_titles").length;
+  const categoryCount = event.related<BookshelfModel>("details").get("category_titles").length;
   const categoryIndexes = _range(1, categoryCount);
   for (const categoryIndex of categoryIndexes) {
     const sortedEntries = rankedEntries.sortBy((entry) => -entry.related("details").get("rating_" + categoryIndex));
@@ -376,7 +376,7 @@ async function computeRankings(event: BookshelfModel) {
       // For each entry, best to worst...
       const divisionEntries = sortedEntries.filter((entry) => entry.get("division") === division);
       for (const entry of divisionEntries) {
-        const details = entry.related("details") as BookshelfModel;
+        const details = entry.related<BookshelfModel>("details");
 
         // Rank it, if it has an average rating if the given category
         if (details.get("rating_" + categoryIndex) >= 1) {
@@ -409,7 +409,7 @@ async function clearRankings(event: BookshelfModel) {
     .where("entry.division", "<>", enums.DIVISION.UNRANKED)
     .fetchAll() as BookshelfCollection;
 
-  const categoryCount: number = event.related("details").get("category_titles").length;
+  const categoryCount: number = event.related<BookshelfModel>("details").get("category_titles").length;
   const categoryIndexes = _range(1, categoryCount);
 
   const attributesPatch: Record<string, any> = {};

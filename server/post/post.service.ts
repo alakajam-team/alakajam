@@ -1,4 +1,4 @@
-import { BookshelfCollection, BookshelfModel, PostBookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, PostBookshelfModel, BookshelfCollectionOf } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import { createLuxonDate } from "server/core/formats";
@@ -25,41 +25,37 @@ export default {
 
 /**
  * Indicates if a date is already past
- * @param  {number}  time
- * @return {Boolean}
  */
-function isPast(time) {
+function isPast(time: number): boolean {
   return time && (new Date().getTime() - time) > 0;
 }
 
 /**
  * Finds the URL of the first picture in the body, if any.
  * Quick and not-completely-reliable implementation.
- * @param {Model} model Any model with a body
+ * @param model Any model with a body
  */
-function getFirstPicture(model) {
+function getFirstPicture(model: BookshelfModel): string | false {
   const matches = FIRST_PICTURE_REGEXP.exec(model.get("body"));
   if (matches) {
     return matches[1] || matches[2]; // Markdown capture OR HTML tag capture
   }
-  return null;
+  return false;
 }
 
 /**
  * Finds all posts from a feed (specified through options)
- * @param  {object} options among "specialPostType allowHidden allowDrafts eventId entryId userId"
- * @return {array(Post)}
  */
 async function findPosts(options: {
-      specialPostType?: string,
-      allowHidden?: boolean,
-      allowDrafts?: boolean,
-      eventId?: number|string,
-      entryId?: number|string,
-      userId?: number|string,
-      page?: number,
-      transacting?: any
-    } = {}): Promise<BookshelfCollection> {
+  specialPostType?: string,
+  allowHidden?: boolean,
+  allowDrafts?: boolean,
+  eventId?: number | string,
+  entryId?: number | string,
+  userId?: number | string,
+  page?: number,
+  transacting?: any
+} = {}): Promise<BookshelfCollectionOf<PostBookshelfModel>> {
   const query = await models.Post.query((qb) => {
     if (options.specialPostType !== undefined) {
       qb = qb.where("special_post_type", options.specialPostType);
@@ -100,9 +96,9 @@ async function findPosts(options: {
   });
 }
 
-async function findPostById(postId) {
+async function findPostById(postId: number): Promise<PostBookshelfModel> {
   return models.Post.where("id", postId)
-    .fetch({ withRelated: ["author", "userRoles", "event", "entry", "entry.userRoles"] });
+    .fetch({ withRelated: ["author", "userRoles", "event", "entry", "entry.userRoles"] }) as any;
 }
 
 /**
@@ -110,7 +106,14 @@ async function findPostById(postId) {
  * @param  {object} options among "id name userId eventId specialPostType allowDrafts"
  * @return {Post}
  */
-async function findPost(options: any = {}) {
+async function findPost(options: {
+  id?: string;
+  name?: string;
+  userId?: number;
+  eventId?: number;
+  specialPostType?: string;
+  allowDrafts?: boolean;
+}): Promise<BookshelfModel> {
   let query = models.Post as BookshelfModel;
   if (options.id) { query = query.where("id", options.id); }
   if (options.name) { query = query.where("name", options.name); }
@@ -128,7 +131,7 @@ async function findPost(options: any = {}) {
  * @param  {Object} options among "eventId"
  * @return {Post}
  */
-async function findLatestAnnouncement(options: any = {}) {
+async function findLatestAnnouncement(options: { eventId?: number } = {}): Promise<BookshelfModel> {
   let query = models.Post
     .where("special_post_type", constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
     .where("published_at", "<=", createLuxonDate().toJSDate() as any);
@@ -141,11 +144,10 @@ async function findLatestAnnouncement(options: any = {}) {
 
 /**
  * Creates and persists a new post, initializing the owner UserRole.
- * @param  {User} user
- * @param  {number} eventId the optional ID of an event to associate with.
- * @return {Post}
+ * @param user
+ * @param eventId the optional ID of an event to associate with.
  */
-async function createPost(user, eventId = null) {
+async function createPost(user: BookshelfModel, eventId?: number): Promise<PostBookshelfModel> {
   const post = new models.Post({
     author_user_id: user.get("id"),
     name: "",
@@ -178,13 +180,13 @@ async function refreshCommentCount(node: BookshelfModel): Promise<void> {
  * @param {Post} post
  * @return {void}
  */
-async function deletePost(post) {
+async function deletePost(post: BookshelfModel): Promise<void> {
   await post.load(["userRoles.user", "comments.user"]);
-  post.related("userRoles").forEach((userRole) => {
+  post.related<BookshelfCollection>("userRoles").forEach((userRole) => {
     cache.user(userRole.related("user")).del("latestPostsCollection");
     userRole.destroy();
   });
-  post.related("comments").forEach((comment) => {
+  post.related<BookshelfCollection>("comments").forEach((comment) => {
     cache.user(comment.related("user")).del("byUserCollection");
     comment.destroy();
   });
@@ -199,7 +201,11 @@ async function deletePost(post) {
  * @param  {number} entryId
  * @return {void}
  */
-async function attachPostsToEntry(eventId, userId, entryId, options: { transacting?: any } = {}) {
+async function attachPostsToEntry(
+  eventId: number,
+  userId: number,
+  entryId: number,
+  options: { transacting?: any } = {}): Promise<BookshelfModel[]> {
   // Attach posts from same event
   const posts = await findPosts({
     eventId,

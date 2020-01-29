@@ -15,6 +15,6 @@ export async function viewEventPosts(_, res) {
   res.render("event/event-posts", {
     posts: postsCollection.models,
     pageCount: postsCollection.pagination.pageCount,
-    userLikes: await likeService.findUserLikeInfo(postsCollection, res.locals.user),
+    userLikes: await likeService.findUserLikeInfo(postsCollection.models, res.locals.user),
   });
 }

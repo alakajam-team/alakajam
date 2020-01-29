@@ -1,4 +1,4 @@
-import { BookshelfModel } from "bookshelf";
+import { BookshelfModel, NodeBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import security from "server/core/security";
 import templating from "server/core/templating-functions";
@@ -20,7 +20,7 @@ export async function postView(req: CustomRequest, res: CustomResponse<CommonLoc
     const context = await buildPostContext(post, user);
 
     // Guess social thumbnail pic
-    res.locals.pageImage = postService.getFirstPicture(post);
+    res.locals.pageImage = postService.getFirstPicture(post) || undefined;
     if (res.locals.pageImage && res.locals.pageImage.indexOf("://") === -1) {
       res.locals.pageImage = templating.staticUrl(res.locals.pageImage);
     }
@@ -34,7 +34,7 @@ export async function postView(req: CustomRequest, res: CustomResponse<CommonLoc
 /**
  * Fetch related event, entry, comments & current user likes
  */
-export async function buildPostContext(post: BookshelfModel, currentUser: BookshelfModel) {
+export async function buildPostContext(post: NodeBookshelfModel, currentUser: BookshelfModel) {
   const context = {
     post,
     allEvents: (await eventService.findEvents()).models,

@@ -1,5 +1,5 @@
 
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import enums from "server/core/enums";
@@ -14,12 +14,12 @@ import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 
 interface HomeContext {
-  featuredPost?: BookshelfModel;
+  featuredPost?: PostBookshelfModel;
   shrinkedJumbo: boolean;
   featuredEventAnnouncement?: BookshelfModel;
   eventSchedule: BookshelfModel[];
   suggestedEntries: BookshelfModel[];
-  posts: BookshelfModel[];
+  posts: PostBookshelfModel[];
   pageCount: number;
 }
 
@@ -37,7 +37,7 @@ export async function home2(req: CustomRequest, res: CustomResponse<CommonLocals
 
   if (res.locals.user) {
     const allPostsInPage = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);
-    res.locals.userLikes = await likeService.findUserLikeInfo(allPostsInPage, res.locals.user);
+    res.locals.userLikes = await likeService.findUserLikeInfo(allPostsInPage as PostBookshelfModel[], res.locals.user);
   }
 
   res.render("home/home2", context);
@@ -88,7 +88,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
 
   // Find featured post
   contextTasks.push(
-    settings.find(SETTING_FEATURED_POST_ID)
+    settings.findNumber(SETTING_FEATURED_POST_ID, 0)
       .then(async (featuredPostId) => {
         if (featuredPostId) {
           context.featuredPost = await postService.findPostById(featuredPostId);

@@ -105,6 +105,7 @@ export default {
   MAX_BODY_USER_DETAILS: 100000,
   MAX_BODY_ENTRY_DETAILS: 100000,
   MAX_BODY_COMMENT: 10000,
+  MAX_UPLOAD_SIZE: 2 * 1024 * 1024,
 
   // Misc
   ARTICLES_ROOT_URL: "https://raw.githubusercontent.com/alakajam-team/alakajam/master/server/docs/article-data/",

@@ -71,7 +71,7 @@ export async function home(req, res) {
       .catch(res.traceAndShowErrorPage);
 
     // Find featured post
-    const featuredPostTask = settings.find(SETTING_FEATURED_POST_ID)
+    const featuredPostTask = settings.findNumber(SETTING_FEATURED_POST_ID, 0)
       .then(async (featuredPostId) => {
         if (featuredPostId) {
           context.featuredPost = await postService.findPostById(featuredPostId);

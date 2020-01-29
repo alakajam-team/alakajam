@@ -25,7 +25,7 @@ export async function adminAnnouncements(req: CustomRequest, res: CustomResponse
   res.render("admin/announcements/admin-announcements", {
     draftPosts,
     publishedPosts: allPostsCollection.filter((post) => !draftPosts.includes(post)),
-    userLikes: await likeService.findUserLikeInfo(allPostsCollection, res.locals.user),
+    userLikes: await likeService.findUserLikeInfo(allPostsCollection.models, res.locals.user),
     currentPage,
     pageCount: allPostsCollection.pagination.pageCount
   });

@@ -1,12 +1,15 @@
+import { PostBookshelfModel } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
+import { CustomRequest, CustomResponse } from "server/types";
 import likeService from "./like/like.service";
 import postService from "./post.service";
 
 /**
  * General paginated posts browsing
  */
-export async function postsView(req, res) {
+export async function postsView(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   // Fetch posts
   let specialPostType = forms.sanitizeString(req.query.special_post_type) || null;
   if (specialPostType === "all") {
@@ -15,13 +18,14 @@ export async function postsView(req, res) {
   const eventId = forms.sanitizeString(req.query.event_id) || undefined;
   const userId = forms.sanitizeString(req.query.user_id) || undefined;
   const currentPage = forms.isId(req.query.p) ? parseInt(req.query.p, 10) : 1;
-  const posts = await postService.findPosts({
+  const postsCollection = await postService.findPosts({
     specialPostType,
     eventId,
     userId,
     page: currentPage,
   });
-  await posts.load(["event", "entry"]);
+  await postsCollection.load(["event", "entry"]);
+  const posts = postsCollection.models as PostBookshelfModel[];
 
   // Determine title
   let title = "Posts";
@@ -43,11 +47,11 @@ export async function postsView(req, res) {
   }
 
   res.render("post/posts-view", {
-    posts: posts.models,
+    posts,
     userLikes: await likeService.findUserLikeInfo(posts, res.locals.user),
     title,
     currentPage,
-    pageCount: posts.pagination.pageCount,
+    pageCount: postsCollection.pagination.pageCount,
     paginationBaseUrl,
   });
 }
