@@ -274,7 +274,7 @@
         <div class="list-group">
         {% for post in posts.models %}
           <div class="list-group-item" style="margin-bottom: -10px">
-            {{ postMacros.post(post, { hideDetails: true, readingUser: user, readingUserLikes: userLikes }) }}
+            {{ postMacros.post(post, { hideDetails: true, readingUser: user, readingUserLikes: userLikes, smallTitle: true }) }}
           </div>
         {% endfor %}
         </div>

@@ -55,7 +55,7 @@ export async function buildPostContext(post: NodeBookshelfModel, currentUser: Bo
   context.specialPostType = post.get("special_post_type");
 
   if (post.id) {
-    context.sortedComments = await commentService.findCommentsSortedForDisplay(post);
+    context.sortedComments = await commentService.findCommentsOnNodeForDisplay(post);
     if (currentUser) {
       context.userLikes = await likeService.findUserLikeInfo([post], currentUser);
     }

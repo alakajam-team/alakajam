@@ -1,7 +1,7 @@
 {% import "macros/form.macros.html" as formMacros with context %}
 {% import "event/event.macros.html" as eventMacros %}
 
-{# Allowed options: readingUser readingUserLikes hideHeading hideBody hideDetails showId allowMods commentsAnchorLinks #}
+{# Allowed options: readingUser readingUserLikes hideHeading hideBody hideDetails showId allowMods commentsAnchorLinks smallTitle #}
 {% macro post(post, options = {}) %}
 
 <div class="post">
@@ -9,7 +9,7 @@
   {% set postUrl = routeUrl(post, 'post') %}
 
   {% if not options.hideHeading %}
-    {% set h = 'h4' if options.hideBody or options.hideDetails else 'h1' %}
+    {% set h = 'h4' if options.smallTitle else 'h1' %}
     {% set specialPostType = post.get('special_post_type') %}
     <{{h}}>
       <a name="p{{ post.get('id') }}" class="anchor" />
@@ -45,7 +45,6 @@
         {% endif %}
         {{ author.get('title') }} 
       </a>
-      {% if not options.hideDate %}
       <span>
          • {% if isPast(post.get('published_at')) %}
           <span data-toggle="tooltip" title="{{ post.get('published_at') | dateTime(user) }}">{{ post.get('published_at') | relativeTime }}</span>
@@ -55,7 +54,6 @@
           <span class="badge">Draft</span>
         {% endif %}
       </span>
-      {% endif %}
 
       {% set relatedEvent = post.related('event') if post.related('event') %}
       {% set relatedEntry = post.related('entry') %}
@@ -87,10 +85,6 @@
         {{ post.get('comment_count') or 0 }} comment{{ 's' if post.get('comment_count') != 1 }}
       </a>
     </div>
-    {% endif %}
-
-    {% if options.hideBody %}
-      <div class="spacing"></div>
     {% endif %}
   </div>
   
@@ -140,7 +134,7 @@
     <div class="row comment mb-3 {{ 'unread' if options.highlightNewerThan and options.highlightNewerThan < comment.get('created_at') }}">
       {% if options.linkToNode and not lastLinkedNode or node != lastLinkedNode %}
       <div class="col-12">
-        <h3><a href="{{ routeUrl(node, comment.get('node_type')) }}#c{{ comment.id }}">{{ node.get('title') }}</a></h3>
+        <a href="{{ commentUrl(node, comment) }}"><h4 class="post__title">{{ node.get('title') }}</h4></a>
         {% set lastLinkedNode = node %}
       </div>
       {% endif %}
@@ -186,8 +180,18 @@
           <a class="btn btn-outline-primary btn-sm ml-auto" href="{{ routeUrl(comment, 'comment', 'edit') }}"><span class="fas fa-pencil-alt"></span></a>
           {% endif %}
         </div>
-        <div class="card card-body comment__body user-contents">
-            {{ comment.get('body') | markdown | safe }}
+        <div class="card">
+          <div class="card-body comment__body user-contents">
+            {% if options.preview %}
+              {% set commentPreview = comment.get('body') | markdownToText | truncate(150) %}
+              {{ commentPreview }}
+              {% if commentPreview.length >= 149 %}
+                <a href="{{ commentUrl(node, comment) }}">(read more)</a>
+              {% endif %} 
+            {% else %}
+              {{ comment.get('body') | markdown | safe }}
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -207,6 +211,10 @@
 </style>
 
 {% endmacro %}
+
+{% macro commentUrl(node, comment) -%}
+{{ routeUrl(node, comment.get('node_type')) }}#c{{ comment.id }}
+{%- endmacro %}
 
 
 {% macro commentEditor(comment, csrfToken, options) %}

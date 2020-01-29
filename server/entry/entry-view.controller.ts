@@ -61,7 +61,7 @@ export async function entryView(req, res) {
   }
 
   res.render("entry/entry-view", {
-    sortedComments: await commentService.findCommentsSortedForDisplay(entry),
+    sortedComments: await commentService.findCommentsOnNodeForDisplay(entry),
     editableAnonComments,
     posts,
     entryVotes,

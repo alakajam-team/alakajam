@@ -2,10 +2,31 @@
  * Home page v2
  */
 
+$homeNavbarHeight: 50px;
+
 .event-jumbotron, .home-jumbotron {
   margin-top: -$body-margin;
-  padding: 30px;
+  padding: 20px 0;
   background-size: cover;
+
+  &__post {
+    margin-top: 15px;
+  }
+
+  &__shortcut:hover {
+    background-color: $neutral-lightest;
+  }
+  &__shortcut-icon {
+    margin-left: -10px;
+    display: inline-block;
+    width: 36px;
+    text-align: center;
+    color: $alt;
+  }
+  &__shortcut-title {
+    color: black;
+    font-weight: normal;
+  }
 }
 
 .jumbotron-invite {
@@ -23,11 +44,39 @@
     margin-bottom: 0;
   }
 
-  &__details {
-    
-  }
-  
   &__countdown {
-    
+    float: right;
+    width: 320px;
+
+    @include media-breakpoint-down(lg) {
+      float: none;
+    }
   }
+}
+
+.home-navbar {
+  background-color: #333;
+  height: $homeNavbarHeight;
+  line-height: $homeNavbarHeight;
+  overflow: hidden;
+
+  &__events {
+    height: $homeNavbarHeight;
+    overflow: hidden;
+  }
+
+  &__event {
+    display: inline-block;
+    margin: -4px 2px 0;
+  }
+
+  &__social {
+    text-align: center;
+
+    img {
+      height: 30px;
+      margin: -4px 2px 0;
+    }
+  }
+
 }

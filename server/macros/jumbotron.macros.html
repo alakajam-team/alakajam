@@ -1,75 +1,126 @@
-{% macro eventJumbotron(event, user) %}
-{% set eventLogo = event.get('logo') if event %}
-{% set eventBackground = event.related('details').get('banner') if event %}<!-- TOOD Background instead of banner -->
+{% import "post/post.macros.html" as postMacros with context %}
+{% import "event/event.macros.html" as eventMacros with context %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
 
-<div class="event-jumbotron" style="{{ backgroundImage(eventBackground) }}">
-
+{% macro eventJumbotron(event, featuredPost, user, entry, options = {}) %}
+<div class="event-jumbotron" style="{{ backgroundImage(event) }}">
   <div class="container">
     <div class="row">
-      <div class="col-2">
+      <div class="col-lg-2 text-center mb-3">
+        {% set eventLogo = event.get('logo') if event %}
         {% if eventLogo %}
           <img src="{{ staticUrl(eventLogo) }}" />
         {% endif %}
       </div>
 
-      <div class="col-7">
+      <div class="col-lg-7 mb-3">
         {% set rawHypeLink = event.get('countdown_config').link %}
         {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
         {% set animatedCountdownEnabled = event.get('countdown_config').enabled %}
         <div class="card card-body jumbotron-invite"
           onclick="{{ 'window.location = \'' + hypeLink + '\'' if hypeLink }}">
           <div class="row align-items-center">
-            <div class="col-11 {{ 'col-lg-6' if animatedCountdownEnabled }}">
+            <div class="col-12 {{ 'col-lg-6 mb-3 mb-xl-0' if animatedCountdownEnabled }}">
               <h1 class="jumbotron-invite__title">{{ event.get('countdown_config').message }}</h1>
               <div class="jumbotron-invite__details">
-                {% if event.get('display_theme') %}
-                <div><span class="fas fa-lightbulb"></span> <b>Theme:</b> {{ event.get('display_theme') }}</div>
-                {% endif %}
                 {{ eventJumbotronCountdownPhrase(event, user) }}
               </div>
             </div>
             {% if animatedCountdownEnabled %}
-            <div class="col-lg-6">
-              <span class="jumbotron-invite__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></span>
+            <div class="col-xl-6 d-none d-sm-block">
+              <div class="jumbotron-invite__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></div>
             </div>
             {% endif %}
           </div>
         </div>
-        <div class="card card-body mt-3">
-          Post
-        </div>
 
+        {% if featuredPost %}
+          <div class="event-jumbotron__post">
+            {% if featuredPost.get('body').indexOf('&lt;iframe') === 0 %}
+              {{ postMacros.post(featuredPost, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
+              {{ featuredPost.get('body') | markdown | safe }}
+            {% else %}
+              {{ postMacros.post(featuredPost, {hideBody: true, readingUser: user, readingUserLikes: userLikes}) }}
+            {% endif %}
+          </div>
+        {% endif %}
       </div>
 
-
-      <div class="col-3">
-        <div class="card card-body">
-          User links
-        </div>
-        <div class="card card-body mt-3">
-          Event links
+      <div class="col-lg-3">
+        <div class="row">
+          <div class="col-lg-12 col-sm-6 col-12 mb-3">
+            <div class="card border-0">
+              {% if entry %}
+                <a class="card-header event-jumbotron__shortcut" href="{{ routeUrl(entry, 'entry') }}">{{ myEntryTitle(event) }}</a>
+                {{ eventMacros.entrySmallThumb(entry) }}
+              {% else %}
+                {% set entryCreationEnabled = ['open', 'open_unranked'].includes(event.get('status_entry')) %}
+                {% if entryCreationEnabled %}
+                  <a class="card-header event-jumbotron__shortcut" href="{{ routeUrl(event, 'event', 'create-entry') }}">{{ myEntryTitle(event) }}</a>
+                  <div class="card-body text-center">
+                    <p class="mb-1">Submissions are open!</p>
+                    <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-alt btn-lg d-block">Create entry</a>
+                  </div>
+                {% else %}
+                  <div class="card-header event-jumbotron__shortcut">{{ myEntryTitle(event) }}</div>
+                  <div class="card-body text-center">
+                    {% if event.get('status_entry') === 'closed' %}
+                      Submissions are closed.
+                    {% else %}
+                      Submissions are not open yet.
+                    {% endif %}
+                  </div>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-lg-12 col-sm-6 col-12">
+            <div class="list-group event-jumbotron__shortcut">
+              {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
+              {% for featuredLink in featuredLinks %}
+                <a class="list-group-item" href="{{ featuredLink.link }}">
+                  <h3>
+                    <span class="event-jumbotron__shortcut-icon"><span class="fas {{ featuredLink.icon }}"></span></span>
+                    <span class="event-jumbotron__shortcut-title">{{ featuredLink.title }}</span>
+                  </h3>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
 </div>
+{% endmacro %}
+
+{% macro myEntryTitle(event) %} 
+<h3 class="mb-0">
+  <span class="event-jumbotron__shortcut-icon"><span class="fas fa-chess-rook"></span></span>
+  <span class="event-jumbotron__shortcut-title">My {{ event.get('title') }} entry</span>
+</h3>
 {% endmacro %}
 
 {% macro eventJumbotronCountdownPhrase(event, user) %}
   {% if event.get('countdown_config').phrase %}
-    <span class="fas fa-calendar-alt"></span> 
-    {{ event.get('countdown_config').phrase }} 
-    {{ event.get('countdown_config').date | featuredEventDateTime(user) }}
+    <div>
+      <span class="fas fa-calendar-alt"></span> 
+      {{ event.get('countdown_config').phrase }} 
+      {{ event.get('countdown_config').date | featuredEventDateTime(user) }}
+    </div>
     {% if user %}
-    {{ "(" + (user.get("timezone") | timezone) + ")" if user and user.get("timezone") }}
-    <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-light btn-sm">
-      <span class="fa fa-cog"></span>
-    </a>
+    <div class="pl-3"> 
+      for {{ (user.get("timezone") | timezone) if user and user.get("timezone") else 'Unknown timezone' }}
+      <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-light btn-xs">
+        <span class="fa fa-cog"></span>
+      </a>
+    </div>
     {% endif %}
   {% endif %}
 {% endmacro %}
 
-{% macro backgroundImage(imagePath) %}
+<!-- TODO Background instead of banner -->
+{% macro backgroundImage(event) -%}
+{%- set imagePath = event.related('details').get('banner') if event -%}
 background-image: {{ 'url(' + staticUrl(imagePath) + ')' if imagePath else 'none' }};
-{% endmacro %}
+{%- endmacro %}

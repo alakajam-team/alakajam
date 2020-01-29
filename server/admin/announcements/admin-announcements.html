@@ -19,14 +19,14 @@
 {% if draftPosts.length > 0 %}
   <h2>Drafts</h2>
   {% for post in draftPosts %}
-    {{ postMacros.post(post, {allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes }) }}
+    {{ postMacros.post(post, {allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes, smallTitle: true }) }}
   {% endfor %}
 
   <h2>Published</h2>
 {% endif %}
 
 {% for post in publishedPosts %}
-  {{ postMacros.post(post, {allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes }) }}
+  {{ postMacros.post(post, {allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes, smallTitle: true }) }}
 {% endfor %}
 
 {% if publishedPosts.length === 0 %}

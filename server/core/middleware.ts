@@ -33,6 +33,7 @@ import log from "./log";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
 import * as templatingFilters from "./templating-filters";
 import * as templatingGlobals from "./templating-globals";
+import instance from "server/sass";
 
 const LAUNCH_TIME = Date.now();
 
@@ -147,7 +148,11 @@ export async function configure(app: Application) {
 
 export function logErrorAndReturn(value: any) {
   return (reason: any) => {
-    log.error(reason);
+    if (reason instanceof Error) {
+      log.error(reason.message, reason.stack);
+    } else {
+      log.error(reason);
+    }
     return value;
   };
 }

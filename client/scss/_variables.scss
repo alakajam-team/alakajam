@@ -9,7 +9,7 @@ $borders: #dadada;
 $tabs: #bbb;
 $text: #1f3038;
 $text-light: change-color($text, $alpha: .7);
-$text-lighter: change-color($text, $alpha: .4);
+$text-lighter: change-color($text, $alpha: .5);
 $text-lightest: change-color($text, $alpha: .3);
 
 $white-lighter: change-color(white, $alpha: .9);
@@ -31,7 +31,7 @@ $neutral: #999;
 $neutral-dark: change-color($neutral, $lightness: 40%);
 $neutral-light: change-color($neutral, $alpha: .7);
 $neutral-lighter: change-color($neutral, $alpha: .25);
-$neutral-lightest: change-color($neutral, $alpha: .1);
+$neutral-lightest: #e6e6e6;
 
 /* Mod / Admin colors */
 

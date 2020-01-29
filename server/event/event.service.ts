@@ -556,11 +556,8 @@ async function findLatestUserEntry(user, options: any = {}) {
 
 /**
  * Retrieves the entry a user submitted to an event
- * @param  {User} user
- * @param  {integer} eventId
- * @return {Entry|null}
  */
-async function findUserEntryForEvent(user, eventId) {
+async function findUserEntryForEvent(user: BookshelfModel, eventId: number): Promise<EntryBookshelfModel> {
   return models.Entry.query((query) => {
     query.innerJoin("user_role", "entry.id", "user_role.node_id")
       .where({
@@ -568,7 +565,7 @@ async function findUserEntryForEvent(user, eventId) {
         "user_role.user_id": user.get("id"),
         "user_role.node_type": "entry",
       });
-  }).fetch({ withRelated: ["userRoles"] });
+  }).fetch({ withRelated: ["userRoles"] }) as any;
 }
 
 async function findEntryInvitesForUser(user, options): Promise<BookshelfCollection> {

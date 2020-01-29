@@ -265,6 +265,11 @@ input[type="submit"][data-disabled] {
   }
 }
 
+.btn.btn-xs {
+  padding: 0.2rem 0.3rem;
+  line-height: normal;
+}
+
 .pagination {
   margin-top: 0;
   margin-bottom: 20px;
@@ -287,10 +292,10 @@ input[type="submit"][data-disabled] {
 
 .horizontal-bar {
   width: 100%;
-  margin: 20px 0;
+  margin: 1rem 0;
   font-weight: bold;
   color: $text-lighter;
-  border-bottom: 1px solid $text-lighter;
+  border-bottom: 1px solid $neutral-light;
 
   & .btn {
     display: inline-block;

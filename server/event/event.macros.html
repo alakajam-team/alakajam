@@ -142,12 +142,12 @@
 {% endmacro %}
 
 {% macro eventShortcutMyPost(user, event, userPost, options = {}) %}
-  <div class="action-banner {{ '
-  ' if options.buttonsOnly }}">
+  <div class="action-banner {{ 'buttons-only' if options.buttonsOnly }}">
     <div class="action-banner__title">
       {% if not options.buttonsOnly %}
         <span class="mr-2">{{ 'Your last post' if not options.buttonsOnly }}</span>
       {% endif %}
+      <div class="btn-group  btn-group-sm">
       {% if userPost and not options.buttonsOnly %}
         <a href="{{ routeUrl(userPost, 'post', 'edit') }}" class="btn btn-sm btn-primary mr-1">
           <span class="fas fa-pencil-alt"></span>
@@ -156,12 +156,13 @@
       {% endif %}
       <a href="{{ routeUrl(null, 'post', 'create', { eventId: event.get('id') }) }}" class="btn btn-sm btn-primary mr-1">
         <span class="fas fa-plus"></span>
-        <span class="d-none d-lg-inline">Create</span>
+        <span class="d-none d-lg-inline">Create post</span>
       </a>
       <a href="{{ routeUrl(user, 'user', 'posts') }}" class="btn btn-sm btn-primary d-none d-md-inline-block">
         <span class="fas fa-folder"></span>
         My posts
       </a>
+      </div>
     </div>
     {% if not options.buttonsOnly %}
     <div class="action-banner__post">

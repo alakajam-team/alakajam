@@ -45,6 +45,10 @@ export function configure(nunjucksEnvironment) {
     return forms.markdownToHtml(str);
   });
 
+  nunjucksEnvironment.addFilter("markdownToText", (str: string) => {
+    return forms.markdownToText(str);
+  });
+
   nunjucksEnvironment.addFilter("markdownUnescape", (str: string) => {
     return str ? str.replace(/&amp;/g, "&").replace(/&quot;/g, '"') : null;
   });
