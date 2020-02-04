@@ -147,7 +147,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
       }
 
       // Event details update
-      const eventDetails = event.related("details") as BookshelfModel;
+      const eventDetails = event.related<BookshelfModel>("details");
       eventDetails.set({
         links: req.body.links,
         category_titles: req.body["category-titles"],

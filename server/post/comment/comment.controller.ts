@@ -117,7 +117,7 @@ export async function handleSaveComment(reqBody, currentUser, currentNode, baseU
     // Cache invalidation: Users @mentioned in the comment
     if (typeof commentBody === "string") {
       commentBody.split(" ").forEach((word) => {
-        if (word.length > 0 && word[0] === "@") {
+        if (word.length > 0 && word.startsWith("@")) {
           const userCache = cache.user(word.slice(1));
           userCache.del("toUserCollection");
           userCache.del("unreadNotifications");

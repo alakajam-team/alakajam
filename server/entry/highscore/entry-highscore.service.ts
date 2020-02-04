@@ -101,13 +101,13 @@ async function findUserScores(userId, options: any = {}): Promise<BookshelfColle
 
   let query = models.EntryScore.where("user_id", userId) as BookshelfModel;
   switch (options.sortBy) {
-    case "ranking":
-      query = query.orderBy("ranking");
-      break;
-    case "submited_at":
-      query = query.orderBy("submited_at", "DESC");
-      break;
-    default:
+  case "ranking":
+    query = query.orderBy("ranking");
+    break;
+  case "submited_at":
+    query = query.orderBy("submited_at", "DESC");
+    break;
+  default:
   }
 
   // PERF: Entry details required to format scores
@@ -156,7 +156,7 @@ async function findEntriesLastActivity(entryIds) {
  * Finds the most recently active entry scores
  */
 async function findRecentlyActiveEntries(
-    options: { limit?: number, eventId?: number } = {}): Promise<BookshelfCollection> {
+  options: { limit?: number; eventId?: number } = {}): Promise<BookshelfCollection> {
   const entryScoreIds = await db.knex.select("entry_score.id")
     .from(function() {
       const qb = this.distinct("entry_score.entry_id")
@@ -254,7 +254,7 @@ async function deleteAllEntryScores(entry) {
 }
 
 async function refreshEntryRankings(
-    entry, triggeringEntryScore = null, options: any = {}): Promise<BookshelfModel | undefined> {
+  entry, triggeringEntryScore = null, options: any = {}): Promise<BookshelfModel | undefined> {
   let updatedEntryScore: BookshelfModel | undefined;
   const impactedEntryScores = [];
 
@@ -294,7 +294,7 @@ async function refreshEntryRankings(
   const activeTournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get("id"), options);
   if (activeTournamentEvent) {
     const triggeringUserId = options.triggeringUserId || (triggeringEntryScore
-        ? triggeringEntryScore.get("user_id") : null);
+      ? triggeringEntryScore.get("user_id") : null);
     eventTournamentService.refreshTournamentScores(module.exports.default, activeTournamentEvent,
       triggeringUserId, impactedEntryScores, options);
   }

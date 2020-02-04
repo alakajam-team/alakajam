@@ -1,20 +1,20 @@
 class AdminDevPO {
 
-    public visit() {
-        cy.visit("/admin/dev");
-    }
+  public visit() {
+    cy.visit("/admin/dev");
+  }
 
-    get alert() {
-        return cy.get(".alert");
-    }
+  public get alert() {
+    return cy.get(".alert");
+  }
 
-    get backupButton() {
-        throw new Error("Do not make backups during tests. A backup is already done on server start (see e2e.ts");
-    }
+  public get backupButton() {
+    throw new Error("Do not make backups during tests. A backup is already done on server start (see e2e.ts");
+  }
 
-    get restoreButton() {
-        return cy.get("input[name=restore]");
-    }
+  public get restoreButton() {
+    return cy.get("input[name=restore]");
+  }
 
 }
 

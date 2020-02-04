@@ -9,15 +9,15 @@ export interface Alert {
 }
 
 export interface CustomExpressSession extends Express.Session {
+  // Session contents
+  userId: number;
+  alerts: Alert[];
+
   // Customized in middleware.ts > promisifySession()
   regenerateAsync(): Promise<void>;
   destroyAsync(): Promise<void>;
   reloadAsync(): Promise<void>;
   saveAsync(): Promise<void>;
-
-  // Session contents
-  userId: number;
-  alerts: Alert[];
 }
 
 export interface CustomRequest extends Request {
@@ -37,4 +37,4 @@ export interface CustomResponse<T extends CommonLocals> extends Response {
   traceAndShowErrorPage(error?: Error): void;
 }
 
-export type RenderContext = { [key: string]: any };
+export interface RenderContext { [key: string]: any }

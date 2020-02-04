@@ -27,7 +27,7 @@ export async function adminDev(req: CustomRequest, res: CustomResponse<CommonLoc
         });
         infoMessage = 'The last 30 created users now have their password set to "password".';
       } else if (req.body.backup) {
-        if (db.getBackupDate()) {
+        if (await db.getBackupDate()) {
           await db.backup();
           infoMessage = "Backup created.";
         } else {

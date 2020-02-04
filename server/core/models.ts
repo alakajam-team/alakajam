@@ -1,5 +1,5 @@
-
-// tslint:disable: max-line-length
+/* eslint-disable prefer-rest-params */
+/* eslint-disable no-underscore-dangle */
 
 /**
  * Bookshelf models
@@ -251,7 +251,7 @@ export const Event = bookshelf.model("Event", {
  * | integer | theme_vote_count | Number of theme votes
  * | string | banner | Path to a banner picture
  * | string | division_counts | Number of entries by division: {"name": count...}
- * | string | shortlist_elimination | Config for shortlist eliminations phase: (JSON: {"start": date, "delay": number in minutes, "body": html}
+ * | string | shortlist_elimination | Config for shortlist eliminations phase (JSON: {"start": date, "delay": number in minutes, "body": html}
  * | string | links | Config for a list of special pages to link to: (JSON: [{"title": string, "link": string, "icon": string}]
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)

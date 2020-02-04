@@ -6,29 +6,29 @@ import dashboardSettingsPo from "./dashboard-settings.po";
 
 class DashboardPO {
 
-    get sidebarAvatar() {
-        return cy.get(".list-group-item .user-thumb__avatar");
-    }
+  public get sidebarAvatar() {
+    return cy.get(".list-group-item .user-thumb__avatar");
+  }
 
-    get feed() {
-        return dashboardFeedPo;
-    }
+  public get feed() {
+    return dashboardFeedPo;
+  }
 
-    get posts() {
-        return dashboardPostsPo;
-    }
+  public get posts() {
+    return dashboardPostsPo;
+  }
 
-    get entries() {
-        return dashboardEntriesPo;
-    }
+  public get entries() {
+    return dashboardEntriesPo;
+  }
 
-    get settings() {
-        return dashboardSettingsPo;
-    }
+  public get settings() {
+    return dashboardSettingsPo;
+  }
 
-    get changePassword() {
-        return dashboardPasswordPo;
-    }
+  public get changePassword() {
+    return dashboardPasswordPo;
+  }
 
 }
 

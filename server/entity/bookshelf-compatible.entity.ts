@@ -7,13 +7,6 @@ export interface DependentEntity {
 
 export abstract class BookshelfCompatibleEntity {
 
-  /**
-   * Specifies which other entities depend on this one.
-   * This adds support for manual cascade deletion like the bookshelf-cascade-delete plugin does.
-   * NB. Be careful of destroy failures due to unsatisfied table constraints if this list is incomplete.
-   */
-  public abstract dependents(): Array<keyof this>;
-
   public get(key: string): any {
     return this[key];
   }
@@ -41,5 +34,12 @@ export abstract class BookshelfCompatibleEntity {
     }
     return entityManager.remove(this);
   }
+
+  /**
+   * Specifies which other entities depend on this one.
+   * This adds support for manual cascade deletion like the bookshelf-cascade-delete plugin does.
+   * NB. Be careful of destroy failures due to unsatisfied table constraints if this list is incomplete.
+   */
+  public abstract dependents(): Array<keyof this>;
 
 }

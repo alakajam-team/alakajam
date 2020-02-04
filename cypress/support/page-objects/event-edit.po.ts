@@ -1,57 +1,57 @@
 class EventEditPO {
 
-    public visit({ eventName, page }: {
-        eventName: string,
-        page?: "edit" | "edit#state" | "edit-themes" | "edit-entries" | "edit-tournament-games"
-    }) {
-        cy.visit(`/${eventName}/${page || "edit"}`);
-    }
+  public visit({ eventName, page }: {
+    eventName: string;
+    page?: "edit" | "edit#state" | "edit-themes" | "edit-entries" | "edit-tournament-games";
+  }) {
+    cy.visit(`/${eventName}/${page || "edit"}`);
+  }
 
-    // General > Tabs
+  // General > Tabs
 
-    get appearanceTab() {
-        return cy.get("a[href=#appearance]");
-    }
+  public get appearanceTab() {
+    return cy.get("a[href=#appearance]");
+  }
 
-    get stateTab() {
-        return cy.get("a[href=#state]");
-    }
+  public get stateTab() {
+    return cy.get("a[href=#state]");
+  }
 
-    get jamConfigTab() {
-        return cy.get("a[href=#jamconfig]");
-    }
+  public get jamConfigTab() {
+    return cy.get("a[href=#jamconfig]");
+  }
 
-    // General > Status tab
+  // General > Status tab
 
-    public themeVotingStatusRadio(status: "disabled" | "off" | "voting" | "shortlist" | "closed" | "results") {
-        return cy.get(`[for=status-theme-${status}]`);
-    }
+  public themeVotingStatusRadio(status: "disabled" | "off" | "voting" | "shortlist" | "closed" | "results") {
+    return cy.get(`[for=status-theme-${status}]`);
+  }
 
-    public entrySubmissionStatusRadio(status: "off" | "open" | "open_unranked" | "closed") {
-        return cy.get(`[for=status-entry-${status}]`);
-    }
+  public entrySubmissionStatusRadio(status: "off" | "open" | "open_unranked" | "closed") {
+    return cy.get(`[for=status-entry-${status}]`);
+  }
 
-    public entryResultsStatusRadio(status: "disabled" | "off" | "voting" | "voting_rescue" | "results") {
-        return cy.get(`[for=status-results-${status}]`);
-    }
+  public entryResultsStatusRadio(status: "disabled" | "off" | "voting" | "voting_rescue" | "results") {
+    return cy.get(`[for=status-results-${status}]`);
+  }
 
-    public tournamentStatusRadio(status: "disabled" | "off" | "submission" | "playing" | "closed" | "results") {
-        return cy.get(`[for=status-tournament-${status}]`);
-    }
+  public tournamentStatusRadio(status: "disabled" | "off" | "submission" | "playing" | "closed" | "results") {
+    return cy.get(`[for=status-tournament-${status}]`);
+  }
 
-    // Common
+  // Common
 
-    get saveButton() {
-        return cy.get(".btn-primary");
-    }
+  public get saveButton() {
+    return cy.get(".btn-primary");
+  }
 
-    get deleteEventButton() {
-        return cy.get(".btn-danger");
-    }
+  public get deleteEventButton() {
+    return cy.get(".btn-danger");
+  }
 
-    get alert() {
-        return cy.get(".alert");
-    }
+  public get alert() {
+    return cy.get(".alert");
+  }
 
 }
 

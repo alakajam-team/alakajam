@@ -18,7 +18,7 @@ import log from "./log";
 
 let sharp = null;
 try {
-  // tslint:disable-next-line: no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   sharp = require("sharp");
 } catch (e) {
   log.warn("Sharp dependency missing. Picture resizing disabled");
@@ -61,7 +61,7 @@ async function getImageType(filepath) {
   const leadingBytes = buf.toString("hex", 0, 8);
 
   for (const header in IMAGE_HEADER_MAGIC_TO_TYPE) {
-    if (leadingBytes.indexOf(header) === 0) {
+    if (leadingBytes.startsWith(header)) {
       return IMAGE_HEADER_MAGIC_TO_TYPE[header];
     }
   }

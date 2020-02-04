@@ -1,4 +1,3 @@
-import { PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
@@ -25,7 +24,7 @@ export async function postsView(req: CustomRequest, res: CustomResponse<CommonLo
     page: currentPage,
   });
   await postsCollection.load(["event", "entry"]);
-  const posts = postsCollection.models as PostBookshelfModel[];
+  const posts = postsCollection.models;
 
   // Determine title
   let title = "Posts";

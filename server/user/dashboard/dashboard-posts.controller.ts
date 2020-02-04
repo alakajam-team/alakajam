@@ -1,4 +1,3 @@
-import { BookshelfCollection } from "bookshelf";
 import forms from "server/core/forms";
 import eventService from "server/event/event.service";
 import postService from "server/post/post.service";

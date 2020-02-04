@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /**
  * Database storage configuration.
  * Requiring the module returns a [Bookshelf](http://bookshelfjs.org/) instance.
@@ -22,7 +23,7 @@ export type DB = Bookshelf & {
 
   // Bookshelf registry plugin
   model: <T>(name: string, extensions: T, ...args)
-    => Bookshelf.Model<T & Bookshelf.BookshelfModel> & typeof Bookshelf.Model;
+  => Bookshelf.Model<T & Bookshelf.BookshelfModel> & typeof Bookshelf.Model;
 };
 
 export default initBookshelf();

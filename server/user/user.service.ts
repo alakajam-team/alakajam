@@ -62,10 +62,10 @@ export class UserService {
    * @returns {Collection(User)}
    */
   public async findUsers(
-      options: {
-        search?: boolean, eventId?: boolean, entriesCount?: boolean, count?: boolean, withEntries?: boolean,
-        isMod?: boolean, isAdmin?: boolean, orderBy?: string, orderByDesc?: boolean
-      } & FetchPageOptions = {}): Promise<BookshelfCollection | string | number> {
+    options: {
+      search?: boolean; eventId?: boolean; entriesCount?: boolean; count?: boolean; withEntries?: boolean;
+      isMod?: boolean; isAdmin?: boolean; orderBy?: string; orderByDesc?: boolean;
+    } & FetchPageOptions = {}): Promise<BookshelfCollection | string | number> {
     let query = new models.User()
       .where("name", "!=", "anonymous");
     if (options.search) {

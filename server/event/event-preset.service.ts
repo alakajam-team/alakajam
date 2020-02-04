@@ -50,7 +50,7 @@ export class EventPresetService {
    */
   public async deleteEventPreset(eventPreset: BookshelfModel): Promise<any> {
     await eventPreset.load("events");
-    const eventsUsingPreset = (eventPreset.related("events") as any).length;
+    const eventsUsingPreset = (eventPreset.related("events")).length;
     if (eventsUsingPreset > 0) {
       throw new Error(`Cannot delete preset ${eventPreset.get("title")} `
         + `because ${eventsUsingPreset} events depend on it`);

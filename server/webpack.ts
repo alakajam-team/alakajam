@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 import * as findUp from "find-up";
 import { intersection } from "lodash";
 import * as path from "path";

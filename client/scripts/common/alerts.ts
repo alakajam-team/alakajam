@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /*
  * Bootstrap Notify integration
  * https://github.com/mouse0270/bootstrap-notify
@@ -25,7 +27,6 @@ export default function(selector: string) {
   try {
     alerts = JSON.parse($(selector).text());
   } catch (e) {
-    // tslint:disable-next-line: no-console
     console.warn("Failed to parse alert data");
     return;
   }
@@ -40,7 +41,6 @@ export default function(selector: string) {
       if (inlineAlertsAreShown) {
         continue;
       } else {
-        // tslint:disable-next-line: no-console
         console.warn("No inline alerts block found, showing inline alert as floating instead");
       }
     }

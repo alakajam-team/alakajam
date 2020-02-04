@@ -23,9 +23,9 @@ export async function viewEventTournamentGames(req, res) {
   const tournamentScore = user ? await eventTournamentService.findOrCreateTournamentScore(
     event.get("id"), user.get("id")) : null;
   const activeEntries = (await highScoreService.findRecentlyActiveEntries({
-      eventId: event.get("id"),
-      limit: 10
-    })).models;
+    eventId: event.get("id"),
+    limit: 10
+  })).models;
 
   res.render("event/tournament/tournament-games", {
     entries,

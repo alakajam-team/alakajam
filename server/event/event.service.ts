@@ -81,7 +81,7 @@ function createEvent(template = null) {
       event_preset_id: template.get("event_preset_id"),
       divisions: template.get("divisions") || event.get("divisions"),
     });
-    const details = event.related("details") as BookshelfModel;
+    const details = event.related<BookshelfModel>("details");
     details.set({
       links: template.get("links"),
       category_titles: template.get("category_titles"),
@@ -92,7 +92,7 @@ function createEvent(template = null) {
 
 function areSubmissionsAllowed(event) {
   return event && event.get("status") === enums.EVENT.STATUS.OPEN &&
-      ([enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get("status_entry")));
+    ([enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get("status_entry")));
 }
 
 function getDefaultDivision(event): string {
@@ -131,14 +131,14 @@ async function findEventByName(name: string) {
  * @returns {array(Event)}
  */
 async function findEvents(options: {
-    name?: string,
-    status?: string,
-    statusNot?: string,
-    ignoreTournaments?: boolean
-    sortDatesAscending?: "ASC" | "DESC",
-    pageSize?: number,
-    page?: number
-  } & FetchAllOptions = {}): Promise<BookshelfCollection> {
+  name?: string;
+  status?: string;
+  statusNot?: string;
+  ignoreTournaments?: boolean;
+  sortDatesAscending?: "ASC" | "DESC";
+  pageSize?: number;
+  page?: number;
+} & FetchAllOptions = {}): Promise<BookshelfCollection> {
   let query = new models.Event()
     .orderBy("started_at", options.sortDatesAscending ? "ASC" : "DESC") as BookshelfModel;
   if (options.status) { query = query.where("status", options.status); }
@@ -228,7 +228,7 @@ async function createEntry(user, event): Promise<EntryBookshelfModel> {
 
   await entry.save(); // otherwise the user role won't have a node_id
 
-  const userRoles = entry.related("userRoles") as BookshelfCollection;
+  const userRoles = entry.related<BookshelfCollection>("userRoles");
   await userRoles.create({
     user_id: user.get("id"),
     user_name: user.get("name"),
@@ -314,10 +314,10 @@ async function searchForExternalEvents(nameFragment) {
 async function deleteEntry(entry) {
   // Unlink posts (not in transaction to prevent foreign key errors)
   const posts = await postService.findPosts({ entryId: entry.get("id") });
-  posts.forEach(async (post) => {
+  for (const post of posts.models) {
     post.set("entry_id", null);
     await post.save();
-  });
+  }
 
   await db.transaction(async (transaction) => {
     // Delete user roles & comments manually (because no cascading)
@@ -355,24 +355,26 @@ async function deleteEntry(entry) {
  *                         withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
  */
 async function findGames(
-    options: {
-      count?: boolean, sortByRatingCount?: boolean, sortByRating?: boolean, sortByRanking?: boolean, eventId?: number,
-      search?: string, platforms?: string[], tags?: Array<{id: number}>, divisions?: string[], notReviewedById?: string,
-      userId?: number, highScoresSupport?: boolean
-    } & FetchPageOptions = {}): Promise<BookshelfCollection | number | string> {
+  options: {
+    count?: boolean; sortByRatingCount?: boolean; sortByRating?: boolean; sortByRanking?: boolean; eventId?: number;
+    search?: string; platforms?: string[]; tags?: Array<{ id: number }>; divisions?: string[]; notReviewedById?: string;
+    userId?: number; highScoresSupport?: boolean;
+  } & FetchPageOptions = {}): Promise<BookshelfCollection | number | string> {
   let query = new models.Entry()
-    .query((qb) => qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")) as BookshelfModel;
+    .query((qb) => {
+      qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id");
+    }) as BookshelfModel;
 
   // Sorting
   if (!options.count) {
     if (options.sortByRatingCount) {
       query = query.query((qb) => {
-        return qb.orderBy("entry_details.rating_count");
+        qb.orderBy("entry_details.rating_count");
       });
     } else if (options.sortByRating) {
       query = query.query((qb) => {
-        return qb.leftJoin("event", "entry.event_id", "event.id")
-          .where(function() {
+        qb.leftJoin("event", "entry.event_id", "event.id")
+          .where(() => {
             this.where("event.status", enums.EVENT.STATUS.CLOSED).orWhereNull("event.status");
           })
           .orderByRaw("entry_details.rating_1 "
@@ -381,8 +383,8 @@ async function findGames(
       });
     } else if (options.sortByRanking) {
       query = query.query((qb) => {
-        return qb.leftJoin("event", "entry.event_id", "event.id")
-          .where(function() {
+        qb.leftJoin("event", "entry.event_id", "event.id")
+          .where(() => {
             this.where("event.status", enums.EVENT.STATUS.CLOSED).orWhereNull("event.status");
           })
           .orderByRaw("entry_details.ranking_1 " + ((config.DB_TYPE === "postgresql") ? "NULLS LAST" : "IS NOT NULL"))
@@ -402,13 +404,13 @@ async function findGames(
   if (options.eventId !== undefined) { query = query.where("entry.event_id", options.eventId); }
   if (options.platforms) {
     query = query.query((qb) => {
-      return qb.leftJoin("entry_platform", "entry_platform.entry_id", "entry.id")
+      qb.leftJoin("entry_platform", "entry_platform.entry_id", "entry.id")
         .whereIn("entry_platform.platform_id", options.platforms);
     });
   }
   if (options.tags) {
     query = query.query((qb) => {
-      return qb.leftJoin("entry_tag", "entry_tag.entry_id", "entry.id")
+      qb.leftJoin("entry_tag", "entry_tag.entry_id", "entry.id")
         .whereIn("entry_tag.tag_id", options.tags.map((tag) => tag.id));
     });
   }
@@ -419,7 +421,7 @@ async function findGames(
     query = query.query((qb) => {
       qb = qb
         // Hide rated
-        .leftJoin("entry_vote", function() {
+        .leftJoin("entry_vote", () => {
           this.on("entry_vote.entry_id", "=", "entry.id")
             .andOn("entry_vote.user_id", "=", options.notReviewedById);
         })
@@ -435,13 +437,12 @@ async function findGames(
       // If this option is set, this has already been done (to avoid multiple joins on same table)
       if (!options.userId) {
         // Hide own entry (not strictly requested, but sensible)
-        qb = qb.leftJoin("user_role", function() {
+        qb = qb.leftJoin("user_role", () => {
           this.on("user_role.node_id", "=", "entry.id")
             .andOn("user_role.user_id", "=", options.notReviewedById);
         })
           .whereNull("user_role.id");
       }
-      return qb;
     });
   }
   if (options.userId) {
@@ -457,7 +458,6 @@ async function findGames(
           "user_role.user_id": options.notReviewedById,
         });
       }
-      return qb;
     });
   }
   if (options.highScoresSupport) {
@@ -485,7 +485,7 @@ async function findGames(
  */
 async function findLatestEntries() {
   return models.Entry.query((qb) => {
-    return qb.whereNotNull("event_id");
+    qb.whereNotNull("event_id");
   })
     .orderBy("created_at", "DESC")
     .fetchPage({
@@ -589,11 +589,11 @@ async function findRescueEntries(event, user, options: any = {}) {
   return models.Entry.where("entry.event_id", event.get("id"))
     .where("division", "<>", enums.DIVISION.UNRANKED)
     .query((qb) => {
-      return qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
+      qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
         // do not rescue those who really didn't participate
         .where("entry_details.rating_count", ">", Math.floor(minRatings / 4))
         .where("entry_details.rating_count", "<", minRatings)
-        .leftJoin("entry_vote", function() {
+        .leftJoin("entry_vote", () => {
           this.on("entry_vote.entry_id", "=", "entry.id")
             .andOn("entry_vote.user_id", "=", user.get("id"));
         })
@@ -748,7 +748,7 @@ async function refreshEventCounts(event: BookshelfModel) {
     event.set("entry_count", totalCount);
     await event.save(null, { transacting: transaction });
 
-    const details = event.related("details") as BookshelfModel;
+    const details = event.related<BookshelfModel>("details");
     details.set("division_counts", divisionCounts);
     await details.save(null, { transacting: transaction });
 

@@ -1,4 +1,4 @@
-// tslint:disable: no-unused-expression no-unused-expressions
+/* eslint-disable no-unused-expressions */
 
 export default function sortable() {
   $("table.sortable").each((index, element) => {

@@ -1,4 +1,4 @@
-// tslint:disable: ordered-imports
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 /**
  * Entry point for the Alakajam! server
@@ -16,7 +16,7 @@ import log from "./core/log";
 
 if (__filename.includes(".js")) {
   // Fix root-relative import paths from build
-  // tslint:disable-next-line: no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("module-alias/register");
 }
 
@@ -25,7 +25,7 @@ if (config.DEBUG_TRACE_REQUESTS) {
   process.env.DEBUG = "express:*";
 }
 if (config.DEBUG_LONG_PROMISE_TRACES) {
-  // tslint:disable-next-line: no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("longjohn");
 }
 
@@ -99,7 +99,7 @@ function catchErrorsAndSignals() {
     log.error(`Uncaught exception: ${error.message}\n${error.stack}`);
     _doGracefulShutdown(null, 1);
   });
-  process.on("unhandledRejection", async (error: any) => {
+  process.on("unhandledRejection", (error: any) => {
     log.error(`Unhandled promise rejection: ${error.message}\n${error.stack}`);
   });
 
@@ -109,7 +109,7 @@ function catchErrorsAndSignals() {
   signals.forEach((signal) => {
     process.on(signal, _doGracefulShutdown);
   });
-  function _doGracefulShutdown(_: NodeJS.Signals, exitCode: number = 0) {
+  function _doGracefulShutdown(_: NodeJS.Signals, exitCode = 0) {
     if (!alreadyShuttingDown) {
       alreadyShuttingDown = true;
       const db = require("./core/db").default;

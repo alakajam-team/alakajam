@@ -20,9 +20,9 @@ export async function articleView(req: CustomRequest, res: CustomResponse<Common
 }
 
 async function _renderArticle(
-    res: CustomResponse<CommonLocals>,
-    category: "about" | "docs",
-    name: string): Promise<void> {
+  res: CustomResponse<CommonLocals>,
+  category: "about" | "docs",
+  name: string): Promise<void> {
   res.locals.articleName = name || category;
 
   // Find featured article

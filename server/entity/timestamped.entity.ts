@@ -1,4 +1,4 @@
-/* tslint:disable:variable-name */
+/* eslint-disable camelcase */
 
 import { CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";

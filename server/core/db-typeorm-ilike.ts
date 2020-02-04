@@ -2,7 +2,7 @@ import { Connection, FindOperator, FindOperatorType } from "typeorm";
 import * as config from "./config";
 
 class CustomFindOperator<T> extends FindOperator<T> {
-  constructor(
+  public constructor(
     type: FindOperatorType | "ilike",
     value: FindOperator<T> | T,
     useParameter?: boolean,

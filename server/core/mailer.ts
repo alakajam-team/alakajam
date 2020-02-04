@@ -10,7 +10,7 @@ export class Mailer {
 
   private mailTransport: MailTransport;
 
-  constructor() {
+  public constructor() {
     if (!config.DEBUG_TEST_MAILER) {
       this.mailTransport = nodemailer.createTransport({
         host: config.SMTP_HOST,
@@ -61,11 +61,11 @@ export class Mailer {
    * @return {void}
    */
   public async sendMail(
-      app: Application,
-      user: BookshelfModel,
-      subject: string,
-      templateName: string,
-      context: Record<string, any> = {}): Promise<void> {
+    app: Application,
+    user: BookshelfModel,
+    subject: string,
+    templateName: string,
+    context: Record<string, any> = {}): Promise<void> {
     const result = new Promise<void>((resolve, reject) => {
       if (this.mailTransport === null) {
         reject(new Error("Mail transporter is not correctly configured. "

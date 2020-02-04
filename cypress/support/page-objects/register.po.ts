@@ -1,44 +1,44 @@
 class RegisterPO {
 
-    public visit() {
-        cy.visit("/register");
-    }
+  public visit() {
+    cy.visit("/register");
+  }
 
-    get alert() {
-        return cy.get(".alert");
-    }
+  public get alert() {
+    return cy.get(".alert");
+  }
 
-    get name() {
-        return cy.get("#name");
-    }
+  public get name() {
+    return cy.get("#name");
+  }
 
-    get emailField() {
-        return cy.get("input[name=email]");
-    }
+  public get emailField() {
+    return cy.get("input[name=email]");
+  }
 
-    get timezoneSelect2Dropdown() {
-        return cy.get("select[name=timezone]");
-    }
+  public get timezoneSelect2Dropdown() {
+    return cy.get("select[name=timezone]");
+  }
 
-    get password() {
-        return cy.get("input[name=password]");
-    }
+  public get password() {
+    return cy.get("input[name=password]");
+  }
 
-    get passwordBis() {
-        return cy.get("input[name=password-bis]");
-    }
+  public get passwordBis() {
+    return cy.get("input[name=password-bis]");
+  }
 
-    get captchaAreYouHuman() {
-        return cy.get("input[name=captcha]");
-    }
+  public get captchaAreYouHuman() {
+    return cy.get("input[name=captcha]");
+  }
 
-    get rememberMe() {
-        return cy.get("input[type=checkbox]");
-    }
+  public get rememberMe() {
+    return cy.get("input[type=checkbox]");
+  }
 
-    get submit() {
-        return cy.get(".btn-primary");
-    }
+  public get submit() {
+    return cy.get(".btn-primary");
+  }
 
 }
 

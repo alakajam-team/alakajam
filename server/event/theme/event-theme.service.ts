@@ -103,11 +103,11 @@ async function findThemesByTitle(title: string, fetchOptions = {}): Promise<Book
  * deletes the idea, not filling the ID creates one instead of updating it.
  */
 async function saveThemeIdeas(
-    user: BookshelfModel,
-    event: BookshelfModel,
-    ideas: Array<{id?: string, title: string}>): Promise<void> {
-  const ideasToKeep: Array<{id?: string, title: string}> = [];
-  const ideasToCreate: Array<{id?: string, title: string}> = [];
+  user: BookshelfModel,
+  event: BookshelfModel,
+  ideas: Array<{id?: string; title: string}>): Promise<void> {
+  const ideasToKeep: Array<{id?: string; title: string}> = [];
+  const ideasToCreate: Array<{id?: string; title: string}> = [];
   const themesToDelete: BookshelfModel[] = [];
 
   // Compare form with the existing user themes
@@ -352,7 +352,7 @@ async function _eliminateLowestThemes(event) {
   const eliminationThreshold = await settings.findNumber(
     SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58);
 
-  const battleReadyThemesQuery = await models.Theme.where({
+  const battleReadyThemesQuery = models.Theme.where({
     event_id: event.get("id"),
     status: enums.THEME.STATUS.ACTIVE,
   })
@@ -487,7 +487,7 @@ async function findShortlist(event): Promise<BookshelfCollection> {
 
 async function computeShortlist(event) {
   // Mark all themes as out
-  const allThemesCollection = await findAllThemes(event, { shortlistEligible: true }) as BookshelfCollection;
+  const allThemesCollection = await findAllThemes(event, { shortlistEligible: true });
   await event.load("details");
   await db.transaction(async (transaction) => {
     for (const theme of allThemesCollection.models) {

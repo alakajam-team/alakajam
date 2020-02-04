@@ -73,20 +73,22 @@ class SassBuilder {
     sass.render({
       file: inputFile,
       includePaths: [this.ROOT_PATH, path.resolve(this.CLIENT_SRC_FOLDER, "css")]
-    }, async (error, result) => {
+    }, (error, result) => {
       if (error) {
         log.error(error.message, error.stack);
         if (typeof reject === "function") { reject(error); }
       } else {
-        await this.writeFileAsync(outputFile, result.css);
-        log.info(`Built CSS to ${outputFile} (${result.css.length / 1000.}kb)`);
-        if (typeof resolve === "function") { resolve(result); }
+        this.writeFileAsync(outputFile, result.css)
+          .then(() => {
+            log.info(`Built CSS to ${outputFile} (${result.css.length / 1000.}kb)`);
+            if (typeof resolve === "function") { resolve(result); }
+          });
       }
     });
   }
 
   private copyAssets({ assetsPath, reject, resolve }:
-    { assetsPath?: string | string[], reject?: (reason: any) => void, resolve?: (files: string[]) => void }) {
+  { assetsPath?: string | string[]; reject?: (reason: any) => void; resolve?: (files: string[]) => void }) {
     copy(
       assetsPath,
       this.CLIENT_DEST_FOLDER,

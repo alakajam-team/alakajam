@@ -43,7 +43,7 @@ async function findActiveTournamentPlaying(entryId, options: any = {}) {
   if (entryId) {
     const activeTournamentEvent = await findActiveTournament(options);
     if (activeTournamentEvent) {
-      const tEntriesCollection = activeTournamentEvent.related("tournamentEntries") as BookshelfCollection;
+      const tEntriesCollection = activeTournamentEvent.related("tournamentEntries");
       for (const tEntry of tEntriesCollection.models) {
         if (tEntry.get("entry_id") === entryId) {
           return activeTournamentEvent;
@@ -222,7 +222,7 @@ async function _refreshTournamentRankings(event) {
           return _tieBreakScore(b, tournamentEntries).localeCompare(_tieBreakScore(a, tournamentEntries));
         });
         tScoresWithoutTies = tScoresWithoutTies.concat(tScoreGroup);
-    });
+      });
 
     let ranking = 1;
     await db.transaction(async (transaction) => {
@@ -292,9 +292,9 @@ async function recalculateAllTournamentScores(highScoreService, event) {
 
   // Append all users having a score in the tournament (might no longer have entry scores)
   const tournamentUserIds = await db.knex("tournament_score")
-      .where("event_id", event.get("id"))
-      .select("user_id")
-      .distinct();
+    .where("event_id", event.get("id"))
+    .select("user_id")
+    .distinct();
 
   // Request tournament score refresh for each user
   const allUserIds = entryUserIds.map((data) => data.user_id);

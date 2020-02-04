@@ -10,7 +10,7 @@ export const TEMPLATE_REGISTER = "user/authentication/register";
 
 export class RegisterController {
 
-  constructor(
+  public constructor(
     private userService: UserService = userServiceSingleton,
     private userTimezoneService: UserTimeZoneService = userTimezoneServiceSingleton) { }
 

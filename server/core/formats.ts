@@ -8,9 +8,9 @@ luxon.Settings.defaultLocale = "en";
 luxon.Settings.defaultZoneName = ZONE_UTC;
 
 export function createLuxonDate(
-    date?: string | number | Date,
-    options: luxon.DateTimeOptions = {},
-    format?: string): luxon.DateTime {
+  date?: string | number | Date,
+  options: luxon.DateTimeOptions = {},
+  format?: string): luxon.DateTime {
   options.zone = options.zone || ZONE_UTC;
   if (date === undefined) {
     return luxon.DateTime.fromObject(options);

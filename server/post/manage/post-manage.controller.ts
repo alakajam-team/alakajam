@@ -46,7 +46,7 @@ export async function postSave(req, res) {
 
   // Check permissions
   if ((post && security.canUserWrite(res.locals.user,
-      post, { allowMods: true })) || (!post && res.locals.user)) {
+    post, { allowMods: true })) || (!post && res.locals.user)) {
     let redirectToView = false;
     const title = forms.sanitizeString(req.body.title);
     const body = forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_POST });
@@ -55,7 +55,7 @@ export async function postSave(req, res) {
 
     if (req.body["save-custom"]) {
       customPublishDate = forms.parsePickerDateTime(
-          req.body["published-at"], { zone: res.locals.user.get("timezone") });
+        req.body["published-at"], { zone: res.locals.user.get("timezone") });
       if (!customPublishDate) {
         errorMessage = "Invalid scheduling time";
       }

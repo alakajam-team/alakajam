@@ -1,23 +1,23 @@
 class DashboardEntriesPO {
 
-    public visit() {
-        cy.visit(`/dashboard/entries`);
-    }
+  public visit() {
+    cy.visit("/dashboard/entries");
+  }
 
-    get createEntryButton() {
-        return cy.get("[data-test=create]");
-    }
+  public get createEntryButton() {
+    return cy.get("[data-test=create]");
+  }
 
-    get importEntryButton() {
-        /**
+  public get importEntryButton() {
+    /**
          * NB. If needed, a workaround to test the importer would be to set up a mock server.
          */
-        throw new Error("Putting load on external servers for our automated tests is not desired.");
-    }
+    throw new Error("Putting load on external servers for our automated tests is not desired.");
+  }
 
-    get entryTitles() {
-        return cy.get(".entry-thumb__title");
-    }
+  public get entryTitles() {
+    return cy.get(".entry-thumb__title");
+  }
 
 }
 

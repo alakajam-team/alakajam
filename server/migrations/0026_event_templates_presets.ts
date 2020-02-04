@@ -3,7 +3,7 @@
  */
 
 if (__filename.endsWith(".js")) {
-  // tslint:disable-next-line: no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("module-alias/register");
 }
 
@@ -42,13 +42,13 @@ exports.up = async (knex) => {
 };
 
 exports.down = async (knex) => {
-    if (config.DB_TYPE === "postgresql") {
-      await knex.raw("alter table event alter column countdown_config type varchar(255)");
-    }
-    await knex.schema.table("event", (table) => {
-      table.dropColumn("event_preset_id");
-    });
+  if (config.DB_TYPE === "postgresql") {
+    await knex.raw("alter table event alter column countdown_config type varchar(255)");
+  }
+  await knex.schema.table("event", (table) => {
+    table.dropColumn("event_preset_id");
+  });
 
-    await knex.schema.dropTableIfExists("event_template");
-    await knex.schema.dropTableIfExists("event_preset");
+  await knex.schema.dropTableIfExists("event_template");
+  await knex.schema.dropTableIfExists("event_preset");
 };

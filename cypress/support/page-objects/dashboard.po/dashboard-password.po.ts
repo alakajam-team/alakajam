@@ -1,28 +1,28 @@
 class DashboardPasswordPO {
 
-    public visit() {
-        cy.visit(`/dashboard/password`);
-    }
+  public visit() {
+    cy.visit("/dashboard/password");
+  }
 
-    get alert() {
-        return cy.get(".alert");
-    }
+  public get alert() {
+    return cy.get(".alert");
+  }
 
-    get currentPasswordField() {
-        return cy.get("input[name=password]");
-    }
+  public get currentPasswordField() {
+    return cy.get("input[name=password]");
+  }
 
-    get newPasswordField() {
-        return cy.get("input[name=new-password]");
-    }
+  public get newPasswordField() {
+    return cy.get("input[name=new-password]");
+  }
 
-    get newPasswordBisField() {
-        return cy.get("input[name=new-password-bis]");
-    }
+  public get newPasswordBisField() {
+    return cy.get("input[name=new-password-bis]");
+  }
 
-    get saveButton() {
-        return cy.get("input[type=submit]");
-    }
+  public get saveButton() {
+    return cy.get("input[type=submit]");
+  }
 
 }
 

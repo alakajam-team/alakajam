@@ -1,45 +1,45 @@
 class DashboardSettingsPO {
 
-    public visit() {
-        cy.visit(`/dashboard/settings`);
-    }
+  public visit() {
+    cy.visit("/dashboard/settings");
+  }
 
-    get alert() {
-        return cy.get(".alert");
-    }
+  public get alert() {
+    return cy.get(".alert");
+  }
 
-    get displayNameField() {
-        return cy.get("input[name=title]");
-    }
+  public get displayNameField() {
+    return cy.get("input[name=title]");
+  }
 
-    get emailField() {
-        return cy.get("input[name=email]");
-    }
+  public get emailField() {
+    return cy.get("input[name=email]");
+  }
 
-    get timezoneSelect2Dropdown() {
-        return cy.get("select[name=timezone]");
-    }
+  public get timezoneSelect2Dropdown() {
+    return cy.get("select[name=timezone]");
+  }
 
-    get websiteField() {
-        return cy.get("input[name=website]");
-    }
+  public get websiteField() {
+    return cy.get("input[name=website]");
+  }
 
-    get twitterField() {
-        return cy.get("input[name=twitter]");
-    }
+  public get twitterField() {
+    return cy.get("input[name=twitter]");
+  }
 
-    get bioEditor() {
-        return cy.getEditor();
-    }
+  public get bioEditor() {
+    return cy.getEditor();
+  }
 
-    get saveButton() {
-        return cy.get(".btn-primary").first();
-    }
+  public get saveButton() {
+    return cy.get(".btn-primary").first();
+  }
 
-    get deleteAccountButton() {
-        cy.acceptFutureConfirms();
-        return cy.get(".btn-danger");
-    }
+  public get deleteAccountButton() {
+    cy.acceptFutureConfirms();
+    return cy.get(".btn-danger");
+  }
 
 }
 

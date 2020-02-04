@@ -34,7 +34,8 @@ async function fetchById(id: number): Promise<BookshelfModel> {
  * Fetch platforms by name (case-insensitive except in SQLite).
  */
 function fetchMultipleNamed(names: string[]): Promise<BookshelfCollection> {
-  return models.Platform.query((qb) => qb.whereIn("name", names)).fetchAll() as Bluebird<BookshelfCollection>;
+  return models.Platform.query((qb) => { qb.whereIn("name", names); })
+    .fetchAll() as Bluebird<BookshelfCollection>;
 }
 
 /**

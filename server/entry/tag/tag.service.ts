@@ -121,7 +121,7 @@ async function updateEntryTags(entry, tagInfo) {
     if (toRemoveIds.length > 0) {
       await transaction("tag")
         .whereNotIn("id", function() {
-          return this.from("entry_tag").distinct("tag_id");
+          this.from("entry_tag").distinct("tag_id");
         })
         .del();
     }

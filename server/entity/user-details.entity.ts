@@ -1,7 +1,7 @@
-/* tslint:disable:variable-name */
+/* eslint-disable camelcase */
 
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BookshelfCompatibleEntity, DependentEntity } from "./bookshelf-compatible.entity";
+import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
 import { User } from "./user.entity";
 

@@ -59,10 +59,8 @@ if (!fs.existsSync(CONFIG_PATH)) {
 }
 
 // Look for missing config keys
-// tslint:disable: no-var-requires
 const config = require(CONFIG_PATH) as Config;
 const configSample = require(CONFIG_SAMPLE_PATH) as Config;
-// tslint:enable: no-var-requires
 
 for (const key in configSample) {
   if (config[key] === undefined && (key !== "DB_SQLITE_FILENAME" || config.DB_TYPE === "sqlite3")) {

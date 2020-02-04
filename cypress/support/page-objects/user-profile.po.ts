@@ -1,44 +1,44 @@
 class UserProfilePO {
 
-    public visit(userName: string) {
-        cy.visit(`/user/${userName}`);
-    }
+  public visit(userName: string) {
+    cy.visit(`/user/${userName}`);
+  }
 
-    get userDisplayName() {
-        return cy.get(".profile__title");
-    }
+  public get userDisplayName() {
+    return cy.get(".profile__title");
+  }
 
-    get userName() {
-        return cy.get(".profile__name");
-    }
+  public get userName() {
+    return cy.get(".profile__name");
+  }
 
-    get userBio() {
-        return cy.get(".featured");
-    }
+  public get userBio() {
+    return cy.get(".featured");
+  }
 
-    // Tabs
+  // Tabs
 
-    get alakajamGamesTab() {
-        return cy.get("a[href=#entries]");
-    }
+  public get alakajamGamesTab() {
+    return cy.get("a[href=#entries]");
+  }
 
-    get otherGamesTab() {
-        return cy.get("a[href=#entries-ext]");
-    }
+  public get otherGamesTab() {
+    return cy.get("a[href=#entries-ext]");
+  }
 
-    get postsTab() {
-        return cy.get("a[href=#posts]");
-    }
+  public get postsTab() {
+    return cy.get("a[href=#posts]");
+  }
 
-    get highScoresTab() {
-        return cy.get("a[href=#scores]");
-    }
+  public get highScoresTab() {
+    return cy.get("a[href=#scores]");
+  }
 
-    // Tab contents
+  // Tab contents
 
-    get tabContents() {
-        return cy.get(".tab-content");
-    }
+  public get tabContents() {
+    return cy.get(".tab-content");
+  }
 
 }
 

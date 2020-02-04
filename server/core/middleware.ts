@@ -22,7 +22,6 @@ import * as randomKey from "random-key";
 import settings from "server/core/settings";
 import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
 import { routes } from "server/routes";
-import instance from "server/sass";
 import { CustomRequest } from "server/types";
 import passwordRecoveryService from "server/user/password-recovery/password-recovery.service";
 import { promisify } from "util";
@@ -85,7 +84,7 @@ export async function configure(app: Application) {
 
   // Body parsers config
   app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(async (req: Request, res: Response, next: NextFunction) => {
+  app.use((req: Request, res: Response, next: NextFunction) => {
     // Multer auto cleanup (actual Multer middleware is declared at initUploadMiddleware())
     res.on("finish", cleanupFormFilesCallback(req, res));
     res.on("close", cleanupFormFilesCallback(req, res));
@@ -182,7 +181,7 @@ function setupNunjucks(app) {
 }
 
 function cleanupFormFilesCallback(req: Request, res: Response) {
-  return async function cleanupFormFiles() {
+  return function cleanupFormFiles() {
     if (res.locals.form) {
       res.locals.form.files.forEach((key) => {
         const fileInfo = res.locals.form.files[key];

@@ -1,67 +1,67 @@
 class PostPO {
 
-    public visit({ postId }: { postId: number | string }) {
-        cy.visit(`/post/${postId}`);
-    }
+  public visit({ postId }: { postId: number | string }) {
+    cy.visit(`/post/${postId}`);
+  }
 
-    public writeNewComment(body: string) {
-        this.commentEditor.type(body, { force: true });
-        this.commentSaveButton.click();
-    }
+  public writeNewComment(body: string) {
+    this.commentEditor.type(body, { force: true });
+    this.commentSaveButton.click();
+  }
 
-    // Header
+  // Header
 
-    get postTitle() {
-        return cy.get(".post__title");
-    }
+  public get postTitle() {
+    return cy.get(".post__title");
+  }
 
-    get postEditButton() {
-        return cy.get(".post .btn-outline-secondary");
-    }
+  public get postEditButton() {
+    return cy.get(".post .btn-outline-secondary");
+  }
 
-    get commentCounter() {
-        return cy.get(".post__comment-count");
-    }
+  public get commentCounter() {
+    return cy.get(".post__comment-count");
+  }
 
-    get likeCounter() {
-        return cy.get(".js-like-button");
-    }
+  public get likeCounter() {
+    return cy.get(".js-like-button");
+  }
 
-    get likeButton() {
-        return this.likeCounter;
-    }
+  public get likeButton() {
+    return this.likeCounter;
+  }
 
-    // Body
+  // Body
 
-    get postBody() {
-        return cy.get(".post__body");
-    }
+  public get postBody() {
+    return cy.get(".post__body");
+  }
 
-    // Comments
+  // Comments
 
-    get commentSectionTitle() {
-        return cy.get("h2");
-    }
+  public get commentSectionTitle() {
+    return cy.get("h2");
+  }
 
-    get commentEditButton() {
-        return cy.get(".comment__details .fa-pencil-alt").first();
-    }
+  public get commentEditButton() {
+    return cy.get(".comment__details .fa-pencil-alt").first();
+  }
 
-    get commentSaveButton() {
-        return cy.get("input[name=save]").first();
-    }
+  public get commentSaveButton() {
+    return cy.get("input[name=save]").first();
+  }
 
-    get commentDeleteButton() {
-        return cy.get("input[name=delete]");
-    }
+  public get commentDeleteButton() {
+    return cy.get("input[name=delete]");
+  }
 
-    get comments() {
-        return cy.get(".comment");
-    }
+  public get comments() {
+    return cy.get(".comment");
+  }
 
-    get commentEditor() {
-        return cy.getEditor();
-    }
+  public get commentEditor() {
+    return cy.getEditor();
+  }
 
 }
 

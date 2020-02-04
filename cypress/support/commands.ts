@@ -29,8 +29,8 @@ Cypress.Commands.add("logout", () => {
 
 Cypress.Commands.add("clearEditor", { prevSubject: true }, (subject) => {
   cy.get(subject)
-    .type(`{ctrl}a`, { force: true })
-    .type(`{backspace}`, { force: true });
+    .type("{ctrl}a", { force: true })
+    .type("{backspace}", { force: true });
 });
 
 Cypress.Commands.add("typeInEditor", { prevSubject: true }, (subject, contents) => {

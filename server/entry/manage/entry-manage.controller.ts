@@ -158,7 +158,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       highScoreType = forms.sanitizeString(req.body["custom-unit"], { maxLength: 20 });
     }
 
-    const entryDetails = entry.related("details") as BookshelfModel;
+    const entryDetails = entry.related<BookshelfModel>("details");
     entryDetails.set({
       optouts,
       body: forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_ENTRY_DETAILS }),
@@ -198,7 +198,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
         teamMembers = req.body.members.map((s) => parseInt(s, 10));
         let ownerId;
         if (!isCreation) {
-          ownerId = (entry.related("userRoles") as BookshelfCollection)
+          ownerId = (entry.related<BookshelfCollection>("userRoles"))
             .find((userRole) => userRole.get("permission") === SECURITY_PERMISSION_MANAGE)
             .get("user_id");
         } else {
@@ -269,7 +269,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
     allPlatforms: await platformService.fetchAllNames(),
     entryPlatforms: entry.get("platforms"),
     external: !res.locals.event,
-    tags: (entry.related("tags") as BookshelfCollection).map((tag) => ({ id: tag.id, value: tag.get("value") })),
+    tags: (entry.related<BookshelfCollection>("tags")).map((tag) => ({ id: tag.id, value: tag.get("value") })),
     isPlayedInTournament,
     tournamentAdvertising: await settings.find(SETTING_EVENT_TOURNAMENT_ADVERTISING),
     errorMessages,
@@ -284,11 +284,11 @@ export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryL
 
   if (user && entry && security.canUserManage(user, entry, { allowMods: true })) {
     await entry.load("posts");
-    const posts = entry.related("posts") as BookshelfCollection;
-    posts.forEach(async (post) => {
+    const posts = entry.related<BookshelfCollection>("posts");
+    for (const post of posts.models) {
       post.set("entry_id", null);
       await post.save();
-    });
+    }
     await eventService.deleteEntry(entry);
     if (event && event.get("status") !== enums.EVENT.STATUS.CLOSED) {
       eventService.refreshEventCounts(event); // No need to await

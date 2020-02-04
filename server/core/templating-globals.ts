@@ -3,7 +3,7 @@ import enums from "./enums";
 import templatingFunctions from "./templating-functions";
 
 export function configure({devMode, launchTime, nunjucksEnvironment}:
-   {devMode: boolean, launchTime: number, nunjucksEnvironment: any}) {
+{devMode: boolean; launchTime: number; nunjucksEnvironment: any}) {
 
   nunjucksEnvironment.addGlobal("browserRefreshUrl", process.env.BROWSER_REFRESH_URL);
   nunjucksEnvironment.addGlobal("constants", constants);

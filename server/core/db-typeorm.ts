@@ -15,8 +15,8 @@ import log from "./log";
 export class DB {
 
   private readonly ENTITIES_PATH = (__filename.endsWith(".js"))
-      ? path.resolve(constants.ROOT_PATH, "dist/server/entity/*.entity.js")
-      : path.resolve(constants.ROOT_PATH, "server/entity/*.entity.ts");
+    ? path.resolve(constants.ROOT_PATH, "dist/server/entity/*.entity.js")
+    : path.resolve(constants.ROOT_PATH, "server/entity/*.entity.ts");
 
   private connectionInstance: Connection = null;
 

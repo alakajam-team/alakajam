@@ -54,9 +54,9 @@ export function configure(nunjucksEnvironment) {
   });
 
   nunjucksEnvironment.addFilter("date", (
-      date: number | string | Date,
-      user?: BookshelfModel,
-      options: { format?: string, utcSuffixByDefault?: boolean } = {}) => {
+    date: number | string | Date,
+    user?: BookshelfModel,
+    options: { format?: string; utcSuffixByDefault?: boolean } = {}) => {
     const useCustomFormat = !!options.format;
     const format = options.format || constants.DATE_FORMAT;
     const utcSuffixByDefault = options.utcSuffixByDefault !== undefined ? options.utcSuffixByDefault : !useCustomFormat;

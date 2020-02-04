@@ -1,32 +1,32 @@
 class PeoplePO {
 
-    public visit() {
-        cy.visit("/people");
-    }
+  public visit() {
+    cy.visit("/people");
+  }
 
-    get title() {
-        return cy.get("h1");
-    }
+  public get title() {
+    return cy.get("h1");
+  }
 
-    get results() {
-        return cy.get(".user-thumbs");
-    }
+  public get results() {
+    return cy.get(".user-thumbs");
+  }
 
-    get form() {
-        return cy.get("form");
-    }
+  public get form() {
+    return cy.get("form");
+  }
 
-    get nameField() {
-        return cy.get("input[name=search]");
-    }
+  public get nameField() {
+    return cy.get("input[name=search]");
+  }
 
-    get withEntriesCheckbox() {
-        return cy.get("input[name=withEntries]");
-    }
+  public get withEntriesCheckbox() {
+    return cy.get("input[name=withEntries]");
+  }
 
-    get cancel() {
-        return cy.get("a.btn-outline-primary");
-    }
+  public get cancel() {
+    return cy.get("a.btn-outline-primary");
+  }
 
 }
 

@@ -47,16 +47,16 @@ function getFirstPicture(model: BookshelfModel): string | false {
  * Finds all posts from a feed (specified through options)
  */
 async function findPosts(options: {
-  specialPostType?: string,
-  allowHidden?: boolean,
-  allowDrafts?: boolean,
-  eventId?: number | string,
-  entryId?: number | string,
-  userId?: number | string,
-  page?: number,
-  transacting?: any
+  specialPostType?: string;
+  allowHidden?: boolean;
+  allowDrafts?: boolean;
+  eventId?: number | string;
+  entryId?: number | string;
+  userId?: number | string;
+  page?: number;
+  transacting?: any;
 } = {}): Promise<BookshelfCollectionOf<PostBookshelfModel>> {
-  const query = await models.Post.query((qb) => {
+  const query = models.Post.query((qb) => {
     if (options.specialPostType !== undefined) {
       qb = qb.where("special_post_type", options.specialPostType);
     }
@@ -83,7 +83,6 @@ async function findPosts(options: {
     }
 
     if (!options.allowDrafts) { qb = qb.where("published_at", "<=", createLuxonDate().toJSDate()); }
-    return qb;
   });
 
   query.orderBy("published_at", "DESC");
@@ -171,7 +170,7 @@ async function createPost(user: BookshelfModel, eventId?: number): Promise<PostB
  */
 async function refreshCommentCount(node: BookshelfModel): Promise<void> {
   await node.load("comments");
-  const comments = node.related("comments") as BookshelfCollection;
+  const comments = node.related<BookshelfCollection>("comments");
   await node.save({ comment_count: comments.length }, { patch: true });
 }
 

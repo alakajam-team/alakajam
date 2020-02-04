@@ -6,6 +6,7 @@ import enums from "server/core/enums";
 import * as models from "server/core/models";
 import security, { SECURITY_PERMISSION_MANAGE, SECURITY_PERMISSION_WRITE } from "server/core/security";
 import postService from "server/post/post.service";
+import { BookshelfModel } from "bookshelf";
 
 export class EntryTeamService {
 
@@ -16,7 +17,7 @@ export class EntryTeamService {
    * @param {Entry} entry the entry model (optional, null if we're in a creation).
    * @returns {TeamMemberSearchResult[]}
    */
-  public searchForTeamMembers(nameFragment: string, eventId?: number, entry?): TeamMemberSearchResult[] {
+  public searchForTeamMembers(nameFragment: string, eventId?: number, entry?: BookshelfModel): Promise<TeamMemberSearchResult[]> {
     // As SQL:
     // SELECT "user".name, "user".title, entered.node_id
     // FROM "user"
@@ -46,7 +47,7 @@ export class EntryTeamService {
       .select("user.id", "user.title", "user.avatar", "entered.node_id")
       .from("user")
       .leftJoin(alreadyEntered.as("entered"), "user.id", "=", "entered.user_id")
-      .where("name", ilikeOperator(), `%${nameFragment}%`) as any;
+      .where("name", ilikeOperator(), `%${nameFragment}%`);
   }
 
   public async findTeamMembers(entry, user = null) {

@@ -187,7 +187,7 @@ async function findVoteHistory(userId, event, options: any = {}) {
 async function findEntryRankings(event, division, categoryIndex): Promise<BookshelfCollection> {
   if (categoryIndex > 0 && categoryIndex <= constants.MAX_CATEGORY_COUNT) {
     return models.Entry.query((qb) => {
-      return qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
+      qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
         .where({
           event_id: event.get("id"),
           division,
@@ -235,7 +235,7 @@ async function refreshEntryRatings(entry) {
   // Only give a rating if the entry has enough votes (tolerate being a bit under the minimum)
   const entryDetails = entry.related("details");
   const requiredRatings = Math.floor(0.8 * await settings.findNumber(
-      SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1));
+    SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1));
   for (const categoryIndex of categoryIndexes) {
     let averageRating;
     if (ratingCount[categoryIndex] >= requiredRatings) {
@@ -396,7 +396,7 @@ async function computeRankings(event: BookshelfModel) {
 
   return db.transaction(async (transaction) => {
     for (const entry of rankedEntries.models) {
-      const entryDetails = entry.related("details") as BookshelfModel;
+      const entryDetails = entry.related<BookshelfModel>("details");
       await entryDetails.save(null, { transacting: transaction });
     }
   });
@@ -404,7 +404,7 @@ async function computeRankings(event: BookshelfModel) {
 
 async function clearRankings(event: BookshelfModel) {
   const entryDetailsCollection = await models.EntryDetails
-    .query((qb) => qb.leftJoin("entry", "entry_details.entry_id", "entry.id"))
+    .query((qb) => { qb.leftJoin("entry", "entry_details.entry_id", "entry.id"); })
     .where("entry.event_id", event.get("id"))
     .where("entry.division", "<>", enums.DIVISION.UNRANKED)
     .fetchAll() as BookshelfCollection;

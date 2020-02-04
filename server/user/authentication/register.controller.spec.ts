@@ -1,4 +1,4 @@
-// tslint:disable: no-unused-expression
+/* eslint-disable no-unused-expressions */
 
 import { expect } from "chai";
 import "module-alias/register";

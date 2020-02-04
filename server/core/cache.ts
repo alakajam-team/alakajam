@@ -1,4 +1,4 @@
-// tslint:disable: max-classes-per-file
+/* eslint-disable max-classes-per-file */
 
 /**
  * Cache configuration
@@ -67,26 +67,31 @@ export default {
  */
 function user(userModel): NodeCache {
   return new PrefixedNodeCache(cacheMap.users,
-      (typeof userModel === "string") ? userModel : userModel.get("name")) as any;
+    (typeof userModel === "string") ? userModel : userModel.get("name")) as any;
 }
 
 class PrefixedNodeCache {
+
   private cache: NodeCache;
   private fullPrefix: string;
 
-  constructor(cache: NodeCache, prefix: string) {
+  public constructor(cache: NodeCache, prefix: string) {
     this.cache = cache;
     this.fullPrefix = prefix.toLowerCase() + "_";
   }
+
   public get<T>(key: string) {
     return this.cache.get<T>(this.fullPrefix + key);
   }
+
   public set<T>(key: string, value: T, ttl?: number) {
     return this.cache.set<T>(this.fullPrefix + key, value, ttl);
   }
+
   public del(key: string) {
     return this.cache.del(this.fullPrefix + key);
   }
+
 }
 
 async function getOrFetch<T>(cache: NodeCache, key: string, asyncFetch: () => Promise<T>, ttl?: number): Promise<T> {

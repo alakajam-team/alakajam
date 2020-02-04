@@ -1,63 +1,63 @@
 class PostEditPO {
 
-    public visit({ postId }: { postId: number | string }) {
-        cy.visit(`/post/${postId}/edit`);
-    }
+  public visit({ postId }: { postId: number | string }) {
+    cy.visit(`/post/${postId}/edit`);
+  }
 
-    // Header
+  // Header
 
-    get titlePreview() {
-        return cy.get(".post__title");
-    }
+  public get titlePreview() {
+    return cy.get(".post__title");
+  }
 
-    // Body
+  // Body
 
-    get titleInput() {
-        return cy.get("input[name=title]");
-    }
+  public get titleInput() {
+    return cy.get("input[name=title]");
+  }
 
-    get relatedEventDropdown() {
-        return cy.get("select[name=event-id]");
-    }
+  public get relatedEventDropdown() {
+    return cy.get("select[name=event-id]");
+  }
 
-    get editor() {
-        return cy.getEditor();
-    }
+  public get editor() {
+    return cy.getEditor();
+  }
 
-    // Actions
+  // Actions
 
-    get publishButton() {
-        return cy.get("input[name=publish]");
-    }
+  public get publishButton() {
+    return cy.get("input[name=publish]");
+  }
 
-    get saveButton() {
-        return cy.get("input[name=save]").first();
-    }
+  public get saveButton() {
+    return cy.get("input[name=save]").first();
+  }
 
-    get saveDraftButton() {
-        return cy.get("input[name=save-draft]");
-    }
+  public get saveDraftButton() {
+    return cy.get("input[name=save-draft]");
+  }
 
-    get unpublishButton() {
-        return cy.get("input[name=unpublish]");
-    }
+  public get unpublishButton() {
+    return cy.get("input[name=unpublish]");
+  }
 
-    get deleteButton() {
-        cy.acceptFutureConfirms();
-        return cy.get(".btn-danger");
-    }
+  public get deleteButton() {
+    cy.acceptFutureConfirms();
+    return cy.get(".btn-danger");
+  }
 
-    get scheduleButton() {
-        return cy.get("input[value='Schedule...']");
-    }
+  public get scheduleButton() {
+    return cy.get("input[value='Schedule...']");
+  }
 
-    get publishedAtField() {
-        return cy.get("input[name=published-at]");
-    }
+  public get publishedAtField() {
+    return cy.get("input[name=published-at]");
+  }
 
-    get saveScheduleButton() {
-        return cy.get("input[name=save-custom]");
-    }
+  public get saveScheduleButton() {
+    return cy.get("input[name=save-custom]");
+  }
 
 }
 

@@ -5,12 +5,11 @@
  */
 
 if (__filename.endsWith(".js")) {
-  // tslint:disable-next-line: no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("module-alias/register");
 }
 
 import config from "server/core/config";
-import log from "server/core/log";
 
 exports.up = async (knex) => {
   await knex.schema.table("event_details", (table) => {

@@ -2,7 +2,7 @@ import { USER_ADMINISTRATOR, USER_DUMBLEDORE } from "../support/data";
 
 function visitAllPages(pages: Record<string, string>) {
   Object.keys(pages).forEach((pageName) => {
-      cy.visit(pages[pageName]);
+    cy.visit(pages[pageName]);
   });
 }
 

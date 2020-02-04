@@ -1,16 +1,16 @@
 class DashboardPostsPO {
 
-    public visit() {
-        cy.visit(`/dashboard/posts`);
-    }
+  public visit() {
+    cy.visit("/dashboard/posts");
+  }
 
-    get createPostButton() {
-        return cy.get(".btn-primary");
-    }
+  public get createPostButton() {
+    return cy.get(".btn-primary");
+  }
 
-    get postTitles() {
-        return cy.get(".post__title");
-    }
+  public get postTitles() {
+    return cy.get(".post__title");
+  }
 
 }
 

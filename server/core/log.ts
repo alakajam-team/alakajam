@@ -24,7 +24,7 @@ const LOCAL_TIME_ZONE = new luxon.LocalZone();
 
 let level = "info";
 try {
-  // tslint:disable-next-line: no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const config = require(path.resolve(SOURCES_ROOT, "config"));
   level = config.LOG_LEVEL;
 } catch (e) {

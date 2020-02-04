@@ -5,14 +5,15 @@ import cache, { TTL_ONE_DAY } from "server/core/cache";
 export class UserTimeZoneService {
 
   public getAllTimeZones(): Promise<TimeZone[]> {
-    return cache.getOrFetch(cache.general, "allTimeZones", async () => {
-      return Object.values(countriesAndTimezones.getAllCountries() as TimezonesByCountry)
-        .map(this.countryToTimezones)
+    return cache.getOrFetch(cache.general, "allTimeZones", () => {
+      const allTimeZones = Object.values(countriesAndTimezones.getAllCountries() as TimezonesByCountry)
+        .map((country) => this.countryToTimezones(country))
         .reduce((list1, list2) => list1.concat(list2), []);
+      return Promise.resolve(allTimeZones);
     }, TTL_ONE_DAY);
   }
 
-  public async getAllTimeZonesAsOptions(): Promise<Array<{ id: string, label: string }>> {
+  public async getAllTimeZonesAsOptions(): Promise<Array<{ id: string; label: string }>> {
     const timezoneData = await this.getAllTimeZones();
     return timezoneData.map((timezone) => ({ id: timezone.id, label: this.formatTimezone(timezone) }));
   }

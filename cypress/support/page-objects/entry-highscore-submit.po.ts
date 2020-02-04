@@ -1,37 +1,37 @@
 class EntrySubmitScorePO {
 
-    public visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
-        cy.visit(`/${eventName}/${entryId}/test-entry/submit-score`);
-    }
+  public visit({ eventName, entryId }: { eventName: string; entryId: number | string }) {
+    cy.visit(`/${eventName}/${entryId}/test-entry/submit-score`);
+  }
 
-    get scoreField() {
-        return cy.get("input[name=score]");
-    }
+  public get scoreField() {
+    return cy.get("input[name=score]");
+  }
 
-    get scoreMinutesField() {
-        return cy.get("input[name=score-mn]");
-    }
+  public get scoreMinutesField() {
+    return cy.get("input[name=score-mn]");
+  }
 
-    get scoreSecondsField() {
-        return cy.get("input[name=score-s]");
-    }
+  public get scoreSecondsField() {
+    return cy.get("input[name=score-s]");
+  }
 
-    get scoreMillisecondsField() {
-        return cy.get("input[name=score-ms]");
-    }
+  public get scoreMillisecondsField() {
+    return cy.get("input[name=score-ms]");
+  }
 
-    get proofPictureField() {
-        return cy.get("input[type=file][name=upload]");
-    }
+  public get proofPictureField() {
+    return cy.get("input[type=file][name=upload]");
+  }
 
-    get saveButton() {
-        return cy.get(".btn-primary");
-    }
+  public get saveButton() {
+    return cy.get(".btn-primary");
+  }
 
-    get deleteButton() {
-        cy.acceptFutureConfirms();
-        return cy.get("input[name=delete]");
-    }
+  public get deleteButton() {
+    cy.acceptFutureConfirms();
+    return cy.get("input[name=delete]");
+  }
 
 }
 

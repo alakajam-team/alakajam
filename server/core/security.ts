@@ -5,7 +5,7 @@
  * @module services/security-service
  */
 
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { BookshelfModel } from "bookshelf";
 import enums from "./enums";
 import * as models from "./models";
 
@@ -49,10 +49,10 @@ export class Security {
    * Warning: Always returns false if no model is given.
    */
   public canUser(
-      user: BookshelfModel,
-      model: BookshelfModel,
-      permission: SecurityPermission,
-      options: SecurityOptions = {}): boolean {
+    user: BookshelfModel,
+    model: BookshelfModel,
+    permission: SecurityPermission,
+    options: SecurityOptions = {}): boolean {
     if (!user || !model) {
       return false;
     }
@@ -63,7 +63,7 @@ export class Security {
     // Comment
     if (model.get("user_id")) {
       if (permission === "read") {
-        return this.canUser(user, model.related("node") as BookshelfModel, permission, options);
+        return this.canUser(user, model.related("node"), permission, options);
       } else {
         return model.get("user_id") === user.get("id");
       }
@@ -83,7 +83,7 @@ export class Security {
       throw new Error("Model does not have user roles");
     }
     const acceptPermissions = this.getPermissionsEqualOrAbove(permission);
-    const allUserRoles = model.related("userRoles") as BookshelfCollection;
+    const allUserRoles = model.related("userRoles");
     if (acceptPermissions && allUserRoles) {
       const userRoles: BookshelfModel[] = allUserRoles.where({
         user_id: user.get("id"),
@@ -133,7 +133,7 @@ export class Security {
     await node.load("userRoles");
 
     // Check if present already
-    const userRoles = node.related("userRoles") as BookshelfCollection;
+    const userRoles = node.related("userRoles");
     const matchingRole = userRoles.find((userRole) => {
       return userRole.get("user_name") === user.get("name") &&
         userRole.get("permission") === permission;
@@ -163,12 +163,12 @@ export class Security {
    * Removes a user right from a node. If the permission does not match exactly, does nothing.
    */
   public async removeUserRight(
-      user: BookshelfModel,
-      node: BookshelfModel,
-      permission: SecurityPermission): Promise<void> {
+    user: BookshelfModel,
+    node: BookshelfModel,
+    permission: SecurityPermission): Promise<void> {
     await node.load("userRoles");
 
-    const userRoles = node.related("userRoles") as BookshelfCollection;
+    const userRoles = node.related("userRoles");
     const matchingRole = userRoles.find((userRole) => {
       return userRole.get("user_name") === user.get("name") &&
         userRole.get("permission") === permission;

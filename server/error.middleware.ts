@@ -37,20 +37,20 @@ export function errorPage(req: CustomRequest, res: Response, code: number, error
   let message = (typeof error === "object") ? error.message : error;
   let title;
   switch (code) {
-    case 404:
-      title = "Page not found";
-      break;
-    case 403:
-      title = "Forbidden";
-      break;
-    case 500:
-      title = "Internal error";
-      if (!devMode) {
-        message = "Something went wrong, sorry about that.";
-      }
-      break;
-    default:
-      title = "Error";
+  case 404:
+    title = "Page not found";
+    break;
+  case 403:
+    title = "Forbidden";
+    break;
+  case 500:
+    title = "Internal error";
+    if (!devMode) {
+      message = "Something went wrong, sorry about that.";
+    }
+    break;
+  default:
+    title = "Error";
   }
 
   // Internal error logging

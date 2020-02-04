@@ -9,7 +9,7 @@ export async function viewDefaultPage(req, res) {
 
   let page;
   if (![enums.EVENT.STATUS_TOURNAMENT.OFF, enums.EVENT.STATUS_TOURNAMENT.DISABLED]
-      .includes(event.get("status_tournament"))) {
+    .includes(event.get("status_tournament"))) {
     if (event.get("status_tournament") === enums.EVENT.STATUS_TOURNAMENT.RESULTS) {
       page = "tournament-leaderboard";
     } else {

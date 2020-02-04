@@ -8,8 +8,7 @@ export function mockRequest(partialReq: Partial<CustomRequest> = {}): CustomRequ
   } as CustomRequest;
 }
 
-export function mockResponse<T extends CommonLocals>(partialRes: Partial<CustomResponse<T>> = {})
-    : CustomResponse<T> & { renderSpy: sinon.SinonSpy } {
+export function mockResponse<T extends CommonLocals>(partialRes: Partial<CustomResponse<T>> = {}): CustomResponse<T> & { renderSpy: sinon.SinonSpy } {
   const renderSpy = spy();
   return {
     locals: {

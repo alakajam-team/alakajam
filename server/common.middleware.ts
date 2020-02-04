@@ -11,6 +11,8 @@ import commentService from "./post/comment/comment.service";
 import { Alert, CustomRequest } from "./types";
 
 export interface CommonLocals {
+  [key: string]: any;
+
   /**
    * Current local path.
    * Available everywhere.
@@ -63,8 +65,6 @@ export interface CommonLocals {
    * Available everywhere.
    */
   readonly editComment: BookshelfModel;
-
-  [key: string]: any;
 }
 
 export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction) {

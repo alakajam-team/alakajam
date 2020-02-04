@@ -10,7 +10,7 @@ describe("Event: Administration", () => {
   });
 
   afterEach(() => {
-   // cy.restoreDB();
+    // cy.restoreDB();
   });
 
   it("supports switching from theme submissions to theme shortlist phase", () => {

@@ -1,4 +1,4 @@
-// tslint:disable: no-unused-expression
+/* eslint-disable no-unused-expressions */
 
 import { expect } from "chai";
 import "module-alias/register";
@@ -9,7 +9,7 @@ describe("User service", function() {
   this.timeout(DB_TEST_TIMEOUT);
 
   before(async () => {
-     await startTestDB();
+    await startTestDB();
   });
 
   after(async () => {

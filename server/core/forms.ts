@@ -24,7 +24,7 @@ export default {
   sanitizeMarkdown,
 
   capitalize: (new nunjucks.Environment() as any).filters.capitalize,
-  slug: _slug,
+  slug: slugCustom,
 
   isEmail,
   isURL,
@@ -130,7 +130,7 @@ function sanitizeMarkdown(markdown: string, options: any = {}) {
 /**
  * Turns a string into a slug suitable for URLs.
  */
-function _slug(str: string) {
+function slugCustom(str: string) {
   return slug(str, SLUG_SETTINGS).toLowerCase();
 }
 

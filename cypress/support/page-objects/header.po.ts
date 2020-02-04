@@ -1,40 +1,40 @@
 class HeaderPO {
 
-    get avatar() {
-        return cy.get(".dropdown .navbar-avatar");
-    }
+  public get avatar() {
+    return cy.get(".dropdown .navbar-avatar");
+  }
 
-    get notificationCount() {
-        return cy.get(".navbar-unread-notifications");
-    }
+  public get notificationCount() {
+    return cy.get(".navbar-unread-notifications");
+  }
 
-    get openButton() {
-        return cy.get(".dropdown-toggle");
-    }
+  public get openButton() {
+    return cy.get(".dropdown-toggle");
+  }
 
-    get dashboardLink() {
-        return cy.get(".dropdown-menu a").eq(1);
-    }
+  public get dashboardLink() {
+    return cy.get(".dropdown-menu a").eq(1);
+  }
 
-    get settingsLink() {
-        return cy.get("a[href=/dashboard/settings]");
-    }
+  public get settingsLink() {
+    return cy.get("a[href=/dashboard/settings]");
+  }
 
-    get myEntriesLink() {
-        return cy.get("a[href=/dashboard/entries]");
-    }
+  public get myEntriesLink() {
+    return cy.get("a[href=/dashboard/entries]");
+  }
 
-    get myPostsLink() {
-        return cy.get("a[href=/dashboard/posts]");
-    }
+  public get myPostsLink() {
+    return cy.get("a[href=/dashboard/posts]");
+  }
 
-    get myScoresLink() {
-        return cy.get("a[href=/dashboard/scores]");
-    }
+  public get myScoresLink() {
+    return cy.get("a[href=/dashboard/scores]");
+  }
 
-    get logoutLink() {
-        return cy.get("a[href=/logout]");
-    }
+  public get logoutLink() {
+    return cy.get("a[href=/logout]");
+  }
 
 }
 

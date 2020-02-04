@@ -41,7 +41,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
       if (req.method === "POST" && res.locals.user) {
         if (req.body.action === "ideas") {
           // Gather ideas data
-          const ideas: Array<{id?: string, title: string}> = [];
+          const ideas: Array<{id?: string; title: string}> = [];
           for (let i = 0; i < parseInt(req.body["idea-rows"], 10); i++) {
             const idField = req.body["idea-id[" + i + "]"];
             if (forms.isId(idField) || !idField) {
@@ -115,7 +115,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
 
       // State-specific data
       if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED,
-      enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
+        enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
         context.shortlistVotes = await eventThemeService.countShortlistVotes(event);
       }
       if (statusTheme === enums.EVENT.STATUS_THEME.RESULTS) {

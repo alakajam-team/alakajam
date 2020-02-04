@@ -137,9 +137,9 @@ export async function apiSearchForTeammate(req, res) {
     const entryId = entry ? entry.get("id") : -1;
     const getStatus = (match) => {
       switch (match.node_id) {
-        case null: return "available";
-        case entryId: return "member";
-        default: return "unavailable";
+      case null: return "available";
+      case entryId: return "member";
+      default: return "unavailable";
       }
     };
 

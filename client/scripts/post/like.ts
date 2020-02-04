@@ -1,5 +1,4 @@
-
-// tslint:disable: no-console
+/* eslint-disable no-console */
 
 const DEFAULT_LIKE_TYPE = "like";
 
