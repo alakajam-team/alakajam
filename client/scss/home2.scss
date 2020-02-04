@@ -13,6 +13,9 @@ $homeNavbarHeight: 50px;
     margin-top: 15px;
   }
 
+  &__shortcut .list-group-item, a.event-jumbotron__shortcut {
+    padding: 10px 15px;
+  }
   &__shortcut:hover {
     background-color: $neutral-lightest;
   }

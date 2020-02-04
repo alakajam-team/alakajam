@@ -79,10 +79,10 @@
               {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
               {% for featuredLink in featuredLinks %}
                 <a class="list-group-item" href="{{ featuredLink.link }}">
-                  <h3>
+                  <h4>
                     <span class="event-jumbotron__shortcut-icon"><span class="fas {{ featuredLink.icon }}"></span></span>
                     <span class="event-jumbotron__shortcut-title">{{ featuredLink.title }}</span>
-                  </h3>
+                  </h4>
                 </a>
               {% endfor %}
             </div>
@@ -95,10 +95,10 @@
 {% endmacro %}
 
 {% macro myEntryTitle(event) %} 
-<h3 class="mb-0">
+<h4 class="mb-0">
   <span class="event-jumbotron__shortcut-icon"><span class="fas fa-chess-rook"></span></span>
   <span class="event-jumbotron__shortcut-title">My {{ event.get('title') }} entry</span>
-</h3>
+</h4>
 {% endmacro %}
 
 {% macro eventJumbotronCountdownPhrase(event, user) %}
