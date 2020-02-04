@@ -22,6 +22,7 @@ import * as randomKey from "random-key";
 import settings from "server/core/settings";
 import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
 import { routes } from "server/routes";
+import instance from "server/sass";
 import { CustomRequest } from "server/types";
 import passwordRecoveryService from "server/user/password-recovery/password-recovery.service";
 import { promisify } from "util";
@@ -33,7 +34,6 @@ import log from "./log";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
 import * as templatingFilters from "./templating-filters";
 import * as templatingGlobals from "./templating-globals";
-import instance from "server/sass";
 
 const LAUNCH_TIME = Date.now();
 

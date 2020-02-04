@@ -1,4 +1,4 @@
-import { BookshelfCollection, BookshelfModel, PostBookshelfModel, BookshelfCollectionOf } from "bookshelf";
+import { BookshelfCollection, BookshelfCollectionOf, BookshelfModel, PostBookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import { createLuxonDate } from "server/core/formats";

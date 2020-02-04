@@ -16,7 +16,7 @@ export async function articleApiRoot(req: CustomRequest, res: CustomResponse<Com
 }
 
 export async function articleView(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
-  return _renderArticle(res, slug(req.params.category), slug(req.params.name || ""));
+  return _renderArticle(res, slug(req.params.category) as any, slug(req.params.name || ""));
 }
 
 async function _renderArticle(

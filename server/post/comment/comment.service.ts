@@ -1,5 +1,5 @@
 import * as Bluebird from "bluebird";
-import { BookshelfCollection, BookshelfModel, NodeBookshelfModel, FetchPageOptions } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, FetchPageOptions, NodeBookshelfModel } from "bookshelf";
 import { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
@@ -74,7 +74,7 @@ export class CommentService {
     }
     return models.Comment.query((qb) => {
       qb = qb.distinct()
-        .leftJoin("user_role", function () {
+        .leftJoin("user_role", function() {
           this.on("comment.node_id", "=", "user_role.node_id")
             .andOn("comment.node_type", "=", "user_role.node_type");
         })

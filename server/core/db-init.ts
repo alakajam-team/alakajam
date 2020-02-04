@@ -139,7 +139,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
           ji = 2;
         }
         const userB = await userService.findByName("entrant" + ji);
-        const entryB = await eventService.findUserEntryForEvent(userB, event2.get("id"));
+        const entryB = await eventService.findUserEntryForEvent(userB as any, event2.get("id"));
         const votes = [];
         for (let k = 0; k < 6; k++) {
           votes[k] = 3 + Math.floor(Math.random() * 4);

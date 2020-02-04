@@ -2,7 +2,7 @@
 
 import * as csurf from "csurf";
 import { RequestHandler } from "express";
-import * as expressPromiseRouter from "express-promise-router";
+import expressPromiseRouter from "express-promise-router";
 import * as multer from "multer";
 import * as randomKey from "random-key";
 import config, * as configUtils from "server/core/config";
