@@ -16,7 +16,8 @@ import { sync as findUp } from "find-up";
 import * as luxon from "luxon";
 import * as path from "path";
 import * as util from "util";
-import { config as winstonConfig, Logger, transports } from "winston";
+import { createLogger, format, transports } from "winston";
+import winston = require("winston");
 
 const SOURCES_ROOT = path.dirname(findUp("package.json", { cwd: __dirname }));
 const LOCAL_TIME_ZONE = new luxon.LocalZone();
@@ -30,40 +31,50 @@ try {
   // Nothing (config file might not be created yet)
 }
 
-/*
- * Configure the Winston logger to print pretty, colorful & informative log lines
- */
-const log = new Logger({
-  level,
-  transports: [
-    new transports.Console({
-      colorize: true,
-      timestamp: () => luxon.DateTime.local().setZone(LOCAL_TIME_ZONE).toFormat("yyyy-MM-dd HH:mm:ss.SSS"),
-      formatter: (options) => {
-        // Figure out the logging caller location
-        // XXX slow and hacky approach
-        let location = "?";
-        const lines = new Error().stack.split("\n");
-        for (const line of lines) {
-          if (line.indexOf(SOURCES_ROOT) !== -1 &&
-              line.indexOf(__filename) === -1 &&
-              line.indexOf("node_modules") === -1) {
-            const locInfo = line.replace(/(.*\()/g, "")
-              .replace(process.cwd(), "")
-              .split(/[ :]/g);
-            location = locInfo[locInfo.length - 3].replace("\\", "") +
-              ":" + locInfo[locInfo.length - 2];
-            break;
-          }
-        }
+const colorizer = format.colorize();
 
-        // Build the logging line
-        const prefix = options.timestamp() + " " + options.level.toUpperCase() + " (" + location + ")";
-        const message = options.message ? (" " + util.format(options.message)) : "";
-        return winstonConfig.colorize(options.level, prefix) + message;
-      },
-    })
-  ]
+/*
+ * Custom formatter allows printing pretty, colorful & informative log lines
+ */
+const customFormat = {
+  transform: (options) => {
+    // Figure out the logging caller location
+    // XXX slow and hacky approach
+    let location = "?";
+    const lines = new Error().stack.split("\n");
+    for (const line of lines) {
+      if (line.indexOf(SOURCES_ROOT) !== -1 &&
+        line.indexOf(__filename) === -1 &&
+        line.indexOf("node_modules") === -1) {
+        const locInfo = line.replace(/(.*\()/g, "")
+          .replace(process.cwd(), "")
+          .split(/[ :]/g);
+        location = locInfo[locInfo.length - 3].replace("\\", "") +
+          ":" + locInfo[locInfo.length - 2];
+        break;
+      }
+    }
+
+    // Build the logging line
+    const timestamp = luxon.DateTime.local().setZone(LOCAL_TIME_ZONE).toFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    const prefix = timestamp + " " + options.level.toUpperCase() + " (" + location + ")";
+    const message = options.message ? (" " + util.format(options.message)) : "";
+    const prefixedMessage = colorizer.colorize(options.level, prefix) + message;
+
+    return {
+      level: options.level,
+      message: prefixedMessage
+    };
+  }
+};
+
+const log = createLogger({
+  level,
+  format: format.combine(
+    format.splat(),
+    customFormat
+  ),
+  transports: [new transports.Console()]
 });
 
 /**
@@ -74,4 +85,6 @@ const log = new Logger({
   log.info("I am" + lines.slice(2).join("\n"));
 };
 
-export default log;
+export type Logger = winston.Logger & { whereami: () => void };
+
+export default log as Logger;
