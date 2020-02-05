@@ -6,40 +6,21 @@
 
 {% block body %}
 
-{% set hasEventBanner = event.related('details').get('banner') %}
-{{ eventMacros.eventBanner(event) }}
+{{ jumbotronMacros.eventJumbotron(event, null, user, entry, { shrinkedJumbo: shrinkedJumbo }) }}
 
-<div class="container thin {{ 'event-banner-offset' if hasEventBanner }}">
-  {{ jumbotronMacros.eventJumbotron(event, null, user, entry, { shrinkedJumbo: shrinkedJumbo }) }}
+<div class="container thin mt-3">
+  {% for post in posts.models %}
+    {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
+    <div class="spacing"></div>
+  {% endfor %}
 
-  {% set featuredLinks = event.related('details').get('links') %}
-  {% if featuredLinks and featuredLinks.length > 0 %}
-  <div class="px-3 py-5">
-      {% for featuredLink in featuredLinks %}
-        <div class="col-sm-6 col-md-4">
-        <a class="home-featured-link" style="max-width: 600px; margin-right: 20px; display: inline-block" href="{{ featuredLink.link }}">
-          <span class="fas {{ featuredLink.icon }}"></span>
-          <span class="home-featured-link__title">{{ featuredLink.title }}</span>
-        </a>
-        </div>
-      {% endfor %}
+  {% if posts.models.length > 0 %}
+    {{ navigationMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=announcement&event_id=' + event.get('id')) }}
+  {% else %}
+  <div class="card card-body">
+    No announcements yet.
   </div>
   {% endif %}
-
-  <div class="{{ 'event-banner-panel' if eventBanner }} {{ 'pt-3' if eventBanner }}">
-      {% for post in posts.models %}
-        {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
-        <div class="spacing"></div>
-      {% endfor %}
-
-      {% if posts.models.length > 0 %}
-        {{ navigationMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=announcement&event_id=' + event.get('id')) }}
-      {% else %}
-      <div class="card card-body">
-        No announcements yet.
-      </div>
-      {% endif %}
-  </div>
 </div>
 
 {% endblock %}

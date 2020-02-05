@@ -17,7 +17,6 @@ export interface EditableSetting {
 
 export const SETTING_FEATURED_EVENT_NAME = "featured_event_name";
 export const SETTING_FEATURED_POST_ID = "featured_post_id";
-export const SETTING_HOME_SHRINKED_JUMBO = "home_shrinked_jumbo";
 
 export const SETTING_EVENT_REQUIRED_ENTRY_VOTES = "event_required_entry_votes";
 export const SETTING_EVENT_THEME_IDEAS_REQUIRED = "event_theme_ideas_required";
@@ -54,11 +53,6 @@ export const EDITABLE_SETTINGS: EditableSetting[] = [
     key: SETTING_FEATURED_POST_ID,
     category: "home page",
     description: "(Optional) Set a post ID to display an arbitrary blog post at the top of the front page. Mostly for emergencies."
-  },
-  {
-    key: SETTING_HOME_SHRINKED_JUMBO,
-    category: "home page",
-    description: "Boolean. If true, makes the featured event jumbo smaller to give more visibility to the blog posts below."
   },
 
   // Events

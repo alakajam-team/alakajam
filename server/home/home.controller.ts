@@ -6,7 +6,7 @@ import enums from "server/core/enums";
 import log from "server/core/log";
 import { logErrorAndReturn } from "server/core/middleware";
 import settings from "server/core/settings";
-import { SETTING_FEATURED_POST_ID, SETTING_HOME_SHRINKED_JUMBO } from "server/core/settings-keys";
+import { SETTING_FEATURED_POST_ID } from "server/core/settings-keys";
 import { loadUserShortcutsContext } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
 import commentService from "server/post/comment/comment.service";
@@ -110,13 +110,6 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
           context.featuredPost = await postService.findPostById(featuredPostId);
         }
       })
-      .catch(log.error));
-
-  // Find whether to shrink the jumbo
-  // TODO Remove?
-  contextTasks.push(
-    settings.find(SETTING_HOME_SHRINKED_JUMBO, "false")
-      .then((value) => context.shrinkedJumbo = value.toLowerCase() === "true")
       .catch(log.error));
 
   // Fetch all the things at once!
