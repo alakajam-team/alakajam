@@ -2,6 +2,8 @@
  * Home page
  */
 
+$homeNavbarHeight: 50px;
+
 .home-welcome {
   @include shadow;
   position: relative;
@@ -38,113 +40,85 @@
       text-decoration: underline;
     }
   }
-
 }
 
-.home-scheduled-events .horizontal-bar a {
-  color: $text-lighter;
+.event-jumbotron,
+.home-jumbotron {
+  margin-top: -$body-margin;
+  padding: 20px 0;
+  background-size: cover;
+
+  &__post {
+    margin-top: 15px;
+  }
+
+  &__shortcut .list-group-item,
+  a.event-jumbotron__shortcut {
+    padding: 10px 15px;
+  }
+  &__shortcut:hover {
+    background-color: $neutral-lightest;
+  }
+  &__shortcut-icon {
+    margin-left: -10px;
+    display: inline-block;
+    width: 36px;
+    text-align: center;
+    color: $alt;
+  }
+  &__shortcut-title {
+    color: black;
+    font-weight: normal;
+  }
+}
+
+.jumbotron-invite {
+  background-color: $alt;
+  cursor: pointer;
+  color: white;
 
   &:hover {
-    color: $text-light;
-  }
-}
-
-.home-scheduled-event {
-  position: relative;
-  padding: 6px 0;
-  border-bottom: 1px solid #CCC;
-
-  &:last-child {
-    border-bottom: 0;
-  }
-
-  &.main, &.featured {
-    padding: 5px 5px;
-  }
-
-  &__logo {
-    float: left;
-    margin-top: 6px;
-    margin-right: 5px;
+    background-color: $alt-dark;
   }
 
   &__title {
-    color: $alt;
-    font-weight: bold;
-    line-height: 1.5rem;
-  }
-
-  &.featured {
-    background-color: white; 
+    color: white;
+    font-size: 1.7rem;
     margin-bottom: 0;
   }
-  &.featured &__arrow {
-    position: absolute;
-    top: 50%;
-    left: -20px;
-    margin-top: -20px;
-    width: 0; 
-    height: 0; 
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-    border-right: 20px solid $alt;
-  }
 
-  & &__entries {
-    color: $text-light;
-  }
+  &__countdown {
+    float: right;
+    width: 320px;
 
-  &__label {
-    position: absolute;
-    bottom: 6px;
-    right: 4px;
-
-    & .label {
-      padding: 1px 6px 2px;
+    @include media-breakpoint-down(lg) {
+      float: none;
     }
   }
 }
 
-.home-featured-links {
-  margin-bottom: 20px;
+.home-navbar {
+  background-color: #333;
+  height: $homeNavbarHeight;
+  line-height: $homeNavbarHeight;
+  overflow: hidden;
 
-  @media (max-width: 991px) {
-    & {
-      margin-bottom: -20px;
-      margin-top: 20px;
-    }
-  }
-}
-.home-featured-link {
-  position: relative;
-  display: block;
-  padding: 6px 0;
-  margin-bottom: 5px;
-  font-size: 1.3rem;
-  font-weight: bold;
-  top: 0px;
-  transition: 0.1s;
-  color: $text;
-
-  & .fas,
-  & .far,
-  & .fab {
-    font-size: 1.6rem;
-    padding-right: 10px;
-    width: 32px;
-    color: $alt;
+  &__events {
+    height: $homeNavbarHeight;
+    overflow: hidden;
   }
 
-  &:hover {
-    left: 5px;
+  &__event {
+    display: inline-block;
+    margin: -4px 2px 0;
   }
 
-}
+  &__social {
+    text-align: center;
 
-.home-entry {
-  @media (max-width: 991px) {
-    & {
-      padding-bottom: 10px;
+    img {
+      height: 30px;
+      margin: -4px 2px 0;
     }
   }
 }

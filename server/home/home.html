@@ -54,7 +54,7 @@
     </div>
     <div class="home-grid game-grid pb-1">
     {% for entry in suggestedEntries %}
-      <div class="home-entry game-grid-entry">
+      <div class="game-grid-entry">
       {{ eventMacros.entryThumb(entry) }}
       </div>
     {% endfor %}
@@ -126,34 +126,6 @@
 </div>
 -->
 {% endblock %}
-
-{% macro featuredLink (event, featuredEvent) %}
-{% set mainEvent = event.get('title').includes('Alakajam') %}
-<div class="home-scheduled-event {{ 'featured' if featuredEvent and featuredEvent.get('id') === event.get('id') }} {{ 'main' if mainEvent }}">
-  <div class="home-scheduled-event__arrow"></div>
-  <a class="home-scheduled-event__title" href="{{ routeUrl(event, 'event', 'results' if event.get('status_results') === 'results') }}">
-    {% if mainEvent %}
-      <img src="{{ staticUrl('/static/images/favicon16.png') }}" class="home-scheduled-event__logo no-border" />
-    {% endif %}
-    {{ event.get('title') }}
-  </a>
-  <div>
-    <span class="home-scheduled-event__dates">
-      {{ event.get('display_dates') }} 
-    </span>
-    {% if event.get('status') === 'closed' %}
-      - <a href="{{ routeUrl(event, 'event') }}" class="home-scheduled-event__entries">{{ event.get('entry_count') }} entries</a>
-    {% endif %}
-  </div>
-  <div class="home-scheduled-event__label">
-    {% if event.get('status') === 'open' %}
-      <span class="badge badge-secondary">On now!</span>
-    {% elseif event.get('status') === 'pending' %}
-      <span class="badge badge-light">Up next!</span>
-    {% endif %}
-  </div>
-</div>
-{% endmacro %}
 
 {% macro socialLink (title, url, iconName) %}
 <a href="{{ url }}" data-toggle="tooltip" title="{{ title }}">
