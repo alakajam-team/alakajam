@@ -11,10 +11,7 @@
   {{ navigationMacros.pagination(currentPage, pageCount, paginationBaseUrl) }}
   
   {% for post in posts %}
-    <div class="expandable">
-      {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
-      {{ navigationMacros.expandCollapse() }}
-    </div>
+    {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes}) }}
   {% endfor %}
   {% if posts.length === 0 %}
     <div class="card card-body">

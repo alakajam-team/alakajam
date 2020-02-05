@@ -7,7 +7,6 @@ import checkAllNone from "./common/check-all-none";
 import datePicker from "./common/date-picker";
 import disabledLinks from "./common/disabled-links";
 import editor from "./common/editor";
-import expandCollapse from "./common/expand-collapse";
 import fixedDigits from "./common/fixed-digits";
 import formSubmit from "./common/form-submit";
 import icheck from "./common/icheck";
@@ -49,7 +48,6 @@ $(function domReady() {
   datePicker(".js-date-picker");
   disabledLinks("a.disabled");
   editor(".easymde-editor", ".codemirror");
-  expandCollapse();
   fixedDigits();
   formSubmit();
   icheck();

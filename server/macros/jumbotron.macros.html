@@ -57,8 +57,8 @@
                 {% set entryCreationEnabled = ['open', 'open_unranked'].includes(event.get('status_entry')) %}
                 {% if entryCreationEnabled %}
                   <a class="card-header event-jumbotron__shortcut" href="{{ routeUrl(event, 'event', 'create-entry') }}">{{ myEntryTitle(event) }}</a>
-                  <div class="card-body text-center">
-                    <p class="mb-1">Submissions are open!</p>
+                  <div class="card-body text-center p-2">
+                    <p class="mb-1">Submissions are open</p>
                     <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-alt btn-lg d-block">Create entry</a>
                   </div>
                 {% else %}

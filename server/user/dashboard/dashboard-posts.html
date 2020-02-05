@@ -19,20 +19,14 @@
   {% if draftPosts.length > 0 %}
     <h2>Drafts</h2>
     {% for post in draftPosts %}
-      <div class="expandable">
-        {{ postMacros.post(post, { allowMods: true, readingUser: user, readingUserLikes: {} }) }}
-        {{ navigationMacros.expandCollapse() }}
-      </div>
+      {{ postMacros.post(post, { allowMods: true, readingUser: user, readingUserLikes: {} }) }}
     {% endfor %}
 
     <h2>Published</h2>
   {% endif %}
 
   {% for post in publishedPosts %}
-    <div class="expandable">
-      {{ postMacros.post(post, { allowMods: true, readingUser: user, readingUserLikes: {} }) }}
-      {{ navigationMacros.expandCollapse() }}
-    </div>
+    {{ postMacros.post(post, { allowMods: true, readingUser: user, readingUserLikes: {} }) }}
   {% endfor %}
 
   {% if publishedPosts.length === 0 %}

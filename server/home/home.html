@@ -71,10 +71,7 @@
       </div>
 
       {% for post in posts %}
-        <div class="expandable">
-          {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes }) }}
-          {{ navigationMacros.expandCollapse() }}
-        </div>
+        {{ postMacros.post(post, {readingUser: user, readingUserLikes: userLikes }) }}
       {% endfor %}
       {{ navigationMacros.pagination(1, pageCount, '/posts') }}
     {% endif %}
