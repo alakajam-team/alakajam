@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% import "macros/jumbotron.macros.html" as jumbotronMacros with context %}
 {% import "event/event.macros.html" as eventMacros with context %}
@@ -9,17 +8,45 @@
 
 {% block body %}
 
+{% if not user %}
+<div class="home-welcome">
+  <div class="home-welcome__container container">
+    <img class="home-welcome__icon" src="{{ staticUrl('/static/images/welcome.png') }}" />
+    <div>
+      <div class="home-welcome__title">New website unlocked</div>
+      Welcome to <span class="home-welcome__brand">Alakajam!</span>, a game making community. We host informal game jams!
+      <a class="home-welcome__more" href="/article/about">Learn&nbsp;more...</a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {% if featuredEvent %}
+  {% if featuredPost %}
+    <div class="home-welcome pt-3">
+      <div class="container">{{ postMacros.post(featuredPost) }}</div>
+    </div>
+  {% endif %}
   {{ jumbotronMacros.eventJumbotron(featuredEvent, featuredEventAnnouncement, user, entry, { shrinkedJumbo: shrinkedJumbo }) }}
-{% endif %}<!-- TODO else -->
-  
+{% else %}
+<div class="event-jumbotron" style="{{ jumbotronMacros.backgroundImage() }}">
+  <div class="container">
+    {% if featuredPost %}
+      {{ postMacros.post(featuredPost) }}
+    {% else %}
+      <h1 class="card card-body text-center">Next event not announced yet.</h1>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
 <div class="home-navbar">
   <div class="container">
     <div class="row">
       <div class="col-9 d-none d-sm-block">
         <div class="home-navbar__events">
           {% for event in eventSchedule %}
-          <a class="home-navbar__event btn {{ 'btn-secondary' if event.get('id') === featuredEvent.get('id') else 'btn-outline-light border-0' }}"
+          <a class="home-navbar__event btn {{ 'btn-secondary' if featuredEvent and event.get('id') === featuredEvent.get('id') else 'btn-outline-light border-0' }}"
             href="{{ routeUrl(event, 'event') }}">
                 {% set isMainEvent = event.get('title').includes('Alakajam') %}
                 {% if isMainEvent %}
@@ -84,47 +111,6 @@
     </div>
   </div>
 </div>
-
-<!--
-<div class="container {{ 'event-banner-offset' if featuredEventBanner }}">
-  {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') if featuredEvent %}
-  {% if shortlistEliminationInfo.stream %}
-  <div>
-      <div style="margin-bottom: 20px">
-        <div id="twitch-embed"></div>
-      </div>
-      <script src="https://embed.twitch.tv/embed/v1.js"></script>
-      <script type="text/javascript">
-        new Twitch.Embed("twitch-embed", {
-          width: '100%',
-          height: 500,
-          channel: "{{ shortlistEliminationInfo.stream }}"
-        });
-      </script>
-  </div>
-  {% endif %}
-
-  {% if not user %}
-  <div class="home-welcome">
-    <img class="home-welcome__icon" src="{{ staticUrl('/static/images/welcome.png') }}" />
-    <div class="home-welcome__title">New website unlocked</div>
-      Welcome to <div class="home-welcome__brand">Alakajam!</div>, a game making community. We host informal game jams!
-      <a class="home-welcome__more" href="/article/docs">Learn&nbsp;more</a>
-  </div>
-  {% endif %}
-
-</div>
-
-<div class="container">
-  <div class="row no-gutters">
-    <div class="col-md-9 pr-3">
-      {% if not featuredEvent and not featuredPost %}
-        <h1 class="text-center">Next event not announced yet.</h1>
-      {% endif %}
-    </div>
-  </div>
-</div>
--->
 {% endblock %}
 
 {% macro socialLink (title, url, iconName) %}

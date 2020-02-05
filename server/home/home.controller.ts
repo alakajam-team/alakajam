@@ -29,19 +29,21 @@ interface HomeContext {
  * Home page
  */
 export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  const { user, featuredEvent } = res.locals;
+
   let context = cache.general.get<HomeContext>("home_page");
   if (!context) {
     context = await loadHomeContext(res);
     cache.general.set("home_page", context, 10 /* 10 seconds */);
   }
 
-  await loadUserShortcutsContext(res, res.locals.featuredEvent, { postFromAnyEvent: true });
+  await loadUserShortcutsContext(res, featuredEvent, { postFromAnyEvent: true });
 
-  if (res.locals.user) {
+  if (user) {
     const allPostsInPage = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);
     await Promise.all([
-      likeService.findUserLikeInfo(allPostsInPage as PostBookshelfModel[], res.locals.user),
-      eventService.findUserEntryForEvent(res.locals.user, res.locals.featuredEvent.get("id"))
+      likeService.findUserLikeInfo(allPostsInPage as PostBookshelfModel[], user),
+      featuredEvent ? eventService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined
     ]).then(([userLikes, entry]) => {
       res.locals.userLikes = userLikes;
       res.locals.entry = entry;

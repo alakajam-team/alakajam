@@ -6,44 +6,66 @@
 <div class="event-jumbotron" style="{{ backgroundImage(event) }}">
   <div class="container">
     <div class="row">
-      <div class="col-lg-2 text-center mb-3">
-        {% set eventLogo = event.get('logo') if event %}
-        {% if eventLogo %}
-          <img src="{{ staticUrl(eventLogo) }}" />
+      <div class="col-lg-9">
+        {% set shortlistEliminationInfo = event.related('details').get('shortlist_elimination') %}
+        {% if shortlistEliminationInfo.stream %}
+          <div class="row">
+            <div class="mb-3">
+              <div id="twitch-embed"></div>
+            </div>
+            <script src="https://embed.twitch.tv/embed/v1.js"></script>
+            <script type="text/javascript">
+              new Twitch.Embed("twitch-embed", {
+                width: '100%',
+                height: 500,
+                channel: "{{ shortlistEliminationInfo.stream }}"
+              });
+            </script>
+          </div>
         {% endif %}
-      </div>
 
-      <div class="col-lg-7 mb-3">
-        {% set rawHypeLink = event.get('countdown_config').link %}
-        {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
-        {% set animatedCountdownEnabled = event.get('countdown_config').enabled %}
-        <div class="card card-body jumbotron-invite"
-          onclick="{{ 'window.location = \'' + hypeLink + '\'' if hypeLink }}">
-          <div class="row align-items-center">
-            <div class="col-12 {{ 'col-lg-6 mb-3 mb-xl-0' if animatedCountdownEnabled }}">
-              <h1 class="jumbotron-invite__title">{{ event.get('countdown_config').message }}</h1>
-              <div class="jumbotron-invite__details">
-                {{ eventJumbotronCountdownPhrase(event, user) }}
+        <div class="row">
+          <div class="col-lg-3 text-center mb-3">
+            {% set eventLogo = event.get('logo') if event %}
+            {% if eventLogo %}
+              <img src="{{ staticUrl(eventLogo) }}" />
+            {% endif %}
+          </div>
+    
+          <div class="col-lg-9 mb-3">
+            {% set rawHypeLink = event.get('countdown_config').link %}
+            {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
+            {% set animatedCountdownEnabled = event.get('countdown_config').enabled %}
+            <div class="card card-body jumbotron-invite"
+              onclick="{{ 'window.location = \'' + hypeLink + '\'' if hypeLink }}">
+              <div class="row align-items-center">
+                <div class="col-12 {{ 'col-lg-6 mb-3 mb-xl-0' if animatedCountdownEnabled }}">
+                  <h1 class="jumbotron-invite__title">{{ event.get('countdown_config').message }}</h1>
+                  <div class="jumbotron-invite__details">
+                    {{ eventJumbotronCountdownPhrase(event, user) }}
+                  </div>
+                </div>
+                {% if animatedCountdownEnabled %}
+                <div class="col-xl-6 d-none d-sm-block">
+                  <div class="jumbotron-invite__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></div>
+                </div>
+                {% endif %}
               </div>
             </div>
-            {% if animatedCountdownEnabled %}
-            <div class="col-xl-6 d-none d-sm-block">
-              <div class="jumbotron-invite__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></div>
-            </div>
+    
+            {% if featuredPost %}
+              <div class="event-jumbotron__post">
+                {% if featuredPost.get('body').indexOf('&lt;iframe') === 0 %}
+                  {{ postMacros.post(featuredPost, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
+                  {{ featuredPost.get('body') | markdown | safe }}
+                {% else %}
+                  {{ postMacros.post(featuredPost, {hideBody: true, readingUser: user, readingUserLikes: userLikes}) }}
+                {% endif %}
+              </div>
             {% endif %}
-          </div>
+            </div>
         </div>
 
-        {% if featuredPost %}
-          <div class="event-jumbotron__post">
-            {% if featuredPost.get('body').indexOf('&lt;iframe') === 0 %}
-              {{ postMacros.post(featuredPost, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
-              {{ featuredPost.get('body') | markdown | safe }}
-            {% else %}
-              {{ postMacros.post(featuredPost, {hideBody: true, readingUser: user, readingUserLikes: userLikes}) }}
-            {% endif %}
-          </div>
-        {% endif %}
       </div>
 
       <div class="col-lg-3">
@@ -122,5 +144,5 @@
 <!-- TODO Background instead of banner -->
 {% macro backgroundImage(event) -%}
 {%- set imagePath = event.related('details').get('banner') if event -%}
-background-image: {{ 'url(' + staticUrl(imagePath) + ')' if imagePath else 'none' }};
+background-image: {{ 'url(' + staticUrl(imagePath if imagePath else '/static/images/default-background.png') + ')'  }};
 {%- endmacro %}

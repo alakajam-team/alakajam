@@ -53,7 +53,7 @@ export const EDITABLE_SETTINGS: EditableSetting[] = [
   {
     key: SETTING_FEATURED_POST_ID,
     category: "home page",
-    description: "(Optional) Set a post ID to display an arbitrary blog post at the top of the front page. Rarely used."
+    description: "(Optional) Set a post ID to display an arbitrary blog post at the top of the front page. Mostly for emergencies."
   },
   {
     key: SETTING_HOME_SHRINKED_JUMBO,

@@ -5,19 +5,15 @@
 $homeNavbarHeight: 50px;
 
 .home-welcome {
-  @include shadow;
-  position: relative;
+  margin: -20px 0 20px 0;
   padding: 10px;
-  padding-left: 100px;
-  margin: 10px 0px 20px 0;
   background-color: $main-lighter;
-  border-left: 10px solid $main;
   font-size: 1.2rem;
 
-  &__icon {
-    position: absolute;
-    left: 0;
-    top: -15px;
+  &__container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
   }
 
   &__title {
@@ -31,10 +27,8 @@ $homeNavbarHeight: 50px;
   }
 
   &__more {
-    color: $main-dark;
     font-weight: bold;
-    text-decoration: underline;
-
+    
     &:hover {
       color: $text;
       text-decoration: underline;

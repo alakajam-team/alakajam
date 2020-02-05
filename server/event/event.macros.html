@@ -86,7 +86,7 @@
 {% macro eventBanner (event) %}
 <div class="event-banner__container">
 <div class="event-banner__origin">
-  <div class="event-banner" style="background-image: url('{{ event.related('details').get('banner') if (event and event.related('details').get('banner')) else staticUrl('/static/images/default-banner.png') }}')">
+  <div class="event-banner" style="background-image: url('{{ event.related('details').get('banner') if (event and event.related('details').get('banner')) else staticUrl('/static/images/default-background.png') }}')">
     <div class="event-banner__gradient"></div>
   </div>
 </div>
