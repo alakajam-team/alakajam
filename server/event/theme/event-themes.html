@@ -93,7 +93,7 @@
       <div class="themes__stats">
         <h2>Stats</h2>
         <div>
-          <p>
+          <p class="mb-1">
             {% if user %}<b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li><br />{% endif %}
             <b>Everyone:</b> {{ event.related('details').get('theme_count') or '0' }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') or '0' }}</span> votes
             {{- ', ' + shortlistVotes + ' shortlist votes' if shortlistVotes }}
@@ -104,9 +104,14 @@
               <div class="progress-bar progress-bar-default" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('active_theme_count') }} Active</div>
               <div class="progress-bar themes__progress-bar-out" role="progressbar" style="width: {{ 100 -  activePercentage }}%">{{ event.related('details').get('theme_count') - event.related('details').get('active_theme_count') }} Out</div>
             </div>
-            <p>The lowest ranking themes (having {{ eliminationMinNotes }} votes or more) are eliminated regularly. The longer the theme stands before elimination, the better it is!</p>
           {% endif %}
         </div>
+
+        <h2>How it works</h2>
+        <ul>
+          <li>The lowest ranking themes (having {{ eliminationMinNotes }} votes or more) are eliminated regularly.</li>
+          <li>After one week, only the {{ constants.SHORTLIST_SIZE }} best themes will remain. The longer the theme stands before elimination, the better it is!</li>
+        </ul>
       </div>
     </div>
 
@@ -158,7 +163,7 @@
           {% if votingAllowed %}
             <p>Here are some of the ideas submitted to the event. <a href="/login?redirect={{ path | urlencode }}" class="btn btn-primary">Login to vote</a></p>
             {% for theme in sampleThemes %}
-              <div class="card theme-vote theme-vote__label">{{ theme.get('title') }}</div>
+              <div class="card card-body mb-3"><h1 class="m-0">{{ theme.get('title') }}</h1></div>
             {% endfor %}
           {% else %}
             Voting will start when at least {{ ideasRequired }} ideas are submitted.
@@ -223,6 +228,7 @@
       <div class="themes__results">
         <h2>Shortlist results</h2>
         <div class="card card-body">
+          <p>
             {% if userRanks %}
               <span class="theme-shortlist-line__score">Your picks</span>
             {% endif %}

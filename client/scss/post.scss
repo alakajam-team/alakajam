@@ -33,14 +33,15 @@
     display: inline-block;
     font-size: 1.5rem;
     white-space: nowrap;
+    color: $text-light;
 
     & button {
-      color: $text-light;
       border: none;
       background: none;
+      color: $text-light;
     }
 
-    &:hover button, &.liked button {
+    &:hover, & button:hover, &.liked, &.liked button {
       color: $alt;
     }
   }
@@ -283,10 +284,12 @@
   }
   
   & .float-left, & .pull-left {
+    float: left;
     margin: 15px;
     margin-left: 0;
   }
-  & .float-right, & .pull-left {
+  & .float-right, & .pull-right {
+    float: right;
     margin: 15px;
     margin-right: 0;
   }

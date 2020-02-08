@@ -96,22 +96,22 @@
   <h2 class="results-podium__title">Tournament leaderboard</h2>
 
   <div class="row">
-    <div class="col-md-offset-1 col-md-10 col-12">
+    <div class="col-md-10 offset-md-1 col-12 ">
       <div class="row results-podium-row">
         {% set entryThumbOptions = { hideMedals: categoryTitles.length === 1 } %}
         {% set ranking = 1 %}
         {% if tournamentScores.length > 0 %}
-          <div class="col-sm-4 results-podium__tournament position-1 ranking-{{ ranking }} results-podium__step">
+          <div class="col-md-4 results-podium__tournament position-1 ranking-{{ ranking }} results-podium__step">
             {{ podiumScore(tournamentScores[0]) }}
           </div>
           {% set ranking = ranking + 1 if tournamentScores[1].get('score') < tournamentScores[0].get('score') %}
-          <div class="col-sm-4 results-podium__tournament position-2 ranking-{{ ranking }} {{ 'results-podium__step' if tournamentScores.length >= 2 }}">
+          <div class="col-md-4 results-podium__tournament position-2 ranking-{{ ranking }} {{ 'results-podium__step' if tournamentScores.length >= 2 }}">
             {% if tournamentScores.length >= 2 %}
               {{ podiumScore(tournamentScores[1]) }}
             {% endif %}
           </div>
           {% set ranking = ranking + 1 if tournamentScores[2].get('score') < tournamentScores[1].get('score') %}
-          <div class="col-sm-4 results-podium__tournament position-3 ranking-{{ ranking }} {{ 'results-podium__step' if tournamentScores.length >= 3 }}">
+          <div class="col-md-4 results-podium__tournament position-3 ranking-{{ ranking }} {{ 'results-podium__step' if tournamentScores.length >= 3 }}">
             {% if tournamentScores.length >= 3 %}
               {{ podiumScore(tournamentScores[2]) }}
             {% endif %}
