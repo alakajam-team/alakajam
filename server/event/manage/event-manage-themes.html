@@ -30,7 +30,7 @@
   <tr>
     <td>
       {% if event.get('status_theme') === 'shortlist' %}
-        <span class="label">R E D A C T E D</span>
+        <span class="badge badge-secondary">R E D A C T E D</span>
       {% else %}
         {{ theme.get('title') }}
       {% endif %}
@@ -98,7 +98,7 @@
   Submitted themes
 </div>
 
-<p>Themes are eliminated when they are no longer <span class="label">New</span> ({{ eliminationMinNotes }} votes or more) and their Elimination Rating gets under <strong>{{ (eliminationThreshold * 100) | digits(1) }}%</strong>.</p>
+<p>Themes are eliminated when they are no longer <span class="badge badge-secondary">New</span> ({{ eliminationMinNotes }} votes or more) and their Elimination Rating gets under <strong>{{ (eliminationThreshold * 100) | digits(1) }}%</strong>.</p>
 
 <table class="table sortable">
 <thead>
@@ -137,7 +137,7 @@
   <td>
     {{ eventMacros.eventThemeStatus(theme, {uncensored: true}) }}
     {% if theme.get('status') === 'active' and theme.get('notes') < eliminationMinNotes %}
-      <div class="label" title="New themes cannot be eliminated">New</div>
+      <div class="badge badge-secondary" title="New themes cannot be eliminated">New</div>
     {% endif %}
   </td>
   <td data-sort="{{ theme.get('notes') }}">{{ (theme.get('score') + theme.get('notes'))/2 }} / {{ theme.get('notes') }}</td>
