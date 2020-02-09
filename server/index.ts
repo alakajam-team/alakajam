@@ -180,6 +180,6 @@ async function _createFolderIfMissing(folderPath) {
   try {
     await util.promisify(fs.access)(folderPath, fs.constants.R_OK);
   } catch (e) {
-    await util.promisify(mkdirp)(folderPath);
+    await mkdirp(folderPath);
   }
 }

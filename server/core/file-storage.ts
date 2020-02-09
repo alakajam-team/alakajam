@@ -277,6 +277,6 @@ function toAbsolutePath(anyPath: string) {
  */
 async function createFolderIfMissing(folderPath) {
   if (!await exists(folderPath)) {
-    await promisify(mkdirp)(folderPath);
+    await mkdirp(folderPath);
   }
 }
