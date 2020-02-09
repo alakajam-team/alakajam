@@ -59,6 +59,10 @@ class EntryPO {
       .eq(rating);
   }
 
+  public votingSuccessIcon() {
+    return cy.get(".show-if-saving-success");
+  }
+
   public get links() {
     return cy.get(".entry__links");
   }

@@ -17,7 +17,9 @@ describe("Event: Ratings", () => {
 
     cy.scrollElementsToScreenCenter();
     entryPo.votingStar("Awesomeness", 5).click();
+    entryPo.votingSuccessIcon().should("be.visible");
     entryPo.votingStar("Beauty", 8).click();
+    entryPo.votingSuccessIcon().should("be.visible");
 
     entryPo.votingRow("Awesomeness").should("contain.text", "5");
     entryPo.votingRow("Beauty").should("contain.text", "8");

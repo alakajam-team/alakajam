@@ -374,7 +374,7 @@ async function findGames(
     } else if (options.sortByRating) {
       query = query.query((qb) => {
         qb.leftJoin("event", "entry.event_id", "event.id")
-          .where(() => {
+          .where(function() {
             this.where("event.status", enums.EVENT.STATUS.CLOSED).orWhereNull("event.status");
           })
           .orderByRaw("entry_details.rating_1 "
@@ -384,7 +384,7 @@ async function findGames(
     } else if (options.sortByRanking) {
       query = query.query((qb) => {
         qb.leftJoin("event", "entry.event_id", "event.id")
-          .where(() => {
+          .where(function() {
             this.where("event.status", enums.EVENT.STATUS.CLOSED).orWhereNull("event.status");
           })
           .orderByRaw("entry_details.ranking_1 " + ((config.DB_TYPE === "postgresql") ? "NULLS LAST" : "IS NOT NULL"))
@@ -421,7 +421,7 @@ async function findGames(
     query = query.query((qb) => {
       qb = qb
         // Hide rated
-        .leftJoin("entry_vote", () => {
+        .leftJoin("entry_vote", function() {
           this.on("entry_vote.entry_id", "=", "entry.id")
             .andOn("entry_vote.user_id", "=", options.notReviewedById);
         })
@@ -437,7 +437,7 @@ async function findGames(
       // If this option is set, this has already been done (to avoid multiple joins on same table)
       if (!options.userId) {
         // Hide own entry (not strictly requested, but sensible)
-        qb = qb.leftJoin("user_role", () => {
+        qb = qb.leftJoin("user_role", function() {
           this.on("user_role.node_id", "=", "entry.id")
             .andOn("user_role.user_id", "=", options.notReviewedById);
         })
@@ -593,7 +593,7 @@ async function findRescueEntries(event, user, options: any = {}) {
         // do not rescue those who really didn't participate
         .where("entry_details.rating_count", ">", Math.floor(minRatings / 4))
         .where("entry_details.rating_count", "<", minRatings)
-        .leftJoin("entry_vote", () => {
+        .leftJoin("entry_vote", function() {
           this.on("entry_vote.entry_id", "=", "entry.id")
             .andOn("entry_vote.user_id", "=", user.get("id"));
         })

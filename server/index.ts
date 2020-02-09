@@ -115,6 +115,9 @@ function catchErrorsAndSignals() {
       const db = require("./core/db").default;
       log.info("Shutting down.");
       db.knex.destroy(() => process.exit(exitCode));
+    } else {
+      log.warn("Forcing process exit.");
+      process.exit(exitCode);
     }
   }
 }
