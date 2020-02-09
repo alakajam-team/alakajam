@@ -35,37 +35,37 @@
           </div>
     
           <div class="col-lg-9 mb-3">
-            {% set rawHypeLink = event.get('countdown_config').link %}
-            {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
-            {% set animatedCountdownEnabled = event.get('countdown_config').enabled %}
-            <div class="card card-body jumbotron-invite"
-              onclick="{{ 'window.location = \'' + hypeLink + '\'' if hypeLink }}">
-              <div class="row align-items-center">
-                <div class="col-12 {{ 'col-lg-6 mb-3 mb-xl-0' if animatedCountdownEnabled }}">
-                  <h1 class="jumbotron-invite__title">{{ event.get('countdown_config').message }}</h1>
-                  <div class="jumbotron-invite__details">
-                    {{ eventJumbotronCountdownPhrase(event, user) }}
+            {% if event.get('countdown_config').message or event.get('countdown_config').phrase %}
+              {% set rawHypeLink = event.get('countdown_config').link %}
+              {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
+              {% set animatedCountdownEnabled = event.get('countdown_config').enabled %}
+              <div class="card card-body jumbotron-invite"
+                onclick="{{ 'window.location = \'' + hypeLink + '\'' if hypeLink }}">
+                <div class="row align-items-center">
+                  <div class="col-12 {{ 'col-lg-6 mb-3 mb-xl-0' if animatedCountdownEnabled }}">
+                    <h1 class="jumbotron-invite__title">{{ event.get('countdown_config').message }}</h1>
+                    <div class="jumbotron-invite__details">
+                      {{ eventJumbotronCountdownPhrase(event, user) }}
+                    </div>
                   </div>
+                  {% if animatedCountdownEnabled %}
+                  <div class="col-xl-6 d-none d-sm-block">
+                    <div class="jumbotron-invite__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></div>
+                  </div>
+                  {% endif %}
                 </div>
-                {% if animatedCountdownEnabled %}
-                <div class="col-xl-6 d-none d-sm-block">
-                  <div class="jumbotron-invite__countdown js-countdown" data-countdown-to-date="{{ event.get('countdown_config').date }}"></div>
-                </div>
-                {% endif %}
-              </div>
-            </div>
-    
-            {% if featuredPost %}
-              <div class="event-jumbotron__post">
-                {% if featuredPost.get('body').indexOf('&lt;iframe') === 0 %}
-                  {{ postMacros.post(featuredPost, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
-                  {{ featuredPost.get('body') | markdown | safe }}
-                {% else %}
-                  {{ postMacros.post(featuredPost, {hideBody: true, readingUser: user, readingUserLikes: userLikes}) }}
-                {% endif %}
               </div>
             {% endif %}
-            </div>
+    
+            {% if featuredPost %}
+              {% if featuredPost.get('body').indexOf('&lt;iframe') === 0 %}
+                {{ postMacros.post(featuredPost, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
+                {{ featuredPost.get('body') | markdown | safe }}
+              {% else %}
+                {{ postMacros.post(featuredPost, {hideBody: true, readingUser: user, readingUserLikes: userLikes}) }}
+              {% endif %}
+            {% endif %}
+          </div>
         </div>
 
       </div>
@@ -132,7 +132,7 @@
       {{ event.get('countdown_config').phrase }} 
       {{ event.get('countdown_config').date | featuredEventDateTime(user) }}
     </div>
-    {% if user %}
+    {% if user and event.get('countdown_config').date %}
     <div class="pl-3"> 
       for {{ (user.get("timezone") | timezone) if user and user.get("timezone") else 'Unknown timezone' }}
       <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-light btn-xs">
