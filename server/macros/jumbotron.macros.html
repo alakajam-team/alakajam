@@ -141,8 +141,7 @@
   {% endif %}
 {% endmacro %}
 
-<!-- TODO Background instead of banner -->
 {% macro backgroundImage(event) -%}
-{%- set imagePath = event.related('details').get('banner') if event -%}
+{%- set imagePath = event.related('details').get('background') or event.related('details').get('banner') if event -%}
 background-image: {{ 'url(' + staticUrl(imagePath if imagePath else '/static/images/default-background.png') + ')'  }};
 {%- endmacro %}

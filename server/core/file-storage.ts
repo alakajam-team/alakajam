@@ -147,10 +147,13 @@ async function savePictureUpload(fileUploadOrPath, targetPathWithoutExtension, o
 
   await createFolderIfMissing(path.dirname(absoluteTargetPath));
   const res = await resize(filePath, absoluteTargetPath, fileExtension, options);
+
+  const finalPath = url.resolve(constants.UPLOADS_WEB_PATH,
+    path.relative(configUtils.uploadsPathAbsolute(), absoluteTargetPath + "." + res.format));
+
   return {
     ...res,
-    finalPath: url.resolve(constants.UPLOADS_WEB_PATH,
-      path.relative(configUtils.uploadsPathAbsolute(), absoluteTargetPath + "." + res.format))
+    finalPath
   };
 }
 

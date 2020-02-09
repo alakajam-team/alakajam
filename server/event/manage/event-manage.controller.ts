@@ -160,6 +160,14 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
           errorMessage = result.error;
         }
       }
+      if (files.background || req.body["background-delete"]) {
+        const file = files.background ? files.background[0] : null;
+        const result = await fileStorage.savePictureToModel(eventDetails, "background", file,
+          req.body["background-delete"], `/events/${event.get("name")}/background`, { maxDiagonal: 3000 });
+        if (result.error) {
+          errorMessage = result.error;
+        }
+      }
 
       // Save
       const nameChanged = event.hasChanged("name");

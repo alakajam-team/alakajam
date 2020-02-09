@@ -121,7 +121,16 @@
         </div>
         <div class="col-md-6">
           <div class="form-group">
-            <label for="logo">Banner</label>
+            <label for="logo">Background</label>
+            {% set eventDetails = event.related('details') if event %}
+            {{ formMacros.pictureInput('background', eventDetails.get('background') if eventDetails, { noCard: true, model: eventDetails }) }}
+          </div>
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="logo">Banner <i>(deprecated)</i></label>
             {% set eventDetails = event.related('details') if event %}
             {{ formMacros.pictureInput('banner', eventDetails.get('banner') if eventDetails, { noCard: true, model: eventDetails }) }}
           </div>

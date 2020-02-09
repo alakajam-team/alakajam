@@ -162,7 +162,11 @@ export function routes(app) {
   router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/scores", entryHighscores);
   router.all("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit-scores", csrf, entryHighscoresManage);
 
-  const eventFormParser = upload.fields([{ name: "logo", maxCount: 1 }, { name: "banner", maxCount: 1 }]);
+  const eventFormParser = upload.fields([
+    { name: "logo", maxCount: 1 },
+    { name: "banner", maxCount: 1 },
+    { name: "background", maxCount: 1 }
+  ]);
   router.get("/pick_event_template", csrf, eventManageTemplate);
   router.get("/create_event", csrf, eventManage);
   router.post("/create_event", eventFormParser, csrf, eventManage);
