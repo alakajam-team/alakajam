@@ -27,10 +27,7 @@
         <div class="row">
           <div class="col-lg-3 event-jumbotron__logo-container">
             <div class="event-jumbotron__logo">
-              {% set eventLogo = event.get('logo') if event %}
-              {% if eventLogo %}
-                <img src="{{ pictureUrl(eventLogo, event) }}" />
-              {% endif %}
+              <img src="{{ pictureUrl(eventLogo, event) if eventLogo else staticUrl('/static/images/jamician196.png') }}" />
             </div>
           </div>
     
