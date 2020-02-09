@@ -65,8 +65,9 @@ class SassBuilder {
     log.debug(`Copied ${WEBFONTS_PATH}`);
   }
 
-  private sassBuild(resolve?: (result: sass.Result) => void, reject?: (cause?: any) => void) {
-    fileStorage.createFolderIfMissing(path.resolve(this.CLIENT_DEST_FOLDER, "css"));
+  private async sassBuild(resolve?: (result: sass.Result) => void, reject?: (cause?: any) => void) {
+    await fileStorage.createFolderIfMissing(path.resolve(this.CLIENT_DEST_FOLDER, "css"))
+      .catch(reject);
     const inputFile = path.resolve(this.CLIENT_SRC_FOLDER, "scss/index.scss");
     const outputFile = path.resolve(this.CLIENT_DEST_FOLDER, "css/index.css");
 
@@ -82,13 +83,18 @@ class SassBuilder {
           .then(() => {
             log.info(`Built CSS to ${outputFile} (${result.css.length / 1000.}kb)`);
             if (typeof resolve === "function") { resolve(result); }
-          });
+          })
+          .catch(reject);
       }
     });
   }
 
   private copyAssets({ assetsPath, reject, resolve }:
-  { assetsPath?: string | string[]; reject?: (reason: any) => void; resolve?: (files: string[]) => void }) {
+  {
+    assetsPath?: string | string[];
+    reject?: (reason: any) => void;
+    resolve?: (files: string[]) => void;
+  }) {
     copy(
       assetsPath,
       this.CLIENT_DEST_FOLDER,
@@ -120,5 +126,9 @@ export default instance;
 
 // Standalone execution
 if (path.resolve(process.argv[1]) === path.resolve(__filename)) {
-  instance.initialize({ watch: intersection(process.argv, ["-w", "--watch"]).length > 0 });
+  instance.initialize({ watch: intersection(process.argv, ["-w", "--watch"]).length > 0 })
+    .catch((e) => {
+      log.error(e);
+      process.exit(1);
+    });
 }

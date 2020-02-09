@@ -9,5 +9,5 @@ jobs:
       - run: npm run build
       - run: npm run test
       - store_artifacts: 
-          path: /cypress/screenshots
+          path: /root/project/cypress/screenshots
           destination: screenshots
