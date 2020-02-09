@@ -101,6 +101,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         event = eventService.createEvent();
       }
 
+      // Event update
       const previousName = event.get("name");
       event.set({
         title: forms.sanitizeString(req.body.title),
@@ -145,17 +146,6 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
       }
 
-      // Caches clearing
-      cache.general.del("active-tournament-event");
-      const nameChanged = event.hasChanged("name");
-      event = await event.save();
-      cache.eventsById.del(event.get("id"));
-      cache.eventsByName.del(event.get("name"));
-      if (nameChanged && previousName) {
-        await eventService.refreshEventReferences(event);
-        cache.eventsByName.del(previousName);
-      }
-
       // Event details update
       const eventDetails = event.related("details") as BookshelfModel;
       eventDetails.set({
@@ -170,7 +160,20 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
           errorMessage = result.error;
         }
       }
+
+      // Save
+      const nameChanged = event.hasChanged("name");
+      await event.save();
       await eventDetails.save();
+
+      // Caches clearing
+      cache.general.del("active-tournament-event");
+      cache.eventsById.del(event.get("id"));
+      cache.eventsByName.del(event.get("name"));
+      if (nameChanged && previousName) {
+        await eventService.refreshEventReferences(event);
+        cache.eventsByName.del(previousName);
+      }
 
       if (creation) {
         res.redirect(links.routeUrl(event, "event", "edit"));
