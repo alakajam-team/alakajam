@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: cypress/base:10
+      - image: cypress/base:13.6.0
     steps:
       - checkout
       - run: npm ci
