@@ -125,7 +125,7 @@
             <label for="logo">Background</label>
             {% set eventDetails = event.related('details') if event %}
             {{ formMacros.pictureInput('background', eventDetails.get('background') if eventDetails, { noCard: true, model: eventDetails }) }}
-            <div class="legend">Ideal background size: 1920x1080 or more. Will resize to always cover full window width.</div>
+            <div class="legend">Ideal background size: 1920x540 or more. Will resize to always cover full window width.</div>
           </div>
         </div>
       </div> 
