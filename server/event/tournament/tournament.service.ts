@@ -43,7 +43,7 @@ async function findActiveTournamentPlaying(entryId, options: any = {}) {
   if (entryId) {
     const activeTournamentEvent = await findActiveTournament(options);
     if (activeTournamentEvent) {
-      const tEntriesCollection = activeTournamentEvent.related("tournamentEntries");
+      const tEntriesCollection = activeTournamentEvent.related<BookshelfCollection>("tournamentEntries");
       for (const tEntry of tEntriesCollection.models) {
         if (tEntry.get("entry_id") === entryId) {
           return activeTournamentEvent;

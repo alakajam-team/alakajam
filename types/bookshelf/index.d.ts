@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable max-classes-per-file */
+
 import "bookshelf";
-import { LoDashExplicitObjectWrapper } from "lodash";
 
 declare module "bookshelf" {
 
@@ -8,23 +10,23 @@ declare module "bookshelf" {
    */
 
   class NodeBookshelfModel extends BookshelfModel {
-    likes: () => BookshelfCollection;
-    userRoles: () => BookshelfCollection;
-    comments: () => BookshelfModel;
+    public likes: () => BookshelfCollection;
+    public userRoles: () => BookshelfCollection;
+    public comments: () => BookshelfModel;
   }
 
   class EntryBookshelfModel extends NodeBookshelfModel {
-    details: () => BookshelfModel;
-    sortedUserRoles: () => BookshelfModel[];
-    picturePreviews: () => any[];
-    pictureThumbnail: () => string | undefined;
-    pictureIcon: () => string | undefined;
+    public details: () => BookshelfModel;
+    public sortedUserRoles: () => BookshelfModel[];
+    public picturePreviews: () => any[];
+    public pictureThumbnail: () => string | undefined;
+    public pictureIcon: () => string | undefined;
   }
 
   class PostBookshelfModel extends NodeBookshelfModel {
-    entry: () => BookshelfModel;
-    event: () => BookshelfModel;
-    author: () => BookshelfModel;
+    public entry: () => BookshelfModel;
+    public event: () => BookshelfModel;
+    public author: () => BookshelfModel;
   }
 
 
@@ -44,28 +46,29 @@ declare module "bookshelf" {
   }
 
   class BookshelfModel extends Model<BookshelfModel> {
-		related<T>(relation: string): T;
-		related<R extends Model<any>>(relation: string): R | Collection<R>;
-    relations?: Record<string, any>;
-    fetchPage?<T extends BookshelfModel>(options: FetchPageOptions): Promise<BookshelfCollectionOf<T>>;
+    public relations?: Record<string, any>;
+    public related<T extends BookshelfModel | BookshelfCollection>(relation: string): T;
+    public related<R extends Model<any>>(relation: string): R | Collection<R>;
+    public fetchPage?<T extends BookshelfModel>(options: FetchPageOptions): Promise<BookshelfCollectionOf<T>>;
   }
 
   class BookshelfCollection extends BookshelfCollectionOf<BookshelfModel> { }
 
-  class BookshelfCollectionOf<T extends BookshelfModel> extends Collection<BookshelfModel> {
-    where(match: { [key: string]: any }, firstOnly?: boolean): T | BookshelfCollection;
-    difference(arrayValue: T[] | BookshelfCollectionOf<T>): T[];
-		difference(...values: T[]): T[];
-    slice(begin?: number, end?: number): T[];
-    includes(value: any, fromIndex?: number): boolean;
 
-    models?: T[];
-    pagination?: {
+  class BookshelfCollectionOf<T extends BookshelfModel> extends Collection<BookshelfModel> {
+    public models?: T[];
+    public pagination?: {
       rowCount: number;
       pageCount: number;
       page: number;
       pageSize: number;
     };
+
+    public where(match: { [key: string]: any }, firstOnly?: boolean): T | BookshelfCollection;
+    public difference(arrayValue: T[] | BookshelfCollectionOf<T>): T[];
+    public difference(...values: T[]): T[];
+    public slice(begin?: number, end?: number): T[];
+    public includes(value: any, fromIndex?: number): boolean;
   }
 
 }

@@ -5,7 +5,7 @@
  * @module services/security-service
  */
 
-import { BookshelfModel } from "bookshelf";
+import { BookshelfModel, BookshelfCollection } from "bookshelf";
 import enums from "./enums";
 import * as models from "./models";
 
@@ -133,7 +133,7 @@ export class Security {
     await node.load("userRoles");
 
     // Check if present already
-    const userRoles = node.related("userRoles");
+    const userRoles = node.related<BookshelfCollection>("userRoles");
     const matchingRole = userRoles.find((userRole) => {
       return userRole.get("user_name") === user.get("name") &&
         userRole.get("permission") === permission;
@@ -168,7 +168,7 @@ export class Security {
     permission: SecurityPermission): Promise<void> {
     await node.load("userRoles");
 
-    const userRoles = node.related("userRoles");
+    const userRoles = node.related<BookshelfCollection>("userRoles");
     const matchingRole = userRoles.find((userRole) => {
       return userRole.get("user_name") === user.get("name") &&
         userRole.get("permission") === permission;

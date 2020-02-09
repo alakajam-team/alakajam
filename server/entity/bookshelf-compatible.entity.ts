@@ -1,4 +1,5 @@
 import { getManager, ObjectType } from "typeorm";
+import { BookshelfModel } from "bookshelf";
 
 export interface DependentEntity {
   entity: ObjectType<any>;
@@ -21,7 +22,7 @@ export abstract class BookshelfCompatibleEntity {
     }
   }
 
-  public related(relation: string): any {
+  public related<T extends BookshelfModel>(relation: string): T {
     return this[relation];
   }
 

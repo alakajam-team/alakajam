@@ -48,7 +48,7 @@ export async function buildPostContext(post: NodeBookshelfModel, currentUser: Bo
   if (post.get("event_id")) {
     context.relatedEvent = await eventService.findEventById(post.get("event_id"));
   }
-  const relatedEntry = post.related("entry");
+  const relatedEntry = post.related<BookshelfModel>("entry");
   if (relatedEntry.id && !post.get("special_post_type")) {
     context.relatedEntry = relatedEntry;
   }

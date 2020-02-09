@@ -1,3 +1,4 @@
+import { BookshelfModel } from "bookshelf";
 import * as luxon from "luxon";
 import settings from "server/core/settings";
 import eventThemeService from "server/event/theme/event-theme.service";
@@ -12,14 +13,7 @@ import enums from "./enums";
 import fileStorage from "./file-storage";
 import { createLuxonDate, formatDate } from "./formats";
 import log from "./log";
-import {
-  SETTING_ARTICLE_SIDEBAR,
-  SETTING_EVENT_REQUIRED_ENTRY_VOTES,
-  SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
-  SETTING_EVENT_THEME_ELIMINATION_MODULO,
-  SETTING_EVENT_THEME_IDEAS_REQUIRED,
-  SETTING_FEATURED_EVENT_NAME
-} from "./settings-keys";
+import { SETTING_ARTICLE_SIDEBAR, SETTING_EVENT_REQUIRED_ENTRY_VOTES, SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_ELIMINATION_MODULO, SETTING_EVENT_THEME_IDEAS_REQUIRED, SETTING_FEATURED_EVENT_NAME } from "./settings-keys";
 
 /**
  * Inserts sample data in the database.
@@ -57,7 +51,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
     entrantUser.set({
       title: "Entrant",
     });
-    entrantUser.related("details").set({
+    entrantUser.related<BookshelfModel>("details").set({
       body: "I am definitely **not** a robot.",
     });
     userService.save(entrantUser);
@@ -99,7 +93,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
       },
     });
     await event2.save();
-    const event2Details = event2.related("details");
+    const event2Details = event2.related<BookshelfModel>("details");
     event2Details.set({
       category_titles: ["Overall", "Graphics", "Audio", "Gameplay", "Originality", "Theme"],
     });

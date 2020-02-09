@@ -331,7 +331,7 @@ export async function getThemeStats(req: CustomRequest, res: CustomResponse<Comm
 
   const themesStats = [];
   for (const theme of themes.models) {
-    const event = theme.related("event");
+    const event = theme.related<BookshelfModel>("event");
     if (event.get("status_theme") === enums.EVENT.STATUS_THEME.RESULTS) {
       const themeStats: {ranking?: number; eventTitle?: string} = {
         eventTitle: event.get("title")
