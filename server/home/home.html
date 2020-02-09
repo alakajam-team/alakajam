@@ -29,7 +29,7 @@
   {% endif %}
   {{ jumbotronMacros.eventJumbotron(featuredEvent, featuredEventAnnouncement, user, entry, { shrinkedJumbo: shrinkedJumbo }) }}
 {% else %}
-<div class="event-jumbotron" style="{{ jumbotronMacros.backgroundImage() }}">
+<div class="event-jumbotron" style="{{ jumbotronMacros.backgroundImage(featuredEvent) }}">
   <div class="container">
     {% if featuredPost %}
       {{ postMacros.post(featuredPost) }}
