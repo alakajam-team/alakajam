@@ -117,6 +117,7 @@
           <div class="form-group">
             <label for="logo">Logo</label>
             {{ formMacros.pictureInput('logo', event.get('logo') if event, { noCard: true, model: event }) }}
+            <div class="legend">Ideal logo size: about 196x196, although slightly bigger images will not be resized and can overflow nicely.</div>
           </div>
         </div>
         <div class="col-md-6">
@@ -124,6 +125,7 @@
             <label for="logo">Background</label>
             {% set eventDetails = event.related('details') if event %}
             {{ formMacros.pictureInput('background', eventDetails.get('background') if eventDetails, { noCard: true, model: eventDetails }) }}
+            <div class="legend">Ideal background size: 1920x1080 or more. Will resize to always cover full window width.</div>
           </div>
         </div>
       </div> 

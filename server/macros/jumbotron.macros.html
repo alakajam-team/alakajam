@@ -25,11 +25,13 @@
         {% endif %}
 
         <div class="row">
-          <div class="col-lg-3 text-center">
-            {% set eventLogo = event.get('logo') if event %}
-            {% if eventLogo %}
-              <img src="{{ staticUrl(eventLogo) }}" />
-            {% endif %}
+          <div class="col-lg-3 event-jumbotron__logo-container">
+            <div class="event-jumbotron__logo">
+              {% set eventLogo = event.get('logo') if event %}
+              {% if eventLogo %}
+                <img src="{{ staticUrl(eventLogo) }}" />
+              {% endif %}
+            </div>
           </div>
     
           <div class="col-lg-9 mb-3">

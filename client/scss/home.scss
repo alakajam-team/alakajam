@@ -41,6 +41,24 @@ $homeNavbarHeight: 50px;
   margin-top: -$body-margin;
   padding: 20px 0;
   background-size: cover;
+  overflow: hidden;
+  background-position: center;
+  background-size: cover;
+
+  &__logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+  }
+  &__logo {
+    position: relative;
+
+    & img {
+      position: absolute;
+      transform: translate(-50%, -50%);
+    }
+  }
 
   &__post {
     margin-top: 15px;
