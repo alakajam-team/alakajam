@@ -527,8 +527,8 @@ async function _refreshEventThemeStats(event) {
       }).count());
     eventDetails.save();
 
-    cache.eventsById.del(event.get('id'));
-    cache.eventsByName.del(event.get('name'));
+    cache.eventsById.del(event.get("id"));
+    cache.eventsByName.del(event.get("name"));
   }
 
   if (!(await isThemeVotingAllowed(event))) {

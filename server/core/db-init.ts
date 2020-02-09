@@ -13,7 +13,14 @@ import enums from "./enums";
 import fileStorage from "./file-storage";
 import { createLuxonDate, formatDate } from "./formats";
 import log from "./log";
-import { SETTING_ARTICLE_SIDEBAR, SETTING_EVENT_REQUIRED_ENTRY_VOTES, SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_ELIMINATION_MODULO, SETTING_EVENT_THEME_IDEAS_REQUIRED, SETTING_FEATURED_EVENT_NAME } from "./settings-keys";
+import {
+  SETTING_ARTICLE_SIDEBAR,
+  SETTING_EVENT_REQUIRED_ENTRY_VOTES,
+  SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
+  SETTING_EVENT_THEME_ELIMINATION_MODULO,
+  SETTING_EVENT_THEME_IDEAS_REQUIRED,
+  SETTING_FEATURED_EVENT_NAME
+} from "./settings-keys";
 
 /**
  * Inserts sample data in the database.

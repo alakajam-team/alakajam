@@ -149,7 +149,6 @@ export function logErrorAndReturn(value: any) {
   return (reason: any) => {
     if (reason instanceof Error) {
       log.error(reason.message, reason.stack);
-      console.error(reason.stack);
     } else {
       log.error(reason);
     }
