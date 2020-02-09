@@ -158,15 +158,15 @@
   <span class="{{ icon }}" data-toggle="tooltip" data-placement="top" title="{{ platform }}"></span> {{ platform if not options.hideLabel }}
 {% endmacro %}
 
-{% macro eventThemeStatus (event, options = {}) %}
-  <span class="badge {{ 'badge-success' if event.get('status') == 'shortlist' }} 
-      {{ 'badge-secondary' if event.get('status') == 'active' }}"><!--
-    -->{% if event.get('status') === 'banned' %}<!--
+{% macro eventThemeStatus (theme, options = {}) %}
+  <span class="badge {{ 'badge-success' if theme.get('status') == 'shortlist' }} 
+      {{ 'badge-secondary' if theme.get('status') == 'active' }}"><!--
+    -->{% if theme.get('status') === 'banned' %}<!--
       -->{{ 'Banned' if options.uncensored else 'Out' }}<!--
-    -->{% elseif event.get('status') === 'duplicate' %}<!--
+    -->{% elseif theme.get('status') === 'duplicate' %}<!--
       -->Idea already submitted<!--
     -->{% else %}<!--
-      -->{{ event.get('status') | capitalize }}<!--
+      -->{{ theme.get('status') | capitalize }}<!--
     -->{% endif %}<!--
   --></span>
 {% endmacro %}
@@ -180,8 +180,8 @@
           <span class="fas fa-pencil-alt"></span>
           Edit entry
         </a>
-      {% elseif event.get('status') !== 'open' or (event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked') %}
-        <a href="#"class="btn btn-sm btn-outline-primary disabled">
+      {% elseif event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
+        <a href="#"class="btn btn-sm btn-outline-secondary disabled">
           <span class="fas fa-plus"></span>
           Create entry
         </a>
