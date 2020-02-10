@@ -3,7 +3,8 @@
  */
 
 $homeNavbarHeight: 50px;
-$arrowSize: 9px;
+$homeNavbarMutedColor: #FFFFFFAA;
+$arrowSize: 9.5px;
 
 .home-welcome {
   margin: -20px 0 20px 0;
@@ -125,7 +126,7 @@ $arrowSize: 9px;
 
   &__events-home {
     margin-top: -3px;
-    color: #FFFFFFAA;
+    color: $homeNavbarMutedColor;
     display: inline-flex;
     line-height: 0.85rem;
     align-items: center;
@@ -138,40 +139,6 @@ $arrowSize: 9px;
     }
   }
 
-  &__event {
-    position: relative;
-    display: inline-block;
-    margin: -4px 10px 0 0;
-
-    &.btn-secondary {
-      padding-left: 1.2rem;
-
-      &::after, &::before {
-        border-top: (2 * $arrowSize) solid transparent;
-        border-bottom: (2 * $arrowSize) solid transparent;
-        border-left: $arrowSize solid #6c757d;
-        height: 0;
-        position: absolute;
-        right: -$arrowSize;
-        top: -1px;
-        width: 0;
-        z-index: 2;
-        content: "";
-        transition: 0.15s ease-in-out;
-      }
-
-      &::before {
-        right: unset;
-        left: -1px;
-        border-left-color: #333;
-      }
-
-      &:hover::after {
-        border-left-color: #5a6268;
-      }
-    }
-  }
-
   &__social {
     text-align: center;
 
@@ -179,5 +146,56 @@ $arrowSize: 9px;
       height: 30px;
       margin: -4px 2px 0;
     }
+  }
+}
+
+.home-navbar-event {
+  position: relative;
+  margin: -4px 10px 0 0;
+  text-align: left;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+
+  &.btn-secondary {
+    padding-left: 1.2rem;
+
+    &::after, &::before {
+      border-top: (2 * $arrowSize) solid transparent;
+      border-bottom: (2 * $arrowSize) solid transparent;
+      border-left: $arrowSize solid #6c757d;
+      height: 0;
+      position: absolute;
+      right: -$arrowSize;
+      top: -1px;
+      width: 0;
+      z-index: 2;
+      content: "";
+      transition: 0.15s ease-in-out;
+    }
+
+    &::before {
+      right: unset;
+      left: -1px;
+      border-left-color: #333;
+    }
+
+    &:hover::after {
+      border-left-color: #5a6268;
+    }
+  }
+  
+  &__legend {
+    line-height: 0.9rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+
+    & img {
+      vertical-align: bottom;
+    }
+  }
+
+  &__dates {
+    opacity: 0.6;
+    font-size: 0.8rem;
   }
 }

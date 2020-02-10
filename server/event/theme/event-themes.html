@@ -286,8 +286,8 @@
           {{ csrfToken() | safe }}
           <input type="hidden" name="action" value="vote" />
           <input type="hidden" name="theme-id" value="<%- theme.id %>" />
-          <button name="upvote" class="btn <%- theme.upvote ? 'btn-success' : 'btn-outline-primary' %> btn-sm"><span class="fas fa-arrow-up"></span></button>
-          <button name="downvote" class="btn <%- theme.downvote ? 'btn-danger' : 'btn-outline-primary' %> btn-sm"><span class="fas fa-arrow-down"></span></button>
+          <button name="upvote" class="btn <%- theme.upvote ? 'btn-success' : 'btn-outline-secondary' %> btn-sm"><span class="fas fa-arrow-up"></span></button>
+          <button name="downvote" class="btn <%- theme.downvote ? 'btn-danger' : 'btn-outline-secondary' %> btn-sm"><span class="fas fa-arrow-down"></span></button>
         </form>
       </td><td class="theme-past__label">
         <%- theme.title %>

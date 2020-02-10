@@ -94,7 +94,7 @@
     padding: 0 10px 0 10px;
   }
 
-  &.pending {
+  &.pending, &.open {
     display: inline-block;
     width: inherit;
     line-height: normal;

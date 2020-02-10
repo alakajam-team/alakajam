@@ -49,20 +49,23 @@
             <span class="fa fa-calendar-alt"></span>
             <span class="d-none d-sm-inline">Event<br />schedule</span>
           </a>
-          <div class="d-sm-inline-block d-none">
-            {% for event in eventSchedule %}
-            <a class="home-navbar__event btn 
+          {% for event in eventSchedule %}
+            <a class="home-navbar-event d-sm-inline-flex d-none btn 
               {{ 'btn-secondary' if featuredEvent and event.get('id') === featuredEvent.get('id') else 'btn-outline-light border-0' }}
               {{ 'd-none d-lg-inline-block' if loop.index === 1 }}"
               href="{{ routeUrl(event, 'event') }}">
-                  {% set isMainEvent = event.get('title').includes('Alakajam') %}
-                  {% if isMainEvent %}
-                    <img src="{{ staticUrl('/static/images/favicon16.png') }}" class="no-border" />
-                  {% endif %}
-                  {{ event.get('title') }}
-              </a>
-            {% endfor %}
-          </div>
+                <div class="home-navbar-event__legend">
+                  <div>
+                    {{ event.get('title') }}
+                    {% set isMainEvent = event.get('title').includes('Alakajam') %}
+                    {% if isMainEvent %}
+                      <img src="{{ staticUrl('/static/images/favicon16.png') }}" class="no-border" />
+                    {% endif %}
+                  </div>
+                  <div class="home-navbar-event__dates">{{ event.get('display_dates') }}</div>
+                </div>
+            </a>
+          {% endfor %}
         </div>
       </div>
       <div class="col-sm-3 col-9">
