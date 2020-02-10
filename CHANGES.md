@@ -2,6 +2,11 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/alakajam-team/alakajam)!
 
+### February 2020
+
+* New front page with cleaner layout, comment feed
+* Remove expand/collapse toggle for blog posts
+
 ### January 2020
 
 * Migrate website to Bootstrap 4 (minor visual changes in all pages)
