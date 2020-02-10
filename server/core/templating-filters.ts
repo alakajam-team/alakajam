@@ -1,7 +1,6 @@
 import { BookshelfModel } from "bookshelf";
 import * as leftPad from "left-pad";
 import * as lodash from "lodash";
-import sanitizeHtml from "sanitize-html";
 import * as slug from "slug";
 import constants from "./constants";
 import * as formats from "./formats";

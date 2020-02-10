@@ -6,7 +6,7 @@ import settings from "server/core/settings";
 import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
-import eventService from "server/event/event.service";
+import eventService, { FindGamesOptions } from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import userService from "server/user/user.service";
 
@@ -63,7 +63,7 @@ export async function viewEventGames(req, res) {
  * @param  {object} searchOptions initial search options
  * @return {object} search options
  */
-export async function handleGameSearch(req, res, searchOptions: any = {}) {
+export async function handleGameSearch(req, res, searchOptions: FindGamesOptions = {}): Promise<FindGamesOptions> {
   // Pagination
   searchOptions.pageSize = 20;
   searchOptions.page = 1;
@@ -143,6 +143,11 @@ export async function handleGameSearch(req, res, searchOptions: any = {}) {
   // High scores
   if (req.query.highScoresSupport) {
     searchOptions.highScoresSupport = true;
+  }
+
+  // Allows tournament use
+  if (req.query.allowsTournamentUse) {
+    searchOptions.allowsTournamentUse = true;
   }
 
   return searchOptions;

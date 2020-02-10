@@ -350,16 +350,28 @@ async function deleteEntry(entry) {
   });
 }
 
+export interface FindGamesOptions extends FetchPageOptions {
+  [key?: string]: any;
+  count?: boolean;
+  sortByRatingCount?: boolean;
+  sortByRating?: boolean;
+  sortByRanking?: boolean;
+  eventId?: number;
+  search?: string;
+  platforms?: string[];
+  tags?: Array<{ id: number }>;
+  divisions?: string[];
+  notReviewedById?: string;
+  userId?: number;
+  highScoresSupport?: boolean;
+  allowsTournamentUse?: boolean;
+}
+
 /**
  * @param options {object} nameFragment eventId userId platforms tags pageSize page
  *                         withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
  */
-async function findGames(
-  options: {
-    count?: boolean; sortByRatingCount?: boolean; sortByRating?: boolean; sortByRanking?: boolean; eventId?: number;
-    search?: string; platforms?: string[]; tags?: Array<{ id: number }>; divisions?: string[]; notReviewedById?: string;
-    userId?: number; highScoresSupport?: boolean;
-  } & FetchPageOptions = {}): Promise<BookshelfCollection | number | string> {
+async function findGames(options: FindGamesOptions = {}): Promise<BookshelfCollection | number | string> {
   let query = new models.Entry()
     .query((qb) => {
       qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id");
@@ -462,6 +474,9 @@ async function findGames(
   }
   if (options.highScoresSupport) {
     query = query.where("status_high_score", "!=", "off");
+  }
+  if (options.allowsTournamentUse) {
+    query = query.where("entry_details.allow_tournament_use", true);
   }
 
   // Pagination settings

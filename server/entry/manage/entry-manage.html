@@ -188,22 +188,20 @@
             <div id="edit-optouts" class="{{ 'd-none' if entry.get('division') === 'unranked' }}">
               <div class="form-group" title="{{ 'Only the entry owner can change this setting' if not canEditOptouts }}">
                 <label>Opt-outs (<a href="/article/faq#optouts" target="_blank">help</a>)</label>
-                <div>
-                  <label style="font-weight: normal">
-                    <input type="checkbox" name="optout-graphics" class="js-checkbox"
+                <div class="form-inline">
+                  <label>
+                    <input type="checkbox" name="optout-graphics" class="js-checkbox" 
                     {{ 'readonly' if not canEditOptouts }}
                     {{ 'checked="checked"' if optouts and optouts.includes('Graphics') }} 
                     {{ 'disabled' if not canEditOptouts }} />
-                    Disable ratings for graphics
+                    <span class="ml-1 mr-3">Disable ratings for graphics</span>
                   </label>
-                </div>
-                <div>
-                  <label style="font-weight: normal">
-                    <input type="checkbox" name="optout-audio" class="js-checkbox"
+                  <label>
+                    <input type="checkbox" name="optout-audio" class="js-checkbox" 
                     {{ 'readonly' if not canEditOptouts }}
                     {{ 'checked="checked"' if optouts and optouts.includes('Audio') }}
                     {{ 'disabled' if not canEditOptouts }} />
-                    Disable ratings for audio
+                    <span class="ml-1 mr-3">Disable ratings for audio</span>
                   </label>
                 </div>
               </div>
@@ -215,7 +213,7 @@
 
         <div class="form-group">
           <label>Links</label>
-          <div class="js-links" data-entry-links="{{ entry.get('links') | default([]) | dump }}">
+          <div class="js-links card card-body" data-entry-links="{{ entry.get('links') | default([]) | dump }}">
             <!-- No-JavaScript link support -->
             <input type="hidden" name="submit-links" value="true" />
             {% set linkCount = entry.get('links').length if (entry.get('links').length > 3) else 3 %}
@@ -238,23 +236,30 @@
             {{ formMacros.editor('body', entryDetails.get('body')) }}
           </div>
         </div>
-        <div class="form-group">
-          <label for="platforms">Platforms</label>
-          <select name="platforms" class="form-control js-entry-platforms" multiple="multiple">
-            {% for platform in allPlatforms %}
-              <option value="{{ platform }}" {{ 'selected' if entry.get('platforms') and entry.get('platforms').includes(platform) }}>{{ platform }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="tags">Tags</label> {{ formMacros.tooltip('Use this to let people search your game by tech (Unity, Game Maker...), genre (Platformer...), style (Pixel art...), etc.') }}
-          <select name="tags" class="form-control js-tags-select" multiple="multiple"
-                  data-allow-new-tags="true"
-                  data-find-tags-url="{{ routeUrl(null, 'tags', 'ajax-find-tags') }}">
-            {% for tag in tags %}
-              <option value="{{ tag.id }}" selected>{{ tag.value }}</option>
-            {% endfor %}
-          </select>
+
+        <div class="row">
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for="platforms">Platforms</label>
+              <select name="platforms" class="form-control js-entry-platforms" multiple="multiple">
+                {% for platform in allPlatforms %}
+                  <option value="{{ platform }}" {{ 'selected' if entry.get('platforms') and entry.get('platforms').includes(platform) }}>{{ platform }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for="tags">Tags</label> {{ formMacros.tooltip('Use this to let people search your game by tech (Unity, Game Maker...), genre (Platformer...), style (Pixel art...), etc.') }}
+              <select name="tags" class="form-control js-tags-select" multiple="multiple"
+                      data-allow-new-tags="true"
+                      data-find-tags-url="{{ routeUrl(null, 'tags', 'ajax-find-tags') }}">
+                {% for tag in tags %}
+                  <option value="{{ tag.id }}" selected>{{ tag.value }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
         </div>
 
         <div class="horizontal-bar" style="margin-top: 40px">High scores</div>
@@ -270,25 +275,32 @@
             {{ formMacros.radio('enable-high-score', 'off', 'Off', 'off' if not highScoreEnabled) }}
             {{ formMacros.radio('enable-high-score', 'on', 'On', 'on' if highScoreEnabled) }}
             <span class="js-high-score-details">
-            {{ formMacros.check('high-score-reversed', 'Lower score is better', entry.get('status_high_score') === 'reversed') }}
             </span>
           </div>
         </div>
 
         <div class="js-high-score-details">
           <div class="form-group">
-            <label for="high-score-unit">Score type</label>
-            <div class="form-inline">
-              {% set isCustomUnit = entryDetails.get('high_score_type') and not ['number', 'time'].includes(entryDetails.get('high_score_type')) %}
-              {{ formMacros.radio('high-score-type', 'number', 'Number', entryDetails.get('high_score_type') or 'number') }}
-              {{ formMacros.radio('high-score-type', 'time', 'Time', entryDetails.get('high_score_type')) }}
-              {{ formMacros.radio('high-score-type', 'custom', 'Custom unit', 'custom' if isCustomUnit) }}
-              <input type="text" name="custom-unit" class="form-control js-custom-unit-input" value="{{ entryDetails.get('high_score_type') if isCustomUnit }}" size="5" />
+            <label for="high-score-unit">Score unit</label>
+            <div class="row">
+              <div class="col-md-6 col-12 form-inline">
+                {% set isCustomUnit = entryDetails.get('high_score_type') and not ['number', 'time'].includes(entryDetails.get('high_score_type')) %}
+                {{ formMacros.radio('high-score-type', 'number', 'Number', entryDetails.get('high_score_type') or 'number') }}
+                {{ formMacros.radio('high-score-type', 'time', 'Time', entryDetails.get('high_score_type')) }}
+                {{ formMacros.radio('high-score-type', 'custom', 'Custom unit', 'custom' if isCustomUnit) }}
+                <input type="text" name="custom-unit" class="form-control js-custom-unit-input" value="{{ entryDetails.get('high_score_type') if isCustomUnit }}" size="5" />
+              </div>
+              <div class="col-md-6 col-12 form-inline">
+                {{ formMacros.check('high-score-reversed', 'Lower score is better', entry.get('status_high_score') === 'reversed') }}
+              </div>
             </div>
           </div>
           <div class="form-group">
             <label for="high-score-instructions">Score submission instructions {{ formMacros.tooltip('You can use this text to specify which score to submit, or which game mode to use, what must appear is the proof screenshot, etc. Markdown allowed.') }}</label>
             <textarea name="high-score-instructions" class="form-control">{{ entryDetails.get('high_score_instructions') }}</textarea>
+          </div>
+          <div class="form-group">
+            {{ formMacros.check('allow-tournament-use', 'Allow game use for tournaments', entryDetails.get('allow_tournament_use'), { noMargin: true }) }} <a href="/article/docs/akj-tournament-rules" target="_blank">(learn more)</a></label>
           </div>
         </div>
 
@@ -298,7 +310,7 @@
           <label for="anonymous-enabled">Comments options</label>
           <div>
             {{ formMacros.check('anonymous-enabled', 'Allow anonymous feedback', entry.get('allow_anonymous'), { noMargin: true }) }}
-            (<a href="/article/faq#anon-entry" target="_blank">help</a>)
+            <a href="/article/faq#anon-entry" target="_blank">(learn more)</a>
           </div>
         </div>
       </div>
@@ -357,7 +369,9 @@
       </div>
     </div>
   <% } %>
-  <input type="button" class="js-add-link btn btn-sm btn-outline-secondary" value="Add link" />
+  <div class="form-group mb-0">
+    <button class="js-add-link d-inline btn btn-outline-secondary mt-2">Add link</button>
+  </div>
 </script>
 
 {% endblock %}

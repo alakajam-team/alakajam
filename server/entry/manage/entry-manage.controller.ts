@@ -164,6 +164,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       body: forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_ENTRY_DETAILS }),
       high_score_type: highScoreType,
       high_score_instructions: forms.sanitizeString(req.body["high-score-instructions"], { maxLength: 2000 }),
+      allow_tournament_use: req.body["allow-tournament-use"] === "on"
     });
 
     // Save entry: Validate form data

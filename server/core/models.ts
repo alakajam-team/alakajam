@@ -539,7 +539,8 @@ export const Entry = bookshelf.model("Entry", {
  * | integer | rating_count | Received rating count
  * | integer | high_score_count | Submitted scores count
  * | integer | high_score_type | 'number', 'time' or any custom text to be used as a suffix (max size: 20)
- * | integer | high_score_instructions | Markdown text to be shown when submitting a score (max size: 2000)
+ * | integer | high_score_instructions | Markdown text to be shown when submitting a score (max size: 200
+ * | boolean | allow_tournament_use | Whether the authors allow using the game for tournaments0)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */

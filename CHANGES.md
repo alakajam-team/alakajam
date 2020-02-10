@@ -6,6 +6,7 @@
 
 * New front page with cleaner layout, comment feed
 * Remove expand/collapse toggle for blog posts
+* Let user allow use of their games for tournaments
 
 ### January 2020
 
