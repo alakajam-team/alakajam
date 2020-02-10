@@ -43,21 +43,29 @@
 <div class="home-navbar">
   <div class="container">
     <div class="row">
-      <div class="col-9 d-none d-sm-block">
+      <div class="col-sm-9 col-3">
         <div class="home-navbar__events">
-          {% for event in eventSchedule %}
-          <a class="home-navbar__event btn {{ 'btn-secondary' if featuredEvent and event.get('id') === featuredEvent.get('id') else 'btn-outline-light border-0' }}"
-            href="{{ routeUrl(event, 'event') }}">
-                {% set isMainEvent = event.get('title').includes('Alakajam') %}
-                {% if isMainEvent %}
-                  <img src="{{ staticUrl('/static/images/favicon16.png') }}" class="no-border" />
-                {% endif %}
-                {{ event.get('title') }}
-            </a>
-          {% endfor %}
+          <a class="home-navbar__events-home btn btn-outline-light border-0" href="/events">
+            <span class="fa fa-calendar-alt"></span>
+            <span class="d-none d-sm-inline">Event<br />schedule</span>
+          </a>
+          <div class="d-sm-inline-block d-none">
+            {% for event in eventSchedule %}
+            <a class="home-navbar__event btn 
+              {{ 'btn-secondary' if featuredEvent and event.get('id') === featuredEvent.get('id') else 'btn-outline-light border-0' }}
+              {{ 'd-none d-lg-inline-block' if loop.index === 1 }}"
+              href="{{ routeUrl(event, 'event') }}">
+                  {% set isMainEvent = event.get('title').includes('Alakajam') %}
+                  {% if isMainEvent %}
+                    <img src="{{ staticUrl('/static/images/favicon16.png') }}" class="no-border" />
+                  {% endif %}
+                  {{ event.get('title') }}
+              </a>
+            {% endfor %}
+          </div>
         </div>
       </div>
-      <div class="col-sm-3 col-12">
+      <div class="col-sm-3 col-9">
         <div class="home-navbar__social">
           {{ socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg') }}
           {{ socialLink('Discord', 'https://discord.gg/yZPBpTn', 'discord.svg') }}
@@ -89,7 +97,7 @@
   {% endif %}
   
   <div class="row">
-    <div class="col-9">
+    <div class="col-md-9 col-12">
       {% if posts.length > 0 %}
       <div class="d-flex mt-3">
         <div class="horizontal-bar mt-0">Latest posts</div>
@@ -104,7 +112,7 @@
     {% endif %}
     </div>
 
-    <div class="col-3">
+    <div class="col-md-3 col-12">
       <div class="horizontal-bar">Latest comments</div>
 
       {{ postMacros.comments(comments, { readingUser: user, readOnly: true, linkToNode: true, preview: true }) }}

@@ -125,7 +125,7 @@
 {% macro eventJumbotronCountdownPhrase(event, user) %}
   {% if event.get('countdown_config').phrase %}
     <div>
-      <span class="fas fa-calendar-alt"></span> 
+      <span class="fas fa-calendar"></span> 
       {{ event.get('countdown_config').phrase }} 
       {{ event.get('countdown_config').date | featuredEventDateTime(user) }}
     </div>

@@ -3,6 +3,7 @@
  */
 
 $homeNavbarHeight: 50px;
+$arrowSize: 9px;
 
 .home-welcome {
   margin: -20px 0 20px 0;
@@ -119,11 +120,56 @@ $homeNavbarHeight: 50px;
   &__events {
     height: $homeNavbarHeight;
     overflow: hidden;
+    vertical-align: middle;
+  }
+
+  &__events-home {
+    margin-top: -3px;
+    color: #FFFFFFAA;
+    display: inline-flex;
+    line-height: 0.85rem;
+    align-items: center;
+    text-align: left;
+
+    & .fa {
+      font-weight: normal;
+      font-size: 1.5rem;
+      margin-right: 8px;
+    }
   }
 
   &__event {
+    position: relative;
     display: inline-block;
-    margin: -4px 2px 0;
+    margin: -4px 10px 0 0;
+
+    &.btn-secondary {
+      padding-left: 1.2rem;
+
+      &::after, &::before {
+        border-top: (2 * $arrowSize) solid transparent;
+        border-bottom: (2 * $arrowSize) solid transparent;
+        border-left: $arrowSize solid #6c757d;
+        height: 0;
+        position: absolute;
+        right: -$arrowSize;
+        top: -1px;
+        width: 0;
+        z-index: 2;
+        content: "";
+        transition: 0.15s ease-in-out;
+      }
+
+      &::before {
+        right: unset;
+        left: -1px;
+        border-left-color: #333;
+      }
+
+      &:hover::after {
+        border-left-color: #5a6268;
+      }
+    }
   }
 
   &__social {

@@ -132,8 +132,9 @@ async function loadEventSchedule(featuredEvent?: BookshelfModel): Promise<Booksh
     } while ((featuredEventIndex === -1 || featuredEventIndex >= eventSchedule.length - 1)
       && fetchedEventsCollection.length > 0);
 
+    // Grab one past event, fill the list up to 5 events total, display in chronological order
     const startIndex = Math.max(0, featuredEventIndex - 2);
-    return eventSchedule.slice(startIndex, startIndex + 5);
+    return eventSchedule.slice(startIndex, startIndex + 5).reverse();
   } else {
     const fetchedEventsCollection = await eventService.findEvents({ pageSize: 5 });
     return fetchedEventsCollection.models;
