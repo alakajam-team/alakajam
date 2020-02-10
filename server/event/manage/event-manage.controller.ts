@@ -101,7 +101,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         event = eventService.createEvent();
       }
 
-      // Event update
+      // Update and save event
       const previousName = event.get("name");
       event.set({
         title: forms.sanitizeString(req.body.title),
@@ -125,6 +125,8 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
           enabled: req.body["countdown-enabled"] === "on",
         },
       });
+      const nameChanged = event.hasChanged("name");
+      await event.save();
 
       // Triggers
       if (event.hasChanged("status_theme") && event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST) {
@@ -146,7 +148,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
       }
 
-      // Event details update
+      // Update and save event details
       const eventDetails = event.related<BookshelfModel>("details");
       eventDetails.set({
         links: req.body.links,
@@ -168,10 +170,6 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
           errorMessage = result.error;
         }
       }
-
-      // Save
-      const nameChanged = event.hasChanged("name");
-      await event.save();
       await eventDetails.save();
 
       // Caches clearing

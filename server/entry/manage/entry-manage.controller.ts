@@ -124,7 +124,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       entry.set({
         event_id: null,
         event_name: null,
-        published_at: forms.parsePickerDate(req.body["published-at"]) || null,
+        published_at: forms.parsePickerDate(req.body["published-at"]),
         external_event: forms.sanitizeString(req.body["external-event"]),
       });
     }

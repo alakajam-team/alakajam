@@ -35,7 +35,7 @@ export class Links {
         } else if (subPage === "template") {
           return "/pick_event_template";
         } else {
-          return "/create_event";
+          return "/create_event#appearance";
         }
 
       } else if (type === "entry") {

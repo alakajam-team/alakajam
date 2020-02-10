@@ -258,18 +258,18 @@ function isPast(time: number) {
  * Converts a string built in a date time picker to an actual date
  * which can be stored in a model
  */
-function parsePickerDateTime(formattedDate: string, options: luxon.DateTimeOptions = {}): Date | false {
+function parsePickerDateTime(formattedDate: string, options: luxon.DateTimeOptions = {}): Date | undefined {
   const luxonDate = createLuxonDate(formattedDate, options, constants.PICKER_DATE_TIME_FORMAT);
-  return (luxonDate.isValid) ? luxonDate.toJSDate() : false;
+  return (luxonDate.isValid) ? luxonDate.toJSDate() : undefined;
 }
 
 /**
  * Converts a string built in a date picker to an actual date
  * which can be stored in a model
  */
-function parsePickerDate(formattedDate: string, options: luxon.DateTimeOptions = {}): Date | false {
+function parsePickerDate(formattedDate: string, options: luxon.DateTimeOptions = {}): Date | undefined {
   const luxonDate = createLuxonDate(formattedDate, options, constants.PICKER_DATE_FORMAT);
-  return (luxonDate.isValid) ? luxonDate.toJSDate() : false;
+  return (luxonDate.isValid) ? luxonDate.toJSDate() : undefined;
 }
 
 /**
@@ -316,17 +316,21 @@ function markdownToHtml(markdown: string, options: {maxLength?: number; readMore
     });
 
   let unsafeHtml = showdownConverter.makeHtml(markdown);
+  let wasTruncated = false;
   if (options.maxLength && unsafeHtml.length > options.maxLength) {
     unsafeHtml = unsafeHtml.slice(0, options.maxLength);
-    if (options.readMoreLink) {
-      unsafeHtml = unsafeHtml.replace(/(\<\/p\>)?$/g, `... <a href="${options.readMoreLink}">(read more)</a>$1`);
-    }
+    wasTruncated= true;
   }
 
-  const safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)
+  let safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)
     .replace(/\[\[([A-Z_].*)\]\]/g, (_, key) => {
       return markdownSnippets[key] || "[[Unknown snippet " + key + "]]";
     });
+
+  if (wasTruncated && options.readMoreLink) {
+    safeHtml = unsafeHtml.replace(/(\<\/p\>)?$/g, `... <a href="${options.readMoreLink}">(read more)</a>$1`);
+  }
+
   return safeHtml;
 }
 

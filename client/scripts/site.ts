@@ -19,6 +19,7 @@ import showIfNonempty from "./common/show-if-nonempty";
 import sortableTable from "./common/sortable-table";
 import syncSlug from "./common/sync-slug";
 import syncText from "./common/sync-text";
+import tabs from "./common/tabs";
 import tagsSelect from "./common/tags-select";
 import tooltips from "./common/tooltips";
 import userSelect from "./common/user-select";
@@ -61,6 +62,7 @@ $(function domReady() {
   sortableTable();
   syncSlug(".js-sync-slug");
   syncText();
+  tabs();
   tagsSelect();
   tooltips("[data-toggle=tooltip]");
   userSelect();
