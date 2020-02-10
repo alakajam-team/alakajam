@@ -1,6 +1,7 @@
 import { BookshelfModel } from "bookshelf";
 import * as leftPad from "left-pad";
 import * as lodash from "lodash";
+import sanitizeHtml from "sanitize-html";
 import * as slug from "slug";
 import constants from "./constants";
 import * as formats from "./formats";
@@ -41,8 +42,8 @@ export function configure(nunjucksEnvironment) {
     return "<pre>" + JSON.stringify(obj, null, 2) + "</pre>";
   });
 
-  nunjucksEnvironment.addFilter("markdown", (str: string) => {
-    return forms.markdownToHtml(str);
+  nunjucksEnvironment.addFilter("markdown", (str: string, options?: object) => {
+    return forms.markdownToHtml(str, options);
   });
 
   nunjucksEnvironment.addFilter("markdownToText", (str: string) => {

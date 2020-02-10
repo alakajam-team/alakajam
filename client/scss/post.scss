@@ -168,6 +168,10 @@
   word-wrap: break-word;
   overflow: hidden;
 
+  & p:last-child {
+    margin-bottom: 0;
+  }
+
   & h1 {
     @include main-font;
     font-weight: bold;

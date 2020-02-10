@@ -183,11 +183,7 @@
         <div class="card">
           <div class="card-body comment__body user-contents">
             {% if options.preview %}
-              {% set commentPreview = comment.get('body') | markdownToText | truncate(150) %}
-              {{ commentPreview }}
-              {% if commentPreview.length >= 149 %}
-                <a href="{{ commentUrl(node, comment) }}">(read more)</a>
-              {% endif %} 
+              {{ comment.get('body') | markdown({ maxLength: 150, readMoreLink: commentUrl(node, comment) }) | safe }}
             {% else %}
               {{ comment.get('body') | markdown | safe }}
             {% endif %}

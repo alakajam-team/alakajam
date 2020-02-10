@@ -297,10 +297,8 @@ function parseJson(str, options: any = {}) {
 
 /**
  * Converts the given Markdown to XSS-safe HTML
- * @param  {string} markdown
- * @return {string}
  */
-function markdownToHtml(markdown: string) {
+function markdownToHtml(markdown: string, options: {maxLength?: number; readMoreLink?: number} = {}): string {
   markdown = (markdown || "")
     // Automatically enable markdown inside HTML tags (not <p> because it messes things up)
     .replace(/< ?(div|table|tr|td|th|ul|li|h[1-5])/gi, '<$1 markdown="1" ')
@@ -317,7 +315,14 @@ function markdownToHtml(markdown: string) {
       }
     });
 
-  const unsafeHtml = showdownConverter.makeHtml(markdown);
+  let unsafeHtml = showdownConverter.makeHtml(markdown);
+  if (options.maxLength && unsafeHtml.length > options.maxLength) {
+    unsafeHtml = unsafeHtml.slice(0, options.maxLength);
+    if (options.readMoreLink) {
+      unsafeHtml = unsafeHtml.replace(/(\<\/p\>)?$/g, `... <a href="${options.readMoreLink}">(read more)</a>$1`);
+    }
+  }
+
   const safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)
     .replace(/\[\[([A-Z_].*)\]\]/g, (_, key) => {
       return markdownSnippets[key] || "[[Unknown snippet " + key + "]]";
