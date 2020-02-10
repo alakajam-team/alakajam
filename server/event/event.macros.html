@@ -100,14 +100,16 @@
 {% endmacro %}
 
 {% macro eventThemeStatus (theme, options = {}) %}
-  <span class="badge {{ 'badge-success' if theme.get('status') == 'shortlist' }} 
-      {{ 'badge-secondary' if theme.get('status') == 'active' }}"><!--
-    -->{% if theme.get('status') === 'banned' %}<!--
+  {% set status = theme.get('status') %}
+  <span class="badge {{ 'badge-success' if status === 'shortlist' }} 
+      {{ 'badge-light' if status === 'active' }}
+      {{ 'badge-secondary' if status !== 'active' and status !== 'shortlist' }}"><!--
+    -->{% if status === 'banned' %}<!--
       -->{{ 'Banned' if options.uncensored else 'Out' }}<!--
-    -->{% elseif theme.get('status') === 'duplicate' %}<!--
+    -->{% elseif status === 'duplicate' %}<!--
       -->Idea already submitted<!--
     -->{% else %}<!--
-      -->{{ theme.get('status') | capitalize }}<!--
+      -->{{ status | capitalize }}<!--
     -->{% endif %}<!--
   --></span>
 {% endmacro %}

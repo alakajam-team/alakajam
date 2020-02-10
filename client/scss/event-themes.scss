@@ -49,14 +49,6 @@
     height: 1.3rem;
     border: 1px solid $neutral-light;
     margin-bottom: 15px;
-    
-    & .progress-bar-default {
-      background-color: white;
-      color: $neutral;
-    }
-  }
-  &__progress-bar-out {
-      background-color: rgba(31, 48, 56, 0.4);
   }
   
   &__shortlist ol, &__results ol {
