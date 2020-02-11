@@ -351,7 +351,7 @@ async function deleteEntry(entry) {
 }
 
 export interface FindGamesOptions extends FetchPageOptions {
-  [key?: string]: any;
+  [key: string]: any;
   count?: boolean;
   sortByRatingCount?: boolean;
   sortByRating?: boolean;

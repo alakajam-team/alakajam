@@ -36,7 +36,7 @@
   <li class="nav-item">
     <a href="{{ targetUrl }}" class="nav-link event-navbar__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
         {{ 'disabled' if statusField and (not (event.get(statusField)|int)) and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
-      <span class="fas fa-{{ icon }}"></span> <span class="d-none d-sm-inline">{{ label | safe }}</span>
+      <span class="fas fa-{{ icon }}"></span> <span>{{ label | safe }}</span>
     </a>
   </li>
 {%- endif -%}
@@ -141,6 +141,10 @@
         
         <div class="collapse navbar-collapse" id="navbar-event-dropdown">
           <ul class="navbar-nav">
+            {%- if not statusTournament or statusTournament === 'disabled' -%}
+              {{- eventLink(event, null, 'my-entry', 'My entry', 'play-circle', path) -}}
+            {%- endif -%}
+
             {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'info-circle', path) -}}
             {{- eventLink(event, null, 'posts', 'Posts', 'newspaper', path) -}}
             

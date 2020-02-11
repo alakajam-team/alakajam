@@ -47,6 +47,6 @@ $theme-colors: (
   outline: none;
 }
 
-.card-header > :last-child {
+.card-header > :last-child, .card-body > :last-child {
   margin-bottom: 0;
 }

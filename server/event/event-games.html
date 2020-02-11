@@ -69,26 +69,27 @@
           {% set firstItemIndex = 1 + (entriesCollection.pagination.page - 1) * entriesCollection.pagination.pageSize %}
           {{ firstItemIndex }} - {{ firstItemIndex + entriesCollection.length - 1 }}
         {% endif %}
-        sorted by Karma {{ formMacros.tooltip('Rate and review other games to increase your karma, and get featured higher on the list!') }}</div>
-
-        {{ navigationMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
-
-        <div class="game-grid">
-          {% set entryThumbOptions = { showKarma: true } %}
-          {% for entry in entriesCollection.models %}
-          <div class="game-grid-entry">
-            {{ eventMacros.entryThumb(entry, entryThumbOptions) }}
-          </div>
-          {% endfor %}
-          {% if entriesCollection.length === 0 %}
-          <div class="card card-body">No entries found.</div>
-          {% endif %}
-        </div>
-
-        {{ navigationMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
-
+        sorted by Karma {{ formMacros.tooltip('Rate and review other games to increase your karma, and get featured higher on the list!') }}
       </div>
+
+      {{ navigationMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
+
+      <div class="game-grid">
+        {% set entryThumbOptions = { showKarma: true } %}
+        {% for entry in entriesCollection.models %}
+        <div class="game-grid-entry">
+          {{ eventMacros.entryThumb(entry, entryThumbOptions) }}
+        </div>
+        {% endfor %}
+        {% if entriesCollection.length === 0 %}
+        <div class="card card-body">No entries found.</div>
+        {% endif %}
+      </div>
+
+      {{ navigationMacros.pagination(entriesCollection.pagination.page, entriesCollection.pagination.pageCount, path) }}
+
     </div>
   </div>
+</div>
 
-  {% endblock %}
+{% endblock %}

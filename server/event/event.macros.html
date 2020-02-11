@@ -114,10 +114,13 @@
   --></span>
 {% endmacro %}
 
-{% macro eventShortcutMyEntry(user, event, userEntry) %}
+{% macro eventShortcutMyEntry(user, event, userEntry, options) %}
+{# options: noTitle #}
   <div class="action-banner">
     <div class="action-banner__title">
-      <span class="mr-2">Your entry</span>
+      {% if not options.noTitle %}
+        <span class="mr-2">Your entry</span>
+      {% endif %}
       {% if userEntry %}
         <a href="{{ routeUrl(userEntry, 'entry', 'edit') }}" class="btn btn-sm btn-primary">
           <span class="fas fa-pencil-alt"></span>
@@ -136,19 +139,20 @@
       {% endif %}
     </div>
     {% if event.get('status_entry') === 'closed' %}
-      {% set customMessage = "Entry submissions are closed" %}
+      {% set customMessage = "Entry submissions are closed." %}
     {% elseif event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
-      {% set customMessage = "Entry submissions are not open yet" %}
+      {% set customMessage = "Entry submissions are not open yet." %}
     {% endif %}
     {{ entrySmallThumb(userEntry, { customMessage: customMessage }) }}
   </div>
 {% endmacro %}
 
 {% macro eventShortcutMyPost(user, event, userPost, options = {}) %}
+{# options: noTitle buttonsOnly #}
   <div class="action-banner {{ 'buttons-only' if options.buttonsOnly }}">
     <div class="action-banner__title">
-      {% if not options.buttonsOnly %}
-        <span class="mr-2">{{ 'Your last post' if not options.buttonsOnly }}</span>
+      {% if not options.buttonsOnly and not options.noTitle %}
+        <span class="mr-2">Your last post</span>
       {% endif %}
       <div class="btn-group  btn-group-sm">
       {% if userPost and not options.buttonsOnly %}

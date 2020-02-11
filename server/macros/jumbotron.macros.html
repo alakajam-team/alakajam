@@ -72,19 +72,17 @@
         <div class="row">
           <div class="col-lg-12 col-sm-6 col-12 mb-3">
             <div class="card border-0">
+              <a class="card-header event-jumbotron__shortcut" href="{{ routeUrl(event, 'event', 'my-entry') }}">{{ myEntryTitle(event) }}</a>
               {% if entry %}
-                <a class="card-header event-jumbotron__shortcut" href="{{ routeUrl(entry, 'entry') }}">{{ myEntryTitle(event) }}</a>
                 {{ eventMacros.entrySmallThumb(entry) }}
               {% else %}
                 {% set entryCreationEnabled = ['open', 'open_unranked'].includes(event.get('status_entry')) %}
                 {% if entryCreationEnabled %}
-                  <a class="card-header event-jumbotron__shortcut" href="{{ routeUrl(event, 'event', 'create-entry') }}">{{ myEntryTitle(event) }}</a>
                   <div class="card-body text-center p-2">
                     <p class="mb-1">Submissions are open</p>
                     <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-alt btn-lg d-block">Create entry</a>
                   </div>
                 {% else %}
-                  <div class="card-header event-jumbotron__shortcut">{{ myEntryTitle(event) }}</div>
                   <div class="card-body text-center">
                     {% if event.get('status_entry') === 'closed' %}
                       Submissions are closed.

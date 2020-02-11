@@ -30,13 +30,13 @@
 
   &__comment-count {
     color: $alt;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     white-space: nowrap;
   }
 
   &__like-count {
     display: inline-block;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     white-space: nowrap;
     color: $text-light;
 
@@ -49,6 +49,10 @@
     &:hover, & button:hover, &.liked, &.liked button {
       color: $alt;
     }
+  }
+
+  h4 &__comment-count, h4 &__like-count {
+    font-size: 1.0rem;
   }
 
   &__related {

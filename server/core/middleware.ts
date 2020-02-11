@@ -135,6 +135,10 @@ export async function configure(app: Application) {
       nativeRedirect.apply(res, args);
     };
 
+    res.redirectToLogin = () => {
+      return this.redirect("/login?redirect=" + req.url);
+    };
+
     next();
   });
 
