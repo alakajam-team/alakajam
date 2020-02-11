@@ -25,7 +25,7 @@ describe("Templating filters", () => {
     });
 
     it("should support formatting featured event dates", () => {
-      expect(filters.featuredEventDateTime(ALAKAJAM_LAUNCH_DATE, mockUser)).to.equal("Jun. 22nd, 7pm");
+      expect(filters.featuredEventDateTime(ALAKAJAM_LAUNCH_DATE, mockUser)).to.equal("June 22nd, 7:00pm");
     });
 
     it("should support formatting relative times", () => {

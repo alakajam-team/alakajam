@@ -69,7 +69,7 @@ export default {
   DATE_TIME_FORMAT: "MMMM # yyyy, h:mma",
   PICKER_DATE_FORMAT: "yyyy-MM-dd",
   PICKER_DATE_TIME_FORMAT: "yyyy-MM-dd HH:mm",
-  FEATURED_EVENT_DATE_FORMAT: "MMM. #, ha",
+  FEATURED_EVENT_DATE_FORMAT: "MMMM #, h:mma",
 
   // Entries
   ENTRY_PLATFORM_DEFAULT_ICON: "far fa-file",
@@ -77,7 +77,7 @@ export default {
     Windows: "fab fa-windows",
     Linux: "fab fa-linux",
     Mac: "fab fa-apple",
-    Web: "fas fa-globe",
+    Web: "fas fa-newspaper",
     Mobile: "fas fa-mobile-alt",
     Retro: "fas fa-gamepad",
   },

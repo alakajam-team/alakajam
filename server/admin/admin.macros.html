@@ -10,7 +10,7 @@
     {{ moderationLink('Create announcement', 'pencil-alt', routeUrl(null, 'post', 'create', { eventId: context.event.id, specialPostType: 'announcement' })) if context.event.id }}
 
     {{ moderationLink('Edit post', 'pencil-alt', routeUrl(context.post, 'post', 'edit')) if context.post.id }}
-    {{ moderationLink('Edit entry', 'chess-rook', routeUrl(context.entry, 'entry', 'edit')) if context.entry.id }}
+    {{ moderationLink('Edit entry', 'gamepad', routeUrl(context.entry, 'entry', 'edit')) if context.entry.id }}
 
     {% if isAdmin %}
       {{ moderationLink('Edit user', 'user', routeUrl(context.profileUser, 'user', 'settings', {dashboardAdminMode: true})) if context.profileUser }}
