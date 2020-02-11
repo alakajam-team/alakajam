@@ -101,7 +101,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         event = eventService.createEvent();
       }
 
-      // Update and save event
+      // Update event
       const previousName = event.get("name");
       event.set({
         title: forms.sanitizeString(req.body.title),
@@ -126,9 +126,8 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         },
       });
       const nameChanged = event.hasChanged("name");
-      await event.save();
 
-      // Triggers
+      // Run event triggers
       if (event.hasChanged("status_theme") && event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST) {
         await eventThemeService.computeShortlist(event);
         infoMessage = "Theme shortlist computed.";
@@ -147,6 +146,9 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         // Pre-fill leaderboard with people who were already in the high scores
         eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
       }
+
+      // Save event
+      await event.save();
 
       // Update and save event details
       const eventDetails = event.related<BookshelfModel>("details");

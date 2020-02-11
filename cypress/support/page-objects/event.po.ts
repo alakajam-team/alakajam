@@ -27,7 +27,7 @@ class EventPO {
   }
 
   public get themeIdeaManageButton() {
-    return cy.get("#js-view-themes .btn-primary[type=submit]");
+    return cy.get("#js-view-themes button.btn-primary");
   }
 
   public get themeIdeaFields() {

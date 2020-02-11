@@ -21,7 +21,7 @@ try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   sharp = require("sharp");
 } catch (e) {
-  log.warn("Sharp dependency missing. Picture resizing disabled");
+  log.warn("Sharp dependency missing. Picture resizing disabled...");
 }
 
 export default {
