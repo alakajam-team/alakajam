@@ -86,19 +86,6 @@
 
       <div class="collapse navbar-collapse" id="navbar-dropdown">
         <ul class="navbar-nav">
-          {% if featuredEvent and (not event or featuredEvent.get('id') !== event.get('id')) %}
-          <li class="nav-item d-none d-xl-block live {{ 'active' if isInFeaturedEvent }}">
-            <a class="nav-link" href="{{ routeUrl(featuredEvent, 'event') }}">
-              <div class="live__event">
-                {{ featuredEvent.get('title') }}
-                <div class="live__dates">
-                  {{ featuredEvent.get('display_dates') }}
-                </div>
-              </div>
-            </a>
-          </li>
-          {% endif %}
-
           <li class="nav-item {{ 'active' if path == '/events' }}"><a class="nav-link" href="/events">Events</a></li>
           <li class="nav-item {{ 'active' if path.indexOf('/games') === 0 }}"><a class="nav-link" href="/games">Games</a></li>
           <li class="nav-item {{ 'active' if path.indexOf('/people') === 0 }}"><a class="nav-link" href="/people">People</a></li>
@@ -139,27 +126,31 @@
             <i class="fas fa-caret-down"></i>
           </button>
 
-          <a href="{{ routeUrl(event, 'event', 'announcements') }}" class="event-navbar__name">
-            {{ event.get('title') }}
+          <a href="{{ routeUrl(event, 'event', 'announcements') }}" class="event-navbar__home">
+            <span class="fa fa-home"></span>
+            <span>
+              <span class="event-navbar__name">
+                {{ event.get('title') }}
+              </span>
+              <span class="event-navbar__dates">
+                {{ event.get('display_dates') }}
+              </span>
+            </span>
           </a>
-          <div class="event-navbar__dates">
-            {{ event.get('display_dates') }}
-          </div>
         </div>
         
         <div class="collapse navbar-collapse" id="navbar-event-dropdown">
           <ul class="navbar-nav">
-            {{- eventLink(event, null, 'announcements', 'News', 'thumbtack', path) -}}
             {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'info-circle', path) -}}
-            {{- eventLink(event, null, 'posts', 'Posts', 'globe', path) -}}
+            {{- eventLink(event, null, 'posts', 'Posts', 'newspaper', path) -}}
             
             {%- set statusTournament = event.get('status_tournament') -%}
             {%- if not statusTournament or statusTournament === 'disabled' -%}
               {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'lightbulb', path) -}}
-              {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'chess-rook', path) -}}
+              {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'gamepad', path) -}}
               {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: ['results'] }) -}}
             {%- else -%}
-              {{- eventLink(event, 'status_tournament', 'tournament-games', 'Games', 'chess-rook', path) -}}
+              {{- eventLink(event, 'status_tournament', 'tournament-games', 'Games', 'gamepad', path) -}}
               {{- eventLink(event, 'status_tournament', 'tournament-leaderboard', 'Leaderboard', 'th-list', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
             {%- endif -%}
           </ul>

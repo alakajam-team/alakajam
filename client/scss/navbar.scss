@@ -104,59 +104,8 @@ $event-navbar-height: 50px;
         }
       }
 
-      &.live {
-        background-color: $main-light;
-        line-height: calc(#{$navbar-height} / 3);
-        padding: 0 15px;
-        padding-top: calc(#{$navbar-height} / 6);
-        font-size: 1rem;
-        margin-right: 20px;
-
-        &:hover {
-          background-color: white;
-
-          & a {
-            color: $alt-dark;
-          }
-        }
-
-        & .live__event {
-          @include alt-font;
-          vertical-align: middle;
-          display: inline-block;
-          margin: 2px 0 4px 0;
-          font-size: 1.4rem;
-          white-space: nowrap;
-        }
-        & .live__dates {
-          @include main-font;
-          font-size: 0.8rem;
-        }
-      }
-
-      &.live.active {
-        background-color: white;
-        color: $alt;
-
-        & .live__dates {
-          color: $text-light;
-        }
-      }
-
       & img:hover {
         border: 4px solid white;
-      }
-
-      @media (max-width: 1199px) {
-        &.live {
-          max-width: 180px;
-        }
-
-        &.live .live__event {
-          width: 100%;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
       }
 
       & .dropdown {
@@ -247,16 +196,14 @@ $event-navbar-height: 50px;
     }
   }
 
-  &__name {
-    @include alt-font;
-    display: block;
+  &__home {
+    display: flex;
+    align-items: center;
     box-sizing: border-box;
-    font-size: 1.3rem;
-    line-height: 1.3rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    margin-top: 2px;
+
+    & .fa {
+      margin-right: 4px;
+    }
 
     @media (min-width: 768px) {
       max-width: 250px;
@@ -267,8 +214,17 @@ $event-navbar-height: 50px;
       max-width: 300px;
     }
   }
-
+  &__name {
+    @include alt-font;
+    font-size: 1.3rem;
+    line-height: 1.3rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-top: 2px;
+  }
   &__dates {
+    @include main-font;
     display: block;
     font-size: .8rem;
     color: $text-light;
