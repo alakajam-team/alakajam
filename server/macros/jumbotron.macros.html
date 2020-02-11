@@ -118,22 +118,21 @@
 
 {% macro myEntryTitle(event) %} 
 <h4 class="mb-0">
-  <span class="event-jumbotron__shortcut-icon"><span class="fas fa-chess-rook"></span></span>
+  <span class="event-jumbotron__shortcut-icon"><span class="fas fa-gamepad"></span></span>
   <span class="event-jumbotron__shortcut-title">My {{ event.get('title') }} entry</span>
 </h4>
 {% endmacro %}
 
 {% macro eventJumbotronCountdownPhrase(event, user) %}
   {% if event.get('countdown_config').phrase %}
-    <div>
-      <span class="fas fa-calendar"></span> 
+    <div class="jumbotron-invite__phrase">
       {{ event.get('countdown_config').phrase }} 
       {{ event.get('countdown_config').date | featuredEventDateTime(user) }}
     </div>
     {% if user and event.get('countdown_config').date %}
-    <div class="pl-3"> 
-      for {{ (user.get("timezone") | timezone) if user and user.get("timezone") else 'Unknown timezone' }}
-      <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-light btn-xs">
+    <div class="jumbotron-invite__timezone"> 
+      Times for {{ (user.get("timezone") | timezone) if user and user.get("timezone") else 'Unknown timezone' }}
+      <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-light btn-xs border-0">
         <span class="fa fa-cog"></span>
       </a>
     </div>

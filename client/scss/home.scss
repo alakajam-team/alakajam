@@ -102,6 +102,15 @@ $arrowSize: 9.5px;
     margin-bottom: 0;
   }
 
+  &__phrase {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  &__timezone {
+    font-size: 0.9rem;
+  }
+
   &__countdown {
     float: right;
     width: 320px;
