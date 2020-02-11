@@ -21,9 +21,20 @@
   <div class="row">
     <div class="col-md-4">
       <div id="js-view-themes">
-        <h2>Theme ideas
-        </h2>
+        <h2>My theme ideas</h2>
         <div class="card themes__ideas">
+          {% if user and event.get('status_theme') === 'voting' %}
+            <div class="themes__idea">
+              <p>
+                <button class="btn btn-primary js-show js-hide"
+                  data-show-selector="#js-manage-themes"
+                  data-hide-selector="#js-view-themes">
+                  <span class="fas fa-pencil-alt"></span>
+                  Manage theme ideas
+                </button>
+              </p>
+            </div>
+          {% endif %}
           {% for userTheme in userThemes %}
             <div class="themes__idea">
               <div class="themes__idea-label">
@@ -48,25 +59,13 @@
             {% endif %}
             </div>
           {% endif %}
-          {% if user and event.get('status_theme') === 'voting' %}
-            <div class="themes__idea">
-              <p>
-                <button class="btn btn-primary js-show js-hide"
-                  data-show-selector="#js-manage-themes"
-                  data-hide-selector="#js-view-themes">
-                  <span class="fas fa-pencil-alt"></span>
-                  Manage theme ideas
-                </button>
-              </p>
-            </div>
-          {% endif %}
         </div>
       </div>
 
       <form id="js-manage-themes" method="post" class="js-warn-on-unsaved-changes d-none">
         {{ csrfToken() | safe }}
 
-        <h2>Theme ideas </h2>
+        <h2>My theme ideas</h2>
         <div class="card themes__ideas">
           {% set ideaRows = max(userThemes.length, maxThemeSuggestions) %}
           {% for index in range(0, ideaRows) %} 
@@ -95,14 +94,26 @@
         
       <div class="themes__stats">
         <h2>Stats</h2>
-        <div>
-          <p class="mb-1">
-            {% if user %}<b>You:</b> {{ userThemes.length }} ideas, <span id="js-user-votes">{{ voteCount }}</span> votes</li><br />{% endif %}
-            <b>Everyone:</b> {{ event.related('details').get('theme_count') or '0' }} ideas, <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') or '0' }}</span> votes
-            {{- ', ' + shortlistVotes + ' shortlist votes' if shortlistVotes }}
-          </p>
+        <div class="card card-body">
+          {% if user %}
+            <div class="row">
+              <div class="col-4"><b>You</b></div>
+              <div class="col-3">{{ userThemes.length }} ideas</div>
+              <div class="col-5"><span id="js-user-votes">{{ voteCount }}</span> votes</div>
+            </div>
+          {% endif %}
+          <div class="row">
+            <div class="col-4"><b>Everyone</b></div>
+            <div class="col-3">{{ event.related('details').get('theme_count') or '0' }} ideas</div>
+            <div class="col-5">
+              <span id="js-total-votes">{{ event.related('details').get('theme_vote_count') or '0' }}</span> votes
+              {% if shortlistVotes %}
+                <br />{{ shortlistVotes }} shortlist votes
+              {% endif %}
+            </div>
+          </div>
           {% if event.get('status_theme') === 'voting' %}
-            <div class="progress">
+            <div class="progress my-1">
               {% set activePercentage = (100 * event.related('details').get('active_theme_count') / event.related('details').get('theme_count') or 100) | digits(0) %}
               <div class="progress-bar bg-light text-muted" role="progressbar" style="width: {{ activePercentage }}%">{{ event.related('details').get('active_theme_count') }} Active</div>
               <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ 100 -  activePercentage }}%">{{ event.related('details').get('theme_count') - event.related('details').get('active_theme_count') }} Out</div>
@@ -110,11 +121,13 @@
           {% endif %}
         </div>
 
-        <h2>How it works</h2>
-        <ul>
-          <li>The lowest ranking themes (having {{ eliminationMinNotes }} votes or more) are eliminated regularly.</li>
-          <li>After one week, only the {{ constants.SHORTLIST_SIZE }} best themes will remain. The longer the theme stands before elimination, the better it is!</li>
-        </ul>
+        <div class="mt-3 d-none d-md-block">
+          <h2>How it works</h2>
+          <ul>
+            <li>The lowest ranking themes (having {{ eliminationMinNotes }} votes or more) are eliminated regularly.</li>
+            <li>After one week, only the {{ constants.SHORTLIST_SIZE }} best themes will remain. The longer the theme stands before elimination, the better it is!</li>
+          </ul>
+        </div>
       </div>
     </div>
 
