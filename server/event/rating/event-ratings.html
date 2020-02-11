@@ -1,8 +1,7 @@
-{% extends "event/_page-event.html" %}
+{% extends "base.html" %}
 {% import "event/event.macros.html" as eventMacros %}
 
 {% block body %}
-{{ super() }}
 
 <div class="container event-ratings">
   <h1>Ratings <span class="count">({{ ratingCount }})</span></h1>

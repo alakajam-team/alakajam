@@ -1,4 +1,4 @@
-{% extends "event/_page-event.html" %}
+{% extends "base.html" %}
 {% import "post/post.macros.html" as postMacros with context %}
 
 {% block body %}
@@ -51,9 +51,12 @@
           {% if user and event.get('status_theme') === 'voting' %}
             <div class="themes__idea">
               <p>
-                <input type="submit" class="btn btn-primary js-show js-hide" value="Manage theme ideas"
+                <button class="btn btn-primary js-show js-hide"
                   data-show-selector="#js-manage-themes"
-                  data-hide-selector="#js-view-themes"/>
+                  data-hide-selector="#js-view-themes">
+                  <span class="fas fa-pencil-alt"></span>
+                  Manage theme ideas
+                </button>
               </p>
             </div>
           {% endif %}
@@ -127,6 +130,7 @@
         {% if user %}
           <div class="card theme-vote">
             {% if votingAllowed %}
+              <p>Would this make a good theme for the jam?</p>
               <div id="js-theme-vote"
                 data-find-themes-url="{{ routeUrl(event, 'event', 'ajax-find-themes') }}"
                 data-save-vote-url="{{ routeUrl(event, 'event', 'ajax-save-vote') }}">

@@ -1,11 +1,16 @@
-{% extends "event/_page-event.html" %}
+{% extends "base.html" %}
 {% import "event/event.macros.html" as eventMacros %}
 {% import "macros/form.macros.html" as formMacros with context %}
 {% import "macros/games-search.macros.html" as gamesSearchMacros %}
 {% import "macros/navigation.macros.html" as navigationMacros %}
 
 {% block body %}
-{{ super() }}
+
+{% if user %}
+<div class="container thin">
+  {{ eventMacros.eventShortcutMyEntry(user, event, userEntry) }}
+</div>
+{% endif %}
 
 <div class="container-fluid">
   <div class="row">

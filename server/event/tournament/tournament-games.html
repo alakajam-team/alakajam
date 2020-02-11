@@ -1,11 +1,10 @@
-{% extends "event/_page-event.html" %}
+{% extends "base.html" %}
 {% import "event/event.macros.html" as eventMacros with context %}
 {% import "entry/highscore/entry-highscore.macros.html" as scoreMacros with context %}
 {% import "user/user.macros.html" as userMacros with context %}
 {% import "macros/form.macros.html" as formMacros with context %}
 
 {% block body %}
-{{ super() }}
 
 {% if user %}
 <div class="container">

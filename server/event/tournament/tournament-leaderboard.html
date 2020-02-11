@@ -1,10 +1,9 @@
-{% extends "event/_page-event.html" %}
+{% extends "base.html" %}
 {% import "post/post.macros.html" as postMacros with context %}
 {% import "user/user.macros.html" as userMacros %}
 {% import "entry/highscore/entry-highscore.macros.html" as scoreMacros %}
 
 {% block body %}
-{{ super() }}
 
 {% set hasEventBanner = event.related('details').get('banner') and event.get('status_tournament') === 'results' %}
 {{ eventMacros.eventBanner(event) if hasEventBanner }}
