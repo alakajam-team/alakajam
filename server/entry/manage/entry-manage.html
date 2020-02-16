@@ -187,7 +187,7 @@
             {% set optouts = entryDetails.get('optouts') %}
             <div id="edit-optouts" class="{{ 'd-none' if entry.get('division') === 'unranked' }}">
               <div class="form-group" title="{{ 'Only the entry owner can change this setting' if not canEditOptouts }}">
-                <label>Opt-outs (<a href="/article/faq#optouts" target="_blank">help</a>)</label>
+                <label>Opt-outs (<a href="/article/docs/faq#optouts" target="_blank">help</a>)</label>
                 <div class="form-inline">
                   <label>
                     <input type="checkbox" name="optout-graphics" class="js-checkbox" 
@@ -310,7 +310,7 @@
           <label for="anonymous-enabled">Comments options</label>
           <div>
             {{ formMacros.check('anonymous-enabled', 'Allow anonymous feedback', entry.get('allow_anonymous'), { noMargin: true }) }}
-            <a href="/article/faq#anon-entry" target="_blank">(learn more)</a>
+            <a href="/article/docs/faq#anon-entry" target="_blank">(learn more)</a>
           </div>
         </div>
       </div>

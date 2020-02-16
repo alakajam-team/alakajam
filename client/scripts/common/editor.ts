@@ -37,7 +37,7 @@ export default function editor(mdSelector, cmSelector) {
         {
           name: "guide",
           action() {
-            window.open("/article/markdown", "_blank");
+            window.open("/article/docs/markdown", "_blank");
           },
           className: "fas fa-question-circle",
           title: "Markdown guide"
