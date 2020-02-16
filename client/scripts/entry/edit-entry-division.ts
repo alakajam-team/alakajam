@@ -2,10 +2,10 @@
 export default function editEntryDivision() {
   $(".js-entry-divisions").each(function() {
     const $entryDivisions = $(this);
-
     const divisionButtonSelector = ".js-division-button";
-
     const initialDivision = $entryDivisions.attr("data-initial-division");
+
+    // Init selected division
 
     $entryDivisions.find("label").each((i, el) => {
       const $el = $(el);
@@ -14,10 +14,15 @@ export default function editEntryDivision() {
       $input.prop("checked", active);
       $el.toggleClass("active", active);
     });
+
+    toggleDivisionSpecificFields(initialDivision);
+
+    // Toggle division-specific fields on click
+
     $entryDivisions.find(divisionButtonSelector).click(function() {
       // XXX avoid depending on IDs outside our own component
-      $("#edit-team").toggleClass("hidden", $(this).find("input").val() === "solo");
-      $("#edit-optouts").toggleClass("hidden", $(this).find("input").val() === "unranked");
+      const division = $(this).find("input").val().toString();
+      toggleDivisionSpecificFields(division);
     });
 
     // Show warning upon not being a team entry anymore
@@ -30,4 +35,19 @@ export default function editEntryDivision() {
       }
     });
   });
+}
+
+function toggleDivisionSpecificFields(division: string) {
+  const isUnranked = division === "unranked";
+
+  $("#edit-team").toggleClass("d-none", division === "solo");
+  $("#edit-optouts").toggleClass("d-none", isUnranked);
+
+  $("#accept-rules").toggleClass("d-none", isUnranked);
+  $("#accept-rules").toggleClass("d-flex", !isUnranked);
+  if (isUnranked) {
+    $("input#accepted-rules").removeAttr("required");
+  } else {
+    $("input#accepted-rules").attr("required", "required");
+  }
 }

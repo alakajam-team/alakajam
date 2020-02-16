@@ -3,7 +3,7 @@ The *Alakajam!* competitions let people make a video game from scratch in a week
 
 ![](https://static.alakajam.com/static/presskit/images/schedule-infographic.png)
 
-## Divisions
+## <a name="divisions"></a>Divisions
 
 Anyone can enter in any of the following divisions:
 
@@ -13,7 +13,7 @@ Anyone can enter in any of the following divisions:
 
 The jam always starts on a Friday, 7pm [UTC](https://www.timeanddate.com/worldclock/timezone/utc).
 
-## Rankings
+## <a name="rankings"></a>Rankings
 
 After the jam, Solo and Team divisions will be ranked separately through community voting: any person who entered the event will be able to play, rate and comment other people's games for two weeks, until the final results are released. On each game you play, you will get to rate six aspects of game making:
 
@@ -28,7 +28,7 @@ After the jam, Solo and Team divisions will be ranked separately through communi
 
 Unranked games won't get ratings but can expect as much plays & feedback as the others.
 
-## What is allowed?
+## <a name="allowed"></a>What is allowed?
 
 ### Solo/Team divisions
 
@@ -50,7 +50,7 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
 
 Those third-party assets exceptions are only allowed as long as you have the license to use them. Please check the licensing terms and in doubt, consult the author.
 
-### Unranked division
+### <a name="unranked"></a>Unranked division
 
 Since there is no ratings involved, the rules are much more relaxed. While the ranked divisions are only made for video games, card & board games are allowed here. The only rules are:
 
@@ -62,7 +62,7 @@ There are additional rules **if you submit an existing project** of yours. These
 * Use the game description to let people know what you did/did not make during the jam ;
 * Make it easy to play the parts you worked on (eg. don't make testers play the full game to try your final boss!).
 
-## In case of doubts...
+## <a name="doubts"></a>In case of doubts...
 
 Obviously, the rules on post-jam changes don't cover every scenario (for instance you may realize the music volume is super low, or in-game instructions are wrong, etc.).
 

@@ -135,15 +135,11 @@
         </div>
         {% endif %}
 
-        {% set isEntryOwner = not entry.get('id') or canUserManage(user, entry) %}
-        {% set canEditDivision = not event or ((isEntryOwner or isMod(user)) and event.get('status_entry') === 'open') %}
-        {% set divisionTooltip = 'Check the Docs section for the detailed rules on each division. '
-          + ('Divisions can no longer be changed.' if event.get('status_entry') !== 'open')
-          + ('Only the entry owner can change this setting.' if not isEntryOwner and event.get('status_entry') === 'open')
-            if event %}
+        <div class="form-group">
+          <label for="division">Division</label>
+          {% set isEntryOwner = not entry.get('id') or canUserManage(user, entry) %}
+          {% set canEditDivision = not event or ((isEntryOwner or isMod(user)) and event.get('status_entry') === 'open') %}
 
-        <label for="division">Division {{ formMacros.tooltip(divisionTooltip) if not external }}</label>
-        <div>
           <div class="entry__divisions toggle js-entry-divisions" data-toggle="buttons"
                data-initial-division="{{ entry.get('division') | default('solo') }}">
             {% if not external %}
@@ -157,8 +153,19 @@
               {{ divisionButton('Team', '', constants.DIVISION_ICONS['team'], 'team', 
                 entry.get('division'), canEditDivision, divisionTooltip) }}
             {% endif %}
+            {% if not external %}
+            <p><small class="form-text text-muted">
+              {% if event.get('status_entry') === 'open' %}
+                Check the <a href="/article/docs/alakajam-competition-rules">Docs section</a> for detailed rules on each division.
+                {{ 'Only the entry owner can change this setting.' if not isEntryOwner }}
+              {% else %}
+              Divisions can no longer be changed.
+              {% endif %}
+            </small></p>
+            {% endif %}
           </div>
           
+
           <div id="edit-team" class="{{ 'd-none' if entry.get('division') === 'solo' }} js-edit-entry-team"
               data-find-team-mate-url="{{ routeUrl(event, 'event', 'ajax-find-team-mate') }}"
               data-entry-id="{{ entry.get('id') or '' }}">
@@ -179,6 +186,7 @@
               </select>
             </div>
           </div>
+        </div>
           
           {% if not external
               and event.related('details').get('category_titles')
@@ -329,6 +337,17 @@
 
     <div class="row">
       <div class="col-lg-8 col-md-7">
+        {% if event and event.get('status_entry') === 'open' %}
+        <div id="accept-rules" class="alert alert-warning d-flex">
+          <img src="{{ staticUrl('/static/images/docs/play.png') }}" class="mr-3" height="98" />
+          <div>
+            <p class="mb-2"><b>Submitting a ranked game</b></p>
+            <p class="mb-2">By submitting a ranked entry, you confirm that all the game assets <a href="/article/docs/alakajam-competition-rules">follow the rules of the event</a> (see <a href="/article/docs/alakajam-competition-rules#allowed">"What is allowed?"</a> section). In case of doubts, you can list your reused assets in the game description and/or <a href="/chat">ask the community</a> for advice.</p>
+            {{ formMacros.check('accepted-rules', 'I understand and confirm', entry.get('id') and entry.get('division') !== 'unranked', { required: true }) }}
+            </div>
+        </div>
+        {% endif %}
+
         <div class="row">
           <div class="col-6">
             {% if entry.has('id') %}

@@ -146,7 +146,7 @@
               {{- eventLink(event, null, 'my-entry', 'My entry', 'play-circle', path) -}}
             {%- endif -%}
 
-            {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'info-circle', path) -}}
+            {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'book', path) -}}
             {{- eventLink(event, null, 'posts', 'Posts', 'newspaper', path) -}}
             
             {%- set statusTournament = event.get('status_tournament') -%}

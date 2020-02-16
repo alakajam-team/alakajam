@@ -64,7 +64,9 @@
 
 {% macro check(name, label, value, options = {}) %}
   <label for="{{ name }}">
-    <input type="checkbox" id="{{ name }}" class="js-checkbox" name="{{ name }}" {{ ('checked="true"' if value) | safe }} />
+    <input type="checkbox" id="{{ name }}" class="js-checkbox" name="{{ name }}"
+       {{ ('checked="true"' if value) | safe }}
+       {{ ('required="true"' if options.required) | safe }} />
     {% if options.textField %}
       <input type="text" class="js-checkbox-text-field" data-target="{{ name }}" placeholder="{{ options.placeholder }}" />
     {% else %}

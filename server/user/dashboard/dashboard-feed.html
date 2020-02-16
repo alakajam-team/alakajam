@@ -1,6 +1,7 @@
 {% extends "user/dashboard/dashboard.base.html" %}
 {% import "post/post.macros.html" as postMacros with context %}
 {% import "event/event.macros.html" as eventMacros %}
+{% import "macros/form.macros.html" as formMacros %}
 
 {% block dashboardBody %}
 
@@ -10,7 +11,7 @@
 </div>
 <div class="row">
   <div class="col-md-7 col-lg-6">
-    <h1>Notifications <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="This feed lists all comments people wrote on your entries and posts, plus any comments mentioning &quot;@{{ user.get('name') }}&quot;." style="font-size: 1rem"></span></h1>
+    <h1>Notifications {{ formMacros.tooltip('This feed lists all comments people wrote on your entries and posts, plus any comments mentioning "@' + user.get('name') + '".') }}</h1>
 
     {% for invite in invites %}
     <div data-test="invites" class="card card-body">
