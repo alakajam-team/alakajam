@@ -31,7 +31,6 @@ import { viewEventHome } from "./event/event-home.controller";
 import { viewEventGames } from "./event/event-games.controller";
 import { viewEventMyEntry } from "./event/event-my-entry.controller";
 import { viewEventPosts } from "./event/event-posts.controller";
-import { viewDefaultPage } from "./event/event-root.controller";
 import { eventMiddleware } from "./event/event.middleware";
 import { eventManageEntries } from "./event/manage/event-manage-entries.controller";
 import { eventManageTemplate } from "./event/manage/event-manage-template.controller";
