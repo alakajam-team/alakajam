@@ -27,7 +27,7 @@ import { entryHighscoreSubmit } from "./entry/highscore/entry-highscore-submit.c
 import { entryHighscores } from "./entry/highscore/entry-highscores.controller";
 import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
 import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
-import { viewEventAnnouncements } from "./event/event-announcements.controller";
+import { viewEventHome } from "./event/event-home.controller";
 import { viewEventGames } from "./event/event-games.controller";
 import { viewEventMyEntry } from "./event/event-my-entry.controller";
 import { viewEventPosts } from "./event/event-posts.controller";
@@ -171,9 +171,9 @@ export function routes(app) {
   router.get("/pick_event_template", csrf, eventManageTemplate);
   router.get("/create_event", csrf, eventManage);
   router.post("/create_event", eventFormParser, csrf, eventManage);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})", viewDefaultPage);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})", viewEventHome);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/my-entry", viewEventMyEntry);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventAnnouncements);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventHome); // deprecated
   router.get("/:eventName([^/]{0,}-[^/]{0,})/posts", viewEventPosts);
   router.all("/:eventName([^/]{0,}-[^/]{0,})/themes", csrf, eventThemes);
   router.all("/:eventName([^/]{0,}-[^/]{0,})/ajax-find-themes", ajaxFindThemes);

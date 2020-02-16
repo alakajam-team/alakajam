@@ -126,7 +126,7 @@
             <i class="fas fa-caret-down"></i>
           </button>
 
-          {% set eventHomePah = routeUrl(event, 'event', 'announcements') %}
+          {% set eventHomePah = routeUrl(event, 'event') %}
           <a href="{{ eventHomePah }}" class="event-navbar__link home {{ 'active' if path and path.indexOf(eventHomePah) === 0 }}">
             <span class="fa fa-home"></span>
             <span>
