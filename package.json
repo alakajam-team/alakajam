@@ -47,6 +47,7 @@
     "body-parser": "^1.19.0",
     "bookshelf": "^0.15.1",
     "bookshelf-cascade-delete": "^2.0.1",
+    "chartist": "^0.11.4",
     "cheerio": "^1.0.0-rc.3",
     "chokidar": "^3.2.3",
     "connect-session-knex": "^1.4.0",
