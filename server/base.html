@@ -127,7 +127,7 @@
           </button>
 
           {% set eventHomePah = routeUrl(event, 'event') %}
-          <a href="{{ eventHomePah }}" class="event-navbar__link home {{ 'active' if path and path.indexOf(eventHomePah) === 0 }}">
+          <a href="{{ eventHomePah }}" class="event-navbar__link home {{ 'active' if path and path === eventHomePath }}">
             <span class="fa fa-home"></span>
             <span>
               <span class="event-navbar__name">
