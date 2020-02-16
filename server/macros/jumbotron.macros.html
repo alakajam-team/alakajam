@@ -26,13 +26,15 @@
 
         <div class="row">
           <div class="col-lg-3 event-jumbotron__logo-container">
-            <div class="event-jumbotron__logo">
+            {% set eventHome = routeUrl(event, 'event', 'announcements') %}
+            {% set logoTag = 'div' if path and path.startsWith(eventHome) else 'a' %}
+            <{{ logoTag }} href="{{ routeUrl(event, 'event', 'announcements') }} " class="event-jumbotron__logo">
               {% set eventLogo = event.get('logo') %}
               <img src="{{ pictureUrl(eventLogo, event) if eventLogo else staticUrl('/static/images/favicon196.png') }}" />
-            </div>
+            </{{ logoTag }}>
           </div>
     
-          <div class="col-lg-9 mb-3">
+          <div class="col-lg-9 mb-3 mb-lg-0">
             {% if event.get('countdown_config').message or event.get('countdown_config').phrase %}
               {% set rawHypeLink = event.get('countdown_config').link %}
               {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
@@ -56,12 +58,14 @@
             {% endif %}
     
             {% if featuredPost %}
+              <div class="event-jumbotron__post">
               {% if featuredPost.get('body').indexOf('&lt;iframe') === 0 %}
                 {{ postMacros.post(featuredPost, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
                 {{ featuredPost.get('body') | markdown | safe }}
               {% else %}
                 {{ postMacros.post(featuredPost, {hideBody: true, readingUser: user, readingUserLikes: userLikes}) }}
               {% endif %}
+              </div>
             {% endif %}
           </div>
         </div>

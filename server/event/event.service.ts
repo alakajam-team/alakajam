@@ -6,7 +6,7 @@
  */
 
 import * as Bluebird from "bluebird";
-import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, FetchAllOptions, FetchPageOptions, SortOrder } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, FetchAllOptions, FetchPageOptions, SortOrder, FetchOptions } from "bookshelf";
 import cache from "server/core/cache";
 import config, { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
@@ -572,7 +572,7 @@ async function findLatestUserEntry(user, options: any = {}) {
 /**
  * Retrieves the entry a user submitted to an event
  */
-async function findUserEntryForEvent(user: BookshelfModel, eventId: number): Promise<EntryBookshelfModel> {
+async function findUserEntryForEvent(user: BookshelfModel, eventId: number, options: FetchOptions = {}): Promise<EntryBookshelfModel> {
   return models.Entry.query((query) => {
     query.innerJoin("user_role", "entry.id", "user_role.node_id")
       .where({
@@ -580,7 +580,7 @@ async function findUserEntryForEvent(user: BookshelfModel, eventId: number): Pro
         "user_role.user_id": user.get("id"),
         "user_role.node_type": "entry",
       });
-  }).fetch({ withRelated: ["userRoles"] }) as any;
+  }).fetch({ withRelated: ["userRoles"], ...options }) as any;
 }
 
 async function findEntryInvitesForUser(user, options): Promise<BookshelfCollection> {

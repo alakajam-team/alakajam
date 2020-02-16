@@ -30,7 +30,7 @@
 
   <div class="mt-4">
   {% for post in posts %}
-    {{ postMacros.post(post, { hideBody: true, smallTitle: true }) }}
+    {{ postMacros.post(post, { hideBody: true, smallTitle: true, readingUser: user, readingUserLikes: userLikes }) }}
   {% endfor %}
   </div>
 

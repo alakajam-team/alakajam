@@ -55,14 +55,24 @@ $arrowSize: 9.5px;
   }
   &__logo {
     position: relative;
+    transition: 0.15s;
 
     & img {
       position: absolute;
       transform: translate(-50%, -50%);
     }
   }
+  a.event-jumbotron__logo:hover {
+    transform: scale(1.05);
+
+    & img {
+      border: 0;
+      filter: brightness(1.1);
+    }
+  }
 
   &__post {
+    background-color: change-color($bg, $alpha: .7);
     margin-top: 15px;
   }
 

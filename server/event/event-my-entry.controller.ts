@@ -1,5 +1,6 @@
-import { BookshelfCollection } from "bookshelf";
+import { BookshelfCollection, BookshelfCollectionOf, PostBookshelfModel } from "bookshelf";
 import db from "server/core/db";
+import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "./event.middleware";
@@ -18,12 +19,14 @@ export async function viewEventMyEntry(req: CustomRequest, res: CustomResponse<E
 
   res.locals.pageTitle += " | Join";
 
-  const entry = await eventService.findUserEntryForEvent(user, event.get("id"));
+  const entry = await eventService.findUserEntryForEvent(user, event.get("id"), {
+    withRelated: [ "posts.likes", "posts.userRoles" ]
+  });
 
-  let postsCollection: BookshelfCollection = new db.Collection() as BookshelfCollection;
+  let postsCollection: BookshelfCollectionOf<PostBookshelfModel>
+    = new db.Collection() as BookshelfCollectionOf<PostBookshelfModel>;
   if (entry) {
-    await entry.load("posts");
-    postsCollection = entry.related<BookshelfCollection>("posts");
+    postsCollection = entry.related("posts");
   } else {
     postsCollection = await postService.findPosts({
       userId: user.get("id"),
@@ -39,6 +42,7 @@ export async function viewEventMyEntry(req: CustomRequest, res: CustomResponse<E
   res.render("event/event-my-entry", {
     entry,
     latestPost,
-    posts: postsCollection.models
+    posts: postsCollection.models,
+    userLikes: await likeService.findUserLikeInfo(postsCollection.models, user),
   });
 }

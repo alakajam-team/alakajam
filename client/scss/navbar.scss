@@ -196,24 +196,6 @@ $event-navbar-height: 50px;
     }
   }
 
-  &__home {
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-
-    & .fa {
-      margin-right: 4px;
-    }
-
-    @media (min-width: 768px) {
-      max-width: 250px;
-      letter-spacing: 1px;
-    }
-
-    @media (min-width: 992px) {
-      max-width: 300px;
-    }
-  }
   &__name {
     @include alt-font;
     font-size: 1.3rem;
@@ -292,6 +274,27 @@ $event-navbar-height: 50px;
       cursor: default;
       &:hover {
         background-color: inherit;
+      }
+    }
+    
+    &.home {
+      padding-top: 4px;
+      line-height: 1.3rem;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+
+      & .fa {
+        margin-right: 4px;
+      }
+
+      @media (min-width: 768px) {
+        max-width: 250px;
+        letter-spacing: 1px;
+      }
+
+      @media (min-width: 992px) {
+        max-width: 300px;
       }
     }
   }
