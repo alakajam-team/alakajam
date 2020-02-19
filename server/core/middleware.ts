@@ -136,7 +136,7 @@ export async function configure(app: Application) {
     };
 
     res.redirectToLogin = () => {
-      return this.redirect("/login?redirect=" + req.url);
+      return res.redirect("/login?redirect=" + req.url);
     };
 
     next();

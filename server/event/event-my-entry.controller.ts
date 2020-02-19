@@ -1,4 +1,4 @@
-import { BookshelfCollection, BookshelfCollectionOf, PostBookshelfModel } from "bookshelf";
+import { BookshelfCollectionOf, PostBookshelfModel } from "bookshelf";
 import db from "server/core/db";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -13,7 +13,7 @@ export async function viewEventMyEntry(req: CustomRequest, res: CustomResponse<E
   const { user, event } = res.locals;
 
   if (!user) {
-    await res.redirectToLogin();
+    res.redirectToLogin();
     return;
   }
 
