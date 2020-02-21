@@ -188,34 +188,33 @@
           </div>
         </div>
           
-          {% if not external
-              and event.related('details').get('category_titles')
-              and event.related('details').get('category_titles').includes('Graphics') %}
-            {% set canEditOptouts = isEntryOwner or isMod(user) %}
-            {% set optouts = entryDetails.get('optouts') %}
-            <div id="edit-optouts" class="{{ 'd-none' if entry.get('division') === 'unranked' }}">
-              <div class="form-group" title="{{ 'Only the entry owner can change this setting' if not canEditOptouts }}">
-                <label>Opt-outs (<a href="/article/docs/faq#optouts" target="_blank">help</a>)</label>
-                <div class="form-inline">
-                  <label>
-                    <input type="checkbox" name="optout-graphics" class="js-checkbox" 
-                    {{ 'readonly' if not canEditOptouts }}
-                    {{ 'checked="checked"' if optouts and optouts.includes('Graphics') }} 
-                    {{ 'disabled' if not canEditOptouts }} />
-                    <span class="ml-1 mr-3">Disable ratings for graphics</span>
-                  </label>
-                  <label>
-                    <input type="checkbox" name="optout-audio" class="js-checkbox" 
-                    {{ 'readonly' if not canEditOptouts }}
-                    {{ 'checked="checked"' if optouts and optouts.includes('Audio') }}
-                    {{ 'disabled' if not canEditOptouts }} />
-                    <span class="ml-1 mr-3">Disable ratings for audio</span>
-                  </label>
-                </div>
+        {% if not external
+            and event.related('details').get('category_titles')
+            and event.related('details').get('category_titles').includes('Graphics') %}
+          {% set canEditOptouts = isEntryOwner or isMod(user) %}
+          {% set optouts = entryDetails.get('optouts') %}
+          <div id="edit-optouts" class="{{ 'd-none' if entry.get('division') === 'unranked' }}">
+            <div class="form-group" title="{{ 'Only the entry owner can change this setting' if not canEditOptouts }}">
+              <label>Opt-outs (<a href="/article/docs/faq#optouts" target="_blank">help</a>)</label>
+              <div class="form-inline">
+                <label>
+                  <input type="checkbox" name="optout-graphics" class="js-checkbox" 
+                  {{ 'readonly' if not canEditOptouts }}
+                  {{ 'checked="checked"' if optouts and optouts.includes('Graphics') }} 
+                  {{ 'disabled' if not canEditOptouts }} />
+                  <span class="ml-1 mr-3">Disable ratings for graphics</span>
+                </label>
+                <label>
+                  <input type="checkbox" name="optout-audio" class="js-checkbox" 
+                  {{ 'readonly' if not canEditOptouts }}
+                  {{ 'checked="checked"' if optouts and optouts.includes('Audio') }}
+                  {{ 'disabled' if not canEditOptouts }} />
+                  <span class="ml-1 mr-3">Disable ratings for audio</span>
+                </label>
               </div>
             </div>
-          {% endif %}
-        </div>
+          </div>
+        {% endif %}
 
         <div class="horizontal-bar" style="margin-top: 40px">Details</div>
 
