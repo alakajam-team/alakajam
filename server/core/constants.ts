@@ -77,7 +77,7 @@ export default {
     Windows: "fab fa-windows",
     Linux: "fab fa-linux",
     Mac: "fab fa-apple",
-    Web: "fas fa-newspaper",
+    Web: "fas fa-globe",
     Mobile: "fas fa-mobile-alt",
     Retro: "fas fa-gamepad",
   },
