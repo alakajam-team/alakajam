@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "macros/form.macros.html" as formMacros with context %}
 
 {% block body %}
 
@@ -29,6 +30,7 @@
 
     </div>
     <div class="col-sm-9">
+      {{ formMacros.alerts(alerts) }}
       {% if infoMessage %}
         <div class="alert alert-info">{{ infoMessage }}</div>
       {% endif %}

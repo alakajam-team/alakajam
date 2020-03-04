@@ -9,6 +9,7 @@ import { createLuxonDate } from "server/core/formats";
 import mailer from "server/core/mailer";
 import * as models from "server/core/models";
 import userService from "../user.service";
+import { CustomApplication } from "server/types";
 
 const PASSWORD_RECOVERY_TOKENS_PATH = path.join(configUtils.dataPathAbsolute(), "password-recovery.json");
 
@@ -45,7 +46,7 @@ export class PasswordRecoveryService {
     }
   }
 
-  public async loadPasswordRecoveryCache(app: Application) {
+  public async loadPasswordRecoveryCache(app: CustomApplication) {
     if (await fileStorage.exists(PASSWORD_RECOVERY_TOKENS_PATH)) {
       const rawFile = await fileStorage.read(PASSWORD_RECOVERY_TOKENS_PATH);
       app.locals.passwordRecoveryTokens = JSON.parse(rawFile);

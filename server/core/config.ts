@@ -5,7 +5,7 @@ import log from "./log";
 
 const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 
-interface Config {
+export interface Config {
   readonly SERVER_PORT: number;
   readonly ROOT_URL: string;
   readonly STATIC_ROOT_URL: false|string;

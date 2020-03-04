@@ -14,7 +14,7 @@ import * as bodyParser from "body-parser";
 import * as connectSessionKnex from "connect-session-knex";
 import * as cookies from "cookies";
 import * as express from "express";
-import { Application, NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import * as expressSession from "express-session";
 import * as nunjucks from "nunjucks";
 import * as path from "path";
@@ -22,7 +22,7 @@ import * as randomKey from "random-key";
 import settings from "server/core/settings";
 import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
 import { routes } from "server/routes";
-import { CustomRequest } from "server/types";
+import { CustomApplication, CustomRequest } from "server/types";
 import passwordRecoveryService from "server/user/password-recovery/password-recovery.service";
 import { promisify } from "util";
 import config, * as configUtils from "./config";
@@ -39,7 +39,7 @@ const LAUNCH_TIME = Date.now();
 /*
  * Setup app middleware
  */
-export async function configure(app: Application) {
+export async function configure(app: CustomApplication) {
   app.locals.config = config;
 
   // Slow requests logging
@@ -140,7 +140,7 @@ export async function configure(app: Application) {
     };
 
     next();
-  });
+  } as any);
 
   // Routing: Views
   routes(app);

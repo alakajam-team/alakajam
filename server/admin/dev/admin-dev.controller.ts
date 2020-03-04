@@ -1,51 +1,36 @@
 import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
-import db from "server/core/db";
 import security from "server/core/security";
-import { CustomRequest, CustomResponse } from "server/types";
-import userService from "../../user/user.service";
+import { Alert, CustomRequest, CustomResponse } from "server/types";
+import adminDevService from "./admin-dev.service";
 
 /**
  * Admin only: developer tools
  */
 export async function adminDev(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   if (res.app.locals.devMode && (config.DEBUG_ADMIN || security.isAdmin(res.locals.user))) {
-    let infoMessage = "";
-    let errorMessage = "";
+
     if (req.method === "POST") {
+      let alert: Alert;
       if (req.body["db-reset"]) {
-        await db.emptyDatabase();
-        const newVersion = await db.initDatabase();
-        infoMessage = "DB reset done (current version : " + newVersion + ").";
+        alert = await adminDevService.resetDatabase();
       } else if (req.body["replace-passwords"]) {
-        const users = await userService.findUsers({ pageSize: 30 });
-        await db.transaction(async (transaction) => {
-          for (const user of (users as any).models) {
-            userService.setPassword(user, "password");
-            await user.save(null, { transacting: transaction });
-          }
-        });
-        infoMessage = 'The last 30 created users now have their password set to "password".';
+        alert = await adminDevService.replaceSomePasswords();
       } else if (req.body.backup) {
-        if (await db.getBackupDate()) {
-          await db.backup();
-          infoMessage = "Backup created.";
-        } else {
-          // Don't override backups (ensures stability when working on Cypress tests)
-          errorMessage = "A backup already exists, please delete it first";
-        }
+        alert = await adminDevService.createBackup();
       } else if (req.body.restore) {
-        await db.restore(res.app.locals.sessionStore);
-        infoMessage = "Backup restored.";
+        alert = await adminDevService.restoreBackup(res.app.locals.sessionStore);
       } else if (req.body["delete-backup"]) {
-        await db.deleteBackup();
-        infoMessage = "Backup deleted.";
+        alert = await adminDevService.deleteBackup();
+      }
+
+      if (alert) {
+        res.locals.alerts.push(alert)
       }
     }
+
     res.render("admin/dev/admin-dev", {
-      infoMessage,
-      errorMessage,
-      backupDate: await db.getBackupDate()
+      backupDate: await adminDevService.getBackupDate()
     });
   } else {
     res.errorPage(403, "Page only available in development mode");
