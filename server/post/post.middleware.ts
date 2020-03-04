@@ -1,6 +1,17 @@
 
+import { PostBookshelfModel } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import postService from "./post.service";
+
+export interface PostLocals extends CommonLocals {
+
+  /**
+   * The current blog post.
+   */
+  post: PostBookshelfModel;
+
+}
 
 export async function postMiddleware(req, res, next) {
   if (req.params.postId && req.params.postId !== "create") {

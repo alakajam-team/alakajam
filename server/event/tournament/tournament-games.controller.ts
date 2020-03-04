@@ -1,11 +1,13 @@
 import enums from "server/core/enums";
 import highScoreService from "server/entry/highscore/entry-highscore.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EventLocals } from "../event.middleware";
 
 /**
  * View the games of a tournament
  */
-export async function viewEventTournamentGames(req, res) {
+export async function viewEventTournamentGames(req: CustomRequest, res: CustomResponse<EventLocals>) {
   res.locals.pageTitle += " | Tournament games";
 
   const { user, event } = res.locals;

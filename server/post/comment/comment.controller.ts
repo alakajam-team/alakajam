@@ -8,12 +8,14 @@ import security from "server/core/security";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import postService from "server/post/post.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { PostLocals } from "../post.middleware";
 import commentService from "./comment.service";
 
 /**
  * Save or delete a comment
  */
-export async function commentSave(req, res) {
+export async function commentSave(req: CustomRequest, res: CustomResponse<PostLocals>) {
   const redirectUrl = await handleSaveComment(req.body, res.locals.user, res.locals.post,
     links.routeUrl(res.locals.post, "post"));
   res.redirect(redirectUrl);

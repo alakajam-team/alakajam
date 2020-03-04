@@ -1,14 +1,16 @@
 
 import { BookshelfCollection } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import eventService from "server/event/event.service";
+import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 
 /**
  * People listing
  */
-export async function people(req, res) {
+export async function people(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "People";
 
   const PAGE_SIZE = 30;

@@ -3,11 +3,7 @@ import * as lodash from "lodash";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import settings from "server/core/settings";
-import {
-  SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
-  SETTING_EVENT_THEME_IDEAS_REQUIRED,
-  SETTING_EVENT_THEME_SUGGESTIONS
-} from "server/core/settings-keys";
+import { SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_IDEAS_REQUIRED, SETTING_EVENT_THEME_SUGGESTIONS } from "server/core/settings-keys";
 import eventThemeService from "server/event/theme/event-theme.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -197,7 +193,7 @@ export async function _generateShortlistInfo(event, user = null) {
 /**
  * AJAX API: Find themes to vote on
  */
-export async function ajaxFindThemes(req, res) {
+export async function ajaxFindThemes(req: CustomRequest, res: CustomResponse<EventLocals>) {
   const themesCollection = await eventThemeService.findThemesToVoteOn(res.locals.user, res.locals.event);
   const json = [];
   for (const theme of themesCollection.models) {
@@ -212,7 +208,7 @@ export async function ajaxFindThemes(req, res) {
 /**
  * AJAX API: Save a vote
  */
-export async function ajaxSaveThemeVote(req, res) {
+export async function ajaxSaveThemeVote(req: CustomRequest, res: CustomResponse<EventLocals>) {
   if (forms.isId(req.body.id) && (req.body.upvote !== undefined || req.body.downvote !== undefined)) {
     const score = (req.body.upvote !== undefined) ? 1 : -1;
     await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(req.body.id, 10), score);

@@ -1,10 +1,12 @@
 import enums from "server/core/enums";
 import eventRatingService from "server/event/rating/event-rating.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EventLocals } from "../event.middleware";
 
 /**
  * Browse ratings by own user
  */
-export async function viewEventRatings(req, res) {
+export async function viewEventRatings(req: CustomRequest, res: CustomResponse<EventLocals>) {
   res.locals.pageTitle += " | Ratings";
 
   const { user, event } = res.locals;

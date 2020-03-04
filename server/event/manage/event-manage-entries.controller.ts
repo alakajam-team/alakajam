@@ -4,12 +4,14 @@ import forms from "server/core/forms";
 import security from "server/core/security";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
+import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
+import { EventLocals } from "../event.middleware";
 
 /**
  * Browse event entries
  */
-export async function eventManageEntries(req, res) {
+export async function eventManageEntries(req: CustomRequest, res: CustomResponse<EventLocals>) {
   res.locals.pageTitle += " | Entries";
 
   if (!security.isMod(res.locals.user)) {

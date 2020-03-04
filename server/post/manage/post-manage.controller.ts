@@ -1,4 +1,5 @@
 
+import { BookshelfCollection, PostBookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import { createLuxonDate, ZONE_UTC } from "server/core/formats";
@@ -7,10 +8,12 @@ import links from "server/core/links";
 import * as models from "server/core/models";
 import security from "server/core/security";
 import eventService from "server/event/event.service";
+import { CustomRequest, CustomResponse } from "server/types";
 import { buildPostContext } from "../post-view.controller";
+import { PostLocals } from "../post.middleware";
 import postService from "../post.service";
 
-export async function postEdit(req, res) {
+export async function postEdit(req: CustomRequest, res: CustomResponse<PostLocals>) {
   if (!res.locals.user) {
     res.redirect("/login?redirect=" + req.url);
     return;
@@ -19,7 +22,7 @@ export async function postEdit(req, res) {
   const createMode = !res.locals.post;
   if (createMode || security.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
     if (createMode) {
-      const post = new models.Post();
+      const post = new models.Post() as PostBookshelfModel;
       post.set("special_post_type", forms.sanitizeString(req.query.special_post_type) || null);
       post.set("title", forms.sanitizeString(req.query.title));
       if (forms.isId(req.query.eventId)) {
@@ -41,7 +44,7 @@ export async function postEdit(req, res) {
   }
 }
 
-export async function postSave(req, res) {
+export async function postSave(req: CustomRequest, res: CustomResponse<PostLocals>) {
   let post = res.locals.post;
 
   // Check permissions
@@ -93,7 +96,7 @@ export async function postSave(req, res) {
             await post.load(["userRoles", "author"]);
 
             // Update event ID on all roles
-            for (const userRole of post.related("userRoles").models) {
+            for (const userRole of post.related<BookshelfCollection>("userRoles").models) {
               userRole.set("event_id", post.get("event_id"));
               await userRole.save();
             }
@@ -128,7 +131,7 @@ export async function postSave(req, res) {
       await post.save();
       cache.user(res.locals.user).del("latestPostsCollection");
     } else if (!post) {
-      post = new models.Post();
+      post = new models.Post() as PostBookshelfModel;
     }
 
     // Render
@@ -144,7 +147,7 @@ export async function postSave(req, res) {
   }
 }
 
-export async function postDelete(req, res) {
+export async function postDelete(req: CustomRequest, res: CustomResponse<PostLocals>) {
   const { user, post } = res.locals;
 
   if (user && post && security.canUserManage(user, post, { allowMods: true })) {

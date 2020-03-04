@@ -64,7 +64,10 @@ declare module "bookshelf" {
       pageSize: number;
     };
 
-    public where(match: { [key: string]: any }, firstOnly?: boolean): T | BookshelfCollection;
+    /**
+     * Actually returns T or T[]
+     */
+    public where(match: { [key: string]: any }, firstOnly?: boolean): any;
     public difference(arrayValue: T[] | BookshelfCollectionOf<T>): T[];
     public difference(...values: T[]): T[];
     public slice(begin?: number, end?: number): T[];

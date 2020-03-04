@@ -2,11 +2,13 @@ import enums from "server/core/enums";
 import forms from "server/core/forms";
 import security from "server/core/security";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EntryLocals } from "../entry.middleware";
 
 /**
  * Moderate high scores
  */
-export async function entryHighscoresManage(req, res) {
+export async function entryHighscoresManage(req: CustomRequest, res: CustomResponse<EntryLocals>) {
   const { user, entry } = res.locals;
 
   if (!user) {

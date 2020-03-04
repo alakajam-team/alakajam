@@ -1,10 +1,12 @@
 import forms from "server/core/forms";
 import highScoreService from "server/entry/highscore/entry-highscore.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { DashboardLocals } from "./dashboard.middleware";
 
 /**
  * Manage user entries
  */
-export async function dashboardScores(req, res) {
+export async function dashboardScores(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const sortedBy = forms.sanitizeString(req.query.sortBy) || "submitted_at";
 
   const userScoresCollection = await highScoreService.findUserScores(res.locals.user.get("id"), { sortBy: sortedBy });

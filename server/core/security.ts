@@ -83,11 +83,9 @@ export class Security {
       throw new Error("Model does not have user roles");
     }
     const acceptPermissions = this.getPermissionsEqualOrAbove(permission);
-    const allUserRoles = model.related("userRoles");
+    const allUserRoles = model.related<BookshelfCollection>("userRoles");
     if (acceptPermissions && allUserRoles) {
-      const userRoles: BookshelfModel[] = allUserRoles.where({
-        user_id: user.get("id"),
-      }) as any;
+      const userRoles = allUserRoles.where({ user_id: user.get("id") }) as BookshelfModel[];
       for (const userRole of userRoles) {
         if (acceptPermissions.includes(userRole.get("permission"))) {
           return true;

@@ -1,3 +1,4 @@
+import { CommonLocals } from "server/common.middleware";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
@@ -5,11 +6,12 @@ import platformService from "server/entry/platform/platform.service";
 import { handleGameSearch } from "server/event/event-games.controller";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
+import { CustomRequest, CustomResponse } from "server/types";
 
 /**
  * Game browser
  */
-export async function games(req, res) {
+export async function games(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "Games";
 
   const { user, featuredEvent } = res.locals;

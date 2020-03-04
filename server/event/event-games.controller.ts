@@ -8,12 +8,14 @@ import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService, { FindGamesOptions } from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
+import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
+import { EventLocals } from "./event.middleware";
 
 /**
  * Browse event games
  */
-export async function viewEventGames(req, res) {
+export async function viewEventGames(req: CustomRequest, res: CustomResponse<EventLocals>) {
   res.locals.pageTitle += " | Games";
 
   const { user, event } = res.locals;

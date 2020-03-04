@@ -1,11 +1,13 @@
 import links from "server/core/links";
+import { CustomRequest, CustomResponse } from "server/types";
 import likeService from "../like/like.service";
+import { PostLocals } from "../post.middleware";
 import postService from "../post.service";
 
 /**
  * Likes or unlikes a post
  */
-export async function likePost(req, res) {
+export async function likePost(req: CustomRequest, res: CustomResponse<PostLocals>) {
   const { user, post } = res.locals;
 
   if (user) {

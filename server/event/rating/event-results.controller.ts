@@ -7,11 +7,13 @@ import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EventLocals } from "../event.middleware";
 
 /**
  * Browse event results
  */
-export async function viewEventResults(req, res) {
+export async function viewEventResults(req: CustomRequest, res: CustomResponse<EventLocals>) {
   res.locals.pageTitle += " | Results";
 
   // Permission checks & special post case

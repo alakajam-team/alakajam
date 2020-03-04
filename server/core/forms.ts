@@ -22,6 +22,7 @@ import { createLuxonDate } from "./formats";
 export default {
   sanitizeString,
   sanitizeMarkdown,
+  sanitizeInt,
 
   capitalize: (new nunjucks.Environment() as any).filters.capitalize,
   slug: slugCustom,
@@ -125,6 +126,15 @@ function sanitizeString(str: string, options: any = {}) {
  */
 function sanitizeMarkdown(markdown: string, options: any = {}) {
   return markdown.slice(0, options.maxLength || constants.MAX_BODY_COMMENT);
+}
+
+function sanitizeInt(int: string, options: { unsigned?: boolean } = {}): number {
+  const parsedInt = parseInt(int, 10);
+  if (options.unsigned) {
+    return Math.max(0, parsedInt);
+  } else {
+    return parsedInt;
+  }
 }
 
 /**

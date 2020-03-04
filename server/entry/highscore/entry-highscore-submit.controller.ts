@@ -3,11 +3,13 @@ import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EntryLocals } from "../entry.middleware";
 
 /**
  * Submit a high score
  */
-export async function entryHighscoreSubmit(req, res) {
+export async function entryHighscoreSubmit(req: CustomRequest, res: CustomResponse<EntryLocals>) {
   const { user, entry } = res.locals;
 
   if (!user) {
@@ -102,7 +104,7 @@ export async function entryHighscoreSubmit(req, res) {
   // Force header to the featured event if a tournament is on, to make navigation less confusing
   const tournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get("id"));
   if (tournamentEvent) {
-    res.locals.event = res.locals.featuredEvent;
+    (res.locals as any).event = res.locals.featuredEvent;
   }
 
   // Build context

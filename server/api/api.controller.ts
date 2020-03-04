@@ -19,6 +19,8 @@ import { CustomRequest, CustomResponse } from "server/types";
 import * as url from "url";
 import userService from "../user/user.service";
 
+type Json = Record<string, any>;
+
 const PUBLIC_ATTRIBUTES_EVENT = ["id", "name", "title", "display_dates", "display_theme", "status", "status_theme",
   "status_entry", "status_results", "countdown_config"];
 const PUBLIC_ATTRIBUTES_ENTRY = ["id", "event_id", "event_name", "name", "title", "description", "links", "pictures",
@@ -34,7 +36,7 @@ const DETAILED_ENTRY_OPTIONS = { withRelated: ["comments", "details", "userRoles
 /**
  * Data about the currently featured event
  */
-export async function getFeaturedEvent(req, res) {
+export async function getFeaturedEvent(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   if (res.locals.featuredEvent) {
     req.params.event = res.locals.featuredEvent.get("id");
     return getEvent(req, res);
@@ -46,8 +48,8 @@ export async function getFeaturedEvent(req, res) {
 /**
  * Event timeline
  */
-export async function getEventTimeline(req, res) {
-  let json: any = {};
+export async function getEventTimeline(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  let json: Json = {};
   let status = 200;
 
   let page = 0;
@@ -76,13 +78,13 @@ export async function getEventTimeline(req, res) {
 /**
  * Data about a specific event
  */
-export async function getEvent(req, res) {
-  let json: any = {};
+export async function getEvent(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  let json: Json = {};
   let status = 200;
 
   let event;
   if (req.params.event && forms.isId(req.params.event)) {
-    event = await eventService.findEventById(req.params.event);
+    event = await eventService.findEventById(forms.sanitizeInt(req.params.event));
   } else {
     event = await eventService.findEventByName(req.params.event);
   }
@@ -131,13 +133,13 @@ export async function getEvent(req, res) {
 /**
  * Data about the theme shortlist of an event
  */
-export async function getEventShortlist(req, res) {
-  let json: any = {};
+export async function getEventShortlist(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  let json: Json = {};
   let status = 200;
 
   let event;
   if (req.params.event && forms.isId(req.params.event)) {
-    event = await eventService.findEventById(req.params.event);
+    event = await eventService.findEventById(forms.sanitizeInt(req.params.event));
   } else {
     event = await eventService.findEventByName(req.params.event);
   }
@@ -183,8 +185,8 @@ export async function getEventShortlist(req, res) {
 /**
  * Data about a specific entry
  */
-export async function getEntry(req, res) {
-  let json: any = {};
+export async function getEntry(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  let json: Json = {};
   let status = 200;
 
   if (forms.isId(req.params.entry)) {
@@ -206,14 +208,13 @@ export async function getEntry(req, res) {
 
 /**
  * Transforms an entry model into detailed JSON info
- * @param  {Entry} entry must be fetched with DETAILED_ENTRY_OPTIONS
- * @return {object} json
+ * @param entry must be fetched with DETAILED_ENTRY_OPTIONS
  */
-function _getDetailedEntryJson(entry) {
+function _getDetailedEntryJson(entry: BookshelfModel): Json {
   const json = _getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY);
   json.url = url.resolve(config.ROOT_URL, links.routeUrl(entry, "entry"));
 
-  const entryDetails = entry.related("details");
+  const entryDetails = entry.related<BookshelfModel>("details");
   Object.assign(json, _getAttributes(entryDetails, PUBLIC_ATTRIBUTES_ENTRY_DETAILS));
 
   const event = entry.related("event");
@@ -222,12 +223,12 @@ function _getDetailedEntryJson(entry) {
   }
 
   json.comments = [];
-  for (const comment of entry.related("comments").models) {
+  for (const comment of entry.related<BookshelfCollection>("comments").models) {
     json.comments.push(_getAttributes(comment, PUBLIC_ATTRIBUTES_COMMENT));
   }
 
   json.users = [];
-  for (const user of entry.related("userRoles").models) {
+  for (const user of entry.related<BookshelfCollection>("userRoles").models) {
     json.users.push(_getAttributes(user.related("user"), PUBLIC_ATTRIBUTES_USER));
   }
 
@@ -237,8 +238,8 @@ function _getDetailedEntryJson(entry) {
 /**
  * Data about a specific user
  */
-export async function getUser(req, res) {
-  let json: any = {};
+export async function getUser(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  let json: Json = {};
   let status = 200;
 
   let user;
@@ -264,8 +265,8 @@ export async function getUser(req, res) {
   _renderJson(req, res, status, json);
 }
 
-export async function getUserLatestEntry(req, res) {
-  let json: any = {};
+export async function getUserLatestEntry(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  let json: Json = {};
   let status = 200;
 
   let user;
@@ -291,8 +292,8 @@ export async function getUserLatestEntry(req, res) {
   _renderJson(req, res, status, json);
 }
 
-export async function getUserSearch(req, res) {
-  let json: any = {};
+export async function getUserSearch(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  let json: Json = {};
   let status = 200;
 
   let page = 0;
@@ -352,7 +353,7 @@ export async function getThemeStats(req: CustomRequest, res: CustomResponse<Comm
   _renderJson(req, res, 200, themesStats);
 }
 
-function _renderJson(req, res, statusCode, json) {
+function _renderJson(req: CustomRequest, res: CustomResponse<CommonLocals>, statusCode: number, json: Json) {
   res.status(statusCode);
   if (req.query.pretty) {
     res.locals.pageTitle = "API Preview for " + req.path;
@@ -362,7 +363,7 @@ function _renderJson(req, res, statusCode, json) {
   }
 }
 
-function _getAttributes(model, whiteList): any {
+function _getAttributes(model: BookshelfModel, whiteList: string[]): Json {
   const values = {};
   for (const attribute of whiteList) {
     values[attribute] = model.get(attribute);

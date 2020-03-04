@@ -4,11 +4,13 @@ import security from "server/core/security";
 import highScoreService from "server/entry/highscore/entry-highscore.service";
 import eventService from "server/event/event.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EventLocals } from "../event.middleware";
 
 /**
  * Manage tournament games
  */
-export async function eventManageTournament(req, res) {
+export async function eventManageTournament(req: CustomRequest, res: CustomResponse<EventLocals>) {
   res.locals.pageTitle += " | Tournament games";
 
   const { user, event } = res.locals;

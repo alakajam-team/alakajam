@@ -1,10 +1,12 @@
 import enums from "server/core/enums";
 import eventTournamentService from "server/event/tournament/tournament.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EventLocals } from "../event.middleware";
 
 /**
  * View the leaderboard of a tournament
  */
-export async function viewEventTournamentLeaderboard(req, res) {
+export async function viewEventTournamentLeaderboard(req: CustomRequest, res: CustomResponse<EventLocals>) {
   res.locals.pageTitle += " | Leaderboard";
 
   const { event } = res.locals;

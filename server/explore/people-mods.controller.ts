@@ -1,8 +1,10 @@
 
 import { BookshelfCollection } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
+import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 
-export async function peopleMods(req, res) {
+export async function peopleMods(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "Admins & mods";
 
   const adminsCollection = await userService.findUsers({ isAdmin: true, orderBy: "title" }) as BookshelfCollection;

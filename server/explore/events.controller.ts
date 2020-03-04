@@ -1,11 +1,13 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
+import { CustomRequest, CustomResponse } from "server/types";
 import eventService from "../event/event.service";
 
 /**
  * Events listing
  */
-export async function events(req, res) {
+export async function events(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "Events";
 
   const pending = [];

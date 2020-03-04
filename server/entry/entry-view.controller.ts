@@ -1,3 +1,4 @@
+import { BookshelfModel } from "bookshelf";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
@@ -13,11 +14,13 @@ import { handleSaveComment } from "server/post/comment/comment.controller";
 import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { EntryLocals } from "./entry.middleware";
 
 /**
  * Browse entry
  */
-export async function entryView(req, res) {
+export async function entryView(req: CustomRequest, res: CustomResponse<EntryLocals>) {
   const { user, entry } = res.locals;
 
   // Let the template display user thumbs
@@ -27,7 +30,7 @@ export async function entryView(req, res) {
   const eventVote = eventRatingService.areVotesAllowed(res.locals.event);
 
   // Fetch vote on someone else's entry
-  let vote;
+  let vote: BookshelfModel;
   let canVote = false;
   if (res.locals.user && eventVote &&
       !security.canUserWrite(res.locals.user, entry)) {
@@ -53,8 +56,8 @@ export async function entryView(req, res) {
     entryId: entry.get("id"),
   });
 
-  let userScore = null;
-  let userLikes = null;
+  let userScore: BookshelfModel = null;
+  let userLikes: Record<number, string> = null;
   if (user) {
     userScore = await highscoreService.findEntryScore(user.get("id"), entry.get("id"));
     userLikes = await likeService.findUserLikeInfo(posts.models, user);
@@ -80,7 +83,7 @@ export async function entryView(req, res) {
 /**
  * Saves a comment or vote made to an entry
  */
-export async function entrySaveCommentOrVote(req, res) {
+export async function entrySaveCommentOrVote(req: CustomRequest, res: CustomResponse<EntryLocals>) {
   const { entry, event, user } = res.locals;
 
   // Security checks
@@ -113,8 +116,8 @@ export async function entrySaveCommentOrVote(req, res) {
  * Search for team mates with usernames matching a string
  * @param {string} req.query.name a string to search user names with.
  */
-export async function apiSearchForTeammate(req, res) {
-  let errorMessage;
+export async function apiSearchForTeammate(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+  let errorMessage: string;
   if (!req.query || !req.query.name) {
     errorMessage = "No search parameter";
   }
@@ -160,8 +163,8 @@ export async function apiSearchForTeammate(req, res) {
 /**
  * AJAX endpoint : Finds external event names
  */
-export async function apiSearchForExternalEvents(req, res) {
-  let errorMessage;
+export async function apiSearchForExternalEvents(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+  let errorMessage: string;
 
   if (!req.query || !req.query.name) {
     errorMessage = "No search parameter";
@@ -182,8 +185,8 @@ export async function apiSearchForExternalEvents(req, res) {
 /**
  * AJAX endpoint : Finds tags
  */
-export async function apiSearchForTags(req, res) {
-  let errorMessage;
+export async function apiSearchForTags(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+  let errorMessage: string;
 
   if (!req.query || !req.query.name) {
     errorMessage = "No search parameter";

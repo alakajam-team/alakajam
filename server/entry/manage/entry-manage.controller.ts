@@ -307,13 +307,13 @@ export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryL
 /**
  * Leaves the team of an entry
  */
-export async function entryLeave(req, res) {
+export async function entryLeave(req: CustomRequest, res: CustomResponse<EntryLocals>) {
   const { entry, user } = res.locals;
 
   if (user && entry) {
     // Remove requesting user posts from the entry
     await entry.load("posts");
-    entry.related("posts").forEach(async (post) => {
+    entry.related<BookshelfCollection>("posts").forEach(async (post) => {
       if (post.get("author_user_id") === user.get("id")) {
         post.set("entry_id", null);
         await post.save();
@@ -322,7 +322,7 @@ export async function entryLeave(req, res) {
 
     // Remove requesting user from the team
     const newTeamMembers = [];
-    entry.related("userRoles").forEach((userRole) => {
+    entry.related<BookshelfCollection>("userRoles").forEach((userRole) => {
       if (userRole.get("user_id") !== user.get("id")) {
         newTeamMembers.push(userRole.get("user_id"));
       }

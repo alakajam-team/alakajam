@@ -3,12 +3,14 @@ import cache from "server/core/cache";
 import eventService from "server/event/event.service";
 import commentService from "server/post/comment/comment.service";
 import postService from "server/post/post.service";
+import { CustomRequest, CustomResponse } from "server/types";
 import userService from "../user.service";
+import { DashboardLocals } from "./dashboard.middleware";
 
 /**
  * View comment feed
  */
-export async function dashboardFeed(req, res) {
+export async function dashboardFeed(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const dashboardUser = res.locals.dashboardUser;
 
   // if an entry is not in the cache it will return undefined
@@ -45,7 +47,7 @@ export async function dashboardFeed(req, res) {
     dashboardUser.set("notifications_last_read", new Date());
     await userService.save(dashboardUser);
     userCache.del("unreadNotifications");
-    res.locals.unreadNotifications = 0;
+    (res.locals as any).unreadNotifications = 0;
   }
 
   // TODO Limit at the SQL-level

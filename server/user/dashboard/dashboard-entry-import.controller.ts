@@ -1,7 +1,9 @@
 import forms from "server/core/forms";
 import entryImportService from "server/entry/import/entry-import.service";
+import { CustomRequest, CustomResponse } from "server/types";
+import { DashboardLocals } from "./dashboard.middleware";
 
-export async function dashboardEntryImport(req, res) {
+export async function dashboardEntryImport(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const context: any = {
     availableImporters: entryImportService.getAvailableImporters(),
   };
