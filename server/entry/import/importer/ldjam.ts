@@ -10,9 +10,10 @@ import cache from "server/core/cache";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import log from "server/core/log";
+import { EntryDetails, EntryImporter, EntryImporterError, EntryReference } from "../entry-import.d";
 import entryImporterTools from "./entry-importer-tools";
 
-export default {
+const ldJamEntryImporter: EntryImporter = {
   config: {
     id: "ldjam.com",
     title: "Ludum Dare (ldjam.com)",
@@ -22,7 +23,7 @@ export default {
   fetchEntryDetails,
 };
 
-async function fetchEntryReferences(profileIdentifier) {
+async function fetchEntryReferences(profileIdentifier: string): Promise<EntryReference[] | EntryImporterError> {
   let profileName;
   if (profileIdentifier.includes("://")) {
     profileName = profileIdentifier.replace(/\/$/, "").replace(/^.*\//, "");
@@ -106,7 +107,7 @@ async function fetchEntryReferences(profileIdentifier) {
   return entryReferences;
 }
 
-async function fetchEntryDetails(entryReference) {
+async function fetchEntryDetails(entryReference: EntryReference): Promise<EntryDetails | EntryImporterError> {
   // Transform links data
   const meta = entryReference.importerProperties.meta;
   const tagNames = await _fetchLDJamTagNames();
@@ -148,7 +149,7 @@ async function fetchEntryDetails(entryReference) {
     links,
   };
 
-  return entryDetails;
+  return entryDetails as EntryDetails;
 }
 
 function _replaceTripleSlashes(str) {
@@ -170,3 +171,5 @@ async function _fetchLDJamTagNames() {
     }
   });
 }
+
+export default ldJamEntryImporter;

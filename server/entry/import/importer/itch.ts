@@ -8,8 +8,9 @@ import * as cheerio from "cheerio";
 import * as download from "download";
 import forms from "server/core/forms";
 import log from "server/core/log";
+import { EntryDetails, EntryImporter, EntryImporterError, EntryReference } from "../entry-import.d";
 
-export default {
+const itchEntryImporter: EntryImporter = {
   config: {
     id: "itch.io",
     title: "Itch.io",
@@ -21,7 +22,7 @@ export default {
   fetchEntryDetails,
 };
 
-async function fetchEntryReferences(profileIdentifier) {
+async function fetchEntryReferences(profileIdentifier: string): Promise<EntryReference[] | EntryImporterError> {
   const myGamesApiUrl = `https://itch.io/api/1/${profileIdentifier}/my-games`;
 
   let data;
@@ -36,7 +37,7 @@ async function fetchEntryReferences(profileIdentifier) {
     return { error: data.errors.join(", ") };
   }
 
-  const entryReferences = [];
+  const entryReferences: EntryReference[] = [];
   if (Array.isArray(data.games)) {
     for (const entry of data.games) {
       entryReferences.push({
@@ -58,7 +59,7 @@ async function fetchEntryReferences(profileIdentifier) {
   return entryReferences;
 }
 
-async function fetchEntryDetails(entryReference) {
+async function fetchEntryDetails(entryReference: EntryReference): Promise<EntryDetails | EntryImporterError> {
   const entryDetails = Object.assign({}, entryReference, entryReference.importerProperties);
 
   // Fetch additional info from actual game page
@@ -67,7 +68,7 @@ async function fetchEntryDetails(entryReference) {
     rawPage = await download(entryReference.link);
   } catch (e) {
     log.warn("Failed to download " + entryReference.link, e);
-    return [];
+    return { error: "Failed to download " + entryReference.link };
   }
   const $ = cheerio.load(rawPage.toString());
 
@@ -92,27 +93,29 @@ async function fetchEntryDetails(entryReference) {
       $(elem).find("a").each((__: number, elem2) => {
         const platformId = $(elem2).attr("href").replace(/.*\/platform-/g, "");
         switch (platformId) {
-        case "windows":
-          platforms.push("Windows");
-          break;
-        case "osx":
-          platforms.push("Mac");
-          break;
-        case "linux":
-          platforms.push("Linux");
-          break;
-        case "ios":
-        case "android":
-          platforms.push("Mobile");
-          break;
-        case "html5":
-          platforms.push("Web");
-          break;
+          case "windows":
+            platforms.push("Windows");
+            break;
+          case "osx":
+            platforms.push("Mac");
+            break;
+          case "linux":
+            platforms.push("Linux");
+            break;
+          case "ios":
+          case "android":
+            platforms.push("Mobile");
+            break;
+          case "html5":
+            platforms.push("Web");
+            break;
         }
       });
     }
   });
   entryDetails.platforms = platforms;
 
-  return entryDetails;
+  return entryDetails as EntryDetails;
 }
+
+export default itchEntryImporter;

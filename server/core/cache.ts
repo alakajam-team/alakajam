@@ -6,6 +6,7 @@
  * @module core/cache
  */
 
+import { BookshelfModel } from "bookshelf";
 import * as NodeCache from "node-cache";
 import config from "./config";
 
@@ -62,12 +63,10 @@ export default {
 
 /**
  * Provides access to the cache for user information
- * @param  {User|string} userModel User model, or directly the user name
- * @return {PrefixedNodeCache} cache
  */
-function user(userModel): NodeCache {
-  return new PrefixedNodeCache(cacheMap.users,
-    (typeof userModel === "string") ? userModel : userModel.get("name")) as any;
+function user(userOrName: BookshelfModel | string) {
+  const userName = (typeof userOrName === "string") ? userOrName : userOrName.get('name');
+  return new PrefixedNodeCache(cacheMap.users, userName);
 }
 
 class PrefixedNodeCache {

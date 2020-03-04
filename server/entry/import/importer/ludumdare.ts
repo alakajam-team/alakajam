@@ -8,9 +8,10 @@ import * as cheerio from "cheerio";
 import * as download from "download";
 import forms from "server/core/forms";
 import log from "server/core/log";
+import { EntryDetails, EntryImporter, EntryImporterError, EntryReference } from "../entry-import.d";
 import entryImporterTools from "./entry-importer-tools";
 
-export default {
+const ludumDareEntryImporter: EntryImporter = {
   config: {
     id: "ludumdare.com",
     title: "Ludum Dare legacy site (ludumdare.com)",
@@ -20,7 +21,7 @@ export default {
   fetchEntryDetails,
 };
 
-async function fetchEntryReferences(profileIdentifier) {
+async function fetchEntryReferences(profileIdentifier: string): Promise<EntryReference[] | EntryImporterError> {
   let profileName;
   if (profileIdentifier.includes("://")) {
     profileName = profileIdentifier.replace(/\/$/, "").replace(/^.*\//, "");
@@ -63,7 +64,7 @@ async function fetchEntryReferences(profileIdentifier) {
   return entryReferences;
 }
 
-async function fetchEntryDetails(entryReference) {
+async function fetchEntryDetails(entryReference: EntryReference): Promise<EntryDetails | EntryImporterError> {
   const rawPage = await download(entryReference.link);
   const $ = cheerio.load(rawPage.toString());
 
@@ -104,7 +105,7 @@ async function fetchEntryDetails(entryReference) {
       links,
     };
 
-    return entryDetails;
+    return entryDetails as EntryDetails;
   }
 
   return { error: "Entry page seems empty" };
@@ -172,3 +173,5 @@ function eventDate(eventName) {
 
   return eventDates[eventName] ? new Date(eventDates[eventName]) : null;
 }
+
+export default ludumDareEntryImporter;

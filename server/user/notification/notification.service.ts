@@ -5,13 +5,14 @@
  * @module services/notification-service
  */
 
+import { BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import eventService from "server/event/event.service";
 import commentService from "server/post/comment/comment.service";
 
 export class NotificationService {
 
-  public async countUnreadNotifications(user): Promise<number> {
+  public async countUnreadNotifications(user: BookshelfModel): Promise<number> {
     const userCache = cache.user(user);
     let unreadNotifications = userCache.get<number>("unreadNotifications");
     if (unreadNotifications === undefined) {

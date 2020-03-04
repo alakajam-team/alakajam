@@ -129,7 +129,7 @@ export async function postSave(req: CustomRequest, res: CustomResponse<PostLocal
 
       // Save
       await post.save();
-      cache.user(res.locals.user).del("latestPostsCollection");
+      cache.user(res.locals.user.get('name')).del("latestPostsCollection");
     } else if (!post) {
       post = new models.Post() as PostBookshelfModel;
     }

@@ -1,10 +1,24 @@
+import { BookshelfModel } from "bookshelf";
 import forms from "server/core/forms";
+import { EntryImporterError, EntryImporter, EntryReference } from "server/entry/import/entry-import";
 import entryImportService from "server/entry/import/entry-import.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { DashboardLocals } from "./dashboard.middleware";
 
+interface DashbaordEntryImportContext {
+  availableImporters: EntryImporter[];
+  
+  importer?: string;
+  profileIdentifier?: string;
+  oauthIdentifier?: string;
+  entryReferences?: EntryReference[];
+
+  infoMessage?: string;
+  errorMessage?: string;
+}
+
 export async function dashboardEntryImport(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
-  const context: any = {
+  const context: DashbaordEntryImportContext = {
     availableImporters: entryImportService.getAvailableImporters(),
   };
 
@@ -21,11 +35,11 @@ export async function dashboardEntryImport(req: CustomRequest, res: CustomRespon
     const importerProfileIdentifier = context.profileIdentifier || context.oauthIdentifier;
     if (req.body.run) {
       try {
-        let result;
+        let result: BookshelfModel | EntryImporterError;
         for (const entryId of entryIds) {
           result = await entryImportService.createOrUpdateEntry(res.locals.user, context.importer,
             importerProfileIdentifier, entryId);
-          if (result.error) {
+          if ('error' in result) {
             throw new Error(result.error);
           }
         }
@@ -40,8 +54,13 @@ export async function dashboardEntryImport(req: CustomRequest, res: CustomRespon
     }
 
     if (importerProfileIdentifier) {
-      context.entryReferences = await entryImportService.fetchEntryReferences(
+      const entryReferences = await entryImportService.fetchEntryReferences(
         res.locals.user, context.importer, importerProfileIdentifier);
+      if ('error' in entryReferences) {
+        context.errorMessage = entryReferences.error;
+      } else {
+        context.entryReferences = entryReferences;
+      }
     }
   }
 
