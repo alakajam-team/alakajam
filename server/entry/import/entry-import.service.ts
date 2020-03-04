@@ -5,7 +5,7 @@
  */
 
 import * as download from "download";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as path from "path";
 import cache from "server/core/cache";
 import * as configUtils from "server/core/config";
@@ -13,7 +13,6 @@ import enums from "server/core/enums";
 import log from "server/core/log";
 import eventService from "server/event/event.service";
 import * as url from "url";
-import { promisify } from "util";
 import entryImporterItch from "./importer/itch";
 import entryImporterLDJam from "./importer/ldjam";
 import entryImporterLudumDare from "./importer/ludumdare";
@@ -165,8 +164,8 @@ async function createOrUpdateEntry(user, importerId, profileIdentifier, entryId)
         let downloadSuccessful = false;
         try {
           const pictureData = await download(entryDetails.picture);
-          await promisify(fs.writeFile)(temporaryPath, pictureData);
-          await promisify(fs.access)(temporaryPath, fs.constants.R_OK);
+          await fs.writeFile(temporaryPath, pictureData);
+          await fs.access(temporaryPath, fs.constants.R_OK);
           downloadSuccessful = true;
         } catch (e) {
           log.warn("Failed to download entry picture " + entryDetails.picture + " to " + temporaryPath, e);
@@ -181,7 +180,7 @@ async function createOrUpdateEntry(user, importerId, profileIdentifier, entryId)
           }
 
           // Delete temporary picture if needed
-          promisify(fs.unlink)(temporaryPath);
+          fs.unlink(temporaryPath);
         }
       }
     }

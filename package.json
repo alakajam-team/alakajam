@@ -117,6 +117,7 @@
     "@types/csurf": "^1.9.36",
     "@types/express": "^4.17.1",
     "@types/express-session": "^1.15.15",
+    "@types/fs-extra": "^8.1.0",
     "@types/jquery": "^3.3.32",
     "@types/luxon": "^1.15.2",
     "@types/mocha": "^7.0.1",

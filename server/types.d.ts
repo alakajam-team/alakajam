@@ -21,28 +21,26 @@ export interface CustomExpressSession extends Express.Session {
   saveAsync(): Promise<void>;
 }
 
-export type CustomApplication = Omit<Application, "locals"> & {
+export type CustomApplicationLocals = {
   locals: {
     devMode: boolean;
     config: Config;
     sessionStore: any;
     passwordRecoveryTokens: Record<string, { userId: number; expires: number }>;
-  }
+  };
 }
 
-export interface CustomRequest extends Omit<Request, "app"> {
+export interface CustomRequest extends Request {
   /**
    * The user session, the object can be used to store any data we want to retain across the user session.
    * Be careful to save it (with session.saveAsync()) if you set anything, otherwise it will make the server stateful.
    */
   session: CustomExpressSession;
-  app: CustomApplication;
   csrfToken: () => string;
 }
 
-export interface CustomResponse<T extends CommonLocals> extends Omit<Response, "app"> {
+export interface CustomResponse<T extends CommonLocals> extends Response {
   locals: T;
-  app: CustomApplication;
 
   // Custom methods registered on middleware.ts
   errorPage(code: number, error?: Error | string): void;

@@ -5,12 +5,11 @@
  * @module core/file-storage
  */
 
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as mime from "mime-types";
 import * as mkdirp from "mkdirp";
 import * as path from "path";
 import * as url from "url";
-import { promisify } from "util";
 import * as configUtils from "./config";
 import constants from "./constants";
 import { createLuxonDate } from "./formats";
@@ -54,10 +53,10 @@ const IMAGE_HEADER_MAGIC_TO_TYPE = {
 async function getImageType(filepath) {
   // Read the first four bytes of the file to ensure it's an image. See
   // IMAGE_HEADER_MAGIC_TO_TYPE and the stackoverflow link there.
-  const fileHandle = await promisify(fs.open)(filepath, "r");
+  const fileHandle = await fs.open(filepath, "r");
   const buf = Buffer.alloc(8);
-  await promisify(fs.read)(fileHandle, buf, 0, 8, 0);
-  await promisify(fs.close)(fileHandle);
+  await fs.read(fileHandle, buf, 0, 8, 0);
+  await fs.close(fileHandle);
   const leadingBytes = buf.toString("hex", 0, 8);
 
   for (const header in IMAGE_HEADER_MAGIC_TO_TYPE) {
@@ -213,14 +212,14 @@ async function resize(sourcePath, targetPathWithoutExtension, fileExtension, opt
   }
 
   // Copy the image if small enough (or sharp is missing)
-  promisify(fs.copyFile)(sourcePath, targetPathWithoutExtension + "." + fileExtension);
+  await fs.copyFile(sourcePath, targetPathWithoutExtension + "." + fileExtension);
   return res;
 }
 
 async function exists(documentPath) {
   const absolutePath = toAbsolutePath(documentPath);
   try {
-    await promisify(fs.access)(absolutePath, fs.constants.R_OK);
+    await fs.access(absolutePath, fs.constants.R_OK);
     return true;
   } catch (e) {
     return false;
@@ -234,7 +233,7 @@ async function exists(documentPath) {
  */
 async function read(documentPath) {
   const absolutePath = toAbsolutePath(documentPath);
-  const fileBuffer = await promisify(fs.readFile)(absolutePath);
+  const fileBuffer = await fs.readFile(absolutePath);
   return fileBuffer.toString();
 }
 
@@ -253,13 +252,13 @@ async function write(documentPath, data) {
 
   const absolutePath = toAbsolutePath(documentPath);
   await createFolderIfMissing(path.dirname(documentPath));
-  return promisify(fs.writeFile)(absolutePath, data);
+  return fs.writeFile(absolutePath, data);
 }
 
 async function remove(documentPath) {
   const absolutePath = toAbsolutePath(documentPath);
   if (await exists(documentPath)) {
-    await promisify(fs.unlink)(absolutePath);
+    await fs.unlink(absolutePath);
   }
 }
 

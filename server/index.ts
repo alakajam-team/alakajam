@@ -35,7 +35,7 @@ if (config.DEBUG_LONG_PROMISE_TRACES) {
 
 import * as express from "express";
 import * as findUp from "find-up";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as mkdirp from "mkdirp";
 import * as path from "path";
 import * as util from "util";
@@ -181,7 +181,7 @@ function configureBrowserRefresh() {
  */
 async function _createFolderIfMissing(folderPath) {
   try {
-    await util.promisify(fs.access)(folderPath, fs.constants.R_OK);
+    await fs.access(folderPath, fs.constants.R_OK);
   } catch (e) {
     await mkdirp(folderPath);
   }

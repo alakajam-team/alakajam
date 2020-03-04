@@ -22,7 +22,7 @@ import * as randomKey from "random-key";
 import settings from "server/core/settings";
 import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
 import { routes } from "server/routes";
-import { CustomApplication, CustomRequest } from "server/types";
+import { CustomRequest } from "server/types";
 import passwordRecoveryService from "server/user/password-recovery/password-recovery.service";
 import { promisify } from "util";
 import config, * as configUtils from "./config";
@@ -39,7 +39,7 @@ const LAUNCH_TIME = Date.now();
 /*
  * Setup app middleware
  */
-export async function configure(app: CustomApplication) {
+export async function configure(app: express.Application) {
   app.locals.config = config;
 
   // Slow requests logging
@@ -140,7 +140,7 @@ export async function configure(app: CustomApplication) {
     };
 
     next();
-  } as any);
+  });
 
   // Routing: Views
   routes(app);
