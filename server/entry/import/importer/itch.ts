@@ -93,22 +93,22 @@ async function fetchEntryDetails(entryReference: EntryReference): Promise<EntryD
       $(elem).find("a").each((__: number, elem2) => {
         const platformId = $(elem2).attr("href").replace(/.*\/platform-/g, "");
         switch (platformId) {
-          case "windows":
-            platforms.push("Windows");
-            break;
-          case "osx":
-            platforms.push("Mac");
-            break;
-          case "linux":
-            platforms.push("Linux");
-            break;
-          case "ios":
-          case "android":
-            platforms.push("Mobile");
-            break;
-          case "html5":
-            platforms.push("Web");
-            break;
+        case "windows":
+          platforms.push("Windows");
+          break;
+        case "osx":
+          platforms.push("Mac");
+          break;
+        case "linux":
+          platforms.push("Linux");
+          break;
+        case "ios":
+        case "android":
+          platforms.push("Mobile");
+          break;
+        case "html5":
+          platforms.push("Web");
+          break;
         }
       });
     }

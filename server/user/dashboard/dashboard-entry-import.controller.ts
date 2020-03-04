@@ -7,7 +7,7 @@ import { DashboardLocals } from "./dashboard.middleware";
 
 interface DashbaordEntryImportContext {
   availableImporters: EntryImporter[];
-  
+
   importer?: string;
   profileIdentifier?: string;
   oauthIdentifier?: string;
@@ -39,7 +39,7 @@ export async function dashboardEntryImport(req: CustomRequest, res: CustomRespon
         for (const entryId of entryIds) {
           result = await entryImportService.createOrUpdateEntry(res.locals.user, context.importer,
             importerProfileIdentifier, entryId);
-          if ('error' in result) {
+          if ("error" in result) {
             throw new Error(result.error);
           }
         }
@@ -56,7 +56,7 @@ export async function dashboardEntryImport(req: CustomRequest, res: CustomRespon
     if (importerProfileIdentifier) {
       const entryReferences = await entryImportService.fetchEntryReferences(
         res.locals.user, context.importer, importerProfileIdentifier);
-      if ('error' in entryReferences) {
+      if ("error" in entryReferences) {
         context.errorMessage = entryReferences.error;
       } else {
         context.entryReferences = entryReferences;

@@ -12,7 +12,7 @@ export class PostService {
   /**
    * Indicates if a date is already past
    */
-  isPast(time: number): boolean {
+  public isPast(time: number): boolean {
     return time && (new Date().getTime() - time) > 0;
   }
 
@@ -21,7 +21,7 @@ export class PostService {
    * Quick and not-completely-reliable implementation.
    * @param model Any model with a body
    */
-  getFirstPicture(model: BookshelfModel): string | false {
+  public getFirstPicture(model: BookshelfModel): string | false {
     const matches = FIRST_PICTURE_REGEXP.exec(model.get("body"));
     if (matches) {
       return matches[1] || matches[2]; // Markdown capture OR HTML tag capture
@@ -32,7 +32,7 @@ export class PostService {
   /**
    * Finds all posts from a feed (specified through options)
    */
-  findPosts(options: {
+  public findPosts(options: {
     specialPostType?: string;
     allowHidden?: boolean;
     allowDrafts?: boolean;
@@ -81,7 +81,7 @@ export class PostService {
     });
   }
 
-  async findPostById(postId: number): Promise<PostBookshelfModel> {
+  public async findPostById(postId: number): Promise<PostBookshelfModel> {
     return models.Post.where("id", postId)
       .fetch({ withRelated: ["author", "userRoles", "event", "entry", "entry.userRoles"] }) as any;
   }
@@ -91,7 +91,7 @@ export class PostService {
    * @param  {object} options among "id name userId eventId specialPostType allowDrafts"
    * @return {Post}
    */
-  async findPost(options: {
+  public async findPost(options: {
     id?: string;
     name?: string;
     userId?: number;
@@ -116,7 +116,7 @@ export class PostService {
    * @param  {Object} options among "eventId"
    * @return {Post}
    */
-  async findLatestAnnouncement(options: { eventId?: number } = {}): Promise<BookshelfModel> {
+  public async findLatestAnnouncement(options: { eventId?: number } = {}): Promise<BookshelfModel> {
     let query = models.Post
       .where("special_post_type", constants.SPECIAL_POST_TYPE_ANNOUNCEMENT)
       .where("published_at", "<=", createLuxonDate().toJSDate() as any);
@@ -132,7 +132,7 @@ export class PostService {
    * @param user
    * @param eventId the optional ID of an event to associate with.
    */
-  async createPost(user: BookshelfModel, eventId?: number): Promise<PostBookshelfModel> {
+  public async createPost(user: BookshelfModel, eventId?: number): Promise<PostBookshelfModel> {
     const post = new models.Post({
       author_user_id: user.get("id"),
       name: "",
@@ -154,7 +154,7 @@ export class PostService {
    * Updates the comment count on the given node and saves it.
    * @param {Post|Entry} node
    */
-  async refreshCommentCount(node: BookshelfModel): Promise<void> {
+  public async refreshCommentCount(node: BookshelfModel): Promise<void> {
     await node.load("comments");
     const comments = node.related<BookshelfCollection>("comments");
     await node.save({ comment_count: comments.length }, { patch: true });
@@ -165,14 +165,14 @@ export class PostService {
    * @param {Post} post
    * @return {void}
    */
-  async deletePost(post: BookshelfModel): Promise<void> {
+  public async deletePost(post: BookshelfModel): Promise<void> {
     await post.load(["userRoles.user", "comments.user"]);
     post.related<BookshelfCollection>("userRoles").forEach((userRole) => {
-      cache.user(userRole.related<BookshelfModel>("user").get('name')).del("latestPostsCollection");
+      cache.user(userRole.related<BookshelfModel>("user").get("name")).del("latestPostsCollection");
       userRole.destroy();
     });
     post.related<BookshelfCollection>("comments").forEach((comment) => {
-      cache.user(comment.related<BookshelfModel>("user").get('name')).del("byUserCollection");
+      cache.user(comment.related<BookshelfModel>("user").get("name")).del("byUserCollection");
       comment.destroy();
     });
 
@@ -186,7 +186,7 @@ export class PostService {
    * @param  {number} entryId
    * @return {void}
    */
-  async attachPostsToEntry(
+  public async attachPostsToEntry(
     eventId: number,
     userId: number,
     entryId: number,

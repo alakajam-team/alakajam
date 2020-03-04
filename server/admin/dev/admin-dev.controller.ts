@@ -25,7 +25,7 @@ export async function adminDev(req: CustomRequest, res: CustomResponse<CommonLoc
       }
 
       if (alert) {
-        res.locals.alerts.push(alert)
+        res.locals.alerts.push(alert);
       }
     }
 

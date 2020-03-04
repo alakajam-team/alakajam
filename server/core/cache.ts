@@ -65,7 +65,7 @@ export default {
  * Provides access to the cache for user information
  */
 function user(userOrName: BookshelfModel | string) {
-  const userName = (typeof userOrName === "string") ? userOrName : userOrName.get('name');
+  const userName = (typeof userOrName === "string") ? userOrName : userOrName.get("name");
   return new PrefixedNodeCache(cacheMap.users, userName);
 }
 

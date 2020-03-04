@@ -1,4 +1,4 @@
-import { Request, Response, Application } from "express";
+import { Request, Response } from "express";
 import { CommonLocals } from "./common.middleware";
 import { Config } from "./core/config";
 
@@ -21,7 +21,7 @@ export interface CustomExpressSession extends Express.Session {
   saveAsync(): Promise<void>;
 }
 
-export type CustomApplicationLocals = {
+export interface CustomApplicationLocals {
   locals: {
     devMode: boolean;
     config: Config;

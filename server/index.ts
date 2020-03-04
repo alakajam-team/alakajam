@@ -38,7 +38,6 @@ import * as findUp from "find-up";
 import * as fs from "fs-extra";
 import * as mkdirp from "mkdirp";
 import * as path from "path";
-import * as util from "util";
 
 /**
  * Local constants

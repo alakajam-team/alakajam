@@ -27,12 +27,12 @@ const importers: EntryImporter[] = [
 
 export class EntryUmportService {
 
-  getAvailableImporters() {
+  public getAvailableImporters() {
     return importers;
   }
 
-  async fetchEntryReferences(user: BookshelfModel, importerId: string, profileIdentifier: string):
-      Promise<EntryReference[] | EntryImporterError> {
+  public async fetchEntryReferences(user: BookshelfModel, importerId: string, profileIdentifier: string):
+  Promise<EntryReference[] | EntryImporterError> {
     // Fetch and cache entry list
     const cacheKey = importerId + "-" + profileIdentifier;
     const entryReferences = await cache.getOrFetch<EntryReference[] | EntryImporterError>(cache.entryImport, cacheKey, async () => {
@@ -50,7 +50,7 @@ export class EntryUmportService {
       }
     });
 
-    if (!('error' in entryReferences)) {
+    if (!("error" in entryReferences)) {
       // Enhance result by detecting existing entries
       const entries = await eventService.findUserEntries(user);
       for (const entryReference of entryReferences) {
@@ -66,12 +66,12 @@ export class EntryUmportService {
     return entryReferences;
   }
 
-  async createOrUpdateEntry(user: BookshelfModel, importerId: string, profileIdentifier: string, entryId: string):
-      Promise<BookshelfModel | EntryImporterError> {
+  public async createOrUpdateEntry(user: BookshelfModel, importerId: string, profileIdentifier: string, entryId: string):
+  Promise<BookshelfModel | EntryImporterError> {
     try {
       // Find entry reference (hopefully cached)
       const entryReferences = await this.fetchEntryReferences(user, importerId, profileIdentifier);
-      if ('error' in entryReferences) {
+      if ("error" in entryReferences) {
         return { error: "Failed to fetch entry list before downloading entry" };
       }
       const entryReference = entryReferences.find((e) => e.id === entryId);
@@ -86,7 +86,7 @@ export class EntryUmportService {
         return { error: "No importer found with name " + importerId };
       }
       const entryDetails = await importer.fetchEntryDetails(entryReference);
-      if ('error' in entryDetails) {
+      if ("error" in entryDetails) {
         return { error: entryDetails.error };
       }
 

@@ -74,4 +74,12 @@ export default {
   LIKES: {
     like: { icon_unliked: "far fa-gem", icon_liked: "fas fa-gem", title: "Like" },
   },
+  PLATFORM: {
+    WINDOWS: "Windows",
+    LINUX: "Linux",
+    MAC: "Mac",
+    WEB: "Web",
+    MOBILE: "Mobile",
+    RETRO: "Retro"
+  }
 };

@@ -14,7 +14,7 @@ export async function dashboardFeed(req: CustomRequest, res: CustomResponse<Dash
   const dashboardUser = res.locals.dashboardUser;
 
   // if an entry is not in the cache it will return undefined
-  const userCache = cache.user(dashboardUser);
+  const userCache = cache.user(dashboardUser.get("name"));
   let byUserCollection = userCache.get<BookshelfCollection>("byUserCollection");
   let toUserCollection = userCache.get<BookshelfCollection>("toUserCollection");
   let latestEntry = userCache.get<BookshelfModel>("latestEntry");

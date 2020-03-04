@@ -255,7 +255,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
 
       // Set or remove platforms.
       platformService.setEntryPlatforms(entry, platforms || []);
-      cache.user(res.locals.user.get('name')).del("latestEntry");
+      cache.user(res.locals.user.get("name")).del("latestEntry");
       await entry.load(["userRoles.user", "comments", "details", "tags"]);
 
       // Save entry: Redirect to view upon success
@@ -294,7 +294,7 @@ export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryL
     if (event && event.get("status") !== enums.EVENT.STATUS.CLOSED) {
       eventService.refreshEventCounts(event); // No need to await
     }
-    cache.user(res.locals.user.get('name')).del("latestEntry");
+    cache.user(res.locals.user.get("name")).del("latestEntry");
   }
 
   if (event) {
@@ -329,7 +329,7 @@ export async function entryLeave(req: CustomRequest, res: CustomResponse<EntryLo
     });
     await entryTeamService.setTeamMembers(user, entry, newTeamMembers);
 
-    cache.user(user.get('name')).del("latestEntry");
+    cache.user(user.get("name")).del("latestEntry");
   }
 
   if (res.locals.event) {
