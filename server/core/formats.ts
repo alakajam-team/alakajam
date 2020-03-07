@@ -7,6 +7,9 @@ export const ZONE_UTC = "utc";
 luxon.Settings.defaultLocale = "en";
 luxon.Settings.defaultZoneName = ZONE_UTC;
 
+/**
+ * Luxon docs: https://moment.github.io/luxon/docs/
+ */
 export function createLuxonDate(
   date?: string | number | Date,
   options: luxon.DateTimeOptions = {},
