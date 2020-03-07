@@ -72,8 +72,8 @@
       <div class="entry-small-thumb__author" >by 
       {% for userRole in entry.sortedUserRoles() %}
        <a href="{{ routeUrl(userRole, 'user') }}">
-        {{ userRole.get('user_title') }}
-       </a>{{ ', ' if not loop.last }}
+        {{ userRole.get('user_title') -}}
+       </a>{{- ', ' if not loop.last }}
       {% endfor %}
       </div>
     </div>
