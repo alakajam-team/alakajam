@@ -114,7 +114,7 @@ export const UserDetails = bookshelf.model("UserDetails", {
   initialize: function initialize(attrs) {
     this.constructor.__super__.initialize.apply(this, arguments);
     attrs = attrs || {};
-    attrs.social_links = attrs.social_links || [];
+    attrs.social_links = attrs.social_links || {};
     return attrs;
   },
   parse: function parse(attrs) {

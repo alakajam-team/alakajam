@@ -24,8 +24,8 @@ export class UserDetails extends BookshelfCompatibleEntity {
   @Column(ColumnTypes.varchar({ length: 100000 }))
   public body: string;
 
-  @Column(ColumnTypes.varchar({ length: 1000 }))
-  public social_links: {[key: string]: string};
+  @Column({ type: "simple-json" })
+  public social_links: { website?: string; twitter?: string };
 
   public dependents(): Array<keyof this> {
     return [];
