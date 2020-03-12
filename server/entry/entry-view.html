@@ -47,7 +47,7 @@
             {%- set ranking = details.get('ranking_' + categoryIndex) -%}
             {%- if ranking and ranking <= 3 -%}
               <a href="#results">
-                <span class="entry-results__category-medal medal-category-{{categoryIndex}} medal-ranking-{{ranking}}"></span>
+                <span class="entry-results__category-medal medal-category-{{categoryIndex}} medal-ranking-{{ranking}} in-picture"></span>
               </a>
             {%- endif -%}
           {%- endfor -%}
@@ -155,7 +155,7 @@
                 <div class="entry-results__category-ranking">
                   <a href="{{ routeUrl(event, 'event', 'results') }}?sortBy={{ categoryIndex }}&amp;division={{ entry.get('division') }}">
                     {% if ranking <= 3 %}
-                      <span class="entry-results__category-medal medal-category-{{categoryIndex}} medal-ranking-{{ranking}}"></span>
+                      <span class="entry-results__category-medal medal-category-{{categoryIndex}} medal-ranking-{{ranking}} in-picture"></span>
                     {% endif %}
                     {{ ranking | ordinal }}
                   </a>

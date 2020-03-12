@@ -17,7 +17,7 @@
           {%- for categoryIndex in range(1, 7) -%}
             {%- set ranking = details.get('ranking_' + categoryIndex) -%}
             {%- if ranking and ranking <= 3 -%}
-              <span class="entry-results__category-medal medal-category-{{categoryIndex}} medal-ranking-{{ranking}}"></span>
+              <span class="entry-results__category-medal medal-category-{{categoryIndex}} medal-ranking-{{ranking}} in-picture"></span>
             {%- endif %}
           {%- endfor -%}
           {%- endif -%}

@@ -30,9 +30,9 @@
 
   {% if rankings.length > 0 and division !== enums.DIVISION.UNRANKED %}
   <div class="row">
-    <div class="col-sm-{{ 12 - categoryTitles.length }} mb-3">&nbsp;</div>
+    <div class="col-sm-9 col-md-{{ 12 - categoryTitles.length }} mb-3">&nbsp;</div>
     {% for title in categoryTitles %}
-      <div class="col-sm-1 text-center">
+      <div class="col-sm-2 col-md-1 text-center  {{ 'd-none d-md-block' if loop.index !== sortedBy }}">
         <span style="font-weight: bold">{{ categoryTitles[loop.index - 1] }}</span>
       </div>
     {% endfor %}
@@ -42,17 +42,18 @@
   {% for entry in rankings %}
     {% if division !== enums.DIVISION.UNRANKED %}
       <div class="row">
-        <div class="col-1 text-right">
+        <div class="col-sm-2 col-md-1 text-center text-sm-right">
           {% if not currentRanking or currentRanking !== entry.related('details').get('ranking_' + sortedBy) %}
             {% set currentRanking = entry.related('details').get('ranking_' + sortedBy) %}
             <h2>{{ currentRanking | ordinal }}</h2>
           {% endif %}
         </div>
-        <div class="col-sm-{{ 11 - categoryTitles.length }} mb-1">
+        <div class="col-sm-7 col-md-{{ 11 - categoryTitles.length }} mb-1">
           {{ eventMacros.entrySmallThumb(entry) }}
         </div>
         {% for title in categoryTitles %}
-          <div class="col-sm-1 text-center" style="{{ 'background-color: #FAFAFA;' if loop.index === sortedBy }}">
+          <div class="col-sm-2 col-md-1 text-center {{ 'd-none d-md-block' if loop.index !== sortedBy }}"
+            style="{{ 'background-color: #FAFAFA;' if loop.index === sortedBy }}">
             <h4 style="line-height: 50px; vertical-align: middle;">
               {% set rating = entry.related('details').get('rating_' + loop.index) %}
               {{ rating | digits(3) if rating > 0 else 'N.A.' }}
@@ -81,7 +82,7 @@
 {% macro pageLinks(divisions, categoryTitles, selectedDivision, selectedCategoryIndex) %}
 {% if divisions.solo or categoryTitles.length > 1 %}
   <div class="text-center results-links">
-    <span class="btn-group" style="margin-right: 20px">
+    <span class="btn-group mr-sm-4 mb-2">
       {% for division in ['solo','team','unranked'] %}
         <a href="?sortBy={{ selectedCategoryIndex }}&amp;division={{ division }}" type="button" 
             class="btn btn-primary results-links__division {{ 'active' if selectedDivision === division }}">
@@ -91,11 +92,12 @@
       {% endfor %}
     </span>
     {% if selectedDivision != 'unranked' %}
-      <span class="btn-group">
+      <span class="btn-group mb-2">
         {% for title in categoryTitles %}
           <a href="?sortBy={{ loop.index }}&amp;division={{ division }}" type="button" 
               class="btn btn-primary results-links__category {{ 'active' if selectedCategoryIndex === loop.index }}">
-            {{ categoryTitles[loop.index - 1] }}
+            <span class="entry-results__category-medal medal-category-{{ loop.index }} medal-ranking-1"></span>&nbsp;
+            <span class="d-none d-lg-inline">{{- categoryTitles[loop.index - 1] }}</span>
           </a>
         {% endfor %}
       </span>
@@ -144,15 +146,15 @@
     <div class="results-podium-row">
       {% set entryThumbOptions = { hideMedals: categoryTitles.length === 1 } %}
       {% if rankings.length > 0 and division !== enums.DIVISION.UNRANKED %}
-        <div class="col-sm-4 position-1 ranking-{{ rankings[0].related('details').get('ranking_' + sortedBy) }} results-podium__step">
+        <div class="col-md-4 position-1 ranking-{{ rankings[0].related('details').get('ranking_' + sortedBy) }} results-podium__step">
           {{ eventMacros.entryThumb(rankings[0], entryThumbOptions) }}
         </div>
-        <div class="col-sm-4 position-2 ranking-{{ rankings[1].related('details').get('ranking_' + sortedBy)}} {{ 'results-podium__step' if rankings.length >= 2 }}">
+        <div class="col-md-4 position-2 ranking-{{ rankings[1].related('details').get('ranking_' + sortedBy)}} {{ 'results-podium__step' if rankings.length >= 2 }}">
           {% if rankings.length >= 2 %}
             {{ eventMacros.entryThumb(rankings[1], entryThumbOptions) }}
           {% endif %}
         </div>
-        <div class="col-sm-4 position-3 ranking-{{ rankings[2].related('details').get('ranking_' + sortedBy) }} {{ 'results-podium__step' if rankings.length >= 3 }}">
+        <div class="col-md-4 position-3 ranking-{{ rankings[2].related('details').get('ranking_' + sortedBy) }} {{ 'results-podium__step' if rankings.length >= 3 }}">
           {% if rankings.length >= 3 %}
             {{ eventMacros.entryThumb(rankings[2], entryThumbOptions) }}
           {% endif %}

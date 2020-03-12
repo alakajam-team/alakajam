@@ -82,7 +82,7 @@
       {% for entry in (featuredEntries.solo or featuredEntries.ranked) %}
         <div class="event-table__entry">
           {{ eventMacros.entrySmallThumb(entry) }}
-          <span class="entry-results__category-medal medal{{ loop.index }}"></span>
+          <span class="entry-results__category-medal medal{{ loop.index }} in-small-thumb"></span>
         </div>
       {% endfor %}
       </div>
@@ -90,7 +90,7 @@
       {% for entry in featuredEntries.team %}
         <div class="event-table__entry">
           {{ eventMacros.entrySmallThumb(entry) }}
-          <span class="entry-results__category-medal medal{{ loop.index }}"></span>
+          <span class="entry-results__category-medal medal{{ loop.index }} in-small-thumb"></span>
         </div>
       {% endfor %}
       </div>
