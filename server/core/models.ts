@@ -416,6 +416,7 @@ export const EventTemplate = bookshelf.model("EventTemplate", {
  * | date | modified_at | Last modification time (not null)
  * | boolean | allow_anonymous | Are anonymous comments allowed on this entry?
  * | string | status_high_score | High score enablement status ('off', 'normal', 'reversed')
+ * | decimal | hotness | ([-999.99999;999.99999], the higher the hotter)
  */
 export const Entry = bookshelf.model("Entry", {
   tableName: "entry",
@@ -905,6 +906,7 @@ export const TournamentScore = bookshelf.model("TournamentScore", {
  * | dateTime | published_at | Publication time
  * | integer | like_count | Number of likes of any type on this post
  * | string | like_details | JSON array: {type: count}
+ * | decimal | hotness | ([-999.99999;999.99999], the higher the hotter)
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */

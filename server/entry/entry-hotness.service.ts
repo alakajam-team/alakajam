@@ -1,8 +1,26 @@
-import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
+import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel } from "bookshelf";
+import db from "server/core/db";
+import eventService from "server/event/event.service";
+import log from "server/core/log";
 
 const MILLISECONDS_TO_DAYS = 1. / 1000 / 3600 / 24;
 
 export class EntryHotnessService {
+
+  public async refreshEntriesHotness(event: BookshelfModel): Promise<void> {
+    return db.transaction(async (t) => {
+      const entryCollection = await eventService.findGames({
+        eventId: event.get("id"),
+        withRelated: ["details"],
+        pageSize: null
+      }) as BookshelfCollectionOf<EntryBookshelfModel>;
+
+      for (const entry of entryCollection.models) {
+        const entryHotness = await this.computeHotness(entry, event);
+        await entry.save("hotness", entryHotness, { transacting: t });
+      }
+    });
+  }
 
   /**
    * Compute the game hotness according to:
@@ -12,10 +30,10 @@ export class EntryHotnessService {
    * Inspired by the Reddit post sorting algorithm.
    */
   public async computeHotness(entry: EntryBookshelfModel, event: BookshelfModel): Promise<number> {
-    if (!entry.relations.entry_details) { await entry.load("entry_details"); };
-    if (!event.relations.event_details) { await event.load("event_details"); };
+    if (!entry.relations.details) { await entry.load("details"); };
+    if (!event.relations.details) { await event.load("details"); };
 
-    const eventDetails = event.related<BookshelfModel>("event_details");
+    const eventDetails = event.related<BookshelfModel>("details");
     const successScore = this.getSuccessScore(entry, eventDetails);
     const bonusMalusSign = successScore >= 0.5 ? 1 : -1;
     const eventStartedAt = event.get("started_at") as Date;
@@ -41,7 +59,7 @@ export class EntryHotnessService {
    * Returns how successful a game was within its division (close to 0 = first, 1 = last)
    */
   private getRankingPercentage(entry: BookshelfModel, eventDetails: BookshelfModel, categoryIndex: number) {
-    const ranking = entry.related("entry_details").get(`ranking_${categoryIndex}`);
+    const ranking = entry.related("details").get(`ranking_${categoryIndex}`);
     const entryCount = eventDetails.get("division_counts")[entry.get("division")];
     if (ranking && entryCount) {
       return 1. * ranking / entryCount;

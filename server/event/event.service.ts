@@ -6,7 +6,7 @@
  */
 
 import * as Bluebird from "bluebird";
-import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, FetchAllOptions, FetchPageOptions, SortOrder, FetchOptions } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, FetchAllOptions, FetchPageOptions, SortOrder, FetchOptions, BookshelfCollectionOf } from "bookshelf";
 import cache from "server/core/cache";
 import config, { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
@@ -371,7 +371,7 @@ export interface FindGamesOptions extends FetchPageOptions {
  * @param options {object} nameFragment eventId userId platforms tags pageSize page
  *                         withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
  */
-async function findGames(options: FindGamesOptions = {}): Promise<BookshelfCollection | number | string> {
+async function findGames(options: FindGamesOptions = {}): Promise<BookshelfCollectionOf<EntryBookshelfModel> | number | string> {
   let query = new models.Entry()
     .query((qb) => {
       qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id");
@@ -489,7 +489,7 @@ async function findGames(options: FindGamesOptions = {}): Promise<BookshelfColle
   } else if (options.pageSize) {
     return query.fetchPage(options);
   } else {
-    return query.fetchAll(options) as Bluebird<BookshelfCollection>;
+    return query.fetchAll(options) as Bluebird<BookshelfCollectionOf<EntryBookshelfModel>>;
   }
 }
 

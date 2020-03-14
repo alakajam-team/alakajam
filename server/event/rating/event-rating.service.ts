@@ -16,6 +16,7 @@ import settings from "server/core/settings";
 import { SETTING_EVENT_OPEN_VOTING, SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import commentService from "server/post/comment/comment.service";
 import eventService from "../event.service";
+import entryHotnessService from "server/entry/entry-hotness.service";
 
 export default {
   areVotesAllowed,
@@ -348,7 +349,7 @@ function computeKarma(received, given) {
   return Math.floor(Math.max(0, 74 + 8.5 * Math.sqrt(10 + Math.min(given, 100)) - received));
 }
 
-async function computeRankings(event: BookshelfModel) {
+async function computeRankings(event: BookshelfModel): Promise<void> {
   const rankedDivisions = Object.keys(event.get("divisions"));
   if (rankedDivisions.length === 0) {
     return;
@@ -394,12 +395,14 @@ async function computeRankings(event: BookshelfModel) {
     }
   }
 
-  return db.transaction(async (transaction) => {
+  await db.transaction(async (transaction) => {
     for (const entry of rankedEntries.models) {
       const entryDetails = entry.related<BookshelfModel>("details");
       await entryDetails.save(null, { transacting: transaction });
     }
   });
+
+  await entryHotnessService.refreshEntriesHotness(event);
 }
 
 async function clearRankings(event: BookshelfModel) {

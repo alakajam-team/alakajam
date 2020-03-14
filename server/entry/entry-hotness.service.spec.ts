@@ -83,7 +83,7 @@ function fakeEntry(title: string, division: string, rankings: number[]): EntryBo
     title,
     division
   }) as EntryBookshelfModel;
-  entry.relations.entry_details = entryDetails;
+  entry.relations.details = entryDetails;
   entry.related = () => entryDetails;
   return entry;
 }
@@ -98,7 +98,7 @@ function fakeEvent(title: string, categoryCount: number, divisionCounts: Record<
     title,
     started_at: createLuxonDate(startTime, {}, "MM-y").toJSDate()
   }) as BookshelfModel;
-  event.relations.event_details = eventDetails;
+  event.relations.details = eventDetails;
   event.related = () => eventDetails;
   return event;
 }

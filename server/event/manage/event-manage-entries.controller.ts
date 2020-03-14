@@ -2,6 +2,7 @@
 import { BookshelfCollection } from "bookshelf";
 import forms from "server/core/forms";
 import security from "server/core/security";
+import entryHotnessService from "server/entry/entry-hotness.service";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -20,6 +21,10 @@ export async function eventManageEntries(req: CustomRequest, res: CustomResponse
   }
 
   const event = res.locals.event;
+
+  if (req.query.hotness) {
+    await entryHotnessService.refreshEntriesHotness(event);
+  }
 
   // Find all entries
   const findGameOptions: any = {
