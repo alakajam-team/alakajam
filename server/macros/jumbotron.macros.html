@@ -1,8 +1,9 @@
 {% import "post/post.macros.html" as postMacros with context %}
 {% import "event/event.macros.html" as eventMacros with context %}
+{% import "event/tournament/tournament.macros.html" as tournamentMacros with context %}
 {% import "macros/navigation.macros.html" as navigationMacros %}
 
-{% macro eventJumbotron(event, featuredPost, user, entry, options = {}) %}
+{% macro eventJumbotron(event, featuredPost, user, entry, tournamentScore, options = {}) %}
 <div class="event-jumbotron" style="{{ backgroundImage(event) }}">
   <div class="container">
     <div class="row">
@@ -59,9 +60,15 @@
         <div class="row">
           <div class="col-lg-12 col-sm-6 col-12 mb-3">
             <div class="card border-0">
-              <a class="card-header event-jumbotron__shortcut" href="{{ routeUrl(event, 'event', 'my-entry') }}">{{ myEntryTitle(event) }}</a>
+              {% set isTournament = event.get('status_tournament') !== 'disabled' %}
+              <a class="card-header event-jumbotron__shortcut" href="{{ routeUrl(event, 'event', 'tournament-games' if isTournament else 'my-entry') }}">{{ myEntryTitle() }}</a>
               {% if entry %}
                 {{ eventMacros.entrySmallThumb(entry) }}
+              {% elseif event.get('status_tournament') !== 'disabled' %}
+                <div class="card-body text-center p-2">
+                  {{ tournamentMacros.userRanking(user, event, tournamentScore, { compact: true }) }}
+                  <a href="{{ routeUrl(event, 'event', 'tournament-games') }}" class="btn btn-alt btn-lg d-block">Play games</a>
+                </div>
               {% else %}
                 {% set entryCreationEnabled = ['open', 'open_unranked'].includes(event.get('status_entry')) %}
                 {% if entryCreationEnabled %}
@@ -114,10 +121,10 @@
 </div>
 {% endmacro %}
 
-{% macro myEntryTitle(event) %} 
+{% macro myEntryTitle() %} 
 <h4 class="mb-0">
   <span class="event-jumbotron__shortcut-icon"><span class="fas fa-gamepad"></span></span>
-  <span class="event-jumbotron__shortcut-title">My {{ event.get('title') }} entry</span>
+  <span class="event-jumbotron__shortcut-title">My entry</span>
 </h4>
 {% endmacro %}
 

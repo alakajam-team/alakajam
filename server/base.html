@@ -142,6 +142,8 @@
         
         <div class="collapse navbar-collapse" id="navbar-event-dropdown">
           <ul class="navbar-nav">
+            {%- set statusTournament = event.get('status_tournament') -%}
+            
             {%- if not statusTournament or statusTournament === 'disabled' -%}
               {{- eventLink(event, null, 'my-entry', 'My entry', 'play-circle', path) -}}
             {%- endif -%}
@@ -149,7 +151,6 @@
             {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'book', path) -}}
             {{- eventLink(event, null, 'posts', 'Posts', 'newspaper', path) -}}
             
-            {%- set statusTournament = event.get('status_tournament') -%}
             {%- if not statusTournament or statusTournament === 'disabled' -%}
               {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'lightbulb', path) -}}
               {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'gamepad', path) -}}

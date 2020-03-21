@@ -1,0 +1,20 @@
+{% import "user/user.macros.html" as userMacros with context %}
+
+{% macro userRanking(user, event, tournamentScore, options = {}) %}
+
+{% if user %}
+<div class="tournament-user-banner">  
+  <div class="tournament-user-banner__user">{{ userMacros.userAvatar(user, { small: true }) }}</div>
+  <div class="tournament-user-banner__ranking text-center">
+    <div class="d-inline-block text-left">
+      <h1>{{ (tournamentScore.get('ranking') or (event.get('entry_count') + 1)) | ordinal }} {{ 'place' if not options.compact }}</h1>
+      <span class="count"> out of {{ event.get('entry_count') }}</span>
+    </div>
+  </div>
+  <div class="tournament-user-banner__points">
+    <h3>{{ (tournamentScore.get('score') or 0) | int }} pts.</h3>
+  </div>
+</div>
+{% endif %}
+
+{% endmacro %}

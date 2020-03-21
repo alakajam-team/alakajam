@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "event/event.macros.html" as eventMacros with context %}
+{% import "event/tournament/tournament.macros.html" as tournamentMacros with context %}
 {% import "entry/highscore/entry-highscore.macros.html" as scoreMacros with context %}
-{% import "user/user.macros.html" as userMacros with context %}
 {% import "macros/form.macros.html" as formMacros with context %}
 
 {% block body %}
@@ -28,18 +28,8 @@
           Your ranking
           <a href="{{ routeUrl(event, 'event', 'tournament-leaderboard') }}" class="btn btn-sm btn-primary">View leaderboard</a>
         </div>
-        <div class="card tournament-user-banner">  
-          <div class="tournament-user-banner__user">{{ userMacros.userThumb(user, { fullWidth: true }) }}</div>
-          <div class="tournament-user-banner__ranking">
-            <h1>{{ (tournamentScore.get('ranking') or (event.get('entry_count') + 1)) | ordinal }}</h1>
-            <span class="count"> out of {{ event.get('entry_count') }}</span>
-          </div>
-          <div class="tournament-user-banner__points">
-            <h3>{{ (tournamentScore.get('score') or 0) | int }} pts.</h3>
-          </div>
-          <div class="tournament-user-banner__buttons d-none d-sm-block">
-            
-          </div>
+        <div class="card">
+          {{ tournamentMacros.userRanking(user, event, tournamentScore) }}
         </div>
       </div>
       {% endif %}

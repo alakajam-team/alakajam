@@ -32,7 +32,7 @@
       <div class="container">{{ postMacros.post(featuredPost) }}</div>
     </div>
   {% endif %}
-  {{ jumbotronMacros.eventJumbotron(featuredEvent, featuredEventAnnouncement, user, entry, { shrinkedJumbo: shrinkedJumbo }) }}
+  {{ jumbotronMacros.eventJumbotron(featuredEvent, featuredEventAnnouncement, user, entry, tournamentScore, { shrinkedJumbo: shrinkedJumbo }) }}
 {% else %}
 <div class="event-jumbotron" style="{{ jumbotronMacros.backgroundImage(featuredEvent) }}">
   <div class="container">

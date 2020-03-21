@@ -6,7 +6,7 @@
  */
 
 import * as Bluebird from "bluebird";
-import { 
+import {
   BookshelfCollection,
   BookshelfCollectionOf,
   BookshelfModel,

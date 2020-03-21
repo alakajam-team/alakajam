@@ -1,5 +1,5 @@
 
-import { BookshelfCollection, BookshelfModel, PostBookshelfModel, BookshelfCollectionOf, EntryBookshelfModel } from "bookshelf";
+import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel, PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import enums from "server/core/enums";
@@ -9,6 +9,7 @@ import settings from "server/core/settings";
 import { SETTING_FEATURED_POST_ID } from "server/core/settings-keys";
 import { loadUserShortcutsContext } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
+import eventTournamentService from "server/event/tournament/tournament.service";
 import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -23,6 +24,7 @@ interface HomeContext {
   posts: PostBookshelfModel[];
   comments: BookshelfModel[];
   pageCount: number;
+  tournamentScore?: BookshelfModel;
 }
 
 /**
@@ -54,31 +56,33 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
 }
 
 async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeContext> {
+  const { featuredEvent, user } = res.locals;
+
   const context: Partial<HomeContext> = {};
   const contextTasks: Array<Promise<any>> = [];
 
   // Find latest announcement for featured event
-  if (res.locals.featuredEvent) {
+  if (featuredEvent) {
     contextTasks.push(
-      postService.findLatestAnnouncement({ eventId: res.locals.featuredEvent.get("id") })
-        .then((announcement) => { context.featuredEventAnnouncement = announcement; })
+      postService.findLatestAnnouncement({ eventId: featuredEvent.get("id") })
+        .then((announcement) => context.featuredEventAnnouncement = announcement)
         .catch(log.error));
   }
 
   // Fetch event schedule (preferably without displaying too many events after the featured one)
   contextTasks.push(
-    loadEventSchedule(res.locals.featuredEvent)
-      .then((eventSchedule) => { context.eventSchedule = eventSchedule; })
+    loadEventSchedule(featuredEvent)
+      .then((eventSchedule) => context.eventSchedule = eventSchedule)
       .catch(logErrorAndReturn([])));
 
   // Gather featured entries during the voting phase
-  if (res.locals.featuredEvent && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
-    .includes(res.locals.featuredEvent.get("status_results"))) {
+  if (featuredEvent && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
+    .includes(featuredEvent.get("status_results"))) {
     contextTasks.push(
       eventService.findGames({
-        eventId: res.locals.featuredEvent.get("id"),
+        eventId: featuredEvent.get("id"),
         pageSize: 4,
-        notReviewedById: res.locals.user ? res.locals.user.get("id") : undefined,
+        notReviewedById: user ? user.get("id") : undefined,
       })
         .then((suggestedEntriesCollection: BookshelfCollectionOf<EntryBookshelfModel>) => {
           context.suggestedEntries = suggestedEntriesCollection.models;
@@ -111,6 +115,14 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
         }
       })
       .catch(log.error));
+
+  // Fetch tournament score
+  if (user && featuredEvent && featuredEvent.get("status_tournament") !== "disabled") {
+    contextTasks.push(
+      eventTournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id"))
+        .then((tournamentScore) => context.tournamentScore = tournamentScore)
+        .catch(log.error));
+  }
 
   // Fetch all the things at once!
   await Promise.all(contextTasks);

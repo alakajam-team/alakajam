@@ -32,13 +32,10 @@
 </div>
 {% endmacro %}
 
-{% macro userAvatar(user) %}
+{% macro userAvatar(user, options = {}) %}
+{% set src = pictureUrl(user.get('avatar'), user) if user.get('avatar') else staticUrl('/static/images/default-avatar.png') %}
 <a href="{{ routeUrl(user, 'user') }}">
-  {% if user.get('avatar') %}
-    <img src="{{ pictureUrl(user.get('avatar'), user) }}" />
-  {% else %}
-    <img src="{{ staticUrl('/static/images/default-avatar.png') }}" />
-  {% endif %}
+  <img class="{{ 'small-avatar' if options.small }}" src="{{ src }}" />
 </a>
 {% endmacro %}
 
