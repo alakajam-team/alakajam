@@ -3,7 +3,7 @@ import { BookshelfCollection } from "bookshelf";
 import forms from "server/core/forms";
 import security from "server/core/security";
 import entryHotnessService from "server/entry/entry-hotness.service";
-import eventService from "server/event/event.service";
+import eventService, { FindGamesOptions } from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
@@ -27,13 +27,13 @@ export async function eventManageEntries(req: CustomRequest, res: CustomResponse
   }
 
   // Find all entries
-  const findGameOptions: any = {
+  const findGameOptions: Partial<FindGamesOptions> = {
     eventId: event.get("id"),
     pageSize: null,
     withRelated: ["userRoles", "details"],
   };
   if (req.query.orderBy === "ratingCount") {
-    findGameOptions.sortByRatingCount = true;
+    findGameOptions.sortBy = "rating-count";
   }
   const entriesCollection = await eventService.findGames(findGameOptions) as BookshelfCollection;
 

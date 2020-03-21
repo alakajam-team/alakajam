@@ -47,11 +47,11 @@ describe("Entry hotness service", function() {
       expect(hotnessEntry2020).to.be.greaterThan(hotnessEntry2019);
     });
 
-    it("should make winner of big jam hotter than winner of small jam", async () => {
+    it("should make non-winner of big jam hotter than that of small jam", async () => {
       const eventSmall = fakeEvent("Small Event", ONE_CATEGORY, { solo: 10 }, "01-2020");
       const eventBig = fakeEvent("Big Event", ONE_CATEGORY, { solo: 100 }, "01-2020");
-      const entrySmall = fakeEntry("Small Winner", "solo", [1]);
-      const entryBig = fakeEntry("Big Winner", "solo", [1]);
+      const entrySmall = fakeEntry("Small Winner", "solo", [2]);
+      const entryBig = fakeEntry("Big Winner", "solo", [2]);
 
       const hotnessEntrySmall = await entryHotnessService.computeHotness(entrySmall, eventSmall);
       const hotnessEntryBig = await entryHotnessService.computeHotness(entryBig, eventBig);

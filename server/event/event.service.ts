@@ -6,7 +6,16 @@
  */
 
 import * as Bluebird from "bluebird";
-import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, FetchAllOptions, FetchPageOptions, SortOrder, FetchOptions, BookshelfCollectionOf } from "bookshelf";
+import { 
+  BookshelfCollection,
+  BookshelfCollectionOf,
+  BookshelfModel,
+  EntryBookshelfModel,
+  FetchAllOptions,
+  FetchOptions,
+  FetchPageOptions,
+  SortOrder
+} from "bookshelf";
 import cache from "server/core/cache";
 import config, { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
@@ -351,11 +360,8 @@ async function deleteEntry(entry) {
 }
 
 export interface FindGamesOptions extends FetchPageOptions {
-  [key: string]: any;
   count?: boolean;
-  sortByRatingCount?: boolean;
-  sortByRating?: boolean;
-  sortByRanking?: boolean;
+  sortBy?: "rating-count" | "rating" | "ranking" | "hotness" | "karma";
   eventId?: number;
   search?: string;
   platforms?: string[];
@@ -363,14 +369,11 @@ export interface FindGamesOptions extends FetchPageOptions {
   divisions?: string[];
   notReviewedById?: string;
   userId?: number;
+  user?: BookshelfModel;
   highScoresSupport?: boolean;
   allowsTournamentUse?: boolean;
 }
 
-/**
- * @param options {object} nameFragment eventId userId platforms tags pageSize page
- *                         withRelated notReviewedBy sortByRatingCount sortByRating sortByRanking
- */
 async function findGames(options: FindGamesOptions = {}): Promise<BookshelfCollectionOf<EntryBookshelfModel> | number | string> {
   let query = new models.Entry()
     .query((qb) => {
@@ -379,11 +382,15 @@ async function findGames(options: FindGamesOptions = {}): Promise<BookshelfColle
 
   // Sorting
   if (!options.count) {
-    if (options.sortByRatingCount) {
+    if (options.sortBy === "hotness") {
+      query = query.query((qb) => {
+        qb.orderBy("entry.hotness", "desc");
+      });
+    } else if (options.sortBy === "rating-count") {
       query = query.query((qb) => {
         qb.orderBy("entry_details.rating_count");
       });
-    } else if (options.sortByRating) {
+    } else if (options.sortBy === "rating") {
       query = query.query((qb) => {
         qb.leftJoin("event", "entry.event_id", "event.id")
           .where(function() {
@@ -393,7 +400,7 @@ async function findGames(options: FindGamesOptions = {}): Promise<BookshelfColle
             + ((config.DB_TYPE === "postgresql") ? "DESC NULLS LAST" : "IS NULL DESC"))
           .orderBy("entry.karma", "DESC");
       });
-    } else if (options.sortByRanking) {
+    } else if (options.sortBy === "ranking") {
       query = query.query((qb) => {
         qb.leftJoin("event", "entry.event_id", "event.id")
           .where(function() {
@@ -403,7 +410,7 @@ async function findGames(options: FindGamesOptions = {}): Promise<BookshelfColle
           .orderBy("entry.created_at", "DESC")
           .orderBy("entry.division");
       });
-    } else if (options.eventId !== null) {
+    } else if (options.eventId !== null || options.sortBy === "karma") {
       query = query.orderBy("entry.karma", "DESC");
     }
     query = query.orderBy("entry.created_at", "DESC");

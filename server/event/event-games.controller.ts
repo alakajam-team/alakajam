@@ -123,6 +123,7 @@ export async function handleGameSearch(req, res, searchOptions: FindGamesOptions
   }
 
   // Event
+  searchOptions.sortBy = "hotness";
   if (req.query.eventId === "none") {
     searchOptions.eventId = null;
   } else if (forms.isId(req.query.eventId)) {
@@ -132,9 +133,8 @@ export async function handleGameSearch(req, res, searchOptions: FindGamesOptions
   } else if (req.query.eventId === undefined && res.locals.featuredEvent &&
       [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
         .includes(res.locals.featuredEvent.get("status_results"))) {
+    searchOptions.sortBy = "karma";
     searchOptions.eventId = res.locals.featuredEvent.get("id");
-  } else {
-    searchOptions.sortByRating = true;
   }
 
   // Hide rated/commented
@@ -142,15 +142,9 @@ export async function handleGameSearch(req, res, searchOptions: FindGamesOptions
     searchOptions.notReviewedById = res.locals.user.get("id");
   }
 
-  // High scores
-  if (req.query.highScoresSupport) {
-    searchOptions.highScoresSupport = true;
-  }
-
-  // Allows tournament use
-  if (req.query.allowsTournamentUse) {
-    searchOptions.allowsTournamentUse = true;
-  }
+  // Other filters
+  searchOptions.highScoresSupport = Boolean(req.query.highScoresSupport);
+  searchOptions.allowsTournamentUse = Boolean(req.query.allowsTournamentUse);
 
   return searchOptions;
 }

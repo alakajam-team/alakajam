@@ -37,7 +37,7 @@ export async function events(req: CustomRequest, res: CustomResponse<CommonLocal
       if (event.get("status_results") === enums.EVENT.STATUS_RESULTS.RESULTS) {
         const topEntries = await eventService.findGames({
           eventId: event.get("id"),
-          sortByRanking: true,
+          sortBy: "ranking",
           pageSize: 6,
           withRelated: ["details", "userRoles"],
         }) as BookshelfCollection;

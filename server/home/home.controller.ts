@@ -1,5 +1,5 @@
 
-import { BookshelfCollection, BookshelfModel, PostBookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, PostBookshelfModel, BookshelfCollectionOf, EntryBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import enums from "server/core/enums";
@@ -80,7 +80,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
         pageSize: 4,
         notReviewedById: res.locals.user ? res.locals.user.get("id") : undefined,
       })
-        .then((suggestedEntriesCollection: BookshelfCollection) => {
+        .then((suggestedEntriesCollection: BookshelfCollectionOf<EntryBookshelfModel>) => {
           context.suggestedEntries = suggestedEntriesCollection.models;
         })
         .catch(logErrorAndReturn([])));
