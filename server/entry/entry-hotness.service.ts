@@ -37,7 +37,7 @@ export class EntryHotnessService {
     const eventDetails = event.related<BookshelfModel>("details");
     const successScore = this.getSuccessScore(entry, eventDetails);
     const bonusMalusSign = successScore >= 0.5 ? 1 : -1;
-    const eventStartedAt = event.get("started_at") as Date;
+    const eventStartedAt = event.get("started_at") ? event.get("started_at") as Date : new Date(0);
     return Math.log10(successScore + 0.01)
       + bonusMalusSign * eventStartedAt.getTime() * MILLISECONDS_TO_DAYS / HOTNESS_AGING_SPEED;
   }
