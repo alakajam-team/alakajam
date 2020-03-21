@@ -37,7 +37,7 @@ export class GameSearchBlockPO {
   }
 
   public get gamesList() {
-    return cy.get(".game-grid, .game-grid-3");
+    return cy.get(".game-grid");
   }
 
   public get gameLinks() {

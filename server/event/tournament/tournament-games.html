@@ -6,31 +6,6 @@
 
 {% block body %}
 
-{% if user %}
-<div class="container">
-  <div class="row">
-    <div class="col-md-8 offset-md-2">
-      <div class="action-banner">
-        <div class="action-banner__title">Your ranking</div>
-        <div class="card tournament-user-banner">  
-          <div class="tournament-user-banner__user">{{ userMacros.userThumb(user, { fullWidth: true }) }}</div>
-          <div class="tournament-user-banner__ranking">
-            <h1>{{ (tournamentScore.get('ranking') or (event.get('entry_count') + 1)) | ordinal }}</h1>
-            <span class="count"> out of {{ event.get('entry_count') }}</span>
-          </div>
-          <div class="tournament-user-banner__points">
-            <h3>{{ (tournamentScore.get('score') or 0) | int }} pts.</h3>
-          </div>
-          <div class="tournament-user-banner__buttons d-none d-sm-block">
-            <a href="{{ routeUrl(event, 'event', 'tournament-leaderboard') }}" class="btn btn-outline-primary">View in leaderboard</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
-
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
@@ -45,9 +20,37 @@
       {% endif %}
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-9 col-sm-12">
-      <div class="game-grid-3 tournament">
+  <div class="row d-flex px-3">
+    <div class="d-none d-md-block pr-5">
+      {% if user %}
+      <div class="action-banner">
+        <div class="action-banner__title">
+          Your ranking
+          <a href="{{ routeUrl(event, 'event', 'tournament-leaderboard') }}" class="btn btn-sm btn-primary">View leaderboard</a>
+        </div>
+        <div class="card tournament-user-banner">  
+          <div class="tournament-user-banner__user">{{ userMacros.userThumb(user, { fullWidth: true }) }}</div>
+          <div class="tournament-user-banner__ranking">
+            <h1>{{ (tournamentScore.get('ranking') or (event.get('entry_count') + 1)) | ordinal }}</h1>
+            <span class="count"> out of {{ event.get('entry_count') }}</span>
+          </div>
+          <div class="tournament-user-banner__points">
+            <h3>{{ (tournamentScore.get('score') or 0) | int }} pts.</h3>
+          </div>
+          <div class="tournament-user-banner__buttons d-none d-sm-block">
+            
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <h2>Recent scores</h2>
+      {% for entryScore in activeEntries %}
+        {{ scoreMacros.highScoreThumb(entryScore) }}
+      {% endfor %}
+    </div>
+    <div class="flex-grow-1">
+      <div class="game-grid tournament {{ 'line-of-3-entries' if entries.length === 6 }} tournament">
         {% for entry in entries %}
         <div class="game-grid-entry">
           {{ eventMacros.entryThumb(entry) }}
@@ -60,12 +63,6 @@
         </div>
         {% endfor %}
       </div>
-    </div>
-    <div class="col-md-3 d-none d-md-block">
-      <h2>Recent scores</h2>
-      {% for entryScore in activeEntries %}
-        {{ scoreMacros.highScoreThumb(entryScore) }}
-      {% endfor %}
     </div>
   </div>
   <div class="row">

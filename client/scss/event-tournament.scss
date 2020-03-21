@@ -32,16 +32,10 @@
     vertical-align: middle;
     margin: 0;
   }
-
-  &__buttons {
-    padding-left: 20px;
-    line-height: 70px;
-    vertical-align: middle;
-  }
 }
 
 /* Event tournament game grid is not perfect, when css-grid-2 will be ready we can use https://www.w3.org/TR/css-grid-2/#subgrids*/
-.tournament.game-grid, .tournament.game-grid-3 {
+.game-grid.tournament {
   & .entry-thumb {
     flex: none;
     &__author {
