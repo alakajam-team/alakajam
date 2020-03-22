@@ -36,6 +36,23 @@
 
 /* Event tournament game grid is not perfect, when css-grid-2 will be ready we can use https://www.w3.org/TR/css-grid-2/#subgrids*/
 .game-grid.tournament {
+  @media (min-width: 576px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 1650px) {
+    grid-template-columns: repeat(4, 1fr);
+
+  }
+
+  &.line-of-3-entries {
+    @media (min-width: 992px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (min-width: 1200px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
   & .entry-thumb {
     flex: none;
     &__author {

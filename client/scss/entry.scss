@@ -27,25 +27,6 @@
   }
 }
 
-.game-grid.tournament {
-  @media (min-width: 576px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @media (min-width: 1720px) {
-    grid-template-columns: repeat(4, 1fr);
-
-  }
-
-  &.line-of-3-entries {
-    @media (min-width: 992px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    @media (min-width: 1200px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-}
-
 .game-grid-entry {
   display: flex;
   flex-direction: column;
