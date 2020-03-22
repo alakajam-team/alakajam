@@ -5,8 +5,8 @@
 .game-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  grid-gap: 20px;
-  padding-bottom: 20px;
+  grid-gap: 15px;
+  padding-bottom: 15px;
   
   @media (min-width: 576px) {
     grid-template-columns: repeat(2, 1fr);
@@ -18,12 +18,12 @@
 @media (min-width: 1200px) {
   .container .game-grid {
     grid-template-columns: repeat(3, 1fr);
-    grid-gap: 20px;
+    grid-gap: 15px;
   }
 
   .game-grid, .container .home-grid.game-grid {
     grid-template-columns: repeat(4, 1fr);
-    grid-gap: 30px;
+    grid-gap: 15px;
   }
 }
 
