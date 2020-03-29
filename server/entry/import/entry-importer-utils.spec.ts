@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import "module-alias/register";
 import enums from "server/core/enums";
-import { capitalizeAllWords, guessPlatforms } from "./entry-importer-tools";
+import { capitalizeAllWords, guessPlatforms } from "./entry-importer-utils";
 
-describe("Entry importer tools", () => {
+describe("Entry importer utils", () => {
 
   describe("Guess platforms", () => {
 

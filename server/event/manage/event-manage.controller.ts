@@ -91,7 +91,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
       const file = files.logo ? files.logo[0] : null;
       const result = await fileStorage.savePictureToModel(event, "logo", file,
         req.body["logo-delete"], `/events/${event.get("name")}/logo`, { maxDiagonal: 1000 });
-      if (result.error) {
+      if ("error" in result) {
         errorMessage = result.error;
       }
     }
@@ -160,7 +160,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         const file = files.banner ? files.banner[0] : null;
         const result = await fileStorage.savePictureToModel(eventDetails, "banner", file,
           req.body["banner-delete"], `/events/${event.get("name")}/banner`, { maxDiagonal: 3000 });
-        if (result.error) {
+        if ("error" in result) {
           errorMessage = result.error;
         }
       }
@@ -168,7 +168,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         const file = files.background ? files.background[0] : null;
         const result = await fileStorage.savePictureToModel(eventDetails, "background", file,
           req.body["background-delete"], `/events/${event.get("name")}/background`, { maxDiagonal: 3000 });
-        if (result.error) {
+        if ("error" in result) {
           errorMessage = result.error;
         }
       }

@@ -96,7 +96,7 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
   const userEntries = await eventService.findUserEntries(res.locals.dashboardUser);
   const result = await userService.deleteUser(res.locals.dashboardUser, userEntries);
 
-  if (!result.error) {
+  if (!("error" in result)) {
     if (deletingOwnAccount) {
       logout(req, res);
     } else {

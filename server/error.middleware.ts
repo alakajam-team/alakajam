@@ -1,15 +1,16 @@
-import { Response } from "express";
+import { Response, NextFunction } from "express";
 import log from "server/core/log";
-import { CustomRequest } from "./types";
+import { CustomRequest, CustomResponse } from "./types";
+import { CommonLocals } from "./common.middleware";
 
 /**
  * Routing: 500/404
  * @param devMode
  */
 export function createErrorRenderingMiddleware(devMode: boolean) {
-  return (error, req, res, next) => {
+  return (error: any, req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction) => {
     if (!error) {
-      errorPage(req, res, 404, undefined, devMode);
+      errorPage(req, res, 404, undefined, {showErrorDetails: devMode});
     } else {
       if (error.code === "EBADCSRFTOKEN") {
         // Replace the default error message from csurf by something more user friendly.
@@ -19,24 +20,25 @@ export function createErrorRenderingMiddleware(devMode: boolean) {
         error.statusCode = 400;
         error.message = "Attachment is too large, please go back and check the size limit";
       }
-      errorPage(req, res, error.statusCode || 500, error, devMode);
+      errorPage(req, res, error.statusCode || 500, error, {showErrorDetails: devMode});
     }
   };
 }
 
 /**
  * Function displaying an error page
- * @param req
- * @param res
- * @param code HTTP error code
- * @param error object or string message (optional)
- * @param devMode
  */
-export function errorPage(req: CustomRequest, res: Response, code: number, error?: Error|string, devMode?: boolean) {
-  const stack = (devMode && typeof error === "object") ? error.stack : undefined;
+export function errorPage(
+  req: CustomRequest,
+  res: Response,
+  httpCode: number,
+  error?: Error|string,
+  options: {showErrorDetails?: boolean} = {}) {
+
+  const stack = (options.showErrorDetails && typeof error === "object") ? error.stack : undefined;
   let message = (typeof error === "object") ? error.message : error;
   let title;
-  switch (code) {
+  switch (httpCode) {
   case 404:
     title = "Page not found";
     break;
@@ -45,7 +47,7 @@ export function errorPage(req: CustomRequest, res: Response, code: number, error
     break;
   case 500:
     title = "Internal error";
-    if (!devMode) {
+    if (!options.showErrorDetails) {
       message = "Something went wrong, sorry about that.";
     }
     break;
@@ -54,14 +56,14 @@ export function errorPage(req: CustomRequest, res: Response, code: number, error
   }
 
   // Internal error logging
-  if (code !== 404 && code !== 403) {
-    log.error(`HTTP ${code}: ${message}` + ((error && typeof error === "object") ? "\n" + error.stack : ""));
+  if (httpCode !== 404 && httpCode !== 403) {
+    log.error(`HTTP ${httpCode}: ${message}` + ((error && typeof error === "object") ? "\n" + error.stack : ""));
   }
 
   // Page rendering
-  res.status(code);
+  res.status(httpCode);
   res.render("error", {
-    code,
+    code: httpCode,
     title,
     message,
     stack,

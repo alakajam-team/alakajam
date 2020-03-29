@@ -27,7 +27,7 @@ const importers: EntryImporter[] = [
 
 export class EntryUmportService {
 
-  public getAvailableImporters() {
+  public getAvailableImporters(): EntryImporter[] {
     return importers;
   }
 
@@ -139,7 +139,7 @@ export class EntryUmportService {
           // Create actual entry picture
           if (downloadSuccessful) {
             const result = await eventService.setEntryPicture(entryModel, temporaryPath);
-            if (result.error) {
+            if ("error" in result) {
               log.warn("Failed to save picture upload " + temporaryPath);
               log.warn(result.error);
             }
@@ -161,9 +161,8 @@ export class EntryUmportService {
     }
   }
 
-  private getImporter(id) {
-    const found = importers.find((importer) => importer.config.id === id);
-    return found || null;
+  private getImporter(id): EntryImporter | undefined {
+    return importers.find((importer) => importer.config.id === id);
   }
 
 }

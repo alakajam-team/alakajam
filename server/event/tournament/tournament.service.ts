@@ -1,10 +1,3 @@
-
-/**
- * Service for managing tournaments.
- *
- * @module services/event-tournament-service
- */
-
 import * as Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as leftPad from "left-pad";
@@ -18,6 +11,9 @@ export interface FindActiveTournamentOptions {
   allowedTournamentStates?: string[];
 }
 
+/**
+ * Service for managing tournaments.
+ */
 export class TournamentService {
 
   public async findActiveTournament(options: FindActiveTournamentOptions = {}): Promise<BookshelfModel> {

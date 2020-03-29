@@ -28,7 +28,7 @@ export async function entryHighscoresManage(req: CustomRequest, res: CustomRespo
         const parsedField = field.split("-");
         const id = parsedField.length === 2 ? parsedField[1] : null;
         if (id && forms.isId(id)) {
-          await highscoreService.setEntryScoreActive(id, field.includes("restore"));
+          await highscoreService.setEntryScoreActive(parseInt(id, 10), field.includes("restore"));
         }
       } else if (field === "clearall") {
         await highscoreService.deleteAllEntryScores(entry);

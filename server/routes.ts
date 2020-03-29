@@ -1,5 +1,5 @@
 import * as csurf from "csurf";
-import { RequestHandler } from "express";
+import { RequestHandler, NextFunction } from "express";
 import expressPromiseRouter from "express-promise-router";
 import * as multer from "multer";
 import * as randomKey from "random-key";
@@ -17,7 +17,7 @@ import { adminStatus } from "./admin/status/admin-status.controller";
 import { adminTags } from "./admin/tags/admin-tags.controller";
 import { adminUsers } from "./admin/users/admin-users.controller";
 import * as apiController from "./api/api.controller";
-import { commonMiddleware } from "./common.middleware";
+import { commonMiddleware, CommonLocals } from "./common.middleware";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
 import { inviteAccept, inviteDecline } from "./entry/entry-invite.controller";
@@ -69,10 +69,11 @@ import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
+import { CustomRequest, CustomResponse } from "./types";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
-const csrfDisabled: RequestHandler = (req, res, next) => {
+const csrfDisabled: RequestHandler = (req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction) => {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   req.csrfToken = () => "";
   next();

@@ -306,7 +306,7 @@ export async function getUserSearch(req: CustomRequest, res: CustomResponse<Comm
     status = 401;
   }
 
-  if (!json.error) {
+  if (!("error" in json)) {
     const users = await userService.findUsers({
       search: req.query.title,
       pageSize: 30,

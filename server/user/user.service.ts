@@ -1,9 +1,3 @@
-/**
- * User service
- *
- * @module services/user-service
- */
-
 import Bluebird = require("bluebird");
 import { BookshelfCollection, BookshelfModel, FetchPageOptions } from "bookshelf";
 import * as crypto from "crypto";

@@ -1,7 +1,5 @@
 /**
  * Functions for helping with entry importer implementations
- *
- * @module services/entry-importers/entry-importers-tools
  */
 
 const PLATFORM_KEYWORDS = {

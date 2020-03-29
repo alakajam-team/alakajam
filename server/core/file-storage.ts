@@ -102,7 +102,7 @@ async function savePictureToModel(model, attribute, fileUpload, deleteFile,
   } else if (fileUpload) {
     // Upload or replace picture
     const result = await savePictureUpload(fileUpload, targetPathWithoutExtension, options);
-    if (!result.error) {
+    if (!("error" in result)) {
       const previousPath = model.get(attribute);
       if (previousPath && previousPath !== result.finalPath) {
         await remove(previousPath);

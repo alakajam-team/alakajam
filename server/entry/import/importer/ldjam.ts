@@ -11,7 +11,7 @@ import enums from "server/core/enums";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import { EntryDetails, EntryImporter, EntryImporterError, EntryReference } from "../entry-import.d";
-import * as entryImporterTools from "../entry-importer-tools";
+import * as entryImporterTools from "../entry-importer-utils";
 
 const ldJamEntryImporter: EntryImporter = {
   config: {

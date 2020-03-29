@@ -3,6 +3,7 @@ import { PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import postService from "./post.service";
+import { CustomRequest, CustomResponse } from "server/types";
 
 export interface PostLocals extends CommonLocals {
 
@@ -13,10 +14,10 @@ export interface PostLocals extends CommonLocals {
 
 }
 
-export async function postMiddleware(req, res, next) {
+export async function postMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next) {
   if (req.params.postId && req.params.postId !== "create") {
     if (forms.isId(req.params.postId)) {
-      res.locals.post = await postService.findPostById(req.params.postId);
+      res.locals.post = await postService.findPostById(parseInt(req.params.postId, 10));
       if (res.locals.post && res.locals.post.get("event_id")) {
         res.locals.event = res.locals.post.related("event");
         if (res.locals.event) {

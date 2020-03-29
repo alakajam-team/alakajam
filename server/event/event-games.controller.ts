@@ -11,6 +11,7 @@ import eventRatingService from "server/event/rating/event-rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 import { EventLocals } from "./event.middleware";
+import { CommonLocals } from "server/common.middleware";
 
 /**
  * Browse event games
@@ -65,7 +66,11 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
  * @param  {object} searchOptions initial search options
  * @return {object} search options
  */
-export async function handleGameSearch(req, res, searchOptions: FindGamesOptions = {}): Promise<FindGamesOptions> {
+export async function handleGameSearch(
+  req: CustomRequest,
+  res: CustomResponse<CommonLocals>,
+  searchOptions: FindGamesOptions = {}): Promise<FindGamesOptions> {
+
   // Pagination
   searchOptions.pageSize = 20;
   searchOptions.page = 1;

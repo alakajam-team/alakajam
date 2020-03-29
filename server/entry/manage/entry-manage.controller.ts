@@ -142,7 +142,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       entry.set("pictures", { previews: [] });
     } else if (req.file && (await fileStorage.isValidPicture(req.file.path))) {
       const result = await eventService.setEntryPicture(entry, req.file);
-      if (result.error) {
+      if ("error" in result) {
         errorMessages.push(result.error);
       }
     }

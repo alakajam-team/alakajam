@@ -3,6 +3,7 @@ import highScoreService from "server/entry/highscore/entry-highscore.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
+import { BookshelfModel } from "bookshelf";
 
 /**
  * View the games of a tournament
@@ -19,7 +20,7 @@ export async function viewEventTournamentGames(req: CustomRequest, res: CustomRe
   }
 
   const tournamentEntries = await eventTournamentService.findTournamentEntries(event, { withDetails: true });
-  const entries = tournamentEntries.map((tEntry) => tEntry.related("entry"));
+  const entries = tournamentEntries.map((tEntry) => tEntry.related("entry")) as BookshelfModel[];
   const highScoresMap = await highScoreService.findHighScoresMap(entries);
   const userScoresMap = user ? await highScoreService.findUserScoresMapByEntry(user.get("id"), entries) : {};
   const tournamentScore = user ? await eventTournamentService.findOrCreateTournamentScore(

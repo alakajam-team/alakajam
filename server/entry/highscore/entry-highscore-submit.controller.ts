@@ -77,7 +77,7 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
         const proofPath = `/scores/${entry.get("id")}/${entryScore.get("user_id")}`;
         const result = await fileStorage.savePictureToModel(entryScore,
           "proof", req.file, req.body["upload-delete"], proofPath);
-        if (result.error) {
+        if ("error" in result) {
           errorMessage = result.error;
         }
       } else {
@@ -88,7 +88,7 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
     // Saving
     if (!errorMessage) {
       const result = await highscoreService.submitEntryScore(entryScore, entry);
-      if (result.error) {
+      if ("error" in result) {
         errorMessage = result.error;
       } else {
         entryScore = result;
