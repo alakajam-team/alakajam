@@ -19,7 +19,7 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
     res.locals.pageDescription = forms.markdownToText(profileUser.related("details").get("body"));
 
     const [entries, posts, scores] = await Promise.all([
-      eventService.findUserEntries(profileUser),
+      eventService.findUserEntries(profileUser as any),
       postService.findPosts({ userId: profileUser.get("id") }),
       highScoreService.findUserScores(profileUser.get("id"), { sortBy: "ranking" }),
     ]);

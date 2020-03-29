@@ -1,5 +1,5 @@
-import { BookshelfModel } from "bookshelf";
 import * as luxon from "luxon";
+import { User } from "server/entity/user.entity";
 import constants from "./constants";
 
 export const ZONE_UTC = "utc";
@@ -32,7 +32,7 @@ export function createLuxonDate(
 
 export function formatDate(
   date: string | number | Date | undefined,
-  user: BookshelfModel | undefined,
+  user: User | undefined,
   format: string,
   options: { utcSuffixByDefault?: boolean } = { utcSuffixByDefault: true }): string {
   if (date) {

@@ -5,7 +5,8 @@
  * @module services/security-service
  */
 
-import { BookshelfModel, BookshelfCollection } from "bookshelf";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { User } from "server/entity/user.entity";
 import enums from "./enums";
 import * as models from "./models";
 
@@ -28,19 +29,19 @@ export class Security {
   /**
    * Checks if a user is watching the given model for receiving notifications
    */
-  public isUserWatching(user: BookshelfModel, model: BookshelfModel): boolean {
+  public isUserWatching(user: User, model: BookshelfModel): boolean {
     return this.canUser(user, model, "watch");
   }
 
-  public canUserRead(user: BookshelfModel, model: BookshelfModel, options: SecurityOptions = {}) {
+  public canUserRead(user: User, model: BookshelfModel, options: SecurityOptions = {}) {
     return this.canUser(user, model, "read", options);
   }
 
-  public canUserWrite(user: BookshelfModel, model: BookshelfModel, options: SecurityOptions = {}): boolean {
+  public canUserWrite(user: User, model: BookshelfModel, options: SecurityOptions = {}): boolean {
     return this.canUser(user, model, "write", options);
   }
 
-  public canUserManage(user: BookshelfModel, model: BookshelfModel, options: SecurityOptions = {}): boolean {
+  public canUserManage(user: User, model: BookshelfModel, options: SecurityOptions = {}): boolean {
     return this.canUser(user, model, "manage", options);
   }
 
@@ -49,7 +50,7 @@ export class Security {
    * Warning: Always returns false if no model is given.
    */
   public canUser(
-    user: BookshelfModel,
+    user: User,
     model: BookshelfModel,
     permission: SecurityPermission,
     options: SecurityOptions = {}): boolean {
@@ -95,11 +96,11 @@ export class Security {
     return false;
   }
 
-  public isMod(user: BookshelfModel) {
+  public isMod(user: User) {
     return user && (user.get("is_mod") || user.get("is_admin"));
   }
 
-  public isAdmin(user: BookshelfModel) {
+  public isAdmin(user: User) {
     return user && user.get("is_admin");
   }
 
@@ -124,7 +125,7 @@ export class Security {
    * Adds a user right to a node.
    */
   public async addUserRight(
-    user: BookshelfModel,
+    user: User,
     node: BookshelfModel,
     nodeType: "post" | "entry",
     permission: SecurityPermission): Promise<void> {
@@ -161,7 +162,7 @@ export class Security {
    * Removes a user right from a node. If the permission does not match exactly, does nothing.
    */
   public async removeUserRight(
-    user: BookshelfModel,
+    user: User,
     node: BookshelfModel,
     permission: SecurityPermission): Promise<void> {
     await node.load("userRoles");

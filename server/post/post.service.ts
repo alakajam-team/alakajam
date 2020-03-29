@@ -4,6 +4,7 @@ import constants from "server/core/constants";
 import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
 import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
+import { User } from "server/entity/user.entity";
 
 const FIRST_PICTURE_REGEXP = /(?:!\[.*?\]\((.*?)\)|src="([^"]+)")/;
 
@@ -132,7 +133,7 @@ export class PostService {
    * @param user
    * @param eventId the optional ID of an event to associate with.
    */
-  public async createPost(user: BookshelfModel, eventId?: number): Promise<PostBookshelfModel> {
+  public async createPost(user: User, eventId?: number): Promise<PostBookshelfModel> {
     const post = new models.Post({
       author_user_id: user.get("id"),
       name: "",

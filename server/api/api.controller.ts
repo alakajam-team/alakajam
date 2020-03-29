@@ -190,7 +190,7 @@ export async function getEntry(req: CustomRequest, res: CustomResponse<CommonLoc
   let status = 200;
 
   if (forms.isId(req.params.entry)) {
-    const entry = await eventService.findEntryById(req.params.entry, DETAILED_ENTRY_OPTIONS);
+    const entry = await eventService.findEntryById(parseInt(req.params.entry, 10), DETAILED_ENTRY_OPTIONS);
 
     if (entry) {
       json = _getDetailedEntryJson(entry);
@@ -244,7 +244,7 @@ export async function getUser(req: CustomRequest, res: CustomResponse<CommonLoca
 
   let user;
   if (forms.isId(req.params.user)) {
-    user = await userService.findById(req.params.user);
+    user = await userService.findById(parseInt(req.params.user, 10));
   } else {
     user = await userService.findByName(req.params.user);
   }
@@ -271,7 +271,7 @@ export async function getUserLatestEntry(req: CustomRequest, res: CustomResponse
 
   let user;
   if (forms.isId(req.params.user)) {
-    user = await userService.findById(req.params.user);
+    user = await userService.findById(parseInt(req.params.user, 10));
   } else {
     user = await userService.findByName(req.params.user);
   }

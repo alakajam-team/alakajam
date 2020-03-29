@@ -14,13 +14,9 @@ import { FindOneOptions, getRepository } from "typeorm";
 
 export class UserService {
 
-  /**
-   * Fetches a user
-   * @param id {id} ID
-   * @returns {User}
-   */
-  public async findById(id) {
-    return models.User.where("id", id).fetch();
+  public async findById(id: number): Promise<User> {
+    const userRepository = getRepository(User);
+    return userRepository.findOne({ where: { id } });
   }
 
   /**
@@ -34,6 +30,12 @@ export class UserService {
       ...options
     });
   }
+
+  public async findByEmail(email: string): Promise<User> {
+    const userRepository = getRepository(User);
+    return userRepository.findOne({ where: { email } });
+  }
+
 
   /**
    * Search users by name

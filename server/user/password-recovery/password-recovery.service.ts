@@ -7,7 +7,6 @@ import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import { createLuxonDate } from "server/core/formats";
 import mailer from "server/core/mailer";
-import * as models from "server/core/models";
 import userService from "../user.service";
 
 const PASSWORD_RECOVERY_TOKENS_PATH = path.join(configUtils.dataPathAbsolute(), "password-recovery.json");
@@ -16,7 +15,7 @@ export class PasswordRecoveryService {
 
   public async sendPasswordRecoveryEmail(app: Application, userEmail: string) {
     // Make sure the user exists
-    const user = await models.User.where("email", userEmail).fetch();
+    const user = await userService.findByEmail(userEmail);
 
     if (user) {
       // Routine work: clear expired tokens
@@ -68,7 +67,7 @@ export class PasswordRecoveryService {
       if (user) {
         const success = userService.setPassword(user, newPassword);
         if (success) {
-          await user.save();
+          await userService.save(user);
           delete app.locals.passwordRecoveryTokens[token];
           fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, app.locals.passwordRecoveryTokens);
         }

@@ -281,7 +281,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
  * Deletes an entry
  */
 export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryLocals>) {
-  const { entry, event, user }: { [key: string]: BookshelfModel } = res.locals;
+  const { entry, event, user } = res.locals;
 
   if (user && entry && security.canUserManage(user, entry, { allowMods: true })) {
     await entry.load("posts");

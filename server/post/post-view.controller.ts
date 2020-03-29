@@ -2,6 +2,7 @@ import { BookshelfModel, NodeBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import security from "server/core/security";
 import templating from "server/core/templating-functions";
+import { User } from "server/entity/user.entity";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventService from "../event/event.service";
 import commentService from "./comment/comment.service";
@@ -34,7 +35,7 @@ export async function postView(req: CustomRequest, res: CustomResponse<CommonLoc
 /**
  * Fetch related event, entry, comments & current user likes
  */
-export async function buildPostContext(post: NodeBookshelfModel, currentUser: BookshelfModel) {
+export async function buildPostContext(post: NodeBookshelfModel, currentUser: User) {
   const context = {
     post,
     allEvents: (await eventService.findEvents()).models,

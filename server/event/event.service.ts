@@ -20,6 +20,7 @@ import * as models from "server/core/models";
 import { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
+import { User } from "server/entity/user.entity";
 import postService from "server/post/post.service";
 
 
@@ -123,10 +124,9 @@ export class EventService {
 
   /**
    * Fetches the currently live models.Event.
-   * @param globalStatus {string} One of "pending", "open", "closed"
    * @returns {Event} The earliest pending event OR the currently open event OR the last closed event.
    */
-  public async findEventByStatus(status): Promise<BookshelfModel> {
+  public async findEventByStatus(status: "pending" | "open" | "closed"): Promise<BookshelfModel> {
     let sortOrder: SortOrder = "ASC";
     if (status === enums.EVENT.STATUS.CLOSED) {
       sortOrder = "DESC";
@@ -138,11 +138,8 @@ export class EventService {
 
   /**
    * Creates and persists a new entry, initializing the owner UserRole.
-   * @param  {User} user
-   * @param  {Event} event
-   * @return {Entry}
    */
-  public async createEntry(user, event): Promise<EntryBookshelfModel> {
+  public async createEntry(user: User, event?: BookshelfModel): Promise<EntryBookshelfModel> {
     const entry = new models.Entry({
       name: "untitled",
       title: "",
@@ -190,7 +187,7 @@ export class EventService {
    * @param {Entry} entry
    * @param {object|string} file The form upload
    */
-  public async setEntryPicture(entry, file) {
+  public async setEntryPicture(entry: EntryBookshelfModel, file: object | string) {
     const picturePath = "/entry/" + entry.get("id");
     const result = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_DEFAULT);
     if (!("error" in result)) {
@@ -227,16 +224,15 @@ export class EventService {
 
   /**
    * Searches for any external event name already submitted
-   * @param  {string} nameFragment
    * @return {array(string)} external event names
    */
-  public async searchForExternalEvents(nameFragment) {
-    const results = await db.knex("entry")
+  public async searchForExternalEvents(nameFragment: string): Promise<string[]> {
+    const results: Array<{ external_event: string }> = await db.knex("entry")
       .distinct()
       .select("external_event")
       .where("external_event", ilikeOperator(), `%${nameFragment}%`);
 
-    const formattedResults = [];
+    const formattedResults: string[] = [];
     for (const result of results) {
       formattedResults.push(result.external_event);
     }
@@ -246,7 +242,7 @@ export class EventService {
     return formattedResults;
   }
 
-  public async deleteEntry(entry) {
+  public async deleteEntry(entry: EntryBookshelfModel) {
     // Unlink posts (not in transaction to prevent foreign key errors)
     const posts = await postService.findPosts({ entryId: entry.get("id") });
     for (const post of posts.models) {
@@ -256,15 +252,15 @@ export class EventService {
 
     await db.transaction(async (transaction) => {
       // Delete user roles & comments manually (because no cascading)
-      await entry.load(["userRoles.user", "comments.user"], { transacting: transaction });
+      await entry.load(["userRoles.user", "comments.user"], { transacting: transaction } as any);
 
-      const destroyQueries: Array<Promise<void>> = [];
-      entry.related("userRoles").forEach((userRole) => {
-        cache.user(userRole.related("user")).del("latestEntry");
+      const destroyQueries: Array<Promise<any>> = [];
+      entry.related<BookshelfCollection>("userRoles").forEach((userRole) => {
+        cache.user(userRole.related<any>("user")).del("latestEntry");
         destroyQueries.push(userRole.destroy({ transacting: transaction }));
       });
-      entry.related("comments").forEach((comment) => {
-        cache.user(comment.related("user")).del("byUserCollection");
+      entry.related<BookshelfCollection>("comments").forEach((comment) => {
+        cache.user(comment.related<any>("user")).del("byUserCollection");
         destroyQueries.push(comment.destroy({ transacting: transaction }));
       });
       await Promise.all(destroyQueries);
@@ -428,15 +424,13 @@ export class EventService {
   }
 
   /**
-   * Fetches an models.Entry by its ID.
-   * @param id {id} models.Entry ID
-   * @returns {Entry}
+   * Fetches an models.Entry by its ID
    */
-  public async findEntryById(id, options: any = {}): Promise<EntryBookshelfModel> {
-    if (!options.withRelated) {
-      options.withRelated = ["details", "event", "userRoles", "tags"];
-    }
-    return models.Entry.where("id", id).fetch(options) as Bluebird<EntryBookshelfModel>;
+  public async findEntryById(id: number, options: FetchOptions = {}): Promise<EntryBookshelfModel> {
+    return models.Entry.where("id", id).fetch({
+      withRelated: ["details", "event", "userRoles", "tags"],
+      ...options
+    }) as Bluebird<EntryBookshelfModel>;
   }
 
   /**
@@ -444,7 +438,7 @@ export class EventService {
    * @param  {User} user
    * @return {array(Entry)|null}
    */
-  public async findUserEntries(user): Promise<BookshelfCollection> {
+  public async findUserEntries(user: User): Promise<BookshelfCollection> {
     const entriesCollection = await models.Entry.query((qb) => {
       qb.distinct()
         .innerJoin("user_role", "entry.id", "user_role.node_id")
@@ -469,11 +463,7 @@ export class EventService {
    * @param  {User} user
    * @return {Entry|null}
    */
-  public async findLatestUserEntry(user, options: any = {}) {
-    if (!options.withRelated) {
-      options.withRelated = ["userRoles", "event"];
-    }
-
+  public async findLatestUserEntry(user: User, options: FetchOptions = {}) {
     return models.Entry.query((qb) => {
       qb.distinct()
         .innerJoin("user_role", "entry.id", "user_role.node_id")
@@ -484,13 +474,16 @@ export class EventService {
         });
     })
       .orderBy("created_at", "desc")
-      .fetch(options);
+      .fetch({
+        withRelated: ["userRoles", "event"],
+        ...options
+      });
   }
 
   /**
    * Retrieves the entry a user submitted to an event
    */
-  public async findUserEntryForEvent(user: BookshelfModel, eventId: number, options: FetchOptions = {}): Promise<EntryBookshelfModel> {
+  public async findUserEntryForEvent(user: User, eventId: number, options: FetchOptions = {}): Promise<EntryBookshelfModel> {
     return models.Entry.query((query) => {
       query.innerJoin("user_role", "entry.id", "user_role.node_id")
         .where({
@@ -501,7 +494,9 @@ export class EventService {
     }).fetch({ withRelated: ["userRoles"], ...options }) as any;
   }
 
-  public async findEntryInvitesForUser(user, options): Promise<BookshelfCollection> {
+  public async findEntryInvitesForUser(
+    user: User, options: FetchAllOptions & { notificationsLastRead?: boolean } = {}): Promise<BookshelfCollection> {
+
     let notificationsLastRead = new Date(0);
     if (options.notificationsLastRead && user.get("notifications_last_read") !== undefined) {
       notificationsLastRead = new Date(user.get("notifications_last_read"));
@@ -513,7 +508,7 @@ export class EventService {
       .fetchAll(options) as Bluebird<BookshelfCollection>;
   }
 
-  public async findRescueEntries(event, user, options: any = {}) {
+  public async findRescueEntries(event: BookshelfModel, user: User, options: any = {}): Promise<BookshelfCollection> {
     const minRatings = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
 
     if (options.pageSize === undefined) { options.pageSize = 4; }
@@ -537,7 +532,7 @@ export class EventService {
       .fetchPage(options);
   }
 
-  public async countEntriesByEvent(event) {
+  public async countEntriesByEvent(event: BookshelfModel): Promise<number> {
     const count = await models.Entry
       .where("event_id", event.get("id"))
       .count();
@@ -549,7 +544,7 @@ export class EventService {
    * Call this after changing the name of an event.
    * @param {Event} event
    */
-  public async refreshEventReferences(event) {
+  public async refreshEventReferences(event: BookshelfModel): Promise<void> {
     // TODO Transaction
     const entryCollection = await models.Entry.where("event_id", event.id).fetchAll() as BookshelfCollection;
     for (const entry of entryCollection.models) {
@@ -625,7 +620,7 @@ export interface FindGamesOptions extends FetchPageOptions {
   divisions?: string[];
   notReviewedById?: string;
   userId?: number;
-  user?: BookshelfModel;
+  user?: User;
   highScoresSupport?: boolean;
   allowsTournamentUse?: boolean;
 }

@@ -1,4 +1,5 @@
 import { BookshelfModel } from "bookshelf";
+import { User } from "server/entity/user.entity";
 import * as url from "url";
 import config from "./config";
 
@@ -22,7 +23,7 @@ export class Links {
   /**
    * Determines the route to a page given a model, its type and an optional sub-page
    */
-  public routeUrl(model: BookshelfModel, type: string, subPage: string | null = null, options: any = {}) {
+  public routeUrl(model: BookshelfModel | User, type: string, subPage: string | null = null, options: any = {}) {
     try {
       let subPagePath = (subPage ? "/" + subPage : "");
 
