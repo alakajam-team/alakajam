@@ -13,7 +13,7 @@ import fileStorage from "server/core/file-storage";
 import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import eventTournamentService, { FindActiveTournamentOptions } from "server/event/tournament/tournament.service";
 
 export default {
   findHighScores,
@@ -233,7 +233,7 @@ async function setEntryScoreActive(id, active) {
     entryScore.set("active", active);
     await entryScore.save();
     await refreshEntryRankings(entryScore.related("entry"), entryScore,
-      { statusTournamentAllowed: [enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED] });
+      { allowedTournamentStates: [enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED] });
   }
 }
 
@@ -254,7 +254,10 @@ async function deleteAllEntryScores(entry) {
 }
 
 async function refreshEntryRankings(
-  entry, triggeringEntryScore = null, options: any = {}): Promise<BookshelfModel | undefined> {
+  entry: BookshelfModel,
+  triggeringEntryScore?: BookshelfModel,
+  options: FindActiveTournamentOptions & { triggeringUserId?: number } = {}): Promise<BookshelfModel | undefined> {
+
   let updatedEntryScore: BookshelfModel | undefined;
   const impactedEntryScores = [];
 
@@ -285,7 +288,7 @@ async function refreshEntryRankings(
   });
 
   // Update high score count
-  const entryDetails = entry.related("details");
+  const entryDetails = entry.related<BookshelfModel>("details");
   if (entryDetails.get("high_score_count") !== scores.models.length) {
     await entryDetails.save({ high_score_count: scores.models.length }, { patch: true });
   }
