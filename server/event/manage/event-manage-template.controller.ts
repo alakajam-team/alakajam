@@ -1,8 +1,8 @@
 
 import { CommonLocals } from "server/common.middleware";
 import security from "server/core/security";
-import eventService from "server/event/event.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import eventTemplateService from "../event-template.service";
 
 export async function eventManageTemplate(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   if (!security.isMod(res.locals.user)) {
@@ -11,6 +11,6 @@ export async function eventManageTemplate(req: CustomRequest, res: CustomRespons
   }
 
   res.render("event/manage/event-manage-template", {
-    eventTemplates: (await eventService.findEventTemplates()).models,
+    eventTemplates: (await eventTemplateService.findEventTemplates()).models,
   });
 }

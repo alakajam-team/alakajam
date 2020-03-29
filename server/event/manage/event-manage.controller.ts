@@ -14,6 +14,7 @@ import eventRatingService from "server/event/rating/event-rating.service";
 import eventThemeService from "server/event/theme/event-theme.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import eventTemplateService from "../event-template.service";
 import { EventLocals } from "../event.middleware";
 
 /**
@@ -195,7 +196,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
     if (!event) {
       let eventTemplate = null;
       if (forms.isId(req.query["event-template-id"])) {
-        eventTemplate = await eventService.findEventTemplateById(parseInt(req.query["event-template-id"], 10));
+        eventTemplate = await eventTemplateService.findEventTemplateById(parseInt(req.query["event-template-id"], 10));
       }
       event = eventService.createEvent(eventTemplate);
     }

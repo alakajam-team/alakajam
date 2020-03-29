@@ -2,6 +2,7 @@ import { BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import eventPresetService from "server/event/event-preset.service";
+import eventTemplateService from "server/event/event-template.service";
 import eventService from "server/event/event.service";
 import { CustomRequest, CustomResponse } from "server/types";
 
@@ -13,9 +14,9 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
   let editEventTemplate: BookshelfModel | null = null;
   const editEventTemplateId = req.query.edit || req.body.id;
   if (forms.isId(editEventTemplateId)) {
-    editEventTemplate = await eventService.findEventTemplateById(parseInt(editEventTemplateId, 10));
+    editEventTemplate = await eventTemplateService.findEventTemplateById(parseInt(editEventTemplateId, 10));
   } else if (req.query.create !== undefined) {
-    editEventTemplate = eventService.createEventTemplate();
+    editEventTemplate = eventTemplateService.createEventTemplate();
   }
 
   // Apply changes
@@ -23,11 +24,11 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
   if (req.method === "POST") {
     if (req.body.delete !== undefined) {
       // Delete model
-      await eventService.deleteEventTemplate(editEventTemplate);
+      await eventTemplateService.deleteEventTemplate(editEventTemplate);
       editEventTemplate = null;
     } else {
       // Update model (without saving yet)
-      editEventTemplate = editEventTemplate || eventService.createEventTemplate();
+      editEventTemplate = editEventTemplate || eventTemplateService.createEventTemplate();
       editEventTemplate.set({
         title: forms.sanitizeString(req.body.title),
         event_title: forms.sanitizeString(req.body["event-title"]),
@@ -58,7 +59,7 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
 
   // Render page
   const eventPresetsCollection = await eventPresetService.findEventPresets();
-  const eventTemplatesCollection = await eventService.findEventTemplates();
+  const eventTemplatesCollection = await eventTemplateService.findEventTemplates();
   res.render("admin/event-templates/admin-event-templates", {
     eventPresets: eventPresetsCollection.models,
     eventTemplates: eventTemplatesCollection.models,

@@ -6,6 +6,7 @@ import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
 import eventService from "server/event/event.service";
+import karmaService from "server/event/karma.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -90,11 +91,11 @@ export async function handleSaveComment(reqBody, currentUser, currentNode, baseU
             user_id: userId,
           });
         }
-        await eventService.refreshCommentKarma(comment);
+        await karmaService.refreshCommentKarma(comment);
         await comment.save();
       } else {
         // This change might impact the karma of other comments, refresh them
-        await eventService.refreshUserCommentKarmaOnNode(currentNode, userId);
+        await karmaService.refreshUserCommentKarmaOnNode(currentNode, userId);
       }
 
       // Refresh karma on both the giver & receiver entries
