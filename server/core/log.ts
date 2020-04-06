@@ -1,15 +1,13 @@
 /**
  * Logging configuration (uses Winston).
  *
- * @description ## Usage
+ * Usage:
  * ```
  * log.debug('message')
  * log.info('message')
  * log.warn('message')
  * log.error('message')
  * ```
- *
- * @module core/log
  */
 
 import { sync as findUp } from "find-up";

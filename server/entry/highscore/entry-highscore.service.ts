@@ -1,8 +1,6 @@
 
 /**
  * Service for importing entries from third-party websites
- *
- * @module services/highscore-service
  */
 
 import Bluebird = require("bluebird");

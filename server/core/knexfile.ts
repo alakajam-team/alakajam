@@ -1,7 +1,5 @@
 /**
  * Knex DB migration configuration.
- *
- * @module knexfile
  */
 
 import * as path from "path";

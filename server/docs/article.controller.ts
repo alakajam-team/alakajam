@@ -1,8 +1,6 @@
 
 /**
  * Article pages
- *
- * @module controllers/article-controller
  */
 
 import { CommonLocals } from "server/common.middleware";

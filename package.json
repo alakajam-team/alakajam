@@ -29,7 +29,7 @@
     "migrate:latest": "node deployment/verify-data-folder.js && npm run knex -- migrate:latest",
     "migrate:rollback": "npm run knex -- migrate:rollback",
     "migrate:currentVersion": "npm run knex -- migrate:currentVersion",
-    "docs": "typedoc --out dist/docs"
+    "docs": "typedoc --out dist/docs --exclude **/*.spec.ts,**/*.controller.ts,**/migrations/*"
   },
   "repository": {
     "type": "git",

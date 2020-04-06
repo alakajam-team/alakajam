@@ -2,8 +2,6 @@
 
 /**
  * Cache configuration
- *
- * @module core/cache
  */
 
 import * as NodeCache from "node-cache";

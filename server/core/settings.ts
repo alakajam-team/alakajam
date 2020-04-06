@@ -1,8 +1,6 @@
 
 /**
  * Manipulate global settings
- *
- * @module services/setting-service
  */
 
 import cache from "server/core/cache";

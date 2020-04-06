@@ -1,8 +1,6 @@
 
 /**
  * JSON API
- *
- * @module controllers/api-controller
  */
 
 import { BookshelfCollection, BookshelfModel } from "bookshelf";

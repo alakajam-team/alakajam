@@ -34,12 +34,12 @@ See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional do
 
 ### Production build
 
-* `npm run build` Builds the TypeScript server.
-* `npm run start:production` Starts the TypeScript server. Needs to be built first.
+* `npm run build` Builds the server to JavaScript.
+* `npm run start:production` Starts JavaScript server. Needs to be built first.
 
 ### Other start commands & tools
 
-* `npm run start:refresh` Alternative that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)
+* `npm run start:refresh` Alternative to `npm start` that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)
 * `npm run start:debug` Launches the server in debug mode. Prefer using the embedded debugger of your code editor (see example for VSCode further below).
 * `npm run migrate:latest` Migrate database to latest version. Useful for migration development. (based on knex)
 * `npm run migrate:rollback` Cancel latest database migration. Useful for migration development.

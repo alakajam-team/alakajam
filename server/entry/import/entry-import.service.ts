@@ -1,7 +1,5 @@
 /**
  * Service for importing entries from third-party websites
- *
- * @module services/event-import-service
  */
 
 import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
@@ -94,7 +92,7 @@ export class EntryUmportService {
       // Create entry or force refreshing existing one (due to fetchEntryReferences() caching)
       let entryModel: EntryBookshelfModel;
       if (!entryReference.existingEntry) {
-        entryModel = await eventService.createEntry(user, undefined);
+        entryModel = await eventService.createEntry(user);
       } else {
         entryModel = await eventService.findEntryById(entryReference.existingEntry.get("id"));
       }

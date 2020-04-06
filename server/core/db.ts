@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+
 /**
  * Database storage configuration.
  * Requiring the module returns a [Bookshelf](http://bookshelfjs.org/) instance.
- *
- * @module core/db
  */
 
 import * as Bookshelf from "bookshelf";

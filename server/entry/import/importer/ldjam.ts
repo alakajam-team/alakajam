@@ -1,7 +1,5 @@
 /**
  * ldjam.com entry importer
- *
- * @module services/entry-importers/ldjam
  */
 
 import * as download from "download";

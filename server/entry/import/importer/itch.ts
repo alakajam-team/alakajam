@@ -1,7 +1,5 @@
 /**
  * itch.io entry importer
- *
- * @module services/entry-importers/itch
  */
 
 import * as cheerio from "cheerio";

@@ -1,8 +1,6 @@
 
 /**
  * Security service. Helps with checking permissions.
- *
- * @module services/security-service
  */
 
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
