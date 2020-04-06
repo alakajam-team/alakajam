@@ -100,10 +100,7 @@ export class UserService {
    * @param passwor unencrypted password (will be hashed before storage)
    * @returns the created user, or an error message
    */
-  public async register(email: string, name: string, password: string): Promise<BookshelfModel | string> {
-    console.log( await models.User.query((query) => {
-      query.whereRaw("LOWER(name) LIKE LOWER(?)", name);
-    }).query().toSQL())
+  public async register(email: string, name: string, password: string): Promise<User | string> {
     if (!name.match(constants.USERNAME_VALIDATION_REGEX)) {
       return "Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.";
     }
@@ -111,10 +108,11 @@ export class UserService {
       return "Username length must be at least " + constants.USERNAME_MIN_LENGTH;
     }
 
-    const caseInsensitiveUsernameMatch = await models.User.query((query) => {
-      query.whereRaw("LOWER(name) LIKE LOWER(?)", name);
-    }).fetch();
-    if (caseInsensitiveUsernameMatch || name === "anonymous") {
+    const userRepository = getRepository(User);
+    const caseInsensitiveUsernameMatches = await userRepository.createQueryBuilder()
+      .where("LOWER(name) LIKE LOWER(:name)", { name })
+      .getCount();
+    if (caseInsensitiveUsernameMatches > 0 || name === "anonymous") {
       return "Username is taken";
     }
     if (!forms.isEmail(email)) {
@@ -125,18 +123,9 @@ export class UserService {
       return passwordValidationResult;
     }
 
-    const user = new models.User({
-      email,
-      name,
-      title: name,
-    });
+    const user = new User(name, email);
     this.setPassword(user, password);
-    await user.save();
-
-    const userDetails = new models.UserDetails({
-      user_id: user.get("id"),
-    });
-    await userDetails.save();
+    await userRepository.save(user);
 
     return user;
   }
@@ -192,16 +181,14 @@ export class UserService {
    * @param {string} password New password, in clear form
    * @returns {boolean|string} true, or an error message
    */
-  public setPassword(user, password) {
+  public setPassword(user: User, password: string): true | string {
     const passwordValidationResult = this.validatePassword(password);
     if (passwordValidationResult !== true) {
       return passwordValidationResult;
     }
 
-    const salt = randomKey.generate();
-    user.set("password_salt", salt);
-    const hash = this.hashPassword(password, salt);
-    user.set("password", hash);
+    user.password_salt = randomKey.generate();
+    user.password = this.hashPassword(password, user.password_salt);
     return true;
   }
 

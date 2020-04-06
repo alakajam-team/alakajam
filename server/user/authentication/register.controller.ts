@@ -53,7 +53,7 @@ export class RegisterController {
         if (req.body.timezone) {
           const user = result;
           user.set("timezone", forms.sanitizeString(req.body.timezone));
-          await user.save();
+          this.userService.save(user);
         }
         loginPost(req, res);
         return;

@@ -10,6 +10,14 @@ import { UserDetails } from "./user-details.entity";
 @Entity()
 export class User extends TimestampedEntity {
 
+  constructor(name: string, email: string) {
+    super();
+    this.name = name;
+    this.email = email;
+    this.title = name;
+    this.details = new UserDetails();
+  }
+
   @PrimaryGeneratedColumn()
   public id: number;
 
