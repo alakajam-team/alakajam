@@ -79,3 +79,13 @@ Put this in `.vscode/launch.json`:
 #### ...Enable picture resizing
 
 Run `npm install` without the `--no-optional` flag to try and set up the `sharp` dependency. If it fails to install (especially on Windows), follow the instructions to install the [sharp dependencies](https://sharp.pixelplumbing.com/en/stable/install/), then try `npm install` again.
+
+#### ...Run only one unit test
+
+Customize the `test:unit` command from package.json to your needs, and prefix it with `npx`. For instance:
+
+```bash
+npx mocha -r ts-node/register -r tsconfig-paths/register server/user/user.service.spec.ts --watch --watch-extensions ts --watch-files server
+```
+
+:warning: Due to a bug (#494), DB_TYPE must be set to `sqlite3` in your `config.js` before running unit tests.
