@@ -36,23 +36,6 @@ export class UserService {
     return userRepository.findOne({ where: { email } });
   }
 
-
-  /**
-   * Search users by name
-   * @param {string} fragment a fragment of the user name.
-   * @param {string|Object|mixed[]} [options.related] any related data to fetch.
-   * @param {boolean} [options.caseSensitive=false] use case-sensitive search.
-   * @returns {Bookshelf.Collection} the users with names matching the query.
-   *
-   * Note: all searches will be case-sensitive if developing with SQLite.
-   */
-  public async searchByName(fragment, options: any = {}): Promise<BookshelfCollection> {
-    const comparator = (options.caseSensitive) ? "LIKE" : configUtils.ilikeOperator();
-    return models.User.where("name", comparator, `%${fragment}%`).fetchAll({
-      withRelated: options.related
-    }) as Bluebird<BookshelfCollection>;
-  }
-
   /**
    * Fetches users
    * @returns {Collection(User)}
@@ -112,18 +95,19 @@ export class UserService {
 
   /**
    * Registers a new user
-   * @param email {string} email
-   * @param name {string} name
-   * @param password {string} unencrypted password (will be hashed before storage)
-   * @returns {User|string} the created user, or an error message
+   * @param email
+   * @param name
+   * @param passwor unencrypted password (will be hashed before storage)
+   * @returns the created user, or an error message
    */
-  public async register(email, name, password): Promise<BookshelfModel | string> {
+  public async register(email: string, name: string, password: string): Promise<BookshelfModel | string> {
     if (!name.match(constants.USERNAME_VALIDATION_REGEX)) {
       return "Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.";
     }
     if (name.length < constants.USERNAME_MIN_LENGTH) {
       return "Username length must be at least " + constants.USERNAME_MIN_LENGTH;
     }
+
     const caseInsensitiveUsernameMatch = await models.User.query((query) => {
       query.whereRaw("LOWER(name) LIKE '%' || LOWER(?) || '%' ", name);
     }).fetch();

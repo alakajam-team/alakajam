@@ -26,16 +26,6 @@ describe("User service", function() {
 
   });
 
-  describe("searchByName", () => {
-
-    it("should find users when searching a valid query", async () => {
-      const result = await userService.searchByName("%dministra%");
-
-      expect(result.length).to.eq(1);
-    });
-
-  });
-
   describe("register", () => {
 
     it("should reject invalid usernames", async () => {
