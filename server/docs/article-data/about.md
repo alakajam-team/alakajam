@@ -8,7 +8,7 @@ Welcome!
 
 Sounds exciting? Come join us! You can start by making an account [in a few clicks](/register), then check the home page or the [Events](/events) to learn the date of the next jam. Feel free to introduce yourself [with a blog post](/post/create)!
 
-If you want to give a hand to our little community, check the [contributing page](/article/contributing).
+If you want to give a hand to our little community, check the [contributing page](/article/about/contributing).
 
 ## <a name="contact"></a>Contact us
 
@@ -24,7 +24,7 @@ If you want to give a hand to our little community, check the [contributing page
 
 [[PAYPAL_BUTTON]]
 
-ALAKAJAM! is a non-profit registered in France on 11 August 2018, as an "association loi 1901" (RNA Number W691095617). Our constitution [can be read here](/article/npo-constitution). The current council of jamicians (which is basically the board of directors except it sounds better) is in office until September 2020:
+ALAKAJAM! is a non-profit registered in France on 11 August 2018, as an "association loi 1901" (RNA Number W691095617). Our constitution [can be read here](/article/about/npo-constitution). The current council of jamicians (which is basically the board of directors except it sounds better) is in office until September 2020:
 
 * **Scribe**: @thrainsa
 * **Master of coin, Lead developer**: @wan

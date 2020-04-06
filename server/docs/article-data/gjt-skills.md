@@ -11,15 +11,15 @@ Another popular option is to go for **pixel art**. It can be super fast to make,
 
 Finally, you can just grab third-party art and submit your entry in the *Unranked* division.
 
-Check the [Resources](/article/resources) page for a list of graphics software you can use.
+Check the [Resources](/article/docs/resources) page for a list of graphics software you can use.
 
 ## <a name="sound"></a>Being bad at sound & music
 
 I have good news: there's several, super easy ways to include sounds effects in your games. Making music is more involved, but still doable!
 
-<img class="pull-right" src="https://i.imgur.com/ZK1ni05.jpg" width="300" />Regarding **sounds**, the [Resources](/article/resources) page has multiple tools for you to try. Your first option is to go down the sound generation route, using the super-easy *bfxr* software and the likes to produce cool, often-arcadey effects. You could also record sounds yourself with *Audacity*, assuming you have a decent microphone. Finally, you could just grab existing sounds, which is allowed even in rated competitions, as long as the assets you use have a permissive license.
+<img class="pull-right" src="https://i.imgur.com/ZK1ni05.jpg" width="300" />Regarding **sounds**, the [Resources](/article/docs/resources) page has multiple tools for you to try. Your first option is to go down the sound generation route, using the super-easy *bfxr* software and the likes to produce cool, often-arcadey effects. You could also record sounds yourself with *Audacity*, assuming you have a decent microphone. Finally, you could just grab existing sounds, which is allowed even in rated competitions, as long as the assets you use have a permissive license.
 
-Now for **music**, if you don't have any experience but still want to start making music, you can look around the [Resources](/article/resources) page and give a try to software like *Bosca Ceoil*. If this is new for you, it will definitely take some time to get comfortable with the tool and not cringe at your music too much, but it's not that hard to get something acceptable for a jam game.
+Now for **music**, if you don't have any experience but still want to start making music, you can look around the [Resources](/article/docs/resources) page and give a try to software like *Bosca Ceoil*. If this is new for you, it will definitely take some time to get comfortable with the tool and not cringe at your music too much, but it's not that hard to get something acceptable for a jam game.
 
 Alternately, you can just grab existing music submit your entry in the *Unranked* division. Or, you now, not have music, maybe even no sound at all, which is also acceptable.
 
@@ -27,7 +27,7 @@ Alternately, you can just grab existing music submit your entry in the *Unranked
 
 <img class="pull-right" src="https://i.imgur.com/zkX2RPr.png" width="300" />Without knowledge of code, there's still plenty of options nowadays for making games! An option is to use genre-specific engines (e.g. for text adventures or RPGs) which are just point-and-click interfaces that let you build your game. More recently, great general purpose engines that still don't require code have started appearing, letting you build any type of (usually 2D) game.
 
-Check the [Resources](/article/resources) page for a wide range of engines to try, and find the one that suits you best. Discovering an engine during a jam can be frustrating, so it is probably best to at least do some tutorials before the event starts.
+Check the [Resources](/article/docs/resources) page for a wide range of engines to try, and find the one that suits you best. Discovering an engine during a jam can be frustrating, so it is probably best to at least do some tutorials before the event starts.
 
 ## <a name="bad"></a>"I'm bad, I'm bad, really really bad" [*](https://www.youtube.com/watch?v=dsUXAEzaC3Q&feature=youtu.be&t=1m9s)
 
