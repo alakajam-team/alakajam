@@ -101,6 +101,9 @@ export class UserService {
    * @returns the created user, or an error message
    */
   public async register(email: string, name: string, password: string): Promise<BookshelfModel | string> {
+    console.log( await models.User.query((query) => {
+      query.whereRaw("LOWER(name) LIKE LOWER(?)", name);
+    }).query().toSQL())
     if (!name.match(constants.USERNAME_VALIDATION_REGEX)) {
       return "Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.";
     }
@@ -109,7 +112,7 @@ export class UserService {
     }
 
     const caseInsensitiveUsernameMatch = await models.User.query((query) => {
-      query.whereRaw("LOWER(name) LIKE '%' || LOWER(?) || '%' ", name);
+      query.whereRaw("LOWER(name) LIKE LOWER(?)", name);
     }).fetch();
     if (caseInsensitiveUsernameMatch || name === "anonymous") {
       return "Username is taken";
