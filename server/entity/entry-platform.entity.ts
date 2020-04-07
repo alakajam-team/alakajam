@@ -19,7 +19,7 @@ export class EntryPlatform extends TimestampedEntity {
   @PrimaryColumn()
   public entry_id: number;
 
-  @OneToOne(() => Entry)
+  @OneToOne(() => Entry, (entry) => entry.entryPlatforms)
   @JoinColumn({ name: "entry_id" })
   public entry: Entry;
 

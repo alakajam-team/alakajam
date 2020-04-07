@@ -11,7 +11,7 @@ export class EntryTag extends TimestampedEntity {
   @PrimaryColumn()
   public entry_id: number;
 
-  @ManyToOne(() => Entry)
+  @ManyToOne(() => Entry, (entry) => entry.tags)
   @JoinColumn({ name: "entry_id" })
   public entry: Entry;
 

@@ -1,8 +1,9 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { Event } from "./event.entity";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
+import { ThemeVote } from "./theme-vote.entity";
 
 @Entity()
 export class Theme extends TimestampedEntity {
@@ -86,6 +87,9 @@ export class Theme extends TimestampedEntity {
   @Column()
   @Index()
   public status: "active" | "out" | "banned" | "shortlist";
+
+  @OneToMany(() => ThemeVote, (themeVote) => themeVote.theme)
+  public votes: ThemeVote[];
 
   public dependents(): Array<keyof this> {
     return ["votes"];
