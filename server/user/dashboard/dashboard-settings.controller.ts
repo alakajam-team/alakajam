@@ -94,7 +94,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
 async function _handleDeletion(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   const deletingOwnAccount = res.locals.user.get("id") === res.locals.dashboardUser.id;
   const userEntries = await eventService.findUserEntries(res.locals.dashboardUser);
-  const result = await userService.deleteUser(res.locals.dashboardUser, userEntries);
+  const result = await userService.deleteUser(res.locals.dashboardUser, userEntries.length);
 
   if (!("error" in result)) {
     if (deletingOwnAccount) {

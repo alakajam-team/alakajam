@@ -65,7 +65,7 @@ function initBookshelf(): DB {
     }
 
     const previousVersion = await knex.migrate.currentVersion();
-    await knex.migrate.latest((knexfile as any).development.migrations);
+    //    await knex.migrate.latest((knexfile as any).development.migrations);
     const newVersion = await knex.migrate.currentVersion();
 
     if (!options.silent) {

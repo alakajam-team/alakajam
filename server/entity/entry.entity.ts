@@ -1,10 +1,14 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToOne, OneToMany } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { EntryDetails } from "./entry-details.entity";
+import { EntryInvite } from "./entry-invite.entity";
+import { EntryPlatform } from "./entry-platform.entity";
+import { EntryScore } from "./entry-score.entity";
+import { EntryVote } from "./entry-vote.entity";
 import { Event } from "./event.entity";
 import { TimestampedEntity } from "./timestamped.entity";
-import { Platform } from "./platform.entity";
-import { EntryScore } from "./entry-score.entity";
+import { EntryTag } from "./entry-tag.entity";
+import { UserRole } from "./user-role.entity";
 
 export interface EntryPictures {
   previews?: string[];
@@ -19,7 +23,6 @@ export class Entry extends TimestampedEntity {
   public id: number;
 
   @OneToOne(() => EntryDetails, (entryDetails) => entryDetails.entry)
-  @JoinColumn({ name: "entry_id" })
   public details: EntryDetails;
 
   /**
@@ -114,14 +117,29 @@ export class Entry extends TimestampedEntity {
   @Index()
   public hotness: number;
 
+  @OneToMany(() => EntryVote, (entryVote) => entryVote.entry)
+  public votes: EntryVote[];
+
+  @OneToMany(() => EntryInvite, (entryInvite) => entryInvite.entry)
+  public invites: EntryInvite[];
+
   @OneToMany(() => EntryScore, (entryScore) => entryScore.entry)
   public scores: EntryScore[];
 
+  @ManyToMany(() => EntryTag, (entryTag) => entryTag.entry)
+  public tags: EntryTag[];
+
+  @ManyToMany(() => EntryPlatform, (entryPlatform) => entryPlatform.entry)
+  public entryPlatforms: EntryPlatform[];
+
   public dependents(): Array<keyof this> {
-    return ["details", "entryPlatformes", "votes", "invites", "tags", "scores"];
+    return ["details", "entryPlatforms", "votes", "invites", "tags", "scores"];
   }
 
-  public sortedUserRoles() {
+  /**
+   * FIXME May be impossible to implement at entity level in TypeORM due to morph relation
+   */
+ /* public sortedUserRoles() {
     return this.userRoles.sortBy((userRole) => {
       // List owners first, otherwise sort alphabetically
       if (userRole.get("permission") === "manage") {
@@ -130,7 +148,7 @@ export class Entry extends TimestampedEntity {
         return userRole.get("user_title");
       }
     });
-  }
+  }*/
 
   public picturePreviews() {
     if (this.pictures && this.pictures.previews) {

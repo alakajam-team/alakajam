@@ -43,7 +43,7 @@ export class DB {
 
     const baseConnectionOptions: BaseConnectionOptions = {
       type: null,
-      synchronize: false,
+      synchronize: true,
       entities: [this.ENTITIES_PATH],
       logging,
       logger: logging ? dbTypeormLogger : undefined,

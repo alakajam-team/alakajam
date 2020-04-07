@@ -89,7 +89,7 @@ export class UserService {
         .fetchPage(options);
     } else {
       if (options.orderBy) { query.orderBy(options.orderBy, options.orderByDesc ? "DESC" : "ASC"); }
-      return query.fetchAll(options) as Bluebird<BookshelfCollection>;
+      return query.fetchAll(options) as any;
     }
   }
 
@@ -132,11 +132,11 @@ export class UserService {
 
   /**
    * Authenticates against a user name and password, and updates the session accordingly
-   * @param name {string} name
-   * @param password {string} clear password (will be hashed & compared to the DB entry)
+   * @param name
+   * @param password clear password (will be hashed & compared to the DB entry)
    * @returns {User} The models.User, or false if the authentication failed
    */
-  public async authenticate(name, password): Promise<BookshelfModel | false> {
+  public async authenticate(name: string, password: string): Promise<User | false> {
     const user = await models.User.query((query) => {
       query
         .where(db.knex.raw("LOWER(name)") as any, name.toLowerCase())
@@ -145,7 +145,7 @@ export class UserService {
     if (user) {
       const hashToTest = this.hashPassword(password, user.get("password_salt"));
       if (hashToTest === user.get("password")) {
-        return user;
+        return user as any;
       }
     }
     return false;
@@ -155,8 +155,8 @@ export class UserService {
    * Deletes an user, but only if it doesn't have any entries.
    * @param {User} user
    */
-  public async deleteUser(user: User, userEntries: BookshelfCollection): Promise<{ error?: string }> {
-    if (userEntries.length === 0) {
+  public async deleteUser(user: User, userEntryCount: number): Promise<{ error?: string }> {
+    if (userEntryCount === 0) {
       const userId = user.id;
       const bookshelfUser = await models.User.where("id", user.id).fetch();
       await bookshelfUser.destroy(); // XXX Comment/entry counters are not refreshed
@@ -170,7 +170,7 @@ export class UserService {
     }
   }
 
-  public async save(user: User) {
+  public async save(user: User): Promise<void> {
     const repository = getRepository(User);
     await repository.save(user);
   }
@@ -197,7 +197,14 @@ export class UserService {
    * Call this after changing the name or title of an user.
    * @param {User} user
    */
-  public async refreshUserReferences(user) {
+  public async refreshUserReferences(user: User): Promise<void> {
+    /* const userRoleRepository = getRepository(UserRole);
+    userRoleRepository.find({
+      where: {
+        user_id: user.id
+      }
+    })*/
+
     // TODO Transaction
     const userRolesCollection = await models.UserRole
       .where("user_id", user.get("id"))
@@ -214,7 +221,7 @@ export class UserService {
    * @param {string} password
    * @returns {boolean|string} true, or an error message
    */
-  private validatePassword(password) {
+  private validatePassword(password: string): true | string {
     if (password.length < constants.PASSWORD_MIN_LENGTH) {
       return "Password length must be at least " + constants.PASSWORD_MIN_LENGTH;
     } else {
@@ -222,7 +229,7 @@ export class UserService {
     }
   }
 
-  private hashPassword(password, salt) {
+  private hashPassword(password: string, salt: string): string {
     return crypto.createHash("sha256").update(password + salt).digest("hex");
   }
 
