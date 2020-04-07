@@ -3,7 +3,6 @@ import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import eventPresetService from "server/event/event-preset.service";
 import eventTemplateService from "server/event/event-template.service";
-import eventService from "server/event/event.service";
 import { CustomRequest, CustomResponse } from "server/types";
 
 /**

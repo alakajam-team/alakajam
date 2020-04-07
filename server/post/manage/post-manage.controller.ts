@@ -1,5 +1,5 @@
 
-import { BookshelfCollection, PostBookshelfModel, BookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, PostBookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import { createLuxonDate, ZONE_UTC } from "server/core/formats";
@@ -12,7 +12,6 @@ import { CustomRequest, CustomResponse } from "server/types";
 import { buildPostContext } from "../post-view.controller";
 import { PostLocals } from "../post.middleware";
 import postService from "../post.service";
-import { User } from "server/entity/user.entity";
 
 export async function postEdit(req: CustomRequest, res: CustomResponse<PostLocals>) {
   if (!res.locals.user) {
