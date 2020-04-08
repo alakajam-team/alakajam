@@ -38,7 +38,7 @@ export class Comment extends BookshelfCompatibleEntity {
   @Column()
   public user_id: number;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.comments)
   @JoinColumn({ name: "user_id" })
   public user: User;
 

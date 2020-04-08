@@ -1,10 +1,16 @@
 /* eslint-disable camelcase */
 
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, CreateDateColumn, Index } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ColumnTypes } from "./column-types";
+import { EntryScore } from "./entry-score.entity";
 import { TimestampedEntity } from "./timestamped.entity";
+import { TournamentScore } from "./tournament-score.entity";
 import { UserDetails } from "./user-details.entity";
 import { UserRole } from "./user-role.entity";
-import { ColumnTypes } from "./column-types";
+import { Comment } from "./comment.entity";
+import { ThemeVote } from "./theme-vote.entity";
+import { Post } from "./post.entity";
+import { Like } from "./like.entity";
 
 /**
  * User account information.
@@ -76,6 +82,24 @@ export class User extends TimestampedEntity {
 
   @OneToMany(() => UserRole, (userRole) => userRole.user, { cascade: true })
   public roles: UserRole[];
+
+  @OneToMany(() => EntryScore, (entryScore) => entryScore.user, { cascade: true })
+  public entryScores: EntryScore[];
+
+  @OneToMany(() => TournamentScore, (tournamentScore) => tournamentScore.user, { cascade: true })
+  public tournamentScores: TournamentScore[];
+
+  @OneToMany(() => Comment, (comment) => comment.user, { cascade: true })
+  public comments: Comment[];
+
+  @OneToMany(() => Post, (post) => post.author, { cascade: true })
+  public posts: Post[];
+
+  @OneToMany(() => Like, (like) => like.user, { cascade: true })
+  public likes: Like[];
+
+  @OneToMany(() => ThemeVote, (themeVote) => themeVote.user, { cascade: true })
+  public themeVotes: ThemeVote[];
 
   public dependents(): Array<keyof this> {
     return [ "details", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes"];

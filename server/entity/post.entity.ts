@@ -1,11 +1,12 @@
 /* eslint-disable camelcase */
 
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { Entry } from "./entry.entity";
 import { Event } from "./event.entity";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
+import { Like } from "./like.entity";
 
 @Entity()
 export class Post extends TimestampedEntity {
@@ -19,7 +20,7 @@ export class Post extends TimestampedEntity {
   @Column()
   public author_user_id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn({ name: "author_user_id" })
   public author: User;
 
@@ -92,7 +93,7 @@ export class Post extends TimestampedEntity {
   public hotness: number;
 
   public dependents(): Array<keyof this> {
-    return ["likes"]; // , "comments", "userRoles"]; // careful of iisue #93 when trying to restore
+    return []; // ["likes" /* TODO handle morph relation */, "comments", "userRoles"]; // careful of issue #93 when trying to restore
   }
 
 }

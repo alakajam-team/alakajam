@@ -13,7 +13,7 @@ export class TournamentScore extends TimestampedEntity {
   @Column()
   public user_id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.tournamentScores)
   @JoinColumn({ name: "user_id" })
   public user: User;
 

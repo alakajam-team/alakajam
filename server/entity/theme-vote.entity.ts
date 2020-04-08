@@ -24,12 +24,12 @@ export class ThemeVote extends TimestampedEntity {
   @ManyToOne(() => Event)
   @JoinColumn({ name: "event_id" })
   public event: Event;
-  
+
   @Column()
   // TODO @Index()
   public user_id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.themeVotes)
   @JoinColumn({ name: "user_id" })
   public user: User;
 
