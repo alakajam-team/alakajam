@@ -1,11 +1,10 @@
 
-import { BookshelfCollection } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import eventService from "server/event/event.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import userService from "server/user/user.service";
+import userService, { FindUserOptions } from "server/user/user.service";
 
 /**
  * People listing
@@ -20,34 +19,37 @@ export async function people(req: CustomRequest, res: CustomResponse<CommonLocal
   if (forms.isId(req.query.p)) {
     currentPage = parseInt(req.query.p, 10);
   }
-  const searchOptions: any = {
+  const searchOptions: FindUserOptions = {
     pageSize: PAGE_SIZE,
     page: currentPage,
     withEntries: req.query.withEntries,
     entriesCount: true,
+    orderBy: "id",
+    orderByDesc: true
   };
   searchOptions.search = forms.sanitizeString(req.query.search);
   if (req.query.eventId === "none") {
     searchOptions.eventId = null;
   } else {
-    searchOptions.eventId = forms.isId(req.query.eventId) ? req.query.eventId : undefined;
+    searchOptions.eventId = forms.isId(req.query.eventId) ? parseInt(req.query.eventId, 10) : undefined;
   }
 
   // Fetch info
-  const usersCollection = await userService.findUsers(searchOptions) as BookshelfCollection;
+  const users = await userService.findUsers(searchOptions);
+  const userCount = await userService.countUsers(searchOptions);
   const eventsCollection = await eventService.findEvents({ statusNot: enums.EVENT.STATUS.PENDING });
   let searchedEvent = null;
   if (searchOptions.eventId) {
-    searchedEvent = eventsCollection.filter((event) => event.id === parseInt(searchOptions.eventId, 10));
+    searchedEvent = eventsCollection.filter((event) => event.id === searchOptions.eventId);
   }
 
   res.render("explore/people", {
     searchOptions,
     searchedEvent,
-    users: usersCollection.sortBy((user) => -user.get("id")),
-    userCount: usersCollection.pagination.rowCount,
-    pageCount: usersCollection.pagination.pageCount,
+    users,
+    userCount,
+    pageCount: Math.ceil(userCount / PAGE_SIZE),
     currentPage,
-    events: eventsCollection.models,
+    events: eventsCollection.models
   });
 }

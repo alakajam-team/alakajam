@@ -36,31 +36,31 @@ export class User extends TimestampedEntity {
   public name: string;
 
   @Column(ColumnTypes.varchar({ nullable: true }))
-  public title: string;
+  public title?: string;
 
   @Column(ColumnTypes.varchar())
   // TODO @Unique
   public email: string;
 
   @Column(ColumnTypes.varchar({ nullable: true }))
-  public avatar: string;
+  public avatar?: string;
 
   @Column(ColumnTypes.varchar({ nullable: true }))
-  public timezone: string;
-
-  /**
-   * "true" if set ("1" on SQLite), "" or NULL otherwise.
-   * TODO Migrate to boolean
-   */
-  @Column(ColumnTypes.varchar({ nullable: true }))
-  public is_mod: string;
+  public timezone?: string;
 
   /**
    * "true" if set ("1" on SQLite), "" or NULL otherwise.
    * TODO Migrate to boolean
    */
   @Column(ColumnTypes.varchar({ nullable: true }))
-  public is_admin: string;
+  public is_mod?: string;
+
+  /**
+   * "true" if set ("1" on SQLite), "" or NULL otherwise.
+   * TODO Migrate to boolean
+   */
+  @Column(ColumnTypes.varchar({ nullable: true }))
+  public is_admin?: string;
 
   /**
    * If true, disallows this user to post anonymous comments
@@ -75,7 +75,7 @@ export class User extends TimestampedEntity {
   public password_salt: string;
 
   @CreateDateColumn(ColumnTypes.dateTime({ nullable: true, default: () => null }))
-  public notifications_last_read: Date;
+  public notifications_last_read?: Date;
 
   @OneToOne(() => UserDetails, (userDetails) => userDetails.user, { cascade: true })
   public details: UserDetails;

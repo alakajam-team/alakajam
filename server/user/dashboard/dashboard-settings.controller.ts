@@ -45,8 +45,8 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
     if (req.body.special_permissions) {
       const isMod = ["mod", "admin"].includes(req.body.special_permissions);
       const isAdmin = req.body.special_permissions === "admin";
-      dashboardUser.is_mod = isMod ? "true" : "";
-      dashboardUser.is_admin = isAdmin ? "true" : "";
+      dashboardUser.is_mod = isMod ? "true" : null;
+      dashboardUser.is_admin = isAdmin ? "true" : null;
     }
   }
 

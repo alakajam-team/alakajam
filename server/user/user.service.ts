@@ -1,10 +1,7 @@
 import Bluebird = require("bluebird");
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as crypto from "crypto";
 import * as randomKey from "random-key";
-import * as configUtils from "server/core/config";
 import constants from "server/core/constants";
-import db from "server/core/db";
 import { ILike } from "server/core/db-typeorm-ilike";
 import forms from "server/core/forms";
 import log from "server/core/log";
@@ -12,7 +9,7 @@ import * as models from "server/core/models";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
 import { Mutable } from "server/types";
-import { FindConditions, FindOneOptions, getRepository, Not, IsNull } from "typeorm";
+import { FindConditions, FindOneOptions, getRepository, IsNull, Not, SelectQueryBuilder } from "typeorm";
 
 export class UserService {
 
@@ -35,7 +32,29 @@ export class UserService {
     return getRepository(User).findOne({ where: { email } });
   }
 
-  public async findUsersTypeORM(options: FindUserOptions = {}): Promise<User[]> {
+  public async countUsers(options: FindUserOptions = {}): Promise<number> {
+    const qb = await this.createFindUsersQuery(options);
+    return qb.getCount();
+  }
+
+  public async findUsers(options: FindUserOptions = {}): Promise<User[]> {
+    const qb = await this.createFindUsersQuery(options);
+
+    if (options.entriesCount) {
+      const results = await qb.getRawAndEntities();
+      results.entities.forEach((user: Mutable<User>, index) => {
+        // Assign entry counts to entities
+        const raw = results.raw[index];
+        user.entriesCount = raw.entries_count;
+        user.akjEntriesCount = raw.akj_entries_count;
+      });
+      return results.entities;
+    } else {
+      return qb.getMany();
+    }
+  }
+
+  private async createFindUsersQuery(options: FindUserOptions): Promise<SelectQueryBuilder<User>> {
     const userRepository = getRepository(User);
     let qb = userRepository.createQueryBuilder("user");
 
@@ -57,88 +76,35 @@ export class UserService {
     }
     if (options.entriesCount) {
       qb.leftJoinAndSelect((entriesCountQb) => {
-        entriesCountQb
-          .from(User, "user")
-          .select([
-            "COUNT(roles.user_id) as entries_count",
-            "COUNT(roles.event_id) as akj_entries_count",
-            "user.id"
-          ])
-          .innerJoin("user.roles", "roles", "roles.node_type = 'entry'")
-          .groupBy("user.id");
-        return entriesCountQb;
-      }, "entriesCount");
+          entriesCountQb
+            .from(User, "user")
+            .select([
+              "COUNT(roles.user_id) as entries_count",
+              "COUNT(roles.event_id) as akj_entries_count",
+              "user.id as id"
+            ])
+            .innerJoin("user.roles", "roles", "roles.node_type = 'entry'")
+            .groupBy("user.id");
+          return entriesCountQb;
+        }, "entriesCount")
+        .andWhere("entriesCount.id = user.id");
 
       if (options.withEntries) {
         qb.andWhere("entriesCount.entries_count > 0");
       }
     }
-
-    if (options.entriesCount) {
-      const results = await qb.getRawAndEntities();
-      results.entities.forEach((user: Mutable<User>, index) => {
-        // Assign entry counts to entities
-        const raw = results.raw[index];
-        user.entriesCount = raw.entries_count;
-        user.akjEntriesCount = raw.akj_entries_count;
-      });
-      return results.entities;
-    } else {
-      return qb.getMany();
+    if (options.page !== undefined || options.pageSize) {
+      const page0Indexed = options.page ? options.page - 1 : 0;
+      const pageSize = options.pageSize || 10;
+      qb.offset(page0Indexed * pageSize)
+        .limit(pageSize)
+        .orderBy("created_at", "DESC");
     }
-  }
-
-  /**
-   * Fetches users
-   * @returns {Collection(User)}
-   */
-  public async findUsers(options: FindUserOptions = {}): Promise<BookshelfCollection | string | number> {
-    let query = new models.User()
-      .where("user.id", "!=", constants.ANONYMOUS_USER_ID);
-    if (options.search) {
-      query = query.where("title", configUtils.ilikeOperator(), "%" + options.search + "%");
-    }
-    if (options.eventId) {
-      query = query.query((qb) => {
-        qb.distinct()
-          .leftJoin("user_role", "user_role.user_id", "user.id")
-          .where("user_role.event_id", options.eventId);
-      });
+    if (options.orderBy) {
+      qb.orderBy(options.orderBy, options.orderByDesc ? "DESC" : "ASC");
     }
 
-    if (options.entriesCount && !options.count) {
-      const subQuery = models.User.forge<BookshelfModel>().query((qb) => {
-        qb.count("user_role.user_id as entries_count")
-          .count("user_role.event_id as akj_entries_count")
-          .select("user.id")
-          .leftJoin("user_role", function () {
-            this.on("user_role.user_id", "=", "user.id")
-              .andOn("user_role.node_type", "like", db.knex.raw("?", ["entry"]));
-          })
-          .groupBy("user.id")
-          .as("c");
-      });
-
-      query = query.query((qb) => {
-        qb.leftJoin(subQuery.query().as("c"), "c.id", "user.id");
-        qb.select("user.*", "c.entries_count", "c.akj_entries_count");
-        if (options.withEntries) {
-          qb.where("c.entries_count", ">", 0);
-        }
-      });
-    }
-    if (options.isMod) { query.where("is_mod", true); }
-    if (options.isAdmin) { query.where("is_admin", true); }
-
-    if (options.count) {
-      return query.count();
-    } else if (options.page !== undefined || options.pageSize) {
-      return query.orderBy("created_at", "DESC")
-        .fetchPage(options);
-    } else {
-      if (options.orderBy) { query.orderBy(options.orderBy, options.orderByDesc ? "DESC" : "ASC"); }
-      return query.fetchAll(options as any) as any;
-    }
+    return qb;
   }
 
   /**
@@ -157,11 +123,14 @@ export class UserService {
     }
 
     const userRepository = getRepository(User);
-    const caseInsensitiveUsernameMatches = await userRepository.createQueryBuilder()
-      .where("LOWER(name) LIKE LOWER(:name)", { name })
+    const conflictingUsers = await userRepository.createQueryBuilder()
+      .where([
+        { name: ILike(name) },
+        { email: ILike(email) }
+      ])
       .getCount();
-    if (caseInsensitiveUsernameMatches > 0 || name === "anonymous") {
-      return "Username is taken";
+    if (conflictingUsers > 0 || name === "anonymous") {
+      return "Username or email is taken";
     }
     if (!forms.isEmail(email)) {
       return "Invalid email";
@@ -185,15 +154,18 @@ export class UserService {
    * @returns {User} The models.User, or false if the authentication failed
    */
   public async authenticate(name: string, password: string): Promise<User | false> {
-    const user = await models.User.query((query) => {
-      query
-        .where(db.knex.raw("LOWER(name)") as any, name.toLowerCase())
-        .orWhere("email", name);
-    }).fetch();
+    const user = await getRepository(User)
+      .createQueryBuilder()
+      .where([
+        { email: ILike(name) },
+        { name: ILike(name) }
+      ])
+      .getOne();
+
     if (user) {
-      const hashToTest = this.hashPassword(password, user.get("password_salt"));
-      if (hashToTest === user.get("password")) {
-        return user as any;
+      const hashToTest = this.hashPassword(password, user.password_salt);
+      if (hashToTest === user.password) {
+        return user;
       }
     }
     return false;
@@ -281,11 +253,10 @@ export interface FindUserOptions {
   search?: string;
   eventId?: number;
   entriesCount?: boolean;
-  count?: boolean;
   withEntries?: boolean;
   isMod?: boolean;
   isAdmin?: boolean;
-  orderBy?: string;
+  orderBy?: keyof User;
   orderByDesc?: boolean;
   page?: number;
   pageSize?: number;

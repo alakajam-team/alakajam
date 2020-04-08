@@ -309,11 +309,11 @@ export async function getUserSearch(req: CustomRequest, res: CustomResponse<Comm
       search: req.query.title,
       pageSize: 30,
       page,
-    }) as BookshelfCollection;
+    });
 
     json.users = [];
-    for (const user of users.models) {
-      const userJson = _getAttributes(user, PUBLIC_ATTRIBUTES_USER);
+    for (const user of users) {
+      const userJson = _getAttributes(user as any, PUBLIC_ATTRIBUTES_USER);
       userJson.url = url.resolve(config.ROOT_URL, links.routeUrl(user, "user"));
       json.users.push(userJson);
     }
