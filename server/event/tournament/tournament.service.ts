@@ -7,28 +7,16 @@ import db from "server/core/db";
 import enums from "server/core/enums";
 import * as models from "server/core/models";
 
-export interface FindActiveTournamentOptions {
-  allowedTournamentStates?: string[];
-}
+export const CACHE_KEY_ACTIVE_TOURNAMENT_EVENT = "active-tournament-event";
 
 /**
  * Service for managing tournaments.
  */
 export class TournamentService {
 
-  public async findActiveTournament(options: FindActiveTournamentOptions = {}): Promise<BookshelfModel> {
-    const allowedTournamentStates = options.allowedTournamentStates || [enums.EVENT.STATUS_TOURNAMENT.PLAYING];
-    const cacheKey = "active-tournament-event-" + allowedTournamentStates.join("-");
-    return cache.getOrFetch<BookshelfModel>(cache.general, cacheKey, async () => {
-      return models.Event
-        .where("status_tournament", "IN", allowedTournamentStates)
-        .fetch({ withRelated: ["tournamentEntries"] });
-    });
-  }
-
-  public async findActiveTournamentPlaying(entryId: number, options: FindActiveTournamentOptions = {}): Promise<BookshelfModel> {
+  public async findActiveTournamentPlaying(entryId: number): Promise<BookshelfModel> {
     if (entryId) {
-      const activeTournamentEvent = await this.findActiveTournament(options);
+      const activeTournamentEvent = await this.findActiveTournament();
       if (activeTournamentEvent) {
         const tEntriesCollection = activeTournamentEvent.related<BookshelfCollection>("tournamentEntries");
         for (const tEntry of tEntriesCollection.models) {
@@ -39,6 +27,14 @@ export class TournamentService {
       }
     }
     return undefined;
+  }
+
+  private async findActiveTournament(): Promise<BookshelfModel> {
+    return cache.getOrFetch<BookshelfModel>(cache.general, CACHE_KEY_ACTIVE_TOURNAMENT_EVENT, async () => {
+      return models.Event
+        .where("status_tournament", "IN", [enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED])
+        .fetch({ withRelated: ["tournamentEntries"] });
+    });
   }
 
   public async findTournamentEntries(event: BookshelfModel, options: { withDetails?: boolean } = {}): Promise<BookshelfModel[]> {
@@ -235,6 +231,8 @@ export class TournamentService {
       if (entryCount !== event.get("entry_count")) {
         event.set("entry_count", entryCount);
         await event.save();
+
+        cache.general.del(CACHE_KEY_ACTIVE_TOURNAMENT_EVENT);
         cache.eventsById.del(event.get("id"));
         cache.eventsByName.del(event.get("name"));
       }

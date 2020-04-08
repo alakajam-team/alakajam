@@ -12,7 +12,7 @@ import eventPresetService from "server/event/event-preset.service";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import eventThemeService from "server/event/theme/event-theme.service";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import eventTournamentService, { CACHE_KEY_ACTIVE_TOURNAMENT_EVENT } from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventTemplateService from "../event-template.service";
 import { EventLocals } from "../event.middleware";
@@ -176,7 +176,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
       await eventDetails.save();
 
       // Caches clearing
-      cache.general.del("active-tournament-event");
+      cache.general.del(CACHE_KEY_ACTIVE_TOURNAMENT_EVENT);
       cache.eventsById.del(event.get("id"));
       cache.eventsByName.del(event.get("name"));
       if (nameChanged && previousName) {

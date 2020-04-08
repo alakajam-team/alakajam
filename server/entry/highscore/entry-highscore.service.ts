@@ -13,7 +13,7 @@ import fileStorage from "server/core/file-storage";
 import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
-import eventTournamentService, { FindActiveTournamentOptions } from "server/event/tournament/tournament.service";
+import eventTournamentService from "server/event/tournament/tournament.service";
 
 export class HighScoreService {
 
@@ -212,8 +212,7 @@ export class HighScoreService {
     if (entryScore && entryScore.get("active") !== active) {
       entryScore.set("active", active);
       await entryScore.save();
-      await this.refreshEntryRankings(entryScore.related("entry"), entryScore,
-        { allowedTournamentStates: [enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED] });
+      await this.refreshEntryRankings(entryScore.related("entry"), entryScore, { updateTournamentIfClosed: true });
     }
   }
 
@@ -236,7 +235,7 @@ export class HighScoreService {
   public async refreshEntryRankings(
     entry: BookshelfModel,
     triggeringEntryScore?: BookshelfModel,
-    options: FindActiveTournamentOptions & { triggeringUserId?: number } = {}): Promise<BookshelfModel | undefined> {
+    options: { triggeringUserId?: number; updateTournamentIfClosed?: boolean } = {}): Promise<BookshelfModel | undefined> {
 
     let updatedEntryScore: BookshelfModel | undefined;
     const impactedEntryScores = [];
@@ -274,12 +273,16 @@ export class HighScoreService {
     }
 
     // Refresh active tournament scores
-    const activeTournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get("id"), options);
+    const activeTournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get("id"));
     if (activeTournamentEvent) {
-      const triggeringUserId = options.triggeringUserId || (triggeringEntryScore
-        ? triggeringEntryScore.get("user_id") : null);
-      eventTournamentService.refreshTournamentScores(module.exports.default, activeTournamentEvent,
-        triggeringUserId, impactedEntryScores, options);
+      const tournamentStatus = activeTournamentEvent.get("status_tournament");
+      if (tournamentStatus === enums.EVENT.STATUS_TOURNAMENT.PLAYING
+        || options.updateTournamentIfClosed && tournamentStatus === enums.EVENT.STATUS_TOURNAMENT.CLOSED) {
+        const triggeringUserId = options.triggeringUserId || (triggeringEntryScore
+          ? triggeringEntryScore.get("user_id") : null);
+        eventTournamentService.refreshTournamentScores(module.exports.default, activeTournamentEvent,
+          triggeringUserId, impactedEntryScores);
+      }
     }
 
     if (updatedEntryScore) {
