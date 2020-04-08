@@ -101,6 +101,18 @@ export class User extends TimestampedEntity {
   @OneToMany(() => ThemeVote, (themeVote) => themeVote.user, { cascade: true })
   public themeVotes: ThemeVote[];
 
+  /**
+   * Number of entries, including for external events.
+   * Only set when using `userService.findUsers()` with flag `entriesCount`.
+   */
+  public readonly entriesCount?: number;
+
+  /**
+   * Number of entries to Alakajam event.
+   * Only set when using `userService.findUsers()` with flag `entriesCount`.
+   */
+  public readonly akjEntriesCount?: number;
+
   public dependents(): Array<keyof this> {
     return [ "details", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes"];
   }

@@ -35,7 +35,120 @@ describe("User service", function() {
 
   });
 
-  describe.only("find users", () => {
+
+  describe("find users (TypeORM)", () => {
+
+    it("should search users by partial, case-insensitive title", async () => {
+      await createUser({ title: "Dumbledore" });
+
+      const foundUsers = await userService.findUsersTypeORM({ search: "dumb" });
+      expect(foundUsers.length).to.equal(1);
+      expect(foundUsers[0].title).to.equal("Dumbledore");
+    });
+
+   it("should not retrieve the anonymous comment user", async () => {
+      const anonymousUser = await userService.findById(constants.ANONYMOUS_USER_ID);
+      expect(anonymousUser).to.exist;
+      expect(anonymousUser.title).not.to.be.empty;
+
+      const foundUsers = await userService.findUsersTypeORM({ search: anonymousUser.title });
+      expect(foundUsers.length).to.equal(0);
+    });
+
+    it("should find users who entered a specific event", async () => {
+      const user = await createUser();
+      await createUserRole(user, { event_id: 1 });
+
+      const foundUsers = await userService.findUsersTypeORM({ eventId: 1 });
+      expect(foundUsers.length).to.equal(1);
+    });
+
+    it("should count user entries", async () => {
+      const user = await createUser({ title: "Harry Potter" });
+      await createUserRole(user, { event_id: undefined });
+      await createUserRole(user, { event_id: 1 });
+      await createUserRole(user, { event_id: 2 });
+
+      const foundUsersWithEntryCounts = await userService.findUsersTypeORM({
+        search: "harry",
+        entriesCount: true
+      });
+      expect(foundUsersWithEntryCounts.length).to.equal(1);
+      expect(foundUsersWithEntryCounts[0].entriesCount).to.equal(3);
+      expect(foundUsersWithEntryCounts[0].akjEntriesCount).to.equal(2);
+    });
+
+    it("should filter out users without entries", async () => {
+      await createUser({ title: "Gandalf" });
+
+      const foundUsers = await userService.findUsersTypeORM({
+        search: "gandalf",
+        entriesCount: true,
+        withEntries: true
+      });
+      expect(foundUsers.length).to.equal(0);
+    });
+    
+    it("should find mods", async () => {
+      await createUser({ is_mod: "1" });
+
+      const foundMods = await userService.findUsersTypeORM({ isMod: true });
+      expect(foundMods.length).to.equal(1);
+    });
+
+    it("should find admins", async () => {
+      const foundAdmins = await userService.findUsersTypeORM({ isAdmin: true });
+      expect(foundAdmins.length).to.equal(1);
+      expect(foundAdmins[0].name).to.equal("administrator");
+    });
+
+  /*  it("should count users", async () => {
+      await createUser({ title: "entrant1" });
+      await createUser({ title: "entrant2" });
+      await createUser({ title: "entrant3" });
+
+      const foundUsersCount = await userService.findUsersTypeORM({
+        search: "entrant",
+        count: true
+      }) as number;
+      expect(foundUsersCount).to.equal(3);
+    });
+
+    it("should support pagination sorting by creation date", async () => {
+      await createUser({ title: "A Paginateme", created_at: 1000 as any });
+      await createUser({ title: "B Paginateme", created_at: 2000 as any });
+      await createUser({ title: "C Paginateme", created_at: 3000 as any });
+
+      // TODO Fix date, currently requires timestamp number to be updated correctly (at least on SQLite)
+      // const test = await await userService.findUsers({search: "Paginate"}) as BookshelfCollection;
+      // console.log(test.map(u => u.get("created_at") + "/" + u.get("title") + "/" + u.id));
+
+      const foundUsers = await userService.findUsersTypeORM({
+        search: "Paginateme",
+        pageSize: 1,
+        page: 2
+      }) as BookshelfCollection;
+      expect(foundUsers.length).to.equal(1);
+      expect(foundUsers.at(0).get("title")).to.equal("B Paginateme");
+    });
+    
+    it("should support ordering", async () => {
+      await createUser({ title: "B Orderme" });
+      await createUser({ title: "A Orderme" });
+      await createUser({ title: "C Orderme" });
+
+      const foundUsers = await userService.findUsersTypeORM({
+        search: "orderme",
+        orderBy: "title",
+        orderByDesc: true
+      }) as BookshelfCollection;
+      expect(foundUsers.map(user => user.get("title")).join(", "))
+        .to.equal("C Orderme, B Orderme, A Orderme");
+    });*/
+    
+  });
+
+  describe("find users", () => {
 
     it("should search users by partial, case-insensitive title", async () => {
       await createUser({ title: "Dumbledore" });

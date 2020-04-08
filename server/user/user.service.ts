@@ -1,5 +1,5 @@
 import Bluebird = require("bluebird");
-import { BookshelfCollection, BookshelfModel, FetchPageOptions } from "bookshelf";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as crypto from "crypto";
 import * as randomKey from "random-key";
 import * as configUtils from "server/core/config";
@@ -11,21 +11,20 @@ import log from "server/core/log";
 import * as models from "server/core/models";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
-import { FindOneOptions, getRepository, SaveOptions } from "typeorm";
+import { Mutable } from "server/types";
+import { FindConditions, FindOneOptions, getRepository, Not, IsNull } from "typeorm";
 
 export class UserService {
 
   public async findById(id: number): Promise<User> {
-    const userRepository = getRepository(User);
-    return userRepository.findOne({ where: { id } });
+    return getRepository(User).findOne({ where: { id } });
   }
 
   /**
    * Fetches a user
    */
   public async findByName(name: string, options: FindOneOptions<User> = {}): Promise<User> {
-    const userRepository = getRepository(User);
-    return userRepository.findOne({
+    return getRepository(User).findOne({
       where: { name: ILike(name) },
       relations: ["details"],
       ...options
@@ -33,19 +32,67 @@ export class UserService {
   }
 
   public async findByEmail(email: string): Promise<User> {
+    return getRepository(User).findOne({ where: { email } });
+  }
+
+  public async findUsersTypeORM(options: FindUserOptions = {}): Promise<User[]> {
     const userRepository = getRepository(User);
-    return userRepository.findOne({ where: { email } });
+    let qb = userRepository.createQueryBuilder("user");
+
+    // Basic search
+
+    const where: FindConditions<User> = {
+      id: Not(constants.ANONYMOUS_USER_ID)
+    }
+    if (options.search) where.title = ILike("%" + options.search + "%");
+    if (options.isMod) where.is_mod = Not(IsNull());
+    if (options.isAdmin) where.is_admin = Not(IsNull());
+    qb.where(where);
+
+    // Advanced search
+
+    if (options.eventId) {
+      qb.innerJoin("user.roles", "roles")
+        .andWhere("roles.event_id = :eventId", { eventId: options.eventId });
+    }
+    if (options.entriesCount) {
+      qb.leftJoinAndSelect((entriesCountQb) => {
+        entriesCountQb
+          .from(User, "user")
+          .select([
+            "COUNT(roles.user_id) as entries_count",
+            "COUNT(roles.event_id) as akj_entries_count",
+            "user.id"
+          ])
+          .innerJoin("user.roles", "roles", "roles.node_type = 'entry'")
+          .groupBy("user.id");
+        return entriesCountQb;
+      }, "entriesCount");
+
+      if (options.withEntries) {
+        qb.andWhere("entriesCount.entries_count > 0");
+      }
+    }
+
+    if (options.entriesCount) {
+      const results = await qb.getRawAndEntities();
+      results.entities.forEach((user: Mutable<User>, index) => {
+        // Assign entry counts to entities
+        const raw = results.raw[index];
+        user.entriesCount = raw.entries_count;
+        user.akjEntriesCount = raw.akj_entries_count;
+      });
+      return results.entities;
+    } else {
+      return qb.getMany();
+    }
   }
 
   /**
    * Fetches users
    * @returns {Collection(User)}
    */
-  public async findUsers(
-    options: {
-      search?: string; eventId?: number; entriesCount?: boolean; count?: boolean; withEntries?: boolean;
-      isMod?: boolean; isAdmin?: boolean; orderBy?: string; orderByDesc?: boolean;
-    } & FetchPageOptions = {}): Promise<BookshelfCollection | string | number> {
+  public async findUsers(options: FindUserOptions = {}): Promise<BookshelfCollection | string | number> {
     let query = new models.User()
       .where("user.id", "!=", constants.ANONYMOUS_USER_ID);
     if (options.search) {
@@ -90,7 +137,7 @@ export class UserService {
         .fetchPage(options);
     } else {
       if (options.orderBy) { query.orderBy(options.orderBy, options.orderByDesc ? "DESC" : "ASC"); }
-      return query.fetchAll(options) as any;
+      return query.fetchAll(options as any) as any;
     }
   }
 
@@ -172,8 +219,7 @@ export class UserService {
   }
 
   public async save(user: User): Promise<void> {
-    const repository = getRepository(User);
-    await repository.save(user);
+    await getRepository(User).save(user);
   }
 
   /**
@@ -229,6 +275,20 @@ export class UserService {
     return crypto.createHash("sha256").update(password + salt).digest("hex");
   }
 
+}
+
+export interface FindUserOptions {
+  search?: string;
+  eventId?: number;
+  entriesCount?: boolean;
+  count?: boolean;
+  withEntries?: boolean;
+  isMod?: boolean;
+  isAdmin?: boolean;
+  orderBy?: string;
+  orderByDesc?: boolean;
+  page?: number;
+  pageSize?: number;
 }
 
 export default new UserService();
