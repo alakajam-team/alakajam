@@ -9,8 +9,9 @@ import { ILike } from "server/core/db-typeorm-ilike";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
+import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
-import { FindOneOptions, getRepository } from "typeorm";
+import { FindOneOptions, getRepository, SaveOptions } from "typeorm";
 
 export class UserService {
 
@@ -42,11 +43,11 @@ export class UserService {
    */
   public async findUsers(
     options: {
-      search?: boolean; eventId?: boolean; entriesCount?: boolean; count?: boolean; withEntries?: boolean;
+      search?: string; eventId?: number; entriesCount?: boolean; count?: boolean; withEntries?: boolean;
       isMod?: boolean; isAdmin?: boolean; orderBy?: string; orderByDesc?: boolean;
     } & FetchPageOptions = {}): Promise<BookshelfCollection | string | number> {
     let query = new models.User()
-      .where("name", "!=", "anonymous");
+      .where("user.id", "!=", constants.ANONYMOUS_USER_ID);
     if (options.search) {
       query = query.where("title", configUtils.ilikeOperator(), "%" + options.search + "%");
     }
@@ -63,7 +64,7 @@ export class UserService {
         qb.count("user_role.user_id as entries_count")
           .count("user_role.event_id as akj_entries_count")
           .select("user.id")
-          .leftJoin("user_role", function() {
+          .leftJoin("user_role", function () {
             this.on("user_role.user_id", "=", "user.id")
               .andOn("user_role.node_type", "like", db.knex.raw("?", ["entry"]));
           })
@@ -198,22 +199,17 @@ export class UserService {
    * @param {User} user
    */
   public async refreshUserReferences(user: User): Promise<void> {
-    /* const userRoleRepository = getRepository(UserRole);
-    userRoleRepository.find({
-      where: {
-        user_id: user.id
-      }
-    })*/
+    const userRoleRepository = getRepository(UserRole);
+    const userRoles = await userRoleRepository.find({
+      where: { user_id: user.id }
+    });
 
-    // TODO Transaction
-    const userRolesCollection = await models.UserRole
-      .where("user_id", user.get("id"))
-      .fetchAll() as BookshelfCollection;
-    for (const userRole of userRolesCollection.models) {
-      userRole.set("user_name", user.get("name"));
-      userRole.set("user_title", user.get("title"));
-      await userRole.save();
+    for (const userRole of userRoles) {
+      userRole.user_name = user.name;
+      userRole.user_title = user.title;
     }
+
+    await userRoleRepository.save(userRoles);
   }
 
   /**

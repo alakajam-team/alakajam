@@ -17,7 +17,7 @@ export type DB = Bookshelf & {
   emptyDatabase: () => Promise<void>;
   backup: () => Promise<void>;
   getBackupDate: () => Promise<Date|false>;
-  restore: (sessionStore) => Promise<void>;
+  restore: (sessionStore?: any) => Promise<void>;
   deleteBackup: () => Promise<void>;
 
   // Bookshelf registry plugin
@@ -65,7 +65,7 @@ function initBookshelf(): DB {
     }
 
     const previousVersion = await knex.migrate.currentVersion();
-    //    await knex.migrate.latest((knexfile as any).development.migrations);
+    await knex.migrate.latest((knexfile as any).development.migrations);
     const newVersion = await knex.migrate.currentVersion();
 
     if (!options.silent) {
@@ -112,11 +112,13 @@ function initBookshelf(): DB {
     }
   };
 
-  bookshelf.restore = async (sessionStore) => {
+  bookshelf.restore = async (sessionStore?: any) => {
     _assertSQLite();
     await knex.destroy();
     await fs.copyFile(BACKUP_PATH, config.DB_SQLITE_FILENAME);
-    sessionStore.knex = bookshelf.knex = knex = createKnexInstance() as any;
+    if (sessionStore) {
+      sessionStore.knex = bookshelf.knex = knex = createKnexInstance() as any;
+    }
   };
 
   bookshelf.deleteBackup = async () => {
@@ -156,7 +158,7 @@ function createKnexInstance(): Knex {
       if (queryTimes[request.__knexUid]) {
         const totalTime = Date.now() - queryTimes[request.__knexUid];
         if (totalTime >= traceSqlThreshold) {
-          log.debug('"' + request.sql + '"', request.bindings, totalTime + "ms");
+          log.debug('[knex] "' + request.sql + '"', request.bindings, totalTime + "ms");
         }
         delete queryTimes[request.__knexUid];
       }

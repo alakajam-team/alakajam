@@ -1,6 +1,5 @@
 import config from "server/core/config";
 import { ColumnOptions, ColumnType } from "typeorm";
-import { add } from "winston";
 
 const dbSpecificTypes: Record<string, ColumnType> = {
   dateTime: "date",
@@ -13,7 +12,7 @@ export class ColumnTypes {
 
   /**
    * Date time column.
-   * If you want to remove the default value of NOW(), specify `() => undefined` to the `default` option field.
+   * If you want to remove the default value of NOW(), specify `() => null` to the `default` option field.
    * @param additionalOptions 
    */
   public static dateTime(additionalOptions: ColumnOptions = {}): ColumnOptions {

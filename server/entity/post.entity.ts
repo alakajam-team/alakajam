@@ -81,7 +81,7 @@ export class Post extends TimestampedEntity {
   @Column({ default: 0 })
   public like_count: number;
 
-  @Column(ColumnTypes.json({ length: 500, default: [] }))
+  @Column(ColumnTypes.json({ length: 500, default: "[]" }))
   public like_details: {[type: string]: number};
 
   /**

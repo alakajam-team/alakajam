@@ -62,19 +62,19 @@ export class EventDetails extends TimestampedEntity {
   /**
     * Number of entries by division: {"name": count...}
     */
-  @Column(ColumnTypes.json({ nullable: true, default: {}, length: 2000 }))
+  @Column(ColumnTypes.json({ nullable: true, default: "{}", length: 2000 }))
   public division_counts: Record<string, number>;
 
   /**
     * Config for shortlist eliminations phase (JSON: {"start": date, "delay": number in minutes, "body": html}
     */
-  @Column(ColumnTypes.json({ nullable: true, default: {}, length: 2000 }))
+  @Column(ColumnTypes.json({ nullable: true, default: "{}", length: 2000 }))
   public shortlist_elimination: { start?: Date; delay?: number; body: string };
 
   /**
     * Config for a list of special pages to link to: (JSON: [{"title": string, "link": string, "icon": string}]
     */
-   @Column(ColumnTypes.json({ nullable: true, default: [], length: 2000 }))
+   @Column(ColumnTypes.json({ nullable: true, default: "[]", length: 2000 }))
   public links: EventLink[];
 
   public dependents(): Array<keyof this> {

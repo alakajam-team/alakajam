@@ -41,7 +41,7 @@ const templateFunction = (options: TransformableInfo): string => {
   const lines = new Error().stack.split("\n");
   for (const line of lines) {
     if (line.indexOf(SOURCES_ROOT) !== -1 &&
-      line.indexOf(__filename) === -1 &&
+      line.indexOf("log.") === -1 &&
       line.indexOf("node_modules") === -1) {
       const locInfo = line.replace(/(.*\()/g, "")
         .replace(process.cwd(), "")

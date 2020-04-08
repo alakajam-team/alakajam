@@ -125,7 +125,7 @@ export class Event extends TimestampedEntity {
   /**
    * Event start date, for sorting purposes
    */
-  @CreateDateColumn(ColumnTypes.dateTime({ default: () => undefined, nullable: true }))
+  @CreateDateColumn(ColumnTypes.dateTime({ default: () => null, nullable: true }))
   @Index()
   public started_at: Date;
 
