@@ -27,7 +27,7 @@ See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional do
 ### Automated tests
 
 * `npm run test` Runs all unit + end to end tests.
-* `npm run test:unit` Runs all unit tests. (based on mocha + chai)
+* `npm run test:unit` Runs all unit tests. (based on mocha + chai, more details below)
 * `npm run test:e2e` Runs all end-to-end tests. (based on cypress) 
 * `npm run start:e2e` Launches the server with a special database for end-to-end testing. More in the Cypress folder readme.
 * `npm run cypress` Launches Cypress for end-to-end test development.
@@ -82,10 +82,10 @@ Run `npm install` without the `--no-optional` flag to try and set up the `sharp`
 
 #### ...Run only one unit test
 
-Customize the `test:unit` command from package.json to your needs, and prefix it with `npx`. For instance:
+Run only partial tests by appending the required file as an argument. For instance:
 
 ```bash
-npx mocha -r ts-node/register -r tsconfig-paths/register server/user/user.service.spec.ts --watch --watch-extensions ts --watch-files server
+npm run test:unit -- user.service
 ```
 
 :warning: Due to a bug (#494), DB_TYPE must be set to `sqlite3` in your `config.js` before running unit tests.
