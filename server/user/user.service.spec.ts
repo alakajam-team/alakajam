@@ -179,7 +179,7 @@ describe("User service", function () {
 
   async function createUser(attributes: Partial<User> = {}): Promise<User> {
     const user = await userService.register(
-      attributes.email || "test@example.com",
+      attributes.email || `test${createdUsers++}@example.com`,
       attributes.name || "user" + createdUsers++,
       "testtest");
     if (typeof user === "string") throw new Error(user);
