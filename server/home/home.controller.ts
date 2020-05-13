@@ -43,12 +43,15 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
 
   if (user) {
     const allPostsInPage = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);
+
     await Promise.all([
       likeService.findUserLikeInfo(allPostsInPage as PostBookshelfModel[], user),
-      featuredEvent ? eventService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined
-    ]).then(([userLikes, entry]) => {
+      featuredEvent ? eventService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined,
+      eventTournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id"))
+    ]).then(([userLikes, entry, tournamentScore]) => {
       res.locals.userLikes = userLikes;
       res.locals.entry = entry;
+      res.locals.tournamentScore = tournamentScore;
     });
   }
 
@@ -115,14 +118,6 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
         }
       })
       .catch(log.error));
-
-  // Fetch tournament score
-  if (user && featuredEvent && featuredEvent.get("status_tournament") !== "disabled") {
-    contextTasks.push(
-      eventTournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id"))
-        .then((tournamentScore) => context.tournamentScore = tournamentScore)
-        .catch(log.error));
-  }
 
   // Fetch all the things at once!
   await Promise.all(contextTasks);

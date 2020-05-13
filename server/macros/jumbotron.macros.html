@@ -21,7 +21,7 @@
           <div class="col-lg-9 mb-3 mb-lg-0">
             {% if event.get('countdown_config').message or event.get('countdown_config').phrase %}
               {% set rawHypeLink = event.get('countdown_config').link %}
-              {% set hypeLink = rawHypeLink if rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
+              {% set hypeLink = rawHypeLink if rawHypeLink and rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
               {% set animatedCountdownEnabled = event.get('countdown_config').enabled %}
               <div class="card card-body jumbotron-invite"
                 onclick="{{ 'window.location = \'' + hypeLink + '\'' if hypeLink }}">

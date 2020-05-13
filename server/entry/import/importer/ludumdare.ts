@@ -1,7 +1,5 @@
 /**
  * ludumdare.com entry importer
- *
- * @module services/entry-importers/ludumdare
  */
 
 import * as cheerio from "cheerio";

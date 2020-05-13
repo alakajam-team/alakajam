@@ -45,7 +45,7 @@ export async function eventManageEntries(req: CustomRequest, res: CustomResponse
   const detailedEntryInfo: any = {};
   const usersById = {};
   if (forms.isId(req.query.entryDetails) && entriesById[req.query.entryDetails]) {
-    const eventUsersCollection = await userService.findUsers({ eventId: event.get("id") }) as BookshelfCollection;
+    const eventUsersCollection = await userService.findUsers({ eventId: event.get("id") });
     eventUsersCollection.forEach((user) => {
       usersById[user.get("id")] = user;
     });

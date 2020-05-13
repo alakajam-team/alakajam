@@ -124,7 +124,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
     await userEntry.save();
 
     for (let i = 2; i <= 10; i++) {
-      await userService.register("entrant@example.com", "entrant" + i, "entrant" + i);
+      await userService.register(`entrant${i}@example.com`, "entrant" + i, "entrant" + i);
       const otherUser = await userService.findByName("entrant" + i);
       const otherEntry = await eventService.createEntry(otherUser, event2);
       otherEntry.set("title", "Game " + i);

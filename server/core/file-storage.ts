@@ -1,8 +1,6 @@
 
 /**
  * File & folder manipulation, mostly for picture storage.
- *
- * @module core/file-storage
  */
 
 import * as fs from "fs-extra";

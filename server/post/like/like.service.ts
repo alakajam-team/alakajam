@@ -2,6 +2,7 @@ import { BookshelfModel, NodeBookshelfModel } from "bookshelf";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import * as models from "server/core/models";
+import { User } from "server/entity/user.entity";
 
 export class LikeService {
 
@@ -17,7 +18,7 @@ export class LikeService {
    * @param nodes node array, can contain holes
    * @param user
    */
-  public async findUserLikeInfo(nodes: NodeBookshelfModel[], user: BookshelfModel): Promise<Record<number, string>> {
+  public async findUserLikeInfo(nodes: NodeBookshelfModel[], user: User): Promise<Record<number, string>> {
     nodes = nodes.filter((node) => !!node);
     if (nodes.length === 0 || !user) {
       return {};

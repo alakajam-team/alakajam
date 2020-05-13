@@ -1,9 +1,3 @@
-/**
- * Enums
- *
- * @module core/enums
- */
-
 export default {
   EVENT: {
     STATUS: {

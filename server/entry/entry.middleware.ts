@@ -18,11 +18,17 @@ export interface EntryLocals extends EventLocals {
  * Fetches the current entry & event
  */
 export async function entryMiddleware(req: CustomRequest, res: CustomResponse<EventLocals>, next: NextFunction) {
-  const entry = await eventService.findEntryById(req.params.entryId);
+  if (!(forms.isId(req.params.entryId))) {
+    res.errorPage(403, "Invalid entry");
+    return;
+  }
+
+  const entry = await eventService.findEntryById(parseInt(req.params.entryId, 10));
   if (!entry) {
     res.errorPage(404, "Entry not found");
     return;
   }
+
   res.locals.entry = entry;
   res.locals.pageTitle = entry.get("title");
   res.locals.pageDescription = entry.get("description")

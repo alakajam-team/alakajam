@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { CommonLocals } from "./common.middleware";
 import { Config } from "./core/config";
 
+export type Mutable<T> = { -readonly [P in keyof T ]: T[P] };
+
 export interface Alert {
   type: "success" | "info" | "warning" | "danger";
   floating?: boolean;

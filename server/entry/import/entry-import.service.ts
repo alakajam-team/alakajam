@@ -1,9 +1,8 @@
 /**
  * Service for importing entries from third-party websites
- *
- * @module services/event-import-service
  */
 
+import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import * as download from "download";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -11,13 +10,13 @@ import cache from "server/core/cache";
 import * as configUtils from "server/core/config";
 import enums from "server/core/enums";
 import log from "server/core/log";
+import { User } from "server/entity/user.entity";
 import eventService from "server/event/event.service";
 import * as url from "url";
-import { EntryImporter, EntryReference, EntryImporterError } from "./entry-import";
+import { EntryImporter, EntryImporterError, EntryReference } from "./entry-import";
 import entryImporterItch from "./importer/itch";
 import entryImporterLDJam from "./importer/ldjam";
 import entryImporterLudumDare from "./importer/ludumdare";
-import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 
 const importers: EntryImporter[] = [
   entryImporterItch,
@@ -31,7 +30,7 @@ export class EntryUmportService {
     return importers;
   }
 
-  public async fetchEntryReferences(user: BookshelfModel, importerId: string, profileIdentifier: string):
+  public async fetchEntryReferences(user: User, importerId: string, profileIdentifier: string):
   Promise<EntryReference[] | EntryImporterError> {
     // Fetch and cache entry list
     const cacheKey = importerId + "-" + profileIdentifier;
@@ -66,7 +65,7 @@ export class EntryUmportService {
     return entryReferences;
   }
 
-  public async createOrUpdateEntry(user: BookshelfModel, importerId: string, profileIdentifier: string, entryId: string):
+  public async createOrUpdateEntry(user: User, importerId: string, profileIdentifier: string, entryId: string):
   Promise<BookshelfModel | EntryImporterError> {
     try {
       // Find entry reference (hopefully cached)
@@ -93,7 +92,7 @@ export class EntryUmportService {
       // Create entry or force refreshing existing one (due to fetchEntryReferences() caching)
       let entryModel: EntryBookshelfModel;
       if (!entryReference.existingEntry) {
-        entryModel = await eventService.createEntry(user, null);
+        entryModel = await eventService.createEntry(user);
       } else {
         entryModel = await eventService.findEntryById(entryReference.existingEntry.get("id"));
       }

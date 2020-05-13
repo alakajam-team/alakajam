@@ -18,6 +18,7 @@ import {
   SETTING_EVENT_THEME_IDEAS_REQUIRED,
   SETTING_EVENT_THEME_SUGGESTIONS
 } from "server/core/settings-keys";
+import { User } from "server/entity/user.entity";
 
 const MAX_ELIMINATED_THEMES = 8;
 
@@ -55,7 +56,7 @@ export class EventThemeService {
    * @param event {Event} event model
    * @param ideas {array(object)} An array of exactly 3 ideas (all fields optional): [{label, id}]
    */
-  public async findThemeIdeasByUser(user: BookshelfModel, event: BookshelfModel): Promise<BookshelfCollection> {
+  public async findThemeIdeasByUser(user: User, event: BookshelfModel): Promise<BookshelfCollection> {
     return models.Theme.where({
       user_id: user.get("id"),
       event_id: event.get("id"),
@@ -78,7 +79,7 @@ export class EventThemeService {
    * deletes the idea, not filling the ID creates one instead of updating it.
    */
   public async saveThemeIdeas(
-    user: BookshelfModel,
+    user: User,
     event: BookshelfModel,
     ideas: Array<{ id?: string; title: string }>): Promise<void> {
     const ideasToKeep: Array<{ id?: string; title: string }> = [];
@@ -136,7 +137,7 @@ export class EventThemeService {
   /**
    * Returns the 30 latest votes by the user
    */
-  public async findThemeVotesHistory(user: BookshelfModel, event: BookshelfModel, options: { count?: boolean } = {}) {
+  public async findThemeVotesHistory(user: User, event: BookshelfModel, options: { count?: boolean } = {}) {
     const query = models.ThemeVote.where({
       event_id: event.get("id"),
       user_id: user.get("id"),
@@ -157,7 +158,7 @@ export class EventThemeService {
    * @param user {User} (optional) user model
    * @param event {Event} event model
    */
-  public async findThemesToVoteOn(user: BookshelfModel, event: BookshelfModel): Promise<BookshelfCollection> {
+  public async findThemesToVoteOn(user: User, event: BookshelfModel): Promise<BookshelfCollection> {
     let query = models.Theme as BookshelfModel;
     if (user) {
       query = query.query((qb) => {
@@ -192,7 +193,7 @@ export class EventThemeService {
     }
   }
 
-  public async findThemeShortlistVotes(user: BookshelfModel, event: BookshelfModel): Promise<BookshelfCollection> {
+  public async findThemeShortlistVotes(user: User, event: BookshelfModel): Promise<BookshelfCollection> {
     const shortlistCollection = await this.findShortlist(event);
     const shortlistIds = [];
     shortlistCollection.forEach((theme) => shortlistIds.push(theme.get("id")));
@@ -349,7 +350,7 @@ export class EventThemeService {
     await theme.save(null, options);
   }
 
-  public async saveShortlistVotes(user: BookshelfModel, event: BookshelfModel, ids: number[]) {
+  public async saveShortlistVotes(user: User, event: BookshelfModel, ids: number[]) {
     const shortlistCollection = await this.findShortlist(event);
     const sortedShortlist = shortlistCollection.sortBy((theme) => {
       return ids.indexOf(theme.get("id"));

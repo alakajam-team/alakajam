@@ -1,9 +1,3 @@
-/**
- * Constants
- *
- * @module core/constants
- */
-
 import { sync as findUp } from "find-up";
 import * as path from "path";
 import { SETTING_SESSION_KEY } from "./settings-keys";

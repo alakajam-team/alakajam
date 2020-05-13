@@ -2,12 +2,10 @@
 
 /**
  * Cache configuration
- *
- * @module core/cache
  */
 
-import { BookshelfModel } from "bookshelf";
 import * as NodeCache from "node-cache";
+import { User } from "server/entity/user.entity";
 import config from "./config";
 
 export const TTL_ONE_DAY = 24 * 60 * 3600;
@@ -64,7 +62,7 @@ export default {
 /**
  * Provides access to the cache for user information
  */
-function user(userOrName: BookshelfModel | string) {
+function user(userOrName: User | string) {
   const userName = (typeof userOrName === "string") ? userOrName : userOrName.get("name");
   return new PrefixedNodeCache(cacheMap.users, userName);
 }

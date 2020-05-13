@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+
 /**
  * Database storage configuration.
  * Requiring the module returns a [Bookshelf](http://bookshelfjs.org/) instance.
- *
- * @module core/db
  */
 
 import * as Bookshelf from "bookshelf";
@@ -18,7 +17,7 @@ export type DB = Bookshelf & {
   emptyDatabase: () => Promise<void>;
   backup: () => Promise<void>;
   getBackupDate: () => Promise<Date|false>;
-  restore: (sessionStore) => Promise<void>;
+  restore: (sessionStore?: any) => Promise<void>;
   deleteBackup: () => Promise<void>;
 
   // Bookshelf registry plugin
@@ -113,11 +112,13 @@ function initBookshelf(): DB {
     }
   };
 
-  bookshelf.restore = async (sessionStore) => {
+  bookshelf.restore = async (sessionStore?: any) => {
     _assertSQLite();
     await knex.destroy();
     await fs.copyFile(BACKUP_PATH, config.DB_SQLITE_FILENAME);
-    sessionStore.knex = bookshelf.knex = knex = createKnexInstance() as any;
+    if (sessionStore) {
+      sessionStore.knex = bookshelf.knex = knex = createKnexInstance() as any;
+    }
   };
 
   bookshelf.deleteBackup = async () => {
@@ -157,7 +158,7 @@ function createKnexInstance(): Knex {
       if (queryTimes[request.__knexUid]) {
         const totalTime = Date.now() - queryTimes[request.__knexUid];
         if (totalTime >= traceSqlThreshold) {
-          log.debug('"' + request.sql + '"', request.bindings, totalTime + "ms");
+          log.debug('[knex] "' + request.sql + '"', request.bindings, totalTime + "ms");
         }
         delete queryTimes[request.__knexUid];
       }

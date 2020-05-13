@@ -1,7 +1,5 @@
 /**
- * Tools for validating, sanitizing and transforming data from forms
- *
- * @module core/forms
+ * Tools for validating, sanitizing and transforming data from forms.
  */
 
 import * as htmlToText from "html-to-text";

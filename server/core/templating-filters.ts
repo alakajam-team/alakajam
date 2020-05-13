@@ -1,6 +1,6 @@
-import { BookshelfModel } from "bookshelf";
 import * as leftPad from "left-pad";
 import * as lodash from "lodash";
+import { User } from "server/entity/user.entity";
 import * as slug from "slug";
 import constants from "./constants";
 import * as formats from "./formats";
@@ -55,7 +55,7 @@ export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("date", (
     date: number | string | Date,
-    user?: BookshelfModel,
+    user?: User,
     options: { format?: string; utcSuffixByDefault?: boolean } = {}) => {
     const useCustomFormat = !!options.format;
     const format = options.format || constants.DATE_FORMAT;
@@ -63,11 +63,11 @@ export function configure(nunjucksEnvironment) {
     return formats.formatDate(date, user, format, { utcSuffixByDefault });
   });
 
-  nunjucksEnvironment.addFilter("dateTime", (date: number | string | Date, user?: BookshelfModel) => {
+  nunjucksEnvironment.addFilter("dateTime", (date: number | string | Date, user?: User) => {
     return formats.formatDate(date, user, constants.DATE_TIME_FORMAT);
   });
 
-  nunjucksEnvironment.addFilter("featuredEventDateTime", (date: number | string | Date, user?: BookshelfModel) => {
+  nunjucksEnvironment.addFilter("featuredEventDateTime", (date: number | string | Date, user?: User) => {
     return formats.formatDate(date, user, constants.FEATURED_EVENT_DATE_FORMAT);
   });
 

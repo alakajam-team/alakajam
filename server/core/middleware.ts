@@ -1,13 +1,11 @@
 /**
  * Server middleware configuration.
  *
- * @description Sets up:
+ * Sets up:
  * - Static file serving (CSS/JS/images)
  * - Templating (nunjucks)
  * - Form parsing / file upload (formidable)
  * - Error pages
- *
- * @module core/middleware
  */
 
 import * as bodyParser from "body-parser";

@@ -13,9 +13,10 @@ export async function adminUsers(req: CustomRequest, res: CustomResponse<CommonL
     res.errorPage(403);
   }
 
-  const users = await userService.findUsers() as BookshelfCollection;
-  const sortedUsers = users.sortBy((user) => user.get("title"));
+  const users = await userService.findUsers();
+  users.sort((user1, user2) => (user1.title || "").localeCompare(user2.title || ""));
+
   res.render("admin/users/admin-users", {
-    users: sortedUsers,
+    users
   });
 }

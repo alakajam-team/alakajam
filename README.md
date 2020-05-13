@@ -27,19 +27,19 @@ See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional do
 ### Automated tests
 
 * `npm run test` Runs all unit + end to end tests.
-* `npm run test:unit` Runs all unit tests. (based on mocha + chai)
+* `npm run test:unit` Runs all unit tests. (based on mocha + chai, more details below)
 * `npm run test:e2e` Runs all end-to-end tests. (based on cypress) 
 * `npm run start:e2e` Launches the server with a special database for end-to-end testing. More in the Cypress folder readme.
 * `npm run cypress` Launches Cypress for end-to-end test development.
 
 ### Production build
 
-* `npm run build` Builds the TypeScript server.
-* `npm run start:production` Starts the TypeScript server. Needs to be built first.
+* `npm run build` Builds the server to JavaScript.
+* `npm run start:production` Starts JavaScript server. Needs to be built first.
 
 ### Other start commands & tools
 
-* `npm run start:refresh` Alternative that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)
+* `npm run start:refresh` Alternative to `npm start` that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)
 * `npm run start:debug` Launches the server in debug mode. Prefer using the embedded debugger of your code editor (see example for VSCode further below).
 * `npm run migrate:latest` Migrate database to latest version. Useful for migration development. (based on knex)
 * `npm run migrate:rollback` Cancel latest database migration. Useful for migration development.
@@ -79,3 +79,13 @@ Put this in `.vscode/launch.json`:
 #### ...Enable picture resizing
 
 Run `npm install` without the `--no-optional` flag to try and set up the `sharp` dependency. If it fails to install (especially on Windows), follow the instructions to install the [sharp dependencies](https://sharp.pixelplumbing.com/en/stable/install/), then try `npm install` again.
+
+#### ...Run only one unit test
+
+Run only partial tests by appending the required file as an argument. For instance:
+
+```bash
+npm run test:unit -- user.service
+```
+
+:warning: Due to a bug (#494), DB_TYPE must be set to `sqlite3` in your `config.js` before running unit tests.

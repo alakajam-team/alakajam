@@ -9,6 +9,7 @@ import userService from "server/user/user.service";
 import { SETTING_FEATURED_EVENT_NAME } from "./core/settings-keys";
 import commentService from "./post/comment/comment.service";
 import { Alert, CustomRequest } from "./types";
+import { User } from "./entity/user.entity";
 
 export interface CommonLocals {
   [key: string]: any;
@@ -46,7 +47,7 @@ export interface CommonLocals {
    * Current logged in user (undefined if logged out).
    * Available everywhere.
    */
-  readonly user?: BookshelfModel;
+  readonly user?: User;
 
   /**
    * The number of unread notifications for the current logged in user (undefined if logged out).

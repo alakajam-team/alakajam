@@ -1,10 +1,10 @@
-import { BookshelfModel } from "bookshelf";
 import { Application } from "express";
 import * as nodemailer from "nodemailer";
 import * as MailTransport from "nodemailer/lib/mailer";
 import config from "server/core/config";
 import forms from "server/core/forms";
 import log from "server/core/log";
+import { User } from "server/entity/user.entity";
 
 export class Mailer {
 
@@ -62,7 +62,7 @@ export class Mailer {
    */
   public async sendMail(
     app: Application,
-    user: BookshelfModel,
+    user: User,
     subject: string,
     templateName: string,
     context: Record<string, any> = {}): Promise<void> {

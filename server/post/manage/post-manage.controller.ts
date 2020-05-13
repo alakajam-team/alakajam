@@ -1,5 +1,5 @@
 
-import { BookshelfCollection, PostBookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, PostBookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import { createLuxonDate, ZONE_UTC } from "server/core/formats";
@@ -103,7 +103,7 @@ export async function postSave(req: CustomRequest, res: CustomResponse<PostLocal
 
             // Figure out related entry from event + user
             const relatedEntry = await eventService.findUserEntryForEvent(
-              post.related("author"), post.get("event_id"));
+              post.related<BookshelfModel>("author") as any, post.get("event_id"));
             post.set("entry_id", relatedEntry ? relatedEntry.get("id") : null);
           } else {
             // Clear entry on special posts

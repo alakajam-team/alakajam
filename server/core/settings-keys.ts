@@ -1,8 +1,6 @@
 
 /**
  * Manipulate global settings
- *
- * @module services/setting-service
  */
 
 export type EditableSettingCategory = "events" | "home page" | "docs";

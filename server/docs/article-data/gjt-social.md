@@ -9,7 +9,7 @@ As for how to effectively use social media and various digital platforms, here a
 * [Twitter](#twitter)
 * [GIFs](#gifs)
 * [Blog posts / Post-mortems](#blog)
-* [Timelapses](/article/gjt-timelapses)
+* [Timelapses](/article/docs/gjt-timelapses)
 
 ## <a name="irl"></a>Real world gatherings
 

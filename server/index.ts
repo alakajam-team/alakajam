@@ -2,11 +2,6 @@
 
 /**
  * Entry point for the Alakajam! server
- *
- * @description
- * Starts the Node server
- *
- * @module server
  */
 
 const startDate = Date.now();

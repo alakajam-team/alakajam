@@ -17,14 +17,14 @@ export class UserDetails extends BookshelfCompatibleEntity {
   @Column({ unique: true })
   public user_id: number;
 
-  @OneToOne((type) => User, (user) => user.details, { nullable: false, onDelete: "CASCADE" })
+  @OneToOne(() => User, (user) => user.details, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
   public user: User;
 
-  @Column(ColumnTypes.varchar({ length: 100000 }))
+  @Column(ColumnTypes.varchar({ length: 100000, nullable: true }))
   public body: string;
 
-  @Column({ type: "simple-json" })
+  @Column(ColumnTypes.json({ nullable: true }))
   public social_links: { website?: string; twitter?: string };
 
   public dependents(): Array<keyof this> {

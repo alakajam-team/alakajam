@@ -5,8 +5,6 @@
  * Bookshelf models
  *
  * NB. To be deprecated/retired someday. The goal is to progressively migrate from Bookshelf to TypeORM.
- *
- * @module core/models
  */
 
 import bookshelf from "./db";
