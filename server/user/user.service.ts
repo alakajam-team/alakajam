@@ -88,7 +88,7 @@ export class UserService {
       }, "entriesCount", '"entriesCount"."id" = user.id');
 
       if (options.withEntries) {
-        qb.andWhere("entriesCount.entries_count > 0");
+        qb.andWhere('"entriesCount"."entries_count" > 0');
       }
     }
     if (options.page !== undefined || options.pageSize) {
