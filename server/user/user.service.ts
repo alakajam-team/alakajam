@@ -1,4 +1,3 @@
-import Bluebird = require("bluebird");
 import * as crypto from "crypto";
 import * as randomKey from "random-key";
 import constants from "server/core/constants";
@@ -56,16 +55,16 @@ export class UserService {
 
   private async createFindUsersQuery(options: FindUserOptions): Promise<SelectQueryBuilder<User>> {
     const userRepository = getRepository(User);
-    let qb = userRepository.createQueryBuilder("user");
+    const qb = userRepository.createQueryBuilder("user");
 
     // Basic search
 
     const where: FindConditions<User> = {
       id: Not(constants.ANONYMOUS_USER_ID)
-    }
-    if (options.search) where.title = ILike("%" + options.search + "%");
-    if (options.isMod) where.is_mod = Not(IsNull());
-    if (options.isAdmin) where.is_admin = Not(IsNull());
+    };
+    if (options.search) { where.title = ILike("%" + options.search + "%"); }
+    if (options.isMod) { where.is_mod = Not(IsNull()); }
+    if (options.isAdmin) { where.is_admin = Not(IsNull()); }
     qb.where(where);
 
     // Advanced search
@@ -76,18 +75,17 @@ export class UserService {
     }
     if (options.entriesCount) {
       qb.leftJoinAndSelect((entriesCountQb) => {
-          entriesCountQb
-            .from(User, "user")
-            .select([
-              "COUNT(roles.user_id) as entries_count",
-              "COUNT(roles.event_id) as akj_entries_count",
-              "user.id as id"
-            ])
-            .innerJoin("user.roles", "roles", "roles.node_type = 'entry'")
-            .groupBy("user.id");
-          return entriesCountQb;
-        }, "entriesCount")
-        .andWhere("entriesCount.id = user.id");
+        entriesCountQb
+          .from(User, "user")
+          .select([
+            "COUNT(roles.user_id) as entries_count",
+            "COUNT(roles.event_id) as akj_entries_count",
+            "user.id as id"
+          ])
+          .innerJoin("user.roles", "roles", "roles.node_type = 'entry'")
+          .groupBy("user.id");
+        return entriesCountQb;
+      }, "entriesCount", '"entriesCount"."id" = user.id');
 
       if (options.withEntries) {
         qb.andWhere("entriesCount.entries_count > 0");

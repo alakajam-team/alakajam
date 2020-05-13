@@ -40,7 +40,7 @@ export async function people(req: CustomRequest, res: CustomResponse<CommonLocal
   const eventsCollection = await eventService.findEvents({ statusNot: enums.EVENT.STATUS.PENDING });
   let searchedEvent = null;
   if (searchOptions.eventId) {
-    searchedEvent = eventsCollection.filter((event) => event.id === searchOptions.eventId);
+    searchedEvent = eventsCollection.find((event) => event.id === searchOptions.eventId);
   }
 
   res.render("explore/people", {

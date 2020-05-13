@@ -43,7 +43,7 @@ export class DB {
     if (config.DEBUG_TRACE_SQL) {
       logging = "all";
     }
-    
+
     const baseConnectionOptions: BaseConnectionOptions = {
       type: null,
       synchronize: false,
