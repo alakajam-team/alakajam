@@ -6,15 +6,19 @@
 
 Requirement: NodeJS 8.3+
 
-1. `npm install --no-optional` (*)
+1. `npm install --no-optional`
 2. `npm start`
 3. Browse to `http://localhost:8000`
 4. You can login as `administrator`/`administrator`
 
+Common problems:
+
+* If npm fails to install `sqlite3` on Windows, run `npm i -g --production windows-build-tools` and retry (works at least on NodeJS 13.1.0).
+* If starting fails with error `ERR_FEATURE_UNAVAILABLE_ON_PLATFORM`, it's caused by a [Node 14 compatibility issue](https://github.com/whitecolor/ts-node-dev/issues/143). A workaround is to use the alternate script: `npm run start:refresh`.
+
 For better performance, consider editing `config.js` to set up a PostgreSQL database.  
 See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional documentation.
 
-> (*) If npm fails to install `sqlite3` on Windows, run `npm i -g --production windows-build-tools` and retry (works at least on NodeJS 13.1.0).
 
 ## All npm commands
 
