@@ -46,6 +46,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Godot Engine](https://godotengine.org/)  | Powerful engine for 3D and 2D games. Uses a Python-like language. Open Source. |
 | [Unity](https://unity3d.com)  | Popular and feature-rich engine, both for 3D and 2D games. Requires programming in C#. Free version has few limitations and plenty to work with. |
 | [Unreal Engine](https://www.unrealengine.com/en-US/blog)  | Popular and feature-rich engine specialized in 3D games. Supports a quite accessible, visual scripting language called Blueprints. And good old C++. |
+| [Defold](https://defold.com/) | A cross-platform engine mostly made for 2D games targeting web and mobiles. Originally a proprietary engine, it turned Open Source in 2020.
 | [TIC-80](https://tic.computer/) | Fantasy console, similar to the popular but paid Pico-8. Customizable palette. Open Source.|
 | [Stencyl](http://www.stencyl.com/) | 2D game engine that uses visual blocks instead of code. Free version lets you publish for the web. |
 | [GDevelop](http://www.compilgames.net) | 2D game engine letting you write logic without knowledge of coding. Open Source. |
