@@ -247,6 +247,7 @@ export const Event = bookshelf.model("Event", {
  * | integer | theme_count | Number of theme ideas submitted
  * | integer | active_theme_count | Number of active themes
  * | integer | theme_vote_count | Number of theme votes
+ * | integer | participation_count | Number of users who joined the event
  * | string | banner | Path to a banner picture
  * | string | division_counts | Number of entries by division: {"name": count...}
  * | string | shortlist_elimination | Config for shortlist eliminations phase (JSON: {"start": date, "delay": number in minutes, "body": html}

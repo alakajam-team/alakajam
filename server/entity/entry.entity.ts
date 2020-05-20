@@ -1,14 +1,13 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { EntryDetails } from "./entry-details.entity";
 import { EntryInvite } from "./entry-invite.entity";
 import { EntryPlatform } from "./entry-platform.entity";
 import { EntryScore } from "./entry-score.entity";
+import { EntryTag } from "./entry-tag.entity";
 import { EntryVote } from "./entry-vote.entity";
 import { Event } from "./event.entity";
 import { TimestampedEntity } from "./timestamped.entity";
-import { EntryTag } from "./entry-tag.entity";
-import { UserRole } from "./user-role.entity";
 
 export interface EntryPictures {
   previews?: string[];

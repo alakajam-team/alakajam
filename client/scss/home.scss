@@ -94,6 +94,15 @@ $arrowSize: 9.5px;
     color: black;
     font-weight: normal;
   }
+
+  &__participation {
+    font-weight: bold;
+    font-size: 1.2rem;
+
+    &-counter {
+      font-size: 1.5rem;
+    }
+  }
 }
 
 .jumbotron-invite {

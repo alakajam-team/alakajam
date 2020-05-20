@@ -5,6 +5,8 @@ import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "./event.middleware";
 import eventService from "./event.service";
+import enums from "server/core/enums";
+import eventParticipationService from "./event-participation.service";
 
 /**
  * Browse event home page
@@ -24,10 +26,18 @@ export async function viewEventHome(req: CustomRequest, res: CustomResponse<Even
     tournamentScore = await eventTournamentService.findOrCreateTournamentScore(event.get("id"), user.get("id"));
   }
 
+  // Check event participation status
+  let inviteToJoin = false;
+  if (event.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED) {
+    const hasJoinedEvent = await eventParticipationService.hasJoinedEvent(event, user);
+    inviteToJoin = !hasJoinedEvent;
+  }
+
   res.render("event/event-home", {
     posts,
     tournamentScore,
     userEntry,
     userLikes: await likeService.findUserLikeInfo(posts.models, res.locals.user),
+    inviteToJoin
   });
 }

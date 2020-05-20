@@ -14,6 +14,7 @@ import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import eventParticipationService from "server/event/event-participation.service";
 
 interface HomeContext {
   featuredPost?: PostBookshelfModel;
@@ -43,15 +44,18 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
 
   if (user) {
     const allPostsInPage = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);
+    const joinEnabled = featuredEvent.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED;
 
     await Promise.all([
       likeService.findUserLikeInfo(allPostsInPage as PostBookshelfModel[], user),
       featuredEvent ? eventService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined,
-      eventTournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id"))
-    ]).then(([userLikes, entry, tournamentScore]) => {
+      eventTournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id")),
+      joinEnabled ? eventParticipationService.hasJoinedEvent(featuredEvent, user) : undefined,
+    ]).then(([userLikes, entry, tournamentScore, hasJoinedEvent]) => {
       res.locals.userLikes = userLikes;
       res.locals.entry = entry;
       res.locals.tournamentScore = tournamentScore;
+      res.locals.inviteToJoin = joinEnabled && !hasJoinedEvent;
     });
   }
 

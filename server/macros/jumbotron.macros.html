@@ -71,7 +71,10 @@
                 </div>
               {% else %}
                 {% set entryCreationEnabled = ['open', 'open_unranked'].includes(event.get('status_entry')) %}
-                {% if entryCreationEnabled %}
+                {% if options.inviteToJoin %}
+                  {{ participationCounter(event) }}
+                  <a href="{{ routeUrl(event, 'event', 'join') }}" class="btn btn-alt btn-lg d-block">Join</a>
+                {% elseif entryCreationEnabled %}
                   <div class="card-body text-center p-2">
                     <p class="mb-1">Submissions are open</p>
                     <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-alt btn-lg d-block">Create entry</a>
@@ -87,6 +90,9 @@
                 {% endif %}
               {% endif %}
             </div>
+            {% if not options.inviteToJoin %}
+              <div class="card mt-2 pt-2 text-center opacity-3">{{ participationCounter(event) }}</div>
+            {% endif %}
           </div>
           <div class="col-lg-12 col-sm-6 col-12">
             <div class="list-group event-jumbotron__shortcut">
@@ -118,6 +124,14 @@
       </script>
     {% endif %}
   </div>
+</div>
+{% endmacro %}
+
+{% macro participationCounter(event) %} 
+<div class="event-jumbotron__participation pb-2">
+  {% set count = event.related('details').get('participation_count') %}
+  <span class="event-jumbotron__participation-counter">{{ count }}</span> 
+  entrant{{ 's' if count !== 1 }}
 </div>
 {% endmacro %}
 

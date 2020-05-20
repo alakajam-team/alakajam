@@ -47,6 +47,12 @@ export class EventDetails extends TimestampedEntity {
   public theme_vote_count: number;
 
   /**
+    * Number of users who joined the event
+    */
+  @Column({ default: 0 })
+  public participation_count: number;
+
+  /**
     * Path to a banner picture
     * @deprecated
     */
@@ -74,7 +80,7 @@ export class EventDetails extends TimestampedEntity {
   /**
     * Config for a list of special pages to link to: (JSON: [{"title": string, "link": string, "icon": string}]
     */
-   @Column(ColumnTypes.json({ nullable: true, default: "[]", length: 2000 }))
+  @Column(ColumnTypes.json({ nullable: true, default: "[]", length: 2000 }))
   public links: EventLink[];
 
   public dependents(): Array<keyof this> {

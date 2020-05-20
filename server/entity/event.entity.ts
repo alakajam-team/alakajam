@@ -4,6 +4,7 @@ import { EventDetails } from "./event-details.entity";
 import { TimestampedEntity } from "./timestamped.entity";
 import { EventPreset } from "./event-preset.entity";
 import { Entry } from "./entry.entity";
+import { EventParticipation } from "./event-participation.entity";
 
 export type EventDivisions = Record<string, string>;
 
@@ -132,8 +133,11 @@ export class Event extends TimestampedEntity {
   @OneToMany(() => Entry, (entry) => entry.event)
   public entries: Entry[];
 
+  @OneToMany(() => EventParticipation, (eventParticipation) => eventParticipation.event)
+  public participations: EventParticipation[];
+
   public dependents(): Array<keyof this> {
-    return ["details", "entries"];
+    return ["details", "entries", "participations"];
   }
 
 }

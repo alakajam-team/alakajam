@@ -1,5 +1,5 @@
 import * as csurf from "csurf";
-import { RequestHandler, NextFunction } from "express";
+import { NextFunction, RequestHandler } from "express";
 import expressPromiseRouter from "express-promise-router";
 import * as multer from "multer";
 import * as randomKey from "random-key";
@@ -17,7 +17,7 @@ import { adminStatus } from "./admin/status/admin-status.controller";
 import { adminTags } from "./admin/tags/admin-tags.controller";
 import { adminUsers } from "./admin/users/admin-users.controller";
 import * as apiController from "./api/api.controller";
-import { commonMiddleware, CommonLocals } from "./common.middleware";
+import { CommonLocals, commonMiddleware } from "./common.middleware";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
 import { inviteAccept, inviteDecline } from "./entry/entry-invite.controller";
@@ -27,8 +27,9 @@ import { entryHighscoreSubmit } from "./entry/highscore/entry-highscore-submit.c
 import { entryHighscores } from "./entry/highscore/entry-highscores.controller";
 import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
 import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
-import { viewEventHome } from "./event/event-home.controller";
 import { viewEventGames } from "./event/event-games.controller";
+import { viewEventHome } from "./event/event-home.controller";
+import { joinEvent } from "./event/event-join.controller";
 import { viewEventMyEntry } from "./event/event-my-entry.controller";
 import { viewEventPosts } from "./event/event-posts.controller";
 import { eventMiddleware } from "./event/event.middleware";
@@ -55,6 +56,7 @@ import { postView } from "./post/post-view.controller";
 import { postWatch } from "./post/post-watch.controller";
 import { postMiddleware } from "./post/post.middleware";
 import { postsView } from "./post/posts-view.controller";
+import { CustomRequest, CustomResponse } from "./types";
 import { loginGet, loginPost } from "./user/authentication/login.controller";
 import { logout } from "./user/authentication/logout.controller";
 import { passwordRecoveryRequest } from "./user/authentication/password-recovery-request.controller";
@@ -69,7 +71,6 @@ import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
-import { CustomRequest, CustomResponse } from "./types";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
@@ -173,6 +174,7 @@ export function routes(app) {
   router.post("/create_event", eventFormParser, csrf, eventManage);
   router.get("/:eventName([^/]{0,}-[^/]{0,})", viewEventHome);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/my-entry", viewEventMyEntry);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/join", joinEvent);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventHome); // deprecated
   router.get("/:eventName([^/]{0,}-[^/]{0,})/posts", viewEventPosts);
   router.all("/:eventName([^/]{0,}-[^/]{0,})/themes", csrf, eventThemes);
