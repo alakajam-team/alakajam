@@ -99,7 +99,7 @@ export class UserService {
         .orderBy("created_at", "DESC");
     }
     if (options.orderBy) {
-      qb.orderBy(options.orderBy, options.orderByDesc ? "DESC" : "ASC");
+      qb.orderBy(`"user".${options.orderBy}`, options.orderByDesc ? "DESC" : "ASC");
     }
 
     return qb;
