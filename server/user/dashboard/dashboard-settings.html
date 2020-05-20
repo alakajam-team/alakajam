@@ -45,7 +45,7 @@
 
     <div class="form-group">
       <label for="name">Email address</label>{{ formMacros.tooltip('Only used for password recovery. Any upcoming feature involving emails will be opt-in.', { placement: 'right' }) }}
-      <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ dashboardUser.get('email') }}" required="required" />
+      <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ dashboardUser.get('email') }}" required />
     </div>
 
     {{ userDashboardMacros.timezoneField(timezones, dashboardUser.get('timezone')) }}
