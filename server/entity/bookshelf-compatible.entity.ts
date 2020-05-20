@@ -1,4 +1,4 @@
-import { getManager, ObjectType } from "typeorm";
+import { getManager, ObjectType, getRepository, getConnection } from "typeorm";
 import { BookshelfModel } from "bookshelf";
 
 export interface DependentEntity {
@@ -24,6 +24,16 @@ export abstract class BookshelfCompatibleEntity {
 
   public related<T extends BookshelfModel>(relation: string): T {
     return this[relation];
+  }
+
+  protected async loadOneToOne<T extends Function, U extends Function>(currentType: T, fieldName: string, fieldType: U) {
+    if (!getRepository(fieldType).hasId(this[fieldName])) {
+      this[fieldName] = await getConnection()
+        .createQueryBuilder()
+        .relation(currentType, fieldName)
+        .of(this)
+        .loadOne();
+    }
   }
 
   public async destroy(): Promise<any> {

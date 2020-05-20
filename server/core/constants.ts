@@ -17,7 +17,6 @@ export default {
   REMEMBER_ME_MAX_AGE: 30 * 24 * 3600000 /* 30 days */,
 
   // User accounts
-  USERNAME_VALIDATION_REGEX: /^[a-zA-Z][-\w]+$/g,
   USERNAME_MIN_LENGTH: 3,
   PASSWORD_MIN_LENGTH: 6,
   PASSWORD_RECOVERY_LINK_MAX_AGE: 24 * 3600000, /* 1 day */

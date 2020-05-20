@@ -165,7 +165,7 @@ function isURL(str: string) {
  * @param  {string} str
  * @return {Boolean}
  */
-function isUsername(str) {
+function isUsername(str: string) {
   return str.length >= 3 && /^[a-zA-Z][0-9a-zA-Z_-]+$/.test(str);
 }
 

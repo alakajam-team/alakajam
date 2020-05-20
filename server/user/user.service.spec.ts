@@ -9,7 +9,7 @@ import { closeTestDB, DB_TEST_TIMEOUT, startTestDB } from "server/testing/testin
 import { getRepository } from "typeorm";
 import userService from "./user.service";
 
-describe("User service", function () {
+describe("User service", () => {
   this.timeout(DB_TEST_TIMEOUT);
 
   before(async () => {
@@ -128,7 +128,7 @@ describe("User service", function () {
       expect(foundUsers.length).to.equal(1);
       expect(foundUsers[0].title).to.equal("B Paginateme");
     });
-    
+
     it("should support ordering", async () => {
       await createUser({ title: "B Orderme" });
       await createUser({ title: "A Orderme" });
@@ -145,7 +145,7 @@ describe("User service", function () {
 
   });
 
-  
+
   describe("register", () => {
 
     it("should reject invalid usernames", async () => {
@@ -157,7 +157,7 @@ describe("User service", function () {
 
   });
 
-  
+
   describe("refresh references", () => {
 
     it("should refresh user roles when user title changes", async () => {
@@ -182,7 +182,7 @@ describe("User service", function () {
       attributes.email || `test${createdUsers++}@example.com`,
       attributes.name || "user" + createdUsers++,
       "testtest");
-    if (typeof user === "string") throw new Error(user);
+    if (typeof user === "string") { throw new Error(user); }
 
     // Support overriding created_at/updated_at
     await getRepository(User)

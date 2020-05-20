@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 
-import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, getRepository, getConnection } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { EntryScore } from "./entry-score.entity";
 import { TimestampedEntity } from "./timestamped.entity";
@@ -112,6 +112,10 @@ export class User extends TimestampedEntity {
    * Only set when using `userService.findUsers()` with flag `entriesCount`.
    */
   public readonly akjEntriesCount?: number;
+
+  public async loadDetails() {
+    await this.loadOneToOne(User, "details", UserDetails);
+  }
 
   public dependents(): Array<keyof this> {
     return [ "details", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes"];

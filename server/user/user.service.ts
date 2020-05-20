@@ -113,7 +113,7 @@ export class UserService {
    * @returns the created user, or an error message
    */
   public async register(email: string, name: string, password: string): Promise<User | string> {
-    if (!name.match(constants.USERNAME_VALIDATION_REGEX)) {
+    if (!forms.isUsername(name)) {
       return "Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.";
     }
     if (name.length < constants.USERNAME_MIN_LENGTH) {
@@ -189,6 +189,7 @@ export class UserService {
   }
 
   public async save(user: User): Promise<void> {
+    await user.loadDetails();
     await getRepository(User).save(user);
   }
 

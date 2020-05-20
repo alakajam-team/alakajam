@@ -1,6 +1,7 @@
 import db from "server/core/db";
 import { Alert } from "server/types";
 import userService from "../../user/user.service";
+import log from "server/core/log";
 
 export class AdminDevService {
 
@@ -37,12 +38,11 @@ export class AdminDevService {
 
   public async replaceSomePasswords(): Promise<Alert> {
     const users = await userService.findUsers({ pageSize: 30 });
-    await db.transaction(async (transaction) => {
-      for (const user of (users as any).models) {
-        userService.setPassword(user, "password");
-        await user.save(null, { transacting: transaction });
-      }
-    });
+    for (const user of users) {
+      userService.setPassword(user, "password");
+      log.debug(user.details);
+      await userService.save(user);
+    }
     return {
       type: "success",
       message: 'The last 30 created users now have their password set to "password".'
