@@ -74,7 +74,7 @@ export class User extends TimestampedEntity {
   @Column(ColumnTypes.varchar())
   public password_salt: string;
 
-  @CreateDateColumn(ColumnTypes.dateTime({ nullable: true, default: () => null }))
+  @Column(ColumnTypes.dateTime({ nullable: true, default: () => null }))
   public notifications_last_read?: Date;
 
   @OneToOne(() => UserDetails, (userDetails) => userDetails.user, { cascade: true })
