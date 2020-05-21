@@ -351,10 +351,10 @@
           <div class="col-6">
             {% if entry.has('id') %}
               {% if isEntryOwner or isMod(user) %}
-                <a class="btn btn-danger" href="{{ routeUrl(entry, 'entry', 'delete') }}" onclick="return confirm('Delete the entry? This cannot be reverted!')">Delete</a> 
+                <a class="btn btn-danger" href="{{ routeUrl(entry, 'entry', 'delete') }}" onclick="return confirm('Delete the entry? All its data will be lost!')">Delete</a> 
               {% endif %}
               {% if not isEntryOwner %}
-                <a class="btn btn-danger" href="{{ routeUrl(entry, 'entry', 'leave') }}" onclick="return confirm('Leave the team? This cannot be reverted, unless the team owner takes you back!')">Leave the team</a>
+                <a class="btn btn-danger" href="{{ routeUrl(entry, 'entry', 'leave') }}" onclick="return confirm('Leave the team? If you want to join again, the team owner will have to send a new invite!')">Leave the team</a>
               {% endif %}
             {% endif %}
           </div>

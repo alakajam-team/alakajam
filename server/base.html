@@ -145,7 +145,7 @@
             {%- set statusTournament = event.get('status_tournament') -%}
             
             {%- if not statusTournament or statusTournament === 'disabled' -%}
-              {{- eventLink(event, null, 'my-entry', 'My entry', 'play-circle', path) -}}
+              {{- eventLink(event, null, 'dashboard', 'Dashboard', 'play-circle', path) -}}
             {%- endif -%}
 
             {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'book', path) -}}

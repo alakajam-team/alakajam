@@ -55,6 +55,7 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       res.locals.userLikes = userLikes;
       res.locals.entry = entry;
       res.locals.tournamentScore = tournamentScore;
+      res.locals.hasJoinedEvent = hasJoinedEvent;
       res.locals.inviteToJoin = joinEnabled && !hasJoinedEvent;
     });
   }

@@ -65,7 +65,7 @@
     <div class="d-flex">
       <div>
         {% if post.has('id') %}
-        <a class="btn btn-danger" onclick="return confirm('Delete the post? This cannot be reverted!')" href="{{ routeUrl(post, 'post', 'delete') }}">Delete</a> 
+        <a class="btn btn-danger" onclick="return confirm('Delete the post? All its data will be lost!')" href="{{ routeUrl(post, 'post', 'delete') }}">Delete</a> 
         {% endif %}
       </div>
       <div class="ml-auto post__actions text-right">

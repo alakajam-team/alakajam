@@ -63,8 +63,7 @@ export class EventService {
   }
 
   public areSubmissionsAllowed(event: BookshelfModel): boolean {
-    return event && event.get("status") === enums.EVENT.STATUS.OPEN &&
-      ([enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get("status_entry")));
+    return [enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get("status_entry"));
   }
 
   public getDefaultDivision(event: BookshelfModel): string {

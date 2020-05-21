@@ -64,7 +64,7 @@ export default function(selector: string) {
         enter: "animated fadeInDown faster",
         exit: "animated fadeOut fast"
       },
-      element: ".navbar-default",
+      element: "#main-header",
       z_index: 1031
     });
   }

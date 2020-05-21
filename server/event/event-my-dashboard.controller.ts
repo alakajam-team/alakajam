@@ -5,11 +5,12 @@ import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "./event.middleware";
 import eventService from "./event.service";
+import eventParticipationService from "./event-participation.service";
 
 /**
- * Manage my entry to an event
+ * Manage my participation to an event
  */
-export async function viewEventMyEntry(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function viewEventDashboard(req: CustomRequest, res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
 
   if (!user) {
@@ -17,10 +18,21 @@ export async function viewEventMyEntry(req: CustomRequest, res: CustomResponse<E
     return;
   }
 
-  res.locals.pageTitle += " | Join";
+  res.locals.pageTitle += " | Event dashboard";
+
+  const hasJoinedEvent = await eventParticipationService.hasJoinedEvent(event, user);
+  if (hasJoinedEvent) {
+    await myEntryHavingJoined(res);
+  } else {
+    await myEntryNotHavingJoined(res);
+  }
+}
+
+async function myEntryHavingJoined(res: CustomResponse<EventLocals>) {
+  const { user, event } = res.locals;
 
   const entry = await eventService.findUserEntryForEvent(user, event.get("id"), {
-    withRelated: [ "posts.likes", "posts.userRoles" ]
+    withRelated: [ "posts.likes", "posts.userRoles", "userRoles" ]
   });
 
   let postsCollection: BookshelfCollectionOf<PostBookshelfModel>
@@ -39,10 +51,15 @@ export async function viewEventMyEntry(req: CustomRequest, res: CustomResponse<E
     return post.get("author_user_id") === user.get("id");
   });
 
-  res.render("event/event-my-entry", {
+  res.render("event/event-my-dashboard", {
     entry,
     latestPost,
     posts: postsCollection.models,
     userLikes: await likeService.findUserLikeInfo(postsCollection.models, user),
   });
+}
+
+
+async function myEntryNotHavingJoined(res: CustomResponse<EventLocals>) {
+  res.render("event/event-my-dashboard-join");
 }

@@ -6,7 +6,8 @@
 
 {% block body %}
 
-{{ jumbotronMacros.eventJumbotron(event, null, user, userEntry, tournamentScore, { shrinkedJumbo: shrinkedJumbo, inviteToJoin: inviteToJoin }) }}
+{{ jumbotronMacros.eventJumbotron(event, null, user, userEntry, tournamentScore,
+    { shrinkedJumbo: shrinkedJumbo, hasJoinedEvent: hasJoinedEvent, inviteToJoin: inviteToJoin }) }}
 
 <div class="container thin mt-3">
   {% for post in posts.models %}

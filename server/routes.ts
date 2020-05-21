@@ -29,8 +29,8 @@ import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.contro
 import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
 import { viewEventGames } from "./event/event-games.controller";
 import { viewEventHome } from "./event/event-home.controller";
-import { joinEvent } from "./event/event-join.controller";
-import { viewEventMyEntry } from "./event/event-my-entry.controller";
+import { joinLeaveEvent } from "./event/event-join.controller";
+import { viewEventDashboard } from "./event/event-my-dashboard.controller";
 import { viewEventPosts } from "./event/event-posts.controller";
 import { eventMiddleware } from "./event/event.middleware";
 import { eventManageEntries } from "./event/manage/event-manage-entries.controller";
@@ -173,8 +173,9 @@ export function routes(app) {
   router.get("/create_event", csrf, eventManage);
   router.post("/create_event", eventFormParser, csrf, eventManage);
   router.get("/:eventName([^/]{0,}-[^/]{0,})", viewEventHome);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/my-entry", viewEventMyEntry);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/join", joinEvent);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard", viewEventDashboard);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/my-entry", viewEventDashboard); // deprecated
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/join", joinLeaveEvent);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventHome); // deprecated
   router.get("/:eventName([^/]{0,}-[^/]{0,})/posts", viewEventPosts);
   router.all("/:eventName([^/]{0,}-[^/]{0,})/themes", csrf, eventThemes);

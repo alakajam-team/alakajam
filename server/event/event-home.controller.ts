@@ -27,17 +27,15 @@ export async function viewEventHome(req: CustomRequest, res: CustomResponse<Even
   }
 
   // Check event participation status
-  let inviteToJoin = false;
-  if (event.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED) {
-    const hasJoinedEvent = await eventParticipationService.hasJoinedEvent(event, user);
-    inviteToJoin = !hasJoinedEvent;
-  }
+  const hasJoinedEvent = await eventParticipationService.hasJoinedEvent(event, user);
+  const inviteToJoin = (event.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED) ? !hasJoinedEvent : false;
 
   res.render("event/event-home", {
     posts,
     tournamentScore,
     userEntry,
     userLikes: await likeService.findUserLikeInfo(posts.models, res.locals.user),
+    hasJoinedEvent,
     inviteToJoin
   });
 }
