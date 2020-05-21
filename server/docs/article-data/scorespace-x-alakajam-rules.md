@@ -20,33 +20,19 @@ See the **What is allowed?** section below for details on the constraints impose
 
 Clock on a division below to unfold the detailed rules on allowed tools, assets, etc.
 
-<details>
-<summary><div class="btn"><b>Solo/Team divisions</b></div></summary>
-<ul>
-<li><b>Tools:</b> All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.</li>
-<li><b>Code reuse:</b> You are allowed to use/reuse any outside library or personal code made prior to the event, or code bits found from sources like StackOverflow or blogs. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.</li>
-<li><b>Graphical asset reuse:</b> You must make all your graphical assets during the event, even if you opt-out of the graphics category. Derivative work of existing assets (ie. you used some existing assets but significantly transformed them) is acceptable, as long as you list the original assets in your game page for the raters to appreciate. You are also <i>allowed</i> to use: third-party fonts and brushes ; procedurally generated assets ; your engine's default appearance for UI elements ; pre-made game author & engine splash screens.</li>
-<li><b>Audio asset reuse:</b> You must make your own music during the event, even if you opt-out of the audio category. However: while creating sounds yourself is encouraged (eg. with the help of [sound generation tools](/article/docs/resources#audio), musical instruments, or microphones), reusing existing sound effects is tolerated. You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed.</li>
-<li><b>Post-jam changes:</b> From the minute the jam ends, you are not allowed to add any features, assets or contents to your game. However we do allow to: package or improve the packaging of your game ; port your game to other platforms ; fix bugs ; fix balance issues or annoyances <i>but only</i> if they are preventing people to reasonably play the game.</li>
+<details class="card">
+<summary><div class="btn"><b>Solo/Team divisions</b></div></summary><ul><li><b>Tools:</b> All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.</li><li><b>Code reuse:</b> You are allowed to use/reuse any outside library or personal code made prior to the event, or code bits found from sources like StackOverflow or blogs. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.</li><li><b>Graphical asset reuse:</b> You must make all your graphical assets during the event, even if you opt-out of the graphics category. Derivative work of existing assets (ie. you used some existing assets but significantly transformed them) is acceptable, as long as you list the original assets in your game page for the raters to appreciate. You are also <i>allowed</i> to use: third-party fonts and brushes ; procedurally generated assets ; your engine's default appearance for UI elements ; pre-made game author & engine splash screens.</li><li><b>Audio asset reuse:</b> You must make your own music during the event, even if you opt-out of the audio category. However: while creating sounds yourself is encouraged (eg. with the help of [sound generation tools](/article/docs/resources#audio), musical instruments, or microphones), reusing existing sound effects is tolerated. You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed.</li><li><b>Post-jam changes:</b> From the minute the jam ends, you are not allowed to add any features, assets or contents to your game. However we do allow to: package or improve the packaging of your game ; port your game to other platforms ; fix bugs ; fix balance issues or annoyances <i>but only</i> if they are preventing people to reasonably play the game.</li>
 </ul>
 Note that third-party assets exceptions are only allowed as long as you have the license to use them.
 </details>
 	
-<details>
-<summary><div class="btn"><b>Unranked division</b></div></summary>
-Since there are no ratings involved, the rules are much more relaxed. While the ranked divisions are only made for video games, card & board games are allowed here. The only rules are:
+<details class="card"><summary><div class="btn"><b>Unranked division</b></div></summary>Since there are no ratings involved, the rules are much more relaxed. While the ranked divisions are only made for video games, card & board games are allowed here. The only rules are:
 
-<ul>
-<li>All third-party assets are allowed as long as you have the license to use them.</li>
-</ul>
+<ul><li>All third-party assets are allowed as long as you have the license to use them.</li></ul>
 
 There are additional rules <b>if you submit an project started before the event</b>. These are fuzzy rules only aimed at preventing abusive self-promotion:
 
-<ul>
-<li>You must spend a significant part of your week-end working on the game ;</li>
-<li>Use the game description to let people know what you did/did not make during the jam ;</li>
-<li>Make it easy to play the parts you worked on (eg. don't make testers play the full game to try your final boss!).</li>
-</ul>
+<ul><li>You must spend a significant part of your week-end working on the game ;</li><li>Use the game description to let people know what you did/did not make during the jam ;</li><li>Make it easy to play the parts you worked on (eg. don't make testers play the full game to try your final boss!).</li></ul>
 </details>
 
 &nbsp;  

@@ -45,11 +45,12 @@ export default {
     img: ["src", "data-src", "width", "height", "class"],
     video: ["poster", "preload", "autoplay", "muted", "loop", "webkit-playsinline", "width", "height", "class"],
     source: ["src", "type"],
-    progress: ["value", "max", "width"]
+    progress: ["value", "max", "width"],
+    details: ["class"]
   },
   ALLOWED_POST_CLASSES: [
     "float-left", "float-right", "pull-left", "pull-right", "text-left", "text-center", "text-right",
-    "spoiler", "indent", "btn", "btn-outline-primary", "btn-primary",
+    "spoiler", "indent", "btn", "btn-outline-primary", "btn-primary", "card"
   ],
   ALLOWED_IFRAME_HOSTS: [
     "www.youtube-nocookie.com"
