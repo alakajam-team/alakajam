@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { EntryDetails } from "./entry-details.entity";
 import { EntryInvite } from "./entry-invite.entity";
@@ -91,7 +91,7 @@ export class Entry extends TimestampedEntity {
   // TODO @Index()
   public karma: number;
 
-  @CreateDateColumn(ColumnTypes.dateTime())
+  @Column(ColumnTypes.dateTime())
   public published_at: Date;
 
   @Column()

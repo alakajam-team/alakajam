@@ -6,10 +6,10 @@ import { ColumnTypes } from "./column-types";
 
 export abstract class TimestampedEntity extends BookshelfCompatibleEntity {
 
-  @CreateDateColumn(ColumnTypes.dateTime({ nullable: true }))
+  @CreateDateColumn(ColumnTypes.dateTime())
   public created_at: Date;
 
-  @UpdateDateColumn(ColumnTypes.dateTime({ nullable: true }))
+  @UpdateDateColumn(ColumnTypes.dateTime())
   public updated_at: Date;
 
 }

@@ -1,10 +1,10 @@
-import { Column, CreateDateColumn, Entity, Index, OneToOne, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
-import { EventDetails } from "./event-details.entity";
-import { TimestampedEntity } from "./timestamped.entity";
-import { EventPreset } from "./event-preset.entity";
 import { Entry } from "./entry.entity";
+import { EventDetails } from "./event-details.entity";
 import { EventParticipation } from "./event-participation.entity";
+import { EventPreset } from "./event-preset.entity";
+import { TimestampedEntity } from "./timestamped.entity";
 
 export type EventDivisions = Record<string, string>;
 
@@ -126,7 +126,7 @@ export class Event extends TimestampedEntity {
   /**
    * Event start date, for sorting purposes
    */
-  @CreateDateColumn(ColumnTypes.dateTime({ default: () => null, nullable: true }))
+  @Column(ColumnTypes.dateTime({ default: () => null, nullable: true }))
   @Index()
   public started_at: Date;
 

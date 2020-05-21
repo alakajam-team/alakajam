@@ -65,7 +65,7 @@ Put this in `.vscode/launch.json`:
       "type": "node",
       "request": "launch",
       "args": ["${workspaceFolder}\\server\\index.ts"],
-      "runtimeArgs": ["--nolazy", "-r", "ts-node/register", "-r", "tsconfig-paths/register"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only", "-r", "tsconfig-paths/register"],
       "sourceMaps": true,
       "cwd": "${workspaceRoot}",
       "protocol": "inspector",

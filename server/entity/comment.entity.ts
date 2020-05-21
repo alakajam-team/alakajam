@@ -64,11 +64,11 @@ export class Comment extends BookshelfCompatibleEntity {
   @Column({ default: 0 })
   public karma: 1 | 2 | 3;
 
-  @CreateDateColumn(ColumnTypes.dateTime({ nullable: true }))
+  @CreateDateColumn(ColumnTypes.dateTime())
   @Index()
   public created_at: Date;
 
-  @UpdateDateColumn(ColumnTypes.dateTime({ nullable: true }))
+  @UpdateDateColumn(ColumnTypes.dateTime())
   @Index()
   public updated_at: Date;
 

@@ -1,22 +1,23 @@
 /* eslint-disable camelcase */
 
-import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, getRepository, getConnection } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, BeforeInsert, BeforeUpdate } from "typeorm";
 import { ColumnTypes } from "./column-types";
+import { Comment } from "./comment.entity";
 import { EntryScore } from "./entry-score.entity";
+import { Like } from "./like.entity";
+import { Post } from "./post.entity";
+import { ThemeVote } from "./theme-vote.entity";
 import { TimestampedEntity } from "./timestamped.entity";
 import { TournamentScore } from "./tournament-score.entity";
 import { UserDetails } from "./user-details.entity";
 import { UserRole } from "./user-role.entity";
-import { Comment } from "./comment.entity";
-import { ThemeVote } from "./theme-vote.entity";
-import { Post } from "./post.entity";
-import { Like } from "./like.entity";
+import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 
 /**
  * User account information.
  */
 @Entity()
-export class User extends TimestampedEntity {
+export class User extends BookshelfCompatibleEntity {
 
   public constructor(name: string, email: string) {
     super();
@@ -100,6 +101,25 @@ export class User extends TimestampedEntity {
 
   @OneToMany(() => ThemeVote, (themeVote) => themeVote.user, { cascade: true })
   public themeVotes: ThemeVote[];
+
+  @Column(ColumnTypes.dateTime())
+  public created_at: Date;
+
+  @Column(ColumnTypes.dateTime())
+  public updated_at: Date;
+
+  // XXX @CreateDateColumn / @UpdateDateColumn not working on user table
+
+  @BeforeInsert()
+  public setCreateDate(): void {
+    this.created_at = new Date();
+    this.updated_at = new Date();
+  }
+
+  @BeforeUpdate()
+  public setUpdateDate(): void {
+    this.updated_at = new Date();
+  }
 
   /**
    * Number of entries, including for external events.

@@ -14,11 +14,11 @@ export class Tag extends BookshelfCompatibleEntity {
   @Index()
   public value: string;
 
-  @CreateDateColumn(ColumnTypes.dateTime({ nullable: true }))
+  @CreateDateColumn(ColumnTypes.dateTime())
   @Index()
   public created_at: Date;
 
-  @UpdateDateColumn(ColumnTypes.dateTime({ nullable: true }))
+  @UpdateDateColumn(ColumnTypes.dateTime())
   public updated_at: Date;
 
   public dependents(): Array<keyof this> {
