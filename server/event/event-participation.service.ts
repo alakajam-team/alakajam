@@ -2,6 +2,7 @@ import { BookshelfModel } from "bookshelf";
 import { EventParticipation } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
 import { getRepository } from "typeorm";
+import cache from "server/core/cache";
 
 export class EventParticipationService {
 
@@ -50,6 +51,8 @@ export class EventParticipationService {
     const eventDetails = event.related<BookshelfModel>("details");
     eventDetails.set("participation_count", await this.countParticipants(event));
     await eventDetails.save();
+    cache.eventsById.del(event.get("id"));
+    cache.eventsByName.del(event.get("name"));
   }
 
 }

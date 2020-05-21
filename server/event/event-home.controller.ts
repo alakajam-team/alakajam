@@ -27,7 +27,7 @@ export async function viewEventHome(req: CustomRequest, res: CustomResponse<Even
   }
 
   // Check event participation status
-  const hasJoinedEvent = await eventParticipationService.hasJoinedEvent(event, user);
+  const hasJoinedEvent = user ? await eventParticipationService.hasJoinedEvent(event, user) : false;
   const inviteToJoin = (event.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED) ? !hasJoinedEvent : false;
 
   res.render("event/event-home", {
