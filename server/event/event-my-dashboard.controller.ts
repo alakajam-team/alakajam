@@ -13,11 +13,6 @@ import eventParticipationService from "./event-participation.service";
 export async function viewEventDashboard(req: CustomRequest, res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
 
-  if (!user) {
-    res.redirectToLogin();
-    return;
-  }
-
   res.locals.pageTitle += " | Event dashboard";
 
   const hasJoinedEvent = await eventParticipationService.hasJoinedEvent(event, user);

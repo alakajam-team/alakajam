@@ -13,7 +13,7 @@
     <p><a href="{{ routeUrl(event, 'event', 'join') }}" class="btn btn-lg btn-alt">Join event</a></p>
     
     {% set participationCount = event.related('details').get('participation_count') %}
-    <p><b>{{ participationCount }} persons</b> joined so far{{ ', be among the first to join the event' if participationCount < 10 }}!</p>
+    <p><b>{{ participationCount }} person{{ 's' if participationCount !== 0 }}</b> joined so far{{ ', be among the first to join the event' if participationCount < 10 }}!</p>
   </div>
 </div>
 

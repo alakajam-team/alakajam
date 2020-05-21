@@ -42,9 +42,9 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
 
   await loadUserShortcutsContext(res, featuredEvent, { postFromAnyEvent: true });
 
+  const joinEnabled = featuredEvent.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED;
   if (user) {
     const allPostsInPage = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);
-    const joinEnabled = featuredEvent.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED;
 
     await Promise.all([
       likeService.findUserLikeInfo(allPostsInPage as PostBookshelfModel[], user),
@@ -58,6 +58,9 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       res.locals.hasJoinedEvent = hasJoinedEvent;
       res.locals.inviteToJoin = joinEnabled && !hasJoinedEvent;
     });
+  } else {
+    res.locals.hasJoinedEvent = false;
+    res.locals.inviteToJoin = joinEnabled;
   }
 
   res.render("home/home", context);

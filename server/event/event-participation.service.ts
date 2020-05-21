@@ -35,6 +35,10 @@ export class EventParticipationService {
   }
 
   public async hasJoinedEvent(event: BookshelfModel, user: User): Promise<boolean> {
+    if (!user) {
+      return false;
+    }
+
     const epRepository = getRepository(EventParticipation);
 
     const resultCount = await epRepository.count({
