@@ -44,8 +44,8 @@ async function _renderArticle(
     res.locals.pageTitle = res.locals.articleName;
     res.render("docs/article");
   } else if (res.locals.articleName !== category) {
-    // Redirect to category root if article is not found
-    res.redirect(`/article/${category}`);
+    // Redirect to welcome page if article is not found
+    res.redirect("/article/about");
   } else {
     res.errorPage(404);
   }

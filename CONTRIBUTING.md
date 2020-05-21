@@ -11,10 +11,10 @@ Thanks for taking the time to read this! You're welcome to contribute to Alakaja
 
 ## What to do if...
 
-* **I found a bug:** Please create an issue explaining the problems in details, and in particular how we could reproduce it (with browser info if relevant). In case of a security vulerability, please share your report privately through one of the contacts [listed here](https://alakajam.com/article/docs).
+* **I found a bug:** Please create an issue explaining the problems in details, and in particular how we could reproduce it (with browser info if relevant). In case of a security vulerability, please share your report privately through one of the contacts [listed here](https://alakajam.com/article/about).
 * **I want to develop an existing issue:** Unless the issue is already assigned, work on it right away! You can also post a comment to let us know you're on it.
 * **I want to develop an idea I have:** Share your feature idea through an issue first, so that the maintainers can greenlight it and possibly discuss its implementation.
 * **I want to share an idea:** Feel free to create an issue or join the [Chat](https://alakajam.com/chat) to discuss it. Note: we keep track of "wish list" features on a separate document so your issue may be eventually closed.
-* **Someone has unacceptable behavior:** Please let us know through one of the contacts [listed here](https://alakajam.com/article/docs).
+* **Someone has unacceptable behavior:** Please let us know through one of the contacts [listed here](https://alakajam.com/article/about).
 
 Have fun coding a jam site :)

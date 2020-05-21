@@ -35,6 +35,6 @@ Alakajam! has the discretion to update this privacy policy at any time. We encou
 By using this Site, you signify your acceptance of this policy. If you do not agree to this policy, please do not use our Site. Your continued use of the Site following the posting of changes to this policy will be deemed your acceptance of those changes.
 
 ## Contacting us
-If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please [contact us](/article/docs).
+If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please [contact us](/article/about).
 
 > This document was last updated on May 30, 2018

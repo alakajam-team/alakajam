@@ -69,7 +69,7 @@ export class Mailer {
     const result = new Promise<void>((resolve, reject) => {
       if (this.mailTransport === null) {
         reject(new Error("Mail transporter is not correctly configured. "
-          + "Please [contact](/article/docs) the administrators."));
+          + "Please [contact](/article/about) the administrators."));
       }
 
       const mergedContext = Object.assign({ rootUrl: config.ROOT_URL }, context);
