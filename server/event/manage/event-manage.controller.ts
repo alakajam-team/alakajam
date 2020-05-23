@@ -91,7 +91,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
     if (!errorMessage && (files.logo || req.body["logo-delete"])) {
       const file = files.logo ? files.logo[0] : null;
       const result = await fileStorage.savePictureToModel(event, "logo", file,
-        req.body["logo-delete"], `/events/${event.get("name")}/logo`, { maxDiagonal: 1000 });
+        req.body["logo-delete"], `/events/${req.body.name}/logo`, { maxDiagonal: 1000 });
       if ("error" in result) {
         errorMessage = result.error;
       }
