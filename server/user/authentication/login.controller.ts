@@ -30,8 +30,6 @@ export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLo
     const user = await userService.authenticate(req.body.name, req.body.password);
     if (user) {
       context.user = user;
-      res.locals.alerts.push({ type: "success", message: "Authentication successful" });
-
       req.session.userId = user.get("id");
       if (req.body["remember-me"]) {
         req.session.cookie.maxAge = constants.REMEMBER_ME_MAX_AGE;
