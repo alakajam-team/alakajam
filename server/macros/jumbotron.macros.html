@@ -110,19 +110,6 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-12 col-sm-6 col-12">
-            <div class="list-group event-jumbotron__shortcut">
-              {% set featuredLinks = event.related('details').get('links') if event %}
-              {% for featuredLink in featuredLinks %}
-                <a class="list-group-item" href="{{ featuredLink.link }}">
-                  <h4>
-                    <span class="event-jumbotron__shortcut-icon"><span class="fas {{ featuredLink.icon }}"></span></span>
-                    <span class="event-jumbotron__shortcut-title">{{ featuredLink.title }}</span>
-                  </h4>
-                </a>
-              {% endfor %}
-            </div>
-          </div>
         </div>
       </div>
     </div>
