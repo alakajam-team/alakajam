@@ -106,7 +106,7 @@
                 <span class="event-jumbotron__shortcut-title">Stats</span>
               </div>
               <div class="text-center">
-                {{ participationCounter(event) }}
+                {{ statsCounters(event) }}
               </div>
             </div>
           </div>
@@ -143,11 +143,21 @@
 </div>
 {% endmacro %}
 
-{% macro participationCounter(event) %} 
-<div class="event-jumbotron__participation py-2">
-  {% set count = event.related('details').get('participation_count') %}
-  <span class="event-jumbotron__participation-counter">{{ count }}</span> 
-  entrant{{ 's' if count !== 1 }}
+{% macro statsCounters(event) %} 
+<div class="event-jumbotron__stats py-2">
+  {% set participants = event.related('details').get('participation_count') %}
+  <span class="event-jumbotron__stats-counter">{{ participants }}</span> entrant{{ 's' if participants !== 1 -}}
+
+  {%- if event.get('status_entry') !== 'off' -%}
+    {%- set entries = event.get('entry_count') -%}
+    , <span class="event-jumbotron__stats-counter">{{ entries }}</span> entr{{ 'ies' if entries !== 1 else 'y' -}}{{'... yet!' if themes == 0 }}
+  {%- elseif event.get('status_theme') === 'voting' -%}
+    {%- set themes = event.related('details').get('theme_count') or '0' -%}
+    , <span class="event-jumbotron__stats-counter">{{ themes }}</span> theme{{ 's' if themes !== 1 -}}{{'... yet!' if themes == 0 }}
+  {%- elseif ['shortlist', 'closed', 'results'].includes(event.get('status_theme'))  -%}
+    {%- set themeVotes = event.related('details').get('theme_vote_count') or '0' -%}
+    , <span class="event-jumbotron__stats-counter">{{ themeVotes }}</span> theme vote{{ 's' if themeVotes !== 1 -}}
+  {%- endif %}
 </div>
 {% endmacro %}
 
