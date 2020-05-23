@@ -112,7 +112,7 @@
           </div>
           <div class="col-lg-12 col-sm-6 col-12">
             <div class="list-group event-jumbotron__shortcut">
-              {% set featuredLinks = featuredEvent.related('details').get('links') if featuredEvent %}
+              {% set featuredLinks = event.related('details').get('links') if event %}
               {% for featuredLink in featuredLinks %}
                 <a class="list-group-item" href="{{ featuredLink.link }}">
                   <h4>
