@@ -6,7 +6,7 @@ import enums from "server/core/enums";
 import log from "server/core/log";
 import { logErrorAndReturn } from "server/core/middleware";
 import settings from "server/core/settings";
-import { SETTING_FEATURED_POST_ID } from "server/core/settings-keys";
+import { SETTING_FEATURED_POST_ID, SETTING_HOME_TIMELINE_SIZE } from "server/core/settings-keys";
 import { loadUserShortcutsContext } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
 import eventTournamentService from "server/event/tournament/tournament.service";
@@ -20,7 +20,7 @@ interface HomeContext {
   featuredPost?: PostBookshelfModel;
   shrinkedJumbo: boolean;
   featuredEventAnnouncement?: BookshelfModel;
-  eventSchedule: BookshelfModel[];
+  eventsTimeline: BookshelfModel[];
   suggestedEntries: BookshelfModel[];
   posts: PostBookshelfModel[];
   comments: BookshelfModel[];
@@ -82,8 +82,8 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
 
   // Fetch event schedule (preferably without displaying too many events after the featured one)
   contextTasks.push(
-    loadEventSchedule(featuredEvent)
-      .then((eventSchedule) => context.eventSchedule = eventSchedule)
+    loadEventsTimeline(featuredEvent)
+      .then((eventsTimeline) => context.eventsTimeline = eventsTimeline)
       .catch(logErrorAndReturn([])));
 
   // Gather featured entries during the voting phase
@@ -133,23 +133,24 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
   return context as HomeContext;
 }
 
-async function loadEventSchedule(featuredEvent?: BookshelfModel): Promise<BookshelfModel[]> {
+async function loadEventsTimeline(featuredEvent?: BookshelfModel): Promise<BookshelfModel[]> {
   if (featuredEvent) {
     let featuredEventIndex;
     let fetchedEventsCollection;
-    let eventSchedule = [];
+    let eventsTimeline = [];
     let page = 1;
     do {
       fetchedEventsCollection = await eventService.findEvents({ pageSize: 10, page: page++ });
-      eventSchedule = eventSchedule.concat(fetchedEventsCollection.models);
-      featuredEventIndex = eventSchedule.findIndex((event) => event.get("id") === featuredEvent.get("id"));
+      eventsTimeline = eventsTimeline.concat(fetchedEventsCollection.models);
+      featuredEventIndex = eventsTimeline.findIndex((event) => event.get("id") === featuredEvent.get("id"));
       // Make sure we have the featured event + at least one past event (or we have run out of events)
-    } while ((featuredEventIndex === -1 || featuredEventIndex >= eventSchedule.length - 1)
+    } while ((featuredEventIndex === -1 || featuredEventIndex >= eventsTimeline.length - 1)
       && fetchedEventsCollection.length > 0);
 
-    // Grab one past event, fill the list up to 5 events total, display in chronological order
+    // Grab one past event, fill the list up to SETTING_HOME_TIMELINE_SIZE events total, display in chronological order
+    const eventCount = await settings.findNumber(SETTING_HOME_TIMELINE_SIZE, 5);
     const startIndex = Math.max(0, featuredEventIndex - 2);
-    return eventSchedule.slice(startIndex, startIndex + 5).reverse();
+    return eventsTimeline.slice(startIndex, startIndex + eventCount).reverse();
   } else {
     const fetchedEventsCollection = await eventService.findEvents({ pageSize: 5 });
     return fetchedEventsCollection.models;

@@ -15,6 +15,7 @@ export interface EditableSetting {
 
 export const SETTING_FEATURED_EVENT_NAME = "featured_event_name";
 export const SETTING_FEATURED_POST_ID = "featured_post_id";
+export const SETTING_HOME_TIMELINE_SIZE = "home_timeline_size";
 
 export const SETTING_EVENT_REQUIRED_ENTRY_VOTES = "event_required_entry_votes";
 export const SETTING_EVENT_THEME_IDEAS_REQUIRED = "event_theme_ideas_required";
@@ -52,6 +53,12 @@ export const EDITABLE_SETTINGS: EditableSetting[] = [
     category: "home page",
     description: "(Optional) Set a post ID to display an arbitrary blog post at the top of the front page. Mostly for emergencies."
   },
+  {
+    key: SETTING_HOME_TIMELINE_SIZE,
+    category: "home page",
+    description: "(Optional) Number of events to be shown in the timeline. Usually 5, but can be reduced to prevent overflow."
+  },
+
 
   // Events
 

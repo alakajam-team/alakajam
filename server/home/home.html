@@ -47,7 +47,7 @@
 {% endif %}
 
 
-{# ===== EVENT SCHEDULE NAVBAR ===== #}
+{# ===== EVENTS TIMELINE NAVBAR ===== #}
 
 <div class="home-navbar">
   <div class="container">
@@ -56,9 +56,9 @@
         <div class="home-navbar__events">
           <a class="home-navbar__events-home btn btn-outline-light border-0" href="/events">
             <span class="fa fa-calendar-alt"></span>
-            <span class="d-none d-sm-inline">Event<br />schedule</span>
+            <span class="d-none d-sm-inline">Events<br />timeline</span>
           </a>
-          {% for event in eventSchedule %}
+          {% for event in eventsTimeline %}
             <a class="home-navbar-event d-sm-inline-flex d-none btn 
               {{ 'btn-secondary' if featuredEvent and event.get('id') === featuredEvent.get('id') else 'btn-outline-light border-0' }}
               {{ 'd-none d-lg-inline-block' if loop.index === 1 }}"
