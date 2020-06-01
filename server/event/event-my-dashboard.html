@@ -40,6 +40,19 @@
         {{ eventMacros.eventShortcutMyEntry(user, event, entry, { noTitle: true }) }}
       </div>
     
+      {% if event.get('status_themes') !== 'disabled' %}
+      <div>
+        <h2><span class="fa fa-lightbulb"></span> Themes</h2>
+        
+        {% if event.get('status_theme') === 'off' %}
+        <div class="card card-body">
+          <h4>Theme submissions are not open yet.</h4>
+        </div>
+        {% else %}
+          <a href="{{ routeUrl(event, 'event', 'themes') }}" class="btn btn-primary">Browse themes</a>
+        {% endif %}
+      </div>
+      {% endif %}
     
       <div class="mt-4">
         <h2><span class="fa fa-newspaper"></span> Blog posts</h2>
