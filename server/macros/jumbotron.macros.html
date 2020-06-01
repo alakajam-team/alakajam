@@ -7,9 +7,9 @@
 <div class="event-jumbotron" style="{{ backgroundImage(event) }}">
   <div class="container">
     <div class="row">
-      <div class="col-lg-9">
+      <div class="col-xl-9">
         <div class="row">
-          <div class="col-lg-3 event-jumbotron__logo-container">
+          <div class="col-lg-4 event-jumbotron__logo-container">
             {% set eventHome = routeUrl(event, 'event') %}
             {% set logoTag = 'div' if path and path.startsWith(eventHome) else 'a' %}
             <{{ logoTag }} href="{{ eventHome }} " class="event-jumbotron__logo">
@@ -18,7 +18,7 @@
             </{{ logoTag }}>
           </div>
     
-          <div class="col-lg-9 mb-3 mb-lg-0">
+          <div class="col-lg-8 mb-3 mb-lg-0 align-self-center">
             {% if event.get('countdown_config').message or event.get('countdown_config').phrase %}
               {% set rawHypeLink = event.get('countdown_config').link %}
               {% set hypeLink = rawHypeLink if rawHypeLink and rawHypeLink.indexOf('/') !== -1 else routeUrl(event, 'event', rawHypeLink) %}
@@ -47,7 +47,12 @@
                 {{ postMacros.post(featuredPost, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
                 {{ featuredPost.get('body') | markdown | safe }}
               {% else %}
-                {{ postMacros.post(featuredPost, {hideBody: true, readingUser: user, readingUserLikes: userLikes}) }}
+                <div class="card">
+                  {{ postMacros.post(featuredPost, {hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes}) }}
+                  <div class="event-jumbotron__post-details">
+                    <span data-toggle="tooltip" title="{{ featuredPost.get('published_at') | dateTime(user) }}">{{ featuredPost.get('published_at') | relativeTime }}</span>
+                  </div>
+                </div>
               {% endif %}
               </div>
             {% endif %}
@@ -56,15 +61,15 @@
 
       </div>
 
-      <div class="col-lg-3">
+      <div class="col-xl-3">
         <div class="row">
-          <div class="col-lg-12 col-sm-6 col-12 mb-2">
-            <div class="card border-0">
+          <div class="col-xl-12 col-sm-6 mb-3">
+            <div class="card bg-jumbotron border-0">
               {% if not options.inviteToJoin %}
-              <a class="card-header event-jumbotron__shortcut" href="{{ routeUrl(event, 'event', 'tournament-games' if isTournament else 'dashboard') }}">
+              <a class="card-header shortcut" href="{{ routeUrl(event, 'event', 'tournament-games' if isTournament else 'dashboard') }}">
                 <h4 class="mb-0">
-                  <span class="event-jumbotron__shortcut-icon"><span class="fas fa-gamepad"></span></span>
-                  <span class="event-jumbotron__shortcut-title">My entry</span>
+                  <span class="shortcut__icon"><span class="fas fa-gamepad"></span></span>
+                  <span class="shortcut__title">My entry</span>
                 </h4>
               </a>
               {% endif %}
@@ -99,11 +104,12 @@
                 {% endif %}
               {% endif %}
             </div>
-
-            <div class="card border-0 mt-2">
-              <div class="card-header py-1">
-                <span class="event-jumbotron__shortcut-icon"><span class="fas fa-chart-line"></span></span>
-                <span class="event-jumbotron__shortcut-title">Stats</span>
+          </div>
+          <div class="col-xl-12 col-sm-6 mb">
+            <div class="card border-0 bg-jumbotron event-jumbotron__stats">
+              <div class="card-header shortcut py-1">
+                <span class="shortcut__icon"><span class="fas fa-chart-line"></span></span>
+                <span class="shortcut__title">Stats</span>
               </div>
               <div class="text-center">
                 {{ statsCounters(event) }}
@@ -131,7 +137,7 @@
 {% endmacro %}
 
 {% macro statsCounters(event) %} 
-<div class="event-jumbotron__stats py-2">
+<div class="event-jumbotron__stats-contents py-2">
   {% set participants = event.related('details').get('participation_count') %}
   <span class="event-jumbotron__stats-counter">{{ participants }}</span> entrant{{ 's' if participants !== 1 -}}
 
