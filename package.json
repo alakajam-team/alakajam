@@ -21,7 +21,7 @@
     "lint:e2e": "eslint cypress/ --ext .ts --fix",
     "test": "npm run test:unit:ci && npm run test:e2e",
     "test:unit": "ts-node-dev --transpile-only -r tsconfig-paths/register server/mocha.ts",
-    "test:unit:ci": "mocha -r tsconfig-paths/register dist/server/**/*.spec.js --exit",
+    "test:unit:ci": "mocha -r ts-node/register/transpile-only -r tsconfig-paths/register server/**/*.spec.ts --exit",
     "test:e2e": "start-server-and-test start:e2e http://localhost:8001 cypress:run",
     "cypress": "cypress open",
     "cypress:run": "cypress run",

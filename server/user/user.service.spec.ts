@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 
 import { expect } from "chai";
-import "module-alias/register";
 import constants from "server/core/constants";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";

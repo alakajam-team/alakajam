@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import "module-alias/register";
 import enums from "server/core/enums";
 import { capitalizeAllWords, guessPlatforms } from "./entry-importer-utils";
 

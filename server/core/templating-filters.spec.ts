@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import "module-alias/register";
 import * as templatingFilters from "./templating-filters";
 
 const ALAKAJAM_LAUNCH_DATE = "2017-06-22T19:00:00Z";

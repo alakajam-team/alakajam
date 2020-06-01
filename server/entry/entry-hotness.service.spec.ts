@@ -2,7 +2,6 @@
 
 import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import { expect } from "chai";
-import "module-alias/register";
 import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
 import entryHotnessService from "./entry-hotness.service";
