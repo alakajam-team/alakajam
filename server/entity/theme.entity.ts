@@ -17,7 +17,7 @@ export class Theme extends TimestampedEntity {
   @ManyToOne(() => Event)
   @JoinColumn({ name: "event_id" })
   public event: Event;
-  
+
   @Column()
   public user_id: number;
 

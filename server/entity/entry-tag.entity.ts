@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, PrimaryColumn } from "typeorm";
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Entry } from "./entry.entity";
 import { Tag } from "./tag.entity";
 import { TimestampedEntity } from "./timestamped.entity";

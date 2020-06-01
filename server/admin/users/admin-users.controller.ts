@@ -1,4 +1,3 @@
-import { BookshelfCollection } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
 import security from "server/core/security";

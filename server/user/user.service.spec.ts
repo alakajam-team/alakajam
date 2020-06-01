@@ -8,7 +8,7 @@ import { closeTestDB, DB_TEST_TIMEOUT, startTestDB } from "server/testing/testin
 import { getRepository } from "typeorm";
 import userService from "./user.service";
 
-describe("User service", function () {
+describe("User service", function() {
   this.timeout(DB_TEST_TIMEOUT);
 
   before(async () => {

@@ -18,7 +18,7 @@ export class AnonymousCommentUser extends BookshelfCompatibleEntity {
   @PrimaryColumn()
   public user_id: number;
 
-  dependents(): Array<keyof this> {
+  public dependents(): Array<keyof this> {
     return [];
   }
 

@@ -1,10 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
-import { TimestampedEntity } from "./timestamped.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
-import { User } from "./user.entity";
 import { Entry } from "./entry.entity";
 import { Event } from "./event.entity";
-import entryTeamService from "server/entry/entry-team.service";
+import { TimestampedEntity } from "./timestamped.entity";
+import { User } from "./user.entity";
 
 @Entity()
 export class EntryVote extends TimestampedEntity {

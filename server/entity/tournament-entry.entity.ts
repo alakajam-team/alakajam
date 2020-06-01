@@ -18,14 +18,14 @@ export class TournamentEntry extends TimestampedEntity {
   @ManyToOne(() => Event)
   @JoinColumn({ name: "event_id" })
   public event: Event;
-  
+
   @Column()
   public entry_id: number;
 
   @ManyToOne(() => Entry)
   @JoinColumn({ name: "entry_id" })
   public entry: Entry;
-  
+
   /**
    * Listing order
    */

@@ -1,11 +1,9 @@
 /* eslint-disable camelcase */
 
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
 import { User } from "./user.entity";
-import { Post } from "./post.entity";
-import { Entry } from "./entry.entity";
 
 @Entity()
 @Index([ "node_id", "node_type" ])
@@ -81,7 +79,7 @@ export class Comment extends BookshelfCompatibleEntity {
    * @param  {Model} model Any model with timestamps
    * @return {bool}
    */
-  wasEdited(): boolean {
+  public wasEdited(): boolean {
     return this.updated_at.getTime() - this.created_at.getTime() > 3600 * 1000;
   }
 

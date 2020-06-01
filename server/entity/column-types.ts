@@ -13,7 +13,7 @@ export class ColumnTypes {
   /**
    * Date time column.
    * If you want to remove the default value of NOW(), specify `() => null` to the `default` option field.
-   * @param additionalOptions 
+   * @param additionalOptions
    */
   public static dateTime(additionalOptions: ColumnOptions = {}): ColumnOptions {
     return {

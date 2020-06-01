@@ -1,12 +1,11 @@
 /* eslint-disable camelcase */
 
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { Entry } from "./entry.entity";
 import { Event } from "./event.entity";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
-import { Like } from "./like.entity";
 
 @Entity()
 export class Post extends TimestampedEntity {

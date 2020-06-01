@@ -1,17 +1,16 @@
 /* eslint-disable camelcase */
 
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, BeforeInsert, BeforeUpdate } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
 import { Comment } from "./comment.entity";
 import { EntryScore } from "./entry-score.entity";
 import { Like } from "./like.entity";
 import { Post } from "./post.entity";
 import { ThemeVote } from "./theme-vote.entity";
-import { TimestampedEntity } from "./timestamped.entity";
 import { TournamentScore } from "./tournament-score.entity";
 import { UserDetails } from "./user-details.entity";
 import { UserRole } from "./user-role.entity";
-import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 
 /**
  * User account information.

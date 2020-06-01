@@ -138,7 +138,7 @@ export class Entry extends TimestampedEntity {
   /**
    * FIXME May be impossible to implement at entity level in TypeORM due to morph relation
    */
- /* public sortedUserRoles() {
+  /* public sortedUserRoles() {
     return this.userRoles.sortBy((userRole) => {
       // List owners first, otherwise sort alphabetically
       if (userRole.get("permission") === "manage") {

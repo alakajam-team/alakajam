@@ -1,7 +1,8 @@
-import { Column, OneToMany, PrimaryGeneratedColumn, Entity } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
-import { Event, EventCountdownConfig, EventEntryStatus, EventGlobalStatus, EventResultsStatus, EventRulesStatus, EventThemeStatus, EventTournamentStatus } from "./event.entity";
 import { ColumnTypes } from "./column-types";
+import { Event, EventCountdownConfig, EventEntryStatus, EventGlobalStatus,
+  EventResultsStatus, EventRulesStatus, EventThemeStatus, EventTournamentStatus } from "./event.entity";
 
 @Entity()
 export class EventPreset extends BookshelfCompatibleEntity {

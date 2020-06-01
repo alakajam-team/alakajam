@@ -1,10 +1,10 @@
 /* eslint-disable camelcase */
 
-import { Column, Entity, Index, PrimaryGeneratedColumn, OneToOne, JoinColumn, PrimaryColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
-import { TimestampedEntity } from "./timestamped.entity";
 import { Entry } from "./entry.entity";
 import { Platform } from "./platform.entity";
+import { TimestampedEntity } from "./timestamped.entity";
 
 @Entity()
 export class EntryPlatform extends TimestampedEntity {

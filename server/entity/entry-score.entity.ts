@@ -1,7 +1,7 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
-import { TimestampedEntity } from "./timestamped.entity";
 import { Entry } from "./entry.entity";
+import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
 
 @Entity()
