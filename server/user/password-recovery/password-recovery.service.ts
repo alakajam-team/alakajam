@@ -30,7 +30,7 @@ export class PasswordRecoveryService {
       // Create token
       const token = randomKey.generate(32);
       passwordRecoveryTokens[token] = {
-        userId: user.get("id"),
+        userId: user.id,
         expires: createLuxonDate().toMillis() + constants.PASSWORD_RECOVERY_LINK_MAX_AGE,
       };
       fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, passwordRecoveryTokens);

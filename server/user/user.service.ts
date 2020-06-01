@@ -114,10 +114,8 @@ export class UserService {
    */
   public async register(email: string, name: string, password: string): Promise<User | string> {
     if (!forms.isUsername(name)) {
-      return "Username must start with a letter. They may only contain letters, numbers, underscores or hyphens.";
-    }
-    if (name.length < constants.USERNAME_MIN_LENGTH) {
-      return "Username length must be at least " + constants.USERNAME_MIN_LENGTH;
+      return "Username is invalid. They may only contain letters, numbers, underscores or hyphens," +
+       ` and must start with a letter. Length must be at least ${constants.USERNAME_MIN_LENGTH}. `;
     }
 
     const userRepository = getRepository(User);
@@ -140,9 +138,7 @@ export class UserService {
 
     const user = new User(name, email);
     this.setPassword(user, password);
-    await userRepository.save(user);
-
-    return user;
+    return userRepository.save(user);
   }
 
   /**

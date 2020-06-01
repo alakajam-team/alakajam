@@ -15,13 +15,13 @@ import userService from "server/user/user.service";
 export async function userProfile(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   const profileUser = await userService.findByName(req.params.name);
   if (profileUser) {
-    res.locals.pageTitle = profileUser.get("title");
-    res.locals.pageDescription = forms.markdownToText(profileUser.related("details").get("body"));
+    res.locals.pageTitle = profileUser.title;
+    res.locals.pageDescription = forms.markdownToText(profileUser.details.body);
 
     const [entries, posts, scores] = await Promise.all([
-      eventService.findUserEntries(profileUser as any),
-      postService.findPosts({ userId: profileUser.get("id") }),
-      highScoreService.findUserScores(profileUser.get("id"), { sortBy: "ranking" }),
+      eventService.findUserEntries(profileUser),
+      postService.findPosts({ userId: profileUser.id }),
+      highScoreService.findUserScores(profileUser.id, { sortBy: "ranking" }),
     ]);
 
     const alakajamEntries = [];
@@ -44,7 +44,7 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
       externalEntries,
       posts,
       userScores: scores.models,
-      medals: scores.countBy((userScore) => userScore.get("ranking")),
+      medals: scores.countBy((userScore: BookshelfModel) => userScore.get("ranking")),
       userLikes: await likeService.findUserLikeInfo(posts.models as PostBookshelfModel[], res.locals.user)
     });
   } else {

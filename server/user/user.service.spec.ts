@@ -9,7 +9,7 @@ import { closeTestDB, DB_TEST_TIMEOUT, startTestDB } from "server/testing/testin
 import { getRepository } from "typeorm";
 import userService from "./user.service";
 
-describe("User service", () => {
+describe("User service", function () {
   this.timeout(DB_TEST_TIMEOUT);
 
   before(async () => {
@@ -152,7 +152,7 @@ describe("User service", () => {
       const result = await userService.register("email@example.com", "xx", "password");
 
       expect(result).to.be.a("string");
-      expect(result).to.contain("Username length must be at least");
+      expect(result).to.contain("Username is invalid");
     });
 
   });
@@ -185,12 +185,14 @@ describe("User service", () => {
     if (typeof user === "string") { throw new Error(user); }
 
     // Support overriding created_at/updated_at
-    await getRepository(User)
-      .createQueryBuilder()
-      .update()
-      .set(attributes)
-      .where({ id: user.id })
-      .execute();
+    if (Object.keys(attributes).length > 0) {
+      await getRepository(User)
+        .createQueryBuilder()
+        .update()
+        .set(attributes)
+        .where({ id: user.id })
+        .execute();
+    }
 
     return user;
   }
