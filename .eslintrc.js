@@ -2,18 +2,22 @@ module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
     parserOptions: {
-        project: "./tsconfig.json"
+        project: "./tsconfig.json",
+        ecmaFeatures: {
+            jsx: true
+        }
     },
     env: {
         es6: true,
         node: true
     },
     plugins: [
-        '@typescript-eslint'
+        '@typescript-eslint',
+        'react'
     ],
     extends: [
         'plugin:@typescript-eslint/recommended',
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+        'plugin:@typescript-eslint/recommended-requiring-type-checking'
     ],
     rules: {
         // Too slow for what they're worth
@@ -26,6 +30,8 @@ module.exports = {
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/consistent-type-definitions": "error",
+        "react/jsx-uses-react": 1,
+        "react/jsx-uses-vars": 1,
         "@typescript-eslint/no-unused-vars": ["error", {
             "vars": "all",
             "args": "none",

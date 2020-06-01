@@ -66,6 +66,18 @@ export interface CommonLocals {
    * Available everywhere.
    */
   readonly editComment: BookshelfModel;
+
+  /**
+   * For JSX render functions only.
+   * List of absolute URLs to append as JavaScript files.
+   */
+  scripts: string[];
+
+  /**
+   * For JSX render functions only.
+   * List of inline styles to append to the page.
+   */
+  inlineStyles: string[];
 }
 
 export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction) {
@@ -78,6 +90,10 @@ export async function commonMiddleware(req: CustomRequest, res: Response, next: 
     req.session.alerts = [];
     await req.session.saveAsync();
   }
+
+  // JSX template tooling
+  res.locals.scripts = [];
+  res.locals.inlineStyles = [];
 
   // Fetch current user
   let userTask = null;

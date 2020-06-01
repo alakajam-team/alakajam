@@ -31,8 +31,14 @@ import log from "./log";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
 import * as templatingFilters from "./templating-filters";
 import * as templatingGlobals from "./templating-globals";
+import { CommonLocals } from "server/common.middleware";
+import { render } from "preact-render-to-string";
 
 const LAUNCH_TIME = Date.now();
+
+export let NUNJUCKS_ENV: nunjucks.Environment | undefined;
+
+export type JSXRenderFunction<T extends CommonLocals> = (context: T) => JSX.Element;
 
 /*
  * Setup app middleware
@@ -70,7 +76,7 @@ export async function configure(app: express.Application) {
 
   // Templating
   app.set("views", path.join(constants.ROOT_PATH, "/server"));
-  const njEnv = setupNunjucks(app);
+  const njEnv = NUNJUCKS_ENV = setupNunjucks(app);
 
   // Templating: custom globals and filters
   templatingGlobals.configure({
@@ -91,6 +97,9 @@ export async function configure(app: express.Application) {
 
   // Templating: rendering context
   app.use(function templateTooling(req: CustomRequest, res: any, next: NextFunction) {
+    res.locals.rootUrl = config.ROOT_URL;
+    res.locals.csrfToken = () => '<input type="hidden" name="_csrf" value="' + req.csrfToken() + '" />';
+
     /* Allows anyone to display an error page.
      * Calling render() after an errorPage() is tolerated an will be a no-op, although it would be bad practice.
      */
@@ -112,14 +121,18 @@ export async function configure(app: express.Application) {
 
     // Context made available anywhere
     const nativeRender = res.render;
-    res.render = (template, context) => {
+    res.render = (template: string, context: Record<string, any>) => {
       if (!res.alreadyRenderedWithError) {
-        const mergedContext = Object.assign({
-          rootUrl: config.ROOT_URL,
-          csrfToken: () => '<input type="hidden" name="_csrf" value="' + req.csrfToken() + '" />',
-        }, res.locals, context);
+        const mergedContext = Object.assign(res.locals, context);
         nativeRender.call(res, template, mergedContext);
-        res.rendered = true;
+      }
+    };
+
+    res.renderJSX = <T extends CommonLocals> (renderFunction: JSXRenderFunction<T>, context: T) => {
+      if (!res.alreadyRenderedWithError) {
+        const jsx = renderFunction(context);
+        res.write("<!doctype html>" + render(jsx));
+        res.end();
       }
     };
 
@@ -158,7 +171,7 @@ export function logErrorAndReturn(value: any) {
   };
 }
 
-function setupNunjucks(app) {
+function setupNunjucks(app: express.Application) {
   const loader = new nunjucks.FileSystemLoader(app.get("views"), {
     watch: app.locals.devMode,
     noCache: app.locals.devMode,
@@ -178,7 +191,6 @@ function setupNunjucks(app) {
   }
 
   app.engine(engineName, engine);
-
   return env;
 }
 
