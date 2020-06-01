@@ -1,5 +1,6 @@
 import { CommonLocals } from "server/common.middleware";
 import { CustomRequest, CustomResponse } from "server/types";
+import chatTemplate from "./chat.template";
 
 /**
  * IRC / Discord Chat
@@ -7,5 +8,5 @@ import { CustomRequest, CustomResponse } from "server/types";
 export async function chat(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "Chat";
 
-  res.render("explore/chat");
+  res.renderJSX(chatTemplate, res.locals);
 }

@@ -8,10 +8,12 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "jsx": "react",
     "typeRoots": ["types", "node_modules/@types"]
   },
   "include": [
-    "server/**/*.ts"
+    "server/**/*.ts",
+    "server/**/*.tsx"
   ],
   "files": [
     "server/types.d.ts"

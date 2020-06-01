@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { CommonLocals } from "./common.middleware";
 import { Config } from "./core/config";
+import { JSXRenderFunction } from "./core/middleware";
 
 export type Mutable<T> = { -readonly [P in keyof T ]: T[P] };
 
@@ -48,6 +49,7 @@ export interface CustomResponse<T extends CommonLocals> extends Response {
   errorPage(code: number, error?: Error | string): void;
   traceAndShowErrorPage(error?: Error): void;
   redirectToLogin(): Promise<void>;
+  renderJSX<T extends CommonLocals>(renderFunction: JSXRenderFunction<T>, context: T): void;
 }
 
 export interface RenderContext { [key: string]: any }
