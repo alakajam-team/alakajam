@@ -10,7 +10,7 @@
 
 ### April 2020
 
-* User registration: fix too restrive check for existing usernames
+* User registration: fix too restrictive check against existing usernames
 
 ### March 2020
 
