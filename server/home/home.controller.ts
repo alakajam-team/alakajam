@@ -14,7 +14,7 @@ import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import eventParticipationService from "server/event/event-participation.service";
+import eventParticipationService from "server/event/dashboard/event-participation.service";
 
 interface HomeContext {
   featuredPost?: PostBookshelfModel;

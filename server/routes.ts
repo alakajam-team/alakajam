@@ -29,8 +29,8 @@ import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.contro
 import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
 import { viewEventGames } from "./event/event-games.controller";
 import { viewEventHome } from "./event/event-home.controller";
-import { joinLeaveEvent } from "./event/event-join.controller";
-import { viewEventDashboard } from "./event/event-my-dashboard.controller";
+import { joinLeaveEvent } from "./event/dashboard/event-join.controller";
+import { postEventDashboard, viewEventDashboard } from "./event/dashboard/event-my-dashboard.controller";
 import { viewEventPosts } from "./event/event-posts.controller";
 import { eventMiddleware } from "./event/event.middleware";
 import { eventManageEntries } from "./event/manage/event-manage-entries.controller";
@@ -71,6 +71,7 @@ import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
+import { viewStreamerPreferences, saveStreamerPreferences } from "./event/dashboard/event-my-dashboard-streamer.controller";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
@@ -174,6 +175,9 @@ export function routes(app) {
   router.post("/create_event", eventFormParser, csrf, eventManage);
   router.get("/:eventName([^/]{0,}-[^/]{0,})", viewEventHome);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard", viewEventDashboard);
+  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard", postEventDashboard);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", viewStreamerPreferences);
+  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", saveStreamerPreferences);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/my-entry", viewEventDashboard); // deprecated
   router.get("/:eventName([^/]{0,}-[^/]{0,})/join", joinLeaveEvent);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventHome); // deprecated

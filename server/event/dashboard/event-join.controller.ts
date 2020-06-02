@@ -1,8 +1,8 @@
 import links from "server/core/links";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventParticipationService from "./event-participation.service";
-import { EventLocals } from "./event.middleware";
-import eventService from "./event.service";
+import { EventLocals } from "../event.middleware";
+import eventService from "../event.service";
 
 /**
  * Join or leave event

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import "macros/form.macros.html" as formMacros with context  %}
+{% import "user/user.macros.html" as userMacros with context %}
+
+{% block body %}
+
+<div class="container thin">
+  <h1>My {{ event.get('title') }} dashboard: Streamer preferences</h1>
+
+  {{ formMacros.alerts(alerts) }}
+
+  <p><a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-outline-secondary">Back to dashboard</a></p>
+
+  <div class="featured">Taking part in the event as a streamer will let you review and rate entries, even if you do not make a game! Log in during the rating phase to explore the submitted entries and use your privilege.</div>
+
+  <form method="post">
+
+    <div class="form-group">
+      <label for="twitch">Twitch channel</label>
+      <input type="text" class="form-control" id="twitch" name="twitch" value="{{ user.details.social_links.twitch }}" />
+      <p class="legend mb-0">This field can also be set from your <a href="{{ routeUrl(user, 'user', 'settings') }}">user settings</a>.</p>
+    </div>
+    
+    <div class="form-group">
+      <label for="twitch">Streamer description</label>
+      <p class="text-muted">Use this description to tell the jammers what and when you plan to stream. This will help them know when to tune in to your channel.</p>
+      {{ formMacros.editor('streamer-description', eventParticipation.streamerDescription) }}
+    </div>
+
+    <div class="form-group text-right">
+      <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+      <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-outline-secondary">Back to dashboard</a>
+
+      <button type="submit" name="cancel-participation" class="btn btn-danger float-left" onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
+        Cancel participation as streamer
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ formMacros.editorScripts() }}
+{% endblock %}

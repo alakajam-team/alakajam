@@ -6,7 +6,7 @@ import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "./event.middleware";
 import eventService from "./event.service";
 import enums from "server/core/enums";
-import eventParticipationService from "./event-participation.service";
+import eventParticipationService from "./dashboard/event-participation.service";
 
 /**
  * Browse event home page

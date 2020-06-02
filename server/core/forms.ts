@@ -107,22 +107,16 @@ const turndownService = new TurndownService();
 /**
  * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
  * Use this on all string input unless you need more advanced escaping (e.g. for URLs, for Markdown)
- * @param  {string} string
- * @param  {object} options maxLength
- * @return {string}
  */
-function sanitizeString(str: string, options: any = {}) {
+function sanitizeString(str: string, options: { maxLength?: number } = {}) {
   return striptags(str).trim().slice(0, options.maxLength || 255);
 }
 
 /**
  * Sanitizes Markdown form input very lightly, just by limiting its length.
  * Real sanitization needs to happen after converting it to HTML.
- * @param  {string} markdown
- * @param  {object} options maxLength
- * @return {string}
  */
-function sanitizeMarkdown(markdown: string, options: any = {}) {
+function sanitizeMarkdown(markdown: string, options: { maxLength?: number } = {}) {
   return markdown.slice(0, options.maxLength || constants.MAX_BODY_COMMENT);
 }
 

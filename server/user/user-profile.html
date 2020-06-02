@@ -4,6 +4,7 @@
 {% import "entry/highscore/entry-highscore.macros.html" as scoreMacros %}
 {% import "event/event.macros.html" as eventMacros %}
 {% import "post/post.macros.html" as postMacros with context %}
+{% import "user/user.macros.html" as userMacros with context %}
 
 {% block body %}
 
@@ -50,6 +51,11 @@
             <a href="{{ socialLinks.website }}">
               <span class="fas fa-home" style="color: black; font-size: 24px"></span> Website
             </a>
+          </div>
+        {% endif %}
+        {% if socialLinks.twitch %}
+          <div class="profile__social-link">
+            {{ userMacros.twitchLink(profileUser) }}
           </div>
         {% endif %}
         {% if socialLinks.twitter %}
