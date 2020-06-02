@@ -6,25 +6,31 @@ import { User } from "./user.entity";
 export class EventParticipation {
 
   public constructor(eventId: number, userId: number) {
-    this.event_id = eventId;
-    this.user_id = userId;
+    this.eventId = eventId;
+    this.userId = userId;
   }
 
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column()
-  public event_id: number;
+  @Column({ name: "event_id" })
+  public eventId: number;
 
   @ManyToOne(() => Event, (event) => event.participations)
   @JoinColumn({ name: "event_id" })
   public event: Event;
 
-  @Column()
-  public user_id: number;
+  @Column({ name: "user_id" })
+  public userId: number;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: "user_id" })
   public user: User;
+
+  @Column({ name: "is_streamer", nullable: true })
+  public isStreamer: boolean | undefined;
+
+  @Column({ name: "streamer_description", length: 2000, nullable: true })
+  public streamerDescription: string;
 
 }

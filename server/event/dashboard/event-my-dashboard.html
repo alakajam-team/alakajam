@@ -3,6 +3,7 @@
 {% import "macros/form.macros.html" as formMacros with context  %}
 {% import "post/post.macros.html" as postMacros with context  %}
 {% import "macros/jumbotron.macros.html" as jumbotronMacros with context  %}
+{% import "user/user.macros.html" as userMacros with context %}
 
 {% block body %}
 
@@ -34,10 +35,41 @@
       </div>
     </div>
     <div class="col-md-9 col-12">
-      <div>
+      <div class="mb-3">
         <h2><span class="fa fa-gamepad"></span> Entry</h2>
     
-        {{ eventMacros.eventShortcutMyEntry(user, event, entry, { noTitle: true }) }}
+        <div class="row">
+          
+          <div class="col-lg-7">
+            <h3>As jammer</h3>
+            {{ eventMacros.eventShortcutMyEntry(user, event, entry, { noTitle: true }) }}
+          </div>
+          <div class="col-lg-5">
+            <h3>As streamer</h3>
+
+            <form method="post" class="action-banner text-center d-flex justify-content-center align-items-center flex-column" style="min-height: 110px">
+              {% if eventParticipation.isStreamer %}
+                <p>You are entering the event as a streamer!</p>
+                {% set socialLinks = user.related('details').get('social_links') %}
+                {% if socialLinks.twitch %}
+                  <span class="alert alert-light">{{ userMacros.twitchLink(user) }}</span>
+                {% else %}
+                  <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Unknown Twitch channel</span>
+                {% endif %}
+                <a href="{{ routeUrl(event, 'event', 'dashboard-streamer-preferences') }}" class="btn btn-primary">Manage streamer preferences</a>
+              {% elseif event.get("status_entry") !== 'closed' %}
+                <input type="hidden" name="is-streamer" value="true" />
+                <button type="submit" name="streamer-preferences" class="btn btn-primary btn-lg">
+                  <span class="fas fa-video"></span>
+                  Enter as streamer
+                </button>
+              {% else %}
+                <p>Entries as streamer are now closed.</p>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+
       </div>
     
       {% if event.get('status_themes') !== 'disabled' %}
@@ -78,7 +110,17 @@
       </div>
     
       <div class="mt-5">
-        <a href="{{ routeUrl(event, 'event', 'join') }}?leave" class="btn btn-danger" onclick="return confirm('Leave the event? You can return at any time.')">Leave event</a>
+        {% if eventParticipation.isStreamer %}
+        <form method="post" class="d-inline">
+          <input type="hidden" name="is-streamer" value="false" />
+          <button type="submit" name="streamer-preferences" class="btn btn-danger" onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
+            Cancel participation as streamer
+          </button>
+        </form>
+        {% endif %}
+        <a href="{{ routeUrl(event, 'event', 'join') }}?leave" class="btn btn-danger" onclick="return confirm('Leave the event? You can return at any time.')">
+          Leave event
+        </a>
       </div>
     </div>
   </div>

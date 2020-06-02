@@ -25,7 +25,7 @@ export class UserDetails extends BookshelfCompatibleEntity {
   public body: string;
 
   @Column(ColumnTypes.json({ nullable: true }))
-  public social_links: { website?: string; twitter?: string };
+  public social_links: { website?: string; twitter?: string; twitch?: string };
 
   public dependents(): Array<keyof this> {
     return [];

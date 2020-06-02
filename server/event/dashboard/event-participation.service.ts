@@ -6,7 +6,7 @@ import cache from "server/core/cache";
 
 export class EventParticipationService {
 
-  public async joinEvent(event: BookshelfModel, user: User): Promise<void> {
+  public async joinEvent(event: BookshelfModel, user: User, options: { isStreamer?: boolean; steamerDescription?: string } = {}): Promise<void> {
     const epRepository = getRepository(EventParticipation);
     if (!await this.hasJoinedEvent(event, user)) {
       await epRepository.save(new EventParticipation(event.get("id"), user.id));
@@ -18,8 +18,8 @@ export class EventParticipationService {
   public async leaveEvent(event: BookshelfModel, user: User): Promise<void> {
     const epRepository = getRepository(EventParticipation);
     await epRepository.delete({
-      event_id: event.get("id"),
-      user_id: user.id
+      eventId: event.get("id"),
+      userId: user.id
     });
 
     await this.refreshParticipationCount(event);
@@ -29,26 +29,38 @@ export class EventParticipationService {
     const epRepository = getRepository(EventParticipation);
     return epRepository.count({
       where: {
-        event_id: event.get("id")
+        eventId: event.get("id")
       }
     });
   }
 
   public async hasJoinedEvent(event: BookshelfModel, user: User): Promise<boolean> {
-    if (!user) {
-      return false;
+    return (await this.getEventParticipation(event, user)) !== undefined;
+  }
+
+  public async setStreamingPreferences(event: BookshelfModel, user: User,
+                                       preferences: { isStreamer: boolean; streamerDescription: string }): Promise<void> {
+    const eventParticipation = await this.getEventParticipation(event, user);
+    if (eventParticipation) {
+      eventParticipation.isStreamer = preferences.isStreamer;
+      eventParticipation.streamerDescription = preferences.streamerDescription;
+      const epRepository = getRepository(EventParticipation);
+      await epRepository.save(eventParticipation);
+    } else {
+      throw new Error("This user has not joined the event");
     }
+  }
 
-    const epRepository = getRepository(EventParticipation);
-
-    const resultCount = await epRepository.count({
-      where: {
-        event_id: event.get("id"),
-        user_id: user.id
-      }
-    });
-
-    return resultCount > 0;
+  public async getEventParticipation(event: BookshelfModel, user: User): Promise<EventParticipation | undefined> {
+    if (user) {
+      const epRepository = getRepository(EventParticipation);
+      return epRepository.findOne({
+        where: {
+          eventId: event.get("id"),
+          userId: user.id
+        }
+      });
+    }
   }
 
   private async refreshParticipationCount(event: BookshelfModel): Promise<void> {
