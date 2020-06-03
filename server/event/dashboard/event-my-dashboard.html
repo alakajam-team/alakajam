@@ -48,6 +48,8 @@
             <h3>As streamer</h3>
 
             <form method="post" class="action-banner text-center d-flex justify-content-center align-items-center flex-column" style="min-height: 110px">
+              {{ csrfToken() | safe }}
+              
               {% if eventParticipation.isStreamer %}
                 <p>You are entering the event as a streamer!</p>
                 {% set socialLinks = user.related('details').get('social_links') %}

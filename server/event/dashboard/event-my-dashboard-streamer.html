@@ -14,6 +14,7 @@
   <div class="featured">Taking part in the event as a streamer will let you review and rate entries, even if you do not make a game! Log in during the rating phase to explore the submitted entries and use your privilege.</div>
 
   <form method="post">
+    {{ csrfToken() | safe }}
 
     <div class="form-group">
       <label for="twitch">Twitch channel</label>

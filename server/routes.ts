@@ -72,6 +72,7 @@ import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/da
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
 import { viewStreamerPreferences, saveStreamerPreferences } from "./event/dashboard/event-my-dashboard-streamer.controller";
+import { eventStreamers, moderateEventStreamers } from "./event/event-streamers.controller";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
@@ -174,10 +175,10 @@ export function routes(app) {
   router.get("/create_event", csrf, eventManage);
   router.post("/create_event", eventFormParser, csrf, eventManage);
   router.get("/:eventName([^/]{0,}-[^/]{0,})", viewEventHome);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard", viewEventDashboard);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard", postEventDashboard);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", viewStreamerPreferences);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", saveStreamerPreferences);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard", csrf, viewEventDashboard);
+  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard", csrf, postEventDashboard);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", csrf, viewStreamerPreferences);
+  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", csrf, saveStreamerPreferences);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/my-entry", viewEventDashboard); // deprecated
   router.get("/:eventName([^/]{0,}-[^/]{0,})/join", joinLeaveEvent);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventHome); // deprecated
@@ -190,6 +191,8 @@ export function routes(app) {
   router.get("/:eventName([^/]{0,}-[^/]{0,})/results", viewEventResults);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-games", csrf, viewEventTournamentGames);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-leaderboard", viewEventTournamentLeaderboard);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/streamers", eventStreamers);
+  router.post("/:eventName([^/]{0,}-[^/]{0,})/streamers", csrf, moderateEventStreamers);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/edit", csrf, eventManage);
   router.post("/:eventName([^/]{0,}-[^/]{0,})/edit", eventFormParser, csrf, eventManage);
   router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventManageThemes);
