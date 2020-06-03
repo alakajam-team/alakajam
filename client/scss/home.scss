@@ -51,7 +51,7 @@ $arrowSize: 9.5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 200px;
+    min-height: 220px;
   }
   &__logo {
     position: relative;
@@ -71,34 +71,29 @@ $arrowSize: 9.5px;
     }
   }
 
-  &__post {
-    background-color: change-color($bg, $alpha: .7);
-    margin-top: 15px;
+  & .card.bg-jumbotron {
+    background-color: change-color($bg, $alpha: .9);
   }
 
-  &__shortcut .list-group-item,
-  a.event-jumbotron__shortcut {
-    padding: 10px 15px;
-  }
-  &__shortcut:hover {
-    background-color: $neutral-lightest;
-  }
-  &__shortcut-icon {
-    margin-left: -10px;
-    display: inline-block;
-    width: 36px;
-    text-align: center;
-    color: $alt;
-  }
-  &__shortcut-title {
-    color: black;
-    font-weight: normal;
+  &__post {
+    margin-top: 15px;
+
+    & .post {
+      margin: 5px 10px 0;
+    }
+    &-details {
+      font-weight: bold;
+      margin: -10px 15px 10px 15px;
+    }
   }
 
   &__stats {
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.2rem;
+
+    &-contents {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
 
     &-counter {
       font-size: 1.5rem;
@@ -133,7 +128,7 @@ $arrowSize: 9.5px;
 
   &__countdown {
     float: right;
-    width: 320px;
+    width: 296px;
 
     @include media-breakpoint-down(lg) {
       float: none;

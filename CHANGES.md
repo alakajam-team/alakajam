@@ -2,6 +2,22 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/alakajam-team/alakajam)!
 
+### May 2020
+
+* Join button for events
+* Move event links and more to participation dashboard
+* Minor front page styling improvements
+
+### April 2020
+
+* User registration: fix too restrictive check against existing usernames
+
+### March 2020
+
+* Introduce a "hotness" rating for games, used for sorting in the global Games tab
+* Improve responsiveness for various pages (tournaments, podium...)
+* Fix support for details/summary tags in posts
+
 ### February 2020
 
 * New front page with cleaner layout, comment feed
