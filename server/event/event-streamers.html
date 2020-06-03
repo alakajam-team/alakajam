@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "post/post.macros.html" as postMacros with context %}
+{% import "macros/form.macros.html" as formMacros with context %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
+
+{% block body %}
+
+<div class="container thin">
+  <h1>Streamers</h1>
+
+  {% for eventParticipation in eventParticipations %}
+    <h2>{{ eventParticipation.user.title }}</h2>
+    <p>{{ eventParticipation.streamerDescription }}</p>
+  {% endfor %}
+</div>
+
+{% endblock %}

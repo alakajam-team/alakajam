@@ -63,6 +63,14 @@ export class EventParticipationService {
     }
   }
 
+  public async getEventParticipations(criteria: Partial<EventParticipation>): Promise<EventParticipation[]> {
+    const epRepository = getRepository(EventParticipation);
+    return epRepository.find({
+      where: criteria,
+      relations: ["user", "user.details"]
+    });
+  }
+
   private async refreshParticipationCount(event: BookshelfModel): Promise<void> {
     const eventDetails = event.related<BookshelfModel>("details");
     eventDetails.set("participation_count", await this.countParticipants(event));
