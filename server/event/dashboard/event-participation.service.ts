@@ -1,12 +1,12 @@
 import { BookshelfModel } from "bookshelf";
-import { EventParticipation } from "server/entity/event-participation.entity";
+import { EventParticipation, StreamerStatus } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
 import { getRepository } from "typeorm";
 import cache from "server/core/cache";
 
 export class EventParticipationService {
 
-  public async joinEvent(event: BookshelfModel, user: User, options: { isStreamer?: boolean; steamerDescription?: string } = {}): Promise<void> {
+  public async joinEvent(event: BookshelfModel, user: User): Promise<void> {
     const epRepository = getRepository(EventParticipation);
     if (!await this.hasJoinedEvent(event, user)) {
       await epRepository.save(new EventParticipation(event.get("id"), user.id));
@@ -39,10 +39,10 @@ export class EventParticipationService {
   }
 
   public async setStreamingPreferences(event: BookshelfModel, user: User,
-                                       preferences: { isStreamer: boolean; streamerDescription: string }): Promise<void> {
+                                       preferences: { streamerStatus: StreamerStatus; streamerDescription: string }): Promise<void> {
     const eventParticipation = await this.getEventParticipation(event, user);
     if (eventParticipation) {
-      eventParticipation.isStreamer = preferences.isStreamer;
+      eventParticipation.streamerStatus = preferences.streamerStatus;
       eventParticipation.streamerDescription = preferences.streamerDescription;
       const epRepository = getRepository(EventParticipation);
       await epRepository.save(eventParticipation);

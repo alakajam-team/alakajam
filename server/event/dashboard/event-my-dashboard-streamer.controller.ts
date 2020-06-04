@@ -11,6 +11,12 @@ import userService from "server/user/user.service";
  */
 export async function viewStreamerPreferences(req: CustomRequest, res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
+  const eventParticipation = await eventParticipationService.getEventParticipation(event, user);
+  if (!eventParticipation?.isStreamer) {
+    res.errorPage(401, "User is not registered as a streamer");
+    return;
+  }
+
   res.locals.pageTitle += " | Event dashboard | Preferences";
 
   await user.loadDetails();
@@ -25,7 +31,7 @@ export async function saveStreamerPreferences(req: CustomRequest, res: CustomRes
 
   if (req.body.submit !== undefined) {
     await eventParticipationService.setStreamingPreferences(event, user, {
-      isStreamer: true,
+      streamerStatus: "requested",
       streamerDescription
     });
 
@@ -43,7 +49,7 @@ export async function saveStreamerPreferences(req: CustomRequest, res: CustomRes
 
   } else if (req.body["cancel-participation"] !== undefined) {
     await eventParticipationService.setStreamingPreferences(event, user, {
-      isStreamer: false,
+      streamerStatus: "off",
       streamerDescription
     });
     res.redirect(links.routeUrl(event, "event", "dashboard"));

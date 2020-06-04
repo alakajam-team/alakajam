@@ -8,7 +8,7 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
 
   const eventParticipations = await eventParticipationService.getEventParticipations({
     eventId: event.get("id"),
-    isStreamer: true
+    streamerStatus: true // NOT NULL
   });
 
   res.render("event/event-streamers.html", {

@@ -31,7 +31,7 @@ export async function postEventDashboard(req: CustomRequest, res: CustomResponse
 
   if (req.body["streamer-preferences"] !== undefined) {
     await eventParticipationService.setStreamingPreferences(event, user, {
-      isStreamer: req.body["is-streamer"] === "true",
+      streamerStatus: req.body["is-streamer"] === "true" ? "requested" : "off",
       streamerDescription: forms.sanitizeString(req.body["streamer-description"], { maxLength: constants.MAX_DESCRIPTION })
     });
   }
