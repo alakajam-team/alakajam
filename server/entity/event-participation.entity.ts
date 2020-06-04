@@ -2,6 +2,8 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { Event } from "./event.entity";
 import { User } from "./user.entity";
 
+export type StreamerStatus = "off" | "requested" | "approved" | "banned";
+
 @Entity()
 export class EventParticipation {
 
@@ -27,10 +29,14 @@ export class EventParticipation {
   @JoinColumn({ name: "user_id" })
   public user: User;
 
-  @Column({ name: "is_streamer", nullable: true })
-  public isStreamer: boolean | undefined;
+  @Column({ name: "streamer_status", nullable: true })
+  public streamerStatus: "off" | "requested" | "approved" | "banned";
 
   @Column({ name: "streamer_description", length: 2000, nullable: true })
   public streamerDescription: string;
+
+  public get isStreamer(): boolean {
+    return ["requested", "approved"].includes(this.streamerStatus);
+  }
 
 }
