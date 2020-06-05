@@ -291,7 +291,7 @@ export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryL
       await post.save();
     }
     await eventService.deleteEntry(entry);
-    if (event && event.get("status") !== enums.EVENT.STATUS.CLOSED) {
+    if (event && event.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED) {
       eventService.refreshEventCounts(event); // No need to await
     }
     cache.user(res.locals.user.get("name")).del("latestEntry");
