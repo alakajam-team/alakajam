@@ -27,11 +27,13 @@ import { entryHighscoreSubmit } from "./entry/highscore/entry-highscore-submit.c
 import { entryHighscores } from "./entry/highscore/entry-highscores.controller";
 import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
 import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
+import { joinLeaveEvent } from "./event/dashboard/event-join.controller";
+import { saveStreamerPreferences, viewStreamerPreferences } from "./event/dashboard/event-my-dashboard-streamer.controller";
+import { postEventDashboard, viewEventDashboard } from "./event/dashboard/event-my-dashboard.controller";
 import { viewEventGames } from "./event/event-games.controller";
 import { viewEventHome } from "./event/event-home.controller";
-import { joinLeaveEvent } from "./event/dashboard/event-join.controller";
-import { postEventDashboard, viewEventDashboard } from "./event/dashboard/event-my-dashboard.controller";
 import { viewEventPosts } from "./event/event-posts.controller";
+import { eventStreamers, eventStreamersDoc, moderateEventStreamers } from "./event/event-streamers.controller";
 import { eventMiddleware } from "./event/event.middleware";
 import { eventManageEntries } from "./event/manage/event-manage-entries.controller";
 import { eventManageTemplate } from "./event/manage/event-manage-template.controller";
@@ -71,8 +73,6 @@ import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
-import { viewStreamerPreferences, saveStreamerPreferences } from "./event/dashboard/event-my-dashboard-streamer.controller";
-import { eventStreamers, moderateEventStreamers } from "./event/event-streamers.controller";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
@@ -193,6 +193,7 @@ export function routes(app) {
   router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-leaderboard", viewEventTournamentLeaderboard);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/streamers", csrf, eventStreamers);
   router.post("/:eventName([^/]{0,}-[^/]{0,})/streamers", csrf, moderateEventStreamers);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/streamers-doc", eventStreamersDoc);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/edit", csrf, eventManage);
   router.post("/:eventName([^/]{0,}-[^/]{0,})/edit", eventFormParser, csrf, eventManage);
   router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventManageThemes);

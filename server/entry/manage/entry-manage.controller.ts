@@ -14,7 +14,7 @@ import highscoreService from "server/entry/highscore/entry-highscore.service";
 import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EntryLocals } from "../entry.middleware";
 
@@ -56,7 +56,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
     return;
   }
 
-  const isPlayedInTournament = await eventTournamentService.findActiveTournamentPlaying(entry.get("id"));
+  const isPlayedInTournament = await tournamentService.findActiveTournamentPlaying(entry.get("id"));
   const errorMessages = res.locals.errorMessages || [];
 
   if (req.method === "POST") {

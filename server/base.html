@@ -144,7 +144,7 @@
           <ul class="navbar-nav">
             {%- set statusTournament = event.get('status_tournament') -%}
             
-            {%- if not statusTournament or statusTournament === 'disabled' -%}
+            {%- if not statusTournament or statusTournament === 'disabled' or event.related('details').get('flags').streamerOnlyTournament -%}<!-- FIXME -->
               {{- eventLink(event, null, 'dashboard', 'Dashboard', 'play-circle', path) -}}
             {%- endif -%}
 

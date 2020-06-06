@@ -3,7 +3,7 @@ import forms from "server/core/forms";
 import security from "server/core/security";
 import highScoreService from "server/entry/highscore/entry-highscore.service";
 import eventService from "server/event/event.service";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
 
@@ -27,8 +27,8 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
       if (forms.isId(req.body.add)) {
         const entry = await eventService.findEntryById(req.body.add);
         if (entry) {
-          await eventTournamentService.addTournamentEntry(event.get("id"), entry.get("id"));
-          eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
+          await tournamentService.addTournamentEntry(event.get("id"), entry.get("id"));
+          tournamentService.recalculateAllTournamentScores(highScoreService, event);
         } else {
           errorMessage = "Entry not found with ID " + req.body.add;
         }
@@ -42,7 +42,7 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
       if (forms.isInt(req.body.ordering)) {
         const entry = await eventService.findEntryById(req.body.id);
         if (entry) {
-          await eventTournamentService.saveTournamentEntryOrdering(event.get("id"), entry.get("id"), req.body.ordering);
+          await tournamentService.saveTournamentEntryOrdering(event.get("id"), entry.get("id"), req.body.ordering);
         }
       } else {
         errorMessage = "Invalid order";
@@ -53,20 +53,20 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
     if (req.body.remove !== undefined && forms.isId(req.body.id)) {
       const entry = await eventService.findEntryById(req.body.id);
       if (entry) {
-        await eventTournamentService.removeTournamentEntry(event.get("id"), entry.get("id"));
-        eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
+        await tournamentService.removeTournamentEntry(event.get("id"), entry.get("id"));
+        tournamentService.recalculateAllTournamentScores(highScoreService, event);
       }
     }
 
     // Refresh scores
-    if (req.body["refresh-all"]) {
-      await eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
+    if (req.body.refresh) {
+      await tournamentService.recalculateAllTournamentScores(highScoreService, event);
     }
   }
 
   // Load tournament entries
   res.render("event/manage/event-manage-tournament", {
-    tournamentEntries: await eventTournamentService.findTournamentEntries(event),
+    tournamentEntries: await tournamentService.findTournamentEntries(event),
     errorMessage,
   });
 }

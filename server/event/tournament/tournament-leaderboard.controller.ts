@@ -1,5 +1,5 @@
 import enums from "server/core/enums";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
 
@@ -18,10 +18,10 @@ export async function viewEventTournamentLeaderboard(req: CustomRequest, res: Cu
     return;
   }
 
-  const tEntries = await eventTournamentService.findTournamentEntries(event);
+  const tEntries = await tournamentService.findTournamentEntries(event);
 
   res.render("event/tournament/tournament-leaderboard", {
-    tournamentScores: (await eventTournamentService.findTournamentScores(event)).models,
+    tournamentScores: (await tournamentService.findTournamentScores(event)).models,
     entries: tEntries.map((tEntry) => tEntry.related("entry")),
   });
 }

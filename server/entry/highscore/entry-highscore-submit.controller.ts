@@ -2,7 +2,7 @@ import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EntryLocals } from "../entry.middleware";
 
@@ -102,7 +102,7 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
   }
 
   // Force header to the featured event if a tournament is on, to make navigation less confusing
-  const tournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get("id"));
+  const tournamentEvent = await tournamentService.findActiveTournamentPlaying(entry.get("id"));
   if (tournamentEvent) {
     (res.locals as any).event = res.locals.featuredEvent;
   }

@@ -9,7 +9,7 @@ import settings from "server/core/settings";
 import { SETTING_FEATURED_POST_ID, SETTING_HOME_TIMELINE_SIZE } from "server/core/settings-keys";
 import { loadUserShortcutsContext } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import tournamentService from "server/event/tournament/tournament.service";
 import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -49,7 +49,7 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
     await Promise.all([
       likeService.findUserLikeInfo(allPostsInPage as PostBookshelfModel[], user),
       featuredEvent ? eventService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined,
-      eventTournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id")),
+      tournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id")),
       joinEnabled ? eventParticipationService.hasJoinedEvent(featuredEvent, user) : undefined,
     ]).then(([userLikes, entry, tournamentScore, hasJoinedEvent]) => {
       res.locals.userLikes = userLikes;

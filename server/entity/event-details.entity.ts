@@ -2,11 +2,16 @@ import { TimestampedEntity } from "./timestamped.entity";
 import { PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, Entity } from "typeorm";
 import { Event } from "./event.entity";
 import { ColumnTypes } from "./column-types";
+import constants from "server/core/constants";
 
 export interface EventLink {
   title: string;
   link: string;
   icon: string;
+}
+
+export interface EventFlags {
+  streamerOnlyTournament?: boolean;
 }
 
 @Entity()
@@ -82,6 +87,9 @@ export class EventDetails extends TimestampedEntity {
     */
   @Column(ColumnTypes.json({ nullable: true, default: "[]", length: 2000 }))
   public links: EventLink[];
+
+  @Column(ColumnTypes.json({ length: constants.MAX_BODY_ANY, default: "{}" }))
+  public flags: EventFlags;
 
   public dependents(): Array<keyof this> {
     return [];

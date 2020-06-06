@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import tournamentService from "server/event/tournament/tournament.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -23,7 +23,7 @@ export async function viewEventHome(req: CustomRequest, res: CustomResponse<Even
   // Fetch tournament score
   let tournamentScore: BookshelfModel | undefined;
   if (user && event && event.get("status_tournament") !== "disabled") {
-    tournamentScore = await eventTournamentService.findOrCreateTournamentScore(event.get("id"), user.get("id"));
+    tournamentScore = await tournamentService.findOrCreateTournamentScore(event.get("id"), user.get("id"));
   }
 
   // Check event participation status

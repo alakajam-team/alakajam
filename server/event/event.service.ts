@@ -22,6 +22,7 @@ import settings from "server/core/settings";
 import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import { User } from "server/entity/user.entity";
 import postService from "server/post/post.service";
+import { EventFlags } from "server/entity/event-details.entity";
 
 
 /**
@@ -605,6 +606,11 @@ export class EventService {
       cache.eventsById.del(event.get("id"));
       cache.eventsByName.del(event.get("name"));
     });
+  }
+
+  public getEventFlag(event: BookshelfModel, flag: keyof EventFlags): boolean {
+    const flags = event.related<BookshelfModel>("details").get("flags") as EventFlags;
+    return flags[flag];
   }
 
 }

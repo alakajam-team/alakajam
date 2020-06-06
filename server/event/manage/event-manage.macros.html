@@ -129,7 +129,7 @@
     </div>
   </div>
   
-  <div id="js-appearance">
+  <div>
     <div class="horizontal-bar">Tournament</div>
     <div class="form-group">
       <label for="status-theme"><b>Tournament status</b></label>
@@ -147,6 +147,10 @@
       {{ formMacros.radio('status-tournament', 'results', 'Tournament results', 
         event.get('status_tournament') if event) }}
       </div>
+    </div>
+    <div class="form-group">
+      {% set flags = event.related('details').get('flags') %}
+      {{ formMacros.check('streamerOnlyTournament', 'Streamer-only tournament', flags.streamerOnlyTournament) }}
     </div>
   </div>
 {% endmacro %}

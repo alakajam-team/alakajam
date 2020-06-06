@@ -6,6 +6,9 @@ import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import * as models from "server/core/models";
+import { EventFlags } from "server/entity/event-details.entity";
+import eventParticipationService from "../dashboard/event-participation.service";
+import { intersection } from "lodash";
 
 export const CACHE_KEY_ACTIVE_TOURNAMENT_EVENT = "active-tournament-event";
 
@@ -45,6 +48,16 @@ export class TournamentService {
     }
     return event.related<BookshelfCollection>("tournamentEntries")
       .sortBy((tEntry) => tEntry.get("ordering"));
+  }
+
+  public async canEnterTournament(event: BookshelfModel, userId: number): Promise<boolean> {
+    const eventFlags = event.related<BookshelfModel>("details").get("flags") as EventFlags;
+    if (eventFlags.streamerOnlyTournament) {
+      const eventParticipation = await eventParticipationService.getEventParticipation(event.get("id"), userId);
+      return eventParticipation?.isStreamer;
+    } else {
+      return true;
+    }
   }
 
   public async addTournamentEntry(eventId: number, entryId: number): Promise<BookshelfModel> {
@@ -105,6 +118,16 @@ export class TournamentService {
       return;
     }
 
+    // Handle streamer only tournaments
+    let allowedUserIds: number[] | "everyone" = "everyone";
+    const eventFlags: EventFlags = event.related<BookshelfModel>("details").get("flags");
+    if (eventFlags.streamerOnlyTournament) {
+      allowedUserIds = await eventParticipationService.getStreamerIds(event);
+    }
+    if (allowedUserIds !== "everyone" && !allowedUserIds.includes(triggeringUserId)) {
+      return;
+    }
+
     const tEntries = await this.findTournamentEntries(event);
     const entries = tEntries.map((tEntry) => tEntry.related("entry")) as BookshelfModel[];
     let tournamentScoresHaveChanged = false;
@@ -137,8 +160,9 @@ export class TournamentService {
     }
   }
 
-  public async refreshTournamentScoresForUser(highScoreService: any, eventId: number, entries: BookshelfModel[], userId: number) {
+  public async refreshTournamentScoresForUser(highScoreService: any, event: BookshelfModel, entries: BookshelfModel[], userId: number) {
     // Fetch or create tournament score
+    const eventId = event.get("id");
     const tournamentScoreKeys = {
       event_id: eventId,
       user_id: userId,
@@ -245,10 +269,17 @@ export class TournamentService {
     const entries = tournamentEntries.map((tEntry) => tEntry.related("entry")) as BookshelfModel[];
 
     // List all users having entry scores
-    const entryUserIds = await db.knex("entry_score")
+    const entryScores = await db.knex("entry_score")
       .where("entry_id", "IN", entries.map((entry) => entry.get("id")))
       .select("user_id")
       .distinct();
+    let refreshScoresForUserIds = entryScores.map((data) => data.user_id);
+    const eventFlags = event.related<BookshelfModel>("details").get("flags") as EventFlags;
+    let allowedUserIds: number[] | "everyone" = "everyone";
+    if (eventFlags.streamerOnlyTournament) {
+      allowedUserIds = await eventParticipationService.getStreamerIds(event);
+      refreshScoresForUserIds = intersection(refreshScoresForUserIds, allowedUserIds);
+    }
 
     // Append all users having a score in the tournament (might no longer have entry scores)
     const tournamentUserIds = await db.knex("tournament_score")
@@ -257,12 +288,20 @@ export class TournamentService {
       .distinct();
 
     // Request tournament score refresh for each user
-    const allUserIds = entryUserIds.map((data) => data.user_id);
     for (const data of tournamentUserIds) {
-      if (allUserIds.indexOf(data.user_id) === -1) { allUserIds.push(data.user_id); }
+      if (allowedUserIds !== "everyone" && !allowedUserIds.includes(data.user_id)) {
+        await db.knex("tournament_score")
+          .where({
+            event_id: event.get("id"),
+            user_id: data.user_id
+          })
+          .delete();
+      } else if (refreshScoresForUserIds.includes(data.user_id)) {
+        refreshScoresForUserIds.push(data.user_id);
+      }
     }
-    for (const userId of allUserIds) {
-      await this.refreshTournamentScoresForUser(highScoreService, event.get("id"), entries, userId);
+    for (const userId of refreshScoresForUserIds) {
+      await this.refreshTournamentScoresForUser(highScoreService, event, entries, userId);
     }
     await this.refreshTournamentRankings(event);
   }
