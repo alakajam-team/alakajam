@@ -6,7 +6,7 @@ import * as Knex from "knex";
 
 exports.up = async (knex: Knex) => {
   await knex.schema.table("event_participation", (table) => {
-    table.string("streamer_status").index();
+    table.string("streamer_status").index().defaultTo("off");
     table.string("streamer_description", 2000);
   });
 };

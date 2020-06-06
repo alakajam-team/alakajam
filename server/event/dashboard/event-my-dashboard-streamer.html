@@ -2,45 +2,83 @@
 {% import "macros/form.macros.html" as formMacros with context  %}
 {% import "user/user.macros.html" as userMacros with context %}
 
-{% block body %}
+{% block styles %}
+<style type="text/css">
+.streamer-perks {
+  background: url('{{ staticUrl('/static/images/streamer-background.jpg') }}');
+  background-size: cover;
+  padding: 50px;
+}
+.streamer-perks .card {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+</style>
+{% endblock %}
 
-<div class="container thin">
-  <h1>My {{ event.get('title') }} dashboard: Streamer preferences</h1>
+{% block body %}
+<div class="container">
+  <h1><a href="{{ routeUrl(event, 'event', 'dashboard') }}">{{ event.get('title') }} dashboard</a>: Streamer settings</h1>
 
   {{ formMacros.alerts(alerts) }}
 
-  <p><a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-outline-secondary">Back to dashboard</a></p>
+  <div class="row">
+    <div class="col-md-6">
+      <form method="post">
+        <h2>
+          Update your settings
+          <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-sm btn-outline-secondary">Back to dashboard</a>
+        </h2>
 
-  <div class="featured">Taking part in the event as a streamer will let you review and rate entries, even if you do not make a game! Log in during the rating phase to explore the submitted entries and use your privilege.</div>
-
-  <form method="post">
-    {{ csrfToken() | safe }}
-
-    <div class="form-group">
-      <label for="twitch">Twitch channel</label>
-      <input type="text" class="form-control" id="twitch" name="twitch" value="{{ user.details.social_links.twitch }}" />
-      <p class="legend mb-0">This field can also be set from your <a href="{{ routeUrl(user, 'user', 'settings') }}">user settings</a>.</p>
-    </div>
+        {{ csrfToken() | safe }}
     
-    <div class="form-group">
-      <label for="twitch">Streamer description</label>
-      <p class="text-muted">Use this description to tell the jammers what and when you plan to stream. This will help them know when to tune in to your channel.</p>
-      {{ formMacros.editor('streamer-description', eventParticipation.streamerDescription) }}
+        <div class="form-group">
+          <label for="twitch">Twitch channel</label>
+          <input type="text" class="form-control form-control-lg" id="twitch" name="twitch" value="{{ user.details.social_links.twitch }}" required />
+          <p class="legend mb-0">This field can also be set from your <a href="{{ routeUrl(user, 'user', 'settings') }}">user settings</a>.</p>
+        </div>
+        
+        <div class="form-group">
+          <label for="twitch">Streamer description</label>
+          <p class="text-muted">Use this description to tell the jammers what and when you plan to stream. This will help them know when to tune in to your channel.</p>
+          {{ formMacros.editor('streamer-description', eventParticipation.streamerDescription) }}
+        </div>
+    
+        <div class="form-group text-right">
+          <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+    
+          <button type="submit" name="cancel-participation" class="btn btn-danger float-left" onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
+            Cancel participation as streamer
+          </button>
+        </div>
+      </form>
+      
     </div>
+    <div class="col-md-6">
+      <div class="streamer-perks">
+        <div class="card card-body mb-4">
+          <h2>Streamer perks</h2>
 
-    <div class="form-group text-right">
-      <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
-      <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-outline-secondary">Back to dashboard</a>
+          <div class="featured">Taking part in the event as a streamer lets you:
+            
+            <ul>
+              <li><b>Appear on the streamer list</b>, to let jammers know about your scheduled streams.</li>
+              <li><b>Review and rate entries</b>, even if you don't make a game. If you stream yourself, know that most jammers don't mind if you rate games live and publicly, it's up to you.</li>
+              <li><b>Enter the gaming competition</b> of the event, held in the 24 hours following the jam results. Your scores will be submitted in the form of screenshots, uploaded directly on the game pages.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card card-body">
 
-      <button type="submit" name="cancel-participation" class="btn btn-danger float-left" onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
-        Cancel participation as streamer
-      </button>
+          <h2>Resources</h2>
+
+          <ul>
+            <li><a href="/article/about/press-kit">Alakajam! press kit</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
-
-  </form>
-
+  </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}

@@ -1,7 +1,7 @@
 import { BookshelfModel } from "bookshelf";
 import { EventParticipation, StreamerStatus } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
-import { getRepository } from "typeorm";
+import { getRepository, FindConditions } from "typeorm";
 import cache from "server/core/cache";
 
 export class EventParticipationService {
@@ -63,11 +63,14 @@ export class EventParticipationService {
     }
   }
 
-  public async getEventParticipations(criteria: Partial<EventParticipation>): Promise<EventParticipation[]> {
+  public async getEventParticipations(criteria: FindConditions<EventParticipation>): Promise<EventParticipation[]> {
     const epRepository = getRepository(EventParticipation);
     return epRepository.find({
       where: criteria,
-      relations: ["user", "user.details"]
+      relations: ["user", "user.details"],
+      order: {
+        id: "ASC" // By joining order
+      }
     });
   }
 

@@ -8,7 +8,7 @@
 {% block body %}
 
 <div class="container">
-  <h1>My {{ event.get('title') }} dashboard</h1>
+  <h1>{{ event.get('title') }} dashboard</h1>
 
   {{ formMacros.alerts(alerts) }}
 
@@ -50,15 +50,25 @@
             <form method="post" class="action-banner text-center d-flex justify-content-center align-items-center flex-column" style="min-height: 110px">
               {{ csrfToken() | safe }}
               
-              {% if eventParticipation.streamerStatus !== "off" %}
+              {% if eventParticipation.isStreamer %}
                 <p>You are entering the event as a streamer!</p>
                 {% set socialLinks = user.related('details').get('social_links') %}
                 {% if socialLinks.twitch %}
-                  <span class="alert alert-light">{{ userMacros.twitchLink(user) }}</span>
+                  <span class="alert alert-light">
+                    {{ userMacros.twitchLink(user) }}<br />
+                    {% if eventParticipation.streamerStatus === "requested" %}
+                      <span class="badge badge-warning">
+                        Pending approbation
+                        {{ formMacros.tooltip('The mods make a simple check, usually within 24 hours, to filter possible spammers and multiple accounts.') }}
+                      </span>
+                    {% elseif eventParticipation.streamerStatus === "approved" %}
+                      <span class="badge badge-success">Approved</span>
+                    {% endif %}
+                  </span>
                 {% else %}
                   <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Unknown Twitch channel</span>
                 {% endif %}
-                <a href="{{ routeUrl(event, 'event', 'dashboard-streamer-preferences') }}" class="btn btn-primary">Manage streamer preferences</a>
+                <a href="{{ routeUrl(event, 'event', 'dashboard-streamer-preferences') }}" class="btn btn-primary">Manage streamer settings</a>
               {% elseif event.get("status_entry") !== 'closed' %}
                 <input type="hidden" name="is-streamer" value="true" />
                 <button type="submit" name="streamer-preferences" class="btn btn-primary btn-lg">
@@ -66,7 +76,8 @@
                   Enter as streamer
                 </button>
               {% else %}
-                <p>Entries as streamer are now closed.</p>
+                <p>Streamer entries are now closed.</p>
+                <p><a href="/events" class="btn btn-secondary">Explore our upcoming events</a></p>
               {% endif %}
             </form>
           </div>
@@ -114,6 +125,7 @@
       <div class="mt-5">
         {% if eventParticipation.isStreamer %}
         <form method="post" class="d-inline">
+          {{ csrfToken() | safe }}
           <input type="hidden" name="is-streamer" value="false" />
           <button type="submit" name="streamer-preferences" class="btn btn-danger" onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
             Cancel participation as streamer

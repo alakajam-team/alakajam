@@ -42,7 +42,7 @@ export async function saveStreamerPreferences(req: CustomRequest, res: CustomRes
 
     res.locals.alerts.push({
       type: "success",
-      message: "Preferences saved."
+      message: "Settings saved."
     });
 
     res.redirect(links.routeUrl(event, "event", "dashboard-streamer-preferences"));

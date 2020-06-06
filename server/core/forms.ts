@@ -341,8 +341,8 @@ function markdownToHtml(markdown: string, options: {maxLength?: number; readMore
  * @param  {string} markdown
  * @return {string} text without markup, but *should not be trusted* as safe HTML!
  */
-function markdownToText(markdown) {
-  return removeMarkdown(sanitizeMarkdown(markdown || "", constants.MAX_BODY_ANY)).replace(/\n\r/g, " ");
+function markdownToText(markdown: string) {
+  return removeMarkdown(sanitizeMarkdown(markdown || "", { maxLength: constants.MAX_BODY_ANY })).replace(/\n\r/g, " ");
 }
 
 /**

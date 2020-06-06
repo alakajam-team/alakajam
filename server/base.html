@@ -150,6 +150,9 @@
 
             {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'book', path) -}}
             {{- eventLink(event, null, 'posts', 'Posts', 'newspaper', path) -}}
+            {%- if event.get('title') === 'ScoreSpace x Alakajam!' -%} <!-- FIXME -->
+              {{- eventLink(event, null, 'streamers', 'Streamers', 'tv', path) -}}
+            {% endif %}
             
             {%- if not statusTournament or statusTournament === 'disabled' -%}
               {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'lightbulb', path) -}}

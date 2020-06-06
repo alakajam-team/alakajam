@@ -1,17 +1,52 @@
 {% extends "base.html" %}
 {% import "post/post.macros.html" as postMacros with context %}
 {% import "macros/form.macros.html" as formMacros with context %}
+{% import "user/user.macros.html" as userMacros with context %}
 {% import "macros/navigation.macros.html" as navigationMacros %}
 
 {% block body %}
 
-<div class="container thin">
-  <h1>Streamers</h1>
+{% block styles %}
+<style type="text/css">
+.background {
+  background: url('{{ staticUrl('/static/images/streamer-background.jpg') }}');
+  background-size: cover;
+  padding: 30px;
+}
+h1 {
+  text-align: center;
+  color: white;
+}
+.user-thumb-container {
+  margin-left: -20px;
+}
+.flex-1 {
+  flex: 1;
+}
+.card-body {
+  height: 200px;
+  overflow-y: auto;
+}
 
-  {% for eventParticipation in eventParticipations %}
-    <h2>{{ eventParticipation.user.title }}</h2>
-    <p>{{ eventParticipation.streamerDescription }}</p>
-  {% endfor %}
+</style>
+{% endblock %}
+<div class="background">
+  <div class="container">
+    <h1>{{ event.get('title') }} streamers</h1>
+
+    <div class="row d-flex justify-content-center">
+    {% for eventParticipation in eventParticipations %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card mb-4">
+          <div class="card-header d-flex">
+            <div class="flex-1 user-thumb-container">{{ userMacros.userThumb(eventParticipation.user, { fullWidth: true }) }}</div>
+            <div class="flex-1 text-right">{{ userMacros.twitchLink(eventParticipation.user) }}</div>
+          </div>
+          <div class="card-body">{{ eventParticipation.streamerDescription | markdown | safe }}</div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
 </div>
-
 {% endblock %}
