@@ -75,7 +75,7 @@ async function myEntryHavingJoined(res: CustomResponse<EventLocals>) {
     latestPost,
     posts: postsCollection.models,
     userLikes: await likeService.findUserLikeInfo(postsCollection.models, user),
-    eventParticipation: await eventParticipationService.getEventParticipation(event, user)
+    eventParticipation: await eventParticipationService.getEventParticipation(event.get("id"), user.id)
   });
 }
 

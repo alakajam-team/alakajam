@@ -11,7 +11,7 @@ import userService from "server/user/user.service";
  */
 export async function viewStreamerPreferences(req: CustomRequest, res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
-  const eventParticipation = await eventParticipationService.getEventParticipation(event, user);
+  const eventParticipation = await eventParticipationService.getEventParticipation(event.get("id"), user.id);
   if (!eventParticipation?.isStreamer) {
     res.errorPage(401, "User is not registered as a streamer");
     return;
@@ -21,7 +21,7 @@ export async function viewStreamerPreferences(req: CustomRequest, res: CustomRes
 
   await user.loadDetails();
   res.render("event/dashboard/event-my-dashboard-streamer.html", {
-    eventParticipation: await eventParticipationService.getEventParticipation(event, user)
+    eventParticipation: await eventParticipationService.getEventParticipation(event.get("id"), user.id)
   });
 }
 

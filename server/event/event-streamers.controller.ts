@@ -48,7 +48,7 @@ export async function moderateEventStreamers(req: CustomRequest, res: CustomResp
 
   if (res.locals.alerts.length === 0) {
     const targetUser = await userService.findById(parseInt(req.body.targetUserId, 10));
-    const ep = await eventParticipationService.getEventParticipation(event, targetUser);
+    const ep = await eventParticipationService.getEventParticipation(event.get("id"), targetUser.id);
     if (ep) {
       await eventParticipationService.setStreamingPreferences(event, targetUser, {
         streamerStatus,

@@ -31,8 +31,8 @@ export class EventRatingService {
   public async canVoteInEvent(user: User, event: BookshelfModel): Promise<boolean> {
     if (user && this.areVotesAllowed(event)) {
       const hasEntryPromise = eventService.findUserEntryForEvent(user, event.get("id"));
-      const isStreamerPromise = eventParticipationService.getEventParticipation(event, user);
-      const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, isStreamerPromise ]);
+      const eventParticipationPromise = eventParticipationService.getEventParticipation(event.get("id"), user.id);
+      const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, eventParticipationPromise ]);
       return Boolean(hasEntry) || eventParticipation?.isStreamer;
     } else {
       return false;
@@ -41,7 +41,7 @@ export class EventRatingService {
 
   private async hasEntryOrIsStreamer(user: User, event: BookshelfModel): Promise<boolean> {
     const hasEntryPromise = eventService.findUserEntryForEvent(user, event.get("id"));
-    const isStreamerPromise = eventParticipationService.getEventParticipation(event, user);
+    const isStreamerPromise = eventParticipationService.getEventParticipation(event.get("id"), user.id);
     const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, isStreamerPromise ]);
     return Boolean(hasEntry) || eventParticipation?.isStreamer;
   }
