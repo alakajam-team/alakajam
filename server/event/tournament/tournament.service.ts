@@ -120,6 +120,7 @@ export class TournamentService {
 
     // Handle streamer only tournaments
     let allowedUserIds: number[] | "everyone" = "everyone";
+    await event.load("details");
     const eventFlags: EventFlags = event.related<BookshelfModel>("details").get("flags");
     if (eventFlags.streamerOnlyTournament) {
       allowedUserIds = await eventParticipationService.getStreamerIds(event);
@@ -151,7 +152,7 @@ export class TournamentService {
     // Recalculate tournament scores
     for (const userIdToUpdate of userIdsToUpdate) {
       tournamentScoresHaveChanged = (await this.refreshTournamentScoresForUser(highScoreService,
-        event.get("id"), entries, userIdToUpdate)) || tournamentScoresHaveChanged;
+        event, entries, userIdToUpdate)) || tournamentScoresHaveChanged;
     }
 
     // Refresh tournament rankings if there was any actual change to the scores
