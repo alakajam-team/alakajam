@@ -191,7 +191,7 @@ export function routes(app) {
   router.get("/:eventName([^/]{0,}-[^/]{0,})/results", viewEventResults);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-games", csrf, viewEventTournamentGames);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-leaderboard", viewEventTournamentLeaderboard);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/streamers", eventStreamers);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/streamers", csrf, eventStreamers);
   router.post("/:eventName([^/]{0,}-[^/]{0,})/streamers", csrf, moderateEventStreamers);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/edit", csrf, eventManage);
   router.post("/:eventName([^/]{0,}-[^/]{0,})/edit", eventFormParser, csrf, eventManage);

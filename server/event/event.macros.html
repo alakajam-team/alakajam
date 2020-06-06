@@ -117,7 +117,8 @@
 {% macro eventShortcutMyEntry(user, event, userEntry, options) %}
 {# options: noTitle #}
   <div class="action-banner">
-    <div class="action-banner__title">
+    {% if not options.noTitle or userEntry %}
+    <div class="action-banner__title w-100">
       {% if not options.noTitle %}
         <span class="mr-2">Your entry</span>
       {% endif %}
@@ -126,24 +127,32 @@
           <span class="fas fa-pencil-alt"></span>
           Edit entry
         </a>
-      {% elseif event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
-        <a href="#"class="btn btn-sm btn-outline-secondary disabled">
-          <span class="fas fa-plus"></span>
-          Create entry
-        </a>
-      {% else %}
-        <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-sm btn-primary">
-          <span class="fas fa-plus"></span>
-          Create entry
-        </a>
       {% endif %}
     </div>
+    {% endif %}
+
     {% if event.get('status_entry') === 'closed' %}
       {% set customMessage = "Entry submissions are closed." %}
     {% elseif event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
       {% set customMessage = "Entry submissions are not open yet." %}
     {% endif %}
-    {{ entrySmallThumb(userEntry, { customMessage: customMessage }) }}
+
+    <div class="text-center w-100">
+      {{ entrySmallThumb(userEntry, { customMessage: customMessage }) }}
+      {% if not userEntry %}
+        {% if event.get('status_entry') !== 'open' and event.get('status_entry') !== 'open_unranked' %}
+          <a href="#"class="btn btn-outline-secondary disabled mt-2">
+            <span class="fas fa-plus"></span>
+            Create entry
+          </a>
+        {% else %}
+          <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-lg btn-primary mt-2">
+            <span class="fas fa-plus"></span>
+            Create entry
+          </a>
+        {% endif %}
+      {% endif %}
+    </div>
   </div>
 {% endmacro %}
 

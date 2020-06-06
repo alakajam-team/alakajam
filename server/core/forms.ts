@@ -183,12 +183,9 @@ function isSlug(str: string) {
 }
 
 /**
- * Checks whether the string is in an array of allowed values
- * @param  {string} string
- * @param  {array(string)|object} values
- * @return {Boolean}
+ * Checks whether the string is in an array of allowed values, or among the values of an object
  */
-function isIn(str, values) {
+function isIn(str: string, values: string[] | object) {
   if (str) {
     if (typeof values === "object") {
       return str && validator.isIn(str, Object.values(values));

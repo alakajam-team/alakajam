@@ -39,17 +39,24 @@ export class EventRatingService {
     }
   }
 
+  private async hasEntryOrIsStreamer(user: User, event: BookshelfModel): Promise<boolean> {
+    const hasEntryPromise = eventService.findUserEntryForEvent(user, event.get("id"));
+    const isStreamerPromise = eventParticipationService.getEventParticipation(event, user);
+    const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, isStreamerPromise ]);
+    return Boolean(hasEntry) || eventParticipation?.isStreamer;
+  }
+
   /**
    * Checks whether a user can vote on an entry
    */
   public async canVoteOnEntry(user: User, entry: EntryBookshelfModel): Promise<boolean> {
-    if (user && this.areVotesAllowed(entry.related("event"))) {
+    const event = entry.related<BookshelfModel>("event");
+    if (user && this.areVotesAllowed(event)) {
       const openVoting = await settings.find(SETTING_EVENT_OPEN_VOTING, "false");
       if (openVoting && openVoting.toLowerCase() === "true") {
         return true;
       } else {
-        const userEntry = await eventService.findUserEntryForEvent(user, entry.get("event_id"));
-        return userEntry && userEntry.get("id") !== entry.get("id");
+        return this.hasEntryOrIsStreamer(user, event);
       }
     } else {
       return false;

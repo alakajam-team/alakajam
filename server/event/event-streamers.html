@@ -11,8 +11,11 @@
 .background {
   background: url('{{ staticUrl('/static/images/streamer-background.jpg') }}');
   background-size: cover;
-  padding: 30px;
+  padding: 30px 0;
+  min-height: 1024px;
+  background-repeat: no-repeat;
 }
+
 h1 {
   text-align: center;
   color: white;
@@ -23,29 +26,66 @@ h1 {
 .flex-1 {
   flex: 1;
 }
+.card.banned {
+  opacity: .5;
+}
 .card-body {
   height: 200px;
   overflow-y: auto;
+}
+.event-banner__gradient {
+  margin-top: 60px;
+}
+.tv-no-signal {
+  margin-top: 50px;
+}
+.tv-no-signal h1, .tv-no-signal h3 {
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  text-align: center;
+  color: #DDD;
+  max-width: 350px;
 }
 
 </style>
 {% endblock %}
 <div class="background">
+  <div class="event-banner__gradient"></div>
   <div class="container">
     <h1>{{ event.get('title') }} streamers</h1>
 
     <div class="row d-flex justify-content-center">
     {% for eventParticipation in eventParticipations %}
       <div class="col-lg-4 col-md-6">
-        <div class="card mb-4">
+        <div class="card mb-4 {{ eventParticipation.streamerStatus }}">
           <div class="card-header d-flex">
             <div class="flex-1 user-thumb-container">{{ userMacros.userThumb(eventParticipation.user, { fullWidth: true }) }}</div>
             <div class="flex-1 text-right">{{ userMacros.twitchLink(eventParticipation.user) }}</div>
           </div>
           <div class="card-body">{{ eventParticipation.streamerDescription | markdown | safe }}</div>
+          {% if isMod(user) %}
+          <form class="card-footer bg-moderation" method="post" onsubmit="return confirm('Confirm streamer status change?')">
+            {{ csrfToken() | safe }}
+            <input type="hidden" name="targetUserId" value="{{ eventParticipation.user.id }}" />
+            <span class="fas fa-wrench"></span>
+            Status <span class="badge badge-secondary">{{ eventParticipation.streamerStatus | capitalize }}</span>
+            <div class="float-right">
+            {% if eventParticipation.streamerStatus === 'requested' %}<button name="approve" class="btn btn-success btn-sm">Approve</button>{% endif %}
+            {% if eventParticipation.streamerStatus !== 'requested' %}<button name="reset" class="btn btn-secondary btn-sm">Reset</button>{% endif %}
+            {% if eventParticipation.streamerStatus === 'requested' %}<button name="ban" class="btn btn-danger btn-sm">Ban</button>{% endif %}
+            </div>
+          </form>
+          {% endif %}
         </div>
       </div>
     {% endfor %}
+
+    {% if eventParticipations.length === 0 %}
+      <div class="tv-no-signal">
+        <h1>NO SIGNAL</h1>
+        <h3>Waiting for the first streamer to join :)</h3>
+      </div>
+    {% endif %}
     </div>
   </div>
 </div>

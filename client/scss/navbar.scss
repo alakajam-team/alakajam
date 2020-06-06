@@ -304,6 +304,10 @@ $event-navbar-height: 50px;
   }
 }
 
+.bg-moderation {
+  background-color: $moderation-dark;
+}
+
 .moderation-bar {
   width: 100%;
   background-color: $moderation-dark;

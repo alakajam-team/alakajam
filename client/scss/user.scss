@@ -125,6 +125,10 @@
     line-height: 1.6rem;
     padding-left: 60px;
     margin: 0;
+
+    & a {
+      color: $text-alt-light;
+    }
   }
   &.centered &__title {
     padding-left: 0;

@@ -5,6 +5,19 @@
 {% import "macros/jumbotron.macros.html" as jumbotronMacros with context  %}
 {% import "user/user.macros.html" as userMacros with context %}
 
+{% block styles %}
+<style type="text/css">
+.main-action-banners .action-banner {
+  min-height: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+</style>
+{% endblock %}
+
 {% block body %}
 
 <div class="container">
@@ -17,7 +30,7 @@
       <h2 class="mb-2">Useful links</h2>
 
       <div class="list-group">
-        {% set featuredLinks = event.related('details').get('links') if event %}
+        {% set featuredLinks = event.related('details').get('links') %}
         {% for featuredLink in featuredLinks %}
           <a class="list-group-item shortcut" href="{{ featuredLink.link }}">
             <h4>
@@ -38,7 +51,7 @@
       <div class="mb-3">
         <h2><span class="fa fa-gamepad"></span> Entry</h2>
     
-        <div class="row">
+        <div class="row main-action-banners">
           
           <div class="col-lg-7">
             <h3>As jammer</h3>
@@ -47,7 +60,7 @@
           <div class="col-lg-5">
             <h3>As streamer</h3>
 
-            <form method="post" class="action-banner text-center d-flex justify-content-center align-items-center flex-column" style="min-height: 110px">
+            <form method="post" class="action-banner text-center">
               {{ csrfToken() | safe }}
               
               {% if eventParticipation.isStreamer %}
