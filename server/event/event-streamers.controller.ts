@@ -1,21 +1,17 @@
 import forms from "server/core/forms";
-import { rule, validateForm } from "server/core/forms-validation";
 import links from "server/core/links";
 import security from "server/core/security";
 import { StreamerStatus } from "server/entity/event-participation.entity";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
-import { In, Not } from "typeorm";
 import eventParticipationService from "./dashboard/event-participation.service";
 import { EventLocals } from "./event.middleware";
 
 export async function eventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
 
-  const eventParticipations = await eventParticipationService.getEventParticipations({
-    eventId: event.get("id"),
-    streamerStatus: security.isMod(user) ? Not("off") : In(["approved", "requested"])
-  });
+  const filter = security.isMod(user) ? "streamers" : "approved-streamers";
+  const eventParticipations = await eventParticipationService.getEventParticipations(event, { filter });
 
   res.render("event/event-streamers.html", {
     eventParticipations

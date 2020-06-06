@@ -1,8 +1,8 @@
 import { BookshelfModel } from "bookshelf";
+import cache from "server/core/cache";
 import { EventParticipation, StreamerStatus } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
-import { getRepository, FindConditions } from "typeorm";
-import cache from "server/core/cache";
+import { FindConditions, getRepository, In, Not } from "typeorm";
 
 export class EventParticipationService {
 
@@ -35,12 +35,12 @@ export class EventParticipationService {
   }
 
   public async hasJoinedEvent(event: BookshelfModel, user: User): Promise<boolean> {
-    return (await this.getEventParticipation(event, user)) !== undefined;
+    return (await this.getEventParticipation(event.get("id"), user.id)) !== undefined;
   }
 
   public async setStreamingPreferences(event: BookshelfModel, user: User,
                                        preferences: { streamerStatus: StreamerStatus; streamerDescription: string }): Promise<void> {
-    const eventParticipation = await this.getEventParticipation(event, user);
+    const eventParticipation = await this.getEventParticipation(event.get("id"), user.id);
     if (eventParticipation) {
       eventParticipation.streamerStatus = preferences.streamerStatus;
       eventParticipation.streamerDescription = preferences.streamerDescription;
@@ -51,19 +51,24 @@ export class EventParticipationService {
     }
   }
 
-  public async getEventParticipation(event: BookshelfModel, user: User): Promise<EventParticipation | undefined> {
-    if (user) {
+  public async getEventParticipation(eventId: number, userId: number): Promise<EventParticipation | undefined> {
+    if (userId) {
       const epRepository = getRepository(EventParticipation);
       return epRepository.findOne({
         where: {
-          eventId: event.get("id"),
-          userId: user.id
+          eventId,
+          userId
         }
       });
     }
   }
 
-  public async getEventParticipations(criteria: FindConditions<EventParticipation>): Promise<EventParticipation[]> {
+  public async getEventParticipations(event: BookshelfModel, options:
+  { filter?: "streamers" | "approved-streamers" } = {}): Promise<EventParticipation[]> {
+    const criteria: FindConditions<EventParticipation> = { eventId: event.get("id") };
+    if (options.filter === "streamers") { criteria.streamerStatus = Not("off"); }
+    if (options.filter === "approved-streamers") { criteria.streamerStatus = In(["approved", "requested"]); }
+
     const epRepository = getRepository(EventParticipation);
     return epRepository.find({
       where: criteria,
