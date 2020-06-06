@@ -11,6 +11,7 @@ $text: #1f3038;
 $text-light: change-color($text, $alpha: .7);
 $text-lighter: change-color($text, $alpha: .5);
 $text-lightest: change-color($text, $alpha: .3);
+$text-alt: #d90023;
 
 $white-lighter: change-color(white, $alpha: .9);
 
