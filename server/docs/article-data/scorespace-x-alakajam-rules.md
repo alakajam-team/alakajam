@@ -75,12 +75,15 @@ The developers that made the 3 winners will:
 
 ## <a name="awards"></a>High score competition
 
-All streamers are invited compete for 24 hours on the three selected games. In order to take part in the competition: 
-* You need to enter as a streamer on the event dashboard, and specify you Twitch channel and scheduled streams ;
-* During the competition phase, you will be invited to take screenshots and submit your results to the *Alakajam!* website for the scores to be taken in account.
+Everyone who wants to (including people who submitted a game) can also enter the event as streamers. If you choose to do so, you are then invited to compete for 24 hours on the three awarded games. In order to take part in the competition: 
+1. You need to enter as a streamer on the event dashboard, and specify you Twitch channel and scheduled streams ;
+2. During the competition phase, you will be invited to livestream yourself playing the game ;
+3. For the scores to be taken in account, take screenshots of your scores and submit them the *Alakajam!* website.
 
-On each game, players are awarded a number of points for being in the top 10, as per the table below. The streamers with the highest total points are shown on a global leaderboard throughout, and at the end we'll announce the winner and runners up!
+On each game, streamers are awarded a number of points for being in the top 10, as per the table below. The streamers with the highest total points are shown on a global leaderboard throughout, and at the end we'll announce the winner and runners up!
 
 ![](https://i.imgur.com/CvSqPvV.jpg)
 
-While the official competition takes place, all the members of the Alakajam! community will also be able to submit scores, and compare themselves to the streamers. They will however not be awarded points for their participation, and will not appear on the global leaderboard.
+Special case: in case you, as a streamer, end up seeing your own game qualified for the competition, it is preferred you don't submit a score to your own game.
+
+While the official competition takes place, every person with an *Alakajam!* account will also be able to submit scores, and compare themselves to the streamers. They will however not be awarded points for their participation, and will not appear on the global leaderboard.
