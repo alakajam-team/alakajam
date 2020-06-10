@@ -30,12 +30,17 @@
         </div>
         
         <div class="form-group">
-          <label for="twitch">Streamer description</label>
-          <p class="text-muted">Use this description to tell the jammers what and when you plan to stream. This will help them know when to tune in to your channel.</p>
+          <label for="twitch">When do you plan to stream?</label>
+          <div class="text-muted">Use this area to tell the jammers:
+            <ul class="text-muted mt-0">
+              <li>What you plan to stream (playing games, game development, etc.) ;</li>
+              <li>When you will go live, so they can now when to tune in to your channel.</li>
+            </ul>
+          </div>
           {{ formMacros.editor('streamer-description', eventParticipation.streamerDescription) }}
         </div>
     
-        <div class="form-group text-right">
+        <div class="form-group text-right">d
           <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
     
           <button type="submit" name="cancel-participation" class="btn btn-danger float-left" onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
