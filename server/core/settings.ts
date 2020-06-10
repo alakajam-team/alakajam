@@ -10,6 +10,14 @@ import { SETTING_ARTICLE_SIDEBAR } from "./settings-keys";
 
 type DefaultValueEval = () => string;
 
+export type ArticleSidebarCategory = Array<{
+  title: string;
+  links: Array<{
+    title: string;
+    url: string;
+  }>;
+}>
+
 export class Settings {
 
   /**
@@ -42,7 +50,7 @@ export class Settings {
     return parseFloat(settingValue);
   }
 
-  public async findArticlesSidebar(category: "about" | "docs"): Promise<object[]> {
+  public async findArticlesSidebar(category: "about" | "docs"): Promise<ArticleSidebarCategory> {
     const articlesSidebar = await this.find(SETTING_ARTICLE_SIDEBAR);
     if (articlesSidebar) {
       let sidebar;

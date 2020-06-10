@@ -223,7 +223,7 @@ function defaultArticleSidebar() {
             "links": [
                 {
                     "title": "Welcome",
-                    "url": "/article/about"
+                    "url": "/article/about/welcome"
                 },
                 {
                     "title": "Press kit",

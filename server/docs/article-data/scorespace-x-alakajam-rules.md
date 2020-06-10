@@ -83,4 +83,4 @@ On each game, players are awarded a number of points for being in the top 10, as
 
 ![](https://i.imgur.com/CvSqPvV.jpg)
 
-While the official competition takes place, all the members of the Alakajam! community will also be able to submit scores, and compare themselves to the streamers. They will however not be awarded points for their participation.
+While the official competition takes place, all the members of the Alakajam! community will also be able to submit scores, and compare themselves to the streamers. They will however not be awarded points for their participation, and will not appear on the global leaderboard.
