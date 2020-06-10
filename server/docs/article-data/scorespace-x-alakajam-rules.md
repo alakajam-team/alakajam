@@ -62,8 +62,8 @@ In order to qualify for the following awards, your game **must support high scor
 
 **Three awards** will be chosen by both developers who participated in the jam, and by streamers. They will be announced at the end of the ratings phase.
 
-* The **Solo Developer's Choice** is the award that is given to the top rated team division game having high scores enabled on their entry.
-* The **Team Developer's Choice** is the award that is given to the top rated solo division game having high scores enabled on their entry.
+* The **Solo Developer's Choice** is the award that is given to the top rated solo division game having high scores enabled on their entry.
+* The **Team Developer's Choice** is the award that is given to the top rated team division game having high scores enabled on their entry.
 * The **Streamer's Choice** is the streamers favorite game in the jam, and the one they think will be fun to play on stream.
 
 The hosts of the competition may exclude a game if supported platforms are too limited (web games are preferred), or if it is severely unbalanced.
@@ -75,9 +75,9 @@ The developers that made the 3 winners will:
 
 ## <a name="awards"></a>High score competition
 
-> NB. The way streamers get to register to the competition still has to be determined, please stay in touch!
-
-All registered streamers will compete for 24 hours on the three selected games. They will have to take screenshots and submit their results to the *Alakajam!* website for their score to be taken in account.
+All streamers are invited compete for 24 hours on the three selected games. In order to take part in the competition: 
+* You need to enter as a streamer on the event dashboard, and specify you Twitch channel and scheduled streams ;
+* During the competition phase, you will be invited to take screenshots and submit your results to the *Alakajam!* website for the scores to be taken in account.
 
 On each game, players are awarded a number of points for being in the top 10, as per the table below. The streamers with the highest total points are shown on a global leaderboard throughout, and at the end we'll announce the winner and runners up!
 
