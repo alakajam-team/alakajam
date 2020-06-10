@@ -20,14 +20,14 @@ h1 {
   text-align: center;
   color: #EEE !important;
 }
-.user-thumb-container {
-  margin-left: -20px;
-}
 .flex-1 {
   flex: 1;
 }
 .card.banned {
   opacity: .5;
+}
+.card-header {
+  margin-left: -15px;
 }
 .card-body {
   height: 200px;
@@ -68,11 +68,11 @@ h1 {
         <div class="col-lg-4 col-md-6">
           <a name="{{ eventParticipation.userId }}"></a>
           <div class="card mb-4 {{ eventParticipation.streamerStatus }}">
-            <div class="card-header d-flex">
-              <div class="flex-1 user-thumb-container">{{ userMacros.userThumb(eventParticipation.user, { fullWidth: true }) }}</div>
-              <div class="flex-1 text-right">{{ userMacros.twitchLink(eventParticipation.user) }}</div>
+            <div class="card-header">{{ userMacros.userThumb(eventParticipation.user, { fullWidth: true }) }}</div>
+            <div class="card-body">
+              <div class="mb-2">{{ userMacros.twitchLink(eventParticipation.user) }}</div>
+              {{ eventParticipation.streamerDescription | markdown | safe }}
             </div>
-            <div class="card-body">{{ eventParticipation.streamerDescription | markdown | safe }}</div>
             {% if isMod(user) %}
             <form class="card-footer bg-moderation" method="post" onsubmit="return confirm('Confirm streamer status change?')">
               {{ csrfToken() | safe }}
