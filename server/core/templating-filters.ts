@@ -6,6 +6,16 @@ import constants from "./constants";
 import * as formats from "./formats";
 import forms from "./forms";
 
+export function date(
+  value: number | string | Date,
+  user?: User,
+  options: { format?: string; utcSuffixByDefault?: boolean } = {}) {
+  const useCustomFormat = !!options.format;
+  const format = options.format || constants.DATE_FORMAT;
+  const utcSuffixByDefault = options.utcSuffixByDefault !== undefined ? options.utcSuffixByDefault : !useCustomFormat;
+  return formats.formatDate(value, user, format, { utcSuffixByDefault });
+}
+
 export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("keys", (obj: object) => {
@@ -53,15 +63,7 @@ export function configure(nunjucksEnvironment) {
     return str ? str.replace(/&amp;/g, "&").replace(/&quot;/g, '"') : null;
   });
 
-  nunjucksEnvironment.addFilter("date", (
-    date: number | string | Date,
-    user?: User,
-    options: { format?: string; utcSuffixByDefault?: boolean } = {}) => {
-    const useCustomFormat = !!options.format;
-    const format = options.format || constants.DATE_FORMAT;
-    const utcSuffixByDefault = options.utcSuffixByDefault !== undefined ? options.utcSuffixByDefault : !useCustomFormat;
-    return formats.formatDate(date, user, format, { utcSuffixByDefault });
-  });
+  nunjucksEnvironment.addFilter("date", date);
 
   nunjucksEnvironment.addFilter("dateTime", (date: number | string | Date, user?: User) => {
     return formats.formatDate(date, user, constants.DATE_TIME_FORMAT);

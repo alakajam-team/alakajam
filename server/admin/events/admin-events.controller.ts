@@ -2,6 +2,7 @@ import { CommonLocals } from "server/common.middleware";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventService from "../../event/event.service";
 import entryHotnessService from "server/entry/entry-hotness.service";
+import { adminEventsTemplate } from "./admin-events.template";
 
 /**
  * Events management
@@ -18,7 +19,8 @@ export async function adminEvents(req: CustomRequest, res: CustomResponse<Common
     return;
   }
 
-  res.render("admin/events/admin-events", {
-    events: eventsCollection.models,
+  res.renderJSX(adminEventsTemplate, {
+    ...res.locals,
+    events: eventsCollection.models
   });
 }
