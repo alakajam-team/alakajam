@@ -5,6 +5,7 @@ import security from "server/core/security";
 import links from "server/core/links";
 import adminBase from "server/admin/admin.base";
 import * as filters from "server/core/templating-filters";
+import { User } from "server/entity/user.entity";
 
 export interface AdminEventsContext extends CommonLocals {
   events: BookshelfModel[];
@@ -13,20 +14,43 @@ export interface AdminEventsContext extends CommonLocals {
 export function adminEventsTemplate(context: AdminEventsContext) {
   const { user, events } = context;
 
-  const adminButtons = (user.is_admin) ?
-    <p>
-      <a href={ links.routeUrl(null, "event", "create") } class="btn btn-primary">Create</a>
-      <a class="btn btn-outline-primary" href="/admin/settings?edit=featured_event_name">Select featured event</a>
+  return adminBase(context,
+    <div>
+      <h1>Events</h1>
+
+      {adminButtons(user)}
+
+      <table class="table sortable mt-3">
+        <thead>
+          <th>Title</th>
+          <th>Name</th>
+          <th>Start date</th>
+          <th>Status</th>
+          <th></th>
+        </thead>
+        <tbody>
+          {eventRows(events, user)}
+        </tbody>
+      </table>
+    </div>);
+}
+
+function adminButtons(user: User) {
+  if (user.is_admin) {
+    return <p>
+      <a href={ links.routeUrl(null, "event", "create") } class="btn btn-primary mr-1">Create</a>
+      <a class="btn btn-outline-primary mr-1" href="/admin/settings?edit=featured_event_name">Select featured event</a>
       <a class="btn btn-outline-primary" href="?refreshHotness=true"
         onClick={() => confirm("This is a resource intensive task. Proceed?")}>Refresh entry hotness on all events</a>
-    </p>
-    :
-    <span></span>;
+    </p>;
+  }
+}
 
-  const eventRows = [];
+function eventRows(events: BookshelfModel[], user: User) {
+  const rows = [];
   for (const event of events) {
     if (security.canUserManage(user, event)) {
-      eventRows.push(
+      rows.push(
         <tr>
           <td><a href={links.routeUrl(event, "event")}>{event.get("title")}</a></td>
           <td><code>{event.get("name")}</code></td>
@@ -36,26 +60,7 @@ export function adminEventsTemplate(context: AdminEventsContext) {
         </tr>);
     }
   }
-
-  return adminBase(context,
-    <div>
-      <h1>Events</h1>
-
-      {adminButtons}
-
-      <table class="table sortable" style="margin-top: 10px">
-        <thead>
-          <th>Title</th>
-          <th>Name</th>
-          <th>Start date</th>
-          <th>Status</th>
-          <th></th>
-        </thead>
-        <tbody>
-          {eventRows}
-        </tbody>
-      </table>
-    </div>);
+  return rows;
 }
 
 function statusBadge(value: string) {
