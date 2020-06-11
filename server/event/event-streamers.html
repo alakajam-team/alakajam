@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% import "post/post.macros.html" as postMacros with context %}
+{% import "macros/form.macros.html" as formMacros with context %}
+{% import "user/user.macros.html" as userMacros with context %}
+{% import "macros/navigation.macros.html" as navigationMacros %}
+
+{% block styles %}
+<style type="text/css">
+.background {
+  background: url('{{ staticUrl('/static/images/streamer-background.jpg') }}');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position-x: center;
+  margin-top: -20px;
+  padding-top: 100px;
+  min-height: 1024px;
+}
+
+h1 {
+  text-align: center;
+  color: #EEE !important;
+}
+.flex-1 {
+  flex: 1;
+}
+.card.banned {
+  opacity: .5;
+}
+.card-header {
+  margin-left: -15px;
+}
+.card-body {
+  height: 200px;
+  overflow-y: auto;
+}
+.event-banner__gradient {
+  margin-top: 60px;
+  pointer-events: none;
+}
+.tv-no-signal {
+  margin-top: 50px;
+}
+.tv-no-signal h1, .tv-no-signal h3 {
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  text-align: center;
+  color: #DDD;
+  max-width: 350px;
+}
+
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="background">
+  <div class="event-banner__gradient"></div>
+  <div class="container text-center">
+    <h1>
+      <div>{{ event.get('title') }} streamers</div>
+      <a href="{{ routeUrl(event, 'event', 'streamers-doc') }}" class="btn btn-primary">Learn more</a>
+      {% if streamerOnlyTournamentIsLive %}
+        <a href="{{ routeUrl(event, 'event', 'tournament-leaderboard') }}" class="btn btn-primary">Browse tournament leaderboard</a>
+      {% endif %}
+    </h1>
+
+    <div class="row d-flex justify-content-center text-left">
+      {% for eventParticipation in eventParticipations %}
+        <div class="col-lg-4 col-md-6">
+          <a name="{{ eventParticipation.userId }}"></a>
+          <div class="card mb-4 {{ eventParticipation.streamerStatus }}">
+            <div class="card-header">{{ userMacros.userThumb(eventParticipation.user, { fullWidth: true }) }}</div>
+            <div class="card-body">
+              <div class="mb-2">{{ userMacros.twitchLink(eventParticipation.user) }}</div>
+              {{ eventParticipation.streamerDescription | markdown | safe }}
+            </div>
+            {% if isMod(user) %}
+            <form class="card-footer bg-moderation" method="post" onsubmit="return confirm('Confirm streamer status change?')">
+              {{ csrfToken() | safe }}
+              <input type="hidden" name="targetUserId" value="{{ eventParticipation.user.id }}" />
+              <span class="fas fa-wrench"></span>
+              Status <span class="badge badge-secondary">{{ eventParticipation.streamerStatus | capitalize }}</span>
+              <div class="float-right">
+              {% if eventParticipation.streamerStatus === 'requested' %}<button name="approve" class="btn btn-success btn-sm">Approve</button>{% endif %}
+              {% if eventParticipation.streamerStatus !== 'requested' %}<button name="reset" class="btn btn-secondary btn-sm">Reset</button>{% endif %}
+              {% if eventParticipation.streamerStatus === 'requested' %}<button name="ban" class="btn btn-danger btn-sm">Ban</button>{% endif %}
+              </div>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if eventParticipations.length === 0 %}
+        <div class="tv-no-signal">
+          <h1>NO SIGNAL</h1>
+          <h3>Waiting for the first streamer to join :)</h3>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

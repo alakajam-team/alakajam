@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% import "macros/form.macros.html" as formMacros with context  %}
+{% import "user/user.macros.html" as userMacros with context %}
+{% import "event/event-streamers-doc.html" as streamersDocMacros with context %}
+
+{% block styles %}
+{{ streamersDocMacros.streamersDocStyles() }}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <h1><a href="{{ routeUrl(event, 'event', 'dashboard') }}">{{ event.get('title') }} dashboard</a>: Streamer settings</h1>
+
+  {{ formMacros.alerts(alerts) }}
+
+  <div class="row">
+    <div class="col-md-6">
+      <form method="post">
+        <h2>
+          Update your settings
+          <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-sm btn-outline-secondary">Back to dashboard</a>
+        </h2>
+
+        {{ csrfToken() | safe }}
+    
+        <div class="form-group">
+          <label for="twitch">Twitch username</label>
+          <input type="text" class="form-control form-control-lg" id="twitch" name="twitch" value="{{ user.details.social_links.twitch }}" required />
+          <p class="legend mb-0">This field can also be set from your <a href="{{ routeUrl(user, 'user', 'settings') }}">user settings</a>.</p>
+        </div>
+        
+        <div class="form-group">
+          <label for="twitch">When do you plan to stream?</label>
+          <div class="text-muted">Use this area to tell the jammers:
+            <ul class="text-muted mt-0">
+              <li>What you plan to stream (playing games, game development, etc.) ;</li>
+              <li>When you will go live, so they can now when to tune in to your channel.</li>
+            </ul>
+          </div>
+          {{ formMacros.editor('streamer-description', eventParticipation.streamerDescription) }}
+        </div>
+    
+        <div class="form-group text-right">d
+          <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+    
+          <button type="submit" name="cancel-participation" class="btn btn-danger float-left" onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
+            Cancel participation as streamer
+          </button>
+        </div>
+      </form>
+      
+    </div>
+    <div class="col-md-6">
+      {{ streamersDocMacros.streamersDoc() }}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ formMacros.editorScripts() }}
+{% endblock %}

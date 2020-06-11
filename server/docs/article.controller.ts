@@ -10,23 +10,41 @@ import * as slug from "slug";
 import articleService from "./article.service";
 
 export async function articleApiRoot(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
-  return _renderArticle(res, "docs", "api");
+  return renderArticle(res, "docs", "api");
 }
 
 export async function articleView(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
-  return _renderArticle(res, slug(req.params.category) as any, slug(req.params.name || ""));
+  const category = slug(req.params.category || "");
+  const name = slug(req.params.name || "");
+
+  if (["about", "docs"].includes(category)) {
+    const validCategory = category as "about" | "docs";
+
+    if (name) {
+      return renderArticle(res, validCategory, name);
+    } else {
+      // Redirect to the first article by default
+      const categorySidebar = await settings.findArticlesSidebar(validCategory)
+      const firstArticlePathElements = categorySidebar[0]?.links[0]?.url.split('/');
+      const firstArticleName = firstArticlePathElements[firstArticlePathElements.length - 1];
+      if (firstArticleName) {
+        return res.redirect(`/article/${validCategory}/${firstArticleName}`);
+      }
+    }
+  
+  }
+
+  res.errorPage(404);
 }
 
-async function _renderArticle(
+async function renderArticle(
   res: CustomResponse<CommonLocals>,
   category: "about" | "docs",
   name: string): Promise<void> {
 
-  res.locals.articleName = name || category;
-
   // Find featured article
   const findArticleTask = articleService.findArticle(
-    res.locals.articleName,
+    name,
   ).then(async (article) => {
     if (article) {
       const lines = article.split("\n");
@@ -43,9 +61,6 @@ async function _renderArticle(
   if (res.locals.articleName && res.locals.articleBody) {
     res.locals.pageTitle = res.locals.articleName;
     res.render("docs/article");
-  } else if (res.locals.articleName !== category) {
-    // Redirect to welcome page if article is not found
-    res.redirect("/article/about");
   } else {
     res.errorPage(404);
   }

@@ -115,7 +115,7 @@ export class UserService {
   public async register(email: string, name: string, password: string): Promise<User | string> {
     if (!forms.isUsername(name)) {
       return "Username is invalid. They may only contain letters, numbers, underscores or hyphens," +
-       ` and must start with a letter. Length must be at least ${constants.USERNAME_MIN_LENGTH}. `;
+        ` and must start with a letter. Length must be at least ${constants.USERNAME_MIN_LENGTH}. `;
     }
 
     const userRepository = getRepository(User);

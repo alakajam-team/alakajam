@@ -276,6 +276,7 @@ export const EventDetails = bookshelf.model("EventDetails", {
     attrs.division_counts = attrs.division_counts || [];
     attrs.shortlist_elimination = attrs.shortlist_elimination || {};
     attrs.links = attrs.links || {};
+    attrs.flags = attrs.flags || {};
     return attrs;
   },
   parse: function parse(attrs) {
@@ -284,6 +285,7 @@ export const EventDetails = bookshelf.model("EventDetails", {
       if (attrs.division_counts) { attrs.division_counts = JSON.parse(attrs.division_counts); }
       if (attrs.shortlist_elimination) { attrs.shortlist_elimination = JSON.parse(attrs.shortlist_elimination); }
       if (attrs.links) { attrs.links = JSON.parse(attrs.links); }
+      if (attrs.flags) { attrs.flags = JSON.parse(attrs.flags); }
     }
     return attrs;
   },
@@ -293,6 +295,7 @@ export const EventDetails = bookshelf.model("EventDetails", {
       if (attrs.division_counts) { attrs.division_counts = JSON.stringify(attrs.division_counts); }
       if (attrs.shortlist_elimination) { attrs.shortlist_elimination = JSON.stringify(attrs.shortlist_elimination); }
       if (attrs.links) { attrs.links = JSON.stringify(attrs.links); }
+      if (attrs.flags) { attrs.flags = JSON.stringify(attrs.flags); }
     }
     return attrs;
   },

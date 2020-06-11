@@ -9,7 +9,7 @@ import highscoreService from "server/entry/highscore/entry-highscore.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import tournamentService from "server/event/tournament/tournament.service";
 import { handleSaveComment } from "server/post/comment/comment.controller";
 import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
@@ -76,7 +76,7 @@ export async function entryView(req: CustomRequest, res: CustomResponse<EntryLoc
     highScoresCollection: await highscoreService.findHighScores(entry),
     userScore,
     userLikes,
-    tournamentEvent: await eventTournamentService.findActiveTournamentPlaying(entry.get("id")),
+    tournamentEvent: await tournamentService.findActiveTournamentPlaying(entry.get("id")),
   });
 }
 

@@ -39,6 +39,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
   dashboardUser.details.social_links = {
     website: req.body.website,
     twitter: forms.sanitizeString(req.body.twitter.replace("@", "")),
+    twitch: forms.sanitizeString(req.body.twitch)
   };
   if (res.locals.dashboardAdminMode) {
     dashboardUser.disallow_anonymous = req.body.disallow_anonymous === "on";

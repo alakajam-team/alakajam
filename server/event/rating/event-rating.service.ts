@@ -1,5 +1,5 @@
 import * as Bluebird from "bluebird";
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
@@ -10,47 +10,60 @@ import { SETTING_EVENT_OPEN_VOTING, SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "s
 import commentService from "server/post/comment/comment.service";
 import eventService from "../event.service";
 import entryHotnessService from "server/entry/entry-hotness.service";
+import eventParticipationService from "../dashboard/event-participation.service";
+import { User } from "server/entity/user.entity";
 
+interface KarmaReceivedByUser {
+  receivedByUser: Record<number, { commentKarma: number; voteKarma: number }>;
+  total: number;
+}
 
 /**
  * Service for managing games ratings & rankings.
  */
 export class EventRatingService {
 
-  public areVotesAllowed(event) {
+  public areVotesAllowed(event: BookshelfModel) {
     return event &&
       [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get("status_results"));
   }
 
-  public async canVoteInEvent(user, event) {
+  public async canVoteInEvent(user: User, event: BookshelfModel): Promise<boolean> {
     if (user && this.areVotesAllowed(event)) {
-      return !!(await eventService.findUserEntryForEvent(user, event.get("id")));
+      const hasEntryPromise = eventService.findUserEntryForEvent(user, event.get("id"));
+      const eventParticipationPromise = eventParticipationService.getEventParticipation(event.get("id"), user.id);
+      const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, eventParticipationPromise ]);
+      return Boolean(hasEntry) || eventParticipation?.isStreamer;
     } else {
       return false;
     }
   }
 
+  private async hasEntryOrIsStreamer(user: User, event: BookshelfModel): Promise<boolean> {
+    const hasEntryPromise = eventService.findUserEntryForEvent(user, event.get("id"));
+    const isStreamerPromise = eventParticipationService.getEventParticipation(event.get("id"), user.id);
+    const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, isStreamerPromise ]);
+    return Boolean(hasEntry) || eventParticipation?.isStreamer;
+  }
+
   /**
    * Checks whether a user can vote on an entry
-   * @param  {User} user
-   * @param  {Entry} entry
-   * @return {void}
    */
-  public async canVoteOnEntry(user, entry) {
-    if (user && this.areVotesAllowed(entry.related("event"))) {
+  public async canVoteOnEntry(user: User, entry: EntryBookshelfModel): Promise<boolean> {
+    const event = entry.related<BookshelfModel>("event");
+    if (user && this.areVotesAllowed(event)) {
       const openVoting = await settings.find(SETTING_EVENT_OPEN_VOTING, "false");
       if (openVoting && openVoting.toLowerCase() === "true") {
         return true;
       } else {
-        const userEntry = await eventService.findUserEntryForEvent(user, entry.get("event_id"));
-        return userEntry && userEntry.get("id") !== entry.get("id");
+        return this.hasEntryOrIsStreamer(user, event);
       }
     } else {
       return false;
     }
   }
 
-  public async countEntryVotes(entry) {
+  public async countEntryVotes(entry: EntryBookshelfModel): Promise<number> {
     const result = await models.EntryVote
       .where("entry_id", entry.get("id"))
       .count();
@@ -59,11 +72,8 @@ export class EventRatingService {
 
   /**
    * Finds the votes an user cast on an entry
-   * @param  {User} user
-   * @param  {Entry} entry
-   * @return {void}
    */
-  public async findEntryVote(user, entry) {
+  public async findEntryVote(user: User, entry: EntryBookshelfModel): Promise<BookshelfModel> {
     return models.EntryVote.where({
       entry_id: entry.get("id"),
       user_id: user.get("id"),
@@ -72,13 +82,8 @@ export class EventRatingService {
 
   /**
    * Saves the votes on an entry
-   * @param  {User} user
-   * @param  {Entry} entry
-   * @param  {Event} event
-   * @param  {array(number)} voteData
-   * @return {void}
    */
-  public async saveEntryVote(user, entry, event, voteData: number[]) {
+  public async saveEntryVote(user: User, entry: EntryBookshelfModel, event: BookshelfModel, voteData: number[]): Promise<void> {
     await entry.load(["details", "event.details"]);
     const eventDetails = event.related("details");
 
@@ -132,12 +137,8 @@ export class EventRatingService {
 
   /**
    * Finds the votes a user cast during an event
-   * @param  {integer} userId
-   * @param  {Event} event
-   * @param  {object} options allowed: pageSize withRelated
-   * @return {void}
    */
-  public async findVoteHistory(userId, event, options: any = {}) {
+  public async findVoteHistory(userId: number, event: BookshelfModel, options: { pageSize?: number; withRelated?: string[] } = {}) {
     const query = models.EntryVote.where({
       user_id: userId,
       event_id: event.get("id"),
@@ -156,13 +157,7 @@ export class EventRatingService {
     }
   }
 
-  /**
-   *
-   * @param  {Event} event
-   * @param  {number} categoryIndex
-   * @return {Collection(Entry)}
-   */
-  public async findEntryRankings(event, division, categoryIndex): Promise<BookshelfCollection> {
+  public async findEntryRankings(event: BookshelfModel, division: string, categoryIndex: number): Promise<BookshelfCollection> {
     if (categoryIndex > 0 && categoryIndex <= constants.MAX_CATEGORY_COUNT) {
       return models.Entry.query((qb) => {
         qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
@@ -181,15 +176,13 @@ export class EventRatingService {
 
   /**
    * Refreshes the average ratings for a given entry
-   * @param  {Entry} entry
-   * @return {void}
    */
-  public async refreshEntryRatings(entry) {
+  public async refreshEntryRatings(entry: EntryBookshelfModel): Promise<void> {
     await entry.load(["votes", "details", "event.details"]);
-    const event = entry.related("event");
-    const votes = entry.related("votes");
+    const event = entry.related<BookshelfModel>("event");
+    const votes = entry.related<BookshelfCollection>("votes");
 
-    const categoryCount = event.related("details").get("category_titles").length;
+    const categoryCount = event.related<BookshelfModel>("details").get("category_titles").length;
 
     const ratingCount = [];
     const ratingSum = [];
@@ -211,7 +204,7 @@ export class EventRatingService {
     });
 
     // Only give a rating if the entry has enough votes (tolerate being a bit under the minimum)
-    const entryDetails = entry.related("details");
+    const entryDetails = entry.related<BookshelfModel>("details");
     const requiredRatings = Math.floor(0.8 * await settings.findNumber(
       SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1));
     for (const categoryIndex of categoryIndexes) {
@@ -226,33 +219,26 @@ export class EventRatingService {
     await entryDetails.save();
   }
 
-  /**
-   *
-   * @param  {Entry} entry
-   * @param  {Event} event
-   * @param  {object} options (optional) force
-   * @return {void}
-   */
-  public async refreshEntryKarma(entry, event) {
+  public async refreshEntryKarma(entry: EntryBookshelfModel, event: BookshelfModel): Promise<void> {
     await entry.load(["details", "comments", "userRoles", "votes"]);
     const received = (await this.computeKarmaReceivedByUser(entry)).total;
     const given = (await this.computeKarmaGivenByUserAndEntry(entry, event)).total;
     await entry.save({ karma: this.computeKarma(received, given) }, { patch: true });
 
-    const entryDetails = entry.related("details");
-    await entryDetails.save({ rating_count: entry.related("votes").length }, { patch: true });
+    const entryDetails = entry.related<BookshelfModel>("details");
+    await entryDetails.save({ rating_count: entry.related<BookshelfCollection>("votes").length }, { patch: true });
   }
 
   /* Compute received score */
-  public async computeKarmaReceivedByUser(entry) {
+  public async computeKarmaReceivedByUser(entry: EntryBookshelfModel): Promise<KarmaReceivedByUser> {
     const receivedByUser = {};
-    for (const comment of entry.related("comments").models) {
+    for (const comment of entry.related<BookshelfCollection>("comments").models) {
       // Earn up to 3 points per user from comments
       const userId = comment.get("user_id");
       receivedByUser[userId] = receivedByUser[userId] || { commentKarma: 0 };
       receivedByUser[userId].commentKarma += comment.get("karma");
     }
-    for (const vote of entry.related("votes").models) {
+    for (const vote of entry.related<BookshelfCollection>("votes").models) {
       // Earn 2 points per user from votes
       const userId = vote.get("user_id");
       receivedByUser[userId] = receivedByUser[userId] || {};
@@ -271,9 +257,9 @@ export class EventRatingService {
   }
 
   /* Compute given score using comments & votes from all the team */
-  public async computeKarmaGivenByUserAndEntry(entry, event) {
+  public async computeKarmaGivenByUserAndEntry(entry: EntryBookshelfModel, event: BookshelfModel) {
     const givenByUserAndEntry = {};
-    const userRoles = entry.related("userRoles");
+    const userRoles = entry.related<BookshelfCollection>("userRoles");
     for (const userRole of userRoles.models) {
       // Earn up to 3 points per user from comments
       const userId = userRole.get("user_id");
@@ -313,7 +299,7 @@ export class EventRatingService {
     return result;
   }
 
-  public computeKarma(received, given): number {
+  public computeKarma(received: number, given: number): number {
     // This formula boosts a little bit low scores (< 30) to ensure everybody gets at least some comments,
     // and to reward people for posting their first comments. It also nerfs & caps very active commenters to prevent
     // them from trusting the front page. Finally, negative scores are not cool so we use 100 as the origin.

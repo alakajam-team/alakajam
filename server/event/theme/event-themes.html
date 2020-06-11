@@ -143,7 +143,6 @@
         {% if user %}
           <div class="card theme-vote">
             {% if votingAllowed %}
-              <p>Would this make a good theme for the jam?</p>
               <div id="js-theme-vote"
                 data-find-themes-url="{{ routeUrl(event, 'event', 'ajax-find-themes') }}"
                 data-save-vote-url="{{ routeUrl(event, 'event', 'ajax-save-vote') }}">
@@ -275,6 +274,7 @@
 
 <script id="js-theme-vote-template" type="text/template">
   <% if (theme) { %>
+  <p>Would this make a good theme for the jam?</p>
   <table>
   <tr><td class="theme-vote__buttons">
     <form id="js-vote-form" method="post">

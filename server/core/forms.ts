@@ -107,22 +107,16 @@ const turndownService = new TurndownService();
 /**
  * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
  * Use this on all string input unless you need more advanced escaping (e.g. for URLs, for Markdown)
- * @param  {string} string
- * @param  {object} options maxLength
- * @return {string}
  */
-function sanitizeString(str: string, options: any = {}) {
+function sanitizeString(str: string, options: { maxLength?: number } = {}) {
   return striptags(str).trim().slice(0, options.maxLength || 255);
 }
 
 /**
  * Sanitizes Markdown form input very lightly, just by limiting its length.
  * Real sanitization needs to happen after converting it to HTML.
- * @param  {string} markdown
- * @param  {object} options maxLength
- * @return {string}
  */
-function sanitizeMarkdown(markdown: string, options: any = {}) {
+function sanitizeMarkdown(markdown: string, options: { maxLength?: number } = {}) {
   return markdown.slice(0, options.maxLength || constants.MAX_BODY_COMMENT);
 }
 
@@ -189,12 +183,9 @@ function isSlug(str: string) {
 }
 
 /**
- * Checks whether the string is in an array of allowed values
- * @param  {string} string
- * @param  {array(string)|object} values
- * @return {Boolean}
+ * Checks whether the string is in an array of allowed values, or among the values of an object
  */
-function isIn(str, values) {
+function isIn(str: string, values: string[] | object) {
   if (str) {
     if (typeof values === "object") {
       return str && validator.isIn(str, Object.values(values));
@@ -347,8 +338,8 @@ function markdownToHtml(markdown: string, options: {maxLength?: number; readMore
  * @param  {string} markdown
  * @return {string} text without markup, but *should not be trusted* as safe HTML!
  */
-function markdownToText(markdown) {
-  return removeMarkdown(sanitizeMarkdown(markdown || "", constants.MAX_BODY_ANY)).replace(/\n\r/g, " ");
+function markdownToText(markdown: string) {
+  return removeMarkdown(sanitizeMarkdown(markdown || "", { maxLength: constants.MAX_BODY_ANY })).replace(/\n\r/g, " ");
 }
 
 /**

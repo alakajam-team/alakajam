@@ -29,8 +29,7 @@ const MAX_ELIMINATED_THEMES = 8;
 export class EventThemeService {
 
   public async isThemeVotingAllowed(event: BookshelfModel): Promise<boolean> {
-    if (event.get("status") === enums.EVENT.STATUS.OPEN &&
-      event.get("status_theme") === enums.EVENT.STATUS_THEME.VOTING) {
+    if (event.get("status_theme") === enums.EVENT.STATUS_THEME.VOTING) {
       const votingAllowedCacheKey = event.get("name") + "_event_voting_allowed_";
       if (cache.general.get(votingAllowedCacheKey) === undefined) {
         const themeIdeasRequired = await settings.findNumber(

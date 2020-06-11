@@ -27,11 +27,13 @@ import { entryHighscoreSubmit } from "./entry/highscore/entry-highscore-submit.c
 import { entryHighscores } from "./entry/highscore/entry-highscores.controller";
 import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
 import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
+import { joinLeaveEvent } from "./event/dashboard/event-join.controller";
+import { saveStreamerPreferences, viewStreamerPreferences } from "./event/dashboard/event-my-dashboard-streamer.controller";
+import { postEventDashboard, viewEventDashboard } from "./event/dashboard/event-my-dashboard.controller";
 import { viewEventGames } from "./event/event-games.controller";
 import { viewEventHome } from "./event/event-home.controller";
-import { joinLeaveEvent } from "./event/event-join.controller";
-import { viewEventDashboard } from "./event/event-my-dashboard.controller";
 import { viewEventPosts } from "./event/event-posts.controller";
+import { eventStreamers, eventStreamersDoc, moderateEventStreamers } from "./event/event-streamers.controller";
 import { eventMiddleware } from "./event/event.middleware";
 import { eventManageEntries } from "./event/manage/event-manage-entries.controller";
 import { eventManageTemplate } from "./event/manage/event-manage-template.controller";
@@ -173,7 +175,10 @@ export function routes(app) {
   router.get("/create_event", csrf, eventManage);
   router.post("/create_event", eventFormParser, csrf, eventManage);
   router.get("/:eventName([^/]{0,}-[^/]{0,})", viewEventHome);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard", viewEventDashboard);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard", csrf, viewEventDashboard);
+  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard", csrf, postEventDashboard);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", csrf, viewStreamerPreferences);
+  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", csrf, saveStreamerPreferences);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/my-entry", viewEventDashboard); // deprecated
   router.get("/:eventName([^/]{0,}-[^/]{0,})/join", joinLeaveEvent);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventHome); // deprecated
@@ -186,6 +191,9 @@ export function routes(app) {
   router.get("/:eventName([^/]{0,}-[^/]{0,})/results", viewEventResults);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-games", csrf, viewEventTournamentGames);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-leaderboard", viewEventTournamentLeaderboard);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/streamers", csrf, eventStreamers);
+  router.post("/:eventName([^/]{0,}-[^/]{0,})/streamers", csrf, moderateEventStreamers);
+  router.get("/:eventName([^/]{0,}-[^/]{0,})/streamers-doc", eventStreamersDoc);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/edit", csrf, eventManage);
   router.post("/:eventName([^/]{0,}-[^/]{0,})/edit", eventFormParser, csrf, eventManage);
   router.all("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventManageThemes);

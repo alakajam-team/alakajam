@@ -34,6 +34,13 @@
         <h1>Tournament leaderboard</h1>
       {% endif %}
 
+      {% if event.related('details').get('flags').streamerOnlyTournament %}
+        <div class="featured">
+          <h3><span class="fa fa-tv"></span> Streamer-only tournament</h3>
+          Only users who are registered <a href="{{ routeUrl(event, 'event', 'streamers') }}">as streamers</a> are eligible to tournament points!
+        </div>
+      {% endif %}
+
       {% if event.get('status_tournament') !== 'closed' %}
         {% if event.get('status_tournament') !== 'results' or tournamentScores.length > 3 %}
         <table class="table">
@@ -77,11 +84,11 @@
         {% endif %}
       
         {% if tournamentScores.length === 0 %}
-        <p>Be the first to enter the leaderboards, by submitting a high score to any of the games!</p>
+        <p class="card card-body mb-5">Be the first to enter the leaderboards, by submitting a high score to any of the games!</p>
         {% endif %}
       {% endif %}
 
-        {{ scoreMacros.pointsDistributionLegend(constants.TOURNAMENT_POINTS_DISTRIBUTION) }}
+      {{ scoreMacros.pointsDistributionLegend(constants.TOURNAMENT_POINTS_DISTRIBUTION) }}
     </div>
   </div>
 </div>

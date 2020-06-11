@@ -95,18 +95,18 @@ select[readonly].select2-hidden-accessible + .select2-container {
 }
 
 a {
-  color: $alt;
+  color: $text-alt;
 
   & img {
     border: 0;
   }
 
   &:hover {
-    color: $alt-dark;
+    color: $alt;
     text-decoration: none;
 
     & img {
-      border: 4px solid $alt;
+      border: 4px solid $alt-light;
       transition: 0.1s;
     }
   }

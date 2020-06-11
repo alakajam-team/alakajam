@@ -11,7 +11,7 @@ import fileStorage from "server/core/file-storage";
 import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
-import eventTournamentService from "server/event/tournament/tournament.service";
+import tournamentService from "server/event/tournament/tournament.service";
 
 export class HighScoreService {
 
@@ -271,14 +271,14 @@ export class HighScoreService {
     }
 
     // Refresh active tournament scores
-    const activeTournamentEvent = await eventTournamentService.findActiveTournamentPlaying(entry.get("id"));
+    const activeTournamentEvent = await tournamentService.findActiveTournamentPlaying(entry.get("id"));
     if (activeTournamentEvent) {
       const tournamentStatus = activeTournamentEvent.get("status_tournament");
       if (tournamentStatus === enums.EVENT.STATUS_TOURNAMENT.PLAYING
         || options.updateTournamentIfClosed && tournamentStatus === enums.EVENT.STATUS_TOURNAMENT.CLOSED) {
         const triggeringUserId = options.triggeringUserId || (triggeringEntryScore
           ? triggeringEntryScore.get("user_id") : null);
-        eventTournamentService.refreshTournamentScores(module.exports.default, activeTournamentEvent,
+        tournamentService.refreshTournamentScores(module.exports.default, activeTournamentEvent,
           triggeringUserId, impactedEntryScores);
       }
     }

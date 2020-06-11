@@ -3,9 +3,12 @@ import db from "server/core/db";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import { EventLocals } from "./event.middleware";
-import eventService from "./event.service";
+import { EventLocals } from "../event.middleware";
+import eventService from "../event.service";
 import eventParticipationService from "./event-participation.service";
+import forms from "server/core/forms";
+import links from "server/core/links";
+import constants from "server/core/constants";
 
 /**
  * Manage my participation to an event
@@ -21,6 +24,26 @@ export async function viewEventDashboard(req: CustomRequest, res: CustomResponse
   } else {
     await myEntryNotHavingJoined(res);
   }
+}
+
+export async function postEventDashboard(req: CustomRequest, res: CustomResponse<EventLocals>) {
+  const { user, event } = res.locals;
+
+  if (req.body["streamer-preferences"] !== undefined) {
+    if (event.get("status_entry") === "closed") {
+      const eventParticipation = await eventParticipationService.getEventParticipation(event.get("id"), user.id);
+      if (!eventParticipation.isStreamer && req.body["is-streamer"] === "true") {
+        res.errorPage(403, "Streamer entries are closed");
+      }
+    }
+
+    await eventParticipationService.setStreamingPreferences(event, user, {
+      streamerStatus: req.body["is-streamer"] === "true" ? "requested" : "off",
+      streamerDescription: forms.sanitizeString(req.body["streamer-description"], { maxLength: constants.MAX_DESCRIPTION })
+    });
+  }
+
+  res.redirect(links.routeUrl(event, "event", "dashboard"));
 }
 
 async function myEntryHavingJoined(res: CustomResponse<EventLocals>) {
@@ -46,15 +69,17 @@ async function myEntryHavingJoined(res: CustomResponse<EventLocals>) {
     return post.get("author_user_id") === user.get("id");
   });
 
-  res.render("event/event-my-dashboard", {
+  await user.loadDetails();
+  res.render("event/dashboard/event-my-dashboard", {
     entry,
     latestPost,
     posts: postsCollection.models,
     userLikes: await likeService.findUserLikeInfo(postsCollection.models, user),
+    eventParticipation: await eventParticipationService.getEventParticipation(event.get("id"), user.id)
   });
 }
 
 
 async function myEntryNotHavingJoined(res: CustomResponse<EventLocals>) {
-  res.render("event/event-my-dashboard-join");
+  res.render("event/dashboard/event-my-dashboard-join");
 }

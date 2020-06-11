@@ -12,7 +12,7 @@ import eventPresetService from "server/event/event-preset.service";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import eventThemeService from "server/event/theme/event-theme.service";
-import eventTournamentService, { CACHE_KEY_ACTIVE_TOURNAMENT_EVENT } from "server/event/tournament/tournament.service";
+import tournamentService, { CACHE_KEY_ACTIVE_TOURNAMENT_EVENT } from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventTemplateService from "../event-template.service";
 import { EventLocals } from "../event.middleware";
@@ -145,7 +145,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
       if (event.hasChanged("status_tournament")
           && event.previous("status_tournament") === enums.EVENT.STATUS_TOURNAMENT.OFF) {
         // Pre-fill leaderboard with people who were already in the high scores
-        eventTournamentService.recalculateAllTournamentScores(highScoreService, event);
+        tournamentService.recalculateAllTournamentScores(highScoreService, event);
       }
 
       // Save event
@@ -156,6 +156,9 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
       eventDetails.set({
         links: req.body.links,
         category_titles: req.body["category-titles"],
+        flags: {
+          streamerOnlyTournament: Boolean(req.body.streamerOnlyTournament)
+        }
       });
       if (files.banner || req.body["banner-delete"]) {
         const file = files.banner ? files.banner[0] : null;

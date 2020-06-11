@@ -117,7 +117,6 @@ describe("User service", function() {
 
       // TODO Fix date, currently requires timestamp number to be updated correctly (at least on SQLite)
       // const test = await await userService.findUsers({search: "Paginate"}) as BookshelfCollection;
-      // console.log(test.map(u => u.get("created_at") + "/" + u.get("title") + "/" + u.id));
 
       const foundUsers = await userService.findUsers({
         search: "Paginateme",

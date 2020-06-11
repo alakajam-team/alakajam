@@ -62,8 +62,8 @@ In order to qualify for the following awards, your game **must support high scor
 
 **Three awards** will be chosen by both developers who participated in the jam, and by streamers. They will be announced at the end of the ratings phase.
 
-* The **Solo Developer's Choice** is the award that is given to the top rated team division game having high scores enabled on their entry.
-* The **Team Developer's Choice** is the award that is given to the top rated solo division game having high scores enabled on their entry.
+* The **Solo Developer's Choice** is the award that is given to the top rated solo division game having high scores enabled on their entry.
+* The **Team Developer's Choice** is the award that is given to the top rated team division game having high scores enabled on their entry.
 * The **Streamer's Choice** is the streamers favorite game in the jam, and the one they think will be fun to play on stream.
 
 The hosts of the competition may exclude a game if supported platforms are too limited (web games are preferred), or if it is severely unbalanced.
@@ -75,12 +75,15 @@ The developers that made the 3 winners will:
 
 ## <a name="awards"></a>High score competition
 
-> NB. The way streamers get to register to the competition still has to be determined, please stay in touch!
+Everyone who wants to (including people who submitted a game) can also enter the event as streamers. If you choose to do so, you are then invited to compete for 24 hours on the three awarded games. In order to take part in the competition: 
+1. You need to enter as a streamer on the event dashboard, and specify you Twitch channel and scheduled streams ;
+2. During the competition phase, you will be invited to livestream yourself playing the game ;
+3. For the scores to be taken in account, take screenshots of your scores and submit them the *Alakajam!* website.
 
-All registered streamers will compete for 24 hours on the three selected games. They will have to take screenshots and submit their results to the *Alakajam!* website for their score to be taken in account.
-
-On each game, players are awarded a number of points for being in the top 10, as per the table below. The streamers with the highest total points are shown on a global leaderboard throughout, and at the end we'll announce the winner and runners up!
+On each game, streamers are awarded a number of points for being in the top 10, as per the table below. The streamers with the highest total points are shown on a global leaderboard throughout, and at the end we'll announce the winner and runners up!
 
 ![](https://i.imgur.com/CvSqPvV.jpg)
 
-While the official competition takes place, all the members of the Alakajam! community will also be able to submit scores, and compare themselves to the streamers. They will however not be awarded points for their participation.
+Special case: in case you, as a streamer, end up seeing your own game qualified for the competition, it is preferred you don't submit a score to your own game.
+
+While the official competition takes place, every person with an *Alakajam!* account will also be able to submit scores, and compare themselves to the streamers. They will however not be awarded points for their participation, and will not appear on the global leaderboard.

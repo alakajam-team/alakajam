@@ -42,3 +42,12 @@
 {% macro userLink(user) %}
 <a href="{{ routeUrl(user, 'user') }}">@{{ user.get('title') }}</a>
 {% endmacro %}
+
+{% macro twitchLink(user) %}
+{% set socialLinks = user.related('details').get('social_links') %}
+{% if socialLinks.twitch %}
+<a href="https://www.twitch.tv/{{ socialLinks.twitch }}">
+  <img src="{{ staticUrl('/static/images/social/twitch.png') }}" class="no-border" style="width: 32px" /> {{ socialLinks.twitch }}
+</a>
+{% endif %}
+{% endmacro %}

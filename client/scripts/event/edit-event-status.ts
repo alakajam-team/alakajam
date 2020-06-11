@@ -6,14 +6,6 @@ const eventStartInput = "input[name=started-at]";
 const errorOutput = "#js-edit-event-status-error";
 
 /**
- *  Hide non-tournament status if tournament is not disabled
- */
-function refreshNonTournamentToggle(statusTournamentValue) {
-  const showOtherStatus = !statusTournamentValue || statusTournamentValue === "disabled";
-  $("#js-edit-event-status-jam").toggle(showOtherStatus);
-}
-
-/**
  * Hide all toggles unless advanced mode is enabled
  */
 function refreshAdvancedModeToggle() {
@@ -96,12 +88,6 @@ function applyPreset() {
 }
 
 export default function editEventStatus() {
-  // Non-tournament status
-  $("input[type=radio][name=status-tournament]").on("change, ifChecked", function() {
-    refreshNonTournamentToggle($(this).val());
-  });
-  refreshNonTournamentToggle($("input[type=radio][name=status-tournament]:checked").val());
-
   // Advanced mode
   refreshAdvancedModeToggle();
   $(advancedModeToggleInputs).click(function() {

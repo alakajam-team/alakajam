@@ -22,7 +22,7 @@
   </div>
   <div class="row d-flex flex-nowrap px-3">
     <div class="d-none d-lg-block pr-4" style="max-width: 400px">
-      {% if user %}
+      {% if user and canEnterTournament %}
       <div class="action-banner">
         <div class="action-banner__title">
           Your ranking
@@ -48,7 +48,7 @@
             {{ scoreMacros.highScoresLinks(entry, user, path) }}
           </div>
           <div style="display: flex">
-          {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')]) }}
+          {{ scoreMacros.highScores(entry, highScoresMap[entry.get('id')], userScoresMap[entry.get('id')], { streamerBadges: streamerBadges }) }}
           </div>
         </div>
         {% endfor %}
