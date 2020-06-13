@@ -11,24 +11,22 @@ export interface AdminEventContext extends AdminBaseContext {
 }
 
 export function adminEventTemplatesTemplate(context: AdminEventContext) {
-  formMacros.registerCodeMirrorScripts(context);
-
   const { editEventTemplate, eventTemplates, eventPresets, csrfTokenJSX } = context;
+
+  formMacros.registerCodeMirrorScripts(context);
 
   return adminBase(context,
     <div>
       <h1>Event templates</h1>
 
-      {actions(editEventTemplate)}
-      {editForm(editEventTemplate, eventPresets, csrfTokenJSX)}
-      {table(eventTemplates)}
-    </div>
-
-  );
+      <Actions eventTemplate={editEventTemplate} />
+      <EditForm eventTemplate={editEventTemplate} eventPresets={eventPresets} csrfTokenJSX={csrfTokenJSX} />
+      <Table eventTemplates={eventTemplates} />
+    </div>);
 }
 
-function actions(editEventTemplate) {
-  if (!editEventTemplate) {
+function Actions(props: { eventTemplate: BookshelfModel }) {
+  if (!props.eventTemplate) {
     return <div>
       <p>These templates allow to create an event with more sensible defaults.</p>
       <p>
@@ -38,32 +36,29 @@ function actions(editEventTemplate) {
   }
 }
 
-function editForm(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[], csrfTokenJSX: () => JSX.Element) {
-  if (eventTemplate) {
+function EditForm(props: { eventTemplate: BookshelfModel; eventPresets: BookshelfModel[]; csrfTokenJSX: () => JSX.Element }) {
+  if (props.eventTemplate) {
     return <div class="card card-body">
       <h2><span id="template-header"></span> event template</h2>
       <form method="post" action="?">
-        {csrfTokenJSX()}
+        {props.csrfTokenJSX()}
         <div class="form-group">
           <label for="title">Title</label>
-          <input type="text" required class="form-control js-sync-text" name="title" value={eventTemplate.get("title")}
+          <input type="text" required class="form-control js-sync-text" name="title" value={props.eventTemplate.get("title")}
             data-sync-text-display-selector="#template-header" data-sync-text-default="New" />
         </div>
         <div class="form-group">
           <label for="title">Default event title</label>
-          <input type="text" class="form-control" name="event-title" value={eventTemplate.get("event_title")} />
+          <input type="text" class="form-control" name="event-title" value={props.eventTemplate.get("event_title")} />
         </div>
         <div class="form-group">
           <label for="logo">Preset</label>
-          <select name="event-preset-id" class="js-select" style="width: 100%" data-placeholder="None" data-allow-clear="true">
-            <option value=""></option>
-            {eventPresetsOptions(eventTemplate, eventPresets)}
-          </select>
+          <EventPresetsSelect eventTemplate={props.eventTemplate} eventPresets={props.eventPresets}></EventPresetsSelect>
         </div>
-        {eventManageMacros.linksForm(eventTemplate)}
-        {eventManageMacros.jamConfigForm(eventTemplate, eventTemplate)}
+        {eventManageMacros.linksForm(props.eventTemplate)}
+        {eventManageMacros.jamConfigForm(props.eventTemplate, props.eventTemplate)}
         <div class="form-group">
-          {deleteButton(eventTemplate)}
+          <DeleteButton eventTemplate={props.eventTemplate}></DeleteButton>
           <button name="save" type="submit" class="btn btn-primary mr-1">Save</button>
           <a href="?" class="btn btn-outline-primary">Cancel</a>
         </div>
@@ -72,30 +67,33 @@ function editForm(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[],
   }
 }
 
-function deleteButton(eventTemplate: BookshelfModel) {
-  if (eventTemplate.get("id")) {
+function DeleteButton(props: { eventTemplate: BookshelfModel }) {
+  if (props.eventTemplate.get("id")) {
     return <div class="float-right">
-      <input type="hidden" name="id" value={eventTemplate.get("id")} />
+      <input type="hidden" name="id" value={props.eventTemplate.get("id")} />
       <button type="submit" class="btn btn-danger" name="delete" onClick={() => confirm("Delete this template?")}>Delete</button>
     </div>;
   }
 }
 
-function eventPresetsOptions(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[]) {
+function EventPresetsSelect(props: { eventTemplate: BookshelfModel; eventPresets: BookshelfModel[] }) {
   const eventPresetOptions = [];
-  eventPresetOptions.forEach((eventPreset) => {
+  props.eventPresets.forEach((eventPreset) => {
     eventPresetOptions.push(
       <option value={eventPreset.get("id")}
-        selected={eventTemplate.get("event_preset_id") === eventPreset.get("id")}>
+        selected={props.eventTemplate.get("event_preset_id") === eventPreset.get("id")}>
         {eventPreset.get("title")}
       </option>);
   });
-  return eventPresetOptions;
+  return <select name="event-preset-id" class="js-select" style="width: 100%" data-placeholder="None" data-allow-clear="true">
+    <option value=""></option>
+    {eventPresetOptions}
+  </select>;
 }
 
-function table(eventTemplates: BookshelfModel[]) {
+function Table(props: { eventTemplates: BookshelfModel[] }) {
   const rows = [];
-  for (const eventTemplate of eventTemplates) {
+  for (const eventTemplate of props.eventTemplates) {
     rows.push(<tr>
       <td>{eventTemplate.get("title")}</td>
       <td>
