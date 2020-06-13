@@ -1,3 +1,5 @@
+import { sortBy } from "lodash";
+import enums from "server/core/enums";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
@@ -7,7 +9,6 @@ import userService from "server/user/user.service";
 import eventParticipationService from "./dashboard/event-participation.service";
 import { EventLocals } from "./event.middleware";
 import eventService from "./event.service";
-import enums from "server/core/enums";
 
 export async function eventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
@@ -16,6 +17,14 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
   const eventParticipations = await eventParticipationService.getEventParticipations(event, { filter });
   const streamerOnlyTournamentIsLive = eventService.getEventFlag(event, "streamerOnlyTournament")
     && ![enums.EVENT.STATUS_TOURNAMENT.DISABLED, enums.EVENT.STATUS_TOURNAMENT.OFF].includes(event.get("status_tournament"));
+
+  eventParticipations.sort((ep1, ep2) => {
+    if (Boolean(ep1.streamerDescription) !== Boolean(ep2.streamerDescription)) {
+      // Show the streamers who set their descriptions first
+      return Boolean(ep1.streamerDescription) ? -1 : 1;
+    }
+    return ep2.id - ep1.id;
+  });
 
   res.render("event/event-streamers.html", {
     eventParticipations,
