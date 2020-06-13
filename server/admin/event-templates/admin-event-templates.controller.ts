@@ -4,6 +4,7 @@ import forms from "server/core/forms";
 import eventPresetService from "server/event/event-preset.service";
 import eventTemplateService from "server/event/event-template.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import { adminEventTemplatesTemplate } from "./admin-event-templates.template";
 
 /**
  * Event templates management
@@ -59,10 +60,11 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
   // Render page
   const eventPresetsCollection = await eventPresetService.findEventPresets();
   const eventTemplatesCollection = await eventTemplateService.findEventTemplates();
-  res.render("admin/event-templates/admin-event-templates", {
+  res.renderJSX(adminEventTemplatesTemplate, {
     eventPresets: eventPresetsCollection.models,
     eventTemplates: eventTemplatesCollection.models,
     editEventTemplate,
     errorMessage,
+    ...res.locals
   });
 }

@@ -71,13 +71,22 @@ export interface CommonLocals {
    * For JSX render functions only.
    * List of absolute URLs to append as JavaScript files.
    */
-  scripts: string[];
+  readonly scripts: string[];
 
   /**
    * For JSX render functions only.
    * List of inline styles to append to the page.
    */
-  inlineStyles: string[];
+  readonly inlineStyles: string[];
+
+  /**
+   * Generates HTML to be inserted in all form for CSRF protection.
+   */
+  readonly csrfToken: () => string;
+  /**
+   * Generates a JSX element to be inserted in all form for CSRF protection.
+   */
+  readonly csrfTokenJSX: () => JSX.Element;
 }
 
 export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction) {

@@ -16,11 +16,13 @@ import { NextFunction, Request, Response } from "express";
 import * as expressSession from "express-session";
 import * as nunjucks from "nunjucks";
 import * as path from "path";
+import { render } from "preact-render-to-string";
 import * as randomKey from "random-key";
+import { CommonLocals } from "server/common.middleware";
 import settings from "server/core/settings";
 import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
 import { routes } from "server/routes";
-import { CustomRequest } from "server/types";
+import { CustomRequest, CustomResponse, Mutable } from "server/types";
 import passwordRecoveryService from "server/user/password-recovery/password-recovery.service";
 import { promisify } from "util";
 import config, * as configUtils from "./config";
@@ -31,14 +33,11 @@ import log from "./log";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
 import * as templatingFilters from "./templating-filters";
 import * as templatingGlobals from "./templating-globals";
-import { CommonLocals } from "server/common.middleware";
-import { render } from "preact-render-to-string";
+import { setUpJSXLocals, JSXRenderFunction } from "./middleware.jsx";
 
 const LAUNCH_TIME = Date.now();
 
 export let NUNJUCKS_ENV: nunjucks.Environment | undefined;
-
-export type JSXRenderFunction<T extends CommonLocals> = (context: T) => JSX.Element;
 
 /*
  * Setup app middleware
@@ -96,16 +95,19 @@ export async function configure(app: express.Application) {
   });
 
   // Templating: rendering context
-  app.use(function templateTooling(req: CustomRequest, res: any, next: NextFunction) {
+  app.use(function templateTooling(req: CustomRequest, res: CustomResponse<Mutable<CommonLocals>>, next: NextFunction) {
     res.locals.rootUrl = config.ROOT_URL;
     res.locals.csrfToken = () => '<input type="hidden" name="_csrf" value="' + req.csrfToken() + '" />';
+    setUpJSXLocals(req, res);
+
+    let alreadyRenderedWithError = false;
 
     /* Allows anyone to display an error page.
      * Calling render() after an errorPage() is tolerated an will be a no-op, although it would be bad practice.
      */
     res.errorPage = (code: number, error?: Error) => {
       errorPage(req, res, code, error, app.locals.devMode);
-      res.alreadyRenderedWithError = true;
+      alreadyRenderedWithError = true;
     };
 
     /* Shorthand for rendering errors on promise failures.
@@ -116,20 +118,20 @@ export async function configure(app: express.Application) {
      */
     res.traceAndShowErrorPage = (error?: Error) => {
       errorPage(req, res, 500, error, app.locals.devMode);
-      res.alreadyRenderedWithError = true;
+      alreadyRenderedWithError = true;
     };
 
     // Context made available anywhere
     const nativeRender = res.render;
     res.render = (template: string, context: Record<string, any>) => {
-      if (!res.alreadyRenderedWithError) {
+      if (!alreadyRenderedWithError) {
         const mergedContext = Object.assign(res.locals, context);
         nativeRender.call(res, template, mergedContext);
       }
     };
 
     res.renderJSX = <T extends CommonLocals> (renderFunction: JSXRenderFunction<T>, context: T) => {
-      if (!res.alreadyRenderedWithError) {
+      if (!alreadyRenderedWithError) {
         const jsx = renderFunction(context);
         res.write("<!doctype html>" + render(jsx));
         res.end();
@@ -147,7 +149,7 @@ export async function configure(app: express.Application) {
     };
 
     res.redirectToLogin = () => {
-      return res.redirect("/login?redirect=" + req.url);
+      res.redirect("/login?redirect=" + req.url);
     };
 
     next();

@@ -48,7 +48,7 @@ export interface CustomResponse<T extends CommonLocals> extends Response {
   // Custom methods registered on middleware.ts
   errorPage(code: number, error?: Error | string): void;
   traceAndShowErrorPage(error?: Error): void;
-  redirectToLogin(): Promise<void>;
+  redirectToLogin(): void;
   renderJSX<T extends CommonLocals>(renderFunction: JSXRenderFunction<T>, context: T): void;
 }
 

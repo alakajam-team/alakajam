@@ -1,16 +1,11 @@
-import * as React from "preact";
-import { render } from "preact-render-to-string";
 import { CommonLocals } from "server/common.middleware";
-import { NUNJUCKS_ENV } from "server/core/middleware";
+import { renderInBaseTemplate } from "server/macros/nunjucks-macros";
 
-export default function adminBase<T extends CommonLocals>(context: T, contentsBlock: JSX.Element) {
-  const html = NUNJUCKS_ENV.renderString(`
-    {% extends "admin/admin.base.html" %}
+export interface AdminBaseContext extends CommonLocals {
+  infoMessage?: string;
+  errorMessage?: string;
+}
 
-    {% block adminBody %}
-      ${render(contentsBlock, context)}
-    {% endblock %}
-  `, context);
-  const htmlWithoutRootTag = html.replace(/^[\s\n]*<\!doctype html>[\s\n]*<html lang="en">/g, "").replace(/<\/html>[\s\n]*$/g, "");
-  return <html lang="en" dangerouslySetInnerHTML={{ __html: htmlWithoutRootTag }} />;
+export default function adminBase(context: AdminBaseContext, contentsBlock: JSX.Element) {
+  return renderInBaseTemplate("admin/admin.base.html", context, "adminBody", contentsBlock);
 }
