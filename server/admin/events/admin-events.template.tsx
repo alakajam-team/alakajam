@@ -41,7 +41,7 @@ function adminButtons(user: User) {
       <a href={ links.routeUrl(null, "event", "create") } class="btn btn-primary mr-1">Create</a>
       <a class="btn btn-outline-primary mr-1" href="/admin/settings?edit=featured_event_name">Select featured event</a>
       <a class="btn btn-outline-primary" href="?refreshHotness=true"
-        onClick={() => confirm("This is a resource intensive task. Proceed?")}>Refresh entry hotness on all events</a>
+        onclick="return confirm('This is a resource intensive task. Proceed?')">Refresh entry hotness on all events</a>
     </p>;
   }
 }

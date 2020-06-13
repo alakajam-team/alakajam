@@ -2,7 +2,6 @@
 /* eslint-disable max-classes-per-file */
 
 import "bookshelf";
-import { BookshelfCompatibleEntity } from "server/entity/bookshelf-compatible.entity";
 
 declare module "bookshelf" {
 
@@ -54,7 +53,6 @@ declare module "bookshelf" {
   }
 
   class BookshelfCollection extends BookshelfCollectionOf<BookshelfModel> { }
-
 
   class BookshelfCollectionOf<T extends BookshelfModel> extends Collection<BookshelfModel> {
     public models?: T[];

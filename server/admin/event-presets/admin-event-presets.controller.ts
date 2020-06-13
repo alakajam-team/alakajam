@@ -3,6 +3,7 @@ import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import eventPresetService from "server/event/event-preset.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import { adminEventPresetsTemplate } from "./admin-event-presets.template";
 
 /**
  * Event presets management
@@ -88,5 +89,8 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
       m: rawOffsetWithoutDays % 60,
     };
   }
-  res.render("admin/event-presets/admin-event-presets", context);
+  res.renderJSX(adminEventPresetsTemplate, {
+    ...res.locals,
+    ...context
+  });
 }

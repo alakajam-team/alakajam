@@ -2,6 +2,7 @@ import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
 import * as eventManageMacros from "server/event/manage/event-manage.macros";
 import * as formMacros from "server/macros/form.macros";
+import { ifSet } from "server/macros/jsx-utils";
 import adminBase, { AdminBaseContext } from "../admin.base";
 
 export interface AdminEventContext extends AdminBaseContext {
@@ -13,32 +14,29 @@ export interface AdminEventContext extends AdminBaseContext {
 export function adminEventTemplatesTemplate(context: AdminEventContext) {
   formMacros.registerCodeMirrorScripts(context);
 
-  const { editEventTemplate, eventTemplates, eventPresets, csrfTokenJSX } = context;
-
   return adminBase(context,
     <div>
       <h1>Event templates</h1>
 
-      {actions(editEventTemplate)}
-      {editForm(editEventTemplate, eventPresets, csrfTokenJSX)}
-      {table(eventTemplates)}
+      {context.editEventTemplate
+        ? edit(context.editEventTemplate, context.eventPresets, context.csrfTokenJSX)
+        : actions()}
+      {list(context.eventTemplates)}
     </div>
 
   );
 }
 
-function actions(editEventTemplate) {
-  if (!editEventTemplate) {
-    return <div>
-      <p>These templates allow to create an event with more sensible defaults.</p>
-      <p>
-        <a href="?create" class="btn btn-primary">Create template</a>
-      </p>
-    </div>;
-  }
+function actions() {
+  return <div>
+    <p>These templates allow to create an event with more sensible defaults.</p>
+    <p>
+      <a href="?create" class="btn btn-primary">Create template</a>
+    </p>
+  </div>;
 }
 
-function editForm(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[], csrfTokenJSX: () => JSX.Element) {
+function edit(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[], csrfTokenJSX: () => JSX.Element) {
   if (eventTemplate) {
     return <div class="card card-body">
       <h2><span id="template-header"></span> event template</h2>
@@ -57,13 +55,22 @@ function editForm(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[],
           <label for="logo">Preset</label>
           <select name="event-preset-id" class="js-select" style="width: 100%" data-placeholder="None" data-allow-clear="true">
             <option value=""></option>
-            {eventPresetsOptions(eventTemplate, eventPresets)}
+            {eventPresets.map((eventPreset) =>
+              <option value={eventPreset.get("id")}
+                selected={eventTemplate.get("event_preset_id") === eventPreset.get("id")}>
+                {eventPreset.get("title")}
+              </option>
+            )}
           </select>
         </div>
         {eventManageMacros.linksForm(eventTemplate)}
         {eventManageMacros.jamConfigForm(eventTemplate, eventTemplate)}
         <div class="form-group">
-          {deleteButton(eventTemplate)}
+          {ifSet(eventTemplate.get("id"),
+            <div class="float-right">
+              <input type="hidden" name="id" value={eventTemplate.get("id")} />
+              <button type="submit" class="btn btn-danger" name="delete" onclick="return confirm('Delete this template?')">Delete</button>
+            </div>)}
           <button name="save" type="submit" class="btn btn-primary mr-1">Save</button>
           <a href="?" class="btn btn-outline-primary">Cancel</a>
         </div>
@@ -72,38 +79,7 @@ function editForm(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[],
   }
 }
 
-function deleteButton(eventTemplate: BookshelfModel) {
-  if (eventTemplate.get("id")) {
-    return <div class="float-right">
-      <input type="hidden" name="id" value={eventTemplate.get("id")} />
-      <button type="submit" class="btn btn-danger" name="delete" onClick={() => confirm("Delete this template?")}>Delete</button>
-    </div>;
-  }
-}
-
-function eventPresetsOptions(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[]) {
-  const eventPresetOptions = [];
-  eventPresetOptions.forEach((eventPreset) => {
-    eventPresetOptions.push(
-      <option value={eventPreset.get("id")}
-        selected={eventTemplate.get("event_preset_id") === eventPreset.get("id")}>
-        {eventPreset.get("title")}
-      </option>);
-  });
-  return eventPresetOptions;
-}
-
-function table(eventTemplates: BookshelfModel[]) {
-  const rows = [];
-  for (const eventTemplate of eventTemplates) {
-    rows.push(<tr>
-      <td>{eventTemplate.get("title")}</td>
-      <td>
-        <a href={"?edit=" + eventTemplate.get("id")} class="btn btn-primary">Edit</a>
-      </td>
-    </tr>);
-  }
-
+function list(eventTemplates: BookshelfModel[]) {
   return <table class="table">
     <thead>
       <tr>
@@ -112,7 +88,13 @@ function table(eventTemplates: BookshelfModel[]) {
       </tr>
     </thead>
     <tbody>
-      {rows}
+      {eventTemplates.map(eventTemplate =>
+        <tr>
+          <td>{eventTemplate.get("title")}</td>
+          <td>
+            <a href={"?edit=" + eventTemplate.get("id")} class="btn btn-primary">Edit</a>
+          </td>
+        </tr>)}
     </tbody>
   </table>;
 }
