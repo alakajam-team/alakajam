@@ -6,16 +6,6 @@ import constants from "./constants";
 import * as formats from "./formats";
 import forms from "./forms";
 
-export function date(
-  value: number | string | Date,
-  user?: User,
-  options: { format?: string; utcSuffixByDefault?: boolean } = {}) {
-  const useCustomFormat = !!options.format;
-  const format = options.format || constants.DATE_FORMAT;
-  const utcSuffixByDefault = options.utcSuffixByDefault !== undefined ? options.utcSuffixByDefault : !useCustomFormat;
-  return formats.formatDate(value, user, format, { utcSuffixByDefault });
-}
-
 export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("keys", (obj: object) => {
@@ -59,22 +49,18 @@ export function configure(nunjucksEnvironment) {
     return forms.markdownToText(str);
   });
 
-  nunjucksEnvironment.addFilter("markdownUnescape", (str: string) => {
-    return str ? str.replace(/&amp;/g, "&").replace(/&quot;/g, '"') : null;
-  });
+  nunjucksEnvironment.addFilter("markdownUnescape", markdownUnescape);
 
   nunjucksEnvironment.addFilter("date", date);
 
-  nunjucksEnvironment.addFilter("dateTime", (date: number | string | Date, user?: User) => {
-    return formats.formatDate(date, user, constants.DATE_TIME_FORMAT);
+  nunjucksEnvironment.addFilter("dateTime", dateTime);
+
+  nunjucksEnvironment.addFilter("featuredEventDateTime", (value: number | string | Date, user?: User) => {
+    return formats.formatDate(value, user, constants.FEATURED_EVENT_DATE_FORMAT);
   });
 
-  nunjucksEnvironment.addFilter("featuredEventDateTime", (date: number | string | Date, user?: User) => {
-    return formats.formatDate(date, user, constants.FEATURED_EVENT_DATE_FORMAT);
-  });
-
-  nunjucksEnvironment.addFilter("relativeTime", (date: number | string | Date) => {
-    return formats.createLuxonDate(date).toRelative();
+  nunjucksEnvironment.addFilter("relativeTime", (value: number | string | Date) => {
+    return formats.createLuxonDate(value).toRelative();
   });
 
   nunjucksEnvironment.addFilter("duration", (durationInSeconds: number) => {
@@ -121,4 +107,26 @@ export function configure(nunjucksEnvironment) {
     return slug(str);
   });
 
+}
+
+export function date(
+  value: number | string | Date,
+  user?: User,
+  options: { format?: string; utcSuffixByDefault?: boolean } = {}) {
+  const useCustomFormat = !!options.format;
+  const format = options.format || constants.DATE_FORMAT;
+  const utcSuffixByDefault = options.utcSuffixByDefault !== undefined ? options.utcSuffixByDefault : !useCustomFormat;
+  return formats.formatDate(value, user, format, { utcSuffixByDefault });
+}
+
+export function dateTime(value: number | string | Date, user?: User) {
+  return formats.formatDate(value, user, constants.DATE_TIME_FORMAT);
+}
+
+export function markdown(value: string, options: {maxLength?: number; readMoreLink?: number} = {}) {
+  return { __html: forms.markdownToHtml(value, options) };
+}
+
+export function markdownUnescape(value: string) {
+  return value ? value.replace(/&amp;/g, "&").replace(/&quot;/g, '"') : null;
 }

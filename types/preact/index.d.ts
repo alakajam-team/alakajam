@@ -24,6 +24,10 @@ declare module "preact" {
       onmouseenter?: string;
       onmouseleave?: string;
       onmousemove?: string;
+
+      // Non-events
+      colspan?: string;
+      readonly?: boolean;
     }
   }
 }

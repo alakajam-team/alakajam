@@ -3,6 +3,7 @@ import config from "server/core/config";
 import security from "server/core/security";
 import { Alert, CustomRequest, CustomResponse } from "server/types";
 import adminDevService from "./admin-dev.service";
+import { adminDevTemplate } from "./admin-dev.template";
 
 /**
  * Admin only: developer tools
@@ -29,8 +30,9 @@ export async function adminDev(req: CustomRequest, res: CustomResponse<CommonLoc
       }
     }
 
-    res.render("admin/dev/admin-dev", {
-      backupDate: await adminDevService.getBackupDate()
+    res.renderJSX(adminDevTemplate, {
+      ...res.locals,
+      backupDate: await adminDevService.getBackupDate() || undefined,
     });
   } else {
     res.errorPage(403, "Page only available in development mode");

@@ -66,7 +66,7 @@ function edit(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[], csr
         {eventManageMacros.linksForm(eventTemplate)}
         {eventManageMacros.jamConfigForm(eventTemplate, eventTemplate)}
         <div class="form-group">
-          {ifSet(eventTemplate.get("id"),
+          {ifSet(eventTemplate.get("id"), () =>
             <div class="float-right">
               <input type="hidden" name="id" value={eventTemplate.get("id")} />
               <button type="submit" class="btn btn-danger" name="delete" onclick="return confirm('Delete this template?')">Delete</button>

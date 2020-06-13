@@ -56,7 +56,7 @@ function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset
       <div class="form-group">
         <button name="save" type="submit" class="btn btn-primary">Save</button>
         <a href="?" class="btn btn-outline-primary">Cancel</a>
-        {ifSet(eventPreset.get("id"),
+        {ifSet(eventPreset.get("id"), () =>
           <div class="float-right">
             <input type="hidden" name="id" value={eventPreset.get("id")} />
             <button type="submit" class="btn btn-danger" name="delete" onclick="return confirm('Delete this preset?')">Delete</button>
