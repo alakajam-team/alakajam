@@ -13,8 +13,10 @@
 <div class="container themes">
   {% set shortlistEliminationInfo = event.related('details').get('shortlist_elimination') %}
   {% if shortlistEliminationInfo.start and shortlistEliminationInfo.body %}
-  <div class="card card-body user-contents mb-3">
-    {{ shortlistEliminationInfo.body | markdown | safe }}
+  <div class="card mb-3">
+    <div class="card-body user-contents">
+      {{ shortlistEliminationInfo.body | markdown | safe }}
+    </div>
   </div>
   {% endif %}
 
