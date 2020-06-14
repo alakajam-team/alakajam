@@ -10,7 +10,7 @@ exports.up = async (knex: Knex) => {
     table.integer("ranking_7").index();
   });
 
-  await knex.schema.createTable("entry_vote", (table) => {
+  await knex.schema.table("entry_vote", (table) => {
     table.decimal("vote_7", 5, 2);
   });
 
@@ -22,7 +22,7 @@ exports.down = async (knex: Knex) => {
     table.dropColumn("ranking_7");
   });
 
-  await knex.schema.createTable("entry_vote", (table) => {
+  await knex.schema.table("entry_vote", (table) => {
     table.dropColumn("vote_7");
   });
 };

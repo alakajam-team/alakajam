@@ -151,6 +151,7 @@
     <div class="form-group">
       {% set flags = event.related('details').get('flags') %}
       {{ formMacros.check('streamerOnlyTournament', 'Streamer-only tournament', flags.streamerOnlyTournament) }}
+      {{ formMacros.check('scoreSpacePodium', 'ScoreSpace podium', flags.scoreSpacePodium) -}}<span style="margin-left: -15px">{{- formMacros.tooltip('The 1st, 2nd, and 3rd placed entries in the 7th rating category will be displayed respectively for the Streamer choice, Solo choice and Team choice. Use the "Rankings" tab to set them.') }}</span>
     </div>
   </div>
 {% endmacro %}
