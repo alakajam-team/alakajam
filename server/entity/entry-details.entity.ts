@@ -43,6 +43,8 @@ export class EntryDetails extends TimestampedEntity {
   public rating_5: number;
   @Column(ColumnTypes.numeric(5, 3, { nullable: true }))
   public rating_6: number;
+  @Column(ColumnTypes.numeric(5, 3, { nullable: true }))
+  public rating_7: number;
 
   /**
    * Ranking for categories 1 to 6 (max: 100000)
@@ -65,6 +67,9 @@ export class EntryDetails extends TimestampedEntity {
   @Column({ nullable: true })
   @Index()
   public ranking_6: number;
+  @Column({ nullable: true })
+  @Index()
+  public ranking_7: number;
 
   /**
    * Received rating count
