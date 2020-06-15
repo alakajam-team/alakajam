@@ -205,20 +205,16 @@ export class EventThemeService {
 
   /**
    * Saves a theme vote
-   * @param user {User} user model
-   * @param event {Event} event model
-   * @param themeId {integer}
-   * @param score {integer}
-   * @param options {object} doNotSave
    */
-  public async saveVote(user, event, themeId, score, options: any = {}) {
+  public async saveVote(user: User, event: BookshelfModel, themeId: number, score: number, options: { doNotSave?: boolean } = {}) {
+    const eventThemeStatus = event.get("status_theme");
     let voteCreated = false;
     let expectedStatus = null;
     let result = {};
 
-    if (event.get("status_theme") === enums.EVENT.STATUS_THEME.VOTING && [-1, 1].indexOf(score) !== -1) {
+    if (eventThemeStatus === enums.EVENT.STATUS_THEME.VOTING && [-1, 1].indexOf(score) !== -1) {
       expectedStatus = enums.THEME.STATUS.ACTIVE;
-    } else if (event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST && score >= 1 && score <= 10) {
+    } else if (eventThemeStatus === enums.EVENT.STATUS_THEME.SHORTLIST && score >= 1 && score <= 10) {
       expectedStatus = enums.THEME.STATUS.SHORTLIST;
     }
 
@@ -249,13 +245,15 @@ export class EventThemeService {
           voteCreated = true;
         }
 
-        const positiveVotes = (theme.get("notes") + theme.get("score")) / 2.0;
-        const wilsonBounds = this.computeWilsonBounds(positiveVotes, theme.get("notes"));
-        theme.set({
-          rating_elimination: wilsonBounds.high,
-          rating_shortlist: wilsonBounds.low,
-          normalized_score: 1.0 * theme.get("score") / theme.get("notes"),
-        });
+        if (eventThemeStatus !== enums.EVENT.STATUS_THEME.SHORTLIST) {
+          const positiveVotes = (theme.get("notes") /* = pos + neg */ + theme.get("score") /* = pos - neg */) / 2.0;
+          const wilsonBounds = this.computeWilsonBounds(positiveVotes, theme.get("notes"));
+          theme.set({
+            rating_elimination: wilsonBounds.high,
+            rating_shortlist: wilsonBounds.low,
+            normalized_score: 1.0 * theme.get("score") / theme.get("notes"),
+          });
+        }
 
         result = {
           theme,
