@@ -12,7 +12,7 @@ JSON API
 | [`/api/featuredEvent`](/api/featuredEvent?pretty=true) | (none) | Fetches the currently featured event (the one that currently appears in the header, usually the current or upcoming event), and its entries. |
 | [`/api/event`](/api/event?pretty=true) | `?page` A page number (page size is 10), starts with 1. | Fetches the most recently published events, including pending ones. |
 | [`/api/event/:event`](/api/event/1st-alakajam?pretty=true) | `event` An event ID, or its name (as visible in its URL) | Fetches an event and its entries. |
-| [`/api/event/:event/shortlist`](/api/event/1st-alakajam/shortlist?pretty=true) | `event` An event ID, or its name (as visible in its URL) | Lists the shortlisted themes and their current status. An additional "nextElimination" field is an ISO 8601 date or `null`. |
+| [`/api/event/:event/shortlist`](/api/event/1st-alakajam/shortlist?pretty=true) | `event` An event ID, or its name (as visible in its URL) | Lists the shortlisted themes and their current status. A list of user names who chose the theme as their top picks is also available as soon as shortlist voting closes.<br />An additional "nextElimination" field is an ISO 8601 date or `null`. |
 | [`/api/entry/:entry`](/api/entry/65?pretty=true) | `entry` An entry ID | Fetches an entry and detailed information about it: its comments, its ratings & rankings (if the event is closed) and some more metadata. |
 | [`/api/user`](/api/user?title=Jamician&pretty=true) | `?title` A display name to search for <br />`?page` A page number (page size is 30), starts with 1. | Searches for users. |
 | [`/api/user/:user`](/api/user/voxel?pretty=true) | `user` A user ID, or their name | Fetches a specific user. |
