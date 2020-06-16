@@ -252,9 +252,9 @@ export class TournamentService {
         }
       });
 
-      const entryCount = ranking - 1;
-      if (entryCount !== event.get("entry_count")) {
-        event.set("entry_count", entryCount);
+      const tournament_count = ranking - 1;
+      if (tournament_count !== event.get("tournament_count")) {
+        event.set("tournament_count", tournament_count);
         await event.save();
 
         cache.general.del(CACHE_KEY_ACTIVE_TOURNAMENT_EVENT);

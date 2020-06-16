@@ -29,9 +29,19 @@
           <a href="{{ routeUrl(event, 'event', 'tournament-leaderboard') }}" class="btn btn-sm btn-primary">View leaderboard</a>
         </div>
         <div class="card">
-          {{ tournamentMacros.userRanking(user, event, tournamentScore) }}
+          {{ tournamentMacros.userRanking(user, event, eventParticipation, tournamentScore) }}
         </div>
       </div>
+      {% elseif event.related('details').get('flags').streamerOnlyTournament %}
+        <div class="action-banner">
+          <div class="action-banner__title">
+            <span class="fa fa-tv"></span> Streamer-only tournament
+          </div>
+          <div class="card-body">
+            <p>Only users who are registered <a href="{{ routeUrl(event, 'event', 'streamers') }}">as streamers</a> are eligible to tournament points!</p>
+            <p>You are welcome to play the games and compete with the streamers but you will not appeared on the leaderboard if you are not registered as a streamer.</p>
+          </div>
+        </div>
       {% endif %}
 
       <h2>Recent scores</h2>

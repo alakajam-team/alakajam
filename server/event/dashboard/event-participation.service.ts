@@ -35,6 +35,9 @@ export class EventParticipationService {
   }
 
   public async hasJoinedEvent(event: BookshelfModel, user: User): Promise<boolean> {
+    if(!user) {
+      return false;
+    }
     return (await this.getEventParticipation(event.get("id"), user.id)) !== undefined;
   }
 

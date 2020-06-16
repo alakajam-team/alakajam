@@ -28,16 +28,16 @@
   <div class="row mt-4">
     <div class="col-md-3 col-12">
       <h2 class="mb-2">Useful links</h2>
-
       <div class="list-group">
+        {% set rulesLink = routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules') %}
+        {% if rulesLink !== 'off' %}
+          {{- usefullLink(event, 'status_rules', rulesLink, 'Rules', 'fa-book') -}}
+        {% endif %}
+        {{- usefullLink(event, null, 'posts', 'Posts', 'fa-newspaper') -}}
+
         {% set featuredLinks = event.related('details').get('links') %}
         {% for featuredLink in featuredLinks %}
-          <a class="list-group-item shortcut" href="{{ featuredLink.link }}">
-            <h4>
-              <span class="shortcut__icon"><span class="fas {{ featuredLink.icon }}"></span></span>
-              <span class="shortcut__title">{{ featuredLink.title }}</span>
-            </h4>
-          </a>
+          {{- usefullLink(event, null, featuredLink.link, featuredLink.title, featuredLink.icon) -}}
         {% endfor %}
       </div>
       
@@ -155,3 +155,15 @@
 </div>
 
 {% endblock %}
+
+{% macro usefullLink (event, statusField, link, title, icon ) %}
+  {%- if not statusField or event.get(statusField) !== 'disabled' -%}
+    {%- set targetUrl = link if link.includes('/') else routeUrl(event, 'event', link) -%}
+    <a class="list-group-item shortcut" href="{{ targetUrl }}">
+      <h4>
+        <span class="shortcut__icon"><span class="fas {{ icon }}"></span></span>
+        <span class="shortcut__title">{{ title }}</span>
+      </h4>
+    </a>
+  {%- endif -%}
+{% endmacro %}

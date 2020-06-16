@@ -142,24 +142,28 @@
         
         <div class="collapse navbar-collapse" id="navbar-event-dropdown">
           <ul class="navbar-nav">
+            {%- set statusJam = event.get('status_theme') -%}
             {%- set statusTournament = event.get('status_tournament') -%}
             
             {%- if not statusTournament or statusTournament === 'disabled' or event.related('details').get('flags').streamerOnlyTournament -%}<!-- FIXME -->
               {{- eventLink(event, null, 'dashboard', 'Dashboard', 'play-circle', path) -}}
+              <li class="mx-3 my-2" style="border-left: solid 1px"></li>
             {%- endif -%}
 
-            {{- eventLink(event, 'status_rules', routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules'), 'Rules', 'book', path) -}}
-            {{- eventLink(event, null, 'posts', 'Posts', 'newspaper', path) -}}
-            {%- if event.get('title') === 'ScoreSpace x Alakajam!' -%} <!-- FIXME -->
+            {%- if not event.related('details').get('flags').hideStreamerMenu -%}
               {{- eventLink(event, null, 'streamers', 'Streamers', 'tv', path) -}}
             {% endif %}
             
-            {%- if not statusTournament or statusTournament === 'disabled' -%}
+            {%- if statusJam and statusJam !== 'disabled' -%}
               {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'lightbulb', path) -}}
               {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'gamepad', path) -}}
               {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: ['results'] }) -}}
-            {%- else -%}
-              {{- eventLink(event, 'status_tournament', 'tournament-games', 'Games', 'gamepad', path) -}}
+            {%- endif -%}
+            {%- if statusTournament and statusTournament !== 'disabled' -%}
+              {%- if statusJam and statusJam !== 'disabled' -%}
+                <li class="mx-3 my-2" style="border-left: solid 1px"></li>
+              {%- endif -%}
+              {{- eventLink(event, 'status_tournament', 'tournament-games', 'Tournament', 'gamepad', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
               {{- eventLink(event, 'status_tournament', 'tournament-leaderboard', 'Leaderboard', 'th-list', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
             {%- endif -%}
           </ul>

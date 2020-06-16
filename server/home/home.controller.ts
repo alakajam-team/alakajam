@@ -50,11 +50,13 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       likeService.findUserLikeInfo(allPostsInPage as PostBookshelfModel[], user),
       featuredEvent ? eventService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined,
       tournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id")),
-      joinEnabled ? eventParticipationService.hasJoinedEvent(featuredEvent, user) : undefined,
-    ]).then(([userLikes, entry, tournamentScore, hasJoinedEvent]) => {
+      eventParticipationService.getEventParticipation(featuredEvent.get("id"), user.get("id")),
+    ]).then(([userLikes, entry, tournamentScore, eventParticipation]) => {
+      const hasJoinedEvent = !!eventParticipation;
       res.locals.userLikes = userLikes;
       res.locals.entry = entry;
       res.locals.tournamentScore = tournamentScore;
+      res.locals.eventParticipation = eventParticipation;
       res.locals.hasJoinedEvent = hasJoinedEvent;
       res.locals.inviteToJoin = joinEnabled && !hasJoinedEvent;
     });

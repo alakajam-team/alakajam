@@ -124,6 +124,12 @@ export class Event extends TimestampedEntity {
   public entry_count: number;
 
   /**
+   * Total number of entries (if a jam) or entrants (if a tournament) in the event.
+   */
+  @Column({ nullable: true, default: 0 })
+  public tournament_count: number;
+
+  /**
    * Event start date, for sorting purposes
    */
   @Column(ColumnTypes.dateTime({ default: () => null, nullable: true }))
