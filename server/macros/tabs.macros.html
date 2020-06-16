@@ -7,6 +7,6 @@
 
 {% macro tab(linkPath, title) %}
 <li class="nav-item">
-    <a class="nav-link {{ 'active' if path === linkPath }}" href="{{ linkPath }}">{{ title }}</a>
+    <a class="nav-link {{ 'active' if path.replace(r/\?.*/g, '') === linkPath }}" href="{{ linkPath }}">{{ title }}</a>
 </li>
 {% endmacro %}
