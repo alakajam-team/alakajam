@@ -357,7 +357,7 @@ function _renderJson(req: CustomRequest, res: CustomResponse<CommonLocals>, stat
     res.locals.pageTitle = "API Preview for " + req.path;
     res.render("api/api-pretty", { apiPath: req.path, json });
   } else {
-    res.json(json);
+    res.jsonp(json);
   }
 }
 

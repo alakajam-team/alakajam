@@ -2,6 +2,7 @@ JSON API
 ## General tips ##
 
 * Append `?pretty=true` to get a human-readable output of the data
+* Append `?callback=yourFunction` for <a href="https://en.wikipedia.org/wiki/JSONP">JSONP</a> support
 * If something goes wrong, the response will always have the format: `{ "error": "..." }`
 
 ## Endpoints ##
