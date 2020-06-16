@@ -2,7 +2,10 @@
  * Fix the normalized ratings to allow 10
  */
 
-
+if (__filename.endsWith(".js")) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  require("module-alias/register");
+}
 import config from "server/core/config";
 
 exports.up = async (knex) => {

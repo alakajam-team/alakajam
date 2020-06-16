@@ -16,7 +16,7 @@ export type ArticleSidebarCategory = Array<{
     title: string;
     url: string;
   }>;
-}>
+}>;
 
 export class Settings {
 

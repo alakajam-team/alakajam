@@ -24,14 +24,14 @@ export async function articleView(req: CustomRequest, res: CustomResponse<Common
       return renderArticle(res, validCategory, name);
     } else {
       // Redirect to the first article by default
-      const categorySidebar = await settings.findArticlesSidebar(validCategory)
-      const firstArticlePathElements = categorySidebar[0]?.links[0]?.url.split('/');
+      const categorySidebar = await settings.findArticlesSidebar(validCategory);
+      const firstArticlePathElements = categorySidebar[0]?.links[0]?.url.split("/");
       const firstArticleName = firstArticlePathElements[firstArticlePathElements.length - 1];
       if (firstArticleName) {
         return res.redirect(`/article/${validCategory}/${firstArticleName}`);
       }
     }
-  
+
   }
 
   res.errorPage(404);

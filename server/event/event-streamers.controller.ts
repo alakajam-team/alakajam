@@ -1,4 +1,3 @@
-import { sortBy } from "lodash";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import links from "server/core/links";
