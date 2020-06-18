@@ -8,6 +8,7 @@ import userService from "server/user/user.service";
 import eventParticipationService from "./dashboard/event-participation.service";
 import { EventLocals } from "./event.middleware";
 import eventService from "./event.service";
+import twitchService from "./twitch.service";
 
 export async function eventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
@@ -16,6 +17,7 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
   const eventParticipations = await eventParticipationService.getEventParticipations(event, { filter });
   const streamerOnlyTournamentIsLive = eventService.getEventFlag(event, "streamerOnlyTournament")
     && ![enums.EVENT.STATUS_TOURNAMENT.DISABLED, enums.EVENT.STATUS_TOURNAMENT.OFF].includes(event.get("status_tournament"));
+  const currentlyLiveUserIds = (await twitchService.listCurrentLiveUsers(event)).map(liveUser => liveUser.id);
 
   eventParticipations.sort((ep1, ep2) => {
     if (Boolean(ep1.streamerDescription) !== Boolean(ep2.streamerDescription)) {
@@ -27,7 +29,8 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
 
   res.render("event/event-streamers.html", {
     eventParticipations,
-    streamerOnlyTournamentIsLive
+    streamerOnlyTournamentIsLive,
+    currentlyLiveUserIds
   });
 }
 

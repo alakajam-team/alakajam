@@ -52,6 +52,8 @@ h1 {
 {% endblock %}
 
 {% block body %}
+<script src="https://embed.twitch.tv/embed/v1.js"></script>
+
 <div class="background">
   <div class="event-banner__gradient"></div>
   <div class="container text-center">
@@ -69,10 +71,24 @@ h1 {
           <a name="{{ eventParticipation.userId }}"></a>
           <div class="card mb-4 {{ eventParticipation.streamerStatus }}">
             <div class="card-header">{{ userMacros.userThumb(eventParticipation.user, { fullWidth: true }) }}</div>
-            <div class="card-body">
-              <div class="mb-2">{{ userMacros.twitchLink(eventParticipation.user) }}</div>
-              {{ eventParticipation.streamerDescription | markdown | safe }}
-            </div>
+
+            {% if currentlyLiveUserIds.includes(eventParticipation.userId) %}
+              <div id="twitch-{{ eventParticipation.userId }}-embed"></div>
+              <script type="text/javascript">
+                new Twitch.Embed("twitch-{{ eventParticipation.userId }}-embed", {
+                  width: '100%',
+                  height: 200,
+                  layout: 'video',
+                  channel: "{{ eventParticipation.user.details.social_links.twitch }}"
+                });
+              </script>
+            {% else %}
+              <div class="card-body">
+                <div class="mb-2">{{ userMacros.twitchLink(eventParticipation.user) }}</div>
+                {{ eventParticipation.streamerDescription | markdown | safe }}
+              </div>
+            {% endif %}
+
             {% if isMod(user) %}
             <form class="card-footer bg-moderation" method="post" onsubmit="return confirm('Confirm streamer status change?')">
               {{ csrfToken() | safe }}

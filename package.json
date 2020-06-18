@@ -97,6 +97,7 @@
     "tempusdominus-bootstrap-4": "^5.1.2",
     "timezone-support": "^2.0.2",
     "turndown": "^5.0.3",
+    "twitch": "^4.0.10",
     "typeorm": "^0.2.24",
     "typescript": "^3.8.3",
     "uglifyjs-webpack-plugin": "^2.2.0",

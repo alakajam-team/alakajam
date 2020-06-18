@@ -21,11 +21,13 @@ export interface Config {
   readonly DB_NAME: string;
   readonly DB_SQLITE_FILENAME?: string;
 
-  // Emails
+  // Integrations
   readonly SMTP_HOST: string;
   readonly SMTP_PORT: number;
   readonly SMTP_USERNAME: string;
   readonly SMTP_PASSWORD: string;
+  readonly TWITCH_CLIENT_ID?: string;
+  readonly TWITCH_CLIENT_SECRET?: string;
 
   // Misc
   readonly SECURE_SESSION_COOKIES: boolean;

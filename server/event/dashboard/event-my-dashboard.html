@@ -31,13 +31,13 @@
       <div class="list-group">
         {% set rulesLink = routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules') %}
         {% if rulesLink !== 'off' %}
-          {{- usefullLink(event, 'status_rules', rulesLink, 'Rules', 'fa-book') -}}
+          {{- usefulLink(event, 'status_rules', rulesLink, 'Detailed rules', 'fa-book') -}}
         {% endif %}
-        {{- usefullLink(event, null, 'posts', 'Posts', 'fa-newspaper') -}}
+        <!--{{- usefulLink(event, null, 'posts', 'Posts', 'fa-newspaper') -}}-->
 
         {% set featuredLinks = event.related('details').get('links') %}
         {% for featuredLink in featuredLinks %}
-          {{- usefullLink(event, null, featuredLink.link, featuredLink.title, featuredLink.icon) -}}
+          {{- usefulLink(event, null, featuredLink.link, featuredLink.title, featuredLink.icon) -}}
         {% endfor %}
       </div>
       
@@ -156,7 +156,7 @@
 
 {% endblock %}
 
-{% macro usefullLink (event, statusField, link, title, icon ) %}
+{% macro usefulLink (event, statusField, link, title, icon ) %}
   {%- if not statusField or event.get(statusField) !== 'disabled' -%}
     {%- set targetUrl = link if link.includes('/') else routeUrl(event, 'event', link) -%}
     <a class="list-group-item shortcut" href="{{ targetUrl }}">

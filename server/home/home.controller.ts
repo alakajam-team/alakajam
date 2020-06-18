@@ -15,6 +15,7 @@ import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventParticipationService from "server/event/dashboard/event-participation.service";
+import twitchService from "server/event/twitch.service";
 
 interface HomeContext {
   featuredPost?: PostBookshelfModel;
@@ -51,7 +52,8 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       featuredEvent ? eventService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined,
       tournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id")),
       eventParticipationService.getEventParticipation(featuredEvent.get("id"), user.get("id")),
-    ]).then(([userLikes, entry, tournamentScore, eventParticipation]) => {
+      twitchService.listCurrentLiveUsers(featuredEvent)
+    ]).then(([userLikes, entry, tournamentScore, eventParticipation, liveUsers]) => {
       const hasJoinedEvent = !!eventParticipation;
       res.locals.userLikes = userLikes;
       res.locals.entry = entry;
@@ -59,6 +61,7 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       res.locals.eventParticipation = eventParticipation;
       res.locals.hasJoinedEvent = hasJoinedEvent;
       res.locals.inviteToJoin = joinEnabled && !hasJoinedEvent;
+      res.locals.featuredStreamer = liveUsers.length > 0 ? liveUsers[0] : undefined;
     });
   } else {
     res.locals.hasJoinedEvent = false;
