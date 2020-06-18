@@ -136,10 +136,9 @@
 
     <div class="col-md-4 col-12">
       {% if featuredEvent and featuredEvent.get("status") === "open" %}
-        <div class="horizontal-bar">Featured streamer</div>
-
         {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') %}
         {% if featuredStreamer and not shortlistEliminationInfo.stream %}
+          <div class="horizontal-bar">Featured streamer</div>
           <div class="featured p-0 mb-1">
             <div id="twitch-featured-embed"></div>
             <script src="https://embed.twitch.tv/embed/v1.js"></script>
@@ -158,15 +157,7 @@
               </a>
             </div>
           </div>
-
-          
-        {% else %}
-        <div class="featured text-center">
-          <p><img src="{{ staticUrl('/static/images/docs/play.png') }}" height="98" class="no-border" /></p>
-          <p class="m-0">When a <a href="{{ routeUrl(featuredEvent, 'event', 'streamers') }}">registered streamer</a> goes live,<br />they will appear here.</p>
-        </div>
         {% endif %}
-
       {% endif %}
 
       <div class="horizontal-bar">Latest comments</div>
