@@ -30,8 +30,9 @@ export async function saveStreamerPreferences(req: CustomRequest, res: CustomRes
   const streamerDescription = forms.sanitizeString(req.body["streamer-description"], { maxLength: constants.MAX_DESCRIPTION });
 
   if (req.body.submit !== undefined) {
+    const existingEventParticipation = await eventParticipationService.getEventParticipation(event.get("id"), user.id);
     await eventParticipationService.setStreamingPreferences(event, user, {
-      streamerStatus: "requested",
+      streamerStatus: existingEventParticipation?.streamerStatus || "requested",
       streamerDescription
     });
 
