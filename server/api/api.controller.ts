@@ -17,7 +17,6 @@ import { CustomRequest, CustomResponse } from "server/types";
 import * as url from "url";
 import userService from "../user/user.service";
 import constants from "server/core/constants";
-import settings from "server/core/settings";
 
 type Json = Record<string, any>;
 

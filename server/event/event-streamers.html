@@ -72,7 +72,7 @@ h1 {
           <div class="card mb-4 {{ eventParticipation.streamerStatus }}">
             <div class="card-header">{{ userMacros.userThumb(eventParticipation.user, { fullWidth: true }) }}</div>
 
-            {% if currentlyLiveUserIds and currentlyLiveUserIds.includes(eventParticipation.userId) %}
+            {% if currentlyLiveUserIds.includes(eventParticipation.userId) %}
               <div id="twitch-{{ eventParticipation.userId }}-embed"></div>
               <script type="text/javascript">
                 new Twitch.Embed("twitch-{{ eventParticipation.userId }}-embed", {
