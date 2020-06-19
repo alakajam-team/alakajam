@@ -14,7 +14,7 @@ There are three divisions available to contestants:
 * **Team**, in which any number of persons can gather to make a game in 72 hours ;
 * **Unranked**, a more open division, useful for those not interested in the competition, or feel like its constraints are too restrictive for them.
 
-For your game to qualify for the streamer competition, you are encouraged make it **support high scores**. Leaderboards are not required, but players should be able to screenshot their scores easily.
+For your game to qualify for the streamer competition, you are encouraged to make it **support high scores**. Leaderboards are not required, but players should be able to screenshot their scores easily.
 
 See the **What is allowed?** section below for details regarding asset reuse, fixing bugs after the jam, etc.
 
