@@ -25,7 +25,7 @@ export class TwitchService {
       try {
         const eventParticipations = await eventParticipationService.getEventParticipations(event, { filter: "streamers" });
         const streamerChannels = eventParticipations
-          .map(ep => ep.user.details.social_links.twitch)
+          .map(ep => ep.user.details.social_links?.twitch)
           .filter(channel => Boolean(channel));
 
         const userByChannelName = {};
