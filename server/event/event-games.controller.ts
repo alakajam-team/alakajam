@@ -131,7 +131,12 @@ export async function handleGameSearch(
   if (!event) {
     event = res.locals.event;
   }
-  searchOptions.eventId = event ? event.get("id") : null;
+
+  if (event) {
+    searchOptions.eventId = event.get("id");
+  } else if (req.query.eventId === "none") {
+    searchOptions.eventId = null;
+  }
 
   // Sorting
   if (event && event.get("status_results") !== enums.EVENT.STATUS_RESULTS.RESULTS) {
