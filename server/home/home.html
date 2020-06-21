@@ -143,12 +143,13 @@
             <div id="twitch-featured-embed"></div>
             <script src="https://embed.twitch.tv/embed/v1.js"></script>
             <script type="text/javascript">
-              new Twitch.Embed("twitch-featured-embed", {
+              const embed = new Twitch.Embed("twitch-featured-embed", {
                 width: '100%',
                 height: 250,
                 layout: 'video',
                 channel: "{{ featuredStreamer.details.social_links.twitch }}"
               });
+              embed.setMuted(true);
             </script>
             <div class="my-1">
               {{ userMacros.userThumb(featuredStreamer) }}
