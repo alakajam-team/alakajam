@@ -15,7 +15,7 @@ Here is a selection of the most useful assets from the kit.
 
 ### Logos
 
-[Original SVG logo](https://static.alakajam.com/static/presskit/images/jamician-big.png) (Fredoka One font required)
+[Original SVG logo](https://static.alakajam.com/static/images/logo.svg) (Fredoka One font required)
 
 <a href="https://static.alakajam.com/static/presskit/images/logo.png"><img src="https://static.alakajam.com/static/presskit/images/logo.png" width="200"/></a> <a href="https://static.alakajam.com/static/presskit/images/avatar.png"><img src="https://static.alakajam.com/static/presskit/images/avatar.png" width="200"/></a>
 
@@ -38,5 +38,5 @@ Here is a selection of the most useful assets from the kit.
 
 ### Sounds
 
-[Main theme](https://static.alakajam.com/static/presskit/sounds/RoccoW-SuperBluesBros_Banana_Blitz.mp3)  
-[Jingle](https://static.alakajam.com/static/presskit/sounds/Alakajam-Jingle.mp3)
+[Main theme](https://static.alakajam.com/static/presskit/sounds/RoccoW-SuperBluesBros_Banana_Blitz.mp3) (<a href="https://roccow.bandcamp.com/track/superbluesbros-banana-blitz-2">SuperBluesBros Banana Blitz</a> by <a href="https://roccow.bandcamp.com/">RoccoW</a>, CC BY-SA 3.0)   
+[Jingle](https://static.alakajam.com/static/presskit/sounds/Alakajam-Jingle.wav) (short edit of the same song)
