@@ -111,10 +111,30 @@
     flex:1;
   }
   
+
+  &__footer {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 6px 0 10px 0;
+    margin: 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    color: $text-light;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    & .fas {
+      margin-left: 3px;
+    }
+
+  }
+
   &__event {
-    float: left;
+    flex: 2;
     color: $text-light;
     font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
     
     & a {
       font-weight: bold;
@@ -126,17 +146,9 @@
     }
   }
 
-  &__footer {
+  &__icons {
+    flex: 1;
     text-align: right;
-    padding: 6px 0 10px 0;
-    margin: 0 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    color: $text-light;
-
-    & .fas {
-      margin-left: 3px;
-    }
   }
 
   &__karma {
