@@ -75,7 +75,7 @@ h1 {
             {% if currentlyLiveUserIds.includes(eventParticipation.userId) %}
               <div id="twitch-{{ eventParticipation.userId }}-embed"></div>
               <script type="text/javascript">
-                const embed = new Twitch.Embed("twitch-{{ eventParticipation.userId }}-embed", {
+                var embed = new Twitch.Embed("twitch-{{ eventParticipation.userId }}-embed", {
                   width: '100%',
                   height: 200,
                   layout: 'video',
