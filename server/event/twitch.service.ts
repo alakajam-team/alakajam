@@ -1,6 +1,6 @@
 import { BookshelfModel } from "bookshelf";
 import { clamp } from "lodash";
-import twitch, { User } from "twitch";
+import twitch, { User, HelixStream } from "twitch";
 import eventParticipationService from "./dashboard/event-participation.service";
 import cache, { TTL_ONE_MINUTE } from "server/core/cache";
 import config from "server/core/config";
@@ -27,10 +27,9 @@ export class TwitchService {
         const streamerChannels = eventParticipations
           .map(ep => ep.user.details.social_links?.twitch)
           .filter(channel => Boolean(channel));
-
         const userByChannelName = {};
         for (const ep of eventParticipations) {
-          const twitchChannel = ep.user.details.social_links.twitch;
+          const twitchChannel = ep.user.details.social_links?.twitch;
           if (twitchChannel) {
             userByChannelName[twitchChannel.toLowerCase()] = ep.user;
           }
@@ -45,12 +44,16 @@ export class TwitchService {
     }, TTL_ONE_MINUTE);
   }
 
-  private async listCurrentLiveStreams(channels: string[]) {
-    const streams = await this.twitchClient.helix.streams.getStreams({
-      userName: channels,
-      limit: clamp(channels.length, 1, 100).toString()
-    });
-    return streams.data;
+  private async listCurrentLiveStreams(channels: string[]): Promise<HelixStream[]> {
+    if (channels.length > 0) {
+      const streams = await this.twitchClient.helix.streams.getStreams({
+        userName: channels,
+        limit: clamp(channels.length, 1, 100).toString()
+      });
+      return streams.data;
+    } else {
+      return [];
+    }
   }
 
 }
