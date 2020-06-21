@@ -16,6 +16,7 @@ import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventParticipationService from "server/event/dashboard/event-participation.service";
 import twitchService from "server/event/twitch.service";
+import { shuffle } from "lodash";
 
 interface HomeContext {
   featuredPost?: PostBookshelfModel;
@@ -61,7 +62,7 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       res.locals.eventParticipation = eventParticipation;
       res.locals.hasJoinedEvent = hasJoinedEvent;
       res.locals.inviteToJoin = joinEnabled && !hasJoinedEvent;
-      res.locals.featuredStreamer = liveUsers.length > 0 ? liveUsers[0] : undefined;
+      res.locals.featuredStreamer = liveUsers.length > 0 ? shuffle(liveUsers)[0] : undefined;
     });
   } else {
     res.locals.hasJoinedEvent = false;
