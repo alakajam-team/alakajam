@@ -20,6 +20,10 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
   const currentlyLiveUserIds = (await twitchService.listCurrentLiveUsers(event)).map(liveUser => liveUser.id);
 
   eventParticipations.sort((ep1, ep2) => {
+    if (currentlyLiveUserIds.includes(ep1.userId) !== currentlyLiveUserIds.includes(ep2.userId)) {
+      // Show live streamers first
+      return currentlyLiveUserIds.includes(ep1.userId) ? -1 : 1;
+    }
     if (Boolean(ep1.streamerDescription) !== Boolean(ep2.streamerDescription)) {
       // Show the streamers who set their descriptions first
       return Boolean(ep1.streamerDescription) ? -1 : 1;

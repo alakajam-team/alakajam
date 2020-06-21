@@ -1,10 +1,11 @@
 import { BookshelfModel } from "bookshelf";
 import { clamp } from "lodash";
-import twitch, { User, HelixStream } from "twitch";
-import eventParticipationService from "./dashboard/event-participation.service";
 import cache, { TTL_ONE_MINUTE } from "server/core/cache";
 import config from "server/core/config";
 import log from "server/core/log";
+import { User } from "server/entity/user.entity";
+import twitch, { HelixStream } from "twitch";
+import eventParticipationService from "./dashboard/event-participation.service";
 
 export class TwitchService {
 
@@ -27,7 +28,7 @@ export class TwitchService {
         const streamerChannels = eventParticipations
           .map(ep => ep.user.details.social_links?.twitch)
           .filter(channel => Boolean(channel));
-        const userByChannelName = {};
+        const userByChannelName: Record<string, User> = {};
         for (const ep of eventParticipations) {
           const twitchChannel = ep.user.details.social_links?.twitch;
           if (twitchChannel) {
