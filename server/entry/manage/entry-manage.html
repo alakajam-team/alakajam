@@ -156,7 +156,8 @@
             {% if not external %}
             <p><small class="form-text text-muted">
               {% if event.get('status_entry') === 'open' %}
-                Check the <a href="/article/docs/alakajam-competition-rules">Docs section</a> for detailed rules on each division.
+                {% set rulesLink = routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules') %}
+                Check the <a href="{{ rulesLink if rulesLink !== 'off' else '/article/docs' }}">Docs section</a> for detailed rules on each division.
                 {{ 'Only the entry owner can change this setting.' if not isEntryOwner }}
               {% else %}
               Divisions can no longer be changed.
