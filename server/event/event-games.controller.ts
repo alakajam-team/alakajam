@@ -127,18 +127,17 @@ export async function handleGameSearch(
   }
 
   // Event
-  searchOptions.sortBy = "hotness";
-  if (req.query.eventId === "none") {
-    searchOptions.eventId = null;
-  } else if (forms.isId(req.query.eventId)) {
-    searchOptions.eventId = forms.parseInt(req.query.eventId);
-  } else if (req.query.eventId === undefined && res.locals.event) {
-    searchOptions.eventId = res.locals.event.get("id");
-  } else if (req.query.eventId === undefined && res.locals.featuredEvent &&
-      [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
-        .includes(res.locals.featuredEvent.get("status_results"))) {
+  let event = forms.isId(req.query.eventId) ? await eventService.findEventById(forms.parseInt(req.query.eventId)) : undefined;
+  if (!event) {
+    event = res.locals.event;
+  }
+  searchOptions.eventId = event ? event.get("id") : null;
+
+  // Sorting
+  if (event && event.get("status_results") !== enums.EVENT.STATUS_RESULTS.RESULTS) {
     searchOptions.sortBy = "karma";
-    searchOptions.eventId = res.locals.featuredEvent.get("id");
+  } else {
+    searchOptions.sortBy = "hotness";
   }
 
   // Hide rated/commented
