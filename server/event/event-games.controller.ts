@@ -75,24 +75,22 @@ export async function handleGameSearch(
   searchOptions.pageSize = 20;
   searchOptions.page = 1;
   if (forms.isId(req.query.p)) {
-    searchOptions.page = parseInt(req.query.p, 10);
+    searchOptions.page = forms.parseInt(req.query.p);
   }
 
   // Text search
-  searchOptions.search = forms.sanitizeString(req.query.search);
+  searchOptions.search = forms.sanitizeString(req.query.search?.toString());
 
   // User search
   if (forms.isId(req.query.user)) {
-    searchOptions.userId = parseInt(req.query.user, 10);
+    searchOptions.userId = forms.parseInt(req.query.user);
     searchOptions.user = await userService.findById(searchOptions.userId);
   }
 
   // Division
   if (req.query.divisions) {
-    if (typeof req.query.divisions === "string") {
-      req.query.divisions = [req.query.divisions];
-    }
-    searchOptions.divisions = req.query.divisions.map(forms.sanitizeString);
+    const divisions = Array.isArray(req.query.divisions) ? req.query.divisions : [req.query.divisions];
+    searchOptions.divisions = divisions.map(division => forms.sanitizeString(division?.toString()));
 
     // Hack for Kajam's ranked division
     if (searchOptions.divisions.includes(enums.DIVISION.SOLO) ||
@@ -106,9 +104,10 @@ export async function handleGameSearch(
 
   // Platforms
   if (req.query.platforms) {
-    let platforms = (Array.isArray(req.query.platforms)) ? req.query.platforms : [req.query.platforms];
-    platforms = platforms.map((str) => parseInt(str, 10));
-    if (platforms.includes(NaN)) {
+    const platformsRaw = (Array.isArray(req.query.platforms)) ? req.query.platforms : [req.query.platforms];
+    let platforms = platformsRaw.map(platform => platform.toString());
+    const platformsIds = platforms.map((str) => forms.parseInt(str));
+    if (platformsIds.includes(NaN)) {
       platforms = [];
       log.error("Invalid platform query: " + req.query.platforms);
     }
@@ -117,8 +116,8 @@ export async function handleGameSearch(
 
   // Tags
   if (req.query.tags) {
-    let tagIds = (Array.isArray(req.query.tags)) ? req.query.tags : [req.query.tags];
-    tagIds = tagIds.map((str) => parseInt(str, 10));
+    const tagsRaw = (Array.isArray(req.query.tags)) ? req.query.tags : [req.query.tags];
+    let tagIds = tagsRaw.map((str) => forms.parseInt(str));
     if (tagIds.includes(NaN)) {
       tagIds = [];
       log.error("Invalid tag query: " + req.query.tags);
@@ -132,7 +131,7 @@ export async function handleGameSearch(
   if (req.query.eventId === "none") {
     searchOptions.eventId = null;
   } else if (forms.isId(req.query.eventId)) {
-    searchOptions.eventId = req.query.eventId;
+    searchOptions.eventId = forms.parseInt(req.query.eventId);
   } else if (req.query.eventId === undefined && res.locals.event) {
     searchOptions.eventId = res.locals.event.get("id");
   } else if (req.query.eventId === undefined && res.locals.featuredEvent &&

@@ -29,8 +29,8 @@ export async function viewEventResults(req: CustomRequest, res: CustomResponse<E
   // Parse query
   let sortedBy = 1;
   let division = eventService.getDefaultDivision(res.locals.event);
-  if (Object.keys(res.locals.event.get("divisions")).includes(req.query.division)) {
-    division = req.query.division;
+  if (Object.keys(res.locals.event.get("divisions")).includes(req.query.division?.toString())) {
+    division = req.query.division.toString();
   }
   let context;
   if (division === enums.DIVISION.UNRANKED) {
@@ -48,8 +48,11 @@ export async function viewEventResults(req: CustomRequest, res: CustomResponse<E
       };
     });
   } else {
-    if (forms.isInt(req.query.sortBy) && req.query.sortBy > 0 && req.query.sortBy <= constants.MAX_CATEGORY_COUNT) {
-      sortedBy = parseInt(req.query.sortBy, 10);
+    if (forms.isInt(req.query.sortBy)) {
+      const parsedSortedBy = forms.parseInt(req.query.sortBy);
+      if (parsedSortedBy > 0 && parsedSortedBy <= constants.MAX_CATEGORY_COUNT) {
+        sortedBy = parsedSortedBy;
+      }
     }
 
     // Gather entries rankings

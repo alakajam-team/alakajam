@@ -10,7 +10,7 @@ import { DashboardLocals } from "./dashboard.middleware";
 export async function dashboardPosts(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
   let currentPage = 1;
   if (forms.isId(req.query.p)) {
-    currentPage = parseInt(req.query.p, 10);
+    currentPage = forms.parseInt(req.query.p);
   }
 
   let newPostEvent = await eventService.findEventByStatus("open");

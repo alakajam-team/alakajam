@@ -10,13 +10,13 @@ import postService from "./post.service";
  */
 export async function postsView(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   // Fetch posts
-  let specialPostType = forms.sanitizeString(req.query.special_post_type) || null;
+  let specialPostType = forms.sanitizeString(req.query.special_post_type?.toString()) || null;
   if (specialPostType === "all") {
     specialPostType = undefined;
   }
-  const eventId = forms.sanitizeString(req.query.event_id) || undefined;
-  const userId = forms.sanitizeString(req.query.user_id) || undefined;
-  const currentPage = forms.isId(req.query.p) ? parseInt(req.query.p, 10) : 1;
+  const eventId = forms.sanitizeString(req.query.event_id?.toString()) || undefined;
+  const userId = forms.sanitizeString(req.query.user_id?.toString()) || undefined;
+  const currentPage = forms.isId(req.query.p) ? forms.parseInt(req.query.p) : 1;
   const postsCollection = await postService.findPosts({
     specialPostType,
     eventId,

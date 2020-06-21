@@ -53,8 +53,8 @@ export async function getEventTimeline(req: CustomRequest, res: CustomResponse<C
 
   let page = 0;
   try {
-    if (req.query.page) {
-      page = Math.max(0, parseInt(req.query.page, 10));
+    if (forms.isInt(req.query.page)) {
+      page = Math.max(0, forms.parseInt(req.query.page));
     }
   } catch (e) {
     json = { error: "Invalid page number" };
@@ -307,7 +307,7 @@ export async function getUserSearch(req: CustomRequest, res: CustomResponse<Comm
   let page = 0;
   try {
     if (req.query.page) {
-      page = Math.max(0, parseInt(req.query.page, 10));
+      page = Math.max(0, forms.parseInt(req.query.page));
     }
   } catch (e) {
     json = { error: "Invalid page number" };
@@ -316,7 +316,7 @@ export async function getUserSearch(req: CustomRequest, res: CustomResponse<Comm
 
   if (!("error" in json)) {
     const users = await userService.findUsers({
-      search: req.query.title,
+      search: req.query.title?.toString(),
       pageSize: 30,
       page,
     });

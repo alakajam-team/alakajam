@@ -95,7 +95,7 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
       }
 
       if (!errorMessage && req.query.redirectTo) {
-        res.redirect(req.query.redirectTo);
+        res.redirect(req.query.redirectTo?.toString());
         return;
       }
     }

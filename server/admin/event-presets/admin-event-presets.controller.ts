@@ -12,11 +12,11 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
   let editEventPreset: BookshelfModel | null = null;
   const editEventPresetId = req.query.edit || req.body.id;
   if (forms.isId(editEventPresetId)) {
-    editEventPreset = await eventPresetService.findEventPresetById(parseInt(editEventPresetId, 10));
+    editEventPreset = await eventPresetService.findEventPresetById(forms.parseInt(editEventPresetId));
   } else if (req.query.create !== undefined) {
     let referencePreset = null;
     if (forms.isId(req.query.reference)) {
-      referencePreset = await eventPresetService.findEventPresetById(parseInt(req.query.reference, 10));
+      referencePreset = await eventPresetService.findEventPresetById(forms.parseInt(req.query.reference));
     }
     editEventPreset = eventPresetService.createEventPreset(referencePreset);
   }
