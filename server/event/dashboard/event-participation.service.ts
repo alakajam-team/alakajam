@@ -3,8 +3,13 @@ import cache from "server/core/cache";
 import { EventParticipation, StreamerStatus } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
 import { FindConditions, getRepository, In, Not } from "typeorm";
+import enums from "server/core/enums";
 
 export class EventParticipationService {
+
+  public canJoinEvent(event: BookshelfModel): boolean {
+    return event.get("status") !== enums.EVENT.STATUS.CLOSED;
+  }
 
   public async joinEvent(event: BookshelfModel, user: User): Promise<void> {
     const epRepository = getRepository(EventParticipation);
@@ -34,11 +39,16 @@ export class EventParticipationService {
     });
   }
 
-  public async hasJoinedEvent(event: BookshelfModel, user: User): Promise<boolean> {
-    if(!user) {
+  public async hasJoinedEvent(event: BookshelfModel, user: User, options: { asStreamer?: boolean } = {}): Promise<boolean> {
+    if (!user) {
       return false;
     }
-    return (await this.getEventParticipation(event.get("id"), user.id)) !== undefined;
+    const eventParticipation = await this.getEventParticipation(event.get("id"), user.id);
+    if (options.asStreamer === true) {
+      return eventParticipation.isStreamer;
+    } else {
+      return Boolean(eventParticipation);
+    }
   }
 
   public async setStreamingPreferences(event: BookshelfModel, user: User,

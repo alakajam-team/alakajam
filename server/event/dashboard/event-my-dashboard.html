@@ -63,9 +63,9 @@
             <form method="post" class="action-banner text-center">
               {{ csrfToken() | safe }}
               
+              {% set socialLinks = user.related('details').get('social_links') %}
               {% if eventParticipation.isStreamer %}
                 <p>You are entering the event as a streamer!</p>
-                {% set socialLinks = user.related('details').get('social_links') %}
                 {% if socialLinks.twitch %}
                   <span class="alert alert-light">
                     {{ userMacros.twitchLink(user) }}<br />
@@ -83,11 +83,16 @@
                 {% endif %}
                 <a href="{{ routeUrl(event, 'event', 'dashboard-streamer-preferences') }}" class="btn btn-primary">Manage streamer settings</a>
               {% elseif event.get("status") !== 'closed' %}
+                {% if socialLinks.twitch %}
                 <input type="hidden" name="is-streamer" value="true" />
                 <button type="submit" name="streamer-preferences" class="btn btn-primary btn-lg">
                   <span class="fas fa-video"></span>
                   Enter as streamer
                 </button>
+                {% else %}
+                  <p>A Twitch channel must be set before joining</p>
+                  <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-primary btn-lg">Manage account settings</a>
+                {% endif %}
               {% else %}
                 <p>Streamer entries are now closed.</p>
                 <p><a href="/events" class="btn btn-secondary">Explore our upcoming events</a></p>

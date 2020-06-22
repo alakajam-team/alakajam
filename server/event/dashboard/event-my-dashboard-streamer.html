@@ -24,9 +24,9 @@
         {{ csrfToken() | safe }}
     
         <div class="form-group">
-          <label for="twitch">Twitch username</label>
+          <label for="twitch"><img src="{{ staticUrl('/static/images/social/twitch.png') }}" class="no-border" style="width: 20px" /> Twitch username</label>
           <input type="text" class="form-control form-control-lg" id="twitch" name="twitch" value="{{ user.details.social_links.twitch }}" required />
-          <p class="legend mb-0">This field can also be set from your <a href="{{ routeUrl(user, 'user', 'settings') }}">user settings</a>.</p>
+          <p class="legend mb-0">This field can also be set from your <a href="{{ routeUrl(user, 'user', 'settings') }}">account settings</a>.</p>
         </div>
         
         <div class="form-group">
