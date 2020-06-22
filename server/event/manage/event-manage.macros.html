@@ -100,6 +100,8 @@
     <div class="form-group">
       <label for="status-entry"><b>Entry submission status</b></label>
       <div class="form-inline">
+      {{ formMacros.radio('status-entry', 'disabled', 'Disabled', 
+        event.get('status_entry') if event) }}
       {{ formMacros.radio('status-entry', 'off', 'Off', 
         event.get('status_entry') if event else 'off') }}
       {{ formMacros.radio('status-entry', 'open', 'Open',

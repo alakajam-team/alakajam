@@ -18,6 +18,7 @@ export default {
       RESULTS: "results",
     },
     STATUS_ENTRY: {
+      DISABLED: "disabled",
       OFF: "off",
       OPEN: "open",
       OPEN_UNRANKED: "open_unranked",

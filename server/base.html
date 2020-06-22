@@ -142,7 +142,7 @@
         
         <div class="collapse navbar-collapse" id="navbar-event-dropdown">
           <ul class="navbar-nav">
-            {%- set statusJam = event.get('status_theme') -%}
+            {%- set statusJam = event.get('status_entry') -%}
             {%- set statusTournament = event.get('status_tournament') -%}
             
             {%- if not statusTournament or statusTournament === 'disabled' or event.related('details').get('flags').streamerOnlyTournament -%}<!-- FIXME -->
