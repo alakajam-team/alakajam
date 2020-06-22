@@ -86,7 +86,11 @@ h1 {
             {% else %}
               <div class="card-body">
                 <div class="mb-2">{{ userMacros.twitchLink(eventParticipation.user) }}</div>
-                {{ eventParticipation.streamerDescription | markdown | safe }}
+                {% if eventParticipation.streamerDescription %}
+                  {{ eventParticipation.streamerDescription | markdown | safe }}
+                {% else %}
+                  <p class="text-center"><i>Stream schedule unknown</i></p>
+                {% endif %}
               </div>
             {% endif %}
 

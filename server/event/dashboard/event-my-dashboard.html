@@ -81,6 +81,9 @@
                 {% else %}
                   <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Unknown Twitch channel</span>
                 {% endif %}
+                {% if not eventParticipation.streamerDescription %}
+                <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Stream schedule not set</span>
+                {% endif %}
                 <a href="{{ routeUrl(event, 'event', 'dashboard-streamer-preferences') }}" class="btn btn-primary">Manage streamer settings</a>
               {% elseif event.get("status") !== 'closed' %}
                 {% if socialLinks.twitch %}
