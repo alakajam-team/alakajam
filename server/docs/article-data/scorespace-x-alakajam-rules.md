@@ -38,7 +38,7 @@ There are additional rules <b>if you submit an project started before the event<
 </details>
 
 &nbsp;  
-*In case of doubts:* Obviously, the rules don't cover every scenario, especially on post-jam changes. In those cases where you want to do something unclear from the rules, and which seems fair to you... *do it*, and just mention it in your game description. After all, this is just an informal competition, we're here to make games and have fun!
+*In case of doubts and mistakes:* Obviously, the rules don't cover every scenario. If you learnt too late about the assets restrictions, or want to do something unclear from the rules... *do what seems fair*, and just be transparent about it in the game description. For the fairness of the competition, the mods may disqualify games whose rules breaches granted them an obvious advantage in terms of ratings. Now whatever happens, let's not overthink things: this is just an informal competition, and we're here to make games and have fun!
 
 ### <a name="rankings"></a>Ratings
 
