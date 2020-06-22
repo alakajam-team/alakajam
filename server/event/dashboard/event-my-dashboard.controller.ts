@@ -30,9 +30,9 @@ export async function postEventDashboard(req: CustomRequest, res: CustomResponse
   const { user, event } = res.locals;
 
   if (req.body["streamer-preferences"] !== undefined) {
-    if (event.get("status_entry") === "closed") {
+    if (event.get("status") === "closed") {
       const eventParticipation = await eventParticipationService.getEventParticipation(event.get("id"), user.id);
-      if (!eventParticipation.isStreamer && req.body["is-streamer"] === "true") {
+      if (!eventParticipation?.isStreamer && req.body["is-streamer"] === "true") {
         res.errorPage(403, "Streamer entries are closed");
       }
     }

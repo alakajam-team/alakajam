@@ -54,7 +54,7 @@ export class TournamentService {
     const eventFlags = event.related<BookshelfModel>("details").get("flags") as EventFlags;
     if (eventFlags.streamerOnlyTournament) {
       const eventParticipation = await eventParticipationService.getEventParticipation(event.get("id"), userId);
-      return eventParticipation?.isStreamer;
+      return eventParticipation?.isApprovedStreamer;
     } else {
       return true;
     }
