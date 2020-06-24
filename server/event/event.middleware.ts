@@ -4,12 +4,19 @@ import { CommonLocals } from "server/common.middleware";
 import eventService from "server/event/event.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import eventParticipationService from "./dashboard/event-participation.service";
+import { EventParticipation } from "server/entity/event-participation.entity";
 
 export interface EventLocals extends CommonLocals {
   /**
    * The current browsed event.
    */
   readonly event: BookshelfModel;
+
+  /**
+   * The current user's participation to the browsed event.
+   */
+  readonly eventParticipation: BookshelfModel;
 
   /**
    * The latest announcement for the current event.
@@ -22,11 +29,12 @@ export interface EventLocals extends CommonLocals {
  */
 export async function eventMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction) {
   if (!req.baseUrl.startsWith("/external-entry")) {
-    const event = await eventService.findEventByName(req.params.eventName);
-    res.locals.event = event;
+    const event =  res.locals.event = await eventService.findEventByName(req.params.eventName);
+
     if (!event) {
       res.errorPage(404, "Event not found");
       return;
+
     } else {
       if (!res.locals.pageTitle) {
         res.locals.pageTitle = event.get("title");
@@ -37,10 +45,12 @@ export async function eventMiddleware(req: CustomRequest, res: CustomResponse<Co
       }
 
       const announcementTask = postService.findLatestAnnouncement({ eventId: event.id })
-        .then((announcement) => { res.locals.latestEventAnnouncement = announcement; });
+        .then(announcement => res.locals.latestEventAnnouncement = announcement);
       const userShortcutTasks = loadUserShortcutsContext(res, res.locals.event);
+      const eventParticipationTask = eventParticipationService.getEventParticipation(event.id, res.locals.user?.id)
+        .then(eventParticipation => res.locals.eventParticipation = eventParticipation);
 
-      await Promise.all([announcementTask, userShortcutTasks]);
+      await Promise.all([announcementTask, userShortcutTasks, eventParticipationTask]);
     }
   }
   next();

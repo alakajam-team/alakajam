@@ -5,17 +5,20 @@
  * - The yellow moderator bar
  */
 
+@import "./variables.scss";
+
 $navbar-height: 60px;
 $navbar-mobile-height: 50px;
 $navbar-mobile-item-height: 40px;
 $navbar-brand-height: 50px;
-$event-navbar-height: 50px;
+$event-navbar-header-height: 40px;
+$event-navbar-tabs-height: 50px;
 
 .navbar#main-header {
   @include header-shadow;
   padding: 0;
   font-size: 1.1rem;
-  
+
   @include media-breakpoint-up(md) {
     height: $navbar-height;
 
@@ -34,21 +37,21 @@ $event-navbar-height: 50px;
     float: left;
     width: 220px;
     height: $navbar-brand-height;
-    background: url('/static/images/brand.svg');
+    background: url("/static/images/brand.svg");
     padding: 0;
   }
-    
+
   & .navbar-brand__hover {
     width: 1px; /* force preload */
     height: 1px;
-    background: url('/static/images/brand_hover.svg');
+    background: url("/static/images/brand_hover.svg");
   }
-  
+
   & .navbar-brand:hover .navbar-brand__hover {
     width: 220px;
     height: $navbar-brand-height;
   }
-  
+
   @include media-breakpoint-down(md) {
     & .navbar-brand {
       width: 42px;
@@ -60,7 +63,7 @@ $event-navbar-height: 50px;
 
   /* Main header > Nav links */
 
-  & #navbar-dropdown > .navbar-nav {
+  & #event-navbar-dropdown > .navbar-nav {
     & > .nav-item {
       height: $navbar-mobile-item-height;
 
@@ -72,11 +75,12 @@ $event-navbar-height: 50px;
         background-color: white;
 
         & > .nav-link {
-        color: $main;
+          color: $main;
         }
       }
 
-      &, &.active {
+      &,
+      &.active {
         @include transition;
         font-size: 1.1rem;
         padding: 0 10px;
@@ -98,7 +102,7 @@ $event-navbar-height: 50px;
       }
       &.button-item {
         padding-right: 0;
-        
+
         &:hover {
           background-color: transparent;
         }
@@ -127,7 +131,7 @@ $event-navbar-height: 50px;
     margin-top: -7px;
     margin-right: 15px;
   }
-  
+
   & .navbar-profile {
     font-weight: bold;
   }
@@ -158,87 +162,177 @@ $event-navbar-height: 50px;
     font-size: 0.8rem;
     font-weight: bold;
     line-height: 20px;
-    
+
     &.unread {
       background-color: $alt;
     }
   }
-
 }
 
 .event-navbar {
   @include header-shadow;
   @include transition;
-  box-sizing: border-box;
-  width: 100%;
   background-color: white;
-  color: $alt;
-  position: relative;
-
-  @include media-breakpoint-up(md) {
-    height: $event-navbar-height;
-  }
+  /*box-sizing: border-box;
+  width: 100%;
+  color: $alt;*/
+}
+.event-navbar-logo {
+  width: 90px;
+  height: 90px;
+  margin-right: 20px;
+  background-size: contain;
+  background-position: left center;
+  background-repeat: no-repeat;
+}
+.event-navbar-contents {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+}
+.event-navbar-header {
+  width: 100%;
+  height: $event-navbar-header-height;
+  display: flex;
+  margin-top: 10px;
 
   & .navbar-toggler {
     float: left !important;
     margin-right: 10px;
   }
-  
-  &__info {
+}
+.event-navbar-title {
+  flex: 1;
+  display: flex;
+
+  &__text {
+    display: inline-block;
+    flex: 1;
+  }
+
+  &__name {
+    @include alt-font;
+    font-size: 2.0rem;
+    line-height: 1.0rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-right: 10px;
+  }
+
+  &__dates {
+    @include main-font;
+    display: inline-block;
+    font-size: 0.9rem;
+    line-height: 1.5rem;
+    color: $text-light;
+    margin-top: -2px;
+  }
+}
+.event-navbar-actions {
+  text-align: right;
+  line-height: $event-navbar-header-height;
+}
+.event-navbar-tabs {
+  width: 100%;
+  line-height: $event-navbar-tabs-height;
+  font-size: 1.4rem;
+  margin-top: 10px;
+
+  @include media-breakpoint-up(sm) {
+    height: $event-navbar-tabs-height;
+  }
+
+  &__separator {
+    border-left: solid 1px $alt-lighter;
+    margin: 8px 10px;
+
+    @include media-breakpoint-down(sm) {
+      display: none;
+    }
+  }
+}
+.event-navbar-tabs {
+  margin-top: 5px;
+
+  & .navbar-nav {
+    height: $event-navbar-tabs-height;
+    line-height: $event-navbar-tabs-height;
+  }
+
+  & .nav-item:first-child .nav-link {
+    padding-left: 0 !important;
+  }
+}
+.event-navbar-tabs .event-navbar-tab {
+  font-size: 1.0rem;
+  height: $event-navbar-tabs-height;
+  line-height: $event-navbar-tabs-height;
+  color: $alt !important;
+  padding: 0 10px !important;
+
+  &:hover {
+    color: $alt-light !important;
+    border-bottom-color: $alt-light !important;
+  }
+
+  &.disabled {
+    color: $neutral-light !important;
+  }
+  &.active {
+    border-bottom: 4px solid $alt;
+  }
+
+  & .btn {
+    margin-top: -3px;
+  }
+
+  &__icon {
+
+  }
+
+  &__label {
+  }
+
+}
+
+// TODO Migrate
+
+.event-navbar {
+  padding-bottom: 0;
+
+  & #event-navbar-info {
     display: inline-block;
     margin-right: 30px;
     vertical-align: top;
   }
   @media (max-width: 767px) {
-    &__info {
+    & #event-navbar-info {
       margin-right: 0;
       padding-top: 2px;
     }
   }
-
-  &__name {
-    @include alt-font;
-    font-size: 1.3rem;
-    line-height: 1.3rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    margin-top: 2px;
-  }
-  &__dates {
-    @include main-font;
-    display: block;
-    font-size: .8rem;
-    color: $text-light;
-    margin-top: -2px;
-  }
-  
+/*
   &__links {
     vertical-align: top;
     display: inline-block;
-    line-height: $event-navbar-height;
+    line-height: $event-navbar-tabs-height;
   }
   @media (max-width: 767px) {
     &__links {
       float: left;
     }
-  }
-
+  }*/
+/*
   &__link {
     display: inline-block;
     box-sizing: border-box;
     vertical-align: top;
     padding: 0 15px;
     margin: 0;
-    height: $event-navbar-height;
-    line-height: $event-navbar-height;
-    font-size: 1.3rem;
+    height: $event-navbar-tabs-height;
+    line-height: $event-navbar-tabs-height;
     text-align: center;
-    color: $alt !important;
-
-    &.disabled {
-     color: $neutral-light !important;
-    }
 
     @media (min-width: 768px) {
       font-size: 1rem;
@@ -249,18 +343,18 @@ $event-navbar-height: 50px;
         display: block;
       }
     }
-    
+
     @media (min-width: 992px) {
       text-align: left;
-      line-height: $event-navbar-height;
+      line-height: $event-navbar-tabs-height;
       font-size: 1rem;
       padding: 0 11px;
-      
+
       & .fas {
         display: inline;
       }
     }
-    
+
     &:hover {
       background-color: $alt-transparent;
     }
@@ -276,8 +370,8 @@ $event-navbar-height: 50px;
         background-color: inherit;
       }
     }
-    
-    &.home {
+
+    /*  &.home {
       padding-top: 4px;
       line-height: 1.3rem;
       display: flex;
@@ -296,12 +390,12 @@ $event-navbar-height: 50px;
       @media (min-width: 992px) {
         max-width: 300px;
       }
-    }
-  }
-    
+    }*/
+  //}
+/*
   &__link-label {
     color: $alt;
-  }
+  }*/
 }
 
 .bg-moderation {

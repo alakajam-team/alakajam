@@ -64,7 +64,7 @@ export class EventParticipationService {
     }
   }
 
-  public async getEventParticipation(eventId: number, userId: number): Promise<EventParticipation | undefined> {
+  public async getEventParticipation(eventId: number, userId?: number): Promise<EventParticipation | undefined> {
     if (userId) {
       const epRepository = getRepository(EventParticipation);
       return epRepository.findOne({

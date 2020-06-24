@@ -33,10 +33,15 @@
 {% macro eventLink (event, statusField, targetPath, label, icon, currentPath, options = {}) %}
 {%- if not statusField or event.get(statusField) !== 'disabled' -%}
   {%- set targetUrl = targetPath if targetPath.includes('/') else routeUrl(event, 'event', targetPath) -%}
+  {%- set active = currentPath and currentPath.indexOf(targetUrl) === 0 -%}
   <li class="nav-item">
-    <a href="{{ targetUrl }}" class="nav-link event-navbar__link {{ 'active' if currentPath and currentPath.indexOf(targetUrl) === 0 }} 
+    <a href="{{ targetUrl }}" class="nav-link event-navbar-tab 
+        {{ 'active' if active and not options.asButton }} 
         {{ 'disabled' if statusField and (not (event.get(statusField)|int)) and (event.get(statusField) === 'off' or options.requiredValue and not options.requiredValue.includes(event.get(statusField))) }}">
-      <span class="fas fa-{{ icon }}"></span> <span>{{ label | safe }}</span>
+      {% if options.asButton %}<span class="btn btn-{{ 'outline-' if active }}alt">{% endif %}
+      <span class="event-navbar-tab__icon fas fa-{{ icon }}"></span> 
+      <span class="event-navbar-tab__label">{{ label | safe }}</span>
+      {% if options.asButton %}</span>{% endif %}
     </a>
   </li>
 {%- endif -%}
@@ -119,54 +124,68 @@
   {# ==== Event header ==== #}
 
   {% if inEvent %}
-    <nav class="event-navbar navbar navbar-light navbar-expand-md justify-content-between">
+    <nav class="event-navbar navbar navbar-light navbar-expand-md">
       <div class="container">
-        <div class="event-navbar__info">
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-event-dropdown" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle event navigation">
-            <i class="fas fa-caret-down"></i>
-          </button>
-
-          {% set eventHomePah = routeUrl(event, 'event') %}
-          <a href="{{ eventHomePah }}" class="event-navbar__link home {{ 'active' if path and path === eventHomePath }}">
-            <span class="fa fa-home"></span>
-            <span>
-              <span class="event-navbar__name">
-                {{ event.get('title') }}
-              </span>
-              <span class="event-navbar__dates">
-                {{ event.get('display_dates') }}
-              </span>
-            </span>
-          </a>
+        {% set eventLogo = event.get('logo') %}
+        <div class="event-navbar-logo"
+          style="background-image: url('{{ pictureUrl(eventLogo, event) if eventLogo else staticUrl('/static/images/favicon196.png') }}')">
         </div>
-        
-        <div class="collapse navbar-collapse" id="navbar-event-dropdown">
-          <ul class="navbar-nav">
-            {%- set statusJam = event.get('status_entry') -%}
-            {%- set statusTournament = event.get('status_tournament') -%}
-            
-            {%- if not statusTournament or statusTournament === 'disabled' or event.related('details').get('flags').streamerOnlyTournament -%}<!-- FIXME -->
-              {{- eventLink(event, null, 'dashboard', 'Dashboard', 'play-circle', path) -}}
-              <li class="mx-3 my-2" style="border-left: solid 1px"></li>
-            {%- endif -%}
+        <div class="event-navbar-contents">
+          <div class="event-navbar-header">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#event-navbar-tabs" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle event navigation">
+              <i class="fas fa-caret-down"></i>
+            </button>
 
-            {%- if not event.related('details').get('flags').hideStreamerMenu -%}
-              {{- eventLink(event, null, 'streamers', 'Streamers', 'tv', path) -}}
-            {% endif %}
-            
-            {%- if statusJam and statusJam !== 'disabled' -%}
-              {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'lightbulb', path) -}}
-              {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'gamepad', path) -}}
-              {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: ['results'] }) -}}
-            {%- endif -%}
-            {%- if statusTournament and statusTournament !== 'disabled' -%}
-              {%- if statusJam and statusJam !== 'disabled' -%}
-                <li class="mx-3 my-2" style="border-left: solid 1px"></li>
+            {% set eventHomePath = routeUrl(event, 'event') %}
+            <a class="event-navbar-title" href="{{ eventHomePath }}">
+              {% set eventLogo = event.get('logo') %}
+              <span class="event-navbar-title__text">
+                <span class="event-navbar-title__name">
+                  {{ event.get('title') }}
+                </span>
+                <span class="event-navbar-title__dates">
+                  <span class="fas fa-calendar"></span>
+                  {{ event.get('display_dates') -}}
+                  <br />
+                  {%- if event.get('display_theme') %}
+                    <span class="fas fa-flag"></span>
+                    <b>Theme: </b>{{ event.get('display_theme') }}
+                  {% endif %}
+                </span>
+              </span>
+            </a>
+
+            <div class="event-navbar-actions">
+            </div>
+          </div>
+          <div class="event-navbar-tabs collapse navbar-collapse" id="event-navbar-tabs">
+            <ul class="navbar-nav">
+              {%- set statusJam = event.get('status_entry') -%}
+              {%- set statusTournament = event.get('status_tournament') -%}
+              
+              {%- if not statusTournament or statusTournament === 'disabled' or event.related('details').get('flags').streamerOnlyTournament -%}<!-- FIXME -->
+                {{- eventLink(event, null, 'dashboard', 'Dashboard', 'play-circle', path, { asButton: true }) -}}
+                <li class="event-navbar-tabs__separator"></li>
               {%- endif -%}
-              {{- eventLink(event, 'status_tournament', 'tournament-games', 'Tournament', 'gamepad', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
-              {{- eventLink(event, 'status_tournament', 'tournament-leaderboard', 'Leaderboard', 'th-list', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
-            {%- endif -%}
-          </ul>
+
+              {%- if not event.related('details').get('flags').hideStreamerMenu -%}
+                {{- eventLink(event, null, 'streamers', 'Streamers', 'tv', path) -}}
+              {% endif %}
+              
+              {%- if statusJam and statusJam !== 'disabled' -%}
+                {{- eventLink(event, 'status_theme', 'themes', 'Themes', 'lightbulb', path) -}}
+                {{- eventLink(event, 'status_entry', 'games', 'Games' + (' <span class="count">(' + event.get('entry_count') +')</span>' if event.get('entry_count')), 'gamepad', path) -}}
+                {{- eventLink(event, 'status_results', 'results', 'Results', 'th-list', path, { requiredValue: ['results'] }) -}}
+              {%- endif -%}
+              {%- if statusTournament and statusTournament !== 'disabled' -%}
+                {%- if statusJam and statusJam !== 'disabled' -%}
+                  <li class="event-navbar-tabs__separator"></li>
+                {%- endif -%}
+                {{- eventLink(event, 'status_tournament', 'tournament-games', 'Tournament', 'gamepad', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
+                {{- eventLink(event, 'status_tournament', 'tournament-leaderboard', 'Leaderboard', 'th-list', path, { requiredValue: ['playing', 'closed', 'results'] }) -}}
+              {%- endif -%}
+            </ul>
+          </div>
         </div>
       </div>
     </nav>
