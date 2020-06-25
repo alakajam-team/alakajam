@@ -72,6 +72,20 @@ export class EventService {
   }
 
   /**
+   * @param categoryIndex must be 1-numbered
+   */
+  public getCategoryTitle(event: BookshelfModel, categoryIndex: number): string | undefined {
+    const eventDetails = event.related<BookshelfModel>("details");
+    const categoryTitles = eventDetails.get("category_titles");
+    const flags = eventDetails.get("flags") as EventFlags;
+    if (categoryTitles.length > categoryIndex - 1) {
+      return categoryTitles[categoryIndex - 1];
+    } else if (flags.scoreSpacePodium && categoryIndex === 7) {
+      return "ScoreSpace Awards";
+    }
+  }
+
+  /**
    * Fetches an models.Event by its ID, with all its Entries.
    */
   public async findEventById(id: number): Promise<BookshelfModel> {
