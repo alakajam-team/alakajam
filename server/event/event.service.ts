@@ -23,6 +23,7 @@ import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import { User } from "server/entity/user.entity";
 import postService from "server/post/post.service";
 import { EventFlags } from "server/entity/event-details.entity";
+import { range } from "lodash";
 
 
 /**
@@ -71,18 +72,18 @@ export class EventService {
     return Object.keys(event.get("divisions"))[0];
   }
 
-  /**
-   * @param categoryIndex must be 1-numbered
-   */
-  public getCategoryTitle(event: BookshelfModel, categoryIndex: number): string | undefined {
-    const eventDetails = event.related<BookshelfModel>("details");
-    const categoryTitles = eventDetails.get("category_titles");
-    const flags = eventDetails.get("flags") as EventFlags;
-    if (categoryTitles.length > categoryIndex - 1) {
-      return categoryTitles[categoryIndex - 1];
-    } else if (flags.scoreSpacePodium && categoryIndex === 7) {
-      return "ScoreSpace Awards";
-    }
+  public getCategoryTitles(event: BookshelfModel): Array<string | undefined> {
+    return range(1, constants.MAX_CATEGORY_COUNT + 1)
+      .map(categoryIndex => {
+        const eventDetails = event.related<BookshelfModel>("details");
+        const categoryTitles = eventDetails.get("category_titles");
+        const flags = eventDetails.get("flags") as EventFlags;
+        if (categoryTitles.length > categoryIndex - 1) {
+          return categoryTitles[categoryIndex - 1];
+        } else if (flags.scoreSpacePodium && categoryIndex === 7) {
+          return "ScoreSpace Awards";
+        };
+      });
   }
 
   /**

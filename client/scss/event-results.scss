@@ -136,6 +136,25 @@
     &.ranking-3::after {
       background-position: -256px -320px;
     }
+    &.award::after {
+      background: url('/static/images/trophy.png');
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    & .award-label {
+      @include alt-font;
+      position: absolute;
+      margin-top: -10px;
+      z-index: 1;
+      font-size: 1.8rem;
+      line-height: 2.0rem;
+      text-align: center;
+      display: block;
+      left: 0;
+      right: 0;
+      text-shadow: 2px 2px 2px #f2536d;
+    }
   }
 
   & .entry-thumb {
@@ -233,7 +252,7 @@
     }
 
     /* Per-rating-category medals */
-    $medal-category-y: -240px -273px -307px -341px -375px -409px;
+    $medal-category-y: -240px -273px -307px -341px -375px -409px -240px;
     $medal-ranking-x: -133px -167px -201px;
     @for $category from 1 through length($medal-category-y) {
       @for $ranking from 1 through length($medal-ranking-x) {

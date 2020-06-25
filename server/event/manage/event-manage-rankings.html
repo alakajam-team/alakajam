@@ -11,13 +11,13 @@
     <div class="btn-group" role="group" aria-label="Divisions">
       {% for division, _ in event.get("divisions") %}
         {% if division !== 'unranked' %}
-          <a href="?division={{ divisionQuery }}&categoryIndex={{ categoryIndex }}"
+          <a href="?division={{ division }}&categoryIndex={{ currentCategoryIndex }}"
             class="btn btn-primary {{ 'active' if divisionQuery === division }}">
             {{ division | capitalize }}
           </a>
         {% endif %}
       {% endfor %}
-      <a href="?division=all&categoryIndex={{ categoryIndex }}"
+      <a href="?division=all&categoryIndex={{ currentCategoryIndex }}"
         class="btn btn-primary {{ 'active' if divisionQuery === 'all' }}">
         All divisions
       </a>
@@ -42,7 +42,7 @@
 {% set allDivisions = divisionQuery === 'all' %}
 <h2>
   {{ 'All' if allDivisions else divisionQuery | capitalize }} division{{ 's' if allDivisions }},
-  category {{ categoryTitles[currentCategoryIndex - 1].replace('Category ', '') }}
+  category {{ categoryTitles[currentCategoryIndex - 1] }}
 </h2>
 
 {{ formMacros.alerts(alerts) }}

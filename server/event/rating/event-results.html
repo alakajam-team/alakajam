@@ -8,22 +8,19 @@
 {% set hasEventBanner = event.related('details').get('banner') %}
 {{ eventMacros.eventBanner(event) }}
 
-{% if division == enums.DIVISION.UNRANKED %}
-  {% set rankings = rankings | shuffle %}
-{% endif %}
-
 {% if resultsPost %}
 <div class="container thin {{ 'event-banner-offset' if hasEventBanner }}">
   {{ postMacros.post(resultsPost, {readingUser: user, readingUserLikes: userLikes}) }}
 </div>
 {% else %} 
 
-{% set categoryTitles = event.related('details').get('category_titles') %}
+{% set flags = event.related("details").get("flags") %}
+{% set scoreSpacePodium = flags.scoreSpacePodium and sortedBy === 7 %}
 
 <div class="container">
   <div class="row">
     <div class="col">
-      {{ podium(rankings, event, categoryTitles, division, sortedBy) }}
+      {{ podium(rankings, event, categoryTitles, division, sortedBy, { scoreSpacePodium: scoreSpacePodium }) }}
       {{ pageLinks(event.get('divisions'), categoryTitles, division, sortedBy) }}
     </div>
   </div>
@@ -32,9 +29,11 @@
   <div class="row">
     <div class="col-sm-9 col-md-{{ 12 - categoryTitles.length }} mb-3">&nbsp;</div>
     {% for title in categoryTitles %}
+      {% if not (flags.scoreSpacePodium and loop.index === 7) %}
       <div class="col-sm-2 col-md-1 text-center  {{ 'd-none d-md-block' if loop.index !== sortedBy }}">
         <span style="font-weight: bold">{{ categoryTitles[loop.index - 1] }}</span>
       </div>
+      {% endif %}
     {% endfor %}
   </div>
   {% endif %}
@@ -52,6 +51,7 @@
           {{ eventMacros.entrySmallThumb(entry) }}
         </div>
         {% for title in categoryTitles %}
+          {% if not (flags.scoreSpacePodium and loop.index === 7) %}
           <div class="col-sm-2 col-md-1 text-center {{ 'd-none d-md-block' if loop.index !== sortedBy }}"
             style="{{ 'background-color: #FAFAFA;' if loop.index === sortedBy }}">
             <h4 style="line-height: 50px; vertical-align: middle;">
@@ -59,6 +59,7 @@
               {{ rating | digits(3) if rating > 0 else 'N.A.' }}
             </h4>
           </div>
+          {% endif %}
         {% endfor %}
       </div>
     {% else %}
@@ -93,12 +94,15 @@
     </span>
     {% if selectedDivision != 'unranked' %}
       <span class="btn-group mb-2">
+        {% set flags = event.related("details").get("flags") %}
         {% for title in categoryTitles %}
-          <a href="?sortBy={{ loop.index }}&amp;division={{ division }}" type="button" 
-              class="btn btn-primary results-links__category {{ 'active' if selectedCategoryIndex === loop.index }}">
-            <span class="entry-results__category-medal medal-category-{{ loop.index }} medal-ranking-1"></span>&nbsp;
-            <span class="d-none d-lg-inline">{{- categoryTitles[loop.index - 1] }}</span>
-          </a>
+          {% if title %}
+            <a href="?sortBy={{ loop.index }}&amp;division={{ selectedDivision if not (flags.scoreSpacePodium and loop.index === 7) }}" type="button" 
+                class="btn btn-primary results-links__category {{ 'active' if selectedCategoryIndex === loop.index }}">
+              <span class="entry-results__category-medal medal-category-{{ loop.index }} medal-ranking-1"></span>&nbsp;
+              <span class="d-none d-lg-inline">{{- categoryTitles[loop.index - 1] }}</span>
+            </a>
+          {% endif %}
         {% endfor %}
       </span>
     {% endif %}
@@ -106,16 +110,18 @@
 {% endif %}
 {% endmacro %}
 
-{% macro podium(rankings, event, categoryTitles, division, sortedBy) %}
+{% macro podium(rankings, event, categoryTitles, division, sortedBy, options = {}) %}
 
 <div class="results-podium">
   <h1 class="results-podium__event-name">{{ event.get('title') }} results</h1>
   <h2 class="results-podium__title">
     <div class="dropdown">
+      {% if not options.scoreSpacePodium %}
       <button class="dropdown-toggle" type="button" data-toggle="dropdown">
         <span class="{{ constants.DIVISION_ICONS[division] }}"></span>
         {{ division | capitalize }} division
       </button>
+      {% endif %}
       <div class="dropdown-menu">
         {% for title in event.get('divisions') | keys %}
           <a class="dropdown-item" href="?sortBy={{ sortBy }}&amp;division={{ title }}">
@@ -135,28 +141,36 @@
           {% endfor %}
         </div>
       </div>
-      rankings 
+      {{ 'rankings' if not options.scoreSpacePodium }}
     {%- else -%}
       (everyone wins!)
     {%- endif -%}
+    {% if not options.scoreSpacePodium %}
     <span class="results-podium__counter">{{ event.related('details').get('division_counts')[division] }} entries (out of {{ event.get('entry_count') }})</span>
+    {% endif %}
   </h2>
 
   <div class="container thin pb-2">
     <div class="results-podium-row">
       {% set entryThumbOptions = { hideMedals: categoryTitles.length === 1 } %}
       {% if rankings.length > 0 and division !== enums.DIVISION.UNRANKED %}
-        <div class="col-md-4 position-1 ranking-{{ rankings[0].related('details').get('ranking_' + sortedBy) }} results-podium__step">
+        {% set trophyPos1 = 'ranking-' + rankings[0].related('details').get('ranking_' + sortedBy) %}
+        <div class="col-md-4 position-1 {{ trophyPos1 if not options.scoreSpacePodium else 'award' }} results-podium__step">
           {{ eventMacros.entryThumb(rankings[0], entryThumbOptions) }}
+          {% if options.scoreSpacePodium %}<span class="award-label">Streamer's<br />Choice</span>{% endif %}
         </div>
-        <div class="col-md-4 position-2 ranking-{{ rankings[1].related('details').get('ranking_' + sortedBy) if rankings.length >= 2 }} {{ 'results-podium__step' if rankings.length >= 2 }}">
+        {% set trophyPos2 = 'ranking-' + rankings[1].related('details').get('ranking_' + sortedBy) if rankings.length >= 2 %}
+        <div class="col-md-4 position-2 {{ trophyPos2 if not options.scoreSpacePodium else 'award' }} {{ 'results-podium__step' if rankings.length >= 2 }}">
           {% if rankings.length >= 2 %}
             {{ eventMacros.entryThumb(rankings[1], entryThumbOptions) }}
+            {% if options.scoreSpacePodium %}<span class="award-label">Solo Developer's<br />Choice</span>{% endif %}
           {% endif %}
         </div>
-        <div class="col-md-4 position-3 ranking-{{ rankings[2].related('details').get('ranking_' + sortedBy) if rankings.length >= 3 }} {{ 'results-podium__step' if rankings.length >= 3 }}">
+        {% set trophyPos3 = 'ranking-' + rankings[1].related('details').get('ranking_' + sortedBy) if rankings.length >= 2 %}
+        <div class="col-md-4 position-3 {{ trophyPos3 if not options.scoreSpacePodium else 'award' }} {{ 'results-podium__step' if rankings.length >= 3 }}">
           {% if rankings.length >= 3 %}
             {{ eventMacros.entryThumb(rankings[2], entryThumbOptions) }}
+            {% if options.scoreSpacePodium %}<span class="award-label">Team Developer's<br />Choice</span>{% endif %}
           {% endif %}
         </div>
       {% elseif rankings.length > 0 and division == enums.DIVISION.UNRANKED %}

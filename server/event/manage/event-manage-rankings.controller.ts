@@ -1,18 +1,19 @@
 
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import constants from "server/core/constants";
+import forms from "server/core/forms";
+import links from "server/core/links";
+import security from "server/core/security";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
 import eventService, { FindGamesOptions } from "../event.service";
-import forms from "server/core/forms";
-import constants from "server/core/constants";
-import links from "server/core/links";
-import security from "server/core/security";
-import { range } from "lodash";
 
 /**
  * Manage the event's entry rankings
  */
 export async function viewEventManageRankings(req: CustomRequest, res: CustomResponse<EventLocals>) {
+  res.locals.pageTitle += " | Manage rankings";
+
   const { event, user } = res.locals;
   await event.load("details");
 
@@ -47,13 +48,9 @@ export async function viewEventManageRankings(req: CustomRequest, res: CustomRes
     return r1 - r2;
   });
 
-  // Gather additional info
-  const categoryTitles = range(1, constants.MAX_CATEGORY_COUNT + 1)
-    .map(categoryIndex => eventService.getCategoryTitle(event, categoryIndex));
-
   res.render("event/manage/event-manage-rankings", {
     entries,
-    categoryTitles,
+    categoryTitles: eventService.getCategoryTitles(event),
     ...parameters
   });
 }
@@ -86,7 +83,6 @@ export async function postEventManageRankings(req: CustomRequest, res: CustomRes
     if (entry) {
       const entryDetails = entry.related<BookshelfModel>("details");
       entryDetails.set(`ranking_${parameters.currentCategoryIndex}`, newRanking);
-      console.log(`ranking_${parameters.currentCategoryIndex} >>>> ${newRanking}`)
       await entryDetails.save();
     } else {
       errors.push({ type: "danger", message: "Entry not found" });

@@ -154,14 +154,16 @@ export class EventRatingService {
     }
   }
 
-  public async findEntryRankings(event: BookshelfModel, division: string, categoryIndex: number): Promise<BookshelfCollection> {
+  public async findEntryRankings(event: BookshelfModel, categoryIndex: number, division?: string ): Promise<BookshelfCollection> {
     if (categoryIndex > 0 && categoryIndex <= constants.MAX_CATEGORY_COUNT) {
+      const whereClause: Record<string, any> = { event_id: event.get("id") };
+      if (division) {
+        whereClause.division = division;
+      }
+
       return models.Entry.query((qb) => {
         qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
-          .where({
-            event_id: event.get("id"),
-            division,
-          })
+          .where(whereClause)
           .whereNotNull("entry_details.ranking_" + categoryIndex)
           .orderBy("entry_details.ranking_" + categoryIndex)
           .orderBy("entry.id", "desc");

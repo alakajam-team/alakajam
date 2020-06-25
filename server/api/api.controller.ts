@@ -53,7 +53,7 @@ export async function getEventTimeline(req: CustomRequest, res: CustomResponse<C
 
   let page = 0;
   try {
-    if (forms.isInt(req.query.page)) {
+    if (forms.isInt(req.query.page?.toString())) {
       page = Math.max(0, forms.parseInt(req.query.page));
     }
   } catch (e) {
