@@ -121,7 +121,7 @@ export async function apiSearchForTeammate(req: CustomRequest, res: CustomRespon
   if (!req.query || !req.query.name) {
     errorMessage = "No search parameter";
   }
-  const nameFragment = forms.sanitizeString(req.query.name);
+  const nameFragment = forms.sanitizeString(req.query.name?.toString());
   if (!nameFragment || nameFragment.length < 3) {
     errorMessage = `Invalid name fragment: '${req.query.name}'`;
   } else if (req.query.entryId && !forms.isId(req.query.entryId)) {
@@ -130,8 +130,8 @@ export async function apiSearchForTeammate(req: CustomRequest, res: CustomRespon
 
   if (!errorMessage) {
     let entry = null;
-    if (req.query.entryId) {
-      entry = await eventService.findEntryById(req.query.entryId);
+    if (forms.isId(req.query.entryId)) {
+      entry = await eventService.findEntryById(forms.parseInt(req.query.entryId));
     }
 
     const matches = await entryTeamService.searchForTeamMembers(nameFragment,
@@ -169,7 +169,7 @@ export async function apiSearchForExternalEvents(req: CustomRequest, res: Custom
   if (!req.query || !req.query.name) {
     errorMessage = "No search parameter";
   }
-  const nameFragment = forms.sanitizeString(req.query.name);
+  const nameFragment = forms.sanitizeString(req.query.name?.toString());
   if (!nameFragment || nameFragment.length < 3) {
     errorMessage = `Invalid name fragment: '${req.query.name}'`;
   }
@@ -191,7 +191,7 @@ export async function apiSearchForTags(req: CustomRequest, res: CustomResponse<E
   if (!req.query || !req.query.name) {
     errorMessage = "No search parameter";
   }
-  const nameFragment = forms.sanitizeString(req.query.name);
+  const nameFragment = forms.sanitizeString(req.query.name?.toString());
   if (!nameFragment || nameFragment.length < 3) {
     errorMessage = `Invalid name fragment: '${req.query.name}'`;
   }

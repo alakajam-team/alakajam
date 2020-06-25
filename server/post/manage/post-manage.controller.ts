@@ -23,8 +23,8 @@ export async function postEdit(req: CustomRequest, res: CustomResponse<PostLocal
   if (createMode || security.canUserWrite(res.locals.user, res.locals.post, { allowMods: true })) {
     if (createMode) {
       const post = new models.Post() as PostBookshelfModel;
-      post.set("special_post_type", forms.sanitizeString(req.query.special_post_type) || null);
-      post.set("title", forms.sanitizeString(req.query.title));
+      post.set("special_post_type", forms.sanitizeString(req.query.special_post_type?.toString()) || null);
+      post.set("title", forms.sanitizeString(req.query.title?.toString()));
       if (forms.isId(req.query.eventId)) {
         post.set("event_id", req.query.eventId);
       } else if (res.locals.featuredEvent) {

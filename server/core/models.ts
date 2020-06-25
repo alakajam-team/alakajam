@@ -174,12 +174,13 @@ export const UserRole = bookshelf.model("UserRole", {
  * | string | status | General status: 'pending', 'open' or 'closed' (not null)
  * | string | status_rules | Event rules status: 'off', or a post ID, or an URL (not null)
  * | string | status_theme | Theme voting status: 'disabled', 'off', 'voting', 'shortlist', 'closed', 'results', or a post ID (not null)
- * | string | status_entry | Entry submission status: 'off', 'open', 'open_unranked' or 'closed' (not null)
+ * | string | status_entry | Entry submission status: 'disabled', 'off', 'open', 'open_unranked' or 'closed' (not null)
  * | string | status_results | Event results status: 'disabled', 'off', 'voting', 'voting_rescue', results', or a post ID (not null)
  * | string | status_tournament | Event tournament status: 'disabled', 'off', 'submission', 'playing', 'closed', 'results'
  * | string | coutdown_config | Home page countdown JSON: `{date, phrase, enabled}`
  * | string | divisions | Divisions info: `{"name": "description"}`
- * | integer | entry_count | Total number of entries (if a jam) or entrants (if a tournament) in the event.
+ * | integer | entry_count | Total number of entries (if a jam) in the event.
+ * | integer | tournament_count | Total number of entrants (if a tournament) in the event.
  * | date | started_at | Event start date, for sorting purposes
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)

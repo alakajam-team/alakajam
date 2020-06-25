@@ -98,10 +98,17 @@
           <div class="form-group">
             <label for="status-rules">Rules blog post</label>
             <div>
-            {{ formMacros.radio('status-rules', 'off', 'Off',
-              event.get('status_rules') if event else 'off') }}
-            {{ formMacros.radio('status-rules', '', '', 
-              event.get('status_rules') if event, { textField: true, placeholder: 'Post ID or URL', textFieldEnabled: event and event.get('status_rules') and event.get('status_rules') !== 'off'}) }}
+              {% set default = '/article/docs/alakajam-competition-rules' %}
+              {{ formMacros.radio('status-rules', 'off', 'Off', event.get('status_rules') if event else 'off') }}
+              {{ formMacros.radio('status-rules', default, 'Default', event.get('status_rules') if event) }}
+              {{ 
+                formMacros.radio('status-rules', '', '', event.get('status_rules') if event, 
+                  {
+                    textField: true, 
+                    placeholder: 'Post ID or URL', 
+                    textFieldEnabled: event and event.get('status_rules') and event.get('status_rules') !== 'off' and event.get('status_rules') !== default
+                  })
+              }}
             </div>
           </div>
         </div>

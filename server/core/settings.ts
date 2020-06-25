@@ -16,7 +16,7 @@ export type ArticleSidebarCategory = Array<{
     title: string;
     url: string;
   }>;
-}>
+}>;
 
 export class Settings {
 
@@ -27,7 +27,7 @@ export class Settings {
    *   If a function is passed, it will be evaluated first.
    * @returns {void}
    */
-  public async find(key, defaultValue?: string | DefaultValueEval): Promise<string> {
+  public async find(key: string, defaultValue?: string | DefaultValueEval): Promise<string> {
     if (!cache.settings.get(key)) {
       if (!key) {
         throw new Error("Undefined key, you might have forgotten to declare a constant");

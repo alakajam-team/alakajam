@@ -34,7 +34,7 @@
 </div>
 {% endif %}
 
-<h2>Account info</h2>
+<h2>Account</h2>
   
 <div class="row">
   <div class="col-md-6 col-lg-7">
@@ -52,18 +52,18 @@
 
     {% set socialLinks = dashboardUser.related('details').get('social_links') %}
     <div class="form-group">
-      <label for="name">Website</label>
-      <input type="url" class="form-control" id="website" name="website" placeholder="http://" value="{{ socialLinks.website }}" />
-    </div>
-
-    <div class="form-group">
-      <label for="twitter">Twitter username</label>
+      <label for="twitter"><img src="{{ staticUrl('/static/images/social/twitter.svg') }}" class="no-border" style="width: 20px" /> Twitter username</label>
       <input type="text" class="form-control" id="twitter" name="twitter" placeholder="@username" value="{{ '@' + socialLinks.twitter if socialLinks.twitter }}" />
     </div>
 
     <div class="form-group">
-      <label for="twitch">Twitch username</label>
+      <label for="twitch"><img src="{{ staticUrl('/static/images/social/twitch.png') }}" class="no-border" style="width: 20px" /> Twitch username</label>
       <input type="text" class="form-control" id="twitch" name="twitch" value="{{ socialLinks.twitch }}" />
+    </div>
+
+    <div class="form-group">
+      <label for="name"><span class="fas fa-home" style="color: black; font-size: 18px"></span> Website</label>
+      <input type="url" class="form-control" id="website" name="website" placeholder="http://" value="{{ socialLinks.website }}" />
     </div>
 
     <div class="form-group">

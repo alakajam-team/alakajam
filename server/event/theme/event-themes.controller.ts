@@ -127,7 +127,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
         context.shortlist = shortlistCollection.sortBy((theme) => -theme.get("score"));
 
         if (res.locals.user) {
-          const shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(res.locals.user, event);
+          const shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(event, { user: res.locals.user });
           if (shortlistVotesCollection.length === shortlistCollection.length) {
             context.userRanks = {};
             shortlistVotesCollection.forEach((vote) => {
@@ -170,7 +170,7 @@ export async function _generateShortlistInfo(event, user = null) {
   };
 
   // Sort active shortlist by user score
-  const shortlistVotesCollection = user ? await eventThemeService.findThemeShortlistVotes(user, event) : null;
+  const shortlistVotesCollection = user ? await eventThemeService.findThemeShortlistVotes(event, { user }) : null;
   if (shortlistVotesCollection) {
     info.scoreByTheme = {};
     shortlistVotesCollection.forEach((vote) => {

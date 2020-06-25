@@ -16,7 +16,7 @@
     </li>
   {% endif %}
   {% for page in range(from, to + 1) %}
-    <li class="page-item {{ 'active' if currentPage === page }}">
+    <li class="page-item d-sm-block {{ 'active' if currentPage === page else 'd-none' }}">
       <a class="page-link" href="{{ baseUrlQS + '&p=' + page }}">{{ page }}</a>
     </li>
   {% endfor %}

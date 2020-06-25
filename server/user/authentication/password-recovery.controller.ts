@@ -13,7 +13,7 @@ export async function passwordRecovery(req: CustomRequest, res: CustomResponse<C
     return;
   }
 
-  if (passwordRecoveryService.validatePasswordRecoveryToken(res.app, req.query.token)) {
+  if (passwordRecoveryService.validatePasswordRecoveryToken(res.app, req.query.token?.toString())) {
     res.locals.token = true;
 
     if (req.method === "POST") {
@@ -22,7 +22,7 @@ export async function passwordRecovery(req: CustomRequest, res: CustomResponse<C
       } else if (req.body["new-password"] !== req.body["new-password-bis"]) {
         errorMessage = "New passwords do not match";
       } else {
-        const result = await passwordRecoveryService.recoverPasswordUsingToken(res.app, req.query.token, req.body["new-password"]);
+        const result = await passwordRecoveryService.recoverPasswordUsingToken(res.app, req.query.token?.toString(), req.body["new-password"]);
         if (result === true) {
           res.locals.success = true;
         } else {

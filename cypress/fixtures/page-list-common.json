@@ -21,6 +21,8 @@
   "post": "/post/1/plog-post",
 
   "event": "/submissions-open",
+  "event-dashboard": "/submissions-open/dashboard",
+  "event-streamers": "/submissions-open/streamers",
   "event-posts": "/submissions-open/posts",
   "event-theme-voting": "/theme-voting/themes",
   "event-theme-shortlist": "/theme-shortlist/themes",

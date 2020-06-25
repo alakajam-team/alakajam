@@ -11,7 +11,7 @@ export async function loginGet(req: CustomRequest, res: CustomResponse<CommonLoc
   res.locals.pageTitle = "Login";
 
   res.render("user/authentication/login", {
-    redirect: forms.sanitizeString(req.query.redirect),
+    redirect: forms.sanitizeString(req.query.redirect?.toString()),
   });
 }
 

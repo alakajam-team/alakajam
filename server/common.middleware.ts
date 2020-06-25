@@ -87,7 +87,7 @@ export async function commonMiddleware(req: CustomRequest, res: Response, next: 
 
       // Fetch comment to edit
       if (req.query.editComment && forms.isId(req.query.editComment)) {
-        return commentService.findCommentById(req.query.editComment).then(async (comment) => {
+        return commentService.findCommentById(forms.parseInt(req.query.editComment)).then(async (comment) => {
           if (comment && (security.canUserWrite(user, comment, { allowMods: true }) ||
               await commentService.isOwnAnonymousComment(comment, user))) {
             res.locals.editComment = comment;

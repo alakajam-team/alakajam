@@ -2,7 +2,6 @@
 /* eslint-disable max-classes-per-file */
 
 import "bookshelf";
-import { BookshelfCompatibleEntity } from "server/entity/bookshelf-compatible.entity";
 
 declare module "bookshelf" {
 

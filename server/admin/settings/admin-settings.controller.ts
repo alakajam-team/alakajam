@@ -58,7 +58,7 @@ export async function adminSettings(req: CustomRequest, res: CustomResponse<Comm
 
   // Fetch setting to edit (and make JSON pretty)
   let editSetting: EditableSetting & { value: string } | undefined;
-  if (req.query.edit && forms.isSlug(req.query.edit)) {
+  if (req.query.edit && forms.isSlug(req.query.edit?.toString())) {
     const editableSetting = EDITABLE_SETTINGS.find((setting) => setting.key === req.query.edit);
     if (editableSetting?.isJson) {
       try {

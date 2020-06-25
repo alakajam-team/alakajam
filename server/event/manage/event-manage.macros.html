@@ -100,6 +100,8 @@
     <div class="form-group">
       <label for="status-entry"><b>Entry submission status</b></label>
       <div class="form-inline">
+      {{ formMacros.radio('status-entry', 'disabled', 'Disabled', 
+        event.get('status_entry') if event) }}
       {{ formMacros.radio('status-entry', 'off', 'Off', 
         event.get('status_entry') if event else 'off') }}
       {{ formMacros.radio('status-entry', 'open', 'Open',
@@ -148,10 +150,17 @@
         event.get('status_tournament') if event) }}
       </div>
     </div>
+  </div>
+
+  <div>
+    <div class="horizontal-bar">Streamers</div>
+    {% set flags = event.related('details').get('flags') %}
     <div class="form-group">
-      {% set flags = event.related('details').get('flags') %}
       {{ formMacros.check('streamerOnlyTournament', 'Streamer-only tournament', flags.streamerOnlyTournament) }}
       {{ formMacros.check('scoreSpacePodium', 'ScoreSpace podium', flags.scoreSpacePodium) -}}<span style="margin-left: -15px">{{- formMacros.tooltip('The 1st, 2nd, and 3rd placed entries in the 7th rating category will be displayed respectively for the Streamer choice, Solo choice and Team choice. Use the "Rankings" tab to set them.') }}</span>
+    </div>
+    <div class="form-group">
+      {{ formMacros.check('hideStreamerMenu', 'Hide Streamer Menu', flags.hideStreamerMenu) }}
     </div>
   </div>
 {% endmacro %}

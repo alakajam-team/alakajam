@@ -56,8 +56,10 @@ export function errorPage(
   }
 
   // Internal error logging
-  if (httpCode !== 404 && httpCode !== 403) {
+  if (httpCode >= 500) {
     log.error(`HTTP ${httpCode}: ${message}` + ((error && typeof error === "object") ? "\n" + error.stack : ""));
+  } else if (httpCode >= 400) {
+    log.warn(`HTTP ${httpCode}: ${message}`);
   }
 
   // Page rendering

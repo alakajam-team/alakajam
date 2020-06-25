@@ -12,8 +12,8 @@ export async function adminStatus(req: CustomRequest, res: CustomResponse<Common
     res.errorPage(403);
   }
 
-  if (req.query.clearCache && cache.cacheMap[req.query.clearCache]) {
-    cache.cacheMap[req.query.clearCache].flushAll();
+  if (req.query.clearCache && cache.cacheMap[req.query.clearCache?.toString()]) {
+    cache.cacheMap[req.query.clearCache?.toString()].flushAll();
   }
 
   let pictureResizeEnabled = false;

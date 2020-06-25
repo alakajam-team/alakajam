@@ -159,6 +159,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         flags: {
           streamerOnlyTournament: Boolean(req.body.streamerOnlyTournament),
           scoreSpacePodium: Boolean(req.body.scoreSpacePodium),
+          hideStreamerMenu: Boolean(req.body.hideStreamerMenu)
         }
       });
       if (files.banner || req.body["banner-delete"]) {
@@ -200,7 +201,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
     if (!event) {
       let eventTemplate = null;
       if (forms.isId(req.query["event-template-id"])) {
-        eventTemplate = await eventTemplateService.findEventTemplateById(parseInt(req.query["event-template-id"], 10));
+        eventTemplate = await eventTemplateService.findEventTemplateById(forms.parseInt(req.query["event-template-id"]));
       }
       event = eventService.createEvent(eventTemplate);
     }

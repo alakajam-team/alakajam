@@ -13,7 +13,7 @@ export async function viewStreamerPreferences(req: CustomRequest, res: CustomRes
   const { user, event } = res.locals;
   const eventParticipation = await eventParticipationService.getEventParticipation(event.get("id"), user.id);
   if (!eventParticipation?.isStreamer) {
-    res.errorPage(401, "User is not registered as a streamer");
+    res.errorPage(403, "User is not registered as a streamer");
     return;
   }
 
@@ -30,8 +30,15 @@ export async function saveStreamerPreferences(req: CustomRequest, res: CustomRes
   const streamerDescription = forms.sanitizeString(req.body["streamer-description"], { maxLength: constants.MAX_DESCRIPTION });
 
   if (req.body.submit !== undefined) {
+    const hasJoinedAsStreamer = eventParticipationService.hasJoinedEvent(event, user, { asStreamer: true });
+    if (!eventParticipationService.canJoinEvent(event)  && !hasJoinedAsStreamer) {
+      res.errorPage(403, "Streamer entries are closed");
+      return;
+    }
+
+    const existingEventParticipation = await eventParticipationService.getEventParticipation(event.get("id"), user.id);
     await eventParticipationService.setStreamingPreferences(event, user, {
-      streamerStatus: "requested",
+      streamerStatus: existingEventParticipation?.streamerStatus || "requested",
       streamerDescription
     });
 

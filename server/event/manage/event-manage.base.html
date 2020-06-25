@@ -15,6 +15,7 @@
         {{ editEventLink(event, createdEvent, 'edit', 'General') }}
         {{ editEventLink(event, createdEvent, 'edit-themes', 'Themes') }}
         {{ editEventLink(event, createdEvent, 'edit-entries', 'Entries') }}
+        {{ editEventLink(event, createdEvent, 'edit-rankings', 'Rankings') }}
         {{ editEventLink(event, createdEvent, 'edit-tournament-games', 'Tournament', { disabled: event.get('status_tournament') === 'disabled' if createdEvent }) }}
       </div>
     </div>

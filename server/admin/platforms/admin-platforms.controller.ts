@@ -47,7 +47,7 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
   }
 
   if (forms.isId(req.query.delete)) {
-    const platform = await platformService.fetchById(req.query.delete);
+    const platform = await platformService.fetchById(forms.parseInt(req.query.delete));
     if (platform) {
       const entryCount = await platformService.countEntriesByPlatform(platform);
       if (entryCount === 0) {
@@ -61,7 +61,7 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
   // Fetch platform to edit
   let editPlatform: BookshelfModel;
   if (forms.isId(req.query.edit)) {
-    editPlatform = await platformService.fetchById(req.query.edit);
+    editPlatform = await platformService.fetchById(forms.parseInt(req.query.edit));
   } else if (req.query.create) {
     editPlatform = platformService.createPlatform("");
   }

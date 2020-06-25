@@ -28,16 +28,16 @@
   <div class="row mt-4">
     <div class="col-md-3 col-12">
       <h2 class="mb-2">Useful links</h2>
-
       <div class="list-group">
+        {% set rulesLink = routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules') %}
+        {% if rulesLink !== 'off' %}
+          {{- usefulLink(event, 'status_rules', rulesLink, 'Detailed rules', 'fa-book') -}}
+        {% endif %}
+        <!--{{- usefulLink(event, null, 'posts', 'Posts', 'fa-newspaper') -}}-->
+
         {% set featuredLinks = event.related('details').get('links') %}
         {% for featuredLink in featuredLinks %}
-          <a class="list-group-item shortcut" href="{{ featuredLink.link }}">
-            <h4>
-              <span class="shortcut__icon"><span class="fas {{ featuredLink.icon }}"></span></span>
-              <span class="shortcut__title">{{ featuredLink.title }}</span>
-            </h4>
-          </a>
+          {{- usefulLink(event, null, featuredLink.link, featuredLink.title, featuredLink.icon) -}}
         {% endfor %}
       </div>
       
@@ -63,9 +63,9 @@
             <form method="post" class="action-banner text-center">
               {{ csrfToken() | safe }}
               
+              {% set socialLinks = user.related('details').get('social_links') %}
               {% if eventParticipation.isStreamer %}
                 <p>You are entering the event as a streamer!</p>
-                {% set socialLinks = user.related('details').get('social_links') %}
                 {% if socialLinks.twitch %}
                   <span class="alert alert-light">
                     {{ userMacros.twitchLink(user) }}<br />
@@ -81,13 +81,21 @@
                 {% else %}
                   <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Unknown Twitch channel</span>
                 {% endif %}
+                {% if not eventParticipation.streamerDescription %}
+                <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Stream schedule not set</span>
+                {% endif %}
                 <a href="{{ routeUrl(event, 'event', 'dashboard-streamer-preferences') }}" class="btn btn-primary">Manage streamer settings</a>
-              {% elseif event.get("status_entry") !== 'closed' %}
+              {% elseif event.get("status") !== 'closed' %}
+                {% if socialLinks.twitch %}
                 <input type="hidden" name="is-streamer" value="true" />
                 <button type="submit" name="streamer-preferences" class="btn btn-primary btn-lg">
                   <span class="fas fa-video"></span>
                   Enter as streamer
                 </button>
+                {% else %}
+                  <p>A Twitch channel must be set before joining</p>
+                  <a href="{{ routeUrl(user, 'user', 'settings') }}" class="btn btn-outline-primary btn-lg">Manage account settings</a>
+                {% endif %}
               {% else %}
                 <p>Streamer entries are now closed.</p>
                 <p><a href="/events" class="btn btn-secondary">Explore our upcoming events</a></p>
@@ -155,3 +163,15 @@
 </div>
 
 {% endblock %}
+
+{% macro usefulLink (event, statusField, link, title, icon ) %}
+  {%- if not statusField or event.get(statusField) !== 'disabled' -%}
+    {%- set targetUrl = link if link.includes('/') else routeUrl(event, 'event', link) -%}
+    <a class="list-group-item shortcut" href="{{ targetUrl }}">
+      <h4>
+        <span class="shortcut__icon"><span class="fas {{ icon }}"></span></span>
+        <span class="shortcut__title">{{ title }}</span>
+      </h4>
+    </a>
+  {%- endif -%}
+{% endmacro %}

@@ -16,6 +16,7 @@ import * as validator from "validator";
 import config from "./config";
 import constants from "./constants";
 import { createLuxonDate } from "./formats";
+import { ParsedQs } from "qs";
 
 export default {
   sanitizeString,
@@ -38,6 +39,7 @@ export default {
   isNotSet,
   isPast,
 
+  parseInt: parseIntCustom,
   parsePickerDateTime,
   parsePickerDate,
   parseJson,
@@ -251,6 +253,10 @@ function isNotSet(input: any) {
  */
 function isPast(time: number) {
   return time && (new Date().getTime() - time) > 0;
+}
+
+function parseIntCustom(value: undefined | string | string[] | ParsedQs | ParsedQs[]): number {
+  return parseInt(value?.toString(), 10);
 }
 
 /**

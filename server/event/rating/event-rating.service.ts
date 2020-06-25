@@ -30,20 +30,17 @@ export class EventRatingService {
 
   public async canVoteInEvent(user: User, event: BookshelfModel): Promise<boolean> {
     if (user && this.areVotesAllowed(event)) {
-      const hasEntryPromise = eventService.findUserEntryForEvent(user, event.get("id"));
-      const eventParticipationPromise = eventParticipationService.getEventParticipation(event.get("id"), user.id);
-      const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, eventParticipationPromise ]);
-      return Boolean(hasEntry) || eventParticipation?.isStreamer;
+      return this.hasEntryOrIsApprovedStreamer(user, event);
     } else {
       return false;
     }
   }
 
-  private async hasEntryOrIsStreamer(user: User, event: BookshelfModel): Promise<boolean> {
+  private async hasEntryOrIsApprovedStreamer(user: User, event: BookshelfModel): Promise<boolean> {
     const hasEntryPromise = eventService.findUserEntryForEvent(user, event.get("id"));
-    const isStreamerPromise = eventParticipationService.getEventParticipation(event.get("id"), user.id);
-    const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, isStreamerPromise ]);
-    return Boolean(hasEntry) || eventParticipation?.isStreamer;
+    const eventParticipationPromise = eventParticipationService.getEventParticipation(event.get("id"), user.id);
+    const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, eventParticipationPromise ]);
+    return Boolean(hasEntry) || eventParticipation?.isApprovedStreamer;
   }
 
   /**
@@ -56,7 +53,7 @@ export class EventRatingService {
       if (openVoting && openVoting.toLowerCase() === "true") {
         return true;
       } else {
-        return this.hasEntryOrIsStreamer(user, event);
+        return this.hasEntryOrIsApprovedStreamer(user, event);
       }
     } else {
       return false;

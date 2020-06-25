@@ -28,12 +28,14 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
     const otherEntries = [];
     const externalEntries = [];
     entries.models.forEach((entry) => {
-      if (entry.get("external_event") != null) {
-        externalEntries.push(entry);
-      } else if (entry.related<BookshelfModel>("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
-        alakajamEntries.push(entry);
+      if (entry.get("event_id") != null) {
+        if (entry.related<BookshelfModel>("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
+          alakajamEntries.push(entry);
+        } else {
+          otherEntries.push(entry);
+        }
       } else {
-        otherEntries.push(entry);
+        externalEntries.push(entry);
       }
     });
 

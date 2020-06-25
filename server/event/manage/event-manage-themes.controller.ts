@@ -60,17 +60,17 @@ export async function eventManageThemes(req: CustomRequest, res: CustomResponse<
 
   if (forms.isId(req.query.edit)) {
     // Edit theme title
-    context.editTheme = await eventThemeService.findThemeById(req.query.edit);
+    context.editTheme = await eventThemeService.findThemeById(forms.parseInt(req.query.edit));
   } else if (forms.isId(req.query.ban)) {
     // Ban theme
-    const theme = await eventThemeService.findThemeById(req.query.ban);
+    const theme = await eventThemeService.findThemeById(forms.parseInt(req.query.ban));
     if (theme) {
       theme.set("status", enums.THEME.STATUS.BANNED);
       await theme.save();
     }
   } else if (forms.isId(req.query.unban)) {
     // Unban theme
-    const theme = await eventThemeService.findThemeById(req.query.unban);
+    const theme = await eventThemeService.findThemeById(forms.parseInt(req.query.unban));
     if (theme) {
       theme.set("status", (event.get("status_theme") === enums.EVENT.STATUS_THEME.VOTING)
         ? enums.THEME.STATUS.ACTIVE : enums.THEME.STATUS.OUT);

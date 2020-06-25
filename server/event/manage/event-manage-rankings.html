@@ -1,0 +1,28 @@
+{% extends "event/manage/event-manage.base.html" %}
+{% import "macros/form.macros.html" as formMacros with context %}
+{% import "event/event.macros.html" as eventMacros %}
+
+{% block editEventBody %}
+
+<h1>{{ event.get('title') }} rankings <span class="count">({{ entries.length }})</span></h1>
+
+<p>TODO Sub-page bar: choose between solo/team/both, choose division from 1 to 7 (prefer category label but display even if missing)</p>
+
+<p>TODO (Optional) Big "reset all rankings" button, ideally on a single category at a time.</p>
+
+<p>TODO List entries ordered by ranking, allow overriding the rankings</p>
+
+<table class="table">
+<tr>
+  <th>Entry</th>
+  <th>Ranking</th>
+</tr>
+{% for entry in entries %}
+  <tr>
+    <td>{{ eventMacros.entrySmallThumb(entry) }}</td>
+    <td><input class="form-control form-control-lg" type="text" value="{{ entry.related('details').get('ranking_1') }}"/></td>
+  </tr>
+{% endfor %}
+</table>
+
+{% endblock %}
