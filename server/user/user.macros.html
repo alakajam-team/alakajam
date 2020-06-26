@@ -51,3 +51,27 @@
 </a>
 {% endif %}
 {% endmacro %}
+
+{% macro twitchEmbed(twitchUsername, options = {}) %}
+{% if twitchUsername %}
+<div id="twitch-{{ twitchUsername }}-embed"></div>
+<script src="https://embed.twitch.tv/embed/v1.js"></script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+  var embed = new Twitch.Embed("twitch-{{ twitchUsername }}-embed", {
+    width: '100%',
+    height: {{ options.height if options.height else '200' }},
+    layout: 'video',
+    channel: "{{ twitchUsername }}"
+  });
+  {% if not options.unmute %}
+  embed.setMuted(true);
+  {% endif %}
+});
+</script>
+{% endif %}
+{% endmacro %}
+
+{% macro twitchEmbedScripts() %}
+<script src="https://embed.twitch.tv/embed/v1.js"></script>
+{% endmacro %}

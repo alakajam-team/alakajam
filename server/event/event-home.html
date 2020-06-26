@@ -3,6 +3,7 @@
 {% import "macros/form.macros.html" as formMacros with context %}
 {% import "macros/navigation.macros.html" as navigationMacros with context %}
 {% import "macros/jumbotron.macros.html" as jumbotronMacros with context %}
+{% import "user/user.macros.html" as userMacros with context %}
 
 {% block body %}
 
@@ -24,4 +25,8 @@
   {% endif %}
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+{{ userMacros.twitchEmbedScripts() }}
 {% endblock %}

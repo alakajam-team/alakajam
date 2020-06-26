@@ -69,6 +69,12 @@
     </div>
 
     <div class="col-md-8 col-lg-9">
+      {% if isTwitchLive %}
+        <div class="mb-3">
+          {{ userMacros.twitchEmbed(profileUser.details.social_links.twitch, { height: 500 }) }}
+        </div>
+      {% endif %}
+
       {% if profileUser.related('details').get('body') %}
       <h2>Bio</h2>
       <div class="featured">
@@ -188,6 +194,10 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+{{ userMacros.twitchEmbedScripts() }}
 {% endblock %}
 
 {% macro linkSortBy(id, label, sortedBy) %}

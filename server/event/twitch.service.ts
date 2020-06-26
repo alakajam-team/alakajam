@@ -17,6 +17,15 @@ export class TwitchService {
     }
   }
 
+  public async isLive(user: User): Promise<boolean> {
+    const twitchUsername = user.details.social_links.twitch;
+    if (twitchUsername) {
+      return (await this.listCurrentLiveStreams([twitchUsername])).length > 0;
+    } else {
+      return false;
+    }
+  }
+
   public async listCurrentLiveUsers(event: BookshelfModel): Promise<User[]> {
     return cache.getOrFetch(cache.general, "currentLiveChannels", async () => {
       if (!event || !this.twitchClient) {

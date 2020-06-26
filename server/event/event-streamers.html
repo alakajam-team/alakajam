@@ -52,7 +52,7 @@ h1 {
 {% endblock %}
 
 {% block body %}
-<script src="https://embed.twitch.tv/embed/v1.js"></script>
+{{ userMacros.twitchEmbedScripts() }}
 
 <div class="background">
   <div class="event-banner__gradient"></div>
@@ -73,16 +73,7 @@ h1 {
             <div class="card-header">{{ userMacros.userThumb(eventParticipation.user, { fullWidth: true }) }}</div>
 
             {% if currentlyLiveUserIds.includes(eventParticipation.userId) %}
-              <div id="twitch-{{ eventParticipation.userId }}-embed"></div>
-              <script type="text/javascript">
-                var embed = new Twitch.Embed("twitch-{{ eventParticipation.userId }}-embed", {
-                  width: '100%',
-                  height: 200,
-                  layout: 'video',
-                  channel: "{{ eventParticipation.user.details.social_links.twitch }}"
-                });
-                embed.setMuted(true);
-              </script>
+              {{ userMacros.twitchEmbed(eventParticipation.user.details.social_links.twitch, { height: 200 }) }}
             {% else %}
               <div class="card-body">
                 <div class="mb-2">{{ userMacros.twitchLink(eventParticipation.user) }}</div>

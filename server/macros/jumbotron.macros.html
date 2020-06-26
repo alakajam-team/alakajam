@@ -2,6 +2,7 @@
 {% import "event/event.macros.html" as eventMacros with context %}
 {% import "event/tournament/tournament.macros.html" as tournamentMacros with context %}
 {% import "macros/navigation.macros.html" as navigationMacros %}
+{% import "user/user.macros.html" as userMacros with context %}
 
 {% macro eventJumbotron(event, eventParticipation, featuredPost, user, entry, tournamentScore, options = {}) %}
 <div class="event-jumbotron" style="{{ backgroundImage(event) }}">
@@ -124,15 +125,9 @@
 
     {% set shortlistEliminationInfo = event.related('details').get('shortlist_elimination') %}
     {% if shortlistEliminationInfo.stream %}
-      <div id="twitch-embed"></div>
-      <script src="https://embed.twitch.tv/embed/v1.js"></script>
-      <script type="text/javascript">
-        new Twitch.Embed("twitch-embed", {
-          width: '100%',
-          height: 500,
-          channel: "{{ shortlistEliminationInfo.stream }}"
-        });
-      </script>
+      <div class="mt-3">
+      {{ userMacros.twitchEmbed(shortlistEliminationInfo.stream, { unmute: true, height: 500 }) }}
+      </div>
     {% endif %}
   </div>
 </div>
