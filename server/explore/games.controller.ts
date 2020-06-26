@@ -7,6 +7,7 @@ import { handleGameSearch } from "server/event/event-games.controller";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import { BookshelfModel } from "bookshelf";
 
 /**
  * Game browser
@@ -17,10 +18,9 @@ export async function games(req: CustomRequest, res: CustomResponse<CommonLocals
   const { user, featuredEvent } = res.locals;
 
   // Parse query
-  const searchOptions: any = await handleGameSearch(req, res);
+  const searchOptions = await handleGameSearch(req, res.locals);
 
   // Fetch info
-  // TODO Parallelize tasks
   let rescueEntries = [];
   let requiredVotes = null;
   if (featuredEvent && featuredEvent.get("status_results") === "voting_rescue") {
@@ -30,13 +30,16 @@ export async function games(req: CustomRequest, res: CustomResponse<CommonLocals
       requiredVotes = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
     }
   }
-  const entriesCollection = await eventService.findGames(searchOptions);
-  const platformCollection = await platformService.fetchAll();
 
-  const eventsCollection = await eventService.findEvents({ ignoreTournaments: true });
-  let searchedEvent = null;
+  const [entriesCollection, platformCollection, eventsCollection] = await Promise.all([
+    eventService.findGames(searchOptions),
+    platformService.fetchAll(),
+    eventService.findEvents({ allowingEntries: true })
+  ]);
+
+  let searchedEvent: BookshelfModel;
   if (searchOptions.eventId) {
-    searchedEvent = eventsCollection.find((event) => event.id === parseInt(searchOptions.eventId, 10));
+    searchedEvent = eventsCollection.find((event) => event.id === searchOptions.eventId);
   }
 
   res.render("explore/games", {

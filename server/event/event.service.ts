@@ -68,6 +68,10 @@ export class EventService {
     return [enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get("status_entry"));
   }
 
+  public isVotingInProgress(event: BookshelfModel) {
+    return [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get("status_results"));
+  }
+
   public getDefaultDivision(event: BookshelfModel): string {
     return Object.keys(event.get("divisions"))[0];
   }
@@ -117,7 +121,7 @@ export class EventService {
     name?: string;
     status?: string;
     statusNot?: string;
-    ignoreTournaments?: boolean;
+    allowingEntries?: boolean;
     sortDatesAscending?: "ASC" | "DESC";
     pageSize?: number;
     page?: number;
@@ -127,8 +131,8 @@ export class EventService {
     if (options.status) { query = query.where("status", options.status); }
     if (options.statusNot) { query = query.where("status", "<>", options.statusNot); }
     if (options.name) { query = query.where("name", options.name); }
-    if (options.ignoreTournaments) {
-      query = query.where("status_tournament", "=", enums.EVENT.STATUS_TOURNAMENT.DISABLED);
+    if (options.allowingEntries) {
+      query = query.where("status_entry", "!=", enums.EVENT.STATUS_ENTRY.DISABLED);
     }
     if (options.pageSize) {
       return query.fetchPage(options);

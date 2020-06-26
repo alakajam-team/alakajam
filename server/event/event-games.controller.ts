@@ -12,6 +12,7 @@ import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 import { EventLocals } from "./event.middleware";
 import { CommonLocals } from "server/common.middleware";
+import { BookshelfModel } from "bookshelf";
 
 /**
  * Browse event games
@@ -26,9 +27,7 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
   }
 
   // Search form & pagination
-  const searchOptions = await handleGameSearch(req, res, {
-    eventId: event.get("id"),
-  });
+  const searchOptions = await handleGameSearch(req, res.locals);
 
   // Search entries
   let rescueEntries = [];
@@ -62,21 +61,16 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
 
 /**
  * Fills a searchOptions object according to the request GET parameters
- * @param  {Request} req
- * @param  {object} searchOptions initial search options
- * @return {object} search options
  */
 export async function handleGameSearch(
   req: CustomRequest,
-  res: CustomResponse<CommonLocals>,
-  searchOptions: FindGamesOptions = {}): Promise<FindGamesOptions> {
+  locals: CommonLocals): Promise<FindGamesOptions> {
 
   // Pagination
-  searchOptions.pageSize = 20;
-  searchOptions.page = 1;
-  if (forms.isId(req.query.p)) {
-    searchOptions.page = forms.parseInt(req.query.p);
-  }
+  const searchOptions: FindGamesOptions = {
+    pageSize: 20,
+    page: forms.isId(req.query.p) ? forms.parseInt(req.query.p) : 1
+  };
 
   // Text search
   searchOptions.search = forms.sanitizeString(req.query.search?.toString());
@@ -128,8 +122,14 @@ export async function handleGameSearch(
 
   // Event
   let event = forms.isId(req.query.eventId) ? await eventService.findEventById(forms.parseInt(req.query.eventId)) : undefined;
-  if (!event) {
-    event = res.locals.event;
+  if (forms.isId(req.query.eventId)) {
+    event = await eventService.findEventById(forms.parseInt(req.query.eventId));
+  } else if (req.query.eventId === undefined) {
+    // Default event
+    event = locals.event;
+    if (!event && locals.featuredEvent && eventService.isVotingInProgress(locals.featuredEvent)) {
+      event = locals.featuredEvent;
+    }
   }
 
   if (event) {
@@ -139,15 +139,15 @@ export async function handleGameSearch(
   }
 
   // Sorting
-  if (event && event.get("status_results") !== enums.EVENT.STATUS_RESULTS.RESULTS) {
+  if (event && eventService.isVotingInProgress(event)) {
     searchOptions.sortBy = "karma";
   } else {
     searchOptions.sortBy = "hotness";
   }
 
   // Hide rated/commented
-  if (req.query.hideReviewed && res.locals.user) {
-    searchOptions.notReviewedById = res.locals.user.get("id");
+  if (req.query.hideReviewed && locals.user) {
+    searchOptions.notReviewedById = locals.user.get("id");
   }
 
   // Other filters
