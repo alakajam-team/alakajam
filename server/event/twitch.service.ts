@@ -18,7 +18,7 @@ export class TwitchService {
   }
 
   public async isLive(user: User): Promise<boolean> {
-    const twitchUsername = user.details.social_links.twitch;
+    const twitchUsername = user.details.social_links?.twitch;
     if (twitchUsername) {
       return (await this.listCurrentLiveStreams([twitchUsername])).length > 0;
     } else {
