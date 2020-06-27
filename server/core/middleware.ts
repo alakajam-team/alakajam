@@ -244,11 +244,11 @@ async function getOrCreateSessionSecret() {
 }
 
 function createSessionStore() {
-  const KnexSessionStore = connectSessionKnex(expressSession);
+  const KnexSessionStore = (connectSessionKnex as any)(expressSession);
   return new KnexSessionStore({
-    knex: db.knex,
+    knex: db.knex as any,
     tablename: "sessions",
-    createtable: true,
+    createTable: true,
     clearInterval: 60000, // Milliseconds between clearing expired sessions
   });
 }

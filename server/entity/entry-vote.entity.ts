@@ -56,6 +56,8 @@ export class EntryVote extends TimestampedEntity {
   public vote_5: number;
   @Column(ColumnTypes.numeric(5, 2, { nullable: true }))
   public vote_6: number;
+  @Column(ColumnTypes.numeric(5, 2, { nullable: true }))
+  public vote_7: number;
 
   public dependents(): Array<keyof this> {
     return [];

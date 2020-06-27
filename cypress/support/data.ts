@@ -21,6 +21,11 @@ export const DUMBLEDORE_ENTRY_NAME_SUBMISSIONS_OPEN = "My game";
 export const USER_GANDALF = "gandalf";
 export const GANDALF_RANKED_GAME = { eventName: "game-ratings", entryId: 11 };
 
+/**
+ * Streamer user
+ */
+export const USER_STREAMER = "streamer";
+
 export const EVENT_NAME_THEME_VOTING = "theme-voting";
 export const EVENT_NAME_THEME_SHORTLIST = "theme-shortlist";
 export const EVENT_NAME_SUBMISSIONS_OPEN = "submissions-open";

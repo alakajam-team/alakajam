@@ -16,5 +16,6 @@
   "edit-event-themes": "/theme-voting/edit-themes",
   "edit-event-entries": "/submissions-open/edit-entries?entryDetails=4",
 
+  "event-streamer-preferences": "/submissions-open/dashboard-streamer-preferences",
   "moderate-entry": "/submissions-open/4/my-game/edit"
 }

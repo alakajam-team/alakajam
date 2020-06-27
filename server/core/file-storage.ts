@@ -168,7 +168,7 @@ async function resize(sourcePath, targetPathWithoutExtension, fileExtension, opt
       }
     }
 
-    // Prevent file to stay opened after resize
+    // Prevent file from staying open after resize
     sharp.cache(false);
 
     // Check whether image is too big

@@ -134,10 +134,10 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         infoMessage = "Theme shortlist computed.";
       }
       if (event.hasChanged("status_results")) {
-        if (event.get("status_results") === enums.EVENT.STATUS_RESULTS.RESULTS) {
+        if ([enums.EVENT.STATUS_RESULTS.CLOSED, enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get("status_results"))) {
           await eventRatingService.computeRankings(event);
           infoMessage = "Event results computed.";
-        } else if (event.previous("status_results") === enums.EVENT.STATUS_RESULTS.RESULTS) {
+        } else if ([enums.EVENT.STATUS_RESULTS.CLOSED, enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.previous("status_results"))) {
           await eventRatingService.clearRankings(event);
           infoMessage = "Event results cleared.";
         }
@@ -157,7 +157,9 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         links: req.body.links,
         category_titles: req.body["category-titles"],
         flags: {
-          streamerOnlyTournament: Boolean(req.body.streamerOnlyTournament)
+          streamerOnlyTournament: Boolean(req.body.streamerOnlyTournament),
+          scoreSpacePodium: Boolean(req.body.scoreSpacePodium),
+          hideStreamerMenu: Boolean(req.body.hideStreamerMenu)
         }
       });
       if (files.banner || req.body["banner-delete"]) {
@@ -199,7 +201,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
     if (!event) {
       let eventTemplate = null;
       if (forms.isId(req.query["event-template-id"])) {
-        eventTemplate = await eventTemplateService.findEventTemplateById(parseInt(req.query["event-template-id"], 10));
+        eventTemplate = await eventTemplateService.findEventTemplateById(forms.parseInt(req.query["event-template-id"]));
       }
       event = eventService.createEvent(eventTemplate);
     }

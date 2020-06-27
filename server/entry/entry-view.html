@@ -135,6 +135,15 @@
         {% endif %}
       {% endif %}
 
+      {% if event and event.get('status_results') === 'closed' and entry.get('division') !== 'unranked' %}
+      <div class="entry-voting">
+        <h2 class="entry-voting__header">Game ratings</h2>
+        <div class="entry-voting__body">
+          The ratings phase is now closed. Final results will be announced shortly.
+        </div>
+      </div>
+      {% endif %}
+
       {% if event and event.get('status_results') === 'results' and entry.get('division') !== 'unranked' %}
       <div class="entry-results">
         <h2 class="entry-results__header"><a name="results"></a>Voting results</h2>
@@ -186,7 +195,7 @@
       {% endif %}
       <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
       {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, allowMods: true, editComment: editComment, 
-        allowAnonymous: entry.get('allow_anonymous'), editableAnonComments: editableAnonComments }) }}
+        allowAnonymous: entry.get('allow_anonymous'), editableAnonComments: editableAnonComments, nodeAuthorIds: nodeAuthorIds }) }}
     </div>
 
     <div class="col-md-4 game-info">

@@ -11,7 +11,7 @@ export type EventDivisions = Record<string, string>;
 export type EventGlobalStatus = "pending" | "open" | "closed";
 export type EventRulesStatus = "off" | number | string;
 export type EventThemeStatus = "disabled" | "off" | "voting" | "shortlist" | "closed" | "results" | number;
-export type EventEntryStatus = "off" | "open" | "open_unranked" | "closed";
+export type EventEntryStatus = "disabled" | "off" | "open" | "open_unranked" | "closed";
 export type EventResultsStatus = "disabled" | "off" | "voting" | "voting_rescue" | "results" | number;
 export type EventTournamentStatus = "disabled" | "off" | "submission" | "playing" | "closed" | "results";
 
@@ -122,6 +122,12 @@ export class Event extends TimestampedEntity {
    */
   @Column({ nullable: true, default: 0 })
   public entry_count: number;
+
+  /**
+   * Total number of entries (if a jam) or entrants (if a tournament) in the event.
+   */
+  @Column({ nullable: true, default: 0 })
+  public tournament_count: number;
 
   /**
    * Event start date, for sorting purposes

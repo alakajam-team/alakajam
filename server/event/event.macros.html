@@ -36,24 +36,26 @@
   </div>
   <div class="entry-thumb__footer">
     {% if options.showEvent %}
-      <span class="entry-thumb__event">
+      <div class="entry-thumb__event">
         {% if entry.get('event_id') %}
           on <a href="{{ routeUrl(entry.related('event'), 'event') }}">{{ entry.related('event').get('title') }}</a>
         {% elseif entry.get('external_event') %}
-          on {{ entry.get('external_event') }}
+          on {{ entry.get('external_event') | truncate(32) }}
         {% endif %}
-      </span>
+      </div>
     {% endif %}
-    {% if options.showKarma %}
-      <span class="entry-thumb__karma" data-toggle="tooltip"
-          title="Rate and review other games to increase your karma, and get featured higher on the list!">
-        Karma: {{ entry.get('karma') | digits(0) }} 
-      </span>
-    {% endif %}
-    {% for platform in entry.get('platforms') %}
-      {{ entryPlatformIcon(platform, { hideLabel: true }) }}
-    {% endfor %}
-    <span class="badge badge-secondary badge-sm">{{ entry.get('division') | capitalize }}</span>
+    <div class="entry-thumb__icons">
+      {% if options.showKarma %}
+        <span class="entry-thumb__karma" data-toggle="tooltip"
+            title="Rate and review other games to increase your karma, and get featured higher on the list!">
+          Karma: {{ entry.get('karma') | digits(0) }} 
+        </span>
+      {% endif %}
+      {% for platform in entry.get('platforms') %}
+        {{ entryPlatformIcon(platform, { hideLabel: true }) }}
+      {% endfor %}
+      <span class="badge badge-secondary badge-sm">{{ entry.get('division') | capitalize }}</span>
+    </div>
   </div>
 </div>
 {% endmacro %}

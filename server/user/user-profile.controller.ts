@@ -8,6 +8,7 @@ import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
+import twitchService from "server/event/twitch.service";
 
 /**
  * Display a user profile
@@ -18,22 +19,25 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
     res.locals.pageTitle = profileUser.title;
     res.locals.pageDescription = forms.markdownToText(profileUser.details.body);
 
-    const [entries, posts, scores] = await Promise.all([
+    const [entries, posts, scores, isTwitchLive] = await Promise.all([
       eventService.findUserEntries(profileUser),
       postService.findPosts({ userId: profileUser.id }),
       highScoreService.findUserScores(profileUser.id, { sortBy: "ranking" }),
+      twitchService.isLive(profileUser)
     ]);
 
     const alakajamEntries = [];
     const otherEntries = [];
     const externalEntries = [];
     entries.models.forEach((entry) => {
-      if (entry.get("external_event") != null) {
-        externalEntries.push(entry);
-      } else if (entry.related<BookshelfModel>("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
-        alakajamEntries.push(entry);
+      if (entry.get("event_id") != null) {
+        if (entry.related<BookshelfModel>("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
+          alakajamEntries.push(entry);
+        } else {
+          otherEntries.push(entry);
+        }
       } else {
-        otherEntries.push(entry);
+        externalEntries.push(entry);
       }
     });
 
@@ -45,7 +49,8 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
       posts,
       userScores: scores.models,
       medals: scores.countBy((userScore: BookshelfModel) => userScore.get("ranking")),
-      userLikes: await likeService.findUserLikeInfo(posts.models as PostBookshelfModel[], res.locals.user)
+      userLikes: await likeService.findUserLikeInfo(posts.models as PostBookshelfModel[], res.locals.user),
+      isTwitchLive
     });
   } else {
     res.errorPage(404, "No user exists with name " + req.params.name);

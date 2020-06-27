@@ -13,8 +13,10 @@
 <div class="container themes">
   {% set shortlistEliminationInfo = event.related('details').get('shortlist_elimination') %}
   {% if shortlistEliminationInfo.start and shortlistEliminationInfo.body %}
-  <div class="card card-body user-contents mb-3">
-    {{ shortlistEliminationInfo.body | markdown | safe }}
+  <div class="card mb-3">
+    <div class="card-body user-contents">
+      {{ shortlistEliminationInfo.body | markdown | safe }}
+    </div>
   </div>
   {% endif %}
 
@@ -202,7 +204,11 @@
               {% if randomizedShortlist %}
                 These are the top submitted ideas, in random order. {{ "Rank them from best (first) to worst (last) by using drag'n'drop." if user }}
               {% elseif shortlistVote %}
-                Here are the top submitted ideas as you ranked them. You can still drag'n'drop them to change the order.
+                {% if hasRankedShortlist %}
+                  Here are the top submitted ideas as you ranked them. You can still drag'n'drop them to change the order.
+                {% else %}
+                  Here are the top submitted ideas as you ranked them during the first vote phase. You can still drag'n'drop them to change the order.
+                {% endif %}
               {% elseif hasRankedShortlist %}
                 Here are the top submitted ideas as you ranked them. You can no longer change your vote.
               {% else %}

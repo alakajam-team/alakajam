@@ -24,14 +24,14 @@
         {{ csrfToken() | safe }}
     
         <div class="form-group">
-          <label for="twitch">Twitch username</label>
+          <label for="twitch"><img src="{{ staticUrl('/static/images/social/twitch.png') }}" class="no-border" style="width: 20px" /> Twitch username</label>
           <input type="text" class="form-control form-control-lg" id="twitch" name="twitch" value="{{ user.details.social_links.twitch }}" required />
-          <p class="legend mb-0">This field can also be set from your <a href="{{ routeUrl(user, 'user', 'settings') }}">user settings</a>.</p>
+          <p class="legend mb-0">This field can also be set from your <a href="{{ routeUrl(user, 'user', 'settings') }}">account settings</a>.</p>
         </div>
         
         <div class="form-group">
-          <label for="twitch">When do you plan to stream?</label>
-          <div class="text-muted">Use this area to tell the jammers:
+          <label for="twitch">Stream schedule</label>
+          <div class="text-muted">Use this area to tell the public:
             <ul class="text-muted mt-0">
               <li>What you plan to stream (playing games, game development, etc.) ;</li>
               <li>When you will go live, so they can now when to tune in to your channel.</li>
@@ -40,7 +40,7 @@
           {{ formMacros.editor('streamer-description', eventParticipation.streamerDescription) }}
         </div>
     
-        <div class="form-group text-right">d
+        <div class="form-group text-right">
           <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
     
           <button type="submit" name="cancel-participation" class="btn btn-danger float-left" onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">

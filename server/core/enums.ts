@@ -18,6 +18,7 @@ export default {
       RESULTS: "results",
     },
     STATUS_ENTRY: {
+      DISABLED: "disabled",
       OFF: "off",
       OPEN: "open",
       OPEN_UNRANKED: "open_unranked",
@@ -28,6 +29,7 @@ export default {
       OFF: "off",
       VOTING: "voting",
       VOTING_RESCUE: "voting_rescue",
+      CLOSED: "closed",
       RESULTS: "results",
     },
     STATUS_TOURNAMENT: {

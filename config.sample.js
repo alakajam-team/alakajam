@@ -22,11 +22,14 @@ module.exports = {
   DB_PASSWORD: '',
   DB_NAME: 'alakajam', */
 
-  // Emails
+  // Integrations
   /* SMTP_HOST: 'smtp.example.com',
   SMTP_PORT: 465,
   SMTP_USERNAME: 'webmaster@example.com',
-  SMTP_PASSWORD: '', */
+  SMTP_PASSWORD: '', 
+  TWITCH_CLIENT_ID: '',
+  TWITCH_CLIENT_SECRET: '',
+  */
 
   // Debug: general options
   DEBUG_DISABLE_STARTUP_BUILD: false, // Makes the server start faster by not building the client JS/CSS (you will have to "npm run build" by hand)

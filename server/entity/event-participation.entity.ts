@@ -36,7 +36,11 @@ export class EventParticipation {
   public streamerDescription: string;
 
   public get isStreamer(): boolean {
-    return ["requested", "approved"].includes(this.streamerStatus);
+    return this.streamerStatus && this.streamerStatus !== "off";
+  }
+
+  public get isApprovedStreamer(): boolean {
+    return this.streamerStatus === "approved";
   }
 
 }

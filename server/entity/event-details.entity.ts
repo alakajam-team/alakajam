@@ -12,6 +12,8 @@ export interface EventLink {
 
 export interface EventFlags {
   streamerOnlyTournament?: boolean;
+  scoreSpacePodium?: boolean;
+  hideStreamerMenu?: boolean;
 }
 
 @Entity()

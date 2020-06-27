@@ -16,6 +16,7 @@ import * as validator from "validator";
 import config from "./config";
 import constants from "./constants";
 import { createLuxonDate } from "./formats";
+import { ParsedQs } from "qs";
 
 export default {
   sanitizeString,
@@ -38,6 +39,7 @@ export default {
   isNotSet,
   isPast,
 
+  parseInt: parseIntCustom,
   parsePickerDateTime,
   parsePickerDate,
   parseJson,
@@ -197,23 +199,16 @@ function isIn(str: string, values: string[] | object) {
 
 /**
  * Checks whether the string is in an integer
- * @param  {string|number} string
- * @param  {object} options (optional) min max lt gt
- * @return {Boolean}
  */
-function isInt(input, options: any = {}) {
-  return (input || input === 0) && ((typeof input === "number" && Number.isInteger(input)) ||
-    validator.isInt(input, options));
+function isInt(input: string | number, options: { min?: number; max?: number } = {}): boolean {
+  return (Boolean(input) || input === 0) && validator.isInt(input.toString(), options);
 }
 
 /**
  * Checks whether the string is in a float
- * @param  {string|number} string
- * @param  {object} options (optional) min max lt gt
- * @return {Boolean}
  */
-function isFloat(input, options: any = {}) {
-  return (input || input === 0) && (typeof input === "number" || validator.isFloat(input, options));
+function isFloat(input: string | number, options: { min?: number; max?: number } = {}): boolean {
+  return (Boolean(input) || input === 0) && validator.isFloat(input.toString(), options);
 }
 
 /**
@@ -251,6 +246,10 @@ function isNotSet(input: any) {
  */
 function isPast(time: number) {
   return time && (new Date().getTime() - time) > 0;
+}
+
+function parseIntCustom(value: undefined | string | string[] | ParsedQs | ParsedQs[]): number {
+  return parseInt(value?.toString(), 10);
 }
 
 /**
@@ -297,7 +296,7 @@ function parseJson(str, options: any = {}) {
 /**
  * Converts the given Markdown to XSS-safe HTML
  */
-function markdownToHtml(markdown: string, options: {maxLength?: number; readMoreLink?: number} = {}): string {
+function markdownToHtml(markdown: string, options: { maxLength?: number; readMoreLink?: number } = {}): string {
   markdown = (markdown || "")
     // Automatically enable markdown inside HTML tags (not <p> because it messes things up)
     .replace(/< ?(div|table|tr|td|th|ul|li|h[1-5])/gi, '<$1 markdown="1" ')
@@ -318,7 +317,7 @@ function markdownToHtml(markdown: string, options: {maxLength?: number; readMore
   let wasTruncated = false;
   if (options.maxLength && unsafeHtml.length > options.maxLength) {
     unsafeHtml = unsafeHtml.slice(0, options.maxLength);
-    wasTruncated= true;
+    wasTruncated = true;
   }
 
   let safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)

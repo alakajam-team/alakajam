@@ -11,7 +11,7 @@ import { CustomRequest, CustomResponse } from "server/types";
 export async function adminAnnouncements(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   let currentPage = 1;
   if (forms.isId(req.query.p)) {
-    currentPage = parseInt(req.query.p, 10);
+    currentPage = forms.parseInt(req.query.p);
   }
 
   const allPostsCollection = await postService.findPosts({

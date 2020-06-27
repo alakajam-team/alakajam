@@ -31,7 +31,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [sfxr](http://www.drpetter.se/project_sfxr.html)  | Excellent and accessible tool for creating sounds effects. Check @thomastc's [jfxr](https://jfxr.frozenfractal.com) for an online variant. |
 | [Chiptone](http://sfbgames.com/chiptone/)  | Visual, powerful, online sound generator. |
 | [Audacity](http://audacity.sourceforge.net/)  | Simple and popular audio recording, mixing & conversion software. Perfect for turning WAVs into lighter formats.|
-| [Beepbox](http://www.beepbox.co) | The easiest music making tool you could find. Online and Open Source. |
+| [Beepbox](http://beepbox.co) | The easiest music making tool you could find. Online and Open Source. |
 | [Bosca Ceoil](http://boscaceoil.net/) | Easy music editor, great for beginners. Misses an undo button. Open Source. |
 | [TIC-80](https://tic.computer/) | While a full-featured fantasy console, you could just use its accessible music tracker. Open Source.|
 | [Audiotool](https://www.audiotool.com)  | Online, knobs-and-cables music editor. Exporting requires a free account. |

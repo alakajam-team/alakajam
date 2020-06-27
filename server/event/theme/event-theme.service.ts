@@ -192,15 +192,24 @@ export class EventThemeService {
     }
   }
 
-  public async findThemeShortlistVotes(user: User, event: BookshelfModel): Promise<BookshelfCollection> {
+  public async findThemeShortlistVotes(event: BookshelfModel, options: { user?: User; score?: number } = {}): Promise<BookshelfCollection> {
     const shortlistCollection = await this.findShortlist(event);
     const shortlistIds = [];
     shortlistCollection.forEach((theme) => shortlistIds.push(theme.get("id")));
-    return models.ThemeVote.where({
-      user_id: user.get("id"),
-    })
+
+    const searchCriteria: Record<string, any> = {};
+    const withRelated: string[] = [];
+    if (options.user) {
+      searchCriteria.user_id = options.user.get("id");
+    }
+    if (options.score) {
+      searchCriteria.score = options.score;
+      withRelated.push("user");
+    }
+
+    return models.ThemeVote.where(searchCriteria)
       .where("theme_id", "IN", shortlistIds)
-      .fetchAll() as Bluebird<BookshelfCollection>;
+      .fetchAll({ withRelated }) as Bluebird<BookshelfCollection>;
   }
 
   /**

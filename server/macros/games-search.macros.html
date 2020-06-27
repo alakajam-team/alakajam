@@ -88,7 +88,7 @@
 
 {% macro searchDescription(searchOptions, searchedEvent) %}
   {% if searchOptions.search or searchOptions.user or searchOptions.eventId !== undefined or searchOptions.tags 
-      or searchOptions.divisions or searchOptions.highScoresSupport or searchOptions.allowsTournamentUse %}
+      or searchOptions.divisions or searchOptions.highScoresSupport or searchOptions.allowsTournamentUse or searchOptions.platforms.length > 0 %}
     <div class="count" style="font-size: 1rem"><!-- TODO rename CSS class to "legend" -->
       {{ ('made by ' + searchOptions.user.get('title')) if searchOptions.user }}
       {% if searchOptions.tags and searchOptions.tags.length > 0 %}

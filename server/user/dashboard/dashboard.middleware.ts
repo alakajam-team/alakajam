@@ -27,7 +27,7 @@ export async function dashboardMiddleware(req: CustomRequest, res: CustomRespons
   } else {
     if (req.query.user && security.isAdmin(res.locals.user) &&
         req.query.user !== res.locals.user.get("name")) {
-      res.locals.dashboardUser = await userService.findByName(forms.sanitizeString(req.query.user));
+      res.locals.dashboardUser = await userService.findByName(forms.sanitizeString(req.query.user?.toString()));
       res.locals.dashboardAdminMode = true;
     } else {
       res.locals.dashboardUser = await userService.findByName(res.locals.user.get("name"));

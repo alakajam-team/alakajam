@@ -1,4 +1,3 @@
-import { BookshelfModel } from "bookshelf";
 import enums from "server/core/enums";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import eventParticipationService from "server/event/dashboard/event-participation.service";

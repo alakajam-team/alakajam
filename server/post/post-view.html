@@ -35,7 +35,8 @@
     {% endif %}
   </h2>
 
-  {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, allowMods: true, editComment: editComment }) }}
+  {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, 
+    allowMods: true, editComment: editComment, nodeAuthorIds: nodeAuthorIds }) }}
 </div>
 
 {% endblock %}

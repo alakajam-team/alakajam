@@ -529,6 +529,16 @@ progress[value]::-moz-progress-bar {
     color: black;
     font-weight: normal;
   }
+
+  &.big {
+    text-align: center;
+
+    & .shortcut__icon {
+      display: block;
+      margin: auto;
+      font-size: 2rem;
+    }
+  }
 }
 a.shortcut:hover {
   background-color: $neutral-lightest;

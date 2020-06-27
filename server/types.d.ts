@@ -12,7 +12,9 @@ export interface Alert {
   message: string;
 }
 
-export interface CustomExpressSession extends Express.Session {
+export interface CustomExpressSession {
+  cookie: any;
+
   // Session contents
   userId: number;
   alerts: Alert[];

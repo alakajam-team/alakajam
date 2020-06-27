@@ -16,6 +16,7 @@ import eventThemeService from "server/event/theme/event-theme.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import * as url from "url";
 import userService from "../user/user.service";
+import constants from "server/core/constants";
 
 type Json = Record<string, any>;
 
@@ -52,8 +53,8 @@ export async function getEventTimeline(req: CustomRequest, res: CustomResponse<C
 
   let page = 0;
   try {
-    if (req.query.page) {
-      page = Math.max(0, parseInt(req.query.page, 10));
+    if (forms.isInt(req.query.page?.toString())) {
+      page = Math.max(0, forms.parseInt(req.query.page));
     }
   } catch (e) {
     json = { error: "Invalid page number" };
@@ -144,14 +145,20 @@ export async function getEventShortlist(req: CustomRequest, res: CustomResponse<
 
   if (event) {
     const shortlist = await eventThemeService.findShortlist(event);
+
     if (shortlist.length > 0) {
       let eliminatedThemes = eventThemeService.computeEliminatedShortlistThemes(event);
       if (event.get("status_theme") === enums.EVENT.STATUS_THEME.RESULTS) {
         eliminatedThemes = 9;
       }
 
+      let topVotes: BookshelfModel[] = [];
+      if ([enums.EVENT.STATUS_THEME.CLOSED, enums.EVENT.STATUS_THEME.RESULTS].includes(event.get("status_theme"))) {
+        topVotes = (await eventThemeService.findThemeShortlistVotes(event, { score: constants.SHORTLIST_SIZE })).models;
+      }
+
       // Build data
-      const rawShortlist = [];
+      const rawShortlist: Array<{title: string; eliminated: boolean; ranking?: number; topPickOf: string[]}> = [];
       shortlist
         .forEach((theme: BookshelfModel, i: number) => {
           const rank = i + 1;
@@ -160,13 +167,16 @@ export async function getEventShortlist(req: CustomRequest, res: CustomResponse<
             title: theme.get("title"),
             eliminated,
             ranking: eliminated ? rank : undefined,
+            topPickOf: topVotes
+              .filter(vote => vote.get("theme_id") === theme.get("id"))
+              .map(vote => vote.related<BookshelfModel>("user").get("title"))
           });
         });
 
       // Obfuscate order for active themes
       const activeShortlist = rawShortlist.filter((themeInfo) => !themeInfo.eliminated);
       const eliminatedShortlist = rawShortlist.filter((themeInfo) => themeInfo.eliminated);
-      json.shortlist = lodash.shuffle(activeShortlist).concat(eliminatedShortlist);
+      json.shortlist = lodash.sortBy(activeShortlist, (themeInfo) => themeInfo.title).concat(eliminatedShortlist);
       json.nextElimination = eventThemeService.computeNextShortlistEliminationTime(event);
     } else {
       json = { error: "Event does not have a theme shortlist" };
@@ -297,7 +307,7 @@ export async function getUserSearch(req: CustomRequest, res: CustomResponse<Comm
   let page = 0;
   try {
     if (req.query.page) {
-      page = Math.max(0, parseInt(req.query.page, 10));
+      page = Math.max(0, forms.parseInt(req.query.page));
     }
   } catch (e) {
     json = { error: "Invalid page number" };
@@ -306,7 +316,7 @@ export async function getUserSearch(req: CustomRequest, res: CustomResponse<Comm
 
   if (!("error" in json)) {
     const users = await userService.findUsers({
-      search: req.query.title,
+      search: req.query.title?.toString(),
       pageSize: 30,
       page,
     });
@@ -357,7 +367,7 @@ function _renderJson(req: CustomRequest, res: CustomResponse<CommonLocals>, stat
     res.locals.pageTitle = "API Preview for " + req.path;
     res.render("api/api-pretty", { apiPath: req.path, json });
   } else {
-    res.json(json);
+    res.jsonp(json);
   }
 }
 

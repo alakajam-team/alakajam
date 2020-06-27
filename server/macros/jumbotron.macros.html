@@ -2,8 +2,9 @@
 {% import "event/event.macros.html" as eventMacros with context %}
 {% import "event/tournament/tournament.macros.html" as tournamentMacros with context %}
 {% import "macros/navigation.macros.html" as navigationMacros %}
+{% import "user/user.macros.html" as userMacros with context %}
 
-{% macro eventJumbotron(event, featuredPost, user, entry, tournamentScore, options = {}) %}
+{% macro eventJumbotron(event, eventParticipation, featuredPost, user, entry, tournamentScore, options = {}) %}
 <div class="event-jumbotron" style="{{ backgroundImage(event) }}">
   <div class="container">
     <div class="row">
@@ -58,53 +59,55 @@
             {% endif %}
           </div>
         </div>
-
       </div>
+
+      {% set isTournament = event.get('status_tournament') !== 'disabled' and event.get('status_tournament') !== 'off' %}
+      {% set isGameJam = event.get('status_entry') !== 'disabled' %}
 
       <div class="col-xl-3">
         <div class="row">
-          <div class="col-xl-12 col-sm-6 mb-3">
-            <div class="card bg-jumbotron border-0">
-              {% if not options.inviteToJoin %}
-              <a class="card-header shortcut" href="{{ routeUrl(event, 'event', 'tournament-games' if isTournament else 'dashboard') }}">
-                <h4 class="mb-0">
-                  <span class="shortcut__icon"><span class="fas fa-gamepad"></span></span>
-                  <span class="shortcut__title">My entry</span>
-                </h4>
-              </a>
-              {% endif %}
-
-              {% set isTournament = event.get('status_tournament') !== 'disabled' %}
-              {% if isTournament %}
-                <div class="card-body text-center p-2">
-                  {{ tournamentMacros.userRanking(user, event, tournamentScore, { compact: true }) }}
-                  <a href="{{ routeUrl(event, 'event', 'tournament-games') }}" class="btn btn-alt btn-lg d-block">Play games</a>
-                </div>
-              {% else %}
-                {% if entry %}
-                  {{ eventMacros.entrySmallThumb(entry) }}
-                  <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-alt d-block">Event dashboard</a>
-                {% else %}
-                  <div class="card-body text-center p-2">
-                    {% set entryCreationEnabled = ['open', 'open_unranked'].includes(event.get('status_entry')) %}
-                    {% if options.inviteToJoin %}
-                      <a href="{{ routeUrl(event, 'event', 'join') }}" class="btn btn-alt btn-lg d-block py-4">Join the event</a>
-                    {% else %}
-                      {% if entryCreationEnabled %}
-                        <p class="mb-1">Submissions are open</p>
-                        <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-alt btn-lg d-block mb-2">Submit entry</a>
-                      {% elseif event.get('status_entry') === 'closed' %}
-                        Submissions are closed.
-                      {% else %}
-                        Submissions are not open yet.
-                      {% endif %}
-                      <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-alt d-block mt-2">Event dashboard</a>
+          {% if isTournament %}
+            <div class="col-xl-12 col-sm-6 mb-3">
+              <div class="card bg-jumbotron border-0">
+                {% if not options.inviteToJoin %}
+                  {% if entry %}
+                    <a class="card-header shortcut" href="{{ routeUrl(event, 'event', 'dashboard') }}">
+                      <h4 class="mb-0">
+                        <span class="shortcut__icon"><span class="fas fa-gamepad"></span></span>
+                        <span class="shortcut__title">My participation</span>
+                      </h4>
+                    </a>
+                  {% else %}
+                      <a class="card-header shortcut" href="{{ routeUrl(event, 'event', 'tournament-leaderboard') }}">
+                        <h4 class="mb-0">
+                          <span class="shortcut__icon"><span class="fas fa-gamepad"></span></span>
+                          <span class="shortcut__title">Tournament</span>
+                        </h4>
+                      </a>
                     {% endif %}
-                  </div>
                 {% endif %}
-              {% endif %}
+                {{ tournamentJumbotronContent(user, event, eventParticipation, tournamentScore, entry, options) }}
+              </div>
             </div>
-          </div>
+          {% endif %}
+
+          {% if not isTournament %}
+            <div class="col-xl-12 col-sm-6 mb-3">
+              <div class="card bg-jumbotron border-0">
+                {% if not options.inviteToJoin %}
+                <a class="card-header shortcut" href="{{ routeUrl(event, 'event', 'dashboard') }}">
+                  <h4 class="mb-0">
+                    <span class="shortcut__icon"><span class="fas fa-gamepad"></span></span>
+                    <span class="shortcut__title">My entry</span>
+                  </h4>
+                </a>
+                {% endif %}
+
+                {{ myEntryJumbotronContent(event, entry, eventParticipation, options) }}
+              </div>
+            </div>
+          {% endif %}
+
           <div class="col-xl-12 col-sm-6 mb">
             <div class="card border-0 bg-jumbotron event-jumbotron__stats">
               <div class="card-header shortcut py-1">
@@ -122,18 +125,71 @@
 
     {% set shortlistEliminationInfo = event.related('details').get('shortlist_elimination') %}
     {% if shortlistEliminationInfo.stream %}
-      <div id="twitch-embed"></div>
-      <script src="https://embed.twitch.tv/embed/v1.js"></script>
-      <script type="text/javascript">
-        new Twitch.Embed("twitch-embed", {
-          width: '100%',
-          height: 500,
-          channel: "{{ shortlistEliminationInfo.stream }}"
-        });
-      </script>
+      <div class="mt-3">
+      {{ userMacros.twitchEmbed(shortlistEliminationInfo.stream, { unmute: true, height: 500 }) }}
+      </div>
     {% endif %}
   </div>
 </div>
+{% endmacro %}
+
+{% macro myEntryJumbotronContent(event, entry, eventParticipation, options = {}, isTournament) %}
+  {% set votingEnabled = ['voting', 'voting_rescue'].includes(event.get('status_results')) %}
+  {% if entry %}
+    {% if votingEnabled %}
+      <div class="card-body text-center p-2">
+        {{ eventMacros.entrySmallThumb(entry) }}
+        <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-alt d-block mt-2">Event dashboard</a>
+        <a href="{{ routeUrl(event, 'event', 'games') }}" class="btn btn-alt d-block mt-2">Rate games</a>
+      </div>
+    {% elseif not isTournament %}
+      {{ eventMacros.entrySmallThumb(entry) }}
+      <div class="card-body text-center p-0">
+        <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-alt d-block">Event dashboard</a>
+      </div>
+    {% else %}
+      <div class="card-body text-center p-2">
+        {{ eventMacros.entrySmallThumb(entry) }}
+        <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-alt d-block mt-2">Event dashboard</a>
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="card-body text-center p-2">
+      {% set entryCreationEnabled = ['open', 'open_unranked'].includes(event.get('status_entry')) %}
+      {% set isStreamer = ['requested', 'approved'].includes(eventParticipation.streamerStatus) %}
+      {% if options.inviteToJoin %}
+        <a href="{{ routeUrl(event, 'event', 'join') }}" class="btn btn-alt btn-lg d-block py-4">Join the event</a>
+      {% else %}
+        {% if entryCreationEnabled %}
+          <p class="mb-1">Submissions are open</p>
+          <a href="{{ routeUrl(event, 'event', 'create-entry') }}" class="btn btn-alt btn-lg d-block mb-2">Submit entry</a>
+        {% elseif event.get('status_entry') === 'closed' %}
+          Submissions are closed.
+        {% else %}
+          Submissions are not open yet.
+        {% endif %}
+        {% if votingEnabled and isStreamer %}
+          <a href="{{ routeUrl(event, 'event', 'games') }}" class="btn btn-alt d-block mt-2">Rate games</a>
+        {% endif %}
+        <a href="{{ routeUrl(event, 'event', 'dashboard') }}" class="btn btn-alt d-block mt-2">Event dashboard</a>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro tournamentJumbotronContent(user, event, eventParticipation, tournamentScore, entry, options) %}
+  {% set leaderboard = ['closed', 'results'].includes(event.get('status_tournament')) %}
+  {% if entry %}
+    {{ myEntryJumbotronContent(event, entry, eventParticipation, options, true) }}
+  {% endif %}
+  <div class="card-body text-center {{ 'px-2 pt-0 pb-2' if entry else 'p-2' }}">
+    {{ tournamentMacros.userRanking(user, event, eventParticipation, tournamentScore, { compact: true }) }}
+    {% if leaderboard %}
+      <a href="{{ routeUrl(event, 'event', 'tournament-leaderboard') }}" class="btn btn-alt d-block">Leaderboard</a>
+    {% else %}
+      <a href="{{ routeUrl(event, 'event', 'tournament-games') }}" class="btn btn-alt d-block">Play games</a>
+    {% endif %}
+  </div>
 {% endmacro %}
 
 {% macro statsCounters(event) %} 
@@ -172,7 +228,7 @@
 {% endmacro %}
 
 {% macro backgroundImage(event) -%}
-{%- set eventImagePath = event.related('details').get('background') or event.related('details').get('banner') if event -%}
-{%- set url = pictureUrl(eventImagePath, event) if eventImagePath else staticUrl('/static/images/default-background.png') -%}
-background-image: {{ 'url(' + url + ')'  }};
+  {%- set eventImagePath = event.related('details').get('background') or event.related('details').get('banner') if event -%}
+  {%- set url = pictureUrl(eventImagePath, event) if eventImagePath else staticUrl('/static/images/default-background.png') -%}
+  background-image: {{ 'url(' + url + ')'  }};
 {%- endmacro %}

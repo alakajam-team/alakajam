@@ -1,3 +1,4 @@
+import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import log from "server/core/log";
@@ -11,7 +12,6 @@ import eventRatingService from "server/event/rating/event-rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 import { EventLocals } from "./event.middleware";
-import { CommonLocals } from "server/common.middleware";
 
 /**
  * Browse event games
@@ -26,9 +26,7 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
   }
 
   // Search form & pagination
-  const searchOptions = await handleGameSearch(req, res, {
-    eventId: event.get("id"),
-  });
+  const searchOptions = await handleGameSearch(req, res.locals);
 
   // Search entries
   let rescueEntries = [];
@@ -62,37 +60,30 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
 
 /**
  * Fills a searchOptions object according to the request GET parameters
- * @param  {Request} req
- * @param  {object} searchOptions initial search options
- * @return {object} search options
  */
 export async function handleGameSearch(
   req: CustomRequest,
-  res: CustomResponse<CommonLocals>,
-  searchOptions: FindGamesOptions = {}): Promise<FindGamesOptions> {
+  locals: CommonLocals): Promise<FindGamesOptions> {
 
   // Pagination
-  searchOptions.pageSize = 20;
-  searchOptions.page = 1;
-  if (forms.isId(req.query.p)) {
-    searchOptions.page = parseInt(req.query.p, 10);
-  }
+  const searchOptions: FindGamesOptions = {
+    pageSize: 20,
+    page: forms.isId(req.query.p) ? forms.parseInt(req.query.p) : 1
+  };
 
   // Text search
-  searchOptions.search = forms.sanitizeString(req.query.search);
+  searchOptions.search = forms.sanitizeString(req.query.search?.toString());
 
   // User search
   if (forms.isId(req.query.user)) {
-    searchOptions.userId = parseInt(req.query.user, 10);
+    searchOptions.userId = forms.parseInt(req.query.user);
     searchOptions.user = await userService.findById(searchOptions.userId);
   }
 
   // Division
   if (req.query.divisions) {
-    if (typeof req.query.divisions === "string") {
-      req.query.divisions = [req.query.divisions];
-    }
-    searchOptions.divisions = req.query.divisions.map(forms.sanitizeString);
+    const divisions = Array.isArray(req.query.divisions) ? req.query.divisions : [req.query.divisions];
+    searchOptions.divisions = divisions.map(division => forms.sanitizeString(division?.toString()));
 
     // Hack for Kajam's ranked division
     if (searchOptions.divisions.includes(enums.DIVISION.SOLO) ||
@@ -106,19 +97,20 @@ export async function handleGameSearch(
 
   // Platforms
   if (req.query.platforms) {
-    let platforms = (Array.isArray(req.query.platforms)) ? req.query.platforms : [req.query.platforms];
-    platforms = platforms.map((str) => parseInt(str, 10));
-    if (platforms.includes(NaN)) {
+    const platformsRaw = (Array.isArray(req.query.platforms)) ? req.query.platforms : [req.query.platforms];
+    let platforms = platformsRaw.map(platform => platform.toString());
+    const platformsIds = platforms.map((str) => forms.parseInt(str));
+    if (platformsIds.includes(NaN)) {
       platforms = [];
       log.error("Invalid platform query: " + req.query.platforms);
     }
-    searchOptions.platforms = platforms;
+    searchOptions.platforms = platformsIds;
   }
 
   // Tags
   if (req.query.tags) {
-    let tagIds = (Array.isArray(req.query.tags)) ? req.query.tags : [req.query.tags];
-    tagIds = tagIds.map((str) => parseInt(str, 10));
+    const tagsRaw = (Array.isArray(req.query.tags)) ? req.query.tags : [req.query.tags];
+    let tagIds = tagsRaw.map((str) => forms.parseInt(str));
     if (tagIds.includes(NaN)) {
       tagIds = [];
       log.error("Invalid tag query: " + req.query.tags);
@@ -128,23 +120,33 @@ export async function handleGameSearch(
   }
 
   // Event
-  searchOptions.sortBy = "hotness";
-  if (req.query.eventId === "none") {
+  let event = forms.isId(req.query.eventId) ? await eventService.findEventById(forms.parseInt(req.query.eventId)) : undefined;
+  if (forms.isId(req.query.eventId)) {
+    event = await eventService.findEventById(forms.parseInt(req.query.eventId));
+  } else if (req.query.eventId === undefined) {
+    // Default event
+    event = locals.event;
+    if (!event && locals.featuredEvent && eventService.isVotingInProgress(locals.featuredEvent)) {
+      event = locals.featuredEvent;
+    }
+  }
+
+  if (event) {
+    searchOptions.eventId = event.get("id");
+  } else if (req.query.eventId === "none") {
     searchOptions.eventId = null;
-  } else if (forms.isId(req.query.eventId)) {
-    searchOptions.eventId = req.query.eventId;
-  } else if (req.query.eventId === undefined && res.locals.event) {
-    searchOptions.eventId = res.locals.event.get("id");
-  } else if (req.query.eventId === undefined && res.locals.featuredEvent &&
-      [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
-        .includes(res.locals.featuredEvent.get("status_results"))) {
+  }
+
+  // Sorting
+  if (event && eventService.isVotingInProgress(event)) {
     searchOptions.sortBy = "karma";
-    searchOptions.eventId = res.locals.featuredEvent.get("id");
+  } else {
+    searchOptions.sortBy = "hotness";
   }
 
   // Hide rated/commented
-  if (req.query.hideReviewed && res.locals.user) {
-    searchOptions.notReviewedById = res.locals.user.get("id");
+  if (req.query.hideReviewed && locals.user) {
+    searchOptions.notReviewedById = locals.user.get("id");
   }
 
   // Other filters

@@ -17,21 +17,21 @@ export async function people(req: CustomRequest, res: CustomResponse<CommonLocal
   // Parse query
   let currentPage = 1;
   if (forms.isId(req.query.p)) {
-    currentPage = parseInt(req.query.p, 10);
+    currentPage = parseInt(req.query.p?.toString(), 10);
   }
   const searchOptions: FindUserOptions = {
     pageSize: PAGE_SIZE,
     page: currentPage,
-    withEntries: req.query.withEntries,
+    withEntries: Boolean(req.query.withEntries),
     entriesCount: true,
     orderBy: "id",
     orderByDesc: true
   };
-  searchOptions.search = forms.sanitizeString(req.query.search);
+  searchOptions.search = forms.sanitizeString(req.query.search?.toString());
   if (req.query.eventId === "none") {
     searchOptions.eventId = null;
   } else {
-    searchOptions.eventId = forms.isId(req.query.eventId) ? parseInt(req.query.eventId, 10) : undefined;
+    searchOptions.eventId = forms.isId(req.query.eventId) ? parseInt(req.query.eventId?.toString(), 10) : undefined;
   }
 
   // Fetch info

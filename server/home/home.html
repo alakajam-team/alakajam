@@ -32,7 +32,7 @@
       <div class="container">{{ postMacros.post(featuredPost) }}</div>
     </div>
   {% endif %}
-  {{ jumbotronMacros.eventJumbotron(featuredEvent, featuredEventAnnouncement, user, entry, tournamentScore,
+  {{ jumbotronMacros.eventJumbotron(featuredEvent, eventParticipation, featuredEventAnnouncement, user, entry, tournamentScore,
     { shrinkedJumbo: shrinkedJumbo, hasJoinedEvent: hasJoinedEvent, inviteToJoin: inviteToJoin }) }}
 {% else %}
 <div class="event-jumbotron" style="{{ jumbotronMacros.backgroundImage(featuredEvent) }}">
@@ -97,27 +97,27 @@
 
 <div class="container">
 
-  {# ===== GAME RATING SUGGESTIONS ===== #}
-
-  {% if user and suggestedEntries and suggestedEntries.length > 0 %}
-    <div class="horizontal-bar">
-      Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
-    </div>
-    <div class="home-grid game-grid pb-1">
-    {% for entry in suggestedEntries %}
-      <div class="game-grid-entry">
-      {{ eventMacros.entryThumb(entry) }}
-      </div>
-    {% endfor %}
-    </div>
-  {% endif %}
-  
-
   <div class="row">
 
-    {# ===== LATEST BLOG POSTS ===== #}
 
-    <div class="col-md-9 col-12">
+    <div class="col-md-8 col-12 order-md-1 order-2">
+      {# ===== GAME RATING SUGGESTIONS ===== #}
+  
+      {% if user and suggestedEntries and suggestedEntries.length > 0 %}
+        <div class="horizontal-bar">
+          Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
+        </div>
+        <div class="home-grid game-grid pb-1">
+        {% for entry in suggestedEntries %}
+          <div class="game-grid-entry">
+          {{ eventMacros.entryThumb(entry) }}
+          </div>
+        {% endfor %}
+        </div>
+      {% endif %}
+        
+      {# ===== LATEST BLOG POSTS ===== #}
+
       {% if posts.length > 0 %}
       <div class="d-flex mt-3">
         <div class="horizontal-bar mt-0">Latest posts</div>
@@ -134,15 +134,36 @@
 
     {# ===== LATEST COMMENTS ===== #}
 
-    <div class="col-md-3 col-12">
-      <div class="horizontal-bar">Latest comments</div>
+    <div class="col-md-4 col-12 order-md-2 order-1">
+      {% if featuredEvent and featuredEvent.get("status") === "open" %}
+        {% set shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination') %}
+        {% if featuredStreamer and not shortlistEliminationInfo.stream %}
+          <div class="horizontal-bar">Featured streamer</div>
+          <div class="featured p-0 mb-1">
+            {{ userMacros.twitchEmbed(featuredStreamer.details.social_links.twitch, { height: 250 }) }}
+            <div class="my-1">
+              {{ userMacros.userThumb(featuredStreamer) }}
+              <a href="{{ routeUrl(featuredEvent, 'event', 'streamers') }}" class="mx-3">
+                <span class="fa fa-tv"></span> Browse all streamers
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
 
-      {{ postMacros.comments(comments, { readingUser: user, readOnly: true, linkToNode: true, preview: true }) }}
+      <div class="d-md-block d-none">
+        <div class="horizontal-bar">Latest comments</div>
+
+        {{ postMacros.comments(comments, { readingUser: user, readOnly: true, linkToNode: true, preview: true }) }}
+      </div>
     </div>
   </div>
 </div>
 {% endblock %}
 
+{% block scripts %}
+{{ userMacros.twitchEmbedScripts() }}
+{% endblock %}
 
 {% macro socialLink (title, url, iconName) %}
 <a href="{{ url }}" data-toggle="tooltip" title="{{ title }}">
