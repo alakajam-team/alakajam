@@ -46,6 +46,9 @@ export async function viewEventResults(req: CustomRequest, res: CustomResponse<E
       sortedBy = 1; // Unset special ScoreSpace category when clicking a division
     }
   }
+  if (!(flags.scoreSpacePodium && sortedBy === 7) && !division) {
+    division = eventService.getDefaultDivision(event);
+  }
 
   let context;
   if (division !== enums.DIVISION.UNRANKED) {

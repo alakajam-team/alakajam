@@ -166,7 +166,7 @@
             {% if options.scoreSpacePodium %}<span class="award-label">Solo Developer's<br />Choice</span>{% endif %}
           {% endif %}
         </div>
-        {% set trophyPos3 = 'ranking-' + rankings[1].related('details').get('ranking_' + sortedBy) if rankings.length >= 2 %}
+        {% set trophyPos3 = 'ranking-' + rankings[2].related('details').get('ranking_' + sortedBy) if rankings.length >= 2 %}
         <div class="col-md-4 position-3 {{ trophyPos3 if not options.scoreSpacePodium else 'award' }} {{ 'results-podium__step' if rankings.length >= 3 }}">
           {% if rankings.length >= 3 %}
             {{ eventMacros.entryThumb(rankings[2], entryThumbOptions) }}
