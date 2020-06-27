@@ -123,6 +123,8 @@
         event.get('status_results') if event) }}
       {{ formMacros.radio('status-results', 'voting_rescue', 'Voting (rescue)', 
         event.get('status_results') if event) }}
+      {{ formMacros.radio('status-results', 'closed', 'Closed', 
+        event.get('status_results') if event) }}
       {{ formMacros.radio('status-results', 'results', 'Results', 
         event.get('status_results') if event) }}
       {{ formMacros.radio('status-results', '', '', 

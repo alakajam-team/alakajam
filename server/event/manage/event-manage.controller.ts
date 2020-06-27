@@ -134,10 +134,10 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         infoMessage = "Theme shortlist computed.";
       }
       if (event.hasChanged("status_results")) {
-        if (event.get("status_results") === enums.EVENT.STATUS_RESULTS.RESULTS) {
+        if ([enums.EVENT.STATUS_RESULTS.CLOSED, enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get("status_results"))) {
           await eventRatingService.computeRankings(event);
           infoMessage = "Event results computed.";
-        } else if (event.previous("status_results") === enums.EVENT.STATUS_RESULTS.RESULTS) {
+        } else if ([enums.EVENT.STATUS_RESULTS.CLOSED, enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.previous("status_results"))) {
           await eventRatingService.clearRankings(event);
           infoMessage = "Event results cleared.";
         }

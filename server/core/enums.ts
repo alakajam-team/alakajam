@@ -29,6 +29,7 @@ export default {
       OFF: "off",
       VOTING: "voting",
       VOTING_RESCUE: "voting_rescue",
+      CLOSED: "closed",
       RESULTS: "results",
     },
     STATUS_TOURNAMENT: {
