@@ -639,7 +639,7 @@ export interface FindGamesOptions extends FetchPageOptions {
   sortBy?: "rating-count" | "rating" | "ranking" | "hotness" | "karma";
   eventId?: number;
   search?: string;
-  platforms?: string[];
+  platforms?: number[];
   tags?: Array<{ id: number }>;
   divisions?: string[];
   notReviewedById?: string;

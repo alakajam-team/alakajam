@@ -1,3 +1,4 @@
+import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import log from "server/core/log";
@@ -11,8 +12,6 @@ import eventRatingService from "server/event/rating/event-rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 import { EventLocals } from "./event.middleware";
-import { CommonLocals } from "server/common.middleware";
-import { BookshelfModel } from "bookshelf";
 
 /**
  * Browse event games
@@ -105,7 +104,7 @@ export async function handleGameSearch(
       platforms = [];
       log.error("Invalid platform query: " + req.query.platforms);
     }
-    searchOptions.platforms = platforms;
+    searchOptions.platforms = platformsIds;
   }
 
   // Tags
