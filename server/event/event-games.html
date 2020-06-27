@@ -6,39 +6,40 @@
 
 {% block body %}
 
-{% if user %}
-<div class="container thin">
-  {{ eventMacros.eventShortcutMyEntry(user, event, userEntry) }}
-</div>
-{% endif %}
 
 <div class="container-fluid">
   <div class="row">
 
-    <div class="col-sm-3">
+    <div class="col-xl-3 col-lg-4 col-md-5">
+      {% if user %}
+        {{ eventMacros.eventShortcutMyEntry(user, event, userEntry) }}
+      {% endif %}
+
       {{ gamesSearchMacros.searchForm(context(), {fixedEvent: true}) }}
 
       {% if user and ['voting', 'voting_rescue', 'results'].includes(event.get('status_results')) %}
-      <div class="list-group mt-3">
+      <div class="list-group my-3">
         <div class="list-group-item">
-          <h4>Recently rated</h4>
+          <h4>Your ratings</h4>
         </div>
         <div class="list-group-item">
           <p><a href="{{ routeUrl(event, 'event', 'ratings') }}" class="btn btn-primary">Manage ratings</a></p>
-          {% for vote in voteHistory %}
-          <p>
-            {{ eventMacros.entrySmallThumb(vote.related('entry')) }}
-          </p>
-          {% endfor %}
-          {% if voteHistory.length === 0 %}
-          You didn't rate entries yet.
-          {% endif %}
+          <div class="d-none d-md-block">
+            {% for vote in voteHistory %}
+            <p>
+              {{ eventMacros.entrySmallThumb(vote.related('entry')) }}
+            </p>
+            {% endfor %}
+            {% if voteHistory.length === 0 %}
+            You didn't rate entries yet.
+            {% endif %}
+          </div>
         </div>
       </div>
       {% endif %}
     </div>
     
-    <div class="col-sm-9">
+    <div class="col-xl-9 col-lg-8 col-md-7">
       <h1>
         Games
         <span class="count">({{ entriesCollection.pagination.rowCount }})</span>
