@@ -4,6 +4,8 @@ import { EventParticipation, StreamerStatus } from "server/entity/event-particip
 import { User } from "server/entity/user.entity";
 import { FindConditions, getRepository, In, Not } from "typeorm";
 import enums from "server/core/enums";
+import tournamentService from "../tournament/tournament.service";
+import entryHighscoreService, { HighScoreService } from "server/entry/highscore/entry-highscore.service";
 
 export class EventParticipationService {
 
@@ -22,12 +24,21 @@ export class EventParticipationService {
 
   public async leaveEvent(event: BookshelfModel, user: User): Promise<void> {
     const epRepository = getRepository(EventParticipation);
-    await epRepository.delete({
-      eventId: event.get("id"),
-      userId: user.id
-    });
 
-    await this.refreshParticipationCount(event);
+    const eventParticipation = await this.getEventParticipation(event.get("id"), user.id);
+    if (eventParticipation) {
+      const tournamentRefreshRequired = this.isTournamentRefreshRequired(event, eventParticipation.isStreamer, false);
+      await epRepository.delete({
+        eventId: event.get("id"),
+        userId: user.id
+      });
+      if (tournamentRefreshRequired) {
+        // XXX Performance
+        await tournamentService.recalculateAllTournamentScores(entryHighscoreService, event);
+      }
+
+      await this.refreshParticipationCount(event);
+    }
   }
 
   public async countParticipants(event: BookshelfModel): Promise<number> {
@@ -51,14 +62,27 @@ export class EventParticipationService {
     }
   }
 
+  private isTournamentRefreshRequired(event: BookshelfModel, wasStreamer: boolean, isNowStreamer: boolean) {
+    return event.get("status_tournament") === enums.EVENT.STATUS_TOURNAMENT.PLAYING && wasStreamer !== isNowStreamer;
+  }
+
   public async setStreamingPreferences(event: BookshelfModel, user: User,
                                        preferences: { streamerStatus: StreamerStatus; streamerDescription: string }): Promise<void> {
     const eventParticipation = await this.getEventParticipation(event.get("id"), user.id);
+
     if (eventParticipation) {
+      const tournamentRefreshRequired = this.isTournamentRefreshRequired(event,
+        eventParticipation.isStreamer, ["requested", "approved"].includes(preferences.streamerStatus));
+
       eventParticipation.streamerStatus = preferences.streamerStatus;
       eventParticipation.streamerDescription = preferences.streamerDescription;
       const epRepository = getRepository(EventParticipation);
       await epRepository.save(eventParticipation);
+
+      if (tournamentRefreshRequired) {
+        // XXX Performance
+        await tournamentService.recalculateAllTournamentScores(entryHighscoreService, event);
+      }
     } else {
       throw new Error("This user has not joined the event");
     }
