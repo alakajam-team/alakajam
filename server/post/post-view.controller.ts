@@ -1,4 +1,4 @@
-import { BookshelfModel, NodeBookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, NodeBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import security from "server/core/security";
 import templating from "server/core/templating-functions";
@@ -43,7 +43,8 @@ export async function buildPostContext(post: NodeBookshelfModel, currentUser: Us
     relatedEntry: undefined,
     specialPostType: undefined,
     sortedComments: undefined,
-    userLikes: undefined
+    userLikes: undefined,
+    nodeAuthorIds: undefined
   };
 
   if (post.get("event_id")) {
@@ -56,10 +57,15 @@ export async function buildPostContext(post: NodeBookshelfModel, currentUser: Us
   context.specialPostType = post.get("special_post_type");
 
   if (post.id) {
-    context.sortedComments = await commentService.findCommentsOnNodeForDisplay(post);
-    if (currentUser) {
-      context.userLikes = await likeService.findUserLikeInfo([post], currentUser);
-    }
+    const [ sortedComments, userLikes ] = await Promise.all([
+      await commentService.findCommentsOnNodeForDisplay(post),
+      currentUser ? await likeService.findUserLikeInfo([post], currentUser) : [],
+      post.load("userRoles")
+    ]);
+
+    context.sortedComments = sortedComments;
+    context.userLikes = userLikes;
+    context.nodeAuthorIds = post.related<BookshelfCollection>("userRoles").map(userRole => userRole.get("user_id"));
   }
   return context;
 }

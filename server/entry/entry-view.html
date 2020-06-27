@@ -186,7 +186,7 @@
       {% endif %}
       <h2>Comments <i>({{ entry.get('comment_count') or '0' }})</i></h2>
       {{ postMacros.comments(sortedComments, { readingUser: user, csrfToken: csrfToken, allowMods: true, editComment: editComment, 
-        allowAnonymous: entry.get('allow_anonymous'), editableAnonComments: editableAnonComments }) }}
+        allowAnonymous: entry.get('allow_anonymous'), editableAnonComments: editableAnonComments, nodeAuthorIds: nodeAuthorIds }) }}
     </div>
 
     <div class="col-md-4 game-info">

@@ -169,6 +169,9 @@
            </a>
           {% endif %}
           {{ '(@' + author.get('name') + ')' if author.get('title') and author.get('name').toLowerCase() !== author.get('title').toLowerCase() }}
+          {% if options.nodeAuthorIds and options.nodeAuthorIds.includes(author.get('id')) %}
+          <span>&nbsp;</span><span class="fas fa-scroll mt-1" data-toggle="tooltip" title="Page owner"></span>
+          {% endif %}
           <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip" title="{{ comment.get('created_at') | dateTime(user) }}">{{ comment.get('created_at') | relativeTime }}</span>
           {% if comment.wasEdited() %}
           <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip" title="{{ comment.get('updated_at') | dateTime(user) }}">edited</span>

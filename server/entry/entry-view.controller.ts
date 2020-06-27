@@ -1,4 +1,4 @@
-import { BookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
@@ -77,6 +77,7 @@ export async function entryView(req: CustomRequest, res: CustomResponse<EntryLoc
     userScore,
     userLikes,
     tournamentEvent: await tournamentService.findActiveTournamentPlaying(entry.get("id")),
+    nodeAuthorIds: entry.related<BookshelfCollection>("userRoles").map(userRole => userRole.get("user_id"))
   });
 }
 
