@@ -1,36 +1,30 @@
 import * as React from 'preact';
-import { User } from 'server/entity/user.entity';
+import base from 'server/base.template';
+import { collectHtml } from 'server/macros/nunjucks-macros';
 import { peopleTabs } from 'server/macros/tabs.macros';
 import { userThumb } from 'server/user/user.macros';
-import { CommonLocals } from 'server/common.middleware';
-import base from 'server/base.template';
-import { collectHtml, collectHtmlAsDiv } from 'server/macros/nunjucks-macros';
+import { PeopleModsContext } from './people-mods.controller';
 
-export interface PeopleModsContext extends CommonLocals {
-  admins: User[];
-  mods: User[];
-}
+export default function render(context: PeopleModsContext) {
+  const { admins, mods, path } = context;
 
-export default function peopleModsTemplate(context: PeopleModsContext) {
-  const { admins, mods } = context;
+  return base(context, <div class="container">
+    {peopleTabs(path)}
 
-  return base(context, <div className="container">
-    {peopleTabs()}
-
-    <div className="row spacing">
-      <div className="col-12">
+    <div class="row spacing">
+      <div class="col-12">
         <h2>Administrators</h2>
       </div>
     </div>
-    <div className="row"
+    <div class="row"
       dangerouslySetInnerHTML={ collectHtml(admins.map(userThumb)) }></div>
 
-    <div className="row">
-      <div className="col-12">
+    <div class="row">
+      <div class="col-12">
         <h2>Moderators</h2>
       </div>
     </div>
-    <div className="row"
+    <div class="row"
       dangerouslySetInnerHTML={ collectHtml(mods.map(userThumb)) }></div>
   </div>);
 

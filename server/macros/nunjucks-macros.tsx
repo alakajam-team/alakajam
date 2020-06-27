@@ -1,18 +1,19 @@
-import { NUNJUCKS_ENV } from "server/core/middleware";
 import * as React from "preact";
-import { CommonLocals } from "server/common.middleware";
+import { JSX } from "preact";
 import { render } from "preact-render-to-string";
+import { CommonLocals } from "server/common.middleware";
+import { NUNJUCKS_ENV } from "server/core/middleware";
 
-export function nunjuckMacro(filePath: string, functionName: string, parameters: any[] = []): { __html: string } {
+export function nunjuckMacro(filePath: string, functionName: string, parameters: any[] = [], additionalContext: Object = {}): { __html: string } {
   const html = NUNJUCKS_ENV.renderString(`
-    {% import "${filePath}" as macros %}
-    {{ macros.${functionName}(${parameters.map((key, index) => `parameters[${index}]`).join(', ') }) }}
-    `, { parameters });
+    {% import "${filePath}" as macros with context %}
+    {{ macros.${functionName}(${parameters.map((key, index) => `parameters[${index}]`).join(", ") }) }}
+    `, { parameters, ...additionalContext });
   return { __html: html };
 }
 
 export function collectHtml(htmlList: Array<{ __html: string }>): { __html: string } {
-  return { __html: htmlList.map(html => html.__html).join('\n') };
+  return { __html: htmlList.map(html => html.__html).join("\n") };
 }
 
 export function collectHtmlAsDiv(htmlList: Array<{ __html: string }>): JSX.Element {

@@ -1,3 +1,5 @@
+import { JSX } from "preact";
+
 export function ifTrue(expression: boolean, callback: () => JSX.Element | JSX.Element[]) {
   if (expression) {
     return callback();

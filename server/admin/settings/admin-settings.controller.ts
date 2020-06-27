@@ -4,9 +4,15 @@ import forms from "server/core/forms";
 import log from "server/core/log";
 import security from "server/core/security";
 import settings from "server/core/settings";
-import { EDITABLE_SETTINGS } from "server/core/settings-keys";
+import { EditableSetting, EDITABLE_SETTINGS } from "server/core/settings-keys";
 import { CustomRequest, CustomResponse } from "server/types";
-import { EditableSettingInstance, adminSettingsTemplate } from "./admin-settings.template";
+
+export type EditableSettingInstance = EditableSetting & { value: string };
+
+export interface AdminSettingsContext extends CommonLocals {
+  settings: EditableSettingInstance[];
+  editSetting: EditableSettingInstance;
+}
 
 /**
  * Admin only: settings management
@@ -75,7 +81,7 @@ export async function adminSettings(req: CustomRequest, res: CustomResponse<Comm
     };
   }
 
-  res.renderJSX(adminSettingsTemplate, {
+  res.renderJSX<AdminSettingsContext>("admin/settings/admin-settings", {
     ...res.locals,
     settings: editableSettings,
     editSetting

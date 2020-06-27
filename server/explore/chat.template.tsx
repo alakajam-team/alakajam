@@ -3,7 +3,7 @@ import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 
-export default function chatTemplate(context: CommonLocals) {
+export default function render(context: CommonLocals) {
   context.inlineStyles.push(`
   .chat_bigicon {
     float: left;

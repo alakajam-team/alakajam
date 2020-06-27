@@ -1,3 +1,4 @@
+import { JSX } from "preact";
 import { CommonLocals } from "./common.middleware";
 import { renderInBaseTemplate } from "./macros/nunjucks-macros";
 

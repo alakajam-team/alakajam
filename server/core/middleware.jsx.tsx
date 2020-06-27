@@ -1,6 +1,7 @@
 import * as React from "preact";
+import { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
-import { CustomResponse, CustomRequest, Mutable } from "server/types";
+import { CustomRequest, CustomResponse, Mutable } from "server/types";
 
 export type JSXRenderFunction<T extends CommonLocals> = (context: T) => JSX.Element;
 

@@ -1,5 +1,6 @@
 import { BookshelfModel } from "bookshelf";
 import { NextFunction, Response } from "express";
+import { JSX } from "preact";
 import forms from "server/core/forms";
 import security from "server/core/security";
 import settings from "server/core/settings";
@@ -7,9 +8,9 @@ import eventService from "server/event/event.service";
 import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
 import { SETTING_FEATURED_EVENT_NAME } from "./core/settings-keys";
+import { User } from "./entity/user.entity";
 import commentService from "./post/comment/comment.service";
 import { Alert, CustomRequest } from "./types";
-import { User } from "./entity/user.entity";
 
 export interface CommonLocals {
   [key: string]: any;

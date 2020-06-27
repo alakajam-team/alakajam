@@ -5,7 +5,7 @@ import { ifTrue, ifSet } from "server/macros/jsx-utils";
 import config from "server/core/config";
 import { dateTime } from "server/core/templating-filters";
 
-export function adminDevTemplate(context: CommonLocals & { backupDate?: Date }) {
+export default function render(context: CommonLocals & { backupDate?: Date }) {
   return adminBase(context,
     <div>
 

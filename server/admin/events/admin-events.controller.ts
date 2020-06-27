@@ -1,8 +1,12 @@
 import { CommonLocals } from "server/common.middleware";
+import entryHotnessService from "server/entry/entry-hotness.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventService from "../../event/event.service";
-import entryHotnessService from "server/entry/entry-hotness.service";
-import { adminEventsTemplate } from "./admin-events.template";
+import { BookshelfModel } from "bookshelf";
+
+export interface AdminEventsContext extends CommonLocals {
+  events: BookshelfModel[];
+}
 
 /**
  * Events management
@@ -19,7 +23,7 @@ export async function adminEvents(req: CustomRequest, res: CustomResponse<Common
     return;
   }
 
-  res.renderJSX(adminEventsTemplate, {
+  res.renderJSX<AdminEventsContext>("admin/events/admin-events", {
     ...res.locals,
     events: eventsCollection.models
   });

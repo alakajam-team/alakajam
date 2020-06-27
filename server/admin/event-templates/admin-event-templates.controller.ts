@@ -4,7 +4,13 @@ import forms from "server/core/forms";
 import eventPresetService from "server/event/event-preset.service";
 import eventTemplateService from "server/event/event-template.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import { adminEventTemplatesTemplate } from "./admin-event-templates.template";
+import { AdminBaseContext } from "../admin.base";
+
+export interface AdminEventContext extends AdminBaseContext {
+  eventTemplates: BookshelfModel[];
+  eventPresets: BookshelfModel[];
+  editEventTemplate: BookshelfModel;
+}
 
 /**
  * Event templates management
@@ -60,7 +66,7 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
   // Render page
   const eventPresetsCollection = await eventPresetService.findEventPresets();
   const eventTemplatesCollection = await eventTemplateService.findEventTemplates();
-  res.renderJSX(adminEventTemplatesTemplate, {
+  res.renderJSX<AdminEventContext>("admin/event-templates/admin-event-templates", {
     eventPresets: eventPresetsCollection.models,
     eventTemplates: eventTemplatesCollection.models,
     editEventTemplate,

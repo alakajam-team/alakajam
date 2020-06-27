@@ -14,9 +14,9 @@ import * as cookies from "cookies";
 import * as express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as expressSession from "express-session";
+import JSXPistols from "jsx-pistols";
 import * as nunjucks from "nunjucks";
 import * as path from "path";
-import { render } from "preact-render-to-string";
 import * as randomKey from "random-key";
 import { CommonLocals } from "server/common.middleware";
 import settings from "server/core/settings";
@@ -30,14 +30,16 @@ import constants from "./constants";
 import db from "./db";
 import fileStorage from "./file-storage";
 import log from "./log";
+import { setUpJSXLocals } from "./middleware.jsx";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
 import * as templatingFilters from "./templating-filters";
 import * as templatingGlobals from "./templating-globals";
-import { setUpJSXLocals, JSXRenderFunction } from "./middleware.jsx";
 
 const LAUNCH_TIME = Date.now();
 
 export let NUNJUCKS_ENV: nunjucks.Environment | undefined;
+
+export const jsxPistols = new JSXPistols({ rootPath: path.join(constants.ROOT_PATH, "/server") });
 
 /*
  * Setup app middleware
@@ -130,10 +132,9 @@ export async function configure(app: express.Application) {
       }
     };
 
-    res.renderJSX = <T extends CommonLocals> (renderFunction: JSXRenderFunction<T>, context: T) => {
+    res.renderJSX = async <T extends CommonLocals> (templateName: string, context: T) => {
       if (!alreadyRenderedWithError) {
-        const jsx = renderFunction(context);
-        res.write("<!doctype html>" + render(jsx));
+        res.write("<!doctype html>" + await jsxPistols.render(templateName + ".template.tsx", context));
         res.end();
       }
     };

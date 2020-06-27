@@ -2,15 +2,22 @@ import { BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import eventPresetService from "server/event/event-preset.service";
+import { EventCountdownOffset } from "server/event/manage/event-manage.macros";
 import { CustomRequest, CustomResponse } from "server/types";
-import { adminEventPresetsTemplate } from "./admin-event-presets.template";
+import { AdminBaseContext } from "../admin.base";
+
+export interface AdminEventPresetsContext extends AdminBaseContext {
+  eventPresets: BookshelfModel[];
+  countdownOffset: EventCountdownOffset;
+  editEventPreset?: BookshelfModel;
+}
 
 /**
  * Event presets management
  */
 export async function adminEventPresets(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   // Find template to edit
-  let editEventPreset: BookshelfModel | null = null;
+  let editEventPreset: BookshelfModel;
   const editEventPresetId = req.query.edit || req.body.id;
   if (forms.isId(editEventPresetId)) {
     editEventPreset = await eventPresetService.findEventPresetById(forms.parseInt(editEventPresetId));
@@ -23,12 +30,12 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
   }
 
   // Apply changes
-  let errorMessage: string | null = null;
+  let errorMessage: string;
   if (req.method === "POST") {
     if (req.body.delete !== undefined) {
       // Delete model
       await eventPresetService.deleteEventPreset(editEventPreset);
-      editEventPreset = null;
+      editEventPreset = undefined;
     } else {
       // Validation / Compute deadline offset
       // TODO Status radios validation (to be put in common with the event edition form)
@@ -74,9 +81,11 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
 
   // Render page
   const eventPresetsCollection = await eventPresetService.findEventPresets();
-  const context: Record<string, any> = {
+  const context: AdminEventPresetsContext = {
+    ...res.locals,
     eventPresets: eventPresetsCollection.models,
     editEventPreset,
+    countdownOffset: undefined
   };
   if (editEventPreset) {
     const rawOffset = 1.0 * (editEventPreset.get("countdown_config").offset || 0);
@@ -89,7 +98,7 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
       m: rawOffsetWithoutDays % 60,
     };
   }
-  res.renderJSX(adminEventPresetsTemplate, {
+  res.renderJSX<AdminEventPresetsContext>("admin/event-presets/admin-event-presets", {
     ...res.locals,
     ...context
   });

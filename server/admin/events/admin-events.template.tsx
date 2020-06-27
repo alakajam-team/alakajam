@@ -1,17 +1,13 @@
-import * as React from "preact";
-import { CommonLocals } from "server/common.middleware";
 import { BookshelfModel } from "bookshelf";
-import security from "server/core/security";
-import links from "server/core/links";
+import * as React from "preact";
 import adminBase from "server/admin/admin.base";
+import links from "server/core/links";
+import security from "server/core/security";
 import * as filters from "server/core/templating-filters";
 import { User } from "server/entity/user.entity";
+import { AdminEventsContext } from "./admin-events.controller";
 
-export interface AdminEventsContext extends CommonLocals {
-  events: BookshelfModel[];
-}
-
-export function adminEventsTemplate(context: AdminEventsContext) {
+export default function render(context: AdminEventsContext) {
   const { user, events } = context;
 
   return adminBase(context,

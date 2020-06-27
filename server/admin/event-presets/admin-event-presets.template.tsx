@@ -1,17 +1,12 @@
 import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
-import { CommonLocals } from "server/common.middleware";
 import * as eventManageMacros from "server/event/manage/event-manage.macros";
 import { EventCountdownOffset } from "server/event/manage/event-manage.macros";
-import adminBase from "../admin.base";
 import { ifSet } from "server/macros/jsx-utils";
+import adminBase from "../admin.base";
+import { AdminEventPresetsContext } from "./admin-event-presets.controller";
 
-export interface AdminEventPresetsContext extends CommonLocals {
-  eventPresets: BookshelfModel[];
-  countdownOffset: EventCountdownOffset;
-}
-
-export function adminEventPresetsTemplate(context: AdminEventPresetsContext) {
+export default function render(context: AdminEventPresetsContext) {
   return adminBase(context,
     <div>
       <h1>Event presets</h1>

@@ -1,19 +1,11 @@
 import * as React from "preact";
-import { CommonLocals } from "server/common.middleware";
-import { EditableSetting } from "server/core/settings-keys";
 import * as templatingFilters from "server/core/templating-filters";
 import * as formMacros from "server/macros/form.macros";
 import { ifSet } from "server/macros/jsx-utils";
 import adminBase from "../admin.base";
+import { AdminSettingsContext, EditableSettingInstance } from "./admin-settings.controller";
 
-export type EditableSettingInstance = EditableSetting & { value: string };
-
-export interface AdminSettingsContext extends CommonLocals {
-  settings: EditableSettingInstance[];
-  editSetting: EditableSettingInstance;
-}
-
-export function adminSettingsTemplate(context: AdminSettingsContext) {
+export default function render(context: AdminSettingsContext) {
   formMacros.registerCodeMirrorScripts(context);
   formMacros.registerEditorScripts(context);
 

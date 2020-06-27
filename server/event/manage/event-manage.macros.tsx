@@ -5,9 +5,9 @@ import { nunjuckMacro } from "server/macros/nunjucks-macros";
 const TEMPLATE_PATH = "event/manage/event-manage.macros.html";
 
 export interface EventCountdownOffset {
-  d: string;
-  h: string;
-  m: string;
+  d: number;
+  h: number;
+  m: number;
 }
 
 export function linksForm(eventDetails: BookshelfModel) {
