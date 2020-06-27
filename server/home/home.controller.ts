@@ -98,7 +98,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
     contextTasks.push(
       eventService.findGames({
         eventId: featuredEvent.get("id"),
-        pageSize: 4,
+        pageSize: 3,
         notReviewedById: user ? user.get("id") : undefined,
       })
         .then((suggestedEntriesCollection: BookshelfCollectionOf<EntryBookshelfModel>) => {

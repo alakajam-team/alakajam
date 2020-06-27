@@ -97,27 +97,27 @@
 
 <div class="container">
 
-  {# ===== GAME RATING SUGGESTIONS ===== #}
-
-  {% if user and suggestedEntries and suggestedEntries.length > 0 %}
-    <div class="horizontal-bar">
-      Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
-    </div>
-    <div class="home-grid game-grid pb-1">
-    {% for entry in suggestedEntries %}
-      <div class="game-grid-entry">
-      {{ eventMacros.entryThumb(entry) }}
-      </div>
-    {% endfor %}
-    </div>
-  {% endif %}
-  
-
   <div class="row">
 
-    {# ===== LATEST BLOG POSTS ===== #}
 
     <div class="col-md-8 col-12 order-md-1 order-2">
+      {# ===== GAME RATING SUGGESTIONS ===== #}
+  
+      {% if user and suggestedEntries and suggestedEntries.length > 0 %}
+        <div class="horizontal-bar">
+          Suggested entries to rate {{ formMacros.tooltip('Rate and comment other games to increase your karma. The Top 4 are featured on the front page!') }}
+        </div>
+        <div class="home-grid game-grid pb-1">
+        {% for entry in suggestedEntries %}
+          <div class="game-grid-entry">
+          {{ eventMacros.entryThumb(entry) }}
+          </div>
+        {% endfor %}
+        </div>
+      {% endif %}
+        
+      {# ===== LATEST BLOG POSTS ===== #}
+
       {% if posts.length > 0 %}
       <div class="d-flex mt-3">
         <div class="horizontal-bar mt-0">Latest posts</div>
