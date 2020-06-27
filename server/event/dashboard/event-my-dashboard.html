@@ -28,11 +28,15 @@
   <div class="row mt-4">
     <div class="col-md-3 col-12">
       <h2 class="mb-2">Useful links</h2>
+
+      {% set rulesLink = routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules') %}
+      {% if rulesLink !== 'off' %}
+      <div class="list-group mb-1">
+        {{- usefulLink(event, 'status_rules', rulesLink, 'Detailed rules', 'fa-book', { big: true }) -}}
+      </div>
+      {% endif %}
+
       <div class="list-group">
-        {% set rulesLink = routeUrl(event.get('status_rules'), 'post') if isId(event.get('status_rules')) else event.get('status_rules') %}
-        {% if rulesLink !== 'off' %}
-          {{- usefulLink(event, 'status_rules', rulesLink, 'Detailed rules', 'fa-book') -}}
-        {% endif %}
         <!--{{- usefulLink(event, null, 'posts', 'Posts', 'fa-newspaper') -}}-->
 
         {% set featuredLinks = event.related('details').get('links') %}
@@ -164,10 +168,10 @@
 
 {% endblock %}
 
-{% macro usefulLink (event, statusField, link, title, icon ) %}
+{% macro usefulLink (event, statusField, link, title, icon, options = {}) %}
   {%- if not statusField or event.get(statusField) !== 'disabled' -%}
     {%- set targetUrl = link if link.includes('/') else routeUrl(event, 'event', link) -%}
-    <a class="list-group-item shortcut" href="{{ targetUrl }}">
+    <a class="list-group-item {{ 'big' if options.big }} shortcut" href="{{ targetUrl }}">
       <h4>
         <span class="shortcut__icon"><span class="fas {{ icon }}"></span></span>
         <span class="shortcut__title">{{ title }}</span>
