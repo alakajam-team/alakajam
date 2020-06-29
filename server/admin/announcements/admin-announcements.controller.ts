@@ -4,6 +4,15 @@ import forms from "server/core/forms";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import { BookshelfModel } from "bookshelf";
+
+export interface AdminAnnouncementContext extends CommonLocals {
+  draftPosts: BookshelfModel[];
+  publishedPosts: BookshelfModel[];
+  userLikes: Record<number, string>;
+  currentPage: number;
+  pageCount: number;
+}
 
 /**
  * Edit home announcements
@@ -22,7 +31,8 @@ export async function adminAnnouncements(req: CustomRequest, res: CustomResponse
   });
   const draftPosts = allPostsCollection.filter((post) => !post.get("published_at"));
 
-  res.render("admin/announcements/admin-announcements", {
+  res.renderJSX<AdminAnnouncementContext>("admin/announcements/admin-announcements", {
+    ...res.locals,
     draftPosts,
     publishedPosts: allPostsCollection.filter((post) => !draftPosts.includes(post)),
     userLikes: await likeService.findUserLikeInfo(allPostsCollection.models, res.locals.user),
