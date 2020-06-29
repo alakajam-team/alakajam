@@ -4,13 +4,15 @@ import links from "server/core/links";
 import * as templatingFilters from "server/core/templating-filters";
 import { nunjuckMacro } from "./nunjucks-macros";
 import { BookshelfModel } from "bookshelf";
+import { Alert } from "server/types";
+import { ifTrue, ifSet } from "./jsx-utils";
 
 const FORM_MACROS_PATH = "macros/form.macros.html";
 
 // Markdown editor
 
 export function editor(editorName: string, editorContents: string) {
-  return <textarea class="form-control easymde-editor" name={ editorName }>{ templatingFilters.markdownUnescape(editorContents) }</textarea>;
+  return <textarea class="form-control easymde-editor" name={editorName}>{templatingFilters.markdownUnescape(editorContents)}</textarea>;
 }
 
 export function registerEditorScripts(locals: CommonLocals) {
@@ -47,13 +49,37 @@ export function tooltip(title: string, options: { class?: string, placement?: st
 }
 
 // Radio and check buttons
-// TODO
+
+export function radio(name, value, label, modelProperty, options = {}) {
+  return <span dangerouslySetInnerHTML={nunjuckMacro(FORM_MACROS_PATH, "radio", [name, value, label, modelProperty, options])} />;
+}
+
+export function check(name, label, value, options = {}) {
+  return <span dangerouslySetInnerHTML={nunjuckMacro(FORM_MACROS_PATH, "check", [name, label, value, options])} />;
+}
 
 // Date time picker
-// TODO
+
+export function dateTimePicker(name, value, options = {}) {
+  return <span dangerouslySetInnerHTML={nunjuckMacro(FORM_MACROS_PATH, "dateTimePicker", [name, value, options])} />;
+}
 
 // Select
-// TODO
+
+export function select(name, models, selectedValue, options = {}) {
+  return <span dangerouslySetInnerHTML={nunjuckMacro(FORM_MACROS_PATH, "select", [name, models, selectedValue, options])} />;
+}
 
 // Alerts
-// TODO
+
+export function alerts(alerts: Alert[]) {
+  return <div id="js-alerts-inline">
+    {alerts.map(alert =>
+      ifTrue(!alert.floating, () =>
+        <div class="alert alert-{{ alert.type or 'info' }}">
+          {ifSet(alert.title, () => <div class="alert-title">{alert.title}</div>)}
+          {alert.message}
+        </div>
+      ))}
+  </div>
+}

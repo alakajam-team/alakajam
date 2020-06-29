@@ -1,5 +1,7 @@
 import { nunjuckMacro } from "server/macros/nunjucks-macros";
 import { User } from "server/entity/user.entity";
+import * as React from "preact";
+import { CommonLocals } from "server/common.middleware";
 
 const USER_MACROS_PATH = "user/user.macros.html";
 
@@ -18,4 +20,16 @@ export function userAvatar(user: User, options: { small?: boolean } = {}): { __h
 
 export function userLink(user: User): { __html: string } {
   return nunjuckMacro(USER_MACROS_PATH, "userLink", [user]);
+}
+
+export function twitchLink(user: User) {
+  return <span dangerouslySetInnerHTML={nunjuckMacro(USER_MACROS_PATH, "twitchLink", [user])} />
+}
+
+export function twitchEmbed(twitchUsername: string, options: { height?: number; unmute?: boolean; } = {}) {
+  return <div dangerouslySetInnerHTML={nunjuckMacro(USER_MACROS_PATH, "twitchEmbed", [twitchUsername, options])} />
+}
+
+export function registerTwitchEmbedScripts(context: CommonLocals) {
+  context.scripts.push("https://embed.twitch.tv/embed/v1.js");
 }
