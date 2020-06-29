@@ -7,6 +7,13 @@ import security from "server/core/security";
 import { CustomRequest, CustomResponse } from "server/types";
 import platformService from "../../entry/platform/platform.service";
 
+export interface AdminPlatformsContext extends CommonLocals {
+  platforms: BookshelfModel[];
+  entryCount: Record<number, number>;
+  editPlatform?: BookshelfModel;
+  errorMessage?: string;
+}
+
 /**
  * Admin only: Platforms management
  */
@@ -31,7 +38,7 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
       }
 
       if (platform) {
-        const duplicateCollection = await platformService.fetchMultipleNamed(platform.get("name"));
+        const duplicateCollection = await platformService.fetchMultipleNamed([platform.get("name")]);
         let isDuplicate = false;
         duplicateCollection.forEach((potentialDuplicate) => {
           isDuplicate = isDuplicate || platform.get("id") !== potentialDuplicate.get("id");
@@ -73,7 +80,8 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
     entryCountByPlatform[platform.get("id")] = await platformService.countEntriesByPlatform(platform);
   }
 
-  res.render("admin/platforms/admin-platforms", {
+  res.renderJSX<AdminPlatformsContext>("admin/platforms/admin-platforms", {
+    ...res.locals,
     platforms: platformCollection.models,
     entryCount: entryCountByPlatform,
     editPlatform,

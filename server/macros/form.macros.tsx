@@ -2,6 +2,9 @@ import * as React from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import * as templatingFilters from "server/core/templating-filters";
+import { nunjuckMacro } from "./nunjucks-macros";
+
+const FORM_MACROS_PATH = "macros/form.macros.html";
 
 export function registerCodeMirrorScripts(locals: CommonLocals) {
   locals.scripts.push(
@@ -19,4 +22,8 @@ export function registerEditorScripts(locals: CommonLocals) {
 
 export function editor(editorName: string, editorContents: string) {
   return <textarea class="form-control easymde-editor" name={ editorName }>{ templatingFilters.markdownUnescape(editorContents) }</textarea>;
+}
+
+export function tooltip(title: string, options: { class?: string, placement?: string } = {}) {
+  return <span dangerouslySetInnerHTML={nunjuckMacro(FORM_MACROS_PATH, "tooltip", [title, options])} />;
 }
