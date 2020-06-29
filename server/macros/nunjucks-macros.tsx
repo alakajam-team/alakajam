@@ -5,11 +5,15 @@ import { CommonLocals } from "server/common.middleware";
 import { NUNJUCKS_ENV } from "server/core/middleware";
 
 export function nunjuckMacro(filePath: string, functionName: string, parameters: any[] = [], additionalContext: Object = {}): { __html: string } {
-  const html = NUNJUCKS_ENV.renderString(`
+  const html = nunjuckMacroAsString(filePath, functionName, parameters, additionalContext);
+  return { __html: html };
+}
+
+export function nunjuckMacroAsString(filePath: string, functionName: string, parameters: any[] = [], additionalContext: Object = {}): string {
+  return NUNJUCKS_ENV.renderString(`
     {% import "${filePath}" as macros with context %}
     {{ macros.${functionName}(${parameters.map((key, index) => `parameters[${index}]`).join(", ") }) }}
     `, { parameters, ...additionalContext });
-  return { __html: html };
 }
 
 export function collectHtml(htmlList: Array<{ __html: string }>): { __html: string } {
