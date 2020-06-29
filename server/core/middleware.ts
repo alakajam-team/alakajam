@@ -39,7 +39,10 @@ const LAUNCH_TIME = Date.now();
 
 export let NUNJUCKS_ENV: nunjucks.Environment | undefined;
 
-export const jsxPistols = new JSXPistols({ rootPath: path.join(constants.ROOT_PATH, "/server") });
+export const jsxPistols = new JSXPistols({
+  rootPath: path.join(__dirname, ".."),
+  babelOptions: process.env.NODE_ENV === "production" ? "skip" : undefined
+});
 
 /*
  * Setup app middleware
@@ -134,7 +137,7 @@ export async function configure(app: express.Application) {
 
     res.renderJSX = async <T extends CommonLocals> (templateName: string, context: T) => {
       if (!alreadyRenderedWithError) {
-        res.write("<!doctype html>" + await jsxPistols.render(templateName + ".template.tsx", context));
+        res.write("<!doctype html>" + await jsxPistols.render(templateName + ".template", context));
         res.end();
       }
     };
