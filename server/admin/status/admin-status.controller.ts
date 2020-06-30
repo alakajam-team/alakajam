@@ -3,6 +3,11 @@ import cache from "server/core/cache";
 import config from "server/core/config";
 import security from "server/core/security";
 import { CustomRequest, CustomResponse } from "server/types";
+import NodeCache = require("node-cache");
+
+export interface AdminStatusContext extends CommonLocals {
+  caches: Record<string, NodeCache>;
+}
 
 /**
  * Admin only: server status
@@ -24,9 +29,10 @@ export async function adminStatus(req: CustomRequest, res: CustomResponse<Common
     // Nothing
   }
 
-  res.render("admin/status/admin-status", {
+  res.renderJSX<AdminStatusContext>("admin/status/admin-status", {
+    ...res.locals,
     devMode: !!res.app.locals.devMode,
     pictureResizeEnabled,
-    caches: cache.cacheMap,
+    caches: cache.cacheMap
   });
 }

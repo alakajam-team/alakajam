@@ -37,9 +37,7 @@ export function configure(nunjucksEnvironment) {
     }
   });
 
-  nunjucksEnvironment.addFilter("prettyDump", (obj: any) => {
-    return "<pre>" + JSON.stringify(obj, null, 2) + "</pre>";
-  });
+  nunjucksEnvironment.addFilter("prettyDump", prettyDump);
 
   nunjucksEnvironment.addFilter("markdown", (str: string, options?: object) => {
     return forms.markdownToHtml(str, options);
@@ -131,4 +129,8 @@ export function digits(n: string | number, digits: number) {
   } else {
     return null;
   }
+}
+
+export function prettyDump(obj: any) {
+  return "<pre>" + JSON.stringify(obj, null, 2) + "</pre>";
 }
