@@ -1,11 +1,12 @@
-import { nunjuckMacro } from "server/macros/nunjucks-macros";
-import { User } from "server/entity/user.entity";
+import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
 import { CommonLocals } from "server/common.middleware";
+import { User } from "server/entity/user.entity";
+import { nunjuckMacro } from "server/macros/nunjucks-macros";
 
 const USER_MACROS_PATH = "user/user.macros.html";
 
-export function userThumb(user: User, options: { fullWidth?: boolean; centered?: boolean; pending?: boolean } | number = {}): { __html: string } {
+export function userThumb(user: BookshelfModel, options: { fullWidth?: boolean; centered?: boolean; pending?: boolean } | number = {}): { __html: string } {
   // Add support as Array.map() callback 
   if (typeof options === 'number') {
     options = {};

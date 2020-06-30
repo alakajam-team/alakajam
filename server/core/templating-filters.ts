@@ -76,16 +76,7 @@ export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("ordinal", formats.ordinal);
 
-  nunjucksEnvironment.addFilter("digits", (n: string | number, digits: number) => {
-    if (typeof n === "string") {
-      n = parseFloat(n);
-    }
-    if (typeof n === "number") {
-      return n.toFixed(digits).toString();
-    } else {
-      return null;
-    }
-  });
+  nunjucksEnvironment.addFilter("digits", digits);
 
   nunjucksEnvironment.addFilter("leftpad", (n: string | number, toLength: number, char: string | number) => {
     return n ? leftPad(n, toLength, char) : "";
@@ -129,4 +120,15 @@ export function markdown(value: string, options: {maxLength?: number; readMoreLi
 
 export function markdownUnescape(value: string) {
   return value ? value.replace(/&amp;/g, "&").replace(/&quot;/g, '"') : null;
+}
+
+export function digits(n: string | number, digits: number) {
+  if (typeof n === "string") {
+    n = parseFloat(n);
+  }
+  if (typeof n === "number") {
+    return n.toFixed(digits).toString();
+  } else {
+    return null;
+  }
 }
