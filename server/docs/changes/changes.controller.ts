@@ -8,7 +8,8 @@ export async function changes(req: CustomRequest, res: CustomResponse<CommonLoca
   res.locals.pageTitle = "Site changes";
   res.locals.changes = await fileStorage.read("CHANGES.md");
 
-  res.render("docs/changes/changes", {
+  res.renderJSX<CommonLocals>("docs/changes/changes", {
+    ...res.locals,
     sidebar: await settings.findArticlesSidebar("about"),
   });
 }
