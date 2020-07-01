@@ -72,13 +72,13 @@ export default function render(context: AdminStatusContext) {
                       )}
                       {ifFalse(constants.CONFIDENTIAL_CACHE_KEYS.includes(key), () => {
                         const value = templatingFilters.prettyDump(cache.get(key));
-                        if (value.length > 100) {
+                        if (value.__html.length > 100) {
                           return <div>
                             <input type="button" class="btn btn-sm btn-outline-primary" value="Toggle" onclick={`$('#${ key }').toggle()`} />
-                            <div id={ key } style="display: none" dangerouslySetInnerHTML={{ __html: value }} />
+                            <div id={ key } style="display: none" dangerouslySetInnerHTML={value} />
                           </div>;
                         } else {
-                          return <div dangerouslySetInnerHTML={{ __html: value }} />;
+                          return <div dangerouslySetInnerHTML={value} />;
                         }
                       })}
                     </td>
