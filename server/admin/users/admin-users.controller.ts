@@ -15,7 +15,8 @@ export async function adminUsers(req: CustomRequest, res: CustomResponse<CommonL
   const users = await userService.findUsers();
   users.sort((user1, user2) => (user1.title || "").localeCompare(user2.title || ""));
 
-  res.render("admin/users/admin-users", {
+  res.renderJSX<CommonLocals>("admin/users/admin-users", {
+    ...res.locals,
     users
   });
 }

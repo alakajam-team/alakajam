@@ -1,6 +1,5 @@
 import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
-import { JSX } from "preact";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import adminBase from "../admin.base";

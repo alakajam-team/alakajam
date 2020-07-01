@@ -17,7 +17,7 @@ export interface AdminEventContext extends AdminBaseContext {
  */
 export async function adminEventTemplates(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   // Find template to edit
-  let editEventTemplate: BookshelfModel | null = null;
+  let editEventTemplate: BookshelfModel;
   const editEventTemplateId = req.query.edit || req.body.id;
   if (forms.isId(editEventTemplateId)) {
     editEventTemplate = await eventTemplateService.findEventTemplateById(parseInt(editEventTemplateId, 10));
@@ -26,12 +26,12 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
   }
 
   // Apply changes
-  let errorMessage: string | null = null;
+  let errorMessage: string;
   if (req.method === "POST") {
     if (req.body.delete !== undefined) {
       // Delete model
       await eventTemplateService.deleteEventTemplate(editEventTemplate);
-      editEventTemplate = null;
+      editEventTemplate = undefined;
     } else {
       // Update model (without saving yet)
       editEventTemplate = editEventTemplate || eventTemplateService.createEventTemplate();
@@ -58,7 +58,7 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
       // Save if valid
       if (!errorMessage) {
         await editEventTemplate.save();
-        editEventTemplate = null;
+        editEventTemplate = undefined;
       }
     }
   }

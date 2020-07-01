@@ -1,11 +1,10 @@
 import * as React from "preact";
-import { CommonLocals } from "server/common.middleware";
-import adminBase from "../admin.base";
-import { ifTrue, ifSet } from "server/macros/jsx-utils";
 import config from "server/core/config";
 import { dateTime } from "server/core/templating-filters";
+import { ifSet, ifTrue } from "server/macros/jsx-utils";
+import adminBase, { AdminBaseContext } from "../admin.base";
 
-export default function render(context: CommonLocals & { backupDate?: Date }) {
+export default function render(context: AdminBaseContext & { backupDate?: Date }) {
   return adminBase(context,
     <div>
 

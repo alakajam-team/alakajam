@@ -6,8 +6,9 @@ import forms from "server/core/forms";
 import security from "server/core/security";
 import { CustomRequest, CustomResponse } from "server/types";
 import platformService from "../../entry/platform/platform.service";
+import { AdminBaseContext } from "../admin.base";
 
-export interface AdminPlatformsContext extends CommonLocals {
+export interface AdminPlatformsContext extends AdminBaseContext {
   platforms: BookshelfModel[];
   entryCount: Record<number, number>;
   editPlatform?: BookshelfModel;
@@ -22,13 +23,13 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
     res.errorPage(403);
   }
 
-  let errorMessage: string | null = null;
+  let errorMessage: string;
 
   // Save changed platform
   if (req.method === "POST") {
     const name = forms.sanitizeString(req.body.name);
     if (name) {
-      let platform: BookshelfModel | null = null;
+      let platform: BookshelfModel;
 
       if (forms.isId(req.body.id)) {
         platform = await platformService.fetchById(req.body.id);

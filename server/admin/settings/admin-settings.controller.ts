@@ -6,10 +6,11 @@ import security from "server/core/security";
 import settings from "server/core/settings";
 import { EditableSetting, EDITABLE_SETTINGS } from "server/core/settings-keys";
 import { CustomRequest, CustomResponse } from "server/types";
+import { AdminBaseContext } from "../admin.base";
 
 export type EditableSettingInstance = EditableSetting & { value: string };
 
-export interface AdminSettingsContext extends CommonLocals {
+export interface AdminSettingsContext extends AdminBaseContext {
   settings: EditableSettingInstance[];
   editSetting: EditableSettingInstance;
 }

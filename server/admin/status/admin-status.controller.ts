@@ -3,9 +3,10 @@ import cache from "server/core/cache";
 import config from "server/core/config";
 import security from "server/core/security";
 import { CustomRequest, CustomResponse } from "server/types";
+import { AdminBaseContext } from "../admin.base";
 import NodeCache = require("node-cache");
 
-export interface AdminStatusContext extends CommonLocals {
+export interface AdminStatusContext extends AdminBaseContext {
   caches: Record<string, NodeCache>;
 }
 

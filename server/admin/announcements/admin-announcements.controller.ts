@@ -1,12 +1,13 @@
+import { BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import { BookshelfModel } from "bookshelf";
+import { AdminBaseContext } from "../admin.base";
 
-export interface AdminAnnouncementContext extends CommonLocals {
+export interface AdminAnnouncementContext extends AdminBaseContext {
   draftPosts: BookshelfModel[];
   publishedPosts: BookshelfModel[];
   userLikes: Record<number, string>;
