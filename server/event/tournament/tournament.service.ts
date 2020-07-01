@@ -143,7 +143,8 @@ export class TournamentService {
     for (const entryScore of impactedEntryScores) {
       // include 11th player in case we need to remove his point
       if (entryScore.get("ranking") <= constants.TOURNAMENT_POINTS_DISTRIBUTION.length + 1) {
-        if (!userIdsToUpdate.includes(entryScore.get("user_id"))) {
+        if (!userIdsToUpdate.includes(entryScore.get("user_id")) 
+          && (allowedUserIds === "everyone" || allowedUserIds.includes(entryScore.get("user_id")))) {
           userIdsToUpdate.push(entryScore.get("user_id"));
         }
       }
