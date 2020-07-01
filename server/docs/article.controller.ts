@@ -4,10 +4,16 @@
  */
 
 import { CommonLocals } from "server/common.middleware";
-import settings from "server/core/settings";
+import settings, { ArticleSidebarCategory } from "server/core/settings";
 import { CustomRequest, CustomResponse } from "server/types";
 import * as slug from "slug";
 import articleService from "./article.service";
+
+export interface ArticleContext extends CommonLocals {
+  sidebar: ArticleSidebarCategory;
+  articleName: string;
+  articleBody: string;
+}
 
 export async function articleApiRoot(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   return renderArticle(res, "docs", "api");
@@ -41,6 +47,12 @@ async function renderArticle(
   res: CustomResponse<CommonLocals>,
   category: "about" | "docs",
   name: string): Promise<void> {
+  const context: ArticleContext = {
+    ...res.locals,
+    sidebar: undefined,
+    articleName: undefined,
+    articleBody: undefined
+  }
 
   // Find featured article
   const findArticleTask = articleService.findArticle(
@@ -48,19 +60,19 @@ async function renderArticle(
   ).then(async (article) => {
     if (article) {
       const lines = article.split("\n");
-      res.locals.articleName = lines.shift();
-      res.locals.articleBody = lines.join("\n");
+      context.articleName = lines.shift();
+      context.articleBody = lines.join("\n");
     }
   });
 
   const settingArticlesTask = settings.findArticlesSidebar(category)
-    .then((sidebar) => res.locals.sidebar = sidebar);
+    .then((sidebar) => context.sidebar = sidebar);
 
   await Promise.all([findArticleTask, settingArticlesTask]); // Parallelize fetching everything
 
-  if (res.locals.articleName && res.locals.articleBody) {
-    res.locals.pageTitle = res.locals.articleName;
-    res.render("docs/article");
+  if (context.articleName && context.articleBody) {
+    context.pageTitle = context.articleName;
+    res.renderJSX<ArticleContext>("docs/article", context);
   } else {
     res.errorPage(404);
   }
