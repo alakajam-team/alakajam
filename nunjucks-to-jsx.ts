@@ -58,7 +58,7 @@ import links from "server/core/links";
   // Render function
   out = replace(out, /{% block body %}/g, () => {
     return `export default function render(context: CommonLocals) {
-  const { user } = context;
+  const { path } = context;
 
   return ${baseName}(context,`;
   });

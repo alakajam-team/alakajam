@@ -19,3 +19,9 @@ export function ifSet(value: any, callback: () => JSX.Element | JSX.Element[]) {
     return callback();
   }
 }
+
+export function ifNotSet(value: any, callback: () => JSX.Element | JSX.Element[]) {
+  if (value === undefined) {
+    return callback();
+  }
+}
