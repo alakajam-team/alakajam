@@ -16,7 +16,7 @@ export default function render(context: CommonLocals) {
           {formMacros.alerts(context.alerts)}
 
           {ifNotSet(user, () =>
-            <form method="post" action={path !== '/logout' ? path : '/login'}>
+            <form method="post" action={path !== "/logout" ? path : "/login"}>
               {context.csrfTokenJSx()}
               <div class="form-group">
                 <label for="username">Username</label>
@@ -30,7 +30,7 @@ export default function render(context: CommonLocals) {
                 <div class="checkbox">
                   <label>
                     <input type="checkbox" name="remember-me" /> Remember me
-            </label>
+                  </label>
                 </div>
               </div>
               <div class="form-group">
@@ -45,7 +45,7 @@ export default function render(context: CommonLocals) {
           )}
 
           {ifSet(user, () =>
-            <p>You are logged in as <b>{user.get('name')}.</b></p>
+            <p>You are logged in as <b>{user.get("name")}.</b></p>
           )}
         </div>
       </div>

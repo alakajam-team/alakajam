@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { CommonLocals } from "./common.middleware";
 import { Config } from "./core/config";
-import { JSXRenderFunction } from "./core/middleware.jsx";
 
 export type Mutable<T> = { -readonly [P in keyof T ]: T[P] };
 

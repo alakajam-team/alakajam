@@ -22,8 +22,8 @@ export default function render(context: CommonLocals) {
 
           {ifTrue(searchOptions.search || searchOptions.eventId !== undefined, () =>
             <div class="count" style="font-size: 1rem; margin-top: -15px; margin-bottom: 20px">{/* TODO rename CSS class to "legend" */}
-              {searchedEvent ? 'who joined ' + searchedEvent.get('title') : ''}
-              {searchOptions.search ? 'matching "' + searchOptions.search + '"' : ''}
+              {searchedEvent ? "who joined " + searchedEvent.get("title") : ""}
+              {searchOptions.search ? 'matching "' + searchOptions.search + '"' : ""}
             </div>
           )}
 
@@ -55,7 +55,7 @@ function searchForm(searchOptions, events) {
         <select name="eventId" class="form-control js-select" data-placeholder="None" data-allow-clear="true">
           <option value=""></option>
           {events.map(event =>
-            <option value={event.get('id') + event.get('id') == searchOptions.eventId ? 'selected' : ''}>{event.get('title')}</option>
+            <option value={event.get("id") + (event.get("id") === searchOptions.eventId) ? "selected" : ""}>{event.get("title")}</option>
           )}
         </select>
       </div>
@@ -63,7 +63,7 @@ function searchForm(searchOptions, events) {
         <label>
           <input type="checkbox" name="withEntries" checked={searchOptions.withEntries} />
           With entries
-    </label>
+        </label>
       </div>
       <div class="form-group">
         <input type="submit" class="btn btn-primary" value="Apply" />

@@ -14,7 +14,7 @@ export default function render(context: CommonLocals) {
       <div class="row">
         <div class="col-lg-6">
 
-          <form action={links.routeUrl(dashboardUser, 'user', 'password', { dashboardAdminMode })} method="post">
+          <form action={links.routeUrl(dashboardUser, "user", "password", { dashboardAdminMode })} method="post">
             {context.csrfTokenJSX()}
 
             <div class="form-group">

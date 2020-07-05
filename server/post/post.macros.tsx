@@ -10,7 +10,7 @@ export interface CommentEditorOptions {
   allowAnonymous?: boolean;
 }
 
-export function post(post: BookshelfModel, options: {
+export function post(postParam: BookshelfModel, options: {
   readingUser?: User;
   readingUserLikes?: Record<number, string>;
   hideHeading?: boolean;
@@ -21,17 +21,17 @@ export function post(post: BookshelfModel, options: {
   commentsAnchorLinks?: boolean;
   smallTitle?: boolean;
 } = {}) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(POST_MACROS_PATH, "post", [post, options])} />;
+  return <div dangerouslySetInnerHTML={nunjuckMacro(POST_MACROS_PATH, "post", [postParam, options])} />;
 }
 
-export function postLikes(post: BookshelfModel, options: {
+export function postLikes(postParam: BookshelfModel, options: {
   readingUser?: User;
   readingUserLikes?: Record<number, string>;
 }) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(POST_MACROS_PATH, "postLikes", [post, options])} />;
+  return <div dangerouslySetInnerHTML={nunjuckMacro(POST_MACROS_PATH, "postLikes", [postParam, options])} />;
 }
 
-export function comments(comments: BookshelfModel[], options: {
+export function comments(commentsParam: BookshelfModel[], options: {
   readingUser?: User;
   editComment?: BookshelfModel;
   csrfToken?: Function;
@@ -42,7 +42,7 @@ export function comments(comments: BookshelfModel[], options: {
   preview?: boolean;
   highlightNewerThan?: any;
 } & CommentEditorOptions) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(POST_MACROS_PATH, "comments", [comments, options])} />;
+  return <div dangerouslySetInnerHTML={nunjuckMacro(POST_MACROS_PATH, "comments", [commentsParam, options])} />;
 }
 
 export function commentUrl(node: BookshelfModel, comment: BookshelfModel) {

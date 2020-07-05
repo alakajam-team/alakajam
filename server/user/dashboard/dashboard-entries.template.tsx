@@ -11,7 +11,7 @@ export default function render(context: CommonLocals) {
   return dashboardBase(context, <div>
     {ifSet(featuredEvent, () =>
       <div>
-        <h1>{featuredEvent.get('title')} entry</h1>
+        <h1>{featuredEvent.get("title")} entry</h1>
         <div class="container-fluid no-padding">
           <div class="row">
             <div class="col-lg-6">
@@ -28,8 +28,8 @@ export default function render(context: CommonLocals) {
     )}
 
     <div class="form-group">
-      <a data-test="import" href={links.routeUrl(user, 'user', 'entry-import')} class="btn btn-primary">Import games (Itch.io, etc.)</a>
-  <a data-test="create" href="/external-entry/create-entry" class="btn btn-primary">Create external entry manually</a>
+      <a data-test="import" href={links.routeUrl(user, "user", "entry-import")} class="btn btn-primary">Import games (Itch.io, etc.)</a>
+      <a data-test="create" href="/external-entry/create-entry" class="btn btn-primary">Create external entry manually</a>
     </div>
 
     {listEntries(entries)}
@@ -69,9 +69,9 @@ function listEntries(entries) {
       <div class="game-grid-entry">
         {eventMacros.entryThumb(entry, { showEvent: true })}
         <div class="entry-thumb__form">
-          <a href={links.routeUrl(entry, 'entry', 'edit')} class="btn btn-sm btn-primary"><span class="fas fa-pencil-alt"></span></a>
+          <a href={links.routeUrl(entry, "entry", "edit")} class="btn btn-sm btn-primary"><span class="fas fa-pencil-alt"></span></a>
         </div>
       </div>
     )}
-  </div>
+  </div>;
 }

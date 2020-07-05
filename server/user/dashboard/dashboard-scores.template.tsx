@@ -33,9 +33,9 @@ export default function render(context: CommonLocals) {
               </div>
               <div class="col-sm-8 text-right">
                 Sort scores by
-                {linkSortBy('submitted_at', 'Latest', sortBy)}
-                {linkSortBy('ranking', 'Ranking', sortBy)}
-                {linkSortBy('activity', 'Game activity', sortBy)}
+                {linkSortBy("submitted_at", "Latest", sortBy)}
+                {linkSortBy("ranking", "Ranking", sortBy)}
+                {linkSortBy("activity", "Game activity", sortBy)}
               </div>
             </div>
           </div>
@@ -53,21 +53,21 @@ export default function render(context: CommonLocals) {
             </thead>
             <tbody>
               {userScores.forEach(userScore => {
-                const entry = userScore.related('entry');
+                const entry = userScore.related("entry");
                 return <tr>
-                  <td>{scoreMacros.printRanking(userScore.get('ranking'))}</td>
+                  <td>{scoreMacros.printRanking(userScore.get("ranking"))}</td>
                   <td style="max-width: 200px">{entryMacros.entrySmallThumb(entry)}</td>
                   <td>
                     <b>{scoreMacros.printScore(entry, userScore, { showEditLink: true })}</b>
                   </td>
-                  <td style="font-size: 0.8rem">{date(userScore.get('updated_at'))}</td>
+                  <td style="font-size: 0.8rem">{date(userScore.get("updated_at"))}</td>
                   <td>
                     <b>{scoreMacros.printProof(userScore)}</b>
                   </td>
                   <td style="font-size: 0.8rem">
-                    <a href={links.routeUrl(entry, 'entry', 'scores')}>{relativeTime(entriesLastActivity[userScore.get('entry_id')])}</a>
+                    <a href={links.routeUrl(entry, "entry", "scores")}>{relativeTime(entriesLastActivity[userScore.get("entry_id")])}</a>
                   </td>
-                </tr>
+                </tr>;
               })}
 
               {ifTrue(userScores.length === 0, () =>
@@ -90,5 +90,5 @@ export default function render(context: CommonLocals) {
 }
 
 function linkSortBy(id, label, sortedBy) {
-  return <a href="?sortBy={id }}" class={"btn btn-sm btn-outline-secondary" + (sortedBy === id ? " disabled" : "")}>{label}</a>
+  return <a href="?sortBy={id }}" class={"btn btn-sm btn-outline-secondary" + (sortedBy === id ? " disabled" : "")}>{label}</a>;
 }

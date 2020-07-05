@@ -12,7 +12,7 @@ import * as userMacros from "server/user/user.macros";
 
 export default function render(context: CommonLocals) {
   const { profileUser, user, isTwitchLive, alakajamEntries, externalEntries, otherEntries, posts, userScores, userLikes, medals } = context;
-  const socialLinks = profileUser.related('details').get('social_links');
+  const socialLinks = profileUser.related("details").get("social_links");
   const totalMedals = (medals[1] || 0) + (medals[2] || 0) + (medals[3] || 0);
 
   userMacros.registerTwitchEmbedScripts(context);
@@ -20,39 +20,39 @@ export default function render(context: CommonLocals) {
   return base(context, <div class="container profile">
     <div class="row">
       <div class="col-md-4 col-lg-3">
-        {ifSet(profileUser.get('avatar'), () =>
-          <img src={links.pictureUrl(profileUser.get('avatar'), profileUser)} class="profile__avatar" />
+        {ifSet(profileUser.get("avatar"), () =>
+          <img src={links.pictureUrl(profileUser.get("avatar"), profileUser)} class="profile__avatar" />
         )}
-        {ifNotSet(profileUser.get('avatar'), () =>
-          <img src={links.staticUrl('/static/images/default-avatar.png')} class="profile__avatar" />
+        {ifNotSet(profileUser.get("avatar"), () =>
+          <img src={links.staticUrl("/static/images/default-avatar.png")} class="profile__avatar" />
         )}
 
         <h1 class="profile__title">
-          {profileUser.get('title')}
+          {profileUser.get("title")}
         </h1>
         <h3 class="profile__name">
-          {profileUser.get('name')}
+          {profileUser.get("name")}
           <span class="profile__id">
-            #{profileUser.get('id')}
+            #{profileUser.get("id")}
           </span>
         </h3>
         <p class="profile__joined">
-          Joined {relativeTime(profileUser.get('created_at'))}
+          Joined {relativeTime(profileUser.get("created_at"))}
         </p>
 
-        {ifTrue(profileUser.get('is_admin'), () =>
+        {ifTrue(profileUser.get("is_admin"), () =>
           <p class="profile__admin">
-            <img src={links.staticUrl('/static/images/adminbadge.png')} class="profile__admin" />
+            <img src={links.staticUrl("/static/images/adminbadge.png")} class="profile__admin" />
           </p>
         )}
-        {ifTrue(profileUser.get('is_mod') && !profileUser.get('is_admin'), () =>
+        {ifTrue(profileUser.get("is_mod") && !profileUser.get("is_admin"), () =>
           <p class="profile__mod">
-            <img src={links.staticUrl('/static/images/modbadge.png')} class="profile__mod" />
+            <img src={links.staticUrl("/static/images/modbadge.png")} class="profile__mod" />
           </p>
         )}
 
-        {ifTrue(user && (user.get('id') == profileUser.get('id')), () =>
-          <a href={links.routeUrl(user, 'user', 'feed')} class="btn btn-outline-primary">View dashboard</a>
+        {ifTrue(user && user.get("id") === profileUser.get("id"), () =>
+          <a href={links.routeUrl(user, "user", "feed")} class="btn btn-outline-primary">View dashboard</a>
         )}
 
         <div class="spacing">
@@ -60,7 +60,7 @@ export default function render(context: CommonLocals) {
             <div class="profile__social-link">
               <a href={socialLinks.website}>
                 <span class="fas fa-home" style="color: black; font-size: 24px"></span> Website
-            </a>
+              </a>
             </div>
           )}
           {ifTrue(socialLinks.twitch, () =>
@@ -71,8 +71,8 @@ export default function render(context: CommonLocals) {
           {ifTrue(socialLinks.twitter, () =>
             <div class="profile__social-link">
               <a href="https://www.twitter.com/{socialLinks.twitter}">
-                <img src={links.staticUrl('/static/images/social/twitter.svg')} class="no-border" style="width: 32px" /> Twitter
-            </a>
+                <img src={links.staticUrl("/static/images/social/twitter.svg")} class="no-border" style="width: 32px" /> Twitter
+              </a>
             </div>
           )}
         </div>
@@ -85,16 +85,18 @@ export default function render(context: CommonLocals) {
           </div>
         )}
 
-        {ifTrue(profileUser.related('details').get('body'), () =>
+        {ifTrue(profileUser.related("details").get("body"), () =>
           <div>
             <h2>Bio</h2>
-            <div class="featured" dangerouslySetInnerHTML={markdown(profileUser.related('details').get('body'))} />
+            <div class="featured" dangerouslySetInnerHTML={markdown(profileUser.related("details").get("body"))} />
             <div class="spacing"></div>
           </div>
         )}
 
         <ul class="nav nav-tabs nav-justified" style="margin-top: 30px; margin-bottom: 10px" role="tablist">
-          <li class="nav-item"><a class="nav-link active" href="#entries" data-toggle="tab">Alakajam! games ({alakajamEntries.length + otherEntries.length})</a></li>
+          <li class="nav-item">
+            <a class="nav-link active" href="#entries" data-toggle="tab">Alakajam! games ({alakajamEntries.length + otherEntries.length})</a>
+          </li>
           {ifTrue(externalEntries.length > 0, () =>
             <li class="nav-item"><a class="nav-link" href="#entries-ext" data-toggle="tab">Other games ({externalEntries.length})</a></li>
           )}
@@ -130,7 +132,7 @@ export default function render(context: CommonLocals) {
             )}
 
             {ifTrue(alakajamEntries.length === 0 && otherEntries.length === 0, () =>
-              <div class="card card-body">{profileUser.get('title')} didn't submit games... Yet!</div>
+              <div class="card card-body">{profileUser.get("title")} didn't submit games... Yet!</div>
             )}
           </div>
           <div id="entries-ext" class="tab-pane fade" role="tabpanel">
@@ -151,12 +153,12 @@ export default function render(context: CommonLocals) {
                     <div class="spacing"></div>
                   </div>
                 )}
-                {navigationMacros.pagination(1, posts.pagination.pageCount, '/posts?special_post_type=all&user_id=' + profileUser.get('id'))}
+                {navigationMacros.pagination(1, posts.pagination.pageCount, "/posts?special_post_type=all&user_id=" + profileUser.get("id"))}
               </div>
             )}
 
             {ifTrue(posts.models.length === 0, () =>
-              <div class="card card-body">{profileUser.get('title')} didn't write posts... Yet!</div>
+              <div class="card card-body">{profileUser.get("title")} didn't write posts... Yet!</div>
             )}
           </div>
           <div id="scores" class="tab-pane fade" role="tabpanel">
@@ -189,18 +191,18 @@ export default function render(context: CommonLocals) {
                 </thead>
                 <tbody>
                   {userScores.map(userScore => {
-                    const entry = userScore.related('entry');
+                    const entry = userScore.related("entry");
                     return <tr>
-                      <td>{scoreMacros.printRanking(userScore.get('ranking'))}</td>
+                      <td>{scoreMacros.printRanking(userScore.get("ranking"))}</td>
                       <td style="max-width: 200px">{eventMacros.entrySmallThumb(entry)}</td>
                       <td>
                         <b>{scoreMacros.printScore(entry, userScore, { showEditLink: false })}</b>
                       </td>
-                      <td style="font-size: 0.8rem">{date(userScore.get('updated_at'))}</td>
+                      <td style="font-size: 0.8rem">{date(userScore.get("updated_at"))}</td>
                       <td>
                         <b>{scoreMacros.printProof(userScore)}</b>
                       </td>
-                    </tr>
+                    </tr>;
                   })}
                 </tbody>
               </table>

@@ -62,5 +62,5 @@ function link(label, targetPath, currentPath, options: { isAdminLink?: boolean; 
   const isLinkActive = currentPath === targetPath || (!options.exactCheck && currentPath.indexOf(targetPath) === 0);
   return <a href={targetPath} class={"list-group-item " + (isLinkActive ? colorClass : "")}>
     {label}
-  </a>
+  </a>;
 }

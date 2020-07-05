@@ -1,7 +1,7 @@
 import * as React from "preact";
 import { nunjuckMacro } from "server/macros/nunjucks-macros";
 
-const ENTRY_HIGHSCORE_MACROS_PATH = "entry/highscore/entry-highscore.macros.html"
+const ENTRY_HIGHSCORE_MACROS_PATH = "entry/highscore/entry-highscore.macros.html";
 
 export function highScoresLinks(entry, user, path, options = {}) {
   return <div dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "highScoresLinks", [entry, user, path, options])} />;

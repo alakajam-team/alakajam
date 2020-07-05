@@ -13,7 +13,7 @@ export default function render(context: CommonLocals) {
       <div class="row">
         {ifSet(sidebar, () =>
           <div class="col-sm-4 col-md-3">
-            {sidebarMacros.sidebar(sidebar, context.path, { class: 'articles-sidebar' })}
+            {sidebarMacros.sidebar(sidebar, context.path, { class: "articles-sidebar" })}
           </div>
         )}
         <div class="col-sm-8 col-md-9">

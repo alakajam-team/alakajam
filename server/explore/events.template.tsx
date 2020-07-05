@@ -16,7 +16,7 @@ export default function render(context: EventsContext) {
         <div class="events-block events-block__live mr-2">
           <h2><span class="fas fa-play-circle"></span> On now!</h2>
           {open.map(event =>
-            eventTable(event, featuredEntries[event.get('id')]))}
+            eventTable(event, featuredEntries[event.get("id")]))}
         </div>
       )}
 
@@ -24,7 +24,7 @@ export default function render(context: EventsContext) {
         <div class="events-block events-block__pending">
           <h2><span class="fas fa-calendar"></span> Upcoming</h2>
           {pending.map(event =>
-            eventTable(event, featuredEntries[event.get('id')]))}
+            eventTable(event, featuredEntries[event.get("id")]))}
         </div>
       )}
 
@@ -44,34 +44,34 @@ export default function render(context: EventsContext) {
       <div class="tab-content">
         <div id="alakajam_events" class="events-block events-block__closed tab-pane fade show active">
           {closedAlakajam.map(event =>
-            eventTable(event, featuredEntries[event.get('id')]))}
+            eventTable(event, featuredEntries[event.get("id")]))}
         </div>
 
         <div id="other_events" class="events-block events-block__closed tab-pane fade">
           {closedOther.map(event =>
-            eventTable(event, featuredEntries[event.get('id')], { noResults: true }))}
+            eventTable(event, featuredEntries[event.get("id")], { noResults: true }))}
         </div>
       </div>
     </div>);
 }
 
 function eventTable(event, featuredEntries, options: { noResults?: boolean } = {}) {
-  return <div class={"event-table " + event.get('status') + " mr-2"}>
+  return <div class={"event-table " + event.get("status") + " mr-2"}>
     <div class="event-table__header">
-      <a href={ links.routeUrl(event, 'event') } class="event-table__title">
-        {event.get('title')}
+      <a href={ links.routeUrl(event, "event") } class="event-table__title">
+        {event.get("title")}
         &nbsp;
-        {ifTrue(event.get('status') === 'closed', () =>
-          <span class="count">({event.get('entry_count')} entries)</span>
+        {ifTrue(event.get("status") === "closed", () =>
+          <span class="count">({event.get("entry_count")} entries)</span>
         )}
         <div class="event-table__dates">
-          {event.get('display_dates') || '(dates unknown)'}
+          {event.get("display_dates") || "(dates unknown)"}
         </div>
       </a>
-      {ifTrue(event.get('display_theme'), () =>
+      {ifTrue(event.get("display_theme"), () =>
         <div class="event-table__theme">
           <span class="event-table__theme-label">Theme</span>
-          {event.get('display_theme')}
+          {event.get("display_theme")}
         </div>
       )}
     </div>

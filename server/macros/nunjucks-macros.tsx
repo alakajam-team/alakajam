@@ -4,12 +4,14 @@ import { render } from "preact-render-to-string";
 import { CommonLocals } from "server/common.middleware";
 import { NUNJUCKS_ENV } from "server/core/middleware";
 
-export function nunjuckMacro(filePath: string, functionName: string, parameters: any[] = [], additionalContext: Object = {}): { __html: string } {
+export function nunjuckMacro(filePath: string, functionName: string, parameters: any[] = [],
+                             additionalContext: Record<string, any> = {}): { __html: string } {
   const html = nunjuckMacroAsString(filePath, functionName, parameters, additionalContext);
   return { __html: html };
 }
 
-export function nunjuckMacroAsString(filePath: string, functionName: string, parameters: any[] = [], additionalContext: Object = {}): string {
+export function nunjuckMacroAsString(filePath: string, functionName: string, parameters: any[] = [],
+                                     additionalContext: Record<string, any> = {}): string {
   return NUNJUCKS_ENV.renderString(`
     {% import "${filePath}" as macros with context %}
     {{ macros.${functionName}(${parameters.map((key, index) => `parameters[${index}]`).join(", ") }) }}

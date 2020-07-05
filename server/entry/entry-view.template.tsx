@@ -16,7 +16,8 @@ import { EntryLocals } from "./entry.middleware";
 import * as templatingFilters from "server/core/templating-filters";
 
 export default function render(context: EntryLocals) {
-  const { entry, external, user, infoMessage, entryVotes, canVote, vote, minEntryVotes, event, eventVote, csrfToken, csrfTokenJSX, sortedComments, editComment, editableAnonComments, nodeAuthorIds, posts } = context;
+  const { entry, external, user, infoMessage, entryVotes, canVote, vote, minEntryVotes,
+    event, eventVote, csrfToken, csrfTokenJSX, sortedComments, editComment, editableAnonComments, nodeAuthorIds, posts } = context;
 
   formMacros.registerEditorScripts(context);
 
@@ -37,8 +38,8 @@ export default function render(context: EntryLocals) {
               {ifTrue(external, () =>
                 <h2 style="margin-top: -5px; margin-bottom: 20px">
                   <span class="badge badge-sm badge-primary">External entry</span>
-                  {ifTrue(entry.get('external_event'), () =>
-                    <span>Made for <i>{entry.get('external_event')}</i></span>
+                  {ifTrue(entry.get("external_event"), () =>
+                    <span>Made for <i>{entry.get("external_event")}</i></span>
                   )}
                 </h2>
               )}
@@ -49,39 +50,42 @@ export default function render(context: EntryLocals) {
           <div class="col-md-8">
             {picture(entry, event)}
 
-            {ifTrue(entry.related('details').get('body'), () =>
+            {ifTrue(entry.related("details").get("body"), () =>
               <div class="card card-body post user-contents mb-3"
-                dangerouslySetInnerHTML={templatingFilters.markdown(entry.related('details').get('body'))} />
+                dangerouslySetInnerHTML={templatingFilters.markdown(entry.related("details").get("body"))} />
             )}
 
             {ifTrue(user && event && eventVote, () =>
               voting(entry, entryVotes, user, canVote, vote, minEntryVotes, csrfTokenJSX)
             )}
 
-            {ifTrue(event && event.get('status_results') === 'closed' && entry.get('division') !== 'unranked', () =>
+            {ifTrue(event && event.get("status_results") === "closed" && entry.get("division") !== "unranked", () =>
               <div class="entry-voting">
                 <h2 class="entry-voting__header">Game ratings</h2>
                 <div class="entry-voting__body">
                   The ratings phase is now closed. Final results will be announced shortly.
-            </div>
+                </div>
               </div>
             )}
 
-            {ifTrue(event && event.get('status_results') === 'results' && entry.get('division') !== 'unranked', () =>
+            {ifTrue(event && event.get("status_results") === "results" && entry.get("division") !== "unranked", () =>
               votingResults(entry, event)
             )}
 
-            {ifTrue(entry.get('allow_anonymous') && user && !user.get('disallow_anonymous'), () =>
-              <p class="float-right my-1">This entry welcomes anonymous comments (<a href="/article/docs/faq#anon-comment" target="_blank">help</a>)</p>
+            {ifTrue(entry.get("allow_anonymous") && user && !user.get("disallow_anonymous"), () =>
+              <p class="float-right my-1">
+                This entry welcomes anonymous comments
+                (<a href="/article/docs/faq#anon-comment" target="_blank">help</a>)
+              </p>
             )}
 
-            <h2>Comments <i>({entry.get('comment_count') || '0'})</i></h2>
+            <h2>Comments <i>({entry.get("comment_count") || "0"})</i></h2>
             {
               postMacros.comments(sortedComments, {
                 readingUser: user,
-                csrfToken: csrfToken,
+                csrfToken,
                 editComment,
-                allowAnonymous: entry.get('allow_anonymous'),
+                allowAnonymous: entry.get("allow_anonymous"),
                 editableAnonComments,
                 nodeAuthorIds
               })
@@ -91,9 +95,9 @@ export default function render(context: EntryLocals) {
           <div class="col-md-4 game-info">
             <h3>Info</h3>
 
-            {ifTrue(entry.get('description'), () =>
+            {ifTrue(entry.get("description"), () =>
               <div class="card card-body entry__description user-contents">
-                {entry.get('description')}
+                {entry.get("description")}
               </div>
             )}
 
@@ -101,35 +105,35 @@ export default function render(context: EntryLocals) {
               <div>
                 <div class="entry__info">
                   <span class="entry__info-label">Division</span>
-                  <span class="entry__info-value">{capitalize(entry.get('division'))}</span>
+                  <span class="entry__info-value">{capitalize(entry.get("division"))}</span>
                 </div>
                 <div class="entry__info">
                   <span class="entry__info-label">Karma</span>
-                  <span class="entry__info-value">{digits(entry.get('karma'), 0)}</span>
+                  <span class="entry__info-value">{digits(entry.get("karma"), 0)}</span>
                 </div>
               </div>
             )}
             <div class="entry__info">
               <span class="entry__info-label">Platforms</span>
               <div class="entry__info-value">
-                {entry.get('platforms').map(name =>
+                {entry.get("platforms").map(name =>
                   <div class="entry__platform">{eventMacros.entryPlatformIcon(name, { hideLabel: true }, context)}</div>
                 )}
               </div>
             </div>
-            {ifTrue(entry.related<BookshelfCollection>('tags').length > 0, () =>
+            {ifTrue(entry.related<BookshelfCollection>("tags").length > 0, () =>
               <div class="entry__info">
                 <span class="entry__info-label">Tags</span>
                 <div class="entry__info-value" style="width: 215px">
-                  {entry.related<BookshelfCollection>('tags').models.map(tag =>
-                    <a href="/games?eventId=&amp;tags={ tag.get('id') }" class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get('value')}</a>
+                  {entry.related<BookshelfCollection>("tags").models.map(tag =>
+                    <a href="/games?eventId=&amp;tags={ tag.get('id') }" class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get("value")}</a>
                   )}
                 </div>
               </div>
             )}
             <div class="entry__info">
               <span class="entry__info-label">Published</span>
-              <span class="entry__info-value">{templatingFilters.date(entry.get('published_at'))}</span>
+              <span class="entry__info-value">{templatingFilters.date(entry.get("published_at"))}</span>
             </div>
 
             <h3 style="margin-top: 20px">Links</h3>
@@ -138,33 +142,33 @@ export default function render(context: EntryLocals) {
               {ifTrue(security.canUserWrite(user, entry), () =>
                 <a class="btn btn-outline-primary" href="{ routeUrl(entry, 'entry', 'edit') }">Edit entry</a>
               )}
-              {entry.get('links').map(link =>
+              {entry.get("links").map(link =>
                 <a class="btn btn-primary" href="{ link.url }" target="_blank">
                   <span class="fas fa-external-link"></span>
                   {link.label}
                 </a>
               )}
-              {ifTrue(entry.get('links').length === 0 || !entry.get('links')[0].url, () =>
+              {ifTrue(entry.get("links").length === 0 || !entry.get("links")[0].url, () =>
                 <div class="card card-body">No links yet.</div>
               )}
             </div>
 
-            <h3 class="mt-4">Author{entry.related<BookshelfCollection>('userRoles').models.length > 1 ? 's' : ''}</h3>
+            <h3 class="mt-4">Author{entry.related<BookshelfCollection>("userRoles").models.length > 1 ? "s" : ""}</h3>
 
             <div class="card card-body pb-2">
               <div class="row">
                 {entry.sortedUserRoles().map(userRole =>
-                  userMacros.userThumb(userRole.related<BookshelfModel>('user'), { fullWidth: true })
+                  userMacros.userThumb(userRole.related<BookshelfModel>("user"), { fullWidth: true })
                 )}
                 {ifTrue(security.canUserWrite(user, entry), () =>
-                  entry.related<BookshelfCollection>('invites').models.map(invite =>
-                    <div dangerouslySetInnerHTML={userMacros.userThumb(invite.related('invited'), { fullWidth: true, pending: true })} />
+                  entry.related<BookshelfCollection>("invites").models.map(invite =>
+                    <div dangerouslySetInnerHTML={userMacros.userThumb(invite.related("invited"), { fullWidth: true, pending: true })} />
                   )
                 )}
               </div>
             </div>
 
-            {ifTrue(entry.get('status_high_score') !== "off", () =>
+            {ifTrue(entry.get("status_high_score") !== "off", () =>
               <div>
                 <h3 name="high-scores" class="mt-4">High scores {scoreMacros.highScoresLinks(entry, user, context.path)}</h3>
                 {scoreMacros.tournamentEventBanner(context.tournamentEvent)}
@@ -193,26 +197,26 @@ export default function render(context: EntryLocals) {
 
 function picture(entry, event) {
   const hasPictures = entry.picturePreviews().length > 0;
-  const mainPicture = hasPictures ? links.pictureUrl(entry.picturePreviews()[0], entry) : links.staticUrl('/static/images/default-entry.png');
+  const mainPicture = hasPictures ? links.pictureUrl(entry.picturePreviews()[0], entry) : links.staticUrl("/static/images/default-entry.png");
 
-  const details = entry.related('details');
+  const details = entry.related("details");
 
-  return <div class={`entry__picture${hasPictures ? '' : ' empty'}`} style={`background-image: url('${mainPicture}')`}>
-    {ifTrue(event && event.get('status_results') === 'results' && entry.get('division') !== 'unranked', () =>
+  return <div class={`entry__picture${hasPictures ? "" : " empty"}`} style={`background-image: url('${mainPicture}')`}>
+    {ifTrue(event && event.get("status_results") === "results" && entry.get("division") !== "unranked", () =>
       <div class="entry-medals">
         {ifSet(details, () =>
           range(1, 7).map(categoryIndex => {
-            const ranking = details.get('ranking_' + categoryIndex);
+            const ranking = details.get("ranking_" + categoryIndex);
             if (ranking && ranking <= 3) {
               return <a href="#results">
                 <span class="entry-results__category-medal medal-category-{categoryIndex} medal-ranking-{ranking} in-picture"></span>
-              </a>
+              </a>;
             }
           })
         )}
       </div>
     )}
-  </div>
+  </div>;
 }
 
 function voting(entry, entryVotes, user, canVote, vote, minEntryVotes, csrfTokenJSX) {
@@ -225,16 +229,19 @@ function voting(entry, entryVotes, user, canVote, vote, minEntryVotes, csrfToken
             <a href="{ routeUrl(event, 'event', 'ratings') }" class="btn btn-outline-light btn-sm">Manage my ratings</a>
           </div>
       Game ratings
-    </h2>
+        </h2>
         <div class="entry-voting__body">
-          {ifTrue(entry.get('division') === 'unranked', () =>
+          {ifTrue(entry.get("division") === "unranked", () =>
             <div>
               <p>This game is an <strong>Unranked</strong> entry.</p>
               <p>Voting is disabled, please provide feedback instead.</p>
-              <p style="margin-bottom: 0"><i>Note: The Karma formula grants you as many points on this entry as on ranked ones. <a href="/article/docs/faq#karma-intro">Learn more</a></i></p>
+              <p style="margin-bottom: 0">
+                <i>Note: The Karma formula grants you as many points on this entry as on ranked ones.
+                  <a href="/article/docs/faq#karma-intro">Learn more</a></i>
+              </p>
             </div>
           )}
-          {ifTrue(entry.get('division') !== 'unranked', () =>
+          {ifTrue(entry.get("division") !== "unranked", () =>
             votingForm(entry, entryVotes, event, csrfTokenJSX, vote)
           )}
         </div>
@@ -251,11 +258,11 @@ function voting(entry, entryVotes, user, canVote, vote, minEntryVotes, csrfToken
       </div>
     )}
 
-    {ifTrue(!canVote && entryVotes !== null && entry.get('division') !== 'unranked', () =>
+    {ifTrue(!canVote && entryVotes !== null && entry.get("division") !== "unranked", () =>
       <div class="entry-voting">
         <h2 class="entry-voting__header">Game ratings</h2>
         <div class="entry-voting__body">
-          <p>You have received <strong>{entryVotes}</strong> rating{entryVotes !== 1 ? 's' : ''} so far.</p>
+          <p>You have received <strong>{entryVotes}</strong> rating{entryVotes !== 1 ? "s" : ""} so far.</p>
           {ifTrue(entryVotes < minEntryVotes, () =>
             <p>You need at least <strong>{minEntryVotes}</strong> ratings for your game to receive rankings.</p>
           )}
@@ -266,7 +273,7 @@ function voting(entry, entryVotes, user, canVote, vote, minEntryVotes, csrfToken
 }
 
 function votingForm(entry, entryVotes, event, csrfTokenJSX, vote) {
-  const optouts = entry.related('details').get('optouts') || [];
+  const optouts = entry.related("details").get("optouts") || [];
 
   return <form action="" method="post">
     {csrfTokenJSX()}
@@ -281,43 +288,47 @@ function votingForm(entry, entryVotes, event, csrfTokenJSX, vote) {
 
     <input type="hidden" name="action" value="vote" />
     <div>
-      {event.related('details').get('category_titles').map((categoryTitle, index) => {
+      {event.related("details").get("category_titles").map((categoryTitle, index) => {
         const categoryIndex = index + 1;
-        const categoryRating = vote ? vote.get('vote_' + categoryIndex) : undefined;
-        <div class="entry-voting__category">
-          <input type="hidden" id="js-vote-{ categoryIndex }" name="vote-{ categoryIndex }" value="{ (categoryRating || 0) | digits(3) }" autocomplete="off" />
+        const categoryRating = vote ? vote.get("vote_" + categoryIndex) : undefined;
+        return <div class="entry-voting__category">
+          <input type="hidden" id={"js-vote-" + categoryIndex } name={"vote-" + categoryIndex }
+            value={ digits(categoryRating || 0, 3) } autocomplete="off" />
           <div class="entry-voting__category-title">{categoryTitle}</div>
-          <div id="js-vote-label-{ categoryIndex }" class="entry-voting__category-rating confirmed">&nbsp;{categoryRating > 0 ? digits(categoryRating, 0) : ''}</div>
+          <div id={"js-vote-label-" + categoryIndex } class="entry-voting__category-rating confirmed">
+              &nbsp;{categoryRating > 0 ? digits(categoryRating, 0) : ""}</div>
           <div class="entry-voting__category-stars">
-            <span data-category="{ categoryIndex }" data-rating="0" class="js-star far fa-lg fa-circle { 'confirmed' if not categoryRating }"></span>
+            <span data-category={ categoryIndex } data-rating="0"
+              class={"js-star far fa-lg fa-circle " + (!categoryRating ? "confirmed" : "")}></span>
             {ifTrue(optouts.includes(categoryTitle), () =>
               <span>Opted out (<a href="/article/docs/faq#optouts">what?</a>)</span>
             )}
             {ifTrue(!optouts.includes(categoryTitle), () =>
               range(1, 11).map(i =>
-                <span data-category="{ categoryIndex }" data-rating="{ i }" class="js-star fa-lg { 'fas fa-star confirmed' if i <= categoryRating else 'far fa-star' }"></span>
+                <span data-category={ categoryIndex } data-rating={ i }
+                  class={"js-star fa-lg " + (i <= categoryRating ? "fas fa-star confirmed" : "far fa-star")}></span>
               )
             )}
           </div>
-        </div>
+        </div>;
       })}
     </div>
-  </form>
+  </form>;
 }
 
 function votingResults(entry, event) {
   const hasRatings = false;
-  const details = entry.related('details');
-  const entriesInDivision = event.related('details').get('division_counts')[entry.get('division')];
+  const details = entry.related("details");
+  const entriesInDivision = event.related("details").get("division_counts")[entry.get("division")];
 
   return <div class="entry-results">
     <h2 class="entry-results__header"><a name="results"></a>Voting results</h2>
     <div class="entry-results__body">
       <p>
-        {event.related('details').get('category_titles').map((categoryTitle, index) => {
+        {event.related("details").get("category_titles").map((categoryTitle, index) => {
           const categoryIndex = index + 1;
-          const ranking = details.get('ranking_' + categoryIndex);
-          const rating = details.get('rating_' + categoryIndex);
+          const ranking = details.get("ranking_" + categoryIndex);
+          const rating = details.get("rating_" + categoryIndex);
 
           if (ranking) {
             const percentage = (ranking - 1.) / entriesInDivision * 100;
@@ -332,20 +343,23 @@ function votingResults(entry, event) {
                   {ordinal(ranking)}
                 </a>
               </div>
-              <div class="entry-results__category-rating d-none d-sm-inline-block">{percentage > 0 ? digits(percentage, 0) + '%' : '' }</div>
+              <div class="entry-results__category-rating d-none d-sm-inline-block">{percentage > 0 ? digits(percentage, 0) + "%" : "" }</div>
               <div class="entry-results__category-rating">{digits(rating, 3)}</div>
               <div class="entry-results__category-stars d-none d-sm-inline-block">
                 {range(1, 11).map(i =>
                   <span class="fa-lg { 'fas fa-star' if i <= rating|round(0) else 'far fa-star' }"></span>
                 )}
               </div>
-            </div>
+            </div>;
           }
         })}
       </p>
 
       {ifTrue(hasRatings, () =>
-        <div>This game entered in the <strong>{capitalize(entry.get('division'))}</strong> competition (<strong>{entriesInDivision}</strong> entries).</div>
+        <div>
+          This game entered in the <strong>{capitalize(entry.get("division"))}</strong> competition
+          (<strong>{entriesInDivision}</strong> entries).
+        </div>
       )}
       {ifFalse(hasRatings, () =>
         <div>This entry did not get enough ratings to be ranked.</div>
@@ -355,5 +369,8 @@ function votingResults(entry, event) {
 }
 
 function ratingCountPhrase(entry, entryVotes) {
-  return <p>This <strong>{capitalize(entry.get('division'))}</strong> entry has received <strong>{entryVotes}</strong> rating{entryVotes !== 1 ? 's' : ''} so far.</p>
+  return <p>
+    This <strong>{capitalize(entry.get("division"))}</strong> entry has received
+    <strong>{entryVotes}</strong> rating{entryVotes !== 1 ? "s" : ""} so far.
+  </p>;
 }

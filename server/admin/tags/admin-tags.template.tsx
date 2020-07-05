@@ -18,7 +18,7 @@ export default function render(context: AdminTagsContext) {
 
       <div class="form-group">
         <div class="btn-group">
-          <a href="?sortBy=date" class="btn btn-outline-secondary" disabled={sortBy === 'date'}>Sort by date</a>
+          <a href="?sortBy=date" class="btn btn-outline-secondary" disabled={sortBy === "date"}>Sort by date</a>
           <a href="?" class="btn btn-outline-secondary" disabled={!sortBy}>Sort by usage</a>
         </div>
       </div >
@@ -48,21 +48,21 @@ function details(detailedTag: BookshelfModel, sortBy: string) {
   return <div class="card mb-3">
     <div class="card-header">
       <div class="float-right">
-        <a class="btn btn-danger mr-1" href={`?delete=${detailedTag.get('id')}&amp;sortBy=${sortBy}`}
+        <a class="btn btn-danger mr-1" href={`?delete=${detailedTag.get("id")}&amp;sortBy=${sortBy}`}
           onclick="return confirm('This cannot be reverted. The tag will be removed from all entries using it. Continue?')">
           Delete this tag
-      </a>
+        </a>
         <a class="btn btn-outline-secondary" href="?">
           <span class="fas fa-trash"></span>
         </a>
       </div>
-      <h2 class="mb-0">{detailedTag.get('value')}</h2>
+      <h2 class="mb-0">{detailedTag.get("value")}</h2>
     </div>
     <div class="card-body">
       <div class="container">
         <h3>Tag usage</h3>
         <div class="row">
-          {detailedTag.related<BookshelfCollection>('entries').models.map(entry =>
+          {detailedTag.related<BookshelfCollection>("entries").models.map(entry =>
             <div class="col-4" style="margin-bottom: 5px">
               {eventMacros.entrySmallThumb(entry)}
             </div>
@@ -70,5 +70,5 @@ function details(detailedTag: BookshelfModel, sortBy: string) {
         </div>
       </div>
     </div>
-  </div>
+  </div>;
 }

@@ -52,7 +52,7 @@ async function renderArticle(
     sidebar: undefined,
     articleName: undefined,
     articleBody: undefined
-  }
+  };
 
   // Find featured article
   const findArticleTask = articleService.findArticle(

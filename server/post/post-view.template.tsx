@@ -16,22 +16,22 @@ export default function render(context: CommonLocals) {
 
   return base(context,
     <div class="container thin">
-      {ifNotSet(post.get('published_at'), () =>
+      {ifNotSet(post.get("published_at"), () =>
         <div class="alert alert-warning"><strong>Draft post</strong> Other users can't see it until it is published.</div>
       )}
 
-      {ifTrue(post.get('published_at') && !templatingFunctions.isPast(post.get('published_at')), () =>
+      {ifTrue(post.get("published_at") && !templatingFunctions.isPast(post.get("published_at")), () =>
         <div class="alert alert-warning"><strong>Pending post</strong> Other users can't see it until
-    {relativeTime(post.get('published_at'))}.</div>
+          {relativeTime(post.get("published_at"))}.</div>
       )}
 
       {postMacros.post(post, { commentsAnchorLinks: true, readingUser: user, readingUserLikes: userLikes })}
 
       <a class="anchor" name="comments"></a>
       <h2 class="spacing">
-        Comments <span class="legend">({post.get('comment_count') || '0'})</span>
+        Comments <span class="legend">({post.get("comment_count") || "0"})</span>
         {ifSet(user, () =>
-          <form method="post" class="comment__subscribe" action={links.routeUrl(post, 'post', 'watch')}>
+          <form method="post" class="comment__subscribe" action={links.routeUrl(post, "post", "watch")}>
             {context.csrfTokenJSX()}
             {/* Being subscribed to a post = having a user right. Only allow removing the right */}
             {ifTrue(security.isUserWatching(user, post), () =>

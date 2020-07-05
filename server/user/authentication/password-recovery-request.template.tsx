@@ -33,7 +33,8 @@ export default function render(context: CommonLocals) {
             <div>
               <h3>Request registered</h3>
               <p>If this address matches an existing account, you should soon receive an email with a password recovery link.</p>
-              <p>If you have issues finding the email, check your spam folder. Still out of luck? Please <a href="/article/about">contact an administrator</a>.</p>
+              <p>If you have issues finding the email, check your spam folder. Still out of luck?
+                Please <a href="/article/about">contact an administrator</a>.</p>
             </div>
           )}
         </div>

@@ -120,12 +120,12 @@ export function markdownUnescape(value: string) {
   return value ? value.replace(/&amp;/g, "&").replace(/&quot;/g, '"') : null;
 }
 
-export function digits(n: string | number, digits: number) {
+export function digits(n: string | number, fractionDigits: number) {
   if (typeof n === "string") {
     n = parseFloat(n);
   }
   if (typeof n === "number") {
-    return n.toFixed(digits).toString();
+    return n.toFixed(fractionDigits).toString();
   } else {
     return null;
   }

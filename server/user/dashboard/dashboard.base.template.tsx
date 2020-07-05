@@ -22,12 +22,12 @@ export default function dashboardBase(context: CommonLocals, contentsBlock: JSX.
           <div class="list-group-item">
             {userMacros.userThumb(dashboardUser, { fullWidth: true, centered: true })}
           </div>
-          {dashboardLink(dashboardUser, 'feed', 'Dashboard', path, options)}
-          {dashboardLink(dashboardUser, 'settings', 'Settings', path, options)}
-          {dashboardLink(dashboardUser, 'entries', 'Entries', path, options)}
-          {dashboardLink(dashboardUser, 'posts', 'Posts', path, options)}
-          {dashboardLink(dashboardUser, 'scores', 'Scores', path, options)}
-          {dashboardLink(dashboardUser, 'password', 'Change password', path, options)}
+          {dashboardLink(dashboardUser, "feed", "Dashboard", path, options)}
+          {dashboardLink(dashboardUser, "settings", "Settings", path, options)}
+          {dashboardLink(dashboardUser, "entries", "Entries", path, options)}
+          {dashboardLink(dashboardUser, "posts", "Posts", path, options)}
+          {dashboardLink(dashboardUser, "scores", "Scores", path, options)}
+          {dashboardLink(dashboardUser, "password", "Change password", path, options)}
         </div>
       </div>
       <div class="col-sm-8 col-md-9">
@@ -35,7 +35,7 @@ export default function dashboardBase(context: CommonLocals, contentsBlock: JSX.
           <h2 style="margin-bottom: 20px">
             <span class="badge badge-danger">
               <span class="fas fa-user"></span>
-              {dashboardUser.get('title')}
+              {dashboardUser.get("title")}
             </span>
           </h2>
         )}
@@ -58,7 +58,7 @@ export default function dashboardBase(context: CommonLocals, contentsBlock: JSX.
 
 
 function dashboardLink(dashboardUser, page, label, path, options) {
-  const url = links.routeUrl(dashboardUser, 'user', page, options);
+  const url = links.routeUrl(dashboardUser, "user", page, options);
 
   return <a href={url} class={"list-group-item"
     + (path.indexOf(url) === 0 ? " active" : "")

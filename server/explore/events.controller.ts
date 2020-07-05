@@ -8,7 +8,7 @@ export type TopEntriesByDivision = Record<"solo" | "team", BookshelfModel[]>;
 
 export interface EventsContext extends CommonLocals {
   open: BookshelfModel[];
-  pending: BookshelfModel[]; 
+  pending: BookshelfModel[];
   closedAlakajam: BookshelfModel[];
   closedOther: BookshelfModel[];
   featuredEntries: Record<number, TopEntriesByDivision>;

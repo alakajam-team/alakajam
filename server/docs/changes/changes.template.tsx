@@ -11,7 +11,7 @@ export default function render(context: CommonLocals & { changes: string }) {
       <div class="row">
         {ifSet(context.sidebar, () =>
           <div class="col-sm-4 col-md-3">
-            {sidebarMacros.sidebar(context.sidebar, context.path, { class: 'articles-sidebar' })}
+            {sidebarMacros.sidebar(context.sidebar, context.path, { class: "articles-sidebar" })}
           </div>
         )}
         <div class="col-sm-8 col-md-9" dangerouslySetInnerHTML={markdown(context.changes)} />

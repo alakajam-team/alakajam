@@ -19,22 +19,24 @@ export default function render(context: CommonLocals) {
           <div class="d-none d-sm-block mt-3">
             <h3>Adding games</h3>
             <p>Users can submit game made during any jam, even external ones. You can add your own
-            <a href={links.routeUrl(user, 'user', 'entries')}>from your Dashboard</a>.
-         </p>
+              <a href={links.routeUrl(user, "user", "entries")}>from your Dashboard</a>.
+            </p>
           </div>
         </div>
         <div class="col-sm-8 col-md-9">
           <h1>
             {ifTrue(searchedEvent, () =>
-              <a href={searchedEvent.get('status_entry') !== 'off' ? links.routeUrl(featuredEvent, 'event', 'games') : 'posts'}>{searchedEvent.get('title')}</a>
+              <a href={searchedEvent.get("status_entry") !== "off" ? links.routeUrl(featuredEvent, "event", "games") : "posts"}>
+                {searchedEvent.get("title")}
+              </a>
             )}
         Games
-        {searchOptions.eventId === null ? 'from external events' : ''}
+            {searchOptions.eventId === null ? "from external events" : ""}
             <span class="count">({entriesCollection.pagination.rowCount})</span>
             {gamesSearchMacros.searchDescription(searchOptions, searchedEvent)}
           </h1>
 
-          {ifTrue(featuredEvent && searchedEvent && featuredEvent.get('id') === searchedEvent.get('id'), () =>
+          {ifTrue(featuredEvent && searchedEvent && featuredEvent.get("id") === searchedEvent.get("id"), () =>
             ratingsPhaseBlock(featuredEvent, rescueEntries, requiredVotes)
           )}
 
@@ -58,9 +60,9 @@ export default function render(context: CommonLocals) {
 function ratingsPhaseBlock(featuredEvent, rescueEntries, requiredVotes) {
   return <div>
 
-    {ifTrue(['voting', 'voting_rescue'].includes(featuredEvent.get('status_results')), () =>
+    {ifTrue(["voting", "voting_rescue"].includes(featuredEvent.get("status_results")), () =>
       <div class="card card-body p-2 mb-3">
-        <b><img src={links.staticUrl('/static/images/favicon16.png')} /> Rating phase in progress</b><br />
+        <b><img src={links.staticUrl("/static/images/favicon16.png")} /> Rating phase in progress</b><br />
         All jam entrants are invited to rate other people's games. Everyone else can still play and post comments.
       </div>
     )}
@@ -73,7 +75,7 @@ function ratingsPhaseBlock(featuredEvent, rescueEntries, requiredVotes) {
             <div class="game-grid-entry">
               {eventMacros.entryThumb(entry)}
               <div class="entry-thumb__score">
-                <span class="float-right">{requiredVotes - entry.related('details').get('rating_count')}</span>
+                <span class="float-right">{requiredVotes - entry.related("details").get("rating_count")}</span>
                 Missing votes
               </div>
             </div>

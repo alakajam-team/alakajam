@@ -19,7 +19,7 @@ export default function render(context: CommonLocals) {
 
     <p>This tool helps you import entries from other websites. If you don't find the site you're looking for, you can still use the manual form.</p>
     <a href="/external-entry/create-entry" class="btn btn-outline-primary">Create entry manually</a>
-    <a href={links.routeUrl(user, 'user', 'entries')} class="btn btn-outline-primary">Back to Entries</a>
+    <a href={links.routeUrl(user, "user", "entries")} class="btn btn-outline-primary">Back to Entries</a>
 
     <form method="post">
       {context.csrfTokenJSX()}
@@ -55,7 +55,8 @@ export default function render(context: CommonLocals) {
                     </a>
                   </li>
                   <li>
-                    <input class="form-control" id="oauthIdentifier" name="oauthIdentifier" type="text" value={oauthIdentifier} placeholder="Paste the key here" />
+                    <input class="form-control" id="oauthIdentifier" name="oauthIdentifier" type="text"
+                      value={oauthIdentifier} placeholder="Paste the key here" />
                   </li>
                 </ol>
                 <p>Note: The authentication key will !be saved. It will only be used for importing games, then forgotten.</p>
@@ -68,7 +69,7 @@ export default function render(context: CommonLocals) {
       {entriesToImport(entryReferences)}
 
       <div class="form-group">
-        <input id="submit" type="submit" value={entryReferences ? 'Confirm' : 'Search games'} class="btn btn-primary" />
+        <input id="submit" type="submit" value={entryReferences ? "Confirm" : "Search games"} class="btn btn-primary" />
       </div>
     </form>
   </div>);
@@ -78,7 +79,7 @@ function entriesToImport(entryReferences) {
   return <div id="js-entry-references">
     {ifTrue(entryReferences, () =>
       <div>
-        <h2 class="spacing">Found entries <span class="legend">({entryReferences ? entryReferences.length : '0'})</span></h2>
+        <h2 class="spacing">Found entries <span class="legend">({entryReferences ? entryReferences.length : "0"})</span></h2>
         <div class="container-fluid no-padding">
           <div class="row">
             <div class="col-md-9">
@@ -87,7 +88,8 @@ function entriesToImport(entryReferences) {
                 {ifTrue(entryReferences.error, () =>
                   <div>
                     <p class="alert alert-danger"><b>Error:</b> {entryReferences.error}.</p>
-                    <p>If you are sure the target website is online, there might be a bug, see <a href="/article/about">the docs for ways to contact an admin</a>.</p>
+                    <p>If you are sure the target website is online, there might be a bug, see
+                      <a href="/article/about">the docs for ways to contact an admin</a>.</p>
                   </div>
                 )}
                 {ifTrue(!entryReferences.error && entryReferences.length > 0, () =>
@@ -104,7 +106,7 @@ function entriesToImport(entryReferences) {
                       <thead>
                         <th>
                           Import?
-                    </th>
+                        </th>
                         <th></th>
                         <th>Title</th>
                         <th>Already imported</th>
@@ -123,7 +125,9 @@ function entriesToImport(entryReferences) {
                             <td>
                               <h3>
                                 {ifTrue(entryReference.link, () =>
-                                  <a target="_blank" href={entryReference.link}>{entryReference.title}<span class="legend fas fa-external-link"></span></a>
+                                  <a target="_blank" href={entryReference.link}>
+                                    {entryReference.title}<span class="legend fas fa-external-link"></span>
+                                  </a>
                                 )}
                                 {ifFalse(entryReference.link, () =>
                                   entryReference.title
@@ -164,5 +168,5 @@ function entriesToImport(entryReferences) {
       </div >
     )
     }
-  </div >
+  </div >;
 }

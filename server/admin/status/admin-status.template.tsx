@@ -92,7 +92,7 @@ export default function render(context: AdminStatusContext) {
           {ifFalse(isLast, () =>
             <div class="horizontal-bar"></div>
           )}
-        </div>
+        </div>;
       })}
     </div>
   );

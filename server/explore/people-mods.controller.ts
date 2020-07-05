@@ -1,9 +1,8 @@
 
+import { BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
-import { User } from "server/entity/user.entity";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
-import { BookshelfModel } from "bookshelf";
 
 export interface PeopleModsContext extends CommonLocals {
   admins: BookshelfModel[];

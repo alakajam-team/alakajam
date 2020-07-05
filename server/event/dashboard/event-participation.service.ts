@@ -1,11 +1,11 @@
 import { BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
+import enums from "server/core/enums";
 import { EventParticipation, StreamerStatus } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
+import entryHighscoreService from "server/entry/highscore/entry-highscore.service";
 import { FindConditions, getRepository, In, Not } from "typeorm";
-import enums from "server/core/enums";
 import tournamentService from "../tournament/tournament.service";
-import entryHighscoreService, { HighScoreService } from "server/entry/highscore/entry-highscore.service";
 
 export class EventParticipationService {
 

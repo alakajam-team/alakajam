@@ -23,12 +23,16 @@ export default function render(context: CommonLocals) {
             </div>
             <div class="form-group">
               <label for="username">Email address</label>
-              <p class="legend">Only used for password recovery || exceptional circumstances. Any upcoming feature involving emails will be opt-in.</p>
+              <p class="legend">
+                Only used for password recovery or exceptional circumstances.
+                Any upcoming feature involving emails will be opt-in.
+              </p>
               <input type="email" class="form-control" id="email" name="email" value={email} required />
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" class="form-control" id="password" name="password" placeholder="Type at least {constants.PASSWORD_MIN_LENGTH} characters" required />
+              <input type="password" class="form-control" id="password" name="password"
+                placeholder="Type at least {constants.PASSWORD_MIN_LENGTH} characters" required />
             </div>
             <div class="form-group">
               <label for="password-bis">Repeat password</label>
@@ -43,7 +47,7 @@ export default function render(context: CommonLocals) {
               <div class="checkbox">
                 <label>
                   <input type="checkbox" name="remember-me" /> Remember me
-            </label>
+                </label>
               </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>

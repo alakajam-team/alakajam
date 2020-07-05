@@ -1,9 +1,8 @@
 import * as React from "preact";
 import base from "server/base.template";
-import { ifTrue, ifFalse } from "server/macros/jsx-utils";
 import { CommonLocals } from "server/common.middleware";
-import links from "server/core/links";
 import * as formMacros from "server/macros/form.macros";
+import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
 export default function render(context: CommonLocals) {
   const { path, success, token } = context;

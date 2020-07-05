@@ -7,7 +7,7 @@ import * as postMacros from "server/post/post.macros";
 import dashboardBase from "./dashboard.base.template";
 
 export default function render(context: CommonLocals) {
-  const { draftPosts, publishedPosts, newPostEvent, currentPage, pageCount, user, dashboardUser } = context;
+  const { draftPosts, publishedPosts, newPostEvent, currentPage, pageCount, user } = context;
 
   return dashboardBase(context,
     <div>
@@ -16,10 +16,11 @@ export default function render(context: CommonLocals) {
         <div class="col-lg-10">
 
           <div class="form-group">
-            <a href={links.routeUrl(null, 'post', 'create', { eventId: newPostEvent ? newPostEvent.get('id') : undefined })} class="btn btn-primary">Create post</a>
+            <a href={links.routeUrl(null, "post", "create",
+              { eventId: newPostEvent ? newPostEvent.get("id") : undefined })} class="btn btn-primary">Create post</a>
           </div>
 
-          {navigationMacros.pagination(currentPage, pageCount, '/dashboard/posts?')}
+          {navigationMacros.pagination(currentPage, pageCount, "/dashboard/posts?")}
 
           {ifTrue(draftPosts.length > 0, () =>
             <div>
@@ -40,7 +41,7 @@ export default function render(context: CommonLocals) {
             <div class="card card-body">No posts yet.</div>
           )}
 
-          {navigationMacros.pagination(currentPage, pageCount, '/dashboard/posts?')}
+          {navigationMacros.pagination(currentPage, pageCount, "/dashboard/posts?")}
 
         </div>
       </div>

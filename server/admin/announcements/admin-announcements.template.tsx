@@ -15,14 +15,15 @@ export default function render(context: AdminAnnouncementContext) {
 
       <div class="form-group">
         {ifSet(featuredEvent, () =>
-          <a href={links.routeUrl(undefined, 'post', 'create', { eventId: featuredEvent.id, specialPostType: 'announcement' })} class="btn btn-warning mr-1">
-            Create (on featured <b>{featuredEvent.get('title')}</b>)
-        </a>)}
+          <a href={links.routeUrl(undefined, "post", "create", { eventId: featuredEvent.id, specialPostType: "announcement" })}
+            class="btn btn-warning mr-1">
+            Create (on featured <b>{featuredEvent.get("title")}</b>)
+          </a>)}
         <a href="{{ routeUrl(null, 'post', 'create', { specialPostType: 'announcement' }) }}" class="btn btn-warning mr-1">Create (no event)</a>
         <a href="{{ routeUrl(null, 'post', 'create', { specialPostType: 'hidden' }) }}" class="btn btn-warning">Create hidden post</a>
       </div>
 
-      {navigationMacros.pagination(currentPage, pageCount, '/admin?')}
+      {navigationMacros.pagination(currentPage, pageCount, "/admin?")}
 
       {ifTrue(draftPosts.length > 0, () => <div>
         <h2>Drafts</h2>
@@ -40,6 +41,6 @@ export default function render(context: AdminAnnouncementContext) {
         <div class="card card-body">Nothing yet!</div>
       )}
 
-      {navigationMacros.pagination(currentPage, pageCount, '/admin?')}
+      {navigationMacros.pagination(currentPage, pageCount, "/admin?")}
     </div>);
 }

@@ -37,14 +37,14 @@ export function pictureInput(name: string, value: string, options: {
   model?: BookshelfModel;
   noCard?: boolean;
   defaultValue?: string;
-  legend?: string
+  legend?: string;
 } = {}) {
   return <span dangerouslySetInnerHTML={nunjuckMacro(FORM_MACROS_PATH, "pictureInput", [name, value, options])} />;
 }
 
 // Tooltips
 
-export function tooltip(title: string, options: { class?: string, placement?: string } = {}) {
+export function tooltip(title: string, options: { class?: string; placement?: string } = {}) {
   return <span dangerouslySetInnerHTML={nunjuckMacro(FORM_MACROS_PATH, "tooltip", [title, options])} />;
 }
 
@@ -72,14 +72,14 @@ export function select(name, models, selectedValue, options = {}) {
 
 // Alerts
 
-export function alerts(alerts: Alert[]) {
+export function alerts(alertsParam: Alert[]) {
   return <div id="js-alerts-inline">
-    {alerts.map(alert =>
+    {alertsParam.map(alert =>
       ifTrue(!alert.floating, () =>
         <div class="alert alert-{{ alert.type or 'info' }}">
           {ifSet(alert.title, () => <div class="alert-title">{alert.title}</div>)}
           {alert.message}
         </div>
       ))}
-  </div>
+  </div>;
 }

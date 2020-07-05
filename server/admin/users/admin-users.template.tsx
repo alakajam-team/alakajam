@@ -21,17 +21,17 @@ export default function render(context: AdminBaseContext & { users: User[] }) {
         <tbody>
           {users.map(someUser =>
             <tr>
-              <td><a href={links.routeUrl(someUser, 'user')}>{someUser.get('title')}</a></td>
-              <td>{someUser.get('name')}</td>
+              <td><a href={links.routeUrl(someUser, "user")}>{someUser.get("title")}</a></td>
+              <td>{someUser.get("name")}</td>
               <td>{specialUserBadge(someUser)}
               </td>
-              <td><a class="btn btn-primary btn-sm" href={links.routeUrl(someUser, 'user', 'settings', { dashboardAdminMode: true })}>Edit</a></td>
+              <td><a class="btn btn-primary btn-sm" href={links.routeUrl(someUser, "user", "settings", { dashboardAdminMode: true })}>Edit</a></td>
             </tr>
           )}
         </tbody>
       </table>
 
-    </div>)
+    </div>);
 }
 
 function specialUserBadge(user: User) {

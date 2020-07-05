@@ -26,7 +26,7 @@ export default function render(context: CommonLocals) {
 
             <p><a href="https://discord.gg/yZPBpTn"><strong>Click this invite to join our Discord server.</strong></a></p>
 
-            <p class="chat_legend">If you're not on Discord yet, <a href="https://discordapp.com/">check their website</a> 
+            <p class="chat_legend">If you're not on Discord yet, <a href="https://discordapp.com/">check their website</a>
             to create an account and (optionally) install their desktop app.</p>
           </div>
         </div>
