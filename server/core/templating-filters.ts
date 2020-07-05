@@ -67,10 +67,7 @@ export function configure(nunjucksEnvironment) {
     return minutes + "'" + leftPad(seconds.toFixed(3).replace(".", '"'), 6, "0");
   });
 
-  nunjucksEnvironment.addFilter("timezone", (timezoneId: string) => {
-    // Exemple: "America/Sao_Paulo". Let's just clean up the underscores.
-    return (typeof timezoneId === "string") ? timezoneId.replace(/\_/g, " ") : timezoneId;
-  });
+  nunjucksEnvironment.addFilter("timezone", timezone);
 
   nunjucksEnvironment.addFilter("ordinal", formats.ordinal);
 
@@ -137,4 +134,9 @@ export function prettyDump(obj: any) {
 
 export function relativeTime(value: number | string | Date) {
   return formats.createLuxonDate(value).toRelative();
+}
+
+export function timezone(timezoneId: string) {
+  // Exemple: "America/Sao_Paulo". Let's just clean up the underscores.
+  return (typeof timezoneId === "string") ? timezoneId.replace(/\_/g, " ") : timezoneId;
 }

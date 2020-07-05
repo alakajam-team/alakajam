@@ -125,6 +125,11 @@ import links from "server/core/links";
     return "}";
   });
 
+  // CSRF Token
+  out = replace(out, /csrfToken\(\) \| safe/g, () => {
+    return `context.csrfTokenJSX()`;
+  });
+
   return out;
 }
 

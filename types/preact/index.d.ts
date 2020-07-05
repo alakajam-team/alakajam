@@ -12,6 +12,7 @@ declare module "preact" {
       onchange?: string;
       onfocus?: string;
       onblur?: string;
+      onsubmit?: string;
 
       // Keyboard events
       onkeydown?: string;
