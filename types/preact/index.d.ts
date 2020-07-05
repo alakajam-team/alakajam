@@ -28,6 +28,7 @@ declare module "preact" {
       // Non-events
       colspan?: string;
       readonly?: boolean;
+      enctype?: string;
     }
   }
 }

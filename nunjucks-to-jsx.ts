@@ -56,7 +56,7 @@ import links from "server/core/links";
   });
 
   // Render function
-  out = replace(out, /{% block body %}/g, () => {
+  out = replace(out, /{% block .+[bB]ody %}/g, () => {
     return `export default function render(context: CommonLocals) {
   const { path } = context;
 

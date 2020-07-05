@@ -59,9 +59,7 @@ export function configure(nunjucksEnvironment) {
     return formats.formatDate(value, user, constants.FEATURED_EVENT_DATE_FORMAT);
   });
 
-  nunjucksEnvironment.addFilter("relativeTime", (value: number | string | Date) => {
-    return formats.createLuxonDate(value).toRelative();
-  });
+  nunjucksEnvironment.addFilter("relativeTime", relativeTime);
 
   nunjucksEnvironment.addFilter("duration", (durationInSeconds: number) => {
     const minutes = Math.floor(durationInSeconds / 60);
@@ -135,4 +133,8 @@ export function digits(n: string | number, digits: number) {
 
 export function prettyDump(obj: any) {
   return { __html: "<pre>" + JSON.stringify(obj, null, 2) + "</pre>" };
+}
+
+export function relativeTime(value: number | string | Date) {
+  return formats.createLuxonDate(value).toRelative();
 }

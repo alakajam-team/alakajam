@@ -40,6 +40,7 @@ export function comments(comments: BookshelfModel[], options: {
   nodeAuthorIds?: number[];
   readOnly?: boolean;
   preview?: boolean;
+  highlightNewerThan?: any;
 } & CommentEditorOptions) {
   return <div dangerouslySetInnerHTML={nunjuckMacro(POST_MACROS_PATH, "comments", [comments, options])} />;
 }
