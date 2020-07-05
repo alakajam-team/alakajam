@@ -56,7 +56,7 @@ import links from "server/core/links";
   });
 
   // Render function
-  out = replace(out, /{% block .+[bB]ody %}/g, () => {
+  out = replace(out, /{% block .?[bB]ody %}/g, () => {
     return `export default function render(context: CommonLocals) {
   const { path } = context;
 
@@ -115,6 +115,14 @@ import links from "server/core/links";
   });
   out = replace(out, / not /g, () => {
     return " !";
+  });
+  
+  // Macros
+  out = replace(out, /{\{% ?macro (.+) ?%\}}/g, (nameAndParameters) => {
+    return `function ${nameAndParameters} {`;
+  });
+  out = replace(out, /{\{% ?endmacro ?%\}}/g, () => {
+    return "}";
   });
 
   return out;

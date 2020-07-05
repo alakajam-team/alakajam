@@ -18,7 +18,7 @@ export function post(post: BookshelfModel, options: {
   hideDetails?: boolean;
   showId?: boolean;
   allowMods?: boolean;
-  commentsAnchorLinks?: any[];
+  commentsAnchorLinks?: boolean;
   smallTitle?: boolean;
 } = {}) {
   return <div dangerouslySetInnerHTML={nunjuckMacro(POST_MACROS_PATH, "post", [post, options])} />;
