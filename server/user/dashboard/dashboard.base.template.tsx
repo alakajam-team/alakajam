@@ -19,9 +19,8 @@ export default function dashboardBase(context: CommonLocals, contentsBlock: JSX.
           <div class="list-group-item">
             <h4 style="margin: 0">User dashboard</h4>
           </div>
-          <div class="list-group-item">
-            {userMacros.userThumb(dashboardUser, { fullWidth: true, centered: true })}
-          </div>
+          <div class="list-group-item"
+            dangerouslySetInnerHTML={userMacros.userThumb(dashboardUser, { fullWidth: true, centered: true })} />
           {dashboardLink(dashboardUser, "feed", "Dashboard", path, options)}
           {dashboardLink(dashboardUser, "settings", "Settings", path, options)}
           {dashboardLink(dashboardUser, "entries", "Entries", path, options)}

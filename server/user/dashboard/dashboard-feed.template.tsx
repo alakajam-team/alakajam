@@ -12,10 +12,6 @@ export default function render(context: CommonLocals) {
 
   return dashboardBase(context, <div>
     <div class="row">
-      <div class="col-md-12">
-      </div>
-    </div>
-    <div class="row">
       <div class="col-md-7 col-lg-6">
         <h1>Notifications {formMacros.tooltip("This feed lists all comments people wrote on your entries && posts,"
           + ' plus any comments mentioning "@' + user.get("name") + '".')}</h1>
@@ -87,18 +83,13 @@ export default function render(context: CommonLocals) {
         )}
 
         <div class="mt-2">
-          <a href={links.routeUrl(dashboardUser, "user", "posts")} class="btn btn-outline-primary">All posts</a>
+          <a href={links.routeUrl(dashboardUser, "user", "posts")} class="btn btn-outline-primary mr-1">All posts</a>
           <a href={links.routeUrl(null, "post", "create")} class="btn btn-primary">Create post</a>
         </div>
 
         <div class="horizontal-bar">Latest comments</div>
 
         {postMacros.comments(byUser, { readingUser: user, readOnly: true, linkToNode: true })}
-      </div>
-    </div>
-
-    <div class="row mt-3">
-      <div class="col-md-7">
       </div>
     </div>
   </div>);

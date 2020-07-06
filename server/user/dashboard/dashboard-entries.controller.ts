@@ -30,7 +30,8 @@ export async function dashboardEntries(req: CustomRequest, res: CustomResponse<C
     featuredEventEntry = await eventService.findUserEntryForEvent(user, featuredEvent.get("id"));
   }
 
-  res.render("user/dashboard/dashboard-entries", {
+  res.renderJSX<CommonLocals>("user/dashboard/dashboard-entries", {
+    ...res.locals,
     alakajamEntries,
     otherEntries,
     externalEntries,

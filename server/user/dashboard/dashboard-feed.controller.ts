@@ -6,6 +6,7 @@ import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "../user.service";
 import { DashboardLocals } from "./dashboard.middleware";
+import { CommonLocals } from "server/common.middleware";
 
 /**
  * View comment feed
@@ -51,7 +52,8 @@ export async function dashboardFeed(req: CustomRequest, res: CustomResponse<Dash
   }
 
   // TODO Limit at the SQL-level
-  res.render("user/dashboard/dashboard-feed", {
+  res.renderJSX<CommonLocals>("user/dashboard/dashboard-feed", {
+    ...res.locals,
     byUser: byUserCollection.slice(0, 20),
     toUser: toUserCollection.slice(0, 20),
     latestEntry,

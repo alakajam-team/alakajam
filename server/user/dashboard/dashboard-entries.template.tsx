@@ -6,7 +6,7 @@ import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import dashboardBase from "./dashboard.base.template";
 
 export default function render(context: CommonLocals) {
-  const { user, featuredEvent, featuredEventEntry, entries, alakajamEntries, otherEntries, externalEntries } = context;
+  const { user, featuredEvent, featuredEventEntry, alakajamEntries, otherEntries, externalEntries } = context;
 
   return dashboardBase(context, <div>
     {ifSet(featuredEvent, () =>
@@ -28,11 +28,9 @@ export default function render(context: CommonLocals) {
     )}
 
     <div class="form-group">
-      <a data-test="import" href={links.routeUrl(user, "user", "entry-import")} class="btn btn-primary">Import games (Itch.io, etc.)</a>
+      <a data-test="import" href={links.routeUrl(user, "user", "entry-import")} class="btn btn-primary mr-1">Import games (Itch.io, etc.)</a>
       <a data-test="create" href="/external-entry/create-entry" class="btn btn-primary">Create external entry manually</a>
     </div>
-
-    {listEntries(entries)}
 
     {ifTrue(alakajamEntries.length > 0, () =>
       <div>
