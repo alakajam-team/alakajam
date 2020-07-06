@@ -10,7 +10,6 @@ export default function render(context: CommonLocals) {
   const { posts, pageCount, userLikes, user, userPost, event } = context;
 
   return base(context,
-
     <div class="container thin">
       {ifSet(user, () =>
         <div class="container thin">

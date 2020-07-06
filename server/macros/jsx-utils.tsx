@@ -15,13 +15,13 @@ export function ifFalse(expression: boolean, callback: () => JSX.Element | JSX.E
 }
 
 export function ifSet(value: any, callback: () => JSX.Element | JSX.Element[]) {
-  if (value !== undefined) {
+  if (value !== undefined && (typeof value !== 'string' || value.trim() !== '')) {
     return callback();
   }
 }
 
 export function ifNotSet(value: any, callback: () => JSX.Element | JSX.Element[]) {
-  if (value === undefined) {
+  if (value === undefined || (typeof value === 'string' && value.trim() === '')) {
     return callback();
   }
 }

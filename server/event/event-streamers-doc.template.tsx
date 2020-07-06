@@ -22,7 +22,7 @@ export default function render(context: CommonLocals & { event: BookshelfModel }
     </div>);
 }
 
-function registerStreamersDocStyles(context: CommonLocals) {
+export function registerStreamersDocStyles(context: CommonLocals) {
   context.inlineStyles.push(`
   .streamer-perks {
     background: url('{links.staticUrl('/static/images/streamer-background.jpg')}');
@@ -35,7 +35,7 @@ function registerStreamersDocStyles(context: CommonLocals) {
   `);
 }
 
-function streamersDoc(event: BookshelfModel) {
+export function streamersDoc(event: BookshelfModel) {
   return <div class="streamer-perks">
     <div class="card card-body mb-4">
       <h2>Streamer perks</h2>
