@@ -22,10 +22,6 @@ export function collectHtml(htmlList: Array<{ __html: string }>): { __html: stri
   return { __html: htmlList.map(html => html.__html).join("\n") };
 }
 
-export function collectHtmlAsDiv(htmlList: Array<{ __html: string }>): JSX.Element {
-  return <div dangerouslySetInnerHTML={ collectHtml(htmlList) }></div>;
-}
-
 export function renderInBaseTemplate(filePath: string, context: CommonLocals, contentsBlockName: string, contentsBlock: JSX.Element) {
   const html = NUNJUCKS_ENV.renderString(`
     {% extends "${filePath}" %}

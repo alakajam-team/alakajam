@@ -1,5 +1,5 @@
 import * as React from "preact";
-import { nunjuckMacro } from "./nunjucks-macros";
+import { nunjuckMacro, nunjuckMacroAsString } from "./nunjucks-macros";
 
 const JUMBOTRON_MACROS_PATH = "macros/jumbotron.macros.html";
 
@@ -27,5 +27,5 @@ export function eventJumbotronCountdownPhrase(event, user) {
 }
 
 export function backgroundImage(event) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(JUMBOTRON_MACROS_PATH, "backgroundImage", [event])} />;
+  return nunjuckMacroAsString(JUMBOTRON_MACROS_PATH, "backgroundImage", [event]);
 }
