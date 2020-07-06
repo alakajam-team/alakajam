@@ -1,27 +1,29 @@
 import { JSX } from "preact";
 
-export function get(callback: () => JSX.Element | JSX.Element[]) {
+export type JSXProvider = () => JSX.Element | JSX.Element[] | string;
+
+export function get(callback: JSXProvider) {
   return callback();
 }
 
-export function ifTrue(expression: boolean, callback: () => JSX.Element | JSX.Element[]) {
+export function ifTrue(expression: boolean, callback: JSXProvider) {
   if (expression) {
     return callback();
   }
 }
 
-export function ifFalse(expression: boolean, callback: () => JSX.Element | JSX.Element[]) {
+export function ifFalse(expression: boolean, callback: JSXProvider) {
   return ifTrue(!expression, callback);
 }
 
-export function ifSet(value: any, callback: () => JSX.Element | JSX.Element[]) {
-  if (value !== undefined && (typeof value !== 'string' || value.trim() !== '')) {
+export function ifSet(value: any, callback: JSXProvider) {
+  if (value !== undefined && (typeof value !== "string" || value.trim() !== "")) {
     return callback();
   }
 }
 
-export function ifNotSet(value: any, callback: () => JSX.Element | JSX.Element[]) {
-  if (value === undefined || (typeof value === 'string' && value.trim() === '')) {
+export function ifNotSet(value: any, callback: JSXProvider) {
+  if (value === undefined || (typeof value === "string" && value.trim() === "")) {
     return callback();
   }
 }

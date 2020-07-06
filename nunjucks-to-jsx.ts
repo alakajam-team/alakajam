@@ -75,7 +75,7 @@ import links from "server/core/links";
   });
 
   // Variables
-  out = replace(out, /\{\{(.+)\}\}/g, (expression) => {
+  out = replace(out, /\{\{([^}]+)\}\}/g, (expression) => {
     return `{${expression.trim()}}`
   });
 
@@ -118,10 +118,10 @@ import links from "server/core/links";
   });
   
   // Macros
-  out = replace(out, /{\{% ?macro (.+) ?%\}}/g, (nameAndParameters) => {
+  out = replace(out, /\{\% ?macro (.+) ?\%\}/g, (nameAndParameters) => {
     return `function ${nameAndParameters} {`;
   });
-  out = replace(out, /{\{% ?endmacro ?%\}}/g, () => {
+  out = replace(out, /\{\% ?endmacro ?\%\}/g, () => {
     return "}";
   });
 

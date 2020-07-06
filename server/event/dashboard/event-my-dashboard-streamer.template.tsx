@@ -14,7 +14,7 @@ export default function render(context: CommonLocals) {
 
   return base(context,
     <div class="container">
-      <h1><a href={links.routeUrl(event, 'event', 'dashboard')}>{event.get('title')} dashboard</a>: Streamer settings</h1>
+      <h1><a href={links.routeUrl(event, "event", "dashboard")}>{event.get("title")} dashboard</a>: Streamer settings</h1>
 
       {formMacros.alerts(context.alerts)}
 
@@ -23,38 +23,38 @@ export default function render(context: CommonLocals) {
           <form method="post">
             <h2>
               Update your settings
-          <a href={links.routeUrl(event, 'event', 'dashboard')} class="btn btn-sm btn-outline-secondary">Back to dashboard</a>
+              <a href={links.routeUrl(event, "event", "dashboard")} class="btn btn-sm btn-outline-secondary">Back to dashboard</a>
             </h2>
 
             {context.csrfTokenJSX()}
 
             <div class="form-group">
-              <label for="twitch"><img src={links.staticUrl('/static/images/social/twitch.png')}
+              <label for="twitch"><img src={links.staticUrl("/static/images/social/twitch.png")}
                 class="no-border" style="width: 20px" /> Twitch username</label>
               <input type="text" class="form-control form-control-lg" id="twitch"
                 name="twitch" value={user.details.social_links.twitch} required />
-              <p class="legend mb-0">This field can also be set from your 
-                <a href={links.routeUrl(user, 'user', 'settings')}>account settings</a>.</p>
+              <p class="legend mb-0">This field can also be set from your
+                <a href={links.routeUrl(user, "user", "settings")}>account settings</a>.</p>
             </div>
 
             <div class="form-group">
               <label for="twitch">Stream schedule</label>
               <div class="text-muted">Use this area to tell the public:
-            <ul class="text-muted mt-0">
+                <ul class="text-muted mt-0">
                   <li>What you plan to stream (playing games, game development, etc.) ;</li>
                   <li>When you will go live, so they can now when to tune in to your channel.</li>
                 </ul>
               </div>
-              {formMacros.editor('streamer-description', eventParticipation.streamerDescription)}
+              {formMacros.editor("streamer-description", eventParticipation.streamerDescription)}
             </div>
 
             <div class="form-group text-right">
               <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
 
-              <button type="submit" name="cancel-participation" class="btn btn-danger float-left" 
+              <button type="submit" name="cancel-participation" class="btn btn-danger float-left"
                 onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
                 Cancel participation as streamer
-          </button>
+              </button>
             </div>
           </form>
 

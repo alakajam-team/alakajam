@@ -12,8 +12,8 @@ import * as userMacros from "server/user/user.macros";
 
 export default function render(context: CommonLocals) {
   const { eventParticipation, event, user, userLikes, posts, latestPost, entry } = context;
-  const rulesLink = forms.isId(event.get('status_rules')) ? links.routeUrl(event.get('status_rules'), 'post') : event.get('status_rules');
-  const socialLinks = user.related('details').get('social_links');
+  const rulesLink = forms.isId(event.get("status_rules")) ? links.routeUrl(event.get("status_rules"), "post") : event.get("status_rules");
+  const socialLinks = user.related("details").get("social_links");
 
   context.inlineStyles.push(`
   .main-action-banners .action-banner {
@@ -28,7 +28,7 @@ export default function render(context: CommonLocals) {
   return base(context,
 
     <div class="container">
-      <h1>{event.get('title')} dashboard</h1>
+      <h1>{event.get("title")} dashboard</h1>
 
       {formMacros.alerts(context.alerts)}
 
@@ -36,15 +36,15 @@ export default function render(context: CommonLocals) {
         <div class="col-md-3 col-12">
           <h2 class="mb-2">Useful links</h2>
 
-          {ifTrue(rulesLink !== 'off', () =>
+          {ifTrue(rulesLink !== "off", () =>
             <div class="list-group mb-1">
-              {usefulLink(event, 'status_rules', rulesLink, 'Detailed rules', 'fa-book', { big: true })}
+              {usefulLink(event, "status_rules", rulesLink, "Detailed rules", "fa-book", { big: true })}
             </div>
           )}
 
           <div class="list-group">
-            {/*usefulLink(event, null, 'posts', 'Posts', 'fa-newspaper') */}
-            {event.related('details').get('links').map(featuredLink =>
+            {/* usefulLink(event, null, 'posts', 'Posts', 'fa-newspaper') */}
+            {event.related("details").get("links").map(featuredLink =>
               usefulLink(event, null, featuredLink.link, featuredLink.title, featuredLink.icon)
             )}
           </div>
@@ -80,7 +80,8 @@ export default function render(context: CommonLocals) {
                           {ifTrue(eventParticipation.streamerStatus === "requested", () =>
                             <span class="badge badge-warning">
                               Pending approbation
-                          {formMacros.tooltip('The mods make a simple check, usually within 24 hours, to filter possible spammers && multiple accounts.')}
+                              {formMacros.tooltip("The mods make a simple check, "
+                                + "usually within 24 hours, to filter possible spammers && multiple accounts.")}
                             </span>
                           )}
                           {ifTrue(eventParticipation.streamerStatus === "approved", () =>
@@ -94,28 +95,28 @@ export default function render(context: CommonLocals) {
                       {ifNotSet(eventParticipation.streamerDescription, () =>
                         <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Stream schedule not set</span>
                       )}
-                      <a href={links.routeUrl(event, 'event', 'dashboard-streamer-preferences')} class="btn btn-primary">Manage streamer settings</a>
+                      <a href={links.routeUrl(event, "event", "dashboard-streamer-preferences")} class="btn btn-primary">Manage streamer settings</a>
                     </div>
                   )}
 
-                  {ifTrue(event.get("status") !== 'closed' && !eventParticipation.isStreamer, () => {
+                  {ifTrue(event.get("status") !== "closed" && !eventParticipation.isStreamer, () => {
                     if (socialLinks.twitch) {
                       return <div>
                         <input type="hidden" name="is-streamer" value="true" />
                         <button type="submit" name="streamer-preferences" class="btn btn-primary btn-lg">
                           <span class="fas fa-video"></span>
                     Enter as streamer
-                  </button>
-                      </div>
+                        </button>
+                      </div>;
                     } else {
                       return <div>
                         <p>A Twitch channel must be set before joining</p>
-                        <a href={links.routeUrl(user, 'user', 'settings')} class="btn btn-outline-primary btn-lg">Manage account settings</a>
-                      </div>
+                        <a href={links.routeUrl(user, "user", "settings")} class="btn btn-outline-primary btn-lg">Manage account settings</a>
+                      </div>;
                     }
                   })}
 
-                  {ifTrue(event.get("status") === 'closed' && !eventParticipation.isStreamer, () =>
+                  {ifTrue(event.get("status") === "closed" && !eventParticipation.isStreamer, () =>
                     <div>
                       <p>Streamer entries are now closed.</p>
                       <p><a href="/events" class="btn btn-secondary">Explore our upcoming events</a></p>
@@ -127,17 +128,17 @@ export default function render(context: CommonLocals) {
 
           </div>
 
-          {ifTrue(event.get('status_themes') !== 'disabled', () =>
+          {ifTrue(event.get("status_themes") !== "disabled", () =>
             <div>
               <h2><span class="fa fa-lightbulb"></span> Themes</h2>
 
-              {ifTrue(event.get('status_theme') === 'off', () =>
+              {ifTrue(event.get("status_theme") === "off", () =>
                 <div class="card card-body">
                   <h4>Theme submissions are !open yet.</h4>
                 </div>
               )}
-              {ifTrue(event.get('status_theme') !== 'off', () =>
-                <a href={links.routeUrl(event, 'event', 'themes')} class="btn btn-primary">Browse themes</a>
+              {ifTrue(event.get("status_theme") !== "off", () =>
+                <a href={links.routeUrl(event, "event", "themes")} class="btn btn-primary">Browse themes</a>
               )}
             </div>
           )}
@@ -150,7 +151,7 @@ export default function render(context: CommonLocals) {
             {ifTrue(posts.length === 0, () =>
               <div class="card card-body">
                 <h4>You don't have posts on this event yet.</h4>
-                {ifTrue(event.get('status_entry') === 'off', () =>
+                {ifTrue(event.get("status_entry") === "off", () =>
                   <p>Make a blog post to present yourself and share your plans for the jam!</p>
                 )}
                 {ifSet(entry, () =>
@@ -160,7 +161,7 @@ export default function render(context: CommonLocals) {
             )}
 
             <div class="mt-4">
-              {posts.map(post => { postMacros.post(post, { hideBody: true, smallTitle: true, readingUser: user, readingUserLikes: userLikes }) }
+              {posts.map(post => { postMacros.post(post, { hideBody: true, smallTitle: true, readingUser: user, readingUserLikes: userLikes }); }
               )}
             </div>
           </div>
@@ -170,14 +171,16 @@ export default function render(context: CommonLocals) {
               <form method="post" class="d-inline">
                 {context.csrfTokenJSX()}
                 <input type="hidden" name="is-streamer" value="false" />
-                <button type="submit" name="streamer-preferences" class="btn btn-danger" onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
+                <button type="submit" name="streamer-preferences" class="btn btn-danger"
+                  onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
                   Cancel participation as streamer
-          </button>
+                </button>
               </form>
             )}
-            <a href="{links.routeUrl(event, 'event', 'join')}?leave" class="btn btn-danger" onclick="return confirm('Leave the event? You can return at any time.')">
+            <a href="{links.routeUrl(event, 'event', 'join')}?leave" class="btn btn-danger"
+              onclick="return confirm('Leave the event? You can return at any time.')">
               Leave event
-        </a>
+            </a>
           </div>
         </div>
       </div>
@@ -187,14 +190,14 @@ export default function render(context: CommonLocals) {
 }
 
 function usefulLink(event, statusField, link, title, icon, options = {}) {
-  if (!statusField || event.get(statusField) !== 'disabled') {
-    const targetUrl = link.includes('/') ? link : links.routeUrl(event, 'event', link);
+  if (!statusField || event.get(statusField) !== "disabled") {
+    const targetUrl = link.includes("/") ? link : links.routeUrl(event, "event", link);
     return <a class="list-group-item {'big' if options.big }} shortcut" href={targetUrl}>
       <h4>
         <span class="shortcut__icon"><span class="fas {icon}"></span></span>
         <span class="shortcut__title">{title}</span>
       </h4>
-    </ a>
+    </ a>;
 
   }
 }
