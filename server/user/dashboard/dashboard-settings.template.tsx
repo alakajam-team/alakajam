@@ -10,7 +10,7 @@ import dashboardBase from "./dashboard.base.template";
 export default function render(context: CommonLocals) {
   const { dashboardUser, dashboardAdminMode, timezones } = context;
 
-  const socialLinks = dashboardUser.related("details").get("social_links");
+  const socialLinks = dashboardUser.related("details").get("social_links") || {};
 
   formMacros.registerEditorScripts(context);
 

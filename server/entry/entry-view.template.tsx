@@ -34,7 +34,7 @@ export default function render(context: EntryLocals) {
             <h1>
               {entry.get("title")}
               {ifTrue(security.canUserWrite(user, entry), () =>
-                <a class="btn btn-outline-primary" href="{ routeUrl(entry, 'entry', 'edit') }">Edit</a>
+                <a class="btn btn-outline-primary" href={ links.routeUrl(entry, "entry", "edit") }>Edit</a>
               )}
               {ifTrue(external, () =>
                 <h2 style="margin-top: -5px; margin-bottom: 20px">

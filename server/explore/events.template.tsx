@@ -1,9 +1,9 @@
 import * as React from "preact";
 import base from "server/base.template";
+import links from "server/core/links";
 import * as eventMacros from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import { EventsContext } from "./events.controller";
-import links from "server/core/links";
 
 export default function render(context: EventsContext) {
   const { open, pending, closedAlakajam, closedOther, featuredEntries } = context;
@@ -31,12 +31,12 @@ export default function render(context: EventsContext) {
       <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
           <a class="nav-link active" href="#alakajam_events" data-toggle="tab">
-            <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Past Alakajam! events</h2>
+            <h2 style="margin: 0"><img src={ links.staticUrl("/static/images/favicon32.png") } class="no-border" />&nbsp;Past Alakajam! events</h2>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#other_events" data-toggle="tab">
-            <h2 style="margin: 0"><img src="{{ staticUrl('/static/images/favicon32.png') }}" class="no-border" />&nbsp;Other events</h2>
+            <h2 style="margin: 0"><img src={ links.staticUrl("/static/images/favicon32.png") } class="no-border" />&nbsp;Other events</h2>
           </a>
         </li>
       </ul>

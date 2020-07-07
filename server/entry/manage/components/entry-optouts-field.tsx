@@ -42,7 +42,7 @@ export function optoutsField(event, entry, user, isEntryOwner) {
             <span>{formMacros.check("accepted-rules", "", entry.get("id") && entry.get("division") !== "unranked", { required: true })}</span>
             <span>I confirm that the entry <a href={rulesLink}>follows the rules on asset reuse</a>,
                             even if I opted-out of graphics/audio ratings.<br />
-                            See <a href="{rulesLink}#allowed">"What is allowed?"</a> for more info.
+                            See <a href={rulesLink + "#allowed"}>"What is allowed?"</a> for more info.
             </span>
           </label>
         </div>

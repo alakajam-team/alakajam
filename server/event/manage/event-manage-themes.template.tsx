@@ -39,8 +39,8 @@ export default function render(context: CommonLocals) {
       Submitted themes
     </div>
 
-    <p>Themes are eliminated when they are no longer <span class="badge badge-secondary">New</span>
-      ({eliminationMinNotes} votes || more) and their Elimination Rating gets under
+    <p>Themes are eliminated when they are no longer <span class="badge badge-secondary mr-1">New</span>
+      ({eliminationMinNotes} votes or more) and their Elimination Rating gets under&nbsp;
       <strong>{digits(eliminationThreshold * 100, 1)}%</strong>.</p>
 
     {themesTable(event, themes, editTheme, eliminationMinNotes, csrfTokenJSX)}
@@ -79,7 +79,7 @@ function shortlistEliminationForm(event, eliminatedShortlistThemes, csrfTokenJSX
   return <div>
     <p>This optional feature lets you eliminate shortlisted themes one by one in the hours preceding the jam launch.</p>
     <p>
-      Current state:
+      Current state:&nbsp;
       {ifSet(eventDetails.get("shortlist_elimination").start, () =>
         <span>
           <span class="badge badge-success">Enabled</span>
@@ -165,12 +165,12 @@ function themesTableRow(theme, editTheme, eliminationMinNotes, csrfTokenJSX) {
     <td>
       <a name={theme.get("id")}></a>
       {ifTrue(isEditedTheme, () =>
-        <form method="post" action="?#{theme.get('id')}" class="form-inline">
+        <form method="post" action={"?#" + theme.get("id")} class="form-inline">
           {csrfTokenJSX()}
           <input type="hidden" name="id" value={editTheme.get("id")} />
           <input type="text" name="title" class="form-control" value={editTheme.get("title")} />
           <input type="submit" value="Save" class="btn btn-primary" />
-          <a href="?#{theme.get('id')}" class="btn btn-outline-primary">Cancel</a>
+          <a href={"?#" + theme.get("id")} class="btn btn-outline-primary">Cancel</a>
         </form>
       )}
       {ifTrue(theme.get("status") !== "banned" && !isEditedTheme, () =>
@@ -199,14 +199,14 @@ function themesTableRow(theme, editTheme, eliminationMinNotes, csrfTokenJSX) {
       </strong>
     </td>
     <td>
-      <a href="?edit={theme.get('id') }}#{{ theme.get('id')}" class="btn btn-sm btn-outline-primary">
+      <a href={`?edit=${theme.get("id")}}#${theme.get("id")}`} class="btn btn-sm btn-outline-primary">
         <span class="fas fa-pencil-alt"></span>
       </a>
       {ifTrue(theme.get("status") !== "banned", () =>
-        <a href="?ban={theme.get('id') }}#{{ theme.get('id')}" class="btn btn-sm btn-outline-primary">Ban</a>
+        <a href={`?ban=${theme.get("id")}}#${theme.get("id")}`} class="btn btn-sm btn-outline-primary">Ban</a>
       )}
       {ifTrue(theme.get("status") === "banned", () =>
-        <a href="?unban={theme.get('id') }}#{{ theme.get('id')}" class="btn btn-sm btn-outline-primary">Unban</a>
+        <a href={`?unban=${theme.get("id")}}#${theme.get("id")}`} class="btn btn-sm btn-outline-primary">Unban</a>
       )}
     </td>
   </tr>;

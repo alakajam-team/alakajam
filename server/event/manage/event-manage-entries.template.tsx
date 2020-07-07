@@ -6,7 +6,7 @@ import { ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "./event-manage.base.template";
 
 export default function render(context: CommonLocals) {
-  const { entries, detailedEntryInfo, entriesById, usersById, event } = context;
+  const { entries, detailedEntryInfo, entriesById, usersById, event, orderBy } = context;
 
   return eventManageBase(context, <div>
     <h1>{event.get("title")} entries <span class="count">({entries.length})</span></h1>
@@ -16,7 +16,7 @@ export default function render(context: CommonLocals) {
     )}
 
     <p>
-      <a href="?orderBy=karma" class="btn btn-outline-secondary">Order by Karma</a>
+      <a href="?orderBy=karma" class="btn btn-outline-secondary mr-1">Order by Karma</a>
       <a href="?orderBy=ratingCount" class="btn btn-outline-secondary">Order by rating count</a>
     </p>
 
@@ -44,7 +44,7 @@ export default function render(context: CommonLocals) {
               <td>{capitalize(entry.get("division"))}</td>
               <td>{entry.get("karma")}</td>
               <td>{entry.get("division") !== "unranked" ? entry.related("details").get("rating_count") : "N.A."}</td>
-              <td><a href="?entryDetails={entry.get('id') }}&amp;orderBy={{ orderBy}" class="btn btn-outline-primary">Details</a></td>
+              <td><a href={`"?entryDetails=${entry.get("id") }}&amp;orderBy=${ orderBy}`} class="btn btn-outline-primary">Details</a></td>
             </tr>
           )}
         </tbody>

@@ -3,7 +3,7 @@ import links from "server/core/links";
 import * as formMacros from "server/macros/form.macros";
 
 export function teamField(event, entry, isEntryOwner, members) {
-  return <div id="edit-team" class="{'d-none' if entry.get('division') === 'solo'} js-edit-entry-team"
+  return <div id="edit-team" class={"js-edit-entry-team " + entry.get("division") === "solo" ? "d-none" : ""}
     data-find-team-mate-url={links.routeUrl(event, "event", "ajax-find-team-mate")}
     data-entry-id={entry.get("id") || ""}>
     <div id="result-box" class="form-group" style="display:none;">

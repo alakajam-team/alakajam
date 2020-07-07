@@ -90,5 +90,5 @@ export default function render(context: CommonLocals) {
 }
 
 function linkSortBy(id, label, sortedBy) {
-  return <a href="?sortBy={id }}" class={"btn btn-sm btn-outline-secondary" + (sortedBy === id ? " disabled" : "")}>{label}</a>;
+  return <a href="?sortBy={id }}" class={"btn btn-sm btn-outline-secondary ml-1 " + (sortedBy === id ? "disabled" : "")}>{label}</a>;
 }

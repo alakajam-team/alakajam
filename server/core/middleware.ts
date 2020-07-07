@@ -14,7 +14,7 @@ import * as cookies from "cookies";
 import * as express from "express";
 import { NextFunction, Request, Response } from "express";
 import * as expressSession from "express-session";
-import JSXPistols from "jsx-pistols";
+import JSXPistols, { defaultBabelOptions } from "jsx-pistols";
 import * as nunjucks from "nunjucks";
 import * as path from "path";
 import * as randomKey from "random-key";
@@ -39,9 +39,12 @@ const LAUNCH_TIME = Date.now();
 
 export let NUNJUCKS_ENV: nunjucks.Environment | undefined;
 
+const jsxPistolsBabelOptions = defaultBabelOptions;
+jsxPistolsBabelOptions.plugins.push("@babel/plugin-proposal-optional-chaining");
+
 export const jsxPistols = new JSXPistols({
   rootPath: path.join(__dirname, ".."),
-  babelOptions: process.env.NODE_ENV === "production" ? "skip" : undefined
+  babelOptions: process.env.NODE_ENV === "production" ? "skip" : jsxPistolsBabelOptions
 });
 
 /*
@@ -137,8 +140,12 @@ export async function configure(app: express.Application) {
 
     res.renderJSX = async <T extends CommonLocals> (templateName: string, context: T) => {
       if (!alreadyRenderedWithError) {
-        res.write("<!doctype html>" + await jsxPistols.render(templateName + ".template", context));
-        res.end();
+        try {
+          res.write("<!doctype html>" + await jsxPistols.render(templateName + ".template", context));
+          res.end();
+        } catch (e) {
+          errorPage(req, res, 500, e, {showErrorDetails: app.locals.devMode});
+        }
       }
     };
 

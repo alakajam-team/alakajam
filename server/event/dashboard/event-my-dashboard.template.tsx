@@ -13,7 +13,7 @@ import * as userMacros from "server/user/user.macros";
 export default function render(context: CommonLocals) {
   const { eventParticipation, event, user, userLikes, posts, latestPost, entry } = context;
   const rulesLink = forms.isId(event.get("status_rules")) ? links.routeUrl(event.get("status_rules"), "post") : event.get("status_rules");
-  const socialLinks = user.related("details").get("social_links");
+  const socialLinks = user.related("details").get("social_links") || {};
 
   context.inlineStyles.push(`
   .main-action-banners .action-banner {
@@ -177,7 +177,7 @@ export default function render(context: CommonLocals) {
                 </button>
               </form>
             )}
-            <a href="{links.routeUrl(event, 'event', 'join')}?leave" class="btn btn-danger"
+            <a href={links.routeUrl(event, "event", "join") + "?leave"} class="btn btn-danger"
               onclick="return confirm('Leave the event? You can return at any time.')">
               Leave event
             </a>

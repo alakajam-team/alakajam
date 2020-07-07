@@ -19,8 +19,8 @@ export default function render(context: AdminAnnouncementContext) {
             class="btn btn-warning mr-1">
             Create (on featured <b>{featuredEvent.get("title")}</b>)
           </a>)}
-        <a href="{{ routeUrl(null, 'post', 'create', { specialPostType: 'announcement' }) }}" class="btn btn-warning mr-1">Create (no event)</a>
-        <a href="{{ routeUrl(null, 'post', 'create', { specialPostType: 'hidden' }) }}" class="btn btn-warning">Create hidden post</a>
+        <a href={ links.routeUrl(null, "post", "create", { specialPostType: "announcement" }) } class="btn btn-warning mr-1">Create (no event)</a>
+        <a href={ links.routeUrl(null, "post", "create", { specialPostType: "hidden" }) } class="btn btn-warning">Create hidden post</a>
       </div>
 
       {navigationMacros.pagination(currentPage, pageCount, "/admin?")}

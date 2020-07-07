@@ -45,7 +45,7 @@ export default function render(context: CommonLocals) {
                         <button class="btn btn-primary js-show js-hide"
                           data-show-selector="#js-manage-themes"
                           data-hide-selector="#js-view-themes">
-                          <span class="fas fa-pencil-alt"></span>
+                          <span class="fas fa-pencil-alt mr-1"></span>
                           Manage theme ideas
                         </button>
                       </p>
@@ -124,7 +124,7 @@ export default function render(context: CommonLocals) {
                 <div class="mt-3 d-none d-md-block">
                   <h2>How it works</h2>
                   <ul>
-                    <li>The lowest ranking themes (having {eliminationMinNotes} votes || more) are eliminated regularly.</li>
+                    <li>The lowest ranking themes (having {eliminationMinNotes} votes or more) are eliminated regularly.</li>
                     <li>After one week, only the {constants.SHORTLIST_SIZE} best themes will remain.
                       The longer the theme stands before elimination, the better it is!</li>
                   </ul>
@@ -156,7 +156,7 @@ export default function render(context: CommonLocals) {
                       </div>
                       <div class="horizontal-bar">Votes history</div>
                       <div id="js-theme-history" class="row">
-                        {votesHistory.map(vote => {
+                        {(votesHistory || []).map(vote => {
                           ifTrue(vote.related("theme").get("status") !== "banned", () =>
                             <div class="col-sm-6">
                               <div class="theme-past">

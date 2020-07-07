@@ -31,7 +31,7 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
     return ep2.id - ep1.id;
   });
 
-  res.renderJSX<EventLocals>("event/event-streamers.html", {
+  res.renderJSX<EventLocals>("event/event-streamers", {
     ...res.locals,
     eventParticipations,
     streamerOnlyTournamentIsLive,

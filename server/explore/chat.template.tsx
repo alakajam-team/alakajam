@@ -32,7 +32,7 @@ export default function render(context: CommonLocals) {
         </div>
         <div class="col-6">
           <div class="featured">
-            <img src="{{ staticUrl('static/images/social/irc.svg') }}" class="chat_bigicon" />
+            <img src={ links.staticUrl("static/images/social/irc.svg") } class="chat_bigicon" />
 
             <p><strong><code>server: irc.afternet.org, chan: #alakajam</code></strong></p>
 
