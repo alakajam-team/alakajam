@@ -36,5 +36,5 @@ export async function passwordRecovery(req: CustomRequest, res: CustomResponse<C
     res.locals.alerts.push({ type: "danger", message: errorMessage });
   }
 
-  res.render("user/authentication/password-recovery");
+  res.renderJSX<CommonLocals>("user/authentication/password-recovery", res.locals);
 }

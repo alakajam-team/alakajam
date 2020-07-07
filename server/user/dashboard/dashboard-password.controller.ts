@@ -5,7 +5,7 @@ import userService from "server/user/user.service";
 import { DashboardLocals } from "./dashboard.middleware";
 
 export async function dashboardPasswordGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
-  res.render("user/dashboard/dashboard-password");
+  res.renderJSX<DashboardLocals>("user/dashboard/dashboard-password", res.locals);
 }
 /**
  * Manage user profile contents

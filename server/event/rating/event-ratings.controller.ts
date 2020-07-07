@@ -44,7 +44,8 @@ export async function viewEventRatings(req: CustomRequest, res: CustomResponse<E
       });
     });
 
-    res.render("event/rating/event-ratings", {
+    res.renderJSX<EventLocals>("event/rating/event-ratings", {
+      ...res.locals,
       votesPerCategory,
       ratingCount: voteHistoryCollection.length,
     });

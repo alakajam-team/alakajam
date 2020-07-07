@@ -69,7 +69,10 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
     res.locals.inviteToJoin = joinEnabled;
   }
 
-  res.render("home/home", context);
+  res.renderJSX<CommonLocals>("home/home", {
+    ...res.locals,
+    context
+  });
 }
 
 async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeContext> {

@@ -20,7 +20,8 @@ export async function dashboardScores(req: CustomRequest, res: CustomResponse<Da
       entriesLastActivity[score2.get("entry_id")].getTime() - entriesLastActivity[score1.get("entry_id")].getTime());
   }
 
-  res.render("user/dashboard/dashboard-scores", {
+  res.renderJSX<DashboardLocals>("user/dashboard/dashboard-scores", {
+    ...res.locals,
     userScores,
     activeEntries: activeEntriesCollection.models,
     entriesLastActivity,

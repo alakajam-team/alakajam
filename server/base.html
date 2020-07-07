@@ -176,7 +176,7 @@
   {# ==== Mod header ==== #}
   
   {% if user and (user.get('is_mod') or user.get('is_admin')) %}
-    {{ adminMacros.moderationBar(context(), user.get('is_admin')) }}
+    {{ adminMacros.moderationBar(context, user.get('is_admin')) }}
   {% endif %}
 
 

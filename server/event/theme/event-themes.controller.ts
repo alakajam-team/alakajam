@@ -140,7 +140,10 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
       await event.load("details");
     }
 
-    res.render("event/theme/event-themes", context);
+    res.renderJSX<EventLocals>("event/theme/event-themes", {
+      ...res.locals,
+      ...context
+    });
   }
 }
 

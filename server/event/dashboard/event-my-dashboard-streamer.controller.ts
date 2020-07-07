@@ -20,7 +20,8 @@ export async function viewStreamerPreferences(req: CustomRequest, res: CustomRes
   res.locals.pageTitle += " | Event dashboard | Preferences";
 
   await user.loadDetails();
-  res.render("event/dashboard/event-my-dashboard-streamer.html", {
+  res.renderJSX<EventLocals>("event/dashboard/event-my-dashboard-streamer.html", {
+    ...res.locals,
     eventParticipation: await eventParticipationService.getEventParticipation(event.get("id"), user.id)
   });
 }

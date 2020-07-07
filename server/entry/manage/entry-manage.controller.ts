@@ -264,7 +264,8 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
     }
   }
 
-  res.render("entry/manage/entry-manage", {
+  res.renderJSX<EntryLocals>("entry/manage/entry-manage", {
+    ...res.locals,
     entry,
     members: await entryTeamService.findTeamMembers(entry, res.locals.user),
     allPlatforms: await platformService.fetchAllNames(),

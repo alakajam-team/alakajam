@@ -65,7 +65,8 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
   }
 
   // Load tournament entries
-  res.render("event/manage/event-manage-tournament", {
+  res.renderJSX<EventLocals>("event/manage/event-manage-tournament", {
+    ...res.locals,
     tournamentEntries: await tournamentService.findTournamentEntries(event),
     errorMessage,
   });

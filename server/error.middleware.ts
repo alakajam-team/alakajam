@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
+import { NextFunction } from "express";
 import log from "server/core/log";
-import { CustomRequest, CustomResponse } from "./types";
 import { CommonLocals } from "./common.middleware";
+import { CustomRequest, CustomResponse } from "./types";
 
 /**
  * Routing: 500/404
@@ -30,7 +30,7 @@ export function createErrorRenderingMiddleware(devMode: boolean) {
  */
 export function errorPage(
   req: CustomRequest,
-  res: Response,
+  res: CustomResponse<CommonLocals>,
   httpCode: number,
   error?: Error|string,
   options: {showErrorDetails?: boolean} = {}) {
@@ -64,7 +64,8 @@ export function errorPage(
 
   // Page rendering
   res.status(httpCode);
-  res.render("error", {
+  res.renderJSX<CommonLocals>("error", {
+    ...res.locals,
     code: httpCode,
     title,
     message,

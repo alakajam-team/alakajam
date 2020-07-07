@@ -25,11 +25,11 @@ export default function render(context: CommonLocals) {
       {ifNotSet(user, () =>
         <div class="home-welcome">
           <div class="home-welcome__container container">
-            <img class="home-welcome__icon" src={links.staticUrl('/static/images/welcome.png')} />
+            <img class="home-welcome__icon" src={links.staticUrl("/static/images/welcome.png")} />
             <div>
               <div class="home-welcome__title">New website unlocked</div>
-      Welcome to <span class="home-welcome__brand">Alakajam!</span>, a game making community. We host informal game jams!
-      <a class="home-welcome__more" href="/article/about">Learn&nbsp;more...</a>
+              Welcome to <span class="home-welcome__brand">Alakajam!</span>, a game making community. We host informal game jams!
+              <a class="home-welcome__more" href="/article/about">Learn&nbsp;more...</a>
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@ export default function render(context: CommonLocals) {
                   postMacros.post(featuredPost)
                 )}
                 {ifNotSet(featuredPost, () =>
-                  <h1 class="card card-body text-center">Next event !announced yet.</h1>
+                  <h1 class="card card-body text-center">Next event not announced yet.</h1>
                 )}
               </div>
             </div>
@@ -72,19 +72,19 @@ export default function render(context: CommonLocals) {
                   <span class="fa fa-calendar-alt"></span>
                   <span class="d-none d-sm-inline">Events<br />timeline</span>
                 </a>
-                {eventsTimeline.map(event =>
-                  <a class="home-navbar-event d-sm-inline-flex d-none btn 
-              {featuredEvent && event.get('id') === featuredEvent.get('id') ? 'btn-secondary' : 'btn-outline-light border-0' }
-              {'d-none d-lg-inline-block' if loop.index === 1}"
-                    href={links.routeUrl(event, 'event')}>
+                {(eventsTimeline || []).map((event, index) =>
+                  <a class={"home-navbar-event d-sm-inline-flex d-none btn "
+                      + (featuredEvent && event.get("id") === featuredEvent.get("id") ? "btn-secondary " : "btn-outline-light border-0 ")
+                      + (index === 0 ? "d-none d-lg-inline-block" : "")}
+                  href={links.routeUrl(event, "event")}>
                     <div class="home-navbar-event__legend">
                       <div>
-                        {event.get('title')}
-                        {ifTrue(event.get('title').includes('Alakajam'), () =>
-                          <img src={links.staticUrl('/static/images/favicon16.png')} class="no-border" />
+                        {event.get("title")}
+                        {ifTrue(event.get("title").includes("Alakajam"), () =>
+                          <img src={links.staticUrl("/static/images/favicon16.png")} class="no-border" />
                         )}
                       </div>
-                      <div class="home-navbar-event__dates">{event.get('display_dates')}</div>
+                      <div class="home-navbar-event__dates">{event.get("display_dates")}</div>
                     </div>
                   </a>
                 )}
@@ -92,15 +92,15 @@ export default function render(context: CommonLocals) {
             </div>
             <div class="col-sm-3 col-9">
               <div class="home-navbar__social">
-                {socialLink('Twitter', 'https://twitter.com/AlakajamBang', 'twitter.svg')}
-                {socialLink('Discord', 'https://discord.gg/yZPBpTn', 'discord.svg')}
-                {socialLink('IRC', '/chat', 'irc.svg')}
-                {socialLink('Reddit', 'https://www.reddit.com/r/alakajam', 'reddit.svg')}
-                {socialLink('Github', 'https://github.com/alakajam-team', 'github.svg')}
+                {socialLink("Twitter", "https://twitter.com/AlakajamBang", "twitter.svg")}
+                {socialLink("Discord", "https://discord.gg/yZPBpTn", "discord.svg")}
+                {socialLink("IRC", "/chat", "irc.svg")}
+                {socialLink("Reddit", "https://www.reddit.com/r/alakajam", "reddit.svg")}
+                {socialLink("Github", "https://github.com/alakajam-team", "github.svg")}
                 <a href="/post/1070/finances-of-the-alakajam-association" class="btn btn-secondary">
                   <span class="fas fa-donate"></span>
-            Donate
-          </a>
+                  Donate
+                </a>
               </div>
             </div>
           </div>
@@ -116,12 +116,13 @@ export default function render(context: CommonLocals) {
             {ifTrue(user && suggestedEntries && suggestedEntries.length > 0, () =>
               <div>
                 <div class="horizontal-bar">
-                  Suggested entries to rate {formMacros.tooltip('Rate && comment other games to increase your karma. The Top 4 are featured on the front page!')}
+                  Suggested entries to rate
+                  {formMacros.tooltip("Rate && comment other games to increase your karma. The Top 4 are featured on the front page!")}
                 </div>
                 <div class="home-grid game-grid pb-1">
-                  {suggestedEntries.map(entry =>
+                  {suggestedEntries.map(suggestedEntry =>
                     <div class="game-grid-entry">
-                      {eventMacros.entryThumb(entry)}
+                      {eventMacros.entryThumb(suggestedEntry)}
                     </div>
                   )}
                 </div>
@@ -130,7 +131,7 @@ export default function render(context: CommonLocals) {
 
             {/* ===== LATEST BLOG POSTS ===== */}
 
-            {ifTrue(posts.length > 0, () =>
+            {ifTrue(posts && posts.length > 0, () =>
               <div>
                 <div class="d-flex mt-3">
                   <div class="horizontal-bar mt-0">Latest posts</div>
@@ -144,7 +145,7 @@ export default function render(context: CommonLocals) {
                 {posts.map(post =>
                   postMacros.post(post, { readingUser: user, readingUserLikes: userLikes })
                 )}
-                {navigationMacros.pagination(1, pageCount, '/posts')}
+                {navigationMacros.pagination(1, pageCount, "/posts")}
               </div>
             )}
           </div>
@@ -153,15 +154,15 @@ export default function render(context: CommonLocals) {
 
           <div class="col-md-4 col-12 order-md-2 order-1">
             {ifTrue(featuredEvent && featuredEvent.get("status") === "open", () => {
-              const shortlistEliminationInfo = featuredEvent.related('details').get('shortlist_elimination');
+              const shortlistEliminationInfo = featuredEvent.related("details").get("shortlist_elimination");
               if (featuredStreamer && !shortlistEliminationInfo.stream) {
                 return <div>
                   <div class="horizontal-bar">Featured streamer</div>
                   <div class="featured p-0 mb-1">
                     {userMacros.twitchEmbed(featuredStreamer.details.social_links.twitch, { height: 250 })}
                     <div class="my-1">
-                      {userMacros.userThumb(featuredStreamer)}
-                      <a href={links.routeUrl(featuredEvent, 'event', 'streamers')} class="mx-3">
+                      <div dangerouslySetInnerHTML={userMacros.userThumb(featuredStreamer)}></div>
+                      <a href={links.routeUrl(featuredEvent, "event", "streamers")} class="mx-3">
                         <span class="fa fa-tv"></span> Browse all streamers
                       </a>
                     </div>
@@ -183,6 +184,6 @@ export default function render(context: CommonLocals) {
 
 function socialLink(title, url, iconName) {
   return <a href={url} data-toggle="tooltip" title={title}>
-    <img src={links.staticUrl('/static/images/social/' + iconName)} class="footer__icon no-border" />
-  </a>
+    <img src={links.staticUrl("/static/images/social/" + iconName)} class="footer__icon no-border" />
+  </a>;
 }

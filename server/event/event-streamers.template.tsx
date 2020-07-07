@@ -33,7 +33,7 @@ export default function render(context: CommonLocals) {
               <div class="col-lg-4 col-md-6">
                 <a name={eventParticipation.userId}></a>
                 <div class="card mb-4 {eventParticipation.streamerStatus}">
-                  <div class="card-header">{userMacros.userThumb(eventParticipation.user, { fullWidth: true })}</div>
+                  <div class="card-header" dangerouslySetInnerHTML={userMacros.userThumb(eventParticipation.user, { fullWidth: true })}></div>
 
                   {ifTrue(currentlyLiveUserIds.includes(eventParticipation.userId), () =>
                     userMacros.twitchEmbed(eventParticipation.user.details.social_links.twitch, { height: 200 })

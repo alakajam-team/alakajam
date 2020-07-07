@@ -1,4 +1,4 @@
-import { BookshelfCollection, BookshelfModel, NodeBookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import security from "server/core/security";
 import templating from "server/core/templating-functions";
@@ -7,18 +7,19 @@ import { CustomRequest, CustomResponse } from "server/types";
 import eventService from "../event/event.service";
 import commentService from "./comment/comment.service";
 import likeService from "./like/like.service";
+import { PostLocals } from "./post.middleware";
 import postService from "./post.service";
 
 /**
  * View a blog post
  */
-export async function postView(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function postView(req: CustomRequest, res: CustomResponse<PostLocals>) {
   // Check permissions
   const { post, user } = res.locals;
   if (postService.isPast(post.get("published_at")) ||
       security.canUserRead(user, post, { allowMods: true })) {
     // Fetch comments and likes
-    const context = await buildPostContext(post, user);
+    const context = await buildPostContext(res.locals);
 
     // Guess social thumbnail pic
     res.locals.pageImage = postService.getFirstPicture(post) || undefined;
@@ -26,7 +27,7 @@ export async function postView(req: CustomRequest, res: CustomResponse<CommonLoc
       res.locals.pageImage = templating.staticUrl(res.locals.pageImage);
     }
 
-    res.render("post/post-view", context);
+    res.renderJSX<CommonLocals>("post/post-view", context);
   } else {
     res.errorPage(403);
   }
@@ -35,9 +36,12 @@ export async function postView(req: CustomRequest, res: CustomResponse<CommonLoc
 /**
  * Fetch related event, entry, comments & current user likes
  */
-export async function buildPostContext(post: NodeBookshelfModel, currentUser: User) {
+export async function buildPostContext(locals: PostLocals): Promise<PostLocals> {
+  const post: PostBookshelfModel = locals.post;
+  const currentUser: User = locals.user;
+
   const context = {
-    post,
+    ...locals,
     allEvents: (await eventService.findEvents()).models,
     relatedEvent: undefined,
     relatedEntry: undefined,

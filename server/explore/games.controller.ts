@@ -42,7 +42,8 @@ export async function games(req: CustomRequest, res: CustomResponse<CommonLocals
     searchedEvent = eventsCollection.find((event) => event.id === searchOptions.eventId);
   }
 
-  res.render("explore/games", {
+  res.renderJSX<CommonLocals>("explore/games", {
+    ...res.locals,
     searchOptions,
     searchedEvent,
     entriesCollection,

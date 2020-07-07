@@ -63,7 +63,8 @@ export async function entryView(req: CustomRequest, res: CustomResponse<EntryLoc
     userLikes = await likeService.findUserLikeInfo(posts.models, user);
   }
 
-  res.render("entry/entry-view", {
+  res.renderJSX<EntryLocals>("entry/entry-view", {
+    ...res.locals,
     sortedComments: await commentService.findCommentsOnNodeForDisplay(entry),
     editableAnonComments,
     posts,

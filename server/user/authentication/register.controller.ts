@@ -19,7 +19,7 @@ export class RegisterController {
    */
   public async registerForm(req: CustomRequest, res: CustomResponse<CommonLocals>) {
     res.locals.pageTitle = "Register";
-    res.render(TEMPLATE_REGISTER, {
+    res.renderJSX<CommonLocals>(TEMPLATE_REGISTER, {
       ...req.body,
       timezones: await this.userTimezoneService.getAllTimeZonesAsOptions()
     });

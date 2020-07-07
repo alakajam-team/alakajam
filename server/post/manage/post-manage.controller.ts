@@ -38,7 +38,7 @@ export async function postEdit(req: CustomRequest, res: CustomResponse<PostLocal
     }
 
     // Fetch related event info
-    res.render("post/manage/post-manage", await buildPostContext(res.locals.post, res.locals.user));
+    res.renderJSX<PostLocals>("post/manage/post-manage", await buildPostContext(res.locals));
   } else {
     res.errorPage(403);
   }
@@ -138,9 +138,12 @@ export async function postSave(req: CustomRequest, res: CustomResponse<PostLocal
     if (redirectToView) {
       res.redirect(links.routeUrl(post, "post")); // TODO move route to routing-service
     } else {
-      const context: any = await buildPostContext(post, res.locals.user);
+      const context: any = await buildPostContext(res.locals);
       context.errorMessage = errorMessage;
-      res.render("post/manage/post-manage", context);
+      res.renderJSX<PostLocals>("post/manage/post-manage", {
+        ...res.locals,
+        ...context
+      });
     }
   } else {
     res.errorPage(403);

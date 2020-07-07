@@ -64,5 +64,8 @@ export async function dashboardEntryImport(req: CustomRequest, res: CustomRespon
     }
   }
 
-  res.render("user/dashboard/dashboard-entry-import", context);
+  res.renderJSX<DashboardLocals>("user/dashboard/dashboard-entry-import", {
+    ...res.locals,
+    ...context
+  });
 }

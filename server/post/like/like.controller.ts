@@ -19,7 +19,8 @@ export async function likePost(req: CustomRequest, res: CustomResponse<PostLocal
   }
 
   if (req.body.ajax) {
-    res.render("post/like/ajax-likes", {
+    res.renderJSX<PostLocals>("post/like/ajax-likes", {
+      ...res.locals,
       post: await postService.findPostById(post.get("id")),
       userLikes: await likeService.findUserLikeInfo([post], user),
     });

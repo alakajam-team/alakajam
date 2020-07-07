@@ -9,7 +9,8 @@ export async function logout(req: CustomRequest, res: CustomResponse<CommonLocal
 
   await req.session.regenerateAsync();
 
-  res.render("user/authentication/login", {
+  res.renderJSX<CommonLocals>("user/authentication/login", {
+    ...res.locals,
     infoMessage: "Logout successful.",
     user: null
   });

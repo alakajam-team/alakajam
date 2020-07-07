@@ -27,7 +27,8 @@ export async function entryHighscores(req: CustomRequest, res: CustomResponse<En
     streamerBadges = new Set(await eventParticipationService.getStreamerIds(featuredEvent));
   }
 
-  res.render("entry/highscore/entry-highscores", {
+  res.renderJSX<EntryLocals>("entry/highscore/entry-highscores", {
+    ...res.locals,
     entryScore,
     highScoresCollection: await highscoreService.findHighScores(entry, { fetchAll: true }),
     tournamentEvent: await tournamentService.findActiveTournamentPlaying(entry.get("id")),

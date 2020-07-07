@@ -59,7 +59,8 @@ export async function eventManageEntries(req: CustomRequest, res: CustomResponse
       detailedEntryInfo.given.total);
   }
 
-  res.render("event/manage/event-manage-entries", {
+  res.renderJSX<EventLocals>("event/manage/event-manage-entries", {
+    ...res.locals,
     entries: entriesCollection.models,
     entriesById,
     usersById,

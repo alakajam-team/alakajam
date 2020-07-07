@@ -41,7 +41,8 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
       }
     });
 
-    res.render("user/user-profile", {
+    res.renderJSX<CommonLocals>("user/user-profile", {
+      ...res.locals,
       profileUser,
       alakajamEntries,
       otherEntries,

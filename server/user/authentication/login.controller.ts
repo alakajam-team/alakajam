@@ -10,7 +10,8 @@ import userService from "server/user/user.service";
 export async function loginGet(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "Login";
 
-  res.render("user/authentication/login", {
+  res.renderJSX<CommonLocals>("user/authentication/login", {
+    ...res.locals,
     redirect: forms.sanitizeString(req.query.redirect?.toString()),
   });
 }
@@ -51,6 +52,9 @@ export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLo
     res.redirect(context.redirect);
   } else {
     res.locals.alerts.push(...errors);
-    res.render("user/authentication/login", context);
+    res.renderJSX<CommonLocals>("user/authentication/login", {
+      ...res.locals,
+      ...context
+    });
   }
 }

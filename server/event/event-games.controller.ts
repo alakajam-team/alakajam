@@ -48,7 +48,8 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
     voteHistory = voteHistoryCollection.models;
   }
 
-  res.render("event/event-games", {
+  res.renderJSX<EventLocals>("event/event-games", {
+    ...res.locals,
     rescueEntries,
     requiredVotes,
     entriesCollection,

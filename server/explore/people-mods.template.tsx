@@ -17,7 +17,7 @@ export default function render(context: PeopleModsContext) {
       </div>
     </div>
     <div class="row"
-      dangerouslySetInnerHTML={ collectHtml(admins.map(userThumb)) }></div>
+      dangerouslySetInnerHTML={collectHtml(admins.map(userThumb))}></div>
 
     <div class="row">
       <div class="col-12">
@@ -25,7 +25,7 @@ export default function render(context: PeopleModsContext) {
       </div>
     </div>
     <div class="row"
-      dangerouslySetInnerHTML={ collectHtml(mods.map(userThumb)) }></div>
+      dangerouslySetInnerHTML={collectHtml(mods.map(userThumb))}></div>
   </div>);
 
 }

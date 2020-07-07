@@ -5,25 +5,26 @@ import links from "server/core/links";
 import { date, markdown, relativeTime } from "server/core/templating-filters";
 import * as scoreMacros from "server/entry/highscore/entry-highscore.macros";
 import * as eventMacros from "server/event/event.macros";
-import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
+import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";
 import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 
 export default function render(context: CommonLocals) {
   const { profileUser, user, isTwitchLive, alakajamEntries, externalEntries, otherEntries, posts, userScores, userLikes, medals } = context;
-  const socialLinks = profileUser.related("details").get("social_links");
+  const socialLinks = profileUser.related("details").get("social_links") || {};
   const totalMedals = (medals[1] || 0) + (medals[2] || 0) + (medals[3] || 0);
+  const hasAvatar = Boolean(profileUser.get("avatar"));
 
   userMacros.registerTwitchEmbedScripts(context);
 
   return base(context, <div class="container profile">
     <div class="row">
       <div class="col-md-4 col-lg-3">
-        {ifSet(profileUser.get("avatar"), () =>
+        {ifTrue(hasAvatar, () =>
           <img src={links.pictureUrl(profileUser.get("avatar"), profileUser)} class="profile__avatar" />
         )}
-        {ifNotSet(profileUser.get("avatar"), () =>
+        {ifFalse(hasAvatar, () =>
           <img src={links.staticUrl("/static/images/default-avatar.png")} class="profile__avatar" />
         )}
 

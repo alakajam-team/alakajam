@@ -79,7 +79,8 @@ export async function viewEventResults(req: CustomRequest, res: CustomResponse<E
     });
   }
 
-  res.render("event/rating/event-results", {
+  res.renderJSX<EventLocals>("event/rating/event-results", {
+    ...res.locals,
     ...context,
     categoryTitles: eventService.getCategoryTitles(event)
   });

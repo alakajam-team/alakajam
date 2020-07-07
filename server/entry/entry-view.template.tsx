@@ -5,15 +5,16 @@ import base from "server/base.template";
 import { ordinal } from "server/core/formats";
 import links from "server/core/links";
 import security from "server/core/security";
+import * as templatingFilters from "server/core/templating-filters";
 import { digits } from "server/core/templating-filters";
 import * as scoreMacros from "server/entry/highscore/entry-highscore.macros";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifFalse, ifSet, ifTrue } from "server/macros/jsx-utils";
+import { collectHtmlAsDiv } from "server/macros/nunjucks-macros";
 import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 import { EntryLocals } from "./entry.middleware";
-import * as templatingFilters from "server/core/templating-filters";
 
 export default function render(context: EntryLocals) {
   const { entry, external, user, infoMessage, entryVotes, canVote, vote, minEntryVotes,
@@ -56,7 +57,7 @@ export default function render(context: EntryLocals) {
             )}
 
             {ifTrue(user && event && eventVote, () =>
-              voting(entry, entryVotes, user, canVote, vote, minEntryVotes, csrfTokenJSX)
+              voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, csrfTokenJSX)
             )}
 
             {ifTrue(event && event.get("status_results") === "closed" && entry.get("division") !== "unranked", () =>
@@ -116,7 +117,7 @@ export default function render(context: EntryLocals) {
             <div class="entry__info">
               <span class="entry__info-label">Platforms</span>
               <div class="entry__info-value">
-                {entry.get("platforms").map(name =>
+                {(entry.get("platforms") || []).map(name =>
                   <div class="entry__platform">{eventMacros.entryPlatformIcon(name, { hideLabel: true }, context)}</div>
                 )}
               </div>
@@ -140,15 +141,15 @@ export default function render(context: EntryLocals) {
 
             <div class="entry__links">
               {ifTrue(security.canUserWrite(user, entry), () =>
-                <a class="btn btn-outline-primary" href="{ routeUrl(entry, 'entry', 'edit') }">Edit entry</a>
+                <a class="btn btn-outline-primary" href={ links.routeUrl(entry, "entry", "edit") }>Edit entry</a>
               )}
-              {entry.get("links").map(link =>
-                <a class="btn btn-primary" href="{ link.url }" target="_blank">
+              {(entry.get("links") || []).map(link =>
+                <a class="btn btn-primary" href={ link.url } target="_blank">
                   <span class="fas fa-external-link"></span>
                   {link.label}
                 </a>
               )}
-              {ifTrue(entry.get("links").length === 0 || !entry.get("links")[0].url, () =>
+              {ifTrue((entry.get("links") || []).length === 0 || !entry.get("links")[0].url, () =>
                 <div class="card card-body">No links yet.</div>
               )}
             </div>
@@ -157,9 +158,9 @@ export default function render(context: EntryLocals) {
 
             <div class="card card-body pb-2">
               <div class="row">
-                {entry.sortedUserRoles().map(userRole =>
+                {collectHtmlAsDiv(entry.sortedUserRoles().map(userRole =>
                   userMacros.userThumb(userRole.related<BookshelfModel>("user"), { fullWidth: true })
-                )}
+                ))}
                 {ifTrue(security.canUserWrite(user, entry), () =>
                   entry.related<BookshelfCollection>("invites").models.map(invite =>
                     <div dangerouslySetInnerHTML={userMacros.userThumb(invite.related("invited"), { fullWidth: true, pending: true })} />
@@ -219,14 +220,14 @@ function picture(entry, event) {
   </div>;
 }
 
-function voting(entry, entryVotes, user, canVote, vote, minEntryVotes, csrfTokenJSX) {
+function voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, csrfTokenJSX) {
   return <div>
 
     {ifTrue(canVote, () =>
       <div class="entry-voting">
         <h2 class="entry-voting__header">
           <div class="float-right">
-            <a href="{ routeUrl(event, 'event', 'ratings') }" class="btn btn-outline-light btn-sm">Manage my ratings</a>
+            <a href={links.routeUrl(event, "event", "ratings") } class="btn btn-outline-light btn-sm">Manage my ratings</a>
           </div>
       Game ratings
         </h2>
@@ -336,9 +337,9 @@ function votingResults(entry, event) {
             return <div class="entry-results__category">
               <div class="entry-results__category-title">{categoryTitle}</div>
               <div class="entry-results__category-ranking">
-                <a href="{ routeUrl(event, 'event', 'results') }?sortBy={ categoryIndex }&amp;division={ entry.get('division') }">
+                <a href={`${links.routeUrl(event, "event", "results") }?sortBy=${ categoryIndex }&amp;division=${ entry.get("division")}`}>
                   {ifTrue(ranking <= 3, () =>
-                    <span class="entry-results__category-medal medal-category-{categoryIndex} medal-ranking-{ranking} in-picture"></span>
+                    <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-${ranking} in-picture`}></span>
                   )}
                   {ordinal(ranking)}
                 </a>
@@ -347,7 +348,7 @@ function votingResults(entry, event) {
               <div class="entry-results__category-rating">{digits(rating, 3)}</div>
               <div class="entry-results__category-stars d-none d-sm-inline-block">
                 {range(1, 11).map(i =>
-                  <span class="fa-lg { 'fas fa-star' if i <= rating|round(0) else 'far fa-star' }"></span>
+                  <span class={"fa-lg " + ((i <= rating) ? "fas fa-star" : "far fa-star")}></span>
                 )}
               </div>
             </div>;
@@ -370,7 +371,7 @@ function votingResults(entry, event) {
 
 function ratingCountPhrase(entry, entryVotes) {
   return <p>
-    This <strong>{capitalize(entry.get("division"))}</strong> entry has received
+    This <strong>{capitalize(entry.get("division"))}</strong> entry has received&nbsp;
     <strong>{entryVotes}</strong> rating{entryVotes !== 1 ? "s" : ""} so far.
   </p>;
 }

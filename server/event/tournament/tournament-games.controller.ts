@@ -43,7 +43,8 @@ export async function viewEventTournamentGames(req: CustomRequest, res: CustomRe
     }
   }
 
-  res.render("event/tournament/tournament-games", {
+  res.renderJSX<EventLocals>("event/tournament/tournament-games", {
+    ...res.locals,
     entries,
     highScoresMap,
     userScoresMap,

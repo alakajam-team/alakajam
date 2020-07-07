@@ -207,7 +207,8 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
     }
 
     // Render
-    res.render("event/manage/event-manage", {
+    res.renderJSX<EventLocals>("event/manage/event-manage", {
+      ...res.locals,
       event,
       eventPresetsData: (await eventPresetService.findEventPresets()).toJSON(),
       infoMessage,

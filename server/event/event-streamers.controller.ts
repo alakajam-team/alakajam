@@ -31,7 +31,8 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
     return ep2.id - ep1.id;
   });
 
-  res.render("event/event-streamers.html", {
+  res.renderJSX<EventLocals>("event/event-streamers.html", {
+    ...res.locals,
     eventParticipations,
     streamerOnlyTournamentIsLive,
     currentlyLiveUserIds
@@ -39,7 +40,7 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
 }
 
 export async function eventStreamersDoc(req: CustomRequest, res: CustomResponse<EventLocals>) {
-  res.render("event/event-streamers-doc");
+  res.renderJSX<EventLocals>("event/event-streamers-doc", res.locals);
 }
 
 export async function moderateEventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>) {
