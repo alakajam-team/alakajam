@@ -1,6 +1,6 @@
-import * as Bluebird from "bluebird";
+import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
-import * as leftPad from "left-pad";
+import leftPad from "left-pad";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import db from "server/core/db";

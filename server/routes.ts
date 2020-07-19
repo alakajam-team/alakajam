@@ -1,7 +1,7 @@
-import * as csurf from "csurf";
+import csurf from "csurf";
 import { NextFunction, RequestHandler } from "express";
 import expressPromiseRouter from "express-promise-router";
-import * as multer from "multer";
+import multer from "multer";
 import * as randomKey from "random-key";
 import config, * as configUtils from "server/core/config";
 import constants from "server/core/constants";

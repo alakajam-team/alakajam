@@ -3,7 +3,7 @@
  */
 
 import * as download from "download";
-import * as leftPad from "left-pad";
+import leftPad from "left-pad";
 import cache from "server/core/cache";
 import enums from "server/core/enums";
 import forms from "server/core/forms";

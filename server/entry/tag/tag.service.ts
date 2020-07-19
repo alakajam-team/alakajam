@@ -1,4 +1,4 @@
-import * as Bluebird from "bluebird";
+import Bluebird from "bluebird";
 import { BookshelfCollection } from "bookshelf";
 import { ilikeOperator } from "server/core/config";
 import db from "server/core/db";

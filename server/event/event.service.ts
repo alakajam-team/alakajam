@@ -1,4 +1,4 @@
-import * as Bluebird from "bluebird";
+import Bluebird from "bluebird";
 import {
   BookshelfCollection,
   BookshelfCollectionOf,

@@ -2,6 +2,10 @@ import "preact";
 
 declare module "preact" {
   namespace JSX {
+    interface IntrinsicElements {
+      ["jsx-wrapper"]: HTMLAttributes<HTMLElement>;
+    }
+
     interface HTMLAttributes<RefType extends EventTarget = EventTarget>
       extends preact.ClassAttributes<RefType>, DOMAttributes<RefType> {
       // Image events

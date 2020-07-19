@@ -1,6 +1,6 @@
 import { Application } from "express";
 import * as nodemailer from "nodemailer";
-import * as MailTransport from "nodemailer/lib/mailer";
+import MailTransport from "nodemailer/lib/mailer";
 import config from "server/core/config";
 import forms from "server/core/forms";
 import log from "server/core/log";

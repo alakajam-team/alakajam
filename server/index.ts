@@ -28,7 +28,7 @@ if (config.DEBUG_LONG_PROMISE_TRACES) {
  * Initial dependencies
  */
 
-import * as express from "express";
+import express from "express";
 import * as findUp from "find-up";
 import * as fs from "fs-extra";
 import * as mkdirp from "mkdirp";

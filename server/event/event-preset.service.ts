@@ -1,4 +1,4 @@
-import * as Bluebird from "bluebird";
+import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as models from "server/core/models";
 

@@ -6,7 +6,7 @@
 import { CommonLocals } from "server/common.middleware";
 import settings, { ArticleSidebarCategory } from "server/core/settings";
 import { CustomRequest, CustomResponse } from "server/types";
-import * as slug from "slug";
+import slug from "slug";
 import articleService from "./article.service";
 
 export interface ArticleContext extends CommonLocals {

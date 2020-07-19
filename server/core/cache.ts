@@ -4,7 +4,7 @@
  * Cache configuration
  */
 
-import * as NodeCache from "node-cache";
+import NodeCache from "node-cache";
 import { User } from "server/entity/user.entity";
 import config from "./config";
 

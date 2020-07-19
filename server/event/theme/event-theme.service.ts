@@ -1,4 +1,4 @@
-import * as Bluebird from "bluebird";
+import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel, SaveOptions, SyncOptions, FetchAllOptions } from "bookshelf";
 import * as lodash from "lodash";
 import * as luxon from "luxon";

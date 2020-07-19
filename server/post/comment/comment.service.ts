@@ -1,4 +1,4 @@
-import * as Bluebird from "bluebird";
+import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel, FetchPageOptions, NodeBookshelfModel } from "bookshelf";
 import { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";

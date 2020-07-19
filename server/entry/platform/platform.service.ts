@@ -1,5 +1,5 @@
 
-import * as Bluebird from "bluebird";
+import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import db from "server/core/db";

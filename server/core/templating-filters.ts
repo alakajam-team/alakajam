@@ -1,7 +1,7 @@
-import * as leftPad from "left-pad";
+import leftPad from "left-pad";
 import * as lodash from "lodash";
 import { User } from "server/entity/user.entity";
-import * as slug from "slug";
+import slug from "slug";
 import constants from "./constants";
 import * as formats from "./formats";
 import forms from "./forms";

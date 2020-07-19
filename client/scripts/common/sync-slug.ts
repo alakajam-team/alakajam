@@ -1,5 +1,5 @@
 
-import * as slug from "slug";
+import slug from "slug";
 
 export default function syncSlug(inputSelector) {
   $(inputSelector)

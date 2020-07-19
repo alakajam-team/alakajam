@@ -9,11 +9,11 @@
  */
 
 import * as bodyParser from "body-parser";
-import * as connectSessionKnex from "connect-session-knex";
+import connectSessionKnex from "connect-session-knex";
 import * as cookies from "cookies";
-import * as express from "express";
+import express from "express";
 import { NextFunction, Request, Response } from "express";
-import * as expressSession from "express-session";
+import expressSession from "express-session";
 import JSXPistols, { defaultBabelOptions } from "jsx-pistols";
 import * as nunjucks from "nunjucks";
 import * as path from "path";

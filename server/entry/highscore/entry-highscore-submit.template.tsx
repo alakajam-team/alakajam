@@ -1,4 +1,4 @@
-import * as leftPad from "left-pad";
+import leftPad from "left-pad";
 import * as React from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";

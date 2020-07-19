@@ -1,4 +1,4 @@
-import * as Bluebird from "bluebird";
+import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import constants from "server/core/constants";
 import db from "server/core/db";

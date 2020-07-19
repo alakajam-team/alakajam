@@ -1,5 +1,5 @@
 import * as chokidar from "chokidar";
-import * as copy from "copy";
+import copy from "copy";
 import * as findUp from "find-up";
 import { writeFile } from "fs";
 import { copySync } from "fs-extra";

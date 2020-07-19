@@ -5,7 +5,7 @@
  * Requiring the module returns a [Bookshelf](http://bookshelfjs.org/) instance.
  */
 
-import * as Bookshelf from "bookshelf";
+import Bookshelf from "bookshelf";
 import * as fs from "fs-extra";
 import * as Knex from "knex";
 import config from "./config";
