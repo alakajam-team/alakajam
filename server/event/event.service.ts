@@ -479,8 +479,6 @@ export class EventService {
 
   /**
    * Retrieves the user's latest entry
-   * @param  {User} user
-   * @return {Entry|null}
    */
   public async findLatestUserEntry(user: User, options: FetchOptions = {}) {
     return models.Entry.query((qb) => {

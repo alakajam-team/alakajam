@@ -1,11 +1,12 @@
 import * as React from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
+import constants from "server/core/constants";
 import * as formMacros from "server/macros/form.macros";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
 
 export default function render(context: CommonLocals) {
-  const { email, timezones, timezone, captcha } = context;
+  const { name, email, timezones, timezone, captcha } = context;
 
   return base(context,
     <div class="container thinner">
@@ -32,7 +33,7 @@ export default function render(context: CommonLocals) {
             <div class="form-group">
               <label for="password">Password</label>
               <input type="password" class="form-control" id="password" name="password"
-                placeholder="Type at least {constants.PASSWORD_MIN_LENGTH} characters" required />
+                placeholder={`Type at least ${constants.PASSWORD_MIN_LENGTH} characters`} required />
             </div>
             <div class="form-group">
               <label for="password-bis">Repeat password</label>
@@ -40,7 +41,7 @@ export default function render(context: CommonLocals) {
             </div>
             {userDashboardMacros.timezoneField(timezones, timezone)}
             <div class="form-group">
-              <label for="captcha">Are you human? (yes || no)</label>
+              <label for="captcha">Are you human? (yes or no)</label>
               <input type="text" class="form-control" id="captcha" name="captcha" value={captcha} required />
             </div>
             <div class="form-group">

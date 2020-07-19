@@ -131,8 +131,8 @@ export default function render(context: CommonLocals) {
         {context.csrfTokenJSX()}
         <div class="form-group">
           <input type="submit" name="delete" class="btn btn-danger" value="Delete account"
-            onclick="return confirm('Delete your account permanently?
-            This will REALLY delete all your data, including posts and comments.
+            onclick="return confirm('Delete your account permanently? \
+            This will REALLY delete all your data, including posts and comments. \
             IMPORTANT: this will only work *after* you have manually deleted or left the team for all your entries.')" />
         </div>
       </form>

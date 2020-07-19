@@ -17,13 +17,13 @@ export function ifFalse(expression: boolean, callback: JSXProvider) {
 }
 
 export function ifSet(value: any, callback: JSXProvider) {
-  if (value !== undefined && (typeof value !== "string" || value.trim() !== "")) {
+  if (value !== undefined && value !== null && (typeof value !== "string" || value.trim() !== "")) {
     return callback();
   }
 }
 
 export function ifNotSet(value: any, callback: JSXProvider) {
-  if (value === undefined || (typeof value === "string" && value.trim() === "")) {
+  if (value === undefined || value === null || (typeof value === "string" && value.trim() === "")) {
     return callback();
   }
 }

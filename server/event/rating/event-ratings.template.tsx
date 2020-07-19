@@ -5,7 +5,7 @@ import { CommonLocals } from "server/common.middleware";
 import * as eventMacros from "server/event/event.macros";
 
 export default function render(context: CommonLocals) {
-  const { ratingCount, votesPerCategory, division } = context;
+  const { ratingCount, votesPerCategory } = context;
 
   return base(context,
 
@@ -25,7 +25,7 @@ export default function render(context: CommonLocals) {
           const categoryIndex = index + 1;
           return <div id={"tab-" + votesCategory.title } class={"event-ratings__tab tab-pane show " + (index === 0 ? "active" : "")}>
             <div class="row">
-              {votesCategory.votesPerDivision.map(division, votes =>
+              {Object.entries(votesCategory.votesPerDivision).map(([division, votes]: [string, any]) =>
                 <div class="col-sm-6">
                   <div class="row">
                     <div class="col-10 offset-2"><h4>{capitalize(division)} entries <span class="count">({votes.length})</span></h4></div>

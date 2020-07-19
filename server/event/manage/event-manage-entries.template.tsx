@@ -44,7 +44,7 @@ export default function render(context: CommonLocals) {
               <td>{capitalize(entry.get("division"))}</td>
               <td>{entry.get("karma")}</td>
               <td>{entry.get("division") !== "unranked" ? entry.related("details").get("rating_count") : "N.A."}</td>
-              <td><a href={`"?entryDetails=${entry.get("id") }}&amp;orderBy=${ orderBy}`} class="btn btn-outline-primary">Details</a></td>
+              <td><a href={`?entryDetails=${entry.get("id") }&orderBy=${ orderBy}`} class="btn btn-outline-primary">Details</a></td>
             </tr>
           )}
         </tbody>
@@ -57,7 +57,7 @@ export default function render(context: CommonLocals) {
 function detailedEntry(detailedEntryInfo, entriesById, usersById) {
   const entry = entriesById[detailedEntryInfo.id];
 
-  return <div class="card card-body">
+  return <div class="card card-body mb-3">
     <h2>Karma details: {entry.get("title")}</h2>
 
     <p>Current karma: <strong>{detailedEntryInfo.total}</strong></p>
@@ -65,7 +65,7 @@ function detailedEntry(detailedEntryInfo, entriesById, usersById) {
     <h4>Given <span class="count">(+{detailedEntryInfo.given.total})</span></h4>
 
     <ul>
-      {detailedEntryInfo.given.givenByUserAndEntry.map((_, data) =>
+      {Object.values(detailedEntryInfo.given.givenByUserAndEntry).map((data: any) =>
         <li>
           {ifTrue(data.commentKarma > 0, () =>
             <span>
@@ -73,7 +73,7 @@ function detailedEntry(detailedEntryInfo, entriesById, usersById) {
                 on {entriesById[data.entryId] ? entriesById[data.entryId].get("title") : "???"}
             </span>
           )}
-          {data.commentKarma && data.voteKarm ? " or " : ""}
+          {data.commentKarma && data.voteKarma ? " or " : ""}
           {ifTrue(data.voteKarma > 0, () =>
             <span>
               <strong>+ {data.voteKarma || "0"}</strong> with votes by {userTitle(usersById, data.userId)}
@@ -87,7 +87,7 @@ function detailedEntry(detailedEntryInfo, entriesById, usersById) {
     <h4>Received <span class="count">(-{detailedEntryInfo.received.total})</span></h4>
 
     <ul>
-      {detailedEntryInfo.received.receivedByUser.map((userId, data) =>
+      {Object.entries(detailedEntryInfo.received.receivedByUser).map(([userId, data]: [string, any]) =>
         <li>
           {ifTrue(data.commentKarma > 0, () =>
             <span>

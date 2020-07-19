@@ -125,14 +125,14 @@ export default function render(context: CommonLocals) {
                 <div class="form-group">
                   <label for="logo">Logo</label>
                   {formMacros.pictureInput("logo", event?.get("logo"), { noCard: true, model: event })}
-                  <div class="legend">Ideal logo size: about 196x196, although slightly bigger images will !be resized && can overflow nicely.</div>
+                  <div class="legend">Ideal logo size: about 196x196, although slightly bigger images will not be resized and can overflow nicely.</div>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="logo">Background</label>
                   {formMacros.pictureInput("background", eventDetails?.get("background"), { noCard: true, model: eventDetails })}
-                  <div class="legend">Ideal background size: 1920x540 || more. Will resize to always cover full window width.</div>
+                  <div class="legend">Ideal background size: 1920x540 or more. Will resize to always cover full window width.</div>
                 </div>
               </div>
             </div>
@@ -190,7 +190,7 @@ function rulesBlogPostField(event) {
     {
       formMacros.radio("status-rules", "", "", event?.get("status_rules"), {
         textField: true,
-        placeholder: "Post ID || URL",
+        placeholder: "Post ID or URL",
         textFieldEnabled: event && event.get("status_rules") && event.get("status_rules") !== "off" && event.get("status_rules") !== defaultRulesPage
       })
     }

@@ -26,7 +26,7 @@ export function entryPlatformIcon(platformName: string, options: { hideLabel?: b
 }
 
 export function eventThemeStatus(theme: BookshelfModel, options: { uncensored?: boolean } = {}) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(EVENT_MACROS_PATH, "eventThemeStatus", [theme, options])} />;
+  return <span dangerouslySetInnerHTML={nunjuckMacro(EVENT_MACROS_PATH, "eventThemeStatus", [theme, options])} />;
 }
 
 export function eventShortcutMyEntry(user: BookshelfModel, event: BookshelfModel, userEntry: BookshelfModel, options: { noTitle?: boolean } = {}) {

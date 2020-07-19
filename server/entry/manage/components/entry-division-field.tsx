@@ -13,7 +13,7 @@ export function divisionField(entry, event, external, divisionTooltip, user) {
   return <div class="entry__divisions toggle js-entry-divisions" data-toggle="buttons"
     data-initial-division={entry.get("division") || "solo"}>
     {ifFalse(external, () =>
-      event.get("divisions").map((name, description) =>
+      Object.entries(event.get("divisions")).map(([name, description]) =>
         divisionButton(capitalize(name), description, constants.DIVISION_ICONS[name], name,
           entry.get("division"), canEditDivision, divisionTooltip)
       )

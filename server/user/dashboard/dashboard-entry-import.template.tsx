@@ -18,51 +18,45 @@ export default function render(context: CommonLocals) {
     <h1>External entry importer</h1>
 
     <p>This tool helps you import entries from other websites. If you don't find the site you're looking for, you can still use the manual form.</p>
-    <a href="/external-entry/create-entry" class="btn btn-outline-primary">Create entry manually</a>
+    <a href="/external-entry/create-entry" class="btn btn-outline-primary mr-1">Create entry manually</a>
     <a href={links.routeUrl(user, "user", "entries")} class="btn btn-outline-primary">Back to Entries</a>
 
     <form method="post">
       {context.csrfTokenJSX()}
       <h2 class="spacing">Importer configuration</h2>
-      <div class="container-fluid no-padding">
-        <div class="row">
-          <div class="col-md-9">
-            <div class="card card-body">
-              <div class="form-group">
-                <label for="title">Importer</label>
-                <select class="form-control js-importer" id="js-importer" name="importer" required>
-                  <option selected={!importer}></option>
-                  {availableImporters.map(availableImporter =>
-                    <option value={availableImporter.config.id}
-                      data-mode={availableImporter.config.mode}
-                      data-oauth-url={availableImporter.config.oauthUrl}
-                      selected={importer === availableImporter.config.id}>
-                      {availableImporter.config.title}
-                    </option>
-                  )}
-                </select>
-              </div>
-              <div class="form-group" id="js-profile" style="display: none">
-                <label for="title">User name || profile URL</label>
-                <input class="form-control" id="profileIdentifier" name="profileIdentifier" type="text" value={profileIdentifier} />
-              </div>
-              <div class="form-group" id="js-oauth" style="display: none">
-                <label for="title">OAuth key</label>
-                <ol style="padding-left: 20px; font-size: 1.1rem; line-height: 3rem">
-                  <li>
-                    <a id="js-oauth-button" href="?" class="btn btn-primary" target="_blank">
-                      <span class="fas fa-external-link"></span> <span id="js-oauth-label"></span>
-                    </a>
-                  </li>
-                  <li>
-                    <input class="form-control" id="oauthIdentifier" name="oauthIdentifier" type="text"
-                      value={oauthIdentifier} placeholder="Paste the key here" />
-                  </li>
-                </ol>
-                <p>Note: The authentication key will !be saved. It will only be used for importing games, then forgotten.</p>
-              </div>
-            </div>
-          </div>
+      <div class="card card-body mb-3" style="max-width: 800px">
+        <div class="form-group">
+          <label for="title">Importer</label>
+          <select class="form-control js-importer" id="js-importer" name="importer" required>
+            <option selected={!importer}></option>
+            {availableImporters.map(availableImporter =>
+              <option value={availableImporter.config.id}
+                data-mode={availableImporter.config.mode}
+                data-oauth-url={availableImporter.config.oauthUrl}
+                selected={importer === availableImporter.config.id}>
+                {availableImporter.config.title}
+              </option>
+            )}
+          </select>
+        </div>
+        <div class="form-group" id="js-profile" style="display: none">
+          <label for="title">User name or profile URL</label>
+          <input class="form-control" id="profileIdentifier" name="profileIdentifier" type="text" value={profileIdentifier} />
+        </div>
+        <div class="form-group" id="js-oauth" style="display: none">
+          <label for="title">OAuth key</label>
+          <ol style="padding-left: 20px; font-size: 1.1rem; line-height: 3rem">
+            <li>
+              <a id="js-oauth-button" href="?" class="btn btn-primary" target="_blank">
+                <span class="fas fa-external-link"></span> <span id="js-oauth-label"></span>
+              </a>
+            </li>
+            <li>
+              <input class="form-control" id="oauthIdentifier" name="oauthIdentifier" type="text"
+                value={oauthIdentifier} placeholder="Paste the key here" />
+            </li>
+          </ol>
+          <p>Note: The authentication key will not be saved. It will only be used for importing games, then forgotten.</p>
         </div>
       </div>
 

@@ -17,7 +17,7 @@ export default function render(context: CommonLocals) {
 
           {ifNotSet(user, () =>
             <form method="post" action={path !== "/logout" ? path : "/login"}>
-              {context.csrfTokenJSx()}
+              {context.csrfTokenJSX()}
               <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" class="form-control" id="name" name="name" required />
@@ -38,7 +38,7 @@ export default function render(context: CommonLocals) {
                 <button type="submit" class="btn btn-primary btn-block btn-lg">Submit</button>
               </div>
               <div class="text-right">
-                <a href="/register" class="btn btn-sm btn-outline-secondary">I don't have an account</a>
+                <a href="/register" class="btn btn-sm btn-outline-secondary mr-1">I don't have an account</a>
                 <a href="/passwordRecoveryRequest" class="btn btn-sm btn-outline-secondary">I forgot my password</a>
               </div>
             </form>

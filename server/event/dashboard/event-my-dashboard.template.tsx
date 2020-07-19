@@ -81,7 +81,7 @@ export default function render(context: CommonLocals) {
                             <span class="badge badge-warning">
                               Pending approbation
                               {formMacros.tooltip("The mods make a simple check, "
-                                + "usually within 24 hours, to filter possible spammers && multiple accounts.")}
+                                + "usually within 24 hours, to filter possible spammers and multiple accounts.")}
                             </span>
                           )}
                           {ifTrue(eventParticipation.streamerStatus === "approved", () =>
@@ -134,7 +134,7 @@ export default function render(context: CommonLocals) {
 
               {ifTrue(event.get("status_theme") === "off", () =>
                 <div class="card card-body">
-                  <h4>Theme submissions are !open yet.</h4>
+                  <h4>Theme submissions are not open yet.</h4>
                 </div>
               )}
               {ifTrue(event.get("status_theme") !== "off", () =>

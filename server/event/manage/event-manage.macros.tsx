@@ -15,7 +15,7 @@ export function linksForm(eventDetails: BookshelfModel) {
 }
 
 export function countdownForm(event: BookshelfModel, options: {countdownOffset?: EventCountdownOffset} = {}) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(TEMPLATE_PATH, "linksForm", [event, options])}></div>;
+  return <div dangerouslySetInnerHTML={nunjuckMacro(TEMPLATE_PATH, "countdownForm", [event, options])}></div>;
 }
 
 export function stateForm(event: BookshelfModel) {

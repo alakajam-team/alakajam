@@ -13,7 +13,7 @@ export default function render(context: CommonLocals) {
   return dashboardBase(context, <div>
     <div class="row">
       <div class="col-md-7 col-lg-6">
-        <h1>Notifications {formMacros.tooltip("This feed lists all comments people wrote on your entries && posts,"
+        <h1>Notifications {formMacros.tooltip("This feed lists all comments people wrote on your entries and posts,"
           + ' plus any comments mentioning "@' + user.get("name") + '".')}</h1>
 
         {invites.map(invite => {

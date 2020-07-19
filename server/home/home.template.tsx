@@ -117,7 +117,7 @@ export default function render(context: CommonLocals) {
               <div>
                 <div class="horizontal-bar">
                   Suggested entries to rate
-                  {formMacros.tooltip("Rate && comment other games to increase your karma. The Top 4 are featured on the front page!")}
+                  {formMacros.tooltip("Rate and comment other games to increase your karma. The Top 4 are featured on the front page!")}
                 </div>
                 <div class="home-grid game-grid pb-1">
                   {suggestedEntries.map(suggestedEntry =>

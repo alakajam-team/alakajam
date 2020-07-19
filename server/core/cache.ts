@@ -30,7 +30,7 @@ if (config.DEBUG_DISABLE_CACHE) {
     public get = (key) => this.fastExpiryCache.get(key);
     public set = (key, value) => this.fastExpiryCache.set(key, value); // Ignore any custom TTL
     public del = (key) => this.fastExpiryCache.del(key);
-    public keys = () => ({});
+    public keys = () => [];
     public getStats = () => ({});
   };
 }

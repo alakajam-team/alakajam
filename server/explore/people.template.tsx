@@ -63,7 +63,7 @@ function searchForm(searchOptions, events) {
         </label>
       </div>
       <div class="form-group">
-        <input type="submit" class="btn btn-primary" value="Apply" />
+        <input type="submit" class="btn btn-primary mr-1" value="Apply" />
         <a href="?" class="btn btn-outline-primary">Clear</a>
       </div>
     </form>

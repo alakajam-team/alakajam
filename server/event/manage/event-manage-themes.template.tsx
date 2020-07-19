@@ -82,7 +82,7 @@ function shortlistEliminationForm(event, eliminatedShortlistThemes, csrfTokenJSX
       Current state:&nbsp;
       {ifSet(eventDetails.get("shortlist_elimination").start, () =>
         <span>
-          <span class="badge badge-success">Enabled</span>
+          <span class="badge badge-success mr-1">Enabled</span>
           <b>(shortlist themes eliminated: {eliminatedShortlistThemes})</b>
         </span>
       )}

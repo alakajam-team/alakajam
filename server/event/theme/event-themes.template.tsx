@@ -15,8 +15,9 @@ export default function render(context: CommonLocals) {
   const { event, themesPost, user, userLikes, votingAllowed, sampleThemes, userRanks,
     shortlist, randomizedShortlist, hasRankedShortlist, shortlistVotes, activeShortlist, eliminatedShortlist,
     ideasRequired, eliminationMinNotes,
-    voteCount, votesHistory, userThemes, maxThemeSuggestions, infoMessage, path } = context;
+    voteCount, votesHistory, maxThemeSuggestions, infoMessage, path } = context;
   const shortlistEliminationInfo = event.related("details").get("shortlist_elimination");
+  const userThemes = context.userThemes || [];
 
   return base(context,
     <div>
@@ -59,7 +60,7 @@ export default function render(context: CommonLocals) {
                       {userTheme ? themeDetails(userTheme) : undefined}
                     </div>
                   )}
-                  {ifTrue(!userThemes || userThemes.length === 0, () =>
+                  {ifTrue(userThemes.length === 0, () =>
                     <div class="themes__idea">
                       {ifTrue(event.get("status_theme") === "voting", () =>
                         <div>
@@ -157,8 +158,8 @@ export default function render(context: CommonLocals) {
                       <div class="horizontal-bar">Votes history</div>
                       <div id="js-theme-history" class="row">
                         {(votesHistory || []).map(vote => {
-                          ifTrue(vote.related("theme").get("status") !== "banned", () =>
-                            <div class="col-sm-6">
+                          if (vote.related("theme").get("status") !== "banned") {
+                            return <div class="col-sm-6">
                               <div class="theme-past">
                                 <table>
                                   <tr><td class="theme-past__buttons">
@@ -166,10 +167,12 @@ export default function render(context: CommonLocals) {
                                       {context.csrfTokenJSX()}
                                       <input type="hidden" name="action" value="vote" />
                                       <input type="hidden" name="theme-id" value={vote.get("theme_id")} />
-                                      <button name="upvote" class="btn {vote.get('score') > 0 ? 'btn-success' : 'btn-outline-secondary' } btn-sm">
+                                      <button name="upvote" class={"btn btn-sm mr-1 "
+                                        + (vote.get("score") > 0 ? "btn-success" : "btn-outline-secondary")}>
                                         <span class="fas fa-arrow-up"></span>
                                       </button>
-                                      <button name="downvote" class="btn {vote.get('score') < 0 ? 'btn-danger' : 'btn-outline-secondary' } btn-sm">
+                                      <button name="downvote" class={"btn btn-sm "
+                                        + (vote.get("score") < 0 ? "btn-danger" : "btn-outline-secondary")}>
                                         <span class="fas fa-arrow-down"></span>
                                       </button>
                                     </form>
@@ -178,10 +181,9 @@ export default function render(context: CommonLocals) {
                                   </td></tr>
                                 </table>
                               </div>
-                            </div>
-                          );
-                        }
-                        )}
+                            </div>;
+                          }
+                        })}
                       </div>
                     </div>
                   )}
@@ -229,7 +231,7 @@ export default function render(context: CommonLocals) {
                       <ol id={shortlistVote ? "js-shortlist" : ""} class={shortlistVote ? "use-hover" : ""}>
                         {activeShortlist.map(theme => {
                           const forcedFontSize = (eliminatedShortlist.length > 0) ? (19 + eliminatedShortlist.length) : undefined;
-                          return <li class="theme-shortlist-line {'draggable' if shortlistVote}" data-theme-id={theme.get("id")}>
+                          return <li class={"theme-shortlist-line " + (shortlistVote ? "draggable" : "")} data-theme-id={theme.get("id")}>
                             {ifTrue(shortlistVote, () =>
                               <span class="theme-shortlist-line__handle fas fa-bars"></span>
                             )}
@@ -238,7 +240,7 @@ export default function render(context: CommonLocals) {
                           </li>;
                         })}
                         {eliminatedShortlist.map(theme =>
-                          <li class="theme-shortlist-line eliminated {'draggable-list' if shortlistVote}" data-theme-id={theme.get("id")}>
+                          <li class={"theme-shortlist-line eliminated " + (shortlistVote ? "draggable-list" : "")} data-theme-id={theme.get("id")}>
                             <span class="theme-shortlist-line__label">{theme.get("title")}</span>
                           </li>
                         )}
@@ -258,13 +260,13 @@ export default function render(context: CommonLocals) {
                       )}
                       <span class="theme-shortlist-line__score d-none d-sm-block">Score</span>
                       {ifTrue(shortlist.length > 0, () =>
-                        `The theme of the <em>${event.get("title")}</em> is <strong>${shortlist[0].get("title")}</strong>. `
-                          + "Here are the detailed voting results:"
+                        <span>The theme of the <em>{event.get("title")}</em> is <strong>{shortlist[0].get("title")}</strong>.
+                          Here are the detailed voting results:</span>
                       )}
                     </p>
                     <ol>
-                      {shortlist.map(theme =>
-                        <li class="theme-shortlist-line {'winner' if loop.index == 1}">
+                      {shortlist.map((theme, index) =>
+                        <li class={"theme-shortlist-line " + (index === 0 ? "winner" : "")}>
                           <span class="theme-shortlist-line__label">{theme.get("title")}</span>
                           {ifTrue(userRanks, () =>
                             <span class="theme-shortlist-line__ranking">{ordinal(userRanks[theme.get("id")])}</span>
@@ -354,13 +356,13 @@ function myThemeIdeas(event, userThemes, maxThemeSuggestions) {
   return <div class="card themes__ideas">
     {range(0, ideaRows).map(index => {
       const userTheme = userThemes.length > index ? userThemes[index] : undefined;
-      return <div class={"themes__idea " + userTheme ? "form-inline" : ""}>
+      return <div class={"themes__idea " + (userTheme ? "form-inline" : "")}>
         <input type="text" id={"idea-title-" + index} name={`idea-title[${index}]`}
           class="form-control input-lg" readonly={Boolean(userTheme)}
           placeholder={"Idea " + (index + 1)} value={userTheme ? userTheme.get("title") : ""} />
         {ifTrue(userTheme, () =>
           ifTrue(userTheme.get("status") === "duplicate" || userTheme.get("status") === "active", () =>
-            <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-outline-danger">
+            <button type="button" class="js-idea-delete themes__idea-delete form-control btn btn-outline-danger ml-1">
               <span class="fas fa-trash"></span>
             </button>
           )
@@ -372,7 +374,7 @@ function myThemeIdeas(event, userThemes, maxThemeSuggestions) {
     <div class="form-group themes__idea mt-0 mb-0">
       <input type="hidden" name="action" value="ideas" />
       <input type="hidden" name="idea-rows" value={ideaRows} />
-      <input type="submit" class="btn btn-primary" value="Save" />
+      <input type="submit" class="btn btn-primary mr-1" value="Save" />
       <a href={links.routeUrl(event, "event", "themes")} class="btn btn-outline-secondary">Cancel</a>
     </div>
   </div>;

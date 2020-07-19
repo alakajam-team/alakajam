@@ -23,7 +23,7 @@ export default function render(context: CommonLocals) {
           {ifTrue(message && message.indexOf("no such column:") !== -1, () =>
             <div class="alert alert-warning">
               <h4>"No such column" error tip</h4>
-              If you're !sure why you have this, your database model is probably out of date.
+              If you're not sure why you have this, your database model is probably out of date.
               You can reset the database from the <a href="/admin">administration</a>.
             </div>
           )}

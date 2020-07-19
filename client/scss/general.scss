@@ -543,3 +543,7 @@ progress[value]::-moz-progress-bar {
 a.shortcut:hover {
   background-color: $neutral-lightest;
 }
+
+.alert-title {
+  font-weight: bold;
+}

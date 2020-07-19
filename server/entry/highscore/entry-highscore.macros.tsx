@@ -4,7 +4,7 @@ import { nunjuckMacro } from "server/macros/nunjucks-macros";
 const ENTRY_HIGHSCORE_MACROS_PATH = "entry/highscore/entry-highscore.macros.html";
 
 export function highScoresLinks(entry, user, path, options = {}) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "highScoresLinks", [entry, user, path, options])} />;
+  return <span dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "highScoresLinks", [entry, user, path, options])} />;
 }
 
 export function tournamentEventBanner(tournamentEvent) {
@@ -20,15 +20,15 @@ export function streamerBadge(scoreUser, streamerBadges) {
 }
 
 export function printProof(score) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "printProof", [score])} />;
+  return <span dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "printProof", [score])} />;
 }
 
 export function printRanking(ranking, options = {}) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "printRanking", [ranking, options])} />;
+  return <span dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "printRanking", [ranking, options])} />;
 }
 
 export function printScore(entry, score, options = {}) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "printScore", [entry, score, options])} />;
+  return <span dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "printScore", [entry, score, options])} />;
 }
 
 export function pointsDistributionLegend(pointsDistribution) {

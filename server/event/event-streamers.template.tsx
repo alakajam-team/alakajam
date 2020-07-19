@@ -89,7 +89,7 @@ export default function render(context: CommonLocals) {
 function registerStyles(context) {
   context.inlineStyles.push(`
     .background {
-      background: url('{links.staticUrl('/static/images/streamer-background.jpg')}');
+      background: url('${links.staticUrl("/static/images/streamer-background.jpg")}');
       background-size: cover;
       background-repeat: no-repeat;
       background-position-x: center;

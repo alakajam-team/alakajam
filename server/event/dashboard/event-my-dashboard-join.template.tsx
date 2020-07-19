@@ -13,7 +13,7 @@ export default function render(context: CommonLocals) {
       <h1>My {event.get("title")} dashboard</h1>
 
       <div class="card card-body">
-        <p>Click the link below to join the event && access your participation dashboard.</p>
+        <p>Click the link below to join the event and access your participation dashboard.</p>
 
         <p><a href={links.routeUrl(event, "event", "join")} class="btn btn-lg btn-alt">Join event</a></p>
 

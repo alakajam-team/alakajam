@@ -21,6 +21,7 @@ export class RegisterController {
     res.locals.pageTitle = "Register";
     res.renderJSX<CommonLocals>(TEMPLATE_REGISTER, {
       ...req.body,
+      ...res.locals,
       timezones: await this.userTimezoneService.getAllTimeZonesAsOptions()
     });
   }

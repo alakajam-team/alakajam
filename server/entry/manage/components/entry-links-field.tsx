@@ -1,16 +1,18 @@
+import { BookshelfModel } from "bookshelf";
 import { range } from "lodash";
 import * as React from "preact";
 
-export function linksField(entry) {
-  const linkCount = Math.max(entry.get("links").length, 3);
+export function linksField(entry: BookshelfModel) {
+  const links = entry.get("links") || [];
+  const linkCount = Math.max(links.length, 3);
 
   return <div>
-    <div class="js-links card card-body" data-entry-links={JSON.stringify(entry.get("links") || [])}>
+    <div class="js-links card card-body" data-entry-links={JSON.stringify(links)}>
       {/* No-JavaScript link support */}
       <input type="hidden" name="submit-links" value="true" />
 
       {range(0, linkCount).map(linkIndex => {
-        const link = entry.get("links").length > linkIndex ? entry.get("links")[linkIndex] : {};
+        const link = links.length > linkIndex ? links[linkIndex] : {};
         return <div class="row mb-1">
           <div class="col-3">
             <input type="text" name={"label" + linkIndex} class="js-link-label form-control" placeholder="Label" value={link.label} />

@@ -13,10 +13,11 @@ import { optoutsField } from "./components/entry-optouts-field";
 import { teamField } from "./components/entry-team-field";
 
 export default function render(context: CommonLocals) {
-  const { entry, event, errorMessages, external, divisionTooltip, isEntryOwner, members,
+  const { entry, event, errorMessages, external, divisionTooltip, members,
     user, allPlatforms, tags, tournamentAdvertising } = context;
   const entryDetails = entry.related("details");
   const picture = entry.picturePreviews().length > 0 ? entry.picturePreviews()[0] : undefined;
+  const isEntryOwner = !entry.get("id") || security.canUserManage(user, entry);
 
   formMacros.registerEditorScripts(context);
 
@@ -45,7 +46,7 @@ export default function render(context: CommonLocals) {
               <label for="title">Game title</label>
               <input type="text" class="form-control js-sync-text" name="title" value={entry.get("title")} required
                 data-sync-text-display-selector="#js-title-display"
-                data-sync-text-default="My {external ? 'external' : event.get('title') } entry" />
+                data-sync-text-default={`My ${external ? "external" : event.get("title") } entry`} />
             </div>
             <div class="form-group">
               <label for="title">Short description</label>
@@ -170,7 +171,7 @@ export default function render(context: CommonLocals) {
                     )}
                     {ifFalse(isEntryOwner, () =>
                       <a class="btn btn-danger" href={links.routeUrl(entry, "entry", "leave")}
-                        onclick="return confirm('Leave the team? If you want to join again,
+                        onclick="return confirm('Leave the team? If you want to join again, \
                           the team owner will have to send a new invite!')">Leave the team</a>
                     )}
                   </span>

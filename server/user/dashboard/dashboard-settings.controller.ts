@@ -8,10 +8,9 @@ import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
 import userTimezoneService from "../user-timezone.service";
 import { DashboardLocals } from "./dashboard.middleware";
-import { CommonLocals } from "server/common.middleware";
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
-  res.renderJSX<CommonLocals>("user/dashboard/dashboard-settings", {
+  res.renderJSX<DashboardLocals>("user/dashboard/dashboard-settings", {
     ...res.locals,
     ...req.body,
     timezones: await userTimezoneService.getAllTimeZonesAsOptions()

@@ -7,8 +7,6 @@ import { BookshelfModel } from "bookshelf";
 export default function render(context: CommonLocals & { event: BookshelfModel }) {
   const {event} = context;
 
-  registerStreamersDocStyles(context);
-
   return base(context,
     <div class="container thin">
       <h1>About streamers</h1>
@@ -18,14 +16,14 @@ export default function render(context: CommonLocals & { event: BookshelfModel }
         they should give you some cool opportunities to have fun with your viewers.</p>
 
       <p><a href={links.routeUrl(event, "event", "dashboard")} class="btn btn-primary">Access the dashboard to enter as a streamer</a></p>
-      {streamersDoc(event)}
+      {streamersDoc(context, event)}
     </div>);
 }
 
-export function registerStreamersDocStyles(context: CommonLocals) {
+export function streamersDoc(context: CommonLocals, event: BookshelfModel) {
   context.inlineStyles.push(`
   .streamer-perks {
-    background: url('{links.staticUrl('/static/images/streamer-background.jpg')}');
+    background: url('${links.staticUrl("/static/images/streamer-background.jpg")}');
     background-size: cover;
     padding: 50px;
   }
@@ -33,9 +31,7 @@ export function registerStreamersDocStyles(context: CommonLocals) {
     background-color: rgba(255, 255, 255, 0.8);
   }
   `);
-}
 
-export function streamersDoc(event: BookshelfModel) {
   return <div class="streamer-perks">
     <div class="card card-body mb-4">
       <h2>Streamer perks</h2>
@@ -46,7 +42,7 @@ export function streamersDoc(event: BookshelfModel) {
           <li><b>Get embedded</b> automatically on the Alakajam! front page when you go live.</li>
           <li><b>Appear on the <a href={links.routeUrl(event, "event", "streamers")}>streamer list</a></b>,
             to let jammers know about your scheduled streams.</li>
-          <li><b>Review && rate entries</b>, even if you don't make a game.
+          <li><b>Review and rate entries</b>, even if you don't make a game.
             Tip: most jammers don't mind if you rate games in the open, it's up to you.</li>
           <li><b>Enter the gaming competition</b> of the event, held in the 24 hours following the jam results.
             Your scores will be submitted in the form of screenshots, uploaded directly on the game pages.</li>

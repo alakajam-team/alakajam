@@ -8,8 +8,6 @@ import * as formMacros from "server/macros/form.macros";
 export default function render(context: CommonLocals) {
   const { event, user, eventParticipation } = context;
 
-  streamersDocMacros.registerStreamersDocStyles(context);
-
   formMacros.registerEditorScripts(context);
 
   return base(context,
@@ -23,7 +21,7 @@ export default function render(context: CommonLocals) {
           <form method="post">
             <h2>
               Update your settings
-              <a href={links.routeUrl(event, "event", "dashboard")} class="btn btn-sm btn-outline-secondary">Back to dashboard</a>
+              <a href={links.routeUrl(event, "event", "dashboard")} class="btn btn-sm btn-outline-secondary ml-1">Back to dashboard</a>
             </h2>
 
             {context.csrfTokenJSX()}
@@ -32,7 +30,7 @@ export default function render(context: CommonLocals) {
               <label for="twitch"><img src={links.staticUrl("/static/images/social/twitch.png")}
                 class="no-border" style="width: 20px" /> Twitch username</label>
               <input type="text" class="form-control form-control-lg" id="twitch"
-                name="twitch" value={user.details.social_links.twitch} required />
+                name="twitch" value={user.details.social_links?.twitch} required />
               <p class="legend mb-0">This field can also be set from your
                 <a href={links.routeUrl(user, "user", "settings")}>account settings</a>.</p>
             </div>
@@ -60,7 +58,7 @@ export default function render(context: CommonLocals) {
 
         </div>
         <div class="col-md-6">
-          {streamersDocMacros.streamersDoc(event)}
+          {streamersDocMacros.streamersDoc(context, event)}
         </div>
       </div>
     </div>);
