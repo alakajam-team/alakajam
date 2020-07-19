@@ -49,7 +49,7 @@ export default function render(context: CommonLocals) {
             <div class="form-group text-right">
               <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
 
-              <button type="submit" name="cancel-participation" class="btn btn-danger float-left"
+              <button type="submit" name="cancel-participation" class="btn btn-danger float-left" formnovalidate
                 onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
                 Cancel participation as streamer
               </button>

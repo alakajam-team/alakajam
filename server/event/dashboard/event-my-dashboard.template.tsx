@@ -171,7 +171,7 @@ export default function render(context: CommonLocals) {
               <form method="post" class="d-inline">
                 {context.csrfTokenJSX()}
                 <input type="hidden" name="is-streamer" value="false" />
-                <button type="submit" name="streamer-preferences" class="btn btn-danger"
+                <button type="submit" name="streamer-preferences" class="btn btn-danger mr-1"
                   onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">
                   Cancel participation as streamer
                 </button>

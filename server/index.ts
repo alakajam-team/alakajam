@@ -31,7 +31,7 @@ if (config.DEBUG_LONG_PROMISE_TRACES) {
 import express from "express";
 import * as findUp from "find-up";
 import * as fs from "fs-extra";
-import * as mkdirp from "mkdirp";
+import mkdirp from "mkdirp";
 import * as path from "path";
 
 /**

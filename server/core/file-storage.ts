@@ -5,7 +5,7 @@
 
 import * as fs from "fs-extra";
 import * as mime from "mime-types";
-import * as mkdirp from "mkdirp";
+import mkdirp from "mkdirp";
 import * as path from "path";
 import * as url from "url";
 import * as configUtils from "./config";

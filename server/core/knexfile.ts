@@ -16,6 +16,11 @@ if (__filename.endsWith(".js")) {
   migrationsDirectory = path.resolve(constants.ROOT_PATH, "dist/server/migrations");
 }
 
+const poolingOptions = {
+  sqlite: { min: 1, max: 1 },
+  postgresql: { min: 2, max: 10 }
+};
+
 const knexfile = {
   development: {
     client: config.DB_TYPE,
@@ -28,10 +33,7 @@ const knexfile = {
       database: config.DB_NAME,
       charset: "utf8"
     },
-    pool: {
-      min: 2,
-      max: 10
-    },
+    pool: poolingOptions[config.DB_TYPE],
     migrations: {
       directory: migrationsDirectory,
       tableName: "knex_migrations"

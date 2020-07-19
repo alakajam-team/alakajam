@@ -5,9 +5,9 @@
 import * as htmlToText from "html-to-text";
 import * as luxon from "luxon";
 import * as nunjucks from "nunjucks";
-import * as removeMarkdown from "remove-markdown";
-import * as sanitizeHtml from "sanitize-html";
-import * as showdown from "showdown";
+import removeMarkdown from "remove-markdown";
+import sanitizeHtml from "sanitize-html";
+import showdown from "showdown";
 import slug from "slug";
 import striptags from "striptags";
 import TurndownService from "turndown";

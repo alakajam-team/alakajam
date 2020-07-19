@@ -34,6 +34,7 @@ declare module "preact" {
       colspan?: string;
       readonly?: boolean;
       enctype?: string;
+      formnovalidate?: boolean;
     }
   }
 }
