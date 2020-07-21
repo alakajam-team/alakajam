@@ -71,7 +71,7 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
 
   res.renderJSX<CommonLocals>("home/home", {
     ...res.locals,
-    context
+    ...context
   });
 }
 
