@@ -87,18 +87,18 @@ export default function render(context: CommonLocals) {
           </div>
           <div class="ml-auto post__actions text-right">
             {ifSet(post.get("published_at"), () =>
-              <div>
-                <input type="submit" class="btn btn-primary" name="save" value="Save changes" />
-                <input type="submit" class="btn btn-outline-secondary" name="unpublish" value="Unpublish" />
-              </div>
+              <jsx-wrapper>
+                <input type="submit" class="btn btn-primary mr-1" name="save" value="Save changes" />
+                <input type="submit" class="btn btn-outline-secondary mr-1" name="unpublish" value="Unpublish" />
+              </jsx-wrapper>
             )}
             {ifNotSet(post.get("published_at"), () =>
-              <div>
-                <input type="submit" class="btn btn-primary" name="publish" value="Save && publish now" />
-                <input type="submit" class="btn btn-outline-secondary" name="save-draft" value="Save draft" />
-              </div>
+              <jsx-wrapper>
+                <input type="submit" class="btn btn-primary mr-1" name="publish" value="Save and publish now" />
+                <input type="submit" class="btn btn-outline-secondary mr-1" name="save-draft" value="Save draft" />
+              </jsx-wrapper>
             )}
-            <input type="button" class="btn btn-outline-secondary js-show js-hide" name="save"
+            <input type="button" class="btn btn-outline-secondary mr-1 js-show js-hide" name="save"
               value="Schedule..." data-show-selector=".post__schedule" data-hide-selector=".post__actions" />
             <a class="btn btn-outline-secondary" href="#" onclick="history.back()">Cancel</a>
           </div>
