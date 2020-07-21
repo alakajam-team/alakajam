@@ -104,8 +104,8 @@ export default function render(context: CommonLocals) {
                       return <div>
                         <input type="hidden" name="is-streamer" value="true" />
                         <button type="submit" name="streamer-preferences" class="btn btn-primary btn-lg">
-                          <span class="fas fa-video"></span>
-                    Enter as streamer
+                          <span class="fas fa-video"></span>&nbsp;
+                          Enter as streamer
                         </button>
                       </div>;
                     } else {
@@ -189,15 +189,14 @@ export default function render(context: CommonLocals) {
   );
 }
 
-function usefulLink(event, statusField, link, title, icon, options = {}) {
+function usefulLink(event, statusField, link, title, icon, options: { big?: boolean } = {}) {
   if (!statusField || event.get(statusField) !== "disabled") {
     const targetUrl = link.includes("/") ? link : links.routeUrl(event, "event", link);
-    return <a class="list-group-item {'big' if options.big }} shortcut" href={targetUrl}>
+    return <a class={"list-group-item shortcut " + (options.big ? "big" : "")} href={targetUrl}>
       <h4>
-        <span class="shortcut__icon"><span class="fas {icon}"></span></span>
+        <span class="shortcut__icon"><span class={"fas " + icon}></span></span>
         <span class="shortcut__title">{title}</span>
       </h4>
-    </ a>;
-
+    </a>;
   }
 }

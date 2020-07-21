@@ -47,7 +47,7 @@ export default function render(context: CommonLocals) {
                 <span class="fa fa-tv"></span> Streamer-only tournament
               </div>
               <div class="card-body">
-                <p>Only users who are registered <a href={links.routeUrl(event, "event", "streamers")}>as streamers</a>
+                <p>Only users who are registered <a href={links.routeUrl(event, "event", "streamers")}>as streamers</a>&nbsp;
                   are eligible to tournament points!</p>
                 <p>You are welcome to play the games and compete with the streamers,
                     but you will not appear on the leaderboard unless you register as a streamer.</p>

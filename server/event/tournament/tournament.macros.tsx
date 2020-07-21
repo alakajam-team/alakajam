@@ -8,7 +8,7 @@ import * as userMacros from "server/user/user.macros";
 
 export function userRanking(user: User, event: BookshelfModel, eventParticipation: EventParticipation,
                             tournamentScore: BookshelfModel, options: { compact?: boolean } = {}) {
-  if (user && (!event.related("details").get("flags").streamerOnlyTournament || eventParticipation.isStreamer)) {
+  if (user && (!event.related("details").get("flags").streamerOnlyTournament || eventParticipation?.isStreamer)) {
     return <div class={"tournament-user-banner " + (options.compact ? "py-0" : "")}>
       <div class="tournament-user-banner__user">{userMacros.userAvatar(user, { small: true })}</div>
       <div class="tournament-user-banner__ranking text-center">

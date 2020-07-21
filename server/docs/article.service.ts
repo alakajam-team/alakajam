@@ -1,6 +1,6 @@
 import * as fs from "fs-extra";
 import * as path from "path";
-import * as requestPromise from "request-promise-native";
+import requestPromise from "request-promise-native";
 import cache from "../core/cache";
 import config from "../core/config";
 import constants from "../core/constants";

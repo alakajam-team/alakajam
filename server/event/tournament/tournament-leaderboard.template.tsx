@@ -20,7 +20,7 @@ export default function render(context: CommonLocals) {
         eventMacros.eventBanner(event)
       )}
 
-      <div class="container {'event-banner-offset' if hasEventBanner}">
+      <div class={"container " + hasEventBanner ? "event-banner-offset" : ""}>
         <div class="row">
           <div class="col-12">
             {ifTrue(event.get("status_tournament") === "results", () =>
@@ -54,7 +54,7 @@ export default function render(context: CommonLocals) {
               {ifTrue(event.related("details").get("flags").streamerOnlyTournament, () =>
                 <div class="featured">
                   <h3><span class="fa fa-tv"></span> Streamer-only tournament</h3>
-                  Only users who are registered <a href={links.routeUrl(event, "event", "streamers")}>as streamers</a>
+                  Only users who are registered <a href={links.routeUrl(event, "event", "streamers")}>as streamers</a>&nbsp;
                     are eligible to tournament points!
                 </div>
               )}
