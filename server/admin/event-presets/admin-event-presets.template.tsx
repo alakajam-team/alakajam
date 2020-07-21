@@ -49,7 +49,7 @@ function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset
       {eventManageMacros.stateForm(eventPreset)}
 
       <div class="form-group">
-        <button name="save" type="submit" class="btn btn-primary">Save</button>
+        <button name="save" type="submit" class="btn btn-primary mr-1">Save</button>
         <a href="?" class="btn btn-outline-primary">Cancel</a>
         {ifSet(eventPreset.get("id"), () =>
           <div class="float-right">

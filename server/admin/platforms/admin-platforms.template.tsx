@@ -66,14 +66,14 @@ function editForm(editPlatform: BookshelfModel, platformEntryCount: number, csrf
 
 function deleteButton(editPlatform: BookshelfModel, platformEntryCount: number) {
   if (!editPlatform.get("id"))  {
-    return <span />;
+    return;
   } else if (platformEntryCount === 0) {
     return <a class="btn btn-danger btn-sm" href={"?delete=" + editPlatform.get("id")}
       onclick="return confirm('This cannot be reverted. Continue?')">Delete</a>;
   } else {
-    return <span>
+    return <jsx-wrapper>
       <span class="btn btn-danger btn-sm disabled">Delete</span>
       {formMacros.tooltip("Platforms used by entries cannot be deleted. Run manual DB queries to fix that before deletion.")}
-    </span>;
+    </jsx-wrapper>;
   }
 }

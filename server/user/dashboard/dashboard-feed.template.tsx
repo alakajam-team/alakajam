@@ -34,7 +34,7 @@ export default function render(context: CommonLocals) {
               <div class="col-8 offset-2">
                 {eventMacros.entrySmallThumb(inviteEntry)}
                 <div class="text-right spacing">
-                  <a href={links.routeUrl(inviteEntry, "entry", "accept-invite")} class="btn btn-primary">Accept</a>
+                  <a href={links.routeUrl(inviteEntry, "entry", "accept-invite")} class="btn btn-primary mr-1">Accept</a>
                   <a href={links.routeUrl(inviteEntry, "entry", "decline-invite")} class="btn btn-outline-primary">Decline</a>
                 </div>
               </div>

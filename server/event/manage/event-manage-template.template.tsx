@@ -29,7 +29,7 @@ export default function render(context: CommonLocals) {
               </div>
             </div>
             <div class="form-group">
-              <button type="submit" class="btn btn-primary">Continue</button>
+              <button type="submit" class="btn btn-primary mr-1">Continue</button>
               <button class="btn btn-outline-primary" onclick="window.history.back(); return false;">Cancel</button>
             </div>
           </form>

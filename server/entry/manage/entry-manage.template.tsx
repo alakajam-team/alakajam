@@ -178,7 +178,7 @@ export default function render(context: CommonLocals) {
                 )}
               </div>
               <div class="col-6 text-right">
-                <input type="submit" class="btn btn-primary" value="Save changes" />
+                <input type="submit" class="btn btn-primary mr-1" value="Save changes" />
                 <a class="btn btn-outline-primary" href="#" onclick="history.back()">Cancel</a>
               </div>
             </div>

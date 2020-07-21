@@ -104,7 +104,7 @@ export default function render(context: CommonLocals) {
             <div class="form-group">
               <input type="submit" class="btn btn-primary" value="Submit" />
               {ifTrue(entryScore.get("id"), () =>
-                <input type="submit" name="delete" class="btn btn-outline-primary"
+                <input type="submit" name="delete" class="btn btn-outline-primary ml-1"
                   value="Delete" onclick="return confirm('Delete your high score?')" />
               )}
             </div>

@@ -22,7 +22,7 @@ export default function render(context: CommonLocals) {
         <div class="container text-center">
           <h1>
             <div>{event.get("title")} streamers</div>
-            <a href={links.routeUrl(event, "event", "streamers-doc")} class="btn btn-primary">Learn more</a>
+            <a href={links.routeUrl(event, "event", "streamers-doc")} class="btn btn-primary mx-1">Learn more</a>
             {ifTrue(streamerOnlyTournamentIsLive, () =>
               <a href={links.routeUrl(event, "event", "tournament-leaderboard")} class="btn btn-primary">Browse tournament leaderboard</a>
             )}
@@ -64,7 +64,7 @@ export default function render(context: CommonLocals) {
                           <button name="reset" class="btn btn-secondary btn-sm">Reset</button>
                         )}
                         {ifTrue(eventParticipation.streamerStatus === "requested", () =>
-                          <button name="ban" class="btn btn-danger btn-sm">Ban</button>
+                          <button name="ban" class="btn btn-danger btn-sm ml-1">Ban</button>
                         )}
                       </div>
                     </form>

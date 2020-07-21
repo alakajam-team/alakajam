@@ -8,7 +8,7 @@ import { ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "./event-manage.base.template";
 
 export default function render(context: CommonLocals) {
-  const { event, entries, division, divisionQuery, categoryTitles, currentCategoryIndex } = context;
+  const { event, entries, divisionQuery, categoryTitles, currentCategoryIndex } = context;
 
   return eventManageBase(context, <div>
     <h1>{event.get("title")} rankings <span class="count">({entries.length})</span></h1>

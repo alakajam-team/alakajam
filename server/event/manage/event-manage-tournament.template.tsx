@@ -38,8 +38,8 @@ export default function render(context: CommonLocals) {
             {context.csrfTokenJSX()}
             <input type="hidden" name="id" value={entry.get("id")} />
             <label for="ordering">Order&nbsp;</label>
-            <input type="text" name="ordering" class="form-control" value={tournamentEntry.get("ordering")} style="max-width: 50px" />
-            <button type="submit" name="update" class="btn btn-primary">
+            <input type="text" name="ordering" class="form-control mr-1" value={tournamentEntry.get("ordering")} style="max-width: 50px" />
+            <button type="submit" name="update" class="btn btn-primary mr-1">
               <span class="fas fa-save"></span>
             </button>
             <button type="submit" name="remove" class="btn btn-outline-primary"

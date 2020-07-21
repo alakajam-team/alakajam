@@ -169,7 +169,7 @@ function themesTableRow(theme, editTheme, eliminationMinNotes, csrfTokenJSX) {
           {csrfTokenJSX()}
           <input type="hidden" name="id" value={editTheme.get("id")} />
           <input type="text" name="title" class="form-control" value={editTheme.get("title")} />
-          <input type="submit" value="Save" class="btn btn-primary" />
+          <input type="submit" value="Save" class="btn btn-primary mr-1" />
           <a href={"?#" + theme.get("id")} class="btn btn-outline-primary">Cancel</a>
         </form>
       )}
@@ -199,7 +199,7 @@ function themesTableRow(theme, editTheme, eliminationMinNotes, csrfTokenJSX) {
       </strong>
     </td>
     <td>
-      <a href={`?edit=${theme.get("id")}}#${theme.get("id")}`} class="btn btn-sm btn-outline-primary">
+      <a href={`?edit=${theme.get("id")}}#${theme.get("id")}`} class="btn btn-sm btn-outline-primary mr-1">
         <span class="fas fa-pencil-alt"></span>
       </a>
       {ifTrue(theme.get("status") !== "banned", () =>

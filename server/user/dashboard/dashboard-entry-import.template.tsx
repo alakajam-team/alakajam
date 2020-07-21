@@ -91,7 +91,7 @@ function entriesToImport(entryReferences) {
 
                     <p>Please check the games you want to import.</p>
                     <p>
-                      <input type="button" class="btn btn-outline-primary btn-sm js-check-all" value="Check all"
+                      <input type="button" class="btn btn-outline-primary btn-sm mr-1 js-check-all" value="Check all"
                         data-check-all-selector=".js-import-checkbox" />
                       <input type="button" class="btn btn-outline-primary btn-sm js-check-none" value="Uncheck all"
                         data-check-none-selector=".js-import-checkbox" />

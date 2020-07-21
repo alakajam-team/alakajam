@@ -13,7 +13,7 @@ export default function render(context: CommonLocals) {
       <div class="card thinner mt-5">
         <div class="card-body">
           {ifTrue(!success && token, () =>
-            <div>
+            <jsx-wrapper>
               <h1>Password recovery</h1>
 
               {formMacros.alerts(context.alerts)}
@@ -30,19 +30,19 @@ export default function render(context: CommonLocals) {
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
               </form>
-            </div>
+            </jsx-wrapper>
           )}
           {ifTrue(success, () =>
-            <div>
+            <jsx-wrapper>
               <p>Your password has been successfully changed!</p>
               <p><a href="/login" class="btn btn-primary">Login</a></p>
-            </div>
+            </jsx-wrapper>
           )}
           {ifFalse(token, () =>
-            <div>
+            <jsx-wrapper>
               <p>This token is !|| no longer valid. You can ask for a new one by following the link below.</p>
               <p><a href="/passwordRecoveryRequest" class="btn btn-primary">Password recovery request</a></p>
-            </div>
+            </jsx-wrapper>
           )}
         </div>
       </div >
