@@ -61,7 +61,7 @@ export class PlatformService {
    * Creates a platform
    */
   public createPlatform(name: string): BookshelfModel {
-    return new models.Platform({ name });
+    return new models.Platform({ name }) as BookshelfModel;
   }
 
   /**
@@ -89,21 +89,17 @@ export class PlatformService {
             platform_name: p.get("name"),
           }));
 
-        const promises = [];
-        promises.push(entry.save("platforms", platformNames, { transacting: transaction }));
+        await entry.save("platforms", platformNames, { transacting: transaction });
 
         if (toAdd.length > 0) { // Insert new entry_platform records.
-          promises.push(transaction("entry_platform").insert(toAdd));
+          await transaction("entry_platform").insert(toAdd);
         }
         if (toRemoveIds.length > 0) { // Remove old entry_platform records.
-          promises.push(
-            transaction("entry_platform")
-              .whereIn("platform_id", toRemoveIds)
-              .andWhere("entry_id", "=", entryId)
-              .del(),
-          );
+          await transaction("entry_platform")
+            .whereIn("platform_id", toRemoveIds)
+            .andWhere("entry_id", "=", entryId)
+            .del();
         }
-        await Promise.all(promises);
       });
     } catch (e) {
       log.error("Failed to update entry platforms: " + e.message);

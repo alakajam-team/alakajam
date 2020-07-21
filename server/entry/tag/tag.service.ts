@@ -103,19 +103,15 @@ async function updateEntryTags(entry, tagInfo) {
         entry_id: entryId,
         tag_id: id,
       }));
-    const promises = [];
     if (toAdd.length > 0) { // Insert new entry_tag records.
-      promises.push(transaction("entry_tag").insert(toAdd));
+      await transaction("entry_tag").insert(toAdd);
     }
     if (toRemoveIds.length > 0) { // Remove old entry_tag records.
-      promises.push(
-        transaction("entry_tag")
-          .whereIn("tag_id", toRemoveIds)
-          .andWhere("entry_id", "=", entryId)
-          .del(),
-      );
+      await transaction("entry_tag")
+        .whereIn("tag_id", toRemoveIds)
+        .andWhere("entry_id", "=", entryId)
+        .del();
     }
-    await Promise.all(promises);
 
     // Clear empty tags
     if (toRemoveIds.length > 0) {

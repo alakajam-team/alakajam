@@ -251,7 +251,7 @@ export class EntryTeamService {
             node_type: "entry",
             permission: invite.get("permission"),
             event_id: entry.get("event_id"),
-          });
+          }) as BookshelfModel;
         }
 
         await postService.attachPostsToEntry(entry.get("event_id"), user.get("id"), entry.get("id"),

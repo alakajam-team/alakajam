@@ -1,4 +1,4 @@
-import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel } from "bookshelf";
+import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel, LoadOptions, SyncOptions } from "bookshelf";
 import db from "server/core/db";
 import eventService from "server/event/event.service";
 
@@ -9,18 +9,16 @@ const HOTNESS_AGING_SPEED = 5000.;
 export class EntryHotnessService {
 
   public async refreshEntriesHotness(event: BookshelfModel): Promise<void> {
-    return db.transaction(async (t) => {
-      const entryCollection = await eventService.findGames({
-        eventId: event.get("id"),
-        withRelated: ["details"],
-        pageSize: null
-      }) as BookshelfCollectionOf<EntryBookshelfModel>;
+    const entryCollection = await eventService.findGames({
+      eventId: event.get("id"),
+      withRelated: ["details"],
+      pageSize: null
+    }) as BookshelfCollectionOf<EntryBookshelfModel>;
 
-      for (const entry of entryCollection.models) {
-        const entryHotness = await this.computeHotness(entry, event);
-        await entry.save("hotness", entryHotness, { transacting: t });
-      }
-    });
+    for (const entry of entryCollection.models) {
+      const entryHotness = await this.computeHotness(entry, event);
+      await entry.save("hotness", entryHotness);
+    }
   }
 
   /**
@@ -30,9 +28,9 @@ export class EntryHotnessService {
    * - How many games there were in the event
    * Inspired by the Reddit post sorting algorithm.
    */
-  public async computeHotness(entry: EntryBookshelfModel, event: BookshelfModel): Promise<number> {
-    if (!entry.relations.details) { await entry.load("details"); };
-    if (!event.relations.details) { await event.load("details"); };
+  public async computeHotness(entry: EntryBookshelfModel, event: BookshelfModel, syncOptions?: SyncOptions): Promise<number> {
+    if (!entry.relations.details) { await entry.load("details", syncOptions); };
+    if (!event.relations.details) { await event.load("details", syncOptions); };
 
     const eventDetails = event.related<BookshelfModel>("details");
     const successScore = this.getSuccessScore(entry, eventDetails);

@@ -47,7 +47,7 @@ export class HighScoreService {
       entry_id: entryId,
     });
     await entryScore.load(["user"]);
-    return entryScore;
+    return entryScore as BookshelfModel;
   }
 
   public async findEntryScore(userId: number, entryId: number): Promise<BookshelfModel | null> {

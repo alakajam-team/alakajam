@@ -33,7 +33,7 @@ export default function render(context: CommonLocals) {
           {ifTrue(user && canEnterTournament, () =>
             <div class="action-banner">
               <div class="action-banner__title">
-                Your ranking
+                Your ranking&nbsp;
                 <a href={links.routeUrl(event, "event", "tournament-leaderboard")} class="btn btn-sm btn-primary">View leaderboard</a>
               </div>
               <div class="card">

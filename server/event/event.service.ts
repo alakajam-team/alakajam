@@ -273,16 +273,14 @@ export class EventService {
       // Delete user roles & comments manually (because no cascading)
       await entry.load(["userRoles.user", "comments.user"], { transacting: transaction } as any);
 
-      const destroyQueries: Array<Promise<any>> = [];
-      entry.related<BookshelfCollection>("userRoles").forEach((userRole) => {
+      for (const userRole of entry.related<BookshelfCollection>("userRoles").models) {
         cache.user(userRole.related<any>("user")).del("latestEntry");
-        destroyQueries.push(userRole.destroy({ transacting: transaction }));
-      });
-      entry.related<BookshelfCollection>("comments").forEach((comment) => {
+        await userRole.destroy({ transacting: transaction });
+      }
+      for (const comment of entry.related<BookshelfCollection>("comments").models) {
         cache.user(comment.related<any>("user")).del("byUserCollection");
-        destroyQueries.push(comment.destroy({ transacting: transaction }));
-      });
-      await Promise.all(destroyQueries);
+        await comment.destroy({ transacting: transaction });
+      }
 
       // Delete pictures
       if (entry.picturePreviews().length > 0) {

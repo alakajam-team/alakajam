@@ -20,7 +20,7 @@ exports.up = async (knex: Knex) => {
       }
       await t.commit();
     } catch (e) {
-      t.rollback();
+      await t.rollback();
       throw e;
     }
   });

@@ -150,7 +150,7 @@ export class Security {
           node_type: nodeType,
           permission,
           event_id: node.get("event_id"),
-        });
+        }) as BookshelfModel;
       }
       await role.save();
     }

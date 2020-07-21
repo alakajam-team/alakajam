@@ -121,7 +121,7 @@ export class EventThemeService {
           event_id: event.get("id"),
           title: idea.title,
           status: enums.THEME.STATUS.ACTIVE,
-        });
+        }) as BookshelfModel;
         await this.handleDuplicates(theme);
         await theme.save();
         ideasSubmitted++;
@@ -254,7 +254,7 @@ export class EventThemeService {
             user_id: user.get("id"),
             event_id: event.get("id"),
             score,
-          });
+          }) as BookshelfModel;
           voteCreated = true;
         }
 
@@ -348,7 +348,7 @@ export class EventThemeService {
     eventDetails: BookshelfModel,
     options: { eliminatedOnShortlistRating?: boolean } & SaveOptions = {}): Promise<void> {
     // Compute ranking as %-age because new submissions would make this number irrelevant
-    const themeRanking = await this.findThemeRanking(theme, { useShortlistRating: options.eliminatedOnShortlistRating });
+    const themeRanking = await this.findThemeRanking(theme, { useShortlistRating: options.eliminatedOnShortlistRating, ...options });
     const rankingPercent = 1.0 * themeRanking / (eventDetails.get("theme_count") || 1);
 
     theme.set({
@@ -452,21 +452,16 @@ export class EventThemeService {
     // Mark all themes as out
     const allThemesCollection = await this.findAllThemes(event, { shortlistEligible: true });
     await event.load("details");
-    await db.transaction(async (transaction) => {
-      for (const theme of allThemesCollection.models) {
-        await this.eliminateTheme(theme, event.related("details"),
-          { eliminatedOnShortlistRating: true, transacting: transaction });
-      }
-    });
+    for (const theme of allThemesCollection.models) {
+      await this.eliminateTheme(theme, event.related("details"), { eliminatedOnShortlistRating: true });
+    }
 
     // Compute new shortlist
     const bestThemeCollection = await this.findBestThemes(event);
-    await db.transaction(async (transaction) => {
-      for (const theme of bestThemeCollection.models) {
-        theme.set("status", enums.THEME.STATUS.SHORTLIST);
-        await theme.save(null, { transacting: transaction });
-      }
-    });
+    for (const theme of bestThemeCollection.models) {
+      theme.set("status", enums.THEME.STATUS.SHORTLIST);
+      await theme.save();
+    }
   }
 
   private async refreshEventThemeStats(event: BookshelfModel) {

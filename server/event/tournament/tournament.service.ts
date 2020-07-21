@@ -66,7 +66,7 @@ export class TournamentService {
       tEntry = new models.TournamentEntry({
         event_id: eventId,
         entry_id: entryId,
-      });
+      }) as BookshelfModel;
       await tEntry.save();
     }
     return tEntry;
@@ -94,7 +94,7 @@ export class TournamentService {
       .where(attributes)
       .fetch();
     if (!tScore) {
-      tScore = new models.TournamentScore(attributes);
+      tScore = new models.TournamentScore(attributes) as BookshelfModel;
     }
     return tScore;
   }
@@ -176,7 +176,7 @@ export class TournamentService {
       tournamentScore = new models.TournamentScore({
         event_id: eventId,
         user_id: userId,
-      });
+      }) as BookshelfModel;
     }
 
     // (Re)-calculate score info

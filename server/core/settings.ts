@@ -3,6 +3,7 @@
  * Manipulate global settings
  */
 
+import { BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import log from "server/core/log";
 import * as models from "server/core/models";
@@ -78,7 +79,7 @@ export class Settings {
     let settingModel = await models.Setting.where("key", key).fetch();
     let method = "update";
     if (!settingModel) {
-      settingModel = new models.Setting({ key });
+      settingModel = new models.Setting({ key }) as BookshelfModel;
       method = "insert"; // setting the ID manually makes Bookshelf assume an update
     }
     settingModel.set("value", value);

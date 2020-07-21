@@ -17,7 +17,7 @@ if (__filename.endsWith(".js")) {
 }
 
 const poolingOptions = {
-  sqlite: { min: 1, max: 1 },
+  sqlite: { min: 1, max: 2, propagateCreateError: false },
   postgresql: { min: 2, max: 10 }
 };
 

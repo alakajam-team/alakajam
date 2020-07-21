@@ -95,7 +95,7 @@ export class EventRatingService {
         user_id: user.get("id"),
         entry_id: entry.get("id"),
         event_id: event.get("id"),
-      });
+      }) as BookshelfModel;
     }
 
     let hasActualVote = false;
@@ -353,12 +353,10 @@ export class EventRatingService {
       }
     }
 
-    await db.transaction(async (transaction) => {
-      for (const entry of rankedEntries.models) {
-        const entryDetails = entry.related<BookshelfModel>("details");
-        await entryDetails.save(null, { transacting: transaction });
-      }
-    });
+    for (const entry of rankedEntries.models) {
+      const entryDetails = entry.related<BookshelfModel>("details");
+      await entryDetails.save();
+    }
 
     await entryHotnessService.refreshEntriesHotness(event);
   }
@@ -376,11 +374,9 @@ export class EventRatingService {
     const attributesPatch: Record<string, any> = {};
     categoryIndexes.forEach((index) => attributesPatch["ranking_" + index] = null);
 
-    return db.transaction(async (transaction) => {
-      for (const entryDetails of entryDetailsCollection.models) {
-        entryDetails.save(attributesPatch, { patch: true, transacting: transaction });
-      }
-    });
+    for (const entryDetails of entryDetailsCollection.models) {
+      await entryDetails.save(attributesPatch, { patch: true });
+    }
   }
 
   private range(from: number, to: number) {

@@ -21,7 +21,7 @@ export class EventPresetService {
         Object.assign({}, referencePreset.get("countdown_config"), eventPreset.get("countdown_config")));
       eventPreset.set(Object.assign({}, referencePreset.attributes, overrideAttributes));
     }
-    return eventPreset;
+    return eventPreset as BookshelfModel;
   }
 
   /**
