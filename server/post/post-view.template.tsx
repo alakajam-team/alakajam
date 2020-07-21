@@ -37,13 +37,15 @@ export default function render(context: CommonLocals) {
             {ifTrue(security.isUserWatching(user, post), () =>
               <div>
                 {ifTrue(security.canUserWrite(user, post), () =>
-                  <span><span class="fas fa-check"></span> Subscribed</span>
+                  <jsx-wrapper><span class="fas fa-check"></span>&nbsp;Subscribed</jsx-wrapper>
                 )}
-                <button type="submit" class="btn btn-secondary btn-sm"><span class="fas fa-minus"></span> Unsubscribe</button>
+                {ifFalse(security.canUserWrite(user, post), () =>
+                  <button type="submit" class="btn btn-outline-secondary btn-sm"><span class="fas fa-minus"></span> Unsubscribe</button>
+                )}
               </div>
             )}
             {ifFalse(security.isUserWatching(user, post), () =>
-              <button type="submit" class="btn btn-secondary btn-sm"><span class="fas fa-plus"></span> Subscribe</button>
+              <button type="submit" class="btn btn-outline-secondary btn-sm"><span class="fas fa-plus"></span> Subscribe</button>
             )}
           </form>
         )}

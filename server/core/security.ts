@@ -170,7 +170,9 @@ export class Security {
       return userRole.get("user_name") === user.get("name") &&
         userRole.get("permission") === permission;
     });
-    await matchingRole.destroy();
+    if (matchingRole) {
+      await matchingRole.destroy();
+    }
   }
 
 }

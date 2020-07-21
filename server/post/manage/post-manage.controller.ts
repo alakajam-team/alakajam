@@ -138,6 +138,7 @@ export async function postSave(req: CustomRequest, res: CustomResponse<PostLocal
     if (redirectToView) {
       res.redirect(links.routeUrl(post, "post")); // TODO move route to routing-service
     } else {
+      res.locals.post = post;
       const context: any = await buildPostContext(res.locals);
       context.errorMessage = errorMessage;
       res.renderJSX<PostLocals>("post/manage/post-manage", {
