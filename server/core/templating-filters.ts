@@ -128,8 +128,12 @@ export function digits(n: string | number, fractionDigits: number) {
   }
 }
 
+export function dump(obj: any) {
+  return JSON.stringify(obj, null, 2);
+}
+
 export function prettyDump(obj: any) {
-  return { __html: "<pre>" + JSON.stringify(obj, null, 2) + "</pre>" };
+  return { __html: "<pre>" + dump(obj) + "</pre>" };
 }
 
 export function relativeTime(value: number | string | Date) {

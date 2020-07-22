@@ -15,7 +15,7 @@ export default function render(context: CommonLocals) {
         <div class="container-fluid no-padding">
           <div class="row">
             <div class="col-lg-6">
-              {eventMacros.eventShortcutMyEntry(user as any, featuredEvent, featuredEventEntry)}
+              {eventMacros.eventShortcutMyEntry(featuredEvent, featuredEventEntry)}
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ import links from "server/core/links";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import * as gamesSearchMacros from "server/macros/games-search.macros";
-import { ifSet, ifTrue } from "server/macros/jsx-utils";
+import { ifFalse, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";
 
 export default function render(context: CommonLocals) {
@@ -17,7 +17,7 @@ export default function render(context: CommonLocals) {
 
         <div class="col-xl-3 col-lg-4 col-md-5">
           {ifSet(user, () =>
-            eventMacros.eventShortcutMyEntry(user as any, event, userEntry)
+            eventMacros.eventShortcutMyEntry(event, userEntry)
           )}
 
           {gamesSearchMacros.searchForm(context, { fixedEvent: true })}
@@ -70,18 +70,18 @@ export default function render(context: CommonLocals) {
           })}
 
           <div class="horizontal-bar">
-            Items
+            Items&nbsp;
             {ifTrue(entriesCollection.pagination.rowCount > entriesCollection.length, () => {
               const firstItemIndex = 1 + (entriesCollection.pagination.page - 1) * entriesCollection.pagination.pageSize;
-              return `${firstItemIndex} - ${firstItemIndex + entriesCollection.length - 1}`;
+              return `${firstItemIndex} - ${firstItemIndex + entriesCollection.length - 1} `;
             })}
-            sorted by
+            sorted by&nbsp;
             {ifTrue(searchOptions.sortBy === "karma", () =>
               <span>
                 Karma {formMacros.tooltip("Rate and review other games to increase your karma, && get featured higher on the list!")}
               </span>
             )}
-            {ifTrue(searchOptions.sortBy !== "karma", () =>
+            {ifFalse(searchOptions.sortBy === "karma", () =>
               <span>
                 game hotness {formMacros.tooltip("Hotness mixes the rankings from all categories into a single score.")}
               </span>

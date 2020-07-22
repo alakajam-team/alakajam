@@ -183,7 +183,7 @@ function themesTableRow(theme, editTheme, eliminationMinNotes, csrfTokenJSX) {
     <td>
       {eventMacros.eventThemeStatus(theme, { uncensored: true })}
       {ifTrue(theme.get("status") === "active" && theme.get("notes") < eliminationMinNotes, () =>
-        <div class="badge badge-secondary" title="New themes cannot be eliminated">New</div>
+        <div class="badge badge-secondary ml-1" title="New themes cannot be eliminated">New</div>
       )}
     </td>
     <td data-sort={theme.get("notes")}>{(theme.get("score") + theme.get("notes")) / 2} / {theme.get("notes")}</td>

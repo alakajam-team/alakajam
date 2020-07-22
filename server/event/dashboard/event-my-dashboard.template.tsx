@@ -63,7 +63,7 @@ export default function render(context: CommonLocals) {
 
               <div class="col-lg-7">
                 <h3>As jammer</h3>
-                {eventMacros.eventShortcutMyEntry(user as any, event, entry, { noTitle: true })}
+                {eventMacros.eventShortcutMyEntry(event, entry, { noTitle: true })}
               </div>
               <div class="col-lg-5">
                 <h3>As streamer</h3>
