@@ -1,5 +1,4 @@
-import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel, LoadOptions, SyncOptions } from "bookshelf";
-import db from "server/core/db";
+import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel, SyncOptions } from "bookshelf";
 import eventService from "server/event/event.service";
 
 const MILLISECONDS_TO_DAYS = 1. / 1000 / 3600 / 24;

@@ -91,5 +91,5 @@ export default function render(context: CommonLocals) {
 function title(divisionQuery, categoryTitles, currentCategoryIndex) {
   const allDivisions = divisionQuery === "all";
   const divisionName = allDivisions ? "All" : capitalize(divisionQuery);
-  return `${divisionName} division${allDivisions ? 's' : ''}, category ${categoryTitles[currentCategoryIndex - 1]}`;
+  return `${divisionName} division${allDivisions ? "s" : ""}, category ${categoryTitles[currentCategoryIndex - 1]}`;
 }

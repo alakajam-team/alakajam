@@ -1,17 +1,16 @@
 import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import constants from "server/core/constants";
-import db from "server/core/db";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
 import { SETTING_EVENT_OPEN_VOTING, SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
-import commentService from "server/post/comment/comment.service";
-import eventService from "../event.service";
-import entryHotnessService from "server/entry/entry-hotness.service";
-import eventParticipationService from "../dashboard/event-participation.service";
 import { User } from "server/entity/user.entity";
+import entryHotnessService from "server/entry/entry-hotness.service";
+import commentService from "server/post/comment/comment.service";
+import eventParticipationService from "../dashboard/event-participation.service";
+import eventService from "../event.service";
 
 interface KarmaReceivedByUser {
   receivedByUser: Record<number, { commentKarma: number; voteKarma: number }>;

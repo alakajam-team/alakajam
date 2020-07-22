@@ -55,9 +55,7 @@ export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("dateTime", dateTime);
 
-  nunjucksEnvironment.addFilter("featuredEventDateTime", (value: number | string | Date, user?: User) => {
-    return formats.formatDate(value, user, constants.FEATURED_EVENT_DATE_FORMAT);
-  });
+  nunjucksEnvironment.addFilter("featuredEventDateTime", featuredEventDateTime);
 
   nunjucksEnvironment.addFilter("relativeTime", relativeTime);
 
@@ -75,14 +73,6 @@ export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("leftpad", (n: string | number, toLength: number, char: string | number) => {
     return n ? leftPad(n, toLength, char) : "";
-  });
-
-  nunjucksEnvironment.addFilter("paginationBasePath", (pagePath: string) => {
-    let basePath = pagePath.replace(/[?&]p=[^&]*/g, "");
-    if (!basePath.includes("?")) {
-      basePath += "?";
-    }
-    return basePath;
   });
 
   nunjucksEnvironment.addFilter("shuffle", (arr: any[]) => {
@@ -143,4 +133,8 @@ export function relativeTime(value: number | string | Date) {
 export function timezone(timezoneId: string) {
   // Exemple: "America/Sao_Paulo". Let's just clean up the underscores.
   return (typeof timezoneId === "string") ? timezoneId.replace(/\_/g, " ") : timezoneId;
+}
+
+export function featuredEventDateTime(value: number | string | Date, user?: User) {
+  return formats.formatDate(value, user, constants.FEATURED_EVENT_DATE_FORMAT);
 }

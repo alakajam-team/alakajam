@@ -125,7 +125,8 @@ export default function render(context: CommonLocals) {
                 <div class="form-group">
                   <label for="logo">Logo</label>
                   {formMacros.pictureInput("logo", event?.get("logo"), { noCard: true, model: event })}
-                  <div class="legend">Ideal logo size: about 196x196, although slightly bigger images will not be resized and can overflow nicely.</div>
+                  <div class="legend">Ideal logo size: about 196x196,&nbsp;
+                    although slightly bigger images will not be resized and can overflow nicely.</div>
                 </div>
               </div>
               <div class="col-md-6">

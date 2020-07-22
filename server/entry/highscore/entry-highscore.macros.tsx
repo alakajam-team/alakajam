@@ -12,7 +12,8 @@ export function tournamentEventBanner(tournamentEvent) {
 }
 
 export function highScores(entry, scoreCollection, userScore = null, options = {}) {
-  return <jsx-wrapper dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "highScores", [entry, scoreCollection, userScore, options])} />;
+  return <jsx-wrapper
+    dangerouslySetInnerHTML={nunjuckMacro(ENTRY_HIGHSCORE_MACROS_PATH, "highScores", [entry, scoreCollection, userScore, options])} />;
 }
 
 export function streamerBadge(scoreUser, streamerBadges) {
