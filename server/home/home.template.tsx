@@ -11,7 +11,7 @@ import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 
 export default function render(context: CommonLocals) {
-  const { user, featuredEvent, featuredPost, featuredEventAnnouncement, featuredStreamer,
+  const { user, featuredEvent, featuredPost, featuredEventAnnouncement, featuredStreamer, path,
     eventsTimeline, shrinkedJumbo,
     eventParticipation, hasJoinedEvent, inviteToJoin, entry, tournamentScore,
     suggestedEntries, posts, comments, userPost, userLikes, pageCount } = context;
@@ -45,7 +45,7 @@ export default function render(context: CommonLocals) {
             </div>
           )}
           {jumbotronMacros.eventJumbotron(featuredEvent, eventParticipation, featuredEventAnnouncement, user, entry, tournamentScore,
-            { shrinkedJumbo, hasJoinedEvent, inviteToJoin })}
+            path, { shrinkedJumbo, hasJoinedEvent, inviteToJoin })}
         </jsx-wrapper>
       )}
       {ifNotSet(featuredEvent, () =>
@@ -158,7 +158,7 @@ export default function render(context: CommonLocals) {
                   <div class="featured p-0 mb-1">
                     {userMacros.twitchEmbed(featuredStreamer.details.social_links.twitch, { height: 250 })}
                     <div class="my-1">
-                      <div dangerouslySetInnerHTML={userMacros.userThumb(featuredStreamer)}></div>
+                      {userMacros.userThumb(featuredStreamer)}
                       <a href={links.routeUrl(featuredEvent, "event", "streamers")} class="mx-3">
                         <span class="fa fa-tv"></span> Browse all streamers
                       </a>

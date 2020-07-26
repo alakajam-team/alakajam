@@ -35,6 +35,7 @@ declare module "preact" {
       readonly?: boolean;
       enctype?: string;
       formnovalidate?: boolean;
+      charset?: string;
     }
   }
 }

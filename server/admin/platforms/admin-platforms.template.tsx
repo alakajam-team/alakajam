@@ -26,7 +26,7 @@ export default function render(context: AdminPlatformsContext) {
         {platforms.map(platform =>
           <tr>
             <td>{platform.get("id")}</td>
-            <td>{eventMacros.entryPlatformIcon(platform.get("name"), undefined, context)}</td>
+            <td>{eventMacros.entryPlatformIcon(platform.get("name"), undefined)}</td>
             <td>{entryCount[platform.get("id")]}</td>
             <td><a class="btn btn-primary btn-sm" href={"?edit=" + platform.get("id")}>Edit</a></td>
           </tr>

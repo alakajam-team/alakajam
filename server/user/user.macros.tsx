@@ -2,37 +2,91 @@ import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
 import { CommonLocals } from "server/common.middleware";
 import { User } from "server/entity/user.entity";
-import { nunjuckMacro } from "server/macros/nunjucks-macros";
-
-const USER_MACROS_PATH = "user/user.macros.html";
+import links from "server/core/links";
+import { ifSet, ifNotSet, ifTrue } from "server/macros/jsx-utils";
 
 export function userThumb(user: BookshelfModel, options: {
   fullWidth?: boolean;
   centered?: boolean;
   pending?: boolean;
-} | number = {}): { __html: string } {
+} | number = {}) {
   // Add support as Array.map() callback
   if (typeof options === "number") {
     options = {};
   }
 
-  return nunjuckMacro(USER_MACROS_PATH, "userThumb", [user, options]);
+  return <div class={`"user-thumb ${options.fullWidth ? "full-width" : "col-sm-4"} 
+        ${options.centered ? "centered" : ""} ${options.pending ? "pending" : ""}`}>
+    <div class="user-thumb__title">
+      <a href={links.routeUrl(user, "user")}>
+        <div class="user-thumb__avatar">
+          {ifSet(user.get("avatar"), () =>
+            <img src={links.pictureUrl(user.get("avatar"), user)} />
+          )}
+          {ifNotSet(user.get("avatar"), () =>
+            <img src={links.staticUrl("/static/images/default-avatar.png")} />
+          )}
+        </div>
+        {user.get("title")}
+      </a>
+    </div>
+    {ifTrue(options.pending, () =>
+      <div class="user-thumb__pending">
+        Pending invite
+      </div>
+    )}
+    <div class="user-thumb__name">
+      {user.get("name")}
+    </div>
+    {ifTrue((user as any).entriesCount > 0, () =>
+      <div class="user-thumb__entries">
+        {(user as any).akjEntriesCount}<img src={links.staticUrl("/static/images/jamician32.png")} height="14" />
+        {(user as any).entriesCount - (user as any).akjEntriesCount} ext
+      </div>
+    )}
+  </div>;
 }
 
-export function userAvatar(user: User, options: { small?: boolean } = {}): { __html: string } {
-  return nunjuckMacro(USER_MACROS_PATH, "userAvatar", [user, options]);
+export function userAvatar(user: User, options: { small?: boolean } = {}) {
+  const src = user.get("avatar") ? links.pictureUrl(user.get("avatar"), user as any) : links.staticUrl("/static/images/default-avatar.png");
+  return <a href={links.routeUrl(user, "user")}>
+    <img class={options.small ? "small-avatar" : ""} src={src} />
+  </a>;
 }
 
-export function userLink(user: User): { __html: string } {
-  return nunjuckMacro(USER_MACROS_PATH, "userLink", [user]);
+export function userLink(user: User) {
+  return <a href={links.routeUrl(user, "user")}>@{user.get("title")}</a>;
 }
 
 export function twitchLink(user: User) {
-  return <span dangerouslySetInnerHTML={nunjuckMacro(USER_MACROS_PATH, "twitchLink", [user])} />;
+  const socialLinks = user.related("details").get("social_links");
+  if (socialLinks.twitch) {
+    return <a href="https://www.twitch.tv/{socialLinks.twitch}">
+      <img src={links.staticUrl("/static/images/social/twitch.png")} class="no-border" style="width: 32px" /> {socialLinks.twitch}
+    </a>;
+  }
 }
 
 export function twitchEmbed(twitchUsername: string, options: { height?: number; unmute?: boolean } = {}) {
-  return <div dangerouslySetInnerHTML={nunjuckMacro(USER_MACROS_PATH, "twitchEmbed", [twitchUsername, options])} />;
+  if (twitchUsername) {
+    return <jsx-wrapper>
+      <div id="twitch-{twitchUsername}-embed"></div>
+      <script src="https://embed.twitch.tv/embed/v1.js"></script>
+      <script type="text/javascript" dangerouslySetInnerHTML={{
+        __html: `
+        document.addEventListener("DOMContentLoaded", function() {
+          var embed = new Twitch.Embed("twitch-{twitchUsername}-embed", {
+            width: "100%",
+            height: {options.height ? options.height : "200" },
+            layout: "video",
+            channel: {twitchUsername}
+          });
+          {ifTrue(not options.unmute, () =>
+          embed.setMuted(true);
+          )}
+        });`}} />
+    </jsx-wrapper>;
+  }
 }
 
 export function registerTwitchEmbedScripts(context: CommonLocals) {

@@ -8,13 +8,14 @@ import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 
 export default function render(context: CommonLocals) {
-  const { posts, event, eventParticipation, user, userEntry, tournamentScore, shrinkedJumbo, hasJoinedEvent, inviteToJoin, userLikes } = context;
+  const { posts, event, eventParticipation, user, userEntry, path,
+    tournamentScore, shrinkedJumbo, hasJoinedEvent, inviteToJoin, userLikes } = context;
 
   userMacros.registerTwitchEmbedScripts(context);
 
   return base(context,
     <div>
-      {jumbotronMacros.eventJumbotron(event, eventParticipation, null, user, userEntry, tournamentScore,
+      {jumbotronMacros.eventJumbotron(event, eventParticipation, null, user, userEntry, tournamentScore, path,
         { shrinkedJumbo, hasJoinedEvent, inviteToJoin })}
 
       <div class="container thin mt-3">

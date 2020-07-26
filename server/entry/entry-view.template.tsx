@@ -118,7 +118,7 @@ export default function render(context: EntryLocals) {
               <span class="entry__info-label">Platforms</span>
               <div class="entry__info-value">
                 {(entry.get("platforms") || []).map(name =>
-                  <div class="entry__platform">{eventMacros.entryPlatformIcon(name, { hideLabel: true }, context)}</div>
+                  <div class="entry__platform">{eventMacros.entryPlatformIcon(name, { hideLabel: true })}</div>
                 )}
               </div>
             </div>
@@ -158,12 +158,12 @@ export default function render(context: EntryLocals) {
 
             <div class="card card-body pb-2">
               <div class="row">
-                {collectHtmlAsDiv(entry.sortedUserRoles().map(userRole =>
+                {entry.sortedUserRoles().map(userRole =>
                   userMacros.userThumb(userRole.related<BookshelfModel>("user"), { fullWidth: true })
-                ))}
+                )}
                 {ifTrue(security.canUserWrite(user, entry), () =>
                   entry.related<BookshelfCollection>("invites").models.map(invite =>
-                    <div dangerouslySetInnerHTML={userMacros.userThumb(invite.related("invited"), { fullWidth: true, pending: true })} />
+                    userMacros.userThumb(invite.related("invited"), { fullWidth: true, pending: true })
                   )
                 )}
               </div>

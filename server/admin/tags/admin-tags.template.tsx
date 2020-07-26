@@ -1,4 +1,4 @@
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import * as React from "preact";
 import * as eventMacros from "server/event/event.macros";
 import { ifSet } from "server/macros/jsx-utils";
@@ -62,7 +62,7 @@ function details(detailedTag: BookshelfModel, sortBy: string) {
       <div class="container">
         <h3>Tag usage</h3>
         <div class="row">
-          {detailedTag.related<BookshelfCollection>("entries").models.map(entry =>
+          {detailedTag.related<BookshelfCollectionOf<EntryBookshelfModel>>("entries").models.map(entry =>
             <div class="col-4" style="margin-bottom: 5px">
               {eventMacros.entrySmallThumb(entry)}
             </div>

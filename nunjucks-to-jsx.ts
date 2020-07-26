@@ -65,12 +65,12 @@ import links from "server/core/links";
 
   // Expressions in attributes
   // (keep double braces for now)
-  out = replace(out, /"\{\{(.+)\}\}"/g, (expression) => { // attributes
+  out = replace(out, /"\{\{([^}]+)\}\}"/g, (expression) => { // attributes
     return `{{${expression.trim()}}}`
   });
 
   // Inline if-elses
-  out = replace(out, /\{\{ ?(.+) if (.+) else (.+) ?\}\}/g, (ifTrue, condition, ifFalse) => {
+  out = replace(out, /\{\{ ?(.+) if ([^}]+) else ([^}]+) ?\}\}/g, (ifTrue, condition, ifFalse) => {
     return `{${condition} ? ${ifTrue} : ${ifFalse}}`
   });
 
@@ -93,6 +93,11 @@ import links from "server/core/links";
   });
   out = replace(out, /\{% ?endfor ?%\}/g, () => {
     return `)}`
+  });
+
+  // Set blocks
+  out = replace(out, /\{% ?set ([^}]+)%\}/g, (assignment) => {
+    return `const ${assignment};`
   });
 
   // Render function end

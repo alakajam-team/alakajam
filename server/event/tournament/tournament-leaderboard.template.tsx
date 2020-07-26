@@ -81,7 +81,9 @@ export default function render(context: CommonLocals) {
                           return <tr class={user && tournamentScore.related("user").get("id") === user.get("id") ? "active" : ""}>
                             <td><h3>{ordinal(tournamentScore.get("ranking"))}</h3></td>
                             <td>
-                              <div class="row" dangerouslySetInnerHTML={userMacros.userThumb(tournamentScore.related("user"))}></div>
+                              <div class="row">
+                                {userMacros.userThumb(tournamentScore.related("user"))}
+                              </div>
                             </td>
                             {entries.map(entry =>
                               <td class="text-center visible-md visible-lg">
@@ -151,7 +153,7 @@ function podiumPosition(position, ranking, tournamentScore?) {
   return <div class={`col-md-4 results-podium__tournament position-${position} ranking-${ranking} ${tournamentScore ? "results-podium__step" : ""}`}>
     {ifSet(tournamentScore, () =>
       <div class="row">
-        <jsx-wrapper dangerouslySetInnerHTML={userMacros.userThumb(tournamentScore.related("user"), { fullWidth: true, centered: true })} />
+        {userMacros.userThumb(tournamentScore.related("user"), { fullWidth: true, centered: true })}
         <div class="col-12">
           <h2 class="text-center tournament-score">{forms.parseInt(tournamentScore.get("score"))} pts.</h2>
         </div>

@@ -16,16 +16,16 @@ export default function render(context: PeopleModsContext) {
         <h2>Administrators</h2>
       </div>
     </div>
-    <div class="row"
-      dangerouslySetInnerHTML={collectHtml(admins.map(userThumb))}></div>
-
+    <div class="row">
+      {admins.map(userThumb)}
+    </div>
     <div class="row">
       <div class="col-12">
         <h2>Moderators</h2>
       </div>
     </div>
-    <div class="row"
-      dangerouslySetInnerHTML={collectHtml(mods.map(userThumb))}></div>
+    <div class="row">
+      {mods.map(userThumb)}
+    </div>
   </div>);
-
 }
