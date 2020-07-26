@@ -8,7 +8,7 @@ const ALTERNATE_STATIC_ROOT_URL = config.ROOT_URL;
 
 export class Links {
 
-  public pictureUrl(picturePath: string, model: BookshelfModel): string {
+  public pictureUrl(picturePath: string, model: BookshelfModel | User): string {
     const rawUpdatedAt = model.get("updated_at");
     const timestamp = (typeof rawUpdatedAt === "object")
       ? rawUpdatedAt.getTime() : rawUpdatedAt; // SQlite/PostgreSQL inconsistency

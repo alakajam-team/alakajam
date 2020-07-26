@@ -59,7 +59,7 @@ export default function render(context: CommonLocals) {
               </div>
             </div>
             <div id="js-state-advanced d-none">
-              {editEventMacros.countdownForm(event)}
+              {editEventMacros.countdownForm(event, user)}
               {editEventMacros.stateForm(event)}
             </div>
           </div>

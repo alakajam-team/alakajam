@@ -5,6 +5,7 @@ import slug from "slug";
 import constants from "./constants";
 import * as formats from "./formats";
 import forms from "./forms";
+import { BookshelfModel } from "bookshelf";
 
 export function configure(nunjucksEnvironment) {
 
@@ -59,11 +60,7 @@ export function configure(nunjucksEnvironment) {
 
   nunjucksEnvironment.addFilter("relativeTime", relativeTime);
 
-  nunjucksEnvironment.addFilter("duration", (durationInSeconds: number) => {
-    const minutes = Math.floor(durationInSeconds / 60);
-    const seconds = durationInSeconds - minutes * 60;
-    return minutes + "'" + leftPad(seconds.toFixed(3).replace(".", '"'), 6, "0");
-  });
+  nunjucksEnvironment.addFilter("duration", duration);
 
   nunjucksEnvironment.addFilter("timezone", timezone);
 
@@ -95,11 +92,11 @@ export function date(
   return formats.formatDate(value, user, format, { utcSuffixByDefault });
 }
 
-export function dateTime(value: number | string | Date, user?: User) {
+export function dateTime(value: number | string | Date, user?: User | BookshelfModel) {
   return formats.formatDate(value, user, constants.DATE_TIME_FORMAT);
 }
 
-export function markdown(value: string, options: {maxLength?: number; readMoreLink?: number} = {}) {
+export function markdown(value: string, options: {maxLength?: number; readMoreLink?: string} = {}) {
   return { __html: forms.markdownToHtml(value, options) };
 }
 
@@ -137,4 +134,10 @@ export function timezone(timezoneId: string) {
 
 export function featuredEventDateTime(value: number | string | Date, user?: User) {
   return formats.formatDate(value, user, constants.FEATURED_EVENT_DATE_FORMAT);
+}
+
+export function duration(durationInSeconds: number) {
+  const minutes = Math.floor(durationInSeconds / 60);
+  const seconds = durationInSeconds - minutes * 60;
+  return minutes + "'" + leftPad(seconds.toFixed(3).replace(".", '"'), 6, "0");
 }

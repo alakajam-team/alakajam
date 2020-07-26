@@ -31,6 +31,9 @@ declare module "bookshelf" {
     public author: () => BookshelfModel;
   }
 
+  class CommentBookshelfModel extends NodeBookshelfModel {
+    public wasEdited: () => boolean;
+  }
 
   /*
    * Original typings do not support the "registry" and "pagination" plugins

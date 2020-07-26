@@ -295,7 +295,7 @@ function parseJson(str, options: any = {}) {
 /**
  * Converts the given Markdown to XSS-safe HTML
  */
-function markdownToHtml(markdown: string, options: { maxLength?: number; readMoreLink?: number } = {}): string {
+function markdownToHtml(markdown: string, options: { maxLength?: number; readMoreLink?: string } = {}): string {
   markdown = (markdown || "")
     // Automatically enable markdown inside HTML tags (not <p> because it messes things up)
     .replace(/< ?(div|table|tr|td|th|ul|li|h[1-5])/gi, '<$1 markdown="1" ')

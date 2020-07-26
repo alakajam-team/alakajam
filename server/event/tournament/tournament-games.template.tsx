@@ -57,7 +57,7 @@ export default function render(context: CommonLocals) {
 
           <h2>Recent scores</h2>
           {activeEntries.map(entryScore =>
-            scoreMacros.highScoreThumb(entryScore)
+            scoreMacros.highScoreThumb(entryScore, user)
           )}
         </div>
         <div class="flex-grow-1">

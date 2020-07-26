@@ -11,13 +11,12 @@ import * as scoreMacros from "server/entry/highscore/entry-highscore.macros";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifFalse, ifSet, ifTrue } from "server/macros/jsx-utils";
-import { collectHtmlAsDiv } from "server/macros/nunjucks-macros";
 import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 import { EntryLocals } from "./entry.middleware";
 
 export default function render(context: EntryLocals) {
-  const { entry, external, user, infoMessage, entryVotes, canVote, vote, minEntryVotes,
+  const { entry, external, user, infoMessage, entryVotes, canVote, vote, minEntryVotes, featuredEvent,
     event, eventVote, csrfToken, csrfTokenJSX, sortedComments, editComment, editableAnonComments, nodeAuthorIds, posts } = context;
 
   formMacros.registerEditorScripts(context);
@@ -173,7 +172,7 @@ export default function render(context: EntryLocals) {
               <div>
                 <h3 name="high-scores" class="mt-4">High scores {scoreMacros.highScoresLinks(entry, user, context.path)}</h3>
                 {scoreMacros.tournamentEventBanner(context.tournamentEvent)}
-                {scoreMacros.highScores(entry, context.highScoresCollection, context.userScore)}
+                {scoreMacros.highScores(entry, context.highScoresCollection, context.userScore, featuredEvent)}
               </div>
             )}
 

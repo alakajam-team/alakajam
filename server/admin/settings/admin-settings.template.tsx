@@ -53,7 +53,7 @@ function list(settings: EditableSettingInstance[]) {
     if (setting.category !== currentCategory) {
       currentCategory = setting.category;
       rows.push(<tr>
-        <td colspan="3"><h2>{currentCategory}</h2></td>
+        <td colspan={3}><h2>{currentCategory}</h2></td>
       </tr>);
     }
 

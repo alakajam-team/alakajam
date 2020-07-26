@@ -8,7 +8,7 @@ import { ifTrue } from "server/macros/jsx-utils";
 import dashboardBase from "./dashboard.base.template";
 
 export default function render(context: CommonLocals) {
-  const { activeEntries, medals, sortBy, userScores, entriesLastActivity } = context;
+  const { activeEntries, medals, sortBy, userScores, entriesLastActivity, user } = context;
 
   const totalMedals = (medals[1] || 0) + (medals[2] || 0) + (medals[3] || 0);
 
@@ -72,7 +72,7 @@ export default function render(context: CommonLocals) {
 
               {ifTrue(userScores.length === 0, () =>
                 <tr>
-                  <td colspan="6" class="text-center">No score submitted yet!</td>
+                  <td colspan={6} class="text-center">No score submitted yet!</td>
                 </tr>
               )}
             </tbody>
@@ -82,7 +82,7 @@ export default function render(context: CommonLocals) {
         <div class="col-md-4">
           <h2>Recent scores</h2>
           {activeEntries.map(entryScore =>
-            scoreMacros.highScoreThumb(entryScore)
+            scoreMacros.highScoreThumb(entryScore, user)
           )}
         </div>
       </div>

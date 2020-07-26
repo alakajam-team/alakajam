@@ -2,7 +2,7 @@ import * as React from "preact";
 
 export function sidebar(sidebarParam, path, options: { class?: string } = {}) {
   return <div class={options.class}>
-    {sidebarParam.map(sidebarGroup => { sidebarLinks(sidebarGroup.title, sidebarGroup.links, path) })}
+    {sidebarParam.map(sidebarGroup => { sidebarLinks(sidebarGroup.title, sidebarGroup.links, path); })}
   </div>;
 }
 

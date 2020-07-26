@@ -6,6 +6,7 @@ import * as tournamentMacros from "server/event/tournament/tournament.macros";
 import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 import { ifFalse, ifTrue } from "./jsx-utils";
+import { BookshelfModel } from "bookshelf";
 
 
 export function eventJumbotron(event, eventParticipation, featuredPost, user, userLikes,
@@ -25,7 +26,7 @@ export function eventJumbotron(event, eventParticipation, featuredPost, user, us
             <div class="col-lg-8 mb-3 mb-lg-0 align-self-center">
               {eventJumbotronCountdown(event, user)}
 
-              {eventJumbotronPost(event, featuredPost, user, userLikes)}
+              {eventJumbotronPost(featuredPost, user, userLikes)}
             </div>
           </div>
         </div>
@@ -97,10 +98,10 @@ export function eventJumbotron(event, eventParticipation, featuredPost, user, us
   </div>;
 }
 
-function eventJumbotronAvatar(event, path) {
+function eventJumbotronAvatar(event: BookshelfModel, path: string) {
   const eventHome = links.routeUrl(event, "event");
   const eventLogo = event.get("logo");
-  const AvatarTag = (path && path.startsWith(eventHome)) ? "div" : "a";
+  const AvatarTag = (path.startsWith(eventHome)) ? "div" : "a";
   return <AvatarTag href={eventHome} class="event-jumbotron__logo">
     <img src={eventLogo ? links.pictureUrl(eventLogo, event) : links.staticUrl("/static/images/favicon196.png")} />
   </AvatarTag>;
@@ -130,7 +131,7 @@ function eventJumbotronCountdown(event, user) {
   }
 }
 
-function eventJumbotronPost(event, featuredPost, user, userLikes) {
+function eventJumbotronPost(featuredPost, user, userLikes) {
   if (featuredPost) {
     const isEmbedPost = featuredPost.get("body").indexOf("&lt;iframe") === 0;
     return <div class="event-jumbotron__post">
@@ -179,7 +180,7 @@ export function myEntryJumbotronContent(event, entry, eventParticipation,
     }
   } else {
     const entryCreationEnabled = ["open", "open_unranked"].includes(event.get("status_entry"));
-    const isStreamer = ["requested", "approved"].includes(eventParticipation.streamerStatus);
+    const isStreamer = ["requested", "approved"].includes(eventParticipation?.streamerStatus);
     return <div class="card-body text-center p-2">
       {ifTrue(options.inviteToJoin, () =>
         <a href={links.routeUrl(event, "event", "join")} class="btn btn-alt btn-lg d-block py-4">Join the event</a>

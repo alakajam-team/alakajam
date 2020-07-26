@@ -114,7 +114,7 @@ export default function render(context: CommonLocals) {
                 )}
             )
               </label>
-              {formMacros.dateTimePicker("published-at", post.get("published_at"))}
+              {formMacros.dateTimePicker("published-at", post.get("published_at"), user)}
             </div>
             <div class="form-group">
               <input type="submit" class="btn btn-primary mx-1" name="save-custom" value="Schedule" />

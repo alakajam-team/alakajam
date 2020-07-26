@@ -3,7 +3,6 @@ import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import { ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";
-import { collectHtml } from "server/macros/nunjucks-macros";
 import * as tabsMacros from "server/macros/tabs.macros";
 import * as userMacros from "server/user/user.macros";
 
@@ -30,7 +29,9 @@ export default function render(context: CommonLocals) {
 
           {navigationMacros.pagination(currentPage, pageCount, path)}
 
-          <div class="row user-thumbs" dangerouslySetInnerHTML={collectHtml(users.map(userMacros.userThumb))}></div>
+          <div class="row user-thumbs">
+            {users.map(userMacros.userThumb)}
+          </div>
         </div>
       </div>
     </div>

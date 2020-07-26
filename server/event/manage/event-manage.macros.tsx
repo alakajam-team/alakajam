@@ -2,6 +2,7 @@ import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
 import forms from "server/core/forms";
 import { dump } from "server/core/templating-filters";
+import { User } from "server/entity/user.entity";
 import * as formMacros from "server/macros/form.macros";
 import { ifNotSet, ifSet } from "server/macros/jsx-utils";
 
@@ -25,7 +26,7 @@ export function linksForm(eventDetails: BookshelfModel) {
   </div>;
 }
 
-export function countdownForm(event: BookshelfModel, options: { countdownOffset?: EventCountdownOffset } = {}) {
+export function countdownForm(event: BookshelfModel, user: User, options: { countdownOffset?: EventCountdownOffset } = {}) {
   return <jsx-wrapper>
     <div class="horizontal-bar">
       Home page
@@ -73,7 +74,7 @@ export function countdownForm(event: BookshelfModel, options: { countdownOffset?
             <jsx-wrapper>
               <label class="mr-1">Date
                 (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)</label>
-              {formMacros.dateTimePicker("countdown-date", event?.get("countdown_config").date)}
+              {formMacros.dateTimePicker("countdown-date", event?.get("countdown_config").date, user)}
             </jsx-wrapper>
           )}
         </div>

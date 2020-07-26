@@ -31,7 +31,7 @@ declare module "preact" {
       onmousemove?: string;
 
       // Non-events
-      colspan?: string;
+      colspan?: number;
       readonly?: boolean;
       enctype?: string;
       formnovalidate?: boolean;

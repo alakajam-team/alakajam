@@ -1,3 +1,4 @@
+import { BookshelfModel } from "bookshelf";
 import * as luxon from "luxon";
 import { User } from "server/entity/user.entity";
 import constants from "./constants";
@@ -32,7 +33,7 @@ export function createLuxonDate(
 
 export function formatDate(
   date: string | number | Date | undefined,
-  user: User | undefined,
+  user: User | BookshelfModel | undefined,
   format: string,
   options: { utcSuffixByDefault?: boolean } = { utcSuffixByDefault: true }): string {
   if (date) {

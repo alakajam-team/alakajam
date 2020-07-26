@@ -129,7 +129,7 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
                     <li class="mx-3 my-2" style="border-left: solid 1px"></li>
                   </jsx-wrapper>
                 )}
-                {ifFalse(event.related("details").get("flags").hideStreamerMenu, () =>
+                {ifFalse(event.related("details").get("flags")?.hideStreamerMenu, () =>
                   eventLink(event, null, "streamers", "Streamers", "tv", path)
                 )}
 

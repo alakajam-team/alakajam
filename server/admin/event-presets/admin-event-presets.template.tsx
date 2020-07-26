@@ -5,12 +5,13 @@ import { EventCountdownOffset } from "server/event/manage/event-manage.macros";
 import { ifSet } from "server/macros/jsx-utils";
 import adminBase from "../admin.base";
 import { AdminEventPresetsContext } from "./admin-event-presets.controller";
+import { User } from "server/entity/user.entity";
 
 export default function render(context: AdminEventPresetsContext) {
   return adminBase(context,
     <div>
       <h1>Event presets</h1>
-      {context.editEventPreset ? edit(context.editEventPreset, context.countdownOffset, context.csrfTokenJSX) : actions()}
+      {context.editEventPreset ? edit(context.editEventPreset, context.countdownOffset, context.user, context.csrfTokenJSX) : actions()}
       {list(context.eventPresets)}
     </div>
   );
@@ -28,7 +29,7 @@ function actions() {
   </div>;
 }
 
-function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset, csrfTokenJSX: Function) {
+function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset, user: User, csrfTokenJSX: Function) {
   return <div class="card card-body">
     <h2><span id="preset-header"></span></h2>
     <form method="post" action="?">
@@ -39,7 +40,7 @@ function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset
           data-sync-text-display-selector="#preset-header" data-sync-text-default="New" />
       </div>
 
-      {eventManageMacros.countdownForm(eventPreset, { countdownOffset })}
+      {eventManageMacros.countdownForm(eventPreset, user, { countdownOffset })}
 
       <div class="alert alert-info">
         <b>Offset from start</b>: Instead of an actual date for the deadline, set an offset in days, hours and minutes from the event start.

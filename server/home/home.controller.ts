@@ -20,7 +20,6 @@ import { shuffle } from "lodash";
 
 interface HomeContext {
   featuredPost?: PostBookshelfModel;
-  shrinkedJumbo: boolean;
   featuredEventAnnouncement?: BookshelfModel;
   eventsTimeline: BookshelfModel[];
   suggestedEntries: BookshelfModel[];
@@ -55,17 +54,14 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       eventParticipationService.getEventParticipation(featuredEvent.get("id"), user.get("id")),
       twitchService.listCurrentLiveUsers(featuredEvent)
     ]).then(([userLikes, entry, tournamentScore, eventParticipation, liveUsers]) => {
-      const hasJoinedEvent = !!eventParticipation;
       res.locals.userLikes = userLikes;
       res.locals.entry = entry;
       res.locals.tournamentScore = tournamentScore;
       res.locals.eventParticipation = eventParticipation;
-      res.locals.hasJoinedEvent = hasJoinedEvent;
-      res.locals.inviteToJoin = joinEnabled && !hasJoinedEvent;
+      res.locals.inviteToJoin = joinEnabled && eventParticipation;
       res.locals.featuredStreamer = liveUsers.length > 0 ? shuffle(liveUsers)[0] : undefined;
     });
   } else {
-    res.locals.hasJoinedEvent = false;
     res.locals.inviteToJoin = joinEnabled;
   }
 
