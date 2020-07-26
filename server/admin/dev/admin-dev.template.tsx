@@ -11,7 +11,7 @@ export default function render(context: AdminBaseContext & { backupDate?: Date }
       <h1>Developer tools</h1>
 
       <form method="post">
-        {context.csrfTokenJSX()}
+        {context.csrfToken()}
 
         <div class="form-group">
           <input type="submit" name="replace-passwords" class="btn btn-danger mr-1"

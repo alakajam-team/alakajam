@@ -69,7 +69,7 @@ export default function render(context: CommonLocals) {
                 <h3>As streamer</h3>
 
                 <form method="post" class="action-banner text-center">
-                  {context.csrfTokenJSX()}
+                  {context.csrfToken()}
 
                   {ifTrue(eventParticipation.isStreamer, () =>
                     <jsx-wrapper>
@@ -169,7 +169,7 @@ export default function render(context: CommonLocals) {
           <div class="mt-5">
             {ifTrue(eventParticipation.isStreamer, () =>
               <form method="post" class="d-inline">
-                {context.csrfTokenJSX()}
+                {context.csrfToken()}
                 <input type="hidden" name="is-streamer" value="false" />
                 <button type="submit" name="streamer-preferences" class="btn btn-danger mr-1"
                   onclick="return confirm('Cancel participation as streamer? You can return at any time until the end of jam.')">

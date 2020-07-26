@@ -22,7 +22,7 @@ export default function render(context: CommonLocals) {
             it will simply no longer appear in the public high scores.</p>
 
           <form method="post">
-            {context.csrfTokenJSX()}
+            {context.csrfToken()}
             {scoreMacros.highScores(entry, highScoresCollection, null, { showActiveToggles: true, showDates: true })}
             <input type="submit" name="clearall" class="btn btn-danger" onclick="return confirm('
               This will actually delete all the scores. It\'s here in case you make gameplay changes that turn all scores obsolete.

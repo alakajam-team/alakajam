@@ -19,7 +19,7 @@ export default function render(context: CommonLocals) {
       <h1 id="title-display"></h1>
 
       <form method="post" class="js-warn-on-unsaved-changes">
-        {context.csrfTokenJSX()}
+        {context.csrfToken()}
 
         {ifTrue(errorMessage, () =>
           <div class="alert alert-warning">{errorMessage}</div>

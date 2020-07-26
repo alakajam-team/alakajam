@@ -20,7 +20,7 @@ export default function render(context: CommonLocals) {
 
       <form action={links.routeUrl(dashboardUser, "user", "settings", { dashboardAdminMode, query: "upload=avatar" })}
         method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
-        {context.csrfTokenJSX()}
+        {context.csrfToken()}
 
         {ifTrue(dashboardAdminMode, () =>
           <div class="alert alert-danger">
@@ -128,7 +128,7 @@ export default function render(context: CommonLocals) {
       <h2 class="spacing">Danger zone</h2>
 
       <form action={links.routeUrl(dashboardUser, "user", "settings", { dashboardAdminMode })} method="post">
-        {context.csrfTokenJSX()}
+        {context.csrfToken()}
         <div class="form-group">
           <input type="submit" name="delete" class="btn btn-danger" value="Delete account"
             onclick="return confirm('Delete your account permanently? \

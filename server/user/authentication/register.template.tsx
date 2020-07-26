@@ -17,7 +17,7 @@ export default function render(context: CommonLocals) {
           {formMacros.alerts(context.alerts)}
 
           <form method="post" action="/register">
-            {context.csrfTokenJSX()}
+            {context.csrfToken()}
             <div class="form-group">
               <label for="username">Username</label>
               <input type="text" class="form-control" id="name" name="name" value={name} required />

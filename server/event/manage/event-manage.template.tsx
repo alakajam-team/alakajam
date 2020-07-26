@@ -16,7 +16,7 @@ export default function render(context: CommonLocals) {
     <h1 id="title-display"></h1>
 
     <form method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
-      {context.csrfTokenJSX()}
+      {context.csrfToken()}
 
       <ul class="nav nav-tabs nav-justified mb-3">
         <li role="presentation" class="nav-item">

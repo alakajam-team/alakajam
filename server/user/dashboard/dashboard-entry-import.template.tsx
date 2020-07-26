@@ -22,7 +22,7 @@ export default function render(context: CommonLocals) {
     <a href={links.routeUrl(user, "user", "entries")} class="btn btn-outline-primary">Back to Entries</a>
 
     <form method="post">
-      {context.csrfTokenJSX()}
+      {context.csrfToken()}
       <h2 class="spacing">Importer configuration</h2>
       <div class="card card-body mb-3" style="max-width: 800px">
         <div class="form-group">

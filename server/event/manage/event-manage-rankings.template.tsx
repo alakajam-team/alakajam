@@ -73,7 +73,7 @@ export default function render(context: CommonLocals) {
           <td>{eventMacros.entrySmallThumb(entry)}</td>
           <td>
             <form method="post" class="form-inline">
-              {context.csrfTokenJSX()}
+              {context.csrfToken()}
               <input type="hidden" name="entryId" value={entry.get("id")} />
               <input class="form-control form-control-lg mr-3" type="text" name="newRanking"
                 value={entry.related("details").get("ranking_" + currentCategoryIndex)} />

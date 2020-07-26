@@ -280,12 +280,12 @@ export function commentUrl(node: BookshelfModel, commentModel: BookshelfModel) {
   return links.routeUrl(node, commentModel.get("node_type")) + "#c" + commentModel.id;
 }
 
-export function commentEditor(commentModel: BookshelfModel, csrfTokenJSX: Function, options: CommentEditorOptions) {
+export function commentEditor(commentModel: BookshelfModel, csrfToken: Function, options: CommentEditorOptions) {
   const user = (commentModel && commentModel.related("user")) ? commentModel.related("user") : options.readingUser;
   const showAnon = options.allowAnonymous && !commentModel;
   if (user) {
     return <form method="post" action={links.routeUrl(commentModel, "comment", "edit")} class="comment js-warn-on-unsaved-changes">
-      {csrfTokenJSX()}
+      {csrfToken()}
       <input type="hidden" name="action" value="comment" />
       <input type="hidden" name="id" value={commentModel?.id} />
       <a class="anchor" name={commentModel ? ("c" + commentModel.id) : ""}></a>

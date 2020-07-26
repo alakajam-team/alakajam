@@ -15,7 +15,7 @@ export default function render(context: AdminEventContext) {
       <h1>Event templates</h1>
 
       {context.editEventTemplate
-        ? edit(context.editEventTemplate, context.eventPresets, context.csrfTokenJSX)
+        ? edit(context.editEventTemplate, context.eventPresets, context.csrfToken)
         : actions()}
       {list(context.eventTemplates)}
     </div>
@@ -32,12 +32,12 @@ function actions() {
   </div>;
 }
 
-function edit(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[], csrfTokenJSX: () => JSX.Element) {
+function edit(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[], csrfToken: () => JSX.Element) {
   if (eventTemplate) {
     return <div class="card card-body">
       <h2><span id="template-header"></span> event template</h2>
       <form method="post" action="?">
-        {csrfTokenJSX()}
+        {csrfToken()}
         <div class="form-group">
           <label for="title">Title</label>
           <input type="text" required class="form-control js-sync-text" name="title" value={eventTemplate.get("title")}

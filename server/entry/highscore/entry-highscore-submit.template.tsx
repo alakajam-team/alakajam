@@ -51,7 +51,7 @@ export default function render(context: CommonLocals) {
           )}
 
           <form method="post" enctype="multipart/form-data">
-            {context.csrfTokenJSX()}
+            {context.csrfToken()}
             <div class="form-group">
               <label for="score" class="d-none d-sm-block">{entry.related("details").get("high_score_type") === "time" ? "Time" : "Score"}</label>
               {ifTrue(entry.related("details").get("high_score_type") === "time", () => {

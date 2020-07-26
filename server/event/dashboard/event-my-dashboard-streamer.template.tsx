@@ -24,7 +24,7 @@ export default function render(context: CommonLocals) {
               <a href={links.routeUrl(event, "event", "dashboard")} class="btn btn-sm btn-outline-secondary ml-1">Back to dashboard</a>
             </h2>
 
-            {context.csrfTokenJSX()}
+            {context.csrfToken()}
 
             <div class="form-group">
               <label for="twitch"><img src={links.staticUrl("/static/images/social/twitch.png")}

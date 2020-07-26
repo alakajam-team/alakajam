@@ -54,7 +54,7 @@ export default function render(context: CommonLocals) {
 
                   {ifTrue(security.isMod(user), () =>
                     <form class="card-footer bg-moderation" method="post" onsubmit="return confirm('Confirm streamer status change?')">
-                      {context.csrfTokenJSX()}
+                      {context.csrfToken()}
                       <input type="hidden" name="targetUserId" value={eventParticipation.user.id} />
                       <span class="fas fa-wrench"></span>
                       Status <span class="badge badge-secondary">{capitalize(eventParticipation.streamerStatus)}</span>

@@ -8,7 +8,7 @@ import { eventManageBase } from "./event-manage.base.template";
 
 export default function render(context: CommonLocals) {
   const { event, themes, eliminationThreshold, shortlist,
-    eliminatedShortlistThemes, eliminationMinNotes, editTheme, csrfTokenJSX } = context;
+    eliminatedShortlistThemes, eliminationMinNotes, editTheme, csrfToken } = context;
 
   context.inlineStyles.push(`
     .table td {
@@ -33,7 +33,7 @@ export default function render(context: CommonLocals) {
     <div class="horizontal-bar">
       Shortlist elimination
     </div>
-    {shortlistEliminationForm(event, eliminatedShortlistThemes, csrfTokenJSX)}
+    {shortlistEliminationForm(event, eliminatedShortlistThemes, csrfToken)}
 
     <div class="horizontal-bar">
       Submitted themes
@@ -43,7 +43,7 @@ export default function render(context: CommonLocals) {
       ({eliminationMinNotes} votes or more) and their Elimination Rating gets under&nbsp;
       <strong>{digits(eliminationThreshold * 100, 1)}%</strong>.</p>
 
-    {themesTable(event, themes, editTheme, eliminationMinNotes, csrfTokenJSX)}
+    {themesTable(event, themes, editTheme, eliminationMinNotes, csrfToken)}
   </div>);
 }
 
@@ -73,7 +73,7 @@ function shortlistTable(event, shortlist) {
   </table>;
 }
 
-function shortlistEliminationForm(event, eliminatedShortlistThemes, csrfTokenJSX) {
+function shortlistEliminationForm(event, eliminatedShortlistThemes, csrfToken) {
   const eventDetails = event.related("details");
 
   return <div>
@@ -92,7 +92,7 @@ function shortlistEliminationForm(event, eliminatedShortlistThemes, csrfTokenJSX
     </p>
 
     <form method="post" class="js-warn-on-unsaved-changes">
-      {csrfTokenJSX()}
+      {csrfToken()}
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
@@ -132,7 +132,7 @@ function shortlistEliminationForm(event, eliminatedShortlistThemes, csrfTokenJSX
   </div>;
 }
 
-function themesTable(event, themes, editTheme, eliminationMinNotes, csrfTokenJSX) {
+function themesTable(event, themes, editTheme, eliminationMinNotes, csrfToken) {
   return <table class="table sortable">
     <thead>
       <tr>
@@ -151,14 +151,14 @@ function themesTable(event, themes, editTheme, eliminationMinNotes, csrfTokenJSX
     <tbody>
       {themes.map(theme =>
         ifTrue(theme.get("status") !== "shortlist", () =>
-          themesTableRow(theme, editTheme, eliminationMinNotes, csrfTokenJSX)
+          themesTableRow(theme, editTheme, eliminationMinNotes, csrfToken)
         )
       )}
     </tbody>
   </table>;
 }
 
-function themesTableRow(theme, editTheme, eliminationMinNotes, csrfTokenJSX) {
+function themesTableRow(theme, editTheme, eliminationMinNotes, csrfToken) {
   const isEditedTheme = editTheme && editTheme.get("id") === theme.get("id");
   return <tr>
     <td class="legend">#{theme.get("id")}</td>
@@ -166,7 +166,7 @@ function themesTableRow(theme, editTheme, eliminationMinNotes, csrfTokenJSX) {
       <a name={theme.get("id")}></a>
       {ifTrue(isEditedTheme, () =>
         <form method="post" action={"?#" + theme.get("id")} class="form-inline">
-          {csrfTokenJSX()}
+          {csrfToken()}
           <input type="hidden" name="id" value={editTheme.get("id")} />
           <input type="text" name="title" class="form-control" value={editTheme.get("title")} />
           <input type="submit" value="Save" class="btn btn-primary mr-1" />

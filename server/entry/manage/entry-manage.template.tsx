@@ -28,7 +28,7 @@ export default function render(context: CommonLocals) {
       <form id="js-edit-entry-form"
         action={links.routeUrl(entry, "entry", !entry.get("id") ? "create-entry" : "edit")}
         method="post" enctype="multipart/form-data" class="js-warn-on-unsaved-changes">
-        {context.csrfTokenJSX()}
+        {context.csrfToken()}
 
         <div class="row">
           <div class="col-md-12">

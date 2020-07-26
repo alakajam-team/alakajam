@@ -81,13 +81,9 @@ export interface CommonLocals {
   readonly inlineStyles: string[];
 
   /**
-   * Generates HTML to be inserted in all form for CSRF protection.
+   * Generates a JSX element to be inserted in all forms for CSRF protection.
    */
-  readonly csrfToken: () => string;
-  /**
-   * Generates a JSX element to be inserted in all form for CSRF protection.
-   */
-  readonly csrfTokenJSX: () => JSX.Element;
+  readonly csrfToken: () => JSX.Element;
 }
 
 export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction) {

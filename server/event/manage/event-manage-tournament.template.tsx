@@ -16,7 +16,7 @@ export default function render(context: CommonLocals) {
     {ifTrue(canRefreshResult, () =>
       <form method="post" class="form-inline">
         <p>
-          {context.csrfTokenJSX()}
+          {context.csrfToken()}
           <input type="submit" name="refresh" class="btn btn-primary" value="Refresh all tournament scores"
             onclick="return confirm('Refresh all tournament scores?')" />
         </p>
@@ -35,7 +35,7 @@ export default function render(context: CommonLocals) {
             <div class="entry-thumb__form"><span class="badge badge-danger">High scores are not enabled</span></div>
           )}
           <form method="post" class="form-inline form-group" style="margin-top: 5px">
-            {context.csrfTokenJSX()}
+            {context.csrfToken()}
             <input type="hidden" name="id" value={entry.get("id")} />
             <label for="ordering">Order&nbsp;</label>
             <input type="text" name="ordering" class="form-control mr-1" value={tournamentEntry.get("ordering")} style="max-width: 50px" />
@@ -53,7 +53,7 @@ export default function render(context: CommonLocals) {
       <div class="game-grid-entry">
         <h3>Add game</h3>
         <form method="post" class="form-inline">
-          {context.csrfTokenJSX()}
+          {context.csrfToken()}
           <input type="number" name="add" class="form-control" placeholder="Entry ID" style="max-width: 120px" />
           <input type="submit" class="btn btn-primary" value="Add" />
         </form>

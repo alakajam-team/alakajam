@@ -11,7 +11,7 @@ export default function render(context: AdminEventPresetsContext) {
   return adminBase(context,
     <div>
       <h1>Event presets</h1>
-      {context.editEventPreset ? edit(context.editEventPreset, context.countdownOffset, context.user, context.csrfTokenJSX) : actions()}
+      {context.editEventPreset ? edit(context.editEventPreset, context.countdownOffset, context.user, context.csrfToken) : actions()}
       {list(context.eventPresets)}
     </div>
   );
@@ -29,11 +29,11 @@ function actions() {
   </div>;
 }
 
-function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset, user: User, csrfTokenJSX: Function) {
+function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset, user: User, csrfToken: Function) {
   return <div class="card card-body">
     <h2><span id="preset-header"></span></h2>
     <form method="post" action="?">
-      {csrfTokenJSX()}
+      {csrfToken()}
       <div class="form-group">
         <label for="title">Preset title</label>
         <input type="text" class="form-control js-sync-text" name="title" value={ eventPreset.get("title") }

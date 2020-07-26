@@ -105,7 +105,6 @@ export async function configure(app: express.Application) {
   // Templating: rendering context
   app.use(function templateTooling(req: CustomRequest, res: CustomResponse<Mutable<CommonLocals>>, next: NextFunction) {
     res.locals.rootUrl = config.ROOT_URL;
-    res.locals.csrfToken = () => '<input type="hidden" name="_csrf" value="' + req.csrfToken() + '" />';
     setUpJSXLocals(req, res);
 
     let alreadyRenderedWithError = false;

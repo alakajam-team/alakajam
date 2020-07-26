@@ -12,7 +12,7 @@ import * as userMacros from "server/user/user.macros";
 
 export default function render(context: CommonLocals) {
   const { user, featuredEvent, featuredPost, featuredEventAnnouncement, featuredStreamer, path,
-    eventsTimeline, eventParticipation, hasJoinedEvent, inviteToJoin, entry, tournamentScore,
+    eventsTimeline, eventParticipation, inviteToJoin, entry, tournamentScore,
     suggestedEntries, posts, comments, userPost, userLikes, pageCount } = context;
 
   userMacros.registerTwitchEmbedScripts(context);
@@ -44,7 +44,7 @@ export default function render(context: CommonLocals) {
             </div>
           )}
           {jumbotronMacros.eventJumbotron(featuredEvent, eventParticipation, featuredEventAnnouncement, user, userLikes,
-            entry, tournamentScore, path, { hasJoinedEvent, inviteToJoin })}
+            entry, tournamentScore, path, { inviteToJoin })}
         </jsx-wrapper>
       )}
       {ifNotSet(featuredEvent, () =>

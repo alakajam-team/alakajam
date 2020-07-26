@@ -32,7 +32,7 @@ export default function render(context: CommonLocals) {
         Comments <span class="legend">({post.get("comment_count") || "0"})</span>
         {ifSet(user, () =>
           <form method="post" class="comment__subscribe" action={links.routeUrl(post, "post", "watch")}>
-            {context.csrfTokenJSX()}
+            {context.csrfToken()}
             {/* Being subscribed to a post = having a user right. Only allow removing the right */}
             {ifTrue(security.isUserWatching(user, post), () =>
               <div>

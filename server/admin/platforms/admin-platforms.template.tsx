@@ -6,13 +6,13 @@ import adminBase from "../admin.base";
 import { AdminPlatformsContext } from "./admin-platforms.controller";
 
 export default function render(context: AdminPlatformsContext) {
-  const { editPlatform, platforms, entryCount, csrfTokenJSX } = context;
+  const { editPlatform, platforms, entryCount, csrfToken } = context;
 
   return adminBase(context, <div>
     <h1>Platforms</h1>
 
     {editPlatform
-      ? editForm(editPlatform, entryCount[editPlatform.get("id")], csrfTokenJSX)
+      ? editForm(editPlatform, entryCount[editPlatform.get("id")], csrfToken)
       : <p><a class="btn btn-primary" href="?create=true">Create platform</a></p>}
 
     <table class="table sortable">
@@ -36,7 +36,7 @@ export default function render(context: AdminPlatformsContext) {
   </div>);
 }
 
-function editForm(editPlatform: BookshelfModel, platformEntryCount: number, csrfTokenJSX: Function) {
+function editForm(editPlatform: BookshelfModel, platformEntryCount: number, csrfToken: Function) {
   return <form action="/admin/platforms" method="post" class="card">
     <div class="card-header">
       <div class="float-right">
@@ -56,7 +56,7 @@ function editForm(editPlatform: BookshelfModel, platformEntryCount: number, csrf
       </div>
 
       <div class="form-group">
-        {csrfTokenJSX()}
+        {csrfToken()}
         <input type="submit" class="btn btn-primary mr-1" value="Save" />
         <a href="?" class="btn btn-outline-primary">Cancel</a>
       </div>

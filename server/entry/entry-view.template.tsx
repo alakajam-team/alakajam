@@ -17,7 +17,7 @@ import { EntryLocals } from "./entry.middleware";
 
 export default function render(context: EntryLocals) {
   const { entry, external, user, infoMessage, entryVotes, canVote, vote, minEntryVotes, featuredEvent,
-    event, eventVote, csrfToken, csrfTokenJSX, sortedComments, editComment, editableAnonComments, nodeAuthorIds, posts } = context;
+    event, eventVote, csrfToken, sortedComments, editComment, editableAnonComments, nodeAuthorIds, posts } = context;
 
   formMacros.registerEditorScripts(context);
 
@@ -56,7 +56,7 @@ export default function render(context: EntryLocals) {
             )}
 
             {ifTrue(user && event && eventVote, () =>
-              voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, csrfTokenJSX)
+              voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, csrfToken)
             )}
 
             {ifTrue(event && event.get("status_results") === "closed" && entry.get("division") !== "unranked", () =>
@@ -219,7 +219,7 @@ function picture(entry, event) {
   </div>;
 }
 
-function voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, csrfTokenJSX) {
+function voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, csrfToken) {
   return <div>
 
     {ifTrue(canVote, () =>
@@ -242,7 +242,7 @@ function voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, cs
             </div>
           )}
           {ifTrue(entry.get("division") !== "unranked", () =>
-            votingForm(entry, entryVotes, event, csrfTokenJSX, vote)
+            votingForm(entry, entryVotes, event, csrfToken, vote)
           )}
         </div>
       </div>
@@ -272,11 +272,11 @@ function voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, cs
   </div>;
 }
 
-function votingForm(entry, entryVotes, event, csrfTokenJSX, vote) {
+function votingForm(entry, entryVotes, event, csrfToken, vote) {
   const optouts = entry.related("details").get("optouts") || [];
 
   return <form action="" method="post">
-    {csrfTokenJSX()}
+    {csrfToken()}
 
     <div class="float-right">
       <div class="show-if-saving"><i class="fas fa-spinner fa-spin" title="Saving…"></i></div>

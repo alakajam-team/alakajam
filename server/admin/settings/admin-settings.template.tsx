@@ -12,12 +12,12 @@ export default function render(context: AdminSettingsContext) {
   return adminBase(context,
     <div>
       <h1>Settings</h1>
-      {ifSet(context.editSetting, () => edit(context.editSetting, context.csrfTokenJSX))}
+      {ifSet(context.editSetting, () => edit(context.editSetting, context.csrfToken))}
       {list(context.settings)}
     </div>);
 }
 
-function edit(setting: EditableSettingInstance, csrfTokenJSX: Function) {
+function edit(setting: EditableSettingInstance, csrfToken: Function) {
   return <form action="/admin/settings" method="post" class="card">
     <div class="card-header">
       <h2>{setting.key}</h2>
@@ -29,7 +29,7 @@ function edit(setting: EditableSettingInstance, csrfTokenJSX: Function) {
         {editSetting(setting)}
       </div>
       <div class="form-group">
-        {csrfTokenJSX()}
+        {csrfToken()}
         <input type="hidden" name="key" value={setting.key} class="form-control" />
         <input type="submit" class="btn btn-primary" value="Save" />
       </div>

@@ -83,7 +83,7 @@ export default function render(context: CommonLocals) {
               </div>
 
               <form id="js-manage-themes" method="post" class="js-warn-on-unsaved-changes d-none">
-                {context.csrfTokenJSX()}
+                {context.csrfToken()}
 
                 <h2>My theme ideas</h2>
                 {myThemeIdeas(event, userThemes, maxThemeSuggestions)}
@@ -164,7 +164,7 @@ export default function render(context: CommonLocals) {
                                 <table>
                                   <tr><td class="theme-past__buttons">
                                     <form method="post">
-                                      {context.csrfTokenJSX()}
+                                      {context.csrfToken()}
                                       <input type="hidden" name="action" value="vote" />
                                       <input type="hidden" name="theme-id" value={vote.get("theme_id")} />
                                       <button name="upvote" class={"btn btn-sm mr-1 "
@@ -208,7 +208,7 @@ export default function render(context: CommonLocals) {
 
                 return <div class="themes__shortlist">
                   <form method="post" class="js-warn-on-unsaved-changes">
-                    {context.csrfTokenJSX()}
+                    {context.csrfToken()}
                     <input type="hidden" name="action" value="shortlist" />
 
                     <h2>Shortlist ranking</h2>

@@ -19,7 +19,7 @@ export default function render(context: CommonLocals) {
               {formMacros.alerts(context.alerts)}
 
               <form method="post" action={path} >
-                {context.csrfTokenJSX()}
+                {context.csrfToken()}
                 < div class="form-group" >
                   <label for="new-password">New password</label>
                   <input type="password" class="form-control" name="new-password" required />

@@ -20,7 +20,7 @@ export default function render(context: CommonLocals) {
               <p>Please fill the email address you used to register.</p>
 
               <form method="post" action={path}>
-                {context.csrfTokenJSX()}
+                {context.csrfToken()}
                 <div class="form-group">
                   <label for="email">Email</label>
                   <input type="text" class="form-control" name="email" required />
