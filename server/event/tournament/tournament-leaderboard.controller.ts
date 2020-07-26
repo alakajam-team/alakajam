@@ -20,7 +20,7 @@ export async function viewEventTournamentLeaderboard(req: CustomRequest, res: Cu
 
   const tEntries = await tournamentService.findTournamentEntries(event);
 
-  res.renderJSX<EventLocals>("event/tournament/tournament-leaderboard", {
+  res.render<EventLocals>("event/tournament/tournament-leaderboard", {
     ...res.locals,
     tournamentScores: (await tournamentService.findTournamentScores(event)).models,
     entries: tEntries.map((tEntry) => tEntry.related("entry")),

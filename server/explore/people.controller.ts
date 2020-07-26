@@ -43,7 +43,7 @@ export async function people(req: CustomRequest, res: CustomResponse<CommonLocal
     searchedEvent = eventsCollection.find((event) => event.id === searchOptions.eventId);
   }
 
-  res.renderJSX<CommonLocals>("explore/people", {
+  res.render<CommonLocals>("explore/people", {
     ...res.locals,
     searchOptions,
     searchedEvent,

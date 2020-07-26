@@ -29,7 +29,7 @@ export async function adminDev(req: CustomRequest, res: CustomResponse<AdminBase
       }
     }
 
-    res.renderJSX("admin/dev/admin-dev", {
+    res.render("admin/dev/admin-dev", {
       ...res.locals,
       backupDate: await adminDevService.getBackupDate() || undefined,
     });

@@ -10,7 +10,7 @@ import userTimezoneService from "../user-timezone.service";
 import { DashboardLocals } from "./dashboard.middleware";
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
-  res.renderJSX<DashboardLocals>("user/dashboard/dashboard-settings", {
+  res.render<DashboardLocals>("user/dashboard/dashboard-settings", {
     ...res.locals,
     ...req.body,
     timezones: await userTimezoneService.getAllTimeZonesAsOptions()

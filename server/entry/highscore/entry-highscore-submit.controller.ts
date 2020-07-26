@@ -126,7 +126,7 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
     }
   }
 
-  res.renderJSX<EntryLocals>("entry/highscore/entry-highscore-submit", {
+  res.render<EntryLocals>("entry/highscore/entry-highscore-submit", {
     ...res.locals,
     ...context
   });

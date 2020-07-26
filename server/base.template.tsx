@@ -229,8 +229,8 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
       <script type="text/javascript" src={links.staticUrl("/static/scripts/lodash.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/tablesort-number-date.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/chartist.min.js")}></script>
-      {ifTrue(context.browserRefreshUrl, () =>
-        <script src={context.browserRefreshUrl}></script>
+      {ifSet(process.env.BROWSER_REFRESH_URL, () =>
+        <script src={process.env.BROWSER_REFRESH_URL}></script>
       )}
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/site.js?" + launchTime)}></script>
       {context.scripts.map(scriptUrl => <script type="text/javascript" src={scriptUrl}></script>)}

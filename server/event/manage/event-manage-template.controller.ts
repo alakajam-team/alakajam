@@ -10,7 +10,7 @@ export async function eventManageTemplate(req: CustomRequest, res: CustomRespons
     return;
   }
 
-  res.renderJSX<CommonLocals>("event/manage/event-manage-template", {
+  res.render<CommonLocals>("event/manage/event-manage-template", {
     ...res.locals,
     eventTemplates: (await eventTemplateService.findEventTemplates()).models,
   });

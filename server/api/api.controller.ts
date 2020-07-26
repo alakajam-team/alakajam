@@ -365,7 +365,7 @@ function _renderJson(req: CustomRequest, res: CustomResponse<CommonLocals>, stat
   res.status(statusCode);
   if (req.query.pretty) {
     res.locals.pageTitle = "API Preview for " + req.path;
-    res.renderJSX<CommonLocals>("api/api-pretty", {
+    res.render<CommonLocals>("api/api-pretty", {
       ...res.locals,
       apiPath: req.path,
       json

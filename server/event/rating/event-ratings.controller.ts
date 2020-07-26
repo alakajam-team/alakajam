@@ -44,7 +44,7 @@ export async function viewEventRatings(req: CustomRequest, res: CustomResponse<E
       });
     });
 
-    res.renderJSX<EventLocals>("event/rating/event-ratings", {
+    res.render<EventLocals>("event/rating/event-ratings", {
       ...res.locals,
       votesPerCategory,
       ratingCount: voteHistoryCollection.length,

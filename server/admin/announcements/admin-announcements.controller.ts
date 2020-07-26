@@ -32,7 +32,7 @@ export async function adminAnnouncements(req: CustomRequest, res: CustomResponse
   });
   const draftPosts = allPostsCollection.filter((post) => !post.get("published_at"));
 
-  res.renderJSX<AdminAnnouncementContext>("admin/announcements/admin-announcements", {
+  res.render<AdminAnnouncementContext>("admin/announcements/admin-announcements", {
     ...res.locals,
     draftPosts,
     publishedPosts: allPostsCollection.filter((post) => !draftPosts.includes(post)),

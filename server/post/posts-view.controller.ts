@@ -45,7 +45,7 @@ export async function postsView(req: CustomRequest, res: CustomResponse<CommonLo
     paginationBaseUrl += "&user_id=" + userId;
   }
 
-  res.renderJSX<CommonLocals>("post/posts-view", {
+  res.render<CommonLocals>("post/posts-view", {
     ...res.locals,
     posts,
     userLikes: await likeService.findUserLikeInfo(posts, res.locals.user),

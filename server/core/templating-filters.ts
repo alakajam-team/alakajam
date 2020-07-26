@@ -1,86 +1,9 @@
+import { BookshelfModel } from "bookshelf";
 import leftPad from "left-pad";
-import * as lodash from "lodash";
 import { User } from "server/entity/user.entity";
-import slug from "slug";
 import constants from "./constants";
 import * as formats from "./formats";
 import forms from "./forms";
-import { BookshelfModel } from "bookshelf";
-
-export function configure(nunjucksEnvironment) {
-
-  nunjucksEnvironment.addFilter("keys", (obj: object) => {
-    return Object.keys(obj);
-  });
-
-  nunjucksEnvironment.addFilter("values", (obj: object) => {
-    return Object.values(obj);
-  });
-
-  nunjucksEnvironment.addFilter("stringify", (obj: any) => {
-    return JSON.stringify(obj);
-  });
-
-  nunjucksEnvironment.addFilter("pretty", (obj: any) => {
-    if (typeof obj === "object") {
-      return JSON.stringify(obj, null, 2);
-    } else {
-      return obj;
-    }
-  });
-
-  nunjucksEnvironment.addFilter("dump", (obj: any) => {
-    // Override default behavior to prevent escaping non-objects
-    if (typeof obj === "object") {
-      return JSON.stringify(obj);
-    } else {
-      return obj;
-    }
-  });
-
-  nunjucksEnvironment.addFilter("prettyDump", (obj: string) => {
-    return prettyDump(obj).__html;
-  });
-
-  nunjucksEnvironment.addFilter("markdown", (str: string, options?: object) => {
-    return forms.markdownToHtml(str, options);
-  });
-
-  nunjucksEnvironment.addFilter("markdownToText", (str: string) => {
-    return forms.markdownToText(str);
-  });
-
-  nunjucksEnvironment.addFilter("markdownUnescape", markdownUnescape);
-
-  nunjucksEnvironment.addFilter("date", date);
-
-  nunjucksEnvironment.addFilter("dateTime", dateTime);
-
-  nunjucksEnvironment.addFilter("featuredEventDateTime", featuredEventDateTime);
-
-  nunjucksEnvironment.addFilter("relativeTime", relativeTime);
-
-  nunjucksEnvironment.addFilter("duration", duration);
-
-  nunjucksEnvironment.addFilter("timezone", timezone);
-
-  nunjucksEnvironment.addFilter("ordinal", formats.ordinal);
-
-  nunjucksEnvironment.addFilter("digits", digits);
-
-  nunjucksEnvironment.addFilter("leftpad", (n: string | number, toLength: number, char: string | number) => {
-    return n ? leftPad(n, toLength, char) : "";
-  });
-
-  nunjucksEnvironment.addFilter("shuffle", (arr: any[]) => {
-    return arr && Array.isArray(arr) ? lodash.shuffle(arr) : arr;
-  });
-
-  nunjucksEnvironment.addFilter("slug", (str: string) => {
-    return slug(str);
-  });
-
-}
 
 export function date(
   value: number | string | Date,

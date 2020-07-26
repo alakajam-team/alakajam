@@ -48,7 +48,7 @@ export async function viewEventManageRankings(req: CustomRequest, res: CustomRes
     return r1 - r2;
   });
 
-  res.renderJSX<EventLocals>("event/manage/event-manage-rankings", {
+  res.render<EventLocals>("event/manage/event-manage-rankings", {
     ...res.locals,
     entries,
     categoryTitles: eventService.getCategoryTitles(event),

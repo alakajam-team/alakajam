@@ -216,11 +216,11 @@ export function eventShortcutMyPost(user: BookshelfModel, event: BookshelfModel,
           </a>
         )}
         <a href={links.routeUrl(null, "post", "create", { eventId: event.get("id") })} class="btn btn-sm btn-primary mr-1">
-          <span class="fas fa-plus"></span>
+          <span class="fas fa-plus"></span>&nbsp;
           <span class="d-none d-lg-inline">Create post</span>
         </a>
         <a href={links.routeUrl(user, "user", "posts")} class="btn btn-sm btn-primary d-none d-md-inline-block">
-          <span class="fas fa-folder"></span>
+          <span class="fas fa-folder"></span>&nbsp;
           My posts
         </a>
       </div>

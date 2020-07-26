@@ -82,7 +82,7 @@ export async function eventManageThemes(req: CustomRequest, res: CustomResponse<
   const themesCollection = await eventThemeService.findAllThemes(event);
   context.themes = themesCollection.models;
 
-  res.renderJSX<EventLocals>("event/manage/event-manage-themes", {
+  res.render<EventLocals>("event/manage/event-manage-themes", {
     ...res.locals,
     ...context
   });

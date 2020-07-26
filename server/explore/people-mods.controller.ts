@@ -16,7 +16,7 @@ export async function peopleMods(req: CustomRequest, res: CustomResponse<CommonL
   const modsAndAdmins = await userService.findUsers({ isMod: true, orderBy: "title" });
   const mods = modsAndAdmins.filter(user => !admins.find(admin => admin.id === user.id));
 
-  res.renderJSX<PeopleModsContext>("explore/people-mods", {
+  res.render<PeopleModsContext>("explore/people-mods", {
     ...res.locals,
     mods: mods as any,
     admins: admins as any

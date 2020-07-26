@@ -47,7 +47,7 @@ export async function adminTags(req: CustomRequest, res: CustomResponse<CommonLo
     sortBy = "date";
   }
 
-  res.renderJSX<AdminTagsContext>("admin/tags/admin-tags", {
+  res.render<AdminTagsContext>("admin/tags/admin-tags", {
     ...res.locals,
     tags: await tagService.fetchTagStats(fetchTagsOptions),
     sortBy,

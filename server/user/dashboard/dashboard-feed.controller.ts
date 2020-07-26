@@ -52,7 +52,7 @@ export async function dashboardFeed(req: CustomRequest, res: CustomResponse<Dash
   }
 
   // TODO Limit at the SQL-level
-  res.renderJSX<CommonLocals>("user/dashboard/dashboard-feed", {
+  res.render<CommonLocals>("user/dashboard/dashboard-feed", {
     ...res.locals,
     byUser: byUserCollection.slice(0, 20),
     toUser: toUserCollection.slice(0, 20),

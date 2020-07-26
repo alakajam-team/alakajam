@@ -3,7 +3,7 @@
  *
  * Sets up:
  * - Static file serving (CSS/JS/images)
- * - Templating (nunjucks)
+ * - Templating (JSX through jsx-pistols)
  * - Form parsing / file upload (formidable)
  * - Error pages
  */
@@ -11,11 +11,9 @@
 import * as bodyParser from "body-parser";
 import connectSessionKnex from "connect-session-knex";
 import * as cookies from "cookies";
-import express from "express";
-import { NextFunction, Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import expressSession from "express-session";
 import JSXPistols, { defaultBabelOptions } from "jsx-pistols";
-import * as nunjucks from "nunjucks";
 import * as path from "path";
 import * as randomKey from "random-key";
 import { CommonLocals } from "server/common.middleware";
@@ -32,20 +30,11 @@ import fileStorage from "./file-storage";
 import log from "./log";
 import { setUpJSXLocals } from "./middleware.jsx";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
-import * as templatingFilters from "./templating-filters";
-import * as templatingGlobals from "./templating-globals";
 
 const LAUNCH_TIME = Date.now();
 
-export let NUNJUCKS_ENV: nunjucks.Environment | undefined;
-
 const jsxPistolsBabelOptions = defaultBabelOptions;
 jsxPistolsBabelOptions.plugins.push("@babel/plugin-proposal-optional-chaining");
-
-export const jsxPistols = new JSXPistols({
-  rootPath: path.join(__dirname, ".."),
-  babelOptions: process.env.NODE_ENV === "production" ? "skip" : jsxPistolsBabelOptions
-});
 
 /*
  * Setup app middleware
@@ -82,16 +71,24 @@ export async function configure(app: express.Application) {
   app.use(await createSessionMiddleware(app.locals.sessionStore));
 
   // Templating
-  app.set("views", path.join(constants.ROOT_PATH, "/server"));
-  const njEnv = NUNJUCKS_ENV = setupNunjucks(app);
-
-  // Templating: custom globals and filters
-  templatingGlobals.configure({
-    devMode: app.locals.devMode,
-    launchTime: LAUNCH_TIME,
-    nunjucksEnvironment: njEnv
+  const jsxPistols = new JSXPistols({
+    rootPath: path.join(__dirname, ".."),
+    babelOptions: process.env.NODE_ENV === "production" ? "skip" : jsxPistolsBabelOptions,
+    expressApp: app
   });
-  templatingFilters.configure(njEnv);
+  const expressEngine = async (filePath: string, options: any, callback: Function) => {
+    try {
+      const output = await jsxPistols.render(filePath, options);
+      callback(null, output);
+    } catch (e) {
+      callback(e);
+    }
+  };
+  app.engine("template.js", expressEngine);
+  app.engine("template.tsx", expressEngine);
+  app.set("view engine", "template.tsx");
+
+  app.set("views", path.join(constants.ROOT_PATH, "/server"));
 
   // Body parsers config
   app.use(bodyParser.urlencoded({ extended: false }));
@@ -105,6 +102,8 @@ export async function configure(app: express.Application) {
   // Templating: rendering context
   app.use(function templateTooling(req: CustomRequest, res: CustomResponse<Mutable<CommonLocals>>, next: NextFunction) {
     res.locals.rootUrl = config.ROOT_URL;
+    res.locals.devMode = app.locals.devMode;
+    res.locals.launchTime = LAUNCH_TIME;
     setUpJSXLocals(req, res);
 
     let alreadyRenderedWithError = false;
@@ -134,17 +133,6 @@ export async function configure(app: express.Application) {
       if (!alreadyRenderedWithError) {
         const mergedContext = Object.assign(res.locals, context);
         nativeRender.call(res, template, mergedContext);
-      }
-    };
-
-    res.renderJSX = async <T extends CommonLocals> (templateName: string, context: T) => {
-      if (!alreadyRenderedWithError) {
-        try {
-          res.write("<!doctype html>" + await jsxPistols.render(templateName + ".template", context));
-          res.end();
-        } catch (e) {
-          errorPage(req, res, 500, e, {showErrorDetails: app.locals.devMode});
-        }
       }
     };
 
@@ -181,29 +169,6 @@ export function logErrorAndReturn(value: any) {
     }
     return value;
   };
-}
-
-function setupNunjucks(app: express.Application) {
-  const loader = new nunjucks.FileSystemLoader(app.get("views"), {
-    watch: app.locals.devMode,
-    noCache: app.locals.devMode,
-  });
-
-  const env = new nunjucks.Environment(loader, {});
-
-  const engine = function(filePath, ctx, cb) {
-    env.render(path.extname(this.name) ? this.name : this.name + this.ext, ctx, cb);
-  };
-
-  let engineName = app.get("view engine");
-
-  if (!engineName) {
-    engineName = "html";
-    app.set("view engine", engineName);
-  }
-
-  app.engine(engineName, engine);
-  return env;
 }
 
 function cleanupFormFilesCallback(req: Request, res: Response) {

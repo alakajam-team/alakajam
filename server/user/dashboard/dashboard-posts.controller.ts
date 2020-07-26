@@ -24,7 +24,7 @@ export async function dashboardPosts(req: CustomRequest, res: CustomResponse<Das
   });
   const draftPosts = allPostsCollection.filter((post) => !post.get("published_at"));
 
-  res.renderJSX<DashboardLocals>("user/dashboard/dashboard-posts", {
+  res.render<DashboardLocals>("user/dashboard/dashboard-posts", {
     ...res.locals,
     publishedPosts: allPostsCollection.filter((post) => !draftPosts.includes(post)),
     draftPosts,

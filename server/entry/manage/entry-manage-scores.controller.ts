@@ -36,7 +36,7 @@ export async function entryHighscoresManage(req: CustomRequest, res: CustomRespo
     }
   }
 
-  res.renderJSX<EntryLocals>("entry/manage/entry-manage-scores", {
+  res.render<EntryLocals>("entry/manage/entry-manage-scores", {
     ...res.locals,
     highScoresCollection: await highscoreService.findHighScores(entry, {
       fetchAll: true,

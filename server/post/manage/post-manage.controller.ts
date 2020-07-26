@@ -38,7 +38,7 @@ export async function postEdit(req: CustomRequest, res: CustomResponse<PostLocal
     }
 
     // Fetch related event info
-    res.renderJSX<PostLocals>("post/manage/post-manage", await buildPostContext(res.locals));
+    res.render<PostLocals>("post/manage/post-manage", await buildPostContext(res.locals));
   } else {
     res.errorPage(403);
   }
@@ -141,7 +141,7 @@ export async function postSave(req: CustomRequest, res: CustomResponse<PostLocal
       res.locals.post = post;
       const context: any = await buildPostContext(res.locals);
       context.errorMessage = errorMessage;
-      res.renderJSX<PostLocals>("post/manage/post-manage", {
+      res.render<PostLocals>("post/manage/post-manage", {
         ...res.locals,
         ...context
       });

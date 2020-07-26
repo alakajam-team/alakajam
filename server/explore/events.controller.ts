@@ -67,7 +67,7 @@ export async function events(req: CustomRequest, res: CustomResponse<CommonLocal
     }
   }
 
-  res.renderJSX<EventsContext>("explore/events", {
+  res.render<EventsContext>("explore/events", {
     ...res.locals,
     pending,
     open,

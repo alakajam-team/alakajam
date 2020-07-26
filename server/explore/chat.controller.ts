@@ -7,5 +7,5 @@ import { CustomRequest, CustomResponse } from "server/types";
 export async function chat(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   res.locals.pageTitle = "Chat";
 
-  res.renderJSX("explore/chat", res.locals);
+  res.render("explore/chat", res.locals);
 }

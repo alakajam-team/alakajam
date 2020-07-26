@@ -27,7 +27,7 @@ export async function postView(req: CustomRequest, res: CustomResponse<PostLocal
       res.locals.pageImage = templating.staticUrl(res.locals.pageImage);
     }
 
-    res.renderJSX<CommonLocals>("post/post-view", context);
+    res.render<CommonLocals>("post/post-view", context);
   } else {
     res.errorPage(403);
   }

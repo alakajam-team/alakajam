@@ -30,7 +30,7 @@ export async function adminStatus(req: CustomRequest, res: CustomResponse<Common
     // Nothing
   }
 
-  res.renderJSX<AdminStatusContext>("admin/status/admin-status", {
+  res.render<AdminStatusContext>("admin/status/admin-status", {
     ...res.locals,
     devMode: !!res.app.locals.devMode,
     pictureResizeEnabled,

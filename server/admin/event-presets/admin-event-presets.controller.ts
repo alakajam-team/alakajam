@@ -98,7 +98,7 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
       m: rawOffsetWithoutDays % 60,
     };
   }
-  res.renderJSX<AdminEventPresetsContext>("admin/event-presets/admin-event-presets", {
+  res.render<AdminEventPresetsContext>("admin/event-presets/admin-event-presets", {
     ...res.locals,
     ...context
   });

@@ -4,7 +4,6 @@
 
 import * as htmlToText from "html-to-text";
 import * as luxon from "luxon";
-import * as nunjucks from "nunjucks";
 import removeMarkdown from "remove-markdown";
 import sanitizeHtml from "sanitize-html";
 import showdown from "showdown";
@@ -22,7 +21,6 @@ export default {
   sanitizeMarkdown,
   sanitizeInt,
 
-  capitalize: (new nunjucks.Environment() as any).filters.capitalize,
   slug: slugCustom,
 
   isEmail,

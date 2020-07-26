@@ -66,7 +66,7 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
   // Render page
   const eventPresetsCollection = await eventPresetService.findEventPresets();
   const eventTemplatesCollection = await eventTemplateService.findEventTemplates();
-  res.renderJSX<AdminEventContext>("admin/event-templates/admin-event-templates", {
+  res.render<AdminEventContext>("admin/event-templates/admin-event-templates", {
     eventPresets: eventPresetsCollection.models,
     eventTemplates: eventTemplatesCollection.models,
     editEventTemplate,

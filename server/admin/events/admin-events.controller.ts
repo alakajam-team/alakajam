@@ -23,7 +23,7 @@ export async function adminEvents(req: CustomRequest, res: CustomResponse<Common
     return;
   }
 
-  res.renderJSX<AdminEventsContext>("admin/events/admin-events", {
+  res.render<AdminEventsContext>("admin/events/admin-events", {
     ...res.locals,
     events: eventsCollection.models
   });

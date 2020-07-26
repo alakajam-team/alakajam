@@ -69,7 +69,7 @@ async function myEntryHavingJoined(res: CustomResponse<EventLocals>) {
   });
 
   await user.loadDetails();
-  res.renderJSX<EventLocals>("event/dashboard/event-my-dashboard", {
+  res.render<EventLocals>("event/dashboard/event-my-dashboard", {
     ...res.locals,
     entry,
     latestPost,
@@ -81,5 +81,5 @@ async function myEntryHavingJoined(res: CustomResponse<EventLocals>) {
 
 
 async function myEntryNotHavingJoined(res: CustomResponse<EventLocals>) {
-  res.renderJSX<EventLocals>("event/dashboard/event-my-dashboard-join", res.locals);
+  res.render<EventLocals>("event/dashboard/event-my-dashboard-join", res.locals);
 }

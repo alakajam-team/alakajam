@@ -72,7 +72,7 @@ async function renderArticle(
 
   if (context.articleName && context.articleBody) {
     context.pageTitle = context.articleName;
-    res.renderJSX<ArticleContext>("docs/article", context);
+    res.render<ArticleContext>("docs/article", context);
   } else {
     res.errorPage(404);
   }

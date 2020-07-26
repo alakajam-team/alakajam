@@ -81,7 +81,7 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
     entryCountByPlatform[platform.get("id")] = await platformService.countEntriesByPlatform(platform);
   }
 
-  res.renderJSX<AdminPlatformsContext>("admin/platforms/admin-platforms", {
+  res.render<AdminPlatformsContext>("admin/platforms/admin-platforms", {
     ...res.locals,
     platforms: platformCollection.models,
     entryCount: entryCountByPlatform,

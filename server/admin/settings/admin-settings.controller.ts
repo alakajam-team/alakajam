@@ -82,7 +82,7 @@ export async function adminSettings(req: CustomRequest, res: CustomResponse<Comm
     };
   }
 
-  res.renderJSX<AdminSettingsContext>("admin/settings/admin-settings", {
+  res.render<AdminSettingsContext>("admin/settings/admin-settings", {
     ...res.locals,
     settings: editableSettings,
     editSetting

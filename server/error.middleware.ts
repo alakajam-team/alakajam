@@ -64,7 +64,7 @@ export function errorPage(
 
   // Page rendering
   res.status(httpCode);
-  res.renderJSX<CommonLocals>("error", {
+  res.render<CommonLocals>("error", {
     ...res.locals,
     code: httpCode,
     title,
