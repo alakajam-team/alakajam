@@ -11,7 +11,7 @@ import { BookshelfModel } from "bookshelf";
 
 export function eventJumbotron(event, eventParticipation, featuredPost, user, userLikes,
                                entry, tournamentScore, path, options: { inviteToJoin?: boolean } = {}) {
-  const isTournament = event.get("status_tournament") !== "disabled" && event.get("status_tournament") !== "off";
+  const isTournament = !["disabled", "off"].includes(event.get("status_tournament"));
   const shortlistEliminationInfo = event.related("details").get("shortlist_elimination");
 
   return <div class="event-jumbotron" style={backgroundImage(event)}>
@@ -25,7 +25,6 @@ export function eventJumbotron(event, eventParticipation, featuredPost, user, us
 
             <div class="col-lg-8 mb-3 mb-lg-0 align-self-center">
               {eventJumbotronCountdown(event, user)}
-
               {eventJumbotronPost(featuredPost, user, userLikes)}
             </div>
           </div>

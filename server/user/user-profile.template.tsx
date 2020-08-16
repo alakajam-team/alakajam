@@ -34,7 +34,7 @@ export default function render(context: CommonLocals) {
         <h3 class="profile__name">
           {profileUser.get("name")}
           <span class="profile__id">
-            #{profileUser.get("id")}
+            &nbsp;#{profileUser.get("id")}
           </span>
         </h3>
         <p class="profile__joined">
@@ -60,7 +60,7 @@ export default function render(context: CommonLocals) {
           {ifTrue(socialLinks.website, () =>
             <div class="profile__social-link">
               <a href={socialLinks.website}>
-                <span class="fas fa-home" style="color: black; font-size: 24px"></span> Website
+                <span class="fas fa-home mr-2" style="color: black; font-size: 24px"></span>Website
               </a>
             </div>
           )}
@@ -72,7 +72,8 @@ export default function render(context: CommonLocals) {
           {ifTrue(socialLinks.twitter, () =>
             <div class="profile__social-link">
               <a href={`https://www.twitter.com/${socialLinks.twitter}`}>
-                <img src={links.staticUrl("/static/images/social/twitter.svg")} class="no-border" style="width: 32px" /> Twitter
+                <img src={links.staticUrl("/static/images/social/twitter.svg")} class="no-border mr-2" style="width: 32px" />
+                @{socialLinks.twitter}
               </a>
             </div>
           )}

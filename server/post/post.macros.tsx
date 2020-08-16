@@ -37,7 +37,7 @@ export function post(postModel: BookshelfModel, options: {
         </a>
         {ifTrue(security.canUserWrite(options.readingUser, postModel, options), () =>
           <a class="btn btn-outline-secondary btn-sm ml-2" href={links.routeUrl(postModel, "post", "edit")}>
-            <span class="fas fa-pencil-alt"></span>
+            <span class="fas fa-pencil-alt mr-1"></span>
             <span class="d-none d-md-inline">Edit</span>
           </a>
         )}
@@ -99,6 +99,7 @@ export function post(postModel: BookshelfModel, options: {
                   <img data-src={links.pictureUrl(relatedEntry.pictureIcon(), relatedEntry)}
                     class="no-border js-lazy" style="max-height: 32px; margin-top: -2px;" />
                 )}
+                &nbsp;
                 {relatedEntry.get("title")}
               </a>
             </span>

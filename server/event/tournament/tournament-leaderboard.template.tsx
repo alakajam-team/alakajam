@@ -12,15 +12,15 @@ import * as userMacros from "server/user/user.macros";
 
 export default function render(context: CommonLocals) {
   const { event, tournamentScores, entries, user, categoryTitles } = context;
-  const hasEventBanner = event.related("details").get("banner") && event.get("status_tournament") === "results";
+  const hasEventBanner = event.get("status_tournament") === "results";
 
   return base(context,
-    <div>
+    <>
       {ifTrue(hasEventBanner, () =>
         eventMacros.eventBanner(event)
       )}
 
-      <div class={"container " + hasEventBanner ? "event-banner-offset" : ""}>
+      <div class={"container " + (hasEventBanner ? "event-banner-offset" : "")}>
         <div class="row">
           <div class="col-12">
             {ifTrue(event.get("status_tournament") === "results", () =>
@@ -113,7 +113,7 @@ export default function render(context: CommonLocals) {
           </div>
         </div>
       )}
-    </div>);
+    </>);
 }
 
 
@@ -150,7 +150,7 @@ function podium(event, tournamentScores = []) {
 }
 
 function podiumPosition(position, ranking, tournamentScore?) {
-  return <div class={`col-md-4 results-podium__tournament position-${position} ranking-${ranking} ${tournamentScore ? "results-podium__step" : ""}`}>
+  return <div class={`col-md-4 results-podium__tournament position-${position} ranking-${ranking} ${tournamentScore ? " results-podium__step" : ""}`}>
     {ifSet(tournamentScore, () =>
       <div class="row">
         {userMacros.userThumb(tournamentScore.related("user"), { fullWidth: true, centered: true })}

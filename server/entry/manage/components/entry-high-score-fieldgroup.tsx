@@ -48,7 +48,7 @@ export function highscoreFieldGroup(entry, tournamentAdvertising) {
       </div>
       <div class="form-group">
         {formMacros.check("allow-tournament-use", "Allow game use for tournaments",
-          entryDetails.get("allow_tournament_use"), { noMargin: true })}
+          entryDetails.get("allow_tournament_use"), { noMargin: true })}{" "}
         <a href="/article/docs/akj-tournament-rules" target="_blank">(learn more)</a>
       </div>
     </div>

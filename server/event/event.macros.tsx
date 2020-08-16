@@ -30,7 +30,7 @@ export function entryThumb(entry: EntryBookshelfModel, options: {
               range(1, 8).map(categoryIndex => {
                 const ranking = details.get("ranking_" + categoryIndex);
                 if (ranking && ranking <= 3) {
-                  return <span class="entry-results__category-medal medal-category-{categoryIndex} medal-ranking-{ranking} in-picture"></span>;
+                  return <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-${ranking} in-picture`}></span>;
                 }
               })
             )}
@@ -82,10 +82,9 @@ export function entryThumb(entry: EntryBookshelfModel, options: {
 }
 
 export function entrySmallThumb(entry: EntryBookshelfModel, options: { noShadow?: boolean; customMessage?: string } = {}) {
-  const authors = entry.sortedUserRoles();
-
   return <div class="entry-small-thumb" style={options.noShadow ? "box-shadow: none" : ""}>
     {ifTrue(entry && entry.get("id"), () => {
+      const authors = entry.sortedUserRoles();
       const customPicturePath = entry.pictureIcon();
       const picturePath = customPicturePath
         ? links.pictureUrl(customPicturePath, entry)
@@ -115,12 +114,12 @@ export function entrySmallThumb(entry: EntryBookshelfModel, options: { noShadow?
 }
 
 export function eventBanner(event: BookshelfModel) {
-  const banner = event.related("details").get("banner");
-  return <div class="event-banner__container">
-    <div class="event-banner__origin">
-      <div class="event-banner" style={`background-image: url('${banner ? banner : links.staticUrl("/static/images/default-background.png")}')`}>
-        <div class="event-banner__gradient"></div>
-      </div>
+  const background = event.related("details").get("background");
+  const logo = event.get("logo");
+  return <div class="event-banner"
+    style={`background-image: url('${background ? background : links.staticUrl("/static/images/default-background.png")}')`}>
+    <div class="event-banner__logo">
+      <img src={logo} />
     </div>
   </div>;
 }
@@ -164,7 +163,7 @@ export function eventShortcutMyEntry(event: BookshelfModel, userEntry: EntryBook
   if (event.get("status_entry") === "closed") {
     customMessage = "Entry submissions are closed.";
   } else if (event.get("status_entry") !== "open" && event.get("status_entry") !== "open_unranked") {
-    customMessage = "Entry submissions are !open yet.";
+    customMessage = "Entry submissions are not open yet.";
   }
 
   return <div class="action-banner">
@@ -187,12 +186,12 @@ export function eventShortcutMyEntry(event: BookshelfModel, userEntry: EntryBook
       {ifNotSet(userEntry, () => {
         if (event.get("status_entry") !== "open" && event.get("status_entry") !== "open_unranked") {
           return <a href="#" class="btn btn-outline-secondary disabled mt-2">
-            <span class="fas fa-plus"></span>
+            <span class="fas fa-plus mr-1"></span>
             Create entry
           </a>;
         } else {
           return <a href={links.routeUrl(event, "event", "create-entry")} class="btn btn-lg btn-primary mt-2">
-            <span class="fas fa-plus"></span>
+            <span class="fas fa-plus mr-1"></span>
             Create entry
           </a>;
         }
@@ -210,17 +209,17 @@ export function eventShortcutMyPost(user: BookshelfModel, event: BookshelfModel,
       )}
       <div class="btn-group  btn-group-sm">
         {ifTrue(userPost && !options.buttonsOnly, () =>
-          <a href={links.routeUrl(userPost, "post", "edit")} class="btn btn-sm btn-primary mr-1">
-            <span class="fas fa-pencil-alt"></span>
+          <a href={links.routeUrl(userPost, "post", "edit")} class="btn btn-sm btn-primary mr-2">
+            <span class="fas fa-pencil-alt mr-1"></span>
             <span class="d-none d-lg-inline">Edit</span>
           </a>
         )}
-        <a href={links.routeUrl(null, "post", "create", { eventId: event.get("id") })} class="btn btn-sm btn-primary mr-1">
-          <span class="fas fa-plus"></span>&nbsp;
+        <a href={links.routeUrl(null, "post", "create", { eventId: event.get("id") })} class="btn btn-sm btn-primary mr-2">
+          <span class="fas fa-plus mr-1"></span>
           <span class="d-none d-lg-inline">Create post</span>
         </a>
         <a href={links.routeUrl(user, "user", "posts")} class="btn btn-sm btn-primary d-none d-md-inline-block">
-          <span class="fas fa-folder"></span>&nbsp;
+          <span class="fas fa-folder mr-1"></span>
           My posts
         </a>
       </div>

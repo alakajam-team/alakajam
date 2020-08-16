@@ -15,7 +15,7 @@ export function userThumb(user: BookshelfModel, options: {
     options = {};
   }
 
-  return <div class={`"user-thumb ${options.fullWidth ? "full-width" : "col-sm-4"} 
+  return <div class={`user-thumb ${options.fullWidth ? "full-width" : "col-sm-4"} 
         ${options.centered ? "centered" : ""} ${options.pending ? "pending" : ""}`}>
     <div class="user-thumb__title">
       <a href={links.routeUrl(user, "user")}>
@@ -60,9 +60,9 @@ export function userLink(user: User) {
 
 export function twitchLink(user: User) {
   const socialLinks = user.related("details").get("social_links");
-  if (socialLinks.twitch) {
+  if (socialLinks?.twitch) {
     return <a href={`https://www.twitch.tv/${socialLinks.twitch}`}>
-      <img src={links.staticUrl("/static/images/social/twitch.png")} class="no-border" style="width: 32px" /> {socialLinks.twitch}
+      <img src={links.staticUrl("/static/images/social/twitch.png")} class="no-border mr-2" style="width: 32px" />{socialLinks.twitch}
     </a>;
   }
 }

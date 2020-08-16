@@ -36,7 +36,7 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
       <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon32.png")} sizes="32x32" />
       <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon196.png")} sizes="196x196" />
       <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet" />
-      {context.inlineStyles.map(inlineStyle => `<style type="text/css">${inlineStyle}</style>`).join("\n")}
+      <style type="text/css">{context.inlineStyles.join("\n")}</style>
       <link rel="stylesheet" type="text/css" href={links.staticUrl("/dist/client/css/index.css?" + launchTime)} />
       <script id="js-alerts" type="application/json" dangerouslySetInnerHTML={{ __html: JSON.stringify(context.alerts) }} />
     </head>

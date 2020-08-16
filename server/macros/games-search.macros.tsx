@@ -39,7 +39,7 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
       <div class="form-group">
         <label for="platforms">Platforms</label>
         <select name="platforms" class="form-control js-select" multiple size={2}>
-          {context.platforms.map(platform =>
+          {context.platforms?.map(platform =>
             <option value={platform.get("id")} selected={context.searchOptions.platforms
               && context.searchOptions.platforms.includes(platform.get("id"))}>{platform.get("name")}</option>
           )}
@@ -49,7 +49,7 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
         <label for="platforms">Tags</label>
         <select name="tags" class="form-control js-tags-select" multiple
           data-find-tags-url={links.routeUrl(null, "tags", "ajax-find-tags")}>
-          {context.searchOptions.tags.map(tagInfo =>
+          {context.searchOptions.tags?.map(tagInfo =>
             <option value={tagInfo.id} selected>{tagInfo.value}</option>
           )}
         </select>
@@ -57,7 +57,7 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
       <div class="form-group">
         <label for="divisions">Divisions</label>
         <select name="divisions" class="form-control js-select" multiple>
-          {divisions.map(division => {
+          {divisions?.map(division => {
             const active = !context.searchOptions.divisions || context.searchOptions.divisions.includes(division);
             return <option value={division} selected={active}>{capitalize(division)}</option>;
           })}
@@ -67,13 +67,13 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
         {ifSet(context.user, () =>
           <div>
             <label>
-              <input type="checkbox" name="hideReviewed" checked={context.searchOptions.notReviewedById} />
+              <input type="checkbox" name="hideReviewed" checked={context.searchOptions.notReviewedById} class="mr-1" />
               Hide rated or commented by me
             </label>
           </div>
         )}
         <div>
-          <label><input type="checkbox" name="highScoresSupport" checked={context.searchOptions.highScoresSupport} />
+          <label><input type="checkbox" name="highScoresSupport" checked={context.searchOptions.highScoresSupport} class="mr-1" />
           High scores support
           </label>
         </div>
@@ -82,7 +82,7 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
             <hr />
             <b>Moderator filters</b>
             <div>
-              <label><input type="checkbox" name="allowsTournamentUse" checked={context.searchOptions.allowsTournamentUse} />
+              <label><input type="checkbox" name="allowsTournamentUse" checked={context.searchOptions.allowsTournamentUse} class="mr-1" />
               Allows tournament use
               </label>
             </div>
@@ -100,21 +100,21 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
 export function searchDescription(searchOptions: any, searchedEvent) {
   if (searchOptions.search || searchOptions.user || searchOptions.eventId !== undefined || searchOptions.tags
     || searchOptions.divisions || searchOptions.highScoresSupport
-    || searchOptions.allowsTournamentUse || searchOptions.platforms.length > 0) {
+    || searchOptions.allowsTournamentUse || searchOptions.platforms?.length > 0) {
     return <div class="count" style="font-size: 1rem">{/* TODO rename CSS class to "legend" */}
       {searchOptions.user ? ("made by " + searchOptions.user.get("title")) : ""}
-      {ifTrue(searchOptions.tags && searchOptions.tags.length > 0, () =>
+      {ifTrue(searchOptions.tags && searchOptions.tags?.length > 0, () =>
         <>
-          with tag{searchOptions.tags.length > 1 ? "s" : ""}
-          {searchOptions.tags.map((tag, index) =>
-            tag.value + (index < searchOptions.tags.length - 1 ? " || " : "")
+          with tag{searchOptions.tags?.length > 1 ? "s" : ""}
+          {searchOptions.tags?.map((tag, index) =>
+            tag.value + (index < searchOptions.tags?.length - 1 ? " || " : "")
           )}
           {searchedEvent ? "in " + searchedEvent.get("title") : ""}
           {searchOptions.eventId === null ? "in external events" : ""}
         </>
       )}
-      {searchOptions.platforms.length > 0 ? "on restricted platforms" : ""}
-      {searchOptions.divisions ? "in division" + (searchOptions.divisions.length > 1 ? "s" : "")
+      {searchOptions.platforms?.length > 0 ? "on restricted platforms" : ""}
+      {searchOptions.divisions ? "in division" + (searchOptions.divisions?.length > 1 ? "s" : "")
         + " '" + (searchOptions.divisions.join(", ").replace(", unranked", "")) + "'" : ""}
       {searchOptions.highScoresSupport ? "with high scores support" : ""}
       {searchOptions.allowsTournamentUse ? "allowing tournament use" : ""}

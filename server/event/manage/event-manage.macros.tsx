@@ -38,7 +38,7 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
         <div class="form-group mr-3">
           <label class="mr-1" for="countdown-message">Message</label>
           <input type="text" class="form-control" style="min-width: 250px"
-            name="countdown-message" value={event?.get("countdown_config").message} />
+            name="countdown-message" value={event?.get("countdown_config")?.message} />
         </div>
         <div class="form-group">
           <label for="countdown-link">Link page&nbsp;

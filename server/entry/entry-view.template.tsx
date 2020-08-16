@@ -156,16 +156,14 @@ export default function render(context: EntryLocals) {
             <h3 class="mt-4">Author{entry.related<BookshelfCollection>("userRoles").models.length > 1 ? "s" : ""}</h3>
 
             <div class="card card-body pb-2">
-              <div class="row">
-                {entry.sortedUserRoles().map(userRole =>
-                  userMacros.userThumb(userRole.related<BookshelfModel>("user"), { fullWidth: true })
-                )}
-                {ifTrue(security.canUserWrite(user, entry), () =>
-                  entry.related<BookshelfCollection>("invites").models.map(invite =>
-                    userMacros.userThumb(invite.related("invited"), { fullWidth: true, pending: true })
-                  )
-                )}
-              </div>
+              {entry.sortedUserRoles().map(userRole =>
+                userMacros.userThumb(userRole.related<BookshelfModel>("user"), { fullWidth: true })
+              )}
+              {ifTrue(security.canUserWrite(user, entry), () =>
+                entry.related<BookshelfCollection>("invites").models.map(invite =>
+                  userMacros.userThumb(invite.related("invited"), { fullWidth: true, pending: true })
+                )
+              )}
             </div>
 
             {ifTrue(entry.get("status_high_score") !== "off", () =>
@@ -209,7 +207,7 @@ function picture(entry, event) {
             const ranking = details.get("ranking_" + categoryIndex);
             if (ranking && ranking <= 3) {
               return <a href="#results">
-                <span class="entry-results__category-medal medal-category-{categoryIndex} medal-ranking-{ranking} in-picture"></span>
+                <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-${ranking} in-picture`}></span>
               </a>;
             }
           })

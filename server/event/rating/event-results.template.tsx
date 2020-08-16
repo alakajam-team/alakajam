@@ -40,13 +40,12 @@ export default function render(context: CommonLocals) {
           {ifTrue(rankings.length > 0 && division !== enums.DIVISION.UNRANKED, () =>
             <div class="row">
               <div class={`col-sm-9 col-md-${12 - categoryTitles.length} mb-3`}>&nbsp;</div>
-              {categoryTitles.map((title, index) => {
+              {categoryTitles.map((title, index) =>
                 ifFalse(flags.scoreSpacePodium && index + 1 === 7, () =>
-                  <div class={"col-sm-2 col-md-1 text-center " + (index - 1) !== sortedBy ? "d-none d-md-block" : ""}>
+                  <div class={"col-sm-2 col-md-1 text-center " +((index - 1) !== sortedBy ? "d-none d-md-block" : "")}>
                     <span style="font-weight: bold">{categoryTitles[index]}</span>
                   </div>
-                );
-              }
+                )
               )}
             </div>
           )}
@@ -61,7 +60,7 @@ export default function render(context: CommonLocals) {
                       return <h2>{ordinal(currentRanking)}</h2>;
                     })}
                   </div>
-                  <div class="col-sm-7 col-md-{11 - categoryTitles.length} mb-1">
+                  <div class={`col-sm-7 col-md-${11 - categoryTitles.length} mb-1`}>
                     {eventMacros.entrySmallThumb(entry)}
                   </div>
                   {categoryTitles.map((title, index) => {
@@ -103,9 +102,9 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
     return <div class="text-center results-links">
       <span class="btn-group mr-sm-4 mb-2">
         {["solo", "team", "unranked"].map(division =>
-          <a href="?sortBy={selectedCategoryIndex}&amp;division={division}" type="button"
-            class="btn btn-primary results-links__division {'active' if selectedDivision === division}">
-            <span class={constants.DIVISION_ICONS[division]}></span>
+          <a href={`?sortBy=${selectedCategoryIndex}&amp;division=${division}`} type="button"
+            class={`btn btn-primary results-links__division ${selectedDivision === division ? "active" : ""}`}>
+            <span class={constants.DIVISION_ICONS[division]}></span>&nbsp;
             {capitalize(division)}
           </a>
         )}
@@ -116,9 +115,9 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
           {categoryTitles.map((title, index) => {
             if (title) {
               const categoryIndex = index + 1;
-              return <a href={`?sortBy=${categoryIndex}&amp;division=${!(flags.scoreSpacePodium && categoryIndex=== 7)
+              return <a href={`?sortBy=${categoryIndex}&amp;division=${!(flags.scoreSpacePodium && categoryIndex === 7)
                 ? selectedDivision : ""}`} type="button"
-              class={"btn btn-primary results-links__category " + (selectedCategoryIndex === categoryIndex ? "active" : "")}>
+                class={"btn btn-primary results-links__category " + (selectedCategoryIndex === categoryIndex ? "active" : "")}>
                 <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-1`}></span>&nbsp;
                 <span class="d-none d-lg-inline">{categoryTitles[index]}</span>
               </a>;
@@ -190,16 +189,16 @@ function podiumSteps(rankings, categoryTitles, division, sortedBy, options) {
   if (rankings.length > 0 && division !== enums.DIVISION.UNRANKED) {
     const podiumStepEls = [];
 
-    const trophyPos1 = "ranking-" + rankings[0].related("details").get("ranking_" + sortedBy);
-    podiumStepEls.push(<div class={"col-md-4 position-1 "
-      + (!options.scoreSpacePodium ? trophyPos1 : "award" ) + " results-podium__step"}>
+    const trophyPos1 = " ranking-" + rankings[0].related("details").get("ranking_" + sortedBy);
+    podiumStepEls.push(<div class={"col-md-4 position-1"
+      + (!options.scoreSpacePodium ? trophyPos1 : " award") + " results-podium__step"}>
       {eventMacros.entryThumb(rankings[0], entryThumbOptions)}
       {ifTrue(options.scoreSpacePodium, () => <span class="award-label">Streamer's<br />Choice</span>)}
     </div>);
 
-    const trophyPos2 = rankings.length >= 2 ? "ranking-" + rankings[1].related("details").get("ranking_" + sortedBy) : "";
-    podiumStepEls.push(<div class={"col-md-4 position-2 "
-      + (!options.scoreSpacePodium ? trophyPos2 : "award ") + (rankings.length >= 2 ?"results-podium__step" : "")}>
+    const trophyPos2 = rankings.length >= 2 ? " ranking-" + rankings[1].related("details").get("ranking_" + sortedBy) : "";
+    podiumStepEls.push(<div class={"col-md-4 position-2"
+      + (!options.scoreSpacePodium ? trophyPos2 : " award") + (rankings.length >= 2 ? " results-podium__step" : "")}>
       {ifTrue(rankings.length >= 2, () =>
         <div>
           {eventMacros.entryThumb(rankings[1], entryThumbOptions)}
@@ -208,9 +207,9 @@ function podiumSteps(rankings, categoryTitles, division, sortedBy, options) {
       )}
     </div>);
 
-    const trophyPos3 = rankings.length >= 2 ? "ranking-" + rankings[2].related("details").get("ranking_" + sortedBy) : "";
-    podiumStepEls.push(<div class={"col-md-4 position-3 "
-      + (!options.scoreSpacePodium ? trophyPos3 : "award") + (rankings.length >= 3 ?"results-podium__step" : "")}>
+    const trophyPos3 = rankings.length >= 2 ? " ranking-" + rankings[2].related("details").get("ranking_" + sortedBy) : "";
+    podiumStepEls.push(<div class={"col-md-4 position-3"
+      + (!options.scoreSpacePodium ? trophyPos3 : " award") + (rankings.length >= 3 ? " results-podium__step" : "")}>
       {ifTrue(rankings.length >= 3, () =>
         <div>
           {eventMacros.entryThumb(rankings[2], entryThumbOptions)}

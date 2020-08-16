@@ -2,11 +2,13 @@ import * as React from "preact";
 
 export function sidebar(sidebarParam, path, options: { class?: string } = {}) {
   return <div class={options.class}>
-    {sidebarParam.map(sidebarGroup => { sidebarLinks(sidebarGroup.title, sidebarGroup.links, path); })}
+    {sidebarParam.map(sidebarGroup =>
+      sidebarLinks(sidebarGroup.title, sidebarGroup.links, path)
+    )}
   </div>;
 }
 
-function sidebarLinks(title, links, path) {
+function sidebarLinks(title: string, links, path: string) {
   if (links) {
     return <>
       <div class="list-group sidebar">
@@ -16,7 +18,7 @@ function sidebarLinks(title, links, path) {
         {links.map(link =>
           <>
             {sidebarLink(link.title, link.url, path)}
-            {link.subLinks.map(subLink =>
+            {link.subLinks?.map(subLink =>
               sidebarSubLink(subLink.title, subLink.url, path)
             )}
           </>
@@ -28,14 +30,14 @@ function sidebarLinks(title, links, path) {
 }
 
 function sidebarLink(label, url, path, options: { dashboardAdminMode?: boolean } = {}) {
-  return <a href={url} class={"list - group - item sidebar__link " + (path === url ? "active" : "")
+  return <a href={url} class={"list-group-item sidebar__link " + (path === url ? "active" : "")
     + (options.dashboardAdminMode && path === url ? "list-group-item-danger" : "")}>
     {label}
   </a>;
 }
 
 function sidebarSubLink(label, url, path, options: { dashboardAdminMode?: boolean } = {}) {
-  return <a href={url} class={"list - group - item sidebar__link " + (path === url ? "active" : "")
+  return <a href={url} class={"list-group-item sidebar__link " + (path === url ? "active" : "")
     + (options.dashboardAdminMode && path === url ? "list-group-item-danger" : "")}>
     <span class="ml-3">{label}</span>
   </a>;

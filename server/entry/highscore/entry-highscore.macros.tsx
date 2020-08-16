@@ -8,8 +8,9 @@ import * as userMacros from "server/user/user.macros";
 
 export function highScoresLinks(entry, user, path, options: { hideSubmitButton?: boolean } = {}) {
   return <>
-    {ifFalse(!options.hideSubmitButton, () =>
-      <a href={links.routeUrl(entry, "entry", "submit-score") + "?redirectTo=" + encodeURIComponent(path)} class="btn btn-primary">Submit score</a>
+    {ifFalse(options.hideSubmitButton, () =>
+      <a href={links.routeUrl(entry, "entry", "submit-score") + "?redirectTo=" + encodeURIComponent(path)}
+        class="btn btn-primary mr-2">Submit score</a>
     )}
     {ifTrue(security.canUserWrite(user, entry, { allowMods: true }), () =>
       <a href={links.routeUrl(entry, "entry", "edit-scores")} class="btn btn-outline-primary">
@@ -89,12 +90,12 @@ export function highScores(entry, scoreCollection, userScore = null, featuredEve
         </>
       )}
 
-      {ifTrue(scoreCollection.pagination.rowCount > 9, () =>
+      {ifTrue(scoreCollection.pagination?.rowCount > 9, () =>
         <tr>
           <td colspan={colspan}>Total submitted scores: <b>{scoreCollection.pagination.rowCount}</b></td>
         </tr>
       )}
-      {ifFalse(scoreCollection.pagination.rowCount > 9, () =>
+      {ifFalse(scoreCollection.pagination?.rowCount > 9, () =>
         <tr>
           <td colspan={colspan}>Be the first to submit a score!</td>
         </tr>
@@ -103,7 +104,7 @@ export function highScores(entry, scoreCollection, userScore = null, featuredEve
       {ifTrue(scoreCollection.length > 0 && !options.hideViewAllScores, () =>
         <td colspan={colspan} class="text-center">
           <a href={links.routeUrl(entry, "entry", "scores")}>View all&nbsp;
-            <b>{scoreCollection.pagination.rowCount || scoreCollection.length}</b> scores</a>
+            <b>{scoreCollection.pagination?.rowCount || scoreCollection.length}</b> scores</a>
         </td>
       )}
     </tbody>
@@ -144,11 +145,15 @@ export function printScore(entry, score, options: { showEditLink?: boolean } = {
   const unit = !["number", "time"].includes(highScoreType) ? highScoreType : "";
   return <>
     {(highScoreType === "time") ? (duration(score.get("score"))) : parseFloat(score.get("score"))}
+    &nbsp;
     {unit}
     {ifTrue(options.showEditLink, () =>
-      <a href={links.routeUrl(entry, "entry", "submit-score")}>
-        <span class="fas fa-edit"></span>
-      </a>
+      <>
+        {" "}
+        <a href={links.routeUrl(entry, "entry", "submit-score")}>
+          <span class="fas fa-edit"></span>
+        </a>
+      </>
     )}
   </>;
 }
@@ -193,11 +198,11 @@ export function highScoreThumb(entryScore, user) {
       {userMacros.userThumb(entryScore.related("user"), { fullWidth: true })}
     </div>
     <div class="spacing">
-      Claimed
-      <b>{printRanking(entryScore.get("ranking"), { onlyMedal: true })}
-        {ordinal(entryScore.get("ranking"))} place</b> on
-      <a href={links.routeUrl(entry, "entry")}>{entry.get("title")}</a>
-      with
+      Claimed{" "}
+      <b>{printRanking(entryScore.get("ranking"), { onlyMedal: true })}{" "}
+        {ordinal(entryScore.get("ranking"))} place</b> on&nbsp;
+      <a href={links.routeUrl(entry, "entry")}>{entry.get("title")}</a>{" "}
+      with{" "}
       <b><a href={links.routeUrl(entry, "entry", "scores")}>
         {printScore(entry, entryScore, { showEditLink: user && entryScore.get("user_id") === user.get("id") })}</a></b>
       <br />

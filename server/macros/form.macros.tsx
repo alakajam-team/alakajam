@@ -3,6 +3,7 @@ import * as React from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import * as templatingFilters from "server/core/templating-filters";
+import { User } from "server/entity/user.entity";
 import { Alert } from "server/types";
 import slug from "slug";
 import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
@@ -71,7 +72,7 @@ export function radio(name, value, label, modelProperty,
   value = options.textFieldEnabled ? modelProperty : value;
   const inputId = slug(name + "-" + value);
   return <label for={inputId}>
-    <input type="radio" id={inputId} class="js-radio" name={name} value={value} checked={value && modelProperty === value} />
+    <input type="radio" id={inputId} class="js-radio" name={name} value={value} checked={Boolean(value && modelProperty === value)} />
     {ifTrue(options.textField, () =>
       <input type="text" class="js-radio-text-field ml-1" data-target={inputId} placeholder={options.placeholder} />
     )}
@@ -97,7 +98,7 @@ export function check(name, label, value, options: { required?: boolean; textFie
 
 // Date time picker
 
-export function dateTimePicker(name, value, user,
+export function dateTimePicker(name, value, user: User,
                                options: { pickerFormat?: string; serverFormat?: string; classes?: string; forceUTC?: boolean } = {}) {
   return <div class="form-group">
     <div class="js-date-picker input-group date" id={"datetimepicker-" + name} data-target-input="nearest"

@@ -223,36 +223,23 @@
 
 /* Event banner */
 
-.event-banner__container {
-  position: absolute;
-  margin-top: -20px;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  z-index: -1;
-}
-
-.event-banner__origin {
-  position: absolute;
-  left: 50%;
-  height: 50%;
-  width: 100%;
-  min-width: 1920px;
-}
-
 .event-banner {
   position: absolute;
   width: 100%;
-  height: 100%;
-  margin-left: -50%;
+  height: 230px;
   background-repeat: no-repeat;
   background-size: cover;
+  overflow: hidden;
 
-  &__gradient {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    background: linear-gradient(to bottom, transparent 20%, $bg) 100%;
+  &__logo {
+    position: relative;
+    text-align: center;
+    margin-top: 85px;
+
+    & img {
+      position: absolute;
+      transform: translate(-50%, -50%) scale(75%);
+    }
   }
 
   @media (max-width: 767px) {
@@ -261,7 +248,7 @@
 }
 
 .event-banner-offset {
-  padding-top: 150px;
+  padding-top: 170px;
 
   @media (max-width: 767px) {
     padding-top: 0;

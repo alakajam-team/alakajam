@@ -28,7 +28,7 @@ export async function viewEventHome(req: CustomRequest, res: CustomResponse<Even
 
   // Check event participation status
   const eventParticipation = user ? await eventParticipationService.getEventParticipation(event.get("id"), user.get("id")) : undefined;
-  const hasJoinedEvent = !!eventParticipation;
+  const hasJoinedEvent = Boolean(eventParticipation);
   const inviteToJoin = (event.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED) ? !hasJoinedEvent : false;
 
   res.render<EventLocals>("event/event-home", {
@@ -37,7 +37,6 @@ export async function viewEventHome(req: CustomRequest, res: CustomResponse<Even
     tournamentScore,
     userEntry,
     userLikes: await likeService.findUserLikeInfo(posts.models, res.locals.user),
-    hasJoinedEvent,
     inviteToJoin,
     eventParticipation,
   });

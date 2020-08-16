@@ -43,13 +43,13 @@ export default function render(context: CommonLocals) {
           )}
           {ifTrue(user && !canEnterTournament && event.related("details").get("flags").streamerOnlyTournament, () =>
             <div class="action-banner">
-              <div class="action-banner__title">
+              <div class="px-2 action-banner__title">
                 <span class="fa fa-tv"></span> Streamer-only tournament
               </div>
-              <div class="card-body">
-                <p>Only users who are registered <a href={links.routeUrl(event, "event", "streamers")}>as streamers</a>&nbsp;
-                  are eligible to tournament points!</p>
-                <p>You are welcome to play the games and compete with the streamers,
+              <div class="px-2">
+                <p>Only users who are registered <a href={links.routeUrl(event, "event", "streamers")}>as streamers</a> are
+                  eligible to tournament points!</p>
+                <p class="mb-0">You are welcome to play the games and compete with the streamers,
                     but you will not appear on the leaderboard unless you register as a streamer.</p>
               </div>
             </div>
@@ -61,7 +61,7 @@ export default function render(context: CommonLocals) {
           )}
         </div>
         <div class="flex-grow-1">
-          <div class="game-grid tournament {'line-of-3-entries' if entries.length === 6} tournament">
+          <div class={`game-grid tournament ${entries.length === 6 ? "line-of-3-entries" : ""} tournament`}>
             {entries.map(entry =>
               <div class="game-grid-entry">
                 {eventMacros.entryThumb(entry)}

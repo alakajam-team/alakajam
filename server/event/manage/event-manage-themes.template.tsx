@@ -7,7 +7,7 @@ import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "./event-manage.base.template";
 
 export default function render(context: CommonLocals) {
-  const { event, themes, eliminationThreshold, shortlist,
+  const { event, themes, eliminationThreshold, shortlist, user,
     eliminatedShortlistThemes, eliminationMinNotes, editTheme, csrfToken } = context;
 
   context.inlineStyles.push(`
@@ -33,7 +33,7 @@ export default function render(context: CommonLocals) {
     <div class="horizontal-bar">
       Shortlist elimination
     </div>
-    {shortlistEliminationForm(event, eliminatedShortlistThemes, csrfToken)}
+    {shortlistEliminationForm(event, eliminatedShortlistThemes, user, csrfToken)}
 
     <div class="horizontal-bar">
       Submitted themes
@@ -73,7 +73,7 @@ function shortlistTable(event, shortlist) {
   </table>;
 }
 
-function shortlistEliminationForm(event, eliminatedShortlistThemes, csrfToken) {
+function shortlistEliminationForm(event, eliminatedShortlistThemes, user, csrfToken) {
   const eventDetails = event.related("details");
 
   return <div>
@@ -102,6 +102,7 @@ function shortlistEliminationForm(event, eliminatedShortlistThemes, csrfToken) {
             {formMacros.dateTimePicker(
               "elimination-start-date",
               eventDetails.get("shortlist_elimination").start,
+              user,
               { forceUTC: true })}
           </div>
         </div>

@@ -58,7 +58,7 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       res.locals.entry = entry;
       res.locals.tournamentScore = tournamentScore;
       res.locals.eventParticipation = eventParticipation;
-      res.locals.inviteToJoin = joinEnabled && eventParticipation;
+      res.locals.inviteToJoin = Boolean(joinEnabled && !eventParticipation);
       res.locals.featuredStreamer = liveUsers.length > 0 ? shuffle(liveUsers)[0] : undefined;
     });
   } else {

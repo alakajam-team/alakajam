@@ -68,7 +68,7 @@ export default function render(context: CommonLocals) {
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="title">Entry publication date</label>
-                    {formMacros.dateTimePicker("published-at", entry.get("published_at"),
+                    {formMacros.dateTimePicker("published-at", entry.get("published_at"), user,
                       { serverFormat: "yyyy-MM-dd", pickerFormat: "YYYY-MM-DD" })}
                   </div>
                 </div>
@@ -144,7 +144,7 @@ export default function render(context: CommonLocals) {
             <div class="form-group">
               <label for="anonymous-enabled">Comments options</label>
               <div>
-                {formMacros.check("anonymous-enabled", "Allow anonymous feedback", entry.get("allow_anonymous"), { noMargin: true })}
+                {formMacros.check("anonymous-enabled", "Allow anonymous feedback", entry.get("allow_anonymous"), { noMargin: true })}{" "}
                 <a href="/article/docs/faq#anon-entry" target="_blank">(learn more)</a>
               </div>
             </div>

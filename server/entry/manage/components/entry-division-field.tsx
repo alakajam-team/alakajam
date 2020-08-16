@@ -45,7 +45,7 @@ export function divisionField(entry, event, external, divisionTooltip, user) {
 
 function divisionButton(title, legend, icon, value, currentValue, canEditDivision, tooltipMessage) {
   if (canEditDivision) {
-    return <label class="btn entry-division js-division-button {'active' if value === currentValue}" role="button">
+    return <label class={`btn entry-division js-division-button ${value === currentValue ? "active" : ""}`} role="button">
       <div class={icon}></div>
       <input type="radio" name="division" value={value} autocomplete="off" class="d-none" checked={value === currentValue} />
       {title}
