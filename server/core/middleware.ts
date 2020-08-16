@@ -71,8 +71,9 @@ export async function configure(app: express.Application) {
   app.use(await createSessionMiddleware(app.locals.sessionStore));
 
   // Templating
+  const templatesRootPath = path.join(__dirname, "..");
   const jsxPistols = new JSXPistols({
-    rootPath: path.join(__dirname, ".."),
+    rootPath: templatesRootPath,
     babelOptions: process.env.NODE_ENV === "production" ? "skip" : jsxPistolsBabelOptions,
     expressApp: app
   });
@@ -84,11 +85,15 @@ export async function configure(app: express.Application) {
       callback(e);
     }
   };
-  app.engine("template.js", expressEngine);
-  app.engine("template.tsx", expressEngine);
-  app.set("view engine", "template.tsx");
 
-  app.set("views", path.join(constants.ROOT_PATH, "/server"));
+  if (process.env.NODE_ENV === "production") {
+    app.engine("template.js", expressEngine);
+    app.set("view engine", "template.js");
+  } else {
+    app.engine("template.tsx", expressEngine);
+    app.set("view engine", "template.tsx");
+  }
+  app.set("views", templatesRootPath);
 
   // Body parsers config
   app.use(bodyParser.urlencoded({ extended: false }));
