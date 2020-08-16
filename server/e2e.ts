@@ -22,8 +22,8 @@ editableConfig.DEBUG_DISABLE_STARTUP_BUILD = true;
 
 // Initialize backup for restoration throughout tests
 // XXX Should be done after DB migration
-log.info("Making a backup of the e2e database for restoration during tests...");
 const DB_SQLITE_PATH = path.resolve(constants.ROOT_PATH, editableConfig.DB_SQLITE_FILENAME);
+log.info(`Backing up DB to ${DB_SQLITE_PATH}.backup to restore its state between tests...`);
 fs.copyFileSync(DB_SQLITE_PATH, DB_SQLITE_PATH + ".backup");
 
 import "./index";import { Mutable } from "./types";
