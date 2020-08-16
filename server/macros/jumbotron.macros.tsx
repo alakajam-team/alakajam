@@ -115,7 +115,7 @@ function eventJumbotronCountdown(event, user) {
     return <div class="card card-body jumbotron-invite"
       onclick={hypeLink ? ("window.location = '" + hypeLink + "'") : ""}>
       <div class="row align-items-center">
-        <div class="col-12 {'col-lg-6 mb-3 mb-xl-0' if animatedCountdownEnabled}">
+        <div class={"col-12 " + (animatedCountdownEnabled ? "col-lg-6 mb-3 mb-xl-0" : "")}>
           <h1 class="jumbotron-invite__title">{event.get("countdown_config").message}</h1>
           <div class="jumbotron-invite__details">
             {eventJumbotronCountdownPhrase(event, user)}
@@ -136,10 +136,10 @@ function eventJumbotronPost(featuredPost, user, userLikes) {
     const isEmbedPost = featuredPost.get("body").indexOf("&lt;iframe") === 0;
     return <div class="event-jumbotron__post">
       {ifTrue(isEmbedPost, () =>
-        <jsx-wrapper>
+        <>
           {postMacros.post(featuredPost, { hideBody: true, hideDetails: true, readingUser: user, readingUserLikes: userLikes })}
           <jsx-wrapper dangerouslySetInnerHTML={markdown(featuredPost.get("body"))} />
-        </jsx-wrapper>
+        </>
       )}
       {ifFalse(isEmbedPost, () =>
         <div class="card">
@@ -166,12 +166,12 @@ export function myEntryJumbotronContent(event, entry, eventParticipation,
         <a href={links.routeUrl(event, "event", "games")} class="btn btn-alt d-block mt-2">Rate games</a>
       </div>;
     } else if (!isTournament) {
-      return <jsx-wrapper>
+      return <>
         {eventMacros.entrySmallThumb(entry)}
         <div class="card-body text-center p-0">
           <a href={links.routeUrl(event, "event", "dashboard")} class="btn btn-alt d-block">Event dashboard</a>
         </div>
-      </jsx-wrapper>;
+      </>;
     } else {
       return <div class="card-body text-center p-2">
         {eventMacros.entrySmallThumb(entry)}
@@ -186,12 +186,12 @@ export function myEntryJumbotronContent(event, entry, eventParticipation,
         <a href={links.routeUrl(event, "event", "join")} class="btn btn-alt btn-lg d-block py-4">Join the event</a>
       )}
       {ifFalse(options.inviteToJoin, () => {
-        return <jsx-wrapper>
+        return <>
           {ifTrue(entryCreationEnabled, () =>
-            <jsx-wrapper>
+            <>
               <p class="mb-1">Submissions are open</p>
               <a href={links.routeUrl(event, "event", "create-entry")} class="btn btn-alt btn-lg d-block mb-2">Submit entry</a>
-            </jsx-wrapper>
+            </>
           )}
           {ifTrue(!entryCreationEnabled && event.get("status_entry") === "closed", () =>
             "Submissions are closed."
@@ -203,7 +203,7 @@ export function myEntryJumbotronContent(event, entry, eventParticipation,
             <a href={links.routeUrl(event, "event", "games")} class="btn btn-alt d-block mt-2">Rate games</a>
           )}
           <a href={links.routeUrl(event, "event", "dashboard")} class="btn btn-alt d-block mt-2">Event dashboard</a>
-        </jsx-wrapper>;
+        </>;
       })}
     </div>;
   }
@@ -211,7 +211,7 @@ export function myEntryJumbotronContent(event, entry, eventParticipation,
 
 export function tournamentJumbotronContent(user, event, eventParticipation, tournamentScore, entry, options = {}) {
   const leaderboard = ["closed", "results"].includes(event.get("status_tournament"));
-  return <jsx-wrapper>
+  return <>
     {ifTrue(entry, () =>
       myEntryJumbotronContent(event, entry, eventParticipation, options, true)
     )}
@@ -224,38 +224,38 @@ export function tournamentJumbotronContent(user, event, eventParticipation, tour
         <a href={links.routeUrl(event, "event", "tournament-games")} class="btn btn-alt d-block">Play games</a>
       )}
     </div>
-  </jsx-wrapper>;
+  </>;
 }
 
 export function statsCounters(event) {
   const participants = event.related("details").get("participation_count");
   const statsElements = [];
 
-  statsElements.push(<jsx-wrapper>
+  statsElements.push(<>
     <span class="event-jumbotron__stats-counter">{participants}</span>&nbsp;
     entrant{participants !== 1 ? "s" : ""}
-  </jsx-wrapper>);
+  </>);
 
   if (event.get("status_entry") !== "off") {
     const entries = event.get("entry_count");
-    statsElements.push(<jsx-wrapper>
+    statsElements.push(<>
       , <span class="event-jumbotron__stats-counter">{entries}</span>&nbsp;
     entr{entries !== 1 ? "ies" : "y"}
       {!entries ? "... yet!" : ""}
-    </jsx-wrapper>);
+    </>);
   } else if (event.get("status_theme") === "voting") {
     const themes = event.related("details").get("theme_count") || "0";
-    statsElements.push(<jsx-wrapper>
+    statsElements.push(<>
       , <span class="event-jumbotron__stats-counter">{themes}</span>&nbsp;
       theme{themes !== 1 ? "s" : ""}
       {!themes ? "... yet!" : ""}
-    </jsx-wrapper>);
+    </>);
   } else if (["shortlist", "closed", "results"].includes(event.get("status_theme"))) {
     const themeVotes = event.related("details").get("theme_vote_count") || "0";
-    statsElements.push(<jsx-wrapper>
+    statsElements.push(<>
       , <span class="event-jumbotron__stats-counter">{themeVotes}</span>&nbsp;
       theme vote{themeVotes !== 1 ? "s" : ""}
-    </jsx-wrapper>);
+    </>);
   }
 
   return <div class="event-jumbotron__stats-contents py-2">
@@ -265,9 +265,9 @@ export function statsCounters(event) {
 
 export function eventJumbotronCountdownPhrase(event, user) {
   if (event.get("countdown_config").phrase) {
-    return <jsx-wrapper>
+    return <>
       <div class="jumbotron-invite__phrase">
-        {event.get("countdown_config").phrase}
+        {event.get("countdown_config").phrase}&nbsp;
         {featuredEventDateTime(event.get("countdown_config").date, user)}
       </div>
       {ifTrue(user && event.get("countdown_config").date, () =>
@@ -278,7 +278,7 @@ export function eventJumbotronCountdownPhrase(event, user) {
           </a>
         </div>
       )}
-    </jsx-wrapper>;
+    </>;
   }
 }
 

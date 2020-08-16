@@ -37,7 +37,7 @@ export default function render(context: CommonLocals) {
             {ifTrue(security.isUserWatching(user, post), () =>
               <div>
                 {ifTrue(security.canUserWrite(user, post), () =>
-                  <jsx-wrapper><span class="fas fa-check"></span>&nbsp;Subscribed</jsx-wrapper>
+                  <><span class="fas fa-check"></span>&nbsp;Subscribed</>
                 )}
                 {ifFalse(security.canUserWrite(user, post), () =>
                   <button type="submit" class="btn btn-outline-secondary btn-sm"><span class="fas fa-minus"></span> Unsubscribe</button>

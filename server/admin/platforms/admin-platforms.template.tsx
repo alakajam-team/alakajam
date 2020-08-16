@@ -71,9 +71,9 @@ function deleteButton(editPlatform: BookshelfModel, platformEntryCount: number) 
     return <a class="btn btn-danger btn-sm" href={"?delete=" + editPlatform.get("id")}
       onclick="return confirm('This cannot be reverted. Continue?')">Delete</a>;
   } else {
-    return <jsx-wrapper>
+    return <>
       <span class="btn btn-danger btn-sm disabled">Delete</span>
       {formMacros.tooltip("Platforms used by entries cannot be deleted. Run manual DB queries to fix that before deletion.")}
-    </jsx-wrapper>;
+    </>;
   }
 }

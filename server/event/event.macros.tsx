@@ -42,26 +42,26 @@ export function entryThumb(entry: EntryBookshelfModel, options: {
     </a>
     <div class="entry-thumb__author" >by&nbsp;
       {authors.map((userRole, index) =>
-        <jsx-wrapper>
+        <>
           <a href={links.routeUrl(userRole, "user")}>
             {userRole.get("user_title")}
           </a>
           {index < authors.length - 1 ? ", " : ""}
-        </jsx-wrapper>
+        </>
       )}
     </div>
     <div class="entry-thumb__footer">
       {ifTrue(options.showEvent, () =>
         <div class="entry-thumb__event">
           {ifTrue(entry.get("event_id"), () =>
-            <jsx-wrapper>
+            <>
               on <a href={links.routeUrl(entry.related<BookshelfModel>("event"), "event")}>{entry.related("event").get("title")}</a>
-            </jsx-wrapper>
+            </>
           )}
           {ifTrue(entry.get("external_event") && !entry.get("event_id"), () =>
-            <jsx-wrapper>
+            <>
               on {truncate(entry.get("external_event"), { length: 32 })}
-            </jsx-wrapper>
+            </>
           )}
         </div>
       )}
@@ -99,11 +99,11 @@ export function entrySmallThumb(entry: EntryBookshelfModel, options: { noShadow?
         </a>
         <div class="entry-small-thumb__author" >by&nbsp;
           {authors.map((userRole, index) =>
-            <jsx-wrapper>
+            <>
               <a href={links.routeUrl(userRole, "user")}>
                 {userRole.get("user_title")}
               </a>{index < authors.length - 1 ? ", " : ""}
-            </jsx-wrapper>
+            </>
           )}
         </div>
       </div>;
@@ -127,10 +127,10 @@ export function eventBanner(event: BookshelfModel) {
 
 export function entryPlatformIcon(platformName: string, options: { hideLabel?: boolean } = {}) {
   const icon = constants.ENTRY_PLATFORM_ICONS[platformName] || constants.ENTRY_PLATFORM_DEFAULT_ICON;
-  return <jsx-wrapper>
+  return <>
     <span class={icon} data-toggle="tooltip" data-placement="top" title={platformName}></span>
     {!options.hideLabel ? platformName : ""}
-  </jsx-wrapper>;
+  </>;
 }
 
 export function eventThemeStatus(theme: BookshelfModel, options: { uncensored?: boolean } = {}) {
@@ -203,7 +203,7 @@ export function eventShortcutMyEntry(event: BookshelfModel, userEntry: EntryBook
 
 export function eventShortcutMyPost(user: BookshelfModel, event: BookshelfModel, userPost: BookshelfModel,
                                     options: { noTitle?: boolean; buttonsOnly?: boolean } = {}) {
-  return <div class="action-banner {'buttons-only' if options.buttonsOnly}">
+  return <div class={`action-banner ${options.buttonsOnly ? "buttons-only" : ""}`}>
     <div class="action-banner__title">
       {ifTrue(!options.buttonsOnly && !options.noTitle, () =>
         <span class="mr-2">Your last post</span>

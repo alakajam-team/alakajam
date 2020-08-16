@@ -61,7 +61,7 @@ export function userLink(user: User) {
 export function twitchLink(user: User) {
   const socialLinks = user.related("details").get("social_links");
   if (socialLinks.twitch) {
-    return <a href="https://www.twitch.tv/{socialLinks.twitch}">
+    return <a href={`https://www.twitch.tv/${socialLinks.twitch}`}>
       <img src={links.staticUrl("/static/images/social/twitch.png")} class="no-border" style="width: 32px" /> {socialLinks.twitch}
     </a>;
   }
@@ -69,23 +69,21 @@ export function twitchLink(user: User) {
 
 export function twitchEmbed(twitchUsername: string, options: { height?: number; unmute?: boolean } = {}) {
   if (twitchUsername) {
-    return <jsx-wrapper>
-      <div id="twitch-{twitchUsername}-embed"></div>
+    return <>
+      <div id={`twitch-${twitchUsername}-embed`}></div>
       <script src="https://embed.twitch.tv/embed/v1.js"></script>
       <script type="text/javascript" dangerouslySetInnerHTML={{
         __html: `
         document.addEventListener("DOMContentLoaded", function() {
-          var embed = new Twitch.Embed("twitch-{twitchUsername}-embed", {
+          var embed = new Twitch.Embed("twitch-${twitchUsername}-embed", {
             width: "100%",
-            height: {options.height ? options.height : "200" },
+            height: ${options.height ? options.height : "200" },
             layout: "video",
-            channel: {twitchUsername}
+            channel: "${twitchUsername}"
           });
-          {ifTrue(not options.unmute, () =>
-          embed.setMuted(true);
-          )}
+          ${ifTrue(!options.unmute, () => "embed.setMuted(true);")}
         });`}} />
-    </jsx-wrapper>;
+    </>;
   }
 }
 

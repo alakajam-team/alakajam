@@ -96,7 +96,8 @@ export default function render(context: CommonLocals) {
                   <label for="title">Event start date
                     {formMacros.tooltip("The jam start date. Used to sort events, "
                       + "but also to let state presets guess deadlines correctly.")}</label>
-                  {formMacros.dateTimePicker("started-at", event?.get("started_at"), { serverFormat: "yyyy-MM-dd", pickerFormat: "YYYY-MM-DD" })}
+                  {formMacros.dateTimePicker("started-at", event?.get("started_at"), user,
+                    { serverFormat: "yyyy-MM-dd", pickerFormat: "YYYY-MM-DD" })}
                 </div>
               </div>
             </div>
@@ -161,7 +162,7 @@ export default function render(context: CommonLocals) {
                 {ifTrue(event.get("status") === "pending", () =>
                   <a href={links.routeUrl(event, "event", "delete")}
                     onclick="return confirm('Do you really want to delete this event? This cannot be undone.')"
-                    class={"btn btn-danger " + !user.get("is_admin") ? "disabled" : ""}
+                    class={"btn btn-danger " + (!user.get("is_admin") ? "disabled" : "")}
                     title={!user.get("is_admin") ? "Only admins can delete events" : ""}>Delete</a>
                 )}
                 {ifTrue(event.get("status") !== "pending", () =>

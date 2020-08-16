@@ -60,7 +60,7 @@ export function pictureInput(name: string, value: string, options: {
 // Tooltips
 
 export function tooltip(title: string, options: { class?: string; placement?: string } = {}) {
-  return <span class={`"fas fa-info-circle ${options.class || "mx-1"}`}
+  return <span class={`fas fa-info-circle ${options.class || "mx-1"}`}
     data-toggle="tooltip" data-placement={options.placement || "top"} title={title} style="font-size: 0.8rem"></span>;
 }
 

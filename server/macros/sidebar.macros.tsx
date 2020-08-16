@@ -8,22 +8,22 @@ export function sidebar(sidebarParam, path, options: { class?: string } = {}) {
 
 function sidebarLinks(title, links, path) {
   if (links) {
-    return <jsx-wrapper>
+    return <>
       <div class="list-group sidebar">
         <div class="list-group-item">
           <h3>{title}</h3>
         </div>
         {links.map(link =>
-          <jsx-wrapper>
+          <>
             {sidebarLink(link.title, link.url, path)}
             {link.subLinks.map(subLink =>
               sidebarSubLink(subLink.title, subLink.url, path)
             )}
-          </jsx-wrapper>
+          </>
         )}
       </div>
       <div class="spacing"></div>
-    </jsx-wrapper>;
+    </>;
   }
 }
 

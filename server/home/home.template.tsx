@@ -37,7 +37,7 @@ export default function render(context: CommonLocals) {
       {/* ===== EVENT JUMBOTRON ===== */}
 
       {ifSet(featuredEvent, () =>
-        <jsx-wrapper>
+        <>
           {ifSet(featuredPost, () =>
             <div class="home-welcome pt-3">
               <div class="container">{postMacros.post(featuredPost)}</div>
@@ -45,7 +45,7 @@ export default function render(context: CommonLocals) {
           )}
           {jumbotronMacros.eventJumbotron(featuredEvent, eventParticipation, featuredEventAnnouncement, user, userLikes,
             entry, tournamentScore, path, { inviteToJoin })}
-        </jsx-wrapper>
+        </>
       )}
       {ifNotSet(featuredEvent, () =>
         <div class="event-jumbotron" style={jumbotronMacros.backgroundImage(featuredEvent)}>

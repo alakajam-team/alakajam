@@ -78,7 +78,7 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
           </label>
         </div>
         {ifTrue(security.isMod(context.user), () =>
-          <jsx-wrapper>
+          <>
             <hr />
             <b>Moderator filters</b>
             <div>
@@ -86,7 +86,7 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
               Allows tournament use
               </label>
             </div>
-          </jsx-wrapper>
+          </>
         )}
       </div>
       <div class="form-group">
@@ -104,14 +104,14 @@ export function searchDescription(searchOptions: any, searchedEvent) {
     return <div class="count" style="font-size: 1rem">{/* TODO rename CSS class to "legend" */}
       {searchOptions.user ? ("made by " + searchOptions.user.get("title")) : ""}
       {ifTrue(searchOptions.tags && searchOptions.tags.length > 0, () =>
-        <jsx-wrapper>
+        <>
           with tag{searchOptions.tags.length > 1 ? "s" : ""}
           {searchOptions.tags.map((tag, index) =>
             tag.value + (index < searchOptions.tags.length - 1 ? " || " : "")
           )}
           {searchedEvent ? "in " + searchedEvent.get("title") : ""}
           {searchOptions.eventId === null ? "in external events" : ""}
-        </jsx-wrapper>
+        </>
       )}
       {searchOptions.platforms.length > 0 ? "on restricted platforms" : ""}
       {searchOptions.divisions ? "in division" + (searchOptions.divisions.length > 1 ? "s" : "")

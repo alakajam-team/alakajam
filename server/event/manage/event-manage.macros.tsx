@@ -27,7 +27,7 @@ export function linksForm(eventDetails: BookshelfModel) {
 }
 
 export function countdownForm(event: BookshelfModel, user: User, options: { countdownOffset?: EventCountdownOffset } = {}) {
-  return <jsx-wrapper>
+  return <>
     <div class="horizontal-bar">
       Home page
     </div>
@@ -59,7 +59,7 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
         </div>
         <div class="form-group mr-3">
           {ifSet(options.countdownOffset, () =>
-            <jsx-wrapper>
+            <>
               <label class="mr-1">Offset from start</label>
               <input type="text" name="countdown-offset-d" class="form-control"
                 style="width: 50px" value={options.countdownOffset.d || "0" } />d
@@ -68,14 +68,14 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
               <input type="text" name="countdown-offset-m" class="form-control"
                 style="width: 50px" value={options.countdownOffset.m || "0" } />m
               &nbsp;
-            </jsx-wrapper>
+            </>
           )}
           {ifNotSet(options.countdownOffset, () =>
-            <jsx-wrapper>
+            <>
               <label class="mr-1">Date
                 (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)</label>
               {formMacros.dateTimePicker("countdown-date", event?.get("countdown_config").date, user)}
-            </jsx-wrapper>
+            </>
           )}
         </div>
         <div class="form-group">
@@ -87,13 +87,13 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
         </div>
       </div>
     </div>
-  </jsx-wrapper>;
+  </>;
 }
 
 export function stateForm(event: BookshelfModel) {
   const flags = event?.related("details").get("flags");
 
-  return <jsx-wrapper>
+  return <>
     <div class="horizontal-bar">Global</div>
 
     <div class="form-group">
@@ -198,11 +198,11 @@ export function stateForm(event: BookshelfModel) {
         {formMacros.check("hideStreamerMenu", "Hide Streamer Menu", flags.hideStreamerMenu)}
       </div>
     </div>
-  </jsx-wrapper>;
+  </>;
 }
 
 export function jamConfigForm(event: BookshelfModel, eventDetails: BookshelfModel) {
-  return <jsx-wrapper>
+  return <>
     <div class="form-group">
       <label for="divisions">Divisions {formMacros.tooltip("Must be a valid JSON object, "
         + "with keys being the name (among: solo,team,ranked,unranked) and values the description.")}</label>
@@ -212,5 +212,5 @@ export function jamConfigForm(event: BookshelfModel, eventDetails: BookshelfMode
       <label for="category-titles">Rating categories {formMacros.tooltip('Must be a valid JSON array of strings, eg. ["General","Theme"]')}</label>
       <textarea name="category-titles" class="codemirror auto-height">{JSON.stringify(eventDetails?.get("category_titles") || [])}</textarea>
     </div>
-  </jsx-wrapper>;
+  </>;
 }

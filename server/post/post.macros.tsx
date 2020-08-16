@@ -1,4 +1,4 @@
-import { BookshelfModel, EntryBookshelfModel, CommentBookshelfModel } from "bookshelf";
+import { BookshelfModel, CommentBookshelfModel, EntryBookshelfModel } from "bookshelf";
 import * as React from "preact";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
@@ -6,8 +6,8 @@ import links from "server/core/links";
 import security from "server/core/security";
 import { dateTime, markdown, relativeTime } from "server/core/templating-filters";
 import { User } from "server/entity/user.entity";
-import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as formMacros from "server/macros/form.macros";
+import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 
 export interface CommentEditorOptions {
   readingUser?: User;
@@ -73,13 +73,14 @@ export function post(postModel: BookshelfModel, options: {
             &nbsp;•&nbsp;
             {ifTrue(isPublished, () =>
               <span data-toggle="tooltip" title={dateTime(postModel.get("published_at"), options.readingUser)}>
-                {relativeTime(postModel.get("published_at"))}
+                {relativeTime(postModel.get("published_at"))}&nbsp;
               </span>
             )}
             {ifTrue(postModel.get("published_at") && !isPublished, () =>
-              <jsx-wrapper>
+              <>
                 <span class="badge">Scheduled</span> for {dateTime(postModel.get("published_at"), options.readingUser)}
-              </jsx-wrapper>
+                &nbsp;
+              </>
             )}
             {ifTrue(!postModel.get("published_at") && !isPublished, () =>
               <span class="badge">Draft</span>
@@ -87,9 +88,9 @@ export function post(postModel: BookshelfModel, options: {
           </span>
 
           {ifSet(relatedEvent.get("id"), () =>
-            <jsx-wrapper>
-              on <a href={links.routeUrl(relatedEvent, "event")}>{relatedEvent.get("title")}</a>
-            </jsx-wrapper>
+            <>
+              on <a href={links.routeUrl(relatedEvent, "event")}>{relatedEvent.get("title")}</a>&nbsp;
+            </>
           )}
           {ifSet(relatedEntry.get("id"), () =>
             <span style="display: inline-block;">
@@ -140,7 +141,7 @@ export function postLikes(postModel: BookshelfModel, options: {
         const likeIcon = liked ? likeType.icon_liked : likeType.icon_unliked;
         return <form method="post"
           action={`${links.routeUrl(postModel, "post", "like")}?redirect=${links.routeUrl(postModel, "post")}#p${postModel.get("id")}`}
-          class={"post__like-count " + liked ? "liked" : ""}>
+          class={"post__like-count " + (liked ? "liked" : "")}>
           <input type="hidden" name={liked ? "unlike" : "like"} value="like" />
           <button type="submit" class="js-like-button" data-post-id={postModel.get("id")} data-post-name={postModel.get("name")} data-liked={liked}>
             <span class={likeIcon}></span> {postModel.get("like_count") || 0}
@@ -168,10 +169,10 @@ export function comments(commentsParam: BookshelfModel[], options: {
   preview?: boolean;
   highlightNewerThan?: any;
 } & CommentEditorOptions) {
-  return <jsx-wrapper>
+  return <>
     {commentsParam.map((comment: CommentBookshelfModel) => {
       const showEditor = options.readingUser && options.editComment && options.editComment.id === comment.id;
-      return <jsx-wrapper>
+      return <>
         {ifTrue(showEditor, () =>
           commentEditor(comment, options.csrfToken, options)
         )}
@@ -194,10 +195,10 @@ export function comments(commentsParam: BookshelfModel[], options: {
                 {ifTrue(isOwnAnonComment, () =>
                   <a href={links.routeUrl(options.readingUser, "user")}>
                     <div class="comment__avatar-container">
-                      {ifTrue(options.readingUser.get("avatar"), () =>
+                      {ifSet(options.readingUser.get("avatar"), () =>
                         <img src={links.pictureUrl(options.readingUser.get("avatar"), options.readingUser)} />
                       )}
-                      {ifFalse(options.readingUser.get("avatar"), () =>
+                      {ifNotSet(options.readingUser.get("avatar"), () =>
                         <img src={links.staticUrl("/static/images/default-avatar.png")} />
                       )}
                     </div>
@@ -208,10 +209,10 @@ export function comments(commentsParam: BookshelfModel[], options: {
                   const AuthorLink = author.get("name") !== "anonymous" ? "a" : "span";
                   return <AuthorLink href={links.routeUrl(author, "user")}>
                     <div class="comment__avatar-container">
-                      {ifTrue(author.get("avatar"), () =>
+                      {ifSet(author.get("avatar"), () =>
                         <img src={links.pictureUrl(author.get("avatar"), author)} />
                       )}
-                      {ifTrue(author.get("avatar"), () =>
+                      {ifNotSet(author.get("avatar"), () =>
                         <img src={links.staticUrl("/static/images/default-avatar.png")} />
                       )}
                     </div>
@@ -221,22 +222,22 @@ export function comments(commentsParam: BookshelfModel[], options: {
                 {(author.get("title") && author.get("name").toLowerCase() !== author.get("title").toLowerCase())
                   ? "(@" + author.get("name") + ")" : ""}
                 {ifTrue(options.nodeAuthorIds && options.nodeAuthorIds.includes(author.get("id")), () =>
-                  <jsx-wrapper>
+                  <>
                     <span>&nbsp;</span><span class="fas fa-scroll mt-1" data-toggle="tooltip" title="Page owner"></span>
-                  </jsx-wrapper>
+                  </>
                 )}
                 <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip" title={dateTime(comment.get("created_at"), options.readingUser)}>
                   {relativeTime(comment.get("created_at"))}</span>
                 {ifTrue(comment.wasEdited(), () =>
-                  <jsx-wrapper>
+                  <>
                     <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip"
                       title={dateTime(comment.get("updated_at"), options.readingUser)}>edited</span>
-                  </jsx-wrapper>
+                  </>
                 )}
                 {ifTrue(comment && !options.linkToNode, () =>
-                  <jsx-wrapper>
+                  <>
                     <span>&nbsp;•&nbsp;</span><a href="#c{comment.id}"><i class="fas fa-link" aria-hidden="true"></i></a>
-                  </jsx-wrapper>
+                  </>
                 )}
                 {ifTrue(!options.readOnly && (security.canUserWrite(options.readingUser, comment) || isOwnAnonComment), () =>
                   <a class="btn btn-outline-primary btn-sm ml-auto"
@@ -256,7 +257,7 @@ export function comments(commentsParam: BookshelfModel[], options: {
             </div>
           </div>;
         })}
-      </jsx-wrapper>;
+      </>;
     })}
 
     {ifTrue(comments.length === 0, () =>
@@ -273,7 +274,7 @@ export function comments(commentsParam: BookshelfModel[], options: {
       min-height: 120px;
     }
   `}} />
-  </jsx-wrapper>;
+  </>;
 }
 
 export function commentUrl(node: BookshelfModel, commentModel: BookshelfModel) {
@@ -317,10 +318,10 @@ export function commentEditor(commentModel: BookshelfModel, csrfToken: Function,
                   onclick="return confirm('Delete this comment?')" />
               )}
               {ifTrue(showAnon && !user.get("disallow_anonymous"), () =>
-                <jsx-wrapper>
+                <>
                   {formMacros.check("comment-anonymously", "Comment anonymously", null, { noMargin: true })}
                   (<a href="/article/docs/faq#anon-comment" target="_blank">why?</a>)
-                </jsx-wrapper>
+                </>
               )}
             </div>
           </div>

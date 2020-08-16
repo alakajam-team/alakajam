@@ -71,7 +71,7 @@ export default function render(context: CommonLocals) {
           )}
           {ifTrue(socialLinks.twitter, () =>
             <div class="profile__social-link">
-              <a href="https://www.twitter.com/{socialLinks.twitter}">
+              <a href={`https://www.twitter.com/${socialLinks.twitter}`}>
                 <img src={links.staticUrl("/static/images/social/twitter.svg")} class="no-border" style="width: 32px" /> Twitter
               </a>
             </div>

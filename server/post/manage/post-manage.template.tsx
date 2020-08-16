@@ -87,16 +87,16 @@ export default function render(context: CommonLocals) {
           </div>
           <div class="ml-auto post__actions text-right">
             {ifSet(post.get("published_at"), () =>
-              <jsx-wrapper>
+              <>
                 <input type="submit" class="btn btn-primary mr-1" name="save" value="Save changes" />
                 <input type="submit" class="btn btn-outline-secondary mr-1" name="unpublish" value="Unpublish" />
-              </jsx-wrapper>
+              </>
             )}
             {ifNotSet(post.get("published_at"), () =>
-              <jsx-wrapper>
+              <>
                 <input type="submit" class="btn btn-primary mr-1" name="publish" value="Save and publish now" />
                 <input type="submit" class="btn btn-outline-secondary mr-1" name="save-draft" value="Save draft" />
-              </jsx-wrapper>
+              </>
             )}
             <input type="button" class="btn btn-outline-secondary mr-1 js-show js-hide" name="save"
               value="Schedule..." data-show-selector=".post__schedule" data-hide-selector=".post__actions" />

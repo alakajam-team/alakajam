@@ -5,6 +5,7 @@ import { moderationBar } from "server/admin/components/moderation-bar.component"
 import { CommonLocals } from "./common.middleware";
 import links from "./core/links";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "./macros/jsx-utils";
+import { BookshelfModel } from "bookshelf";
 
 export default function base(context: CommonLocals, contents: JSX.Element) {
   const { pageImage, launchTime, rootUrl, path, event, user, unreadNotifications } = context;
@@ -64,17 +65,17 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
               <li class={"nav-item " + ((path.startsWith("/article/about") || path === "/changes") ? "active" : "")}>
                 <a class="nav-link" href="/article/about">About</a></li>
               {ifSet(user, () =>
-                <jsx-wrapper>
+                <>
                   <li class={"nav-item d-md-none " + (path.startsWith("/dashboard") ? "active" : "")}>
                     <a class="nav-link" href="/dashboard">Dashboard</a></li>
                   <li class={"nav-item d-md-none " + (path === "/logout" ? "active" : "")}><a class="nav-link" href="/logout">Logout</a></li>
                   <li class="nav-item button-item d-none d-md-block">
                     {userMenu(user, unreadNotifications)}
                   </li>
-                </jsx-wrapper>
+                </>
               )}
               {ifNotSet(user, () =>
-                <jsx-wrapper>
+                <>
                   <li class="nav-item button-item">
                     <a class="nav-link" href={"/login" + (path !== "/logout" ? ("?redirect=" + encodeURIComponent(path)) : "")}>
                       <button class="btn btn-outline-light">Login</button>
@@ -85,7 +86,7 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
                       <button class="btn btn-outline-light">Register</button>
                     </a>
                   </li>
-                </jsx-wrapper>
+                </>
               )}
             </ul>
           </div>
@@ -124,26 +125,27 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
             <div class="collapse navbar-collapse" id="navbar-event-dropdown">
               <ul class="navbar-nav">
                 {ifTrue(!statusTournament || statusTournament === "disabled" || event.related("details").get("flags").streamerOnlyTournament, () =>
-                  <jsx-wrapper>
+                  <>
                     {eventLink(event, null, "dashboard", "Dashboard", "play-circle", path)}
                     <li class="mx-3 my-2" style="border-left: solid 1px"></li>
-                  </jsx-wrapper>
+                  </>
                 )}
                 {ifFalse(event.related("details").get("flags")?.hideStreamerMenu, () =>
                   eventLink(event, null, "streamers", "Streamers", "tv", path)
                 )}
 
                 {ifTrue(statusJam && statusJam !== "disabled", () =>
-                  <jsx-wrapper>
+                  <>
                     {eventLink(event, "status_theme", "themes", "Themes", "lightbulb", path)}
-                    {eventLink(event, "status_entry", "games", "Games"
-                      + (event.get("entry_count") ? (" <span class='count'>(" + event.get("entry_count") + ")</span>") : ""), "gamepad", path)}
+                    {eventLink(event, "status_entry", "games",
+                      <>Games {ifTrue(event.get("entry_count"), () => <span class='count'>({event.get("entry_count")})</span>)}</>,
+                      "gamepad", path)}
                     {eventLink(event, "status_results", "results", "Results", "th-list", path, { requiredValue: ["results"] })}
-                  </jsx-wrapper>
+                  </>
                 )}
 
                 {ifTrue(statusTournament && statusTournament !== "disabled", () =>
-                  <jsx-wrapper>
+                  <>
                     {ifTrue(statusJam && statusJam !== "disabled", () =>
                       <li class="mx-3 my-2" style="border-left: solid 1px"></li>
                     )}
@@ -151,7 +153,7 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
                       "Tournament", "gamepad", path, { requiredValue: ["playing", "closed", "results"] })}
                     {eventLink(event, "status_tournament", "tournament-leaderboard",
                       "Leaderboard", "th-list", path, { requiredValue: ["playing", "closed", "results"] })}
-                  </jsx-wrapper>
+                  </>
                 )}
               </ul>
             </div>
@@ -270,17 +272,25 @@ function userMenu(user, unreadNotifications) {
   </div>;
 }
 
-function eventLink(event, statusField, targetPath, label, icon, currentPath, options: { requiredValue?: string[] } = {}) {
+function eventLink(
+  event: BookshelfModel,
+  statusField: string,
+  targetPath: string,
+  label: string | JSX.Element,
+  icon: string,
+  currentPath: string,
+  options: { requiredValue?: string[] } = {}) {
+
   if (!statusField || event.get(statusField) !== "disabled") {
     const targetUrl = targetPath.includes("/") ? targetPath : links.routeUrl(event, "event", targetPath);
     return <li class="nav-item">
       <a href={targetUrl} class={"nav-link event-navbar__link "
-        + (currentPath && currentPath.indexOf(targetUrl) === 0 ? "active" : "")
+        + (currentPath && currentPath.startsWith(targetUrl) ? "active" : "")
         + (statusField && (!(parseInt(event.get(statusField), 10)))
           && (event.get(statusField) === "off" || options.requiredValue
             && !options.requiredValue.includes(event.get(statusField))) ? "disabled" : "")}>
         <span class={`fas fa-${icon}`}></span>&nbsp;
-        <span dangerouslySetInnerHTML={label} />
+        <span>{label}</span>
       </a>
     </li>;
   }

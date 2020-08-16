@@ -7,7 +7,7 @@ import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import * as userMacros from "server/user/user.macros";
 
 export function highScoresLinks(entry, user, path, options: { hideSubmitButton?: boolean } = {}) {
-  return <jsx-wrapper>
+  return <>
     {ifFalse(!options.hideSubmitButton, () =>
       <a href={links.routeUrl(entry, "entry", "submit-score") + "?redirectTo=" + encodeURIComponent(path)} class="btn btn-primary">Submit score</a>
     )}
@@ -16,7 +16,7 @@ export function highScoresLinks(entry, user, path, options: { hideSubmitButton?:
         <span class="fas fa-cog"></span>
       </a>
     )}
-  </jsx-wrapper>;
+  </>;
 }
 
 export function tournamentEventBanner(tournamentEvent) {
@@ -62,18 +62,18 @@ export function highScores(entry, scoreCollection, userScore = null, featuredEve
             {ifTrue(options.showActiveToggles, () =>
               <td class="text-right">
                 {ifTrue(score.get("active"), () =>
-                  <jsx-wrapper>
+                  <>
                     <span class="badge badge-success">Active</span>&nbsp;
                     <input type="submit" name={"suspend-" + score.get("id")} class="btn btn-outline-primary btn-sm"
                       onclick={`return confirm("Suspend the score of ${score.related("user").get("title")}?")`} value="Suspend" />
-                  </jsx-wrapper>
+                  </>
                 )}
                 {ifFalse(score.get("active"), () =>
-                  <jsx-wrapper>
+                  <>
                     <span class="badge badge-warning">Suspended</span>&nbsp;
                     <input type="submit" name={"restore-" + score.get("id")} class="btn btn-outline-primary btn-sm"
                       onclick={`return confirm("Restore the score of ${score.related("user").get("title")}?")`} value="Restore" />
-                  </jsx-wrapper>
+                  </>
                 )}
               </td>
             )}
@@ -82,11 +82,11 @@ export function highScores(entry, scoreCollection, userScore = null, featuredEve
       )}
 
       {ifTrue(userScore && userScore.get("id") && userScore.get("ranking") > 10, () =>
-        <jsx-wrapper>
+        <>
           <tr>
             <td colspan={colspan} class="text-center">...</td>
           </tr>
-        </jsx-wrapper>
+        </>
       )}
 
       {ifTrue(scoreCollection.pagination.rowCount > 9, () =>
@@ -142,7 +142,7 @@ export function printRanking(ranking, options: { onlyMedal?: boolean } = {}) {
 export function printScore(entry, score, options: { showEditLink?: boolean } = {}) {
   const highScoreType = entry.related("details").get("high_score_type");
   const unit = !["number", "time"].includes(highScoreType) ? highScoreType : "";
-  return <jsx-wrapper>
+  return <>
     {(highScoreType === "time") ? (duration(score.get("score"))) : parseFloat(score.get("score"))}
     {unit}
     {ifTrue(options.showEditLink, () =>
@@ -150,11 +150,11 @@ export function printScore(entry, score, options: { showEditLink?: boolean } = {
         <span class="fas fa-edit"></span>
       </a>
     )}
-  </jsx-wrapper>;
+  </>;
 }
 
 export function pointsDistributionLegend(pointsDistribution) {
-  return <jsx-wrapper>
+  return <>
     <div class="horizontal-bar"></div>
 
     <h2>Points distribution</h2>
@@ -183,7 +183,7 @@ export function pointsDistributionLegend(pointsDistribution) {
         </table>
       </div>
     </div>
-  </jsx-wrapper>;
+  </>;
 }
 
 export function highScoreThumb(entryScore, user) {

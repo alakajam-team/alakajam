@@ -72,7 +72,7 @@ export default function render(context: CommonLocals) {
                   {context.csrfToken()}
 
                   {ifTrue(eventParticipation.isStreamer, () =>
-                    <jsx-wrapper>
+                    <>
                       <p>You are entering the event as a streamer!</p>
                       {ifSet(socialLinks.twitch, () =>
                         <span class="alert alert-light">
@@ -96,7 +96,7 @@ export default function render(context: CommonLocals) {
                         <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Stream schedule not set</span>
                       )}
                       <a href={links.routeUrl(event, "event", "dashboard-streamer-preferences")} class="btn btn-primary">Manage streamer settings</a>
-                    </jsx-wrapper>
+                    </>
                   )}
 
                   {ifTrue(event.get("status") !== "closed" && !eventParticipation.isStreamer, () => {
