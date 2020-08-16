@@ -361,20 +361,24 @@ export class EventRatingService {
   }
 
   public async clearRankings(event: BookshelfModel) {
-    const entryDetailsCollection = await models.EntryDetails
-      .query((qb) => { qb.leftJoin("entry", "entry_details.entry_id", "entry.id"); })
-      .where("entry.event_id", event.get("id"))
-      .where("entry.division", "<>", enums.DIVISION.UNRANKED)
-      .fetchAll() as BookshelfCollection;
-
     const categoryCount: number = event.related<BookshelfModel>("details").get("category_titles").length;
     const categoryIndexes = this.range(1, categoryCount);
 
-    const attributesPatch: Record<string, any> = {};
-    categoryIndexes.forEach((index) => attributesPatch["ranking_" + index] = null);
+    if (categoryIndexes.length > 0) {
+      const attributesPatch: Record<string, any> = {};
+      categoryIndexes.forEach((index) => {
+        attributesPatch["ranking_" + index] = null;
+      });
 
-    for (const entryDetails of entryDetailsCollection.models) {
-      await entryDetails.save(attributesPatch, { patch: true });
+      const entryDetailsCollection = await models.EntryDetails
+        .query((qb) => { qb.leftJoin("entry", "entry_details.entry_id", "entry.id"); })
+        .where("entry.event_id", event.get("id"))
+        .where("entry.division", "<>", enums.DIVISION.UNRANKED)
+        .fetchAll() as BookshelfCollection;
+
+      for (const entryDetails of entryDetailsCollection.models) {
+        await entryDetails.save(attributesPatch, { patch: true });
+      }
     }
   }
 

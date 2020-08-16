@@ -43,7 +43,7 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
         <div class="form-group">
           <label for="countdown-link">Link page&nbsp;
             {formMacros.tooltip('Among "themes", "posts", "games", "results", or an absolute path like "/post/create"')}</label>
-          <input type="text" class="form-control" name="countdown-link" value={event?.get("countdown_config").link} />
+          <input type="text" class="form-control" name="countdown-link" value={event?.get("countdown_config")?.link} />
         </div>
       </div>
     </div>
@@ -55,7 +55,7 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
           <label>Phrase&nbsp;
             {formMacros.tooltip('For instance: "ends", "voting starts"... '
               + 'or directly "starts January 31st" if the date is not set.')}</label>
-          <input type="text" class="form-control" name="countdown-phrase" value={event?.get("countdown_config").phrase} />
+          <input type="text" class="form-control" name="countdown-phrase" value={event?.get("countdown_config")?.phrase} />
         </div>
         <div class="form-group mr-3">
           {ifSet(options.countdownOffset, () =>
@@ -74,15 +74,15 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
             <>
               <label class="mr-1">Date
                 (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)</label>
-              {formMacros.dateTimePicker("countdown-date", event?.get("countdown_config").date, user)}
+              {formMacros.dateTimePicker("countdown-date", event?.get("countdown_config")?.date, user)}
             </>
           )}
         </div>
         <div class="form-group">
           <label>
             <input type="checkbox" class="form-control js-checkbox" name="countdown-enabled"
-              checked={event?.get("countdown_config").enabled} />
-          Animated countdown
+              checked={event?.get("countdown_config")?.enabled} />&nbsp;
+              Animated countdown
           </label>
         </div>
       </div>
@@ -91,7 +91,7 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
 }
 
 export function stateForm(event: BookshelfModel) {
-  const flags = event?.related("details").get("flags");
+  const flags = event?.related("details").get("flags") || {};
 
   return <>
     <div class="horizontal-bar">Global</div>
@@ -191,7 +191,7 @@ export function stateForm(event: BookshelfModel) {
       <div class="form-group">
         {formMacros.check("streamerOnlyTournament", "Streamer-only tournament", flags.streamerOnlyTournament)}
         {formMacros.check("scoreSpacePodium", "ScoreSpace podium", flags.scoreSpacePodium)}
-        <span style="margin-left: -15px" class="mr-1">
+        <span style="margin-left: -10px" class="mr-1">
           {formMacros.tooltip("The 1st, 2nd, and 3rd placed entries in the 7th rating category will be displayed "
             + 'respectively for the Streamer choice, Solo choice and Team choice. Use the "Rankings" tab to set them.')}
         </span>

@@ -86,7 +86,7 @@ export function check(name, label, value, options: { required?: boolean; textFie
   return <label for={name}>
     <input type="checkbox" id={name} class="js-checkbox" name={name}
       checked={Boolean(value)}
-      required={options.required} />
+      required={options.required} />{" "}
     {ifTrue(options.textField, () =>
       <input type="text" class="js-checkbox-text-field" data-target={name} placeholder={options.placeholder} />
     )}
