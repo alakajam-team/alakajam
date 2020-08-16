@@ -222,7 +222,6 @@
 }
 
 /* Event banner */
-
 .event-banner {
   position: absolute;
   width: 100%;
@@ -250,15 +249,42 @@
 .event-banner-offset {
   padding-top: 170px;
 
-  @media (max-width: 767px) {
+@media (max-width: 767px) {
     padding-top: 0;
   }
 }
 
-.event-banner-panel {
-  @media (min-width: 768px) {
-    @include shadow;
-    padding: 10px;
-    background-color: change-color($bg, $alpha: .85);
+/** Event streamers page **/
+
+.event-streamers-background {
+  background: url('/static/images/streamer-background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position-x: center;
+  margin-top: -20px;
+  padding-top: 100px;
+  min-height: 1024px;
+  position: relative;
+  
+  &__gradient {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(to bottom, transparent 20%, $bg) 100%;
+    pointer-events: none;
+  }
+}
+
+.event-streamers-tv-no-signal {
+  margin-top: 50px;
+  
+  & h1, & h3 {
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+    color: #DDD;
+    max-width: 350px;
   }
 }

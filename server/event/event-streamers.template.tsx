@@ -17,8 +17,8 @@ export default function render(context: CommonLocals) {
 
   return base(context,
     <div>
-      <div class="background">
-        <div class="event-banner__gradient"></div>
+      <div class="event-streamers-background">
+        <div class="event-streamers-background__gradient"></div>
         <div class="container text-center">
           <h1>
             <div>{event.get("title")} streamers</div>
@@ -56,7 +56,7 @@ export default function render(context: CommonLocals) {
                     <form class="card-footer bg-moderation" method="post" onsubmit="return confirm('Confirm streamer status change?')">
                       {context.csrfToken()}
                       <input type="hidden" name="targetUserId" value={eventParticipation.user.id} />
-                      <span class="fas fa-wrench"></span>
+                      <span class="fas fa-wrench"></span>&nbsp;
                       Status <span class="badge badge-secondary">{capitalize(eventParticipation.streamerStatus)}</span>
                       <div class="float-right">
                         {ifTrue(eventParticipation.streamerStatus === "requested", () =>
@@ -76,7 +76,7 @@ export default function render(context: CommonLocals) {
             )}
 
             {ifTrue(eventParticipations.length === 0, () =>
-              <div class="tv-no-signal">
+              <div class="event-streamers-tv-no-signal">
                 <h1>NO SIGNAL</h1>
                 <h3>Waiting for the first streamer to join :)</h3>
               </div>
@@ -90,16 +90,6 @@ export default function render(context: CommonLocals) {
 
 function registerStyles(context) {
   context.inlineStyles.push(`
-    .background {
-      background: url('${links.staticUrl("/static/images/streamer-background.jpg")}');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position-x: center;
-      margin-top: -20px;
-      padding-top: 100px;
-      min-height: 1024px;
-    }
-    
     h1 {
       text-align: center;
       color: #EEE !important;
@@ -116,20 +106,6 @@ function registerStyles(context) {
     .card-body {
       height: 200px;
       overflow-y: auto;
-    }
-    .event-banner__gradient {
-      margin-top: 60px;
-      pointer-events: none;
-    }
-    .tv-no-signal {
-      margin-top: 50px;
-    }
-    .tv-no-signal h1, .tv-no-signal h3 {
-      font-weight: bold;
-      font-family: 'Courier New', Courier, monospace;
-      text-align: center;
-      color: #DDD;
-      max-width: 350px;
     }
     `);
 }
