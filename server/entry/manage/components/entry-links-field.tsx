@@ -15,7 +15,7 @@ export function linksField(entry: BookshelfModel) {
         const link = links.length > linkIndex ? links[linkIndex] : {};
         return <div class="row mb-1">
           <div class="col-3">
-            <input type="text" name={"label" + linkIndex} class="js-link-label form-control" placeholder="Label" value={link.label} />
+            <input type="text" name={"label" + linkIndex} class="js-link-label form-control" placeholder="Link name" value={link.label} />
           </div>
           <div class="col-8">
             <input type="url" name={"url" + linkIndex} class="js-link-url form-control" placeholder="URL" value={link.url} />
@@ -33,7 +33,7 @@ export function linksField(entry: BookshelfModel) {
                 </div>
                 <div style="width: 25%; display: inline-block">
                     <input type="text" name="label<%- i %>" class="js-link-label form-control" 
-                      data-row="<%- i %>" placeholder="Label" value="<%- links[i].label %>" />
+                      data-row="<%- i %>" placeholder="Link name" value="<%- links[i].label %>" />
                 </div>
                 <div style="width: 64%; display: inline-block">
                     <input type="url" class="js-link-url form-control" data-row="<%- i %>"
