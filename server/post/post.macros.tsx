@@ -170,6 +170,8 @@ export function comments(commentsParam: BookshelfModel[], options: {
   preview?: boolean;
   highlightNewerThan?: any;
 } & CommentEditorOptions) {
+  let lastLinkedNode: BookshelfModel | undefined;
+
   return <>
     {commentsParam.map((comment: CommentBookshelfModel) => {
       const showEditor = options.readingUser && options.editComment && options.editComment.id === comment.id;
@@ -181,15 +183,15 @@ export function comments(commentsParam: BookshelfModel[], options: {
           const author = comment.related<BookshelfModel>("user");
           const node = comment.related<BookshelfModel>("node");
           const isOwnAnonComment = options.editableAnonComments && options.editableAnonComments.includes(comment.get("id"));
-          const lastLinkedNode = node;
 
           return <div class={"row comment mb-3 "
             + ((options.highlightNewerThan && options.highlightNewerThan < comment.get("created_at")) ? "unread" : "")}>
-            {ifTrue(options.linkToNode && !lastLinkedNode || node !== lastLinkedNode, () =>
-              <div class="col-12">
+            {ifTrue(options.linkToNode && (!lastLinkedNode || node !== lastLinkedNode), () => {
+              lastLinkedNode = node;
+              return <div class="col-12">
                 <a href={commentUrl(node, comment)}><h4 class="post__title">{node.get("title")}</h4></a>
-              </div>
-            )}
+              </div>;
+            })}
             <div class="offset-1 col-11">
               <a class="anchor" name="c{comment.id if comment}"></a>
               <div class="comment__details d-flex">
