@@ -143,7 +143,17 @@ async function savePictureUpload(fileUploadOrPath, targetPathWithoutExtension, o
   const absoluteTargetPath = toAbsolutePath(actualTargetPath);
 
   await createFolderIfMissing(path.dirname(absoluteTargetPath));
-  const res = await resize(filePath, absoluteTargetPath, fileExtension, options);
+
+  let res;
+  try {
+    res = await resize(filePath, absoluteTargetPath, fileExtension, options);
+  } catch (e) {
+    if (e.message?.includes("Input image exceeds pixel limit")) {
+      return { error: e.message } ;
+    } else {
+      throw e;
+    }
+  }
 
   const finalPath = url.resolve(constants.UPLOADS_WEB_PATH,
     path.relative(configUtils.uploadsPathAbsolute(), absoluteTargetPath + "." + res.format));
@@ -172,7 +182,7 @@ async function resize(sourcePath, targetPathWithoutExtension, fileExtension, opt
     sharp.cache(false);
 
     // Check whether image is too big
-    const source = sharp(sourcePath);
+    const source = sharp(sourcePath, { limitInputPixels: constants.MAX_UPLOAD_PIXELS });
     const meta = await source.metadata();
     let resizeOptions;
     if (options.maxWidth || options.maxHeight) {
