@@ -1,18 +1,12 @@
 import * as React from "preact";
-import { markdown } from "server/core/templating-filters";
 import * as formMacros from "server/macros/form.macros";
-import { ifTrue } from "server/macros/jsx-utils";
 
-export function highscoreFieldGroup(entry, tournamentAdvertising) {
+export function highscoreFieldGroup(entry) {
   const entryDetails = entry.related("details");
   const highScoreEnabled = entry.get("status_high_score") && entry.get("status_high_score") !== "off";
   const isCustomUnit = entryDetails.get("high_score_type") && !["number", "time"].includes(entryDetails.get("high_score_type"));
 
   return <div>
-    {ifTrue(tournamentAdvertising, () =>
-      <div class="alert alert-info" dangerouslySetInnerHTML={markdown(tournamentAdvertising)} />
-    )}
-
     <div class="form-group">
       <label for="enable-high-score">Enable high scores
         {formMacros.tooltip("Players will be able to submit their scores with a screenshot as proof.")}</label>

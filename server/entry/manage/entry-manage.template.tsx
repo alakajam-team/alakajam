@@ -137,7 +137,7 @@ export default function render(context: CommonLocals) {
               <div class="alert alert-info" dangerouslySetInnerHTML={markdown(tournamentAdvertising)} />
             )}
 
-            {highscoreFieldGroup(entry, tournamentAdvertising)}
+            {highscoreFieldGroup(entry)}
 
             <div class="horizontal-bar" style="margin-top: 40px">Other</div>
 
