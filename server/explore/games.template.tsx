@@ -26,12 +26,15 @@ export default function render(context: CommonLocals) {
         <div class="col-sm-8 col-md-9">
           <h1>
             {ifTrue(searchedEvent, () =>
-              <a href={searchedEvent.get("status_entry") !== "off" ? links.routeUrl(featuredEvent, "event", "games") : "posts"}>
-                {searchedEvent.get("title")}
-              </a>
+              <>
+                <a href={searchedEvent.get("status_entry") !== "off" ? links.routeUrl(featuredEvent, "event", "games") : "posts"}>
+                  {searchedEvent.get("title")}
+                </a>
+                {" "}
+              </>
             )}
-        Games
-            {searchOptions.eventId === null ? "from external events" : ""}
+            Games
+            {searchOptions.eventId === null ? " from external events " : " "}
             <span class="count">({entriesCollection.pagination.rowCount})</span>
             {gamesSearchMacros.searchDescription(searchOptions, searchedEvent)}
           </h1>

@@ -90,7 +90,7 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
         )}
       </div>
       <div class="form-group">
-        <input type="submit" class="btn btn-primary" value="Apply" />
+        <input type="submit" class="btn btn-primary mr-1" value="Apply" />
         <a href="?" class="btn btn-outline-primary">Clear</a>
       </div>
     </form>
@@ -98,27 +98,25 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
 }
 
 export function searchDescription(searchOptions: any, searchedEvent) {
-  if (searchOptions.search || searchOptions.user || searchOptions.eventId !== undefined || searchOptions.tags
+  if (searchOptions.search || searchOptions.user || searchOptions.tags
     || searchOptions.divisions || searchOptions.highScoresSupport
     || searchOptions.allowsTournamentUse || searchOptions.platforms?.length > 0) {
     return <div class="count" style="font-size: 1rem">{/* TODO rename CSS class to "legend" */}
-      {searchOptions.user ? ("made by " + searchOptions.user.get("title")) : ""}
+      {searchOptions.user ? ("made by " + searchOptions.user.get("title") + " ") : ""}
       {ifTrue(searchOptions.tags && searchOptions.tags?.length > 0, () =>
         <>
-          with tag{searchOptions.tags?.length > 1 ? "s" : ""}
+          with tag{searchOptions.tags?.length > 1 ? "s " : " "}
           {searchOptions.tags?.map((tag, index) =>
             tag.value + (index < searchOptions.tags?.length - 1 ? " || " : "")
           )}
-          {searchedEvent ? "in " + searchedEvent.get("title") : ""}
-          {searchOptions.eventId === null ? "in external events" : ""}
         </>
       )}
-      {searchOptions.platforms?.length > 0 ? "on restricted platforms" : ""}
-      {searchOptions.divisions ? "in division" + (searchOptions.divisions?.length > 1 ? "s" : "")
+      {searchOptions.platforms?.length > 0 ? " on restricted platforms" : ""}
+      {searchOptions.divisions ? " in division" + (searchOptions.divisions?.length > 1 ? "s" : "")
         + " '" + (searchOptions.divisions.join(", ").replace(", unranked", "")) + "'" : ""}
-      {searchOptions.highScoresSupport ? "with high scores support" : ""}
-      {searchOptions.allowsTournamentUse ? "allowing tournament use" : ""}
-      {searchOptions.search ? "matching '" + searchOptions.search + '"' : ""}
+      {searchOptions.highScoresSupport ? " with high scores support" : ""}
+      {searchOptions.allowsTournamentUse ? " allowing tournament use" : ""}
+      {searchOptions.search ? ' matching "' + searchOptions.search + '"' : ""}
     </div>;
   }
 }
