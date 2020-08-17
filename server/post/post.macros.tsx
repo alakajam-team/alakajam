@@ -224,7 +224,7 @@ export function comments(commentsParam: BookshelfModel[], options: {
                   ? "(@" + author.get("name") + ")" : ""}
                 {ifTrue(options.nodeAuthorIds && options.nodeAuthorIds.includes(author.get("id")), () =>
                   <>
-                    <span>&nbsp;</span><span class="fas fa-scroll mt-1" data-toggle="tooltip" title="Page owner"></span>
+                    <span>&nbsp;</span><span class="fas fa-pen-nib mt-1" data-toggle="tooltip" title="Page owner"></span>
                   </>
                 )}
                 <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip" title={dateTime(comment.get("created_at"), options.readingUser)}>
