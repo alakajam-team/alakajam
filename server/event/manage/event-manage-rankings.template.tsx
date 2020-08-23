@@ -52,7 +52,7 @@ export default function render(context: CommonLocals) {
 
     {formMacros.alerts(context.alerts)}
 
-    {ifTrue(event.related("details").get("flags").scoreSpacePodium && currentCategoryIndex === 7, () =>
+    {ifTrue(event.related("details").get("flags")?.scoreSpacePodium && currentCategoryIndex === 7, () =>
       <div>
         <b>Special instructions for ScoreSpace Awards</b>
         <ul>

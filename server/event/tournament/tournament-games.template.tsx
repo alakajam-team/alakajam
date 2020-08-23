@@ -41,7 +41,7 @@ export default function render(context: CommonLocals) {
               </div>
             </div>
           )}
-          {ifTrue(user && !canEnterTournament && event.related("details").get("flags").streamerOnlyTournament, () =>
+          {ifTrue(user && !canEnterTournament && event.related("details").get("flags")?.streamerOnlyTournament, () =>
             <div class="action-banner">
               <div class="px-2 action-banner__title">
                 <span class="fa fa-tv"></span> Streamer-only tournament

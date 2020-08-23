@@ -51,7 +51,7 @@ export default function render(context: CommonLocals) {
                 <h1>Tournament leaderboard</h1>
               )}
 
-              {ifTrue(event.related("details").get("flags").streamerOnlyTournament, () =>
+              {ifTrue(event.related("details").get("flags")?.streamerOnlyTournament, () =>
                 <div class="featured">
                   <h3><span class="fa fa-tv"></span> Streamer-only tournament</h3>
                   Only users who are registered <a href={links.routeUrl(event, "event", "streamers")}>as streamers</a>&nbsp;

@@ -189,13 +189,13 @@ export function stateForm(event: BookshelfModel) {
     <div>
       <div class="horizontal-bar">Streamers</div>
       <div class="form-group">
-        {formMacros.check("streamerOnlyTournament", "Streamer-only tournament", flags.streamerOnlyTournament)}
-        {formMacros.check("scoreSpacePodium", "ScoreSpace podium", flags.scoreSpacePodium)}
+        {formMacros.check("streamerOnlyTournament", "Streamer-only tournament", flags?.streamerOnlyTournament)}
+        {formMacros.check("scoreSpacePodium", "ScoreSpace podium", flags?.scoreSpacePodium)}
         <span style="margin-left: -10px" class="mr-1">
           {formMacros.tooltip("The 1st, 2nd, and 3rd placed entries in the 7th rating category will be displayed "
             + 'respectively for the Streamer choice, Solo choice and Team choice. Use the "Rankings" tab to set them.')}
         </span>
-        {formMacros.check("hideStreamerMenu", "Hide Streamer Menu", flags.hideStreamerMenu)}
+        {formMacros.check("hideStreamerMenu", "Hide Streamer Menu", flags?.hideStreamerMenu)}
       </div>
     </div>
   </>;
