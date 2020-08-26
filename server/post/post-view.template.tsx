@@ -21,7 +21,7 @@ export default function render(context: CommonLocals) {
       )}
 
       {ifTrue(post.get("published_at") && !templatingFunctions.isPast(post.get("published_at")), () =>
-        <div class="alert alert-warning"><strong>Pending post</strong> Other users can't see it until
+        <div class="alert alert-warning"><strong>Pending post</strong> Other users can't see it until{" "}
           {relativeTime(post.get("published_at"))}.</div>
       )}
 
