@@ -32,7 +32,7 @@ export default function render(context: CommonLocals) {
             {eventParticipations.map(eventParticipation =>
               <div class="col-lg-4 col-md-6">
                 <a name={eventParticipation.userId}></a>
-                <div class="card mb-4 {eventParticipation.streamerStatus}">
+                <div class={`card mb-4 ${eventParticipation.streamerStatus}`}>
                   <div class="card-header">
                     {userMacros.userThumb(eventParticipation.user, { fullWidth: true })}
                   </div>

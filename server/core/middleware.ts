@@ -24,7 +24,6 @@ import { CustomRequest, CustomResponse, Mutable } from "server/types";
 import passwordRecoveryService from "server/user/password-recovery/password-recovery.service";
 import { promisify } from "util";
 import config, * as configUtils from "./config";
-import constants from "./constants";
 import db from "./db";
 import fileStorage from "./file-storage";
 import log from "./log";

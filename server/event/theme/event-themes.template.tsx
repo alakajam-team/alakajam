@@ -74,7 +74,7 @@ export default function render(context: CommonLocals) {
                         if (user) {
                           return "You didn't submit theme ideas.";
                         } else {
-                          return <p><a href={"/login?redirect=" + encodeURI(path)} class="btn btn-primary">Login to view your ideas</a></p>;
+                          return <p><a href={`/login?redirect=${encodeURIComponent(path)}`} class="btn btn-primary">Login to view your ideas</a></p>;
                         }
                       })}
                     </div>
@@ -191,7 +191,7 @@ export default function render(context: CommonLocals) {
                     if (votingAllowed) {
                       return <div>
                         <p>Here are some of the ideas submitted to the event.
-                          <a href={`/login?redirect=${encodeURIComponent(path)}`} class="btn btn-primary">Login to vote</a></p>
+                          <a href={`/login?redirect=${encodeURI(path)}`} class="btn btn-primary">Login to vote</a></p>
                         {sampleThemes.map(theme =>
                           <div class="card card-body mb-3"><h1 class="m-0">{theme.get("title")}</h1></div>
                         )}

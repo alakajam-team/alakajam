@@ -214,7 +214,7 @@ export function tournamentJumbotronContent(user, event, eventParticipation, tour
     {ifTrue(entry, () =>
       myEntryJumbotronContent(event, entry, eventParticipation, options, true)
     )}
-    <div class="card-body text-center {entry ? 'px-2 pt-0 pb-2' : 'p-2' }">
+    <div class={`card-body text-center ${entry ? "px-2 pt-0 pb-2" : "p-2" }`}>
       {tournamentMacros.userRanking(user, event, eventParticipation, tournamentScore, { compact: true })}
       {ifTrue(leaderboard, () =>
         <a href={links.routeUrl(event, "event", "tournament-leaderboard")} class="btn btn-alt d-block">Leaderboard</a>

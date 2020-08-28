@@ -10,7 +10,7 @@ import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as postMacros from "server/post/post.macros";
 
 export default function render(context: CommonLocals) {
-  const { post, user, userLikes, sortedComments, csrfToken, editComment, nodeAuthorIds } = context;
+  const { post, user, userLikes, sortedComments, csrfToken, editComment, nodeAuthorIds, path } = context;
 
   formMacros.registerEditorScripts(context);
 
@@ -51,7 +51,7 @@ export default function render(context: CommonLocals) {
         )}
       </h2>
 
-      {postMacros.comments(sortedComments, { readingUser: user, csrfToken, editComment, nodeAuthorIds })}
+      {postMacros.comments(sortedComments, path, { readingUser: user, csrfToken, editComment, nodeAuthorIds })}
     </div>
   );
 }

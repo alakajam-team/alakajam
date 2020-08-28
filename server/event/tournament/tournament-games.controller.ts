@@ -13,7 +13,7 @@ import eventParticipationService from "../dashboard/event-participation.service"
 export async function viewEventTournamentGames(req: CustomRequest, res: CustomResponse<EventLocals>) {
   res.locals.pageTitle += " | Tournament games";
 
-  const { user, event, featuredEvent } = res.locals;
+  const { user, event } = res.locals;
 
   const statusTournament = event.get("status_tournament");
   if ([enums.EVENT.STATUS_TOURNAMENT.DISABLED, enums.EVENT.STATUS_TOURNAMENT.OFF].includes(statusTournament)) {

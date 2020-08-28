@@ -117,7 +117,7 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
               const categoryIndex = index + 1;
               return <a href={`?sortBy=${categoryIndex}&amp;division=${!(flags.scoreSpacePodium && categoryIndex === 7)
                 ? selectedDivision : ""}`} type="button"
-                class={"btn btn-primary results-links__category " + (selectedCategoryIndex === categoryIndex ? "active" : "")}>
+              class={"btn btn-primary results-links__category " + (selectedCategoryIndex === categoryIndex ? "active" : "")}>
                 <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-1`}></span>&nbsp;
                 <span class="d-none d-lg-inline">{categoryTitles[index]}</span>
               </a>;
@@ -142,7 +142,7 @@ function podium(rankings, event, categoryTitles, division, sortedBy, options: { 
         )}
         <div class="dropdown-menu">
           {Object.keys(event.get("divisions")).map(title =>
-            <a class="dropdown-item" href="?sortBy={sortBy}&amp;division={title}">
+            <a class="dropdown-item" href={`?sortBy=${sortedBy}&amp;division=${title}`}>
               {capitalize(title)} division
             </a>
           )}
@@ -154,7 +154,7 @@ function podium(rankings, event, categoryTitles, division, sortedBy, options: { 
             <button class="dropdown-toggle" type="button" data-toggle="dropdown">  {categoryTitles[sortedBy - 1]}</button>
             <div class="dropdown-menu">
               {categoryTitles.map((_title, index) =>
-                <a class="dropdown-item" href="?sortBy={index + 1}&amp;division={division}">
+                <a class="dropdown-item" href={`?sortBy=${index + 1}&amp;division=${division}`}>
                   {categoryTitles[index]}
                 </a>
               )}

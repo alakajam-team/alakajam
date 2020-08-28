@@ -8,7 +8,8 @@ import * as postMacros from "server/post/post.macros";
 import dashboardBase from "./dashboard.base.template";
 
 export default function render(context: CommonLocals) {
-  const { invites, toUser, user, notificationsLastRead, latestEntry, dashboardUser, latestPosts, byUser } = context;
+  const { invites, toUser, user, notificationsLastRead, path,
+    latestEntry, dashboardUser, latestPosts, byUser } = context;
 
   return dashboardBase(context, <div>
     <div class="row">
@@ -43,7 +44,8 @@ export default function render(context: CommonLocals) {
         })}
 
         {ifTrue(toUser.length > 0, () =>
-          postMacros.comments(toUser, { readingUser: user, readOnly: true, linkToNode: true, highlightNewerThan: notificationsLastRead })
+          postMacros.comments(toUser, path,
+            { readingUser: user, readOnly: true, linkToNode: true, highlightNewerThan: notificationsLastRead })
         )}
         {ifTrue(toUser.length === 0, () =>
           <div data-test="notifications" class="card card-body">No notifications yet.</div>
@@ -89,7 +91,7 @@ export default function render(context: CommonLocals) {
 
         <div class="horizontal-bar">Latest comments</div>
 
-        {postMacros.comments(byUser, { readingUser: user, readOnly: true, linkToNode: true })}
+        {postMacros.comments(byUser, path, { readingUser: user, readOnly: true, linkToNode: true })}
       </div>
     </div>
   </div>);

@@ -159,7 +159,7 @@ export function postLikes(postModel: BookshelfModel, options: {
   </span>;
 }
 
-export function comments(commentsParam: BookshelfModel[], options: {
+export function comments(commentsParam: BookshelfModel[], path: string, options: {
   readingUser?: User;
   editComment?: BookshelfModel;
   csrfToken?: Function;
@@ -177,7 +177,7 @@ export function comments(commentsParam: BookshelfModel[], options: {
       const showEditor = options.readingUser && options.editComment && options.editComment.id === comment.id;
       return <>
         {ifTrue(showEditor, () =>
-          commentEditor(comment, options.csrfToken, options)
+          commentEditor(comment, path, options.csrfToken, options)
         )}
         {ifFalse(showEditor, () => {
           const author = comment.related<BookshelfModel>("user");
@@ -193,7 +193,7 @@ export function comments(commentsParam: BookshelfModel[], options: {
               </div>;
             })}
             <div class="offset-1 col-11">
-              <a class="anchor" name="c{comment.id if comment}"></a>
+              <a class="anchor" name={"c" + (comment?.id || "")}></a>
               <div class="comment__details d-flex">
                 {ifTrue(isOwnAnonComment, () =>
                   <a href={links.routeUrl(options.readingUser, "user")}>
@@ -239,7 +239,7 @@ export function comments(commentsParam: BookshelfModel[], options: {
                 )}
                 {ifTrue(comment && !options.linkToNode, () =>
                   <>
-                    <span>&nbsp;•&nbsp;</span><a href="#c{comment.id}"><i class="fas fa-link" aria-hidden="true"></i></a>
+                    <span>&nbsp;•&nbsp;</span><a href={"#c" + comment.id}><i class="fas fa-link" aria-hidden="true"></i></a>
                   </>
                 )}
                 {ifTrue(!options.readOnly && (security.canUserWrite(options.readingUser, comment) || isOwnAnonComment), () =>
@@ -268,7 +268,7 @@ export function comments(commentsParam: BookshelfModel[], options: {
     )}
 
     {ifFalse(options.readOnly, () =>
-      commentEditor(null, options.csrfToken, options)
+      commentEditor(null, path, options.csrfToken, options)
     )}
 
     <style type="text/css" dangerouslySetInnerHTML={{
@@ -284,7 +284,7 @@ export function commentUrl(node: BookshelfModel, commentModel: BookshelfModel) {
   return links.routeUrl(node, commentModel.get("node_type")) + "#c" + commentModel.id;
 }
 
-export function commentEditor(commentModel: BookshelfModel, csrfToken: Function, options: CommentEditorOptions) {
+export function commentEditor(commentModel: BookshelfModel, path: string, csrfToken: Function, options: CommentEditorOptions) {
   const user = (commentModel && commentModel.related("user")) ? commentModel.related("user") : options.readingUser;
   const showAnon = options.allowAnonymous && !commentModel;
   if (user) {
@@ -332,6 +332,6 @@ export function commentEditor(commentModel: BookshelfModel, csrfToken: Function,
       </div>
     </form>;
   } else {
-    return <a class="btn btn-primary" href="/login?redirect={{ path }}">Login to comment</a>;
+    return <a class="btn btn-primary" href={`"/login?redirect=${encodeURIComponent(path)}`}>Login to comment</a>;
   }
 }

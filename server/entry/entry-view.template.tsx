@@ -16,7 +16,7 @@ import * as userMacros from "server/user/user.macros";
 import { EntryLocals } from "./entry.middleware";
 
 export default function render(context: EntryLocals) {
-  const { entry, external, user, infoMessage, entryVotes, canVote, vote, minEntryVotes, featuredEvent,
+  const { entry, external, user, infoMessage, entryVotes, canVote, vote, minEntryVotes, featuredEvent, path,
     event, eventVote, csrfToken, sortedComments, editComment, editableAnonComments, nodeAuthorIds, posts } = context;
 
   formMacros.registerEditorScripts(context);
@@ -81,7 +81,7 @@ export default function render(context: EntryLocals) {
 
             <h2>Comments <i>({entry.get("comment_count") || "0"})</i></h2>
             {
-              postMacros.comments(sortedComments, {
+              postMacros.comments(sortedComments, path, {
                 readingUser: user,
                 csrfToken,
                 editComment,
@@ -126,7 +126,7 @@ export default function render(context: EntryLocals) {
                 <span class="entry__info-label">Tags</span>
                 <div class="entry__info-value" style="width: 215px">
                   {entry.related<BookshelfCollection>("tags").models.map(tag =>
-                    <a href="/games?eventId=&amp;tags={ tag.get('id') }" class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get("value")}</a>
+                    <a href={`/games?eventId=&amp;tags=${ tag.get("id") }`} class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get("value")}</a>
                   )}
                 </div>
               </div>

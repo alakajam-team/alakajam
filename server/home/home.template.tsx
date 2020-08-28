@@ -170,7 +170,7 @@ export default function render(context: CommonLocals) {
             <div class="d-md-block d-none">
               <div class="horizontal-bar">Latest comments</div>
 
-              {postMacros.comments(comments, { readingUser: user, readOnly: true, linkToNode: true, preview: true })}
+              {postMacros.comments(comments, path, { readingUser: user, readOnly: true, linkToNode: true, preview: true })}
             </div>
           </div>
         </div>
