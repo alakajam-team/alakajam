@@ -66,7 +66,7 @@ export default function render(context: CommonLocals) {
                         <div>
                           <p style="margin-bottom: 10px">None yet. You can submit up to {maxThemeSuggestions} ideas.</p>
                           {ifNotSet(user, () =>
-                            <p><a href="/login?redirect={path | urlencode}" class="btn btn-primary">Login to submit ideas</a></p>
+                            <p><a href={`/login?redirect=${encodeURIComponent(path)}`} class="btn btn-primary">Login to submit ideas</a></p>
                           )}
                         </div>
                       )}
@@ -191,7 +191,7 @@ export default function render(context: CommonLocals) {
                     if (votingAllowed) {
                       return <div>
                         <p>Here are some of the ideas submitted to the event.
-                          <a href="/login?redirect={path | urlencode}" class="btn btn-primary">Login to vote</a></p>
+                          <a href={`/login?redirect=${encodeURIComponent(path)}`} class="btn btn-primary">Login to vote</a></p>
                         {sampleThemes.map(theme =>
                           <div class="card card-body mb-3"><h1 class="m-0">{theme.get("title")}</h1></div>
                         )}
