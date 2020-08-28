@@ -288,7 +288,7 @@ export default function render(context: CommonLocals) {
             <table>
             <tr><td class="theme-vote__buttons">
               <form id="js-vote-form" method="post">
-                ${context.csrfToken()}
+                ${context.csrfTokenHTML()}
                 <input type="hidden" name="action" value="vote" />
                 <input type="hidden" name="theme-id" id="js-theme-id" value="<%- theme.id %>" />
                 <button id="js-upvote" name="upvote" class="btn btn-outline-secondary"><span class="fas fa-arrow-up"></span></button>
@@ -311,7 +311,7 @@ export default function render(context: CommonLocals) {
                 <table class="js-theme-vote-history-block" style="display: none">
                 <tr><td class="theme-past__buttons">
                   <form method="post">
-                    ${context.csrfToken()}
+                    ${context.csrfTokenHTML()}
                     <input type="hidden" name="action" value="vote" />
                     <input type="hidden" name="theme-id" value="<%- theme.id %>" />
                     <button name="upvote" class="btn <%- theme.upvote ? 'btn-success' : 'btn-outline-secondary' %> btn-sm">
@@ -384,6 +384,7 @@ function themeDetails(userTheme) {
   const themeStatus = userTheme ? userTheme.get("status") : undefined;
   return <p>
     {eventMacros.eventThemeStatus(userTheme)}
+    {" "}
     {ifTrue(themeStatus !== "duplicate", () => {
       if (themeStatus === "out" || themeStatus === "banned") {
         return <span>Out after {userTheme.get("notes")} votes</span>;

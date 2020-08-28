@@ -40,7 +40,6 @@ export class AdminDevService {
     const users = await userService.findUsers({ pageSize: 30 });
     for (const user of users) {
       userService.setPassword(user, "password");
-      log.debug(user.details);
       await userService.save(user);
     }
     return {
