@@ -114,7 +114,7 @@ export async function handleGameSearch(
     let tagIds = tagsRaw.map((str) => forms.parseInt(str));
     if (tagIds.includes(NaN)) {
       tagIds = [];
-      log.error("Invalid tag query: " + req.query.tags);
+      log.warn("Invalid tags in query params: " + req.query.tags);
     }
     const tagCollection = await tagService.fetchByIds(tagIds);
     searchOptions.tags = tagCollection.map((tag) => ({ id: tag.get("id"), value: tag.get("value") }));

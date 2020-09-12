@@ -11,6 +11,12 @@ import userService from "server/user/user.service";
  */
 export async function viewStreamerPreferences(req: CustomRequest, res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
+
+  if (!user) {
+    res.redirectToLogin();
+    return;
+  }
+
   const eventParticipation = await eventParticipationService.getEventParticipation(event.get("id"), user.id);
   if (!eventParticipation?.isStreamer) {
     res.errorPage(403, "User is not registered as a streamer");
