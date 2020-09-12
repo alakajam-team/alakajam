@@ -334,14 +334,14 @@ export default function render(context: CommonLocals) {
 function shortlistMessage(user, randomizedShortlist, shortlistVote, hasRankedShortlist) {
   if (randomizedShortlist) {
     return <span>These are the top submitted ideas, in random order.
-      {user ? "Rank them from best (first) to worst (last) by using drag'n'drop." : ""}</span>;
+      {user ? "Rank them by using drag'n'drop: move them up the order to give them more points!" : ""}</span>;
   } else if (shortlistVote) {
     if (hasRankedShortlist) {
       return "Here are the top submitted ideas as you ranked them. "
-        + "You can still drag'n'drop them to change the order.";
+        + "You can still drag'n'drop them, move themes up the order to give them more points!";
     } else {
       return "Here are the top submitted ideas as you ranked them during the first vote phase. "
-        + "You can still drag'n'drop them to change the order.";
+        + "You can still drag'n'drop them, move themes up the order to give them more points!";
     }
   } else if (hasRankedShortlist) {
     return "Here are the top submitted ideas as you ranked them. You can no longer change your vote.";

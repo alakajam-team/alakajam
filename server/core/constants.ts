@@ -85,7 +85,7 @@ export default {
   // Events
   MAX_CATEGORY_COUNT: 7,
   TOURNAMENT_POINTS_DISTRIBUTION: [15, 12, 10, 8, 6, 5, 4, 3, 2, 1],
-  SHORTLIST_SIZE: 10,
+  SHORTLIST_SIZE: 20,
 
   // Pictures
   PICTURE_OPTIONS_DEFAULT: { maxWidth: 1280, maxHeight: 720 },

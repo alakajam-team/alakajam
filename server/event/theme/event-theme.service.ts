@@ -227,7 +227,8 @@ export class EventThemeService {
 
     if (event.get("status_theme") === enums.EVENT.STATUS_THEME.VOTING && [-1, 1].indexOf(score) !== -1) {
       expectedStatus = enums.THEME.STATUS.ACTIVE;
-    } else if (event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST && score >= 1 && score <= 10) {
+    } else if (event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST
+      && score >= 1 && score <= constants.SHORTLIST_SIZE) {
       expectedStatus = enums.THEME.STATUS.SHORTLIST;
     }
 
