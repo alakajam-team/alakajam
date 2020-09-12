@@ -179,17 +179,12 @@ export class EventThemeService {
     const themesCollection = await query.orderBy("updated_at")
       .fetchPage({ pageSize: 20 });
 
-    if (themesCollection.length >= 5) {
-      // Grab the 20 oldest theme ideas, then just keep the 10 with the least notes.
-      // This helps new themes catch up with the pack fast, while being much better randomized
-      // than just showing the themes with the least notes.
-      const sortedThemes = themesCollection.sortBy((theme) => theme.get("notes"));
-      const themesToVoteOn = lodash.shuffle(sortedThemes.splice(0, 10));
-      return new db.Collection(themesToVoteOn) as BookshelfCollection;
-    } else {
-      // Only serve themes in batches, otherwise it gives away when a person submitted its 3 themes
-      return new db.Collection() as BookshelfCollection;
-    }
+    // Grab the 20 oldest theme ideas, then just keep the 10 with the least notes.
+    // This helps new themes catch up with the pack fast, while being much better randomized
+    // than just showing the themes with the least notes.
+    const sortedThemes = themesCollection.sortBy((theme) => theme.get("notes"));
+    const themesToVoteOn = lodash.shuffle(sortedThemes.splice(0, 10));
+    return new db.Collection(themesToVoteOn) as BookshelfCollection;
   }
 
   public async findThemeShortlistVotes(event: BookshelfModel, options: { user?: User; score?: number } = {}): Promise<BookshelfCollection> {
