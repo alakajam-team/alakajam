@@ -230,31 +230,33 @@ export function statsCounters(event) {
   const participants = event.related("details").get("participation_count");
   const statsElements = [];
 
-  statsElements.push(<>
+  statsElements.push(<div>
     <span class="event-jumbotron__stats-counter">{participants}</span>&nbsp;
     entrant{participants !== 1 ? "s" : ""}
-  </>);
+  </div>);
 
   if (event.get("status_entry") !== "off") {
     const entries = event.get("entry_count");
-    statsElements.push(<>
-      , <span class="event-jumbotron__stats-counter">{entries}</span>&nbsp;
-    entr{entries !== 1 ? "ies" : "y"}
+    statsElements.push(<div>
+      <span class="event-jumbotron__stats-counter">{entries}</span>&nbsp;
+      entr{entries !== 1 ? "ies" : "y"}
       {!entries ? "... yet!" : ""}
-    </>);
+    </div>);
   } else if (event.get("status_theme") === "voting") {
     const themes = event.related("details").get("theme_count") || "0";
-    statsElements.push(<>
-      , <span class="event-jumbotron__stats-counter">{themes}</span>&nbsp;
-      theme{themes !== 1 ? "s" : ""}
-      {!themes ? "... yet!" : ""}
-    </>);
+    statsElements.push(
+      <div>
+        <span class="event-jumbotron__stats-counter">{themes}</span>&nbsp;
+        theme{themes !== 1 ? "s" : ""}
+        {!themes ? "... yet!" : ""}
+      </div>);
   } else if (["shortlist", "closed", "results"].includes(event.get("status_theme"))) {
     const themeVotes = event.related("details").get("theme_vote_count") || "0";
-    statsElements.push(<>
-      , <span class="event-jumbotron__stats-counter">{themeVotes}</span>&nbsp;
-      theme vote{themeVotes !== 1 ? "s" : ""}
-    </>);
+    statsElements.push(
+      <div>
+        <span class="event-jumbotron__stats-counter">{themeVotes}</span>&nbsp;
+        theme vote{themeVotes !== 1 ? "s" : ""}
+      </div>);
   }
 
   return <div class="event-jumbotron__stats-contents py-2">

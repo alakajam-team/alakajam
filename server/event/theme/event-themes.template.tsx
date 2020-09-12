@@ -340,7 +340,7 @@ function shortlistMessage(user, randomizedShortlist, shortlistVote, hasRankedSho
       return "Here are the top submitted ideas as you ranked them. "
         + "You can still drag'n'drop them, move themes up the order to give them more points!";
     } else {
-      return "Here are the top submitted ideas as you ranked them during the first vote phase. "
+      return "Here are the top submitted ideas as you rated them during the first vote phase. "
         + "You can still drag'n'drop them, move themes up the order to give them more points!";
     }
   } else if (hasRankedShortlist) {
