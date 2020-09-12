@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "dist/server/index.js",
   "scripts": {
-    "start": "ts-node-dev --transpile-only -r tsconfig-paths/register --ignore-watch node_modules server/index.ts",
+    "start": "ts-node-dev --transpile-only -r tsconfig-paths/register --ignore-watch node_modules --ignore-watch \".*.tsx\" server/index.ts",
     "start:refresh": "npm run build:server && concurrently --kill-others \"npm run build:server -- -w\" \"browser-refresh\"",
     "start:e2e": "ts-node --transpile-only -r tsconfig-paths/register server/e2e.ts",
     "start:debug": "tsc && ts-node --transpile-only --nolazy -r tsconfig-paths/register --inspect-brk dist/server/index.js",
