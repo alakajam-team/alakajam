@@ -40,7 +40,7 @@ export default function render(context: CommonLocals) {
         <>
           {ifSet(featuredPost, () =>
             <div class="home-welcome pt-3">
-              <div class="container">{postMacros.post(featuredPost)}</div>
+              <div class="container">{postMacros.post(featuredPost, { readOnly: true })}</div>
             </div>
           )}
           {jumbotronMacros.eventJumbotron(featuredEvent, eventParticipation, featuredEventAnnouncement, user, userLikes,

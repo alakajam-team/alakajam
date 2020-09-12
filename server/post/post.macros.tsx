@@ -24,6 +24,7 @@ export function post(postModel: BookshelfModel, options: {
   allowMods?: boolean;
   commentsAnchorLinks?: boolean;
   smallTitle?: boolean;
+  readOnly?: boolean;
 } = {}) {
   const author = postModel.related<BookshelfModel>("author");
 
@@ -41,12 +42,16 @@ export function post(postModel: BookshelfModel, options: {
             <span class="d-none d-md-inline">Edit</span>
           </a>
         )}
-        <a href={options.commentsAnchorLinks ? "#comments" : links.routeUrl(postModel, "post", "#comments")} class="post__comment-count ml-2">
-          <span class="fas fa-comments"></span> {postModel.get("comment_count") || 0}
-        </a>
-        <span class="js-like ml-1">
-          {postLikes(postModel, options)}
-        </span>
+        {ifFalse(options.readOnly, () =>
+          <>
+            <a href={options.commentsAnchorLinks ? "#comments" : links.routeUrl(postModel, "post", "#comments")} class="post__comment-count ml-2">
+              <span class="fas fa-comments"></span> {postModel.get("comment_count") || 0}
+            </a>
+            <span class="js-like ml-1">
+              {postLikes(postModel, options)}
+            </span>
+          </>
+        )}
         {ifTrue(options.showId, () =>
           <span style="font-family: monospace; font-size: 1rem">ID={postModel.get("id")}</span>
         )}
@@ -110,7 +115,7 @@ export function post(postModel: BookshelfModel, options: {
           <div class="post__body card-body user-contents" dangerouslySetInnerHTML={markdown(postModel.get("body"))} />
         )}
 
-        {ifTrue(!options.hideBody && !options.commentsAnchorLinks, () =>
+        {ifTrue(!options.hideBody && !options.commentsAnchorLinks && !options.readOnly, () =>
           <div class="post__footer">
             <a href={links.routeUrl(postModel, "post", "#comments")}>
               <span class="fas fa-comments"></span>&nbsp;
