@@ -74,7 +74,7 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
             <>
               <label class="mr-1">Date
                 (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)</label>
-              {formMacros.dateTimePicker("countdown-date", event?.get("countdown_config")?.date, user)}
+              {formMacros.dateTimePicker("countdown-date", event?.get("countdown_config")?.date, user, { forceUTC: true })}
             </>
           )}
         </div>
