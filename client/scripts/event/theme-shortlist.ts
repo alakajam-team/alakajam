@@ -11,6 +11,7 @@ export default function themeShortlist() {
 
   Sortable.create($shortlist[0], {
     animation: 100,
+    filter: ".not-sortable",
     onUpdate() {
       const votes = [];
       $shortlist.find("li").each(function() {

@@ -247,7 +247,7 @@ export default function render(context: CommonLocals) {
                           </>;
                         })}
                         {eliminatedShortlist.map(theme =>
-                          <li class={"theme-shortlist-line eliminated " + (shortlistVote ? "draggable-list" : "")} data-theme-id={theme.get("id")}>
+                          <li class="theme-shortlist-line eliminated not-sortable" data-theme-id={theme.get("id")}>
                             <span class="theme-shortlist-line__label">{theme.get("title")}</span>
                           </li>
                         )}
