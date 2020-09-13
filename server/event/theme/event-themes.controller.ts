@@ -13,6 +13,7 @@ import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
+import eventThemeShortlistService from "./event-theme-shortlist.service";
 
 /**
  * Submit themes to an event, view and vote on other themes
@@ -52,7 +53,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
             }
           }
           // Update theme ideas
-          await eventThemeService.saveThemeIdeas(res.locals.user, event, ideas);
+          await eventThemeService.saveThemeSubmissions(res.locals.user, event, ideas);
         } else if (req.body.action === "vote") {
           if (forms.isId(req.body["theme-id"]) && (req.body.upvote !== undefined || req.body.downvote !== undefined)) {
             const score = (req.body.upvote !== undefined) ? 1 : -1;
@@ -67,7 +68,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
             }
           }
           if (validIds) {
-            await eventThemeService.saveShortlistVotes(res.locals.user, event, ids);
+            await eventThemeShortlistService.saveShortlistVotes(res.locals.user, event, ids);
             context.infoMessage = "Ranking changes saved.";
           }
         }
@@ -78,7 +79,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
 
       if (res.locals.user) {
         // Logged users
-        const userThemesCollection = await eventThemeService.findThemeIdeasByUser(res.locals.user, event);
+        const userThemesCollection = await eventThemeService.findThemesByUser(res.locals.user, event);
         context.userThemes = userThemesCollection.models;
 
         context.voteCount = await eventThemeService.findThemeVotesHistory(
@@ -116,18 +117,18 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
       // State-specific data
       if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED,
         enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
-        context.shortlistVotes = await eventThemeService.countShortlistVotes(event);
+        context.shortlistVotes = await eventThemeShortlistService.countShortlistVotes(event);
       }
       if (statusTheme === enums.EVENT.STATUS_THEME.RESULTS) {
-        let shortlistCollection = await eventThemeService.findShortlist(event);
+        let shortlistCollection = await eventThemeShortlistService.findShortlist(event);
         if (shortlistCollection.length === 0) {
           // In case the shortlist phase has been skipped
-          shortlistCollection = await eventThemeService.findBestThemes(event);
+          shortlistCollection = await eventThemeShortlistService.findBestThemes(event);
         }
         context.shortlist = shortlistCollection.sortBy((theme) => -theme.get("score"));
 
         if (res.locals.user) {
-          const shortlistVotesCollection = await eventThemeService.findThemeShortlistVotes(event, { user: res.locals.user });
+          const shortlistVotesCollection = await eventThemeShortlistService.findThemeShortlistVotes(event, { user: res.locals.user });
           if (shortlistVotesCollection.length === shortlistCollection.length) {
             context.userRanks = {};
             shortlistVotesCollection.forEach((vote) => {
@@ -160,8 +161,8 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
  * }
  */
 export async function _generateShortlistInfo(event, user = null) {
-  const shortlistCollection = await eventThemeService.findShortlist(event);
-  const eliminatedShortlistThemes = eventThemeService.computeEliminatedShortlistThemes(event);
+  const shortlistCollection = await eventThemeShortlistService.findShortlist(event);
+  const eliminatedShortlistThemes = eventThemeShortlistService.computeEliminatedShortlistThemes(event);
 
   // Split shortlist
   const info = {
@@ -173,7 +174,7 @@ export async function _generateShortlistInfo(event, user = null) {
   };
 
   // Sort active shortlist by user score
-  const shortlistVotesCollection = user ? await eventThemeService.findThemeShortlistVotes(event, { user }) : null;
+  const shortlistVotesCollection = user ? await eventThemeShortlistService.findThemeShortlistVotes(event, { user }) : null;
   if (shortlistVotesCollection) {
     info.scoreByTheme = {};
     shortlistVotesCollection.forEach((vote) => {

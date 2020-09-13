@@ -7,16 +7,17 @@ import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as lodash from "lodash";
 import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
+import constants from "server/core/constants";
 import enums from "server/core/enums";
 import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import eventService from "server/event/event.service";
+import eventThemeShortlistService from "server/event/theme/event-theme-shortlist.service";
 import eventThemeService from "server/event/theme/event-theme.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import * as url from "url";
 import userService from "../user/user.service";
-import constants from "server/core/constants";
 
 type Json = Record<string, any>;
 
@@ -144,17 +145,17 @@ export async function getEventShortlist(req: CustomRequest, res: CustomResponse<
   }
 
   if (event) {
-    const shortlist = await eventThemeService.findShortlist(event);
+    const shortlist = await eventThemeShortlistService.findShortlist(event);
 
     if (shortlist.length > 0) {
-      let eliminatedThemes = eventThemeService.computeEliminatedShortlistThemes(event);
+      let eliminatedThemes = eventThemeShortlistService.computeEliminatedShortlistThemes(event);
       if (event.get("status_theme") === enums.EVENT.STATUS_THEME.RESULTS) {
         eliminatedThemes = 9;
       }
 
       let topVotes: BookshelfModel[] = [];
       if ([enums.EVENT.STATUS_THEME.CLOSED, enums.EVENT.STATUS_THEME.RESULTS].includes(event.get("status_theme"))) {
-        topVotes = (await eventThemeService.findThemeShortlistVotes(event, { score: constants.SHORTLIST_SIZE })).models;
+        topVotes = (await eventThemeShortlistService.findThemeShortlistVotes(event, { score: constants.SHORTLIST_SIZE })).models;
       }
 
       // Build data
@@ -177,7 +178,7 @@ export async function getEventShortlist(req: CustomRequest, res: CustomResponse<
       const activeShortlist = rawShortlist.filter((themeInfo) => !themeInfo.eliminated);
       const eliminatedShortlist = rawShortlist.filter((themeInfo) => themeInfo.eliminated);
       json.shortlist = lodash.sortBy(activeShortlist, (themeInfo) => themeInfo.title).concat(eliminatedShortlist);
-      json.nextElimination = eventThemeService.computeNextShortlistEliminationTime(event);
+      json.nextElimination = eventThemeShortlistService.computeNextShortlistEliminationTime(event);
     } else {
       json = { error: "Event does not have a theme shortlist" };
       status = 403;

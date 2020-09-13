@@ -4,6 +4,10 @@ import { TimestampedEntity } from "./timestamped.entity";
 import { Event } from "./event.entity";
 import { User } from "./user.entity";
 
+export interface EntryScoresMap {
+  [entryId: number]: {score: number; ranking: number}
+};
+
 @Entity()
 export class TournamentScore extends TimestampedEntity {
 
@@ -37,7 +41,7 @@ export class TournamentScore extends TimestampedEntity {
    * JSON caching of the entry scores used to compute the tournament score: {entryId: {score, ranking}}
    */
   @Column(ColumnTypes.json({ nullable: true, length: 1000 }))
-  public entry_scores: {[entryId: number]: {score: number; ranking: number}};
+  public entry_scores: EntryScoresMap;
 
   /**
    * User ranking on that tournament

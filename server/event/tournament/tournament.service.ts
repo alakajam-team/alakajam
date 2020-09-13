@@ -1,14 +1,15 @@
 import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import leftPad from "left-pad";
+import { intersection } from "lodash";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import * as models from "server/core/models";
 import { EventFlags } from "server/entity/event-details.entity";
+import { EntryScoresMap } from "server/entity/tournament-score.entity";
 import eventParticipationService from "../dashboard/event-participation.service";
-import { intersection } from "lodash";
 
 export const CACHE_KEY_ACTIVE_TOURNAMENT_EVENT = "active-tournament-event";
 
@@ -181,7 +182,7 @@ export class TournamentService {
 
     // (Re)-calculate score info
     let totalScore = 0;
-    const entryScores = {};
+    const entryScores: EntryScoresMap = {};
     const entryScoresMap = await highScoreService.findUserScoresMapByEntry(userId, entries);
     Object.keys(entryScoresMap).forEach((entryId) => {
       const entryScore = entryScoresMap[entryId];

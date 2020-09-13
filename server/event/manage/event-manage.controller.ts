@@ -11,11 +11,11 @@ import highScoreService from "server/entry/highscore/entry-highscore.service";
 import eventPresetService from "server/event/event-preset.service";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
-import eventThemeService from "server/event/theme/event-theme.service";
 import tournamentService, { CACHE_KEY_ACTIVE_TOURNAMENT_EVENT } from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventTemplateService from "../event-template.service";
 import { EventLocals } from "../event.middleware";
+import eventThemeShortlistService from "../theme/event-theme-shortlist.service";
 
 /**
  * Edit or create an event
@@ -130,7 +130,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
 
       // Run event triggers
       if (event.hasChanged("status_theme") && event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST) {
-        await eventThemeService.computeShortlist(event);
+        await eventThemeShortlistService.computeShortlist(event);
         infoMessage = "Theme shortlist computed.";
       }
       if (event.hasChanged("status_results")) {

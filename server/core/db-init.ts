@@ -108,7 +108,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
 
     await settings.save(SETTING_FEATURED_EVENT_NAME, "2nd-alakajam");
 
-    eventThemeService.saveThemeIdeas(entrantUser as any, event2, [
+    eventThemeService.saveThemeSubmissions(entrantUser as any, event2, [
       { title: "Alone" },
       { title: "Evolution" },
       { title: "Two buttons" },

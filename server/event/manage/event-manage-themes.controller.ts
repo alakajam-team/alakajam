@@ -9,6 +9,7 @@ import { SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_ELIMINAT
 import eventThemeService from "server/event/theme/event-theme.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
+import eventThemeShortlistService from "../theme/event-theme-shortlist.service";
 
 /**
  * Manage the event's submitted themes
@@ -23,14 +24,14 @@ export async function eventManageThemes(req: CustomRequest, res: CustomResponse<
 
   // Init context
   const event = res.locals.event;
-  const shortlistCollection = await eventThemeService.findShortlist(event);
+  const shortlistCollection = await eventThemeShortlistService.findShortlist(event);
   const context: any = {
     eliminationMinNotes: await settings.findNumber(
       SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
     eliminationThreshold: await settings.findNumber(
       SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58),
     shortlist: shortlistCollection.models,
-    eliminatedShortlistThemes: eventThemeService.computeEliminatedShortlistThemes(event),
+    eliminatedShortlistThemes: eventThemeShortlistService.computeEliminatedShortlistThemes(event),
   };
 
   if (req.method === "POST") {
