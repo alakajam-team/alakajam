@@ -15,6 +15,7 @@ export interface EditableSetting {
 
 export const SETTING_FEATURED_EVENT_NAME = "featured_event_name";
 export const SETTING_FEATURED_POST_ID = "featured_post_id";
+export const SETTING_FEATURED_TWITCH_CHANNEL = "featured_twitch_channel";
 export const SETTING_HOME_TIMELINE_SIZE = "home_timeline_size";
 
 export const SETTING_EVENT_REQUIRED_ENTRY_VOTES = "event_required_entry_votes";
@@ -22,6 +23,7 @@ export const SETTING_EVENT_THEME_IDEAS_REQUIRED = "event_theme_ideas_required";
 export const SETTING_EVENT_THEME_ELIMINATION_MODULO = "event_theme_elimination_modulo";
 export const SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES = "event_theme_elimination_min_notes";
 export const SETTING_EVENT_THEME_ELIMINATION_THRESHOLD = "event_theme_elimination_threshold";
+export const SETTING_EVENT_THEME_SHORTLIST_SIZE = "event_theme_shortlist_size";
 export const SETTING_EVENT_THEME_SUGGESTIONS = "event_theme_suggestions";
 export const SETTING_EVENT_OPEN_VOTING = "event_open_voting";
 export const SETTING_EVENT_TOURNAMENT_ADVERTISING = "event_tournament_advertising";
@@ -51,14 +53,19 @@ export const EDITABLE_SETTINGS: EditableSetting[] = [
   {
     key: SETTING_FEATURED_POST_ID,
     category: "home page",
-    description: "(Optional) Set a post ID to display an arbitrary blog post at the top of the front page. Mostly for emergencies."
+    description: "(Optional) Set a post ID to pin an arbitrary blog post at the top of the front page. Mostly for emergencies."
+  },
+  {
+    key: SETTING_FEATURED_TWITCH_CHANNEL,
+    category: "home page",
+    description: "(Optional) Set a Twitch channel name to pin it as an embed at the top of the front page. "
+      + "For jam launches and other official streams."
   },
   {
     key: SETTING_HOME_TIMELINE_SIZE,
     category: "home page",
     description: "(Optional) Number of events to be shown in the timeline. Usually 5, but can be reduced to prevent overflow."
   },
-
 
   // Events
 
@@ -102,6 +109,11 @@ export const EDITABLE_SETTINGS: EditableSetting[] = [
     key: SETTING_EVENT_THEME_ELIMINATION_THRESHOLD,
     category: "events",
     description: "Between 0 and 1. Themes with an 'Elimination rating' below that point will be eliminated. Handle with care."
+  },
+  {
+    key: SETTING_EVENT_THEME_SHORTLIST_SIZE,
+    category: "events",
+    description: "Number of themes to be kept the next time we compute a shortlist. Usually 10."
   },
 
   // Docs

@@ -6,6 +6,7 @@ import forms from "server/core/forms";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_ELIMINATION_THRESHOLD } from "server/core/settings-keys";
+import { ThemeShortlistEliminationState } from "server/entity/event-details.entity";
 import eventThemeService from "server/event/theme/event-theme.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
@@ -24,38 +25,47 @@ export async function eventManageThemes(req: CustomRequest, res: CustomResponse<
 
   // Init context
   const event = res.locals.event;
+  await eventThemeShortlistService.updateShortlistAutoElimination(event);
   const shortlistCollection = await eventThemeShortlistService.findShortlist(event);
   const context: any = {
     eliminationMinNotes: await settings.findNumber(
       SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
     eliminationThreshold: await settings.findNumber(
       SETTING_EVENT_THEME_ELIMINATION_THRESHOLD, 0.58),
-    shortlist: shortlistCollection.models,
-    eliminatedShortlistThemes: eventThemeShortlistService.computeEliminatedShortlistThemes(event),
+    shortlist: shortlistCollection.models
   };
 
   if (req.method === "POST") {
     if (forms.isId(req.body.id)) {
-      // Save theme title
+      // Apply theme changes
       const theme = await eventThemeService.findThemeById(req.body.id);
       if (theme) {
         theme.set("title", forms.sanitizeString(req.body.title));
         await theme.save();
       }
-    } else if (req.body.elimination) {
+
+    } else if (req.body["shortlist-elimination-form"] !== undefined) {
       // Save shortlist elimination settings
       const eventDetails = event.related<BookshelfModel>("details");
-      const sanitizedDelay = forms.isInt(req.body["elimination-delay"])
-        ? parseInt(req.body["elimination-delay"], 10) : 8;
-      eventDetails.set("shortlist_elimination", {
-        start: forms.parsePickerDateTime(req.body["elimination-start-date"]),
-        delay: sanitizedDelay,
-        body: forms.sanitizeMarkdown(req.body["elimination-body"]),
-        stream: forms.sanitizeString(req.body.stream),
+      const shortlistElimination: ThemeShortlistEliminationState = {
+        nextElimination: forms.parsePickerDateTime(req.body["next-elimination"])?.toISOString(),
+        eliminatedCount: forms.parseInt(req.body["eliminated-count"]),
+        minutesBetweenEliminations: forms.parseInt(req.body["minutes-between-eliminations"])
+      };
+      eventDetails.set({
+        theme_page_header: forms.sanitizeMarkdown(req.body["theme-page-header"]),
+        shortlist_elimination: shortlistElimination
       });
+      eventThemeShortlistService.updateShortlistAutoElimination(event);
       await eventDetails.save();
+      res.locals.alerts.push({ type: "success", message: "Changes saved."});
+
       cache.eventsById.del(event.get("id"));
       cache.eventsByName.del(event.get("name"));
+
+    } else if (req.body["eliminate-one"] !== undefined) {
+      await eventThemeShortlistService.eliminateOneShorlistTheme(event);
+      res.locals.alerts.push({ type: "success", message: "Theme successfully eliminated."});
     }
   }
 
@@ -79,9 +89,9 @@ export async function eventManageThemes(req: CustomRequest, res: CustomResponse<
     }
   }
 
-  // Fetch themes list at the end to make sure all changes are visible
   const themesCollection = await eventThemeService.findAllThemes(event);
   context.themes = themesCollection.models;
+  context.isShortlistAutoEliminationEnabled = eventThemeShortlistService.isShortlistAutoEliminationEnabled(event);
 
   res.render<EventLocals>("event/manage/event-manage-themes", {
     ...res.locals,

@@ -251,7 +251,9 @@ export const Event = bookshelf.model("Event", {
  * | integer | participation_count | Number of users who joined the event
  * | string | banner | Path to a banner picture
  * | string | division_counts | Number of entries by division: {"name": count...}
- * | string | shortlist_elimination | Config for shortlist eliminations phase (JSON: {"start": date, "delay": number in minutes, "body": html}
+ * | string | shortlist_elimination | State of shortlist eliminations phase
+ *            (JSON: {"nextElimination": date, "minutesBetweenEliminations": number in minutes, "eliminatedCount": number})
+ * | string | theme_page_header | Arbitrary Markdown do be displayed at the top of the theme voting page
  * | string | links | Config for a list of special pages to link to: (JSON: [{"title": string, "link": string, "icon": string}]
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)

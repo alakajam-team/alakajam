@@ -39,6 +39,13 @@ $arrowSize: 9.5px;
   }
 }
 
+.home-stream-container {
+  margin: -20px 0 20px 0;
+  background-color: black;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
 .event-jumbotron,
 .home-jumbotron {
   margin-top: -$body-margin;

@@ -1,4 +1,4 @@
-import { BookshelfCollection } from "bookshelf";
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import * as lodash from "lodash";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
@@ -6,8 +6,11 @@ import settings from "server/core/settings";
 import {
   SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
   SETTING_EVENT_THEME_IDEAS_REQUIRED,
-  SETTING_EVENT_THEME_SUGGESTIONS
+  SETTING_EVENT_THEME_SUGGESTIONS,
+  SETTING_EVENT_THEME_SHORTLIST_SIZE
 } from "server/core/settings-keys";
+import { ThemeShortlistEliminationState } from "server/entity/event-details.entity";
+import { User } from "server/entity/user.entity";
 import eventThemeService from "server/event/theme/event-theme.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -33,6 +36,8 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
       eliminationMinNotes: await settings.findNumber(
         SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, 5),
       infoMessage: null,
+      defaultShortlistSize: await settings.findNumber(
+        SETTING_EVENT_THEME_SHORTLIST_SIZE, 10)
     };
 
     if (forms.isId(statusThemes)) {
@@ -97,6 +102,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
           }
         } else if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED].includes(statusTheme)) {
           context = Object.assign(context, await _generateShortlistInfo(event, res.locals.user));
+          await eventThemeShortlistService.updateShortlistAutoElimination(event);
         }
       } else {
         // Anonymous users
@@ -120,11 +126,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
         context.shortlistVotes = await eventThemeShortlistService.countShortlistVotes(event);
       }
       if (statusTheme === enums.EVENT.STATUS_THEME.RESULTS) {
-        let shortlistCollection = await eventThemeShortlistService.findShortlist(event);
-        if (shortlistCollection.length === 0) {
-          // In case the shortlist phase has been skipped
-          shortlistCollection = await eventThemeShortlistService.findBestThemes(event);
-        }
+        const shortlistCollection = await eventThemeShortlistService.findShortlist(event);
         context.shortlist = shortlistCollection.sortBy((theme) => -theme.get("score"));
 
         if (res.locals.user) {
@@ -160,14 +162,15 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
  *  scoreByTheme: (optional) The scores set by the user
  * }
  */
-export async function _generateShortlistInfo(event, user = null) {
+export async function _generateShortlistInfo(event: BookshelfModel, user: User | null = null) {
   const shortlistCollection = await eventThemeShortlistService.findShortlist(event);
-  const eliminatedShortlistThemes = eventThemeShortlistService.computeEliminatedShortlistThemes(event);
+  const shortlistElimination: ThemeShortlistEliminationState = event.related<BookshelfModel>("details").get("shortlist_elimination");
+  const eliminatedCount = shortlistElimination.eliminatedCount || 0;
 
   // Split shortlist
   const info = {
-    activeShortlist: shortlistCollection.slice(0, shortlistCollection.length - eliminatedShortlistThemes),
-    eliminatedShortlist: eliminatedShortlistThemes > 0 ? shortlistCollection.slice(-eliminatedShortlistThemes) : [],
+    activeShortlist: shortlistCollection.slice(0, shortlistCollection.length - eliminatedCount),
+    eliminatedShortlist: eliminatedCount > 0 ? shortlistCollection.slice(-eliminatedCount) : [],
     randomizedShortlist: false,
     hasRankedShortlist: false,
     scoreByTheme: undefined
@@ -191,7 +194,7 @@ export async function _generateShortlistInfo(event, user = null) {
   // Shuffle active shortlist if no vote or anonymous
   if (!shortlistVotesCollection || shortlistVotesCollection.length === 0) {
     info.activeShortlist = lodash.shuffle(
-      shortlistCollection.slice(0, shortlistCollection.length - eliminatedShortlistThemes));
+      shortlistCollection.slice(0, shortlistCollection.length - eliminatedCount));
     info.randomizedShortlist = true;
   }
 

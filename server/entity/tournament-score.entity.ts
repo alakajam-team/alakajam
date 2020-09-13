@@ -5,7 +5,7 @@ import { Event } from "./event.entity";
 import { User } from "./user.entity";
 
 export interface EntryScoresMap {
-  [entryId: number]: {score: number; ranking: number}
+  [entryId: number]: {score: number; ranking: number};
 };
 
 @Entity()

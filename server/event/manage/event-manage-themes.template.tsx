@@ -1,14 +1,18 @@
+import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
 import { CommonLocals } from "server/common.middleware";
 import { digits } from "server/core/templating-filters";
+import { ThemeShortlistEliminationState } from "server/entity/event-details.entity";
+import { User } from "server/entity/user.entity";
 import * as eventMacros from "server/event/event.macros";
+import eventThemeShortlistService from "server/event/theme/event-theme-shortlist.service";
 import * as formMacros from "server/macros/form.macros";
-import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
+import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "./event-manage.base.template";
 
 export default function render(context: CommonLocals) {
-  const { event, themes, eliminationThreshold, shortlist, user,
-    eliminatedShortlistThemes, eliminationMinNotes, editTheme, csrfToken } = context;
+  const { event, themes, eliminationThreshold, shortlist, user, eliminationMinNotes, editTheme,
+    isShortlistAutoEliminationEnabled, csrfToken } = context;
 
   context.inlineStyles.push(`
     .table td {
@@ -21,6 +25,23 @@ export default function render(context: CommonLocals) {
   return eventManageBase(context, <div>
     <h1>{event.get("title")} themes <span class="count">({themes.length})</span></h1>
 
+    <form method="post" class="js-warn-on-unsaved-changes">
+      {csrfToken()}
+
+      <div class="horizontal-bar">
+        Theme voting settings
+      </div>
+      <div class="form-group">
+        <label for="theme-page-header">Theme voting page header {formMacros.tooltip("Displayed at the top of the page")}</label>
+        {formMacros.editor("theme-page-header", event.related("details").get("theme_page_header"), { minHeight: 50 })}
+      </div>
+      {shortlistEliminationFields(event, user, isShortlistAutoEliminationEnabled)}
+
+      <div class="form-group">
+        <input type="submit" name="shortlist-elimination-form" class="btn btn-primary" value="Save changes" />
+      </div>
+    </form>
+
     {ifTrue(["shortlist", "closed", "results"].includes(event.get("status_theme")), () =>
       <div>
         <div class="horizontal-bar">
@@ -31,11 +52,6 @@ export default function render(context: CommonLocals) {
     )}
 
     <div class="horizontal-bar">
-      Shortlist elimination
-    </div>
-    {shortlistEliminationForm(event, eliminatedShortlistThemes, user, csrfToken)}
-
-    <div class="horizontal-bar">
       Submitted themes
     </div>
 
@@ -43,7 +59,7 @@ export default function render(context: CommonLocals) {
       ({eliminationMinNotes} votes or more) and their Elimination Rating gets under&nbsp;
       <strong>{digits(eliminationThreshold * 100, 1)}%</strong>.</p>
 
-    {themesTable(event, themes, editTheme, eliminationMinNotes, csrfToken)}
+    {themesTable(themes, editTheme, eliminationMinNotes, csrfToken)}
   </div>);
 }
 
@@ -73,67 +89,51 @@ function shortlistTable(event, shortlist) {
   </table>;
 }
 
-function shortlistEliminationForm(event, eliminatedShortlistThemes, user, csrfToken) {
+function shortlistEliminationFields(event: BookshelfModel, user: User, isShortlistAutoEliminationEnabled: boolean) {
   const eventDetails = event.related("details");
+  const shotlistElimination: ThemeShortlistEliminationState = eventDetails.get("shortlist_elimination");
 
   return <div>
-    <p>This optional feature lets you eliminate shortlisted themes one by one in the hours preceding the jam launch.</p>
-    <p>
-      Current state:&nbsp;
-      {ifSet(eventDetails.get("shortlist_elimination").start, () =>
-        <span>
-          <span class="badge badge-success mr-1">Enabled</span>
-          <b>(shortlist themes eliminated: {eliminatedShortlistThemes})</b>
-        </span>
-      )}
-      {ifNotSet(eventDetails.get("shortlist_elimination").start, () =>
-        <span class="badge badge-secondary">Disabled</span>
-      )}
-    </p>
+    <div class="form-group">
+      <label for="start-date">Eliminated shortlist themes</label>
+      <div class="form-inline">
+        <input class="form-control" name="eliminated-count" value={shotlistElimination.eliminatedCount?.toString() || "0"} />
+        <button type="submit" name="eliminate-one" class="btn btn-outline-primary ml-3">Eliminate one!</button>
+      </div>
+    </div>
 
-    <form method="post" class="js-warn-on-unsaved-changes">
-      {csrfToken()}
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="start-date">Start date (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)
-              {formMacros.tooltip("Specify when the first of the shortlisted themes is eliminated. " +
-              "Eliminations will stop when 3 themes remain. If the date is unset, feature is disabled.")}</label>
-            {formMacros.dateTimePicker(
-              "elimination-start-date",
-              eventDetails.get("shortlist_elimination").start,
-              user,
-              { forceUTC: true })}
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="title">Minutes between eliminations</label>
-            <input type="text" class="form-control" name="elimination-delay" value={eventDetails.get("shortlist_elimination").delay} />
-          </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="start-date">Next elimination (<a href="https://www.timeanddate.com/worldclock/timezone/utc" target="_blank">UTC</a>)
+            {formMacros.tooltip(`Specify when the next of the shortlisted themes is eliminated. 
+              Eliminations will stop when ${eventThemeShortlistService.MIN_REMAINING_THEMES} themes remain.
+              If the date is unset or the elimination limit is reached, this feature is disabled.`)}</label>
+          {formMacros.dateTimePicker(
+            "next-elimination",
+            shotlistElimination.nextElimination,
+            user,
+            { forceUTC: true })}
+          <p>
+            Automatic elimination state:&nbsp;
+            {ifTrue(isShortlistAutoEliminationEnabled, () => <span class="badge badge-success mr-1">Active</span>)}
+            {ifFalse(isShortlistAutoEliminationEnabled, () => <span class="badge badge-secondary">Inactive</span>)}
+          </p>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="stream">Twitch channel to display on front page</label>
-            <input type="text" class="form-control" name="stream"
-              value={eventDetails.get("shortlist_elimination").stream} placeholder="Channel name (e.g. DanaePlays)" />
-          </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="title">Minutes between eliminations</label>
+          <input type="text" class="form-control" name="minutes-between-eliminations" value={shotlistElimination.minutesBetweenEliminations} />
         </div>
       </div>
-      <div class="form-group">
-        <label for="elimination-body">Banner {formMacros.tooltip("Displayed at the top of the page")}</label>
-        {formMacros.editor("elimination-body", eventDetails.get("shortlist_elimination").body)}
-      </div>
-      <div class="form-group">
-        <input type="submit" name="elimination" class="btn btn-primary" value="Save changes" />
-      </div>
-    </form>
+    </div>
+
   </div>;
 }
 
-function themesTable(event, themes, editTheme, eliminationMinNotes, csrfToken) {
+function themesTable(themes: BookshelfModel[], editTheme: BookshelfModel | undefined,
+                     eliminationMinNotes: number, csrfToken: Function) {
   return <table class="table sortable">
     <thead>
       <tr>
@@ -159,7 +159,7 @@ function themesTable(event, themes, editTheme, eliminationMinNotes, csrfToken) {
   </table>;
 }
 
-function themesTableRow(theme, editTheme, eliminationMinNotes, csrfToken) {
+function themesTableRow(theme: BookshelfModel, editTheme: BookshelfModel | undefined, eliminationMinNotes: number, csrfToken: Function) {
   const isEditedTheme = editTheme && editTheme.get("id") === theme.get("id");
   return <tr>
     <td class="legend">#{theme.get("id")}</td>

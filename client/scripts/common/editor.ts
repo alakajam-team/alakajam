@@ -43,7 +43,8 @@ export default function editor(mdSelector, cmSelector) {
           title: "Markdown guide"
         }],
       status: false,
-      forceSync: true // Save all changes immediately to underlying textarea. Needed for warnOnUnsavedChanges.
+      forceSync: true, // Save all changes immediately to underlying textarea. Needed for warnOnUnsavedChanges.
+      minHeight: $(this).attr("data-min-height") || undefined
     });
     mde.codemirror.setOption("extraKeys", {
       Home: "goLineLeft",

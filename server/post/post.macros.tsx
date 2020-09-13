@@ -227,8 +227,9 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
                     {author.get("title")}
                   </AuthorLink>;
                 })}
-                {(author.get("title") && author.get("name").toLowerCase() !== author.get("title").toLowerCase())
-                  ? "(@" + author.get("name") + ")" : ""}
+                {ifTrue(author.get("title") && author.get("name").toLowerCase() !== author.get("title").toLowerCase(), () =>
+                  <span class="ml-1">(@{ author.get("name") })</span>
+                )}
                 {ifTrue(options.nodeAuthorIds && options.nodeAuthorIds.includes(author.get("id")), () =>
                   <>
                     <span>&nbsp;</span><span class="fas fa-pen-nib mt-1" data-toggle="tooltip" title="Page owner"></span>

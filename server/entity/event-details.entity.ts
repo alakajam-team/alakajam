@@ -16,6 +16,15 @@ export interface EventFlags {
   hideStreamerMenu?: boolean;
 }
 
+export interface ThemeShortlistEliminationState {
+  /**
+   * ISO date
+   */
+  nextElimination?: string;
+  minutesBetweenEliminations?: number;
+  eliminatedCount?: number;
+}
+
 @Entity()
 export class EventDetails extends TimestampedEntity {
 
@@ -82,7 +91,13 @@ export class EventDetails extends TimestampedEntity {
     * Config for shortlist eliminations phase (JSON: {"start": date, "delay": number in minutes, "body": html}
     */
   @Column(ColumnTypes.json({ nullable: true, default: "{}", length: 2000 }))
-  public shortlist_elimination: { start?: Date; delay?: number; body: string };
+  public shortlist_elimination: ThemeShortlistEliminationState;
+
+  /**
+   * Arbitrary Markdown do be displayed at the top of the theme voting page
+   */
+  @Column(ColumnTypes.varchar({ nullable: true, length: 2000 }))
+  public theme_page_header: string;
 
   /**
     * Config for a list of special pages to link to: (JSON: [{"title": string, "link": string, "icon": string}]

@@ -2,21 +2,20 @@ import { range } from "lodash";
 import * as React from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
-import constants from "server/core/constants";
-import { ordinal } from "server/core/formats";
+import { createLuxonDate, ordinal } from "server/core/formats";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import { digits, markdown } from "server/core/templating-filters";
+import { ThemeShortlistEliminationState } from "server/entity/event-details.entity";
 import * as eventMacros from "server/event/event.macros";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as postMacros from "server/post/post.macros";
 
 export default function render(context: CommonLocals) {
-  const { event, themesPost, user, userLikes, votingAllowed, sampleThemes, userRanks,
+  const { event, themesPost, user, userLikes, votingAllowed, sampleThemes, userRanks, defaultShortlistSize,
     shortlist, randomizedShortlist, hasRankedShortlist, shortlistVotes, activeShortlist, eliminatedShortlist,
     ideasRequired, eliminationMinNotes,
     voteCount, votesHistory, maxThemeSuggestions, infoMessage, path } = context;
-  const shortlistEliminationInfo = event.related("details").get("shortlist_elimination");
   const userThemes = context.userThemes || [];
 
   return base(context,
@@ -29,9 +28,9 @@ export default function render(context: CommonLocals) {
 
       {ifNotSet(themesPost, () =>
         <div class="container themes">
-          {ifTrue(shortlistEliminationInfo.start && shortlistEliminationInfo.body, () =>
+          {ifSet(event.related("details").get("theme_page_header"), () =>
             <div class="card mb-3">
-              <div class="card-body user-contents" dangerouslySetInnerHTML={markdown(shortlistEliminationInfo.body)} />
+              <div class="card-body user-contents" dangerouslySetInnerHTML={markdown(event.related("details").get("theme_page_header"))} />
             </div>
           )}
 
@@ -126,7 +125,7 @@ export default function render(context: CommonLocals) {
                   <h2>How it works</h2>
                   <ul>
                     <li>The lowest ranking themes (having {eliminationMinNotes} votes or more) are eliminated regularly.</li>
-                    <li>After one week, only the {constants.SHORTLIST_SIZE} best themes will remain.
+                    <li>After one week, only the {defaultShortlistSize} best themes will remain.
                       The longer the theme stands before elimination, the better it is!</li>
                   </ul>
                 </div>
@@ -218,7 +217,7 @@ export default function render(context: CommonLocals) {
                         {shortlistMessage(user, randomizedShortlist, shortlistVote, hasRankedShortlist)}
                       </p>
                       {ifTrue(eliminatedShortlist.length > 0, () =>
-                        <p>The greyed out themes have been eliminated, only {constants.SHORTLIST_SIZE - eliminatedShortlist.length} remain in competition!</p>
+                        <h3>Active themes</h3>
                       )}
                       <p>
                         {ifTrue(shortlistVote, () =>
@@ -238,6 +237,18 @@ export default function render(context: CommonLocals) {
                             <span class="theme-shortlist-line__label"
                               style={forcedFontSize ? `font-size: ${forcedFontSize}px` : ""}>{theme.get("title")}</span>
                           </li>;
+                        })}
+                        {ifTrue(eliminatedShortlist.length > 0, () => {
+                          const shortlistElimination: ThemeShortlistEliminationState = event.related("details").get("shortlist_elimination");
+                          return <>
+                            <h3>Eliminated themes</h3>
+                            <p>
+                              The weakest theme is eliminated regularly until the start of the jam.
+                              {ifSet(shortlistElimination.nextElimination, () =>
+                                <>The next one will be eliminated <b>{createLuxonDate(shortlistElimination.nextElimination).toRelative()}</b>.</>
+                              )}
+                            </p>
+                          </>;
                         })}
                         {eliminatedShortlist.map(theme =>
                           <li class={"theme-shortlist-line eliminated " + (shortlistVote ? "draggable-list" : "")} data-theme-id={theme.get("id")}>

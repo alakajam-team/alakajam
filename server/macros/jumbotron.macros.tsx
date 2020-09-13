@@ -1,18 +1,16 @@
+import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
 import links from "server/core/links";
 import { dateTime, featuredEventDateTime, markdown, relativeTime, timezone } from "server/core/templating-filters";
 import * as eventMacros from "server/event/event.macros";
 import * as tournamentMacros from "server/event/tournament/tournament.macros";
 import * as postMacros from "server/post/post.macros";
-import * as userMacros from "server/user/user.macros";
 import { ifFalse, ifTrue } from "./jsx-utils";
-import { BookshelfModel } from "bookshelf";
 
 
 export function eventJumbotron(event, eventParticipation, featuredPost, user, userLikes,
                                entry, tournamentScore, path, options: { inviteToJoin?: boolean } = {}) {
   const isTournament = !["disabled", "off"].includes(event.get("status_tournament"));
-  const shortlistEliminationInfo = event.related("details").get("shortlist_elimination");
 
   return <div class="event-jumbotron" style={backgroundImage(event)}>
     <div class="container">
@@ -87,12 +85,6 @@ export function eventJumbotron(event, eventParticipation, featuredPost, user, us
           </div>
         </div>
       </div>
-
-      {ifTrue(shortlistEliminationInfo.stream, () =>
-        <div class="mt-3">
-          {userMacros.twitchEmbed(shortlistEliminationInfo.stream, { unmute: true, height: 500 })}
-        </div>
-      )}
     </div>
   </div>;
 }

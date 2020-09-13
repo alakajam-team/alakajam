@@ -55,6 +55,11 @@
     padding-left: 0;
     list-style-position: inside;
   }
+  &__shortlist h3 {
+    margin: 20px 0 5px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
   & .theme-shortlist-line {
     position: relative;
     padding: 3px 0;
@@ -79,10 +84,6 @@
       & .theme-shortlist-line__label {
         text-decoration: line-through;
         color: $text-lighter;
-      }
-
-      &.draggable-list {
-        padding-left: 30px;
       }
     }
     &.winner .theme-shortlist-line__label {

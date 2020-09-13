@@ -1,6 +1,5 @@
 import * as React from "preact";
 import base from "server/base.template";
-import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
@@ -9,9 +8,10 @@ import * as jumbotronMacros from "server/macros/jumbotron.macros";
 import * as navigationMacros from "server/macros/navigation.macros";
 import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
+import { HomeContext } from "./home.controller";
 
-export default function render(context: CommonLocals) {
-  const { user, featuredEvent, featuredPost, featuredEventAnnouncement, featuredStreamer, path,
+export default function render(context: HomeContext) {
+  const { user, featuredEvent, featuredPost, embedStreamer, jumboStream, featuredEventAnnouncement, path,
     eventsTimeline, eventParticipation, inviteToJoin, entry, tournamentScore,
     suggestedEntries, posts, comments, userPost, userLikes, pageCount } = context;
 
@@ -30,6 +30,16 @@ export default function render(context: CommonLocals) {
               Welcome to <span class="home-welcome__brand">Alakajam!</span>, a game making community. We host informal game jams!
               <a class="home-welcome__more" href="/article/about">Learn&nbsp;more...</a>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== JUMBO STREAM ===== */}
+
+      {ifSet(jumboStream, () =>
+        <div class="home-stream-container">
+          <div class="container my-2">
+            {userMacros.twitchEmbed(jumboStream, { unmute: true, height: 500 })}
           </div>
         </div>
       )}
@@ -150,14 +160,13 @@ export default function render(context: CommonLocals) {
 
           <div class="col-md-4 col-12 order-md-2 order-1">
             {ifTrue(featuredEvent && featuredEvent.get("status") === "open", () => {
-              const shortlistEliminationInfo = featuredEvent.related("details").get("shortlist_elimination");
-              if (featuredStreamer && !shortlistEliminationInfo.stream) {
+              if (embedStreamer && !jumboStream) {
                 return <div>
                   <div class="horizontal-bar">Featured streamer</div>
                   <div class="featured p-0 mb-1">
-                    {userMacros.twitchEmbed(featuredStreamer.details.social_links.twitch, { height: 250 })}
+                    {userMacros.twitchEmbed(embedStreamer.details.social_links.twitch, { height: 250 })}
                     <div class="my-1">
-                      {userMacros.userThumb(featuredStreamer)}
+                      {userMacros.userThumb(embedStreamer)}
                       <a href={links.routeUrl(featuredEvent, "event", "streamers")} class="mx-3">
                         <span class="fa fa-tv"></span> Browse all streamers
                       </a>

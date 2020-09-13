@@ -1,28 +1,31 @@
 
 import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel, PostBookshelfModel } from "bookshelf";
+import { shuffle } from "lodash";
 import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import enums from "server/core/enums";
 import log from "server/core/log";
 import { logErrorAndReturn } from "server/core/middleware";
 import settings from "server/core/settings";
-import { SETTING_FEATURED_POST_ID, SETTING_HOME_TIMELINE_SIZE } from "server/core/settings-keys";
+import { SETTING_FEATURED_POST_ID, SETTING_FEATURED_TWITCH_CHANNEL, SETTING_HOME_TIMELINE_SIZE } from "server/core/settings-keys";
+import { User } from "server/entity/user.entity";
+import eventParticipationService from "server/event/dashboard/event-participation.service";
 import { loadUserShortcutsContext } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
 import tournamentService from "server/event/tournament/tournament.service";
+import twitchService from "server/event/twitch.service";
 import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import eventParticipationService from "server/event/dashboard/event-participation.service";
-import twitchService from "server/event/twitch.service";
-import { shuffle } from "lodash";
 
-interface HomeContext {
+export interface HomeContext extends CommonLocals {
   featuredPost?: PostBookshelfModel;
   featuredEventAnnouncement?: BookshelfModel;
+  jumboStream?: string;
+  embedStreamer?: User;
   eventsTimeline: BookshelfModel[];
-  suggestedEntries: BookshelfModel[];
+  suggestedEntries: EntryBookshelfModel[];
   posts: PostBookshelfModel[];
   comments: BookshelfModel[];
   pageCount: number;
@@ -59,7 +62,7 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       res.locals.tournamentScore = tournamentScore;
       res.locals.eventParticipation = eventParticipation;
       res.locals.inviteToJoin = Boolean(joinEnabled && !eventParticipation);
-      res.locals.featuredStreamer = liveUsers.length > 0 ? shuffle(liveUsers)[0] : undefined;
+      res.locals.embedStreamer = liveUsers.length > 0 ? shuffle(liveUsers)[0] : undefined;
     });
   } else {
     res.locals.inviteToJoin = joinEnabled;
@@ -130,6 +133,12 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
           context.featuredPost = await postService.findPostById(featuredPostId);
         }
       })
+      .catch(log.error));
+
+  // Find jumbo stream
+  contextTasks.push(
+    settings.find(SETTING_FEATURED_TWITCH_CHANNEL)
+      .then((jumboStream) => context.jumboStream = jumboStream)
       .catch(log.error));
 
   // Fetch all the things at once!

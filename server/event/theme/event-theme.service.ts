@@ -3,7 +3,6 @@ import { BookshelfCollection, BookshelfModel, FetchAllOptions, SaveOptions, Sync
 import * as lodash from "lodash";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
-import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import { createLuxonDate } from "server/core/formats";
@@ -15,10 +14,10 @@ import {
   SETTING_EVENT_THEME_ELIMINATION_MODULO,
   SETTING_EVENT_THEME_ELIMINATION_THRESHOLD,
   SETTING_EVENT_THEME_IDEAS_REQUIRED,
+  SETTING_EVENT_THEME_SHORTLIST_SIZE,
   SETTING_EVENT_THEME_SUGGESTIONS
 } from "server/core/settings-keys";
 import { User } from "server/entity/user.entity";
-
 
 /**
  * Service for managing theme voting
@@ -191,22 +190,19 @@ export class EventThemeService {
 
   /**
    * Saves a theme vote
-   * @param user {User} user model
-   * @param event {Event} event model
-   * @param themeId {integer}
-   * @param score {integer}
-   * @param options {object} doNotSave
    */
-  public async saveVote(user, event, themeId, score, options: any = {}) {
+  public async saveVote(user: User, event: BookshelfModel, themeId: number, score: number, options: { doNotSave?: boolean } = {}) {
     let voteCreated = false;
     let expectedStatus = null;
     let result = {};
 
     if (event.get("status_theme") === enums.EVENT.STATUS_THEME.VOTING && [-1, 1].indexOf(score) !== -1) {
       expectedStatus = enums.THEME.STATUS.ACTIVE;
-    } else if (event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST
-      && score >= 1 && score <= constants.SHORTLIST_SIZE) {
-      expectedStatus = enums.THEME.STATUS.SHORTLIST;
+    } else if (event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST) {
+      const shortlistSize = await this.getShortlistSize(event);
+      if (score >= 1 && score <= shortlistSize) {
+        expectedStatus = enums.THEME.STATUS.SHORTLIST;
+      }
     }
 
     if (expectedStatus) {
@@ -271,6 +267,14 @@ export class EventThemeService {
     return result;
   }
 
+  public getShortlistSize(event: BookshelfModel): Promise<number> {
+    return models.Theme.where({
+      event_id: event.get("id"),
+      status: "shortlist"
+    })
+      .count() as Bluebird<number>;
+  }
+
   private computeWilsonBounds(positive: number, total: number) {
     if (total === 0) {
       return { low: 0, high: 1 };
@@ -301,7 +305,8 @@ export class EventThemeService {
 
     // Make sure we have at least enough themes to fill our shortlist before removing some
     const battleReadyThemeCount = parseInt((await battleReadyThemesQuery.count()).toString(), 10);
-    if (battleReadyThemeCount > constants.SHORTLIST_SIZE) {
+    const shortlistSize = await settings.findNumber(SETTING_EVENT_THEME_SHORTLIST_SIZE, 10);
+    if (battleReadyThemeCount > shortlistSize) {
       const loserThemes = await models.Theme.where({
         event_id: event.get("id"),
         status: enums.THEME.STATUS.ACTIVE,
@@ -314,7 +319,7 @@ export class EventThemeService {
 
       await event.load("details");
       const eliminatedThemes = loserThemes.slice(0,
-        Math.min(battleReadyThemeCount - constants.SHORTLIST_SIZE, loserThemes.length));
+        Math.min(battleReadyThemeCount - shortlistSize, loserThemes.length));
       for (const eliminatedTheme of eliminatedThemes) {
         await this.eliminateTheme(eliminatedTheme, event.related("details"));
       }
@@ -353,7 +358,7 @@ export class EventThemeService {
     }
 
     const betterThemeCount = await betterThemeQuery.count(null, options);
-    return parseInt(betterThemeCount.toString(), 10) + 1;
+    return forms.parseInt(betterThemeCount) + 1;
   }
 
   private async refreshEventThemeStats(event: BookshelfModel) {

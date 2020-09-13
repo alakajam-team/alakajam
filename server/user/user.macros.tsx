@@ -5,7 +5,7 @@ import { User } from "server/entity/user.entity";
 import links from "server/core/links";
 import { ifSet, ifNotSet, ifTrue } from "server/macros/jsx-utils";
 
-export function userThumb(user: BookshelfModel, options: {
+export function userThumb(user: BookshelfModel | User, options: {
   fullWidth?: boolean;
   centered?: boolean;
   pending?: boolean;
