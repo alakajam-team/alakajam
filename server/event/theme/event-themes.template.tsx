@@ -218,7 +218,7 @@ export default function render(context: CommonLocals) {
                         {shortlistMessage(user, randomizedShortlist, shortlistVote, hasRankedShortlist)}
                       </p>
                       {ifTrue(eliminatedShortlist.length > 0, () =>
-                        <p>The greyed out themes have been eliminated, only {10 - eliminatedShortlist.length} remain in competition!</p>
+                        <p>The greyed out themes have been eliminated, only {constants.SHORTLIST_SIZE - eliminatedShortlist.length} remain in competition!</p>
                       )}
                       <p>
                         {ifTrue(shortlistVote, () =>
