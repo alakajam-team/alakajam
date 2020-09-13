@@ -190,7 +190,7 @@ export default function render(context: CommonLocals) {
                     if (votingAllowed) {
                       return <div>
                         <p>Here are some of the ideas submitted to the event.
-                          <a href={`/login?redirect=${encodeURI(path)}`} class="btn btn-primary">Login to vote</a></p>
+                          <a href={`/login?redirect=${encodeURI(path)}`} class="btn btn-primary ml-1">Login to vote</a></p>
                         {sampleThemes.map(theme =>
                           <div class="card card-body mb-3"><h1 class="m-0">{theme.get("title")}</h1></div>
                         )}
@@ -213,12 +213,8 @@ export default function render(context: CommonLocals) {
                     <h2>Shortlist ranking</h2>
                     <input id="js-shortlist-votes" type="hidden" name="shortlist-votes" />
                     <div class="card card-body">
-                      <p>
-                        {shortlistMessage(user, randomizedShortlist, shortlistVote, hasRankedShortlist)}
-                      </p>
-                      {ifTrue(eliminatedShortlist.length > 0, () =>
-                        <h3>Active themes</h3>
-                      )}
+                      {shortlistMessage(user, randomizedShortlist, shortlistVote, hasRankedShortlist)}
+                      <h3>{eliminatedShortlist.length > 0 ? "Active themes" : ""}</h3>
                       <p>
                         {ifTrue(shortlistVote, () =>
                           <input id="js-shortlist-submit" type="submit" class="btn btn-primary disabled" value="Save changes" disabled />

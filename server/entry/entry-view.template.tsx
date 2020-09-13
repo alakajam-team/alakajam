@@ -161,7 +161,7 @@ export default function render(context: EntryLocals) {
               )}
               {ifTrue(security.canUserWrite(user, entry), () =>
                 entry.related<BookshelfCollection>("invites").models.map(invite =>
-                  userMacros.userThumb(invite.related("invited"), { fullWidth: true, pending: true })
+                  userMacros.userThumb(invite.related<BookshelfModel>("invited"), { fullWidth: true, pending: true })
                 )
               )}
             </div>

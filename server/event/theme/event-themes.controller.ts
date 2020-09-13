@@ -62,7 +62,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
         } else if (req.body.action === "vote") {
           if (forms.isId(req.body["theme-id"]) && (req.body.upvote !== undefined || req.body.downvote !== undefined)) {
             const score = (req.body.upvote !== undefined) ? 1 : -1;
-            await eventThemeService.saveVote(res.locals.user, event, parseInt(req.body["theme-id"], 10), score);
+            await eventThemeService.saveVote(res.locals.user, event, forms.parseInt(req.body["theme-id"]), score);
           }
         } else if (req.body.action === "shortlist" && req.body["shortlist-votes"]) {
           const ids = req.body["shortlist-votes"].split(",").map((id) => parseInt(id, 10));
@@ -222,7 +222,7 @@ export async function ajaxFindThemes(req: CustomRequest, res: CustomResponse<Eve
 export async function ajaxSaveThemeVote(req: CustomRequest, res: CustomResponse<EventLocals>) {
   if (forms.isId(req.body.id) && (req.body.upvote !== undefined || req.body.downvote !== undefined)) {
     const score = (req.body.upvote !== undefined) ? 1 : -1;
-    await eventThemeService.saveVote(res.locals.user, res.locals.event, parseInt(req.body.id, 10), score);
+    await eventThemeService.saveVote(res.locals.user, res.locals.event, forms.parseInt(req.body.id), score);
   }
   res.type("text/plain"); // Keeps Firefox from parsing the empty response as XML and logging an error.
   res.end("");

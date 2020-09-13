@@ -232,13 +232,15 @@ export class EventThemeService {
           voteCreated = true;
         }
 
-        const positiveVotes = (theme.get("notes") + theme.get("score")) / 2.0;
-        const wilsonBounds = this.computeWilsonBounds(positiveVotes, theme.get("notes"));
-        theme.set({
-          rating_elimination: wilsonBounds.high,
-          rating_shortlist: wilsonBounds.low,
-          normalized_score: 1.0 * theme.get("score") / theme.get("notes"),
-        });
+        if (event.get("status_theme") !== enums.EVENT.STATUS_THEME.SHORTLIST) {
+          const positiveVotes = (theme.get("notes") + theme.get("score")) / 2.0;
+          const wilsonBounds = this.computeWilsonBounds(positiveVotes, theme.get("notes"));
+          theme.set({
+            rating_elimination: wilsonBounds.high,
+            rating_shortlist: wilsonBounds.low,
+            normalized_score: 1.0 * theme.get("score") / theme.get("notes"),
+          });
+        }
 
         result = {
           theme,
@@ -267,12 +269,13 @@ export class EventThemeService {
     return result;
   }
 
-  public getShortlistSize(event: BookshelfModel): Promise<number> {
-    return models.Theme.where({
+  public async getShortlistSize(event: BookshelfModel): Promise<number> {
+    const count = await models.Theme.where({
       event_id: event.get("id"),
       status: "shortlist"
     })
-      .count() as Bluebird<number>;
+      .count();
+    return forms.parseInt(count);
   }
 
   private computeWilsonBounds(positive: number, total: number) {
