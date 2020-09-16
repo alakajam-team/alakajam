@@ -234,24 +234,26 @@ export default function render(context: CommonLocals) {
                               style={forcedFontSize ? `font-size: ${forcedFontSize}px` : ""}>{theme.get("title")}</span>
                           </li>;
                         })}
-                        {ifTrue(eliminatedShortlist.length > 0, () => {
-                          const shortlistElimination: ThemeShortlistEliminationState = event.related("details").get("shortlist_elimination");
-                          return <>
-                            <h3>Eliminated themes</h3>
-                            <p>
-                              The weakest theme is eliminated regularly until the start of the jam.
-                              {ifSet(shortlistElimination.nextElimination, () =>
-                                <>The next one will be eliminated <b>{createLuxonDate(shortlistElimination.nextElimination).toRelative()}</b>.</>
-                              )}
-                            </p>
-                          </>;
-                        })}
-                        {eliminatedShortlist.map(theme =>
-                          <li class="theme-shortlist-line eliminated not-sortable" data-theme-id={theme.get("id")}>
-                            <span class="theme-shortlist-line__label">{theme.get("title")}</span>
-                          </li>
-                        )}
                       </ol>
+                      {ifTrue(eliminatedShortlist.length > 0, () => {
+                        const shortlistElimination: ThemeShortlistEliminationState = event.related("details").get("shortlist_elimination");
+                        return <>
+                          <h3>Eliminated themes</h3>
+                          <p>
+                            The weakest theme is eliminated regularly until the start of the jam.
+                            {ifSet(shortlistElimination.nextElimination, () =>
+                              <>The next one will be eliminated <b>{createLuxonDate(shortlistElimination.nextElimination).toRelative()}</b>.</>
+                            )}
+                          </p>
+                          <ol start={activeShortlist.length + 1}>
+                            {eliminatedShortlist.map(theme =>
+                              <li class="theme-shortlist-line eliminated not-sortable" data-theme-id={theme.get("id")}>
+                                <span class="theme-shortlist-line__label">{theme.get("title")}</span>
+                              </li>
+                            )}
+                          </ol>
+                        </>;
+                      })}
                     </div>
                   </form>
                 </div>;

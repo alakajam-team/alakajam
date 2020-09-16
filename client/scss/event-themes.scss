@@ -71,9 +71,6 @@
     &:last-child {
       border-bottom: 0;
     }
-    &.draggable.sortable-chosen {
-      background-color: $borders;
-    } 
     &.draggable {
       padding-left: 30px;
       cursor: default;
@@ -89,16 +86,25 @@
     &.winner .theme-shortlist-line__label {
       font-size: 1.8rem;
     }
+    &.hovered {
+      background-color: #EEE;
+    }
     
     &__handle {
       position: absolute;
       left: 0;
       top: 50%;
-      margin-top: -0.6rem;
+      padding: 15px;
+      margin-top: -23px;
+      margin-left: -15px;
       font-size: 1.2rem;
-      color: $text;
+      color: #1f3038;
+
+      &:hover {
+        cursor: grab !important;
+      }
     }
-    
+
     &__label {
       @include alt-font;
       color: $text;
@@ -119,9 +125,6 @@
         width: 50px;
       }
     }
-  }
-  & .use-hover .theme-shortlist-line.draggable:hover {
-    background-color: #EEE;
   }
   
   & .theme-vote {
@@ -153,4 +156,8 @@
       line-height: 0.9rem;
     }
   }
+}
+
+.sortable-chosen, .sortable-drag, .sortable-ghost {
+  cursor: grabbing !important;
 }

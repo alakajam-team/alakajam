@@ -8,10 +8,22 @@ export default function themeShortlist() {
   }
   const $shortlistVotes = $("#js-shortlist-votes");
   const $shortlistSubmit = $("#js-shortlist-submit");
+  const handleSelector = ".theme-shortlist-line__handle";
+
+  $(handleSelector).on("mouseenter", function() {
+    $(this).parent().addClass("hovered");
+  });
+  $(handleSelector).on("mouseleave", function() {
+    $(this).parent().removeClass("hovered");
+  });
 
   Sortable.create($shortlist[0], {
     animation: 100,
     filter: ".not-sortable",
+    handle: ".theme-shortlist-line__handle",
+    forceFallback: true,
+    fallbackClass: "theme-shortlist-line sortable-drag",
+    fallbackOnBody: true,
     onUpdate() {
       const votes = [];
       $shortlist.find("li").each(function() {
@@ -21,12 +33,6 @@ export default function themeShortlist() {
       $shortlistSubmit
         .removeClass("disabled")
         .removeAttr("disabled");
-    },
-    onStart() {
-      this.el.classList.remove("use-hover");
-    },
-    onEnd() {
-      this.el.classList.add("use-hover");
     }
   });
 }
