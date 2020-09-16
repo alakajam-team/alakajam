@@ -22,6 +22,7 @@ export default function adminBase(context: AdminBaseContext, contentsBlock: JSX.
             <div class="list-group-item list-group-item-default"><h4>Moderation</h4></div>
             {link("Announcements", "/admin", path, { exactCheck: true })}
             {link("Events", "/admin/events", path)}
+            {link("Settings", "/admin/settings", path)}
           </div>
 
           {ifTrue(user && user.get("is_admin") || config.DEBUG_ADMIN, () =>
@@ -32,7 +33,6 @@ export default function adminBase(context: AdminBaseContext, contentsBlock: JSX.
               {link("Event templates", "/admin/event-templates", path, { isAdminLink: true })}
               {link("Platforms", "/admin/platforms", path, { isAdminLink: true })}
               {link("Tags", "/admin/tags", path, { isAdminLink: true })}
-              {link("Settings", "/admin/settings", path, { isAdminLink: true })}
               {link("Server status", "/admin/status", path, { isAdminLink: true })}
               {ifSet(devMode, () =>
                 link("Developer tools", "/admin/dev", path, { isAdminLink: true })

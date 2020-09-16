@@ -11,6 +11,7 @@ export interface EditableSetting {
   description: string;
   isJson?: boolean;
   isMarkdown?: boolean;
+  isAdminOnly?: boolean;
 }
 
 export const SETTING_FEATURED_EVENT_NAME = "featured_event_name";
@@ -88,7 +89,7 @@ export const EDITABLE_SETTINGS: EditableSetting[] = [
   {
     key:  SETTING_EVENT_REQUIRED_ENTRY_VOTES,
     category: "events",
-    description: "How many ratings an entry needs to get a ranking at the end of the jam."
+    description: "How many ratings an entry needs to get a ranking at the end of the jam. Actual requirement is 80% of that, rounded down."
   },
   {
     key: SETTING_EVENT_THEME_IDEAS_REQUIRED,
@@ -98,7 +99,8 @@ export const EDITABLE_SETTINGS: EditableSetting[] = [
   {
     key: SETTING_EVENT_THEME_ELIMINATION_MODULO,
     category: "events",
-    description: "Performance optimization setting: how many votes to wait before triggering theme eliminations again."
+    description: "Performance optimization setting: how many votes to wait before triggering theme eliminations again.",
+    isAdminOnly: true
   },
   {
     key: SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
@@ -108,7 +110,8 @@ export const EDITABLE_SETTINGS: EditableSetting[] = [
   {
     key: SETTING_EVENT_THEME_ELIMINATION_THRESHOLD,
     category: "events",
-    description: "Between 0 and 1. Themes with an 'Elimination rating' below that point will be eliminated. Handle with care."
+    description: "Between 0 and 1. Themes with an 'Elimination rating' below that point will be eliminated. Handle with care.",
+    isAdminOnly: true
   },
   {
     key: SETTING_EVENT_THEME_SHORTLIST_SIZE,

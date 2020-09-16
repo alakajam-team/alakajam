@@ -29,15 +29,12 @@ export default function render(context: CommonLocals) {
             <div class="form-group">
               <label for="name">Special permissions</label>
               <div>
-                {ifFalse(security.isMod(dashboardUser), () =>
-                  formMacros.radio("special_permissions", "none", "None", "none")
-                )}
-                {ifTrue(security.isMod(dashboardUser) && !security.isAdmin(dashboardUser), () =>
-                  formMacros.radio("special_permissions", "mod", "Moderator", "mod")
-                )}
-                {ifTrue(security.isAdmin(dashboardUser), () =>
-                  formMacros.radio("special_permissions", "admin", "Administrator", "admin")
-                )}
+                {formMacros.radio("special_permissions", "none", "None",
+                  !security.isMod(dashboardUser) ? "none": "")}
+                {formMacros.radio("special_permissions", "mod", "Moderator",
+                  (security.isMod(dashboardUser) && !security.isAdmin(dashboardUser)) ? "mod" : "")}
+                {formMacros.radio("special_permissions", "admin", "Administrator",
+                  security.isAdmin(dashboardUser) ? "admin": "")}
               </div>
             </div>
             <div class="form-group">

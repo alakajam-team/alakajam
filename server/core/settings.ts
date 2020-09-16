@@ -7,7 +7,9 @@ import { BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import log from "server/core/log";
 import * as models from "server/core/models";
-import { SETTING_ARTICLE_SIDEBAR } from "./settings-keys";
+import { User } from "server/entity/user.entity";
+import security from "./security";
+import { EditableSetting, SETTING_ARTICLE_SIDEBAR } from "./settings-keys";
 
 type DefaultValueEval = () => string;
 
@@ -85,6 +87,14 @@ export class Settings {
     settingModel.set("value", value);
     await settingModel.save(null, { method });
     cache.settings.del(key);
+  }
+
+  public canUserEdit(user: User, setting: EditableSetting) {
+    if (setting.isAdminOnly) {
+      return security.isAdmin(user);
+    } else {
+      return security.isMod(user);
+    }
   }
 
 }

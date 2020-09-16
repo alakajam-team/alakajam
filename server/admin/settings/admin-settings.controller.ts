@@ -19,7 +19,9 @@ export interface AdminSettingsContext extends AdminBaseContext {
  * Admin only: settings management
  */
 export async function adminSettings(req: CustomRequest, res: CustomResponse<CommonLocals>) {
-  if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
+  const { user } = res.locals;
+
+  if (!config.DEBUG_ADMIN && !security.isMod(user)) {
     res.errorPage(403);
   }
 
@@ -27,7 +29,7 @@ export async function adminSettings(req: CustomRequest, res: CustomResponse<Comm
   let currentEditValue: string | undefined;
   if (req.method === "POST") {
     const editableSetting = EDITABLE_SETTINGS.find((setting) => setting.key === req.body.key);
-    if (editableSetting) {
+    if (editableSetting && settings.canUserEdit(user, editableSetting)) {
       let save = true;
       if (editableSetting.isJson) {
         try {
@@ -54,13 +56,15 @@ export async function adminSettings(req: CustomRequest, res: CustomResponse<Comm
   // Gather editable settings
   const editableSettings: Array<EditableSettingInstance> = [];
   for (const editableSetting of EDITABLE_SETTINGS) {
-    const editableSettingWithValue = {
-      ...editableSetting,
-      value: await settings.find(editableSetting.key),
-    };
-    editableSettings.push(editableSettingWithValue);
-    if (!currentEditValue && req.query.edit && editableSetting.key === req.query.edit) {
-      currentEditValue = editableSettingWithValue.value;
+    if (settings.canUserEdit(user, editableSetting)) {
+      const editableSettingWithValue = {
+        ...editableSetting,
+        value: await settings.find(editableSetting.key),
+      };
+      editableSettings.push(editableSettingWithValue);
+      if (!currentEditValue && req.query.edit && editableSetting.key === req.query.edit) {
+        currentEditValue = editableSettingWithValue.value;
+      }
     }
   }
 
@@ -68,7 +72,7 @@ export async function adminSettings(req: CustomRequest, res: CustomResponse<Comm
   let editSetting: EditableSettingInstance | undefined;
   if (req.query.edit && forms.isSlug(req.query.edit?.toString())) {
     const editableSetting = EDITABLE_SETTINGS.find((setting) => setting.key === req.query.edit);
-    if (editableSetting?.isJson) {
+    if (editableSetting?.isJson && settings.canUserEdit(user, editableSetting)) {
       try {
         currentEditValue = JSON.stringify(JSON.parse(currentEditValue), null, 4);
       } catch (e) {
