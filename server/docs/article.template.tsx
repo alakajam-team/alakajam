@@ -1,12 +1,12 @@
 import * as React from "preact";
 import base from "server/base.template";
-import { CommonLocals } from "server/common.middleware";
 import { markdown } from "server/core/templating-filters";
 import { ifSet } from "server/macros/jsx-utils";
 import * as sidebarMacros from "server/macros/sidebar.macros";
+import { ArticleContext } from "./article.controller";
 
-export default function render(context: CommonLocals) {
-  const { sidebar, articleName, articleBody } = context;
+export default function render(context: ArticleContext) {
+  const { sidebar, articleName, articleTitle, articleBody } = context;
 
   return base(context,
     <div class="container">
@@ -17,7 +17,14 @@ export default function render(context: CommonLocals) {
           </div>
         )}
         <div class="col-sm-8 col-md-9">
-          <h1>{articleName}</h1>
+          <h1>
+            {articleTitle}
+            <a class="btn btn-outline-primary btn-sm float-lg-right"
+              href={`https://github.com/alakajam-team/alakajam/blob/master/server/docs/article-data/${articleName}.md`}>
+              <span class="fab fa-github mr-1"></span>
+              Contribute&nbsp;to&nbsp;this&nbsp;page
+            </a>
+          </h1>
           <div class="user-contents" dangerouslySetInnerHTML={markdown(articleBody)} />
         </div>
       </div>

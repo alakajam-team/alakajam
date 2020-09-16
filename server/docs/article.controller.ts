@@ -12,6 +12,7 @@ import articleService from "./article.service";
 export interface ArticleContext extends CommonLocals {
   sidebar: ArticleSidebarCategory;
   articleName: string;
+  articleTitle: string;
   articleBody: string;
 }
 
@@ -50,7 +51,8 @@ async function renderArticle(
   const context: ArticleContext = {
     ...res.locals,
     sidebar: undefined,
-    articleName: undefined,
+    articleName: name,
+    articleTitle: undefined,
     articleBody: undefined
   };
 
@@ -60,7 +62,7 @@ async function renderArticle(
   ).then(async (article) => {
     if (article) {
       const lines = article.split("\n");
-      context.articleName = lines.shift();
+      context.articleTitle = lines.shift();
       context.articleBody = lines.join("\n");
     }
   });
@@ -70,8 +72,8 @@ async function renderArticle(
 
   await Promise.all([findArticleTask, settingArticlesTask]); // Parallelize fetching everything
 
-  if (context.articleName && context.articleBody) {
-    context.pageTitle = context.articleName;
+  if (context.articleTitle && context.articleBody) {
+    context.pageTitle = context.articleTitle;
     res.render<ArticleContext>("docs/article", context);
   } else {
     res.errorPage(404);
