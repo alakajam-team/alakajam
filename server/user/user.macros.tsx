@@ -67,7 +67,7 @@ export function twitchLink(user: User) {
   }
 }
 
-export function twitchEmbed(twitchUsername: string, options: { height?: number; unmute?: boolean } = {}) {
+export function twitchEmbed(twitchUsername: string, options: { height?: number; autoplay?: boolean } = {}) {
   if (twitchUsername) {
     return <>
       <div id={`twitch-${twitchUsername}-embed`}></div>
@@ -76,12 +76,13 @@ export function twitchEmbed(twitchUsername: string, options: { height?: number; 
         __html: `
         document.addEventListener("DOMContentLoaded", function() {
           var embed = new Twitch.Embed("twitch-${twitchUsername}-embed", {
+            autoplay: ${options.autoplay ? "true" : "false"},
+            muted: ${options.autoplay ? "true" : "false"},
             width: "100%",
             height: ${options.height ? options.height : "200" },
             layout: "video",
             channel: "${twitchUsername}"
           });
-          ${ifTrue(!options.unmute, () => "embed.setMuted(true);")}
         });`}} />
     </>;
   }

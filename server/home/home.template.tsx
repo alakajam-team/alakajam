@@ -39,7 +39,7 @@ export default function render(context: HomeContext) {
       {ifSet(jumboStream, () =>
         <div class="home-stream-container">
           <div class="container my-2">
-            {userMacros.twitchEmbed(jumboStream, { unmute: true, height: 500 })}
+            {userMacros.twitchEmbed(jumboStream, { autoplay: true, height: 500 })}
           </div>
         </div>
       )}
