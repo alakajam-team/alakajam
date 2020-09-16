@@ -50,6 +50,7 @@ const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
  */
 
 decreaseProcessPriority();
+heapDumpOnSigpipe();
 createApp();
 
 /*
@@ -189,19 +190,30 @@ function decreaseProcessPriority() {
       const spawn = require("child_process").spawn;
       const priority = 10;
       const proc = spawn("renice", [priority, process.pid]);
-      proc.on("exit", function (code) {
+      proc.on("exit", (code) => {
         if (code !== 0) {
           log.info("Process exec failed with code - " + code);
         }
       });
-      proc.stdout.on("data", function (data) {
+      proc.stdout.on("data", (data) => {
         log.info("Renice stdout: " + data);
       });
-      proc.stderr.on("data", function (data) {
+      proc.stderr.on("data", (data) => {
         log.info("Renice stderr: " + data);
       });
     } catch (e) {
       log.warn("Failed to decrease process priority with renice: " + e.message)
     }
   }
+}
+
+function heapDumpOnSigpipe() { // kill -13
+  log.info(`PID: ${process.pid}`);
+  process.on("SIGPIPE", () => {
+    const heapdump = require("heapdump");
+    heapdump.writeSnapshot(path.resolve(__dirname, `${Date.now()}.heapsnapshot`));
+    heapdump.writeSnapshot((err, filename) => {
+      log.info(`Heap dump written to ${filename}`);
+    });
+  });
 }

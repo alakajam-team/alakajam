@@ -90,6 +90,7 @@
     "find-up": "^4.1.0",
     "flipclock": "^0.7.8",
     "fs-extra": "^8.1.0",
+    "heapdump": "^0.3.15",
     "html-to-text": "^5.1.1",
     "icheck": "^1.0.2",
     "jsx-pistols": "^0.4.0",
