@@ -1,7 +1,6 @@
 import db from "server/core/db";
 import { Alert } from "server/types";
 import userService from "../../user/user.service";
-import log from "server/core/log";
 
 export class AdminDevService {
 

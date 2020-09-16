@@ -15,6 +15,7 @@ if (__filename.includes(".js")) {
   require("module-alias/register");
 }
 
+
 log.warn("Starting server...");
 if (config.DEBUG_TRACE_REQUESTS) {
   process.env.DEBUG = "express:*";
@@ -48,6 +49,7 @@ const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
  * App launch!
  */
 
+decreaseProcessPriority();
 createApp();
 
 /*
@@ -178,5 +180,28 @@ async function _createFolderIfMissing(folderPath) {
     await fs.access(folderPath, fs.constants.R_OK);
   } catch (e) {
     await mkdirp(folderPath);
+  }
+}
+
+function decreaseProcessPriority() {
+  if (process.platform === "linux") {
+    try {
+      const spawn = require("child_process").spawn;
+      const priority = 10;
+      const proc = spawn("renice", [priority, process.pid]);
+      proc.on("exit", function (code) {
+        if (code !== 0) {
+          log.info("Process exec failed with code - " + code);
+        }
+      });
+      proc.stdout.on("data", function (data) {
+        log.info("Renice stdout: " + data);
+      });
+      proc.stderr.on("data", function (data) {
+        log.info("Renice stderr: " + data);
+      });
+    } catch (e) {
+      log.warn("Failed to decrease process priority with renice: " + e.message)
+    }
   }
 }
