@@ -343,7 +343,7 @@ export default function render(context: CommonLocals) {
 function shortlistMessage(user, randomizedShortlist, shortlistVote, hasRankedShortlist) {
   if (randomizedShortlist) {
     return <span>These are the top submitted ideas, in random order.
-      {user ? "Rank them by using drag'n'drop: move them up the order to give them more points!" : ""}</span>;
+      {user ? " Rank them by using drag'n'drop: move them up the order to give them more points!" : ""}</span>;
   } else if (shortlistVote) {
     if (hasRankedShortlist) {
       return "Here are the top submitted ideas as you ranked them. "

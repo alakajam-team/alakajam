@@ -1,6 +1,7 @@
 import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
+import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import { createLuxonDate } from "server/core/formats";
@@ -24,10 +25,8 @@ export class EventThemeShortlistService {
    * @param event Event
    */
   public async findShortlist(event: BookshelfModel): Promise<BookshelfCollection> {
-    return models.Theme.where({
-      event_id: event.get("id"),
-      status: "shortlist"
-    })
+    return models.Theme.where("event_id", event.get("id"))
+      .query(qb => qb.whereIn("status", [enums.THEME.STATUS.SHORTLIST, enums.THEME.STATUS.SHORTLIST_OUT]))
       .orderBy("score", "DESC")
       .fetchAll() as Bluebird<BookshelfCollection>;
   }
@@ -153,21 +152,55 @@ export class EventThemeShortlistService {
         cache.eventsByName.del(event.get("name"));
       }
     }
+
+    await this.refreshShortlistThemesStatus(event);
   }
 
   public isShortlistAutoEliminationEnabled(event: BookshelfModel) {
-    const eventDetails = event.related<BookshelfModel>("details");
-    const shortlistElimination: ThemeShortlistEliminationState = eventDetails.get("shortlist_elimination");
+    const shortlistElimination = this.getShortlistEliminationState(event);
     return shortlistElimination.nextElimination && shortlistElimination.minutesBetweenEliminations > 0;
   }
 
   public async eliminateOneShorlistTheme(event: BookshelfModel) {
-    const eventDetails = event.related<BookshelfModel>("details");
-    const shortlistElimination: ThemeShortlistEliminationState = eventDetails.get("shortlist_elimination");
+    const shortlistElimination = this.getShortlistEliminationState(event);
     shortlistElimination.eliminatedCount = (shortlistElimination.eliminatedCount || 0) + 1;
-    await eventDetails.save({ shortlist_elimination: shortlistElimination });
+
+    await this.refreshShortlistThemesStatus(event);
+    await event.related<BookshelfModel>("details").save({ shortlist_elimination: shortlistElimination });
     cache.eventsById.del(event.get("id"));
     cache.eventsByName.del(event.get("name"));
+  }
+
+  private async refreshShortlistThemesStatus(event: BookshelfModel) {
+    const shortlist = await this.findShortlist(event);
+    const activeShortlist = shortlist
+      .sortBy(theme => theme.get("score"))
+      .filter(theme => theme.get("status") === enums.THEME.STATUS.SHORTLIST);
+    const eliminatedShortlist = shortlist
+      .sortBy(theme => theme.get("score"))
+      .filter(theme => theme.get("status") === enums.THEME.STATUS.SHORTLIST_OUT);
+
+    const shortlistElimination = this.getShortlistEliminationState(event);
+
+    if (shortlistElimination.eliminatedCount > eliminatedShortlist.length) {
+      // Mark some themes as out
+      const activeCount = shortlist.length - shortlistElimination.eliminatedCount;
+      const toEliminate = activeShortlist.length - activeCount;
+      for (const theme of activeShortlist.slice(0, toEliminate)) {
+        await theme.save({ status: enums.THEME.STATUS.SHORTLIST_OUT });
+      }
+    } else if (shortlistElimination.eliminatedCount < eliminatedShortlist.length) {
+      // Restore some themes
+      const toRestore = eliminatedShortlist.length - shortlistElimination.eliminatedCount;
+      for (const theme of eliminatedShortlist.slice(-toRestore)) {
+        await theme.save({ status: enums.THEME.STATUS.SHORTLIST });
+      }
+    }
+  }
+
+  private getShortlistEliminationState(event: BookshelfModel): ThemeShortlistEliminationState {
+    const eventDetails = event.related<BookshelfModel>("details");
+    return eventDetails.get("shortlist_elimination");
   }
 
   private getMaxEliminatedShortlistThemes(shortlistSize: number) {

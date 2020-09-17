@@ -148,7 +148,9 @@ export function eventThemeStatus(theme: BookshelfModel, options: { uncensored?: 
     badgeClass = "badge-light";
     break;
   case "shortlist":
+  case "shortlist_out":
     badgeClass = "badge-success";
+    label = "Shortlist";
     break;
   default:
   }

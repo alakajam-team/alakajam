@@ -270,10 +270,8 @@ export class EventThemeService {
   }
 
   public async getShortlistSize(event: BookshelfModel): Promise<number> {
-    const count = await models.Theme.where({
-      event_id: event.get("id"),
-      status: "shortlist"
-    })
+    const count = await models.Theme.where({event_id: event.get("id")})
+      .query(qb => qb.whereIn("status", [enums.THEME.STATUS.SHORTLIST, enums.THEME.STATUS.SHORTLIST_OUT]))
       .count();
     return forms.parseInt(count);
   }

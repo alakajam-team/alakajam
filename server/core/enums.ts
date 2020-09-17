@@ -58,6 +58,7 @@ export default {
       ACTIVE: "active",
       BANNED: "banned",
       SHORTLIST: "shortlist",
+      SHORTLIST_OUT: "shortlist_out",
       DUPLICATE: "duplicate",
     },
   },

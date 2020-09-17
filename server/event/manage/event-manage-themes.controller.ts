@@ -25,7 +25,6 @@ export async function eventManageThemes(req: CustomRequest, res: CustomResponse<
 
   // Init context
   const event = res.locals.event;
-  await eventThemeShortlistService.updateShortlistAutoElimination(event);
   const shortlistCollection = await eventThemeShortlistService.findShortlist(event);
   const context: any = {
     eliminationMinNotes: await settings.findNumber(
@@ -56,7 +55,7 @@ export async function eventManageThemes(req: CustomRequest, res: CustomResponse<
         theme_page_header: forms.sanitizeMarkdown(req.body["theme-page-header"]),
         shortlist_elimination: shortlistElimination
       });
-      eventThemeShortlistService.updateShortlistAutoElimination(event);
+      await eventThemeShortlistService.updateShortlistAutoElimination(event);
       await eventDetails.save();
       res.locals.alerts.push({ type: "success", message: "Changes saved."});
 

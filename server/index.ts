@@ -208,7 +208,6 @@ function decreaseProcessPriority() {
 }
 
 function heapDumpOnSigpipe() { // kill -13
-  log.info(`PID: ${process.pid}`);
   process.on("SIGPIPE", () => {
     const heapdump = require("heapdump");
     heapdump.writeSnapshot(path.resolve(__dirname, `${Date.now()}.heapsnapshot`));

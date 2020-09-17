@@ -169,8 +169,8 @@ export async function _generateShortlistInfo(event: BookshelfModel, user: User |
 
   // Split shortlist
   const info = {
-    activeShortlist: shortlistCollection.slice(0, shortlistCollection.length - eliminatedCount),
-    eliminatedShortlist: eliminatedCount > 0 ? shortlistCollection.slice(-eliminatedCount) : [],
+    activeShortlist: shortlistCollection.filter(theme => theme.get("status") === enums.THEME.STATUS.SHORTLIST),
+    eliminatedShortlist: shortlistCollection.filter(theme => theme.get("status") === enums.THEME.STATUS.SHORTLIST_OUT),
     randomizedShortlist: false,
     hasRankedShortlist: false,
     scoreByTheme: undefined
