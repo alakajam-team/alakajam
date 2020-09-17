@@ -4,6 +4,7 @@ import cache from "server/core/cache";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import { createLuxonDate } from "server/core/formats";
+import log from "server/core/log";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
 import { SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_SHORTLIST_SIZE } from "server/core/settings-keys";
@@ -63,9 +64,9 @@ export class EventThemeShortlistService {
 
   public async saveShortlistVotes(user: User, event: BookshelfModel, ids: number[]) {
     const shortlistCollection = await this.findShortlist(event);
-    const sortedShortlist = shortlistCollection.sortBy((theme) => {
-      return ids.indexOf(theme.get("id"));
-    });
+    const sortedShortlist = shortlistCollection
+      .sortBy(theme => ids.indexOf(theme.get("id")))
+      .filter(theme => ids.includes(theme.get("id")));
 
     let score = await eventThemeService.getShortlistSize(event);
     const results = [];
