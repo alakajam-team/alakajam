@@ -124,7 +124,7 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
 
             <div class="collapse navbar-collapse" id="navbar-event-dropdown">
               <ul class="navbar-nav">
-                {ifTrue(!statusTournament || statusTournament === "disabled" || event.related("details").get("flags")?.streamerOnlyTournament, () =>
+                {ifTrue(statusJam !== "disabled", () =>
                   <>
                     {eventLink(event, null, "dashboard", "Dashboard", "play-circle", path)}
                     <li class="mx-3 my-2" style="border-left: solid 1px"></li>
