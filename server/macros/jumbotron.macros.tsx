@@ -232,7 +232,7 @@ export function statsCounters(event) {
     statsElements.push(<div>
       <span class="event-jumbotron__stats-counter">{entries}</span>&nbsp;
       entr{entries !== 1 ? "ies" : "y"}
-      {!entries ? "... yet!" : ""}
+      {!entries ? "... for now!" : ""}
     </div>);
   } else if (event.get("status_theme") === "voting") {
     const themes = event.related("details").get("theme_count") || "0";
@@ -240,7 +240,7 @@ export function statsCounters(event) {
       <div>
         <span class="event-jumbotron__stats-counter">{themes}</span>&nbsp;
         theme{themes !== 1 ? "s" : ""}
-        {!themes ? "... yet!" : ""}
+        {!themes ? "... for now!" : ""}
       </div>);
   } else if (["shortlist", "closed", "results"].includes(event.get("status_theme"))) {
     const themeVotes = event.related("details").get("theme_vote_count") || "0";

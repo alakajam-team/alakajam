@@ -134,7 +134,7 @@ export default function render(context: CommonLocals) {
             )}
 
             {ifTrue(alakajamEntries.length === 0 && otherEntries.length === 0, () =>
-              <div class="card card-body">{profileUser.get("title")} didn't submit games... Yet!</div>
+              <div class="card card-body">{profileUser.get("title")} didn't submit games... for now!</div>
             )}
           </div>
           <div id="entries-ext" class="tab-pane fade" role="tabpanel">
@@ -160,7 +160,7 @@ export default function render(context: CommonLocals) {
             )}
 
             {ifTrue(posts.models.length === 0, () =>
-              <div class="card card-body">{profileUser.get("title")} didn't write posts... Yet!</div>
+              <div class="card card-body">{profileUser.get("title")} didn't write posts... for now!</div>
             )}
           </div>
           <div id="scores" class="tab-pane fade" role="tabpanel">
