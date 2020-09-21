@@ -76,7 +76,7 @@ function list(eventPresets: BookshelfModel[]) {
           <td>{eventPreset.get("title")}</td>
           <td>
             <a href={ "?edit=" + eventPreset.get("id") } class="btn btn-primary mr-1">Edit</a>
-            <a href={ "?create&amp;reference=" + eventPreset.get("id") } class="btn btn-outline-primary">Copy</a>
+            <a href={ "?create&reference=" + eventPreset.get("id") } class="btn btn-outline-primary">Copy</a>
           </td>
         </tr>
       )}

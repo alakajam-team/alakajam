@@ -32,10 +32,10 @@ export default function render(context: AdminTagsContext) {
         <tbody>
           {tags.map(tag =>
             <tr>
-              <td><a href={`?view=${tag.id}&amp;sortBy=${sortBy}`}>{tag.value}</a></td>
+              <td><a href={`?view=${tag.id}&sortBy=${sortBy}`}>{tag.value}</a></td>
               <td>{tag.count}</td>
               <td>
-                <a class="btn btn-primary btn-sm" href={`?view=${tag.id}&amp;sortBy=${sortBy}`}>Details</a>
+                <a class="btn btn-primary btn-sm" href={`?view=${tag.id}&sortBy=${sortBy}`}>Details</a>
               </td>
             </tr>
           )}
@@ -48,7 +48,7 @@ function details(detailedTag: BookshelfModel, sortBy: string) {
   return <div class="card mb-3">
     <div class="card-header">
       <div class="float-right">
-        <a class="btn btn-danger mr-1" href={`?delete=${detailedTag.get("id")}&amp;sortBy=${sortBy}`}
+        <a class="btn btn-danger mr-1" href={`?delete=${detailedTag.get("id")}&sortBy=${sortBy}`}
           onclick="return confirm('This cannot be reverted. The tag will be removed from all entries using it. Continue?')">
           Delete this tag
         </a>

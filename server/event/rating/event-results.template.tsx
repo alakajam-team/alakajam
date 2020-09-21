@@ -102,7 +102,7 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
     return <div class="text-center results-links">
       <span class="btn-group mr-sm-4 mb-2">
         {["solo", "team", "unranked"].map(division =>
-          <a href={`?sortBy=${selectedCategoryIndex}&amp;division=${division}`} type="button"
+          <a href={`?sortBy=${selectedCategoryIndex}&division=${division}`} type="button"
             class={`btn btn-primary results-links__division ${selectedDivision === division ? "active" : ""}`}>
             <span class={constants.DIVISION_ICONS[division]}></span>&nbsp;
             {capitalize(division)}
@@ -115,7 +115,7 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
           {categoryTitles.map((title, index) => {
             if (title) {
               const categoryIndex = index + 1;
-              return <a href={`?sortBy=${categoryIndex}&amp;division=${!(flags.scoreSpacePodium && categoryIndex === 7)
+              return <a href={`?sortBy=${categoryIndex}&division=${!(flags.scoreSpacePodium && categoryIndex === 7)
                 ? selectedDivision : ""}`} type="button"
               class={"btn btn-primary results-links__category " + (selectedCategoryIndex === categoryIndex ? "active" : "")}>
                 <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-1`}></span>&nbsp;
@@ -142,7 +142,7 @@ function podium(rankings, event, categoryTitles, division, sortedBy, options: { 
         )}
         <div class="dropdown-menu">
           {Object.keys(event.get("divisions")).map(title =>
-            <a class="dropdown-item" href={`?sortBy=${sortedBy}&amp;division=${title}`}>
+            <a class="dropdown-item" href={`?sortBy=${sortedBy}&division=${title}`}>
               {capitalize(title)} division
             </a>
           )}
@@ -154,7 +154,7 @@ function podium(rankings, event, categoryTitles, division, sortedBy, options: { 
             <button class="dropdown-toggle" type="button" data-toggle="dropdown">  {categoryTitles[sortedBy - 1]}</button>
             <div class="dropdown-menu">
               {categoryTitles.map((_title, index) =>
-                <a class="dropdown-item" href={`?sortBy=${index + 1}&amp;division=${division}`}>
+                <a class="dropdown-item" href={`?sortBy=${index + 1}&division=${division}`}>
                   {categoryTitles[index]}
                 </a>
               )}

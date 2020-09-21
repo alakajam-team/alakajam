@@ -126,7 +126,7 @@ export default function render(context: EntryLocals) {
                 <span class="entry__info-label">Tags</span>
                 <div class="entry__info-value" style="width: 215px">
                   {entry.related<BookshelfCollection>("tags").models.map(tag =>
-                    <a href={`/games?eventId=&amp;tags=${ tag.get("id") }`} class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get("value")}</a>
+                    <a href={`/games?tags=${ tag.get("id") }`} class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get("value")}</a>
                   )}
                 </div>
               </div>
@@ -334,7 +334,7 @@ function votingResults(entry, event) {
             return <div class="entry-results__category">
               <div class="entry-results__category-title">{categoryTitle}</div>
               <div class="entry-results__category-ranking">
-                <a href={`${links.routeUrl(event, "event", "results") }?sortBy=${ categoryIndex }&amp;division=${ entry.get("division")}`}>
+                <a href={`${links.routeUrl(event, "event", "results") }?sortBy=${ categoryIndex }&division=${ entry.get("division")}`}>
                   {ifTrue(ranking <= 3, () =>
                     <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-${ranking} in-picture`}></span>
                   )}
