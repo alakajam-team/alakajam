@@ -526,7 +526,7 @@ export class EventService {
   public async findRescueEntries(event: BookshelfModel, user: User, options: any = {}): Promise<BookshelfCollection> {
     const minRatings = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
 
-    if (options.pageSize === undefined) { options.pageSize = 4; }
+    if (options.pageSize === undefined) { options.pageSize = 3; }
     if (options.withRelated === undefined) { options.withRelated = ["details", "userRoles"]; }
 
     return models.Entry.where("entry.event_id", event.get("id"))
