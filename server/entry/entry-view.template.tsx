@@ -37,7 +37,7 @@ export default function render(context: EntryLocals) {
               )}
               {ifTrue(external, () =>
                 <h2 style="margin-top: -5px; margin-bottom: 20px">
-                  <span class="badge badge-sm badge-primary">External entry</span>
+                  <span class="badge badge-sm badge-primary">External entry</span>{" "}
                   {ifTrue(entry.get("external_event"), () =>
                     <span>Made for <i>{entry.get("external_event")}</i></span>
                   )}

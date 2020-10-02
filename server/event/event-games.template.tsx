@@ -46,7 +46,7 @@ export default function render(context: CommonLocals) {
 
         <div class="col-xl-9 col-lg-8 col-md-7">
           <h1>
-            Games
+            Games{" "}
             <span class="count">({entriesCollection.pagination.rowCount})</span>
             { gamesSearchMacros.searchDescription(searchOptions, null) }
           </h1>
