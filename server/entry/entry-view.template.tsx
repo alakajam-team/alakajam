@@ -314,8 +314,8 @@ function votingForm(entry, entryVotes, event, csrfToken, vote) {
   </form>;
 }
 
-function votingResults(entry, event) {
-  const hasRatings = false;
+function votingResults(entry: BookshelfModel, event: BookshelfModel) {
+  let hasRatings = false;
   const details = entry.related("details");
   const entriesInDivision = event.related("details").get("division_counts")[entry.get("division")];
 
@@ -324,6 +324,7 @@ function votingResults(entry, event) {
     <div class="entry-results__body">
       <p>
         {event.related("details").get("category_titles").map((categoryTitle, index) => {
+          hasRatings = true;
           const categoryIndex = index + 1;
           const ranking = details.get("ranking_" + categoryIndex);
           const rating = details.get("rating_" + categoryIndex);
