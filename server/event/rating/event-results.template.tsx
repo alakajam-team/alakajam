@@ -149,7 +149,7 @@ function podium(rankings, event, categoryTitles, division, sortedBy, options: { 
         </div>
       </div>
       {ifTrue(division !== enums.DIVISION.UNRANKED, () =>
-        <div>
+        <>
           <div class="dropdown">
             <button class="dropdown-toggle" type="button" data-toggle="dropdown">  {categoryTitles[sortedBy - 1]}</button>
             <div class="dropdown-menu">
@@ -161,7 +161,7 @@ function podium(rankings, event, categoryTitles, division, sortedBy, options: { 
             </div>
           </div>
           {options.scoreSpacePodium ? "" : "rankings"}
-        </div>
+        </>
       )}
       {ifTrue(division === enums.DIVISION.UNRANKED, () =>
         "(everyone wins!)"
@@ -220,7 +220,7 @@ function podiumSteps(rankings, categoryTitles, division, sortedBy, options) {
 
     return podiumStepEls;
   } else if (rankings.length > 0 && division === enums.DIVISION.UNRANKED) {
-    return <div>
+    return <>
       <h2 class="col-12 text-center m-3">Random picks</h2>
       <div class="col-sm-4 col-10 first unranked">
         {eventMacros.entryThumb(rankings[0], entryThumbOptions)}
@@ -235,7 +235,7 @@ function podiumSteps(rankings, categoryTitles, division, sortedBy, options) {
           eventMacros.entryThumb(rankings[2], entryThumbOptions)
         )}
       </div>
-    </div>;
+    </>;
 
   } else {
     return <h2 class="text-center">No entries</h2>;
