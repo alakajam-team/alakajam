@@ -95,7 +95,7 @@ export function highScores(entry, scoreCollection, userScore = null, featuredEve
           <td colspan={colspan}>Total submitted scores: <b>{scoreCollection.pagination.rowCount}</b></td>
         </tr>
       )}
-      {ifFalse(scoreCollection.pagination?.rowCount > 9, () =>
+      {ifTrue(scoreCollection.pagination?.rowCount === 0, () =>
         <tr>
           <td colspan={colspan}>Be the first to submit a score!</td>
         </tr>
