@@ -28,7 +28,7 @@ export default function render(context: HomeContext) {
             <div>
               <div class="home-welcome__title">New website unlocked</div>
               Welcome to <span class="home-welcome__brand">Alakajam!</span>, a game making community. We host informal game jams!
-              <a class="home-welcome__more" href="/article/about">Learn&nbsp;more...</a>
+              <a class="home-welcome__more ml-1" href="/article/about">Learn&nbsp;more...</a>
             </div>
           </div>
         </div>

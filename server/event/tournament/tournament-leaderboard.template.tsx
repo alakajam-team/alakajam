@@ -95,7 +95,7 @@ export default function render(context: CommonLocals) {
                                 })}
                               </td>
                             )}
-                            <td><h3>{forms.parseInt(tournamentScore.get("score"))}</h3></td>
+                            <td><h3>{parseFloat(tournamentScore.get("score"))}</h3></td>
                           </tr>;
                         })}
                       </tbody>

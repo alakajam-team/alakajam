@@ -18,7 +18,7 @@ export function userRanking(user: User, event: BookshelfModel, eventParticipatio
         </div>
       </div>
       <div class="tournament-user-banner__points">
-        <h3>{forms.parseInt((tournamentScore.get("score") || 0))} pts.</h3>
+        <h3>{parseFloat(tournamentScore.get("score")) || "0"} pts.</h3>
       </div>
     </div>;
   }
