@@ -174,7 +174,7 @@ export function pointsDistributionLegend(pointsDistribution) {
           <thead>
             <tr>
               {pointsDistribution.map((points, index) =>
-                <th>{ordinal(index - 1)}</th>
+                <th>{ordinal(index + 1)}</th>
               )}
             </tr>
           </thead>

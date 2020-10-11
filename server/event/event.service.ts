@@ -625,7 +625,7 @@ export class EventService {
 
   public getEventFlag(event: BookshelfModel, flag: keyof EventFlags): boolean {
     const flags = event.related<BookshelfModel>("details").get("flags") as EventFlags;
-    return flags[flag];
+    return flags && flags[flag];
   }
 
 }

@@ -99,7 +99,7 @@ function eventJumbotronAvatar(event: BookshelfModel, path: string) {
 }
 
 function eventJumbotronCountdown(event, user) {
-  if (event.get("countdown_config").message || event.get("countdown_config").phrase) {
+  if (event.get("countdown_config")?.message || event.get("countdown_config")?.phrase) {
     const rawHypeLink = event.get("countdown_config").link;
     const hypeLink = (rawHypeLink && rawHypeLink.indexOf("/") !== -1) ? rawHypeLink : links.routeUrl(event, "event", rawHypeLink);
     const animatedCountdownEnabled = event.get("countdown_config").enabled;
