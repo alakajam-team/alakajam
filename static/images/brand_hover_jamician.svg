@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -13,7 +15,7 @@
    viewBox="0 0 58.208331 13.229166"
    version="1.1"
    id="svg8"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
    sodipodi:docname="brand_hover.svg"
    inkscape:export-filename="D:\Dev\alakajam\static\images\brand_hover.png"
    inkscape:export-xdpi="96"
@@ -28,19 +30,18 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="6.5454545"
-     inkscape:cx="39.349818"
-     inkscape:cy="65.877726"
+     inkscape:cx="110"
+     inkscape:cy="36.983364"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-height="1018"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      units="px"
-     inkscape:pagecheckerboard="true"
-     inkscape:document-rotation="0" />
+     inkscape:pagecheckerboard="true" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -59,7 +60,7 @@
      id="layer1"
      transform="translate(0,-283.77085)">
     <path
-       style="fill:#009dd6;fill-opacity:1;stroke-width:1.2972964"
+       style="fill:#00abd6;fill-opacity:1;stroke-width:1.2972964"
        d="M 0 0 L 0 50 L 220 50 L 220 0 L 0 0 z "
        transform="matrix(0.26458333,0,0,0.26458333,0,283.77085)"
        id="rect48" />
@@ -156,13 +157,13 @@
       </g>
     </g>
     <image
-       width="8.4666538"
-       height="10.054152"
-       preserveAspectRatio="none"
+       y="285.35834"
+       x="2.3812499"
+       id="image970"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAmCAYAAAClI5npAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJ bWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdp bj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6 eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0 NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJo dHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlw dGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAv IiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RS ZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpD cmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNl SUQ9InhtcC5paWQ6RENCNjlCRjVBQ0REMTFFN0JEQUNDOTc5RDg4NDFDNUMiIHhtcE1NOkRvY3Vt ZW50SUQ9InhtcC5kaWQ6RENCNjlCRjZBQ0REMTFFN0JEQUNDOTc5RDg4NDFDNUMiPiA8eG1wTU06 RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpEQ0I2OUJGM0FDREQxMUU3QkRB Q0M5NzlEODg0MUM1QyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpEQ0I2OUJGNEFDREQxMUU3 QkRBQ0M5NzlEODg0MUM1QyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1w bWV0YT4gPD94cGFja2V0IGVuZD0iciI/PtcxbgEAAAGBSURBVHja7FexagJBEL119TcsQrp8gYW1 ZxcIBMEqrQgprPwICyGY8iohBgJ2Xh0DgfTpvB+JnCe6Owc73Dh7CGYOnGY5b27Z9+bN7FMFl4r+ MHOe5y/qsNSCf466b+JTDyFgInozCAF5NgqPjyq5gZRMBAPKF3mYmtTu7nT+ykKKtSEs0vbF/cDs 9zFzfpfLQFnkLBMPAzdhORPKgC/y5waqMXyfmnW6Vac1IW4OnIs873/ttHm+HxXyJiGndqrmVF6Y BsIZwLXHtcaaWPwpR9Wj1m3xzt8brwPI0QAgXKEjPY47x/V3bRF9JQ7yu3YxA9PPpHA/+V0AteX6 t2kRBgQDeAICY9HPRhYDCk9CcDKcA/KdmFgrahILvQtyD0cghVpStaZiAvMAVi2sC64HqLO+HnUD Vj+nAfCCi/dXe0tmFWHAt+9ZJqz7jXXVNEA5JUCKmaDuEHBMUeUYoJxSWc1QE7Q6GgAEoGL4x4Pv Al/E4hgoXWDOJ1C3qlgG9gIMAMB+pccpTf5DAAAAAElFTkSuQmCC "
        style="image-rendering:optimizeSpeed"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAATCAMAAACuuX39AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJ bWFnZVJlYWR5ccllPAAAAC1QTFRFAKvWYVhs/860a/3/C0tkAFtszdLZJavWhVZuEFxs8lNtKURs HpPJIGae////rC852AAAAA90Uk5T//////////////////8A1NyYoQAAAIdJREFUeNpUzlESwyAI BFDSiojA3v+4RTSZlD/euIukzIC74wzxh9hFHiGmi0XEbiElSviauVkBlGEmEuFhBU0BW7uXbEDE SIkUAjRlzlFS0LvOnH8YY/ZeskB1xBugDWErExtW6YJ9hmpHzA1Zmu9xEgeWvCEjLU7C79K2b8T5 +q61GuAnwAAh2A0n4MR0AwAAAABJRU5ErkJggg== "
-       id="image376"
-       x="2.3812621"
-       y="285.35834" />
+       preserveAspectRatio="none"
+       height="10.054167"
+       width="8.4666662" />
   </g>
 </svg>

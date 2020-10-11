@@ -12,7 +12,7 @@ import * as postMacros from "server/post/post.macros";
 
 export default function render(context: CommonLocals) {
   const { resultsPost, event, user, userLikes, rankings, categoryTitles, division, sortedBy } = context;
-  const hasEventBanner = event.related("details").get("banner");
+  const hasEventBanner = event.related("details").get("background");
   let currentRanking;
 
   return base(context,
