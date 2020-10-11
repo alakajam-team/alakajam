@@ -34,14 +34,14 @@ $event-navbar-height: 50px;
     float: left;
     width: 220px;
     height: $navbar-brand-height;
-    background: url('/static/images/brand.svg');
+    background: url('/static/images/brand.svg?jelly');
     padding: 0;
   }
     
   & .navbar-brand__hover {
     width: 1px; /* force preload */
     height: 1px;
-    background: url('/static/images/brand_hover.svg');
+    background: url('/static/images/brand_hover.svg?jelly');
   }
   
   & .navbar-brand:hover .navbar-brand__hover {

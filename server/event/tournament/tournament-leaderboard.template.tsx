@@ -155,7 +155,7 @@ function podiumPosition(position, ranking, tournamentScore?) {
       <div class="row">
         {userMacros.userThumb(tournamentScore.related("user"), { fullWidth: true, centered: true })}
         <div class="col-12">
-          <h2 class="text-center tournament-score">{forms.parseInt(tournamentScore.get("score"))} pts.</h2>
+          <h2 class="text-center tournament-score">{parseFloat(tournamentScore.get("score"))} pts.</h2>
         </div>
       </div>
     )}
