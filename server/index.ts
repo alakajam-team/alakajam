@@ -17,9 +17,6 @@ if (__filename.includes(".js")) {
 
 
 log.warn("Starting server...");
-if (config.DEBUG_TRACE_REQUESTS) {
-  process.env.DEBUG = "express:*";
-}
 if (config.DEBUG_LONG_PROMISE_TRACES) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("longjohn");

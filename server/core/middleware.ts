@@ -29,6 +29,7 @@ import fileStorage from "./file-storage";
 import log from "./log";
 import { setUpJSXLocals } from "./middleware.jsx";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
+import * as crypto from "crypto";
 
 const LAUNCH_TIME = Date.now();
 
@@ -41,20 +42,6 @@ jsxPistolsBabelOptions.plugins.push("@babel/plugin-proposal-optional-chaining");
 export async function configure(app: express.Application) {
   app.locals.config = config;
 
-  // Slow requests logging
-  if (config.DEBUG_TRACE_SLOW_REQUESTS > -1) {
-    app.use((req: Request, res: Response, next: NextFunction) => {
-      const start = Date.now();
-      res.once("finish", () => {
-        const totalTime = Date.now() - start;
-        if (totalTime > config.DEBUG_TRACE_SLOW_REQUESTS) {
-          log.debug(req.url + " " + totalTime + "ms");
-        }
-      });
-      next();
-    });
-  }
-
   // In-memory data
   await passwordRecoveryService.loadPasswordRecoveryCache(app);
 
@@ -62,6 +49,11 @@ export async function configure(app: express.Application) {
   app.use("/static", express.static(configUtils.staticPathAbsolute()));
   app.use("/dist/client", express.static(configUtils.clientBuildPathAbsolute()));
   app.use("/data/uploads", express.static(configUtils.uploadsPathAbsolute()));
+
+  // Trace requests
+  if (config.DEBUG_TRACE_REQUESTS) {
+    app.use(traceRequestsMiddleware);
+  }
 
   // Session management
   const sessionKey = await findOrCreateSessionKey();
@@ -163,6 +155,27 @@ export async function configure(app: express.Application) {
 
   // Routing: 500/404
   app.use(createErrorRenderingMiddleware(app.locals.devMode));
+}
+
+export function traceRequestsMiddleware(req: Request, res: Response, next: NextFunction) {
+  const minRequestDuration = config.DEBUG_TRACE_SLOW_REQUESTS || -1;
+  if (!req.url.startsWith('/data') && !req.url.startsWith('/static') && !req.url.startsWith('/dist')) {
+    // Trace start
+    res.locals.requestId = crypto.randomBytes(3).toString("hex");
+    res.locals.startTime = Date.now();
+    if (minRequestDuration < 0) {
+      log.debug(`[${res.locals.requestId}] START ${req.url}`);
+    }
+    
+    // Trace end
+    res.on('finish', () => {
+      const duration = Date.now() - res.locals.startTime;
+      if (duration > minRequestDuration) {
+        log.debug(`[${res.locals.requestId}] ${minRequestDuration < 0 ? 'END' : ''} (${duration}ms) ${req.url}`);
+      }
+    });
+  }
+  next();
 }
 
 export function logErrorAndReturn(value: any) {
