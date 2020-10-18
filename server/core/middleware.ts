@@ -11,8 +11,10 @@
 import * as bodyParser from "body-parser";
 import connectSessionKnex from "connect-session-knex";
 import * as cookies from "cookies";
+import * as crypto from "crypto";
 import express, { NextFunction, Request, Response } from "express";
 import expressSession from "express-session";
+import expressSlowDown from "express-slow-down";
 import JSXPistols, { defaultBabelOptions } from "jsx-pistols";
 import * as path from "path";
 import * as randomKey from "random-key";
@@ -29,7 +31,6 @@ import fileStorage from "./file-storage";
 import log from "./log";
 import { setUpJSXLocals } from "./middleware.jsx";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
-import * as crypto from "crypto";
 
 const LAUNCH_TIME = Date.now();
 
@@ -55,6 +56,17 @@ export async function configure(app: express.Application) {
     app.use(traceRequestsMiddleware);
   }
 
+  // Speed limit against bots
+  const slowDownMiddleware = expressSlowDown({
+    windowMs: 60 * 1000, // 1 minute
+    delayAfter: 60,
+    delayMs: 500,
+    onLimitReached: (req) => {
+      log.info("Slowing down IP " + req.ip);
+    }
+  });
+  app.use(slowDownMiddleware);
+
   // Session management
   const sessionKey = await findOrCreateSessionKey();
   app.use(cookies.express([sessionKey]));
@@ -67,7 +79,7 @@ export async function configure(app: express.Application) {
     rootPath: templatesRootPath,
     babelOptions: process.env.NODE_ENV === "production" ? "skip" : jsxPistolsBabelOptions,
     expressApp: app,
-    maxCacheSize: 50 // XXX DEBUG Possible cause for server freeze
+    maxCacheSize: 50 // XXX DEBUG Possible cause for server freeze?
   });
   const expressEngine = async (filePath: string, options: any, callback: Function) => {
     try {

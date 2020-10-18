@@ -1,10 +1,12 @@
 import csurf from "csurf";
 import { NextFunction, RequestHandler } from "express";
 import expressPromiseRouter from "express-promise-router";
+import expressSlowDown from "express-slow-down";
 import multer from "multer";
 import * as randomKey from "random-key";
 import config, * as configUtils from "server/core/config";
 import constants from "server/core/constants";
+import log from "server/core/log";
 import { adminMiddleware } from "./admin/admin.middleware";
 import { adminAnnouncements } from "./admin/announcements/admin-announcements.controller";
 import { adminDev } from "./admin/dev/admin-dev.controller";
@@ -36,6 +38,7 @@ import { viewEventPosts } from "./event/event-posts.controller";
 import { eventStreamers, eventStreamersDoc, moderateEventStreamers } from "./event/event-streamers.controller";
 import { eventMiddleware } from "./event/event.middleware";
 import { eventManageEntries } from "./event/manage/event-manage-entries.controller";
+import { postEventManageRankings, viewEventManageRankings } from "./event/manage/event-manage-rankings.controller";
 import { eventManageTemplate } from "./event/manage/event-manage-template.controller";
 import { eventManageThemes } from "./event/manage/event-manage-themes.controller";
 import { eventManageTournament } from "./event/manage/event-manage-tournament.controller";
@@ -73,7 +76,6 @@ import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
-import { viewEventManageRankings, postEventManageRankings } from "./event/manage/event-manage-rankings.controller";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
@@ -83,6 +85,15 @@ const csrfDisabled: RequestHandler = (req: CustomRequest, res: CustomResponse<Co
   next();
 };
 const csrfIfNotDebug = config.DEBUG_ADMIN ? [csrfDisabled] : [csrf];
+
+const sensitiveActionsSlowDown: RequestHandler = expressSlowDown({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  delayAfter: 10,
+  delayMs: 500,
+  onLimitReached: (req) => {
+    log.info("Slowing down sensitive actions for IP " + req.ip);
+  }
+});
 
 export function routes(app) {
   // Using express-promise-router instead of the default express.Router
@@ -116,12 +127,12 @@ export function routes(app) {
   // Users
 
   router.get("/register", csrf, registerController.registerForm.bind(registerController));
-  router.post("/register", csrf, registerController.register.bind(registerController));
+  router.post("/register", sensitiveActionsSlowDown, csrf, registerController.register.bind(registerController));
   router.get("/login", csrf, loginGet);
-  router.post("/login", csrf, loginPost);
+  router.post("/login", sensitiveActionsSlowDown, csrf, loginPost);
   router.get("/logout", csrf, logout);
-  router.all("/passwordRecoveryRequest", csrf, passwordRecoveryRequest);
-  router.all("/passwordRecovery", csrf, passwordRecovery);
+  router.all("/passwordRecoveryRequest", sensitiveActionsSlowDown, csrf, passwordRecoveryRequest);
+  router.all("/passwordRecovery", sensitiveActionsSlowDown, csrf, passwordRecovery);
 
   router.all("/dashboard(/feed)?", csrf, dashboardFeed);
   router.all("/dashboard/entries", csrf, dashboardEntries);
