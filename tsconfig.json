@@ -10,7 +10,8 @@
     "experimentalDecorators": true,
     "jsx": "react",
     "esModuleInterop": true,
-    "typeRoots": ["types", "node_modules/@types"]
+    "typeRoots": ["types", "node_modules/@types"],
+    "skipDefaultLibCheck": true
   },
   "include": [
     "server/**/*.ts",

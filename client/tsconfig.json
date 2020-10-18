@@ -5,7 +5,8 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "sourceMap": true,
-    "types": ["jquery"]
+    "types": ["jquery"],
+    "skipDefaultLibCheck": true
   },
   "include": [
     "**/*.ts"
