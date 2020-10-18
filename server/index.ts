@@ -62,10 +62,10 @@ async function createApp() {
 
   const app = express();
   app.disable("x-powered-by");
-  if (config.SECURE_SESSION_COOKIES) {
-    // See https://github.com/expressjs/session#cookiesecure
-    app.enable("trust proxy");
-  }
+
+  // Detect IP correctly behind proxy (must be in localhost)
+  // Required for secure cookies too, see https://github.com/expressjs/session#cookiesecure
+  app.set('trust proxy', 'loopback');
 
   app.locals.devMode = DEV_ENVIRONMENT;
   const previousVersion = await db.initDatabase();
