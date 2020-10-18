@@ -64,7 +64,7 @@ async function createApp() {
   app.disable("x-powered-by");
   if (config.SECURE_SESSION_COOKIES) {
     // See https://github.com/expressjs/session#cookiesecure
-    app.set("trust proxy", 1);
+    app.enable("trust proxy");
   }
 
   app.locals.devMode = DEV_ENVIRONMENT;
@@ -77,7 +77,8 @@ async function createApp() {
 
   app.listen(config.SERVER_PORT, () => {
     const startSeconds = (Date.now() - startDate) / 1000;
-    log.info(`Server started in ${startSeconds.toFixed(1)}s: http://localhost:${config.SERVER_PORT}/`);
+    const localUrl = 'http://localhost' + config.SERVER_PORT;
+    log.info(`Server started in ${startSeconds.toFixed(1)}s: ${config.ROOT_URL ? (config.ROOT_URL + " or ") : ""} ${localUrl}`);
     if (process.send) {
       process.send("online"); // browser-refresh event
     }
