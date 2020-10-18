@@ -338,6 +338,6 @@ export function commentEditor(commentModel: BookshelfModel, path: string, csrfTo
       </div>
     </form>;
   } else {
-    return <a class="btn btn-primary" href={`"/login?redirect=${encodeURIComponent(path)}`}>Login to comment</a>;
+    return <a class="btn btn-primary" href={`/login?redirect=${encodeURIComponent(path)}`}>Login to comment</a>;
   }
 }
