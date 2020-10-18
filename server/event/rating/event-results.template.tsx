@@ -207,7 +207,7 @@ function podiumSteps(rankings, categoryTitles, division, sortedBy, options) {
       )}
     </div>);
 
-    const trophyPos3 = rankings.length >= 2 ? " ranking-" + rankings[2].related("details").get("ranking_" + sortedBy) : "";
+    const trophyPos3 = rankings.length >= 3 ? " ranking-" + rankings[2].related("details").get("ranking_" + sortedBy) : "";
     podiumStepEls.push(<div class={"col-md-4 position-3"
       + (!options.scoreSpacePodium ? trophyPos3 : " award") + (rankings.length >= 3 ? " results-podium__step" : "")}>
       {ifTrue(rankings.length >= 3, () =>
