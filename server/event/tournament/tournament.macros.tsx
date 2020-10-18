@@ -1,7 +1,6 @@
 import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
 import { ordinal } from "server/core/formats";
-import forms from "server/core/forms";
 import { EventParticipation } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
 import * as userMacros from "server/user/user.macros";

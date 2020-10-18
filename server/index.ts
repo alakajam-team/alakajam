@@ -199,7 +199,7 @@ function decreaseProcessPriority() {
         log.info("Renice stderr: " + data);
       });
     } catch (e) {
-      log.warn("Failed to decrease process priority with renice: " + e.message)
+      log.warn("Failed to decrease process priority with renice: " + e.message);
     }
   }
 }

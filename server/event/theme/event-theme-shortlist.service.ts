@@ -1,11 +1,9 @@
 import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
-import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import { createLuxonDate } from "server/core/formats";
-import log from "server/core/log";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
 import { SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_SHORTLIST_SIZE } from "server/core/settings-keys";

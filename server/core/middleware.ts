@@ -159,19 +159,19 @@ export async function configure(app: express.Application) {
 
 export function traceRequestsMiddleware(req: Request, res: Response, next: NextFunction) {
   const minRequestDuration = config.DEBUG_TRACE_SLOW_REQUESTS || -1;
-  if (!req.url.startsWith('/data') && !req.url.startsWith('/static') && !req.url.startsWith('/dist')) {
+  if (!req.url.startsWith("/data") && !req.url.startsWith("/static") && !req.url.startsWith("/dist")) {
     // Trace start
     res.locals.requestId = crypto.randomBytes(3).toString("hex");
     res.locals.startTime = Date.now();
     if (minRequestDuration < 0) {
       log.debug(`[${res.locals.requestId}] START ${req.url}`);
     }
-    
+
     // Trace end
-    res.on('finish', () => {
+    res.on("finish", () => {
       const duration = Date.now() - res.locals.startTime;
       if (duration > minRequestDuration) {
-        log.debug(`[${res.locals.requestId}] ${minRequestDuration < 0 ? 'END' : ''} (${duration}ms) ${req.url}`);
+        log.debug(`[${res.locals.requestId}] ${minRequestDuration < 0 ? "END" : ""} (${duration}ms) ${req.url}`);
       }
     });
   }

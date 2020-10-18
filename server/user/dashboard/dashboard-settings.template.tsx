@@ -3,7 +3,7 @@ import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import security from "server/core/security";
 import * as formMacros from "server/macros/form.macros";
-import { ifFalse, ifTrue } from "server/macros/jsx-utils";
+import { ifTrue } from "server/macros/jsx-utils";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
 import dashboardBase from "./dashboard.base.template";
 

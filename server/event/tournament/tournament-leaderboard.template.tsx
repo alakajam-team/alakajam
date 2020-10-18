@@ -3,7 +3,6 @@ import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import { ordinal } from "server/core/formats";
-import forms from "server/core/forms";
 import links from "server/core/links";
 import * as scoreMacros from "server/entry/highscore/entry-highscore.macros";
 import * as eventMacros from "server/event/event.macros";
