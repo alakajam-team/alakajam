@@ -44,9 +44,14 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
     cache.general.set("home_page", context, 10 /* 10 seconds */);
   }
 
-  await loadUserShortcutsContext(res, featuredEvent, { postFromAnyEvent: true });
+  let joinEnabled: boolean;
+  if (featuredEvent) {
+    await loadUserShortcutsContext(res, featuredEvent, { postFromAnyEvent: true });
+    joinEnabled = featuredEvent?.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED;
+  } else {
+    joinEnabled = false;
+  }
 
-  const joinEnabled = featuredEvent.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED;
   if (user) {
     const allPostsInPage = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);
 
