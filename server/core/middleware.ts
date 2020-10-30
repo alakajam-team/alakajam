@@ -77,9 +77,8 @@ export async function configure(app: express.Application) {
   const templatesRootPath = path.join(__dirname, "..");
   const jsxPistols = new JSXPistols({
     rootPath: templatesRootPath,
-    babelOptions: process.env.NODE_ENV === "production" ? "skip" : jsxPistolsBabelOptions,
-    expressApp: app,
-    maxCacheSize: 50 // XXX DEBUG Possible cause for server freeze?
+    babelOptions: jsxPistolsBabelOptions,
+    expressApp: app
   });
   const expressEngine = async (filePath: string, options: any, callback: Function) => {
     try {

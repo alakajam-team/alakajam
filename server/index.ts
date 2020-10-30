@@ -78,7 +78,8 @@ async function createApp() {
   app.listen(config.SERVER_PORT, () => {
     const startSeconds = (Date.now() - startDate) / 1000;
     const localUrl = 'http://localhost' + config.SERVER_PORT;
-    log.info(`Server started in ${startSeconds.toFixed(1)}s: ${config.ROOT_URL ? (config.ROOT_URL + " or ") : ""} ${localUrl}`);
+    const advertisedUrls = `${(config.ROOT_URL && config.ROOT_URL !== localUrl) ? (config.ROOT_URL + " or") : ""} ${localUrl}`;
+    log.info(`Server started in ${startSeconds.toFixed(1)}s: ${advertisedUrls}`);
     if (process.send) {
       process.send("online"); // browser-refresh event
     }
