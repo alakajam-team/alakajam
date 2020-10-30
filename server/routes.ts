@@ -85,15 +85,7 @@ const csrfDisabled: RequestHandler = (req: CustomRequest, res: CustomResponse<Co
   next();
 };
 const csrfIfNotDebug = config.DEBUG_ADMIN ? [csrfDisabled] : [csrf];
-
-const sensitiveActionsSlowDown: RequestHandler = expressSlowDown({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  delayAfter: 10,
-  delayMs: 500,
-  onLimitReached: (req) => {
-    log.info("Slowing down sensitive actions for IP " + req.ip);
-  }
-});
+const sensitiveActionsSlowDown: RequestHandler = initSensitiveActionsSlowDownMiddleware();
 
 export function routes(app) {
   // Using express-promise-router instead of the default express.Router
@@ -277,4 +269,20 @@ function initCSRFMiddleware() {
     cookie: false,
     ignoreMethods: ["GET"],
   });
+}
+
+
+function initSensitiveActionsSlowDownMiddleware(): RequestHandler {
+  if (config.DEBUG_DISABLE_SLOW_DOWN) {
+    return (_req, _res, next) => { next(); };
+  } else {
+    return expressSlowDown({
+      windowMs: 10 * 60 * 1000, // 10 minutes
+      delayAfter: 10,
+      delayMs: 500,
+      onLimitReached: (req) => {
+        log.info("Slowing down sensitive actions for IP " + req.ip);
+      }
+    });
+  }
 }

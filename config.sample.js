@@ -40,6 +40,7 @@ module.exports = {
   DEBUG_TEST_MAILER: true, // Uses the fake https://ethereal.email/ mailer (emails are also logged in console)
   DEBUG_ARTICLES: true, // Uses the local version of the articles rather than downloading them from Github
   DEBUG_LONG_PROMISE_TRACES: false, // Enables better stack traces for Promises, at a performance and stability (Knex support) cost
+  DEBUG_DISABLE_SLOW_DOWN: false, // Disables mechanisms to slow down spammers, mostly useful for E2E and load testing
 
   // Debug: trace options
   LOG_LEVEL: 'debug', // Verbose level among 'none', 'error', 'warn', 'info', 'debug'

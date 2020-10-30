@@ -19,6 +19,7 @@ editableConfig.ROOT_URL = "http://localhost:8001";
 editableConfig.DATA_PATH = "cypress";
 editableConfig.DEBUG_ADMIN = true;
 editableConfig.DEBUG_DISABLE_STARTUP_BUILD = true;
+editableConfig.DEBUG_DISABLE_SLOW_DOWN = true;
 
 // Initialize backup for restoration throughout tests
 // XXX Should be done after DB migration

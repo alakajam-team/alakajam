@@ -57,15 +57,17 @@ export async function configure(app: express.Application) {
   }
 
   // Speed limit against bots
-  const slowDownMiddleware = expressSlowDown({
-    windowMs: 60 * 1000, // 1 minute
-    delayAfter: 60,
-    delayMs: 500,
-    onLimitReached: (req) => {
-      log.info("Slowing down IP " + req.ip);
-    }
-  });
-  app.use(slowDownMiddleware);
+  if (!config.DEBUG_DISABLE_SLOW_DOWN) {
+    const slowDownMiddleware = expressSlowDown({
+      windowMs: 60 * 1000, // 1 minute
+      delayAfter: 60,
+      delayMs: 500,
+      onLimitReached: (req) => {
+        log.info("Slowing down IP " + req.ip);
+      }
+    });
+    app.use(slowDownMiddleware);
+  }
 
   // Session management
   const sessionKey = await findOrCreateSessionKey();
