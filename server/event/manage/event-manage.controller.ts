@@ -159,7 +159,8 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         flags: {
           streamerOnlyTournament: Boolean(req.body.streamerOnlyTournament),
           scoreSpacePodium: Boolean(req.body.scoreSpacePodium),
-          hideStreamerMenu: Boolean(req.body.hideStreamerMenu)
+          hideStreamerMenu: Boolean(req.body.hideStreamerMenu),
+          hideThemeResultsDetails: Boolean(req.body.hideThemeResultsDetails)
         }
       });
       if (files.banner || req.body["banner-delete"]) {

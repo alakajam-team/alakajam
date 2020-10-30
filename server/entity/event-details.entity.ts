@@ -14,6 +14,7 @@ export interface EventFlags {
   streamerOnlyTournament?: boolean;
   scoreSpacePodium?: boolean;
   hideStreamerMenu?: boolean;
+  hideThemeResultsDetails?: boolean;
 }
 
 export interface ThemeShortlistEliminationState {
