@@ -31,11 +31,11 @@ export async function entryView(req: CustomRequest, res: CustomResponse<EntryLoc
 
   // Fetch vote on someone else's entry
   let vote: BookshelfModel;
-  let canVote = false;
+  let canVoteOnEntry = false;
   if (res.locals.user && eventVote &&
       !security.canUserWrite(res.locals.user, entry)) {
-    canVote = await eventRatingService.canVoteOnEntry(res.locals.user, entry);
-    if (canVote) {
+    canVoteOnEntry = await eventRatingService.canVoteOnEntry(res.locals.user, entry);
+    if (canVoteOnEntry) {
       vote = await eventRatingService.findEntryVote(res.locals.user, entry);
     }
   }
@@ -71,7 +71,7 @@ export async function entryView(req: CustomRequest, res: CustomResponse<EntryLoc
     entryVotes,
     minEntryVotes,
     vote,
-    canVote,
+    canVoteOnEntry,
     eventVote,
     external: !res.locals.event,
     highScoresCollection: await highscoreService.findHighScores(entry),

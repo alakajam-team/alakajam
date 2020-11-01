@@ -16,7 +16,7 @@ import * as userMacros from "server/user/user.macros";
 import { EntryLocals } from "./entry.middleware";
 
 export default function render(context: EntryLocals) {
-  const { entry, external, user, infoMessage, entryVotes, canVote, vote, minEntryVotes, featuredEvent, path,
+  const { entry, external, user, infoMessage, entryVotes, canVoteOnEntry, vote, minEntryVotes, featuredEvent, path,
     event, eventVote, csrfToken, sortedComments, editComment, editableAnonComments, nodeAuthorIds, posts } = context;
 
   formMacros.registerEditorScripts(context);
@@ -33,7 +33,7 @@ export default function render(context: EntryLocals) {
             <h1>
               {entry.get("title")}
               {ifTrue(security.canUserWrite(user, entry), () =>
-                <a class="btn btn-outline-primary ml-2" href={ links.routeUrl(entry, "entry", "edit") }>Edit</a>
+                <a class="btn btn-outline-primary ml-2" href={links.routeUrl(entry, "entry", "edit")}>Edit</a>
               )}
               {ifTrue(external, () =>
                 <h2 style="margin-top: -5px; margin-bottom: 20px">
@@ -56,7 +56,7 @@ export default function render(context: EntryLocals) {
             )}
 
             {ifTrue(user && event && eventVote, () =>
-              voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, csrfToken)
+              votingBlock(event, entry, entryVotes, user, canVoteOnEntry, vote, minEntryVotes, csrfToken)
             )}
 
             {ifTrue(event && event.get("status_results") === "closed" && entry.get("division") !== "unranked", () =>
@@ -126,7 +126,7 @@ export default function render(context: EntryLocals) {
                 <span class="entry__info-label">Tags</span>
                 <div class="entry__info-value" style="width: 215px">
                   {entry.related<BookshelfCollection>("tags").models.map(tag =>
-                    <a href={`/games?tags=${ tag.get("id") }`} class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get("value")}</a>
+                    <a href={`/games?tags=${tag.get("id")}`} class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get("value")}</a>
                   )}
                 </div>
               </div>
@@ -140,10 +140,10 @@ export default function render(context: EntryLocals) {
 
             <div class="entry__links">
               {ifTrue(security.canUserWrite(user, entry), () =>
-                <a class="btn btn-outline-primary" href={ links.routeUrl(entry, "entry", "edit") }>Edit entry</a>
+                <a class="btn btn-outline-primary" href={links.routeUrl(entry, "entry", "edit")}>Edit entry</a>
               )}
               {(entry.get("links") || []).map(link =>
-                <a class="btn btn-primary" href={ link.url } target="_blank">
+                <a class="btn btn-primary" href={link.url} target="_blank">
                   <span class="fas fa-external-link"></span>
                   {link.label}
                 </a>
@@ -217,57 +217,60 @@ function picture(entry, event) {
   </div>;
 }
 
-function voting(event, entry, entryVotes, user, canVote, vote, minEntryVotes, csrfToken) {
-  return <div>
-
-    {ifTrue(canVote, () =>
-      <div class="entry-voting">
-        <h2 class="entry-voting__header">
-          <div class="float-right">
-            <a href={links.routeUrl(event, "event", "ratings") } class="btn btn-outline-light btn-sm">Manage my ratings</a>
-          </div>
+function votingBlock(event, entry, entryVotes, user, canVoteOnEntry, vote, minEntryVotes, csrfToken) {
+  if (canVoteOnEntry) {
+    // Jam entrant who can vote on this entry
+    return <div class="entry-voting">
+      <h2 class="entry-voting__header">
+        <div class="float-right">
+          <a href={links.routeUrl(event, "event", "ratings")} class="btn btn-outline-light btn-sm">Manage my ratings</a>
+        </div>
       Game ratings
         </h2>
-        <div class="entry-voting__body">
-          {ifTrue(entry.get("division") === "unranked", () =>
-            <div>
-              <p>This game is an <strong>Unranked</strong> entry.</p>
-              <p>Voting is disabled, please provide feedback instead.</p>
-              <p style="margin-bottom: 0">
-                <i>Note: The Karma formula grants you as many points on this entry as on ranked ones.
-                  <a href="/article/docs/faq#karma-intro">Learn more</a></i>
-              </p>
-            </div>
-          )}
-          {ifTrue(entry.get("division") !== "unranked", () =>
-            votingForm(entry, entryVotes, event, csrfToken, vote)
-          )}
-        </div>
+      <div class="entry-voting__body">
+        {ifTrue(entry.get("division") === "unranked", () =>
+          <div>
+            <p>This game is an <strong>Unranked</strong> entry.</p>
+            <p>Voting is disabled, please provide feedback instead.</p>
+            <p style="margin-bottom: 0">
+              <i>Note: The Karma formula grants you as many points on this entry as on ranked ones. 
+                {" "}<a href="/article/docs/faq#karma-intro">Learn more</a></i>
+            </p>
+          </div>
+        )}
+        {ifTrue(entry.get("division") !== "unranked", () =>
+          votingForm(entry, entryVotes, event, csrfToken, vote)
+        )}
       </div>
-    )}
+    </div>;
 
-    {ifTrue(!canVote && !security.canUserWrite(user, entry), () =>
-      <div class="entry-voting">
-        <h2 class="entry-voting__header">Game ratings</h2>
-        <div class="entry-voting__body">
-          {ratingCountPhrase(entry, entryVotes)}
-          <p>Because you didn't enter the event, you cannot rate this game. You can still provide feedback using comments!</p>
-        </div>
-      </div>
-    )}
-
-    {ifTrue(!canVote && entryVotes !== null && entry.get("division") !== "unranked", () =>
-      <div class="entry-voting">
-        <h2 class="entry-voting__header">Game ratings</h2>
-        <div class="entry-voting__body">
-          <p>You have received <strong>{entryVotes}</strong> rating{entryVotes !== 1 ? "s" : ""} so far.</p>
-          {ifTrue(entryVotes < minEntryVotes, () =>
-            <p>You need at least <strong>{minEntryVotes}</strong> ratings for your game to receive rankings.</p>
-          )}
-        </div>
-      </div>
-    )}
-  </div>;
+  } else {
+    if (security.canUserWrite(user, entry)) {
+      if (entry.get("division") !== "unranked") {
+        // Own entry that can be ranked
+        return <div class="entry-voting">
+          <h2 class="entry-voting__header">Game ratings</h2>
+          <div class="entry-voting__body">
+            <p>You have received <strong>{entryVotes}</strong> rating{entryVotes !== 1 ? "s" : ""} so far.</p>
+            {ifTrue(entryVotes < minEntryVotes, () =>
+              <p>You need at least <strong>{minEntryVotes}</strong> ratings for your game to receive rankings.</p>
+            )}
+          </div>
+        </div>;
+      } else {
+        // Own entry that cannot be ranked
+      }
+    } else {
+      // Non-jam entrant
+      return <div class="entry-voting">
+          <h2 class="entry-voting__header">Game ratings</h2>
+          <div class="entry-voting__body">
+            {ratingCountPhrase(entry, entryVotes)}
+            <p>Because you didn't enter the event, you cannot rate this game. You can still provide feedback using comments!</p>
+          </div>
+        </div>;
+    }
+  };
 }
 
 function votingForm(entry, entryVotes, event, csrfToken, vote) {
@@ -290,20 +293,20 @@ function votingForm(entry, entryVotes, event, csrfToken, vote) {
         const categoryIndex = index + 1;
         const categoryRating = vote ? vote.get("vote_" + categoryIndex) : undefined;
         return <div class="entry-voting__category">
-          <input type="hidden" id={"js-vote-" + categoryIndex } name={"vote-" + categoryIndex }
-            value={ digits(categoryRating || 0, 3) } autocomplete="off" />
+          <input type="hidden" id={"js-vote-" + categoryIndex} name={"vote-" + categoryIndex}
+            value={digits(categoryRating || 0, 3)} autocomplete="off" />
           <div class="entry-voting__category-title">{categoryTitle}</div>
-          <div id={"js-vote-label-" + categoryIndex } class="entry-voting__category-rating confirmed">
-              &nbsp;{categoryRating > 0 ? digits(categoryRating, 0) : ""}</div>
+          <div id={"js-vote-label-" + categoryIndex} class="entry-voting__category-rating confirmed">
+            &nbsp;{categoryRating > 0 ? digits(categoryRating, 0) : ""}</div>
           <div class="entry-voting__category-stars">
-            <span data-category={ categoryIndex } data-rating="0"
+            <span data-category={categoryIndex} data-rating="0"
               class={"js-star far fa-lg fa-circle " + (!categoryRating ? "confirmed" : "")}></span>
             {ifTrue(optouts.includes(categoryTitle), () =>
               <span>Opted out (<a href="/article/docs/faq#optouts">what?</a>)</span>
             )}
             {ifTrue(!optouts.includes(categoryTitle), () =>
               range(1, 11).map(i =>
-                <span data-category={ categoryIndex } data-rating={ i }
+                <span data-category={categoryIndex} data-rating={i}
                   class={"js-star fa-lg " + (i <= categoryRating ? "fas fa-star confirmed" : "far fa-star")}></span>
               )
             )}
@@ -335,14 +338,14 @@ function votingResults(entry: BookshelfModel, event: BookshelfModel) {
             return <div class="entry-results__category">
               <div class="entry-results__category-title">{categoryTitle}</div>
               <div class="entry-results__category-ranking">
-                <a href={`${links.routeUrl(event, "event", "results") }?sortBy=${ categoryIndex }&division=${ entry.get("division")}`}>
+                <a href={`${links.routeUrl(event, "event", "results")}?sortBy=${categoryIndex}&division=${entry.get("division")}`}>
                   {ifTrue(ranking <= 3, () =>
                     <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-${ranking} in-picture`}></span>
                   )}
                   {ordinal(ranking)}
                 </a>
               </div>
-              <div class="entry-results__category-rating d-none d-sm-inline-block">{percentage > 0 ? digits(percentage, 0) + "%" : "" }</div>
+              <div class="entry-results__category-rating d-none d-sm-inline-block">{percentage > 0 ? digits(percentage, 0) + "%" : ""}</div>
               <div class="entry-results__category-rating">{digits(rating, 3)}</div>
               <div class="entry-results__category-stars d-none d-sm-inline-block">
                 {range(1, 11).map(i =>
