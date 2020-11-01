@@ -232,6 +232,7 @@ async function createSessionMiddleware(sessionStore) {
       httpOnly: true,
       secure: config.SECURE_SESSION_COOKIES || false,
       maxAge: null, // Expire when the browser closes (typically)
+      sameSite: "lax"
     },
     resave: false,
     saveUninitialized: false,
