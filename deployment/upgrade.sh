@@ -20,6 +20,6 @@ git checkout -- .
 git fetch
 git reset --hard origin/master
 npm install --production
-npm run build
+NODE_ENV=production npm run build
 
 pm2 restart $PM2_APP_NAME
