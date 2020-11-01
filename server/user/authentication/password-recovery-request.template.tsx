@@ -23,7 +23,7 @@ export default function render(context: CommonLocals) {
                 {context.csrfToken()}
                 <div class="form-group">
                   <label for="email">Email</label>
-                  <input type="text" class="form-control" name="email" required />
+                  <input type="text" class="form-control" name="email" required autofocus />
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
               </form>

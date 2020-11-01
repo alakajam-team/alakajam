@@ -60,7 +60,7 @@ export default function render(context: CommonLocals) {
                   <label for="score-mn" class="visible-xs">Minutes</label>
                   <input type="number" name="score-mn" class="form-control input-lg no-spinner"
                     value={forms.parseInt(hasScore ? (scoreMn || "0") : (scoreMn || ""))}
-                    placeholder="minutes" style="width: 120px" min="0" max="999" /><span class="d-none d-sm-block"> ' </span>
+                    placeholder="minutes" style="width: 120px" min="0" max="999" autofocus /><span class="d-none d-sm-block"> ' </span>
                   <label for="score-mn" class="visible-xs">Seconds</label>
                   <input type="text" name="score-s" class="form-control input-lg js-fixed-digits" data-digits="2"
                     value={leftPad(forms.parseInt(hasScore ? (scoreS || "0") : (scoreS || "")), 2, "0")}
@@ -72,7 +72,7 @@ export default function render(context: CommonLocals) {
                 </div>;
               })}
               {ifTrue(entry.related("details").get("high_score_type") !== "time", () =>
-                <input type="text" name="score" class="form-control input-lg" value={parseFloat(entryScore.get("score"))} />
+                <input type="text" name="score" class="form-control input-lg" value={parseFloat(entryScore.get("score"))} autofocus />
               )}
             </div>
             <div class="form-group">

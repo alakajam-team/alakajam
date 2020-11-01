@@ -37,7 +37,7 @@ function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset
       <div class="form-group">
         <label for="title">Preset title</label>
         <input type="text" class="form-control js-sync-text" name="title" value={ eventPreset.get("title") }
-          data-sync-text-display-selector="#preset-header" data-sync-text-default="New" />
+          data-sync-text-display-selector="#preset-header" data-sync-text-default="New" autofocus />
       </div>
 
       {eventManageMacros.countdownForm(eventPreset, user, { countdownOffset })}

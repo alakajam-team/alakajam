@@ -41,7 +41,7 @@ function edit(eventTemplate: BookshelfModel, eventPresets: BookshelfModel[], csr
         <div class="form-group">
           <label for="title">Title</label>
           <input type="text" required class="form-control js-sync-text" name="title" value={eventTemplate.get("title")}
-            data-sync-text-display-selector="#template-header" data-sync-text-default="New" />
+            data-sync-text-display-selector="#template-header" data-sync-text-default="New" autofocus />
         </div>
         <div class="form-group">
           <label for="title">Default event title</label>

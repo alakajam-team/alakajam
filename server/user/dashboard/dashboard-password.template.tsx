@@ -20,7 +20,7 @@ export default function render(context: CommonLocals) {
             <div class="form-group">
               <label for="password">Current password</label>
               {ifFalse(dashboardAdminMode, () =>
-                <input type="password" class="form-control" id="password" name="password" />
+                <input type="password" class="form-control" id="password" name="password" autofocus />
               )}
               {ifTrue(dashboardAdminMode, () =>
                 <input type="password" class="form-control" placeholder="Admin mode enabled" disabled />

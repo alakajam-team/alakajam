@@ -22,7 +22,7 @@ export default function render(context: CommonLocals) {
                 {context.csrfToken()}
                 < div class="form-group" >
                   <label for="new-password">New password</label>
-                  <input type="password" class="form-control" name="new-password" required />
+                  <input type="password" class="form-control" name="new-password" required autofocus />
                 </div>
                 <div class="form-group">
                   <label for="new-password-bis">Repeat password</label>

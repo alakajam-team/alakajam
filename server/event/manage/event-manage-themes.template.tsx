@@ -168,7 +168,7 @@ function themesTableRow(theme: BookshelfModel, editTheme: BookshelfModel | undef
         <form method="post" action={"?#" + theme.get("id")} class="form-inline">
           {csrfToken()}
           <input type="hidden" name="id" value={editTheme.get("id")} />
-          <input type="text" name="title" class="form-control" value={editTheme.get("title")} />
+          <input type="text" name="title" class="form-control" value={editTheme.get("title")} autofocus />
           <input type="submit" value="Save" class="btn btn-primary mr-1" />
           <a href={"?#" + theme.get("id")} class="btn btn-outline-primary">Cancel</a>
         </form>
@@ -199,7 +199,7 @@ function themesTableRow(theme: BookshelfModel, editTheme: BookshelfModel | undef
       </strong>
     </td>
     <td>
-      <a href={`?edit=${theme.get("id")}}#${theme.get("id")}`} class="btn btn-sm btn-outline-primary mr-1">
+      <a href={`?edit=${theme.get("id")}#${theme.get("id")}`} class="btn btn-sm btn-outline-primary mr-1">
         <span class="fas fa-pencil-alt"></span>
       </a>
       {ifTrue(theme.get("status") !== "banned", () =>

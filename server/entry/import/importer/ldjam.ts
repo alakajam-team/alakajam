@@ -18,7 +18,7 @@ const ldJamEntryImporter: EntryImporter = {
     mode: "scraping",
   },
   fetchEntryReferences,
-  fetchEntryDetails,
+  fetchEntryDetails
 };
 
 async function fetchEntryReferences(profileIdentifier: string): Promise<EntryReference[] | EntryImporterError> {

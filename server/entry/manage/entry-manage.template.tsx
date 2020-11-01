@@ -46,7 +46,7 @@ export default function render(context: CommonLocals) {
               <label for="title">Game title</label>
               <input type="text" class="form-control js-sync-text" name="title" value={entry.get("title")} required
                 data-sync-text-display-selector="#js-title-display"
-                data-sync-text-default={`My ${external ? "external" : event.get("title") } entry`} />
+                data-sync-text-default={`My ${external ? "external" : event.get("title") } entry`} autofocus />
             </div>
             <div class="form-group">
               <label for="title">Short description</label>

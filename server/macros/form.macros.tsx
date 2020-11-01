@@ -10,10 +10,11 @@ import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 
 // Markdown editor
 
-export function editor(editorName: string, editorContents: string, options: { minHeight?: number } = {}) {
+export function editor(editorName: string, editorContents: string, options: { minHeight?: number; autofocus?: boolean } = {}) {
   return <textarea class="form-control easymde-editor"
     name={editorName}
     data-min-height={ifSet(options.minHeight, () => options.minHeight + "px")}
+    autofocus={options.autofocus}
   >{templatingFilters.markdownUnescape(editorContents)}</textarea>;
 }
 

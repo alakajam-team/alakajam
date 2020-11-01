@@ -20,7 +20,7 @@ export default function render(context: CommonLocals) {
               {context.csrfToken()}
               <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" class="form-control" id="name" name="name" required />
+                <input type="text" class="form-control" id="name" name="name" required autofocus />
               </div>
               <div class="form-group">
                 <label for="password">Password</label>

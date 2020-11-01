@@ -12,6 +12,7 @@ import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 export interface CommentEditorOptions {
   readingUser?: User;
   allowAnonymous?: boolean;
+  autofocus?: boolean;
 }
 
 export function post(postModel: BookshelfModel, options: {
@@ -182,7 +183,7 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
       const showEditor = options.readingUser && options.editComment && options.editComment.id === comment.id;
       return <>
         {ifTrue(showEditor, () =>
-          commentEditor(comment, path, options.csrfToken, options)
+          commentEditor(comment, path, options.csrfToken, { ...options, autofocus: true })
         )}
         {ifFalse(showEditor, () => {
           const author = comment.related<BookshelfModel>("user");
@@ -313,7 +314,7 @@ export function commentEditor(commentModel: BookshelfModel, path: string, csrfTo
             {user.get("title")}
           </div>
           <div class={"mb-3 " + (commentModel?.id ? "card card-body" : "")}>
-            {formMacros.editor("body", commentModel?.get("body"))}
+            {formMacros.editor("body", commentModel?.get("body"), { autofocus: options.autofocus })}
 
             <div class="comment__actions">
               <div class="float-right">

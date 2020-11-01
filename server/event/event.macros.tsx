@@ -176,8 +176,7 @@ export function eventShortcutMyEntry(event: BookshelfModel, userEntry: EntryBook
         )}
         {ifSet(userEntry, () =>
           <a href={links.routeUrl(userEntry, "entry", "edit")} class="btn btn-sm btn-primary">
-            <span class="fas fa-pencil-alt"></span>
-          Edit entry
+            <span class="fas fa-pencil-alt"></span> Edit entry
           </a>
         )}
       </div>
