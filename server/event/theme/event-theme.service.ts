@@ -104,7 +104,7 @@ export class EventThemeService {
     this.refreshEventThemeStats(event);
   }
 
-  public async findAllThemes(event: BookshelfModel, options: any = {}): Promise<BookshelfCollection> {
+  public async findAllThemes(event: BookshelfModel, options: { shortlistEligible?: boolean } = {}): Promise<BookshelfCollection> {
     let query = models.Theme.where("event_id", event.get("id")) as BookshelfModel;
     if (options.shortlistEligible) {
       query = query.where("status", "<>", enums.THEME.STATUS.OUT)

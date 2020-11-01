@@ -1,6 +1,7 @@
 import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
 import { CommonLocals } from "server/common.middleware";
+import enums from "server/core/enums";
 import { digits } from "server/core/templating-filters";
 import { ThemeShortlistEliminationState } from "server/entity/event-details.entity";
 import { User } from "server/entity/user.entity";
@@ -150,11 +151,9 @@ function themesTable(themes: BookshelfModel[], editTheme: BookshelfModel | undef
       </tr>
     </thead>
     <tbody>
-      {themes.map(theme =>
-        ifTrue(theme.get("status") !== "shortlist", () =>
-          themesTableRow(theme, editTheme, eliminationMinNotes, csrfToken)
-        )
-      )}
+      {themes
+        .filter(theme => ![enums.THEME.STATUS.SHORTLIST, enums.THEME.STATUS.SHORTLIST_OUT].includes(theme.get("status")))
+        .map(theme => themesTableRow(theme, editTheme, eliminationMinNotes, csrfToken))}
     </tbody>
   </table>;
 }
