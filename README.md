@@ -11,44 +11,12 @@ Requirement: NodeJS 8.3+
 3. Browse to `http://localhost:8000`
 4. You can login as `administrator`/`administrator`
 
-Common problems:
+Tips:
 
-* If npm fails to install `sqlite3` on Windows, run `npm i -g --production windows-build-tools` and retry (works at least on NodeJS 13.1.0).
-* If starting fails with error `ERR_FEATURE_UNAVAILABLE_ON_PLATFORM`, it's caused by a [Node 14 compatibility issue](https://github.com/whitecolor/ts-node-dev/issues/143). A workaround is to use the alternate script: `npm run start:refresh`.
+* If npm fails to install `sqlite3` on Windows, run `npm i -g --production windows-build-tools` and retry. You may need to upgrade NodeJS to a recent version.
+* For better performance, consider editing `config.js` to set up a PostgreSQL database.
 
-For better performance, consider editing `config.js` to set up a PostgreSQL database.  
-See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional documentation.
-
-
-## All npm commands
-
-### Recommended for development
-
-* `npm start` Launches the server for development. Every TypeScript change will trigger a server restart. (based on [ts-node-dev](https://www.npmjs.com/package/ts-node-dev))
-* `npm run lint` Checks your code for errors, and fixes the most obvious ones. Tip: run `githooks/install.sh` to trigger the lint before your commits instead.
-* `npm run build:client` and `build:css` Builds the client Typescript and CSS respectively. Append ` -- -w` to those for watch mode. They are only useful if you set `DEBUG_DISABLE_STARTUP_BUILD: false` for faster launch times.
-
-### Automated tests
-
-* `npm run test` Runs all unit + end to end tests.
-* `npm run test:unit` Runs all unit tests. (based on mocha + chai, more details below)
-* `npm run test:e2e` Runs all end-to-end tests. (based on cypress) 
-* `npm run start:e2e` Launches the server with a special database for end-to-end testing. More in the Cypress folder readme.
-* `npm run cypress` Launches Cypress for end-to-end test development.
-
-### Production build
-
-* `npm run build` Builds the server to JavaScript.
-* `npm run start:production` Starts JavaScript server. Needs to be built first.
-
-### Other start commands & tools
-
-* `npm run start:refresh` Alternative to `npm start` that also refreshes the browser automatically after editing templates/CSS/client-side scripts. (based on tsc + browser-refresh)
-* `npm run start:debug` Launches the server in debug mode. Prefer using the embedded debugger of your code editor (see example for VSCode further below).
-* `npm run migrate:latest` Migrate database to latest version. Useful for migration development. (based on knex)
-* `npm run migrate:rollback` Cancel latest database migration. Useful for migration development.
-* `npm run migrate:currentVersion` Display current database version.
-* `npm run docs` Generates the code documentation. (based on typedoc)
+**See [the wiki](https://github.com/alakajam-team/alakajam/wiki) for additional documentation.**
 
 ## How do I...
 
