@@ -120,9 +120,9 @@ export function routes(app) {
 
   router.get("/register", csrf, registerController.registerForm.bind(registerController));
   router.post("/register", sensitiveActionsSlowDown, csrf, registerController.register.bind(registerController));
-  router.get("/login", loginGet);
-  router.post("/login", sensitiveActionsSlowDown, loginPost);
-  router.get("/logout", logout);
+  router.get("/login", csrf, loginGet);
+  router.post("/login", sensitiveActionsSlowDown, csrf, loginPost);
+  router.get("/logout", csrf, logout);
   router.all("/passwordRecoveryRequest", sensitiveActionsSlowDown, csrf, passwordRecoveryRequest);
   router.all("/passwordRecovery", sensitiveActionsSlowDown, csrf, passwordRecovery);
 
