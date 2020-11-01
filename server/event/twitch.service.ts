@@ -55,7 +55,7 @@ export class TwitchService {
   }
 
   private async listCurrentLiveStreams(channels: string[]): Promise<HelixStream[]> {
-    if (channels.length > 0) {
+    if (this.twitchClient && channels.length > 0) {
       const streams = await this.twitchClient.helix.streams.getStreams({
         userName: channels,
         limit: clamp(channels.length, 1, 100).toString()
