@@ -17,7 +17,7 @@ export function pagination(currentPage = 1, pageCount = 1, baseUrl = "/posts?") 
           <a class="page-link" href={baseUrlQS + "&p=" + (currentPage - 1)}>Previous page</a>
         </li>
       )}
-      {range(from, to + 2).map(page =>
+      {range(from, to + 1).map(page =>
         <li class={"page-item d-sm-block " + (currentPage === page ? "active" : "d-none")}>
           <a class="page-link" href={baseUrlQS + "&p=" + page}>{page}</a>
         </li>
