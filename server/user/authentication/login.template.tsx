@@ -17,7 +17,6 @@ export default function render(context: CommonLocals) {
 
           {ifNotSet(user, () =>
             <form method="post" action={path !== "/logout" ? path : "/login"}>
-              {context.csrfToken()}
               <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" class="form-control" id="name" name="name" required />
