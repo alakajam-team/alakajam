@@ -3,7 +3,7 @@
  */
 
 import * as cheerio from "cheerio";
-import * as download from "download";
+import download from "download";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import { EntryDetails, EntryImporter, EntryImporterError, EntryReference } from "../entry-import.d";

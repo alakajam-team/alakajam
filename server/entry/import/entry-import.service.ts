@@ -3,7 +3,7 @@
  */
 
 import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
-import * as download from "download";
+import download from "download";
 import * as fs from "fs-extra";
 import * as path from "path";
 import cache from "server/core/cache";

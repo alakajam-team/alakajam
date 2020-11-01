@@ -2,7 +2,7 @@
  * ldjam.com entry importer
  */
 
-import * as download from "download";
+import download from "download";
 import leftPad from "left-pad";
 import cache from "server/core/cache";
 import enums from "server/core/enums";
