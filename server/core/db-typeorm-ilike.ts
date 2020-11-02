@@ -1,6 +1,9 @@
 import { Connection, FindOperator, FindOperatorType } from "typeorm";
 import * as config from "./config";
 
+/**
+ * TODO Remove when TypeORM 0.2.29 is out with native ILIKE support
+ */
 class CustomFindOperator<T> extends FindOperator<T> {
   public constructor(
     type: FindOperatorType | "ilike",

@@ -44,13 +44,13 @@ export async function eventManageEntries(req: CustomRequest, res: CustomResponse
   });
   const detailedEntryInfo: any = {};
   const usersById = {};
-  if (forms.isId(req.query.entryDetails) && entriesById[forms.parseInt(req.query.entryDetails)]) {
+  if (forms.isId(req.query.entryDetails) && entriesById[forms.parseInt(req.query.entryDetails.toString())]) {
     const eventUsersCollection = await userService.findUsers({ eventId: event.get("id") });
     eventUsersCollection.forEach((user) => {
       usersById[user.get("id")] = user;
     });
 
-    const entry = entriesById[forms.parseInt(req.query.entryDetails)];
+    const entry = entriesById[forms.parseInt(req.query.entryDetails.toString())];
     await entry.load(["comments", "votes"]);
     detailedEntryInfo.id = req.query.entryDetails;
     detailedEntryInfo.given = await eventRatingService.computeKarmaGivenByUserAndEntry(entry, event);

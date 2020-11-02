@@ -1,4 +1,4 @@
-import * as Sortable from "../../../node_modules/sortablejs/Sortable";
+import Sortable from "sortablejs";
 
 export default function editEntryLinks() {
   const linksTemplate = _.template($("#js-links-template").html());

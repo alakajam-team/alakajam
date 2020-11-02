@@ -16,7 +16,7 @@ export async function postsView(req: CustomRequest, res: CustomResponse<CommonLo
   }
   const eventId = forms.sanitizeString(req.query.event_id?.toString()) || undefined;
   const userId = forms.sanitizeString(req.query.user_id?.toString()) || undefined;
-  const currentPage = forms.isId(req.query.p) ? forms.parseInt(req.query.p) : 1;
+  const currentPage = forms.isId(req.query.p) ? forms.parseInt(req.query.p.toString()) : 1;
   const postsCollection = await postService.findPosts({
     specialPostType,
     eventId,

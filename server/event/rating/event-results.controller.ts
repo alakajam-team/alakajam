@@ -35,7 +35,7 @@ export async function viewEventResults(req: CustomRequest, res: CustomResponse<E
   let sortedBy = flags.scoreSpacePodium ? 7 : 1;
   let division = flags.scoreSpacePodium ? undefined : eventService.getDefaultDivision(event);
   if (forms.isInt(req.query.sortBy?.toString())) {
-    const parsedSortedBy = forms.parseInt(req.query.sortBy);
+    const parsedSortedBy = forms.parseInt(req.query.sortBy.toString());
     if (parsedSortedBy > 0 && parsedSortedBy <= constants.MAX_CATEGORY_COUNT) {
       sortedBy = parsedSortedBy;
     }

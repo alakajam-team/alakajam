@@ -69,7 +69,7 @@ export async function handleGameSearch(
   // Pagination
   const searchOptions: FindGamesOptions = {
     pageSize: 20,
-    page: forms.isId(req.query.p) ? forms.parseInt(req.query.p) : 1
+    page: forms.isId(req.query.p) ? forms.parseInt(req.query.p.toString()) : 1
   };
 
   // Text search
@@ -77,7 +77,7 @@ export async function handleGameSearch(
 
   // User search
   if (forms.isId(req.query.user)) {
-    searchOptions.userId = forms.parseInt(req.query.user);
+    searchOptions.userId = forms.parseInt(req.query.user.toString());
     searchOptions.user = await userService.findById(searchOptions.userId);
   }
 
@@ -111,7 +111,7 @@ export async function handleGameSearch(
   // Tags
   if (req.query.tags) {
     const tagsRaw = (Array.isArray(req.query.tags)) ? req.query.tags : [req.query.tags];
-    let tagIds = tagsRaw.map((str) => forms.parseInt(str));
+    let tagIds = tagsRaw.map((str) => forms.parseInt(str.toString()));
     if (tagIds.includes(NaN)) {
       tagIds = [];
       log.warn("Invalid tags in query params: " + req.query.tags);
@@ -121,9 +121,9 @@ export async function handleGameSearch(
   }
 
   // Event
-  let event = forms.isId(req.query.eventId) ? await eventService.findEventById(forms.parseInt(req.query.eventId)) : undefined;
+  let event = forms.isId(req.query.eventId) ? await eventService.findEventById(forms.parseInt(req.query.eventId.toString())) : undefined;
   if (forms.isId(req.query.eventId)) {
-    event = await eventService.findEventById(forms.parseInt(req.query.eventId));
+    event = await eventService.findEventById(forms.parseInt(req.query.eventId.toString()));
   } else if (req.query.eventId === undefined) {
     // Default event
     event = locals.event;

@@ -1,5 +1,5 @@
 
-import * as Sortable from "../../../node_modules/sortablejs/Sortable";
+import Sortable from "sortablejs";
 
 export default function themeShortlist() {
   const $shortlist = $("#js-shortlist");

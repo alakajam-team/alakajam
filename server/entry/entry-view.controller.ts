@@ -133,7 +133,7 @@ export async function apiSearchForTeammate(req: CustomRequest, res: CustomRespon
   if (!errorMessage) {
     let entry = null;
     if (forms.isId(req.query.entryId)) {
-      entry = await eventService.findEntryById(forms.parseInt(req.query.entryId));
+      entry = await eventService.findEntryById(forms.parseInt(req.query.entryId.toString()));
     }
 
     const matches = await entryTeamService.searchForTeamMembers(nameFragment,

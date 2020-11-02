@@ -24,7 +24,7 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
   } else if (req.query.create !== undefined) {
     let referencePreset = null;
     if (forms.isId(req.query.reference)) {
-      referencePreset = await eventPresetService.findEventPresetById(forms.parseInt(req.query.reference));
+      referencePreset = await eventPresetService.findEventPresetById(forms.parseInt(req.query.reference.toString()));
     }
     editEventPreset = eventPresetService.createEventPreset(referencePreset);
   }

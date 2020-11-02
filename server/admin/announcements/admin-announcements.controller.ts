@@ -21,7 +21,7 @@ export interface AdminAnnouncementContext extends AdminBaseContext {
 export async function adminAnnouncements(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   let currentPage = 1;
   if (forms.isId(req.query.p)) {
-    currentPage = forms.parseInt(req.query.p);
+    currentPage = forms.parseInt(req.query.p.toString());
   }
 
   const allPostsCollection = await postService.findPosts({

@@ -4,16 +4,17 @@ import cache, { TTL_ONE_MINUTE } from "server/core/cache";
 import config from "server/core/config";
 import log from "server/core/log";
 import { User } from "server/entity/user.entity";
-import twitch, { HelixStream } from "twitch";
+import { ApiClient, ClientCredentialsAuthProvider, HelixStream, StaticAuthProvider } from "twitch";
 import eventParticipationService from "./dashboard/event-participation.service";
 
 export class TwitchService {
 
-  private twitchClient?: twitch;
+  private twitchClient?: ApiClient;
 
   public constructor() {
     if (config.TWITCH_CLIENT_ID && config.TWITCH_CLIENT_SECRET) {
-      this.twitchClient = twitch.withClientCredentials(config.TWITCH_CLIENT_ID, config.TWITCH_CLIENT_SECRET);
+      const authProvider = new ClientCredentialsAuthProvider(config.TWITCH_CLIENT_ID, config.TWITCH_CLIENT_SECRET);
+      this.twitchClient = new ApiClient({ authProvider });
     }
   }
 
