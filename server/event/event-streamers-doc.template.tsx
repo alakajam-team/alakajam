@@ -60,4 +60,4 @@ export function streamersDoc(context: CommonLocals, event: BookshelfModel) {
       </ul>
     </div>
   </div>;
-};
+}

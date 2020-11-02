@@ -263,20 +263,20 @@ export default function render(context: CommonLocals) {
                 <div class="themes__results">
                   <h2>Shortlist results</h2>
                   <div class="card card-body">
-                      <p>
-                        {ifFalse(event.related("details").get("flags")?.hideThemeResultsDetails, () =>
-                          <>
-                            {ifTrue(userRanks, () =>
-                              <span class="theme-shortlist-line__score">Your picks</span>
-                            )}
-                            <span class="theme-shortlist-line__score d-none d-sm-block">Score</span>
-                          </>
-                        )}
-                        {ifTrue(shortlist.length > 0, () =>
-                          <span>The theme of the <em>{event.get("title")}</em> is <strong>{shortlist[0].get("title")}</strong>.
+                    <p>
+                      {ifFalse(event.related("details").get("flags")?.hideThemeResultsDetails, () =>
+                        <>
+                          {ifTrue(userRanks, () =>
+                            <span class="theme-shortlist-line__score">Your picks</span>
+                          )}
+                          <span class="theme-shortlist-line__score d-none d-sm-block">Score</span>
+                        </>
+                      )}
+                      {ifTrue(shortlist.length > 0, () =>
+                        <span>The theme of the <em>{event.get("title")}</em> is <strong>{shortlist[0].get("title")}</strong>.
                             Here are the detailed voting results:</span>
-                        )}
-                      </p>
+                      )}
+                    </p>
                     <ol>
                       {shortlist.map((theme, index) =>
                         <li class={"theme-shortlist-line " + (index === 0 ? "winner" : "")}>
@@ -286,7 +286,9 @@ export default function render(context: CommonLocals) {
                               {ifTrue(userRanks, () =>
                                 <span class="theme-shortlist-line__ranking">{ordinal(userRanks[theme.get("id")])}</span>
                               )}
-                              <span class="theme-shortlist-line__score d-none d-sm-block">{theme.get("score") > 0 ? "+" : ""}{theme.get("score")}</span>
+                              <span class="theme-shortlist-line__score d-none d-sm-block">
+                                {theme.get("score") > 0 ? "+" : ""}{theme.get("score")}
+                              </span>
                             </>
                           )}
                         </li>

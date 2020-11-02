@@ -40,7 +40,7 @@ export default function render(context: CommonLocals) {
           <input type="text" class="form-control js-sync-text" name="title" value={post.get("title")} required
             data-sync-text-display-selector="#title-display"
             data-sync-text-default={specialPostType ? capitalize(specialPostType) : "Blog post"}
-            autoFocus={!post.get('id')} />
+            autoFocus={!post.get("id")} />
         </div>
 
         <div class="form-group">
@@ -76,7 +76,7 @@ export default function render(context: CommonLocals) {
 
         <div class="form-group">
           <label for="body">Body</label>
-          {formMacros.editor("body", post.get("body"), { autofocus: Boolean(post.get('id'))})}
+          {formMacros.editor("body", post.get("body"), { autofocus: Boolean(post.get("id"))})}
         </div>
 
         <div class="d-flex">

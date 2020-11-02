@@ -11,7 +11,7 @@ export default function editor(mdSelector, cmSelector) {
       element: this,
       autoDownloadFontAwesome: false,
       spellChecker: false,
-      autofocus: $(this).attr('autofocus') !== undefined,
+      autofocus: $(this).attr("autofocus") !== undefined,
       toolbar: ["bold", "italic", "heading", "|",
         {
           name: "float-left",

@@ -28,8 +28,8 @@ export class EntryHotnessService {
    * Inspired by the Reddit post sorting algorithm.
    */
   public async computeHotness(entry: EntryBookshelfModel, event: BookshelfModel, syncOptions?: SyncOptions): Promise<number> {
-    if (!entry.relations.details) { await entry.load("details", syncOptions); };
-    if (!event.relations.details) { await event.load("details", syncOptions); };
+    if (!entry.relations.details) { await entry.load("details", syncOptions); }
+    if (!event.relations.details) { await event.load("details", syncOptions); }
 
     const eventDetails = event.related<BookshelfModel>("details");
     const successScore = this.getSuccessScore(entry, eventDetails);

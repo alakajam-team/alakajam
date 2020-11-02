@@ -15,8 +15,7 @@ class SassBuilder {
   private readonly ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
   private readonly CLIENT_SRC_FOLDER = path.join(this.ROOT_PATH, "./client/");
   private readonly CLIENT_DEST_FOLDER = path.join(this.ROOT_PATH, "./dist/client/");
-  private readonly ASSETS_GLOBS = ["png", "gif", "svg", "ttf", "woff", "woff2", "eot"]
-    .map((ext) => "./**/*." + ext);
+  private readonly ASSETS_GLOBS = ["png", "gif", "svg", "ttf", "woff", "woff2", "eot"].map((ext) => "./**/*." + ext);
   private readonly FA_WEBFONTS_FOLDER = path.join(this.ROOT_PATH, "./node_modules/@fortawesome/fontawesome-free/webfonts/");
 
   private writeFileAsync = promisify(writeFile);

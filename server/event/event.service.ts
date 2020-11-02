@@ -86,7 +86,7 @@ export class EventService {
           return categoryTitles[categoryIndex - 1];
         } else if (flags.scoreSpacePodium && categoryIndex === 7) {
           return "ScoreSpace Awards";
-        };
+        }
       });
   }
 

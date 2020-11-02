@@ -6,7 +6,7 @@ import { User } from "./user.entity";
 
 export interface EntryScoresMap {
   [entryId: number]: {score: number; ranking: number};
-};
+}
 
 @Entity()
 export class TournamentScore extends TimestampedEntity {

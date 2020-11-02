@@ -65,7 +65,7 @@ async function createApp() {
 
   // Detect IP correctly behind proxy (must be in localhost)
   // Required for secure cookies too, see https://github.com/expressjs/session#cookiesecure
-  app.set('trust proxy', 'loopback');
+  app.set("trust proxy", "loopback");
 
   app.locals.devMode = DEV_ENVIRONMENT;
   const previousVersion = await db.initDatabase();
@@ -77,12 +77,12 @@ async function createApp() {
 
   app.listen(config.SERVER_PORT, () => {
     const startSeconds = (Date.now() - startDate) / 1000;
-    const advertisedUrls = ['http://localhost:' + config.SERVER_PORT];
+    const advertisedUrls = ["http://localhost:" + config.SERVER_PORT];
     if (config.ROOT_URL && config.ROOT_URL !== advertisedUrls[0]) {
       advertisedUrls.push(config.ROOT_URL);
     }
 
-    log.info(`Server started in ${startSeconds.toFixed(1)}s: ${advertisedUrls.join(' or ')}`);
+    log.info(`Server started in ${startSeconds.toFixed(1)}s: ${advertisedUrls.join(" or ")}`);
 
     if (process.send) {
       process.send("online"); // browser-refresh event

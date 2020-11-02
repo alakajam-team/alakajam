@@ -4,7 +4,7 @@ import cache, { TTL_ONE_MINUTE } from "server/core/cache";
 import config from "server/core/config";
 import log from "server/core/log";
 import { User } from "server/entity/user.entity";
-import { ApiClient, ClientCredentialsAuthProvider, HelixStream, StaticAuthProvider } from "twitch";
+import { ApiClient, ClientCredentialsAuthProvider, HelixStream } from "twitch";
 import eventParticipationService from "./dashboard/event-participation.service";
 
 export class TwitchService {
@@ -27,7 +27,7 @@ export class TwitchService {
         return false;
       }
     } catch (e) {
-      log.error(`Failed to check whether ${user.get('name')} is live`, e);
+      log.error(`Failed to check whether ${user.get("name")} is live`, e);
       return false;
     }
   }

@@ -197,7 +197,8 @@ export function stateForm(event: BookshelfModel) {
                 + 'respectively for the Streamer choice, Solo choice and Team choice. Use the "Rankings" tab to set them.')}
             </span></div>
           <div class="col-md-6 col-lg-4">{formMacros.check("hideStreamerMenu", "Hide Streamer Menu", flags?.hideStreamerMenu)}</div>
-          <div class="col-md-6 col-lg-4">{formMacros.check("hideThemeResultsDetails", "Hide numbers in theme results", flags?.hideThemeResultsDetails)}</div>
+          <div class="col-md-6 col-lg-4">{formMacros.check("hideThemeResultsDetails",
+            "Hide numbers in theme results", flags?.hideThemeResultsDetails)}</div>
         </div>
       </div>
     </div>

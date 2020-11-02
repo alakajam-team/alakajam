@@ -77,7 +77,7 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
               {ifNotSet(user, () =>
                 <>
                   <li class="nav-item button-item">
-                    <a class="nav-link" href={"/login" + (path.startsWith('/log') ? "" : ("?redirect=" + encodeURIComponent(path)))}>
+                    <a class="nav-link" href={"/login" + (path.startsWith("/log") ? "" : ("?redirect=" + encodeURIComponent(path)))}>
                       <button class="btn btn-outline-light">Login</button>
                     </a>
                   </li>
