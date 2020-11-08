@@ -14,7 +14,7 @@ export function eventDashboardBlogPosts(user: User, event: BookshelfModel, entry
       <div class="card card-body">
         <h4>You don't have posts on this event yet.</h4>
         {ifTrue(event.get("status_entry") === "off", () =>
-          <p>Make a blog post to present yourself and share your plans for the jam!</p>
+          <p>Make a blog post to present yourself and share your plans for the event!</p>
         )}
         {ifSet(entry, () =>
           <p>Telling your experience with a post is a good way to share what you learnt and exchange impressions!</p>
