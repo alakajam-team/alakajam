@@ -16,7 +16,7 @@ export default function render(context: CommonLocals) {
   return base(context,
     <>
       {ifTrue(hasEventBanner, () =>
-        eventMacros.eventBanner(event)
+        eventMacros.eventBanner(event, { withLogo: true })
       )}
 
       <div class={"container " + (hasEventBanner ? "event-banner-offset" : "")}>

@@ -230,6 +230,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
+  z-index: -1;
 
   &__logo {
     position: relative;

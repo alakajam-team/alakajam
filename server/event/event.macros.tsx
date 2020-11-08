@@ -113,14 +113,16 @@ export function entrySmallThumb(entry: EntryBookshelfModel, options: { noShadow?
   </div>;
 }
 
-export function eventBanner(event: BookshelfModel) {
+export function eventBanner(event: BookshelfModel, options: { withLogo?: boolean } = {}) {
   const background = event.related("details").get("background");
   const logo = event.get("logo");
   return <div class="event-banner"
     style={`background-image: url('${background ? background : links.staticUrl("/static/images/default-background.png")}')`}>
-    <div class="event-banner__logo">
-      <img src={logo} />
-    </div>
+    {ifTrue(options.withLogo, () =>
+      <div class="event-banner__logo">
+        <img src={logo} />
+      </div>
+    )}
   </div>;
 }
 
