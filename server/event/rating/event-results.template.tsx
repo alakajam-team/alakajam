@@ -137,7 +137,7 @@ function podium(rankings, event, categoryTitles, division, sortedBy, options: { 
         {ifFalse(options.scoreSpacePodium, () =>
           <button class="dropdown-toggle" type="button" data-toggle="dropdown">
             <span class={constants.DIVISION_ICONS[division]}></span>
-            {capitalize(division)} division
+            <span class="ml-1">{capitalize(division)} division</span>
           </button>
         )}
         <div class="dropdown-menu">

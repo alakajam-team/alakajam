@@ -48,7 +48,7 @@ module.exports = {
             2,
             {
                 "FunctionDeclaration": {
-                    "parameters": "first"
+                    "parameters": "off"
                 },
                 "FunctionExpression": {
                     "parameters": "first"
@@ -105,6 +105,7 @@ module.exports = {
         "guard-for-in": "error",
         "id-blacklist": "off",
         "id-match": "error",
+        "indent": "off",
         "max-classes-per-file": [
             "error",
             1

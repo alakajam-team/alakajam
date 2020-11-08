@@ -1,18 +1,18 @@
 import * as React from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
-import forms from "server/core/forms";
 import links from "server/core/links";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
-import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
+import { ifTrue } from "server/macros/jsx-utils";
 import * as jumbotronMacros from "server/macros/jumbotron.macros";
-import * as postMacros from "server/post/post.macros";
-import * as userMacros from "server/user/user.macros";
+import { eventDashboardBlogPosts } from "./components/blog-posts.component";
+import { eventDashboardStreamerEntry } from "./components/streamer-entry.component";
+import { eventDashboardThemes } from "./components/themes.component";
+import { eventDashboardUsefulLinks } from "./components/useful-links.component";
 
 export default function render(context: CommonLocals) {
   const { eventParticipation, event, user, userLikes, posts, latestPost, entry } = context;
-  const rulesLink = forms.isId(event.get("status_rules")) ? links.routeUrl(event.get("status_rules"), "post") : event.get("status_rules");
   const socialLinks = user.related("details").get("social_links") || {};
 
   context.inlineStyles.push(`
@@ -35,135 +35,40 @@ export default function render(context: CommonLocals) {
       <div class="row mt-4">
         <div class="col-md-3 col-12">
           <h2 class="mb-2">Useful links</h2>
-
-          {ifTrue(rulesLink !== "off", () =>
-            <div class="list-group mb-1">
-              {usefulLink(event, "status_rules", rulesLink, "Detailed rules", "fa-book", { big: true })}
-            </div>
-          )}
-
-          <div class="list-group">
-            {/* usefulLink(event, null, 'posts', 'Posts', 'fa-newspaper') */}
-            {event.related("details").get("links").map(featuredLink =>
-              usefulLink(event, null, featuredLink.link, featuredLink.title, featuredLink.icon)
-            )}
-          </div>
+          {eventDashboardUsefulLinks(event)}
 
           <h2 class="mb-2 mt-4">Event stats</h2>
-
           <div class="card card-body">
             {jumbotronMacros.statsCounters(event)}
           </div>
         </div>
+
         <div class="col-md-9 col-12">
           <div class="mb-3">
             <h2><span class="fa fa-gamepad"></span> Entry</h2>
-
             <div class="row main-action-banners">
-
               <div class="col-lg-7">
                 <h3>As jammer</h3>
                 {eventMacros.eventShortcutMyEntry(event, entry, { noTitle: true })}
               </div>
               <div class="col-lg-5">
                 <h3>As streamer</h3>
-
-                <form method="post" class="action-banner text-center">
-                  {context.csrfToken()}
-
-                  {ifTrue(eventParticipation.isStreamer, () =>
-                    <>
-                      <p>You are entering the event as a streamer!</p>
-                      {ifSet(socialLinks.twitch, () =>
-                        <span class="alert alert-light">
-                          {userMacros.twitchLink(user)}<br />
-                          {ifTrue(eventParticipation.streamerStatus === "requested", () =>
-                            <span class="badge badge-warning">
-                              Pending approbation
-                              {formMacros.tooltip("The mods make a simple check, "
-                                + "usually within 24 hours, to filter possible spammers and multiple accounts.")}
-                            </span>
-                          )}
-                          {ifTrue(eventParticipation.streamerStatus === "approved", () =>
-                            <span class="badge badge-success">Approved</span>
-                          )}
-                        </span>
-                      )}
-                      {ifNotSet(socialLinks.twitch, () =>
-                        <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Unknown Twitch channel</span>
-                      )}
-                      {ifNotSet(eventParticipation.streamerDescription, () =>
-                        <span class="alert alert-warning"><span class="fa fa-exclamation-triangle"></span> Stream schedule not set</span>
-                      )}
-                      <a href={links.routeUrl(event, "event", "dashboard-streamer-preferences")} class="btn btn-primary">Manage streamer settings</a>
-                    </>
-                  )}
-
-                  {ifTrue(event.get("status") !== "closed" && !eventParticipation.isStreamer, () => {
-                    if (socialLinks.twitch) {
-                      return <div>
-                        <input type="hidden" name="is-streamer" value="true" />
-                        <button type="submit" name="streamer-preferences" class="btn btn-primary btn-lg">
-                          <span class="fas fa-video"></span>&nbsp;
-                          Enter as streamer
-                        </button>
-                      </div>;
-                    } else {
-                      return <div>
-                        <p>A Twitch channel must be set before joining</p>
-                        <a href={links.routeUrl(user, "user", "settings")} class="btn btn-outline-primary btn-lg">Manage account settings</a>
-                      </div>;
-                    }
-                  })}
-
-                  {ifTrue(event.get("status") === "closed" && !eventParticipation.isStreamer, () =>
-                    <div>
-                      <p>Streamer entries are now closed.</p>
-                      <p><a href="/events" class="btn btn-secondary">Explore our upcoming events</a></p>
-                    </div>
-                  )}
-                </form>
+                {eventDashboardStreamerEntry(eventParticipation, event, socialLinks, user, context.csrfToken)}
               </div>
             </div>
 
           </div>
 
-          {ifTrue(event.get("status_themes") !== "disabled", () =>
+          {ifTrue(event.get("status_theme") !== "disabled", () =>
             <div>
               <h2><span class="fa fa-lightbulb"></span> Themes</h2>
-
-              {ifTrue(event.get("status_theme") === "off", () =>
-                <div class="card card-body">
-                  <h4>Theme submissions are not open yet.</h4>
-                </div>
-              )}
-              {ifTrue(event.get("status_theme") !== "off", () =>
-                <a href={links.routeUrl(event, "event", "themes")} class="btn btn-primary">Browse themes</a>
-              )}
+              {eventDashboardThemes(event)}
             </div>
           )}
 
           <div class="mt-4">
             <h2><span class="fa fa-newspaper"></span> Blog posts</h2>
-
-            <p class="mt-3">{eventMacros.eventShortcutMyPost(user as any, event, latestPost, { buttonsOnly: true })}</p>
-
-            {ifTrue(posts.length === 0, () =>
-              <div class="card card-body">
-                <h4>You don't have posts on this event yet.</h4>
-                {ifTrue(event.get("status_entry") === "off", () =>
-                  <p>Make a blog post to present yourself and share your plans for the jam!</p>
-                )}
-                {ifSet(entry, () =>
-                  <p>Telling your experience with a post is a good way to share what you learnt and exchange impressions!</p>
-                )}
-              </div>
-            )}
-
-            <div class="mt-4">
-              {posts.map(post => { postMacros.post(post, { hideBody: true, smallTitle: true, readingUser: user, readingUserLikes: userLikes }); }
-              )}
-            </div>
+            {eventDashboardBlogPosts(user, event, entry, posts, latestPost, userLikes)}
           </div>
 
           <div class="mt-5">
@@ -189,14 +94,3 @@ export default function render(context: CommonLocals) {
   );
 }
 
-function usefulLink(event, statusField, link, title, icon, options: { big?: boolean } = {}) {
-  if (!statusField || event.get(statusField) !== "disabled") {
-    const targetUrl = link.includes("/") ? link : links.routeUrl(event, "event", link);
-    return <a class={"list-group-item shortcut " + (options.big ? "big" : "")} href={targetUrl}>
-      <h4>
-        <span class="shortcut__icon"><span class={"fas " + icon}></span></span>
-        <span class="shortcut__title">{title}</span>
-      </h4>
-    </a>;
-  }
-}
