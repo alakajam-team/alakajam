@@ -16,7 +16,7 @@ export interface AdminSettingsContext extends AdminBaseContext {
 }
 
 /**
- * Admin only: settings management
+ * Settings management
  */
 export async function adminSettings(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   const { user } = res.locals;
@@ -70,7 +70,7 @@ export async function adminSettings(req: CustomRequest, res: CustomResponse<Comm
 
   // Fetch setting to edit (and make JSON pretty)
   let editSetting: EditableSettingInstance | undefined;
-  if (req.query.edit && forms.isSlug(req.query.edit?.toString())) {
+  if (req.query.edit) {
     const editableSetting = EDITABLE_SETTINGS.find((setting) => setting.key === req.query.edit);
     if (editableSetting?.isJson && settings.canUserEdit(user, editableSetting)) {
       try {
