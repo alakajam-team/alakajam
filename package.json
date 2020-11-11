@@ -136,7 +136,7 @@
     "typeorm": "^0.2.29",
     "typescript": "^3.9.7",
     "validator": "^13.1.17",
-    "webpack": "^5.3.2",
+    "webpack": "^4.44.2",
     "webpack-merge": "^5.3.0",
     "winston": "^3.3.3"
   },

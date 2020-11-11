@@ -36,3 +36,12 @@ Package                                  Current   Wanted   Latest  Location
 @typescript-eslint/parser                 2.34.0   2.34.0    4.6.0  alakajam
 typescript                                 3.9.7    3.9.7    4.0.5  alakajam
 ```
+
+* Webpack
+
+`@cypress/webpack-preprocessor` breaks on Webpack 5 due to https://github.com/cypress-io/cypress/issues/8948.
+
+```
+Package                                  Current  Wanted   Latest  Location
+webpack                                   4.44.2  4.44.2    5.4.0  alakajam
+```
