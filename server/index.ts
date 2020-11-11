@@ -68,7 +68,7 @@ async function createApp() {
   app.set("trust proxy", "loopback");
 
   app.locals.devMode = DEV_ENVIRONMENT;
-  const previousVersion = await db.initDatabase();
+  const previousVersion = await db.upgradeDatabase();
   await require("./core/db-typeorm").default.connect();
   if (previousVersion === "none") {
     await require("./core/db-init").insertInitialData(config.DEBUG_INSERT_SAMPLES);

@@ -13,7 +13,7 @@ import * as knexfile from "./knexfile";
 import log from "./log";
 
 export type DB = Bookshelf & {
-  initDatabase: (options?: {silent?: boolean}) => Promise<"none"|string>;
+  upgradeDatabase: (options?: {silent?: boolean}) => Promise<"none"|string>;
   emptyDatabase: () => Promise<void>;
   backup: () => Promise<void>;
   getBackupDate: () => Promise<Date|false>;
@@ -38,7 +38,7 @@ function initBookshelf(): DB {
    * Updates the database to the latest version
    * @return {string} the previous DB version, or "none"
    */
-  bookshelf.initDatabase = async (options: {silent?: boolean} = {}): Promise<"none"|string> => {
+  bookshelf.upgradeDatabase = async (options: {silent?: boolean} = {}): Promise<"none"|string> => {
     if (!options.silent) {
       log.info("Upgrading database...");
     }
@@ -119,6 +119,7 @@ function initBookshelf(): DB {
     if (sessionStore) {
       sessionStore.knex = bookshelf.knex = knex = createKnexInstance() as any;
     }
+    await bookshelf.upgradeDatabase({ silent: true });
   };
 
   bookshelf.deleteBackup = async () => {
