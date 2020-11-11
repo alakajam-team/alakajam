@@ -74,15 +74,8 @@ function chooseSelect2Option(subject: any, contents: any, typingFunction: () => 
     .click();
 }
 
-Cypress.Commands.add("dropFile", { prevSubject: true }, (subject, fixture, mimeType) => {
-  const fileName = fixture || DEFAULT_PICTURE;
-  cy.fixture(fileName).then((fileContent) => {
-    cy.get(subject).upload({
-      fileContent,
-      fileName,
-      mimeType: mimeType || "image/png"
-    });
-  });
+Cypress.Commands.add("dropFile", { prevSubject: true }, (subject, fixture) => {
+  cy.get(subject).attachFile(fixture || DEFAULT_PICTURE);
 });
 
 Cypress.Commands.add("scrollElementsToScreenCenter", () => {
