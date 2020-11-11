@@ -1,11 +1,11 @@
 const webpack = require('webpack')
-const webpackMerge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const TerserPlugin = require('terser-webpack-plugin')
 
 const webpackCommon = require('./webpack.common')
 
 // https://webpack.js.org/guides/production/#setup
-module.exports = webpackMerge(webpackCommon, {
+module.exports = merge(webpackCommon, {
   mode: 'production',
   optimization: {
     minimize: true,

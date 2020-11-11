@@ -127,7 +127,7 @@
     "sqlite3": "^4.2.0",
     "striptags": "^3.0.1",
     "tempusdominus-bootstrap-4": "^5.1.2",
-    "terser-webpack-plugin": "^4.2.3",
+    "terser-webpack-plugin": "^5.0.3",
     "timezone-support": "^2.0.2",
     "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
@@ -136,8 +136,8 @@
     "typeorm": "^0.2.24",
     "typescript": "^3.9.7",
     "validator": "^13.1.17",
-    "webpack": "^4.44.2",
-    "webpack-merge": "^4.2.2",
+    "webpack": "^5.3.2",
+    "webpack-merge": "^5.3.0",
     "winston": "^3.3.3"
   },
   "optionalDependencies": {
@@ -156,7 +156,7 @@
     "mocha": "^8.2.0",
     "sinon": "^9.2.1",
     "start-server-and-test": "^1.11.5",
-    "ts-loader": "^6.2.2",
+    "ts-loader": "^8.0.7",
     "ts-node-dev": "^1.0.0",
     "tsconfig-paths": "^3.9.0",
     "typedoc": "^0.19.2"
