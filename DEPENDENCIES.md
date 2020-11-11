@@ -1,13 +1,11 @@
-# Last updated Nov. 2nd, 2020
+# NPM dependencies analysis
+
+> Last updated Nov. 11, 2020
 
 ## Upgrade required
 
 ```
-Package                                  Current   Wanted   Latest  Location
-eslint                                     6.8.0    6.8.0   7.12.1  alakajam
-flipclock                                  0.7.8    0.7.8   0.10.8  alakajam
-pg                                        7.18.2   7.18.2    8.4.2  alakajam
-sqlite3                                    4.2.0    4.2.0    5.0.0  alakajam
+TODO
 ```
 
 ## Blocked versions
