@@ -1,14 +1,13 @@
 import * as crypto from "crypto";
 import * as randomKey from "random-key";
 import constants from "server/core/constants";
-import { ILike } from "server/core/db-typeorm-ilike";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
 import { Mutable } from "server/types";
-import { FindConditions, FindOneOptions, getRepository, IsNull, Not, SelectQueryBuilder } from "typeorm";
+import { FindConditions, FindOneOptions, getRepository, ILike, IsNull, Not, SelectQueryBuilder } from "typeorm";
 
 export class UserService {
 

@@ -2,10 +2,10 @@
 
 > Last updated Nov. 11, 2020
 
-## Upgrade required
+## Pending upgrades
 
 ```
-TODO
+None
 ```
 
 ## Blocked versions
@@ -35,14 +35,4 @@ Package                                  Current   Wanted   Latest  Location
 @typescript-eslint/eslint-plugin-tslint   2.34.0   2.34.0    4.6.0  alakajam
 @typescript-eslint/parser                 2.34.0   2.34.0    4.6.0  alakajam
 typescript                                 3.9.7    3.9.7    4.0.5  alakajam
-```
-
-* TypeORM
-
-v0.2.25+ break code to add ILike support. v0.2.29 will support it natively.  
-Resolution: Wait for v0.2.29 to release.  
-
-```
-Package                                  Current   Wanted   Latest  Location
-typeorm                                   0.2.24   0.2.28   0.2.28  alakajam
 ```
