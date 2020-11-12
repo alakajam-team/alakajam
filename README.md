@@ -4,7 +4,7 @@
 
 ## Initial setup
 
-Requirement: NodeJS 8.3+
+Requirement: NodeJS 10+
 
 1. `npm install --no-optional`
 2. `npm start`

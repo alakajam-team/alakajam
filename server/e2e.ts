@@ -7,6 +7,7 @@ import * as path from "path";
 import config, { Config } from "./core/config";
 import constants from "./core/constants";
 import log from "./core/log";
+import { Mutable } from "./types";
 
 // Patch config for using e2e DB
 log.info("Launching server with forced end-to-end configuration...");
@@ -27,5 +28,5 @@ const DB_SQLITE_PATH = path.resolve(constants.ROOT_PATH, editableConfig.DB_SQLIT
 log.info(`Backing up DB to ${DB_SQLITE_PATH}.backup to restore its state between tests...`);
 fs.copyFileSync(DB_SQLITE_PATH, DB_SQLITE_PATH + ".backup");
 
-import "./index";import { Mutable } from "./types";
+import "./index";
 

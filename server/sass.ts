@@ -72,6 +72,7 @@ class SassBuilder {
 
     sass.render({
       file: inputFile,
+      sourceMap: false,
       includePaths: [this.ROOT_PATH, path.resolve(this.CLIENT_SRC_FOLDER, "css")]
     }, (error, result) => {
       if (error) {

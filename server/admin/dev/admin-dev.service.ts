@@ -31,7 +31,7 @@ export class AdminDevService {
 
   public async resetDatabase(): Promise<Alert> {
     await db.emptyDatabase();
-    const newVersion = await db.initDatabase();
+    const newVersion = await db.upgradeDatabase();
     return { type: "success", message: "DB reset done (current version : " + newVersion + ")." };
   }
 

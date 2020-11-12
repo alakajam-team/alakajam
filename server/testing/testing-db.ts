@@ -12,7 +12,7 @@ export const startTestDB = async () => {
   mkdirpSync(path.dirname(config.DB_SQLITE_FILENAME));
 
   await db.emptyDatabase(); // Abort initial connection as it uses the default config due to module loading
-  await db.initDatabase({ silent: true });
+  await db.upgradeDatabase({ silent: true });
   await dbTypeorm.connect({ logging: false });
   await insertInitialData(false);
 };

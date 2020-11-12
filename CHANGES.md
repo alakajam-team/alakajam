@@ -2,6 +2,47 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/alakajam-team/alakajam)!
 
+### November 2020
+
+* Minor layout changes in event results page
+* Make border colors around form elements more consistent
+
+### October 2020
+
+* Replace Jamician sprite with the Jellymancer throughout the site
+* Slow down requests to prevent "denial of service" attacks
+* Slow down requests heavily to prevent brute forcing of passwords
+
+### September 2020
+
+* Support theme shortlists of arbitrary sizes
+* Rewrite shortlist system to let mods eliminate themes manually
+* Improve shortlist UX on mobiles
+* Add a "contribute" link to articles
+* Let mods manage certain admin settings
+
+### August 2020
+
+* Migrate entire templating system from Nunjucks to JSX
+* Change icon for post/entry owner in comment sections
+* Add PNG bomb protection in file uploads
+
+### June 2020
+
+* Ability to enter the event as a streamer
+* Streamer listing page
+* Streamers can rate games 
+* Embed live channels in home page, streamer list page, user profile
+* Approbation process for streamers
+* ScoreSpace x Alakajam: Support restricting tournaments to streamers only
+* ScoreSpace x Alakajam: Custom podium for special awards
+* Event administration: support closing ratings without revealing the results
+* Minor homepage layout changes
+* Add themes block to event dashboard
+* Minor mobile support improvements
+
+## [18 June 2020: ScoreSpace x Alakajam! launch](https://alakajam.com/scorespace-alakajam)
+
 ### May 2020
 
 * Join button for events
@@ -97,7 +138,7 @@
 * Make Twitter cards use pictures from blog posts & entry pages
 * Batch of long overdue bugfixes
 
-### November 2019
+### November 2018
 
 * Feature Discord chat on chat page
 

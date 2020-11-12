@@ -228,6 +228,7 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
       <script type="text/javascript" src={links.staticUrl("/static/scripts/bootstrap-notify.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/icheck.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/select2.full.min.js")}></script>
+      <script type="text/javascript" src={links.staticUrl("/static/scripts/flipclock.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/lodash.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/tablesort-number-date.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/chartist.min.js")}></script>
