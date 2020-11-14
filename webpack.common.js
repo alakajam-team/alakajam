@@ -83,6 +83,6 @@ module.exports = {
     colors: true,
     modules: false,
     performance: false,
-    warnings: true
+    warnings: false
   }
 };

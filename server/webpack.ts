@@ -11,7 +11,7 @@ const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 class WebpackBuilder {
 
   public async initialize({watch = false}) {
-    const webpack =  require("webpack");
+    const webpack = require("webpack");
 
     const env = process.env.NODE_ENV || "development";
     const webpackConfig = require(path.join(ROOT_PATH, "./webpack." + env + ".js"));

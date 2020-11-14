@@ -1,7 +1,12 @@
+declare module "raw-loader!*" {
+  const value: any;
+  export default value;
+}
+
 interface JQuery {
   datetimepicker: any;
   iCheck: any;
-  Lazy: any;
+  Lazy: () => void;
   select2: any;
   tooltip: any;
 }
