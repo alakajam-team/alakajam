@@ -44,4 +44,5 @@ typescript                                 3.9.7    3.9.7    4.0.5  alakajam
 ```
 Package                                  Current  Wanted   Latest  Location
 webpack                                   4.44.2  4.44.2    5.4.0  alakajam
+terser-webpack-plugin                      4.2.3   4.2.3    5.0.3  alakajam
 ```
