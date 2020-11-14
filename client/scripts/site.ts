@@ -42,6 +42,11 @@ import like from "./post/like";
 import dashboardEntryImport from "./user/dashboard-entry-import";
 import dashboardSettingsTimezone from "./user/dashboard-settings-timezone";
 
+// Global exports
+// TODO #398 remove all but jquery (to help development) when all libs a migrated to webpack
+const windowAny = window as any;
+windowAny.$ = windowAny.jQuery = $;
+
 $(function domReady() {
 
   // Common

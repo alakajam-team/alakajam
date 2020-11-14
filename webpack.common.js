@@ -1,8 +1,8 @@
-const path = require('path')
+const path = require('path');
+const webpack = require('webpack');
 
-const rootPathTo = pathFromRoot => path.resolve(__dirname, pathFromRoot)
-
-const outputPath = rootPathTo('dist/client/scripts')
+const rootPathTo = pathFromRoot => path.resolve(__dirname, pathFromRoot);
+const outputPath = rootPathTo('dist/client/scripts');
 
 const babelOptions = {
   presets: [
@@ -17,7 +17,12 @@ const babelOptions = {
     ]
   ],
   sourceType: 'unambiguous'
-}
+};
+
+const providePlugin = new webpack.ProvidePlugin({
+  $: 'jquery',
+  jQuery: 'jquery'
+});
 
 module.exports = {
   entry: {
@@ -30,6 +35,20 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
+  },
+  plugins: [
+    providePlugin
+  ],
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
   },
   module: {
     rules: [
@@ -66,4 +85,4 @@ module.exports = {
     performance: false,
     warnings: true
   }
-}
+};
