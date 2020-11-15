@@ -1,3 +1,7 @@
+import evalRawScript from "./core/eval-raw-script";
+
+import("raw-loader!flipclock/dist/flipclock.min.js").then(evalRawScript);
+
 export default function countdown(selector: string) {
   $(selector).each(function () {
     const $countdown = $(this);
@@ -5,7 +9,7 @@ export default function countdown(selector: string) {
     const startTime = roundToNearestSecond(Date.now());
     const endTime = Date.parse($countdown.attr("data-countdown-to-date"));
     const targetDate = new Date(Math.max(Date.now(), endTime));
-    
+
     $countdown.show();
 
     const clock = new FlipClock(this, targetDate, {

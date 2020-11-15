@@ -1,3 +1,5 @@
+import template from "lodash.template";
+
 export default function themeVotes() {
   const $themeVote = $("#js-theme-vote");
   if ($themeVote.length === 0) {
@@ -14,8 +16,8 @@ export default function themeVotes() {
   const themeTitleSelector = "#js-theme-title";
   const themeVoteHistoryBlockSelector = ".js-theme-vote-history-block";
 
-  const themeVoteTemplate = _.template($("#js-theme-vote-template").html());
-  const themeVoteHistoryTemplate = _.template($("#js-theme-vote-history-template").html());
+  const themeVoteTemplate = template($("#js-theme-vote-template").html());
+  const themeVoteHistoryTemplate = template($("#js-theme-vote-history-template").html());
 
   const findThemesUrl = $themeVote.attr("data-find-themes-url");
   const saveVoteUrl = $themeVote.attr("data-save-vote-url");

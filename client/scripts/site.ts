@@ -2,6 +2,8 @@
  * JavaScript bundle root to be served up to the browser.
  */
 
+import evalRawScript from "./core/eval-raw-script";
+
 import alerts from "./common/alerts";
 import checkAllNone from "./common/check-all-none";
 import datePicker from "./common/date-picker";
@@ -41,6 +43,9 @@ import themeVotes from "./event/theme-votes";
 import like from "./post/like";
 import dashboardEntryImport from "./user/dashboard-entry-import";
 import dashboardSettingsTimezone from "./user/dashboard-settings-timezone";
+
+// Global JS libraries without module support
+import("raw-loader!icheck/icheck.min.js").then(evalRawScript);
 
 // Global exports
 // TODO #398 remove all but jquery (to help development) when all libs a migrated to webpack
