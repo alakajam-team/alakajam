@@ -49,9 +49,9 @@ import dashboardSettingsTimezone from "./user/dashboard-settings-timezone";
 
 // Global exports
 // Global JS libraries (using raw-loader when module support is missing)
-import "select2";
 import "popper.js";
 import "bootstrap";
+import("select2/dist/js/select2.full.min").then(evalRawScript);
 import("raw-loader!icheck/icheck.min.js").then(evalRawScript);
 import("raw-loader!tablesort/dist/tablesort.min.js").then(evalRawScript);
 
