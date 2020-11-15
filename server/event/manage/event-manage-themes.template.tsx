@@ -22,6 +22,7 @@ export default function render(context: CommonLocals) {
     `);
 
   formMacros.registerEditorScripts(context);
+  formMacros.registerDatePickerScripts(context);
 
   return eventManageBase(context, <div>
     <h1>{event.get("title")} themes <span class="count">({themes.length})</span></h1>

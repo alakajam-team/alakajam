@@ -13,6 +13,7 @@ export default function render(context: CommonLocals) {
   const { post, user, errorMessage, featuredEvent, specialPostType, allEvents, relatedEvent } = context;
 
   formMacros.registerEditorScripts(context);
+  formMacros.registerDatePickerScripts(context);
 
   return base(context,
     <div class="container thin">

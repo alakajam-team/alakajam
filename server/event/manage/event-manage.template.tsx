@@ -11,6 +11,7 @@ export default function render(context: CommonLocals) {
   const eventDetails = event?.related("details");
 
   formMacros.registerCodeMirrorScripts(context);
+  formMacros.registerDatePickerScripts(context);
 
   return eventManageBase(context, <div>
     <h1 id="title-display"></h1>

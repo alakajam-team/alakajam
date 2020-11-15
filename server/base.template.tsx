@@ -224,10 +224,8 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/site.js?" + launchTime)}></script>
 
       {/* TODO #398 migrate to vendors.js */}
-      <script type="text/javascript" src={links.staticUrl("/static/scripts/moment.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/popper.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/bootstrap.bundle.min.js")}></script>
-      <script type="text/javascript" src={links.staticUrl("/static/scripts/tempusdominus-bootstrap-4.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/bootstrap-notify.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/icheck.min.js")}></script>
       <script type="text/javascript" src={links.staticUrl("/static/scripts/select2.full.min.js")}></script>

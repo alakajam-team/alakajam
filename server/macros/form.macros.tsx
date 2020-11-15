@@ -10,6 +10,9 @@ import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 
 // Markdown editor
 
+/**
+ * Requires registration of scripts with `formMacros.registerEditorScripts(context)` to function
+ */
 export function editor(editorName: string, editorContents: string, options: { minHeight?: number; autofocus?: boolean } = {}) {
   return <textarea class="form-control easymde-editor"
     name={editorName}
@@ -102,6 +105,9 @@ export function check(name, label, value, options: { required?: boolean; textFie
 
 // Date time picker
 
+/**
+ * Requires registration of scripts with `formMacros.registerDatePickerScripts(context)` to function
+ */
 export function dateTimePicker(name, value, user: User,
                                options: { pickerFormat?: string; serverFormat?: string; classes?: string; forceUTC?: boolean } = {}) {
   return <div class="form-group">
@@ -116,6 +122,13 @@ export function dateTimePicker(name, value, user: User,
       </div>
     </div>
   </div>;
+}
+
+export function registerDatePickerScripts(locals: CommonLocals) {
+  locals.scripts.push(
+    links.staticUrl("/static/scripts/moment.min.js"),
+    links.staticUrl("/static/scripts/tempusdominus-bootstrap-4.min.js")
+  );
 }
 
 // Select
