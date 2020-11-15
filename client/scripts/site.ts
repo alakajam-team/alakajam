@@ -44,13 +44,16 @@ import like from "./post/like";
 import dashboardEntryImport from "./user/dashboard-entry-import";
 import dashboardSettingsTimezone from "./user/dashboard-settings-timezone";
 
-// Global JS libraries without module support
-import("raw-loader!icheck/icheck.min.js").then(evalRawScript);
+// Keep jQuery exposed for development
+(window as any).$ = (window as any).jQuery = $;
 
 // Global exports
-// TODO #398 remove all but jquery (to help development) when all libs a migrated to webpack
-const windowAny = window as any;
-windowAny.$ = windowAny.jQuery = $;
+// Global JS libraries (using raw-loader when module support is missing)
+import "select2";
+import "popper.js";
+import "bootstrap";
+import("raw-loader!icheck/icheck.min.js").then(evalRawScript);
+import("raw-loader!tablesort/dist/tablesort.min.js").then(evalRawScript);
 
 $(function domReady() {
 

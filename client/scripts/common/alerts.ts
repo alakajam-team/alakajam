@@ -5,6 +5,8 @@
  * https://github.com/mouse0270/bootstrap-notify
  */
 
+import "bootstrap-notify";
+
 interface Alert {
   type: "success" | "info" | "warning" | "danger";
   title?: string;

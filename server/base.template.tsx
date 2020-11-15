@@ -222,16 +222,6 @@ export default function base(context: CommonLocals, contents: JSX.Element) {
       {ifSet(process.env.BROWSER_REFRESH_URL, () => <script src={process.env.BROWSER_REFRESH_URL}></script>)}
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/vendors.js?" + launchTime)}></script>
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/site.js?" + launchTime)}></script>
-
-      {/* TODO #398 migrate to vendors.js */}
-      <script type="text/javascript" src={links.staticUrl("/static/scripts/popper.min.js")}></script>
-      <script type="text/javascript" src={links.staticUrl("/static/scripts/bootstrap.bundle.min.js")}></script>
-      <script type="text/javascript" src={links.staticUrl("/static/scripts/bootstrap-notify.min.js")}></script>
-      <script type="text/javascript" src={links.staticUrl("/static/scripts/select2.full.min.js")}></script>
-      <script type="text/javascript" src={links.staticUrl("/static/scripts/tablesort-number-date.min.js")}></script>
-      <script type="text/javascript" src={links.staticUrl("/static/scripts/chartist.min.js")}></script>
-
-      {/* TODO #398 migrate codemirror/tinymce related sources to separate entrypoints */}
       {context.scripts.map(scriptUrl => <script type="text/javascript" src={scriptUrl}></script>)}
     </body>
   </html>;
