@@ -23,8 +23,13 @@ interface KarmaReceivedByUser {
 export class EventRatingService {
 
   public areVotesAllowed(event: BookshelfModel) {
-    return event &&
-      [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get("status_results"));
+    if (event) {
+      const isVotingPhase = [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get("status_results"));
+      const divisions = Object.keys(event.get("divisions") || {});
+      const isUnrankedOnly = divisions.length === 1 && divisions[0] === enums.DIVISION.UNRANKED;
+      return isVotingPhase && !isUnrankedOnly;
+    }
+    return false;
   }
 
   public async canVoteInEvent(user: User, event: BookshelfModel): Promise<boolean> {

@@ -122,8 +122,8 @@ export default function render(context: HomeContext) {
             {ifTrue(user && suggestedEntries && suggestedEntries.length > 0, () =>
               <div>
                 <div class="horizontal-bar">
-                  Suggested entries to rate
-                  {formMacros.tooltip("Rate and comment other games to increase your karma. The Top 4 are featured on the front page!")}
+                  Suggested entries to play
+                  {formMacros.tooltip("Rate and comment other games to increase your karma. The Top 3 are featured on the front page!")}
                 </div>
                 <div class="home-grid game-grid pb-1">
                   {suggestedEntries.map(suggestedEntry =>
