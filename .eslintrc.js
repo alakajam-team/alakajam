@@ -72,6 +72,10 @@ module.exports = {
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-parameter-properties": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",
@@ -83,6 +87,8 @@ module.exports = {
             }
         ],
         "@typescript-eslint/require-await": "off",
+        "@typescript-eslint/restrict-plus-operands": "off",
+        "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/semi": [
             "error",
             "always"

@@ -144,7 +144,8 @@ export class EntryUmportService {
             }
 
             // Delete temporary picture if needed
-            fs.unlink(temporaryPath);
+            fs.unlink(temporaryPath)
+              .catch(e => log.error(e));
           }
         }
       }

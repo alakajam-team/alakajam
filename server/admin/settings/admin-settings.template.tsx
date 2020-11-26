@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import * as templatingFilters from "server/core/templating-filters";
 import * as formMacros from "server/macros/form.macros";
 import { ifSet } from "server/macros/jsx-utils";
 import adminBase from "../admin.base";
 import { AdminSettingsContext, EditableSettingInstance } from "./admin-settings.controller";
 
-export default function render(context: AdminSettingsContext) {
+export default function render(context: AdminSettingsContext): JSX.Element {
   formMacros.registerCodeMirrorScripts(context);
   formMacros.registerEditorScripts(context);
 
@@ -17,7 +17,7 @@ export default function render(context: AdminSettingsContext) {
     </div>);
 }
 
-function edit(setting: EditableSettingInstance, csrfToken: Function) {
+function edit(setting: EditableSettingInstance, csrfToken: () => JSX.Element) {
   return <form action="/admin/settings" method="post" class="card">
     <div class="card-header">
       <h2>{setting.key}</h2>

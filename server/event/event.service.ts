@@ -68,7 +68,7 @@ export class EventService {
     return [enums.EVENT.STATUS_ENTRY.OPEN, enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED].includes(event.get("status_entry"));
   }
 
-  public isVotingInProgress(event: BookshelfModel) {
+  public isVotingInProgress(event: BookshelfModel): boolean {
     return [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get("status_results"));
   }
 
@@ -206,7 +206,7 @@ export class EventService {
    * @param {Entry} entry
    * @param {object|string} file The form upload
    */
-  public async setEntryPicture(entry: EntryBookshelfModel, file: object | string) {
+  public async setEntryPicture(entry: EntryBookshelfModel, file: object | string): Promise<void> {
     const picturePath = "/entry/" + entry.get("id");
     const result = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_DEFAULT);
     if (!("error" in result)) {
@@ -261,7 +261,7 @@ export class EventService {
     return formattedResults;
   }
 
-  public async deleteEntry(entry: EntryBookshelfModel) {
+  public async deleteEntry(entry: EntryBookshelfModel): Promise<void> {
     // Unlink posts (not in transaction to prevent foreign key errors)
     const posts = await postService.findPosts({ entryId: entry.get("id") });
     for (const post of posts.models) {
@@ -301,24 +301,24 @@ export class EventService {
   public async findGames(options: FindGamesOptions = {}): Promise<BookshelfCollectionOf<EntryBookshelfModel> | number | string> {
     let query = new models.Entry()
       .query((qb) => {
-        qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id");
+        void qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id");
       }) as BookshelfModel;
 
     // Sorting
     if (!options.count) {
       if (options.sortBy === "hotness") {
         query = query.query((qb) => {
-          qb.orderBy("entry.hotness", "desc");
+          void qb.orderBy("entry.hotness", "desc");
         });
       } else if (options.sortBy === "rating-count") {
         query = query.query((qb) => {
-          qb.orderBy("entry_details.rating_count");
+          void qb.orderBy("entry_details.rating_count");
         });
       } else if (options.sortBy === "rating") {
         query = query.query((qb) => {
-          qb.leftJoin("event", "entry.event_id", "event.id")
+          void qb.leftJoin("event", "entry.event_id", "event.id")
             .where(function() {
-              this.where("event.status", enums.EVENT.STATUS.CLOSED).orWhereNull("event.status");
+              void this.where("event.status", enums.EVENT.STATUS.CLOSED).orWhereNull("event.status");
             })
             .orderByRaw("entry_details.rating_1 "
               + ((config.DB_TYPE === "postgresql") ? "DESC NULLS LAST" : "IS NULL DESC"))
@@ -326,9 +326,9 @@ export class EventService {
         });
       } else if (options.sortBy === "ranking") {
         query = query.query((qb) => {
-          qb.leftJoin("event", "entry.event_id", "event.id")
+          void qb.leftJoin("event", "entry.event_id", "event.id")
             .where(function() {
-              this.where("event.status", enums.EVENT.STATUS.CLOSED).orWhereNull("event.status");
+              void this.where("event.status", enums.EVENT.STATUS.CLOSED).orWhereNull("event.status");
             })
             .orderByRaw("entry_details.ranking_1 " + ((config.DB_TYPE === "postgresql") ? "NULLS LAST" : "IS NOT NULL"))
             .orderBy("entry.created_at", "DESC")
@@ -347,13 +347,13 @@ export class EventService {
     if (options.eventId !== undefined) { query = query.where("entry.event_id", options.eventId); }
     if (options.platforms) {
       query = query.query((qb) => {
-        qb.leftJoin("entry_platform", "entry_platform.entry_id", "entry.id")
+        void qb.leftJoin("entry_platform", "entry_platform.entry_id", "entry.id")
           .whereIn("entry_platform.platform_id", options.platforms);
       });
     }
     if (options.tags) {
       query = query.query((qb) => {
-        qb.leftJoin("entry_tag", "entry_tag.entry_id", "entry.id")
+        void qb.leftJoin("entry_tag", "entry_tag.entry_id", "entry.id")
           .whereIn("entry_tag.tag_id", options.tags.map((tag) => tag.id));
       });
     }
@@ -397,7 +397,7 @@ export class EventService {
           });
         // Hide own entry (not strictly requested, but sensible)
         if (options.notReviewedById) {
-          qb.whereNot({
+          void qb.whereNot({
             "user_role.user_id": options.notReviewedById,
           });
         }
@@ -429,9 +429,9 @@ export class EventService {
    * @param id {id} models.Entry ID
    * @returns {Entry}
    */
-  public async findLatestEntries() {
+  public async findLatestEntries(): Promise<BookshelfCollection> {
     return models.Entry.query((qb) => {
-      qb.whereNotNull("event_id");
+      void qb.whereNotNull("event_id");
     })
       .orderBy("created_at", "DESC")
       .fetchPage({
@@ -457,7 +457,7 @@ export class EventService {
    */
   public async findUserEntries(user: User): Promise<BookshelfCollection> {
     const entriesCollection = await models.Entry.query((qb) => {
-      qb.distinct()
+      void qb.distinct()
         .innerJoin("user_role", "entry.id", "user_role.node_id")
         .where({
           "user_role.user_id": user.get("id"),
@@ -478,9 +478,9 @@ export class EventService {
   /**
    * Retrieves the user's latest entry
    */
-  public async findLatestUserEntry(user: User, options: FetchOptions = {}) {
+  public async findLatestUserEntry(user: User, options: FetchOptions = {}): Promise<BookshelfModel> {
     return models.Entry.query((qb) => {
-      qb.distinct()
+      void qb.distinct()
         .innerJoin("user_role", "entry.id", "user_role.node_id")
         .whereNotNull("entry.event_id")
         .where({
@@ -500,7 +500,7 @@ export class EventService {
    */
   public async findUserEntryForEvent(user: User, eventId: number, options: FetchOptions = {}): Promise<EntryBookshelfModel> {
     return models.Entry.query((query) => {
-      query.innerJoin("user_role", "entry.id", "user_role.node_id")
+      void query.innerJoin("user_role", "entry.id", "user_role.node_id")
         .where({
           "entry.event_id": eventId,
           "user_role.user_id": user.get("id"),
@@ -532,7 +532,7 @@ export class EventService {
     return models.Entry.where("entry.event_id", event.get("id"))
       .where("division", "<>", enums.DIVISION.UNRANKED)
       .query((qb) => {
-        qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
+        void qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
           // do not rescue those who really didn't participate
           .where("entry_details.rating_count", ">", Math.floor(minRatings / 4))
           .where("entry_details.rating_count", "<", minRatings)
@@ -568,10 +568,10 @@ export class EventService {
     }
   }
 
-  public async refreshEntryPlatforms(entry) {
+  public async refreshEntryPlatforms(entry: BookshelfModel): Promise<void> {
     const tasks = [];
     await entry.load("platforms");
-    entry.related("platforms").forEach(async (platform) => {
+    entry.related<BookshelfCollection>("platforms").forEach(async (platform) => {
       tasks.push(platform.destroy());
     });
     const platformStrings = entry.get("platforms");
@@ -592,7 +592,7 @@ export class EventService {
    * @param  {Event} event
    * @return {void}
    */
-  public async refreshEventCounts(event: BookshelfModel) {
+  public async refreshEventCounts(event: BookshelfModel): Promise<void> {
     const countByDivision = await db.knex("entry")
       .count("* as count").select("division")
       .where("event_id", event.get("id"))

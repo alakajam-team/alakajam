@@ -31,7 +31,8 @@ class SassBuilder {
       const { resolve: assetsResolve, reject: assetsReject, promise: assetsPromise }
         = this.createDeferredPromise<string[]>();
 
-      this.sassBuild(sassResolve, sassReject);
+      this.sassBuild(sassResolve, sassReject)
+        .catch(e => log.error(e));
       this.copyAssets({
         assetsPath: this.ASSETS_GLOBS,
         reject: assetsReject,

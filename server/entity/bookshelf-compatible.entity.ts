@@ -1,4 +1,4 @@
-import { getManager, ObjectType, getRepository, getConnection } from "typeorm";
+import { getManager, ObjectType, getRepository, getConnection, EntityTarget } from "typeorm";
 import { BookshelfModel } from "bookshelf";
 
 export interface DependentEntity {
@@ -12,7 +12,7 @@ export abstract class BookshelfCompatibleEntity {
     return this[key];
   }
 
-  public set(keyOrObject: string | { [key: string]: any }, value?: any): void {
+  public set(keyOrObject: string | { [key: string]: any }, value?: unknown): void {
     if (typeof keyOrObject === "object") {
       for (const key of Object.keys(keyOrObject)) {
         this.set(key, keyOrObject[key]);
@@ -26,7 +26,8 @@ export abstract class BookshelfCompatibleEntity {
     return this[relation];
   }
 
-  protected async loadOneToOne<T extends Function, U extends Function>(currentType: T, fieldName: string, fieldType: U) {
+  protected async loadOneToOne<T extends EntityTarget<unknown>, U extends EntityTarget<unknown>>(
+    currentType: T, fieldName: string, fieldType: U): Promise<void> {
     if (!getRepository(fieldType).hasId(this[fieldName])) {
       this[fieldName] = await getConnection()
         .createQueryBuilder()

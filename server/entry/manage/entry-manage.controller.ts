@@ -5,6 +5,7 @@ import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import links from "server/core/links";
+import log from "server/core/log";
 import * as models from "server/core/models";
 import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import settings from "server/core/settings";
@@ -18,7 +19,7 @@ import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EntryLocals } from "../entry.middleware";
 
-export async function entryManage(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function entryManage(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { event, user } = res.locals;
   let entry = res.locals.entry;
 
@@ -100,7 +101,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
     }
 
     // Save tags
-    let tags = (Array.isArray(req.body.tags)) ? req.body.tags : [req.body.tags];
+    let tags: string[] = (Array.isArray(req.body.tags)) ? req.body.tags : [req.body.tags];
     tags = tags.map((tag) => forms.sanitizeString(tag));
     await tagService.updateEntryTags(entry, tags);
 
@@ -245,16 +246,18 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       if (entry.hasChanged("status_high_score")
           && entry.get("status_high_score") !== enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
         // corner case: owner toggles lower-is-better after some scores are submitted
-        highscoreService.refreshEntryRankings(entry);
+        highscoreService.refreshEntryRankings(entry)
+          .catch(e => log.error(e));
       }
       entry.set("published_at", entry.get("published_at") || new Date());
       await entry.save();
       if (eventCountRefreshNeeded) {
-        eventService.refreshEventCounts(event); // No need to await
+        eventService.refreshEventCounts(event) // No need to await
+          .catch(e => log.error(e));
       }
 
       // Set or remove platforms.
-      platformService.setEntryPlatforms(entry, platforms || []);
+      await platformService.setEntryPlatforms(entry, platforms || []);
       cache.user(res.locals.user.get("name")).del("latestEntry");
       await entry.load(["userRoles.user", "comments", "details", "tags"]);
 
@@ -281,7 +284,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
 /**
  * Deletes an entry
  */
-export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { entry, event, user } = res.locals;
 
   if (user && entry && security.canUserManage(user, entry, { allowMods: true })) {
@@ -293,7 +296,8 @@ export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryL
     }
     await eventService.deleteEntry(entry);
     if (event && event.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED) {
-      eventService.refreshEventCounts(event); // No need to await
+      eventService.refreshEventCounts(event) // No need to await
+        .catch(e => log.error(e));
     }
     cache.user(res.locals.user.get("name")).del("latestEntry");
   }
@@ -308,7 +312,7 @@ export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryL
 /**
  * Leaves the team of an entry
  */
-export async function entryLeave(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function entryLeave(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { entry, user } = res.locals;
 
   if (user && entry) {

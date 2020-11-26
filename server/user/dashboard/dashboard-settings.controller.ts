@@ -9,7 +9,7 @@ import userService from "server/user/user.service";
 import userTimezoneService from "../user-timezone.service";
 import { DashboardLocals } from "./dashboard.middleware";
 
-export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   res.render<DashboardLocals>("user/dashboard/dashboard-settings", {
     ...res.locals,
     ...req.body,
@@ -20,7 +20,7 @@ export async function dashboardSettingsGet(req: CustomRequest, res: CustomRespon
 /**
  * Manage general user info
  */
-export async function dashboardSettingsPost(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+export async function dashboardSettingsPost(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   if (req.body.delete) {
     await _handleDeletion(req, res);
   } else {
@@ -100,7 +100,7 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
 
   if (!("error" in result)) {
     if (deletingOwnAccount) {
-      logout(req, res);
+      await logout(req, res);
     } else {
       res.redirect("/people");
     }

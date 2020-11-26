@@ -79,14 +79,14 @@ export class TournamentService {
     return tEntry.save();
   }
 
-  public async removeTournamentEntry(eventId: number, entryId: number) {
+  public async removeTournamentEntry(eventId: number, entryId: number): Promise<void> {
     const tEntry = await this.getTournamentEntry(eventId, entryId);
     if (tEntry) {
       await tEntry.destroy();
     }
   }
 
-  public async findOrCreateTournamentScore(eventId: number, userId: number) {
+  public async findOrCreateTournamentScore(eventId: number, userId: number): Promise<BookshelfModel> {
     const attributes = {
       event_id: eventId,
       user_id: userId,
@@ -100,7 +100,7 @@ export class TournamentService {
     return tScore;
   }
 
-  public async findTournamentScores(event): Promise<BookshelfCollection> {
+  public async findTournamentScores(event: BookshelfModel): Promise<BookshelfCollection> {
     return models.TournamentScore
       .where("event_id", event.get("id"))
       .where("score", ">", 0)
@@ -113,7 +113,7 @@ export class TournamentService {
     event: BookshelfModel,
     triggeringUserId?: number,
     impactedEntryScores: BookshelfModel[] = [],
-    options: { allowedTournamentStates?: string[] } = {}) {
+    options: { allowedTournamentStates?: string[] } = {}): Promise<void> {
     const allowedTournamentStates = options.allowedTournamentStates || [enums.EVENT.STATUS_TOURNAMENT.PLAYING];
     if (!allowedTournamentStates.includes(event.get("status_tournament"))) {
       return;
@@ -163,7 +163,8 @@ export class TournamentService {
     }
   }
 
-  public async refreshTournamentScoresForUser(highScoreService: any, event: BookshelfModel, entries: BookshelfModel[], userId: number) {
+  public async refreshTournamentScoresForUser(
+    highScoreService: any, event: BookshelfModel, entries: BookshelfModel[], userId: number): Promise<boolean> {
     // Fetch or create tournament score
     const eventId = event.get("id");
     const tournamentScoreKeys = {
@@ -266,7 +267,7 @@ export class TournamentService {
     }
   }
 
-  public async recalculateAllTournamentScores(highScoreService: any, event: BookshelfModel) {
+  public async recalculateAllTournamentScores(highScoreService: any, event: BookshelfModel): Promise<void> {
     // Pick entries for which to fetch scores
     const tournamentEntries = await this.findTournamentEntries(event);
     const entries = tournamentEntries.map((tEntry) => tEntry.related("entry")) as BookshelfModel[];

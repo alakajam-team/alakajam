@@ -10,7 +10,7 @@ import eventParticipationService from "../dashboard/event-participation.service"
 /**
  * View the games of a tournament
  */
-export async function viewEventTournamentGames(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function viewEventTournamentGames(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Tournament games";
 
   const { user, event } = res.locals;

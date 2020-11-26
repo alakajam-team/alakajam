@@ -7,6 +7,7 @@ import db from "server/core/db";
 import enums from "server/core/enums";
 import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
+import log from "server/core/log";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
 import {
@@ -101,7 +102,8 @@ export class EventThemeService {
       }
     }
 
-    this.refreshEventThemeStats(event);
+    this.refreshEventThemeStats(event)
+      .catch(e => log.error(e));
   }
 
   public async findAllThemes(event: BookshelfModel, options: { shortlistEligible?: boolean } = {}): Promise<BookshelfCollection> {
@@ -137,7 +139,8 @@ export class EventThemeService {
   /**
    * Returns the 30 latest votes by the user
    */
-  public async findThemeVotesHistory(user: User, event: BookshelfModel, options: { count?: boolean } = {}) {
+  public async findThemeVotesHistory(
+    user: User, event: BookshelfModel, options: { count?: boolean } = {}): Promise<BookshelfCollection | string | number> {
     const query = models.ThemeVote.where({
       event_id: event.get("id"),
       user_id: user.get("id"),
@@ -162,7 +165,7 @@ export class EventThemeService {
     let query = models.Theme as BookshelfModel;
     if (user) {
       query = query.query((qb) => {
-        qb.leftOuterJoin("theme_vote", function() {
+        void qb.leftOuterJoin("theme_vote", function() {
           this.on("theme.id", "=", "theme_vote.theme_id");
           this.andOn("theme_vote.user_id", "=", user.get("id"));
         });
@@ -191,7 +194,8 @@ export class EventThemeService {
   /**
    * Saves a theme vote
    */
-  public async saveVote(user: User, event: BookshelfModel, themeId: number, score: number, options: { doNotSave?: boolean } = {}) {
+  public async saveVote(
+    user: User, event: BookshelfModel, themeId: number, score: number, options: { doNotSave?: boolean } = {}) {
     let voteCreated = false;
     let expectedStatus = null;
     let result = {};
@@ -258,9 +262,9 @@ export class EventThemeService {
         SETTING_EVENT_THEME_ELIMINATION_MODULO, 10);
       let uptimeVotes: number = cache.general.get("uptime_votes") || 0;
       if (uptimeVotes % eliminationThreshold === 0) {
-        this.eliminateLowestThemes(event);
+        await this.eliminateLowestThemes(event);
       }
-      this.refreshEventThemeStats(event);
+      await this.refreshEventThemeStats(event);
 
       uptimeVotes++;
       cache.general.set("uptime_votes", uptimeVotes);
@@ -381,7 +385,7 @@ export class EventThemeService {
         await models.ThemeVote.where({
           event_id: event.get("id"),
         }).count());
-      eventDetails.save();
+      await eventDetails.save();
 
       cache.eventsById.del(event.get("id"));
       cache.eventsByName.del(event.get("name"));

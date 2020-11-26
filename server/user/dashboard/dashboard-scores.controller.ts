@@ -6,7 +6,7 @@ import { DashboardLocals } from "./dashboard.middleware";
 /**
  * Personal high score dashboard
  */
-export async function dashboardScores(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+export async function dashboardScores(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const sortBy: string = forms.sanitizeString(req.query.sortBy?.toString()) || "submitted_at";
 
   const userScoresCollection = await highScoreService.findUserScores(res.locals.user.get("id"), { sortBy });

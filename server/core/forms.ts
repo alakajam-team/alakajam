@@ -107,7 +107,7 @@ const turndownService = new TurndownService();
  * Sanitizes a string form input (by removing any tags and slicing it to the max allowed size).
  * Use this on all string input unless you need more advanced escaping (e.g. for URLs, for Markdown)
  */
-function sanitizeString(str: string, options: { maxLength?: number } = {}) {
+function sanitizeString(str: string, options: { maxLength?: number } = {}): string {
   return striptags(str).trim().slice(0, options.maxLength || 255);
 }
 
@@ -115,7 +115,7 @@ function sanitizeString(str: string, options: { maxLength?: number } = {}) {
  * Sanitizes Markdown form input very lightly, just by limiting its length.
  * Real sanitization needs to happen after converting it to HTML.
  */
-function sanitizeMarkdown(markdown: string, options: { maxLength?: number } = {}) {
+function sanitizeMarkdown(markdown: string, options: { maxLength?: number } = {}): string {
   return markdown.slice(0, options.maxLength || constants.MAX_BODY_COMMENT);
 }
 
@@ -131,7 +131,7 @@ function sanitizeInt(int: string, options: { unsigned?: boolean } = {}): number 
 /**
  * Turns a string into a slug suitable for URLs.
  */
-function slugCustom(str: string) {
+function slugCustom(str: string): string {
   return slug(str, SLUG_SETTINGS).toLowerCase();
 }
 
@@ -140,7 +140,7 @@ function slugCustom(str: string) {
  * @param  {string} string
  * @return {Boolean}
  */
-function isEmail(str: string) {
+function isEmail(str: string): boolean {
   return str && validator.isEmail(str);
 }
 
@@ -149,7 +149,7 @@ function isEmail(str: string) {
  * @param  {string} string
  * @return {Boolean}
  */
-function isURL(str: string) {
+function isURL(str: string): boolean {
   return str && validator.isURL(str);
 }
 
@@ -158,7 +158,7 @@ function isURL(str: string) {
  * @param  {string} str
  * @return {Boolean}
  */
-function isUsername(str: string) {
+function isUsername(str: string): boolean {
   return str.length >= constants.USERNAME_MIN_LENGTH && /^[a-zA-Z][0-9a-zA-Z_-]+$/.test(str);
 }
 
@@ -167,7 +167,7 @@ function isUsername(str: string) {
  * @param  {string|number} value
  * @return {Boolean}
  */
-function isId(value) {
+function isId(value): boolean {
   return value && ((typeof value === "number" && value % 1 === 0 && value > 0 && value < MAX_POSTGRESQL_INTEGER) ||
     validator.isInt(value, { min: 1, max: MAX_POSTGRESQL_INTEGER }));
 }
@@ -177,14 +177,14 @@ function isId(value) {
  * @param  {string} string
  * @return {Boolean}
  */
-function isSlug(str: string) {
+function isSlug(str: string): boolean {
   return str && slug(str) === str;
 }
 
 /**
  * Checks whether the string is in an array of allowed values, or among the values of an object
  */
-function isIn(str: string, values: string[] | object) {
+function isIn(str: string, values: string[] | Record<string, unknown>): boolean {
   if (str) {
     if (typeof values === "object") {
       return str && validator.isIn(str, Object.values(values));

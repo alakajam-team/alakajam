@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { CommonLocals } from "./common.middleware";
 import { Config } from "./core/config";
 
-export type Mutable<T> = { -readonly [P in keyof T ]: T[P] };
+export type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
 export interface Alert {
   type: "success" | "info" | "warning" | "danger";
@@ -50,7 +50,7 @@ export interface CustomResponse<T extends CommonLocals> extends Response {
   errorPage(code: number, error?: Error | string): void;
   traceAndShowErrorPage(error?: Error): void;
   redirectToLogin(): void;
-  render<T extends CommonLocals>(templateName: string, context: T): void;
+  render<U extends CommonLocals>(templateName: string, context: U): void;
 }
 
 export interface RenderContext { [key: string]: any }

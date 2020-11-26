@@ -6,6 +6,7 @@ import * as configUtils from "server/core/config";
 import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import { createLuxonDate } from "server/core/formats";
+import log from "server/core/log";
 import mailer from "server/core/mailer";
 import userService from "../user.service";
 
@@ -13,7 +14,7 @@ const PASSWORD_RECOVERY_TOKENS_PATH = path.join(configUtils.dataPathAbsolute(), 
 
 export class PasswordRecoveryService {
 
-  public async sendPasswordRecoveryEmail(app: Application, userEmail: string) {
+  public async sendPasswordRecoveryEmail(app: Application, userEmail: string): Promise<void> {
     // Make sure the user exists
     const user = await userService.findByEmail(userEmail);
 
@@ -33,7 +34,8 @@ export class PasswordRecoveryService {
         userId: user.id,
         expires: createLuxonDate().toMillis() + constants.PASSWORD_RECOVERY_LINK_MAX_AGE,
       };
-      fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, passwordRecoveryTokens);
+      fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, passwordRecoveryTokens)
+        .catch(e => log.error(e));
 
       // Send email
       const context = {
@@ -44,7 +46,7 @@ export class PasswordRecoveryService {
     }
   }
 
-  public async loadPasswordRecoveryCache(app: Application) {
+  public async loadPasswordRecoveryCache(app: Application): Promise<void> {
     if (await fileStorage.exists(PASSWORD_RECOVERY_TOKENS_PATH)) {
       const rawFile = await fileStorage.read(PASSWORD_RECOVERY_TOKENS_PATH);
       app.locals.passwordRecoveryTokens = JSON.parse(rawFile);
@@ -60,8 +62,8 @@ export class PasswordRecoveryService {
    * @param {string} newPassword
    * @returns {boolean|string} true or an error message
    */
-  public async recoverPasswordUsingToken(app: Application, token: string, newPassword: string) {
-    if (this.validatePasswordRecoveryToken(app, token)) {
+  public async recoverPasswordUsingToken(app: Application, token: string, newPassword: string): Promise<string | true> {
+    if (this.isPasswordRecoveryTokenValid(app, token)) {
       const userId = app.locals.passwordRecoveryTokens[token].userId;
       const user = await userService.findById(userId);
       if (user) {
@@ -69,7 +71,8 @@ export class PasswordRecoveryService {
         if (success) {
           await userService.save(user);
           delete app.locals.passwordRecoveryTokens[token];
-          fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, app.locals.passwordRecoveryTokens);
+          fileStorage.write(PASSWORD_RECOVERY_TOKENS_PATH, app.locals.passwordRecoveryTokens)
+            .catch(e => log.error(e));
         }
         return success;
       } else {
@@ -80,7 +83,7 @@ export class PasswordRecoveryService {
     }
   }
 
-  public validatePasswordRecoveryToken(app: Application, token: string) {
+  public isPasswordRecoveryTokenValid(app: Application, token: string): boolean {
     return app.locals.passwordRecoveryTokens[token] &&
       app.locals.passwordRecoveryTokens[token].expires > Date.now();
   }

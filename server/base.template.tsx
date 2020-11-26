@@ -7,7 +7,7 @@ import links from "./core/links";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "./macros/jsx-utils";
 import { BookshelfModel } from "bookshelf";
 
-export default function base(context: CommonLocals, contents: JSX.Element) {
+export default function base(context: CommonLocals, contents: JSX.Element): JSX.Element {
   const { pageImage, launchTime, rootUrl, path, event, user, unreadNotifications } = context;
 
   const pageTitle = (context.pageTitle ? (context.pageTitle + " | ") : "") + "Alakajam!";

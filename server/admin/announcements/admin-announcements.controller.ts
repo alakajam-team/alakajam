@@ -1,4 +1,4 @@
-import { BookshelfModel } from "bookshelf";
+import { BookshelfModel, PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
@@ -18,7 +18,7 @@ export interface AdminAnnouncementContext extends AdminBaseContext {
 /**
  * Edit home announcements
  */
-export async function adminAnnouncements(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function adminAnnouncements(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let currentPage = 1;
   if (forms.isId(req.query.p)) {
     currentPage = forms.parseInt(req.query.p.toString());
@@ -30,7 +30,7 @@ export async function adminAnnouncements(req: CustomRequest, res: CustomResponse
     allowDrafts: true,
     page: currentPage
   });
-  const draftPosts = allPostsCollection.filter((post) => !post.get("published_at"));
+  const draftPosts = allPostsCollection.filter((post: PostBookshelfModel) => !post.get("published_at"));
 
   res.render<AdminAnnouncementContext>("admin/announcements/admin-announcements", {
     ...res.locals,

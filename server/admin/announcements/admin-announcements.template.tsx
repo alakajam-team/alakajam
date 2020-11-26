@@ -1,4 +1,5 @@
 import * as React from "preact";
+import { JSX } from "preact";
 import links from "server/core/links";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";
@@ -6,7 +7,7 @@ import * as postMacros from "server/post/post.macros";
 import adminBase from "../admin.base";
 import { AdminAnnouncementContext } from "./admin-announcements.controller";
 
-export default function render(context: AdminAnnouncementContext) {
+export default function render(context: AdminAnnouncementContext): JSX.Element {
   const { draftPosts, publishedPosts, currentPage, pageCount, featuredEvent, user, userLikes } = context;
 
   return adminBase(context,

@@ -13,7 +13,7 @@ export async function passwordRecovery(req: CustomRequest, res: CustomResponse<C
     return;
   }
 
-  if (passwordRecoveryService.validatePasswordRecoveryToken(res.app, req.query.token?.toString())) {
+  if (passwordRecoveryService.isPasswordRecoveryTokenValid(res.app, req.query.token?.toString())) {
     res.locals.token = true;
 
     if (req.method === "POST") {

@@ -17,7 +17,7 @@ export class RegisterController {
   /**
    * Register form
    */
-  public async registerForm(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  public async registerForm(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
     res.locals.pageTitle = "Register";
     res.render<CommonLocals>(TEMPLATE_REGISTER, {
       ...req.body,
@@ -29,7 +29,7 @@ export class RegisterController {
   /**
    * Register
    */
-  public async register(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+  public async register(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
     res.locals.pageTitle = "Register";
 
     const formAlerts = await validateForm(req.body, {
@@ -54,9 +54,9 @@ export class RegisterController {
         if (req.body.timezone) {
           const user = result;
           user.set("timezone", forms.sanitizeString(req.body.timezone));
-          this.userService.save(user);
+          await this.userService.save(user);
         }
-        loginPost(req, res);
+        await loginPost(req, res);
         return;
 
       } else {
@@ -70,7 +70,7 @@ export class RegisterController {
       res.locals.alerts.push(...formAlerts);
     }
 
-    this.registerForm(req, res);
+    await this.registerForm(req, res);
   }
 
 }

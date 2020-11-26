@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
@@ -12,7 +12,7 @@ import { linksField } from "./components/entry-links-field";
 import { optoutsField } from "./components/entry-optouts-field";
 import { teamField } from "./components/entry-team-field";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { entry, event, errorMessages, external, divisionTooltip, members,
     user, allPlatforms, tags, tournamentAdvertising } = context;
   const entryDetails = entry.related("details");

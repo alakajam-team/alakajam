@@ -20,7 +20,7 @@ import { EntryLocals } from "./entry.middleware";
 /**
  * Browse entry
  */
-export async function entryView(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function entryView(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { user, entry } = res.locals;
 
   // Let the template display user thumbs
@@ -85,7 +85,7 @@ export async function entryView(req: CustomRequest, res: CustomResponse<EntryLoc
 /**
  * Saves a comment or vote made to an entry
  */
-export async function entrySaveCommentOrVote(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function entrySaveCommentOrVote(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { entry, event, user } = res.locals;
 
   // Security checks
@@ -110,7 +110,7 @@ export async function entrySaveCommentOrVote(req: CustomRequest, res: CustomResp
     if (await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)) {
       await eventRatingService.saveEntryVote(res.locals.user, res.locals.entry, res.locals.event, votes);
     }
-    entryView(req, res);
+    await entryView(req, res);
   }
 }
 
@@ -118,7 +118,7 @@ export async function entrySaveCommentOrVote(req: CustomRequest, res: CustomResp
  * Search for team mates with usernames matching a string
  * @param {string} req.query.name a string to search user names with.
  */
-export async function apiSearchForTeammate(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function apiSearchForTeammate(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   let errorMessage: string;
   if (!req.query || !req.query.name) {
     errorMessage = "No search parameter";
@@ -165,7 +165,7 @@ export async function apiSearchForTeammate(req: CustomRequest, res: CustomRespon
 /**
  * AJAX endpoint : Finds external event names
  */
-export async function apiSearchForExternalEvents(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function apiSearchForExternalEvents(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   let errorMessage: string;
 
   if (!req.query || !req.query.name) {
@@ -187,7 +187,7 @@ export async function apiSearchForExternalEvents(req: CustomRequest, res: Custom
 /**
  * AJAX endpoint : Finds tags
  */
-export async function apiSearchForTags(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function apiSearchForTags(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   let errorMessage: string;
 
   if (!req.query || !req.query.name) {

@@ -14,7 +14,7 @@ declare module "bookshelf" {
   class NodeBookshelfModel extends BookshelfModel {
     public likes: () => BookshelfCollection;
     public userRoles: () => BookshelfCollection;
-    public comments: () => BookshelfModel;
+    public comments: () => BookshelfCollection;
   }
 
   class EntryBookshelfModel extends NodeBookshelfModel {

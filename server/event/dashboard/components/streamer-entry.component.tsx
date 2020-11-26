@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import { EventParticipation } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
@@ -8,7 +8,7 @@ import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as userMacros from "server/user/user.macros";
 
 export function eventDashboardStreamerEntry(eventParticipation: EventParticipation, event: BookshelfModel,
-                                            socialLinks: Record<string, string>, user: User, csrfToken: Function) {
+                                            socialLinks: Record<string, string>, user: User, csrfToken: () => JSX.Element): JSX.Element {
   return <form method="post" class="action-banner text-center">
     {csrfToken()}
 

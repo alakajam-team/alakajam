@@ -53,41 +53,43 @@ createApp();
 /*
  * Create, configure and launch the server
  */
-async function createApp() {
-  catchErrorsAndSignals();
-  await initFilesLayout();
+function createApp() {
+  (async () => {
+    catchErrorsAndSignals();
+    await initFilesLayout();
 
-  const middleware = require("./core/middleware");
-  const db = require("./core/db").default;
+    const middleware = require("./core/middleware");
+    const db = require("./core/db").default;
 
-  const app = express();
-  app.disable("x-powered-by");
+    const app = express();
+    app.disable("x-powered-by");
 
-  // Detect IP correctly behind proxy (must be in localhost)
-  // Required for secure cookies too, see https://github.com/expressjs/session#cookiesecure
-  app.set("trust proxy", "loopback");
+    // Detect IP correctly behind proxy (must be in localhost)
+    // Required for secure cookies too, see https://github.com/expressjs/session#cookiesecure
+    app.set("trust proxy", "loopback");
 
-  app.locals.devMode = DEV_ENVIRONMENT;
-  const previousVersion = await db.upgradeDatabase();
-  await require("./core/db-typeorm").default.connect();
-  if (previousVersion === "none") {
-    await require("./core/db-init").insertInitialData(config.DEBUG_INSERT_SAMPLES);
-  }
-  await middleware.configure(app);
-
-  app.listen(config.SERVER_PORT, () => {
-    const startSeconds = (Date.now() - startDate) / 1000;
-    const advertisedUrls = ["http://localhost:" + config.SERVER_PORT];
-    if (config.ROOT_URL && config.ROOT_URL !== advertisedUrls[0]) {
-      advertisedUrls.push(config.ROOT_URL);
+    app.locals.devMode = DEV_ENVIRONMENT;
+    const previousVersion = await db.upgradeDatabase();
+    await require("./core/db-typeorm").default.connect();
+    if (previousVersion === "none") {
+      await require("./core/db-init").insertInitialData(config.DEBUG_INSERT_SAMPLES);
     }
+    await middleware.configure(app);
 
-    log.info(`Server started in ${startSeconds.toFixed(1)}s: ${advertisedUrls.join(" or ")}`);
+    app.listen(config.SERVER_PORT, () => {
+      const startSeconds = (Date.now() - startDate) / 1000;
+      const advertisedUrls = ["http://localhost:" + config.SERVER_PORT];
+      if (config.ROOT_URL && config.ROOT_URL !== advertisedUrls[0]) {
+        advertisedUrls.push(config.ROOT_URL);
+      }
 
-    if (process.send) {
-      process.send("online"); // browser-refresh event
-    }
-  });
+      log.info(`Server started in ${startSeconds.toFixed(1)}s: ${advertisedUrls.join(" or ")}`);
+
+      if (process.send) {
+        process.send("online"); // browser-refresh event
+      }
+    });
+  })().catch(e => log.error(e));
 }
 
 /*

@@ -132,7 +132,7 @@ export class User extends BookshelfCompatibleEntity {
    */
   public readonly akjEntriesCount?: number;
 
-  public async loadDetails() {
+  public async loadDetails(): Promise<void> {
     await this.loadOneToOne(User, "details", UserDetails);
   }
 

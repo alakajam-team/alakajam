@@ -27,7 +27,7 @@ import {
  * @param {bool|string} samples true to add samples, 'nightly' to add the special nighly post
  * @returns {void}
  */
-export async function insertInitialData(samples: boolean | "nightly") {
+export async function insertInitialData(samples: boolean | "nightly"): Promise<void> {
   const knex = db.knex;
 
   // Mandatory admin account & important settings
@@ -61,7 +61,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
     entrantUser.related<BookshelfModel>("details").set({
       body: "I am definitely **not** a robot.",
     });
-    userService.save(entrantUser);
+    await userService.save(entrantUser);
 
     // 1st event
 
@@ -108,7 +108,7 @@ export async function insertInitialData(samples: boolean | "nightly") {
 
     await settings.save(SETTING_FEATURED_EVENT_NAME, "2nd-alakajam");
 
-    eventThemeService.saveThemeSubmissions(entrantUser as any, event2, [
+    await eventThemeService.saveThemeSubmissions(entrantUser as any, event2, [
       { title: "Alone" },
       { title: "Evolution" },
       { title: "Two buttons" },

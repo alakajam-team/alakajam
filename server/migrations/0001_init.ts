@@ -5,10 +5,6 @@
  * and have been backported for better SQLite support.
  */
 
-interface TempTypeScriptTest {
-  test: string;
-}
-
 exports.up = async (knex) => {
   await knex.schema.createTable("setting", (table) => {
     table.string("key").primary();

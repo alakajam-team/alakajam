@@ -62,5 +62,6 @@ export default instance;
 
 // Standalone execution
 if (path.resolve(process.argv[1]) === path.resolve(__filename)) {
-  instance.initialize({ watch: intersection(process.argv, ["-w", "--watch"]).length > 0 });
+  instance.initialize({ watch: intersection(process.argv, ["-w", "--watch"]).length > 0 })
+    .catch(e => log.error(e));
 }

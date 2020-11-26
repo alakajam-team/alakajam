@@ -1,8 +1,9 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import { date, markdown, relativeTime } from "server/core/templating-filters";
+import { UserSocialLinks } from "server/entity/user-details.entity";
 import * as scoreMacros from "server/entry/highscore/entry-highscore.macros";
 import * as eventMacros from "server/event/event.macros";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
@@ -10,9 +11,9 @@ import * as navigationMacros from "server/macros/navigation.macros";
 import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { profileUser, user, isTwitchLive, alakajamEntries, externalEntries, otherEntries, posts, userScores, userLikes, medals } = context;
-  const socialLinks = profileUser.related("details").get("social_links") || {};
+  const socialLinks: UserSocialLinks = profileUser.related("details").get("social_links") || {};
   const totalMedals = (medals[1] || 0) + (medals[2] || 0) + (medals[3] || 0);
   const hasAvatar = Boolean(profileUser.get("avatar"));
 
@@ -57,19 +58,19 @@ export default function render(context: CommonLocals) {
         )}
 
         <div class="spacing">
-          {ifTrue(socialLinks.website, () =>
+          {ifTrue(Boolean(socialLinks.website), () =>
             <div class="profile__social-link">
               <a href={socialLinks.website}>
                 <span class="fas fa-home mr-2" style="color: black; font-size: 24px"></span>Website
               </a>
             </div>
           )}
-          {ifTrue(socialLinks.twitch, () =>
+          {ifTrue(Boolean(socialLinks.twitch), () =>
             <div class="profile__social-link">
               {userMacros.twitchLink(profileUser)}
             </div>
           )}
-          {ifTrue(socialLinks.twitter, () =>
+          {ifTrue(Boolean(socialLinks.twitter), () =>
             <div class="profile__social-link">
               <a href={`https://www.twitter.com/${socialLinks.twitter}`}>
                 <img src={links.staticUrl("/static/images/social/twitter.svg")} class="no-border mr-2" style="width: 32px" />

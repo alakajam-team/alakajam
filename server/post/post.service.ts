@@ -2,6 +2,7 @@ import { BookshelfCollection, BookshelfCollectionOf, BookshelfModel, PostBookshe
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import { createLuxonDate } from "server/core/formats";
+import log from "server/core/log";
 import * as models from "server/core/models";
 import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import { User } from "server/entity/user.entity";
@@ -48,14 +49,14 @@ export class PostService {
         qb = qb.where("special_post_type", options.specialPostType);
       }
       if (!options.allowHidden) {
-        qb.where((qb2) => {
+        void qb.where((qb2) => {
           qb2 = qb2.where("special_post_type", "<>", "hidden");
           if (!options.specialPostType) {
-            qb2.orWhere("special_post_type", null);
+            void qb2.orWhere("special_post_type", null);
           }
         });
       } else {
-        qb.orWhere("special_post_type", "hidden");
+        void qb.orWhere("special_post_type", "hidden");
       }
 
       if (options.eventId) { qb = qb.where("post.event_id", options.eventId); }
@@ -170,11 +171,13 @@ export class PostService {
     await post.load(["userRoles.user", "comments.user"]);
     post.related<BookshelfCollection>("userRoles").forEach((userRole) => {
       cache.user(userRole.related<BookshelfModel>("user").get("name")).del("latestPostsCollection");
-      userRole.destroy();
+      userRole.destroy()
+        .catch(e => log.error(e));
     });
     post.related<BookshelfCollection>("comments").forEach((comment) => {
       cache.user(comment.related<BookshelfModel>("user").get("name")).del("byUserCollection");
-      comment.destroy();
+      comment.destroy()
+        .catch(e => log.error(e));
     });
 
     await post.destroy();

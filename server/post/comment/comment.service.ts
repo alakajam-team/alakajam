@@ -4,6 +4,7 @@ import { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import * as models from "server/core/models";
+import { User } from "server/entity/user.entity";
 
 export class CommentService {
 
@@ -34,7 +35,7 @@ export class CommentService {
    * @param  {User} user
    * @return {Collection(Comment)}
    */
-  public async findCommentsByUser(user): Promise<BookshelfCollection> {
+  public async findCommentsByUser(user: User): Promise<BookshelfCollection> {
     return models.Comment.where("user_id", user.id)
       .orderBy("created_at", "DESC")
       .fetchAll({ withRelated: ["user", "node"] }) as Bluebird<BookshelfCollection>;
@@ -46,9 +47,9 @@ export class CommentService {
    * @param  {integer} eventId
    * @return {Collection(Comment)}
    */
-  public async findCommentsByUserAndEvent(userId, eventId): Promise<BookshelfCollection> {
+  public async findCommentsByUserAndEvent(userId: number, eventId: number): Promise<BookshelfCollection> {
     return models.Comment.query((qb) => {
-      qb.innerJoin("entry", "comment.node_id", "entry.id")
+      void qb.innerJoin("entry", "comment.node_id", "entry.id")
         .where({
           "user_id": userId,
           "node_type": "entry",
@@ -65,7 +66,7 @@ export class CommentService {
    * @param  {Object} options among "notificationsLastRead"
    * @return {Collection(Comment)}
    */
-  public async findCommentsToUser(user, options: any = {}): Promise<BookshelfCollection> {
+  public async findCommentsToUser(user: User, options: any = {}): Promise<BookshelfCollection> {
     // let's view any notifs in the last x mins
 
     let notificationsLastRead = new Date(0);
@@ -96,7 +97,7 @@ export class CommentService {
    * @param  {string} nodeType
    * @return {array(number)}
    */
-  public async findOwnAnonymousCommentIds(user, nodeId, nodeType) {
+  public async findOwnAnonymousCommentIds(user: User, nodeId: number, nodeType: string): Promise<number[]> {
     const results = await db.knex("anonymous_comment_user")
       .select("anonymous_comment_user.comment_id")
       .leftJoin("comment", "comment.id", "anonymous_comment_user.comment_id")
@@ -114,7 +115,7 @@ export class CommentService {
    * @param  {User}  user
    * @return {boolean}
    */
-  public async isOwnAnonymousComment(comment, user) {
+  public async isOwnAnonymousComment(comment: BookshelfModel, user: User): Promise<boolean> {
     if (comment.get("user_id") === constants.ANONYMOUS_USER_ID) {
       const result = await db.knex("anonyous_comment_user")
         .count()
@@ -136,7 +137,7 @@ export class CommentService {
    * @param  {Boolean} requestAnonymous (optional)
    * @return {Comment}
    */
-  public async createComment(user, node, body, requestAnonymous = false) {
+  public async createComment(user: User, node: NodeBookshelfModel, body: string, requestAnonymous = false): Promise<BookshelfModel> {
     const comment = await node.comments().create({
       user_id: user.get("id"),
       body,
@@ -161,7 +162,7 @@ export class CommentService {
    * @param  {Comment} comment
    * @return {void}
    */
-  public async deleteComment(comment) {
+  public async deleteComment(comment: BookshelfModel): Promise<void> {
     // In case it was an anonymous comment, delete the associated user link
     await db.knex("anonymous_comment_user")
       .where("comment_id", comment.get("id"))

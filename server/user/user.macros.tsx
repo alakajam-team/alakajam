@@ -1,15 +1,16 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
-import { User } from "server/entity/user.entity";
 import links from "server/core/links";
-import { ifSet, ifNotSet, ifTrue } from "server/macros/jsx-utils";
+import { UserSocialLinks } from "server/entity/user-details.entity";
+import { User } from "server/entity/user.entity";
+import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 
 export function userThumb(user: BookshelfModel | User, options: {
   fullWidth?: boolean;
   centered?: boolean;
   pending?: boolean;
-} | number = {}) {
+} | number = {}): JSX.Element {
   // Add support as Array.map() callback
   if (typeof options === "number") {
     options = {};
@@ -47,19 +48,19 @@ export function userThumb(user: BookshelfModel | User, options: {
   </div>;
 }
 
-export function userAvatar(user: User, options: { small?: boolean } = {}) {
+export function userAvatar(user: User, options: { small?: boolean } = {}): JSX.Element {
   const src = user.get("avatar") ? links.pictureUrl(user.get("avatar"), user as any) : links.staticUrl("/static/images/default-avatar.png");
   return <a href={links.routeUrl(user, "user")}>
     <img class={options.small ? "small-avatar" : ""} src={src} />
   </a>;
 }
 
-export function userLink(user: User) {
+export function userLink(user: User): JSX.Element {
   return <a href={links.routeUrl(user, "user")}>@{user.get("title")}</a>;
 }
 
-export function twitchLink(user: User) {
-  const socialLinks = user.related("details").get("social_links");
+export function twitchLink(user: User): JSX.Element {
+  const socialLinks: UserSocialLinks = user.related("details").get("social_links");
   if (socialLinks?.twitch) {
     return <a href={`https://www.twitch.tv/${socialLinks.twitch}`}>
       <img src={links.staticUrl("/static/images/social/twitch.png")} class="no-border mr-2" style="width: 32px" />{socialLinks.twitch}
@@ -67,7 +68,7 @@ export function twitchLink(user: User) {
   }
 }
 
-export function twitchEmbed(twitchUsername: string, options: { height?: number; autoplay?: boolean } = {}) {
+export function twitchEmbed(twitchUsername: string, options: { height?: number; autoplay?: boolean } = {}): JSX.Element {
   if (twitchUsername) {
     return <>
       <div id={`twitch-${twitchUsername}-embed`}></div>
@@ -88,6 +89,6 @@ export function twitchEmbed(twitchUsername: string, options: { height?: number; 
   }
 }
 
-export function registerTwitchEmbedScripts(context: CommonLocals) {
+export function registerTwitchEmbedScripts(context: CommonLocals): void {
   context.scripts.push("https://embed.twitch.tv/embed/v1.js");
 }

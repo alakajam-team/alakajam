@@ -10,6 +10,7 @@ import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
 import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
+import log from "server/core/log";
 import * as models from "server/core/models";
 import tournamentService from "server/event/tournament/tournament.service";
 
@@ -62,7 +63,7 @@ export class HighScoreService {
     }
   }
 
-  public async findEntryScoreById(id: number, options: FetchOptions = {}) {
+  public async findEntryScoreById(id: number, options: FetchOptions = {}): Promise<BookshelfModel> {
     return models.EntryScore.where("id", id)
       .fetch({
         withRelated: ["user"],
@@ -73,7 +74,9 @@ export class HighScoreService {
   /**
    * Retrieves all user scores
    */
-  public async findUserScores(userId, options: FetchAllOptions & { sortBy?: "ranking" | "submitted_at" | any } = {}): Promise<BookshelfCollection> {
+  public async findUserScores(
+    userId: number,
+    options: FetchAllOptions & { sortBy?: "ranking" | "submitted_at" | any } = {}): Promise<BookshelfCollection> {
     if (!userId) { return null; }
 
     let query = models.EntryScore.where("user_id", userId) as BookshelfModel;
@@ -97,10 +100,8 @@ export class HighScoreService {
   /**
    * Finds all scores submitted by a user to the specified entry array or collection
    */
-  public async findUserScoresMapByEntry(userId, entries): Promise<Record<number, BookshelfModel>> {
+  public async findUserScoresMapByEntry(userId: number, entries: BookshelfModel[]): Promise<Record<number, BookshelfModel>> {
     if (!userId || !entries) { return null; }
-
-    entries = entries.models || entries; // Accept collections or arrays
 
     const entriesToScore: Record<number, BookshelfModel> = {};
     const entryScores = await models.EntryScore
@@ -216,14 +217,15 @@ export class HighScoreService {
 
   public async deleteEntryScore(entryScore: BookshelfModel, entry: BookshelfModel): Promise<void> {
     if (!this.isExternalProof(entryScore)) {
-      fileStorage.remove(entryScore.get("proof"));
+      fileStorage.remove(entryScore.get("proof"))
+        .catch(e => log.error(e));
     }
     const triggeringUserId = entryScore.get("user_id");
     await entryScore.destroy();
     await this.refreshEntryRankings(entry, null, { triggeringUserId });
   }
 
-  public async deleteAllEntryScores(entry): Promise<void> {
+  public async deleteAllEntryScores(entry: BookshelfModel): Promise<void> {
     await db.knex("entry_score")
       .where("entry_id", entry.get("id"))
       .delete();
@@ -279,7 +281,8 @@ export class HighScoreService {
         const triggeringUserId = options.triggeringUserId || (triggeringEntryScore
           ? triggeringEntryScore.get("user_id") : null);
         tournamentService.refreshTournamentScores(module.exports.default, activeTournamentEvent,
-          triggeringUserId, impactedEntryScores);
+          triggeringUserId, impactedEntryScores)
+          .catch(e => log.error(e));
       }
     }
 

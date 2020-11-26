@@ -1,6 +1,6 @@
 import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import { capitalize, range, truncate } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import constants from "server/core/constants";
 import links from "server/core/links";
 import { digits } from "server/core/templating-filters";
@@ -10,7 +10,7 @@ export function entryThumb(entry: EntryBookshelfModel, options: {
   hideMedals?: boolean;
   showEvent?: boolean;
   showKarma?: boolean;
-} = {}) {
+} = {}): JSX.Element {
   const picturePath = entry.pictureThumbnail();
   const authors = entry.sortedUserRoles();
 
@@ -81,7 +81,9 @@ export function entryThumb(entry: EntryBookshelfModel, options: {
   </div>;
 }
 
-export function entrySmallThumb(entry: EntryBookshelfModel, options: { noShadow?: boolean; customMessage?: string } = {}) {
+export function entrySmallThumb(
+  entry: EntryBookshelfModel,
+  options: { noShadow?: boolean; customMessage?: string } = {}): JSX.Element {
   return <div class="entry-small-thumb" style={options.noShadow ? "box-shadow: none" : ""}>
     {ifTrue(entry && entry.get("id"), () => {
       const authors = entry.sortedUserRoles();
@@ -113,7 +115,7 @@ export function entrySmallThumb(entry: EntryBookshelfModel, options: { noShadow?
   </div>;
 }
 
-export function eventBanner(event: BookshelfModel, options: { withLogo?: boolean } = {}) {
+export function eventBanner(event: BookshelfModel, options: { withLogo?: boolean } = {}): JSX.Element {
   const background = event.related("details").get("background");
   const logo = event.get("logo");
   return <div class="event-banner"
@@ -126,7 +128,7 @@ export function eventBanner(event: BookshelfModel, options: { withLogo?: boolean
   </div>;
 }
 
-export function entryPlatformIcon(platformName: string, options: { hideLabel?: boolean } = {}) {
+export function entryPlatformIcon(platformName: string, options: { hideLabel?: boolean } = {}): JSX.Element {
   const icon = constants.ENTRY_PLATFORM_ICONS[platformName] || constants.ENTRY_PLATFORM_DEFAULT_ICON;
   return <>
     <span class={`${icon} ml-1`} data-toggle="tooltip" data-placement="top" title={platformName}></span>
@@ -134,7 +136,7 @@ export function entryPlatformIcon(platformName: string, options: { hideLabel?: b
   </>;
 }
 
-export function eventThemeStatus(theme: BookshelfModel, options: { uncensored?: boolean } = {}) {
+export function eventThemeStatus(theme: BookshelfModel, options: { uncensored?: boolean } = {}): JSX.Element {
   const status = theme.get("status");
 
   let label = capitalize(status);
@@ -162,7 +164,8 @@ export function eventThemeStatus(theme: BookshelfModel, options: { uncensored?: 
   </span>;
 }
 
-export function eventShortcutMyEntry(event: BookshelfModel, userEntry: EntryBookshelfModel, options: { noTitle?: boolean } = {}) {
+export function eventShortcutMyEntry(
+  event: BookshelfModel, userEntry: EntryBookshelfModel, options: { noTitle?: boolean } = {}): JSX.Element {
   let customMessage;
   if (event.get("status_entry") === "closed") {
     customMessage = "Entry submissions are closed.";
@@ -204,7 +207,7 @@ export function eventShortcutMyEntry(event: BookshelfModel, userEntry: EntryBook
 }
 
 export function eventShortcutMyPost(user: BookshelfModel, event: BookshelfModel, userPost: BookshelfModel,
-                                    options: { noTitle?: boolean; buttonsOnly?: boolean } = {}) {
+                                    options: { noTitle?: boolean; buttonsOnly?: boolean } = {}): JSX.Element {
   return <div class={`action-banner ${options.buttonsOnly ? "buttons-only" : ""}`}>
     <div class="action-banner__title">
       {ifTrue(!options.buttonsOnly && !options.noTitle, () =>

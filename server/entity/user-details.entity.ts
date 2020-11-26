@@ -5,6 +5,12 @@ import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
 import { User } from "./user.entity";
 
+export interface UserSocialLinks {
+  website?: string;
+  twitter?: string;
+  twitch?: string;
+}
+
 /**
  * Extended user information, mostly containing the user profile page.
  */
@@ -25,7 +31,7 @@ export class UserDetails extends BookshelfCompatibleEntity {
   public body: string;
 
   @Column(ColumnTypes.json({ nullable: true }))
-  public social_links: { website?: string; twitter?: string; twitch?: string };
+  public social_links: UserSocialLinks;
 
   public dependents(): Array<keyof this> {
     return [];

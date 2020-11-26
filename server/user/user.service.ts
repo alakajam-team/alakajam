@@ -231,7 +231,7 @@ export class UserService {
    */
   private validatePassword(password: string): true | string {
     if (password.length < constants.PASSWORD_MIN_LENGTH) {
-      return "Password length must be at least " + constants.PASSWORD_MIN_LENGTH;
+      return "Password length must be at least " + constants.PASSWORD_MIN_LENGTH.toString();
     } else {
       return true;
     }
