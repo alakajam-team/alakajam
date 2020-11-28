@@ -245,7 +245,7 @@ function isPast(time: number) {
   return time && (new Date().getTime() - time) > 0;
 }
 
-function parseIntCustom(value: undefined | string | string[] | number, defaultValue = 0): number {
+function parseIntCustom(value: undefined | unknown, defaultValue = 0): number {
   const valueString = value?.toString();
   if (isInt(valueString)) {
     return parseInt(valueString, 10);

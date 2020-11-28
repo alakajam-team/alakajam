@@ -9,21 +9,21 @@ import {
   FetchPageOptions,
   SortOrder
 } from "bookshelf";
+import { range } from "lodash";
 import cache from "server/core/cache";
 import config, { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import enums from "server/core/enums";
-import fileStorage from "server/core/file-storage";
+import fileStorage, { FileUploadResult } from "server/core/file-storage";
 import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
 import { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
+import { EventFlags } from "server/entity/event-details.entity";
 import { User } from "server/entity/user.entity";
 import postService from "server/post/post.service";
-import { EventFlags } from "server/entity/event-details.entity";
-import { range } from "lodash";
 
 
 /**
@@ -206,13 +206,13 @@ export class EventService {
    * @param {Entry} entry
    * @param {object|string} file The form upload
    */
-  public async setEntryPicture(entry: EntryBookshelfModel, file: object | string): Promise<void> {
+  public async setEntryPicture(entry: EntryBookshelfModel, file: Express.Multer.File | string): Promise<FileUploadResult> {
     const picturePath = "/entry/" + entry.get("id");
     const result = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_DEFAULT);
     if (!("error" in result)) {
       entry.set("updated_at", createLuxonDate().toJSDate());
       // Thumbnails creation
-      let resultThumbnail;
+      let resultThumbnail: FileUploadResult;
       if (result && result.width >= result.height * 1.1) {
         resultThumbnail = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_THUMB);
       } else {
@@ -220,6 +220,13 @@ export class EventService {
           constants.PICTURE_OPTIONS_THUMB_PORTRAIT);
       }
       const resultIcon = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_ICON);
+
+      if ("error" in resultThumbnail) {
+        return resultThumbnail;
+      }
+      if ("error" in resultIcon) {
+        return resultIcon;
+      }
 
       // Delete previous pictures (in case of a different extension)
       if (entry.picturePreviews().length > 0 && result.finalPath !== entry.picturePreviews()[0]) {

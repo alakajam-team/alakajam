@@ -25,7 +25,8 @@ export async function adminTags(req: CustomRequest, res: CustomResponse<CommonLo
 
   // Tag deletion
   if (forms.isId(req.query.delete)) {
-    const tag = await tagService.fetchById(req.query.delete);
+    const tagId = forms.parseInt(req.query.delete);
+    const tag = await tagService.fetchById(tagId);
     if (tag) {
       await tag.destroy();
     } else {
@@ -36,7 +37,8 @@ export async function adminTags(req: CustomRequest, res: CustomResponse<CommonLo
   // Detailed tag view
   let detailedTag: BookshelfModel;
   if (forms.isId(req.query.view)) {
-    detailedTag = await tagService.fetchById(req.query.view, { withRelated: "entries.userRoles" });
+    const tagId = forms.parseInt(req.query.view);
+    detailedTag = await tagService.fetchById(tagId, { withRelated: "entries.userRoles" });
   }
 
   // Custom sorting
