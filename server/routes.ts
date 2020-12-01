@@ -22,7 +22,7 @@ import * as apiController from "./api/api.controller";
 import { CommonLocals, commonMiddleware } from "./common.middleware";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
-import { inviteAccept, inviteDecline } from "./entry/team/entry-invite.controller";
+import { inviteAccept, inviteDecline } from "./entry/team/team-invite.controller";
 import {
   apiSearchForExternalEvents,
   apiSearchForTags,
@@ -31,8 +31,8 @@ import {
   entryView
 } from "./entry/view/entry-view.controller";
 import { entryMiddleware } from "./entry/entry.middleware";
-import { entryHighscoreSubmit } from "./entry/highscore/entry-highscore-submit.controller";
-import { entryHighscores } from "./entry/highscore/entry-highscores.controller";
+import { entryHighscoreSubmit } from "./entry/highscore/highscore-submit.controller";
+import { entryHighscores } from "./entry/highscore/highscores.controller";
 import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
 import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
 import { joinLeaveEvent } from "./event/dashboard/event-join.controller";
@@ -41,17 +41,17 @@ import { postEventDashboard, viewEventDashboard } from "./event/dashboard/event-
 import { viewEventGames } from "./event/games/event-games.controller";
 import { viewEventHome } from "./event/home/event-home.controller";
 import { viewEventPosts } from "./event/posts/event-posts.controller";
-import { eventStreamers, eventStreamersDoc, moderateEventStreamers } from "./event/streamers/event-streamers.controller";
+import { eventStreamers, eventStreamersDoc, moderateEventStreamers } from "./event/streamers/streamers.controller";
 import { eventMiddleware } from "./event/event.middleware";
-import { eventManageEntries } from "./event/manage/event-manage-entries.controller";
-import { postEventManageRankings, viewEventManageRankings } from "./event/manage/event-manage-rankings.controller";
-import { eventManageTemplate } from "./event/manage/event-manage-template.controller";
-import { eventManageThemes } from "./event/manage/event-manage-themes.controller";
-import { eventManageTournament } from "./event/manage/event-manage-tournament.controller";
-import { eventDelete, eventManage } from "./event/manage/event-manage.controller";
-import { viewEventRatings } from "./event/rating/event-ratings.controller";
-import { viewEventResults } from "./event/rating/event-results.controller";
-import { ajaxFindThemes, ajaxSaveThemeVote, eventThemes } from "./event/theme/themes.controller";
+import { eventManageEntries } from "./event/manage/entries/event-manage-entries.controller";
+import { postEventManageRankings, viewEventManageRankings } from "./event/manage/rankings/event-manage-rankings.controller";
+import { eventCreate } from "./event/manage/create/event-create.controller";
+import { eventManageThemes } from "./event/manage/themes/event-manage-themes.controller";
+import { eventManageTournament } from "./event/manage/tournament/event-manage-tournament.controller";
+import { eventDelete, eventManage } from "./event/manage/settings/event-settings.controller";
+import { viewEventRatings } from "./event/ratings/ratings.controller";
+import { viewEventResults } from "./event/results/results.controller";
+import { ajaxFindThemes, ajaxSaveThemeVote, eventThemes } from "./event/theme/theme.controller";
 import { viewEventTournamentGames } from "./event/tournament/tournament-games.controller";
 import { viewEventTournamentLeaderboard } from "./event/tournament/tournament-leaderboard.controller";
 import { chat } from "./explore/chat.controller";
@@ -70,16 +70,16 @@ import { postsView } from "./post/posts-view.controller";
 import { CustomRequest, CustomResponse } from "./types";
 import { loginGet, loginPost } from "./user/authentication/login.controller";
 import { logout } from "./user/authentication/logout.controller";
-import { passwordRecoveryRequest } from "./user/authentication/password-recovery-request.controller";
-import { passwordRecovery } from "./user/authentication/password-recovery.controller";
+import { passwordRecoveryRequest } from "./user/authentication/password-recovery/password-recovery-request.controller";
+import { passwordRecovery } from "./user/authentication/password-recovery/password-recovery.controller";
 import registerController from "./user/authentication/register.controller";
-import { dashboardEntries } from "./user/dashboard/dashboard-entries.controller";
-import { dashboardEntryImport } from "./user/dashboard/dashboard-entry-import.controller";
-import { dashboardFeed } from "./user/dashboard/dashboard-feed.controller";
-import { dashboardPasswordGet, dashboardPasswordPost } from "./user/dashboard/dashboard-password.controller";
-import { dashboardPosts } from "./user/dashboard/dashboard-posts.controller";
-import { dashboardScores } from "./user/dashboard/dashboard-scores.controller";
-import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/dashboard-settings.controller";
+import { dashboardEntries } from "./user/dashboard/entries/dashboard-entries.controller";
+import { dashboardEntryImport } from "./user/dashboard/entries/dashboard-entry-import.controller";
+import { dashboardFeed } from "./user/dashboard/feed/dashboard-feed.controller";
+import { dashboardPasswordGet, dashboardPasswordPost } from "./user/dashboard/password/dashboard-password.controller";
+import { dashboardPosts } from "./user/dashboard/posts/dashboard-posts.controller";
+import { dashboardScores } from "./user/dashboard/scores/dashboard-scores.controller";
+import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/settings/dashboard-settings.controller";
 import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
 
@@ -181,7 +181,7 @@ export function routes(app) {
     { name: "banner", maxCount: 1 },
     { name: "background", maxCount: 1 }
   ]);
-  router.get("/pick_event_template", csrf, eventManageTemplate);
+  router.get("/pick_event_template", csrf, eventCreate);
   router.get("/create_event", csrf, eventManage);
   router.post("/create_event", eventFormParser, csrf, eventManage);
   router.get("/:eventName([^/]{0,}-[^/]{0,})", viewEventHome);

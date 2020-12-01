@@ -4,10 +4,10 @@ import links from "server/core/links";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
-import highscoreService from "server/entry/highscore/entry-highscore.service";
+import highscoreService from "server/entry/highscore/highscore.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
-import eventRatingService from "server/event/rating/event-rating.service";
+import ratingService from "server/event/ratings/rating.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { handleSaveComment } from "server/post/comment/comment.controller";
 import commentService from "server/post/comment/comment.service";
@@ -16,7 +16,7 @@ import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EntryLocals } from "../entry.middleware";
 import entryService from "../entry.service";
-import entryTeamService from "../team/entry-team.service";
+import teamService from "../team/team.service";
 
 /**
  * Browse entry
@@ -28,21 +28,21 @@ export async function entryView(req: CustomRequest, res: CustomResponse<EntryLoc
   await entry.load(["invites.invited", "userRoles.user"]);
 
   // Check voting phase
-  const eventVote = eventRatingService.areVotesAllowed(res.locals.event);
+  const eventVote = ratingService.areVotesAllowed(res.locals.event);
 
   // Fetch vote on someone else's entry
   let vote: BookshelfModel;
   let canVoteOnEntry = false;
   if (res.locals.user && eventVote &&
       !security.canUserWrite(res.locals.user, entry)) {
-    canVoteOnEntry = await eventRatingService.canVoteOnEntry(res.locals.user, entry);
+    canVoteOnEntry = await ratingService.canVoteOnEntry(res.locals.user, entry);
     if (canVoteOnEntry) {
-      vote = await eventRatingService.findEntryVote(res.locals.user, entry);
+      vote = await ratingService.findEntryVote(res.locals.user, entry);
     }
   }
 
   // Count votes
-  const entryVotes = await eventRatingService.countEntryVotes(entry);
+  const entryVotes = await ratingService.countEntryVotes(entry);
   let minEntryVotes = null;
   if (res.locals.user && security.canUserWrite(res.locals.user, entry)) {
     minEntryVotes = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
@@ -64,7 +64,7 @@ export async function entryView(req: CustomRequest, res: CustomResponse<EntryLoc
     userLikes = await likeService.findUserLikeInfo(posts.models, user);
   }
 
-  res.render<EntryLocals>("entry/entry-view", {
+  res.render<EntryLocals>("entry/view/entry-view", {
     ...res.locals,
     sortedComments: await commentService.findCommentsOnNodeForDisplay(entry),
     editableAnonComments,
@@ -108,8 +108,8 @@ export async function entrySaveCommentOrVote(req: CustomRequest, res: CustomResp
       votes.push(req.body["vote-" + i]);
       i++;
     }
-    if (await eventRatingService.canVoteOnEntry(res.locals.user, res.locals.entry)) {
-      await eventRatingService.saveEntryVote(res.locals.user, res.locals.entry, res.locals.event, votes);
+    if (await ratingService.canVoteOnEntry(res.locals.user, res.locals.entry)) {
+      await ratingService.saveEntryVote(res.locals.user, res.locals.entry, res.locals.event, votes);
     }
     await entryView(req, res);
   }
@@ -137,7 +137,7 @@ export async function apiSearchForTeammate(req: CustomRequest, res: CustomRespon
       entry = await entryService.findEntryById(forms.parseInt(req.query.entryId.toString()));
     }
 
-    const matches = await entryTeamService.searchForTeamMembers(nameFragment,
+    const matches = await teamService.searchForTeamMembers(nameFragment,
       res.locals.event ? res.locals.event.id : null, entry);
 
     const entryId = entry ? entry.get("id") : -1;

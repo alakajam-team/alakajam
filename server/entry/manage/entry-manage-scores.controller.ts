@@ -1,7 +1,7 @@
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import security from "server/core/security";
-import highscoreService from "server/entry/highscore/entry-highscore.service";
+import highscoreService from "server/entry/highscore/highscore.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EntryLocals } from "../entry.middleware";
 

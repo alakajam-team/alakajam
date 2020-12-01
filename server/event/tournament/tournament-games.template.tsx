@@ -3,7 +3,7 @@ import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import links from "server/core/links";
-import * as scoreMacros from "server/entry/highscore/entry-highscore.macros";
+import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as eventMacros from "server/event/event.macros";
 import * as tournamentMacros from "server/event/tournament/tournament.macros";
 import { ifTrue } from "server/macros/jsx-utils";

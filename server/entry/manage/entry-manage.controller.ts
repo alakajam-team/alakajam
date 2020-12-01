@@ -10,8 +10,8 @@ import * as models from "server/core/models";
 import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_TOURNAMENT_ADVERTISING } from "server/core/settings-keys";
-import entryTeamService from "server/entry/team/entry-team.service";
-import highscoreService from "server/entry/highscore/entry-highscore.service";
+import teamService from "server/entry/team/team.service";
+import highscoreService from "server/entry/highscore/highscore.service";
 import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
@@ -231,7 +231,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
 
         res.locals.infoMessage = "";
         if (teamMembers !== null) {
-          const teamChanges = await entryTeamService.setTeamMembers(user, entry, teamMembers);
+          const teamChanges = await teamService.setTeamMembers(user, entry, teamMembers);
           if (teamChanges.numAdded > 0) {
             res.locals.infoMessage += teamChanges.numAdded + " user(s) have been sent an invite to join your team. ";
           }
@@ -272,7 +272,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
   res.render<EntryLocals>("entry/manage/entry-manage", {
     ...res.locals,
     entry,
-    members: await entryTeamService.findTeamMembers(entry, res.locals.user),
+    members: await teamService.findTeamMembers(entry, res.locals.user),
     allPlatforms: await platformService.fetchAllNames(),
     entryPlatforms: entry.get("platforms"),
     external: !res.locals.event,
@@ -334,7 +334,7 @@ export async function entryLeave(req: CustomRequest, res: CustomResponse<EntryLo
         newTeamMembers.push(userRole.get("user_id"));
       }
     });
-    await entryTeamService.setTeamMembers(user, entry, newTeamMembers);
+    await teamService.setTeamMembers(user, entry, newTeamMembers);
 
     cache.user(user.get("name")).del("latestEntry");
   }

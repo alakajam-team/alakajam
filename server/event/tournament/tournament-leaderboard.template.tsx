@@ -4,7 +4,7 @@ import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import { ordinal } from "server/core/formats";
 import links from "server/core/links";
-import * as scoreMacros from "server/entry/highscore/entry-highscore.macros";
+import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as eventMacros from "server/event/event.macros";
 import { ifFalse, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as userMacros from "server/user/user.macros";

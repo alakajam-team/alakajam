@@ -7,7 +7,7 @@ import entryService from "server/entry/entry.service";
 import platformService from "server/entry/platform/platform.service";
 import eventService from "server/event/event.service";
 import { handleGameSearch } from "server/event/games/event-games.controller";
-import eventRatingService from "server/event/rating/event-rating.service";
+import ratingService from "server/event/ratings/rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
 
 /**
@@ -25,7 +25,7 @@ export async function games(req: CustomRequest, res: CustomResponse<CommonLocals
   let rescueEntries = [];
   let requiredVotes = null;
   if (featuredEvent && featuredEvent.get("status_results") === "voting_rescue") {
-    const canVoteInEvent = await eventRatingService.canVoteInEvent(user, featuredEvent);
+    const canVoteInEvent = await ratingService.canVoteInEvent(user, featuredEvent);
     if (canVoteInEvent || security.isMod(user)) {
       rescueEntries = (await entryService.findRescueEntries(featuredEvent, user)).models;
       requiredVotes = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);

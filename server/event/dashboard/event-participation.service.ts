@@ -3,7 +3,7 @@ import cache from "server/core/cache";
 import enums from "server/core/enums";
 import { EventParticipation, StreamerStatus } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
-import entryHighscoreService from "server/entry/highscore/entry-highscore.service";
+import entryHighscoreService from "server/entry/highscore/highscore.service";
 import { FindConditions, getRepository, In, Not } from "typeorm";
 import tournamentService from "../tournament/tournament.service";
 

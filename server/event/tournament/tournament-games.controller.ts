@@ -1,5 +1,5 @@
 import enums from "server/core/enums";
-import highScoreService from "server/entry/highscore/entry-highscore.service";
+import highScoreService from "server/entry/highscore/highscore.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";

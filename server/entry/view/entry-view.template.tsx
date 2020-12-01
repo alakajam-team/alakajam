@@ -3,7 +3,7 @@ import * as React from "preact";
 import base from "server/base.template";
 import security from "server/core/security";
 import * as templatingFilters from "server/core/templating-filters";
-import * as scoreMacros from "server/entry/highscore/entry-highscore.macros";
+import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as postMacros from "server/post/post.macros";

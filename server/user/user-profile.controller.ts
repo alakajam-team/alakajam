@@ -3,7 +3,7 @@ import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import entryService from "server/entry/entry.service";
-import highScoreService from "server/entry/highscore/entry-highscore.service";
+import highScoreService from "server/entry/highscore/highscore.service";
 import twitchService from "server/event/streamers/twitch.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";

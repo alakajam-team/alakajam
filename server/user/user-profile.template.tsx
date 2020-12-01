@@ -4,7 +4,7 @@ import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import { date, markdown, relativeTime } from "server/core/templating-filters";
 import { UserSocialLinks } from "server/entity/user-details.entity";
-import * as scoreMacros from "server/entry/highscore/entry-highscore.macros";
+import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as eventMacros from "server/event/event.macros";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";

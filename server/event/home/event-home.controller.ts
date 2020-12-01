@@ -31,7 +31,7 @@ export async function viewEventHome(req: CustomRequest, res: CustomResponse<Even
   const hasJoinedEvent = Boolean(eventParticipation);
   const inviteToJoin = (event.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED) ? !hasJoinedEvent : false;
 
-  res.render<EventLocals>("event/event-home", {
+  res.render<EventLocals>("event/home/event-home", {
     ...res.locals,
     posts,
     tournamentScore,

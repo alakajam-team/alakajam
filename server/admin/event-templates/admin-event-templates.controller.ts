@@ -1,8 +1,8 @@
 import { BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
-import eventPresetService from "server/event/manage/event-preset.service";
-import eventTemplateService from "server/event/manage/event-template.service";
+import eventPresetService from "server/event/manage/settings/event-preset.service";
+import eventTemplateService from "server/event/manage/create/event-template.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { AdminBaseContext } from "../admin.base";
 

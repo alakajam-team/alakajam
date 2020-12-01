@@ -14,7 +14,7 @@ export async function viewEventPosts(_, res: CustomResponse<EventLocals>) {
   });
   await postsCollection.load(["entry", "event"]);
 
-  res.render<EventLocals>("event/event-posts", {
+  res.render<EventLocals>("event/posts/event-posts", {
     ...res.locals,
     posts: postsCollection.models,
     pageCount: postsCollection.pagination.pageCount,

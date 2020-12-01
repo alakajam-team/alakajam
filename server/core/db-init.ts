@@ -5,7 +5,7 @@ import entryService from "server/entry/entry.service";
 import themeService from "server/event/theme/theme.service";
 import commentService from "server/post/comment/comment.service";
 import eventService from "../event/event.service";
-import eventRatingService from "../event/rating/event-rating.service";
+import ratingService from "../event/ratings/rating.service";
 import postService from "../post/post.service";
 import userService from "../user/user.service";
 import constants from "./constants";
@@ -145,7 +145,7 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
         for (let k = 0; k < 6; k++) {
           votes[k] = 3 + Math.floor(Math.random() * 4);
         }
-        await eventRatingService.saveEntryVote(userA, entryB, event2, votes);
+        await ratingService.saveEntryVote(userA, entryB, event2, votes);
       }
     }
 

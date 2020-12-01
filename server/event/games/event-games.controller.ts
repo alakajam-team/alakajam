@@ -9,7 +9,7 @@ import entryService, { FindGamesOptions } from "server/entry/entry.service";
 import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
-import eventRatingService from "server/event/rating/event-rating.service";
+import ratingService from "server/event/ratings/rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 import { EventLocals } from "../event.middleware";
@@ -32,7 +32,7 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
   // Search entries
   let rescueEntries = [];
   if (event.get("status_results") === "voting_rescue") {
-    const canVoteInEvent = await eventRatingService.canVoteInEvent(user, event);
+    const canVoteInEvent = await ratingService.canVoteInEvent(user, event);
     if (canVoteInEvent || security.isMod(user)) {
       rescueEntries = (await entryService.findRescueEntries(event, user)).models;
     }
@@ -45,11 +45,11 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
   let voteHistory = [];
   if (user && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE,
     enums.EVENT.STATUS_RESULTS.RESULTS].includes(event.get("status_results"))) {
-    const voteHistoryCollection = await eventRatingService.findVoteHistory(user.get("id"), event, { pageSize: 5 });
+    const voteHistoryCollection = await ratingService.findVoteHistory(user.get("id"), event, { pageSize: 5 });
     voteHistory = voteHistoryCollection.models;
   }
 
-  res.render<EventLocals>("event/event-games", {
+  res.render<EventLocals>("event/games/event-games", {
     ...res.locals,
     rescueEntries,
     requiredVotes,
