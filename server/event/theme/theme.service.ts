@@ -1,21 +1,12 @@
 import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel, FetchAllOptions, SaveOptions, SyncOptions } from "bookshelf";
-import * as lodash from "lodash";
-import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
-import db from "server/core/db";
 import enums from "server/core/enums";
-import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
 import {
-  SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
-  SETTING_EVENT_THEME_ELIMINATION_MODULO,
-  SETTING_EVENT_THEME_ELIMINATION_THRESHOLD,
-  SETTING_EVENT_THEME_IDEAS_REQUIRED,
-  SETTING_EVENT_THEME_SHORTLIST_SIZE,
   SETTING_EVENT_THEME_SUGGESTIONS
 } from "server/core/settings-keys";
 import { User } from "server/entity/user.entity";

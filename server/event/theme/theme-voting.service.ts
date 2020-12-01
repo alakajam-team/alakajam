@@ -61,7 +61,7 @@ export class ThemeService {
     let query = models.Theme as BookshelfModel;
     if (user) {
       query = query.query((qb) => {
-        void qb.leftOuterJoin("theme_vote", function () {
+        void qb.leftOuterJoin("theme_vote", function() {
           this.on("theme.id", "=", "theme_vote.theme_id");
           this.andOn("theme_vote.user_id", "=", user.get("id"));
         });
