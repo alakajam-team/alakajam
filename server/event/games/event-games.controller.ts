@@ -39,7 +39,7 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
   }
   const requiredVotes = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
   const entriesCollection = await entryService.findEntries(searchOptions);
-  const platformCollection = await platformService.fetchAll();
+  const platforms = await platformService.findAll();
 
   // Fetch vote history
   let voteHistory = [];
@@ -56,7 +56,7 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
     entriesCollection,
     voteHistory,
     searchOptions,
-    platforms: platformCollection.models,
+    platforms,
   });
 }
 

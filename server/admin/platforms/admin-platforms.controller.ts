@@ -1,17 +1,17 @@
-import { BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
-import cache from "server/core/cache";
 import config from "server/core/config";
 import forms from "server/core/forms";
 import security from "server/core/security";
+import { Platform } from "server/entity/platform.entity";
+import platformRepository from "server/entry/platform/platform.repository";
 import { CustomRequest, CustomResponse } from "server/types";
 import platformService from "../../entry/platform/platform.service";
 import { AdminBaseContext } from "../admin.base";
 
 export interface AdminPlatformsContext extends AdminBaseContext {
-  platforms: BookshelfModel[];
+  platforms: Platform[];
   entryCount: Record<number, number>;
-  editPlatform?: BookshelfModel;
+  editPlatform?: Platform;
   errorMessage?: string;
 }
 
@@ -29,24 +29,23 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
   if (req.method === "POST") {
     const name = forms.sanitizeString(req.body.name);
     if (name) {
-      let platform: BookshelfModel;
+      let platform: Platform;
 
       if (forms.isId(req.body.id)) {
-        platform = await platformService.fetchById(req.body.id);
+        platform = await platformRepository.findById(req.body.id);
         platform.set("name", name);
       } else {
-        platform = platformService.createPlatform(forms.sanitizeString(req.body.name));
+        platform = platformRepository.createPlatform(forms.sanitizeString(req.body.name));
       }
 
       if (platform) {
-        const duplicateCollection = await platformService.fetchMultipleNamed([platform.get("name")]);
+        const duplicateCollection = await platformRepository.findAllByName([platform.name]);
         let isDuplicate = false;
         duplicateCollection.forEach((potentialDuplicate) => {
-          isDuplicate = isDuplicate || platform.get("id") !== potentialDuplicate.get("id");
+          isDuplicate = isDuplicate || platform.id !== potentialDuplicate.id;
         });
         if (!isDuplicate) {
-          await platform.save();
-          cache.general.del("platforms");
+          await platformService.save(platform);
         } else {
           errorMessage = "Duplicate platform";
         }
@@ -55,11 +54,11 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
   }
 
   if (forms.isId(req.query.delete)) {
-    const platform = await platformService.fetchById(forms.parseInt(req.query.delete.toString()));
+    const platform = await platformRepository.findById(forms.parseInt(req.query.delete));
     if (platform) {
-      const entryCount = await platformService.countEntriesByPlatform(platform);
+      const entryCount = await platformRepository.countEntriesByPlatform(platform);
       if (entryCount === 0) {
-        await platform.destroy();
+        await platformService.delete(platform.id);
       }
     } else {
       errorMessage = "Platform to delete not found";
@@ -67,23 +66,23 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
   }
 
   // Fetch platform to edit
-  let editPlatform: BookshelfModel;
+  let editPlatform: Platform;
   if (forms.isId(req.query.edit)) {
-    editPlatform = await platformService.fetchById(forms.parseInt(req.query.edit.toString()));
+    editPlatform = await platformRepository.findById(forms.parseInt(req.query.edit.toString()));
   } else if (req.query.create) {
-    editPlatform = platformService.createPlatform("");
+    editPlatform = platformRepository.createPlatform("");
   }
 
   // Count entries by platform
-  const platformCollection = await platformService.fetchAll();
+  const platforms = await platformService.findAll();
   const entryCountByPlatform: Record<number, number> = {};
-  for (const platform of platformCollection.models) {
-    entryCountByPlatform[platform.get("id")] = await platformService.countEntriesByPlatform(platform);
+  for (const platform of platforms) {
+    entryCountByPlatform[platform.get("id")] = await platformRepository.countEntriesByPlatform(platform);
   }
 
   res.render<AdminPlatformsContext>("admin/platforms/admin-platforms", {
     ...res.locals,
-    platforms: platformCollection.models,
+    platforms,
     entryCount: entryCountByPlatform,
     editPlatform,
     errorMessage,

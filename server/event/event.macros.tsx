@@ -131,7 +131,7 @@ export function eventBanner(event: BookshelfModel, options: { withLogo?: boolean
 export function entryPlatformIcon(platformName: string, options: { hideLabel?: boolean } = {}): JSX.Element {
   const icon = constants.ENTRY_PLATFORM_ICONS[platformName] || constants.ENTRY_PLATFORM_DEFAULT_ICON;
   return <>
-    <span class={`${icon} ml-1`} data-toggle="tooltip" data-placement="top" title={platformName}></span>
+    <span class={`${icon} mr-1`} data-toggle="tooltip" data-placement="top" title={platformName}></span>
     {!options.hideLabel ? platformName : ""}
   </>;
 }

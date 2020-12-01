@@ -10,16 +10,16 @@ import * as models from "server/core/models";
 import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_TOURNAMENT_ADVERTISING } from "server/core/settings-keys";
-import teamService from "server/entry/team/team.service";
 import highscoreService from "server/entry/highscore/highscore.service";
-import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
+import teamService from "server/entry/team/team.service";
 import eventService from "server/event/event.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import entryPicturesService from "../entry-pictures.service";
 import { EntryLocals } from "../entry.middleware";
 import entryService from "../entry.service";
+import platformRepository from "../platform/platform.repository";
 
 export async function entryManage(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { event, user } = res.locals;
@@ -87,7 +87,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       // Ensure the requested platforms (if any) are valid before proceeding.
       let platformNames = (Array.isArray(req.body.platforms)) ? req.body.platforms : [req.body.platforms];
       platformNames = platformNames.map(forms.sanitizeString);
-      platforms = await platformService.fetchMultipleNamed(platformNames);
+      platforms = await platformRepository.findAllByName(platformNames);
       if (platforms.length < platformNames.length) {
         errorMessages.push("One or more platforms are invalid: " + platformNames.join(", "));
       }
@@ -259,7 +259,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       }
 
       // Set or remove platforms.
-      await platformService.setEntryPlatforms(entry, platforms || []);
+      await platformRepository.setEntryPlatforms(entry, platforms || []);
       cache.user(res.locals.user.get("name")).del("latestEntry");
       await entry.load(["userRoles.user", "comments", "details", "tags"]);
 
@@ -273,7 +273,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
     ...res.locals,
     entry,
     members: await teamService.findTeamMembers(entry, res.locals.user),
-    allPlatforms: await platformService.fetchAllNames(),
+    allPlatforms: await platformRepository.findAllNames(),
     entryPlatforms: entry.get("platforms"),
     external: !res.locals.event,
     tags: (entry.related<BookshelfCollection>("tags")).map((tag) => ({ id: tag.id, value: tag.get("value") })),

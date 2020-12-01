@@ -32,9 +32,9 @@ export async function games(req: CustomRequest, res: CustomResponse<CommonLocals
     }
   }
 
-  const [entriesCollection, platformCollection, eventsCollection] = await Promise.all([
+  const [entriesCollection, platforms, eventsCollection] = await Promise.all([
     entryService.findEntries(searchOptions),
-    platformService.fetchAll(),
+    platformService.findAll(),
     eventService.findEvents({ allowingEntries: true })
   ]);
 
@@ -51,6 +51,6 @@ export async function games(req: CustomRequest, res: CustomResponse<CommonLocals
     rescueEntries,
     requiredVotes,
     events: eventsCollection.models,
-    platforms: platformCollection.models,
+    platforms,
   });
 }

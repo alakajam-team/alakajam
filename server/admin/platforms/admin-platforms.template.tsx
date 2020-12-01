@@ -1,5 +1,5 @@
-import { BookshelfModel } from "bookshelf";
 import * as React from "preact";
+import { Platform } from "server/entity/platform.entity";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import adminBase from "../admin.base";
@@ -12,7 +12,7 @@ export default function render(context: AdminPlatformsContext) {
     <h1>Platforms</h1>
 
     {editPlatform
-      ? editForm(editPlatform, entryCount[editPlatform.get("id")], csrfToken)
+      ? editForm(editPlatform, entryCount[editPlatform.id], csrfToken)
       : <p><a class="btn btn-primary" href="?create=true">Create platform</a></p>}
 
     <table class="table sortable">
@@ -25,10 +25,10 @@ export default function render(context: AdminPlatformsContext) {
       <tbody>
         {platforms.map(platform =>
           <tr>
-            <td>{platform.get("id")}</td>
-            <td>{eventMacros.entryPlatformIcon(platform.get("name"), undefined)}</td>
-            <td>{entryCount[platform.get("id")]}</td>
-            <td><a class="btn btn-primary btn-sm" href={"?edit=" + platform.get("id")}>Edit</a></td>
+            <td>{platform.id}</td>
+            <td>{eventMacros.entryPlatformIcon(platform.name, undefined)}</td>
+            <td>{entryCount[platform.id]}</td>
+            <td><a class="btn btn-primary btn-sm" href={"?edit=" + platform.id}>Edit</a></td>
           </tr>
         )}
       </tbody>
@@ -36,23 +36,23 @@ export default function render(context: AdminPlatformsContext) {
   </div>);
 }
 
-function editForm(editPlatform: BookshelfModel, platformEntryCount: number, csrfToken: Function) {
+function editForm(editPlatform: Platform, platformEntryCount: number, csrfToken: Function) {
   return <form action="/admin/platforms" method="post" class="card">
     <div class="card-header">
       <div class="float-right">
         {deleteButton(editPlatform, platformEntryCount)}
       </div>
-      <h2>{editPlatform.get("name")}</h2>
+      <h2>{editPlatform.name}</h2>
     </div>
     <div class="card-body">
       <div class="form-group">
         <label for="id">ID</label>
-        <p>{editPlatform.get("id") || "N.A."}</p>
-        <input type="hidden" name="id" value={ editPlatform.get("id") } />
+        <p>{editPlatform.id || "N.A."}</p>
+        <input type="hidden" name="id" value={ editPlatform.id } />
       </div>
       <div class="form-group">
         <label for="name">Name</label>
-        <input type="text" name="name" value={ editPlatform.get("name") } class="form-control" autocomplete="off" autofocus />
+        <input type="text" name="name" value={ editPlatform.name } class="form-control" autocomplete="off" autofocus />
       </div>
 
       <div class="form-group">
@@ -64,11 +64,11 @@ function editForm(editPlatform: BookshelfModel, platformEntryCount: number, csrf
   </form>;
 }
 
-function deleteButton(editPlatform: BookshelfModel, platformEntryCount: number) {
-  if (!editPlatform.get("id"))  {
+function deleteButton(editPlatform: Platform, platformEntryCount: number) {
+  if (!editPlatform.id)  {
     return;
   } else if (platformEntryCount === 0) {
-    return <a class="btn btn-danger btn-sm" href={"?delete=" + editPlatform.get("id")}
+    return <a class="btn btn-danger btn-sm" href={"?delete=" + editPlatform.id}
       onclick="return confirm('This cannot be reverted. Continue?')">Delete</a>;
   } else {
     return <>

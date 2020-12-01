@@ -40,8 +40,8 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
         <label for="platforms">Platforms</label>
         <select name="platforms" class="form-control js-select" multiple size={2}>
           {context.platforms?.map(platform =>
-            <option value={platform.get("id")} selected={context.searchOptions.platforms
-              && context.searchOptions.platforms.includes(platform.get("id"))}>{platform.get("name")}</option>
+            <option value={platform.id} selected={context.searchOptions.platforms
+              && context.searchOptions.platforms.includes(platform.id)}>{platform.name}</option>
           )}
         </select>
       </div>
