@@ -23,7 +23,6 @@ describe("User service", function() {
     await closeTestDB();
   });
 
-
   describe("find by name", () => {
 
     it("should return a user when searching a valid name", async () => {

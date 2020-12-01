@@ -1,15 +1,16 @@
 /* eslint-disable no-console */
 
 import * as childProcess from "child_process";
+import * as path from "path";
 import constants from "./core/constants";
 
 const specMatcher = process.argv.length >= 3
   ? "server/**/" + process.argv[2] + "*"
   : "server/**/*.spec.ts";
 
-const npx = process.platform.startsWith("win") ? "npx.cmd" : "npx";
-const npxArgs = [
-  "mocha",
+const mochaExec = process.platform.startsWith("win") ? "mocha.cmd" : "mocha";
+const mochaPath = path.resolve(constants.ROOT_PATH, "node_modules/.bin", mochaExec);
+const mochaArgs = [
   "-r ts-node/register/transpile-only",
   "-r tsconfig-paths/register",
   specMatcher,
@@ -18,11 +19,12 @@ const npxArgs = [
   "--watch-files server"
 ];
 
-console.log(`Running: ${npx} ${npxArgs.join(" ")}`);
+console.log(`Running: mocha ${mochaArgs.join(" ")}`);
 
-const cp = childProcess.spawn(npx, npxArgs, {
+const cp = childProcess.spawn(mochaPath, mochaArgs, {
   cwd: constants.ROOT_PATH,
-  stdio: "inherit"
+  stdio: "inherit",
+  windowsVerbatimArguments: true
 });
 
 process.on("SIGINT", () => {
