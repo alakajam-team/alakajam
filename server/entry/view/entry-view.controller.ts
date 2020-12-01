@@ -14,9 +14,9 @@ import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import { EntryLocals } from "./entry.middleware";
-import entryService from "./entry.service";
-import entryTeamService from "./team/entry-team.service";
+import { EntryLocals } from "../entry.middleware";
+import entryService from "../entry.service";
+import entryTeamService from "../team/entry-team.service";
 
 /**
  * Browse entry

@@ -23,7 +23,13 @@ import { CommonLocals, commonMiddleware } from "./common.middleware";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
 import { inviteAccept, inviteDecline } from "./entry/team/entry-invite.controller";
-import { apiSearchForExternalEvents, apiSearchForTags, apiSearchForTeammate, entrySaveCommentOrVote, entryView } from "./entry/entry-view.controller";
+import {
+  apiSearchForExternalEvents,
+  apiSearchForTags,
+  apiSearchForTeammate,
+  entrySaveCommentOrVote,
+  entryView
+} from "./entry/view/entry-view.controller";
 import { entryMiddleware } from "./entry/entry.middleware";
 import { entryHighscoreSubmit } from "./entry/highscore/entry-highscore-submit.controller";
 import { entryHighscores } from "./entry/highscore/entry-highscores.controller";
