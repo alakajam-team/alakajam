@@ -4,9 +4,10 @@ import constants from "server/core/constants";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
+import entryService, { FindGamesOptions } from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
-import eventService, { FindGamesOptions } from "../event.service";
+import eventService from "../event.service";
 
 /**
  * Manage the event's entry rankings
@@ -35,7 +36,7 @@ export async function viewEventManageRankings(req: CustomRequest, res: CustomRes
   if (req.query.orderBy === "ratingCount") {
     findGameOptions.sortBy = "rating-count";
   }
-  const entriesCollection = await eventService.findGames(findGameOptions) as BookshelfCollection;
+  const entriesCollection = await entryService.findEntries(findGameOptions) as BookshelfCollection;
 
   // Sort by rating category, entries without rankings are last
   const entries = entriesCollection.models;
@@ -80,7 +81,7 @@ export async function postEventManageRankings(req: CustomRequest, res: CustomRes
   }
 
   if (errors.length === 0) {
-    const entry = await eventService.findEntryById(req.body.entryId, { withRelated: ["details"] });
+    const entry = await entryService.findEntryById(req.body.entryId, { withRelated: ["details"] });
     if (entry) {
       const entryDetails = entry.related<BookshelfModel>("details");
       entryDetails.set(`ranking_${parameters.currentCategoryIndex}`, newRanking);

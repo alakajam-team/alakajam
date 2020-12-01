@@ -3,7 +3,7 @@ import { BookshelfCollection } from "bookshelf";
 import forms from "server/core/forms";
 import security from "server/core/security";
 import entryHotnessService from "server/entry/entry-hotness.service";
-import eventService, { FindGamesOptions } from "server/event/event.service";
+import entryService, { FindGamesOptions } from "server/entry/entry.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
@@ -35,7 +35,7 @@ export async function eventManageEntries(req: CustomRequest, res: CustomResponse
   if (req.query.orderBy === "ratingCount") {
     findGameOptions.sortBy = "rating-count";
   }
-  const entriesCollection = await eventService.findGames(findGameOptions) as BookshelfCollection;
+  const entriesCollection = await entryService.findEntries(findGameOptions) as BookshelfCollection;
 
   // Gather info for karma details
   const entriesById = {};

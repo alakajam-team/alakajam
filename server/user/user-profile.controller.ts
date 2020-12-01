@@ -2,13 +2,13 @@ import { BookshelfModel, PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
+import entryService from "server/entry/entry.service";
 import highScoreService from "server/entry/highscore/entry-highscore.service";
-import eventService from "server/event/event.service";
+import twitchService from "server/event/streamers/twitch.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
-import twitchService from "server/event/streamers/twitch.service";
 
 /**
  * Display a user profile
@@ -20,7 +20,7 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
     res.locals.pageDescription = forms.markdownToText(profileUser.details.body);
 
     const [entries, posts, scores, isTwitchLive] = await Promise.all([
-      eventService.findUserEntries(profileUser),
+      entryService.findUserEntries(profileUser),
       postService.findPosts({ userId: profileUser.id }),
       highScoreService.findUserScores(profileUser.id, { sortBy: "ranking" }),
       twitchService.isLive(profileUser)

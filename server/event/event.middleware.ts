@@ -1,6 +1,7 @@
 import { BookshelfModel } from "bookshelf";
 import { NextFunction } from "express";
 import { CommonLocals } from "server/common.middleware";
+import entryService from "server/entry/entry.service";
 import eventService from "server/event/event.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -51,7 +52,7 @@ export function loadUserShortcutsContext(
   targetEvent: BookshelfModel,
   options: { postFromAnyEvent?: boolean } = {}) {
   if (targetEvent && res.locals.user) {
-    const entryTask = eventService.findUserEntryForEvent(res.locals.user, targetEvent.get("id"))
+    const entryTask = entryService.findUserEntryForEvent(res.locals.user, targetEvent.get("id"))
       .then((userEntry) => { res.locals.userEntry = userEntry; });
     const userPostTask = postService.findPost({
       userId: res.locals.user.id,

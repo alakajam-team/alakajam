@@ -10,14 +10,16 @@ import * as models from "server/core/models";
 import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_TOURNAMENT_ADVERTISING } from "server/core/settings-keys";
-import entryTeamService from "server/entry/entry-team.service";
+import entryTeamService from "server/entry/team/entry-team.service";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import entryPicturesService from "../entry-pictures.service";
 import { EntryLocals } from "../entry.middleware";
+import entryService from "../entry.service";
 
 export async function entryManage(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { event, user } = res.locals;
@@ -28,7 +30,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
     res.redirect("/login?redirect=" + req.url);
     return;
   } else if (!entry && event) {
-    const existingEntry = await eventService.findUserEntryForEvent(user, event.id);
+    const existingEntry = await entryService.findUserEntryForEvent(user, event.id);
     if (existingEntry) {
       // User with an entry went to the creation URL, redirect him
       res.redirect(links.routeUrl(existingEntry, "entry", "edit"));
@@ -94,7 +96,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
     // Create model if needed
     let isCreation;
     if (!entry.get("id")) {
-      entry = await eventService.createEntry(user, event);
+      entry = await entryService.createEntry(user, event);
       isCreation = true;
     } else {
       isCreation = false;
@@ -142,7 +144,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       }
       entry.set("pictures", { previews: [] });
     } else if (req.file && (await fileStorage.isValidPicture(req.file.path))) {
-      const result = await eventService.setEntryPicture(entry, req.file);
+      const result = await entryPicturesService.setEntryPicture(entry, req.file);
       if ("error" in result) {
         errorMessages.push(result.error);
       }
@@ -294,7 +296,7 @@ export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryL
       post.set("entry_id", null);
       await post.save();
     }
-    await eventService.deleteEntry(entry);
+    await entryService.deleteEntry(entry);
     if (event && event.get("status_entry") !== enums.EVENT.STATUS_ENTRY.CLOSED) {
       eventService.refreshEventCounts(event) // No need to await
         .catch(e => log.error(e));

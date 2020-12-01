@@ -1,7 +1,7 @@
 import { BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
-import eventService from "server/event/event.service";
+import entryService from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
 
 /**
@@ -10,7 +10,7 @@ import { CustomRequest, CustomResponse } from "server/types";
 export async function dashboardEntries(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   const { user, featuredEvent } = res.locals;
 
-  const entryCollection = await eventService.findUserEntries(user);
+  const entryCollection = await entryService.findUserEntries(user);
 
   const alakajamEntries: BookshelfModel[] = [];
   const otherEntries: BookshelfModel[] = [];
@@ -27,7 +27,7 @@ export async function dashboardEntries(req: CustomRequest, res: CustomResponse<C
 
   let featuredEventEntry;
   if (featuredEvent) {
-    featuredEventEntry = await eventService.findUserEntryForEvent(user, featuredEvent.get("id"));
+    featuredEventEntry = await entryService.findUserEntryForEvent(user, featuredEvent.get("id"));
   }
 
   res.render<CommonLocals>("user/dashboard/dashboard-entries", {

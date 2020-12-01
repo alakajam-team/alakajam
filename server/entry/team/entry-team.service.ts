@@ -1,12 +1,11 @@
-
+import { BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import * as models from "server/core/models";
-import security, { SECURITY_PERMISSION_MANAGE, SECURITY_PERMISSION_WRITE } from "server/core/security";
-import postService from "server/post/post.service";
-import { BookshelfModel } from "bookshelf";
+import { SECURITY_PERMISSION_MANAGE, SECURITY_PERMISSION_WRITE } from "server/core/security";
+import entryInviteService from "./entry-invite.service";
 
 export class EntryTeamService {
 
@@ -184,7 +183,7 @@ export class EntryTeamService {
           await invite.save(null, { transacting: transaction });
 
           if (toCreateUserRow.id === currentUser.get("id")) {
-            await this.acceptInvite(currentUser, entry);
+            await entryInviteService.acceptInvite(currentUser, entry);
           } else {
             numAdded++;
             cache.user(toCreateUserRow.name).del("unreadNotifications");
@@ -198,81 +197,6 @@ export class EntryTeamService {
         alreadyEntered,
       };
     });
-  }
-
-  public async acceptInvite(user, entry) {
-    // Verify we're not on a solo entry
-    if (entry.get("division") === enums.DIVISION.SOLO) {
-      return this.deleteInvite(user, entry);
-    }
-
-    await db.transaction(async (transaction) => {
-      // Check that the invite exists
-      const invite = await models.EntryInvite.where({
-        entry_id: entry.get("id"),
-        invited_user_id: user.get("id"),
-      }).fetch({ transacting: transaction });
-
-      if (invite) {
-        // Check if the user role already exists
-        let userRole = await models.UserRole.where({
-          node_id: entry.get("id"),
-          node_type: "entry",
-          user_id: user.get("id"),
-        }).fetch({ transacting: transaction });
-
-        // Create or promote role
-        if (userRole) {
-          const isInviteForHigherPermission = security.getPermissionsEqualOrAbove(userRole.get("permission"))
-            .includes(invite.get("permission"));
-          if (isInviteForHigherPermission) {
-            userRole.set("permission", invite.get("permission"));
-          }
-        } else {
-          // Clear any other invites from the same event
-          if (entry.get("event_id")) {
-            const inviteIds = await transaction("entry_invite")
-              .select("entry_invite.id")
-              .leftJoin("entry", "entry.id", "entry_invite.entry_id")
-              .where({
-                "entry_invite.invited_user_id": user.get("id"),
-                "entry.event_id": entry.get("event_id"),
-              }) as any;
-            await transaction("entry_invite")
-              .whereIn("id", inviteIds.map((row) => row.id))
-              .del();
-          }
-
-          userRole = new models.UserRole({
-            user_id: user.get("id"),
-            user_name: user.get("name"),
-            user_title: user.get("title"),
-            node_id: entry.get("id"),
-            node_type: "entry",
-            permission: invite.get("permission"),
-            event_id: entry.get("event_id"),
-          }) as BookshelfModel;
-        }
-
-        await postService.attachPostsToEntry(entry.get("event_id"), user.get("id"), entry.get("id"),
-          { transacting: transaction });
-
-        await userRole.save(null, { transacting: transaction });
-        await this.deleteInvite(user, entry, { transacting: transaction });
-      }
-    });
-  }
-
-  public async deleteInvite(user, entry, options: any = {}) {
-    let query = db.knex("entry_invite");
-    if (options.transacting) {
-      query = query.transacting(options.transacting);
-    }
-    await query.where({
-      entry_id: entry.get("id"),
-      invited_user_id: user.get("id"),
-    })
-      .del();
   }
 
 }

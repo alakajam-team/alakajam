@@ -5,12 +5,12 @@ if (__filename.endsWith(".js")) {
 
 import * as fs from "fs-extra";
 import * as path from "path";
-
 import config from "server/core/config";
 import constants from "server/core/constants";
 import log from "server/core/log";
 import * as models from "server/core/models";
-import eventService from "server/event/event.service";
+import entryPicturesService from "server/entry/entry-pictures.service";
+
 
 exports.up = async (knex) => {
   let entries;
@@ -34,7 +34,7 @@ exports.up = async (knex) => {
         u++;
         const movedFile = path.join(constants.ROOT_PATH, entry.picturePreviews()[0].replace(".", "-old."));
         await fs.rename(path.join(constants.ROOT_PATH, entry.picturePreviews()[0]), movedFile);
-        await eventService.setEntryPicture(entry, movedFile);
+        await entryPicturesService.setEntryPicture(entry, movedFile);
         await entry.save();
         await fs.unlink(movedFile);
       }

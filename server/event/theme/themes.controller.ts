@@ -6,17 +6,18 @@ import settings from "server/core/settings";
 import {
   SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES,
   SETTING_EVENT_THEME_IDEAS_REQUIRED,
-  SETTING_EVENT_THEME_SUGGESTIONS,
-  SETTING_EVENT_THEME_SHORTLIST_SIZE
+
+  SETTING_EVENT_THEME_SHORTLIST_SIZE, SETTING_EVENT_THEME_SUGGESTIONS
 } from "server/core/settings-keys";
 import { ThemeShortlistEliminationState } from "server/entity/event-details.entity";
 import { User } from "server/entity/user.entity";
-import eventThemeService from "server/event/theme/event-theme.service";
+import themeService from "server/event/theme/theme.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
-import eventThemeShortlistService from "./event-theme-shortlist.service";
+import themeShortlistService from "./theme-shortlist.service";
+import themeVotingService from "./theme-voting.service";
 
 /**
  * Submit themes to an event, view and vote on other themes
@@ -58,11 +59,11 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
             }
           }
           // Update theme ideas
-          await eventThemeService.saveThemeSubmissions(res.locals.user, event, ideas);
+          await themeService.saveThemeSubmissions(res.locals.user, event, ideas);
         } else if (req.body.action === "vote") {
           if (forms.isId(req.body["theme-id"]) && (req.body.upvote !== undefined || req.body.downvote !== undefined)) {
             const score = (req.body.upvote !== undefined) ? 1 : -1;
-            await eventThemeService.saveVote(res.locals.user, event, forms.parseInt(req.body["theme-id"]), score);
+            await themeVotingService.saveVote(res.locals.user, event, forms.parseInt(req.body["theme-id"]), score);
           }
         } else if (req.body.action === "shortlist" && req.body["shortlist-votes"]) {
           const ids = req.body["shortlist-votes"].split(",").map((id) => parseInt(id, 10));
@@ -73,7 +74,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
             }
           }
           if (validIds) {
-            await eventThemeShortlistService.saveShortlistVotes(res.locals.user, event, ids);
+            await themeShortlistService.saveShortlistVotes(res.locals.user, event, ids);
             context.infoMessage = "Ranking changes saved.";
           }
         }
@@ -84,15 +85,15 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
 
       if (res.locals.user) {
         // Logged users
-        const userThemesCollection = await eventThemeService.findThemesByUser(res.locals.user, event);
+        const userThemesCollection = await themeService.findThemesByUser(res.locals.user, event);
         context.userThemes = userThemesCollection.models;
 
-        context.voteCount = await eventThemeService.findThemeVotesHistory(
+        context.voteCount = await themeVotingService.findThemeVotesHistory(
           res.locals.user, event, { count: true });
 
         if (statusTheme === enums.EVENT.STATUS_THEME.VOTING) {
-          if (await eventThemeService.isThemeVotingAllowed(event)) {
-            const votesHistoryCollection = await eventThemeService.findThemeVotesHistory(
+          if (await themeVotingService.isThemeVotingAllowed(event)) {
+            const votesHistoryCollection = await themeVotingService.findThemeVotesHistory(
               res.locals.user, event) as BookshelfCollection;
             context.votesHistory = votesHistoryCollection.models;
             context.votingAllowed = true;
@@ -102,13 +103,13 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
           }
         } else if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED].includes(statusTheme)) {
           context = Object.assign(context, await _generateShortlistInfo(event, res.locals.user));
-          await eventThemeShortlistService.updateShortlistAutoElimination(event);
+          await themeShortlistService.updateShortlistAutoElimination(event);
         }
       } else {
         // Anonymous users
         if (event.get("status_theme") === enums.EVENT.STATUS_THEME.VOTING) {
-          if (await eventThemeService.isThemeVotingAllowed(event)) {
-            const sampleThemesCollection = await eventThemeService.findThemesToVoteOn(null, event);
+          if (await themeVotingService.isThemeVotingAllowed(event)) {
+            const sampleThemesCollection = await themeVotingService.findThemesToVoteOn(null, event);
             context.sampleThemes = sampleThemesCollection.models;
             context.votingAllowed = true;
           } else {
@@ -123,14 +124,14 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
       // State-specific data
       if ([enums.EVENT.STATUS_THEME.SHORTLIST, enums.EVENT.STATUS_THEME.CLOSED,
         enums.EVENT.STATUS_THEME.RESULTS].includes(statusTheme)) {
-        context.shortlistVotes = await eventThemeShortlistService.countShortlistVotes(event);
+        context.shortlistVotes = await themeShortlistService.countShortlistVotes(event);
       }
       if (statusTheme === enums.EVENT.STATUS_THEME.RESULTS) {
-        const shortlistCollection = await eventThemeShortlistService.findShortlist(event);
+        const shortlistCollection = await themeShortlistService.findShortlist(event);
         context.shortlist = shortlistCollection.sortBy((theme) => -theme.get("score"));
 
         if (res.locals.user) {
-          const shortlistVotesCollection = await eventThemeShortlistService.findThemeShortlistVotes(event, { user: res.locals.user });
+          const shortlistVotesCollection = await themeShortlistService.findThemeShortlistVotes(event, { user: res.locals.user });
           if (shortlistVotesCollection.length === shortlistCollection.length) {
             context.userRanks = {};
             shortlistVotesCollection.forEach((vote) => {
@@ -163,7 +164,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
  * }
  */
 export async function _generateShortlistInfo(event: BookshelfModel, user: User | null = null) {
-  const shortlistCollection = await eventThemeShortlistService.findShortlist(event);
+  const shortlistCollection = await themeShortlistService.findShortlist(event);
   const shortlistElimination: ThemeShortlistEliminationState = event.related<BookshelfModel>("details").get("shortlist_elimination");
   const eliminatedCount = shortlistElimination.eliminatedCount || 0;
 
@@ -177,7 +178,7 @@ export async function _generateShortlistInfo(event: BookshelfModel, user: User |
   };
 
   // Sort active shortlist by user score
-  const shortlistVotesCollection = user ? await eventThemeShortlistService.findThemeShortlistVotes(event, { user }) : null;
+  const shortlistVotesCollection = user ? await themeShortlistService.findThemeShortlistVotes(event, { user }) : null;
   if (shortlistVotesCollection) {
     info.scoreByTheme = {};
     shortlistVotesCollection.forEach((vote) => {
@@ -205,7 +206,7 @@ export async function _generateShortlistInfo(event: BookshelfModel, user: User |
  * AJAX API: Find themes to vote on
  */
 export async function ajaxFindThemes(req: CustomRequest, res: CustomResponse<EventLocals>) {
-  const themesCollection = await eventThemeService.findThemesToVoteOn(res.locals.user, res.locals.event);
+  const themesCollection = await themeVotingService.findThemesToVoteOn(res.locals.user, res.locals.event);
   const json = [];
   for (const theme of themesCollection.models) {
     json.push({
@@ -222,7 +223,7 @@ export async function ajaxFindThemes(req: CustomRequest, res: CustomResponse<Eve
 export async function ajaxSaveThemeVote(req: CustomRequest, res: CustomResponse<EventLocals>) {
   if (forms.isId(req.body.id) && (req.body.upvote !== undefined || req.body.downvote !== undefined)) {
     const score = (req.body.upvote !== undefined) ? 1 : -1;
-    await eventThemeService.saveVote(res.locals.user, res.locals.event, forms.parseInt(req.body.id), score);
+    await themeVotingService.saveVote(res.locals.user, res.locals.event, forms.parseInt(req.body.id), score);
   }
   res.type("text/plain"); // Keeps Firefox from parsing the empty response as XML and logging an error.
   res.end("");

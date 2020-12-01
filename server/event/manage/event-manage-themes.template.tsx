@@ -6,7 +6,7 @@ import { digits } from "server/core/templating-filters";
 import { ThemeShortlistEliminationState } from "server/entity/event-details.entity";
 import { User } from "server/entity/user.entity";
 import * as eventMacros from "server/event/event.macros";
-import eventThemeShortlistService from "server/event/theme/event-theme-shortlist.service";
+import eventThemeShortlistService from "server/event/theme/theme-shortlist.service";
 import * as formMacros from "server/macros/form.macros";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "./event-manage.base.template";

@@ -9,11 +9,12 @@ import { logErrorAndReturn } from "server/core/middleware";
 import settings from "server/core/settings";
 import { SETTING_FEATURED_POST_ID, SETTING_FEATURED_TWITCH_CHANNEL, SETTING_HOME_TIMELINE_SIZE } from "server/core/settings-keys";
 import { User } from "server/entity/user.entity";
+import entryService from "server/entry/entry.service";
 import eventParticipationService from "server/event/dashboard/event-participation.service";
 import { loadUserShortcutsContext } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
-import tournamentService from "server/event/tournament/tournament.service";
 import twitchService from "server/event/streamers/twitch.service";
+import tournamentService from "server/event/tournament/tournament.service";
 import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -57,7 +58,7 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
 
     await Promise.all([
       likeService.findUserLikeInfo(allPostsInPage as PostBookshelfModel[], user),
-      featuredEvent ? eventService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined,
+      featuredEvent ? entryService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined,
       tournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id")),
       eventParticipationService.getEventParticipation(featuredEvent.get("id"), user.get("id")),
       twitchService.listCurrentLiveUsers(featuredEvent)
@@ -103,7 +104,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
   if (featuredEvent && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
     .includes(featuredEvent.get("status_results"))) {
     contextTasks.push(
-      eventService.findGames({
+      entryService.findEntries({
         eventId: featuredEvent.get("id"),
         pageSize: 3,
         notReviewedById: user ? user.get("id") : undefined,

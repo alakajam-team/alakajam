@@ -1,5 +1,5 @@
 import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel, SyncOptions } from "bookshelf";
-import eventService from "server/event/event.service";
+import entryService from "./entry.service";
 
 const MILLISECONDS_TO_DAYS = 1. / 1000 / 3600 / 24;
 const OVERALL_CATEGORY_WEIGHT_BONUS = 3.;
@@ -8,7 +8,7 @@ const HOTNESS_AGING_SPEED = 5000.;
 export class EntryHotnessService {
 
   public async refreshEntriesHotness(event: BookshelfModel): Promise<void> {
-    const entryCollection = await eventService.findGames({
+    const entryCollection = await entryService.findEntries({
       eventId: event.get("id"),
       withRelated: ["details"],
       pageSize: null

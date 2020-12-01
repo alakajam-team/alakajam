@@ -1,8 +1,8 @@
 
 import forms from "server/core/forms";
 import security from "server/core/security";
+import entryService from "server/entry/entry.service";
 import highScoreService from "server/entry/highscore/entry-highscore.service";
-import eventService from "server/event/event.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
@@ -25,7 +25,7 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
     // Add to tournament
     if (req.body.add !== undefined) {
       if (forms.isId(req.body.add)) {
-        const entry = await eventService.findEntryById(req.body.add);
+        const entry = await entryService.findEntryById(req.body.add);
         if (entry) {
           await tournamentService.addTournamentEntry(event.get("id"), entry.get("id"));
           tournamentService.recalculateAllTournamentScores(highScoreService, event);
@@ -40,7 +40,7 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
     // Update order
     if (req.body.update !== undefined && forms.isId(req.body.id)) {
       if (forms.isInt(req.body.ordering)) {
-        const entry = await eventService.findEntryById(req.body.id);
+        const entry = await entryService.findEntryById(req.body.id);
         if (entry) {
           await tournamentService.saveTournamentEntryOrdering(event.get("id"), entry.get("id"), req.body.ordering);
         }
@@ -51,7 +51,7 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
 
     // Remove from tournament
     if (req.body.remove !== undefined && forms.isId(req.body.id)) {
-      const entry = await eventService.findEntryById(req.body.id);
+      const entry = await entryService.findEntryById(req.body.id);
       if (entry) {
         await tournamentService.removeTournamentEntry(event.get("id"), entry.get("id"));
         tournamentService.recalculateAllTournamentScores(highScoreService, event);

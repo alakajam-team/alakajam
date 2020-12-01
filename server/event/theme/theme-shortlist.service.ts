@@ -4,12 +4,14 @@ import cache from "server/core/cache";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import { createLuxonDate } from "server/core/formats";
+import forms from "server/core/forms";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
 import { SETTING_EVENT_THEME_ELIMINATION_MIN_NOTES, SETTING_EVENT_THEME_SHORTLIST_SIZE } from "server/core/settings-keys";
 import { ThemeShortlistEliminationState } from "server/entity/event-details.entity";
 import { User } from "server/entity/user.entity";
-import eventThemeService from "./event-theme.service";
+import themeVotingService from "./theme-voting.service";
+import themeService from "./theme.service";
 
 /**
  * Service for managing the theme shortlist
@@ -17,6 +19,13 @@ import eventThemeService from "./event-theme.service";
 export class EventThemeShortlistService {
 
   public readonly MIN_REMAINING_THEMES = 3;
+
+  public async getShortlistSize(event: BookshelfModel): Promise<number> {
+    const count = await models.Theme.where({event_id: event.get("id")})
+      .query(qb => qb.whereIn("status", [enums.THEME.STATUS.SHORTLIST, enums.THEME.STATUS.SHORTLIST_OUT]))
+      .count();
+    return forms.parseInt(count);
+  }
 
   /**
    * Retrieves the theme shortlist sorted from best to worst
@@ -31,10 +40,10 @@ export class EventThemeShortlistService {
 
   public async computeShortlist(event: BookshelfModel) {
     // Mark all themes as out
-    const allThemesCollection = await eventThemeService.findAllThemes(event, { shortlistEligible: true });
+    const allThemesCollection = await themeService.findAllThemes(event, { shortlistEligible: true });
     await event.load("details");
     for (const theme of allThemesCollection.models) {
-      await eventThemeService.eliminateTheme(theme, event.related("details"), { eliminatedOnShortlistRating: true });
+      await themeService.eliminateTheme(theme, event.related("details"), { eliminatedOnShortlistRating: true });
     }
 
     // Compute new shortlist
@@ -65,10 +74,10 @@ export class EventThemeShortlistService {
       .sortBy(theme => ids.indexOf(theme.get("id")))
       .filter(theme => ids.includes(theme.get("id")));
 
-    let score = await eventThemeService.getShortlistSize(event);
+    let score = await this.getShortlistSize(event);
     const results = [];
     for (const theme of sortedShortlist) {
-      results.push(await eventThemeService.saveVote(user, event, theme.get("id"), score, { doNotSave: true }));
+      results.push(await themeVotingService.saveVote(user, event, theme.get("id"), score, { doNotSave: true }));
       score--;
     }
 
@@ -117,7 +126,7 @@ export class EventThemeShortlistService {
     if (this.isShortlistAutoEliminationEnabled(event)) {
       const eventDetails = event.related<BookshelfModel>("details");
       const shortlistElimination: ThemeShortlistEliminationState = eventDetails.get("shortlist_elimination");
-      const shortlistSize = await eventThemeService.getShortlistSize(event);
+      const shortlistSize = await this.getShortlistSize(event);
       const maxEliminatedShortlistThemes = this.getMaxEliminatedShortlistThemes(shortlistSize);
 
       let themesToEliminate = 0;

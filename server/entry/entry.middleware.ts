@@ -4,8 +4,8 @@ import forms from "server/core/forms";
 import links from "server/core/links";
 import templating from "server/core/templating-functions";
 import { EventLocals } from "server/event/event.middleware";
-import eventService from "server/event/event.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import entryService from "./entry.service";
 
 export interface EntryLocals extends EventLocals {
   /**
@@ -23,7 +23,7 @@ export async function entryMiddleware(req: CustomRequest, res: CustomResponse<Ev
     return;
   }
 
-  const entry = await eventService.findEntryById(parseInt(req.params.entryId, 10));
+  const entry = await entryService.findEntryById(parseInt(req.params.entryId, 10));
   if (!entry) {
     res.errorPage(404, "Entry not found");
     return;

@@ -11,8 +11,9 @@ import * as configUtils from "server/core/config";
 import enums from "server/core/enums";
 import log from "server/core/log";
 import { User } from "server/entity/user.entity";
-import eventService from "server/event/event.service";
 import * as url from "url";
+import entryPicturesService from "../entry-pictures.service";
+import entryService from "../entry.service";
 import { EntryImporter, EntryImporterError, EntryReference } from "./entry-import";
 import entryImporterItch from "./importer/itch";
 import entryImporterLDJam from "./importer/ldjam";
@@ -51,7 +52,7 @@ export class EntryUmportService {
 
     if (!("error" in entryReferences)) {
       // Enhance result by detecting existing entries
-      const entries = await eventService.findUserEntries(user);
+      const entries = await entryService.findUserEntries(user);
       for (const entryReference of entryReferences) {
         entryReference.existingEntry = entries.find((entry) => {
           return entry.get("event_name") === null && entry.get("title") === entryReference.title;
@@ -92,9 +93,9 @@ export class EntryUmportService {
       // Create entry or force refreshing existing one (due to fetchEntryReferences() caching)
       let entryModel: EntryBookshelfModel;
       if (!entryReference.existingEntry) {
-        entryModel = await eventService.createEntry(user);
+        entryModel = await entryService.createEntry(user);
       } else {
-        entryModel = await eventService.findEntryById(entryReference.existingEntry.get("id"));
+        entryModel = await entryService.findEntryById(entryReference.existingEntry.get("id"));
       }
 
       // Set model info
@@ -137,7 +138,7 @@ export class EntryUmportService {
 
           // Create actual entry picture
           if (downloadSuccessful) {
-            const result = await eventService.setEntryPicture(entryModel, temporaryPath);
+            const result = await entryPicturesService.setEntryPicture(entryModel, temporaryPath);
             if ("error" in result) {
               log.warn("Failed to save picture upload " + temporaryPath);
               log.warn(result.error);

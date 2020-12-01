@@ -7,7 +7,7 @@ import forms from "server/core/forms";
 import links from "server/core/links";
 import * as models from "server/core/models";
 import security from "server/core/security";
-import eventService from "server/event/event.service";
+import entryService from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { buildPostContext } from "../post-view.controller";
 import { PostLocals } from "../post.middleware";
@@ -102,7 +102,7 @@ export async function postSave(req: CustomRequest, res: CustomResponse<PostLocal
             }
 
             // Figure out related entry from event + user
-            const relatedEntry = await eventService.findUserEntryForEvent(
+            const relatedEntry = await entryService.findUserEntryForEvent(
               post.related<BookshelfModel>("author") as any, post.get("event_id"));
             post.set("entry_id", relatedEntry ? relatedEntry.get("id") : null);
           } else {

@@ -1,7 +1,8 @@
 import { BookshelfModel } from "bookshelf";
 import * as luxon from "luxon";
 import settings from "server/core/settings";
-import eventThemeService from "server/event/theme/event-theme.service";
+import entryService from "server/entry/entry.service";
+import themeService from "server/event/theme/theme.service";
 import commentService from "server/post/comment/comment.service";
 import eventService from "../event/event.service";
 import eventRatingService from "../event/rating/event-rating.service";
@@ -77,7 +78,7 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
       status_results: enums.EVENT.STATUS_RESULTS.DISABLED,
     });
     await event1.save();
-    let userEntry = await eventService.createEntry(entrantUser, event1);
+    let userEntry = await entryService.createEntry(entrantUser, event1);
     userEntry.set("title", "Old Game");
     await userEntry.save();
 
@@ -108,17 +109,17 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
 
     await settings.save(SETTING_FEATURED_EVENT_NAME, "2nd-alakajam");
 
-    await eventThemeService.saveThemeSubmissions(entrantUser as any, event2, [
+    await themeService.saveThemeSubmissions(entrantUser as any, event2, [
       { title: "Alone" },
       { title: "Evolution" },
       { title: "Two buttons" },
     ]);
 
-    const adminEntry = await eventService.createEntry(adminUser, event2);
+    const adminEntry = await entryService.createEntry(adminUser, event2);
     adminEntry.set("title", "Super Game");
     await adminEntry.save();
 
-    userEntry = await eventService.createEntry(entrantUser, event2);
+    userEntry = await entryService.createEntry(entrantUser, event2);
     userEntry.set("title", "Game 1");
     userEntry.set("published_at", createLuxonDate().toJSDate());
     await userEntry.save();
@@ -126,7 +127,7 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
     for (let i = 2; i <= 10; i++) {
       await userService.register(`entrant${i}@example.com`, "entrant" + i, "entrant" + i);
       const otherUser = await userService.findByName("entrant" + i);
-      const otherEntry = await eventService.createEntry(otherUser, event2);
+      const otherEntry = await entryService.createEntry(otherUser, event2);
       otherEntry.set("title", "Game " + i);
       otherEntry.set("published_at", createLuxonDate().toJSDate());
       await otherEntry.save();
@@ -139,7 +140,7 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
           ji = 2;
         }
         const userB = await userService.findByName("entrant" + ji);
-        const entryB = await eventService.findUserEntryForEvent(userB as any, event2.get("id"));
+        const entryB = await entryService.findUserEntryForEvent(userB as any, event2.get("id"));
         const votes = [];
         for (let k = 0; k < 6; k++) {
           votes[k] = 3 + Math.floor(Math.random() * 4);

@@ -1,8 +1,8 @@
 import links from "server/core/links";
+import entryService from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import eventParticipationService from "./event-participation.service";
 import { EventLocals } from "../event.middleware";
-import eventService from "../event.service";
+import eventParticipationService from "./event-participation.service";
 
 /**
  * Join or leave event
@@ -37,7 +37,7 @@ async function joinEvent(res: CustomResponse<EventLocals>) {
 async function leaveEvent(res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
 
-  const hasEntry = await eventService.findUserEntryForEvent(user, event.get("id"));
+  const hasEntry = await entryService.findUserEntryForEvent(user, event.get("id"));
   if (hasEntry) {
     res.locals.alerts.push({
       type: "danger",

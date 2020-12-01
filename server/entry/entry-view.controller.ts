@@ -4,7 +4,6 @@ import links from "server/core/links";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
-import entryTeamService from "server/entry/entry-team.service";
 import highscoreService from "server/entry/highscore/entry-highscore.service";
 import tagService from "server/entry/tag/tag.service";
 import eventService from "server/event/event.service";
@@ -16,6 +15,8 @@ import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EntryLocals } from "./entry.middleware";
+import entryService from "./entry.service";
+import entryTeamService from "./team/entry-team.service";
 
 /**
  * Browse entry
@@ -133,7 +134,7 @@ export async function apiSearchForTeammate(req: CustomRequest, res: CustomRespon
   if (!errorMessage) {
     let entry = null;
     if (forms.isId(req.query.entryId)) {
-      entry = await eventService.findEntryById(forms.parseInt(req.query.entryId.toString()));
+      entry = await entryService.findEntryById(forms.parseInt(req.query.entryId.toString()));
     }
 
     const matches = await entryTeamService.searchForTeamMembers(nameFragment,

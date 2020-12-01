@@ -22,7 +22,7 @@ import * as apiController from "./api/api.controller";
 import { CommonLocals, commonMiddleware } from "./common.middleware";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
-import { inviteAccept, inviteDecline } from "./entry/entry-invite.controller";
+import { inviteAccept, inviteDecline } from "./entry/team/entry-invite.controller";
 import { apiSearchForExternalEvents, apiSearchForTags, apiSearchForTeammate, entrySaveCommentOrVote, entryView } from "./entry/entry-view.controller";
 import { entryMiddleware } from "./entry/entry.middleware";
 import { entryHighscoreSubmit } from "./entry/highscore/entry-highscore-submit.controller";
@@ -45,7 +45,7 @@ import { eventManageTournament } from "./event/manage/event-manage-tournament.co
 import { eventDelete, eventManage } from "./event/manage/event-manage.controller";
 import { viewEventRatings } from "./event/rating/event-ratings.controller";
 import { viewEventResults } from "./event/rating/event-results.controller";
-import { ajaxFindThemes, ajaxSaveThemeVote, eventThemes } from "./event/theme/event-themes.controller";
+import { ajaxFindThemes, ajaxSaveThemeVote, eventThemes } from "./event/theme/themes.controller";
 import { viewEventTournamentGames } from "./event/tournament/tournament-games.controller";
 import { viewEventTournamentLeaderboard } from "./event/tournament/tournament-leaderboard.controller";
 import { chat } from "./explore/chat.controller";

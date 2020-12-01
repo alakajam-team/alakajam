@@ -15,7 +15,7 @@ import tournamentService, { CACHE_KEY_ACTIVE_TOURNAMENT_EVENT } from "server/eve
 import { CustomRequest, CustomResponse } from "server/types";
 import eventTemplateService from "./event-template.service";
 import { EventLocals } from "../event.middleware";
-import eventThemeShortlistService from "../theme/event-theme-shortlist.service";
+import themeShortlistService from "../theme/theme-shortlist.service";
 
 /**
  * Edit or create an event
@@ -130,7 +130,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
 
       // Run event triggers
       if (event.hasChanged("status_theme") && event.get("status_theme") === enums.EVENT.STATUS_THEME.SHORTLIST) {
-        await eventThemeShortlistService.computeShortlist(event);
+        await themeShortlistService.computeShortlist(event);
         infoMessage = "Theme shortlist computed.";
       }
       if (event.hasChanged("status_results")) {

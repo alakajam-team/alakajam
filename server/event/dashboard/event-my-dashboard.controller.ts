@@ -1,14 +1,14 @@
 import { BookshelfCollectionOf, PostBookshelfModel } from "bookshelf";
+import constants from "server/core/constants";
 import db from "server/core/db";
+import forms from "server/core/forms";
+import links from "server/core/links";
+import entryService from "server/entry/entry.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
-import eventService from "../event.service";
 import eventParticipationService from "./event-participation.service";
-import forms from "server/core/forms";
-import links from "server/core/links";
-import constants from "server/core/constants";
 
 /**
  * Manage my participation to an event
@@ -48,7 +48,7 @@ export async function postEventDashboard(req: CustomRequest, res: CustomResponse
 async function myEntryHavingJoined(res: CustomResponse<EventLocals>) {
   const { user, event } = res.locals;
 
-  const entry = await eventService.findUserEntryForEvent(user, event.get("id"), {
+  const entry = await entryService.findUserEntryForEvent(user, event.get("id"), {
     withRelated: [ "posts.likes", "posts.userRoles", "userRoles" ]
   });
 

@@ -8,9 +8,9 @@ import settings from "server/core/settings";
 import { SETTING_EVENT_OPEN_VOTING, SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
 import { User } from "server/entity/user.entity";
 import entryHotnessService from "server/entry/entry-hotness.service";
+import entryService from "server/entry/entry.service";
 import commentService from "server/post/comment/comment.service";
 import eventParticipationService from "../dashboard/event-participation.service";
-import eventService from "../event.service";
 
 interface KarmaReceivedByUser {
   receivedByUser: Record<number, { commentKarma: number; voteKarma: number }>;
@@ -41,7 +41,7 @@ export class EventRatingService {
   }
 
   private async hasEntryOrIsApprovedStreamer(user: User, event: BookshelfModel): Promise<boolean> {
-    const hasEntryPromise = eventService.findUserEntryForEvent(user, event.get("id"));
+    const hasEntryPromise = entryService.findUserEntryForEvent(user, event.get("id"));
     const eventParticipationPromise = eventParticipationService.getEventParticipation(event.get("id"), user.id);
     const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, eventParticipationPromise ]);
     return Boolean(hasEntry) || eventParticipation?.isApprovedStreamer;
@@ -129,7 +129,7 @@ export class EventRatingService {
     if (refreshRequired) {
       this.refreshEntryKarma(entry, event);
 
-      const userEntry = await eventService.findUserEntryForEvent(user, event.get("id"));
+      const userEntry = await entryService.findUserEntryForEvent(user, event.get("id"));
       if (userEntry) {
         this.refreshEntryKarma(userEntry, event);
       }

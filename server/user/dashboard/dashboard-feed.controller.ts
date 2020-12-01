@@ -1,12 +1,13 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
-import eventService from "server/event/event.service";
+import entryService from "server/entry/entry.service";
+import entryInviteService from "server/entry/team/entry-invite.service";
 import commentService from "server/post/comment/comment.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "../user.service";
 import { DashboardLocals } from "./dashboard.middleware";
-import { CommonLocals } from "server/common.middleware";
 
 /**
  * View comment feed
@@ -30,7 +31,7 @@ export async function dashboardFeed(req: CustomRequest, res: CustomResponse<Dash
     userCache.set("toUserCollection", toUserCollection);
   }
   if (!latestEntry) {
-    latestEntry = await eventService.findLatestUserEntry(dashboardUser);
+    latestEntry = await entryService.findLatestUserEntry(dashboardUser);
     userCache.set("latestEntry", latestEntry);
   }
   if (!latestPostsCollection) {
@@ -39,7 +40,7 @@ export async function dashboardFeed(req: CustomRequest, res: CustomResponse<Dash
     });
     userCache.set("latestPostsCollection", latestPostsCollection);
   }
-  const invitesCollection = await eventService.findEntryInvitesForUser(dashboardUser, {
+  const invitesCollection = await entryInviteService.findEntryInvitesForUser(dashboardUser, {
     withRelated: ["entry.event", "entry.userRoles", "invited"],
   });
 

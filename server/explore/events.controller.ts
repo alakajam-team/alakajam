@@ -1,6 +1,7 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
+import entryService from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventService from "../event/event.service";
 
@@ -45,7 +46,7 @@ export async function events(req: CustomRequest, res: CustomResponse<CommonLocal
       }
 
       if (event.get("status_results") === enums.EVENT.STATUS_RESULTS.RESULTS) {
-        const topEntries = await eventService.findGames({
+        const topEntries = await entryService.findEntries({
           eventId: event.get("id"),
           sortBy: "ranking",
           pageSize: 6,

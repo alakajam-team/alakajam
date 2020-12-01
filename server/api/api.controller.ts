@@ -7,9 +7,10 @@ import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import { ThemeShortlistEliminationState } from "server/entity/event-details.entity";
+import entryService from "server/entry/entry.service";
 import eventService from "server/event/event.service";
-import eventThemeShortlistService from "server/event/theme/event-theme-shortlist.service";
-import eventThemeService from "server/event/theme/event-theme.service";
+import themeShortlistService from "server/event/theme/theme-shortlist.service";
+import themeService from "server/event/theme/theme.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import * as url from "url";
 import userService from "../user/user.service";
@@ -140,7 +141,7 @@ export async function getEventShortlist(req: CustomRequest, res: CustomResponse<
   }
 
   if (event) {
-    const shortlist = await eventThemeShortlistService.findShortlist(event);
+    const shortlist = await themeShortlistService.findShortlist(event);
     const shortlistElimination: ThemeShortlistEliminationState = event.related<BookshelfModel>("details").get("shortlist_elimination");
 
     if (shortlist.length > 0) {
@@ -151,7 +152,7 @@ export async function getEventShortlist(req: CustomRequest, res: CustomResponse<
 
       let topVotes: BookshelfModel[] = [];
       if ([enums.EVENT.STATUS_THEME.CLOSED, enums.EVENT.STATUS_THEME.RESULTS].includes(event.get("status_theme"))) {
-        topVotes = (await eventThemeShortlistService.findThemeShortlistVotes(event, { score: shortlist.length })).models;
+        topVotes = (await themeShortlistService.findThemeShortlistVotes(event, { score: shortlist.length })).models;
       }
 
       // Build data
@@ -197,7 +198,7 @@ export async function getEntry(req: CustomRequest, res: CustomResponse<CommonLoc
   let status = 200;
 
   if (forms.isId(req.params.entry)) {
-    const entry = await eventService.findEntryById(parseInt(req.params.entry, 10), DETAILED_ENTRY_OPTIONS);
+    const entry = await entryService.findEntryById(parseInt(req.params.entry, 10), DETAILED_ENTRY_OPTIONS);
 
     if (entry) {
       json = _getDetailedEntryJson(entry);
@@ -261,7 +262,7 @@ export async function getUser(req: CustomRequest, res: CustomResponse<CommonLoca
     json.url = url.resolve(config.ROOT_URL, links.routeUrl(user, "user"));
 
     json.entries = [];
-    for (const entry of (await eventService.findUserEntries(user)).models) {
+    for (const entry of (await entryService.findUserEntries(user)).models) {
       json.entries.push(_getAttributes(entry, PUBLIC_ATTRIBUTES_ENTRY));
     }
   } else {
@@ -286,9 +287,9 @@ export async function getUserLatestEntry(req: CustomRequest, res: CustomResponse
   if (user) {
     json = _getAttributes(user, PUBLIC_ATTRIBUTES_USER);
 
-    const entry = await eventService.findLatestUserEntry(user);
+    const entry = await entryService.findLatestUserEntry(user);
     if (entry) {
-      json.latest_entry = _getDetailedEntryJson(await eventService.findLatestUserEntry(user, DETAILED_ENTRY_OPTIONS));
+      json.latest_entry = _getDetailedEntryJson(await entryService.findLatestUserEntry(user, DETAILED_ENTRY_OPTIONS));
       json.latest_entry.url = url.resolve(config.ROOT_URL, links.routeUrl(entry, "entry"));
     }
   } else {
@@ -333,7 +334,7 @@ export async function getUserSearch(req: CustomRequest, res: CustomResponse<Comm
 
 export async function getThemeStats(req: CustomRequest, res: CustomResponse<CommonLocals>) {
   const title = forms.sanitizeString(req.params.theme);
-  const themes = await eventThemeService.findThemesByTitle(title, {
+  const themes = await themeService.findThemesByTitle(title, {
     withRelated: ["event.details"]
   });
 
@@ -349,7 +350,7 @@ export async function getThemeStats(req: CustomRequest, res: CustomResponse<Comm
         themeStats.ranking = Math.floor(theme.get("ranking") * event.related<BookshelfModel>("details").get("theme_count"));
       } else {
         // Use true ranking (needed for shortlisted themes at least)
-        themeStats.ranking = await eventThemeService.findThemeRanking(theme, { useShortlistRating: true });
+        themeStats.ranking = await themeService.findThemeRanking(theme, { useShortlistRating: true });
       }
       if (theme.get("notes") > 0) { // Ignore themes that haven't received any votes (eg. duplicates)
         themesStats.push(themeStats);

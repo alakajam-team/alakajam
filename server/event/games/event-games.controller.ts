@@ -5,9 +5,10 @@ import log from "server/core/log";
 import security from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
+import entryService, { FindGamesOptions } from "server/entry/entry.service";
 import platformService from "server/entry/platform/platform.service";
 import tagService from "server/entry/tag/tag.service";
-import eventService, { FindGamesOptions } from "server/event/event.service";
+import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
@@ -33,11 +34,11 @@ export async function viewEventGames(req: CustomRequest, res: CustomResponse<Eve
   if (event.get("status_results") === "voting_rescue") {
     const canVoteInEvent = await eventRatingService.canVoteInEvent(user, event);
     if (canVoteInEvent || security.isMod(user)) {
-      rescueEntries = (await eventService.findRescueEntries(event, user)).models;
+      rescueEntries = (await entryService.findRescueEntries(event, user)).models;
     }
   }
   const requiredVotes = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
-  const entriesCollection = await eventService.findGames(searchOptions);
+  const entriesCollection = await entryService.findEntries(searchOptions);
   const platformCollection = await platformService.fetchAll();
 
   // Fetch vote history

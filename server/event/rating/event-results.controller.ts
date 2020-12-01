@@ -5,6 +5,7 @@ import constants from "server/core/constants";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import { EventFlags } from "server/entity/event-details.entity";
+import entryService from "server/entry/entry.service";
 import eventService from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import likeService from "server/post/like/like.service";
@@ -70,7 +71,7 @@ export async function viewEventResults(req: CustomRequest, res: CustomResponse<E
         eventId: event.get("id"),
         divisions: [enums.DIVISION.UNRANKED],
       };
-      const games = await eventService.findGames(findGameOptions) as BookshelfCollection;
+      const games = await entryService.findEntries(findGameOptions) as BookshelfCollection;
       return {
         rankings: shuffle(games.models),
         sortedBy,

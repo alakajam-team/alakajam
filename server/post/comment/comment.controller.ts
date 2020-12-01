@@ -5,9 +5,9 @@ import db from "server/core/db";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
-import eventService from "server/event/event.service";
-import karmaService from "server/event/rating/karma.service";
+import entryService from "server/entry/entry.service";
 import eventRatingService from "server/event/rating/event-rating.service";
+import karmaService from "server/event/rating/karma.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { PostLocals } from "../post.middleware";
@@ -101,7 +101,7 @@ export async function handleSaveComment(reqBody, currentUser, currentNode, baseU
       // Refresh karma on both the giver & receiver entries
       if (currentEvent) {
         const currentEntry = currentNode;
-        const userEntry = await eventService.findUserEntryForEvent(currentUser, currentEntry.get("event_id"));
+        const userEntry = await entryService.findUserEntryForEvent(currentUser, currentEntry.get("event_id"));
         await eventRatingService.refreshEntryKarma(currentEntry, currentEvent);
         if (userEntry) {
           await eventRatingService.refreshEntryKarma(userEntry, currentEvent);
