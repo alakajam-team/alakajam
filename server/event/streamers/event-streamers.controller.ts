@@ -5,9 +5,9 @@ import security from "server/core/security";
 import { StreamerStatus } from "server/entity/event-participation.entity";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
-import eventParticipationService from "./dashboard/event-participation.service";
-import { EventLocals } from "./event.middleware";
-import eventService from "./event.service";
+import eventParticipationService from "../dashboard/event-participation.service";
+import { EventLocals } from "../event.middleware";
+import eventService from "../event.service";
 import twitchService from "./twitch.service";
 
 export async function eventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>) {

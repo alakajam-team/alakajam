@@ -8,7 +8,7 @@ import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
-import twitchService from "server/event/twitch.service";
+import twitchService from "server/event/streamers/twitch.service";
 
 /**
  * Display a user profile

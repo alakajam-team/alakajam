@@ -32,10 +32,10 @@ import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manag
 import { joinLeaveEvent } from "./event/dashboard/event-join.controller";
 import { saveStreamerPreferences, viewStreamerPreferences } from "./event/dashboard/event-my-dashboard-streamer.controller";
 import { postEventDashboard, viewEventDashboard } from "./event/dashboard/event-my-dashboard.controller";
-import { viewEventGames } from "./event/event-games.controller";
-import { viewEventHome } from "./event/event-home.controller";
-import { viewEventPosts } from "./event/event-posts.controller";
-import { eventStreamers, eventStreamersDoc, moderateEventStreamers } from "./event/event-streamers.controller";
+import { viewEventGames } from "./event/games/event-games.controller";
+import { viewEventHome } from "./event/home/event-home.controller";
+import { viewEventPosts } from "./event/posts/event-posts.controller";
+import { eventStreamers, eventStreamersDoc, moderateEventStreamers } from "./event/streamers/event-streamers.controller";
 import { eventMiddleware } from "./event/event.middleware";
 import { eventManageEntries } from "./event/manage/event-manage-entries.controller";
 import { postEventManageRankings, viewEventManageRankings } from "./event/manage/event-manage-rankings.controller";

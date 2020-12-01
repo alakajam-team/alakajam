@@ -5,7 +5,7 @@ import config from "server/core/config";
 import log from "server/core/log";
 import { User } from "server/entity/user.entity";
 import { ApiClient, ClientCredentialsAuthProvider, HelixStream } from "twitch";
-import eventParticipationService from "./dashboard/event-participation.service";
+import eventParticipationService from "../dashboard/event-participation.service";
 
 export class TwitchService {
 

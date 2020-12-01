@@ -1,7 +1,7 @@
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomResponse } from "server/types";
-import { EventLocals } from "./event.middleware";
+import { EventLocals } from "../event.middleware";
 
 /**
  * Browse event posts

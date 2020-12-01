@@ -13,7 +13,7 @@ import eventParticipationService from "server/event/dashboard/event-participatio
 import { loadUserShortcutsContext } from "server/event/event.middleware";
 import eventService from "server/event/event.service";
 import tournamentService from "server/event/tournament/tournament.service";
-import twitchService from "server/event/twitch.service";
+import twitchService from "server/event/streamers/twitch.service";
 import commentService from "server/post/comment/comment.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";

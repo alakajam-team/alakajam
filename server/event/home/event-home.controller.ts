@@ -3,10 +3,10 @@ import tournamentService from "server/event/tournament/tournament.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import { EventLocals } from "./event.middleware";
-import eventService from "./event.service";
+import { EventLocals } from "../event.middleware";
+import eventService from "../event.service";
 import enums from "server/core/enums";
-import eventParticipationService from "./dashboard/event-participation.service";
+import eventParticipationService from "../dashboard/event-participation.service";
 
 /**
  * Browse event home page

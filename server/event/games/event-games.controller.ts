@@ -11,7 +11,7 @@ import eventService, { FindGamesOptions } from "server/event/event.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
-import { EventLocals } from "./event.middleware";
+import { EventLocals } from "../event.middleware";
 
 /**
  * Browse event games

@@ -6,7 +6,7 @@ import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
 import eventService from "server/event/event.service";
-import karmaService from "server/event/karma.service";
+import karmaService from "server/event/rating/karma.service";
 import eventRatingService from "server/event/rating/event-rating.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
