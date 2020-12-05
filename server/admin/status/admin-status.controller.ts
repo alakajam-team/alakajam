@@ -13,7 +13,7 @@ export interface AdminStatusContext extends AdminBaseContext {
 /**
  * Admin only: server status
  */
-export async function adminStatus(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
+export function adminStatus(req: CustomRequest, res: CustomResponse<CommonLocals>): void {
   if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }

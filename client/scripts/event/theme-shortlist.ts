@@ -1,7 +1,7 @@
 
 import Sortable from "sortablejs";
 
-export default function themeShortlist() {
+export default function themeShortlist(): void {
   const $shortlist = $("#js-shortlist");
   if ($shortlist.length === 0) {
     return;

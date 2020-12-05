@@ -1,6 +1,6 @@
 import select2Sort from "./select2-sort";
 
-export default function tagsSelect() {
+export default function tagsSelect(): void {
   $(".js-tags-select").each(function() {
     const $select = $(this);
     const findTagsUrl = $select.attr("data-find-tags-url");

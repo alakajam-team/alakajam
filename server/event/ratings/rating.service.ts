@@ -237,7 +237,7 @@ export class RatingService {
   }
 
   /* Compute received score */
-  public async computeKarmaReceivedByUser(entry: EntryBookshelfModel): Promise<KarmaReceivedByUser> {
+  public computeKarmaReceivedByUser(entry: EntryBookshelfModel): KarmaReceivedByUser {
     const receivedByUser = {};
     for (const comment of entry.related<BookshelfCollection>("comments").models) {
       // Earn up to 3 points per user from comments

@@ -3,7 +3,7 @@
  * https://getbootstrap.com/docs/4.0/components/tooltips/
  */
 
-export default function tooltips(selector) {
+export default function tooltips(selector: string): void {
   initTooltips(selector);
 }
 

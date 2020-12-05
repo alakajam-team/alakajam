@@ -87,7 +87,7 @@ function applyPreset() {
   }
 }
 
-export default function editEventStatus() {
+export default function editEventStatus(): void {
   // Advanced mode
   refreshAdvancedModeToggle();
   $(advancedModeToggleInputs).click(function() {

@@ -1,9 +1,9 @@
 import evalRawScript from "./core/eval-raw-script";
 
-import("raw-loader!flipclock/dist/flipclock.min.js").then(evalRawScript);
+import("raw-loader!flipclock/dist/flipclock.min.js").then(evalRawScript).catch(e => console.error(e));
 
-export default function countdown(selector: string) {
-  $(selector).each(function () {
+export default function countdown(selector: string): void {
+  $(selector).each(function() {
     const $countdown = $(this);
 
     const startTime = roundToNearestSecond(Date.now());

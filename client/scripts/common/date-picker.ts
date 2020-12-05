@@ -3,7 +3,7 @@
  * https://tempusdominus.github.io/bootstrap-4/
  */
 
-export default function datePicker(selector) {
+export default function datePicker(selector: string): void {
   $(selector).each((i, element) => {
     const $element = $(element);
     $element.datetimepicker({

@@ -1,7 +1,7 @@
 
 import slug from "slug";
 
-export default function syncSlug(inputSelector) {
+export default function syncSlug(inputSelector: string): void {
   $(inputSelector)
     .on("change", (event) => {
       const $titleInput = $(event.target);

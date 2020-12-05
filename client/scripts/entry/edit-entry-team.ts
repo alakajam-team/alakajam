@@ -1,7 +1,7 @@
 
 import select2Sort from "../common/select2-sort";
 
-export default function editEntryTeam() {
+export default function editEntryTeam(): void {
   $(".js-edit-entry-team").each(function() {
     const $editEntryTeam = $(this);
     const $searchMembers = $editEntryTeam.find(".js-search-members");

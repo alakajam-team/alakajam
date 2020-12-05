@@ -80,6 +80,6 @@ async function myEntryHavingJoined(res: CustomResponse<EventLocals>): Promise<vo
 }
 
 
-async function myEntryNotHavingJoined(res: CustomResponse<EventLocals>): Promise<void> {
+function myEntryNotHavingJoined(res: CustomResponse<EventLocals>): void {
   res.render<EventLocals>("event/dashboard/event-my-dashboard-join", res.locals);
 }

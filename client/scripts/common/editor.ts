@@ -5,7 +5,7 @@
  * `mdselector`. Can be configured using data attributes. Also initializes
  * the CodeMirror editor on each textarea matching the given `cmSelector`.
  */
-export default function editor(mdSelector, cmSelector) {
+export default function editor(mdSelector: string, cmSelector: string): void {
   $(mdSelector).each(function() {
     const mde = new EasyMDE({
       element: this,

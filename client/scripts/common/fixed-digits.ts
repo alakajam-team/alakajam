@@ -26,7 +26,7 @@ function manageZeroes($input, caretPosition, digits) {
  *
  * <input type="number" name="seconds" class="form-control js-fixed-digits" data-digits="2" placeholder="seconds" />
  */
-export default function fixedDigits() {
+export default function fixedDigits(): void {
   $("input.js-fixed-digits").each(function() {
     const self: HTMLInputElement = (this as HTMLInputElement);
 

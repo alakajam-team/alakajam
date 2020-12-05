@@ -21,7 +21,7 @@ function refreshImporterForm() {
   }
 }
 
-export default function dashboardEntryImport() {
+export default function dashboardEntryImport(): void {
   $importer.select2({
     placeholder: "Select a website to import from",
     allowClear: true

@@ -24,7 +24,7 @@ function makeInlineAlertsDismissable() {
   });
 }
 
-export default function(selector: string) {
+export default function(selector: string): void {
   let alerts: Alert[];
   try {
     alerts = JSON.parse($(selector).text());

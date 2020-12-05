@@ -17,7 +17,7 @@ function previewUpload(inputBlock: HTMLElement, input: HTMLInputElement) {
   }
 }
 
-export default function pictureInput() {
+export default function pictureInput(): void {
   $(".js-picture-input").each(function() {
     const inputBlock = this;
     const $inputFile = $("input[type=file]", inputBlock);

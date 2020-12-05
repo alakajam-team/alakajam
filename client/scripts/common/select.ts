@@ -7,7 +7,7 @@
  * https://select2.org/configuration/data-attributes
  * Notable ones include `data-placeholder` and `data-allow-clear`.
  */
-export default function select() {
+export default function select(): void {
   $(".js-select").each(function() {
     const $select = $(this);
     $select.select2();

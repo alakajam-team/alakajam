@@ -1,5 +1,5 @@
 
-export default function editEntryExternal() {
+export default function editEntryExternal(): void {
   $(".js-entry-external-event").each(function() {
     const $externalEventInput = $(this);
 

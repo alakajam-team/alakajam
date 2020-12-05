@@ -9,14 +9,14 @@ if (__filename.endsWith(".js")) {
 }
 import config from "server/core/config";
 
-exports.up = async (knex) => {
+exports.up = (knex) => {
   return knex.schema.table("theme", (table) => {
     table.decimal("rating_elimination", 4, 3).notNullable().defaultTo(1).index();
     table.decimal("rating_shortlist", 4, 3).notNullable().defaultTo(0).index();
   });
 };
 
-exports.down = async (knex) => {
+exports.down = (knex) => {
   if (config.DB_TYPE === "postgresql") {
     await knex.raw("alter table event alter column countdown_config type varchar(255)");
   }

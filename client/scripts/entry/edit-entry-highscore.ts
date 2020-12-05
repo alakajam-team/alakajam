@@ -11,7 +11,7 @@ function toggleCustomUnitInput(unitType) {
   }
 }
 
-export default function editEntryHighScore() {
+export default function editEntryHighScore(): void {
   // Toggle high score details
   $("input[type=radio][name=enable-high-score]").on("change, ifChecked", function() {
     const self = this as HTMLInputElement;

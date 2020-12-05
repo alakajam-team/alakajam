@@ -10,7 +10,7 @@ const watchedForms = [];
  * serialized values to the stored ones. If they differ, a warning is thrown
  * up.
  */
-export default function warnOnUnsavedChanges(formSelector) {
+export default function warnOnUnsavedChanges(formSelector: string): void {
   const $forms = $(formSelector);
 
   // Wait a bit before storing initial values, because other scripts might come

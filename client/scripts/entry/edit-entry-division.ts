@@ -1,5 +1,5 @@
 
-export default function editEntryDivision() {
+export default function editEntryDivision(): void {
   $(".js-entry-divisions").each(function() {
     const $entryDivisions = $(this);
     const divisionButtonSelector = ".js-division-button";

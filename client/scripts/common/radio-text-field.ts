@@ -7,7 +7,7 @@
  * </label>
  *
  */
-export default function radioTextField() {
+export default function radioTextField(): void {
   const $textFields = $(".js-radio-text-field");
 
   // Initialize text field with value if enabled

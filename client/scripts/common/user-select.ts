@@ -1,5 +1,5 @@
 
-export default function userSelect() {
+export default function userSelect(): void {
   $(".js-user-select").each(function() {
     const $select = $(this);
     $select.select2({

@@ -39,7 +39,7 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
   });
 }
 
-export async function eventStreamersDoc(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
+export function eventStreamersDoc(req: CustomRequest, res: CustomResponse<EventLocals>): void {
   res.render<EventLocals>("event/streamers/streamers-doc", res.locals);
 }
 

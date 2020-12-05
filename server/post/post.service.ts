@@ -83,7 +83,7 @@ export class PostService {
     });
   }
 
-  public async findPostById(postId: number): Promise<PostBookshelfModel> {
+  public findPostById(postId: number): Promise<PostBookshelfModel> {
     return models.Post.where("id", postId)
       .fetch({ withRelated: ["author", "userRoles", "event", "entry", "entry.userRoles"] }) as any;
   }

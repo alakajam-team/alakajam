@@ -126,7 +126,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
       .catch(logErrorAndReturn([])));
   contextTasks.push(
     commentService.findLatestComments({ limit: 10 })
-      .then(async (commentsCollection) => {
+      .then((commentsCollection) => {
         context.comments = commentsCollection.models;
       })
       .catch(logErrorAndReturn([])));

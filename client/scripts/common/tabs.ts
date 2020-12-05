@@ -1,7 +1,7 @@
 /**
  * Ensures Bootstrap tabs update URL anchors and are kept upon refresh
  */
-export default function tabs() {
+export default function tabs(): void {
   $(".nav-link").click(function() {
     window.location.hash = $(this).attr("href");
   });

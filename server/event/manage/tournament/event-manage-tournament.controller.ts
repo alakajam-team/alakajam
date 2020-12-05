@@ -2,7 +2,6 @@
 import forms from "server/core/forms";
 import security from "server/core/security";
 import entryService from "server/entry/entry.service";
-import highScoreService from "server/entry/highscore/highscore.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../../event.middleware";

@@ -3,7 +3,7 @@
  * Sets up event listeners that show/hide elements if an input field is
  * (non)empty, based on a selector stored in a data attribute.
  */
-export default function showIfNonempty(inputSelector) {
+export default function showIfNonempty(inputSelector: string): void {
   $(inputSelector)
     .change((event) => {
       const $input = $(event.target);

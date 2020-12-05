@@ -4,7 +4,7 @@ import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 import { DashboardLocals } from "../dashboard.middleware";
 
-export async function dashboardPasswordGet(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
+export function dashboardPasswordGet(req: CustomRequest, res: CustomResponse<DashboardLocals>): void {
   res.render<DashboardLocals>("user/dashboard/password/dashboard-password", res.locals);
 }
 /**

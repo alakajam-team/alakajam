@@ -7,7 +7,7 @@
  *    data-sync-text-display-selector="#title" data-sync-text-default="My title" />
  * </div>
  */
-export default function syncText() {
+export default function syncText(): void {
   $(".js-sync-text")
     .on("change keyup", (event) => {
       const $input = $(event.target);

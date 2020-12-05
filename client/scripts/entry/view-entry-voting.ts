@@ -1,5 +1,5 @@
 
-export default function viewEntryVoting() {
+export default function viewEntryVoting(): void {
   const $stars = $(".js-star");
   const $starsArray = [];
   $stars.each(function() {
@@ -103,14 +103,16 @@ export default function viewEntryVoting() {
         $form.removeClass("form-saving");
         posting = false;
         if (postQueue.length > 0) {
-          $.post(postQueue.shift());
+          $.post(postQueue.shift())
+            .catch(e => console.error(e));
         }
       }
     };
     if (posting) {
       postQueue.push(postObj);
     } else {
-      $.post(postObj);
+      $.post(postObj)
+        .catch(e => console.error(e));
     }
   }
 }

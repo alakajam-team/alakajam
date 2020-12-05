@@ -21,7 +21,7 @@ export class EventThemeShortlistService {
   public readonly MIN_REMAINING_THEMES = 3;
 
   public async getShortlistSize(event: BookshelfModel): Promise<number> {
-    const count = await models.Theme.where({event_id: event.get("id")})
+    const count = await models.Theme.where({ event_id: event.get("id") })
       .query(qb => qb.whereIn("status", [enums.THEME.STATUS.SHORTLIST, enums.THEME.STATUS.SHORTLIST_OUT]))
       .count();
     return forms.parseInt(count);
@@ -111,15 +111,14 @@ export class EventThemeShortlistService {
   }
 
   public async countShortlistVotes(event: BookshelfModel): Promise<number> {
-    return cache.getOrFetch(cache.general, "shortlist_votes_" + event.get("name"),
-      async () => {
-        return forms.parseInt(models.ThemeVote
-          .where({
-            event_id: event.get("id"),
-            score: 9,
-          })
-          .count());
-      }, 10 * 60 /* 10 min TTL */);
+    return cache.getOrFetch(cache.general, "shortlist_votes_" + event.get("name"), () => {
+      return forms.parseInt(models.ThemeVote
+        .where({
+          event_id: event.get("id"),
+          score: 9,
+        })
+        .count());
+    }, 10 * 60 /* 10 min TTL */);
   }
 
   public async updateShortlistAutoElimination(event: BookshelfModel): Promise<void> {

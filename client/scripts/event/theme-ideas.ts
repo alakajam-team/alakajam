@@ -1,5 +1,5 @@
 
-export default function themeIdeas() {
+export default function themeIdeas(): void {
   const $ideaDelete = $(".js-idea-delete");
 
   // XXX This is strongly dependent on the DOM structure. Would be better to

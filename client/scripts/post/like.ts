@@ -2,7 +2,7 @@
 
 const DEFAULT_LIKE_TYPE = "like";
 
-export default function like() {
+export default function like(): void {
   $(".js-like").each(function() {
     bindLike($(this));
   });
@@ -28,7 +28,8 @@ function bindLike($like) {
       .fail(() => {
         console.error("Failed to register like");
         $(".js-like-spinner", $like).removeClass("hidden");
-      });
+      })
+      .catch(err => console.error(err));
 
     e.preventDefault();
     return false;

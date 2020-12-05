@@ -308,7 +308,7 @@ export class EntryService {
   /**
    * Retrieves the entry a user submitted to an event
    */
-  public async findUserEntryForEvent(user: User, eventId: number, options: FetchOptions = {}): Promise<EntryBookshelfModel> {
+  public findUserEntryForEvent(user: User, eventId: number, options: FetchOptions = {}): Promise<EntryBookshelfModel> {
     return models.Entry.query((query) => {
       void query.innerJoin("user_role", "entry.id", "user_role.node_id")
         .where({
@@ -353,7 +353,7 @@ export class EntryService {
   public async refreshEntryPlatforms(entry: BookshelfModel): Promise<void> {
     const tasks = [];
     await entry.load("platforms");
-    entry.related<BookshelfCollection>("platforms").forEach(async (platform) => {
+    entry.related<BookshelfCollection>("platforms").forEach((platform) => {
       tasks.push(platform.destroy());
     });
     const platformStrings = entry.get("platforms");

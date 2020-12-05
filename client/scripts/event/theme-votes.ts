@@ -1,6 +1,6 @@
 import template from "lodash.template";
 
-export default function themeVotes() {
+export default function themeVotes(): void {
   const $themeVote = $("#js-theme-vote");
   if ($themeVote.length === 0) {
     return;
@@ -44,7 +44,8 @@ export default function themeVotes() {
       $.getJSON(findThemesUrl, (data) => {
         themeBuffer = data;
         renderTheme(themeBuffer.length > 0 ? themeBuffer.shift() : null);
-      });
+      })
+        .catch(e => console.error(e));
     } else {
       renderTheme(themeBuffer.shift());
     }
@@ -93,7 +94,8 @@ export default function themeVotes() {
     $themeHistory.prepend(historyBlock);
     $(themeVoteHistoryBlockSelector).fadeIn(800);
 
-    $.post(saveVoteUrl, themeInfo, callback);
+    $.post(saveVoteUrl, themeInfo, callback)
+      .catch(e => console.error(e));
   }
 
   nextTheme();

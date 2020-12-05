@@ -116,7 +116,7 @@ export class TagService {
     });
   }
 
-  public async fetchTagStats(options: { orderByDate?: boolean } = {}): Promise<TagStats[]> {
+  public fetchTagStats(options: { orderByDate?: boolean } = {}): Promise<TagStats[]> {
     return db.knex("entry_tag")
       .select("tag.id", "tag.value", "tag.created_at", db.knex.raw("count(*) as count"))
       .leftJoin("tag", "entry_tag.tag_id", "tag.id")

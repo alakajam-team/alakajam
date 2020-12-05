@@ -52,7 +52,7 @@ export class UserService {
     }
   }
 
-  private async createFindUsersQuery(options: FindUserOptions): Promise<SelectQueryBuilder<User>> {
+  private createFindUsersQuery(options: FindUserOptions): SelectQueryBuilder<User> {
     const userRepository = getRepository(User);
     const qb = userRepository.createQueryBuilder("user");
 

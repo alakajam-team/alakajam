@@ -7,7 +7,7 @@ import userService from "server/user/user.service";
 /**
  * Login form
  */
-export async function loginGet(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
+export function loginGet(req: CustomRequest, res: CustomResponse<CommonLocals>): void {
   res.locals.pageTitle = "Login";
 
   res.render<CommonLocals>("user/authentication/login", {

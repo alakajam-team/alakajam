@@ -1,7 +1,7 @@
 import template from "lodash.template";
 import Sortable from "sortablejs";
 
-export default function editEntryLinks() {
+export default function editEntryLinks(): void {
   const linksTemplate = template($("#js-links-template").html());
   const addLinkSelector = ".js-add-link";
   const removeLinkSelector = ".js-remove-link";

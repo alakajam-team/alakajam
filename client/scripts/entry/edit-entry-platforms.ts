@@ -1,5 +1,5 @@
 
-export default function editEntryPlatforms() {
+export default function editEntryPlatforms(): void {
   $(".js-entry-platforms").each(function() {
     const $entryPlatforms = $(this);
 

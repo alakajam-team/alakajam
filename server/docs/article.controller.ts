@@ -59,7 +59,7 @@ async function renderArticle(
   // Find featured article
   const findArticleTask = articleService.findArticle(
     name,
-  ).then(async (article) => {
+  ).then((article) => {
     if (article) {
       const lines = article.split("\n");
       context.articleTitle = lines.shift();

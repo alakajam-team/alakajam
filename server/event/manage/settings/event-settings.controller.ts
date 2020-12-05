@@ -7,15 +7,14 @@ import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
-import highScoreService from "server/entry/highscore/highscore.service";
-import eventPresetService from "server/event/manage/settings/event-preset.service";
 import eventService from "server/event/event.service";
+import eventPresetService from "server/event/manage/settings/event-preset.service";
 import ratingService from "server/event/ratings/rating.service";
 import tournamentService, { CACHE_KEY_ACTIVE_TOURNAMENT_EVENT } from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
-import eventTemplateService from "../create/event-template.service";
 import { EventLocals } from "../../event.middleware";
 import themeShortlistService from "../../theme/theme-shortlist.service";
+import eventTemplateService from "../create/event-template.service";
 
 /**
  * Edit or create an event

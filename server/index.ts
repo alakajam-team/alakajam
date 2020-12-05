@@ -163,7 +163,7 @@ function configureBrowserRefresh() {
   if (config.DEBUG_REFRESH_BROWSER) {
     browserRefreshClient
       .enableSpecialReload(CLIENT_RESOURCES)
-      .onFileModified(async (filePath) => {
+      .onFileModified((filePath) => {
         if (filePath.endsWith(".css")) {
           browserRefreshClient.refreshStyles();
         } else if (filePath.endsWith(".gif") || filePath.endsWith(".jpg") || filePath.endsWith(".png")) {

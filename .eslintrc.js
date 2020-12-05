@@ -29,6 +29,7 @@ module.exports = {
         "@typescript-eslint/prefer-includes": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/array-type": "off",
+
         "@typescript-eslint/consistent-type-definitions": "error",
         "react/jsx-uses-react": 1,
         "react/jsx-uses-vars": 1,
@@ -86,7 +87,6 @@ module.exports = {
                 "avoidEscape": true
             }
         ],
-        "@typescript-eslint/require-await": "off",
         "@typescript-eslint/restrict-plus-operands": "off",
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/semi": [
