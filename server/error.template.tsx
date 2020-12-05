@@ -1,9 +1,9 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { code, title, message, devMode, stack } = context;
 
   return base(context,

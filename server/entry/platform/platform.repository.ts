@@ -21,7 +21,7 @@ export class PlatformRepositoryBookshelf {
    */
   public async findAllByName(names: string[]): Promise<Platform[]> {
     const collection = await models.Platform
-      .query((qb) => { qb.whereIn("name", names); })
+      .query((qb) => { void qb.whereIn("name", names); })
       .fetchAll();
     return collection.map(model => Platform.fromBookshelfModel(model));
   }
@@ -104,12 +104,12 @@ export class PlatformRepositoryBookshelf {
       log.error(e.stack);
     }
   }
-  
-  save(platform: Platform): Promise<Platform> {
+
+  public save(platform: Platform): Promise<Platform> {
     return getRepository(Platform).save(platform);
   }
 
-  async delete(id: number) {
+  public async delete(id: number) {
     if (id) {
       await getRepository(Platform).delete({ id });
     }

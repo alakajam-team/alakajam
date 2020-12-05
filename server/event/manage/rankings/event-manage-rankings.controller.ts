@@ -12,7 +12,7 @@ import eventService from "../../event.service";
 /**
  * Manage the event's entry rankings
  */
-export async function viewEventManageRankings(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function viewEventManageRankings(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Manage rankings";
 
   const { event, user } = res.locals;
@@ -60,7 +60,7 @@ export async function viewEventManageRankings(req: CustomRequest, res: CustomRes
 /**
  * Save changes the event's entry rankings
  */
-export async function postEventManageRankings(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function postEventManageRankings(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
   if (!security.canUserWrite(user, event)) {

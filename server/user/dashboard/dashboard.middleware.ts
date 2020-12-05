@@ -19,7 +19,7 @@ export interface DashboardLocals extends CommonLocals {
   readonly dashboardAdminMode: boolean;
 }
 
-export async function dashboardMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction) {
+export async function dashboardMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction): Promise<void> {
   res.locals.pageTitle = "User dashboard";
 
   if (!res.locals.user || res.locals.user === undefined) {

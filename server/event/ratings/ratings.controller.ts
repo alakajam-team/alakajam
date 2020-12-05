@@ -6,7 +6,7 @@ import { EventLocals } from "../event.middleware";
 /**
  * Browse ratings by own user
  */
-export async function viewEventRatings(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function viewEventRatings(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Ratings";
 
   const { user, event } = res.locals;

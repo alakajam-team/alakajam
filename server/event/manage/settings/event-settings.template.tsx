@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import * as editEventMacros from "server/event/manage/event-manage.macros";
@@ -6,7 +6,7 @@ import * as formMacros from "server/macros/form.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "../event-manage.base.template";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { event, eventPresetsData, user } = context;
   const eventDetails = event?.related("details");
 

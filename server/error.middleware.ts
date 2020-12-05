@@ -8,7 +8,7 @@ import { CustomRequest, CustomResponse } from "./types";
  * @param devMode
  */
 export function createErrorRenderingMiddleware(devMode: boolean) {
-  return (error: any, req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction) => {
+  return (error: any, req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction): void => {
     if (!error) {
       errorPage(req, res, 404, undefined, {showErrorDetails: devMode});
     } else {
@@ -33,7 +33,7 @@ export function errorPage(
   res: CustomResponse<CommonLocals>,
   httpCode: number,
   error?: Error|string,
-  options: {showErrorDetails?: boolean} = {}) {
+  options: {showErrorDetails?: boolean} = {}): void {
 
   const stack = (options.showErrorDetails && typeof error === "object") ? error.stack : undefined;
   let message = (typeof error === "object") ? error.message : error;

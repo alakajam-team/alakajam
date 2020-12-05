@@ -7,7 +7,7 @@ import eventParticipationService from "./event-participation.service";
 /**
  * Join or leave event
  */
-export async function joinLeaveEvent(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function joinLeaveEvent(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   if (!res.locals.user) {
     res.redirectToLogin();
     return;
@@ -20,7 +20,7 @@ export async function joinLeaveEvent(req: CustomRequest, res: CustomResponse<Eve
   }
 }
 
-async function joinEvent(res: CustomResponse<EventLocals>) {
+async function joinEvent(res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
   await eventParticipationService.joinEvent(event, user);
@@ -34,7 +34,7 @@ async function joinEvent(res: CustomResponse<EventLocals>) {
   res.redirect(links.routeUrl(event, "event", "dashboard"));
 }
 
-async function leaveEvent(res: CustomResponse<EventLocals>) {
+async function leaveEvent(res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
   const hasEntry = await entryService.findUserEntryForEvent(user, event.get("id"));

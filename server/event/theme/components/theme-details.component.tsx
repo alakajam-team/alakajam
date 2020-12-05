@@ -1,9 +1,9 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import * as eventMacros from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 
-export function themeDetails(userTheme: BookshelfModel) {
+export function themeDetails(userTheme: BookshelfModel): JSX.Element {
   const themeStatus = userTheme ? userTheme.get("status") : undefined;
   return <p>
     {eventMacros.eventThemeStatus(userTheme)}

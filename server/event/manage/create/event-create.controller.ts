@@ -4,7 +4,7 @@ import security from "server/core/security";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventTemplateService from "./event-template.service";
 
-export async function eventCreate(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function eventCreate(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   if (!security.isMod(res.locals.user)) {
     res.errorPage(403);
     return;

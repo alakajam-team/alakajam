@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import { markdown } from "server/core/templating-filters";
@@ -12,7 +12,7 @@ import { themeStats } from "./components/theme-stats.component";
 import { themeVotingSamples } from "./components/theme-voting-samples.component";
 import { themeVoting } from "./components/theme-voting.component";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { event, themesPost, user, userLikes, votingAllowed, sampleThemes, userRanks, defaultShortlistSize,
     shortlist, randomizedShortlist, hasRankedShortlist, shortlistVotes, activeShortlist, eliminatedShortlist,
     ideasRequired, eliminationMinNotes,

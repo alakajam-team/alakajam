@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { JSX } from "preact";
 
 export function peopleTabs(path: string): JSX.Element {

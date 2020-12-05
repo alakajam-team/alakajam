@@ -1,10 +1,10 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { peopleTabs } from "server/macros/tabs.macros";
 import { userThumb } from "server/user/user.macros";
 import { PeopleModsContext } from "./people-mods.controller";
 
-export default function render(context: PeopleModsContext) {
+export default function render(context: PeopleModsContext): JSX.Element {
   const { admins, mods, path } = context;
 
   return base(context, <div class="container">

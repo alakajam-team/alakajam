@@ -22,7 +22,7 @@ import themeVotingService from "./theme-voting.service";
 /**
  * Submit themes to an event, view and vote on other themes
  */
-export async function eventThemes(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function eventThemes(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Themes";
 
   const event = res.locals.event;
@@ -205,7 +205,7 @@ export async function _generateShortlistInfo(event: BookshelfModel, user: User |
 /**
  * AJAX API: Find themes to vote on
  */
-export async function ajaxFindThemes(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function ajaxFindThemes(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const themesCollection = await themeVotingService.findThemesToVoteOn(res.locals.user, res.locals.event);
   const json = [];
   for (const theme of themesCollection.models) {
@@ -220,7 +220,7 @@ export async function ajaxFindThemes(req: CustomRequest, res: CustomResponse<Eve
 /**
  * AJAX API: Save a vote
  */
-export async function ajaxSaveThemeVote(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function ajaxSaveThemeVote(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   if (forms.isId(req.body.id) && (req.body.upvote !== undefined || req.body.downvote !== undefined)) {
     const score = (req.body.upvote !== undefined) ? 1 : -1;
     await themeVotingService.saveVote(res.locals.user, res.locals.event, forms.parseInt(req.body.id), score);

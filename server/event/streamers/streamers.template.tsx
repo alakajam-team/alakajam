@@ -1,5 +1,5 @@
 import { capitalize } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
@@ -8,7 +8,7 @@ import { markdown } from "server/core/templating-filters";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import * as userMacros from "server/user/user.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { user, event, eventParticipations, currentlyLiveUserIds, streamerOnlyTournamentIsLive } = context;
 
   registerStyles(context);

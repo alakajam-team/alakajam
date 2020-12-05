@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import forms from "server/core/forms";
 import { dump } from "server/core/templating-filters";
 import { User } from "server/entity/user.entity";
@@ -17,7 +17,7 @@ export interface EventCountdownOffset {
   m: number;
 }
 
-export function linksForm(eventDetails: BookshelfModel) {
+export function linksForm(eventDetails: BookshelfModel): JSX.Element {
   return <div class="form-group">
     <label for="links">Home page shortcuts
       {formMacros.tooltip("Must be a valid JSON array of links, "

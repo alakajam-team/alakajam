@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { markdown } from "server/core/templating-filters";
 import { ifSet } from "server/macros/jsx-utils";
 import * as sidebarMacros from "server/macros/sidebar.macros";
 import { ArticleContext } from "./article.controller";
 
-export default function render(context: ArticleContext) {
+export default function render(context: ArticleContext): JSX.Element {
   const { sidebar, articleName, articleTitle, articleBody } = context;
 
   return base(context,

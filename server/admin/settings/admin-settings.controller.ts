@@ -18,7 +18,7 @@ export interface AdminSettingsContext extends AdminBaseContext {
 /**
  * Settings management
  */
-export async function adminSettings(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function adminSettings(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   const { user } = res.locals;
 
   if (!config.DEBUG_ADMIN && !security.isMod(user)) {

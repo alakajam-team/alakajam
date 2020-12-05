@@ -18,7 +18,7 @@ export interface EventsContext extends CommonLocals {
 /**
  * Events listing
  */
-export async function events(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function events(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   res.locals.pageTitle = "Events";
 
   const pending: BookshelfModel[] = [];

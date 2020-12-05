@@ -1,8 +1,8 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import * as formMacros from "server/macros/form.macros";
 
-export function teamField(event, entry, isEntryOwner, members) {
+export function teamField(event, entry, isEntryOwner, members): JSX.Element {
   return <div id="edit-team" class={"js-edit-entry-team " + (entry.get("division") === "solo" ? "d-none" : "")}
     data-find-team-mate-url={links.routeUrl(event, "event", "ajax-find-team-mate")}
     data-entry-id={entry.get("id") || ""}>

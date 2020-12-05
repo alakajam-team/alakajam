@@ -1,8 +1,8 @@
 import { BookshelfModel } from "bookshelf";
 import { range } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 
-export function linksField(entry: BookshelfModel) {
+export function linksField(entry: BookshelfModel): JSX.Element {
   const links = entry.get("links") || [];
   const linkCount = Math.max(links.length, 3);
 

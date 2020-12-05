@@ -8,7 +8,7 @@ import postService from "./post.service";
 /**
  * General paginated posts browsing
  */
-export async function postsView(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function postsView(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   // Fetch posts
   let specialPostType = forms.sanitizeString(req.query.special_post_type?.toString()) || null;
   if (specialPostType === "all") {

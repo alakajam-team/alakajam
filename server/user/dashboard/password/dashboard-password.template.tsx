@@ -1,10 +1,10 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import dashboardBase from "../dashboard.base.template";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { dashboardUser, dashboardAdminMode } = context;
 
   return dashboardBase(context,

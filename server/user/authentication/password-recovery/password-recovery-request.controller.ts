@@ -3,7 +3,7 @@ import forms from "server/core/forms";
 import { CustomRequest, CustomResponse } from "server/types";
 import passwordRecoveryService from "../../password-recovery/password-recovery.service";
 
-export async function passwordRecoveryRequest(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function passwordRecoveryRequest(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let errorMessage: string | null = null;
 
   if (res.locals.user) {

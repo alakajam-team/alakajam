@@ -13,7 +13,7 @@ import eventParticipationService from "./event-participation.service";
 /**
  * Manage my participation to an event
  */
-export async function viewEventDashboard(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function viewEventDashboard(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
   res.locals.pageTitle += " | Event dashboard";
@@ -26,7 +26,7 @@ export async function viewEventDashboard(req: CustomRequest, res: CustomResponse
   }
 }
 
-export async function postEventDashboard(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function postEventDashboard(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
   if (req.body["streamer-preferences"] !== undefined) {
@@ -45,7 +45,7 @@ export async function postEventDashboard(req: CustomRequest, res: CustomResponse
   res.redirect(links.routeUrl(event, "event", "dashboard"));
 }
 
-async function myEntryHavingJoined(res: CustomResponse<EventLocals>) {
+async function myEntryHavingJoined(res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
   const entry = await entryService.findUserEntryForEvent(user, event.get("id"), {
@@ -80,6 +80,6 @@ async function myEntryHavingJoined(res: CustomResponse<EventLocals>) {
 }
 
 
-async function myEntryNotHavingJoined(res: CustomResponse<EventLocals>) {
+async function myEntryNotHavingJoined(res: CustomResponse<EventLocals>): Promise<void> {
   res.render<EventLocals>("event/dashboard/event-my-dashboard-join", res.locals);
 }

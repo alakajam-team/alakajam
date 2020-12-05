@@ -1,5 +1,5 @@
 import leftPad from "left-pad";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import { ordinal } from "server/core/formats";
@@ -11,7 +11,7 @@ import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { entry, entryScore, errorMessage, scoreMn, scoreS, scoreMs,
     isExternalProof, tournamentEvent, highScoresCollection } = context;
 

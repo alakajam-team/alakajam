@@ -21,7 +21,7 @@ export interface EventLocals extends CommonLocals {
 /**
  * Fetches the event & optionally the user's entry
  */
-export async function eventMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction) {
+export async function eventMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction): Promise<void> {
   if (!req.baseUrl.startsWith("/external-entry")) {
     const event = await eventService.findEventByName(req.params.eventName);
     res.locals.event = event;
@@ -50,7 +50,7 @@ export async function eventMiddleware(req: CustomRequest, res: CustomResponse<Co
 export function loadUserShortcutsContext(
   res: CustomResponse<CommonLocals>,
   targetEvent: BookshelfModel,
-  options: { postFromAnyEvent?: boolean } = {}) {
+  options: { postFromAnyEvent?: boolean } = {}): Promise<void> {
   if (targetEvent && res.locals.user) {
     const entryTask = entryService.findUserEntryForEvent(res.locals.user, targetEvent.get("id"))
       .then((userEntry) => { res.locals.userEntry = userEntry; });

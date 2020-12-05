@@ -1,12 +1,12 @@
 import { capitalize } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
-export function divisionField(entry, event, external, divisionTooltip, user) {
+export function divisionField(entry, event, external, divisionTooltip, user): JSX.Element {
   const isEntryOwner = !entry.get("id") || security.canUserManage(user, entry);
   const canEditDivision = !event || ((isEntryOwner || security.isMod(user)) && event.get("status_entry") === "open");
 

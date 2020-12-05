@@ -1,11 +1,11 @@
 import { BookshelfCollectionOf, BookshelfModel, EntryBookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import * as eventMacros from "server/event/event.macros";
 import { ifSet } from "server/macros/jsx-utils";
 import adminBase from "../admin.base";
 import { AdminTagsContext } from "./admin-tags.controller";
 
-export default function render(context: AdminTagsContext) {
+export default function render(context: AdminTagsContext): JSX.Element {
   const { tags, detailedTag, sortBy } = context;
 
   return adminBase(context,

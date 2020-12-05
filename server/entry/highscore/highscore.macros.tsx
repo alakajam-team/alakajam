@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { ordinal } from "server/core/formats";
 import links from "server/core/links";
 import security from "server/core/security";
@@ -6,7 +6,7 @@ import { date, duration, relativeTime } from "server/core/templating-filters";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import * as userMacros from "server/user/user.macros";
 
-export function highScoresLinks(entry, user, path, options: { hideSubmitButton?: boolean } = {}) {
+export function highScoresLinks(entry, user, path, options: { hideSubmitButton?: boolean } = {}): JSX.Element {
   return <>
     {ifFalse(options.hideSubmitButton, () =>
       <a href={links.routeUrl(entry, "entry", "submit-score") + "?redirectTo=" + encodeURIComponent(path)}

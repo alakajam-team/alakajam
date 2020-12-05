@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import adminBase from "server/admin/admin.base";
 import links from "server/core/links";
 import security from "server/core/security";
@@ -7,7 +7,7 @@ import * as filters from "server/core/templating-filters";
 import { User } from "server/entity/user.entity";
 import { AdminEventsContext } from "./admin-events.controller";
 
-export default function render(context: AdminEventsContext) {
+export default function render(context: AdminEventsContext): JSX.Element {
   const { user, events } = context;
 
   return adminBase(context,

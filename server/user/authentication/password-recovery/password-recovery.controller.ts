@@ -5,7 +5,7 @@ import passwordRecoveryService from "server/user/password-recovery/password-reco
 /**
  * Password change page, following the click on a password recovery link.
  */
-export async function passwordRecovery(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function passwordRecovery(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let errorMessage: string | null = null;
 
   if (res.locals.user) {

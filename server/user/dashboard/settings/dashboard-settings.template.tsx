@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import security from "server/core/security";
@@ -7,7 +7,7 @@ import { ifTrue } from "server/macros/jsx-utils";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
 import dashboardBase from "../dashboard.base.template";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { dashboardUser, dashboardAdminMode, timezones } = context;
 
   const socialLinks = dashboardUser.related("details").get("social_links") || {};

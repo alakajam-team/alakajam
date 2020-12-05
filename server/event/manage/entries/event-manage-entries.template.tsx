@@ -1,11 +1,11 @@
 import { capitalize } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import * as eventMacros from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "../event-manage.base.template";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { entries, detailedEntryInfo, entriesById, usersById, event, orderBy } = context;
 
   return eventManageBase(context, <div>

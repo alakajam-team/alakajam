@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import * as templatingFilters from "server/core/templating-filters";
@@ -21,13 +21,13 @@ export function editor(editorName: string, editorContents: string, options: { mi
   >{templatingFilters.markdownUnescape(editorContents)}</textarea>;
 }
 
-export function registerEditorScripts(locals: CommonLocals) {
+export function registerEditorScripts(locals: CommonLocals): JSX.Element {
   locals.scripts.push(links.staticUrl("/static/scripts/easymde.min.js"));
 }
 
 // Codemirror editor
 
-export function registerCodeMirrorScripts(locals: CommonLocals) {
+export function registerCodeMirrorScripts(locals: CommonLocals): JSX.Element {
   locals.scripts.push(
     links.staticUrl("/static/scripts/codemirror.min.js"),
     links.staticUrl("/static/scripts/matchbrackets.min.js"),
@@ -124,7 +124,7 @@ export function dateTimePicker(name, value, user: User,
   </div>;
 }
 
-export function registerDatePickerScripts(locals: CommonLocals) {
+export function registerDatePickerScripts(locals: CommonLocals): JSX.Element {
   locals.scripts.push(
     links.staticUrl("/static/scripts/moment.min.js"),
     links.staticUrl("/static/scripts/tempusdominus-bootstrap-4.min.js")

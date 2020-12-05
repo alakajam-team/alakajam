@@ -1,9 +1,9 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import { prettyDump } from "server/core/templating-filters";
 
-export default function render(context: CommonLocals & { json: string; apiPath: string }) {
+export default function render(context: CommonLocals & { json: string; apiPath: string }): JSX.Element {
   context.inlineStyles.push(`
     .parameter {
       padding-right: 10px;

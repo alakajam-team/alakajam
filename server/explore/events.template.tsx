@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import links from "server/core/links";
 import * as eventMacros from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import { EventsContext } from "./events.controller";
 
-export default function render(context: EventsContext) {
+export default function render(context: EventsContext): JSX.Element {
   const { open, pending, closedAlakajam, closedOther, featuredEntries } = context;
 
   return base(context,

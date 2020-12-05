@@ -1,5 +1,5 @@
 import { BookshelfModel, CommentBookshelfModel, EntryBookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import links from "server/core/links";
@@ -26,7 +26,7 @@ export function post(postModel: BookshelfModel, options: {
   commentsAnchorLinks?: boolean;
   smallTitle?: boolean;
   readOnly?: boolean;
-} = {}) {
+} = {}): JSX.Element {
   const author = postModel.related<BookshelfModel>("author");
 
   return <div class="post">
@@ -134,7 +134,7 @@ export function post(postModel: BookshelfModel, options: {
 export function postLikes(postModel: BookshelfModel, options: {
   readingUser?: User;
   readingUserLikes?: Record<number, string>;
-}) {
+}): JSX.Element {
   return <span data-toggle="tooltip" class="cursor-default"
     title={`${postModel.get("like_count") || 0} gem${postModel.get("like_count") !== -1 ? "s" : ""}`}>
     {ifSet(options.readingUser, () => {
@@ -168,14 +168,14 @@ export function postLikes(postModel: BookshelfModel, options: {
 export function comments(commentsParam: BookshelfModel[], path: string, options: {
   readingUser?: User;
   editComment?: BookshelfModel;
-  csrfToken?: Function;
+  csrfToken?: () => JSX.Element;
   editableAnonComments?: number[];
   linkToNode?: boolean;
   nodeAuthorIds?: number[];
   readOnly?: boolean;
   preview?: boolean;
   highlightNewerThan?: any;
-} & CommentEditorOptions) {
+} & CommentEditorOptions): JSX.Element {
   let lastLinkedNode: BookshelfModel | undefined;
 
   return <>
@@ -287,11 +287,11 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
   </>;
 }
 
-export function commentUrl(node: BookshelfModel, commentModel: BookshelfModel) {
+export function commentUrl(node: BookshelfModel, commentModel: BookshelfModel): string {
   return links.routeUrl(node, commentModel.get("node_type")) + "#c" + commentModel.id;
 }
 
-export function commentEditor(commentModel: BookshelfModel, path: string, csrfToken: Function, options: CommentEditorOptions) {
+export function commentEditor(commentModel: BookshelfModel, path: string, csrfToken: () => JSX.Element, options: CommentEditorOptions): JSX.Element {
   const user = (commentModel && commentModel.related("user")) ? commentModel.related("user") : options.readingUser;
   const showAnon = options.allowAnonymous && !commentModel;
   if (user) {

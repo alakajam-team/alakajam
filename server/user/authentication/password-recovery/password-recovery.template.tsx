@@ -1,10 +1,10 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import * as formMacros from "server/macros/form.macros";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { path, success, token } = context;
 
   return base(context,

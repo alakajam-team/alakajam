@@ -1,11 +1,11 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import { range } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import { ifTrue } from "server/macros/jsx-utils";
 import { themeDetails } from "./theme-details.component";
 
-export function themeIdeasForm(event: BookshelfModel, userThemes: BookshelfCollection, maxThemeSuggestions: number) {
+export function themeIdeasForm(event: BookshelfModel, userThemes: BookshelfCollection, maxThemeSuggestions: number): JSX.Element {
   const ideaRows = Math.max(userThemes.length, maxThemeSuggestions);
 
   return <div class="card themes__ideas">

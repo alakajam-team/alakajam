@@ -1,6 +1,6 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import { capitalize } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import * as templatingFilters from "server/core/templating-filters";
 import { digits } from "server/core/templating-filters";
 import * as eventMacros from "server/event/event.macros";

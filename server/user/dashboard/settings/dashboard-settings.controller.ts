@@ -28,7 +28,7 @@ export async function dashboardSettingsPost(req: CustomRequest, res: CustomRespo
   }
 }
 
-async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const dashboardUser = res.locals.dashboardUser;
   const oldTitle = dashboardUser.title;
 
@@ -93,7 +93,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
   await dashboardSettingsGet(req, res);
 }
 
-async function _handleDeletion(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+async function _handleDeletion(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const deletingOwnAccount = res.locals.user.get("id") === res.locals.dashboardUser.id;
   const userEntries = await entryService.findUserEntries(res.locals.dashboardUser);
   const result = await userService.deleteUser(res.locals.dashboardUser, userEntries.length);

@@ -7,7 +7,7 @@ import adminDevService from "./admin-dev.service";
 /**
  * Admin only: developer tools
  */
-export async function adminDev(req: CustomRequest, res: CustomResponse<AdminBaseContext>) {
+export async function adminDev(req: CustomRequest, res: CustomResponse<AdminBaseContext>): Promise<void> {
   if (res.app.locals.devMode && (config.DEBUG_ADMIN || security.isAdmin(res.locals.user))) {
 
     if (req.method === "POST") {

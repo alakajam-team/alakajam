@@ -1,5 +1,5 @@
 import { truncate } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { JSX } from "preact";
 import { moderationBar } from "server/admin/components/moderation-bar.component";
 import { CommonLocals } from "./common.middleware";

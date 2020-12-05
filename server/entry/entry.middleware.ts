@@ -17,7 +17,7 @@ export interface EntryLocals extends EventLocals {
 /**
  * Fetches the current entry & event
  */
-export async function entryMiddleware(req: CustomRequest, res: CustomResponse<EventLocals>, next: NextFunction) {
+export async function entryMiddleware(req: CustomRequest, res: CustomResponse<EventLocals>, next: NextFunction): Promise<void> {
   if (!(forms.isId(req.params.entryId))) {
     res.errorPage(403, "Invalid entry");
     return;

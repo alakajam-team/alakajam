@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
 import { ifTrue } from "server/macros/jsx-utils";
 import { entryRatingForm } from "./entry-rating-form.template";
 import { entryRatingCountPhrase } from "./entry-rating-count-phrase.template";
 
-export function entryRating(event, entry, entryVotes, user, canVoteOnEntry, vote, minEntryVotes, csrfToken) {
+export function entryRating(event, entry, entryVotes, user, canVoteOnEntry, vote, minEntryVotes, csrfToken): JSX.Element {
   if (canVoteOnEntry) {
     // Jam entrant who can vote on this entry
     return <div class="entry-voting">

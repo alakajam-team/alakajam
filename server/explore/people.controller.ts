@@ -9,7 +9,7 @@ import userService, { FindUserOptions } from "server/user/user.service";
 /**
  * People listing
  */
-export async function people(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function people(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   res.locals.pageTitle = "People";
 
   const PAGE_SIZE = 30;

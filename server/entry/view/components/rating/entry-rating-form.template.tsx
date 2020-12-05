@@ -1,10 +1,10 @@
 import { range } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { digits } from "server/core/templating-filters";
 import { ifTrue } from "server/macros/jsx-utils";
 import { entryRatingCountPhrase } from "./entry-rating-count-phrase.template";
 
-export function entryRatingForm(entry, entryVotes, event, csrfToken, vote) {
+export function entryRatingForm(entry, entryVotes, event, csrfToken, vote): JSX.Element {
   const optouts = entry.related("details").get("optouts") || [];
 
   return <form action="" method="post">

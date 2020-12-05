@@ -1,5 +1,5 @@
 import * as NodeCache from "node-cache";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import config from "server/core/config";
 import constants from "server/core/constants";
 import * as templatingFilters from "server/core/templating-filters";
@@ -9,7 +9,7 @@ import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import adminBase from "../admin.base";
 import { AdminStatusContext } from "./admin-status.controller";
 
-export default function render(context: AdminStatusContext) {
+export default function render(context: AdminStatusContext): JSX.Element {
   const { devMode, pictureResizeEnabled, caches, user } = context;
 
   return adminBase(context,

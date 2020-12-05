@@ -2,7 +2,7 @@ import { CommonLocals } from "server/common.middleware";
 import security from "server/core/security";
 import { CustomRequest, CustomResponse } from "server/types";
 
-export async function postWatch(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function postWatch(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   const { user, post } = res.locals;
 
   if (user) {

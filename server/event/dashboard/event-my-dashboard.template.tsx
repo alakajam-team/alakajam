@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
@@ -11,7 +11,7 @@ import { eventDashboardStreamerEntry } from "./components/streamer-entry.compone
 import { eventDashboardThemes } from "./components/themes.component";
 import { eventDashboardUsefulLinks } from "./components/useful-links.component";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { eventParticipation, event, user, userLikes, posts, latestPost, entry } = context;
   const socialLinks = user.related("details").get("social_links") || {};
 

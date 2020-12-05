@@ -9,7 +9,7 @@ import { EntryLocals } from "../entry.middleware";
 /**
  * Submit a high score
  */
-export async function entryHighscoreSubmit(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function entryHighscoreSubmit(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { user, entry } = res.locals;
 
   if (!user) {

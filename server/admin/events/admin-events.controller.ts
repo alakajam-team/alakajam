@@ -11,7 +11,7 @@ export interface AdminEventsContext extends CommonLocals {
 /**
  * Events management
  */
-export async function adminEvents(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function adminEvents(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   const eventsCollection = await eventService.findEvents();
 
   if (req.query.refreshHotness) {

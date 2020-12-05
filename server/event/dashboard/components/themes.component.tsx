@@ -1,9 +1,9 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import { ifTrue } from "server/macros/jsx-utils";
 
-export function eventDashboardThemes(event: BookshelfModel) {
+export function eventDashboardThemes(event: BookshelfModel): JSX.Element {
   if (event.get("status_theme") !== "disabled") {
     return <>
       {ifTrue(event.get("status_theme") === "off", () =>

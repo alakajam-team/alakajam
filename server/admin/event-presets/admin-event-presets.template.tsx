@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import * as eventManageMacros from "server/event/manage/event-manage.macros";
 import { EventCountdownOffset } from "server/event/manage/event-manage.macros";
 import { ifSet } from "server/macros/jsx-utils";
@@ -7,7 +7,7 @@ import adminBase from "../admin.base";
 import { AdminEventPresetsContext } from "./admin-event-presets.controller";
 import { User } from "server/entity/user.entity";
 
-export default function render(context: AdminEventPresetsContext) {
+export default function render(context: AdminEventPresetsContext): JSX.Element {
   return adminBase(context,
     <div>
       <h1>Event presets</h1>

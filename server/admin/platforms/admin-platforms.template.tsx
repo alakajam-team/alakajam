@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { Platform } from "server/entity/platform.entity";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import adminBase from "../admin.base";
 import { AdminPlatformsContext } from "./admin-platforms.controller";
 
-export default function render(context: AdminPlatformsContext) {
+export default function render(context: AdminPlatformsContext): JSX.Element {
   const { editPlatform, platforms, entryCount, csrfToken } = context;
 
   return adminBase(context, <div>

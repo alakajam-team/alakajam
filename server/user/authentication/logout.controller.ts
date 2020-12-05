@@ -4,7 +4,7 @@ import { CustomRequest, CustomResponse } from "server/types";
 /**
  * Logout
  */
-export async function logout(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function logout(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   res.locals.pageTitle = "Login";
 
   await req.session.regenerateAsync();

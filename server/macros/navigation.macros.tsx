@@ -1,8 +1,8 @@
 import { range } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { ifTrue } from "./jsx-utils";
 
-export function pagination(currentPage = 1, pageCount = 1, baseUrl = "/posts?") {
+export function pagination(currentPage = 1, pageCount = 1, baseUrl = "/posts?"): JSX.Element {
   const baseUrlQS = paginationBasePath(baseUrl);
   const pagesToEnd = pageCount - currentPage;
   const from = Math.max(1, currentPage - Math.max(5, 11 - pagesToEnd));

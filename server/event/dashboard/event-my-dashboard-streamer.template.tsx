@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import * as streamersDocMacros from "server/event/streamers/streamers-doc.template";
 import * as formMacros from "server/macros/form.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { event, user, eventParticipation } = context;
 
   formMacros.registerEditorScripts(context);

@@ -1,11 +1,11 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
 import { User } from "server/entity/user.entity";
 import { ifTrue } from "server/macros/jsx-utils";
 
-export default function entryHeader(entry: BookshelfModel, user: User, external: boolean) {
+export default function entryHeader(entry: BookshelfModel, user: User, external: boolean): JSX.Element {
   return <h1>
     {entry.get("title")}
     {ifTrue(security.canUserWrite(user, entry), () =>

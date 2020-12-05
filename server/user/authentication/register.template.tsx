@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import * as formMacros from "server/macros/form.macros";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { name, email, timezones, timezone, captcha } = context;
 
   return base(context,

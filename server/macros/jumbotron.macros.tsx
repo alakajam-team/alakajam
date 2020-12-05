@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import { dateTime, featuredEventDateTime, markdown, relativeTime, timezone } from "server/core/templating-filters";
 import * as eventMacros from "server/event/event.macros";
@@ -9,7 +9,7 @@ import { ifFalse, ifTrue } from "./jsx-utils";
 
 
 export function eventJumbotron(event, eventParticipation, featuredPost, user, userLikes,
-                               entry, tournamentScore, path, options: { inviteToJoin?: boolean } = {}) {
+                               entry, tournamentScore, path, options: { inviteToJoin?: boolean } = {}): JSX.Element {
   const isTournament = !["disabled", "off"].includes(event.get("status_tournament"));
 
   return <div class="event-jumbotron" style={backgroundImage(event)}>

@@ -1,10 +1,10 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import config from "server/core/config";
 import { dateTime } from "server/core/templating-filters";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 import adminBase, { AdminBaseContext } from "../admin.base";
 
-export default function render(context: AdminBaseContext & { backupDate?: Date }) {
+export default function render(context: AdminBaseContext & { backupDate?: Date }): JSX.Element {
   return adminBase(context,
     <div>
 

@@ -10,7 +10,7 @@ import { EventLocals } from "../../event.middleware";
 /**
  * Manage tournament games
  */
-export async function eventManageTournament(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function eventManageTournament(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Tournament games";
 
   const { user, event } = res.locals;

@@ -1,6 +1,6 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 
-export function sidebar(sidebarParam, path, options: { class?: string } = {}) {
+export function sidebar(sidebarParam, path, options: { class?: string } = {}): JSX.Element {
   return <div class={options.class}>
     {sidebarParam.map(sidebarGroup =>
       sidebarLinks(sidebarGroup.title, sidebarGroup.links, path)

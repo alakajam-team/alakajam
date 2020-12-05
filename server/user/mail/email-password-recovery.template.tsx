@@ -1,7 +1,7 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 
-export default function render(context: Record<string, any>) {
+export default function render(context: Record<string, any>): JSX.Element {
   const { rootUrl, token, user } = context;
 
   const link = rootUrl + "/passwordRecovery?token=" + token;

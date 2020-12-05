@@ -1,5 +1,5 @@
 import { capitalize, range } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import * as eventMacros from "server/event/event.macros";
@@ -7,7 +7,7 @@ import * as formMacros from "server/macros/form.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "../event-manage.base.template";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { event, entries, divisionQuery, categoryTitles, currentCategoryIndex } = context;
 
   return eventManageBase(context, <div>

@@ -20,7 +20,7 @@ import themeShortlistService from "../../theme/theme-shortlist.service";
 /**
  * Edit or create an event
  */
-export async function eventManage(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function eventManage(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { user } = res.locals;
   let { event } = res.locals;
 
@@ -221,7 +221,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
 /**
  * Delete an event
  */
-export async function eventDelete(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function eventDelete(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   if (!security.isAdmin(res.locals.user)) {
     res.errorPage(403);
     return;

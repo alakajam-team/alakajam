@@ -6,7 +6,7 @@ import { EventLocals } from "../event.middleware";
 /**
  * View the leaderboard of a tournament
  */
-export async function viewEventTournamentLeaderboard(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function viewEventTournamentLeaderboard(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Leaderboard";
 
   const { event } = res.locals;

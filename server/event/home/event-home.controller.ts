@@ -11,7 +11,7 @@ import { EventLocals } from "../event.middleware";
 /**
  * Browse event home page
  */
-export async function viewEventHome(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function viewEventHome(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
   const posts = await postService.findPosts({

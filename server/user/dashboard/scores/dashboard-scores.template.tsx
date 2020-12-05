@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import { date, relativeTime } from "server/core/templating-filters";
@@ -7,7 +7,7 @@ import * as entryMacros from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import dashboardBase from "../dashboard.base.template";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { activeEntries, medals, sortBy, userScores, entriesLastActivity, user } = context;
 
   const totalMedals = (medals[1] || 0) + (medals[2] || 0) + (medals[3] || 0);

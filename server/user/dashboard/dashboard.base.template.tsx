@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";

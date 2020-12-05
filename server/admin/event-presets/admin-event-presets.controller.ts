@@ -15,7 +15,7 @@ export interface AdminEventPresetsContext extends AdminBaseContext {
 /**
  * Event presets management
  */
-export async function adminEventPresets(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function adminEventPresets(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   // Find template to edit
   let editEventPreset: BookshelfModel;
   const editEventPresetId = req.query.edit || req.body.id;

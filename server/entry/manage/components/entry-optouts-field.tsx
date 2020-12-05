@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import * as formMacros from "server/macros/form.macros";
 import security from "server/core/security";
 import forms from "server/core/forms";
 import { ifTrue } from "server/macros/jsx-utils";
 
-export function optoutsField(event, entry, user, isEntryOwner) {
+export function optoutsField(event, entry, user, isEntryOwner): JSX.Element {
   const canEditOptouts = isEntryOwner || security.isMod(user);
   const optouts = entry.related("details").get("optouts");
   const rulesLink = forms.isId(event.get("status_rules")) ? links.routeUrl(event.get("status_rules"), "post") : event.get("status_rules");

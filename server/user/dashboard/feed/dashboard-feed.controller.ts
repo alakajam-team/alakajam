@@ -12,7 +12,7 @@ import { DashboardLocals } from "../dashboard.middleware";
 /**
  * View comment feed
  */
-export async function dashboardFeed(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+export async function dashboardFeed(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const dashboardUser = res.locals.dashboardUser;
 
   // if an entry is not in the cache it will return undefined

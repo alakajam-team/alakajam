@@ -6,7 +6,7 @@ import { EventLocals } from "../event.middleware";
 /**
  * Browse event posts
  */
-export async function viewEventPosts(_, res: CustomResponse<EventLocals>) {
+export async function viewEventPosts(_, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Posts";
 
   const postsCollection = await postService.findPosts({

@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
@@ -9,7 +9,7 @@ import * as formMacros from "server/macros/form.macros";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as postMacros from "server/post/post.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { post, user, userLikes, sortedComments, csrfToken, editComment, nodeAuthorIds, path } = context;
 
   formMacros.registerEditorScripts(context);

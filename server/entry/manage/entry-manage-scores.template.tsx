@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as formMacros from "server/macros/form.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { entry, highScoresCollection } = context;
 
   formMacros.registerEditorScripts(context);

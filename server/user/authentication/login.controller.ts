@@ -7,7 +7,7 @@ import userService from "server/user/user.service";
 /**
  * Login form
  */
-export async function loginGet(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function loginGet(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   res.locals.pageTitle = "Login";
 
   res.render<CommonLocals>("user/authentication/login", {
@@ -19,7 +19,7 @@ export async function loginGet(req: CustomRequest, res: CustomResponse<CommonLoc
 /**
  * Login
  */
-export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   res.locals.pageTitle = "Login";
 
   const context: RenderContext = {

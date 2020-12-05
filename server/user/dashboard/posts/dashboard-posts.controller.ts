@@ -7,7 +7,7 @@ import { DashboardLocals } from "../dashboard.middleware";
 /**
  * Manage user posts
  */
-export async function dashboardPosts(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+export async function dashboardPosts(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   let currentPage = 1;
   if (forms.isId(req.query.p)) {
     currentPage = forms.parseInt(req.query.p.toString());

@@ -1,10 +1,10 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
 import { User } from "server/entity/user.entity";
 import adminBase, { AdminBaseContext } from "../admin.base";
 
-export default function render(context: AdminBaseContext & { users: User[] }) {
+export default function render(context: AdminBaseContext & { users: User[] }): JSX.Element {
   const { users } = context;
 
   return adminBase(context,

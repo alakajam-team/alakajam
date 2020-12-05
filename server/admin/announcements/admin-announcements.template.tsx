@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { JSX } from "preact";
 import links from "server/core/links";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";

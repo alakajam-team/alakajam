@@ -13,7 +13,7 @@ import { buildPostContext } from "../post-view.controller";
 import { PostLocals } from "../post.middleware";
 import postService from "../post.service";
 
-export async function postEdit(req: CustomRequest, res: CustomResponse<PostLocals>) {
+export async function postEdit(req: CustomRequest, res: CustomResponse<PostLocals>): Promise<void> {
   if (!res.locals.user) {
     res.redirect("/login?redirect=" + req.url);
     return;
@@ -44,7 +44,7 @@ export async function postEdit(req: CustomRequest, res: CustomResponse<PostLocal
   }
 }
 
-export async function postSave(req: CustomRequest, res: CustomResponse<PostLocals>) {
+export async function postSave(req: CustomRequest, res: CustomResponse<PostLocals>): Promise<void> {
   let post = res.locals.post;
 
   // Check permissions
@@ -151,7 +151,7 @@ export async function postSave(req: CustomRequest, res: CustomResponse<PostLocal
   }
 }
 
-export async function postDelete(req: CustomRequest, res: CustomResponse<PostLocals>) {
+export async function postDelete(req: CustomRequest, res: CustomResponse<PostLocals>): Promise<void> {
   const { user, post } = res.locals;
 
   if (user && post && security.canUserManage(user, post, { allowMods: true })) {

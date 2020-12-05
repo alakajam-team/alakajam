@@ -8,7 +8,7 @@ import { EntryLocals } from "../entry.middleware";
 /**
  * Moderate high scores
  */
-export async function entryHighscoresManage(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function entryHighscoresManage(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { user, entry } = res.locals;
 
   if (!user) {

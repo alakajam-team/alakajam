@@ -4,7 +4,7 @@ import * as models from "server/core/models";
 
 export class ThemeStatsService {
 
-  public async refreshEventThemeStats(event: BookshelfModel) {
+  public async refreshEventThemeStats(event: BookshelfModel): Promise<void> {
     await event.load("details");
     const eventDetails = event.related<BookshelfModel>("details");
 

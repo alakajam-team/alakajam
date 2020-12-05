@@ -9,7 +9,7 @@ import { EntryLocals } from "../entry.middleware";
 /**
  * Browse entry scores
  */
-export async function entryHighscores(req: CustomRequest, res: CustomResponse<EntryLocals>) {
+export async function entryHighscores(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { user, entry, featuredEvent } = res.locals;
 
   if (entry.get("status_high_score") === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {

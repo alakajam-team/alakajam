@@ -32,7 +32,7 @@ const DETAILED_ENTRY_OPTIONS = { withRelated: ["comments", "details", "userRoles
 /**
  * Data about the currently featured event
  */
-export async function getFeaturedEvent(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function getFeaturedEvent(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   if (res.locals.featuredEvent) {
     req.params.event = res.locals.featuredEvent.get("id");
     return getEvent(req, res);
@@ -44,7 +44,7 @@ export async function getFeaturedEvent(req: CustomRequest, res: CustomResponse<C
 /**
  * Event timeline
  */
-export async function getEventTimeline(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function getEventTimeline(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let json: Json = {};
   let status = 200;
 
@@ -74,7 +74,7 @@ export async function getEventTimeline(req: CustomRequest, res: CustomResponse<C
 /**
  * Data about a specific event
  */
-export async function getEvent(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function getEvent(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let json: Json = {};
   let status = 200;
 
@@ -129,7 +129,7 @@ export async function getEvent(req: CustomRequest, res: CustomResponse<CommonLoc
 /**
  * Data about the theme shortlist of an event
  */
-export async function getEventShortlist(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function getEventShortlist(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let json: Json = {};
   let status = 200;
 
@@ -193,7 +193,7 @@ export async function getEventShortlist(req: CustomRequest, res: CustomResponse<
 /**
  * Data about a specific entry
  */
-export async function getEntry(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function getEntry(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let json: Json = {};
   let status = 200;
 
@@ -246,7 +246,7 @@ function _getDetailedEntryJson(entry: BookshelfModel): Json {
 /**
  * Data about a specific user
  */
-export async function getUser(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function getUser(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let json: Json = {};
   let status = 200;
 
@@ -273,7 +273,7 @@ export async function getUser(req: CustomRequest, res: CustomResponse<CommonLoca
   _renderJson(req, res, status, json);
 }
 
-export async function getUserLatestEntry(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function getUserLatestEntry(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let json: Json = {};
   let status = 200;
 
@@ -300,7 +300,7 @@ export async function getUserLatestEntry(req: CustomRequest, res: CustomResponse
   _renderJson(req, res, status, json);
 }
 
-export async function getUserSearch(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function getUserSearch(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   let json: Json = {};
   let status = 200;
 
@@ -332,7 +332,7 @@ export async function getUserSearch(req: CustomRequest, res: CustomResponse<Comm
   _renderJson(req, res, status, json);
 }
 
-export async function getThemeStats(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function getThemeStats(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   const title = forms.sanitizeString(req.params.theme);
   const themes = await themeService.findThemesByTitle(title, {
     withRelated: ["event.details"]

@@ -62,8 +62,8 @@ if (!fs.existsSync(CONFIG_PATH)) {
 }
 
 // Look for missing config keys
-const config = require(CONFIG_PATH) as Config;
-const configSample = require(CONFIG_SAMPLE_PATH) as Config;
+const config = require(CONFIG_PATH) as Config; // eslint-disable-line @typescript-eslint/no-var-requires
+const configSample = require(CONFIG_SAMPLE_PATH) as Config; // eslint-disable-line @typescript-eslint/no-var-requires
 
 for (const key in configSample) {
   if (config[key] === undefined && (key !== "DB_SQLITE_FILENAME" || config.DB_TYPE === "sqlite3")) {
@@ -77,38 +77,38 @@ export default config;
 /**
  * Root data path
  */
-export function dataPathAbsolute() {
+export function dataPathAbsolute(): string {
   return path.resolve(ROOT_PATH, config.DATA_PATH);
 }
 
 /**
  * User uploads storage folder
  */
-export function uploadsPathAbsolute() {
+export function uploadsPathAbsolute(): string {
   return path.join(dataPathAbsolute(), "uploads");
 }
 
 /**
  * Temporary files folder
  */
-export function tmpPathAbsolute() {
+export function tmpPathAbsolute(): string {
   return path.join(dataPathAbsolute(), "tmp");
 }
 
 /**
  * Static files, output of the client build
  */
-export function clientBuildPathAbsolute() {
+export function clientBuildPathAbsolute(): string {
   return path.join(ROOT_PATH, "/dist/client");
 }
 
 /**
  * Static files, non-build (images, etc.)
  */
-export function staticPathAbsolute() {
+export function staticPathAbsolute(): string {
   return path.join(ROOT_PATH, "/static");
 }
 
-export function ilikeOperator() {
+export function ilikeOperator(): string {
   return config.DB_TYPE === "sqlite3" ? "like" : "ilike";
 }

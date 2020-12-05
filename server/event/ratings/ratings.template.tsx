@@ -1,10 +1,10 @@
 import { capitalize } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import * as eventMacros from "server/event/event.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { ratingCount, votesPerCategory } = context;
 
   return base(context,

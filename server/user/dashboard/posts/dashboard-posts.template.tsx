@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import { ifTrue } from "server/macros/jsx-utils";
@@ -6,7 +6,7 @@ import * as navigationMacros from "server/macros/navigation.macros";
 import * as postMacros from "server/post/post.macros";
 import dashboardBase from "../dashboard.base.template";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { draftPosts, publishedPosts, newPostEvent, currentPage, pageCount, user } = context;
 
   return dashboardBase(context,

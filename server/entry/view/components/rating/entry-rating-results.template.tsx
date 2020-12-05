@@ -1,12 +1,12 @@
 import { BookshelfModel } from "bookshelf";
 import { capitalize, range } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { ordinal } from "server/core/formats";
 import links from "server/core/links";
 import { digits } from "server/core/templating-filters";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
-export function entryRatingResults(entry: BookshelfModel, event: BookshelfModel) {
+export function entryRatingResults(entry: BookshelfModel, event: BookshelfModel): JSX.Element {
   let hasRatings = false;
   const details = entry.related("details");
   const entriesInDivision = event.related("details").get("division_counts")[entry.get("division")];

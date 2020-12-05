@@ -1,5 +1,5 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import security from "server/core/security";
 import * as templatingFilters from "server/core/templating-filters";
@@ -16,7 +16,7 @@ import { entryPicture } from "./components/entry-picture.template";
 import { entryRatingResults } from "./components/rating/entry-rating-results.template";
 import { entryRating } from "./components/rating/entry-rating.template";
 
-export default function render(context: EntryLocals) {
+export default function render(context: EntryLocals): JSX.Element {
   const { entry, external, user, infoMessage, entryVotes, canVoteOnEntry, vote, minEntryVotes, featuredEvent, path,
     event, eventVote, csrfToken, sortedComments, editComment, editableAnonComments, nodeAuthorIds, posts } = context;
 

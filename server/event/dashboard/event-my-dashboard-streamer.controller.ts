@@ -9,7 +9,7 @@ import userService from "server/user/user.service";
 /**
  * Manage my streamer participation to an event
  */
-export async function viewStreamerPreferences(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function viewStreamerPreferences(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
   if (!user) {
@@ -32,7 +32,7 @@ export async function viewStreamerPreferences(req: CustomRequest, res: CustomRes
   });
 }
 
-export async function saveStreamerPreferences(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function saveStreamerPreferences(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
   const streamerDescription = forms.sanitizeString(req.body["streamer-description"], { maxLength: constants.MAX_DESCRIPTION });
 

@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import { digits } from "server/core/templating-filters";
@@ -11,7 +11,7 @@ import * as formMacros from "server/macros/form.macros";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "../event-manage.base.template";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { event, themes, eliminationThreshold, shortlist, user, eliminationMinNotes, editTheme,
     isShortlistAutoEliminationEnabled, csrfToken } = context;
 

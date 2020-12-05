@@ -40,7 +40,7 @@ jsxPistolsBabelOptions.plugins.push("@babel/plugin-proposal-optional-chaining");
 /*
  * Setup app middleware
  */
-export async function configure(app: express.Application) {
+export async function configure(app: express.Application): Promise<void> {
   app.locals.config = config;
 
   // In-memory data
@@ -82,7 +82,7 @@ export async function configure(app: express.Application) {
     babelOptions: jsxPistolsBabelOptions,
     expressApp: app
   });
-  const expressEngine = async (filePath: string, options: any, callback: Function) => {
+  const expressEngine = async (filePath: string, options: any, callback: (e?: Error, output?: string) => void) => {
     try {
       const output = await jsxPistols.render(filePath, options);
       callback(null, output);
@@ -170,7 +170,7 @@ export async function configure(app: express.Application) {
   app.use(createErrorRenderingMiddleware(app.locals.devMode));
 }
 
-export function traceRequestsMiddleware(req: Request, res: Response, next: NextFunction) {
+export function traceRequestsMiddleware(req: Request, res: Response, next: NextFunction): void {
   const minRequestDuration = config.DEBUG_TRACE_SLOW_REQUESTS || -1;
   if (!req.url.startsWith("/data") && !req.url.startsWith("/static") && !req.url.startsWith("/dist")) {
     // Trace start
@@ -191,8 +191,8 @@ export function traceRequestsMiddleware(req: Request, res: Response, next: NextF
   next();
 }
 
-export function logErrorAndReturn(value: any) {
-  return (reason: any) => {
+export function logErrorAndReturn<T>(value: T): (reason: Error | string) => T {
+  return (reason: Error | string) => {
     if (reason instanceof Error) {
       log.error(reason.message, reason.stack);
     } else {
@@ -210,10 +210,12 @@ function cleanupFormFilesCallback(req: Request, res: Response) {
         if (fileInfo) {
           if (Array.isArray(fileInfo)) {
             for (const fileInfoEntry of fileInfo) {
-              fileStorage.remove(fileInfoEntry.path);
+              fileStorage.remove(fileInfoEntry.path)
+                .catch(e => log.error(e));
             }
           } else {
-            fileStorage.remove(fileInfo.path);
+            fileStorage.remove(fileInfo.path)
+              .catch(e => log.error(e));
           }
         }
       });

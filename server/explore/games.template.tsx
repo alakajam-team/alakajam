@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
@@ -7,7 +7,7 @@ import * as gamesSearchMacros from "server/macros/games-search.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { user, searchedEvent, featuredEvent, searchOptions, entriesCollection, rescueEntries, requiredVotes, path } = context;
 
   return base(context,

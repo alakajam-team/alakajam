@@ -1,10 +1,10 @@
 import { capitalize } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
 import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 
-export function searchForm(context: Record<string, any>, options: { fixedEvent?: boolean } = {}) {
+export function searchForm(context: Record<string, any>, options: { fixedEvent?: boolean } = {}): JSX.Element {
   const divisions = context.event ? Object.keys(context.event.get("divisions")) : ["solo", "team", "unranked"];
 
   return <div class="list-group">

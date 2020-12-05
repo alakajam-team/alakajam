@@ -15,7 +15,7 @@ export interface AdminEventContext extends AdminBaseContext {
 /**
  * Event templates management
  */
-export async function adminEventTemplates(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function adminEventTemplates(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   // Find template to edit
   let editEventTemplate: BookshelfModel;
   const editEventTemplateId = req.query.edit || req.body.id;

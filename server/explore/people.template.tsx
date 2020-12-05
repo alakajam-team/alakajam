@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import { ifTrue } from "server/macros/jsx-utils";
@@ -6,7 +6,7 @@ import * as navigationMacros from "server/macros/navigation.macros";
 import * as tabsMacros from "server/macros/tabs.macros";
 import * as userMacros from "server/user/user.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { events, searchOptions, path, userCount, searchedEvent, users, currentPage, pageCount } = context;
 
   return base(context,

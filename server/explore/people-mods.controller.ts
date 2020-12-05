@@ -9,7 +9,7 @@ export interface PeopleModsContext extends CommonLocals {
   mods: BookshelfModel[];
 }
 
-export async function peopleMods(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function peopleMods(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   res.locals.pageTitle = "Admins & mods";
 
   const admins = await userService.findUsers({ isAdmin: true, orderBy: "title" });

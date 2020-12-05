@@ -12,7 +12,7 @@ import { EventLocals } from "../../event.middleware";
 /**
  * Browse event entries
  */
-export async function eventManageEntries(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function eventManageEntries(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Entries";
 
   if (!security.isMod(res.locals.user)) {

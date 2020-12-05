@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import { ifTrue } from "server/macros/jsx-utils";
@@ -7,7 +7,7 @@ import * as navigationMacros from "server/macros/navigation.macros";
 import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { posts, event, eventParticipation, user, userEntry, path,
     tournamentScore, inviteToJoin, userLikes } = context;
 

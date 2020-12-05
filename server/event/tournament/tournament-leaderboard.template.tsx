@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
@@ -9,7 +9,7 @@ import * as eventMacros from "server/event/event.macros";
 import { ifFalse, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as userMacros from "server/user/user.macros";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { event, tournamentScores, entries, user, categoryTitles } = context;
   const hasEventBanner = event.get("status_tournament") === "results";
 

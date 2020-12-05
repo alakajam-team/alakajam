@@ -1,12 +1,12 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { ordinal } from "server/core/formats";
 import { EventParticipation } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
 import * as userMacros from "server/user/user.macros";
 
 export function userRanking(user: User, event: BookshelfModel, eventParticipation: EventParticipation,
-                            tournamentScore: BookshelfModel, options: { compact?: boolean } = {}) {
+                            tournamentScore: BookshelfModel, options: { compact?: boolean } = {}): JSX.Element {
   if (user && (!event.related("details").get("flags")?.streamerOnlyTournament || eventParticipation?.isStreamer)) {
     return <div class={"tournament-user-banner " + (options.compact ? "py-0" : "")}>
       <div class="tournament-user-banner__user">{userMacros.userAvatar(user, { small: true })}</div>

@@ -1,11 +1,11 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import * as eventMacros from "server/event/event.macros";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import dashboardBase from "../dashboard.base.template";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { user, importer, availableImporters, profileIdentifier, oauthIdentifier, entryReferences } = context;
 
   context.inlineStyles.push(`

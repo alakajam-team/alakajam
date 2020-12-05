@@ -15,7 +15,7 @@ import themeShortlistService from "../../theme/theme-shortlist.service";
 /**
  * Manage the event's submitted themes
  */
-export async function eventManageThemes(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function eventManageThemes(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Themes";
 
   if (!security.isMod(res.locals.user)) {

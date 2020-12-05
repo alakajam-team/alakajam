@@ -16,7 +16,7 @@ export interface AdminTagsContext extends AdminBaseContext {
 /**
  * Admin only: Tags management
  */
-export async function adminTags(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function adminTags(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   if (!config.DEBUG_ADMIN && !security.isAdmin(res.locals.user)) {
     res.errorPage(403);
   }

@@ -16,7 +16,7 @@ import commentService from "./comment.service";
 /**
  * Save or delete a comment
  */
-export async function commentSave(req: CustomRequest, res: CustomResponse<PostLocals>) {
+export async function commentSave(req: CustomRequest, res: CustomResponse<PostLocals>): Promise<void> {
   const redirectUrl = await handleSaveComment(req.body, res.locals.user, res.locals.post,
     links.routeUrl(res.locals.post, "post"));
   res.redirect(redirectUrl);

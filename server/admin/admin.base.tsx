@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
@@ -11,7 +11,7 @@ export interface AdminBaseContext extends CommonLocals {
   errorMessage?: string;
 }
 
-export default function adminBase(context: AdminBaseContext, contentsBlock: JSX.Element) {
+export default function adminBase(context: AdminBaseContext, contentsBlock: JSX.Element): JSX.Element {
   const { path, devMode, user, infoMessage, errorMessage, alerts } = context;
 
   return base(context,

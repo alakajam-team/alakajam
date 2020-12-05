@@ -1,10 +1,10 @@
 import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import { range } from "lodash";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import links from "server/core/links";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 
-export function entryPicture(entry: EntryBookshelfModel, event: BookshelfModel) {
+export function entryPicture(entry: EntryBookshelfModel, event: BookshelfModel): JSX.Element {
   const hasPictures = entry.picturePreviews().length > 0;
   const mainPicture = hasPictures ? links.pictureUrl(entry.picturePreviews()[0], entry) : links.staticUrl("/static/images/default-entry.png");
 

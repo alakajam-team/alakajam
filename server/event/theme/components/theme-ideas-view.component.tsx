@@ -1,10 +1,11 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { User } from "server/entity/user.entity";
 import { ifNotSet, ifTrue } from "server/macros/jsx-utils";
 import { themeDetails } from "./theme-details.component";
 
-export function themeIdeasView(user: User, event: BookshelfModel, userThemes: BookshelfCollection, maxThemeSuggestions: number, path: string) {
+export function themeIdeasView(user: User, event: BookshelfModel, userThemes: BookshelfCollection,
+  maxThemeSuggestions: number, path: string): JSX.Element {
   return <div class="card themes__ideas">
     {ifTrue(user && event.get("status_theme") === "voting", () =>
       <div class="themes__idea">

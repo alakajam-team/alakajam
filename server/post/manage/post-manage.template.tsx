@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { ifTrue, ifSet, ifNotSet } from "server/macros/jsx-utils";
 import { CommonLocals } from "server/common.middleware";
@@ -9,7 +9,7 @@ import constants from "server/core/constants";
 import security from "server/core/security";
 import * as templatingFilters from "server/core/templating-filters";
 
-export default function render(context: CommonLocals) {
+export default function render(context: CommonLocals): JSX.Element {
   const { post, user, errorMessage, featuredEvent, specialPostType, allEvents, relatedEvent } = context;
 
   formMacros.registerEditorScripts(context);

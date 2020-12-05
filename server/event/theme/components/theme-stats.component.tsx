@@ -1,11 +1,12 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import forms from "server/core/forms";
 import { digits } from "server/core/templating-filters";
 import { User } from "server/entity/user.entity";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 
-export function themeStats(event: BookshelfModel, user: User, userThemes: BookshelfModel[], voteCount: number, shortlistVotes: number) {
+export function themeStats(event: BookshelfModel, user: User, userThemes: BookshelfModel[],
+  voteCount: number, shortlistVotes: number): JSX.Element {
   return <div class="card card-body">
     {ifSet(user, () =>
       <div class="row">

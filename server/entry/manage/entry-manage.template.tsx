@@ -192,7 +192,7 @@ export default function render(context: CommonLocals): JSX.Element {
   );
 }
 
-function regsiterCustomStyles(context: CommonLocals) {
+function regsiterCustomStyles(context: CommonLocals): JSX.Element {
   context.inlineStyles.push(`
 #edit-team .select2.select2-container {
   width: 200px;

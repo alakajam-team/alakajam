@@ -1,10 +1,10 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import { ifTrue } from "server/macros/jsx-utils";
 
-export function eventDashboardUsefulLinks(event: BookshelfModel) {
+export function eventDashboardUsefulLinks(event: BookshelfModel): JSX.Element {
   const rulesLink = forms.isId(event.get("status_rules"))
     ? links.routeUrl(event.get("status_rules"), "post")
     : event.get("status_rules");

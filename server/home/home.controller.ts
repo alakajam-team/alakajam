@@ -36,7 +36,7 @@ export interface HomeContext extends CommonLocals {
 /**
  * Home page
  */
-export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   const { user, featuredEvent } = res.locals;
 
   let context = cache.general.get<HomeContext>("home_page");

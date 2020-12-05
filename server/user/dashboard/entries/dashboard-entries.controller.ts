@@ -7,7 +7,7 @@ import { CustomRequest, CustomResponse } from "server/types";
 /**
  * Manage user entries
  */
-export async function dashboardEntries(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function dashboardEntries(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   const { user, featuredEvent } = res.locals;
 
   const entryCollection = await entryService.findUserEntries(user);

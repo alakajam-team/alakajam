@@ -17,7 +17,7 @@ interface DashbaordEntryImportContext {
   errorMessage?: string;
 }
 
-export async function dashboardEntryImport(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+export async function dashboardEntryImport(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const context: DashbaordEntryImportContext = {
     availableImporters: entryImportService.getAvailableImporters(),
   };

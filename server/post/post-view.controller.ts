@@ -13,7 +13,7 @@ import postService from "./post.service";
 /**
  * View a blog post
  */
-export async function postView(req: CustomRequest, res: CustomResponse<PostLocals>) {
+export async function postView(req: CustomRequest, res: CustomResponse<PostLocals>): Promise<void> {
   // Check permissions
   const { post, user } = res.locals;
   if (postService.isPast(post.get("published_at")) ||

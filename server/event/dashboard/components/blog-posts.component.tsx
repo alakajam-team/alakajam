@@ -1,12 +1,12 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { User } from "server/entity/user.entity";
 import * as eventMacros from "server/event/event.macros";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as postMacros from "server/post/post.macros";
 
 export function eventDashboardBlogPosts(user: User, event: BookshelfModel, entry: BookshelfModel,
-  posts: BookshelfModel[], latestPost: BookshelfModel, userLikes: Record<number, string>) {
+  posts: BookshelfModel[], latestPost: BookshelfModel, userLikes: Record<number, string>): JSX.Element {
   return <>
     <p class="mt-3">{eventMacros.eventShortcutMyPost(user as any, event, latestPost, { buttonsOnly: true })}</p>
 

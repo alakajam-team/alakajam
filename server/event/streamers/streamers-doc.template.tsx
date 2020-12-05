@@ -1,10 +1,10 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import { BookshelfModel } from "bookshelf";
 
-export default function render(context: CommonLocals & { event: BookshelfModel }) {
+export default function render(context: CommonLocals & { event: BookshelfModel }): JSX.Element {
   const {event} = context;
 
   return base(context,
@@ -20,7 +20,7 @@ export default function render(context: CommonLocals & { event: BookshelfModel }
     </div>);
 }
 
-export function streamersDoc(context: CommonLocals, event: BookshelfModel) {
+export function streamersDoc(context: CommonLocals, event: BookshelfModel): JSX.Element {
   context.inlineStyles.push(`
   .streamer-perks {
     background: url('${links.staticUrl("/static/images/streamer-background.jpg")}');

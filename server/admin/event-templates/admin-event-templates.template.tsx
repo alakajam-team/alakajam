@@ -1,5 +1,5 @@
 import { BookshelfModel } from "bookshelf";
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { JSX } from "preact";
 import * as eventManageMacros from "server/event/manage/event-manage.macros";
 import * as formMacros from "server/macros/form.macros";

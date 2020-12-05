@@ -13,7 +13,7 @@ import userService from "server/user/user.service";
 /**
  * Display a user profile
  */
-export async function userProfile(req: CustomRequest, res: CustomResponse<CommonLocals>) {
+export async function userProfile(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   const profileUser = await userService.findByName(req.params.name);
   if (profileUser) {
     res.locals.pageTitle = profileUser.title;

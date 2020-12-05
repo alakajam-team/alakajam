@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import base from "server/base.template";
 import links from "server/core/links";
 import * as eventMacros from "server/event/event.macros";
@@ -10,7 +10,7 @@ import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 import { HomeContext } from "./home.controller";
 
-export default function render(context: HomeContext) {
+export default function render(context: HomeContext): JSX.Element {
   const { user, featuredEvent, featuredPost, embedStreamer, jumboStream, featuredEventAnnouncement, path,
     eventsTimeline, eventParticipation, inviteToJoin, entry, tournamentScore,
     suggestedEntries, posts, comments, userPost, userLikes, pageCount } = context;

@@ -16,7 +16,7 @@ import { EventLocals } from "../event.middleware";
 /**
  * Browse event results
  */
-export async function viewEventResults(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function viewEventResults(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Results";
 
   const { event } = res.locals;

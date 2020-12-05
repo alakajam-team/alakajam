@@ -4,13 +4,13 @@ import { CustomRequest, CustomResponse } from "server/types";
 import userService from "server/user/user.service";
 import { DashboardLocals } from "../dashboard.middleware";
 
-export async function dashboardPasswordGet(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+export async function dashboardPasswordGet(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   res.render<DashboardLocals>("user/dashboard/password/dashboard-password", res.locals);
 }
 /**
  * Manage user profile contents
  */
-export async function dashboardPasswordPost(req: CustomRequest, res: CustomResponse<DashboardLocals>) {
+export async function dashboardPasswordPost(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const dashboardUser = res.locals.dashboardUser;
 
   const formAlerts = await validateForm(req.body, {

@@ -7,7 +7,7 @@ import postService from "../post.service";
 /**
  * Likes or unlikes a post
  */
-export async function likePost(req: CustomRequest, res: CustomResponse<PostLocals>) {
+export async function likePost(req: CustomRequest, res: CustomResponse<PostLocals>): Promise<void> {
   const { user, post } = res.locals;
 
   if (user) {

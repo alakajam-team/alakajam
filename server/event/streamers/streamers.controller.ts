@@ -10,7 +10,7 @@ import { EventLocals } from "../event.middleware";
 import eventService from "../event.service";
 import twitchService from "./twitch.service";
 
-export async function eventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function eventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
   const filter = security.isMod(user) ? "all-streamer-states" : "streamers";
@@ -39,11 +39,11 @@ export async function eventStreamers(req: CustomRequest, res: CustomResponse<Eve
   });
 }
 
-export async function eventStreamersDoc(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function eventStreamersDoc(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.render<EventLocals>("event/streamers/streamers-doc", res.locals);
 }
 
-export async function moderateEventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>) {
+export async function moderateEventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { event, user } = res.locals;
 
   if (!security.isMod(user)) {

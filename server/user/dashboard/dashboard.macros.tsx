@@ -1,4 +1,4 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 
 export function timezoneField(timezones, selectedTimezone) {
   return <div class="form-group">

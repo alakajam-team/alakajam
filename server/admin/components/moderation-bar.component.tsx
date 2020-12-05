@@ -1,10 +1,10 @@
-import * as React from "preact";
+import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import security from "server/core/security";
 import { ifTrue } from "server/macros/jsx-utils";
 
-export function moderationBar(context: CommonLocals, isAdmin: boolean) {
+export function moderationBar(context: CommonLocals, isAdmin: boolean): JSX.Element {
   return <div class="moderation-bar">
     <div class="container">
       <a href="/admin" class="btn"><span class="fas fa-wrench"></span> Mod dashboard</a>
