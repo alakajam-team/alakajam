@@ -1,6 +1,7 @@
 import React, { JSX } from "preact";
+import { TimeZone } from "../user-timezone.service";
 
-export function timezoneField(timezones, selectedTimezone): JSX.Element {
+export function timezoneField(timezones: TimeZone[], selectedTimezone: string): JSX.Element {
   return <div class="form-group">
     <label for="timezone">Timezone</label>
     <p class="legend">Useful for viewing jam times in your local zone</p>

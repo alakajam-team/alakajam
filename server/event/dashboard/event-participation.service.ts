@@ -34,7 +34,7 @@ export class EventParticipationService {
       });
       if (tournamentRefreshRequired) {
         // XXX Performance
-        await tournamentService.recalculateAllTournamentScores(entryHighscoreService, event);
+        await tournamentService.recalculateAllTournamentScores(event);
       }
 
       await this.refreshParticipationCount(event);
@@ -81,7 +81,7 @@ export class EventParticipationService {
 
       if (tournamentRefreshRequired) {
         // XXX Performance
-        await tournamentService.recalculateAllTournamentScores(entryHighscoreService, event);
+        await tournamentService.recalculateAllTournamentScores(event);
       }
     } else {
       throw new Error("This user has not joined the event");

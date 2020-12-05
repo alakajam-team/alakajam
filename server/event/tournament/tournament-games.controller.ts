@@ -33,7 +33,7 @@ export async function viewEventTournamentGames(req: CustomRequest, res: CustomRe
   })).models;
 
   const eventFlags = event.related<BookshelfModel>("details").get("flags") as EventFlags;
-  let streamerBadges = new Set();
+  let streamerBadges = new Set<number>();
   let canEnterTournament = true;
   if (eventFlags.streamerOnlyTournament) {
     const streamerParticipations = await eventParticipationService.getEventParticipations(event, { filter: "streamers" });

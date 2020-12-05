@@ -15,7 +15,7 @@ export function divisionField(entry: BookshelfModel, event: BookshelfModel, exte
   return <div class="entry__divisions toggle js-entry-divisions" data-toggle="buttons"
     data-initial-division={entry.get("division") || "solo"}>
     {ifFalse(external, () =>
-      Object.entries(event.get("divisions")).map(([name, description]) =>
+      Object.entries(event.get("divisions")).map(([name, description]: [string, string]) =>
         divisionButton(capitalize(name), description, constants.DIVISION_ICONS[name], name,
           entry.get("division"), canEditDivision, divisionTooltip)
       )
@@ -45,20 +45,20 @@ export function divisionField(entry: BookshelfModel, event: BookshelfModel, exte
   </div>;
 }
 
-function divisionButton(title: string, legend: { __html: string }, icon: string, value: string, currentValue: string,
+function divisionButton(title: string, legend: string, icon: string, value: string, currentValue: string,
     canEditDivision: boolean, tooltipMessage: string) {
   if (canEditDivision) {
     return <label class={`btn entry-division js-division-button ${value === currentValue ? "active" : ""}`} role="button">
       <div class={icon}></div>
       <input type="radio" name="division" value={value} autocomplete="off" class="d-none" checked={value === currentValue} />
       {title}
-      <div class="entry-division__legend d-none d-sm-block d-none d-md-block" dangerouslySetInnerHTML={legend} />
+      <div class="entry-division__legend d-none d-sm-block d-none d-md-block">{legend}</div>
     </label>;
   } else {
     return <div class={"btn entry-division " + (value === currentValue ? "active" : "disabled")} title={tooltipMessage}>
       <div class={icon}></div>
       {title}
-      <div class="entry-division__legend d-none d-sm-block d-none d-md-block" dangerouslySetInnerHTML={legend} />
+      <div class="entry-division__legend d-none d-sm-block d-none d-md-block">{legend}</div>
     </div>;
   }
 }

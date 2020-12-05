@@ -6,7 +6,7 @@ import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as formMacros from "server/macros/form.macros";
 
 export default function render(context: CommonLocals): JSX.Element {
-  const { path, entry, user, tournamentEvent, highScoresCollection, entryScore, streamerBadges } = context;
+  const { path, entry, user, tournamentEvent, highScoresCollection, entryScore, streamerBadges, featuredEvent } = context;
 
   formMacros.registerEditorScripts(context);
 
@@ -19,7 +19,8 @@ export default function render(context: CommonLocals): JSX.Element {
           <h2>Leaderboard {scoreMacros.highScoresLinks(entry, user, path)}</h2>
 
           {scoreMacros.tournamentEventBanner(tournamentEvent)}
-          {scoreMacros.highScores(entry, highScoresCollection, entryScore, { hideViewAllScores: true, showDates: true, streamerBadges })}
+          {scoreMacros.highScores(entry, highScoresCollection, entryScore, featuredEvent,
+            { hideViewAllScores: true, showDates: true, streamerBadges })}
         </div>
       </div>
     </div>

@@ -85,6 +85,7 @@
     "csurf": "^1.11.0",
     "download": "^8.0.0",
     "easymde": "^2.13.0",
+    "eventemitter2": "^6.4.3",
     "express": "^4.17.1",
     "express-promise-router": "^4.0.1",
     "express-session": "^1.17.1",

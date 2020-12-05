@@ -12,7 +12,7 @@ import { createLuxonDate } from "server/core/formats";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
-import tournamentService from "server/event/tournament/tournament.service";
+import * as highscoreEvents from "./highscore.events";
 
 export class HighScoreService {
 
@@ -196,7 +196,7 @@ export class HighScoreService {
         await entryScore.save();
 
         // Refresh rankings
-        const updatedEntryScore = await this.refreshEntryRankings(entry, entryScore);
+        const updatedEntryScore = await this.refreshEntryRankings(entry, { triggeringEntryScore: entryScore });
         return updatedEntryScore || entryScore;
       } else {
         return entryScore;
@@ -211,7 +211,7 @@ export class HighScoreService {
     if (entryScore && entryScore.get("active") !== active) {
       entryScore.set("active", active);
       await entryScore.save();
-      await this.refreshEntryRankings(entryScore.related("entry"), entryScore, { updateTournamentIfClosed: true });
+      await this.refreshEntryRankings(entryScore.related("entry"), { triggeringEntryScore: entryScore, updateTournamentIfClosed: true });
     }
   }
 
@@ -222,7 +222,7 @@ export class HighScoreService {
     }
     const triggeringUserId = entryScore.get("user_id");
     await entryScore.destroy();
-    await this.refreshEntryRankings(entry, null, { triggeringUserId });
+    await this.refreshEntryRankings(entry, { triggeringUserId });
   }
 
   public async deleteAllEntryScores(entry: BookshelfModel): Promise<void> {
@@ -232,10 +232,9 @@ export class HighScoreService {
     await this.refreshEntryRankings(entry);
   }
 
-  public async refreshEntryRankings(
-    entry: BookshelfModel,
-    triggeringEntryScore?: BookshelfModel,
-    options: { triggeringUserId?: number; updateTournamentIfClosed?: boolean } = {}): Promise<BookshelfModel | undefined> {
+  public async refreshEntryRankings(entry: BookshelfModel, options: {
+    triggeringEntryScore?: BookshelfModel; triggeringUserId?: number; updateTournamentIfClosed?: boolean; } = {}
+  ): Promise<BookshelfModel | undefined> {
 
     let updatedEntryScore: BookshelfModel | undefined;
     const impactedEntryScores = [];
@@ -260,7 +259,7 @@ export class HighScoreService {
           ranking++;
         }
 
-        if (triggeringEntryScore && score.get("id") === triggeringEntryScore.get("id")) {
+        if (options.triggeringEntryScore && score.get("id") === options.triggeringEntryScore.get("id")) {
           updatedEntryScore = score;
         }
       }
@@ -273,18 +272,7 @@ export class HighScoreService {
     }
 
     // Refresh active tournament scores
-    const activeTournamentEvent = await tournamentService.findActiveTournamentPlaying(entry.get("id"));
-    if (activeTournamentEvent) {
-      const tournamentStatus = activeTournamentEvent.get("status_tournament");
-      if (tournamentStatus === enums.EVENT.STATUS_TOURNAMENT.PLAYING
-        || options.updateTournamentIfClosed && tournamentStatus === enums.EVENT.STATUS_TOURNAMENT.CLOSED) {
-        const triggeringUserId = options.triggeringUserId || (triggeringEntryScore
-          ? triggeringEntryScore.get("user_id") : null);
-        tournamentService.refreshTournamentScores(module.exports.default, activeTournamentEvent,
-          triggeringUserId, impactedEntryScores)
-          .catch(e => log.error(e));
-      }
-    }
+    await highscoreEvents.fireEntryRankingChange(entry, impactedEntryScores, options);
 
     if (updatedEntryScore) {
       await updatedEntryScore.load(["user"]);

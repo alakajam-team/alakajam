@@ -13,12 +13,15 @@ import { EditableSetting, SETTING_ARTICLE_SIDEBAR } from "./settings-keys";
 
 type DefaultValueEval = () => string;
 
+export interface ArticleLink {
+  title: string;
+  url: string;
+  subLinks?: ArticleLink[];
+}
+
 export type ArticleSidebarCategory = Array<{
   title: string;
-  links: Array<{
-    title: string;
-    url: string;
-  }>;
+  links: ArticleLink[];
 }>;
 
 export class Settings {

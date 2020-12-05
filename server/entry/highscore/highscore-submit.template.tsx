@@ -12,7 +12,7 @@ import * as formMacros from "server/macros/form.macros";
 import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 
 export default function render(context: CommonLocals): JSX.Element {
-  const { entry, entryScore, errorMessage, scoreMn, scoreS, scoreMs,
+  const { featuredEvent, entry, entryScore, errorMessage, scoreMn, scoreS, scoreMs,
     isExternalProof, tournamentEvent, highScoresCollection } = context;
 
   formMacros.registerEditorScripts(context);
@@ -114,7 +114,7 @@ export default function render(context: CommonLocals): JSX.Element {
           <h2>High scores</h2>
           {eventMacros.entryThumb(entry)}
           {scoreMacros.tournamentEventBanner(tournamentEvent)}
-          {scoreMacros.highScores(entry, highScoresCollection, entryScore, { hideSubmitButton: true })}
+          {scoreMacros.highScores(entry, highScoresCollection, entryScore, featuredEvent)}
         </div>
       </div>
     </div>

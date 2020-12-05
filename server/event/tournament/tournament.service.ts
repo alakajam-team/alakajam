@@ -9,7 +9,9 @@ import enums from "server/core/enums";
 import * as models from "server/core/models";
 import { EventFlags } from "server/entity/event-details.entity";
 import { EntryScoresMap } from "server/entity/tournament-score.entity";
+import highscoreService from "server/entry/highscore/highscore.service";
 import eventParticipationService from "../dashboard/event-participation.service";
+import * as tournamentEntryRankingChangeListener from "./tournament-entry-ranking-change.listener";
 
 export const CACHE_KEY_ACTIVE_TOURNAMENT_EVENT = "active-tournament-event";
 
@@ -17,6 +19,10 @@ export const CACHE_KEY_ACTIVE_TOURNAMENT_EVENT = "active-tournament-event";
  * Service for managing tournaments.
  */
 export class TournamentService {
+
+  public constructor() {
+    tournamentEntryRankingChangeListener.init();
+  }
 
   public async findActiveTournamentPlaying(entryId: number): Promise<BookshelfModel> {
     if (entryId) {
@@ -109,7 +115,6 @@ export class TournamentService {
   }
 
   public async refreshTournamentScores(
-    highScoreService: any,
     event: BookshelfModel,
     triggeringUserId?: number,
     impactedEntryScores: BookshelfModel[] = [],
@@ -153,7 +158,7 @@ export class TournamentService {
 
     // Recalculate tournament scores
     for (const userIdToUpdate of userIdsToUpdate) {
-      tournamentScoresHaveChanged = (await this.refreshTournamentScoresForUser(highScoreService,
+      tournamentScoresHaveChanged = (await this.refreshTournamentScoresForUser(
         event, entries, userIdToUpdate)) || tournamentScoresHaveChanged;
     }
 
@@ -163,8 +168,7 @@ export class TournamentService {
     }
   }
 
-  public async refreshTournamentScoresForUser(
-    highScoreService: any, event: BookshelfModel, entries: BookshelfModel[], userId: number): Promise<boolean> {
+  public async refreshTournamentScoresForUser(event: BookshelfModel, entries: BookshelfModel[], userId: number): Promise<boolean> {
     // Fetch or create tournament score
     const eventId = event.get("id");
     const tournamentScoreKeys = {
@@ -184,7 +188,7 @@ export class TournamentService {
     // (Re)-calculate score info
     let totalScore = 0;
     const entryScores: EntryScoresMap = {};
-    const entryScoresMap = await highScoreService.findUserScoresMapByEntry(userId, entries);
+    const entryScoresMap = await highscoreService.findUserScoresMapByEntry(userId, entries);
     Object.keys(entryScoresMap).forEach((entryId) => {
       const entryScore = entryScoresMap[entryId];
       if (entryScore && entryScore.get("active")
@@ -267,7 +271,7 @@ export class TournamentService {
     }
   }
 
-  public async recalculateAllTournamentScores(highScoreService: any, event: BookshelfModel): Promise<void> {
+  public async recalculateAllTournamentScores(event: BookshelfModel): Promise<void> {
     // Pick entries for which to fetch scores
     const tournamentEntries = await this.findTournamentEntries(event);
     const entries = tournamentEntries.map((tEntry) => tEntry.related("entry")) as BookshelfModel[];
@@ -305,7 +309,7 @@ export class TournamentService {
       }
     }
     for (const userId of refreshScoresForUserIds) {
-      await this.refreshTournamentScoresForUser(highScoreService, event, entries, userId);
+      await this.refreshTournamentScoresForUser(event, entries, userId);
     }
     await this.refreshTournamentRankings(event);
   }

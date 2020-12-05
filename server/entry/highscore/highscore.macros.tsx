@@ -33,7 +33,7 @@ export function tournamentEventBanner(tournamentEvent: BookshelfModel): JSX.Elem
 
 export function highScores(entry: BookshelfModel, scoreCollection: BookshelfCollection, userScore = null, featuredEvent: BookshelfModel,
                            options: { showDates?: boolean; showActiveToggles?: boolean;
-                             streamerBadges?: any; hideViewAllScores?: boolean; } = {}): JSX.Element {
+                             streamerBadges?: Set<number>; hideViewAllScores?: boolean; } = {}): JSX.Element {
   const highScoreType = entry.related("details").get("high_score_type");
   const colspan = 4 + (options.showDates ? 1 : 0) + (options.showActiveToggles ? 1 : 0);
   return <table class="table">
@@ -115,7 +115,7 @@ export function highScores(entry: BookshelfModel, scoreCollection: BookshelfColl
   </table>;
 }
 
-export function streamerBadge(scoreUser: BookshelfModel | User, streamerBadges: any, featuredEvent: BookshelfModel): JSX.Element {
+export function streamerBadge(scoreUser: BookshelfModel | User, streamerBadges: Set<number>, featuredEvent: BookshelfModel): JSX.Element {
   if (streamerBadges && streamerBadges.has(scoreUser.get("id"))) {
     if (featuredEvent) {
       return <a href={links.routeUrl(featuredEvent, "event", "streamers") + "#" + scoreUser.get(" id")}
@@ -135,9 +135,9 @@ export function printProof(score: BookshelfModel): JSX.Element {
   }
 }
 
-export function printRanking(ranking: number, options: { onlyMedal?: boolean } = {}): JSX.Element {
+export function printRanking(ranking: number, options: { onlyMedal?: boolean } = {}): JSX.Element | string {
   if (ranking > 3) {
-    return (!options.onlyMedal) ? ranking : "";
+    return (!options.onlyMedal) ? ranking.toString() : "";
   } else {
     // Text in span needed for proper table sorting
     return <span class={"highscore-medal ranking-" + ranking}>{ranking}</span>;

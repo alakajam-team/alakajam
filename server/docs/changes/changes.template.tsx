@@ -3,7 +3,7 @@ import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import { markdown } from "server/core/templating-filters";
 import { ifSet } from "server/macros/jsx-utils";
-import * as sidebarMacros from "server/macros/sidebar.macros";
+import * as sidebarMacros from "server/docs/components/article-sidebar.component";
 
 export default function render(context: CommonLocals & { changes: string }): JSX.Element {
   return base(context,

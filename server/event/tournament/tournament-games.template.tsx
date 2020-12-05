@@ -10,7 +10,7 @@ import { ifTrue } from "server/macros/jsx-utils";
 
 export default function render(context: CommonLocals): JSX.Element {
   const { path, entries, event, user, canEnterTournament, eventParticipation, tournamentScore, activeEntries,
-    highScoresMap, userScoresMap, streamerBadges } = context;
+    highScoresMap, userScoresMap, streamerBadges, featuredEvent } = context;
 
   return base(context,
     <div class="container-fluid">
@@ -69,7 +69,7 @@ export default function render(context: CommonLocals): JSX.Element {
                   {scoreMacros.highScoresLinks(entry, user, path)}
                 </div>
                 <div style="display: flex">
-                  {scoreMacros.highScores(entry, highScoresMap[entry.get("id")], userScoresMap[entry.get("id")], { streamerBadges })}
+                  {scoreMacros.highScores(entry, highScoresMap[entry.get("id")], userScoresMap[entry.get("id")], featuredEvent, { streamerBadges })}
                 </div>
               </div>
             )}

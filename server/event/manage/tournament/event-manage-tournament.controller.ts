@@ -28,7 +28,7 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
         const entry = await entryService.findEntryById(req.body.add);
         if (entry) {
           await tournamentService.addTournamentEntry(event.get("id"), entry.get("id"));
-          await tournamentService.recalculateAllTournamentScores(highScoreService, event);
+          await tournamentService.recalculateAllTournamentScores(event);
         } else {
           errorMessage = "Entry not found with ID " + req.body.add;
         }
@@ -54,13 +54,13 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
       const entry = await entryService.findEntryById(req.body.id);
       if (entry) {
         await tournamentService.removeTournamentEntry(event.get("id"), entry.get("id"));
-        await tournamentService.recalculateAllTournamentScores(highScoreService, event);
+        await tournamentService.recalculateAllTournamentScores(event);
       }
     }
 
     // Refresh scores
     if (req.body.refresh) {
-      await tournamentService.recalculateAllTournamentScores(highScoreService, event);
+      await tournamentService.recalculateAllTournamentScores(event);
     }
   }
 

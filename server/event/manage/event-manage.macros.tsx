@@ -174,8 +174,8 @@ export function stateForm(event: BookshelfModel): JSX.Element {
             event?.get("status_tournament") || "disabled")}
           {formMacros.radio("status-tournament", "off", "Off",
             event?.get("status_tournament"))}
-          {formMacros.radio("status-tournament", "submission", "Submission",
-            event?.get("status_tournament"))}
+          {/* {formMacros.radio("status-tournament", "submission", "Submission",
+            event?.get("status_tournament"))} */}
           {formMacros.radio("status-tournament", "playing", "Playing",
             event?.get("status_tournament"))}
           {formMacros.radio("status-tournament", "closed", "Closed",

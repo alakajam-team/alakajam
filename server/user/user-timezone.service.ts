@@ -53,6 +53,7 @@ export class UserTimeZoneService {
 
 export interface TimeZone {
   id: string;
+  label?: string;
   offsetName: string;
   countryName: string;
 }
