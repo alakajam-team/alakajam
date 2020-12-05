@@ -145,7 +145,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
       if (event.hasChanged("status_tournament")
           && event.previous("status_tournament") === enums.EVENT.STATUS_TOURNAMENT.OFF) {
         // Pre-fill leaderboard with people who were already in the high scores
-        tournamentService.recalculateAllTournamentScores(highScoreService, event);
+        await tournamentService.recalculateAllTournamentScores(highScoreService, event);
       }
 
       // Save event

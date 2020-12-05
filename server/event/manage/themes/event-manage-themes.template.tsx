@@ -135,7 +135,7 @@ function shortlistEliminationFields(event: BookshelfModel, user: User, isShortli
 }
 
 function themesTable(themes: BookshelfModel[], editTheme: BookshelfModel | undefined,
-                     eliminationMinNotes: number, csrfToken: Function) {
+                     eliminationMinNotes: number, csrfToken: () => JSX.Element) {
   return <table class="table sortable">
     <thead>
       <tr>
@@ -159,7 +159,7 @@ function themesTable(themes: BookshelfModel[], editTheme: BookshelfModel | undef
   </table>;
 }
 
-function themesTableRow(theme: BookshelfModel, editTheme: BookshelfModel | undefined, eliminationMinNotes: number, csrfToken: Function) {
+function themesTableRow(theme: BookshelfModel, editTheme: BookshelfModel | undefined, eliminationMinNotes: number, csrfToken: () => JSX.Element) {
   const isEditedTheme = editTheme && editTheme.get("id") === theme.get("id");
   return <tr>
     <td class="legend">#{theme.get("id")}</td>

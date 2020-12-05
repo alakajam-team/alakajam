@@ -1,10 +1,12 @@
+import { BookshelfModel } from "bookshelf";
 import { range } from "lodash";
 import React, { JSX } from "preact";
 import { digits } from "server/core/templating-filters";
 import { ifTrue } from "server/macros/jsx-utils";
 import { entryRatingCountPhrase } from "./entry-rating-count-phrase.template";
 
-export function entryRatingForm(entry, entryVotes, event, csrfToken, vote): JSX.Element {
+export function entryRatingForm(entry: BookshelfModel, entryVotes: number, event: BookshelfModel,
+  csrfToken: () => JSX.Element, vote: BookshelfModel): JSX.Element {
   const optouts = entry.related("details").get("optouts") || [];
 
   return <form action="" method="post">

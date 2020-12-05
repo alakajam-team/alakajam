@@ -36,7 +36,7 @@ export default function render(context: AdminPlatformsContext): JSX.Element {
   </div>);
 }
 
-function editForm(editPlatform: Platform, platformEntryCount: number, csrfToken: Function) {
+function editForm(editPlatform: Platform, platformEntryCount: number, csrfToken: () => JSX.Element) {
   return <form action="/admin/platforms" method="post" class="card">
     <div class="card-header">
       <div class="float-right">

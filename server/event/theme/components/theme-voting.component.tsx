@@ -4,7 +4,7 @@ import links from "server/core/links";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
 export function themeVoting(event: BookshelfModel, votingAllowed: boolean,
-  ideasRequired: number, votesHistory: BookshelfModel[], csrfToken: () => JSX.Element, csrfTokenHTML: () => string) {
+  ideasRequired: number, votesHistory: BookshelfModel[], csrfToken: () => JSX.Element, csrfTokenHTML: () => string): JSX.Element {
   return <div>
     <div class="card theme-vote">
       {ifTrue(votingAllowed, () =>

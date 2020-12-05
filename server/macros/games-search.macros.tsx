@@ -2,6 +2,7 @@ import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
+import { FindGamesOptions } from "server/entry/entry.service";
 import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 
 export function searchForm(context: Record<string, any>, options: { fixedEvent?: boolean } = {}): JSX.Element {
@@ -97,7 +98,7 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
   </div>;
 }
 
-export function searchDescription(searchOptions: any, searchedEvent) {
+export function searchDescription(searchOptions: FindGamesOptions): JSX.Element {
   if (searchOptions.search || searchOptions.user || searchOptions.tags
     || searchOptions.divisions || searchOptions.highScoresSupport
     || searchOptions.allowsTournamentUse || searchOptions.platforms?.length > 0) {

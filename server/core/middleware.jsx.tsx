@@ -1,5 +1,4 @@
 import React, { JSX } from "preact";
-import { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import { CustomRequest, CustomResponse, Mutable } from "server/types";
 

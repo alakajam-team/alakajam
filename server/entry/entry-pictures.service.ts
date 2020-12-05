@@ -15,7 +15,7 @@ export class EntryPicturesService {
   public async setEntryPicture(entry: EntryBookshelfModel, file: Express.Multer.File | string): Promise<FileUploadResult> {
     const picturePath = "/entry/" + entry.get("id");
     const result = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_DEFAULT);
-    if (!("error" in result)) {
+    if ("uploaded" in result) {
       entry.set("updated_at", createLuxonDate().toJSDate());
       // Thumbnails creation
       let resultThumbnail: FileUploadResult;
@@ -27,10 +27,10 @@ export class EntryPicturesService {
       }
       const resultIcon = await fileStorage.savePictureUpload(file, picturePath, constants.PICTURE_OPTIONS_ICON);
 
-      if ("error" in resultThumbnail) {
+      if (!("uploaded" in resultThumbnail)) {
         return resultThumbnail;
       }
-      if ("error" in resultIcon) {
+      if (!("uploaded" in resultIcon)) {
         return resultIcon;
       }
 

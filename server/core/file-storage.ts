@@ -31,7 +31,10 @@ const IMAGE_HEADER_MAGIC_TO_TYPE = {
   "474946": "gif",
 };
 
-export type FileUploadResult = { error: string } | { finalPath: string; width: number; height: number };
+export type FileUploadResult =
+  { deleted: true } |
+  { error: string } |
+  { uploaded: true; finalPath: string; width: number; height: number };
 
 export interface ResizeOptions {
   format?: string;
@@ -69,7 +72,7 @@ export class FileStorage {
    * @param {string} path
    * @returns {bool} whather the specified path is a valid picture
    */
-  public async isValidPicture(picturePath: string) {
+  public async isValidPicture(picturePath: string): Promise<boolean> {
     if (await this.exists(picturePath)) {
       return (await this.getImageType(picturePath)) !== undefined;
     } else {
@@ -90,18 +93,19 @@ export class FileStorage {
    * @returns result, with either "error" or "finalPath" set, or nothing if the picture was deleted
    */
   public async savePictureToModel(model: BookshelfModel | User, attribute: string, fileUpload: string | Express.Multer.File,
-                                  deleteFile: boolean, targetPathWithoutExtension, options: ResizeOptions = {}): Promise<FileUploadResult | {}> {
+                                  deleteFile: boolean, targetPathWithoutExtension: string,
+                                  options: ResizeOptions = {}): Promise<FileUploadResult> {
     if (deleteFile) {
       // Delete picture
       if (model.get(attribute)) {
         await this.remove(model.get(attribute));
       }
       model.set(attribute, null);
-      return {};
+      return { deleted: true };
     } else if (fileUpload) {
       // Upload or replace picture
       const result = await this.savePictureUpload(fileUpload, targetPathWithoutExtension, options);
-      if (!("error" in result)) {
+      if ("uploaded" in result) {
         const previousPath = model.get(attribute);
         if (previousPath && previousPath !== result.finalPath) {
           await this.remove(previousPath);

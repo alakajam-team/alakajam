@@ -7,7 +7,7 @@ import { ifSet, ifTrue } from "server/macros/jsx-utils";
 
 export function themeShortlist(event: BookshelfModel, user: User,
   randomizedShortlist: BookshelfModel[], activeShortlist: BookshelfModel[], eliminatedShortlist: BookshelfModel[],
-  hasRankedShortlist: boolean, csrfToken: () => JSX.Element, path: string) {
+  hasRankedShortlist: boolean, csrfToken: () => JSX.Element, path: string): JSX.Element {
 
   const shortlistVote = (user && event.get("status_theme") === "shortlist");
 

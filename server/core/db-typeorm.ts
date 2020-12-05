@@ -20,14 +20,14 @@ export class DB {
 
   private connectionInstance: Connection = null;
 
-  public get connection() {
+  public get connection(): Connection {
     if (this.connectionInstance == null) {
       throw new Error("no DB connection, please call connect() first");
     }
     return this.connectionInstance;
   }
 
-  public async closeAnyConnection() {
+  public async closeAnyConnection(): Promise<void> {
     try {
       await getConnection().close();
     } catch (e) {
@@ -35,7 +35,7 @@ export class DB {
     }
   }
 
-  public async connect(options: Partial<BaseConnectionOptions> = {}) {
+  public async connect(options: Partial<BaseConnectionOptions> = {}): Promise<void> {
     let logging: LoggerOptions = ["error"];
     if (options.logging !== undefined) {
       logging = options.logging;

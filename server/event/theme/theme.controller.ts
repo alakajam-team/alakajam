@@ -163,7 +163,7 @@ export async function eventThemes(req: CustomRequest, res: CustomResponse<EventL
  *  scoreByTheme: (optional) The scores set by the user
  * }
  */
-export async function _generateShortlistInfo(event: BookshelfModel, user: User | null = null) {
+export async function _generateShortlistInfo(event: BookshelfModel, user: User | null = null): Promise<any> {
   const shortlistCollection = await themeShortlistService.findShortlist(event);
   const shortlistElimination: ThemeShortlistEliminationState = event.related<BookshelfModel>("details").get("shortlist_elimination");
   const eliminatedCount = shortlistElimination.eliminatedCount || 0;

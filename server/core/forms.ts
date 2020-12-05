@@ -167,7 +167,7 @@ function isUsername(str: string): boolean {
  * @param  {string|number} value
  * @return {Boolean}
  */
-function isId(value): boolean {
+function isId(value: unknown): boolean {
   return value && ((typeof value === "number" && value % 1 === 0 && value > 0 && value < MAX_POSTGRESQL_INTEGER) ||
     validator.isInt(value, { min: 1, max: MAX_POSTGRESQL_INTEGER }));
 }
@@ -216,7 +216,7 @@ function isFloat(input: string | number, options: { min?: number; max?: number }
  * @param  {Number}  maxLength
  * @return {Boolean}
  */
-function isLengthValid(input, maxLength = 255) {
+function isLengthValid(input: unknown, maxLength = 255): boolean {
   if (!input) {
     return true;
   } else if (typeof input === "string") {
@@ -228,12 +228,12 @@ function isLengthValid(input, maxLength = 255) {
   }
 }
 
-function isSet(input: any) {
-  return input !== undefined && input.trim() !== "";
+function isSet(input: unknown): boolean {
+  return input !== undefined && (typeof input !== "string" || input.trim() !== "");
 }
 
-function isNotSet(input: any) {
-  return input === undefined || input.trim() === "";
+function isNotSet(input: unknown): boolean {
+  return input === undefined || (typeof input === "string" && input.trim() === "");
 }
 
 /**
@@ -241,7 +241,7 @@ function isNotSet(input: any) {
  * @param  {number}  time
  * @return {Boolean}
  */
-function isPast(time: number) {
+function isPast(time: number): boolean {
   return time && (new Date().getTime() - time) > 0;
 }
 
@@ -277,9 +277,9 @@ function parsePickerDate(formattedDate: string, options: luxon.DateTimeOptions =
  * @param {string} str
  * @param {object} options throwError acceptInvalid
  */
-function parseJson(str, options: any = {}) {
+function parseJson<T>(str: string, options: any = {}): T | string | false {
   if (!str) {
-    return str;
+    return false;
   }
 
   try {
@@ -339,7 +339,7 @@ function markdownToHtml(markdown: string, options: { maxLength?: number; readMor
  * @param  {string} markdown
  * @return {string} text without markup, but *should not be trusted* as safe HTML!
  */
-function markdownToText(markdown: string) {
+function markdownToText(markdown: string): string {
   return removeMarkdown(sanitizeMarkdown(markdown || "", { maxLength: constants.MAX_BODY_ANY })).replace(/\n\r/g, " ");
 }
 
@@ -348,6 +348,6 @@ function markdownToText(markdown: string) {
  * @param  {string} html
  * @return {string} Markdown
  */
-function htmlToMarkdown(html) {
+function htmlToMarkdown(html: string): string {
   return turndownService.turndown(html || "");
 }

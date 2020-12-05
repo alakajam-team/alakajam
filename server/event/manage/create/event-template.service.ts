@@ -24,7 +24,7 @@ export class EventTemplateService {
    * Finds an event template.
    * @param {number} id
    */
-  public async findEventTemplateById(id: number) {
+  public async findEventTemplateById(id: number): Promise<BookshelfModel> {
     return models.EventTemplate.where({ id }).fetch();
   }
 
@@ -32,8 +32,8 @@ export class EventTemplateService {
    * Deletes an event template.
    * @param {EventTemplate} eventTemplate
    */
-  public async deleteEventTemplate(eventTemplate: BookshelfModel) {
-    return eventTemplate.destroy();
+  public async deleteEventTemplate(eventTemplate: BookshelfModel): Promise<void> {
+    await eventTemplate.destroy();
   }
 }
 

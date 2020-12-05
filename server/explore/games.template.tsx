@@ -36,7 +36,7 @@ export default function render(context: CommonLocals): JSX.Element {
             Games
             {searchOptions.eventId === null ? " from external events " : " "}
             <span class="count">({entriesCollection.pagination.rowCount})</span>
-            {gamesSearchMacros.searchDescription(searchOptions, searchedEvent)}
+            {gamesSearchMacros.searchDescription(searchOptions)}
           </h1>
 
           {ifTrue(featuredEvent && searchedEvent && featuredEvent.get("id") === searchedEvent.get("id"), () =>

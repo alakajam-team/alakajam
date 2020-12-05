@@ -1,5 +1,4 @@
 import React, { JSX } from "preact";
-import { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
@@ -7,7 +6,7 @@ import * as formMacros from "server/macros/form.macros";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as userMacros from "server/user/user.macros";
 
-export default function dashboardBase(context: CommonLocals, contentsBlock: JSX.Element) {
+export default function dashboardBase(context: CommonLocals, contentsBlock: JSX.Element): JSX.Element {
   const { dashboardUser, dashboardAdminMode, infoMessage, errorMessage, path } = context;
 
   const options = { dashboardAdminMode };

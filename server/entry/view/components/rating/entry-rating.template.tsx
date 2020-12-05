@@ -1,11 +1,14 @@
+import { BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
+import { User } from "server/entity/user.entity";
 import { ifTrue } from "server/macros/jsx-utils";
-import { entryRatingForm } from "./entry-rating-form.template";
 import { entryRatingCountPhrase } from "./entry-rating-count-phrase.template";
+import { entryRatingForm } from "./entry-rating-form.template";
 
-export function entryRating(event, entry, entryVotes, user, canVoteOnEntry, vote, minEntryVotes, csrfToken): JSX.Element {
+export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryVotes: number, user: User, canVoteOnEntry: boolean,
+  vote: BookshelfModel, minEntryVotes: number, csrfToken: () => JSX.Element): JSX.Element {
   if (canVoteOnEntry) {
     // Jam entrant who can vote on this entry
     return <div class="entry-voting">

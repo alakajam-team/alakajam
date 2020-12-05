@@ -109,7 +109,7 @@ export class PlatformRepositoryBookshelf {
     return getRepository(Platform).save(platform);
   }
 
-  public async delete(id: number) {
+  public async delete(id: number): Promise<void> {
     if (id) {
       await getRepository(Platform).delete({ id });
     }

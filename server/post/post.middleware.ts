@@ -4,6 +4,7 @@ import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import postService from "./post.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import { NextFunction } from "express-serve-static-core";
 
 export interface PostLocals extends CommonLocals {
 
@@ -14,7 +15,7 @@ export interface PostLocals extends CommonLocals {
 
 }
 
-export async function postMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next) {
+export async function postMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction): Promise<void> {
   if (req.params.postId && req.params.postId !== "create") {
     if (forms.isId(req.params.postId)) {
       res.locals.post = await postService.findPostById(parseInt(req.params.postId, 10));

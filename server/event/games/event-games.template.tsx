@@ -48,7 +48,7 @@ export default function render(context: CommonLocals): JSX.Element {
           <h1>
             Games{" "}
             <span class="count">({entriesCollection.pagination.rowCount})</span>
-            { gamesSearchMacros.searchDescription(searchOptions, null) }
+            { gamesSearchMacros.searchDescription(searchOptions) }
           </h1>
 
           {ifTrue(rescueEntries.length > 0, () => {

@@ -13,7 +13,7 @@ import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 /**
  * Requires registration of scripts with `formMacros.registerEditorScripts(context)` to function
  */
-export function editor(editorName: string, editorContents: string, options: { minHeight?: number; autofocus?: boolean } = {}) {
+export function editor(editorName: string, editorContents: string, options: { minHeight?: number; autofocus?: boolean } = {}): JSX.Element {
   return <textarea class="form-control easymde-editor"
     name={editorName}
     data-min-height={ifSet(options.minHeight, () => options.minHeight + "px")}
@@ -21,13 +21,13 @@ export function editor(editorName: string, editorContents: string, options: { mi
   >{templatingFilters.markdownUnescape(editorContents)}</textarea>;
 }
 
-export function registerEditorScripts(locals: CommonLocals): JSX.Element {
+export function registerEditorScripts(locals: CommonLocals): void {
   locals.scripts.push(links.staticUrl("/static/scripts/easymde.min.js"));
 }
 
 // Codemirror editor
 
-export function registerCodeMirrorScripts(locals: CommonLocals): JSX.Element {
+export function registerCodeMirrorScripts(locals: CommonLocals): void {
   locals.scripts.push(
     links.staticUrl("/static/scripts/codemirror.min.js"),
     links.staticUrl("/static/scripts/matchbrackets.min.js"),
@@ -47,7 +47,7 @@ export function pictureInput(name: string, value: string, options: {
   noCard?: boolean;
   defaultValue?: string;
   legend?: string;
-} = {}) {
+} = {}): JSX.Element {
   const displayValue = value || options.defaultValue;
   return <div class={"js-picture-input " + (!options.noCard ? "card card-body" : "")}>
     <p>
@@ -67,15 +67,15 @@ export function pictureInput(name: string, value: string, options: {
 
 // Tooltips
 
-export function tooltip(title: string, options: { class?: string; placement?: string } = {}) {
+export function tooltip(title: string, options: { class?: string; placement?: string } = {}): JSX.Element {
   return <span class={`fas fa-info-circle ${options.class || "mx-1"}`}
     data-toggle="tooltip" data-placement={options.placement || "top"} title={title} style="font-size: 0.8rem"></span>;
 }
 
 // Radio and check buttons
 
-export function radio(name, value, label, modelProperty,
-                      options: { textField?: boolean; textFieldEnabled?: boolean; placeholder?: string } = {}) {
+export function radio(name: string, value: string, label: string, modelProperty: string,
+                      options: { textField?: boolean; textFieldEnabled?: boolean; placeholder?: string } = {}): JSX.Element {
   value = options.textFieldEnabled ? modelProperty : value;
   const inputId = slug(name + "-" + value);
   return <label for={inputId}>
@@ -89,7 +89,8 @@ export function radio(name, value, label, modelProperty,
   </label>;
 }
 
-export function check(name, label, value, options: { required?: boolean; textField?: boolean; placeholder?: string; noMargin?: boolean } = {}) {
+export function check(name: string, label: string, value: boolean,
+                      options: { required?: boolean; textField?: boolean; placeholder?: string; noMargin?: boolean } = {}): JSX.Element {
   return <label for={name}>
     <input type="checkbox" id={name} class="js-checkbox" name={name}
       checked={Boolean(value)}
@@ -108,8 +109,8 @@ export function check(name, label, value, options: { required?: boolean; textFie
 /**
  * Requires registration of scripts with `formMacros.registerDatePickerScripts(context)` to function
  */
-export function dateTimePicker(name, value, user: User,
-                               options: { pickerFormat?: string; serverFormat?: string; classes?: string; forceUTC?: boolean } = {}) {
+export function dateTimePicker(name: string, value: string, user: User,
+                               options: { pickerFormat?: string; serverFormat?: string; classes?: string; forceUTC?: boolean } = {}): JSX.Element {
   return <div class="form-group">
     <div class="js-date-picker input-group date" id={"datetimepicker-" + name} data-target-input="nearest"
       data-format={options.pickerFormat || "YYYY-MM-DD HH:mm"}>
@@ -124,7 +125,7 @@ export function dateTimePicker(name, value, user: User,
   </div>;
 }
 
-export function registerDatePickerScripts(locals: CommonLocals): JSX.Element {
+export function registerDatePickerScripts(locals: CommonLocals): void {
   locals.scripts.push(
     links.staticUrl("/static/scripts/moment.min.js"),
     links.staticUrl("/static/scripts/tempusdominus-bootstrap-4.min.js")
@@ -133,7 +134,7 @@ export function registerDatePickerScripts(locals: CommonLocals): JSX.Element {
 
 // Select
 
-export function select(name, models, selectedValue, options: { nullable?: boolean } = {}) {
+export function select(name: string, models: BookshelfModel[], selectedValue: string, options: { nullable?: boolean } = {}): JSX.Element {
   return <select name={name} class="js-select form-control">
     {ifTrue(options.nullable, () =>
       <option value="" selected={!selectedValue}></option>
@@ -148,7 +149,7 @@ export function select(name, models, selectedValue, options: { nullable?: boolea
 
 // Alerts
 
-export function alerts(alertsParam: Alert[]) {
+export function alerts(alertsParam: Alert[]): JSX.Element {
   return <div id="js-alerts-inline">
     {alertsParam.map(alert =>
       ifTrue(!alert.floating, () =>

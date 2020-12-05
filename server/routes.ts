@@ -1,5 +1,5 @@
 import csurf from "csurf";
-import { NextFunction, RequestHandler } from "express";
+import express, { NextFunction, RequestHandler } from "express";
 import expressPromiseRouter from "express-promise-router";
 import expressSlowDown from "express-slow-down";
 import multer from "multer";
@@ -22,6 +22,11 @@ import * as apiController from "./api/api.controller";
 import { CommonLocals, commonMiddleware } from "./common.middleware";
 import { articleApiRoot, articleView } from "./docs/article.controller";
 import { changes } from "./docs/changes/changes.controller";
+import { entryMiddleware } from "./entry/entry.middleware";
+import { entryHighscoreSubmit } from "./entry/highscore/highscore-submit.controller";
+import { entryHighscores } from "./entry/highscore/highscores.controller";
+import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
+import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
 import { inviteAccept, inviteDecline } from "./entry/team/team-invite.controller";
 import {
   apiSearchForExternalEvents,
@@ -30,27 +35,22 @@ import {
   entrySaveCommentOrVote,
   entryView
 } from "./entry/view/entry-view.controller";
-import { entryMiddleware } from "./entry/entry.middleware";
-import { entryHighscoreSubmit } from "./entry/highscore/highscore-submit.controller";
-import { entryHighscores } from "./entry/highscore/highscores.controller";
-import { entryHighscoresManage } from "./entry/manage/entry-manage-scores.controller";
-import { entryDelete, entryLeave, entryManage } from "./entry/manage/entry-manage.controller";
 import { joinLeaveEvent } from "./event/dashboard/event-join.controller";
 import { saveStreamerPreferences, viewStreamerPreferences } from "./event/dashboard/event-my-dashboard-streamer.controller";
 import { postEventDashboard, viewEventDashboard } from "./event/dashboard/event-my-dashboard.controller";
+import { eventMiddleware } from "./event/event.middleware";
 import { viewEventGames } from "./event/games/event-games.controller";
 import { viewEventHome } from "./event/home/event-home.controller";
-import { viewEventPosts } from "./event/posts/event-posts.controller";
-import { eventStreamers, eventStreamersDoc, moderateEventStreamers } from "./event/streamers/streamers.controller";
-import { eventMiddleware } from "./event/event.middleware";
+import { eventCreate } from "./event/manage/create/event-create.controller";
 import { eventManageEntries } from "./event/manage/entries/event-manage-entries.controller";
 import { postEventManageRankings, viewEventManageRankings } from "./event/manage/rankings/event-manage-rankings.controller";
-import { eventCreate } from "./event/manage/create/event-create.controller";
+import { eventDelete, eventManage } from "./event/manage/settings/event-settings.controller";
 import { eventManageThemes } from "./event/manage/themes/event-manage-themes.controller";
 import { eventManageTournament } from "./event/manage/tournament/event-manage-tournament.controller";
-import { eventDelete, eventManage } from "./event/manage/settings/event-settings.controller";
+import { viewEventPosts } from "./event/posts/event-posts.controller";
 import { viewEventRatings } from "./event/ratings/ratings.controller";
 import { viewEventResults } from "./event/results/results.controller";
+import { eventStreamers, eventStreamersDoc, moderateEventStreamers } from "./event/streamers/streamers.controller";
 import { ajaxFindThemes, ajaxSaveThemeVote, eventThemes } from "./event/theme/theme.controller";
 import { viewEventTournamentGames } from "./event/tournament/tournament-games.controller";
 import { viewEventTournamentLeaderboard } from "./event/tournament/tournament-leaderboard.controller";
@@ -73,6 +73,7 @@ import { logout } from "./user/authentication/logout.controller";
 import { passwordRecoveryRequest } from "./user/authentication/password-recovery/password-recovery-request.controller";
 import { passwordRecovery } from "./user/authentication/password-recovery/password-recovery.controller";
 import registerController from "./user/authentication/register.controller";
+import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { dashboardEntries } from "./user/dashboard/entries/dashboard-entries.controller";
 import { dashboardEntryImport } from "./user/dashboard/entries/dashboard-entry-import.controller";
 import { dashboardFeed } from "./user/dashboard/feed/dashboard-feed.controller";
@@ -80,7 +81,6 @@ import { dashboardPasswordGet, dashboardPasswordPost } from "./user/dashboard/pa
 import { dashboardPosts } from "./user/dashboard/posts/dashboard-posts.controller";
 import { dashboardScores } from "./user/dashboard/scores/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/settings/dashboard-settings.controller";
-import { dashboardMiddleware } from "./user/dashboard/dashboard.middleware";
 import { userProfile } from "./user/user-profile.controller";
 
 const upload = initUploadMiddleware();
@@ -93,7 +93,7 @@ const csrfDisabled: RequestHandler = (req: CustomRequest, res: CustomResponse<Co
 const csrfIfNotDebug = config.DEBUG_ADMIN ? [csrfDisabled] : [csrf];
 const sensitiveActionsSlowDown: RequestHandler = initSensitiveActionsSlowDownMiddleware();
 
-export function routes(app) {
+export function routes(app: express.Application): void {
   // Using express-promise-router instead of the default express.Router
   // allows our routes to return rejected promises to trigger the error
   // handling.

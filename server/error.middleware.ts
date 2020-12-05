@@ -1,4 +1,4 @@
-import { NextFunction } from "express";
+import { ErrorRequestHandler, NextFunction } from "express";
 import log from "server/core/log";
 import { CommonLocals } from "./common.middleware";
 import { CustomRequest, CustomResponse } from "./types";
@@ -7,7 +7,7 @@ import { CustomRequest, CustomResponse } from "./types";
  * Routing: 500/404
  * @param devMode
  */
-export function createErrorRenderingMiddleware(devMode: boolean) {
+export function createErrorRenderingMiddleware(devMode: boolean): ErrorRequestHandler {
   return (error: any, req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction): void => {
     if (!error) {
       errorPage(req, res, 404, undefined, {showErrorDetails: devMode});

@@ -1,9 +1,9 @@
 import { BookshelfModel } from "bookshelf";
-import React from "preact";
+import React, { JSX } from "preact";
 import { ordinal } from "server/core/formats";
 import { ifFalse, ifSet, ifTrue } from "server/macros/jsx-utils";
 
-export function themeResults(event: BookshelfModel, shortlist: BookshelfModel[], userRanks: number[]) {
+export function themeResults(event: BookshelfModel, shortlist: BookshelfModel[], userRanks: number[]): JSX.Element {
   return <div class="themes__results">
     <h2>Shortlist results</h2>
     <div class="card card-body">

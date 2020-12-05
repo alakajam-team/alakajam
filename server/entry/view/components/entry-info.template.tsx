@@ -6,7 +6,7 @@ import { digits } from "server/core/templating-filters";
 import * as eventMacros from "server/event/event.macros";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
-export default function entryInfo(entry: BookshelfModel, external: boolean) {
+export default function entryInfo(entry: BookshelfModel, external: boolean): JSX.Element {
   return <>
     {ifTrue(entry.get("description"), () =>
       <div class="card card-body entry__description user-contents">

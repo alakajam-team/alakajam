@@ -26,7 +26,7 @@ export function linksForm(eventDetails: BookshelfModel): JSX.Element {
   </div>;
 }
 
-export function countdownForm(event: BookshelfModel, user: User, options: { countdownOffset?: EventCountdownOffset } = {}) {
+export function countdownForm(event: BookshelfModel, user: User, options: { countdownOffset?: EventCountdownOffset } = {}): JSX.Element {
   return <>
     <div class="horizontal-bar">
       Home page
@@ -90,7 +90,7 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
   </>;
 }
 
-export function stateForm(event: BookshelfModel) {
+export function stateForm(event: BookshelfModel): JSX.Element {
   const flags = event?.related("details").get("flags") || {};
 
   return <>
@@ -205,7 +205,7 @@ export function stateForm(event: BookshelfModel) {
   </>;
 }
 
-export function jamConfigForm(event: BookshelfModel, eventDetails: BookshelfModel) {
+export function jamConfigForm(event: BookshelfModel, eventDetails: BookshelfModel): JSX.Element {
   return <>
     <div class="form-group">
       <label for="divisions">Divisions {formMacros.tooltip("Must be a valid JSON object, "

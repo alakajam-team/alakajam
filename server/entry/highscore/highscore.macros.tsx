@@ -1,12 +1,14 @@
+import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
 import { ordinal } from "server/core/formats";
 import links from "server/core/links";
 import security from "server/core/security";
 import { date, duration, relativeTime } from "server/core/templating-filters";
+import { User } from "server/entity/user.entity";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import * as userMacros from "server/user/user.macros";
 
-export function highScoresLinks(entry, user, path, options: { hideSubmitButton?: boolean } = {}): JSX.Element {
+export function highScoresLinks(entry: BookshelfModel, user: User, path: string, options: { hideSubmitButton?: boolean } = {}): JSX.Element {
   return <>
     {ifFalse(options.hideSubmitButton, () =>
       <a href={links.routeUrl(entry, "entry", "submit-score") + "?redirectTo=" + encodeURIComponent(path)}
@@ -20,7 +22,7 @@ export function highScoresLinks(entry, user, path, options: { hideSubmitButton?:
   </>;
 }
 
-export function tournamentEventBanner(tournamentEvent) {
+export function tournamentEventBanner(tournamentEvent: BookshelfModel): JSX.Element {
   if (tournamentEvent) {
     return <a href={links.routeUrl(tournamentEvent, "event")} class="highscore-banner">
       <div>This game is currently featured in the</div>
@@ -29,8 +31,9 @@ export function tournamentEventBanner(tournamentEvent) {
   }
 }
 
-export function highScores(entry, scoreCollection, userScore = null, featuredEvent,
-                           options: { showDates?: boolean; showActiveToggles?: boolean; streamerBadges?: any; hideViewAllScores?: boolean } = {}) {
+export function highScores(entry: BookshelfModel, scoreCollection: BookshelfCollection, userScore = null, featuredEvent: BookshelfModel,
+                           options: { showDates?: boolean; showActiveToggles?: boolean;
+                             streamerBadges?: any; hideViewAllScores?: boolean; } = {}): JSX.Element {
   const highScoreType = entry.related("details").get("high_score_type");
   const colspan = 4 + (options.showDates ? 1 : 0) + (options.showActiveToggles ? 1 : 0);
   return <table class="table">
@@ -54,7 +57,8 @@ export function highScores(entry, scoreCollection, userScore = null, featuredEve
           const isOwnScore = userScore && score.get("id") === userScore.get("id");
           return <tr class={isOwnScore ? "active" : ""}>
             <td><a name={"score-rank-" + score.get("ranking")}></a>{printRanking(score.get("ranking"))}</td>
-            <td>{userMacros.userLink(score.related("user"))}{streamerBadge(score.related("user"), options.streamerBadges, featuredEvent)}</td>
+            <td>{userMacros.userLink(score.related<BookshelfModel>("user"))}
+              {streamerBadge(score.related<BookshelfModel>("user"), options.streamerBadges, featuredEvent)}</td>
             <td><b>{printScore(entry, score, { showEditLink: isOwnScore })}</b></td>
             {ifTrue(options.showDates, () =>
               <td style="font-size: 0.8rem"> {date(score.get("submitted_at"))}</td>
@@ -111,7 +115,7 @@ export function highScores(entry, scoreCollection, userScore = null, featuredEve
   </table>;
 }
 
-export function streamerBadge(scoreUser, streamerBadges, featuredEvent) {
+export function streamerBadge(scoreUser: BookshelfModel | User, streamerBadges: any, featuredEvent: BookshelfModel): JSX.Element {
   if (streamerBadges && streamerBadges.has(scoreUser.get("id"))) {
     if (featuredEvent) {
       return <a href={links.routeUrl(featuredEvent, "event", "streamers") + "#" + scoreUser.get(" id")}
@@ -122,7 +126,7 @@ export function streamerBadge(scoreUser, streamerBadges, featuredEvent) {
   }
 }
 
-export function printProof(score) {
+export function printProof(score: BookshelfModel): JSX.Element {
   const proof = score.get("proof");
   if (proof) {
     return <a href={links.pictureUrl(proof, score)} target="alakajam_proof">
@@ -131,7 +135,7 @@ export function printProof(score) {
   }
 }
 
-export function printRanking(ranking, options: { onlyMedal?: boolean } = {}) {
+export function printRanking(ranking: number, options: { onlyMedal?: boolean } = {}): JSX.Element {
   if (ranking > 3) {
     return (!options.onlyMedal) ? ranking : "";
   } else {
@@ -140,7 +144,7 @@ export function printRanking(ranking, options: { onlyMedal?: boolean } = {}) {
   }
 }
 
-export function printScore(entry, score, options: { showEditLink?: boolean } = {}) {
+export function printScore(entry: BookshelfModel, score: BookshelfModel, options: { showEditLink?: boolean } = {}): JSX.Element {
   const highScoreType = entry.related("details").get("high_score_type");
   const unit = !["number", "time"].includes(highScoreType) ? highScoreType : "";
   return <>
@@ -158,7 +162,7 @@ export function printScore(entry, score, options: { showEditLink?: boolean } = {
   </>;
 }
 
-export function pointsDistributionLegend(pointsDistribution) {
+export function pointsDistributionLegend(pointsDistribution: number[]): JSX.Element {
   return <>
     <div class="horizontal-bar"></div>
 
@@ -173,7 +177,7 @@ export function pointsDistributionLegend(pointsDistribution) {
         <table class="table">
           <thead>
             <tr>
-              {pointsDistribution.map((points, index) =>
+              {pointsDistribution.map((_points, index) =>
                 <th>{ordinal(index + 1)}</th>
               )}
             </tr>
@@ -191,11 +195,11 @@ export function pointsDistributionLegend(pointsDistribution) {
   </>;
 }
 
-export function highScoreThumb(entryScore, user) {
-  const entry = entryScore.related("entry");
+export function highScoreThumb(entryScore: BookshelfModel, user: User): JSX.Element {
+  const entry = entryScore.related<BookshelfModel>("entry");
   return <div class="featured">
     <div style="width: 100%; margin: 0 0 -10px -10px">
-      {userMacros.userThumb(entryScore.related("user"), { fullWidth: true })}
+      {userMacros.userThumb(entryScore.related<BookshelfModel>("user"), { fullWidth: true })}
     </div>
     <div class="spacing">
       Claimed{" "}

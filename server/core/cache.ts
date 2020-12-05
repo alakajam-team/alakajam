@@ -62,7 +62,7 @@ export default {
 /**
  * Provides access to the cache for user information
  */
-function user(userOrName: User | string) {
+function user(userOrName: User | string): PrefixedNodeCache {
   const userName = (typeof userOrName === "string") ? userOrName : userOrName.get("name");
   return new PrefixedNodeCache(cacheMap.users, userName);
 }

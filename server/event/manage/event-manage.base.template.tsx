@@ -1,11 +1,10 @@
 import React, { JSX } from "preact";
-import { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import { ifTrue } from "server/macros/jsx-utils";
 
-export function eventManageBase(context: CommonLocals, editEventBody: JSX.Element) {
+export function eventManageBase(context: CommonLocals, editEventBody: JSX.Element): JSX.Element {
   const { event, path, infoMessage, errorMessage } = context;
 
   const createdEvent = event && event.get("id");

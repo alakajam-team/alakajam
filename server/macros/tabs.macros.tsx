@@ -1,5 +1,4 @@
 import React, { JSX } from "preact";
-import { JSX } from "preact";
 
 export function peopleTabs(path: string): JSX.Element {
   return <ul class="nav nav-tabs">

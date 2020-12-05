@@ -208,7 +208,7 @@ export class TournamentService {
     return tournamentScoreHasChanged;
   }
 
-  public async refreshTournamentRankings(event: BookshelfModel) {
+  public async refreshTournamentRankings(event: BookshelfModel): Promise<void> {
     const allowedTournamentStates = [enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED];
     if (allowedTournamentStates.includes(event.get("status_tournament"))) {
       // Fetch ALL tournament scores

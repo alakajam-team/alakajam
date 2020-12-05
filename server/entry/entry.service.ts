@@ -377,7 +377,7 @@ export interface FindGamesOptions extends FetchPageOptions {
   eventId?: number;
   search?: string;
   platforms?: number[];
-  tags?: Array<{ id: number }>;
+  tags?: Array<{ id: number; value: string }>;
   divisions?: string[];
   notReviewedById?: string;
   userId?: number;

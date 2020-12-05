@@ -149,7 +149,7 @@ export class Entry extends TimestampedEntity {
     });
   }*/
 
-  public picturePreviews() {
+  public picturePreviews(): string[] {
     if (this.pictures && this.pictures.previews) {
       return this.pictures.previews;
     } else {
@@ -157,7 +157,7 @@ export class Entry extends TimestampedEntity {
     }
   }
 
-  public pictureThumbnail() {
+  public pictureThumbnail(): string {
     if (this.pictures) {
       return this.pictures.thumbnail;
     } else {
@@ -165,7 +165,7 @@ export class Entry extends TimestampedEntity {
     }
   }
 
-  public pictureIcon() {
+  public pictureIcon(): string {
     if (this.pictures) {
       return this.pictures.icon;
     } else {

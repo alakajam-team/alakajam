@@ -1,12 +1,12 @@
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
-import { CustomResponse } from "server/types";
+import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../event.middleware";
 
 /**
  * Browse event posts
  */
-export async function viewEventPosts(_, res: CustomResponse<EventLocals>): Promise<void> {
+export async function viewEventPosts(_: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Posts";
 
   const postsCollection = await postService.findPosts({

@@ -1,8 +1,9 @@
+import { BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
 import * as formMacros from "server/macros/form.macros";
 
-export function highscoreFieldGroup(entry): JSX.Element {
-  const entryDetails = entry.related("details");
+export function highscoreFieldGroup(entry: BookshelfModel): JSX.Element {
+  const entryDetails = entry.related<BookshelfModel>("details");
   const highScoreEnabled = entry.get("status_high_score") && entry.get("status_high_score") !== "off";
   const isCustomUnit = entryDetails.get("high_score_type") && !["number", "time"].includes(entryDetails.get("high_score_type"));
 

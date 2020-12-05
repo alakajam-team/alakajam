@@ -91,7 +91,8 @@ export class ThemeService {
    * Saves a theme vote
    */
   public async saveVote(
-    user: User, event: BookshelfModel, themeId: number, score: number, options: { doNotSave?: boolean } = {}) {
+    user: User, event: BookshelfModel, themeId: number, score: number, options: { doNotSave?: boolean } = {}
+  ): Promise<{ theme?: BookshelfModel; vote?: BookshelfModel }> {
     let voteCreated = false;
     let expectedStatus = null;
     let result = {};

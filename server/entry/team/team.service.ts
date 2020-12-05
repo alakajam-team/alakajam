@@ -1,11 +1,20 @@
-import { BookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
 import db from "server/core/db";
 import enums from "server/core/enums";
 import * as models from "server/core/models";
 import { SECURITY_PERMISSION_MANAGE, SECURITY_PERMISSION_WRITE } from "server/core/security";
+import { User } from "server/entity/user.entity";
 import teamInviteService from "./team-invite.service";
+
+export interface TeamMember {
+  id: number;
+  text: string;
+  avatar: string;
+  locked: boolean;
+  invite: boolean;
+}
 
 export class TeamService {
 
@@ -49,7 +58,7 @@ export class TeamService {
       .where("name", ilikeOperator(), `%${nameFragment}%`);
   }
 
-  public async findTeamMembers(entry, user = null) {
+  public async findTeamMembers(entry: EntryBookshelfModel, user?: User): Promise<TeamMember[]> {
     if (entry && entry.get("id")) {
       await entry.load(["invites.invited", "userRoles.user"]);
       const members = entry.sortedUserRoles()
@@ -61,7 +70,7 @@ export class TeamService {
           invite: false,
         }));
 
-      entry.related("invites").forEach((invite) => {
+      entry.related<BookshelfCollection>("invites").forEach((invite) => {
         members.push({
           id: invite.get("invited_user_id"),
           text: invite.get("invited_user_title"),
@@ -89,7 +98,7 @@ export class TeamService {
    * @param {Bookshelf.Model} entry the entry model.
    * @param {string[]} userIds the desired member user IDs.
    */
-  public setTeamMembers(currentUser, entry, userIds: string[]): Promise<SetTeamMembersResult> {
+  public setTeamMembers(currentUser: User, entry: EntryBookshelfModel, userIds: string[]): Promise<SetTeamMembersResult> {
     return db.transaction(async (transaction) => {
       let numRemoved = 0;
       let numAdded = 0;
@@ -113,7 +122,7 @@ export class TeamService {
       } else {
         // Remove removed user posts from the entry
         await entry.load("posts", { transacting: transaction });
-        entry.related("posts").forEach(async (post) => {
+        entry.related<BookshelfCollection>("posts").forEach(async (post) => {
           if (!userIds.includes(post.get("author_user_id"))) {
             post.set("entry_id", null);
             await post.save(null, { transacting: transaction });
@@ -211,9 +220,9 @@ interface TeamMemberSearchResult {
   /** User avatar path */
   avatar?: string;
   /** The entry ID if entered, otherwise `null` */
-  node_id: number|null;
+  node_id: number | null;
   /** the event ID if entered; otherwise `null` */
-  event_id: number|null;
+  event_id: number | null;
 }
 
 interface UserEntryData {

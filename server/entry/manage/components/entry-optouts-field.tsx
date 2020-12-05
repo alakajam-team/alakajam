@@ -1,11 +1,13 @@
+import { BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
-import links from "server/core/links";
-import * as formMacros from "server/macros/form.macros";
-import security from "server/core/security";
 import forms from "server/core/forms";
+import links from "server/core/links";
+import security from "server/core/security";
+import { User } from "server/entity/user.entity";
+import * as formMacros from "server/macros/form.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 
-export function optoutsField(event, entry, user, isEntryOwner): JSX.Element {
+export function optoutsField(event: BookshelfModel, entry: BookshelfModel, user: User, isEntryOwner: boolean): JSX.Element {
   const canEditOptouts = isEntryOwner || security.isMod(user);
   const optouts = entry.related("details").get("optouts");
   const rulesLink = forms.isId(event.get("status_rules")) ? links.routeUrl(event.get("status_rules"), "post") : event.get("status_rules");
@@ -39,7 +41,8 @@ export function optoutsField(event, entry, user, isEntryOwner): JSX.Element {
         <div>
           <p class="mb-2"><b>Submitting a ranked game</b></p>
           <label class="mb-2 d-flex" for="accepted-rules">
-            <span>{formMacros.check("accepted-rules", "", entry.get("id") && entry.get("division") !== "unranked", { required: true })}</span>
+            <span>{formMacros.check("accepted-rules", "", Boolean(entry.get("id") && entry.get("division") !== "unranked"),
+              { required: true })}</span>
             <span>I confirm that the entry <a href={rulesLink}>follows the rules on asset reuse</a>,
                             even if I opted-out of graphics/audio ratings.<br />
                             See <a href={rulesLink + "#allowed"}>"What is allowed?"</a> for more info.

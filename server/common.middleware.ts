@@ -91,7 +91,7 @@ export interface CommonLocals {
   readonly csrfTokenHTML: () => string;
 }
 
-export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction) {
+export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
   res.locals.path = req.originalUrl;
 
   // Init alerts, restore them from the session if needed

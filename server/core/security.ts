@@ -31,7 +31,7 @@ export class Security {
     return this.canUser(user, model, "watch");
   }
 
-  public canUserRead(user: User, model: BookshelfModel, options: SecurityOptions = {}) {
+  public canUserRead(user: User, model: BookshelfModel, options: SecurityOptions = {}): boolean {
     return this.canUser(user, model, "read", options);
   }
 
@@ -94,11 +94,11 @@ export class Security {
     return false;
   }
 
-  public isMod(user: User) {
+  public isMod(user: User): boolean {
     return user && (user.get("is_mod") || user.get("is_admin"));
   }
 
-  public isAdmin(user: User) {
+  public isAdmin(user: User): boolean {
     return user && user.get("is_admin");
   }
 

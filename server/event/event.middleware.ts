@@ -47,7 +47,7 @@ export async function eventMiddleware(req: CustomRequest, res: CustomResponse<Co
   next();
 }
 
-export function loadUserShortcutsContext(
+export async function loadUserShortcutsContext(
   res: CustomResponse<CommonLocals>,
   targetEvent: BookshelfModel,
   options: { postFromAnyEvent?: boolean } = {}): Promise<void> {
@@ -61,6 +61,6 @@ export function loadUserShortcutsContext(
     })
       .then((userPost) => { res.locals.userPost = userPost; });
 
-    return Promise.all([entryTask, userPostTask]);
+    await Promise.all([entryTask, userPostTask]);
   }
 }

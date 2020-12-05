@@ -1,13 +1,15 @@
 
+import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, NodeBookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
+import { User } from "server/entity/user.entity";
 import entryService from "server/entry/entry.service";
-import ratingService from "server/event/ratings/rating.service";
 import karmaService from "server/event/ratings/karma.service";
+import ratingService from "server/event/ratings/rating.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { PostLocals } from "../post.middleware";
@@ -32,7 +34,8 @@ export async function commentSave(req: CustomRequest, res: CustomResponse<PostLo
  * @param {Event} currentEvent The current event, if the node is an entry
  * @return {string} A URL to redirect to
  */
-export async function handleSaveComment(reqBody, currentUser, currentNode, baseUrl, currentEvent?) {
+export async function handleSaveComment(reqBody: Record<string, any>, currentUser: User, currentNode: NodeBookshelfModel,
+                                        baseUrl: string, currentEvent?: BookshelfModel): Promise<string> {
   let redirectUrl = baseUrl;
 
   // Validate comment body
@@ -100,7 +103,7 @@ export async function handleSaveComment(reqBody, currentUser, currentNode, baseU
 
       // Refresh karma on both the giver & receiver entries
       if (currentEvent) {
-        const currentEntry = currentNode;
+        const currentEntry = currentNode as EntryBookshelfModel;
         const userEntry = await entryService.findUserEntryForEvent(currentUser, currentEntry.get("event_id"));
         await ratingService.refreshEntryKarma(currentEntry, currentEvent);
         if (userEntry) {
@@ -110,7 +113,7 @@ export async function handleSaveComment(reqBody, currentUser, currentNode, baseU
     }
 
     // Cache invalidation: comment feed and unread notifications of users associated with the post/entry
-    const userRoles = currentNode.related("userRoles");
+    const userRoles = currentNode.related<BookshelfCollection>("userRoles");
     userRoles.forEach((userRole) => {
       const userCache = cache.user(userRole.get("user_name"));
       userCache.del("toUserCollection");

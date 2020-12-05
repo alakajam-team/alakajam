@@ -20,7 +20,7 @@ export class AdminDevService {
     return { type: "success", message: "Backup deleted." };
   }
 
-  public async restoreBackup(sessionStore: any): Promise<Alert> {
+  public async restoreBackup(sessionStore: unknown): Promise<Alert> {
     await db.restore(sessionStore);
     return { type: "success", message: "Backup restored." };
   }

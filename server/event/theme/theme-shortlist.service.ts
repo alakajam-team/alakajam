@@ -38,7 +38,7 @@ export class EventThemeShortlistService {
       .fetchAll() as Bluebird<BookshelfCollection>;
   }
 
-  public async computeShortlist(event: BookshelfModel) {
+  public async computeShortlist(event: BookshelfModel): Promise<void> {
     // Mark all themes as out
     const allThemesCollection = await themeService.findAllThemes(event, { shortlistEligible: true });
     await event.load("details");
@@ -68,7 +68,7 @@ export class EventThemeShortlistService {
       .fetchAll() as Bluebird<BookshelfCollection>;
   }
 
-  public async saveShortlistVotes(user: User, event: BookshelfModel, ids: number[]) {
+  public async saveShortlistVotes(user: User, event: BookshelfModel, ids: number[]): Promise<void> {
     const shortlistCollection = await this.findShortlist(event);
     const sortedShortlist = shortlistCollection
       .sortBy(theme => ids.indexOf(theme.get("id")))
@@ -110,19 +110,19 @@ export class EventThemeShortlistService {
       .fetchAll({ withRelated }) as Bluebird<BookshelfCollection>;
   }
 
-  public async countShortlistVotes(event: BookshelfModel) {
+  public async countShortlistVotes(event: BookshelfModel): Promise<number> {
     return cache.getOrFetch(cache.general, "shortlist_votes_" + event.get("name"),
       async () => {
-        return models.ThemeVote
+        return forms.parseInt(models.ThemeVote
           .where({
             event_id: event.get("id"),
             score: 9,
           })
-          .count();
+          .count());
       }, 10 * 60 /* 10 min TTL */);
   }
 
-  public async updateShortlistAutoElimination(event: BookshelfModel) {
+  public async updateShortlistAutoElimination(event: BookshelfModel): Promise<void> {
     if (this.isShortlistAutoEliminationEnabled(event)) {
       const eventDetails = event.related<BookshelfModel>("details");
       const shortlistElimination: ThemeShortlistEliminationState = eventDetails.get("shortlist_elimination");
@@ -163,12 +163,12 @@ export class EventThemeShortlistService {
     await this.refreshShortlistThemesStatus(event);
   }
 
-  public isShortlistAutoEliminationEnabled(event: BookshelfModel) {
+  public isShortlistAutoEliminationEnabled(event: BookshelfModel): boolean {
     const shortlistElimination = this.getShortlistEliminationState(event);
     return shortlistElimination.nextElimination && shortlistElimination.minutesBetweenEliminations > 0;
   }
 
-  public async eliminateOneShorlistTheme(event: BookshelfModel) {
+  public async eliminateOneShorlistTheme(event: BookshelfModel): Promise<void> {
     const shortlistElimination = this.getShortlistEliminationState(event);
     shortlistElimination.eliminatedCount = (shortlistElimination.eliminatedCount || 0) + 1;
 

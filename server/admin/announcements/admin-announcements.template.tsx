@@ -1,5 +1,4 @@
 import React, { JSX } from "preact";
-import { JSX } from "preact";
 import links from "server/core/links";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";

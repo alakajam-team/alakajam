@@ -7,7 +7,7 @@ import dbTypeorm from "server/core/db-typeorm";
 
 export const DB_TEST_TIMEOUT = 5000;
 
-export const startTestDB = async () => {
+export const startTestDB = async (): Promise<void> => {
   require("server/testing/testing-db-config");
   mkdirpSync(path.dirname(config.DB_SQLITE_FILENAME));
 
@@ -17,7 +17,7 @@ export const startTestDB = async () => {
   await insertInitialData(false);
 };
 
-export const closeTestDB = async () => {
+export const closeTestDB = async (): Promise<void> => {
   await dbTypeorm.closeAnyConnection();
   await db.emptyDatabase();
 };

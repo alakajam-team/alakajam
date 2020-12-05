@@ -110,7 +110,7 @@ export async function configure(app: express.Application): Promise<void> {
   });
 
   // Templating: rendering context
-  app.use(function templateTooling(req: CustomRequest, res: CustomResponse<Mutable<CommonLocals>>, next: NextFunction) {
+  app.use(function templateTooling(req: CustomRequest, res: CustomResponse<Mutable<CommonLocals>>, next: NextFunction): void {
     res.locals.rootUrl = config.ROOT_URL;
     res.locals.devMode = app.locals.devMode;
     res.locals.launchTime = LAUNCH_TIME;

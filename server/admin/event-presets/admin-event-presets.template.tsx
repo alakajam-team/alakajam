@@ -29,7 +29,7 @@ function actions() {
   </div>;
 }
 
-function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset, user: User, csrfToken: Function) {
+function edit(eventPreset: BookshelfModel, countdownOffset: EventCountdownOffset, user: User, csrfToken: () => JSX.Element) {
   return <div class="card card-body">
     <h2><span id="preset-header"></span></h2>
     <form method="post" action="?">

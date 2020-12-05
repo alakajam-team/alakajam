@@ -3,6 +3,7 @@ import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "booksh
 import constants from "server/core/constants";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
+import log from "server/core/log";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
 import { SETTING_EVENT_OPEN_VOTING, SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
@@ -22,7 +23,7 @@ interface KarmaReceivedByUser {
  */
 export class RatingService {
 
-  public areVotesAllowed(event: BookshelfModel) {
+  public areVotesAllowed(event: BookshelfModel): boolean {
     if (event) {
       const isVotingPhase = [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE].includes(event.get("status_results"));
       const divisions = Object.keys(event.get("divisions") || {});
@@ -127,11 +128,13 @@ export class RatingService {
 
     await this.refreshEntryRatings(entry);
     if (refreshRequired) {
-      this.refreshEntryKarma(entry, event);
+      this.refreshEntryKarma(entry, event)
+        .catch(e => log.error(e));
 
       const userEntry = await entryService.findUserEntryForEvent(user, event.get("id"));
       if (userEntry) {
-        this.refreshEntryKarma(userEntry, event);
+        this.refreshEntryKarma(userEntry, event)
+          .catch(e => log.error(e));
       }
     }
   }
@@ -139,7 +142,8 @@ export class RatingService {
   /**
    * Finds the votes a user cast during an event
    */
-  public async findVoteHistory(userId: number, event: BookshelfModel, options: { pageSize?: number; withRelated?: string[] } = {}) {
+  public async findVoteHistory(userId: number, event: BookshelfModel,
+                               options: { pageSize?: number; withRelated?: string[] } = {}): Promise<BookshelfCollection> {
     const query = models.EntryVote.where({
       user_id: userId,
       event_id: event.get("id"),
@@ -166,7 +170,7 @@ export class RatingService {
       }
 
       return models.Entry.query((qb) => {
-        qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
+        void qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
           .where(whereClause)
           .whereNotNull("entry_details.ranking_" + categoryIndex)
           .orderBy("entry_details.ranking_" + categoryIndex)
@@ -260,7 +264,7 @@ export class RatingService {
   }
 
   /* Compute given score using comments & votes from all the team */
-  public async computeKarmaGivenByUserAndEntry(entry: EntryBookshelfModel, event: BookshelfModel) {
+  public async computeKarmaGivenByUserAndEntry(entry: EntryBookshelfModel, event: BookshelfModel): Promise<any> {
     const givenByUserAndEntry = {};
     const userRoles = entry.related<BookshelfCollection>("userRoles");
     for (const userRole of userRoles.models) {
@@ -365,7 +369,7 @@ export class RatingService {
     await entryHotnessService.refreshEntriesHotness(event);
   }
 
-  public async clearRankings(event: BookshelfModel) {
+  public async clearRankings(event: BookshelfModel): Promise<void> {
     const categoryCount: number = event.related<BookshelfModel>("details").get("category_titles").length;
     const categoryIndexes = this.range(1, categoryCount);
 
@@ -376,7 +380,7 @@ export class RatingService {
       });
 
       const entryDetailsCollection = await models.EntryDetails
-        .query((qb) => { qb.leftJoin("entry", "entry_details.entry_id", "entry.id"); })
+        .query((qb) => { void qb.leftJoin("entry", "entry_details.entry_id", "entry.id"); })
         .where("entry.event_id", event.get("id"))
         .where("entry.division", "<>", enums.DIVISION.UNRANKED)
         .fetchAll() as BookshelfCollection;

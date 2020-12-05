@@ -10,7 +10,7 @@ const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 
 class WebpackBuilder {
 
-  public async initialize({watch = false}) {
+  public async initialize({watch = false}): Promise<void> {
     const webpack = require("webpack");
 
     const env = process.env.NODE_ENV || "development";
@@ -42,7 +42,7 @@ class WebpackBuilder {
         }
         logMethod(stats.toString(webpackConfig.stats));
 
-        resolve();
+        resolve(undefined);
       }
 
       if (watch) {

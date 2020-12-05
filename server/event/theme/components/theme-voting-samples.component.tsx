@@ -1,7 +1,8 @@
 import { BookshelfModel } from "bookshelf";
-import React from "preact";
+import React, { JSX } from "preact";
 
-export function themeVotingSamples(sampleThemes: BookshelfModel[], votingAllowed: boolean, ideasRequired: number, path: string) {
+export function themeVotingSamples(sampleThemes: BookshelfModel[], votingAllowed: boolean, ideasRequired: number,
+  path: string): JSX.Element | string {
   if (votingAllowed) {
     return <div>
       <p>Here are some of the ideas submitted to the event.

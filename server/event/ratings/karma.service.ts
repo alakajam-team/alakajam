@@ -2,7 +2,7 @@ import { BookshelfCollection, BookshelfModel } from "bookshelf";
 
 export class KarmaService {
 
-  public async refreshCommentKarma(comment: BookshelfModel) {
+  public async refreshCommentKarma(comment: BookshelfModel): Promise<void> {
     await comment.load(["node.comments", "node.userRoles"]);
 
     let isTeamMember = false;
@@ -38,11 +38,11 @@ export class KarmaService {
    * @param {integer} userId The user id of the modified comment
    * @param {Post|Entry} node
    */
-  public async refreshUserCommentKarmaOnNode(node, userId) {
+  public async refreshUserCommentKarmaOnNode(node: BookshelfModel, userId: number): Promise<void> {
     await node.load(["comments", "userRoles"]);
     let isTeamMember = false;
 
-    const entryUserRoles = node.related("userRoles");
+    const entryUserRoles = node.related<BookshelfCollection>("userRoles");
     for (const userRole of entryUserRoles.models) {
       if (userRole.get("user_id") === userId) {
         isTeamMember = true;
@@ -52,7 +52,7 @@ export class KarmaService {
 
     if (!isTeamMember) {
       let previousCommentsScore = 0;
-      const entryComments = node.related("comments");
+      const entryComments = node.related<BookshelfCollection>("comments");
       for (const comment of entryComments.models) {
         if (comment.get("user_id") === userId) {
           let adjustedScore = 0;

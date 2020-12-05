@@ -1,13 +1,12 @@
 import { BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
-import { JSX } from "preact";
 import * as eventManageMacros from "server/event/manage/event-manage.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifSet } from "server/macros/jsx-utils";
 import adminBase from "../admin.base";
 import { AdminEventContext } from "./admin-event-templates.controller";
 
-export default function render(context: AdminEventContext) {
+export default function render(context: AdminEventContext): JSX.Element {
   formMacros.registerCodeMirrorScripts(context);
 
   return adminBase(context,

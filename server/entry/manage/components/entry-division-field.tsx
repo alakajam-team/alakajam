@@ -1,12 +1,14 @@
+import { BookshelfModel } from "bookshelf";
 import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
+import { User } from "server/entity/user.entity";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
-export function divisionField(entry, event, external, divisionTooltip, user): JSX.Element {
+export function divisionField(entry: BookshelfModel, event: BookshelfModel, external: boolean, divisionTooltip: string, user: User): JSX.Element {
   const isEntryOwner = !entry.get("id") || security.canUserManage(user, entry);
   const canEditDivision = !event || ((isEntryOwner || security.isMod(user)) && event.get("status_entry") === "open");
 
@@ -43,7 +45,8 @@ export function divisionField(entry, event, external, divisionTooltip, user): JS
   </div>;
 }
 
-function divisionButton(title, legend, icon, value, currentValue, canEditDivision, tooltipMessage) {
+function divisionButton(title: string, legend: { __html: string }, icon: string, value: string, currentValue: string,
+    canEditDivision: boolean, tooltipMessage: string) {
   if (canEditDivision) {
     return <label class={`btn entry-division js-division-button ${value === currentValue ? "active" : ""}`} role="button">
       <div class={icon}></div>

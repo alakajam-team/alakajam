@@ -55,7 +55,7 @@ export function userAvatar(user: User, options: { small?: boolean } = {}): JSX.E
   </a>;
 }
 
-export function userLink(user: User): JSX.Element {
+export function userLink(user: BookshelfModel | User): JSX.Element {
   return <a href={links.routeUrl(user, "user")}>@{user.get("title")}</a>;
 }
 

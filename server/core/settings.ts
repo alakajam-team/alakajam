@@ -48,7 +48,7 @@ export class Settings {
     }
   }
 
-  public async findNumber(key: string, defaultValue: number) {
+  public async findNumber(key: string, defaultValue: number): Promise<number> {
     const settingValue = await this.find(key, defaultValue.toString());
     return parseFloat(settingValue);
   }
@@ -77,7 +77,7 @@ export class Settings {
    * @param value {string} The new value
    * @returns {void}
    */
-  public async save(key, value) {
+  public async save(key: string, value: string | number): Promise<void> {
     let settingModel = await models.Setting.where("key", key).fetch();
     let method = "update";
     if (!settingModel) {
@@ -89,7 +89,7 @@ export class Settings {
     cache.settings.del(key);
   }
 
-  public canUserEdit(user: User, setting: EditableSetting) {
+  public canUserEdit(user: User, setting: EditableSetting): boolean {
     if (setting.isAdminOnly) {
       return security.isAdmin(user);
     } else {

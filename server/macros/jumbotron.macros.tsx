@@ -1,15 +1,18 @@
-import { BookshelfModel } from "bookshelf";
+import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
 import links from "server/core/links";
 import { dateTime, featuredEventDateTime, markdown, relativeTime, timezone } from "server/core/templating-filters";
+import { EventParticipation } from "server/entity/event-participation.entity";
+import { User } from "server/entity/user.entity";
 import * as eventMacros from "server/event/event.macros";
 import * as tournamentMacros from "server/event/tournament/tournament.macros";
 import * as postMacros from "server/post/post.macros";
-import { ifFalse, ifTrue } from "./jsx-utils";
+import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 
 
-export function eventJumbotron(event, eventParticipation, featuredPost, user, userLikes,
-                               entry, tournamentScore, path, options: { inviteToJoin?: boolean } = {}): JSX.Element {
+export function eventJumbotron(event: BookshelfModel, eventParticipation: EventParticipation, featuredPost: BookshelfModel,
+  user: User, userLikes: unknown[], entry: EntryBookshelfModel, tournamentScore: BookshelfModel, path: string,
+  options: { inviteToJoin?: boolean } = {}): JSX.Element {
   const isTournament = !["disabled", "off"].includes(event.get("status_tournament"));
 
   return <div class="event-jumbotron" style={backgroundImage(event)}>
@@ -146,8 +149,8 @@ function eventJumbotronPost(featuredPost, user, userLikes) {
   }
 }
 
-export function myEntryJumbotronContent(event, entry, eventParticipation,
-                                        options: { inviteToJoin?: boolean } = {}, isTournament?: boolean) {
+export function myEntryJumbotronContent(event: BookshelfModel, entry: EntryBookshelfModel, eventParticipation: EventParticipation,
+                                        options: { inviteToJoin?: boolean } = {}, isTournament?: boolean): JSX.Element {
   const votingEnabled = ["voting", "voting_rescue"].includes(event.get("status_results"));
   if (entry) {
     if (votingEnabled) {
@@ -200,10 +203,11 @@ export function myEntryJumbotronContent(event, entry, eventParticipation,
   }
 }
 
-export function tournamentJumbotronContent(user, event, eventParticipation, tournamentScore, entry, options = {}) {
+export function tournamentJumbotronContent(user: User, event: BookshelfModel, eventParticipation: EventParticipation,
+  tournamentScore: BookshelfModel, entry: EntryBookshelfModel, options: { inviteToJoin?: boolean } = {}): JSX.Element {
   const leaderboard = ["closed", "results"].includes(event.get("status_tournament"));
   return <>
-    {ifTrue(entry, () =>
+    {ifSet(entry, () =>
       myEntryJumbotronContent(event, entry, eventParticipation, options, true)
     )}
     <div class={`card-body text-center ${entry ? "px-2 pt-0 pb-2" : "p-2" }`}>
@@ -218,8 +222,8 @@ export function tournamentJumbotronContent(user, event, eventParticipation, tour
   </>;
 }
 
-export function statsCounters(event) {
-  const participants = event.related("details").get("participation_count");
+export function statsCounters(event: BookshelfModel): JSX.Element {
+  const participants = event.related<BookshelfModel>("details").get("participation_count");
   const statsElements = [];
 
   statsElements.push(<div>
@@ -256,7 +260,7 @@ export function statsCounters(event) {
   </div >;
 }
 
-export function eventJumbotronCountdownPhrase(event, user) {
+export function eventJumbotronCountdownPhrase(event: BookshelfModel, user: User): JSX.Element {
   if (event.get("countdown_config").phrase) {
     return <>
       <div class="jumbotron-invite__phrase">
@@ -275,7 +279,7 @@ export function eventJumbotronCountdownPhrase(event, user) {
   }
 }
 
-export function backgroundImage(event) {
+export function backgroundImage(event: BookshelfModel): string {
   const eventImagePath = event?.related("details").get("background") || event?.related("details").get("banner");
   const url = eventImagePath ? links.pictureUrl(eventImagePath, event) : links.staticUrl("/static/images/default-background.png");
   return `background-image: url('${url}');`;
