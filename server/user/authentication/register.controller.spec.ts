@@ -32,4 +32,15 @@ describe("Register controller", () => {
     expect(res.renderSpy.calledWith(TEMPLATE_REGISTER)).to.be.true;
   });
 
+  it("rejects the form if the gotcha is filled", async () => {
+    const req = mockRequest({ body: { email: 'bot@alakaspam.com' } });
+    const res = mockResponse();
+
+    await registerController.register(req, res);
+
+    expect(isAlertPresent(res, {
+      message: "You didn't pass the human test!",
+    })).to.be.true;
+    expect(res.renderSpy.calledWith(TEMPLATE_REGISTER)).to.be.true;
+  });
 });

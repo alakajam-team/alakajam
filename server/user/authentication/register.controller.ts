@@ -44,7 +44,9 @@ export class RegisterController {
         "Passwords do not match"),
       "captcha": allRules(
         rule(forms.isSet, "Are you human???"),
-        rule((captcha) => captcha.trim().toLowerCase()[0] === "y", "You didn't pass the human test!"))
+        rule((captcha) => captcha.trim().toLowerCase()[0] === "y", "You didn't pass the human test!")),
+      "gotcha": allRules(
+        rule((gotcha) => gotcha.trim() === "", "You didn't pass the human test!")),
     });
 
     if (!formAlerts) {

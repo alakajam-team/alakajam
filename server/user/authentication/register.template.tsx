@@ -44,6 +44,11 @@ export default function render(context: CommonLocals) {
               <label for="captcha">Are you human? (yes or no)</label>
               <input type="text" class="form-control" id="captcha" name="captcha" value={captcha} required />
             </div>
+            <div id="gotcha-group" class="form-group">
+              <div id="gotcha-explanation">This field is hidden. Please do not answer it.</div>
+              <label for="gotcha">Are you an automaton?</label>
+              <input type="text" class="form-control" id="gotcha" name="gotcha" value="" aria-describedby="gotcha-explanation"/>
+            </div>
             <div class="form-group">
               <div class="checkbox">
                 <label>
