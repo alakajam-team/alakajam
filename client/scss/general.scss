@@ -144,12 +144,21 @@ blockquote {
   border: 1px solid #aab2bd;
   border-radius: 4px;
   padding: 3px 0;
+  font-family: inherit;
 
   &.auto-height {
     min-height: auto;
   }
   &.auto-height &-scroll {
     min-height: auto;
+  }
+
+  // Retain monospace font for code-like content.
+  .cm-tag,
+  .cm-bracket,
+  .cm-attribute,
+  .cm-comment {
+    font-family: monospace;
   }
 }
 
