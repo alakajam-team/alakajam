@@ -47,7 +47,7 @@ export default function render(context: CommonLocals) {
             <div id="gotcha-group" class="form-group">
               <div id="gotcha-explanation">This field is hidden. Please do not answer it.</div>
               <label for="gotcha">Are you an automaton?</label>
-              <input type="text" class="form-control" id="gotcha" name="gotcha" value="" aria-describedby="gotcha-explanation"/>
+              <input type="text" class="form-control" id="gotcha" name="gotcha" value="" aria-describedby="gotcha-explanation" autocomplete="off" />
             </div>
             <div class="form-group">
               <div class="checkbox">
