@@ -91,7 +91,7 @@ class PrefixedNodeCache {
 
 }
 
-async function getOrFetch<T>(cache: NodeCache, key: string, asyncFetch: () => Promise<T>, ttl?: number): Promise<T> {
+async function getOrFetch<T>(cache: NodeCache, key: string, asyncFetch: () => T | Promise<T>, ttl?: number): Promise<T> {
   if (!cache.get<T>(key)) {
     const result = await asyncFetch();
     cache.set<T>(key, result, ttl);

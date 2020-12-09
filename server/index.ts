@@ -145,8 +145,8 @@ async function initFilesLayout() {
   if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
     process.chdir(ROOT_PATH);
     await Promise.all([
-      require("./sass").default.initialize({ watch: DEV_ENVIRONMENT }),
-      require("./webpack").default.initialize({ watch: DEV_ENVIRONMENT })
+      require("./scripts/sass").default.initialize({ watch: DEV_ENVIRONMENT }),
+      require("./scripts/webpack").default.initialize({ watch: DEV_ENVIRONMENT })
     ]);
   }
 }

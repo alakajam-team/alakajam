@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { CommonLocals } from "./common.middleware";
 import { Config } from "./core/config";
 
 export type Mutable<T> = { -readonly [P in keyof T]: T[P] };
@@ -43,14 +42,14 @@ export interface CustomRequest extends Request {
   csrfToken: () => string;
 }
 
-export interface CustomResponse<T extends CommonLocals> extends Response {
+export interface CustomResponse<T> extends Response {
   locals: T;
 
   // Custom methods registered on middleware.ts
   errorPage(code: number, error?: Error | string): void;
   traceAndShowErrorPage(error?: Error): void;
   redirectToLogin(): void;
-  render<U extends CommonLocals>(templateName: string, context: U): void;
+  render<U>(templateName: string, context: U): void;
 }
 
 export interface RenderContext { [key: string]: any }

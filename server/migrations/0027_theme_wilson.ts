@@ -16,7 +16,7 @@ exports.up = (knex) => {
   });
 };
 
-exports.down = (knex) => {
+exports.down = async (knex) => {
   if (config.DB_TYPE === "postgresql") {
     await knex.raw("alter table event alter column countdown_config type varchar(255)");
   }
