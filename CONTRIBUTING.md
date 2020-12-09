@@ -6,7 +6,7 @@ Thanks for taking the time to read this! You're welcome to contribute to Alakaja
 
 * You are allowed to create an issue even for just asking questions. Alternately you can also join our [Discord](https://alakajam.com/chat).
 * Issues labeled "[good first issue](https://github.com/alakajam-team/alakajam/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)" should be the most accessible to new contributors.
-* Please install the `tslint` Githook mentioned in the [Readme](https://github.com/alakajam-team/alakajam/blob/master/README.md) to ensure your code looks clean.
+* Please install the `eslint` Githook mentioned in the [Readme](https://github.com/alakajam-team/alakajam/blob/master/README.md) to ensure your code looks clean.
 * Interested in following Alakajam! behind the scenes? [Join our mailing-list.](https://framalistes.org/sympa/arc/alakajam-team)
 
 ## What to do if...

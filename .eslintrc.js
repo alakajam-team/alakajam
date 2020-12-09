@@ -167,33 +167,6 @@ module.exports = {
         ],
         "spaced-comment": "error",
         "use-isnan": "error",
-        "valid-typeof": "off",
-        /*"@typescript-eslint/tslint/config": [
-            "error",
-            {
-                "rules": {
-                    "import-spacing": true,
-                    "jsdoc-format": true,
-                    "no-reference-import": true,
-                    "one-line": [
-                        true,
-                        "check-catch",
-                        "check-else",
-                        "check-finally",
-                        "check-open-brace",
-                        "check-whitespace"
-                    ],
-                    "whitespace": [
-                        true,
-                        "check-branch",
-                        "check-decl",
-                        "check-operator",
-                        "check-separator",
-                        "check-type",
-                        "check-typecast"
-                    ]
-                }
-            }
-        ]*/
+        "valid-typeof": "off"
     }
 }
