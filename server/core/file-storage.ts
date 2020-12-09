@@ -168,7 +168,8 @@ export class FileStorage {
 
     return {
       ...res,
-      finalPath
+      finalPath,
+      uploaded: true
     };
   }
 
