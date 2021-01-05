@@ -106,4 +106,5 @@ This page compiles a list of **free** resources for making games, especially for
 
 | Name | Description |
 | -------- | -------- |
+| **Game jams:** [The Game-Jammer's Cookbook](https://gumroad.com/l/gamejamguide) | An extensive and illustrated PDF about what it takes to make a successful game jam entry. Soft paywall. | 
 | **Art:** [Ctrl+Paint](https://www.ctrlpaint.com/library/) | An excellent and extensive collection of videos about drawing in general, then digital painting in particular. Whatever art style you are interested in, these can help you improve your art skills. |
