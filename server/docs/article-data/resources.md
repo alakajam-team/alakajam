@@ -5,9 +5,9 @@ This page compiles a list of **free** resources for making games, especially for
 * [Audio software](#audio)
 * [Game engines/frameworks](#engines)
 * [Free assets](#assets)
-* [Screen capture](#capture)
 * [Level design](#level)
-* [Learning](#learning)
+* [Learning](#learning
+* [Screen capture](#capture)
 
 
 ## <a name="graphics"></a>Graphics software
