@@ -52,13 +52,13 @@ function divisionButton(title: string, legend: string, icon: string, value: stri
       <div class={icon}></div>
       <input type="radio" name="division" value={value} autocomplete="off" class="d-none" checked={value === currentValue} />
       {title}
-      <div class="entry-division__legend d-none d-sm-block d-none d-md-block">{legend}</div>
+      <div class="entry-division__legend d-none d-sm-block d-none d-md-block" dangerouslySetInnerHTML={({__html: legend})}></div>
     </label>;
   } else {
     return <div class={"btn entry-division " + (value === currentValue ? "active" : "disabled")} title={tooltipMessage}>
       <div class={icon}></div>
       {title}
-      <div class="entry-division__legend d-none d-sm-block d-none d-md-block">{legend}</div>
+      <div class="entry-division__legend d-none d-sm-block d-none d-md-block" dangerouslySetInnerHTML={({__html: legend})}></div>
     </div>;
   }
 }
