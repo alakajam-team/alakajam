@@ -29,7 +29,7 @@ export default function render(context: CommonLocals): JSX.Element {
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb py-0">
               <li class="breadcrumb-item"><a href="/events">Events</a></li>
-              <li class="breadcrumb-item active" aria-current="page">User search</li>
+              <li class="breadcrumb-item active" aria-current="page">Game search</li>
             </ol>
           </nav>
 
