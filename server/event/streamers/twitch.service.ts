@@ -2,6 +2,7 @@ import { BookshelfModel } from "bookshelf";
 import { clamp } from "lodash";
 import cache, { TTL_ONE_MINUTE } from "server/core/cache";
 import config from "server/core/config";
+import constants from "server/core/constants";
 import log from "server/core/log";
 import { User } from "server/entity/user.entity";
 import { ApiClient, ClientCredentialsAuthProvider, HelixStream } from "twitch";
@@ -32,8 +33,9 @@ export class TwitchService {
     }
   }
 
-  public async listCurrentLiveUsers(event: BookshelfModel): Promise<User[]> {
-    return cache.getOrFetch(cache.general, "currentLiveChannels", async () => {
+  public async listCurrentLiveUsers(event: BookshelfModel, options: { alakajamRelatedOnly?: boolean } = {}): Promise<User[]> {
+    const cacheKey = "currentLiveChannels-" + event.get("name") + "-" + (options.alakajamRelatedOnly ? "akj" : "all");
+    return cache.getOrFetch(cache.general, cacheKey, async () => {
       if (!event || !this.twitchClient) {
         return [];
       }
@@ -52,12 +54,19 @@ export class TwitchService {
         }
 
         const streams = await this.listCurrentLiveStreams(streamerChannels);
-        return streams.map((stream) => userByChannelName[stream.userDisplayName.toLowerCase()]);
+        return streams
+          .filter((stream) => options.alakajamRelatedOnly ? this.isAlakajamRelatedStream(stream.title) : true)
+          .map((stream) => userByChannelName[stream.userDisplayName.toLowerCase()]);
       } catch (e) {
         log.error("Failed to list live streamers", e);
         return []; // Do not block the website because Twitch failed
       }
     }, TTL_ONE_MINUTE);
+  }
+
+  private isAlakajamRelatedStream(title: string): boolean {
+    const lowerCaseTitle = title.toLowerCase();
+    return constants.TWITCH_KEYWORDS.find(keyword => lowerCaseTitle.includes(keyword.toLowerCase())) !== undefined;
   }
 
   private async listCurrentLiveStreams(channels: string[]): Promise<HelixStream[]> {

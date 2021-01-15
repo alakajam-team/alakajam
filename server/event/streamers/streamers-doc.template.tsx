@@ -1,8 +1,9 @@
+import { BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
+import constants from "server/core/constants";
 import links from "server/core/links";
-import { BookshelfModel } from "bookshelf";
 
 export default function render(context: CommonLocals & { event: BookshelfModel }): JSX.Element {
   const {event} = context;
@@ -28,26 +29,30 @@ export function streamersDoc(context: CommonLocals, event: BookshelfModel): JSX.
     padding: 50px;
   }
   .streamer-perks .card {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.85);
+  }
+  .streamer-perks ul {
+    margin-left: -20px;
   }
   `);
+
+  const advertisedKeywords = constants.TWITCH_KEYWORDS
+    .concat(constants.TWITCH_KEYWORDS.map(keyword => "#" + keyword));
 
   return <div class="streamer-perks">
     <div class="card card-body mb-4">
       <h2>Streamer perks</h2>
 
-      <div class="featured">Taking part in the event as a streamer lets you:
-
-        <ul>
-          <li><b>Get embedded</b> automatically on the Alakajam! front page when you go live.</li>
-          <li><b>Appear on the <a href={links.routeUrl(event, "event", "streamers")}>streamer list</a></b>,
-            to let jammers know about your scheduled streams.</li>
-          <li><b>Review and rate entries</b>, even if you don't make a game.
-            Tip: most jammers don't mind if you rate games in the open, it's up to you.</li>
-          <li><b>Enter the gaming competition</b> of the event, held in the 24 hours following the jam results.
-            Your scores will be submitted in the form of screenshots, uploaded directly on the game pages.</li>
-        </ul>
-      </div>
+      <ul>
+        <li><b>Get embedded</b> automatically on the Alakajam! front page when you go live.
+          The stream title must contain any of the following keywords:
+        {advertisedKeywords.map((keyword) => <>&nbsp;<code>{keyword}</code>&nbsp;</>)}
+          (they are case insensitive)</li>
+        <li><b>Appear on the <a href={links.routeUrl(event, "event", "streamers")}>streamer list</a></b>,
+          to let jammers know about your scheduled streams.</li>
+        <li><b>Review and rate entries</b>, even if you don't make a game.
+          Tip: most jammers don't mind if you rate games in the open, it's up to you.</li>
+      </ul>
     </div>
     <div class="card card-body">
 

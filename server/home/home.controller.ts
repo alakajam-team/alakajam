@@ -61,7 +61,7 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
       featuredEvent ? entryService.findUserEntryForEvent(user, featuredEvent.get("id")) : undefined,
       tournamentService.findOrCreateTournamentScore(featuredEvent.get("id"), user.get("id")),
       eventParticipationService.getEventParticipation(featuredEvent.get("id"), user.get("id")),
-      twitchService.listCurrentLiveUsers(featuredEvent)
+      twitchService.listCurrentLiveUsers(featuredEvent, { alakajamRelatedOnly: true })
     ]).then(([userLikes, entry, tournamentScore, eventParticipation, liveUsers]) => {
       res.locals.userLikes = userLikes;
       res.locals.entry = entry;

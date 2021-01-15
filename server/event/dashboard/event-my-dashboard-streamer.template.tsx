@@ -31,7 +31,7 @@ export default function render(context: CommonLocals): JSX.Element {
                 class="no-border" style="width: 20px" autofocus /> Twitch username</label>
               <input type="text" class="form-control form-control-lg" id="twitch"
                 name="twitch" value={user.details.social_links?.twitch} required />
-              <p class="legend mb-0">This field can also be set from your
+              <p class="legend mb-0">This field can also be set from your&nbsp;
                 <a href={links.routeUrl(user, "user", "settings")}>account settings</a>.</p>
             </div>
 
