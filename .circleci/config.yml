@@ -2,7 +2,8 @@ version: 2
 jobs:
   build:
     docker:
-      - image: cypress/base:10
+      - image: cypress/included:5.6.0
+        entrypoint: /bin/bash
     steps:
       - checkout
       - run: npm ci
