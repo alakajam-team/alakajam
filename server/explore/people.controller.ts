@@ -6,12 +6,14 @@ import eventService from "server/event/event.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import userService, { FindUserOptions } from "server/user/user.service";
 
+export function usersRoot(_req: CustomRequest, res: CustomResponse<CommonLocals>): void {
+  res.redirect("/events/people");
+}
+
 /**
  * People listing
  */
 export async function people(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
-  res.locals.pageTitle = "People";
-
   const PAGE_SIZE = 30;
 
   // Parse query

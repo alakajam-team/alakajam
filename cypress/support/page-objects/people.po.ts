@@ -1,7 +1,7 @@
 class PeoplePO {
 
   public visit() {
-    cy.visit("/people");
+    cy.visit("/events/people");
   }
 
   public get title() {

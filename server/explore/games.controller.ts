@@ -14,8 +14,6 @@ import { CustomRequest, CustomResponse } from "server/types";
  * Game browser
  */
 export async function games(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
-  res.locals.pageTitle = "Games";
-
   const { user, featuredEvent } = res.locals;
 
   // Parse query

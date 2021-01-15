@@ -1,7 +1,7 @@
 @import "_variables";
 
 $theme-colors: (
-  "primary": $main
+  "primary": $main,
 );
 
 .container {
@@ -18,7 +18,10 @@ $theme-colors: (
     }
   }
 
-  & h1, & h2, & h3, & h4 {
+  & h1,
+  & h2,
+  & h3,
+  & h4 {
     font-weight: bold;
     margin: 0;
   }
@@ -47,6 +50,12 @@ $theme-colors: (
   outline: none;
 }
 
-.card-header > :last-child, .card-body > :last-child {
+.card-header > :last-child,
+.card-body > :last-child {
   margin-bottom: 0;
+}
+
+body .breadcrumb {
+  background-color: transparent;
+  padding: 0.75rem 0rem;
 }

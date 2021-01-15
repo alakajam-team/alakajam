@@ -11,7 +11,15 @@ export default function render(context: EventsContext): JSX.Element {
   return base(context,
     <div class="container" style="width: 900px">
 
-      <h1>Events <span class="count">({open.length + pending.length + closedAlakajam.length + closedOther.length})</span></h1>
+      <h1>
+        Events
+        <a href="/events/games" class="btn btn-primary ml-2">
+          <span class="fa fa-gamepad"></span> Game search
+        </a>
+        <a href="/events/people" class="btn btn-primary ml-2">
+          <span class="fa fa-user"></span> User search
+        </a>
+      </h1>
       {ifTrue(open.length > 0, () =>
         <div class="events-block events-block__live mr-2">
           <h2><span class="fas fa-play-circle"></span> On now!</h2>

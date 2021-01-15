@@ -102,7 +102,7 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
     if (deletingOwnAccount) {
       await logout(req, res);
     } else {
-      res.redirect("/people");
+      res.redirect("/events/people");
     }
   } else {
     res.locals.alerts.push({

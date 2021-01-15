@@ -2,8 +2,8 @@ import React, { JSX } from "preact";
 
 export function peopleTabs(path: string): JSX.Element {
   return <ul class="nav nav-tabs">
-    { tab("/people", "All members", path) }
-    { tab("/people/mods", "Admins & mods", path) }
+    { tab("/events/people", "All members", path) }
+    { tab("/events/people/mods", "Admins & mods", path) }
   </ul>;
 }
 

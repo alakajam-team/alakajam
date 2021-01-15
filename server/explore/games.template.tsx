@@ -10,6 +10,8 @@ import * as navigationMacros from "server/macros/navigation.macros";
 export default function render(context: CommonLocals): JSX.Element {
   const { user, searchedEvent, featuredEvent, searchOptions, entriesCollection, rescueEntries, requiredVotes, path } = context;
 
+  context.pageTitle = "Game search";
+
   return base(context,
     <div class="container-fluid">
       <div class="row">
@@ -24,6 +26,13 @@ export default function render(context: CommonLocals): JSX.Element {
           </div>
         </div>
         <div class="col-sm-8 col-md-9">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb py-0">
+              <li class="breadcrumb-item"><a href="/events">Events</a></li>
+              <li class="breadcrumb-item active" aria-current="page">User search</li>
+            </ol>
+          </nav>
+
           <h1>
             {ifTrue(searchedEvent, () =>
               <>

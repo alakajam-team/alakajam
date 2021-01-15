@@ -1,9 +1,9 @@
 {
   "home": "/",
   "events": "/events",
-  "games": "/games",
-  "people": "/people",
-  "people-mods": "/people/mods",
+  "games": "/events/games",
+  "people": "/events/people",
+  "people-mods": "/events/people/mods",
   "chat": "/chat",
   "changelog": "/changes",
   "about-home": "/article/about",

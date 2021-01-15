@@ -9,8 +9,18 @@ import * as userMacros from "server/user/user.macros";
 export default function render(context: CommonLocals): JSX.Element {
   const { events, searchOptions, path, userCount, searchedEvent, users, currentPage, pageCount } = context;
 
+  context.pageTitle = "User search";
+
   return base(context,
     <div class="container">
+
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/events">Events</a></li>
+          <li class="breadcrumb-item active" aria-current="page">User search</li>
+        </ol>
+      </nav>
+
       {tabsMacros.peopleTabs(path)}
 
       <div class="row spacing">
@@ -18,7 +28,7 @@ export default function render(context: CommonLocals): JSX.Element {
           {searchForm(searchOptions, events)}
         </div>
         <div class="col-sm-8 col-md-9">
-          <h1>People <span class="count">({userCount})</span></h1>
+          <h1>Users <span class="count">({userCount})</span></h1>
 
           {ifTrue(searchOptions.search || searchOptions.eventId !== undefined, () =>
             <div class="count" style="font-size: 1rem; margin-top: -15px; margin-bottom: 20px">{/* TODO rename CSS class to "legend" */}

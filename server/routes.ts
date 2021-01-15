@@ -58,7 +58,7 @@ import { chat } from "./explore/chat.controller";
 import { events } from "./explore/events.controller";
 import { games } from "./explore/games.controller";
 import { peopleMods } from "./explore/people-mods.controller";
-import { people } from "./explore/people.controller";
+import { people, usersRoot } from "./explore/people.controller";
 import { home } from "./home/home.controller";
 import { commentSave } from "./post/comment/comment.controller";
 import { likePost } from "./post/like/like.controller";
@@ -115,10 +115,10 @@ export function routes(app: express.Application): void {
 
   router.get("/", home);
   router.get("/events", events);
-  router.get("/games", games);
-  router.get("/people", people);
-  router.get("/people/mods", peopleMods);
-  router.get("/user", people);
+  router.get("/events/games", games);
+  router.get("/events/people", people);
+  router.get("/events/people/mods", peopleMods);
+  router.get("/user", usersRoot);
   router.get("/chat", chat);
   router.get("/changes", changes);
 
