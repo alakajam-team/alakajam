@@ -59,7 +59,7 @@ function searchForm(searchOptions, events) {
       </div>
       <div>
         <label>
-          <input type="checkbox" name="withEntries" checked={searchOptions.withEntries} />
+          <input type="checkbox" name="withEntries" checked={searchOptions.withEntries} class="mr-1" />
           With entries
         </label>
       </div>

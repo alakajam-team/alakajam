@@ -21,7 +21,8 @@ export function linksForm(eventDetails: BookshelfModel): JSX.Element {
   return <div class="form-group">
     <label for="links">Home page shortcuts
       {formMacros.tooltip("Must be a valid JSON array of links, "
-      + 'eg. [{ "title": "Event rules", "link": "/post/123", "icon": "fa-question-circle" }]')}</label>
+      + 'eg. [{ "title": "Event rules", "link": "/post/123", "icon": "fa-question-circle" }]')}
+      <a href="https://fontawesome.com/icons?d=gallery" class="ml-1">(Icon gallery)</a></label>
     <textarea name="links" class="codemirror auto-height">{JSON.stringify(eventDetails?.get("links") || [], null, 2)}</textarea>
   </div>;
 }
