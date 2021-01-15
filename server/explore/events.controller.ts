@@ -1,17 +1,16 @@
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import entryService from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import eventService from "../event/event.service";
 
-export type TopEntriesByDivision = Record<"solo" | "team", BookshelfModel[]>;
+export type TopEntriesByDivision = Record<string, EntryBookshelfModel[]>;
 
 export interface EventsContext extends CommonLocals {
   open: BookshelfModel[];
   pending: BookshelfModel[];
-  closedAlakajam: BookshelfModel[];
-  closedOther: BookshelfModel[];
+  closed: BookshelfModel[];
   featuredEntries: Record<number, TopEntriesByDivision>;
 }
 
@@ -23,8 +22,7 @@ export async function events(req: CustomRequest, res: CustomResponse<CommonLocal
 
   const pending: BookshelfModel[] = [];
   const open: BookshelfModel[] = [];
-  const closedAlakajam: BookshelfModel[] = [];
-  const closedOther: BookshelfModel[] = [];
+  const closed: BookshelfModel[] = [];
 
   const allEventsCollection = await eventService.findEvents();
 
@@ -39,11 +37,7 @@ export async function events(req: CustomRequest, res: CustomResponse<CommonLocal
       open.push(event);
       break;
     default:
-      if (event.get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
-        closedAlakajam.push(event);
-      } else {
-        closedOther.push(event);
-      }
+      closed.push(event);
 
       if (event.get("status_results") === enums.EVENT.STATUS_RESULTS.RESULTS) {
         const topEntries = await entryService.findEntries({
@@ -52,8 +46,8 @@ export async function events(req: CustomRequest, res: CustomResponse<CommonLocal
           pageSize: 6,
           withRelated: ["details", "userRoles"],
         }) as BookshelfCollection;
-        const topEntriesByDivision: TopEntriesByDivision = { solo: [], team: [] };
-        topEntries.forEach((entry) => {
+        const topEntriesByDivision: TopEntriesByDivision = {};
+        topEntries.forEach((entry: EntryBookshelfModel) => {
           const division = entry.get("division");
           if (!topEntriesByDivision[division]) {
             topEntriesByDivision[division] = [];
@@ -72,8 +66,7 @@ export async function events(req: CustomRequest, res: CustomResponse<CommonLocal
     ...res.locals,
     pending,
     open,
-    closedAlakajam,
-    closedOther,
+    closed,
     featuredEntries,
   });
 }

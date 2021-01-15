@@ -1,22 +1,23 @@
+import { BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
 import base from "server/base.template";
 import links from "server/core/links";
 import * as eventMacros from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
-import { EventsContext } from "./events.controller";
+import { EventsContext, TopEntriesByDivision } from "./events.controller";
 
 export default function render(context: EventsContext): JSX.Element {
-  const { open, pending, closedAlakajam, closedOther, featuredEntries } = context;
+  const { open, pending, closed, featuredEntries } = context;
 
   return base(context,
     <div class="container" style="width: 900px">
 
       <h1>
         Events
-        <a href="/events/games" class="btn btn-primary ml-2">
+        <a href="/events/games" class="btn btn-outline-primary ml-2">
           <span class="fa fa-gamepad"></span> Game search
         </a>
-        <a href="/events/people" class="btn btn-primary ml-2">
+        <a href="/events/people" class="btn btn-outline-primary ml-2">
           <span class="fa fa-user"></span> User search
         </a>
       </h1>
@@ -36,34 +37,14 @@ export default function render(context: EventsContext): JSX.Element {
         </div>
       )}
 
-      <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" href="#alakajam_events" data-toggle="tab">
-            <h2 style="margin: 0"><img src={ links.staticUrl("/static/images/favicon32.png") } class="no-border" />&nbsp;Past Alakajam! events</h2>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#other_events" data-toggle="tab">
-            <h2 style="margin: 0"><img src={ links.staticUrl("/static/images/favicon32.png") } class="no-border" />&nbsp;Other events</h2>
-          </a>
-        </li>
-      </ul>
+      <h2 style="margin: 0"><img src={ links.staticUrl("/static/images/favicon32.png") } class="no-border" />&nbsp;Past events</h2>
 
-      <div class="tab-content">
-        <div id="alakajam_events" class="events-block events-block__closed tab-pane fade show active">
-          {closedAlakajam.map(event =>
-            eventTable(event, featuredEntries[event.get("id")]))}
-        </div>
-
-        <div id="other_events" class="events-block events-block__closed tab-pane fade">
-          {closedOther.map(event =>
-            eventTable(event, featuredEntries[event.get("id")], { noResults: true }))}
-        </div>
-      </div>
+      {closed.map(event =>
+        eventTable(event, featuredEntries[event.get("id")]))}
     </div>);
 }
 
-function eventTable(event, featuredEntries, options: { noResults?: boolean } = {}) {
+function eventTable(event: BookshelfModel, featuredEntries: TopEntriesByDivision, options: { noResults?: boolean } = {}) {
   return <div class={"event-table " + event.get("status") + " mr-2"}>
     <div class="event-table__header">
       <a href={ links.routeUrl(event, "event") } class="event-table__title">
@@ -84,7 +65,7 @@ function eventTable(event, featuredEntries, options: { noResults?: boolean } = {
       )}
     </div>
 
-    {ifTrue(!options.noResults && featuredEntries && (featuredEntries.solo || featuredEntries.ranked), () =>
+    {ifTrue(Boolean(!options.noResults && featuredEntries && event.get("title").includes("Alakajam!")), () =>
       <div class="event-table__entries">
         <div class="row">
           <div class="col-sm-6">
@@ -96,7 +77,7 @@ function eventTable(event, featuredEntries, options: { noResults?: boolean } = {
             )}
           </div>
           <div class="col-sm-6">
-            {featuredEntries.team.map((entry, index) =>
+            {featuredEntries.team?.map((entry, index) =>
               <div class="event-table__entry">
                 {eventMacros.entrySmallThumb(entry)}
                 <span class={"entry-results__category-medal medal" + (index + 1) + " in-small-thumb"}></span>
