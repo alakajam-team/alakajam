@@ -220,6 +220,7 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/vendors.js?" + launchTime)}></script>
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/site.js?" + launchTime)}></script>
       {context.scripts.map(scriptUrl => <script type="text/javascript" src={scriptUrl}></script>)}
+      <script data-goatcounter="https://alakajam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
     </body>
   </html>;
 }
