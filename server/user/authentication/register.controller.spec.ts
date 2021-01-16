@@ -33,7 +33,7 @@ describe("Register controller", () => {
   });
 
   it("rejects the form if the gotcha is filled", async () => {
-    const req = mockRequest({ body: { email: 'bot@alakaspam.com' } });
+    const req = mockRequest({ body: { email: "bot@alakaspam.com" } });
     const res = mockResponse();
 
     await registerController.register(req, res);

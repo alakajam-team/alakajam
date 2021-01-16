@@ -81,13 +81,13 @@ export class HighScoreService {
 
     let query = models.EntryScore.where("user_id", userId) as BookshelfModel;
     switch (options.sortBy) {
-      case "ranking":
-        query = query.orderBy("ranking");
-        break;
-      case "submitted_at":
-        query = query.orderBy("submitted_at", "DESC");
-        break;
-      default:
+    case "ranking":
+      query = query.orderBy("ranking");
+      break;
+    case "submitted_at":
+      query = query.orderBy("submitted_at", "DESC");
+      break;
+    default:
     }
 
     // PERF: Entry details required to format scores
@@ -137,7 +137,7 @@ export class HighScoreService {
   public async findRecentlyActiveEntries(
     options: { limit?: number; eventId?: number } = {}): Promise<BookshelfCollection> {
     const entryScoreIds = await db.knex.select("entry_score.id")
-      .from(function () {
+      .from(function() {
         const qb = this.distinct("entry_score.entry_id")
           .max("entry_score.submitted_at as max_submitted_at")
           .from("entry_score");
@@ -150,7 +150,7 @@ export class HighScoreService {
           .limit(options.limit || 10)
           .as("active");
       })
-      .innerJoin("entry_score", function () {
+      .innerJoin("entry_score", function() {
         this.on("entry_score.submitted_at", "=", "active.max_submitted_at")
           .andOn("entry_score.entry_id", "=", "active.entry_id");
       })

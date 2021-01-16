@@ -281,7 +281,7 @@ function eventLink(
 }
 
 function analytics() {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     return <script data-goatcounter="https://alakajam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>;
   }
 }
