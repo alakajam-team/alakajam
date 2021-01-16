@@ -1,7 +1,7 @@
 Contributing
 ## <img src="https://static.alakajam.com/static/images/welcome.png" class="pull-right" height="64" />Donations
 
-A simple and effective way to donate is to throw money at our non-profit through the link below! It and will help us cover the expenses of the community ([read more about it here](https://alakajam.com/post/1070/finances-of-the-alakajam-association)).
+A simple and effective way to donate is to throw money at Alakajam through the link below! It and will help us cover the expenses of the community ([read more about it here](https://alakajam.com/post/1070/finances-of-the-alakajam-association)).
 
 [[PAYPAL_BUTTON]]
 
