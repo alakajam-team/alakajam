@@ -220,11 +220,10 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/vendors.js?" + launchTime)}></script>
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/site.js?" + launchTime)}></script>
       {context.scripts.map(scriptUrl => <script type="text/javascript" src={scriptUrl}></script>)}
-      <script data-goatcounter="https://alakajam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+      {analytics()}
     </body>
   </html>;
 }
-
 
 function userMenu(user, unreadNotifications) {
   return <div class="dropdown">
@@ -278,5 +277,11 @@ function eventLink(
         <span>{label}</span>
       </a>
     </li>;
+  }
+}
+
+function analytics() {
+  if (process.env.NODE_ENV === 'production') {
+    return <script data-goatcounter="https://alakajam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>;
   }
 }
