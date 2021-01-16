@@ -19,7 +19,8 @@ echo "Upgrading $PM2_APP_NAME..."
 git checkout -- .
 git fetch
 git reset --hard origin/master
-npm install --production
+
+NODE_ENV=production npm ci
 NODE_ENV=production npm run build
 
 pm2 restart $PM2_APP_NAME
