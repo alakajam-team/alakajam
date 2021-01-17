@@ -277,13 +277,6 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
     {ifFalse(options.readOnly, () =>
       commentEditor(null, path, options.csrfToken, options)
     )}
-
-    <style type="text/css" dangerouslySetInnerHTML={{
-      __html: `
-    .CodeMirror, .CodeMirror-scroll {
-      min-height: 120px;
-    }
-  `}} />
   </>;
 }
 

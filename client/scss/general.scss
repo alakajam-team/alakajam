@@ -162,10 +162,17 @@ blockquote {
   }
 }
 
+.CodeMirror, .CodeMirror-scroll {
+  min-height: 120px;
+}
+.CodeMirror-scroll {
+  margin-right: -30px !important;
+}
 .editor-toolbar.fullscreen,
 .CodeMirror-fullscreen,
 .editor-preview-side {
   z-index: 2000;
+  border-radius: 0;
 }
 .editor-preview-active-side {
   background-color: #F5F5F5;

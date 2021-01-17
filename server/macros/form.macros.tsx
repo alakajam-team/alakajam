@@ -14,11 +14,13 @@ import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
  * Requires registration of scripts with `formMacros.registerEditorScripts(context)` to function
  */
 export function editor(editorName: string, editorContents: string, options: { minHeight?: number; autofocus?: boolean } = {}): JSX.Element {
-  return <textarea class="form-control easymde-editor"
-    name={editorName}
-    data-min-height={ifSet(options.minHeight, () => options.minHeight + "px")}
-    autofocus={options.autofocus}
-  >{templatingFilters.markdownUnescape(editorContents)}</textarea>;
+  return <div class="EasyMDEContainer">
+    <textarea class="form-control easymde-editor"
+      name={editorName}
+      data-min-height={ifSet(options.minHeight, () => options.minHeight + "px")}
+      autofocus={options.autofocus}
+    >{templatingFilters.markdownUnescape(editorContents)}</textarea>
+  </div>;
 }
 
 export function registerEditorScripts(locals: CommonLocals): void {
@@ -75,7 +77,7 @@ export function tooltip(title: string, options: { class?: string; placement?: st
 // Radio and check buttons
 
 export function radio(name: string, value: string, label: string, modelProperty: string,
-                      options: { textField?: boolean; textFieldEnabled?: boolean; placeholder?: string } = {}): JSX.Element {
+  options: { textField?: boolean; textFieldEnabled?: boolean; placeholder?: string } = {}): JSX.Element {
   value = options.textFieldEnabled ? modelProperty : value;
   const inputId = slug(name + "-" + value);
   return <label for={inputId}>
@@ -90,7 +92,7 @@ export function radio(name: string, value: string, label: string, modelProperty:
 }
 
 export function check(name: string, label: string, value: boolean,
-                      options: { required?: boolean; textField?: boolean; placeholder?: string; noMargin?: boolean } = {}): JSX.Element {
+  options: { required?: boolean; textField?: boolean; placeholder?: string; noMargin?: boolean } = {}): JSX.Element {
   return <label for={name}>
     <input type="checkbox" id={name} class="js-checkbox" name={name}
       checked={Boolean(value)}
@@ -110,7 +112,7 @@ export function check(name: string, label: string, value: boolean,
  * Requires registration of scripts with `formMacros.registerDatePickerScripts(context)` to function
  */
 export function dateTimePicker(name: string, value: string, user: User,
-                               options: { pickerFormat?: string; serverFormat?: string; classes?: string; forceUTC?: boolean } = {}): JSX.Element {
+  options: { pickerFormat?: string; serverFormat?: string; classes?: string; forceUTC?: boolean } = {}): JSX.Element {
   return <div class="form-group">
     <div class="js-date-picker input-group date" id={"datetimepicker-" + name} data-target-input="nearest"
       data-format={options.pickerFormat || "YYYY-MM-DD HH:mm"}>
