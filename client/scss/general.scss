@@ -141,7 +141,7 @@ blockquote {
 
 .CodeMirror {
   height: auto;
-  border: 1px solid #aab2bd;
+  border: 1px solid #aab2bd !important;
   border-radius: 4px;
   padding: 3px 0;
   font-family: inherit;
@@ -164,6 +164,7 @@ blockquote {
 
 .CodeMirror, .CodeMirror-scroll {
   min-height: 120px;
+  border-radius: 0;
 }
 .CodeMirror-scroll {
   margin-right: -30px !important;
@@ -172,7 +173,6 @@ blockquote {
 .CodeMirror-fullscreen,
 .editor-preview-side {
   z-index: 2000;
-  border-radius: 0;
 }
 .editor-preview-active-side {
   background-color: #F5F5F5;
