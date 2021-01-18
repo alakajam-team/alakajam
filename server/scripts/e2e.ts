@@ -2,6 +2,7 @@
  * Entry point for the end-to-end test server
  */
 
+import log from "../core/log";
 log.info("Launching server with forced end-to-end configuration...");
 process.env.CONFIG_PATH = "server/scripts/e2e-config.js";
 
@@ -9,7 +10,6 @@ import * as fs from "fs";
 import * as path from "path";
 import config from "../core/config";
 import constants from "../core/constants";
-import log from "../core/log";
 
 // Initialize backup for restoration throughout tests
 // XXX Should be done after DB migration
