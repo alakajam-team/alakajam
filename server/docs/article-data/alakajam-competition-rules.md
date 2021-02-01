@@ -3,7 +3,7 @@ The *Alakajam!* competitions let people make a video game from scratch in a week
 
 ![](https://static.alakajam.com/static/presskit/images/schedule-infographic.png)
 
-## <a name="divisions"></a>Divisions
+## Divisions
 
 Anyone can enter in any of the following divisions:
 
@@ -13,7 +13,7 @@ Anyone can enter in any of the following divisions:
 
 The jam always starts on a Friday, 7pm [UTC](https://www.timeanddate.com/worldclock/timezone/utc).
 
-## <a name="rankings"></a>Rankings
+## Rankings
 
 After the jam, Solo and Team divisions will be ranked separately through community voting: any person who entered the event will be able to play, rate and comment other people's games for two weeks, until the final results are released. On each game you play, you will get to rate six aspects of game making:
 
@@ -28,7 +28,7 @@ After the jam, Solo and Team divisions will be ranked separately through communi
 
 Unranked games won't get ratings but can expect as much plays & feedback as the others.
 
-## <a name="allowed"></a>What is allowed?
+## What is allowed?
 
 ### Solo/Team divisions
 
@@ -38,7 +38,7 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
     * Your engine's default appearance for UI elements ;
     * Pre-made game author & engine splash screens.
 * **Audio asset reuse:** You must make your own music during the event, even if you opt-out of the audio category. However:
-    * While creating sounds yourself is encouraged (eg. with the help of [sound generation tools](/article/docs/resources#audio), musical instruments, or microphones), reusing existing sound effects is tolerated.
+    * While creating sounds yourself is encouraged (eg. with the help of [sound generation tools](/article/docs/resources#audio-software), musical instruments, or microphones), reusing existing sound effects is tolerated.
     * You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed ;
 * **Code reuse:** You are allowed to use/reuse any outside library or personal code made prior to the event, or code bits found from sources like StackOverflow or blogs. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.
 * **Tools:** All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.
@@ -50,7 +50,7 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
 
 Those third-party assets exceptions are only allowed as long as you have the license to use them. Please check the licensing terms and in doubt, consult the author.
 
-### <a name="unranked"></a>Unranked division
+### Unranked division
 
 Since there is no ratings involved, the rules are much more relaxed. While the ranked divisions are only made for video games, card & board games are allowed here. The only rules are:
 
@@ -62,7 +62,7 @@ There are additional rules **if you submit an existing project** of yours. These
 * Use the game description to let people know what you did/did not make during the jam ;
 * Make it easy to play the parts you worked on (eg. don't make testers play the full game to try your final boss!).
 
-## <a name="doubts"></a>In case of doubts...
+## In case of doubts...
 
 Obviously, the rules on post-jam changes don't cover every scenario (for instance you may realize the music volume is super low, or in-game instructions are wrong, etc.).
 

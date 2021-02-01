@@ -25,7 +25,7 @@ export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryV
             <p>Voting is disabled, please provide feedback instead.</p>
             <p style="margin-bottom: 0">
               <i>Note: The Karma formula grants you as many points on this entry as on ranked ones.
-                {" "}<a href="/article/docs/faq#karma-intro">Learn more</a></i>
+                {" "}<a href="/article/docs/faq#what-is-karma">Learn more</a></i>
             </p>
           </div>
         )}

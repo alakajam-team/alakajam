@@ -1,16 +1,16 @@
 Game making resources
 This page compiles a list of **free** resources for making games, especially for beginners. If you have suggestions to add please [let us know](https://docs.google.com/forms/d/e/1FAIpQLScjMwNehfQBGKvsMEE2VYuH_9WbbNb2hZ3F1dIC_UPy9c294w/viewform)!
 
-* [Graphics software](#graphics)
-* [Audio software](#audio)
-* [Game engines/frameworks](#engines)
-* [Free assets](#assets)
-* [Level design](#level)
-* [Learning](#learning
+* [Graphics software](#graphics-software)
+* [Audio software](#audio-software)
+* [Game engines/frameworks](#game-enginesframeworks)
+* [Free assets](#free-assets)
+* [Level design](#level-design)
+* [Learning](#learning)
 * [Screen capture](#capture)
 
 
-## <a name="graphics"></a>Graphics software
+## Graphics software
 
 | Name | Description |
 | -------- | -------- |
@@ -24,7 +24,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [GraphicsGale](https://graphicsgale.com/)  | Old-school looking but powerful pixel art editor, supports animations. |
 
 
-## <a name="audio"></a>Audio software
+## Audio software
 
 | Name | Description |
 | -------- | -------- |
@@ -37,7 +37,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Audiotool](https://www.audiotool.com)  | Online, knobs-and-cables music editor. Exporting requires a free account. |
 | [LMMS](https://lmms.io/)  | Full featured, cross-platform music creation software inspired by FL Studio. Open Source. |
 
-## <a name="engines"></a>Game engines/frameworks
+## Game engines/frameworks
 
 **General purpose engines**
 
@@ -73,7 +73,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [PhaserJS](https://phaser.io) | JavaScript framework to make 2D games for the browser. Open source. |
 | [LibGDX](https://libgdx.badlogicgames.com/) | Cross-platform Java framework with lots of features for both 2D and 3D. Open source. |
 
-## <a name="assets"></a>Free assets
+## Free assets
 
 | Name | Description |
 | -------- | -------- |
@@ -85,7 +85,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Soniss GDC 2018 Bundle](https://sonniss.com/gameaudiogdc18/) \| [2017](https://sonniss.com/gameaudiogdc2017/) | Massive packs of game-related royalty-free sounds. |
 | [Universal LPC Sprite Sheet Generator](http://gaurav.munjal.us/Universal-LPC-Spritesheet-Character-Generator/) | Customizable character sprite sheets assembled from open art. |  
 
-## <a name="capture"></a>Screen capture
+## Screen capture
 
 | Name | Description |
 | -------- | -------- |
@@ -96,13 +96,13 @@ This page compiles a list of **free** resources for making games, especially for
 | [Gyazo](https://gyazo.com/) | Service letting you capture your screen (as a picture or GIF) *and* automatically publishing the result to a dedicated website. |
 | [Snipping Tool](https://support.microsoft.com/en-us/help/13776/windows-use-snipping-tool-to-capture-screenshots) | A native and often underrated Windows program for capturing screnshots. |
 
-## <a name="levels"></a>Level design
+## Level design
 
 | Name | Description |
 | -------- | -------- |
 | [TilEd](http://www.mapeditor.org/)  | Powerful editor for 2D maps (platformers, RPGs, etc.), which can then be exported in either its own TFX format or simple JSON. Open Source. |
 
-## <a name="learning"></a>Learning
+## Learning
 
 | Name | Description |
 | -------- | -------- |

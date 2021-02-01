@@ -25,7 +25,7 @@ export default function render(context: ArticleContext): JSX.Element {
               Contribute&nbsp;to&nbsp;this&nbsp;page
             </a>
           </h1>
-          <div class="user-contents" dangerouslySetInnerHTML={markdown(articleBody)} />
+          <div class="user-contents" dangerouslySetInnerHTML={markdown(articleBody, { generateClickableAnchors: true })} />
         </div>
       </div>
     </div>);

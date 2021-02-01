@@ -53,9 +53,9 @@ const SLUG_SETTINGS = { symbols: false };
 
 // Libs init
 
-const showdownLazyPicturesExt = {
+const showdownLazyPicturesExt: showdown.ShowdownExtension = {
   type: "output",
-  filter(text) {
+  filter(text: string) {
     if (text.includes("img")) {
       text = text.replace(/<img([^>]+)src="/g, '<img$1data-src="');
     }
@@ -300,8 +300,8 @@ export interface MarkdownToHtmlOptions {
   maxLength?: number;
   readMoreLink?: string;
   truncateByWords?: boolean;
+  generateClickableAnchors?: boolean;
 }
-
 
 /**
  * Converts the given Markdown to XSS-safe HTML
@@ -312,7 +312,7 @@ function markdownToHtml(markdown: string, options: MarkdownToHtmlOptions = {}): 
     .replace(/< ?(div|table|tr|td|th|ul|li|h[1-5])/gi, '<$1 markdown="1" ')
     // Github-style mentions parsing
     // (adapted from https://github.com/showdownjs/showdown/blob/master/src/subParsers/makehtml/anchors.js)
-    .replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,'[\]()]|\s|$)/gmi, (text, st, escape, mentions, username) => {
+    .replace(/(^|\s)(\\)?(@([a-z\d\-_]+))(?=[.!?;,'[\]()]|\s|$)/gmi, (_text, st, escape, mentions, username) => {
       if (escape === "\\") {
         return st + mentions;
       } else {
@@ -324,10 +324,22 @@ function markdownToHtml(markdown: string, options: MarkdownToHtmlOptions = {}): 
     });
 
   const unsafeHtml = showdownConverter.makeHtml(markdown);
-  let safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)
+  let safeHtml = sanitizeHtml(unsafeHtml, {
+    ...sanitizeHtmlOptions,
+    ...options
+  })
     .replace(/\[\[([A-Z_].*)\]\]/g, (_, key) => {
       return markdownSnippets[key] || "[[Unknown snippet " + key + "]]";
     });
+
+  if (options.generateClickableAnchors) {
+    safeHtml = safeHtml.replace(/<h([1-5])>([^<]+)<\/h[1-5]>/gi, (_text, h, title) => {
+      const anchorName = slug(title.trim());
+      return `<h${h}><a class="anchor" name="${anchorName}"></a>${title}
+        <a class="post__permalink" href="#${anchorName}"><span class="fas fa-link"></span></a>
+      </h${h}>`;
+    });
+  }
 
   if (options.maxLength) {
     safeHtml = truncateHtml(safeHtml, {

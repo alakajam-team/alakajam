@@ -5,19 +5,19 @@ Yes. Submitting a game to Alakajam! has absolutely no implication other than let
 
 You are also free to expand your games after the jam, and why not release them commercially!
 
-## <a name="anon-entry"></a>Allowing anonymous comments
+## Allowing anonymous comments
 
 Enabling this option allows all users to post anonymous comments on your entry. Doing so gives them a free hand for posting direct, unfiltered feedback about your game, pleasant or not. If you don't feel comfortable with strong criticism, please keep this option disabled.
 
 If you enable the option, you may change your mind later, but comments posted anonymously will of course remain anonymous.
 
-## <a name="anon-comment"></a>Commenting anonymously
+## Commenting anonymously
 
 If the owner of an entry allowed it, you can choose to post a comment anonymously. This allows you to provide honest, even unpleasant feedback while making sure the user won't give you bad ratings in exchange (this rarely happens, but we understand some people prefer to be 100% safe). Note that anonymous comments can still be identified by administrators, to moderate any form of hateful, offensive or insulting comments.
 
-Anonymous comments do not count towards your [karma](#karma-intro).
+Anonymous comments do not count towards your [karma](#what-is-karma).
 
-## <a name="optouts"></a>Opt-outs
+## Opt-outs
 
 When entering the Solo or Team division, you can opt-out of certain rating categories. This is completely optional and depends on each game and your personal preference.
 
@@ -26,13 +26,13 @@ When entering the Solo or Team division, you can opt-out of certain rating categ
 
 People who opt out of a category still have to follow the same rules regarding third-party assets.
 
-## <a name="karma-intro"></a>What is Karma?
+## What is Karma?
 
 The *karma* is a score attached to your game, calculated to decide what appears first in the search results. The more ratings & comments you give, the higher your score! The more ratings & comments you receive, the lower it gets. The goal is simply to help reward the people who are active during the ratings phase.
 
 If you are entering a competitive division, make sure to rate & comment enough games, or your entry might stay hidden in the results and you might not get enough ratings for an official ranking.
 
-## <a name="karma"></a>How is karma calculated?
+## How is karma calculated?
 
 Alakajam's karma uses a secret recipe transmitted from father to son since 50 generations! Its details are kept vague on purpose, but you might want to know that:
 

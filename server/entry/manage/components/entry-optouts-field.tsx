@@ -15,7 +15,7 @@ export function optoutsField(event: BookshelfModel, entry: BookshelfModel, user:
   return <div>
     <div id="edit-optouts" class={entry.get("division") === "unranked" ? "d-none" : ""}>
       <div class="form-group" title={!canEditOptouts ? "Only the entry owner can change this setting" : ""}>
-        <label>Opt-outs (<a href="/article/docs/faq#optouts" target="_blank">help</a>)</label>
+        <label>Opt-outs (<a href="/article/docs/faq#opt-outs" target="_blank">help</a>)</label>
         <div class="form-inline">
           <label>
             <input type="checkbox" name="optout-graphics" class="js-checkbox"

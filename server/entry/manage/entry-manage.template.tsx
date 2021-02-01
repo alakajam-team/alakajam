@@ -147,7 +147,7 @@ export default function render(context: CommonLocals): JSX.Element {
               <label for="anonymous-enabled">Comments options</label>
               <div>
                 {formMacros.check("anonymous-enabled", "Allow anonymous feedback", entry.get("allow_anonymous"), { noMargin: true })}{" "}
-                <a href="/article/docs/faq#anon-entry" target="_blank">(learn more)</a>
+                <a href="/article/docs/faq#commenting-anonymously" target="_blank">(learn more)</a>
               </div>
             </div>
           </div>

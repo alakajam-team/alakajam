@@ -327,7 +327,7 @@ export function commentEditor(commentModel: BookshelfModel, path: string, csrfTo
               {ifTrue(showAnon && !user.get("disallow_anonymous"), () =>
                 <>
                   {formMacros.check("comment-anonymously", "Comment anonymously", null, { noMargin: true })}
-                  (<a href="/article/docs/faq#anon-comment" target="_blank">why?</a>)
+                  (<a href="/article/docs/faq#commenting-anonymously" target="_blank">why?</a>)
                 </>
               )}
             </div>

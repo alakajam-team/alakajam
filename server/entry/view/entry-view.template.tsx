@@ -66,7 +66,7 @@ export default function render(context: EntryLocals): JSX.Element {
             {ifTrue(entry.get("allow_anonymous") && user && !user.get("disallow_anonymous"), () =>
               <p class="float-right my-1">
                 This entry welcomes anonymous comments
-                (<a href="/article/docs/faq#anon-comment" target="_blank">help</a>)
+                (<a href="/article/docs/faq#commenting-anonymously" target="_blank">help</a>)
               </p>
             )}
             <h2>Comments <i>({entry.get("comment_count") || "0"})</i></h2>

@@ -15,6 +15,11 @@
     margin-bottom: 8px;
   }
 
+  &__permalink {
+    color: $text-lightest;
+    font-size: 90%;
+  }
+
   &__title {
     @include main-font;
     font-weight: bold;

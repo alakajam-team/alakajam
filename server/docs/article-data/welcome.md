@@ -10,7 +10,7 @@ Sounds exciting? Come join us! You can start by making an account [in a few clic
 
 If you want to give a hand to our little community, check the [contributing page](/article/about/contributing).
 
-## <a name="contact"></a>Contact us
+## Contact us
 
 
 | How          | Where |

@@ -7,7 +7,7 @@ You will find here the detailed rules of this special competition, which involve
 
 ## Game dev competition
 
-### <a name="divisions"></a>Divisions
+### Divisions
 
 There are three divisions available to contestants:
 * **Solo**, in which you make a whole game alone in 72 hours ;
@@ -18,12 +18,12 @@ For your game to qualify for the streamer competition, you are encouraged to mak
 
 See the **What is allowed?** section below for details regarding asset reuse, fixing bugs after the jam, etc.
 
-### <a name="allowed"></a>What is allowed?
+### What is allowed?
 
 Click on a division below to read its detailed constraints.
 
 <details class="card">
-<summary><div class="btn"><b>Solo/Team divisions</b></div></summary><ul><li><b>Tools:</b> All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.</li><li><b>Code reuse:</b> You are allowed to use/reuse any outside library or personal code made prior to the event, or code bits found from sources like StackOverflow or blogs. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.</li><li><b>Graphical asset reuse:</b> You must make all your graphical assets during the event, even if you opt-out of the graphics category. Derivative work of existing assets (ie. you used some existing assets but significantly transformed them) is acceptable, as long as you list the original assets in your game page for the raters to appreciate. You are also <i>allowed</i> to use: third-party fonts and brushes ; procedurally generated assets ; your engine's default appearance for UI elements ; pre-made game author & engine splash screens.</li><li><b>Audio asset reuse:</b> You must make your own music during the event, even if you opt-out of the audio category. However: while creating sounds yourself is encouraged (eg. with the help of [sound generation tools](/article/docs/resources#audio), musical instruments, or microphones), reusing existing sound effects is tolerated. You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed.</li><li><b>Post-jam changes:</b> From the minute the jam ends, you are not allowed to add any features, assets or contents to your jam version. However we do allow: packaging or improving the packaging ; porting to other platforms ; and fixing bugs (the definition of what is a "bug" as opposed to "balancing"/"improving" the game is blurry, just act in fairness to the other contestants). Any other change must be distributed as a separate "Post-jam version" clearly labelled as such.</li>
+<summary><div class="btn"><b>Solo/Team divisions</b></div></summary><ul><li><b>Tools:</b> All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.</li><li><b>Code reuse:</b> You are allowed to use/reuse any outside library or personal code made prior to the event, or code bits found from sources like StackOverflow or blogs. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.</li><li><b>Graphical asset reuse:</b> You must make all your graphical assets during the event, even if you opt-out of the graphics category. Derivative work of existing assets (ie. you used some existing assets but significantly transformed them) is acceptable, as long as you list the original assets in your game page for the raters to appreciate. You are also <i>allowed</i> to use: third-party fonts and brushes ; procedurally generated assets ; your engine's default appearance for UI elements ; pre-made game author & engine splash screens.</li><li><b>Audio asset reuse:</b> You must make your own music during the event, even if you opt-out of the audio category. However: while creating sounds yourself is encouraged (eg. with the help of [sound generation tools](/article/docs/resources#audio-software), musical instruments, or microphones), reusing existing sound effects is tolerated. You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed.</li><li><b>Post-jam changes:</b> From the minute the jam ends, you are not allowed to add any features, assets or contents to your jam version. However we do allow: packaging or improving the packaging ; porting to other platforms ; and fixing bugs (the definition of what is a "bug" as opposed to "balancing"/"improving" the game is blurry, just act in fairness to the other contestants). Any other change must be distributed as a separate "Post-jam version" clearly labelled as such.</li>
 </ul>
 Note that third-party assets exceptions are only allowed as long as you have the license to use them.
 </details>
@@ -40,7 +40,7 @@ There are additional rules <b>if you submit an project started before the event<
 &nbsp;  
 *In case of doubts and mistakes:* Obviously, the rules don't cover every scenario. If you learnt too late about the assets restrictions, or want to do something unclear from the rules... *do what seems fair*, and just be transparent about it in the game description. For the fairness of the competition, the mods may disqualify games whose rules breaches granted them an obvious advantage in terms of ratings. Now whatever happens, let's not overthink things: this is just an informal competition, and we're here to make games and have fun!
 
-### <a name="rankings"></a>Ratings
+### Ratings
 
 After the jam, Solo and Team divisions will be ranked separately through community voting: any person who submitted an entry, as well as any registered streamer will be able to play, rate and comment other people's games for five days. On each game you play, you will get to rate six aspects of game making:
 
@@ -73,7 +73,7 @@ The developers that made the 3 winners will:
 * Receive a special discord role in the [ScoreSpace discord server](https://discord.com/invite/P5pwDrv).
 * The top 3 games also get their game played and livestreamed in the second part of the jam by competing streamers!
 
-## <a name="awards"></a>High score competition
+## High score competition
 
 Everyone who wants to (including people who submitted a game) can also enter the event as streamers. If you choose to do so, you are then invited to compete for 24 hours on the three awarded games. In order to take part in the competition: 
 1. You need to enter as a streamer on the event dashboard, and specify you Twitch channel and scheduled streams ;

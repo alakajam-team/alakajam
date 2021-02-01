@@ -1,7 +1,7 @@
 Skills
 Not everyone is proficient is all aspects of game making... But if you don't have a team to complement your skills, jams are a chance to try your hand at something new! Let's just figure out some accessible options.
 
-## <a name="art"></a>Being bad at graphics
+## Being bad at graphics
 
 <img class="pull-right" src="https://i.imgur.com/bsfPtXb.jpg" width="300" />You don't know how to draw? No problem.
 
@@ -13,7 +13,7 @@ Finally, you can just grab third-party art and submit your entry in the *Unranke
 
 Check the [Resources](/article/docs/resources) page for a list of graphics software you can use.
 
-## <a name="sound"></a>Being bad at sound & music
+## Being bad at sound & music
 
 I have good news: there's several, super easy ways to include sounds effects in your games. Making music is more involved, but still doable!
 
@@ -23,13 +23,13 @@ Now for **music**, if you don't have any experience but still want to start maki
 
 Alternately, you can just grab existing music submit your entry in the *Unranked* division. Or, you now, not have music, maybe even no sound at all, which is also acceptable.
 
-## <a name="code"></a>Being bad at code
+## Being bad at code
 
 <img class="pull-right" src="https://i.imgur.com/zkX2RPr.png" width="300" />Without knowledge of code, there's still plenty of options nowadays for making games! An option is to use genre-specific engines (e.g. for text adventures or RPGs) which are just point-and-click interfaces that let you build your game. More recently, great general purpose engines that still don't require code have started appearing, letting you build any type of (usually 2D) game.
 
 Check the [Resources](/article/docs/resources) page for a wide range of engines to try, and find the one that suits you best. Discovering an engine during a jam can be frustrating, so it is probably best to at least do some tutorials before the event starts.
 
-## <a name="bad"></a>"I'm bad, I'm bad, really really bad" [*](https://www.youtube.com/watch?v=dsUXAEzaC3Q&feature=youtu.be&t=1m9s)
+## "I'm bad, I'm bad, really really bad" [*](https://www.youtube.com/watch?v=dsUXAEzaC3Q&feature=youtu.be&t=1m9s)
 
 If you're just new to all aspects of game development, you still have no excuses! Engines like *Twine* (text adventures) and *Scratch* (2D) are literally accessible for everyone. You can even enter without making the art *or* sounds yourself, by choosing the Unranked division.
 
