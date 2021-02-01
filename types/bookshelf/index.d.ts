@@ -3,7 +3,6 @@
 
 import "bookshelf";
 import BlueBird = require("bluebird");
-import { SyncOptions } from "bookshelf";
 
 declare module "bookshelf" {
 

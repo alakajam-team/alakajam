@@ -11,7 +11,8 @@
     "jsx": "react",
     "esModuleInterop": true,
     "typeRoots": ["types", "node_modules/@types"],
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
   "include": [
     "server/**/*.ts",

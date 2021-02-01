@@ -3,7 +3,7 @@ import leftPad from "left-pad";
 import { User } from "server/entity/user.entity";
 import constants from "./constants";
 import * as formats from "./formats";
-import forms from "./forms";
+import forms, { MarkdownToHtmlOptions } from "./forms";
 
 export function date(
   value: number | string | Date,
@@ -19,7 +19,7 @@ export function dateTime(value: number | string | Date, user?: User | BookshelfM
   return formats.formatDate(value, user, constants.DATE_TIME_FORMAT);
 }
 
-export function markdown(value: string, options: forms.MarkdownToHtmlOptions = {}): { __html: string } {
+export function markdown(value: string, options: MarkdownToHtmlOptions = {}): { __html: string } {
   return { __html: forms.markdownToHtml(value, options) };
 }
 
