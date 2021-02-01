@@ -12,6 +12,7 @@ import striptags from "striptags";
 import TurndownService from "turndown";
 import * as url from "url";
 import * as validator from "validator";
+import truncateHtml from "truncate-html";
 import config from "./config";
 import constants from "./constants";
 import { createLuxonDate } from "./formats";
@@ -295,10 +296,17 @@ function parseJson<T>(str: string, options: any = {}): T | string | false {
   }
 }
 
+export interface MarkdownToHtmlOptions {
+  maxLength?: number;
+  readMoreLink?: string;
+  truncateByWords?: boolean;
+}
+
+
 /**
  * Converts the given Markdown to XSS-safe HTML
  */
-function markdownToHtml(markdown: string, options: { maxLength?: number; readMoreLink?: string } = {}): string {
+function markdownToHtml(markdown: string, options: MarkdownToHtmlOptions = {}): string {
   markdown = (markdown || "")
     // Automatically enable markdown inside HTML tags (not <p> because it messes things up)
     .replace(/< ?(div|table|tr|td|th|ul|li|h[1-5])/gi, '<$1 markdown="1" ')
@@ -315,20 +323,18 @@ function markdownToHtml(markdown: string, options: { maxLength?: number; readMor
       }
     });
 
-  let unsafeHtml = showdownConverter.makeHtml(markdown);
-  let wasTruncated = false;
-  if (options.maxLength && unsafeHtml.length > options.maxLength) {
-    unsafeHtml = unsafeHtml.slice(0, options.maxLength);
-    wasTruncated = true;
-  }
-
+  const unsafeHtml = showdownConverter.makeHtml(markdown);
   let safeHtml = sanitizeHtml(unsafeHtml, sanitizeHtmlOptions)
     .replace(/\[\[([A-Z_].*)\]\]/g, (_, key) => {
       return markdownSnippets[key] || "[[Unknown snippet " + key + "]]";
     });
 
-  if (wasTruncated && options.readMoreLink) {
-    safeHtml = unsafeHtml.replace(/(\<\/p\>)?$/g, `... <a href="${options.readMoreLink}">(read more)</a>$1`);
+  if (options.maxLength) {
+    safeHtml = truncateHtml(safeHtml, {
+      length: options.maxLength,
+      byWords: options.truncateByWords,
+      ellipsis: options.readMoreLink ? `... <a href="${options.readMoreLink}">(read more)</a>` : "...",
+    });
   }
 
   return safeHtml;

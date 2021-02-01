@@ -19,7 +19,7 @@ export function dateTime(value: number | string | Date, user?: User | BookshelfM
   return formats.formatDate(value, user, constants.DATE_TIME_FORMAT);
 }
 
-export function markdown(value: string, options: {maxLength?: number; readMoreLink?: string} = {}): { __html: string } {
+export function markdown(value: string, options: forms.MarkdownToHtmlOptions = {}): { __html: string } {
   return { __html: forms.markdownToHtml(value, options) };
 }
 
