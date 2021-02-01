@@ -19,7 +19,7 @@ declare module "bookshelf" {
   class EntryBookshelfModel extends NodeBookshelfModel {
     public details: () => BookshelfModel;
     public sortedUserRoles: () => BookshelfModel[];
-    public picturePreviews: () => any[];
+    public picturePreviews: () => string[];
     public pictureThumbnail: () => string | undefined;
     public pictureIcon: () => string | undefined;
   }

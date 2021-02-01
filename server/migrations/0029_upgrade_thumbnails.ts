@@ -3,6 +3,7 @@ if (__filename.endsWith(".js")) {
   require("module-alias/register");
 }
 
+import { BookshelfCollectionOf, EntryBookshelfModel } from "bookshelf";
 import * as fs from "fs-extra";
 import * as path from "path";
 import config from "server/core/config";
@@ -12,15 +13,17 @@ import * as models from "server/core/models";
 import entryPicturesService from "server/entry/entry-pictures.service";
 
 
-exports.up = async (knex) => {
-  let entries;
-  if (config.DB_TYPE === "sqlite3") {
-    entries = []; // Bookshelf unsupported due to having a single connection
-  } else {
-    entries = await models.Entry.where({}).orderBy("id", "ASC").fetchAll();
+exports.up = async (_knex) => {
+  let entries: BookshelfCollectionOf<EntryBookshelfModel>;
+  if (config.DB_TYPE === "postgresql") { // SQLite unsupported due to having a single connection
+    try {
+      entries = await models.Entry.where({}).orderBy("id", "ASC").fetchAll() as BookshelfCollectionOf<EntryBookshelfModel>;
+    } catch (e) {
+      log.debug("Failed to fetch entry list to update thumbnails, assuming this is a fresh database.");
+    }
   }
 
-  if (entries.length === 0) {
+  if (!entries) {
     return;
   }
 
@@ -47,6 +50,6 @@ exports.up = async (knex) => {
   log.info("Generated Thumbnails: " + u);
 };
 
-exports.down = async (knex) => {
+exports.down = async (_knex) => {
   // Nothing to do
 };
