@@ -55,22 +55,19 @@ const SOURCES_ROOT = path.dirname(findUp.sync("package.json", { cwd: __dirname }
 const CONFIG_PATH = path.join(SOURCES_ROOT, "config.js");
 const CONFIG_SAMPLE_PATH = path.join(SOURCES_ROOT, "config.sample.js");
 
-// Create config.js if missing
-if (!fs.existsSync(CONFIG_PATH)) {
-  fs.copyFileSync(CONFIG_SAMPLE_PATH, CONFIG_PATH);
-  log.info(CONFIG_PATH + " initialized with sample values");
-}
 
-// Look for missing config keys
-const config = require(CONFIG_PATH) as Config; // eslint-disable-line @typescript-eslint/no-var-requires
-const configSample = require(CONFIG_SAMPLE_PATH) as Config; // eslint-disable-line @typescript-eslint/no-var-requires
+const configSample = require(CONFIG_SAMPLE_PATH) as Config;
+const config = fs.existsSync(CONFIG_PATH) ? (require(CONFIG_PATH) as Config) : configSample;
 
-for (const key in configSample) {
-  if (config[key] === undefined && (key !== "DB_SQLITE_FILENAME" || config.DB_TYPE === "sqlite3")) {
-    log.warn('Key "' + key + '" missing from config.js, using default value "' + configSample[key] + '"');
-    config[key] = configSample[key];
+if (configSample !== config) {
+  for (const key in configSample) {
+    if (config[key] === undefined && (key !== "DB_SQLITE_FILENAME" || config.DB_TYPE === "sqlite3")) {
+      log.warn('Key "' + key + '" missing from config.js, using default value "' + configSample[key] + '"');
+      config[key] = configSample[key];
+    }
   }
 }
+
 
 export default config;
 
