@@ -140,9 +140,8 @@ export async function handleGameSearch(
   }
 
   // Sorting
-  if (event && eventService.isVotingInProgress(event)) {
-    searchOptions.sortBy = "karma";
-  } else {
+  searchOptions.sortBy = "karma";
+  if (event && eventService.isRanked(event) && !eventService.isVotingInProgress(event)) {
     searchOptions.sortBy = "hotness";
   }
 

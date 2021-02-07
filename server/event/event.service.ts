@@ -66,6 +66,10 @@ export class EventService {
     return Object.keys(event.get("divisions"))[0];
   }
 
+  public isRanked(event: BookshelfModel): boolean {
+    return event.related<BookshelfModel>("details").get("category_titles").length > 0;
+  }
+
   public getCategoryTitles(event: BookshelfModel): Array<string | undefined> {
     return range(1, constants.MAX_CATEGORY_COUNT + 1)
       .map(categoryIndex => {
