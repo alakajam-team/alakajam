@@ -45,7 +45,7 @@ export default function editEntryLinks(): void {
       refreshLinksModel();
       links.push({});
       refreshLinksView();
-      toggleLinksWarning(false);
+      toggleLinksWarning(links.some(link => link.url !== undefined));
     });
 
     $linksContainer.on("click", removeLinkSelector, function() {
