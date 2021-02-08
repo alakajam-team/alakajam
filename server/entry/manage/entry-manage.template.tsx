@@ -163,6 +163,14 @@ export default function render(context: CommonLocals): JSX.Element {
 
         <div class="row">
           <div class="col-lg-8 col-md-7">
+            <div class="row entry-warnings-container">
+              <div class="col-12">
+                <div class="js-warnings-no-links entry-warning">
+                  Your game has no links! People will be unable to play it.
+                </div>
+              </div>
+            </div>
+
             <div class="row">
               <div class="col-6">
                 {ifTrue(entry.has("id"), () =>
@@ -213,6 +221,17 @@ function regsiterCustomStyles(context: CommonLocals): void {
 }
 .edit-team-dropdown .select2-result {
   height: 42px;
+}
+
+.row.entry-warnings-container {
+  background-color: #dc3545;
+  color: #fff;
+  margin: 10px 0;
+  border-radius: 2px;
+}
+.entry-warning {
+  padding: 4px;
+  display: none;
 }
 
 .member {

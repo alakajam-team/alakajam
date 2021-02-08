@@ -12,6 +12,7 @@ export default function editEntryLinks(): void {
 
   const links = JSON.parse($linksContainer.attr("data-entry-links") || "[]") || [];
   if (links.length === 0) {
+    toggleLinksWarning(true);
     links.push({});
   }
 
@@ -44,6 +45,7 @@ export default function editEntryLinks(): void {
       refreshLinksModel();
       links.push({});
       refreshLinksView();
+      toggleLinksWarning(false);
     });
 
     $linksContainer.on("click", removeLinkSelector, function() {
@@ -51,9 +53,14 @@ export default function editEntryLinks(): void {
       links.splice($(this).attr("data-row"), 1);
       if (links.length === 0) {
         links.push({});
+        toggleLinksWarning(true);
       }
       refreshLinksView();
     });
+  }
+
+  function toggleLinksWarning(showWarning) {
+    $('.js-warnings-no-links').toggle(showWarning);
   }
 
   function refreshLinksView() {
