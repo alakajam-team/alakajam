@@ -168,6 +168,10 @@ export default function render(context: CommonLocals): JSX.Element {
                 <div class="js-warnings-no-links entry-warning">
                   Your game has no links! People will be unable to play it.
                 </div>
+                <div class="js-warnings-no-platforms entry-warning">
+                  Your entry has no platforms selected. It will be easier for
+                  people to find and play if you choose some platforms!
+                </div>
               </div>
             </div>
 
@@ -230,7 +234,7 @@ function regsiterCustomStyles(context: CommonLocals): void {
   border-radius: 2px;
 }
 .entry-warning {
-  padding: 4px;
+  padding: 8px 4px;
   display: none;
 }
 
