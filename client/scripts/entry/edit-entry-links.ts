@@ -11,8 +11,8 @@ export default function editEntryLinks(): void {
   const $linksContainer = $(".js-links");
 
   const links = JSON.parse($linksContainer.attr("data-entry-links") || "[]") || [];
+  updateLinksWarning();
   if (links.length === 0) {
-    toggleLinksWarning(true);
     links.push({});
   }
 
@@ -23,6 +23,7 @@ export default function editEntryLinks(): void {
       onEnd() {
         let index = 0;
         $(".js-link").each(function() {
+          let urlIsEmpty = !links[index];
           $(".js-link-label", this).attr({
             "name": "label" + index,
             "data-row": index
@@ -30,6 +31,12 @@ export default function editEntryLinks(): void {
           $(".js-link-url", this).attr({
             "name": "url" + index,
             "data-row": index
+          });
+          $(".js-link-url", this).on("input", event => {
+            if (!event.target.value !== urlIsEmpty) {
+              updateLinksWarning();
+              urlIsEmpty = !urlIsEmpty;
+            }
           });
           $(".js-remove-link", this).attr({
             "data-row": index
@@ -45,7 +52,6 @@ export default function editEntryLinks(): void {
       refreshLinksModel();
       links.push({});
       refreshLinksView();
-      toggleLinksWarning(links.some(link => link.url !== undefined));
     });
 
     $linksContainer.on("click", removeLinkSelector, function() {
@@ -53,18 +59,20 @@ export default function editEntryLinks(): void {
       links.splice($(this).attr("data-row"), 1);
       if (links.length === 0) {
         links.push({});
-        toggleLinksWarning(true);
       }
       refreshLinksView();
     });
   }
 
-  function toggleLinksWarning(showWarning) {
-    $('.js-warnings-no-links').toggle(showWarning);
+  function updateLinksWarning() {
+    $(".js-warnings-no-links").toggle(
+      links.every(link => !link.url)
+    );
   }
 
   function refreshLinksView() {
     $linksContainer.html(linksTemplate({ links }));
+    updateLinksWarning();
   }
 
   function refreshLinksModel() {
