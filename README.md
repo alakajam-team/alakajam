@@ -59,5 +59,3 @@ Run only partial tests by appending the required file as an argument. For instan
 ```bash
 npm run test:unit -- user.service
 ```
-
-:warning: Due to a bug (#494), DB_TYPE must be set to `sqlite3` in your `config.js` before running unit tests.

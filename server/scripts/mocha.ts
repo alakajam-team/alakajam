@@ -3,6 +3,13 @@
 import * as childProcess from "child_process";
 import * as path from "path";
 import constants from "../core/constants";
+import config, { Config } from "../core/config";
+import { Mutable } from "server/types";
+
+const editableConfig: Mutable<Config> = config as any;
+editableConfig.DEBUG_DISABLE_CACHE = false;
+editableConfig.DB_TYPE = "sqlite3";
+editableConfig.DB_SQLITE_FILENAME = "data/test.sqlite";
 
 const specMatcher = process.argv.length >= 3
   ? "server/**/" + process.argv[2] + "*"
@@ -24,7 +31,10 @@ console.log(`Running: mocha ${mochaArgs.join(" ")}`);
 const cp = childProcess.spawn(mochaPath, mochaArgs, {
   cwd: constants.ROOT_PATH,
   stdio: "inherit",
-  windowsVerbatimArguments: true
+  windowsVerbatimArguments: true,
+  env: {
+    CONFIG_PATH: "server/scripts/mocha-config.js"
+  }
 });
 
 process.on("SIGINT", () => {

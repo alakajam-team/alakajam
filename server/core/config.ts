@@ -52,7 +52,7 @@ export interface Config {
 }
 
 const SOURCES_ROOT = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
-const CONFIG_PATH = path.join(SOURCES_ROOT, "config.js");
+const CONFIG_PATH = path.join(SOURCES_ROOT, process.env.CONFIG_PATH || "config.js");
 const CONFIG_SAMPLE_PATH = path.join(SOURCES_ROOT, "config.sample.js");
 
 const configSample = require(CONFIG_SAMPLE_PATH) as Config; // eslint-disable-line @typescript-eslint/no-var-requires
