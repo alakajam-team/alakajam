@@ -111,14 +111,15 @@ export class EventThemeShortlistService {
   }
 
   public async countShortlistVotes(event: BookshelfModel): Promise<number> {
-    return cache.getOrFetch(cache.general, "shortlist_votes_" + event.get("name"), () => {
-      return forms.parseInt(models.ThemeVote
+    return cache.getOrFetch(cache.general, "shortlist_votes_" + event.get("name"), async () => {
+      const shortlistVotes = await models.ThemeVote
         .where({
           event_id: event.get("id"),
           score: 9,
         })
-        .count());
-    }, 10 * 60 /* 10 min TTL */);
+        .count();
+      return forms.parseInt(shortlistVotes);
+    }, 1 * 60 /* 1 min TTL */);
   }
 
   public async updateShortlistAutoElimination(event: BookshelfModel): Promise<void> {
