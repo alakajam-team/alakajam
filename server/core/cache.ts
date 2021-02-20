@@ -21,6 +21,7 @@ const eventsTtl = TTL_ONE_DAY;
 const settingsTtl = TTL_ONE_DAY;
 const articlesTtl = TTL_ONE_DAY;
 const entryImportTtl = 3 * TTL_ONE_MINUTE;
+const rateLimiterTtl = TTL_ONE_MINUTE;
 
 let Cache: any = NodeCache;
 if (config.DEBUG_DISABLE_CACHE) {
@@ -43,6 +44,7 @@ const cacheMap = {
   eventsByName: new Cache({ stdTTL: eventsTtl }) as NodeCache,
   articles: new Cache({ stdTTL: articlesTtl }) as NodeCache,
   entryImport: new Cache({ stdTTL: entryImportTtl }) as NodeCache,
+  rateLimiter: new Cache({ stdTTL: rateLimiterTtl }) as NodeCache
 };
 
 export default {
@@ -53,6 +55,7 @@ export default {
   eventsByName: cacheMap.eventsByName,
   articles: cacheMap.articles,
   entryImport: cacheMap.entryImport,
+  rateLimiter: cacheMap.rateLimiter,
 
   getOrFetch,
 
