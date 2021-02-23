@@ -8,8 +8,8 @@ export default function editEntryPlatforms(): void {
     const $entryPlatforms = $(this);
 
     function updateWarning() {
-      $('.js-warnings-no-platforms').toggle(
-        $entryPlatforms.select2('data').length === 0
+      $(".js-warnings-no-platforms").toggle(
+        $entryPlatforms.select2("data").length === 0
       );
     }
 
@@ -19,7 +19,7 @@ export default function editEntryPlatforms(): void {
       width: "100%",
       formatResult: format,
       formatSelection: format
-    }).on('change', updateWarning);
+    }).on("change", updateWarning);
 
     updateWarning();
   });

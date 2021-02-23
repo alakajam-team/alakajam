@@ -163,12 +163,14 @@ export default function render(context: CommonLocals): JSX.Element {
 
         <div class="row">
           <div class="col-lg-8 col-md-7">
-            <div class="row entry-warnings-container">
+            <div class="row">
               <div class="col-12">
-                <div class="js-warnings-no-links entry-warning">
+                <div class="js-warnings-no-links alert alert-warning">
+                  <span class="fa fa-exclamation-triangle mr-2"></span>
                   Your game has no links! People will be unable to play it.
                 </div>
-                <div class="js-warnings-no-platforms entry-warning">
+                <div class="js-warnings-no-platforms alert alert-warning">
+                  <span class="fa fa-exclamation-triangle mr-2"></span>
                   Your entry has no platforms selected. It will be easier for
                   people to find and play if you choose some platforms!
                 </div>
@@ -225,17 +227,6 @@ function regsiterCustomStyles(context: CommonLocals): void {
 }
 .edit-team-dropdown .select2-result {
   height: 42px;
-}
-
-.row.entry-warnings-container {
-  background-color: #dc3545;
-  color: #fff;
-  margin: 10px 0;
-  border-radius: 2px;
-}
-.entry-warning {
-  padding: 8px 4px;
-  display: none;
 }
 
 .member {

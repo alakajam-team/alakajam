@@ -29,7 +29,7 @@ export default function editEntryLinks(): void {
       animation: 100,
       handle: ".draggable",
       onEnd() {
-        // Update row index data after a drag'n'drop
+        // Update DOM attributes after a drag'n'drop
         let index = 0;
         $(".js-link").each(function() {
           $(".js-link-label", this).attr({
@@ -58,7 +58,7 @@ export default function editEntryLinks(): void {
       refreshView();
     });
 
-    // View update
+    // Initial view update
 
     refreshView();
   }
