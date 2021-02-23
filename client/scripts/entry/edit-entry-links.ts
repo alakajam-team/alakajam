@@ -1,6 +1,11 @@
 import template from "lodash.template";
 import Sortable from "sortablejs";
 
+interface EntryLink {
+  label: string;
+  url: string;
+}
+
 export default function editEntryLinks(): void {
   const linksTemplate = template($("#js-links-template").html());
   const addLinkSelector = ".js-add-link";
@@ -10,20 +15,23 @@ export default function editEntryLinks(): void {
 
   const $linksContainer = $(".js-links");
 
-  const links = JSON.parse($linksContainer.attr("data-entry-links") || "[]") || [];
-  updateLinksWarning();
+  // Model
+
+  const links: EntryLink[] = JSON.parse($linksContainer.attr("data-entry-links") || "[]") || [];
   if (links.length === 0) {
-    links.push({});
+    links.push(newLink());
   }
+
+  // Initial bindings
 
   if ($linksContainer.length > 0) {
     Sortable.create($linksContainer[0], {
       animation: 100,
       handle: ".draggable",
       onEnd() {
+        // Update row index data after a drag'n'drop
         let index = 0;
         $(".js-link").each(function() {
-          let urlIsEmpty = !links[index];
           $(".js-link-label", this).attr({
             "name": "label" + index,
             "data-row": index
@@ -31,12 +39,6 @@ export default function editEntryLinks(): void {
           $(".js-link-url", this).attr({
             "name": "url" + index,
             "data-row": index
-          });
-          $(".js-link-url", this).on("input", event => {
-            if (!event.target.value !== urlIsEmpty) {
-              updateLinksWarning();
-              urlIsEmpty = !urlIsEmpty;
-            }
           });
           $(".js-remove-link", this).attr({
             "data-row": index
@@ -46,36 +48,41 @@ export default function editEntryLinks(): void {
       }
     });
 
-    refreshLinksView();
-
     $linksContainer.on("click", addLinkSelector, () => {
-      refreshLinksModel();
-      links.push({});
-      refreshLinksView();
+      links.push(newLink());
+      refreshView();
     });
 
     $linksContainer.on("click", removeLinkSelector, function() {
-      refreshLinksModel();
-      links.splice($(this).attr("data-row"), 1);
-      if (links.length === 0) {
-        links.push({});
-      }
-      refreshLinksView();
+      links.splice(parseInt($(this).attr("data-row"), 10), 1);
+      refreshView();
     });
+
+    // View update
+
+    refreshView();
   }
 
-  function updateLinksWarning() {
+  function refreshView() {
+    // Recreate input fields if needed
+    if (links.length !== $(".js-link").length) {
+      $linksContainer.html(linksTemplate({ links }));
+
+      // Recreate input bindings
+      $(".js-link-url, .js-link-label").off("input");
+      $(".js-link-url, .js-link-label").on("input", () => {
+        refreshModel();
+        refreshView();
+      });
+    }
+
+    // Toggle links warning
     $(".js-warnings-no-links").toggle(
       links.every(link => !link.url)
     );
   }
 
-  function refreshLinksView() {
-    $linksContainer.html(linksTemplate({ links }));
-    updateLinksWarning();
-  }
-
-  function refreshLinksModel() {
+  function refreshModel() {
     $linksContainer.find(linkLabelSelector).each(function() {
       const $this = $(this);
       links[$this.attr("data-row")].label = $this.val();
@@ -85,4 +92,9 @@ export default function editEntryLinks(): void {
       links[$this.attr("data-row")].url = $this.val();
     });
   }
+
+  function newLink(): EntryLink {
+    return { label: "", url: "" };
+  }
+
 }
