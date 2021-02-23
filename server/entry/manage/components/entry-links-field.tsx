@@ -46,7 +46,7 @@ export function linksField(entry: BookshelfModel): JSX.Element {
             </div>
             <% } %>
             <div class="form-group mb-0">
-            <button class="js-add-link d-inline btn btn-outline-secondary mt-2">Add link</button>
+            <button type="button" class="js-add-link d-inline btn btn-outline-secondary mt-2">Add link</button>
             </div>
             `}} />
   </div>;

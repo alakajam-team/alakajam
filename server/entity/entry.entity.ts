@@ -9,6 +9,11 @@ import { EntryVote } from "./entry-vote.entity";
 import { Event } from "./event.entity";
 import { TimestampedEntity } from "./timestamped.entity";
 
+export interface EntryLink {
+  label: string;
+  url: string;
+}
+
 export interface EntryPictures {
   previews?: string[];
   thumbnail?: string;
@@ -60,10 +65,10 @@ export class Entry extends TimestampedEntity {
   public description: string;
 
   /**
-   * JSON Array : [{url, title}]
+   * JSON Array : [{url, label}]
    */
   @Column(ColumnTypes.json({ nullable: true, length: 1000 }))
-  public links: Array<{ url: string; title: string }>;
+  public links: EntryLink[];
 
   /**
    * JSON Array : [platform]

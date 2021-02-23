@@ -1,10 +1,16 @@
 
 export default function editEntryPlatforms(): void {
+  function format(platform) {
+    return '<div class="platform">' + platform.text + "</div>";
+  }
+
   $(".js-entry-platforms").each(function() {
     const $entryPlatforms = $(this);
 
-    function format(platform) {
-      return '<div class="platform">' + platform.text + "</div>";
+    function updateWarning() {
+      $(".js-warnings-no-platforms").toggle(
+        $entryPlatforms.select2("data").length === 0
+      );
     }
 
     $entryPlatforms.select2({
@@ -13,6 +19,8 @@ export default function editEntryPlatforms(): void {
       width: "100%",
       formatResult: format,
       formatSelection: format
-    });
+    }).on("change", updateWarning);
+
+    updateWarning();
   });
 }

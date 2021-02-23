@@ -10,6 +10,7 @@ import * as models from "server/core/models";
 import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import settings from "server/core/settings";
 import { SETTING_EVENT_TOURNAMENT_ADVERTISING } from "server/core/settings-keys";
+import { EntryLink } from "server/entity/entry.entity";
 import highscoreService from "server/entry/highscore/highscore.service";
 import tagService from "server/entry/tag/tag.service";
 import teamService from "server/entry/team/team.service";
@@ -65,7 +66,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
   if (req.method === "POST") {
     // Parse form data
     const isExternalEvent = req.body["external-event"] !== undefined || !event;
-    let entryLinks = [];
+    let entryLinks: EntryLink[] = [];
     let i = 0;
     if (req.body["submit-links"]) {
       while (req.body["url" + i] || req.body["label" + i]) {
