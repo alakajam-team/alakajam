@@ -5,6 +5,7 @@ import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
 import { Comment } from "./comment.entity";
 import { EntryScore } from "./entry-score.entity";
+import { EventParticipation } from "./event-participation.entity";
 import { Like } from "./like.entity";
 import { Post } from "./post.entity";
 import { ThemeVote } from "./theme-vote.entity";
@@ -100,6 +101,9 @@ export class User extends BookshelfCompatibleEntity {
 
   @OneToMany(() => ThemeVote, (themeVote) => themeVote.user, { cascade: true })
   public themeVotes: ThemeVote[];
+
+  @OneToMany(() => EventParticipation, (eventParticipation) => eventParticipation.user, { cascade: true })
+  public eventParticipations: EventParticipation[];
 
   @Column(ColumnTypes.dateTime())
   public created_at: Date;

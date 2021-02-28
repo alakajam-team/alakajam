@@ -69,8 +69,8 @@ export class UserService {
     // Advanced search
 
     if (options.eventId) {
-      qb.innerJoin("user.roles", "roles")
-        .andWhere("roles.event_id = :eventId", { eventId: options.eventId });
+      qb.innerJoin("user.eventParticipations", "ep")
+        .andWhere("ep.event_id = :eventId", { eventId: options.eventId });
     }
     if (options.entriesCount) {
       qb.leftJoinAndSelect((entriesCountQb) => {

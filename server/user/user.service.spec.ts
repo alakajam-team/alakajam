@@ -2,6 +2,8 @@
 
 import { expect } from "chai";
 import constants from "server/core/constants";
+import { EventParticipation } from "server/entity/event-participation.entity";
+import { Event } from "server/entity/event.entity";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
 import { closeTestDB, DB_TEST_TIMEOUT, startTestDB } from "server/testing/testing-db";
@@ -55,7 +57,7 @@ describe("User service", function() {
 
     it("should find users who entered a specific event", async () => {
       const user = await createUser();
-      await createUserRole(user, { event_id: 1 });
+      await createEventParticipation(user, 1);
 
       const foundUsers = await userService.findUsers({ eventId: 1 });
       expect(foundUsers.length).to.equal(1);
@@ -206,6 +208,34 @@ describe("User service", function() {
 
     const userRoleRepository = getRepository(UserRole);
     return userRoleRepository.save(userRole);
+  }
+
+  async function createEventParticipation(user: User, eventId: number, attributes: Partial<EventParticipation> = {}): Promise<EventParticipation> {
+    await createEventIfMissing(eventId);
+
+    const ep = new EventParticipation(eventId, user.id);
+    Object.assign(ep, attributes);
+
+    const epRepository = getRepository(EventParticipation);
+    return epRepository.save(ep);
+  }
+
+  async function createEventIfMissing(eventId: number): Promise<void> {
+    const eventRepository = getRepository(Event);
+    const existingEvent = await eventRepository.findOne({ where: { id: eventId } });
+    if (!existingEvent) {
+      const event = new Event();
+      event.id = eventId;
+      event.name = "test";
+      event.title = "test";
+      event.status = "open";
+      event.status_theme = "disabled";
+      event.status_entry = "disabled";
+      event.status_rules = "disabled";
+      event.status_results = "disabled";
+      event.status_tournament = "disabled";
+      await eventRepository.save(event);
+    }
   }
 
   function findUserRole(userRoleId: number): Promise<UserRole> {

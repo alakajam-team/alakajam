@@ -23,7 +23,11 @@ export class Links {
   /**
    * Determines the route to a page given a model, its type and an optional sub-page
    */
-  public routeUrl(model: BookshelfModel | User, type: string, subPage: string | null = null, options: any = {}): string {
+  public routeUrl(
+    model: BookshelfModel | User,
+    type: "event" | "entry" | "user" | "post" | "comment" | "tags",
+    subPage: string | null = null,
+    options: any = {}): string {
     try {
       let subPagePath = (subPage ? "/" + subPage : "");
 

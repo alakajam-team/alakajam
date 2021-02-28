@@ -101,6 +101,14 @@ $arrowSize: 9.5px;
       text-align: center;
       font-weight: bold;
       font-size: 1.2rem;
+
+      & a {
+        color: $text;
+
+        &:hover {
+          color: $alt-light;
+        }
+      }
     }
 
     &-counter {

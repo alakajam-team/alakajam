@@ -1,7 +1,8 @@
 import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
-import { ifTrue } from "server/macros/jsx-utils";
+import links from "server/core/links";
+import { ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";
 import * as tabsMacros from "server/macros/tabs.macros";
 import * as userMacros from "server/user/user.macros";
@@ -30,10 +31,13 @@ export default function render(context: CommonLocals): JSX.Element {
         <div class="col-sm-8 col-md-9">
           <h1>Users <span class="count">({userCount})</span></h1>
 
-          {ifTrue(searchOptions.search || searchOptions.eventId !== undefined, () =>
+          {ifTrue(searchOptions.search || searchOptions.eventId !== undefined || searchOptions.withEntries, () =>
             <div class="count" style="font-size: 1rem; margin-top: -15px; margin-bottom: 20px">{/* TODO rename CSS class to "legend" */}
-              {searchedEvent ? "who joined " + searchedEvent.get("title") : ""}
-              {searchOptions.search ? 'matching "' + searchOptions.search + '"' : ""}
+              {searchOptions.search ? ' matching "' + searchOptions.search + '"' : ""}
+              {ifSet(searchedEvent, () =>
+                <>&nbsp;who joined <a href={links.routeUrl(searchedEvent, "event")}>{searchedEvent.get("title")}</a></>
+              )}
+              {searchOptions.withEntries ? " submitting an entry" : ""}
             </div>
           )}
 
@@ -63,7 +67,7 @@ function searchForm(searchOptions, events) {
         <select name="eventId" class="form-control js-select" data-placeholder="None" data-allow-clear="true">
           <option value=""></option>
           {events.map(event =>
-            <option value={event.get("id") + (event.get("id") === searchOptions.eventId) ? "selected" : ""}>{event.get("title")}</option>
+            <option selected={event.get("id") === searchOptions.eventId} value={event.get("id")}>{event.get("title")}</option>
           )}
         </select>
       </div>

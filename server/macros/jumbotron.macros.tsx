@@ -226,33 +226,34 @@ export function statsCounters(event: BookshelfModel): JSX.Element {
   const participants = event.related<BookshelfModel>("details").get("participation_count");
   const statsElements = [];
 
-  statsElements.push(<div>
+  statsElements.push(<a href={`/events/people?search=&eventId=${event.get("id")}`} class="d-block">
     <span class="event-jumbotron__stats-counter">{participants}</span>&nbsp;
     entrant{participants !== 1 ? "s" : ""}
-  </div>);
+  </a>);
 
   if (event.get("status_entry") !== "off") {
     const entries = event.get("entry_count");
-    statsElements.push(<div>
-      <span class="event-jumbotron__stats-counter">{entries}</span>&nbsp;
-      entr{entries !== 1 ? "ies" : "y"}
-      {!entries ? "... for now!" : ""}
-    </div>);
+    statsElements.push(
+      <a href={links.routeUrl(event, "event", "games")} class="d-block">
+        <span class="event-jumbotron__stats-counter">{entries}</span>&nbsp;
+        entr{entries !== 1 ? "ies" : "y"}
+        {!entries ? "... for now!" : ""}
+      </a>);
   } else if (event.get("status_theme") === "voting") {
     const themes = event.related("details").get("theme_count") || "0";
     statsElements.push(
-      <div>
+      <a href={links.routeUrl(event, "event", "themes")} class="d-block">
         <span class="event-jumbotron__stats-counter">{themes}</span>&nbsp;
         theme{themes !== 1 ? "s" : ""}
         {!themes ? "... for now!" : ""}
-      </div>);
+      </a>);
   } else if (["shortlist", "closed", "results"].includes(event.get("status_theme"))) {
     const themeVotes = event.related("details").get("theme_vote_count") || "0";
     statsElements.push(
-      <div>
+      <a href={links.routeUrl(event, "event", "themes")} class="d-block">
         <span class="event-jumbotron__stats-counter">{themeVotes}</span>&nbsp;
         theme vote{themeVotes !== 1 ? "s" : ""}
-      </div>);
+      </a>);
   }
 
   return <div class="event-jumbotron__stats-contents py-2">
