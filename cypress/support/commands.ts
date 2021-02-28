@@ -3,6 +3,7 @@ import { DEFAULT_PICTURE } from "./data";
 import loginPo from "./page-objects/login.po";
 
 Cypress.Commands.add("restoreDB", () => {
+  cy.log("Restore database from backup");
   cy.request({
     method: "POST",
     url: "/admin/dev",

@@ -15,7 +15,7 @@ describe("Post", () => {
     cy.loginAs(USER_DUMBLEDORE);
   });
 
-  afterEach(() => {
+  after(() => {
     cy.restoreDB();
   });
 

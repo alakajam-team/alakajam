@@ -15,7 +15,7 @@ module.exports = {
 
   DEBUG_DISABLE_STARTUP_BUILD: true,
   DEBUG_INSERT_SAMPLES: false,
-  DEBUG_DISABLE_CACHE: false, 
+  DEBUG_DISABLE_CACHE: true, 
   DEBUG_REFRESH_BROWSER: true, 
   DEBUG_ADMIN: true, 
   DEBUG_TEST_MAILER: true, 

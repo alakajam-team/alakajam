@@ -9,7 +9,7 @@ describe("Event: Administration", () => {
     cy.loginAs(USER_ADMINISTRATOR);
   });
 
-  afterEach(() => {
+  after(() => {
     cy.restoreDB();
   });
 

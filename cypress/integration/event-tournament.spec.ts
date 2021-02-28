@@ -9,7 +9,7 @@ describe("Event: Tournament", () => {
     cy.loginAs(USER_GANDALF);
   });
 
-  afterEach(() => {
+  after(() => {
     cy.restoreDB();
   });
 

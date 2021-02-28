@@ -8,7 +8,7 @@ describe("Event: Themes", () => {
     cy.loginAs(USER_DUMBLEDORE);
   });
 
-  afterEach(() => {
+  after(() => {
     cy.restoreDB();
   });
 
