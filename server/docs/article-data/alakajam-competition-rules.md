@@ -40,7 +40,7 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
 * **Audio asset reuse:** You must make your own music during the event, even if you opt-out of the audio category. However:
     * While creating sounds yourself is encouraged (eg. with the help of [sound generation tools](/article/docs/resources#audio-software), musical instruments, or microphones), reusing existing sound effects is tolerated.
     * You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed ;
-* **Code reuse:** You are allowed to use/reuse any outside library or personal code made prior to the event, or code bits found from sources like StackOverflow or blogs. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.
+* **Code reuse:** You are allowed to use/reuse any third party library or personal code made prior to the event. This includes shaders and code snippets found online. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.
 * **Tools:** All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.
 * **Post-jam changes:** From the minute the jam ends, you are not allowed to add any features, assets or contents to your game. While you're supposed to have properly tested your game, stuff happens, so we do allow to:
     * Package or improve the packaging of your game ;
