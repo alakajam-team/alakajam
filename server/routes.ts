@@ -12,7 +12,7 @@ import { adminAnnouncements } from "./admin/announcements/admin-announcements.co
 import { adminDev } from "./admin/dev/admin-dev.controller";
 import { adminEventPresets } from "./admin/event-presets/admin-event-presets.controller";
 import { adminEventTemplates } from "./admin/event-templates/admin-event-templates.controller";
-import { adminEvents } from "./admin/events/admin-events.controller";
+import { adminEvents, adminEventsPost } from "./admin/events/admin-events.controller";
 import { adminPlatforms } from "./admin/platforms/admin-platforms.controller";
 import { adminSettings } from "./admin/settings/admin-settings.controller";
 import { adminStatus } from "./admin/status/admin-status.controller";
@@ -150,6 +150,7 @@ export function routes(app: express.Application): void {
 
   router.get("/admin", csrf, adminAnnouncements);
   router.get("/admin/events", csrf, adminEvents);
+  router.post("/admin/events", csrf, adminEventsPost);
   router.get("/admin/event-presets", csrf, adminEventPresets);
   router.post("/admin/event-presets", csrf, adminEventPresets);
   router.get("/admin/event-templates", csrf, adminEventTemplates);

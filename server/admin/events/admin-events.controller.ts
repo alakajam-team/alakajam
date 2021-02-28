@@ -11,20 +11,23 @@ export interface AdminEventsContext extends CommonLocals {
 /**
  * Events management
  */
-export async function adminEvents(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
+export async function adminEvents(_req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   const eventsCollection = await eventService.findEvents();
-
-  if (req.query.refreshHotness) {
-    for (const event of eventsCollection.models) {
-      await entryHotnessService.refreshEntriesHotness(event);
-    }
-    res.locals.alerts.push({ type: "success", message: "Hotness recalculated on all entries." });
-    res.redirect("?");
-    return;
-  }
 
   res.render<AdminEventsContext>("admin/events/admin-events", {
     ...res.locals,
     events: eventsCollection.models
   });
+}
+
+export async function adminEventsPost(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
+  if (req.body.refreshHotness !== undefined) {
+    const eventsCollection = await eventService.findEvents();
+    for (const event of eventsCollection.models) {
+      await entryHotnessService.refreshEntriesHotness(event);
+    }
+    res.locals.alerts.push({ type: "success", message: "Hotness recalculated on all entries." });
+  }
+
+  res.redirect(req.url);
 }

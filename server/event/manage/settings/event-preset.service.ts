@@ -8,7 +8,7 @@ export class EventPresetService {
    * Creates an empty, unpersisted event preset.
    * @param {EventPreset} referencePreset Optional reference preset to clone data from
    */
-  public createEventPreset(referencePreset?: BookshelfModel): BookshelfModel {
+  public initEventPreset(referencePreset?: BookshelfModel): BookshelfModel {
     const eventPreset = new models.EventPreset({
       countdown_config: { date: new Date(0) },
     });
