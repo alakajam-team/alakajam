@@ -23,7 +23,6 @@ module.exports = {
   DEBUG_LONG_PROMISE_TRACES: false, 
   DEBUG_DISABLE_SLOW_DOWN: false, 
 
-  
   LOG_LEVEL: 'debug', 
   DEBUG_TRACE_SQL: false, 
   DEBUG_TRACE_SLOW_SQL: -1, 

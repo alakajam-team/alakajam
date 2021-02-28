@@ -37,10 +37,12 @@ export default function render(context: AdminPlatformsContext): JSX.Element {
 }
 
 function editForm(editPlatform: Platform, platformEntryCount: number, csrfToken: () => JSX.Element) {
-  return <form action="/admin/platforms" method="post" class="card">
+  return <form action="?" method="post" class="card">
+    {csrfToken()}
+
     <div class="card-header">
       <div class="float-right">
-        {deleteButton(editPlatform, platformEntryCount)}
+        {deleteButton(editPlatform, platformEntryCount, csrfToken)}
       </div>
       <h2>{editPlatform.name}</h2>
     </div>
@@ -48,15 +50,14 @@ function editForm(editPlatform: Platform, platformEntryCount: number, csrfToken:
       <div class="form-group">
         <label for="id">ID</label>
         <p>{editPlatform.id || "N.A."}</p>
-        <input type="hidden" name="id" value={ editPlatform.id } />
+        <input type="hidden" name="id" value={editPlatform.id} />
       </div>
       <div class="form-group">
         <label for="name">Name</label>
-        <input type="text" name="name" value={ editPlatform.name } class="form-control" autocomplete="off" autofocus />
+        <input type="text" name="name" value={editPlatform.name} class="form-control" autocomplete="off" autofocus />
       </div>
 
       <div class="form-group">
-        {csrfToken()}
         <input type="submit" class="btn btn-primary mr-1" value="Save" />
         <a href="?" class="btn btn-outline-primary">Cancel</a>
       </div>
@@ -64,12 +65,12 @@ function editForm(editPlatform: Platform, platformEntryCount: number, csrfToken:
   </form>;
 }
 
-function deleteButton(editPlatform: Platform, platformEntryCount: number) {
-  if (!editPlatform.id)  {
+function deleteButton(editPlatform: Platform, platformEntryCount: number, csrfToken: () => JSX.Element) {
+  if (!editPlatform.id) {
     return;
   } else if (platformEntryCount === 0) {
-    return <a class="btn btn-danger btn-sm" href={"?delete=" + editPlatform.id}
-      onclick="return confirm('This cannot be reverted. Continue?')">Delete</a>;
+    return <button type="submit" name="delete" class="btn btn-danger btn-sm"
+      onclick="return confirm('This cannot be reverted. Continue?')">Delete</button>;
   } else {
     return <>
       <span class="btn btn-danger btn-sm disabled">Delete</span>

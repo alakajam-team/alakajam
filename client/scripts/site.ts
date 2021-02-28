@@ -54,6 +54,7 @@ import "bootstrap";
 import("select2/dist/js/select2.full.min").then(evalRawScript).catch(e => console.error(e));
 import("raw-loader!icheck/icheck.min.js").then(evalRawScript).catch(e => console.error(e));
 import("raw-loader!tablesort/dist/tablesort.min.js").then(evalRawScript).catch(e => console.error(e));
+import("raw-loader!tablesort/dist/sorts/tablesort.number.min.js").then(evalRawScript).catch(e => console.error(e));
 
 $(function domReady() {
 

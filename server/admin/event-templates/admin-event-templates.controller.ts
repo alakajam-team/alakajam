@@ -22,7 +22,7 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
   if (forms.isId(editEventTemplateId)) {
     editEventTemplate = await eventTemplateService.findEventTemplateById(parseInt(editEventTemplateId, 10));
   } else if (req.query.create !== undefined) {
-    editEventTemplate = eventTemplateService.createEventTemplate();
+    editEventTemplate = eventTemplateService.initEventTemplate();
   }
 
   // Apply changes
@@ -34,7 +34,7 @@ export async function adminEventTemplates(req: CustomRequest, res: CustomRespons
       editEventTemplate = undefined;
     } else {
       // Update model (without saving yet)
-      editEventTemplate = editEventTemplate || eventTemplateService.createEventTemplate();
+      editEventTemplate = editEventTemplate || eventTemplateService.initEventTemplate();
       editEventTemplate.set({
         title: forms.sanitizeString(req.body.title),
         event_title: forms.sanitizeString(req.body["event-title"]),

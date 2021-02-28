@@ -26,7 +26,7 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
     if (forms.isId(req.query.reference)) {
       referencePreset = await eventPresetService.findEventPresetById(forms.parseInt(req.query.reference.toString()));
     }
-    editEventPreset = eventPresetService.createEventPreset(referencePreset);
+    editEventPreset = eventPresetService.initEventPreset(referencePreset);
   }
 
   // Apply changes
@@ -53,7 +53,7 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
       }
 
       // Update model (without saving yet)
-      editEventPreset = editEventPreset || eventPresetService.createEventPreset();
+      editEventPreset = editEventPreset || eventPresetService.initEventPreset();
       editEventPreset.set({
         title: forms.sanitizeString(req.body.title),
         status: forms.sanitizeString(req.body.status),

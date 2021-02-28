@@ -25,8 +25,8 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
 
   let errorMessage: string;
 
-  // Save changed platform
   if (req.method === "POST") {
+    // Save changed platform
     const name = forms.sanitizeString(req.body.name);
     if (name) {
       let platform: Platform;
@@ -51,17 +51,18 @@ export async function adminPlatforms(req: CustomRequest, res: CustomResponse<Com
         }
       }
     }
-  }
 
-  if (forms.isId(req.query.delete)) {
-    const platform = await platformRepository.findById(forms.parseInt(req.query.delete));
-    if (platform) {
-      const entryCount = await platformRepository.countEntriesByPlatform(platform);
-      if (entryCount === 0) {
-        await platformService.delete(platform.id);
+    // Delete platform
+    if (req.body.delete !== undefined && forms.isId(req.body.id)) {
+      const platform = await platformRepository.findById(forms.parseInt(req.body.id));
+      if (platform) {
+        const entryCount = await platformRepository.countEntriesByPlatform(platform);
+        if (entryCount === 0) {
+          await platformService.delete(platform.id);
+        }
+      } else {
+        errorMessage = "Platform to delete not found";
       }
-    } else {
-      errorMessage = "Platform to delete not found";
     }
   }
 

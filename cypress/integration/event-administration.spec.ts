@@ -9,8 +9,8 @@ describe("Event: Administration", () => {
     cy.loginAs(USER_ADMINISTRATOR);
   });
 
-  afterEach(() => {
-    // cy.restoreDB();
+  after(() => {
+    cy.restoreDB();
   });
 
   it("supports switching from theme submissions to theme shortlist phase", () => {

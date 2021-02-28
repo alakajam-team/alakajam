@@ -14,7 +14,7 @@ export default function render(context: AdminEventsContext): JSX.Element {
     <div>
       <h1>Events</h1>
 
-      {adminButtons(user)}
+      {adminButtons(user, context.csrfToken)}
 
       <table class="table sortable mt-3">
         <thead>
@@ -31,14 +31,15 @@ export default function render(context: AdminEventsContext): JSX.Element {
     </div>);
 }
 
-function adminButtons(user: User) {
+function adminButtons(user: User, csrfToken: () => JSX.Element) {
   if (user.is_admin) {
-    return <p>
-      <a href={ links.routeUrl(null, "event", "create") } class="btn btn-primary mr-1">Create</a>
+    return <form method="post" class="form-inline" action="">
+      {csrfToken()}
+      <a href={links.routeUrl(null, "event", "create")} class="btn btn-primary mr-1">Create</a>
       <a class="btn btn-outline-primary mr-1" href="/admin/settings?edit=featured_event_name">Select featured event</a>
-      <a class="btn btn-outline-primary" href="?refreshHotness=true"
-        onclick="return confirm('This is a resource intensive task. Proceed?')">Refresh entry hotness on all events</a>
-    </p>;
+      <button type="submit" name="refreshHotness" class="btn btn-outline-primary"
+        onclick="return confirm('This is a resource intensive task. Proceed?')">Refresh entry hotness on all events</button>
+    </form>;
   }
 }
 

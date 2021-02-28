@@ -10,7 +10,7 @@ describe("Account management", () => {
     cy.restoreDB();
   });
 
-  afterEach(() => {
+  after(() => {
     cy.restoreDB();
   });
 

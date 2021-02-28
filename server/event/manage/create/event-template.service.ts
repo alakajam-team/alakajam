@@ -7,7 +7,7 @@ export class EventTemplateService {
   /**
    * Creates an empty, unpersisted event template.
    */
-  public createEventTemplate(): BookshelfModel {
+  public initEventTemplate(): BookshelfModel {
     return new models.EventTemplate() as BookshelfModel;
   }
 
