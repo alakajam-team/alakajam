@@ -1,4 +1,5 @@
 import { CommonLocals } from "server/common.middleware";
+import config from "server/core/config";
 import forms from "server/core/forms";
 import { allRules, rule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -19,6 +20,12 @@ export class RegisterController {
    */
   public async registerForm(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
     res.locals.pageTitle = "Register";
+
+    if (config.READ_ONLY_MODE) {
+      res.errorPage(401, "Website is in read-only mode");
+      return;
+    }
+
     res.render<CommonLocals>(TEMPLATE_REGISTER, {
       ...req.body,
       ...res.locals,
@@ -31,6 +38,11 @@ export class RegisterController {
    */
   public async register(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
     res.locals.pageTitle = "Register";
+
+    if (config.READ_ONLY_MODE) {
+      res.errorPage(401, "Website is in read-only mode");
+      return;
+    }
 
     const formAlerts = await validateForm(req.body, {
       "name": allRules(

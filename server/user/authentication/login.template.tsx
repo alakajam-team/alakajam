@@ -1,8 +1,9 @@
 import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
+import config from "server/core/config";
 import * as formMacros from "server/macros/form.macros";
-import { ifNotSet, ifSet } from "server/macros/jsx-utils";
+import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 
 export default function render(context: CommonLocals): JSX.Element {
   const { path, user, redirect } = context;
@@ -12,6 +13,13 @@ export default function render(context: CommonLocals): JSX.Element {
       <div class="card">
         <div class="card-body">
           <h1>Login</h1>
+
+          {ifTrue(config.READ_ONLY_MODE, () =>
+            <div class="alert alert-warning">
+              <b>Website in read-only mode</b><br />
+              Logging in has been deactivated temporarily by the administrators. Sorry for the inconvenience.
+            </div>
+          )}
 
           {formMacros.alerts(context.alerts)}
 
