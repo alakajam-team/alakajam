@@ -1,4 +1,5 @@
 import { CommonLocals } from "server/common.middleware";
+import config from "server/core/config";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
 import { Alert, CustomRequest, CustomResponse, RenderContext } from "server/types";
@@ -30,12 +31,17 @@ export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLo
   if (req.body.name && req.body.password) {
     const user = await userService.authenticate(req.body.name, req.body.password);
     if (user) {
-      context.user = user;
-      req.session.userId = user.get("id");
-      if (req.body["remember-me"]) {
-        req.session.cookie.maxAge = constants.REMEMBER_ME_MAX_AGE;
+      if (!config.READ_ONLY_MODE || user.is_admin) {
+        context.user = user;
+        req.session.userId = user.get("id");
+        if (req.body["remember-me"]) {
+          req.session.cookie.maxAge = constants.REMEMBER_ME_MAX_AGE;
+        }
+        await req.session.saveAsync();
+      } else {
+        errors.push({ type: "danger", message: "The website is temporarily in read-only mode. "
+          + "Logging in is disabled, sorry for the inconvenience." });
       }
-      await req.session.saveAsync();
     } else {
       errors.push({ type: "danger", message: "Authentication failed. Please try again or reset your password." });
     }

@@ -31,6 +31,7 @@ export interface Config {
 
   // Misc
   readonly SECURE_SESSION_COOKIES: boolean;
+  readonly READ_ONLY_MODE: boolean;
 
   // Debug: general options
   readonly DEBUG_INSERT_SAMPLES: boolean;

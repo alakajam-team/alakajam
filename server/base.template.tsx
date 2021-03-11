@@ -5,6 +5,7 @@ import { CommonLocals } from "./common.middleware";
 import links from "./core/links";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "./macros/jsx-utils";
 import { BookshelfModel } from "bookshelf";
+import config from "./core/config";
 
 export default function base(context: CommonLocals, contents: JSX.Element): JSX.Element {
   const { pageImage, launchTime, rootUrl, path, event, user, unreadNotifications } = context;
@@ -61,6 +62,7 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
                 <a class="nav-link" href="/article/docs">Docs</a></li>
               <li class={"nav-item " + ((path.startsWith("/article/about") || path === "/changes") ? "active" : "")}>
                 <a class="nav-link" href="/article/about">About</a></li>
+
               {ifSet(user, () =>
                 <>
                   <li class={"nav-item d-md-none " + (path.startsWith("/dashboard") ? "active" : "")}>
@@ -71,19 +73,27 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
                   </li>
                 </>
               )}
-              {ifNotSet(user, () =>
-                <>
-                  <li class="nav-item button-item">
-                    <a class="nav-link" href={"/login" + (path.startsWith("/log") ? "" : ("?redirect=" + encodeURIComponent(path)))}>
-                      <button class="btn btn-outline-light">Login</button>
-                    </a>
-                  </li>
-                  <li class="nav-item button-item">
-                    <a class="nav-link" href="/register">
-                      <button class="btn btn-outline-light">Register</button>
-                    </a>
-                  </li>
-                </>
+              {ifFalse(config.READ_ONLY_MODE, () =>
+                ifNotSet(user, () =>
+                  <>
+                    <li class="nav-item button-item">
+                      <a class="nav-link" href={"/login" + (path.startsWith("/log") ? "" : ("?redirect=" + encodeURIComponent(path)))}>
+                        <button class="btn btn-outline-light">Login</button>
+                      </a>
+                    </li>
+                    <li class="nav-item button-item">
+                      <a class="nav-link" href="/register">
+                        <button class="btn btn-outline-light">Register</button>
+                      </a>
+                    </li>
+                  </>
+                )
+              )}
+              {ifTrue(config.READ_ONLY_MODE, () =>
+                <div><span class="badge badge-warning mt-4 ml-2" data-toggle="tooltip"
+                  title="Logging in has been deactivated temporarily by the administrators. Sorry for the inconvenience.">
+                  Website in read-only mode
+                </span></div>
               )}
             </ul>
           </div>

@@ -7,6 +7,7 @@ import settings from "server/core/settings";
 import eventService from "server/event/event.service";
 import notificationService from "server/user/notification/notification.service";
 import userService from "server/user/user.service";
+import config from "./core/config";
 import { SETTING_FEATURED_EVENT_NAME } from "./core/settings-keys";
 import { User } from "./entity/user.entity";
 import commentService from "./post/comment/comment.service";
@@ -109,7 +110,13 @@ export async function commonMiddleware(req: CustomRequest, res: Response, next: 
   // Fetch current user
   let userTask = null;
   if (req.session.userId) {
-    userTask = userService.findById(req.session.userId).then((user) => {
+    userTask = userService.findById(req.session.userId).then(async (user) => {
+      if (config.READ_ONLY_MODE && !user.is_admin) {
+        delete req.session.userId;
+        await req.session.saveAsync();
+        return;
+      }
+
       res.locals.user = user;
 
       // Fetch comment to edit

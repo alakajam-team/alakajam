@@ -4,6 +4,7 @@ module.exports = {
   ROOT_URL: 'http://localhost:8000',
   STATIC_ROOT_URL: false,
   SECURE_SESSION_COOKIES: false,
+  READ_ONLY_MODE: false,
 
   // File storage
   DATA_PATH: 'data/',
