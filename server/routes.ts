@@ -42,7 +42,7 @@ import { eventMiddleware } from "./event/event.middleware";
 import { viewEventGames } from "./event/games/event-games.controller";
 import { viewEventHome } from "./event/home/event-home.controller";
 import { eventCreate } from "./event/manage/create/event-create.controller";
-import { eventManageEntries } from "./event/manage/entries/event-manage-entries.controller";
+import { eventManageEntries, eventManageEntriesPost } from "./event/manage/entries/event-manage-entries.controller";
 import { postEventManageRankings, viewEventManageRankings } from "./event/manage/rankings/event-manage-rankings.controller";
 import { eventDelete, eventManage } from "./event/manage/settings/event-settings.controller";
 import { eventManageThemes } from "./event/manage/themes/event-manage-themes.controller";
@@ -222,6 +222,7 @@ export function routes(app: express.Application): void {
   router.get("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventManageThemes);
   router.post("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventManageThemes);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/edit-entries", csrf, eventManageEntries);
+  router.post("/:eventName([^/]{0,}-[^/]{0,})/edit-entries", csrf, eventManageEntriesPost);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/edit-rankings", csrf, viewEventManageRankings);
   router.post("/:eventName([^/]{0,}-[^/]{0,})/edit-rankings", csrf, postEventManageRankings);
   router.get("/:eventName([^/]{0,}-[^/]{0,})/edit-tournament-games", csrf, eventManageTournament);

@@ -1,15 +1,18 @@
 import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
+import { User } from "server/entity/user.entity";
 import * as eventMacros from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "../event-manage.base.template";
 
 export default function render(context: CommonLocals): JSX.Element {
-  const { entries, detailedEntryInfo, entriesById, usersById, event, orderBy } = context;
+  const { entries, detailedEntryInfo, entriesById, usersById, event, orderBy, user, csrfToken } = context;
 
   return eventManageBase(context, <div>
     <h1>{event.get("title")} entries <span class="count">({entries.length})</span></h1>
+
+    {adminButtons(user, csrfToken)}
 
     {ifTrue(detailedEntryInfo.id, () =>
       detailedEntry(detailedEntryInfo, entriesById, usersById)
@@ -52,6 +55,16 @@ export default function render(context: CommonLocals): JSX.Element {
     </ol>
   </div>
   );
+}
+
+function adminButtons(user: User, csrfToken: () => JSX.Element) {
+  if (user.is_admin) {
+    return <form method="post" class="form-inline mb-3" action="">
+      {csrfToken()}
+      <button type="submit" name="refreshKarma" class="btn btn-outline-primary"
+        onclick="return confirm('This is a resource intensive task. Proceed?')">Refresh entry karma on all entries</button>
+    </form>;
+  }
 }
 
 function detailedEntry(detailedEntryInfo, entriesById, usersById) {
