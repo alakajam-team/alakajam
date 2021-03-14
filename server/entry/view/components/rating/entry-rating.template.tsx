@@ -56,7 +56,12 @@ export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryV
       return <div class="entry-voting">
         <h2 class="entry-voting__header">Game ratings</h2>
         <div class="entry-voting__body">
-          {entryRatingCountPhrase(entry, entryVotes)}
+          {ifTrue(entry.get("division") === "unranked", () =>
+            <p>This game is an <strong>Unranked</strong> entry.</p>
+          )}
+          {ifTrue(entry.get("division") !== "unranked", () =>
+            entryRatingCountPhrase(entry, entryVotes)
+          )}
           <p>Because you didn't enter the event, you cannot rate this game. You can still provide feedback using comments!</p>
         </div>
       </div>;
