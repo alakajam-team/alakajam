@@ -133,7 +133,8 @@ $event-navbar-height: 50px;
   }
 
   & .navbar-avatar {
-    width: 36px;
+    max-width: 36px;
+    max-height: 36px;
     border-radius: 6px;
     vertical-align: middle;
   }
