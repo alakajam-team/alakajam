@@ -120,11 +120,11 @@ nvm install 14
 # Add Alakajam! user
 adduser alakajam
 usermod -aG www-data $admin
+echo "cd /var/www/alakajam" >> /home/alakajam/.bashrc
 mkdir -p /var/www/alakajam
 cd /var/www/alakajam
 git clone https://github.com/alakajam-team/alakajam.git
 chown -R alakajam:alakajam /var/www
-
 
 # Certbot
 apt-get install snapd
