@@ -55,7 +55,7 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
         <div class="form-group mr-3">
           <label>Phrase&nbsp;
             {formMacros.tooltip('For instance: "ends", "voting starts"... '
-              + 'or directly "starts January 31st" if the date is not set.')}</label>
+            + 'or directly "starts January 31st" if the date is not set.')}</label>
           <input type="text" class="form-control" name="countdown-phrase" value={event?.get("countdown_config")?.phrase} />
         </div>
         <div class="form-group mr-3">
@@ -63,11 +63,11 @@ export function countdownForm(event: BookshelfModel, user: User, options: { coun
             <>
               <label class="mr-1">Offset from start</label>
               <input type="text" name="countdown-offset-d" class="form-control"
-                style="width: 50px" value={options.countdownOffset.d || "0" } />d
+                style="width: 50px" value={options.countdownOffset.d || "0"} />d
               <input type="text" name="countdown-offset-h" class="form-control"
-                style="width: 50px" value={options.countdownOffset.h || "0" } />h
+                style="width: 50px" value={options.countdownOffset.h || "0"} />h
               <input type="text" name="countdown-offset-m" class="form-control"
-                style="width: 50px" value={options.countdownOffset.m || "0" } />m
+                style="width: 50px" value={options.countdownOffset.m || "0"} />m
               &nbsp;
             </>
           )}
@@ -200,6 +200,10 @@ export function stateForm(event: BookshelfModel): JSX.Element {
           <div class="col-md-6 col-lg-4">{formMacros.check("hideStreamerMenu", "Hide Streamer Menu", flags?.hideStreamerMenu)}</div>
           <div class="col-md-6 col-lg-4">{formMacros.check("hideThemeResultsDetails",
             "Hide numbers in theme results", flags?.hideThemeResultsDetails)}</div>
+          <div class="col-md-6 col-lg-4">{formMacros.check("rankedKarmaModifier", "Ranked karma modifier", flags?.rankedKarmaModifier)}
+            <span style="margin-left: -10px" class="mr-1">
+              {formMacros.tooltip("Give a 10 points karma penalty to games having reached their required number of ratings. Can help rescuing games.")}
+            </span></div>
         </div>
       </div>
     </div>

@@ -57,6 +57,7 @@ export async function eventManageEntries(req: CustomRequest, res: CustomResponse
     detailedEntryInfo.id = req.query.entryDetails;
     detailedEntryInfo.given = await ratingService.computeKarmaGivenByUserAndEntry(entry, event);
     detailedEntryInfo.received = await ratingService.computeKarmaReceivedByUser(entry);
+    detailedEntryInfo.modifiers = await ratingService.computeKarmaModifiers(entry, event);
     detailedEntryInfo.total = ratingService.computeKarma(detailedEntryInfo.received.total,
       detailedEntryInfo.given.total);
   }

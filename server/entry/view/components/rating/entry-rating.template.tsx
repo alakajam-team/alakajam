@@ -2,6 +2,7 @@ import { BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
+import { EventFlags } from "server/entity/event-details.entity";
 import { User } from "server/entity/user.entity";
 import { ifTrue } from "server/macros/jsx-utils";
 import { entryRatingCountPhrase } from "./entry-rating-count-phrase.template";
@@ -9,6 +10,8 @@ import { entryRatingForm } from "./entry-rating-form.template";
 
 export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryVotes: number, user: User, canVoteOnEntry: boolean,
   vote: BookshelfModel, minEntryVotes: number, csrfToken: () => JSX.Element): JSX.Element {
+  const flags: EventFlags = event.related<BookshelfModel>("details").get("flags");
+
   if (canVoteOnEntry) {
     // Jam entrant who can vote on this entry
     return <div class="entry-voting">
@@ -46,10 +49,18 @@ export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryV
             {ifTrue(entryVotes < minEntryVotes, () =>
               <p>You need at least <strong>{minEntryVotes}</strong> ratings for your game to receive rankings.</p>
             )}
+            {ifTrue(flags.rankedKarmaModifier && entryVotes >= minEntryVotes, () =>
+              <p>Now that you have sufficient ratings, your karma has been lowered to help other games.</p>
+            )}
           </div>
         </div>;
       } else {
         // Own entry that cannot be ranked
+        return <>
+          {ifTrue(flags.rankedKarmaModifier && entry.get("comment_count") > minEntryVotes, () =>
+            <p>Now that you have more than <strong>{minEntryVotes}</strong> comments, your karma has been lowered to help other games.</p>
+          )}
+        </>;
       }
     } else {
       // Non-jam entrant

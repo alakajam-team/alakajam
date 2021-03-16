@@ -15,6 +15,7 @@ export interface EventFlags {
   scoreSpacePodium?: boolean;
   hideStreamerMenu?: boolean;
   hideThemeResultsDetails?: boolean;
+  rankedKarmaModifier?: boolean;
 }
 
 export interface ThemeShortlistEliminationState {

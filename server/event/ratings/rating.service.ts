@@ -7,6 +7,7 @@ import log from "server/core/log";
 import * as models from "server/core/models";
 import settings from "server/core/settings";
 import { SETTING_EVENT_OPEN_VOTING, SETTING_EVENT_REQUIRED_ENTRY_VOTES } from "server/core/settings-keys";
+import { EventFlags } from "server/entity/event-details.entity";
 import { User } from "server/entity/user.entity";
 import entryHotnessService from "server/entry/entry-hotness.service";
 import entryService from "server/entry/entry.service";
@@ -15,6 +16,11 @@ import eventParticipationService from "../dashboard/event-participation.service"
 
 interface KarmaReceivedByUser {
   receivedByUser: Record<number, { commentKarma: number; voteKarma: number }>;
+  total: number;
+}
+
+interface KarmaGivenByUserAndEntry {
+  givenByUserAndEntry: Record<string, { commentKarma: number; voteKarma?: number; userId: number; entryId: number }>;
   total: number;
 }
 
@@ -44,7 +50,7 @@ export class RatingService {
   private async hasEntryOrIsApprovedStreamer(user: User, event: BookshelfModel): Promise<boolean> {
     const hasEntryPromise = entryService.findUserEntryForEvent(user, event.get("id"));
     const eventParticipationPromise = eventParticipationService.getEventParticipation(event.get("id"), user.id);
-    const [ hasEntry, eventParticipation ] = await Promise.all([ hasEntryPromise, eventParticipationPromise ]);
+    const [hasEntry, eventParticipation] = await Promise.all([hasEntryPromise, eventParticipationPromise]);
     return Boolean(hasEntry) || eventParticipation?.isApprovedStreamer;
   }
 
@@ -143,7 +149,7 @@ export class RatingService {
    * Finds the votes a user cast during an event
    */
   public async findVoteHistory(userId: number, event: BookshelfModel,
-                               options: { pageSize?: number; withRelated?: string[] } = {}): Promise<BookshelfCollection> {
+    options: { pageSize?: number; withRelated?: string[] } = {}): Promise<BookshelfCollection> {
     const query = models.EntryVote.where({
       user_id: userId,
       event_id: event.get("id"),
@@ -162,7 +168,7 @@ export class RatingService {
     }
   }
 
-  public async findEntryRankings(event: BookshelfModel, categoryIndex: number, division?: string ): Promise<BookshelfCollection> {
+  public async findEntryRankings(event: BookshelfModel, categoryIndex: number, division?: string): Promise<BookshelfCollection> {
     if (categoryIndex > 0 && categoryIndex <= constants.MAX_CATEGORY_COUNT) {
       const whereClause: Record<string, any> = { event_id: event.get("id") };
       if (division) {
@@ -230,7 +236,10 @@ export class RatingService {
     await entry.load(["details", "comments", "userRoles", "votes"]);
     const received = (await this.computeKarmaReceivedByUser(entry)).total;
     const given = (await this.computeKarmaGivenByUserAndEntry(entry, event)).total;
-    await entry.save({ karma: this.computeKarma(received, given) }, { patch: true });
+    const karmaModifiers = await this.computeKarmaModifiers(entry, event);
+    await entry.save({
+      karma: this.computeKarma(received, given) + karmaModifiers
+    }, { patch: true });
 
     const entryDetails = entry.related<BookshelfModel>("details");
     await entryDetails.save({ rating_count: entry.related<BookshelfCollection>("votes").length }, { patch: true });
@@ -264,8 +273,9 @@ export class RatingService {
   }
 
   /* Compute given score using comments & votes from all the team */
-  public async computeKarmaGivenByUserAndEntry(entry: EntryBookshelfModel, event: BookshelfModel): Promise<any> {
-    const givenByUserAndEntry = {};
+  public async computeKarmaGivenByUserAndEntry(entry: EntryBookshelfModel, event: BookshelfModel):
+    Promise<KarmaGivenByUserAndEntry> {
+    const givenByUserAndEntry: Record<string, { commentKarma: number; voteKarma?: number; userId: number; entryId: number }> = {};
     const userRoles = entry.related<BookshelfCollection>("userRoles");
     for (const userRole of userRoles.models) {
       // Earn up to 3 points per user from comments
@@ -294,7 +304,7 @@ export class RatingService {
       }
     }
 
-    const result = {
+    const result: KarmaGivenByUserAndEntry = {
       givenByUserAndEntry,
       total: 0,
     };
@@ -313,6 +323,24 @@ export class RatingService {
     // NB. It is inspired by the actual LD sorting equation: D = 50 + R - 5*sqrt(min(C,100))
     // (except that here, higher is better)
     return Math.floor(Math.max(0, 74 + 8.5 * Math.sqrt(10 + Math.min(given, 100)) - received));
+  }
+
+  public async computeKarmaModifiers(entry: EntryBookshelfModel, event: BookshelfModel): Promise<number> {
+    let modifier = 0;
+
+    const eventFlags: EventFlags = event.related<BookshelfModel>("details").get("flags");
+    if (eventFlags.rankedKarmaModifier) {
+      const requiredRatings = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
+      if (entry.get("division") === enums.DIVISION.UNRANKED) {
+        const commentCount: number = entry.get("comment_count");
+        modifier += (commentCount > requiredRatings) ? -10 : 0;
+      } else {
+        const ratingCount: number = entry.related<BookshelfModel>("details").get("rating_count");
+        modifier += (ratingCount >= requiredRatings) ? -10 : 0;
+      }
+    }
+
+    return modifier;
   }
 
   public async computeRankings(event: BookshelfModel): Promise<void> {

@@ -74,7 +74,7 @@ function detailedEntry(detailedEntryInfo, entriesById, usersById) {
     <h2>Karma details: {entry.get("title")}</h2>
 
     <p>Current karma: <strong>{detailedEntryInfo.total}</strong></p>
-
+    <h4>Modifiers <span class="count">({detailedEntryInfo.modifiers})</span></h4>
     <h4>Given <span class="count">(+{detailedEntryInfo.given.total})</span></h4>
 
     <ul>
@@ -83,7 +83,7 @@ function detailedEntry(detailedEntryInfo, entriesById, usersById) {
           {ifTrue(data.commentKarma > 0, () =>
             <span>
               <strong>+ {data.commentKarma || "0"}</strong> with comments by {userTitle(usersById, data.userId)}
-                on {entriesById[data.entryId] ? entriesById[data.entryId].get("title") : "???"}
+                &nbsp;on {entriesById[data.entryId] ? entriesById[data.entryId].get("title") : "???"}
             </span>
           )}
           {data.commentKarma && data.voteKarma ? " or " : ""}
