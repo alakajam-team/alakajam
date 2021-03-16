@@ -217,7 +217,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       // Manager-only changes
       if (isCreation || security.canUserManage(user, entry, { allowMods: true })) {
         let division = req.body.division || eventService.getDefaultDivision(event);
-        if (event &&
+        if (event && !security.isMod(user) &&
           (event.get("status_entry") === enums.EVENT.STATUS_ENTRY.OPEN_UNRANKED
             || event.get("status_entry") === enums.EVENT.STATUS_ENTRY.CLOSED)) {
           if (!entry.has("division")) {
