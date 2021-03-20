@@ -10,11 +10,6 @@ None
 
 ## Blocked versions
 
-* ts-node-dev
-
-Recent versions can fail on Windows due to a problem related to concurrent file writes during compilation  
-https://github.com/whitecolor/ts-node-dev/issues/185
-
 * Bookshelf
 
 1.X has a blocking bug for us: https://github.com/alakajam-team/alakajam/issues/478  
