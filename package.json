@@ -61,7 +61,7 @@
     "@types/node": "^14.14.35",
     "@types/nodemailer": "^6.4.1",
     "@types/sass": "^1.16.0",
-    "@types/sharp": "^0.26.1",
+    "@types/sharp": "^0.27.1",
     "@types/showdown": "^1.9.3",
     "@types/sinon": "^9.0.11",
     "@types/slug": "^0.9.1",
@@ -94,7 +94,7 @@
     "flipclock": "^0.10.8",
     "fs-extra": "^9.1.0",
     "heapdump": "^0.3.15",
-    "html-to-text": "^6.0.0",
+    "html-to-text": "^7.0.0",
     "icheck": "^1.0.2",
     "jquery-lazy": "^1.7.11",
     "jsx-pistols": "^0.5.1",
@@ -132,7 +132,7 @@
     "striptags": "^3.0.1",
     "tablesort": "^5.2.1",
     "tempusdominus-bootstrap-4": "^5.39.0",
-    "tempusdominus-core": "5.0.3",
+    "tempusdominus-core": "5.19.0",
     "terser-webpack-plugin": "^4.2.3",
     "timezone-support": "^2.0.2",
     "truncate-html": "^1.0.3",
@@ -140,21 +140,21 @@
     "turndown": "^7.0.0",
     "twitch": "^4.5.1",
     "typeorm": "^0.2.31",
-    "typescript": "4.0.5",
+    "typescript": "4.2.3",
     "validator": "^13.5.2",
     "webpack": "^4.46.0",
     "webpack-merge": "^5.7.3",
     "winston": "^3.3.3"
   },
   "optionalDependencies": {
-    "sharp": "^0.25.4"
+    "sharp": "^0.27.2"
   },
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^5.6.0",
     "browser-refresh": "^1.7.3",
     "browser-refresh-client": "^1.1.4",
     "chai": "^4.3.4",
-    "concurrently": "^5.3.0",
+    "concurrently": "^6.0.0",
     "cypress": "^5.6.0",
     "cypress-file-upload": "^4.1.1",
     "eslint": "^7.22.0",
@@ -165,7 +165,7 @@
     "ts-loader": "^8.0.18",
     "ts-node-dev": "^1.1.6",
     "tsconfig-paths": "^3.9.0",
-    "typedoc": "^0.19.2"
+    "typedoc": "^0.20.32"
   },
   "browserslist": [
     "> 0.25%",
