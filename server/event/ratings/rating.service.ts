@@ -328,6 +328,11 @@ export class RatingService {
   public async computeKarmaModifiers(entry: EntryBookshelfModel, event: BookshelfModel): Promise<number> {
     let modifier = 0;
 
+    const entryHasLinks = entry.get("links")?.length > 0;
+    if (!entryHasLinks) {
+      modifier -= 20;
+    }
+
     const eventFlags: EventFlags = event.related<BookshelfModel>("details").get("flags");
     if (eventFlags.rankedKarmaModifier) {
       const requiredRatings = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);

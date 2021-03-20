@@ -15,6 +15,7 @@ import highscoreService from "server/entry/highscore/highscore.service";
 import tagService from "server/entry/tag/tag.service";
 import teamService from "server/entry/team/team.service";
 import eventService from "server/event/event.service";
+import ratingService from "server/event/ratings/rating.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import entryPicturesService from "../entry-pictures.service";
@@ -254,6 +255,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
       }
       entry.set("published_at", entry.get("published_at") || new Date());
       await entry.save();
+      await ratingService.refreshEntryKarma(entry, event);
       if (eventCountRefreshNeeded) {
         eventService.refreshEventCounts(event) // No need to await
           .catch(e => log.error(e));
