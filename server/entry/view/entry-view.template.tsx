@@ -1,17 +1,16 @@
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
 import base from "server/base.template";
-import security from "server/core/security";
 import * as templatingFilters from "server/core/templating-filters";
 import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as postMacros from "server/post/post.macros";
-import * as userMacros from "server/user/user.macros";
 import { EntryLocals } from "../entry.middleware";
+import { entryAuthors } from "./components/entry-authors.template";
 import entryHeader from "./components/entry-header.template";
-import entryInfo from "./components/entry-info.template";
 import entryLinks from "./components/entry-links.template";
+import entryMetadataEvent from "./components/entry-metadata.template";
+import entryMetadata from "./components/entry-metadata.template";
 import { entryPicture } from "./components/entry-picture.template";
 import { entryRatingResults } from "./components/rating/entry-rating-results.template";
 import { entryRating } from "./components/rating/entry-rating.template";
@@ -84,23 +83,12 @@ export default function render(context: EntryLocals): JSX.Element {
 
           {/* Right column */}
           <div class="col-md-4 game-info">
-            <h3>Info</h3>
-            {entryInfo(entry, external)}
-
-            <h3 class="mt-3">Links</h3>
             {entryLinks(entry, user)}
 
-            <h3 class="mt-4">Author{entry.related<BookshelfCollection>("userRoles").models.length > 1 ? "s" : ""}</h3>
-            <div class="card card-body pb-2">
-              {entry.sortedUserRoles().map(userRole =>
-                userMacros.userThumb(userRole.related<BookshelfModel>("user"), { fullWidth: true })
-              )}
-              {ifTrue(security.canUserWrite(user, entry), () =>
-                entry.related<BookshelfCollection>("invites").models.map(invite =>
-                  userMacros.userThumb(invite.related<BookshelfModel>("invited"), { fullWidth: true, pending: true })
-                )
-              )}
-            </div>
+            {entryAuthors(entry, user)}
+
+            <h3>Details</h3>
+            {entryMetadata(entry, external, event)}
 
             {ifTrue(entry.get("status_high_score") !== "off", () =>
               <div>
