@@ -33,8 +33,8 @@ export async function viewEventResults(req: CustomRequest, res: CustomResponse<E
 
   // Parse query
   const flags = event.related<BookshelfModel>("details").get("flags") as EventFlags;
-  let sortedBy = flags.scoreSpacePodium ? 7 : 1;
-  let division = flags.scoreSpacePodium ? undefined : eventService.getDefaultDivision(event);
+  let sortedBy = flags.specialAwards ? 7 : 1;
+  let division = flags.specialAwards ? undefined : eventService.getDefaultDivision(event);
   if (forms.isInt(req.query.sortBy?.toString())) {
     const parsedSortedBy = forms.parseInt(req.query.sortBy.toString());
     if (parsedSortedBy > 0 && parsedSortedBy <= constants.MAX_CATEGORY_COUNT) {
@@ -43,11 +43,11 @@ export async function viewEventResults(req: CustomRequest, res: CustomResponse<E
   }
   if (Object.keys(event.get("divisions")).includes(req.query.division?.toString())) {
     division = req.query.division.toString();
-    if (flags.scoreSpacePodium && sortedBy === 7) {
+    if (flags.specialAwards && sortedBy === 7) {
       sortedBy = 1; // Unset special ScoreSpace category when clicking a division
     }
   }
-  if (!(flags.scoreSpacePodium && sortedBy === 7) && !division) {
+  if (!(flags.specialAwards && sortedBy === 7) && !division) {
     division = eventService.getDefaultDivision(event);
   }
 

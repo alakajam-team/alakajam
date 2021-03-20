@@ -78,8 +78,8 @@ export class EventService {
         const flags = eventDetails.get("flags") as EventFlags;
         if (categoryTitles.length > categoryIndex - 1) {
           return categoryTitles[categoryIndex - 1];
-        } else if (flags.scoreSpacePodium && categoryIndex === 7) {
-          return "ScoreSpace Awards";
+        } else if (flags.specialAwards && categoryIndex === 7) {
+          return "Special awards";
         }
       });
   }

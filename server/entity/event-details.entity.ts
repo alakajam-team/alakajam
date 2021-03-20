@@ -12,7 +12,7 @@ export interface EventLink {
 
 export interface EventFlags {
   streamerOnlyTournament?: boolean;
-  scoreSpacePodium?: boolean;
+  specialAwards?: boolean;
   hideStreamerMenu?: boolean;
   hideThemeResultsDetails?: boolean;
   rankedKarmaModifier?: boolean;
@@ -109,6 +109,9 @@ export class EventDetails extends TimestampedEntity {
 
   @Column(ColumnTypes.json({ length: constants.MAX_BODY_ANY, default: "{}" }))
   public flags: EventFlags;
+
+  @Column(ColumnTypes.json({ nullable: true, default: "[]" }))
+  public special_award_titles: string[];
 
   public dependents(): Array<keyof this> {
     return [];

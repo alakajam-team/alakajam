@@ -1,3 +1,4 @@
+import { BookshelfModel } from "bookshelf";
 import { capitalize, range } from "lodash";
 import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
@@ -9,6 +10,7 @@ import { eventManageBase } from "../event-manage.base.template";
 
 export default function render(context: CommonLocals): JSX.Element {
   const { event, entries, divisionQuery, categoryTitles, currentCategoryIndex } = context;
+  const eventDetails: BookshelfModel = event.related("details");
 
   return eventManageBase(context, <div>
     <h1>{event.get("title")} rankings <span class="count">({entries.length})</span></h1>
@@ -52,15 +54,20 @@ export default function render(context: CommonLocals): JSX.Element {
 
     {formMacros.alerts(context.alerts)}
 
-    {ifTrue(event.related("details").get("flags")?.scoreSpacePodium && currentCategoryIndex === 7, () =>
-      <div>
-        <b>Special instructions for ScoreSpace Awards</b>
-        <ul>
-          <li>Set 1 for Streamer's Choice</li>
-          <li>Set 2 for Solo Developer's Choice</li>
-          <li>Set 3 for Team Developer's Choice</li>
-        </ul>
-      </div>
+    {ifTrue(event.related("details").get("flags")?.specialAwards && currentCategoryIndex === 7, () =>
+      <form method="post" class="form">
+        {context.csrfToken()}
+        {[1, 2, 3].map((index) =>
+          <div class="form-group form-inline">
+            <label for={"special-award-" + index} class="mr-3">Award name for ranking #{index}</label>
+            <input type="text" class="form-control" name={"special-award-" + index}
+              value={eventDetails.get("special_award_titles")?.length >= index ? eventDetails.get("special_award_titles")[index - 1] : ""} />
+          </div>
+        )}
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
     )}
 
     <table class="table">

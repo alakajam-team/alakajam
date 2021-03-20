@@ -255,6 +255,7 @@ export const Event = bookshelf.model("Event", {
  *            (JSON: {"nextElimination": date, "minutesBetweenEliminations": number in minutes, "eliminatedCount": number})
  * | string | theme_page_header | Arbitrary Markdown do be displayed at the top of the theme voting page
  * | string | links | Config for a list of special pages to link to: (JSON: [{"title": string, "link": string, "icon": string}]
+ * | string | special_award_titles | JSON: ["award1","award2","award3"]
  * | date | created_at | Creation time (not null)
  * | date | modified_at | Last modification time (not null)
  */
@@ -280,6 +281,7 @@ export const EventDetails = bookshelf.model("EventDetails", {
     attrs.shortlist_elimination = attrs.shortlist_elimination || {};
     attrs.links = attrs.links || {};
     attrs.flags = attrs.flags || {};
+    attrs.special_award_titles = attrs.special_award_titles || [];
     return attrs;
   },
   parse: function parse(attrs) {
@@ -289,6 +291,7 @@ export const EventDetails = bookshelf.model("EventDetails", {
       if (attrs.shortlist_elimination) { attrs.shortlist_elimination = JSON.parse(attrs.shortlist_elimination); }
       if (attrs.links) { attrs.links = JSON.parse(attrs.links); }
       if (attrs.flags) { attrs.flags = JSON.parse(attrs.flags); }
+      if (attrs.special_award_titles) { attrs.special_award_titles = JSON.parse(attrs.special_award_titles); }
     }
     return attrs;
   },
@@ -299,6 +302,7 @@ export const EventDetails = bookshelf.model("EventDetails", {
       if (attrs.shortlist_elimination) { attrs.shortlist_elimination = JSON.stringify(attrs.shortlist_elimination); }
       if (attrs.links) { attrs.links = JSON.stringify(attrs.links); }
       if (attrs.flags) { attrs.flags = JSON.stringify(attrs.flags); }
+      if (attrs.special_award_titles) { attrs.special_award_titles = JSON.stringify(attrs.special_award_titles); }
     }
     return attrs;
   },

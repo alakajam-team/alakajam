@@ -5,6 +5,7 @@ import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
 import entryService, { FindGamesOptions } from "server/entry/entry.service";
+import specialAwardsService from "server/event/results/special-awards.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../../event.middleware";
 import eventService from "../../event.service";
@@ -69,26 +70,34 @@ export async function postEventManageRankings(req: CustomRequest, res: CustomRes
   }
 
   const parameters = parseQueryParameters(req, event);
-
-  // Form validation
   const errors = [];
-  const newRanking = forms.sanitizeString(req.body.newRanking) || null;
-  if (req.body.newRanking && !forms.isInt(newRanking, { min: 1 })) {
-    errors.push({ type: "danger", message: "Invalid ranking" });
-  }
-  if (!forms.isId(req.body.entryId)) {
-    errors.push({ type: "danger", message: "Invalid entry ID" });
+
+  // Update entry ranking
+  if (req.body.entryId) {
+    const newRanking = forms.sanitizeString(req.body.newRanking) || null;
+    if (req.body.newRanking && !forms.isInt(newRanking, { min: 1 })) {
+      errors.push({ type: "danger", message: "Invalid ranking" });
+    }
+    if (!forms.isId(req.body.entryId)) {
+      errors.push({ type: "danger", message: "Invalid entry ID" });
+    }
+
+    if (errors.length === 0) {
+      const entry = await entryService.findEntryById(req.body.entryId, { withRelated: ["details"] });
+      if (entry) {
+        const entryDetails = entry.related<BookshelfModel>("details");
+        entryDetails.set(`ranking_${parameters.currentCategoryIndex}`, newRanking);
+        await entryDetails.save();
+      } else {
+        errors.push({ type: "danger", message: "Entry not found" });
+      }
+    }
   }
 
-  if (errors.length === 0) {
-    const entry = await entryService.findEntryById(req.body.entryId, { withRelated: ["details"] });
-    if (entry) {
-      const entryDetails = entry.related<BookshelfModel>("details");
-      entryDetails.set(`ranking_${parameters.currentCategoryIndex}`, newRanking);
-      await entryDetails.save();
-    } else {
-      errors.push({ type: "danger", message: "Entry not found" });
-    }
+  // Rename special awards
+  if (req.body["special-award-1"]) {
+    const specialAwardTitles = [1, 2, 3].map(index => forms.sanitizeString(req.body[`special-award-${index}`]));
+    await specialAwardsService.saveSpecialAwardsLabels(event, specialAwardTitles);
   }
 
   res.locals.alerts.push(...errors);

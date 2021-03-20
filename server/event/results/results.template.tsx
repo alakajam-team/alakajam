@@ -1,3 +1,4 @@
+import { BookshelfModel } from "bookshelf";
 import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import base from "server/base.template";
@@ -13,7 +14,7 @@ import * as postMacros from "server/post/post.macros";
 export default function render(context: CommonLocals): JSX.Element {
   const { resultsPost, event, user, userLikes, rankings, categoryTitles, division, sortedBy } = context;
   const hasEventBanner = event.related("details").get("background");
-  let currentRanking;
+  let previousRanking = -1;
 
   return base(context,
     <div>
@@ -27,12 +28,12 @@ export default function render(context: CommonLocals): JSX.Element {
 
       {ifNotSet(resultsPost, () => {
         const flags = event.related("details").get("flags");
-        const scoreSpacePodium = flags.scoreSpacePodium && sortedBy === 7;
+        const displaySpecialAwards = flags.specialAwards && sortedBy === 7;
 
         return <div class="container">
           <div class="row">
             <div class="col">
-              {podium(rankings, event, categoryTitles, division, sortedBy, { scoreSpacePodium })}
+              {podium(rankings, event, categoryTitles, division, sortedBy, { displaySpecialAwards })}
               {pageLinks(event, event.get("divisions"), categoryTitles, division, sortedBy)}
             </div>
           </div>
@@ -41,7 +42,7 @@ export default function render(context: CommonLocals): JSX.Element {
             <div class="row">
               <div class={`col-sm-9 col-md-${12 - categoryTitles.length} mb-3`}>&nbsp;</div>
               {categoryTitles.map((title, index) =>
-                ifFalse(flags.scoreSpacePodium && index + 1 === 7, () =>
+                ifFalse(flags.specialAwards && index + 1 === 7, () =>
                   <div class={"col-sm-2 col-md-1 text-center " +((index - 1) !== sortedBy ? "d-none d-md-block" : "")}>
                     <span style="font-weight: bold">{categoryTitles[index]}</span>
                   </div>
@@ -55,17 +56,17 @@ export default function render(context: CommonLocals): JSX.Element {
               {ifTrue(division !== enums.DIVISION.UNRANKED, () =>
                 <div class="row">
                   <div class="col-sm-2 col-md-1 text-center text-sm-right">
-                    {ifTrue(!currentRanking || currentRanking !== entry.related("details").get("ranking_" + sortedBy), () => {
-                      currentRanking = entry.related("details").get("ranking_" + sortedBy);
-                      return <h2>{ordinal(currentRanking)}</h2>;
+                    {ifTrue(!displaySpecialAwards && previousRanking !== entry.related("details").get("ranking_" + sortedBy), () => {
+                      previousRanking = entry.related("details").get("ranking_" + sortedBy);
+                      return <h2>{ordinal(previousRanking)}</h2>;
                     })}
                   </div>
                   <div class={`col-sm-7 col-md-${11 - categoryTitles.length} mb-1`}>
                     {eventMacros.entrySmallThumb(entry)}
                   </div>
-                  {categoryTitles.map((title, index) => {
+                  {categoryTitles.map((_title, index) => {
                     const categoryIndex = index + 1;
-                    if (!(flags.scoreSpacePodium && categoryIndex === 7)) {
+                    if (!(flags.specialAwards && categoryIndex === 7)) {
                       const rating = entry.related("details").get("rating_" + categoryIndex);
                       return <div class={"col-sm-2 col-md-1 text-center " + (categoryIndex !== sortedBy ? "d-none d-md-block" : "")}
                         style={categoryIndex === sortedBy ? "background-color: #FAFAFA;" : ""}>
@@ -115,7 +116,7 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
           {categoryTitles.map((title, index) => {
             if (title) {
               const categoryIndex = index + 1;
-              return <a href={`?sortBy=${categoryIndex}&division=${!(flags.scoreSpacePodium && categoryIndex === 7)
+              return <a href={`?sortBy=${categoryIndex}&division=${!(flags.specialAwards && categoryIndex === 7)
                 ? selectedDivision : ""}`} type="button"
               class={"btn btn-primary results-links__category " + (selectedCategoryIndex === categoryIndex ? "active" : "")}>
                 <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-1`}></span>&nbsp;
@@ -129,12 +130,13 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
   }
 }
 
-function podium(rankings, event, categoryTitles, division, sortedBy, options: { scoreSpacePodium?: boolean } = {}) {
+function podium(rankings, event: BookshelfModel, categoryTitles: string[], division: string, sortedBy: number,
+    options: { displaySpecialAwards?: boolean } = {}) {
   return <div class="results-podium">
     <h1 class="results-podium__event-name">{event.get("title")} results</h1>
     <h2 class="results-podium__title">
       <div class="dropdown">
-        {ifFalse(options.scoreSpacePodium, () =>
+        {ifFalse(options.displaySpecialAwards, () =>
           <button class="dropdown-toggle" type="button" data-toggle="dropdown">
             <span class={constants.DIVISION_ICONS[division]}></span>
             <span class="ml-1">{capitalize(division)} division</span>
@@ -160,13 +162,13 @@ function podium(rankings, event, categoryTitles, division, sortedBy, options: { 
               )}
             </div>
           </div>
-          {options.scoreSpacePodium ? "" : "rankings"}
+          {options.displaySpecialAwards ? "" : "rankings"}
         </>
       )}
       {ifTrue(division === enums.DIVISION.UNRANKED, () =>
         "(everyone wins!)"
       )}
-      {ifFalse(options.scoreSpacePodium, () =>
+      {ifFalse(options.displaySpecialAwards, () =>
         <span class="results-podium__counter">
           {event.related("details").get("division_counts")[division]}
           entries (out of {event.get("entry_count")})
@@ -176,44 +178,46 @@ function podium(rankings, event, categoryTitles, division, sortedBy, options: { 
 
     <div class="container thin pb-2">
       <div class="results-podium-row">
-        {podiumSteps(rankings, categoryTitles, division, sortedBy, options)}
+        {podiumSteps(rankings, event, categoryTitles, division, sortedBy, options)}
       </div>
     </div>
   </div>;
 
 }
 
-function podiumSteps(rankings, categoryTitles, division, sortedBy, options) {
+function podiumSteps(rankings, event: BookshelfModel, categoryTitles: string[], division: string, sortedBy: number,
+    options: { displaySpecialAwards?: boolean } = {}) {
   const entryThumbOptions = { hideMedals: categoryTitles.length === 1 };
+  const specialAwardTitles = event.related<BookshelfModel>("details").get("special_award_titles") as string[];
 
   if (rankings.length > 0 && division !== enums.DIVISION.UNRANKED) {
     const podiumStepEls = [];
 
     const trophyPos1 = " ranking-" + rankings[0].related("details").get("ranking_" + sortedBy);
     podiumStepEls.push(<div class={"col-md-4 position-1"
-      + (!options.scoreSpacePodium ? trophyPos1 : " award") + " results-podium__step"}>
+      + (!options.displaySpecialAwards ? trophyPos1 : " award") + " results-podium__step"}>
       {eventMacros.entryThumb(rankings[0], entryThumbOptions)}
-      {ifTrue(options.scoreSpacePodium, () => <span class="award-label">Streamer's<br />Choice</span>)}
+      {ifTrue(options.displaySpecialAwards, () => <span class="award-label">{specialAwardTitles[0]}</span>)}
     </div>);
 
     const trophyPos2 = rankings.length >= 2 ? " ranking-" + rankings[1].related("details").get("ranking_" + sortedBy) : "";
     podiumStepEls.push(<div class={"col-md-4 position-2"
-      + (!options.scoreSpacePodium ? trophyPos2 : " award") + (rankings.length >= 2 ? " results-podium__step" : "")}>
+      + (!options.displaySpecialAwards ? trophyPos2 : " award") + (rankings.length >= 2 ? " results-podium__step" : "")}>
       {ifTrue(rankings.length >= 2, () =>
         <div>
           {eventMacros.entryThumb(rankings[1], entryThumbOptions)}
-          {ifTrue(options.scoreSpacePodium, () => <span class="award-label">Solo Developer's<br />Choice</span>)}
+          {ifTrue(options.displaySpecialAwards, () => <span class="award-label">{specialAwardTitles[1]}</span>)}
         </div>
       )}
     </div>);
 
     const trophyPos3 = rankings.length >= 3 ? " ranking-" + rankings[2].related("details").get("ranking_" + sortedBy) : "";
     podiumStepEls.push(<div class={"col-md-4 position-3"
-      + (!options.scoreSpacePodium ? trophyPos3 : " award") + (rankings.length >= 3 ? " results-podium__step" : "")}>
+      + (!options.displaySpecialAwards ? trophyPos3 : " award") + (rankings.length >= 3 ? " results-podium__step" : "")}>
       {ifTrue(rankings.length >= 3, () =>
         <div>
           {eventMacros.entryThumb(rankings[2], entryThumbOptions)}
-          {ifTrue(options.scoreSpacePodium, () => <span class="award-label">Team Developer's<br />Choice</span>)}
+          {ifTrue(options.displaySpecialAwards, () => <span class="award-label">{specialAwardTitles[2]}</span>)}
         </div>
       )}
     </div>);

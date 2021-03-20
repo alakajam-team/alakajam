@@ -192,17 +192,18 @@ export function stateForm(event: BookshelfModel): JSX.Element {
       <div class="form-group">
         <div class="row">
           <div class="col-md-6 col-lg-4">{formMacros.check("streamerOnlyTournament", "Streamer-only tournament", flags?.streamerOnlyTournament)}</div>
-          <div class="col-md-6 col-lg-4">{formMacros.check("scoreSpacePodium", "ScoreSpace podium", flags?.scoreSpacePodium)}
+          <div class="col-md-6 col-lg-4">{formMacros.check("specialAwards", "Special awards", flags?.specialAwards)}
             <span style="margin-left: -10px" class="mr-1">
               {formMacros.tooltip("The 1st, 2nd, and 3rd placed entries in the 7th rating category will be displayed "
-                + 'respectively for the Streamer choice, Solo choice and Team choice. Use the "Rankings" tab to set them.')}
+                + "as winners of special awards. Labels can be customized in the rankings page.")}
             </span></div>
           <div class="col-md-6 col-lg-4">{formMacros.check("hideStreamerMenu", "Hide Streamer Menu", flags?.hideStreamerMenu)}</div>
           <div class="col-md-6 col-lg-4">{formMacros.check("hideThemeResultsDetails",
             "Hide numbers in theme results", flags?.hideThemeResultsDetails)}</div>
           <div class="col-md-6 col-lg-4">{formMacros.check("rankedKarmaModifier", "Ranked karma modifier", flags?.rankedKarmaModifier)}
             <span style="margin-left: -10px" class="mr-1">
-              {formMacros.tooltip("Give a 10 points karma penalty to games having reached their required number of ratings. Can help rescuing games.")}
+              {formMacros.tooltip("Give a 10 points karma penalty to games having reached their required number of ratings. "
+                + "Can help rescuing games.")}
             </span></div>
         </div>
       </div>
