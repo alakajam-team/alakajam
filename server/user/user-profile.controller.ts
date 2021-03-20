@@ -1,9 +1,9 @@
 import { BookshelfModel, PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
-import enums from "server/core/enums";
 import forms from "server/core/forms";
 import entryService from "server/entry/entry.service";
 import highScoreService from "server/entry/highscore/highscore.service";
+import eventService from "server/event/event.service";
 import twitchService from "server/event/streamers/twitch.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
@@ -31,7 +31,7 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
     const externalEntries = [];
     entries.models.forEach((entry) => {
       if (entry.get("event_id") != null) {
-        if (entry.related<BookshelfModel>("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
+        if (eventService.isMainAlakajamEvent(entry.related<BookshelfModel>("event"))) {
           alakajamEntries.push(entry);
         } else {
           otherEntries.push(entry);

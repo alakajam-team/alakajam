@@ -2,6 +2,7 @@ import { BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
 import enums from "server/core/enums";
 import entryService from "server/entry/entry.service";
+import eventService from "server/event/event.service";
 import { CustomRequest, CustomResponse } from "server/types";
 
 /**
@@ -18,7 +19,7 @@ export async function dashboardEntries(req: CustomRequest, res: CustomResponse<C
   entryCollection.models.forEach((entry) => {
     if (entry.get("external_event") != null) {
       externalEntries.push(entry);
-    } else if (entry.related<BookshelfModel>("event").get("status_theme") !== enums.EVENT.STATUS_THEME.DISABLED) {
+    } else if (eventService.isMainAlakajamEvent(entry.related<BookshelfModel>("event"))) {
       alakajamEntries.push(entry);
     } else {
       otherEntries.push(entry);

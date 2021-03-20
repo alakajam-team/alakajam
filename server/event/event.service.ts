@@ -224,6 +224,10 @@ export class EventService {
     return flags && flags[flag];
   }
 
+  public isMainAlakajamEvent(event: BookshelfModel): boolean {
+    return event.get("name").endsWith("-alakajam");
+  }
+
 }
 
 export default new EventService();
