@@ -4,6 +4,7 @@ declare module "preact" {
   namespace JSX {
     interface IntrinsicElements {
       ["jsx-wrapper"]: HTMLAttributes<HTMLElement>;
+      ["iframe"]: HTMLAttributes<HTMLElement>;
     }
 
     interface HTMLAttributes<RefType extends EventTarget = EventTarget>
@@ -36,6 +37,7 @@ declare module "preact" {
       enctype?: string;
       formnovalidate?: boolean;
       charset?: string;
+      allow?: string;
     }
   }
 }

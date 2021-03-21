@@ -5,6 +5,7 @@ import entryService from "server/entry/entry.service";
 import highScoreService from "server/entry/highscore/highscore.service";
 import eventService from "server/event/event.service";
 import twitchService from "server/event/streamers/twitch.service";
+import youtubeService from "server/event/streamers/youtube.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -19,11 +20,12 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
     res.locals.pageTitle = profileUser.title;
     res.locals.pageDescription = forms.markdownToText(profileUser.details.body);
 
-    const [entries, posts, scores, isTwitchLive] = await Promise.all([
+    const [entries, posts, scores, isTwitchLive, isYoutubeLive] = await Promise.all([
       entryService.findUserEntries(profileUser),
       postService.findPosts({ userId: profileUser.id }),
       highScoreService.findUserScores(profileUser.id, { sortBy: "ranking" }),
-      twitchService.isLive(profileUser)
+      twitchService.isLive(profileUser),
+      youtubeService.isLive(profileUser)
     ]);
 
     const alakajamEntries = [];
@@ -41,6 +43,8 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
       }
     });
 
+    const liveYoutubeUrl = isYoutubeLive ? youtubeService.getEmbedUrl(profileUser) : undefined;
+
     res.render<CommonLocals>("user/user-profile", {
       ...res.locals,
       profileUser,
@@ -51,7 +55,8 @@ export async function userProfile(req: CustomRequest, res: CustomResponse<Common
       userScores: scores.models,
       medals: scores.countBy((userScore: BookshelfModel) => userScore.get("ranking")),
       userLikes: await likeService.findUserLikeInfo(posts.models as PostBookshelfModel[], res.locals.user),
-      isTwitchLive
+      isTwitchLive,
+      liveYoutubeUrl
     });
   } else {
     res.errorPage(404, "No user exists with name " + req.params.name);

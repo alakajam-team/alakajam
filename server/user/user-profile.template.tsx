@@ -12,7 +12,8 @@ import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 
 export default function render(context: CommonLocals): JSX.Element {
-  const { profileUser, user, isTwitchLive, alakajamEntries, externalEntries, otherEntries, posts, userScores, userLikes, medals } = context;
+  const { profileUser, user, isTwitchLive, liveYoutubeUrl, alakajamEntries, externalEntries, otherEntries,
+    posts, userScores, userLikes, medals } = context;
   const socialLinks: UserSocialLinks = profileUser.related("details").get("social_links") || {};
   const totalMedals = (medals[1] || 0) + (medals[2] || 0) + (medals[3] || 0);
   const hasAvatar = Boolean(profileUser.get("avatar"));
@@ -90,6 +91,12 @@ export default function render(context: CommonLocals): JSX.Element {
         {ifTrue(isTwitchLive, () =>
           <div class="mb-3">
             {userMacros.twitchEmbed(profileUser.details.social_links.twitch, { height: 500 })}
+          </div>
+        )}
+
+        {ifSet(liveYoutubeUrl, () =>
+          <div class="mb-3">
+            {userMacros.youtubeEmbed(liveYoutubeUrl, { height: 500 })}
           </div>
         )}
 
