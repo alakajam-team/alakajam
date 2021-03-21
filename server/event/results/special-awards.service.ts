@@ -1,6 +1,6 @@
 import { BookshelfModel } from "bookshelf";
 import { EventFlags } from "server/entity/event-details.entity";
-
+import caches from "server/core/cache";
 export class SpecialAwardsService {
 
   public isSpecialAwardsEnabled(event: BookshelfModel): boolean {
@@ -12,6 +12,9 @@ export class SpecialAwardsService {
     const eventDetails = event.related<BookshelfModel>("details");
     eventDetails.set("special_award_titles", specialAwardTitles);
     await eventDetails.save();
+
+    caches.eventsById.del(event.get("id"));
+    caches.eventsByName.del(event.get("name"));
   }
 
 }
