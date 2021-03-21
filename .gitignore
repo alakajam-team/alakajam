@@ -18,6 +18,7 @@
 *.pid
 *.backup
 *.stackdump
+*.tar.gz
 
 # OS-specific garbage
 .DS_Store
