@@ -233,6 +233,10 @@ export class RatingService {
   }
 
   public async refreshEntryKarma(entry: EntryBookshelfModel, event: BookshelfModel): Promise<void> {
+    if (!event) {
+      return; // external entry
+    }
+
     await entry.load(["details", "comments", "userRoles", "votes"]);
     const received = (await this.computeKarmaReceivedByUser(entry)).total;
     const given = (await this.computeKarmaGivenByUserAndEntry(entry, event)).total;
