@@ -33,7 +33,7 @@ export async function viewEventResults(req: CustomRequest, res: CustomResponse<E
 
   // Parse query
   const flags = event.related<BookshelfModel>("details").get("flags") as EventFlags;
-  let sortedBy = flags.specialAwards ? 7 : 1;
+  let sortedBy = 1;
   let division = flags.specialAwards ? undefined : eventService.getDefaultDivision(event);
   if (forms.isInt(req.query.sortBy?.toString())) {
     const parsedSortedBy = forms.parseInt(req.query.sortBy.toString());
