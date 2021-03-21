@@ -149,7 +149,7 @@ export class RatingService {
    * Finds the votes a user cast during an event
    */
   public async findVoteHistory(userId: number, event: BookshelfModel,
-    options: { pageSize?: number; withRelated?: string[] } = {}): Promise<BookshelfCollection> {
+                               options: { pageSize?: number; withRelated?: string[] } = {}): Promise<BookshelfCollection> {
     const query = models.EntryVote.where({
       user_id: userId,
       event_id: event.get("id"),
@@ -278,7 +278,7 @@ export class RatingService {
 
   /* Compute given score using comments & votes from all the team */
   public async computeKarmaGivenByUserAndEntry(entry: EntryBookshelfModel, event: BookshelfModel):
-    Promise<KarmaGivenByUserAndEntry> {
+  Promise<KarmaGivenByUserAndEntry> {
     const givenByUserAndEntry: Record<string, { commentKarma: number; voteKarma?: number; userId: number; entryId: number }> = {};
     const userRoles = entry.related<BookshelfCollection>("userRoles");
     for (const userRole of userRoles.models) {

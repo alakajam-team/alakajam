@@ -9,7 +9,6 @@ import { EntryLocals } from "../entry.middleware";
 import { entryAuthors } from "./components/entry-authors.template";
 import entryHeader from "./components/entry-header.template";
 import entryLinks from "./components/entry-links.template";
-import entryMetadataEvent from "./components/entry-metadata.template";
 import entryMetadata from "./components/entry-metadata.template";
 import { entryPicture } from "./components/entry-picture.template";
 import { entryRatingResults } from "./components/rating/entry-rating-results.template";

@@ -1,6 +1,5 @@
 import { BookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
-import enums from "server/core/enums";
 import entryService from "server/entry/entry.service";
 import eventService from "server/event/event.service";
 import { CustomRequest, CustomResponse } from "server/types";

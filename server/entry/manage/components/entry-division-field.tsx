@@ -36,7 +36,7 @@ export function divisionField(entry: BookshelfModel, event: BookshelfModel, exte
             const rulesLink = forms.isId(event.get("status_rules")) ? links.routeUrl(event.get("status_rules"), "post") : event.get("status_rules");
             return <div>
               Check the <a href={rulesLink !== "off" ? rulesLink : "/article/docs"}>Docs section</a> for detailed rules on each division.
-            {isEntryOwner ? "" : "Only the entry owner can change this setting."}
+              {isEntryOwner ? "" : "Only the entry owner can change this setting."}
             </div>;
           })}
           {ifTrue(event.get("status_entry") !== "open", () =>
