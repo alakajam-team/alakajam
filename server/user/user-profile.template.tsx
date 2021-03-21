@@ -6,7 +6,7 @@ import { date, markdown, relativeTime } from "server/core/templating-filters";
 import { UserSocialLinks } from "server/entity/user-details.entity";
 import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as eventMacros from "server/event/event.macros";
-import { ifFalse, ifTrue } from "server/macros/jsx-utils";
+import { ifFalse, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";
 import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
@@ -58,19 +58,24 @@ export default function render(context: CommonLocals): JSX.Element {
         )}
 
         <div class="spacing">
-          {ifTrue(Boolean(socialLinks.website), () =>
+          {ifSet(socialLinks.website, () =>
             <div class="profile__social-link">
               <a href={socialLinks.website}>
                 <span class="fas fa-home mr-2" style="color: black; font-size: 24px"></span>Website
               </a>
             </div>
           )}
-          {ifTrue(Boolean(socialLinks.twitch), () =>
+          {ifSet(socialLinks.twitch, () =>
             <div class="profile__social-link">
               {userMacros.twitchLink(profileUser)}
             </div>
           )}
-          {ifTrue(Boolean(socialLinks.twitter), () =>
+          {ifSet(socialLinks.youtube, () =>
+            <div class="profile__social-link">
+              {userMacros.youtubeLink(profileUser)}
+            </div>
+          )}
+          {ifSet(socialLinks.twitter, () =>
             <div class="profile__social-link">
               <a href={`https://www.twitter.com/${socialLinks.twitter}`}>
                 <img src={links.staticUrl("/static/images/social/twitter.svg")} class="no-border mr-2" style="width: 32px" />

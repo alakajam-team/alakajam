@@ -9,6 +9,7 @@ export interface UserSocialLinks {
   website?: string;
   twitter?: string;
   twitch?: string;
+  youtube?: string;
 }
 
 /**

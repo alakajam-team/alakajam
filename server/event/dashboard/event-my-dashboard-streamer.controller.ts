@@ -52,6 +52,7 @@ export async function saveStreamerPreferences(req: CustomRequest, res: CustomRes
     await user.loadDetails();
     const socialLinks = user.details.social_links;
     socialLinks.twitch = forms.sanitizeString(req.body.twitch);
+    socialLinks.youtube = forms.sanitizeString(req.body.youtube);
     await userService.save(user);
 
     res.locals.alerts.push({

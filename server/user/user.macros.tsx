@@ -68,6 +68,15 @@ export function twitchLink(user: User): JSX.Element {
   }
 }
 
+export function youtubeLink(user: User): JSX.Element {
+  const socialLinks: UserSocialLinks = user.related("details").get("social_links");
+  if (socialLinks?.youtube) {
+    return <a href={socialLinks.youtube}>
+      <img src={links.staticUrl("/static/images/social/youtube.svg")} class="no-border mr-2" style="width: 32px" /> YouTube
+    </a>;
+  }
+}
+
 export function twitchEmbed(twitchUsername: string, options: { height?: number; autoplay?: boolean } = {}): JSX.Element {
   if (twitchUsername) {
     return <>

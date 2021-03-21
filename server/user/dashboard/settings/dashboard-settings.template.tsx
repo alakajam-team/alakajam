@@ -2,6 +2,7 @@ import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import security from "server/core/security";
+import { UserSocialLinks } from "server/entity/user-details.entity";
 import * as formMacros from "server/macros/form.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
@@ -10,7 +11,7 @@ import dashboardBase from "../dashboard.base.template";
 export default function render(context: CommonLocals): JSX.Element {
   const { dashboardUser, dashboardAdminMode, timezones } = context;
 
-  const socialLinks = dashboardUser.related("details").get("social_links") || {};
+  const socialLinks: UserSocialLinks = dashboardUser.related("details").get("social_links") || {};
 
   formMacros.registerEditorScripts(context);
 
@@ -84,6 +85,14 @@ export default function render(context: CommonLocals): JSX.Element {
                 Twitch username
               </label>
               <input type="text" class="form-control" id="twitch" name="twitch" value={socialLinks.twitch} />
+            </div>
+
+            <div class="form-group">
+              <label for="youtube">
+                <img src={links.staticUrl("/static/images/social/youtube.svg")} class="no-border mr-1" style="width: 20px" />
+                YouTube channel URL
+              </label>
+              <input type="text" class="form-control" id="youtube" name="youtube" value={socialLinks.youtube} />
             </div>
 
             <div class="form-group">

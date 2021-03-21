@@ -40,7 +40,8 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
   dashboardUser.details.social_links = {
     website: req.body.website,
     twitter: forms.sanitizeString(req.body.twitter.replace(/.*\//g /* cleanup full URLs */, "").replace("@", "")),
-    twitch: forms.sanitizeString(req.body.twitch).replace(/.*\//g /* cleanup full URLs */, "")
+    twitch: forms.sanitizeString(req.body.twitch).replace(/.*\//g /* cleanup full URLs */, ""),
+    youtube: forms.sanitizeString(req.body.youtube)
   };
   if (res.locals.dashboardAdminMode) {
     dashboardUser.disallow_anonymous = req.body.disallow_anonymous === "on";
