@@ -3,16 +3,16 @@ Kajam rules
 
 ## Divisions
 
-Anyone can enter in any of the following divisions:
+Anyone can enter in one of the following divisions, unless a particular Kajam is organized differently:
 
 * **Ranked**, in which you make a game either alone or as a team ;
 * **Unranked**, for those not interested in the competitive aspect of the event, or who want to enter without focusing on the monthly topic.
 
-Everyone has around three weeks to submit their entries.
+Everyone has usually three to four weeks to submit their entries.
 
 ## Rankings
 
-After the jam, *everyone* with an Alakajam! account is able to play, rate and comment other people's games for one week, until the final results are released.
+In the case of a ranked jam, *everyone* with an Alakajam! account is able to play, rate and comment other people's games for one week, until the final results are released.
 
 On each Ranked game you play, you will get to rate **a single aspect of the game, being the topic of the month**. You won't even see an *Overall* rating category, so making a finished, polished game with enough contents is not necessarily the goal!
 
