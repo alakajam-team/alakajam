@@ -53,6 +53,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Game Pencil](http://gamepencil.pawbyte.com/) | A cross-platform 2D engine inspired by Unity & Game Maker, except Open Source. Uses JS scripting. |
 | [PlayCanvas](https://playcanvas.com) | Web-based, collaborative 3D engine, think Google Docs except for game making. Free to use for public projects. Multi-platform. |
 | [GB Studio](https://www.gbstudio.dev/) | Game Boy ROM creation engine, also exports to the web and mobile. No coding required, open source. |
+| [Wick Editor](https://www.wickeditor.com) | A web editor for animation and games, largely inspired by the Flash editor. |
 
 **Genre-specific engines**
 
