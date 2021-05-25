@@ -1,4 +1,5 @@
 import * as crypto from "crypto";
+import { Request } from "express";
 import * as randomKey from "random-key";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
@@ -108,10 +109,10 @@ export class UserService {
    * Registers a new user
    * @param email
    * @param name
-   * @param passwor unencrypted password (will be hashed before storage)
+   * @param password unencrypted password (will be hashed before storage)
    * @returns the created user, or an error message
    */
-  public async register(email: string, name: string, password: string): Promise<User | string> {
+  public async register(email: string, name: string, password: string, reqForTrace?: Request): Promise<User | string> {
     if (!forms.isUsername(name)) {
       return "Username is invalid. They may only contain letters, numbers, underscores or hyphens," +
         ` and must start with a letter. Length must be at least ${constants.USERNAME_MIN_LENGTH}. `;
@@ -137,7 +138,14 @@ export class UserService {
 
     const user = new User(name, email);
     this.setPassword(user, password);
-    return userRepository.save(user);
+    const savedUser = await userRepository.save(user);
+
+    if (reqForTrace) {
+      const ip = reqForTrace.headers['x-forwarded-for'] || reqForTrace.socket.remoteAddress;
+      log.info(`User ${name} has just registered (ip=${ip})`)
+    }
+
+    return savedUser;
   }
 
   /**

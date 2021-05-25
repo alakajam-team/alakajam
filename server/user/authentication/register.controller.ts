@@ -61,7 +61,7 @@ export class RegisterController {
     });
 
     if (!formAlerts) {
-      const result = await this.userService.register(req.body.email, req.body.name, req.body.password);
+      const result = await this.userService.register(req.body.email, req.body.name, req.body.password, req);
 
       if (typeof result === "object") {
         if (req.body.timezone) {
