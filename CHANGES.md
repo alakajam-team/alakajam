@@ -2,6 +2,35 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/alakajam-team/alakajam)!
 
+### June 2021
+
+* Restore the Jamician as the owner of the site
+
+### March 2021
+
+* Add support for read-only mode (just in case of the server room burning down, requiring a restoration from a very old database back until we recover - or not - a more recent version of the database)
+* Add support for YouTube channels
+* Better support for special awards in events
+* Entry page layout changes (mostly metadata reorganization)
+* Give a temporary karma penalty to games without links
+* Let admins refresh the games Karma event-wise
+* Let mods change the division of games
+
+### February 2021
+
+* Remind people to set links and platforms in their entries
+* Make event stats in homepage clickable
+* Add clickable anchors in docs
+
+### January 2021
+
+* Simplify links in headers, small Events page layout changes
+* Filter homepage Twitchs embed to feature Alakajam-related streams only
+
+### December 2020
+
+* Reinforce user registration Captcha
+
 ### November 2020
 
 * Minor layout changes in event results page

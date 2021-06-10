@@ -330,7 +330,7 @@ export class EntryService {
       .query((qb) => {
         void qb.leftJoin("entry_details", "entry_details.entry_id", "entry.id")
           // do not rescue those who really didn't participate
-          // .where("entry_details.rating_count", ">", Math.floor(minRatings / 4))
+          .where("entry_details.rating_count", ">", Math.floor(minRatings / 4))
           .where("entry_details.rating_count", "<", minRatings)
           .leftJoin("entry_vote", function() {
             this.on("entry_vote.entry_id", "=", "entry.id")
