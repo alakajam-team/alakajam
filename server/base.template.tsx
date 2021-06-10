@@ -25,16 +25,16 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
       <meta name="twitter:site" content="@AlakajamBang" />
       <meta name="twitter:title" content={pageTitle ? pageTitle : "Alakajam!"} />
       <meta name="twitter:description" content={truncate(pageDescription, { length: 160 })} />
-      <meta name="twitter:image" content={pageImage || links.staticUrl("/static/images/logo.png")} />
+      <meta name="twitter:image" content={pageImage || links.staticUrl("/static/images/logo.png?jamician")} />
       <meta property="og:title" content={pageTitle ? pageTitle : "Alakajam!"} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={rootUrl + path} />
-      <meta property="og:image" content={pageImage || links.staticUrl("/static/images/logo.png")} />
+      <meta property="og:image" content={pageImage || links.staticUrl("/static/images/logo.png?jamician")} />
       <meta name="description" content={truncate(pageDescription, { length: 160 })} />
 
-      <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon16.png")} sizes="16x16" />
-      <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon32.png")} sizes="32x32" />
-      <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon196.png")} sizes="196x196" />
+      <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon16.png?jamician")} sizes="16x16" />
+      <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon32.png?jamician")} sizes="32x32" />
+      <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon196.png?jamician")} sizes="196x196" />
       <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet" />
       <style type="text/css">{context.inlineStyles.join("\n")}</style>
       <link rel="stylesheet" type="text/css" href={links.staticUrl("/dist/client/css/index.css?" + launchTime)} />

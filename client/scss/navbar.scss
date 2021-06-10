@@ -34,14 +34,14 @@ $event-navbar-height: 50px;
     float: left;
     width: 220px;
     height: $navbar-brand-height;
-    background: url('/static/images/brand.svg?jellymician');
+    background: url('/static/images/brand.svg?jamician');
     padding: 0;
   }
     
   & .navbar-brand__hover {
     width: 1px; /* force preload */
     height: 1px;
-    background: url('/static/images/brand_hover.svg?jellymician');
+    background: url('/static/images/brand_hover.svg?jamician');
   }
   
   & .navbar-brand:hover .navbar-brand__hover {

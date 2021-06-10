@@ -11,4 +11,4 @@ echo "If package.json has changed, don't forget to do a 'npm install'."
 echo "If static files have changed, don't forget to do a 'git pull'."
 
 # Manual actions on the server, as alakajam
-# > tar -xzf dist.tar.gz && rm dist.tar.gz && pm2 restart alakajam
+# > git pull && tar -xzf dist.tar.gz && rm dist.tar.gz && pm2 restart alakajam
