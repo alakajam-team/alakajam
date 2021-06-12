@@ -5,6 +5,11 @@ import log from "./log";
 
 const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 
+export interface CaptchaOption {
+  label: string;
+  icon: string;
+}
+
 export interface Config {
   readonly SERVER_PORT: number;
   readonly ROOT_URL: string;
@@ -43,6 +48,7 @@ export interface Config {
   readonly DEBUG_ARTICLES: boolean;
   readonly DEBUG_LONG_PROMISE_TRACES: boolean;
   readonly DEBUG_DISABLE_SLOW_DOWN: boolean;
+  readonly DEBUG_DISABLE_CAPTCHA: boolean;
 
   // Debug: trace options
   readonly LOG_LEVEL: "none"|"error"|"warn"|"info"|"debug";
@@ -50,6 +56,10 @@ export interface Config {
   readonly DEBUG_TRACE_SLOW_SQL: number;
   readonly DEBUG_TRACE_REQUESTS: boolean;
   readonly DEBUG_TRACE_SLOW_REQUESTS: number;
+
+  // Captcha
+  readonly CAPTCHA_GROUP_LARGE: CaptchaOption[];
+  readonly CAPTCHA_GROUP_SMALL: CaptchaOption[];
 }
 
 const SOURCES_ROOT = path.dirname(findUp.sync("package.json", { cwd: __dirname }));

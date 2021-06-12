@@ -43,6 +43,7 @@ module.exports = {
   DEBUG_ARTICLES: true, // Uses the local version of the articles rather than downloading them from Github
   DEBUG_LONG_PROMISE_TRACES: false, // Enables better stack traces for Promises, at a performance and stability (Knex support) cost
   DEBUG_DISABLE_SLOW_DOWN: false, // Disables mechanisms to slow down spammers, mostly useful for E2E and load testing
+  DEBUG_DISABLE_CAPTCHA: false, // Disable human verification tests
 
   // Debug: trace options
   LOG_LEVEL: 'debug', // Verbose level among 'none', 'error', 'warn', 'info', 'debug'
@@ -50,4 +51,12 @@ module.exports = {
   DEBUG_TRACE_SLOW_SQL: -1, // Traces SQL calls taking more than the specified time (in milliseconds, use -1 to disable)
   DEBUG_TRACE_REQUESTS: false, // Enables route debug mode to trace request routes & timing
   DEBUG_TRACE_SLOW_REQUESTS: -1, // Traces HTTP requests calls taking more than the specified time (in milliseconds, use -1 to disable)
+  
+  // Captcha
+  CAPTCHA_GROUP_LARGE: [
+    { label: 'castle', icon: 'fab fa-fort-awesome' }
+  ],
+  CAPTCHA_GROUP_SMALL: [
+    { label: 'flower', icon: 'fab fa-fort-awesome' }
+  ]
 }

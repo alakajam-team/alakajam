@@ -70,7 +70,6 @@ showdownConverter.setFlavor("github");
 const sanitizeHtmlOptions = {
   allowedTags: constants.ALLOWED_POST_TAGS,
   allowedAttributes: constants.ALLOWED_POST_ATTRIBUTES,
-  allowedClasses: {}, // see below
   transformTags: {
     iframe: (tagName, attribs) => {
       if (attribs.src) {
@@ -92,11 +91,6 @@ const sanitizeHtmlOptions = {
     }
   },
 };
-for (const allowedTag in constants.ALLOWED_POST_ATTRIBUTES) {
-  if (constants.ALLOWED_POST_ATTRIBUTES[allowedTag].includes("class")) {
-    sanitizeHtmlOptions.allowedClasses[allowedTag] = constants.ALLOWED_POST_CLASSES;
-  }
-}
 
 const markdownSnippets = {
   PAYPAL_BUTTON: constants.PAYPAL_BUTTON,

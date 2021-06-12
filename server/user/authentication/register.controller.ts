@@ -4,16 +4,22 @@ import forms from "server/core/forms";
 import { allRules, rule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import userServiceSingleton, { UserService } from "server/user/user.service";
-import userTimezoneServiceSingleton, { UserTimeZoneService } from "../user-timezone.service";
+import captchaServiceSingleton, { CaptchaQuestion, CaptchaService } from "../captcha.service";
+import userTimezoneServiceSingleton, { TimezoneOption, UserTimeZoneService } from "../user-timezone.service";
 import { loginPost } from "./login.controller";
 
 export const TEMPLATE_REGISTER = "user/authentication/register";
 
+export interface RegisterContext extends CommonLocals {
+  captcha: CaptchaQuestion;
+  timezones: TimezoneOption[];
+}
 export class RegisterController {
 
   public constructor(
     private userService: UserService = userServiceSingleton,
-    private userTimezoneService: UserTimeZoneService = userTimezoneServiceSingleton) { }
+    private userTimezoneService: UserTimeZoneService = userTimezoneServiceSingleton,
+    private captchaService: CaptchaService = captchaServiceSingleton) { }
 
   /**
    * Register form
@@ -26,9 +32,10 @@ export class RegisterController {
       return;
     }
 
-    res.render<CommonLocals>(TEMPLATE_REGISTER, {
+    res.render<RegisterContext>(TEMPLATE_REGISTER, {
       ...req.body,
       ...res.locals,
+      captcha: this.captchaService.generateCaptcha(),
       timezones: await this.userTimezoneService.getAllTimeZonesAsOptions()
     });
   }
@@ -44,6 +51,11 @@ export class RegisterController {
       return;
     }
 
+    const captchaValidator = () => this.captchaService.validateCaptcha({
+      key: req.body["captcha-key"],
+      answer: req.body["captcha-answer"],
+    });
+
     const formAlerts = await validateForm(req.body, {
       "name": allRules(
         rule(forms.isSet, "Name is not set"),
@@ -54,10 +66,8 @@ export class RegisterController {
       "password": rule(forms.isSet, "Password is not set"),
       "password-bis": rule((passwordBis) => passwordBis === req.body.password,
         "Passwords do not match"),
-      "captcha": allRules(
-        rule(forms.isSet, "Are you human???"),
-        rule((captcha) => captcha.trim().toLowerCase()[0] === "y", "You didn't pass the human test!")),
-      "gotcha": rule((gotcha) => gotcha?.trim() === "", "You didn't pass the human test!"),
+      "captcha": rule(captchaValidator, "You didn't pass the human verification test"),
+      "gotcha": rule((gotcha) => gotcha?.trim() === "", "You didn't pass the human verification test"),
       "terms-and-conditions": rule(forms.isSet, "The privacy policy must be accepted"),
     });
 

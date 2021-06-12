@@ -6,6 +6,7 @@
 
 * Restore the Jamician as the owner of the site
 * Make it mandatory to accept the privacy policy during registration
+* New keyword-based captcha  
 
 ### March 2021
 

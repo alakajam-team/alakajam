@@ -2,6 +2,11 @@ import * as countriesAndTimezones from "countries-and-timezones";
 import * as luxon from "luxon";
 import cache, { TTL_ONE_DAY } from "server/core/cache";
 
+export interface TimezoneOption {
+  id: string;
+  label: string;
+}
+
 export class UserTimeZoneService {
 
   public getAllTimeZones(): Promise<TimeZone[]> {
@@ -13,7 +18,7 @@ export class UserTimeZoneService {
     }, TTL_ONE_DAY);
   }
 
-  public async getAllTimeZonesAsOptions(): Promise<Array<{ id: string; label: string }>> {
+  public async getAllTimeZonesAsOptions(): Promise<TimezoneOption[]> {
     const timezoneData = await this.getAllTimeZones();
     return timezoneData.map((timezone) => ({ id: timezone.id, label: this.formatTimezone(timezone) }));
   }

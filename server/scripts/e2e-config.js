@@ -22,6 +22,7 @@ module.exports = {
   DEBUG_ARTICLES: true, 
   DEBUG_LONG_PROMISE_TRACES: false, 
   DEBUG_DISABLE_SLOW_DOWN: true, 
+  DEBUG_DISABLE_CAPTCHA: true,
   
   LOG_LEVEL: 'debug', 
   DEBUG_TRACE_SQL: false, 

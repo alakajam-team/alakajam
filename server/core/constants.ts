@@ -32,12 +32,13 @@ export default {
   ALLOWED_POST_TAGS: [
     "b", "i", "em", "strong", "a", "u", "del", "code", "br", "hr", "iframe", "img", "h1", "h2", "h3", "h4", "h5", "h6",
     "p", "blockquote", "pre", "ul", "ol", "li", "video", "source", "table", "thead", "tbody", "tr", "th", "td",
-    "progress", "div", "details", "summary"
+    "progress", "div", "details", "summary", "span"
   ],
   ALLOWED_POST_ATTRIBUTES: {
     div: ["class"],
     p: ["class"],
     a: ["href", "class", "name"],
+    i: ["class"],
     iframe: [
       "src", "width", "height", "class", "frameborder",
       "webkitallowfullscreen", "mozallowfullscreen", "allowfullscreen"
@@ -46,12 +47,9 @@ export default {
     video: ["poster", "preload", "autoplay", "muted", "loop", "webkit-playsinline", "width", "height", "class"],
     source: ["src", "type"],
     progress: ["value", "max", "width"],
-    details: ["class"]
+    details: ["class"],
+    span: ["class"]
   },
-  ALLOWED_POST_CLASSES: [
-    "float-left", "float-right", "pull-left", "pull-right", "text-left", "text-center", "text-right",
-    "spoiler", "indent", "btn", "btn-outline-primary", "btn-primary", "card"
-  ],
   ALLOWED_IFRAME_HOSTS: [
     "www.youtube-nocookie.com"
   ],

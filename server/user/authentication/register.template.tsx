@@ -1,11 +1,12 @@
 import React, { JSX } from "preact";
 import base from "server/base.template";
-import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
+import { markdown } from "server/core/templating-filters";
 import * as formMacros from "server/macros/form.macros";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
+import { RegisterContext } from "./register.controller";
 
-export default function render(context: CommonLocals): JSX.Element {
+export default function render(context: RegisterContext): JSX.Element {
   const { name, email, timezones, timezone, captcha } = context;
 
   return base(context,
@@ -41,8 +42,9 @@ export default function render(context: CommonLocals): JSX.Element {
             </div>
             {userDashboardMacros.timezoneField(timezones, timezone)}
             <div class="form-group">
-              <label for="captcha">Are you human? (yes or no)</label>
-              <input type="text" class="form-control" id="captcha" name="captcha" value={captcha} required />
+              <label for="captcha-answer" dangerouslySetInnerHTML={markdown(captcha.questionMarkdown)} />
+              <input type="hidden" name="captcha-key" value={captcha.key} />
+              <input type="text" class="form-control" id="captcha" name="captcha-answer" placeholder="Type the answer" required />
             </div>
             <div id="gotcha-group" class="form-group">
               <div id="gotcha-explanation">This field is hidden. Please do not answer it.</div>
