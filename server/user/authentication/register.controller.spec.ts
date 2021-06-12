@@ -39,7 +39,7 @@ describe("Register controller", () => {
     await registerController.register(req, res);
 
     expect(isAlertPresent(res, {
-      message: "You didn't pass the human test!",
+      message: "You didn't pass the human verification test",
     })).to.be.true;
     expect(res.renderSpy.calledWith(TEMPLATE_REGISTER)).to.be.true;
   });

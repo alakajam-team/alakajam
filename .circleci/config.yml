@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run: npm ci
       - run: npm run build
-      - run: npm run test
+      - run: npm run test:ci
       - store_artifacts: 
           path: /root/project/cypress/screenshots
           destination: screenshots
