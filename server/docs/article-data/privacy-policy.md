@@ -1,5 +1,8 @@
 Privacy Policy
-> Tip: All users can delete their account from their [Dashboard](/dashboard/settings). This effectively deletes all personal information from the live database permanently.
+
+> ### <img src="/static/images/favicon16.png" /> In practice  
+> All users can delete their account from their [Dashboard](/dashboard/settings). This effectively deletes most personal information from our database, permanently.  
+> Any eventual remaining data (such as technical logs and database backups) is only kept temporarily and for the legimitate interests of security & abuse detection purposes. Such remaining data can still be cleared [on request](https://alakajam.com/article/about/welcome#contact-us), to the best of our ability.
 
 This Privacy Policy governs the manner in which Alakajam! collects, uses, maintains and discloses information collected from users (each, a "User") of the https://alakajam.com website ("Site"). This privacy policy was built using the https://PrivacyPolicies.com generator.
 
@@ -16,6 +19,7 @@ Our Site may use "cookies" to enhance User experience. User's web browser places
 Alakajam! may collect and use Users personal information for the following purposes:
 
 * To run and operate our Site: We may need your information display content on the Site correctly.
+* To block abusive contents: Collected information helps us detect bots and other abusive visitors, and prevent them from submitting unwanted contents to the Site.
 * To personalize user experience: We may use information in the aggregate to understand how our Users as a group use the services and resources provided on our Site.
 * To send periodic emails: We may use the email address to send User information and updates pertaining to their order. It may also be used to respond to their inquiries, questions, and/or other requests.
 
@@ -37,4 +41,4 @@ By using this Site, you signify your acceptance of this policy. If you do not ag
 ## Contacting us
 If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please [contact us](/article/about).
 
-> This document was last updated on May 30, 2018
+> This document was last updated on June 12, 2021 ([file history](https://github.com/alakajam-team/alakajam/commits/master/server/docs/article-data/privacy-policy.md))

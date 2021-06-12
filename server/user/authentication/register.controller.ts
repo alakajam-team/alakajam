@@ -58,6 +58,7 @@ export class RegisterController {
         rule(forms.isSet, "Are you human???"),
         rule((captcha) => captcha.trim().toLowerCase()[0] === "y", "You didn't pass the human test!")),
       "gotcha": rule((gotcha) => gotcha?.trim() === "", "You didn't pass the human test!"),
+      "terms-and-conditions": rule(forms.isSet, "The privacy policy must be accepted"),
     });
 
     if (!formAlerts) {

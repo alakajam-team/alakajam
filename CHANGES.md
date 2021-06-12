@@ -5,6 +5,7 @@
 ### June 2021
 
 * Restore the Jamician as the owner of the site
+* Make it mandatory to accept the privacy policy during registration
 
 ### March 2021
 

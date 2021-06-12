@@ -52,6 +52,14 @@ export default function render(context: CommonLocals): JSX.Element {
             <div class="form-group">
               <div class="checkbox">
                 <label>
+                  <input type="checkbox" name="terms-and-conditions" />&nbsp;
+                  I acknowledge and accept the website's <a target="akj-privacy" href="/article/about/privacy-policy">Privacy Policy</a>
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
                   <input type="checkbox" name="remember-me" /> Remember me
                 </label>
               </div>
