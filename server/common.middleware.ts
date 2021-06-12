@@ -1,4 +1,5 @@
 import { BookshelfModel } from "bookshelf";
+import * as crypto from "crypto";
 import { NextFunction, Response } from "express";
 import { JSX } from "preact";
 import forms from "server/core/forms";
@@ -106,6 +107,11 @@ export async function commonMiddleware(req: CustomRequest, res: Response, next: 
   // JSX template tooling
   res.locals.scripts = [];
   res.locals.inlineStyles = [];
+
+  // Generate session ID
+  if (!req.session.sessionId) {
+    req.session.sessionId = crypto.randomBytes(10).toString("hex");
+  }
 
   // Fetch current user
   let userTask = null;

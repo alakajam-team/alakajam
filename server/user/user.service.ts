@@ -141,8 +141,8 @@ export class UserService {
     const savedUser = await userRepository.save(user);
 
     if (reqForTrace) {
-      const ip = reqForTrace.headers['x-forwarded-for'] || reqForTrace.socket.remoteAddress;
-      log.info(`User ${name} has just registered (ip=${ip})`)
+      const ip = reqForTrace.headers["x-forwarded-for"] || reqForTrace.socket.remoteAddress;
+      log.info(`User ${name} has just registered (ip=${ip})`);
     }
 
     return savedUser;

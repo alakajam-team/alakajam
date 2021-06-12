@@ -14,6 +14,7 @@ export interface CustomExpressSession {
   cookie: any;
 
   // Session contents
+  sessionId: string;
   userId: number;
   alerts: Alert[];
 
@@ -35,7 +36,7 @@ export interface CustomApplicationLocals {
 
 export interface CustomRequest extends Request {
   /**
-   * The user session, the object can be used to store any data we want to retain across the user session.
+   * The user session. The object can be used to store any data we want to retain across the user session.
    * Be careful to save it (with session.saveAsync()) if you set anything, otherwise it will make the server stateful.
    */
   session: CustomExpressSession;
