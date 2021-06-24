@@ -20,6 +20,9 @@ export class Mailer {
           user: config.SMTP_USERNAME,
           pass: config.SMTP_PASSWORD,
         },
+        tls: {
+          rejectUnauthorized: false
+        }
       });
 
       this.mailTransport.verify((err) => {

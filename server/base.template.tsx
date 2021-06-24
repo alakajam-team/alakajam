@@ -36,7 +36,7 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
       <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon32.png?jamician")} sizes="32x32" />
       <link rel="icon" type="image/png" href={links.staticUrl("/static/images/favicon196.png?jamician")} sizes="196x196" />
       <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet" />
-      <style type="text/css">{context.inlineStyles.join("\n")}</style>
+      <style type="text/css">{context.inlineStyles?.join("\n")}</style>
       <link rel="stylesheet" type="text/css" href={links.staticUrl("/dist/client/css/index.css?" + launchTime)} />
       <script id="js-alerts" type="application/json" dangerouslySetInnerHTML={{ __html: JSON.stringify(context.alerts) }} />
     </head>
@@ -229,7 +229,7 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
       {ifSet(process.env.BROWSER_REFRESH_URL, () => <script src={process.env.BROWSER_REFRESH_URL}></script>)}
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/vendors.js?" + launchTime)}></script>
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/site.js?" + launchTime)}></script>
-      {context.scripts.map(scriptUrl => <script type="text/javascript" src={scriptUrl}></script>)}
+      {context.scripts?.map(scriptUrl => <script type="text/javascript" src={scriptUrl}></script>)}
       {analytics()}
     </body>
   </html>;
