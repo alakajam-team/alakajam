@@ -25,7 +25,7 @@ export default function render(context: CommonLocals): JSX.Element {
         <div class="container thin">
           {postMacros.post(themesPost, { readingUser: user, readingUserLikes: userLikes })}
         </div>
-      )};
+      )}
 
       {ifNotSet(themesPost, () =>
         <div class="container themes">
