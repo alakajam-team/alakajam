@@ -1,13 +1,16 @@
 import React, { JSX } from "preact";
 import base from "server/base.template";
+import config from "server/core/config";
 import constants from "server/core/constants";
-import { markdown } from "server/core/templating-filters";
 import * as formMacros from "server/macros/form.macros";
+import { ifSet } from "server/macros/jsx-utils";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
 import { RegisterContext } from "./register.controller";
 
 export default function render(context: RegisterContext): JSX.Element {
-  const { name, email, timezones, timezone, captcha } = context;
+  const { name, email, timezones, timezone } = context;
+
+  context.scripts.push("https://js.hcaptcha.com/1/api.js");
 
   return base(context,
     <div class="container thinner">
@@ -41,32 +44,26 @@ export default function render(context: RegisterContext): JSX.Element {
               <input type="password" class="form-control" id="password-bis" name="password-bis" required />
             </div>
             {userDashboardMacros.timezoneField(timezones, timezone)}
-            <div class="form-group">
-              <label for="captcha-answer" dangerouslySetInnerHTML={markdown(captcha.questionMarkdown)} />
-              <input type="hidden" name="captcha-key" value={captcha.key} />
-              <input type="text" class="form-control" id="captcha" name="captcha-answer" placeholder="Type the answer" required />
-            </div>
             <div id="gotcha-group" class="form-group">
               <div id="gotcha-explanation">This field is hidden. Please do not answer it.</div>
               <label for="gotcha">Are you an automaton?</label>
               <input type="text" class="form-control" id="gotcha" name="gotcha" value="" aria-describedby="gotcha-explanation" autocomplete="off" />
             </div>
-            <div class="form-group">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="terms-and-conditions" />&nbsp;
-                  I acknowledge and accept the website's <a target="akj-privacy" href="/article/about/privacy-policy">Privacy Policy</a>
-                </label>
-              </div>
+            <div class="form-group mt-4">
+              <label>
+                <input type="checkbox" name="terms-and-conditions" /> I acknowledge and accept the website's{" "}
+                <a target="akj-privacy" href="/article/about/privacy-policy"> Privacy Policy</a>
+              </label>
+              <label>
+                <input type="checkbox" name="remember-me" /> Remember me
+              </label>
             </div>
-            <div class="form-group">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="remember-me" /> Remember me
-                </label>
-              </div>
-            </div>
+            {ifSet(config.HCAPTCHA_SITEKEY, () =>
+              <div class="h-captcha mb-3" data-sitekey={config.HCAPTCHA_SITEKEY}></div>
+            )}
+
             <button type="submit" class="btn btn-primary">Submit</button>
+
           </form>
         </div>
       </div>

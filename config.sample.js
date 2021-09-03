@@ -53,10 +53,6 @@ module.exports = {
   DEBUG_TRACE_SLOW_REQUESTS: -1, // Traces HTTP requests calls taking more than the specified time (in milliseconds, use -1 to disable)
   
   // Captcha
-  CAPTCHA_GROUP_LARGE: [
-    { label: 'castle', icon: 'fab fa-fort-awesome' }
-  ],
-  CAPTCHA_GROUP_SMALL: [
-    { label: 'flower', icon: 'fab fa-fort-awesome' }
-  ]
+  // HCAPTCHA_SITE_KEY: '',
+  // HCAPTCHA_SECRET: ''
 }

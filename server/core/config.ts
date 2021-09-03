@@ -5,11 +5,6 @@ import log from "./log";
 
 const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 
-export interface CaptchaOption {
-  label: string;
-  icon: string;
-}
-
 export interface Config {
   readonly SERVER_PORT: number;
   readonly ROOT_URL: string;
@@ -58,8 +53,8 @@ export interface Config {
   readonly DEBUG_TRACE_SLOW_REQUESTS: number;
 
   // Captcha
-  readonly CAPTCHA_GROUP_LARGE: CaptchaOption[];
-  readonly CAPTCHA_GROUP_SMALL: CaptchaOption[];
+  readonly HCAPTCHA_SITEKEY?: string;
+  readonly HCAPTCHA_SECRET?: string;
 }
 
 const SOURCES_ROOT = path.dirname(findUp.sync("package.json", { cwd: __dirname }));

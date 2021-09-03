@@ -22,8 +22,8 @@ describe("Account management", () => {
     registerPo.password.type("ffixrules");
     registerPo.passwordBis.type("ffixrules");
     registerPo.timezoneSelect2Dropdown.select2Dropdown("antarctica");
+    registerPo.termsAndConditions.click();
     registerPo.rememberMe.click();
-    registerPo.captchaAreYouHuman.type("yes"); // ( ͡° ͜ʖ ͡°)
     registerPo.submit.click();
 
     dashboardPo.settings.visit();

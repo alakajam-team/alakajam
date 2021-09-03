@@ -93,6 +93,7 @@
     "find-up": "^5.0.0",
     "flipclock": "^0.10.8",
     "fs-extra": "^9.1.0",
+    "hcaptcha": "^0.1.0",
     "heapdump": "^0.3.15",
     "html-to-text": "^7.0.0",
     "icheck": "^1.0.2",

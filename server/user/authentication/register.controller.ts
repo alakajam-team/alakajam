@@ -4,14 +4,13 @@ import forms from "server/core/forms";
 import { allRules, rule, validateForm } from "server/core/forms-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import userServiceSingleton, { UserService } from "server/user/user.service";
-import captchaServiceSingleton, { CaptchaQuestion, CaptchaService } from "../captcha.service";
+import captchaServiceSingleton, { CaptchaService } from "../captcha.service";
 import userTimezoneServiceSingleton, { TimezoneOption, UserTimeZoneService } from "../user-timezone.service";
 import { loginPost } from "./login.controller";
 
 export const TEMPLATE_REGISTER = "user/authentication/register";
 
 export interface RegisterContext extends CommonLocals {
-  captcha: CaptchaQuestion;
   timezones: TimezoneOption[];
 }
 export class RegisterController {
@@ -35,7 +34,6 @@ export class RegisterController {
     res.render<RegisterContext>(TEMPLATE_REGISTER, {
       ...req.body,
       ...res.locals,
-      captcha: this.captchaService.generateCaptcha(),
       timezones: await this.userTimezoneService.getAllTimeZonesAsOptions()
     });
   }
@@ -51,10 +49,7 @@ export class RegisterController {
       return;
     }
 
-    const captchaValidator = () => this.captchaService.validateCaptcha({
-      key: req.body["captcha-key"],
-      answer: req.body["captcha-answer"],
-    });
+    const captchaValidator = () => this.captchaService.validateCaptcha(req.body["h-captcha-response"]);
 
     const formAlerts = await validateForm(req.body, {
       "name": allRules(

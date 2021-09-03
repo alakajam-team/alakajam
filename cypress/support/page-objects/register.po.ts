@@ -28,12 +28,12 @@ class RegisterPO {
     return cy.get("input[name=password-bis]");
   }
 
-  public get captchaAreYouHuman() {
-    return cy.get("input[name=captcha]");
+  public get termsAndConditions() {
+    return cy.get("input[name=terms-and-conditions]");
   }
 
   public get rememberMe() {
-    return cy.get("input[type=checkbox]");
+    return cy.get("input[name=remember-me]");
   }
 
   public get submit() {
