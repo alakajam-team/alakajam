@@ -2,6 +2,14 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/alakajam-team/alakajam)!
 
+### October 2021
+
+* Spam protection: prevent accounts without an entry to share hyperlinks
+
+### September 2021
+
+* New captcha system, based on hCaptcha
+
 ### June 2021
 
 * Restore the Jamician as the owner of the site

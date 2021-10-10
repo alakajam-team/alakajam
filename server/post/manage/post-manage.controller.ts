@@ -9,6 +9,7 @@ import * as models from "server/core/models";
 import security from "server/core/security";
 import entryService from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import userService from "server/user/user.service";
 import { buildPostContext } from "../post-view.controller";
 import { PostLocals } from "../post.middleware";
 import postService from "../post.service";
@@ -46,13 +47,19 @@ export async function postEdit(req: CustomRequest, res: CustomResponse<PostLocal
 
 export async function postSave(req: CustomRequest, res: CustomResponse<PostLocals>): Promise<void> {
   let post = res.locals.post;
+  const user = res.locals.user;
 
   // Check permissions
-  if ((post && security.canUserWrite(res.locals.user,
-    post, { allowMods: true })) || (!post && res.locals.user)) {
+  if ((post && security.canUserWrite(user,
+    post, { allowMods: true })) || (!post && user)) {
     let redirectToView = false;
+
+    const isTrustedUser = await userService.isTrustedUser(user);
     const title = forms.sanitizeString(req.body.title);
-    const body = forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_POST });
+    const body = forms.sanitizeMarkdown(req.body.body, {
+      maxLength: constants.MAX_BODY_POST,
+      noHyperlinks: !isTrustedUser
+    });
     let errorMessage = null;
     let customPublishDate: Date | false = false;
 

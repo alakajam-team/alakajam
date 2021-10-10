@@ -5,6 +5,7 @@ import constants from "server/core/constants";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
+import security from "server/core/security";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
 import { Mutable } from "server/types";
@@ -247,6 +248,22 @@ export class UserService {
 
   private hashPassword(password: string, salt: string): string {
     return crypto.createHash("sha256").update(password + salt).digest("hex");
+  }
+
+  public async isTrustedUser(user: User): Promise<boolean> {
+    if (security.isMod(user)) {
+      return true;
+    }
+
+    const userRoleRepository = getRepository(UserRole);
+    const jamEntryCount = await userRoleRepository.count({
+      where: {
+        user_id: user.id,
+        node_type: "entry",
+        event_id: Not(IsNull())
+      }
+    });
+    return jamEntryCount > 0;
   }
 
 }

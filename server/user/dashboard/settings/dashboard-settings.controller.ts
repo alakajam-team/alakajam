@@ -10,10 +10,16 @@ import userTimezoneService from "../../user-timezone.service";
 import { DashboardLocals } from "../dashboard.middleware";
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
+  const [timezones, isTrustedUser] = await Promise.all([
+    userTimezoneService.getAllTimeZonesAsOptions(),
+    userService.isTrustedUser(res.locals.user)
+  ]);
+
   res.render<DashboardLocals>("user/dashboard/settings/dashboard-settings", {
     ...res.locals,
     ...req.body,
-    timezones: await userTimezoneService.getAllTimeZonesAsOptions()
+    timezones,
+    isTrustedUser
   });
 }
 
@@ -31,18 +37,24 @@ export async function dashboardSettingsPost(req: CustomRequest, res: CustomRespo
 async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const dashboardUser = res.locals.dashboardUser;
   const oldTitle = dashboardUser.title;
+  const isTrustedUser = await userService.isTrustedUser(res.locals.user);
 
   // Apply form changes
   dashboardUser.title = forms.sanitizeString(req.body.title || dashboardUser.name);
   dashboardUser.email = req.body.email;
   dashboardUser.timezone = forms.sanitizeString(req.body.timezone);
-  dashboardUser.details.body = forms.sanitizeMarkdown(req.body.body, { maxLength: constants.MAX_BODY_USER_DETAILS });
+  dashboardUser.details.body = forms.sanitizeMarkdown(req.body.body,
+    { maxLength: constants.MAX_BODY_USER_DETAILS, noHyperlinks: !isTrustedUser });
   dashboardUser.details.social_links = {
     website: req.body.website,
     twitter: forms.sanitizeString(req.body.twitter.replace(/.*\//g /* cleanup full URLs */, "").replace("@", "")),
     twitch: forms.sanitizeString(req.body.twitch).replace(/.*\//g /* cleanup full URLs */, ""),
     youtube: forms.sanitizeString(req.body.youtube)
   };
+  if (!isTrustedUser) {
+    delete dashboardUser.details.social_links.youtube;
+    delete dashboardUser.details.social_links.website;
+  }
   if (res.locals.dashboardAdminMode) {
     dashboardUser.disallow_anonymous = req.body.disallow_anonymous === "on";
     if (req.body.special_permissions) {

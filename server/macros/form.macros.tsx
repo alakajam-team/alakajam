@@ -13,14 +13,19 @@ import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 /**
  * Requires registration of scripts with `formMacros.registerEditorScripts(context)` to function
  */
-export function editor(editorName: string, editorContents: string, options: { minHeight?: number; autofocus?: boolean } = {}): JSX.Element {
-  return <div class="EasyMDEContainer">
-    <textarea class="form-control easymde-editor"
-      name={editorName}
-      data-min-height={ifSet(options.minHeight, () => options.minHeight + "px")}
-      autofocus={options.autofocus}
-    >{templatingFilters.markdownUnescape(editorContents)}</textarea>
-  </div>;
+export function editor(editorName: string, editorContents: string,
+    options: { minHeight?: number; autofocus?: boolean; noHyperlinks?: boolean } = {}): JSX.Element {
+  return <>
+    {ifTrue(options.noHyperlinks, () =>
+      <div class="legend">As a protection against spam, hyperlinks are blocked and will be stripped upon saving.</div>)}
+    <div class="EasyMDEContainer">
+      <textarea class="form-control easymde-editor"
+        name={editorName}
+        data-min-height={ifSet(options.minHeight, () => options.minHeight + "px")}
+        autofocus={options.autofocus}
+      >{templatingFilters.markdownUnescape(editorContents)}</textarea>
+    </div>
+  </>;
 }
 
 export function registerEditorScripts(locals: CommonLocals): void {

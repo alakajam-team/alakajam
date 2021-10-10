@@ -110,7 +110,13 @@ function sanitizeString(str: string, options: { maxLength?: number } = {}): stri
  * Sanitizes Markdown form input very lightly, just by limiting its length.
  * Real sanitization needs to happen after converting it to HTML.
  */
-function sanitizeMarkdown(markdown: string, options: { maxLength?: number } = {}): string {
+function sanitizeMarkdown(markdown: string, options: { maxLength?: number; noHyperlinks?: boolean } = {}): string {
+  if (options.noHyperlinks) {
+    markdown = markdown.replace(/\[(.*)\]\(.*\)/g, "$1") // Markdown links
+      .replace(/\<[\s]*a[\s]*href.+\>(.*)<\/[\s]*a[\s]*\>/gi, "$1") // HTML links
+      .replace(/http[^\s]+/gi, ""); // Inline URLs
+  }
+
   return markdown.slice(0, options.maxLength || constants.MAX_BODY_COMMENT);
 }
 

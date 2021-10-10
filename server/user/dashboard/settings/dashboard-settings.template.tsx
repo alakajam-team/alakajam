@@ -4,12 +4,13 @@ import links from "server/core/links";
 import security from "server/core/security";
 import { UserSocialLinks } from "server/entity/user-details.entity";
 import * as formMacros from "server/macros/form.macros";
-import { ifTrue } from "server/macros/jsx-utils";
+import { ifFalse, ifTrue } from "server/macros/jsx-utils";
+import { linkRestrictionAlert } from "server/user/components/link-restriction-alert.component";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
 import dashboardBase from "../dashboard.base.template";
 
 export default function render(context: CommonLocals): JSX.Element {
-  const { dashboardUser, dashboardAdminMode, timezones } = context;
+  const { dashboardUser, dashboardAdminMode, timezones, isTrustedUser } = context;
 
   const socialLinks: UserSocialLinks = dashboardUser.related("details").get("social_links") || {};
 
@@ -31,11 +32,11 @@ export default function render(context: CommonLocals): JSX.Element {
               <label for="name">Special permissions</label>
               <div>
                 {formMacros.radio("special_permissions", "none", "None",
-                  !security.isMod(dashboardUser) ? "none": "")}
+                  !security.isMod(dashboardUser) ? "none" : "")}
                 {formMacros.radio("special_permissions", "mod", "Moderator",
                   (security.isMod(dashboardUser) && !security.isAdmin(dashboardUser)) ? "mod" : "")}
                 {formMacros.radio("special_permissions", "admin", "Administrator",
-                  security.isAdmin(dashboardUser) ? "admin": "")}
+                  security.isAdmin(dashboardUser) ? "admin" : "")}
               </div>
             </div>
             <div class="form-group">
@@ -52,6 +53,8 @@ export default function render(context: CommonLocals): JSX.Element {
         )}
 
         <h2>Account</h2>
+
+        {ifFalse(isTrustedUser, linkRestrictionAlert)}
 
         <div class="row">
           <div class="col-md-6 col-lg-7">
@@ -92,12 +95,14 @@ export default function render(context: CommonLocals): JSX.Element {
                 <img src={links.staticUrl("/static/images/social/youtube.svg")} class="no-border mr-1" style="width: 20px" />
                 YouTube channel URL
               </label>
-              <input type="text" class="form-control" id="youtube" name="youtube" value={socialLinks.youtube} />
+              <input type="text" class="form-control" id="youtube" name="youtube"
+                value={socialLinks.youtube}  />
             </div>
 
             <div class="form-group">
               <label for="name"><span class="fas fa-home" style="color: black; font-size: 18px"></span> Website</label>
-              <input type="url" class="form-control" id="website" name="website" placeholder="http://" value={socialLinks.website} />
+              <input type="url" class="form-control" id="website" name="website" placeholder="http://"
+                value={socialLinks.website}  />
             </div>
 
             <div class="form-group">
@@ -119,7 +124,7 @@ export default function render(context: CommonLocals): JSX.Element {
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
-              {formMacros.editor("body", dashboardUser.related("details").get("body"))}
+              {formMacros.editor("body", dashboardUser.related("details").get("body"), { noHyperlinks: !isTrustedUser })}
             </div>
 
             <div class="form-group">
