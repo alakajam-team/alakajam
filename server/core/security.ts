@@ -67,7 +67,7 @@ export class Security {
       if (permission === "read") {
         return this.canUser(user, model.related("node"), permission, options);
       } else {
-        return model.get("user_id") === user.get("id");
+        return model.get("user_id") === user?.get("id");
       }
     }
 
@@ -110,11 +110,11 @@ export class Security {
   }
 
   public isMod(user?: User): boolean {
-    return user && (user.get("is_mod") || user.get("is_admin"));
+    return user?.get("is_mod") || user?.get("is_admin");
   }
 
   public isAdmin(user?: User): boolean {
-    return user && user.get("is_admin");
+    return user?.get("is_admin");
   }
 
   public getPermissionsEqualOrAbove(permission: SecurityPermission): SecurityPermission[] {
