@@ -910,7 +910,7 @@ export const TournamentScore = bookshelf.model("TournamentScore", {
  * | integer | entry_id | Entry ID
  * | integer | event_id | Event ID
  * | string | body | Post body (max size: 100000)
- * | string | special_post_type | 'announcement' or empty
+ * | string | special_post_type | 'announcement', 'hidden' or empty
  * | integer | comment_count | Number of comments made on this post
  * | dateTime | published_at | Publication time
  * | integer | like_count | Number of likes of any type on this post

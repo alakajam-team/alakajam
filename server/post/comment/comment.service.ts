@@ -4,6 +4,7 @@ import { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import * as models from "server/core/models";
+import security, { ANONYMOUS_USER } from "server/core/security";
 import { User } from "server/entity/user.entity";
 
 export class CommentService {
@@ -13,13 +14,18 @@ export class CommentService {
       .fetch({ withRelated: ["user"] });
   }
 
-  public async findLatestComments(options: FetchPageOptions): Promise<BookshelfCollection> {
-    return models.Comment.where({})
+  public async findLatestComments(options: FetchPageOptions): Promise<BookshelfModel[]> {
+    const comments = await models.Comment.where({})
       .orderBy("created_at", "DESC")
       .fetchPage({
         withRelated: ["user", "node"],
         ...options
       });
+
+    return comments.filter((comment: BookshelfModel) => {
+      const node = comment.related<BookshelfModel>("node");
+      return security.canUserRead(ANONYMOUS_USER, node);
+    });
   }
 
   /**
@@ -75,7 +81,7 @@ export class CommentService {
     }
     return models.Comment.query((qb) => {
       qb = qb.distinct()
-        .leftJoin("user_role", function() {
+        .leftJoin("user_role", function () {
           this.on("comment.node_id", "=", "user_role.node_id")
             .andOn("comment.node_type", "=", "user_role.node_type");
         })

@@ -5,9 +5,12 @@
 
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 import { User } from "server/entity/user.entity";
+import constants from "./constants";
 import enums from "./enums";
+import forms from "./forms";
 import * as models from "./models";
 
+export const ANONYMOUS_USER: User | undefined = undefined;
 export const SECURITY_PERMISSION_READ = "read";
 export const SECURITY_PERMISSION_WATCH = "watch";
 export const SECURITY_PERMISSION_WRITE = "write";
@@ -48,11 +51,11 @@ export class Security {
    * Warning: Always returns false if no model is given.
    */
   public canUser(
-    user: User,
+    user: User | undefined,
     model: BookshelfModel,
     permission: SecurityPermission,
     options: SecurityOptions = {}): boolean {
-    if (!user || !model) {
+    if (!model) {
       return false;
     }
     if ((options.allowMods && this.isMod(user)) || (options.allowAdmins && this.isAdmin(user))) {
@@ -77,7 +80,19 @@ export class Security {
       }
     }
 
-    // User/Post (permission-based)
+    // User/Post read (depends on publication date and special post type)
+    if (permission === "read") {
+      if (forms.isPast(model.get("published_at"))
+        && model.get("special_post_type") !== constants.SPECIAL_POST_TYPE_HIDDEN) {
+        return true;
+      }
+      // If false, check permissions
+    }
+
+    // User/Post write (permission-based)
+    if (!user) {
+      return false;
+    }
     if (!model.relations.userRoles) {
       throw new Error("Model does not have user roles");
     }
@@ -94,11 +109,11 @@ export class Security {
     return false;
   }
 
-  public isMod(user: User): boolean {
+  public isMod(user?: User): boolean {
     return user && (user.get("is_mod") || user.get("is_admin"));
   }
 
-  public isAdmin(user: User): boolean {
+  public isAdmin(user?: User): boolean {
     return user && user.get("is_admin");
   }
 

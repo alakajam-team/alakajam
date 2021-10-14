@@ -126,9 +126,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
       .catch(logErrorAndReturn([])));
   contextTasks.push(
     commentService.findLatestComments({ limit: 10 })
-      .then((commentsCollection) => {
-        context.comments = commentsCollection.models;
-      })
+      .then(comments => context.comments = comments)
       .catch(logErrorAndReturn([])));
 
   // Find featured post

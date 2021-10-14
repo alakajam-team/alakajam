@@ -1,5 +1,6 @@
 import { BookshelfCollection, BookshelfModel, PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
+import forms from "server/core/forms";
 import security from "server/core/security";
 import templating from "server/core/templating-functions";
 import { User } from "server/entity/user.entity";
@@ -17,7 +18,7 @@ import postService from "./post.service";
 export async function postView(req: CustomRequest, res: CustomResponse<PostLocals>): Promise<void> {
   // Check permissions
   const { post, user } = res.locals;
-  if (postService.isPast(post.get("published_at")) ||
+  if (forms.isPast(post.get("published_at")) ||
       security.canUserRead(user, post, { allowMods: true })) {
     // Fetch comments and likes
     const context = await buildPostContext(res.locals);
@@ -44,7 +45,7 @@ export async function buildPostContext(locals: PostLocals): Promise<PostLocals> 
   const context = {
     ...locals,
     allEvents: (await eventService.findEvents()).models,
-    isTrusterUser: currentUser ? (await userService.isTrustedUser(locals.user)) : false,
+    isTrustedUser: currentUser ? (await userService.isTrustedUser(currentUser)) : false,
     relatedEvent: undefined,
     relatedEntry: undefined,
     specialPostType: undefined,

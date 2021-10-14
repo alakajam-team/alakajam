@@ -12,13 +12,6 @@ const FIRST_PICTURE_REGEXP = /(?:!\[.*?\]\((.*?)\)|src="([^"]+)")/;
 export class PostService {
 
   /**
-   * Indicates if a date is already past
-   */
-  public isPast(time: number): boolean {
-    return time && (new Date().getTime() - time) > 0;
-  }
-
-  /**
    * Finds the URL of the first picture in the body, if any.
    * Quick and not-completely-reliable implementation.
    * @param model Any model with a body

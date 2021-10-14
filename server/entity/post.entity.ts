@@ -56,7 +56,7 @@ export class Post extends TimestampedEntity {
   public body: string;
 
   /**
-   * 'announcement' or empty
+   * 'announcement', 'hidden' or empty
    */
   @Column(ColumnTypes.varchar({ nullable: true }))
   public special_post_type: string;
