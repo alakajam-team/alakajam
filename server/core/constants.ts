@@ -44,7 +44,7 @@ export default {
       "webkitallowfullscreen", "mozallowfullscreen", "allowfullscreen"
     ],
     img: ["src", "data-src", "width", "height", "class"],
-    video: ["poster", "preload", "autoplay", "muted", "loop", "webkit-playsinline", "width", "height", "class"],
+    video: ["poster", "preload", "autoplay", "muted", "loop", "webkit-playsinline", "width", "height", "class", "controls"],
     source: ["src", "type"],
     progress: ["value", "max", "width"],
     details: ["class"],
