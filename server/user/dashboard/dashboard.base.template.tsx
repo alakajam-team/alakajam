@@ -31,9 +31,10 @@ export default function dashboardBase(context: CommonLocals, contentsBlock: JSX.
       </div>
       <div class="col-sm-8 col-md-9">
         {ifTrue(dashboardAdminMode, () =>
-          <h2 style="margin-bottom: 20px">
+          <h2 class="mb-3">
             <span class="badge badge-danger">
-              <span class="fas fa-user"></span> {dashboardUser.get("title")}
+              <span class="fas fa-user mr-2"></span>
+              {dashboardUser.get("title")}
             </span>
           </h2>
         )}

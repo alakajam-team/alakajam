@@ -1,17 +1,16 @@
+import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import base from "server/base.template";
-import { ifTrue, ifSet, ifNotSet, ifFalse } from "server/macros/jsx-utils";
 import { CommonLocals } from "server/common.middleware";
-import links from "server/core/links";
-import * as formMacros from "server/macros/form.macros";
-import { capitalize } from "lodash";
 import constants from "server/core/constants";
+import links from "server/core/links";
 import security from "server/core/security";
 import * as templatingFilters from "server/core/templating-filters";
-import { linkRestrictionAlert } from "server/user/components/link-restriction-alert.component";
+import * as formMacros from "server/macros/form.macros";
+import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 
 export default function render(context: CommonLocals): JSX.Element {
-  const { post, user, errorMessage, featuredEvent, specialPostType, allEvents, relatedEvent, isTrustedUser } = context;
+  const { post, user, errorMessage, featuredEvent, specialPostType, allEvents, relatedEvent } = context;
 
   formMacros.registerEditorScripts(context);
   formMacros.registerDatePickerScripts(context);
@@ -22,8 +21,6 @@ export default function render(context: CommonLocals): JSX.Element {
 
       <form method="post" class="js-warn-on-unsaved-changes">
         {context.csrfToken()}
-
-        {ifFalse(isTrustedUser, linkRestrictionAlert)}
 
         {ifTrue(errorMessage, () =>
           <div class="alert alert-warning">{errorMessage}</div>
@@ -80,7 +77,7 @@ export default function render(context: CommonLocals): JSX.Element {
 
         <div class="form-group">
           <label for="body">Body</label>
-          {formMacros.editor("body", post.get("body"), { autofocus: Boolean(post.get("id")), noHyperlinks: !isTrustedUser })}
+          {formMacros.editor("body", post.get("body"), { autofocus: Boolean(post.get("id")) })}
         </div>
 
         <div class="d-flex">

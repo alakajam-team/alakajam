@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, Index, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
 import { Comment } from "./comment.entity";
@@ -10,6 +10,7 @@ import { Like } from "./like.entity";
 import { Post } from "./post.entity";
 import { ThemeVote } from "./theme-vote.entity";
 import { TournamentScore } from "./tournament-score.entity";
+import UserApprobationStateTransformer, { UserApprobationState, USER_PENDING_VALUE } from "./transformer/user-approbation-state.transformer";
 import { UserDetails } from "./user-details.entity";
 import { UserRole } from "./user-role.entity";
 
@@ -77,6 +78,10 @@ export class User extends BookshelfCompatibleEntity {
 
   @Column(ColumnTypes.dateTime({ nullable: true, default: () => null }))
   public notifications_last_read?: Date;
+
+  @Column(ColumnTypes.numeric(1, 0, { transformer: UserApprobationStateTransformer, default: USER_PENDING_VALUE }))
+  @Index()
+  public approbation_state: UserApprobationState;
 
   @OneToOne(() => UserDetails, (userDetails) => userDetails.user, { cascade: true })
   public details: UserDetails;

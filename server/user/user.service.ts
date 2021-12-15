@@ -254,7 +254,7 @@ export class UserService {
     return crypto.createHash("sha256").update(password + salt).digest("hex");
   }
 
-  public async isTrustedUser(user: User): Promise<boolean> {
+  public async isApprovedUser(user: User): Promise<boolean> {
     if (security.isMod(user)) {
       return true;
     }

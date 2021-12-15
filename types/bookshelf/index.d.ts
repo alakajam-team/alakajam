@@ -54,7 +54,8 @@ declare module "bookshelf" {
     public related<T extends BookshelfModel | BookshelfCollection>(relation: string): T;
     public related<R extends Model<any>>(relation: string): R | Collection<R>;
     public fetchPage?<T extends BookshelfModel>(options: FetchPageOptions): Promise<BookshelfCollectionOf<T>>;
-    public load<T extends BookshelfModel | BookshelfCollection>(relations: string | string[], options?: SyncOptions): BlueBird<T>; // Fix wrong options type
+    public load<T extends BookshelfModel | BookshelfCollection>(
+      relations: string | string[], options?: SyncOptions): BlueBird<T>; // Fix wrong options type
   }
 
   class BookshelfCollection extends BookshelfCollectionOf<BookshelfModel> { }

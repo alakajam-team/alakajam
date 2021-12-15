@@ -2,6 +2,14 @@
 
 > You can help with the site development by joining us on [Github](https://github.com/alakajam-team/alakajam)!
 
+## March 2022
+
+* User approbation system
+
+## February 2022
+
+* More pedagogy for people encontering unranked games during the rating phase
+
 ### October 2021
 
 * Spam protection: prevent accounts without an entry to share hyperlinks

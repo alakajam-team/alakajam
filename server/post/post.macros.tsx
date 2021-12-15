@@ -3,8 +3,9 @@ import React, { JSX } from "preact";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import links from "server/core/links";
-import security from "server/core/security";
+import security, { SecurityOptions } from "server/core/security";
 import { dateTime, markdown, relativeTime } from "server/core/templating-filters";
+import { USER_APPROVED_VALUE } from "server/entity/transformer/user-approbation-state.transformer";
 import { User } from "server/entity/user.entity";
 import * as formMacros from "server/macros/form.macros";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
@@ -22,14 +23,20 @@ export function post(postModel: BookshelfModel, options: {
   hideBody?: boolean;
   hideDetails?: boolean;
   showId?: boolean;
-  allowMods?: boolean;
   commentsAnchorLinks?: boolean;
   smallTitle?: boolean;
   readOnly?: boolean;
-} = {}): JSX.Element {
+} & SecurityOptions = {}): JSX.Element {
   const author = postModel.related<BookshelfModel>("author");
+  const isAuthorApproved = author.get("approbation_state") === USER_APPROVED_VALUE;
+  const readingUser = options.readingUser;
 
-  return <div class="post">
+  if (!security.canUserRead(readingUser, postModel, { allowMods: true })) {
+    return <></>;
+  }
+
+  return <div class={`post ${!isAuthorApproved ? "pending-approbation" : ""}`}>
+
     {ifFalse(options.hideHeading, () => {
       const H = options.smallTitle ? "h4" : "h1";
       return <H>
@@ -37,7 +44,7 @@ export function post(postModel: BookshelfModel, options: {
         <a href={links.routeUrl(postModel, "post")} class="post__title">
           {postModel.get("title")}
         </a>
-        {ifTrue(security.canUserWrite(options.readingUser, postModel, options), () =>
+        {ifTrue(security.canUserWrite(readingUser, postModel, options), () =>
           <a class="btn btn-outline-secondary btn-sm ml-2" href={links.routeUrl(postModel, "post", "edit")}>
             <span class="fas fa-pencil-alt mr-1"></span>
             <span class="d-none d-md-inline">Edit</span>
@@ -57,6 +64,28 @@ export function post(postModel: BookshelfModel, options: {
           <span style="font-family: monospace; font-size: 1rem">ID={postModel.get("id")}</span>
         )}
       </H>;
+    })}
+
+    {ifTrue(!isAuthorApproved, () => {
+      if (security.isMod(readingUser)) {
+        return <form class="alert alert-danger">
+          <p class="alert-title">
+            <span class="fas fa-wrench mr-2"></span>
+            User approbation required
+            <a href={`/dashboard/settings?user=${author.get("name")}`} class="btn btn-primary btn-sm ml-3">Manage user</a>
+          </p>
+          <p>This post is invisible until the author is approved. Bots/spam accounts can be freely deleted.</p>
+        </form>;
+      } else {
+        return <div class="alert alert-warning">
+          <p class="alert-title">
+            <img src={links.staticUrl("/static/images/jellymancer/jellymancer_favicon32.png")} class="mr-2" />
+            Pending approbation
+          </p>
+          In order to fight spam, new users must be approved in order to publish posts.<br />
+          Your post will be made public within a few hours, as soon as a moderator is available to review it. Thanks for your understanding.
+        </div>;
+      }
     })}
 
     {ifFalse(options.hideDetails, () => {
@@ -229,7 +258,7 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
                   </AuthorLink>;
                 })}
                 {ifTrue(author.get("title") && author.get("name").toLowerCase() !== author.get("title").toLowerCase(), () =>
-                  <span class="ml-1">(@{ author.get("name") })</span>
+                  <span class="ml-1">(@{author.get("name")})</span>
                 )}
                 {ifTrue(options.nodeAuthorIds && options.nodeAuthorIds.includes(author.get("id")), () =>
                   <>

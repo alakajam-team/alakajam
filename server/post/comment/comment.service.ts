@@ -18,7 +18,7 @@ export class CommentService {
     const comments = await models.Comment.where({})
       .orderBy("created_at", "DESC")
       .fetchPage({
-        withRelated: ["user", "node"],
+        withRelated: ["user", "node", "node.author"],
         ...options
       });
 

@@ -191,14 +191,14 @@ export function traceRequestsMiddleware(req: Request, res: Response, next: NextF
   next();
 }
 
-export function logErrorAndReturn<T>(value: T): (reason: Error | string) => T {
+export function logErrorAnd<T>(callback: (reason: Error | string) => T): (reason: Error | string) => T {
   return (reason: Error | string) => {
     if (reason instanceof Error) {
-      log.error(reason.message, reason.stack);
+      log.error(`${reason.message}\n${reason.stack}`);
     } else {
       log.error(reason);
     }
-    return value;
+    return callback(reason);
   };
 }
 

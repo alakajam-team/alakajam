@@ -8,10 +8,16 @@
   border-radius: 3px;
   margin-bottom: 1rem;
 
+  &.pending-approbation {
+    h1, .card {
+      opacity: 0.5;
+    }
+  }
+
   & h1 {
     padding: 5px 5px 0 5px;
     font-weight: normal;
-    font-size: 2.0rem;
+    font-size: 2rem;
     margin-bottom: 8px;
   }
 
@@ -26,7 +32,7 @@
     margin: 0;
     padding-bottom: 5px;
     color: $text;
-      
+
     &:hover {
       color: $alt-dark;
     }
@@ -50,13 +56,17 @@
       color: $text-light;
     }
 
-    &:hover, & button:hover, &.liked, &.liked button {
+    &:hover,
+    & button:hover,
+    &.liked,
+    &.liked button {
       color: $alt;
     }
   }
 
-  h4 &__comment-count, h4 &__like-count {
-    font-size: 1.0rem;
+  h4 &__comment-count,
+  h4 &__like-count {
+    font-size: 1rem;
   }
 
   &__related {
@@ -147,27 +157,26 @@
     left: calc(-8.33333333% + 10px);
     top: 0;
     text-align: center;
-    
+
     & img {
       max-width: 100%;
       max-height: 70px;
       margin-bottom: 5px;
     }
   }
-  
+
   &__details {
     padding-bottom: 5px;
     font-weight: bold;
   }
-  
+
   &__body {
     padding: 10px;
   }
-  
+
   &__actions {
     margin-top: 10px;
   }
-
 }
 
 /* User contents */
@@ -188,7 +197,7 @@
     margin-top: 25px;
     padding-bottom: 3px;
     margin-bottom: 15px;
-    font-size: 2.0rem;
+    font-size: 2rem;
     border-bottom: 1px solid $neutral-light;
 
     &:first-child {
@@ -210,7 +219,7 @@
     font-size: 1.4rem;
     font-weight: normal;
     color: $text-light;
-    
+
     &:first-child {
       margin-top: 0;
     }
@@ -228,7 +237,7 @@
     font-size: 1rem;
     color: $text-light;
   }
-  
+
   & .spoiler {
     border-left: 3px solid $borders;
     color: change-color($text-light, $alpha: 0);
@@ -243,7 +252,7 @@
 
     &::before {
       color: $alt-light;
-      content: 'Spoiler';
+      content: "Spoiler";
       display: block;
     }
     &:hover {
@@ -253,7 +262,7 @@
       overflow: auto;
     }
   }
-  
+
   & .indent {
     text-indent: 1rem;
   }
@@ -276,7 +285,8 @@
     }
   }
 
-  & iframe, & img {
+  & iframe,
+  & img {
     max-width: 100% !important;
     max-height: 400px !important;
   }
@@ -288,7 +298,8 @@
     border-spacing: 0;
     background-color: white;
 
-    & td, & th {
+    & td,
+    & th {
       border: 1px solid $borders;
       padding: 6px;
     }
@@ -300,13 +311,15 @@
       color: white;
     }
   }
-  
-  & .float-left, & .pull-left {
+
+  & .float-left,
+  & .pull-left {
     float: left;
     margin: 15px;
     margin-left: 0;
   }
-  & .float-right, & .pull-right {
+  & .float-right,
+  & .pull-right {
     float: right;
     margin: 15px;
     margin-right: 0;

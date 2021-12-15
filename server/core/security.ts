@@ -4,6 +4,7 @@
  */
 
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { USER_APPROVED_VALUE } from "server/entity/transformer/user-approbation-state.transformer";
 import { User } from "server/entity/user.entity";
 import constants from "./constants";
 import enums from "./enums";
@@ -62,8 +63,13 @@ export class Security {
       return true;
     }
 
+    let modelType = model.tableName as "post" | "entry" | "user" | "comment" | "event";
+    if (model instanceof User) {
+      modelType = "user";
+    }
+
     // Comment
-    if (model.get("user_id")) {
+    if (modelType === "comment") {
       if (permission === "read") {
         return this.canUser(user, model.related("node"), permission, options);
       } else {
@@ -72,7 +78,7 @@ export class Security {
     }
 
     // Event (mods can only edit pending/open events)
-    if (model.get("status")) {
+    if (modelType === "event") {
       if (permission === "read") {
         return true;
       } else {
@@ -80,13 +86,15 @@ export class Security {
       }
     }
 
-    // User/Post read (depends on publication date and special post type)
+    // User/Post read
     if (permission === "read") {
       if (forms.isPast(model.get("published_at"))
-        && model.get("special_post_type") !== constants.SPECIAL_POST_TYPE_HIDDEN) {
+        && model.get("special_post_type") !== constants.SPECIAL_POST_TYPE_HIDDEN
+        && (modelType !== "post" || model.related<BookshelfModel>("author").get("approbation_state") === USER_APPROVED_VALUE)) {
         return true;
       }
-      // If false, check permissions
+
+      // Otherwise, check permissions
     }
 
     // User/Post write (permission-based)

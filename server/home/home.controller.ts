@@ -5,7 +5,7 @@ import { CommonLocals } from "server/common.middleware";
 import cache from "server/core/cache";
 import enums from "server/core/enums";
 import log from "server/core/log";
-import { logErrorAndReturn } from "server/core/middleware";
+import { logErrorAnd } from "server/core/middleware";
 import settings from "server/core/settings";
 import { SETTING_FEATURED_POST_ID, SETTING_FEATURED_TWITCH_CHANNEL, SETTING_HOME_TIMELINE_SIZE } from "server/core/settings-keys";
 import { User } from "server/entity/user.entity";
@@ -98,7 +98,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
   contextTasks.push(
     loadEventsTimeline(featuredEvent)
       .then((eventsTimeline) => context.eventsTimeline = eventsTimeline)
-      .catch(logErrorAndReturn([])));
+      .catch(logErrorAnd(() => context.eventsTimeline = [])));
 
   // Gather featured entries during the voting phase
   if (featuredEvent && [enums.EVENT.STATUS_RESULTS.VOTING, enums.EVENT.STATUS_RESULTS.VOTING_RESCUE]
@@ -112,7 +112,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
         .then((suggestedEntriesCollection: BookshelfCollectionOf<EntryBookshelfModel>) => {
           context.suggestedEntries = suggestedEntriesCollection.models;
         })
-        .catch(logErrorAndReturn([])));
+        .catch(logErrorAnd(() => context.suggestedEntries = [])));
   }
 
   // Gather posts and comments
@@ -123,11 +123,14 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
         context.posts = postsCollection.models;
         context.pageCount = postsCollection.pagination.pageCount;
       })
-      .catch(logErrorAndReturn([])));
+      .catch(logErrorAnd(() => {
+        context.posts = [];
+        context.pageCount = 0;
+      })));
   contextTasks.push(
     commentService.findLatestComments({ limit: 10 })
       .then(comments => context.comments = comments)
-      .catch(logErrorAndReturn([])));
+      .catch(logErrorAnd(() => context.comments = [])));
 
   // Find featured post
   contextTasks.push(

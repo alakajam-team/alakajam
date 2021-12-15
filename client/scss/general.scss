@@ -560,6 +560,13 @@ a.shortcut:hover {
   background-color: $neutral-lightest;
 }
 
-.alert-title {
-  font-weight: bold;
+.alert {
+  .alert-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  p:last-child {
+    margin-bottom: 5px;
+  }
 }

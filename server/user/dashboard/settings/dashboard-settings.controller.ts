@@ -1,7 +1,8 @@
 import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
-import { anyRule, rule, validateForm } from "server/core/forms-validation";
+import { allRules, anyRule, rule, validateForm } from "server/core/forms-validation";
+import { USER_APPROVATION_STATES } from "server/entity/transformer/user-approbation-state.transformer";
 import entryService from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { logout } from "server/user/authentication/logout.controller";
@@ -10,16 +11,12 @@ import userTimezoneService from "../../user-timezone.service";
 import { DashboardLocals } from "../dashboard.middleware";
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
-  const [timezones, isTrustedUser] = await Promise.all([
-    userTimezoneService.getAllTimeZonesAsOptions(),
-    userService.isTrustedUser(res.locals.user)
-  ]);
+  const timezones = await userTimezoneService.getAllTimeZonesAsOptions();
 
   res.render<DashboardLocals>("user/dashboard/settings/dashboard-settings", {
     ...res.locals,
     ...req.body,
-    timezones,
-    isTrustedUser
+    timezones
   });
 }
 
@@ -35,40 +32,18 @@ export async function dashboardSettingsPost(req: CustomRequest, res: CustomRespo
 }
 
 async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
-  const dashboardUser = res.locals.dashboardUser;
+  const { dashboardUser } = res.locals;
   const oldTitle = dashboardUser.title;
-  const isTrustedUser = await userService.isTrustedUser(res.locals.user);
-
-  // Apply form changes
-  dashboardUser.title = forms.sanitizeString(req.body.title || dashboardUser.name);
-  dashboardUser.email = req.body.email;
-  dashboardUser.timezone = forms.sanitizeString(req.body.timezone);
-  dashboardUser.details.body = forms.sanitizeMarkdown(req.body.body,
-    { maxLength: constants.MAX_BODY_USER_DETAILS, noHyperlinks: !isTrustedUser });
-  dashboardUser.details.social_links = {
-    website: req.body.website,
-    twitter: forms.sanitizeString(req.body.twitter.replace(/.*\//g /* cleanup full URLs */, "").replace("@", "")),
-    twitch: forms.sanitizeString(req.body.twitch).replace(/.*\//g /* cleanup full URLs */, ""),
-    youtube: forms.sanitizeString(req.body.youtube)
-  };
-  if (!isTrustedUser) {
-    delete dashboardUser.details.social_links.youtube;
-    delete dashboardUser.details.social_links.website;
-  }
-  if (res.locals.dashboardAdminMode) {
-    dashboardUser.disallow_anonymous = req.body.disallow_anonymous === "on";
-    if (req.body.special_permissions) {
-      const isMod = ["mod", "admin"].includes(req.body.special_permissions);
-      const isAdmin = req.body.special_permissions === "admin";
-      dashboardUser.is_mod = isMod ? "true" : null;
-      dashboardUser.is_admin = isAdmin ? "true" : null;
-    }
-  }
+  const isApprovedUser = dashboardUser.approbation_state === "approved";
 
   // Validate changes
   const formAlerts = await validateForm(req.body, {
     email: rule(forms.isEmail, "Invalid email"),
     website: anyRule([forms.isNotSet, forms.isURL], "Account website has an invalid URL"),
+    approbation_state: allRules(
+      value => { if (value !== undefined && !res.locals.dashboardAdminMode) { return "Not allowed to change approbation status on this user"; } },
+      value => { if (value !== undefined && !USER_APPROVATION_STATES.includes(value)) { return "Invalid approbation status"; } }
+    ),
     special_permissions: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
       "Not allowed to change special permissions on this user"),
     disallow_anonymous: anyRule([forms.isNotSet, () => res.locals.dashboardAdminMode],
@@ -80,6 +55,36 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
   });
 
   if (!formAlerts) {
+
+    // Apply form changes
+    dashboardUser.title = forms.sanitizeString(req.body.title || dashboardUser.name);
+    dashboardUser.email = req.body.email;
+    dashboardUser.timezone = forms.sanitizeString(req.body.timezone);
+    dashboardUser.details.body = forms.sanitizeMarkdown(req.body.body,
+      { maxLength: constants.MAX_BODY_USER_DETAILS, noHyperlinks: !isApprovedUser });
+    dashboardUser.details.social_links = {
+      website: req.body.website,
+      twitter: forms.sanitizeString(req.body.twitter.replace(/.*\//g /* cleanup full URLs */, "").replace("@", "")),
+      twitch: forms.sanitizeString(req.body.twitch).replace(/.*\//g /* cleanup full URLs */, ""),
+      youtube: forms.sanitizeString(req.body.youtube)
+    };
+    if (!isApprovedUser) {
+      delete dashboardUser.details.social_links.youtube;
+      delete dashboardUser.details.social_links.website;
+    }
+    if (res.locals.dashboardAdminMode) {
+      dashboardUser.disallow_anonymous = req.body.disallow_anonymous === "on";
+      if (req.body.approbation_state) {
+        dashboardUser.approbation_state = req.body.approbation_state;
+      }
+      if (req.body.special_permissions) {
+        const isMod = ["mod", "admin"].includes(req.body.special_permissions);
+        const isAdmin = req.body.special_permissions === "admin";
+        dashboardUser.is_mod = isMod ? "true" : null;
+        dashboardUser.is_admin = isAdmin ? "true" : null;
+      }
+    }
+
     // Persist avatar
     if (req.file || req.body["avatar-delete"]) {
       const avatarPath = "/user/" + dashboardUser.id;
