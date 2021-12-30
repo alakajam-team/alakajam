@@ -9,7 +9,7 @@ import { DashboardLocals } from "../dashboard.middleware";
 export async function dashboardScores(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const sortBy: string = forms.sanitizeString(req.query.sortBy?.toString()) || "submitted_at";
 
-  const userScoresCollection = await highScoreService.findUserScores(res.locals.user.get("id"), { sortBy });
+  const userScoresCollection = await highScoreService.findUserScores(res.locals.dashboardUser.get("id"), { sortBy });
   const activeEntriesCollection = await highScoreService.findRecentlyActiveEntries({ limit: 5 });
   const entriesLastActivity = await highScoreService.findEntriesLastActivity(
     userScoresCollection.map((entryScore) => entryScore.get("entry_id")));

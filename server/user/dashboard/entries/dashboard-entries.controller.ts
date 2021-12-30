@@ -8,9 +8,9 @@ import { CustomRequest, CustomResponse } from "server/types";
  * Manage user entries
  */
 export async function dashboardEntries(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
-  const { user, featuredEvent } = res.locals;
+  const { featuredEvent, dashboardUser } = res.locals;
 
-  const entryCollection = await entryService.findUserEntries(user);
+  const entryCollection = await entryService.findUserEntries(dashboardUser);
 
   const alakajamEntries: BookshelfModel[] = [];
   const otherEntries: BookshelfModel[] = [];
@@ -27,7 +27,7 @@ export async function dashboardEntries(req: CustomRequest, res: CustomResponse<C
 
   let featuredEventEntry;
   if (featuredEvent) {
-    featuredEventEntry = await entryService.findUserEntryForEvent(user, featuredEvent.get("id"));
+    featuredEventEntry = await entryService.findUserEntryForEvent(dashboardUser, featuredEvent.get("id"));
   }
 
   res.render<CommonLocals>("user/dashboard/entries/dashboard-entries", {

@@ -186,9 +186,12 @@ export default function render(context: CommonLocals): JSX.Element {
                         onclick="return confirm('Delete the entry? All its data will be lost!')">Delete</a>
                     )}
                     {ifFalse(isEntryOwner, () =>
-                      <a class="btn btn-danger" href={links.routeUrl(entry, "entry", "leave")}
-                        onclick="return confirm('Leave the team? If you want to join again, \
-                          the team owner will have to send a new invite!')">Leave the team</a>
+                      <>
+                        {" "}
+                        <a class="btn btn-danger" href={links.routeUrl(entry, "entry", "leave")}
+                          onclick="return confirm('Leave the team? If you want to join again, \
+                            the team owner will have to send a new invite!')">Leave the team</a>
+                      </>
                     )}
                   </span>
                 )}
