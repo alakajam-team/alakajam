@@ -6,6 +6,7 @@ import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
 import security from "server/core/security";
+import { EventParticipation } from "server/entity/event-participation.entity";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
 import { Mutable } from "server/types";
@@ -180,6 +181,9 @@ export class UserService {
   public async deleteUser(user: User, userEntryCount: number): Promise<{ error?: string }> {
     if (userEntryCount === 0) {
       const userId = user.id;
+
+      await getRepository(EventParticipation).delete({ userId: user.id }); // XXX Should ideally be cascaded through TypeORM User deletion
+
       const bookshelfUser = await models.User.where("id", user.id).fetch();
       await bookshelfUser.destroy(); // XXX Comment/entry counters are not refreshed
       log.info("User %s has been deleted", userId);
