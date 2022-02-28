@@ -6,6 +6,7 @@ import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
 import { User } from "server/entity/user.entity";
+import { eventRulesLink } from "server/event/event.macros";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
 export function divisionField(entry: BookshelfModel, event: BookshelfModel, external: boolean, divisionTooltip: string, user: User): JSX.Element {
@@ -33,9 +34,9 @@ export function divisionField(entry: BookshelfModel, event: BookshelfModel, exte
       <p>
         <small class="form-text text-muted">
           {ifTrue(event.get("status_entry") === "open", () => {
-            const rulesLink = forms.isId(event.get("status_rules")) ? links.routeUrl(event.get("status_rules"), "post") : event.get("status_rules");
+            const rulesLink = eventRulesLink(event);
             return <div>
-              Check the <a href={rulesLink !== "off" ? rulesLink : "/article/docs"}>Docs section</a> for detailed rules on each division.
+              Check the <a href={rulesLink}>Docs section</a> for detailed rules on each division.
               {isEntryOwner ? "" : "Only the entry owner can change this setting."}
             </div>;
           })}

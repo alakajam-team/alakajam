@@ -52,11 +52,11 @@ Those third-party assets exceptions are only allowed as long as you have the lic
 
 ### Unranked division
 
-Since there is no ratings involved, the rules are much more relaxed. While the ranked divisions are only made for video games, card & board games are allowed here. The only rules are:
+Instead of the competitive jam, you can choose to enter the *Unranked* division, which has no ratings involved. This lets you join the excitement of the jam and the exchange of feedback, while keeping the freedom to work on pretty much anything. Even card & board games are welcome here. You must still observe this primary rule:
 
 * All third-party assets are allowed as long as you have the license to use them.
 
-There are additional rules **if you submit an existing project** of yours. These are fuzzy rules only aimed at preventing abusive self-promotion:
+If you choose to work on and submit **an existing project of yours**, it is allowed with these additional rules in place to prevent abusive self-promotion:
 
 * You must spend a significant part of your week-end working on the game ;
 * Use the game description to let people know what you did/did not make during the jam ;

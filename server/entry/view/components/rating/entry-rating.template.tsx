@@ -3,10 +3,12 @@ import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
 import { EventFlags } from "server/entity/event-details.entity";
+import * as formMacros from "server/macros/form.macros";
 import { User } from "server/entity/user.entity";
 import { ifTrue } from "server/macros/jsx-utils";
 import { entryRatingCountPhrase } from "./entry-rating-count-phrase.template";
 import { entryRatingForm } from "./entry-rating-form.template";
+import { eventRulesLink } from "server/event/event.macros";
 
 export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryVotes: number, user: User, canVoteOnEntry: boolean,
   vote: BookshelfModel, minEntryVotes: number, csrfToken: () => JSX.Element): JSX.Element {
@@ -19,13 +21,15 @@ export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryV
         <div class="float-right">
           <a href={links.routeUrl(event, "event", "ratings")} class="btn btn-outline-light btn-sm">Manage my ratings</a>
         </div>
-      Game ratings
+        Game ratings
       </h2>
       <div class="entry-voting__body">
         {ifTrue(entry.get("division") === "unranked", () =>
           <div>
-            <p>This game is an <strong>Unranked</strong> entry.</p>
-            <p>Voting is disabled, please provide feedback instead.</p>
+            <p>This game is an <strong>Unranked</strong> entry.{" "}
+            Most rules from the ranked competition do not apply{" "}
+            (see <a href={eventRulesLink(event) + "#unranked-division"}>Docs</a> for more info).</p>
+            <p>Voting is disabled, please provide feedback instead to earn Karma.</p>
             <p style="margin-bottom: 0">
               <i>Note: The Karma formula grants you as many points on this entry as on ranked ones.
                 {" "}<a href="/article/docs/faq#what-is-karma">Learn more</a></i>

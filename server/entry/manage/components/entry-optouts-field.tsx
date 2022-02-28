@@ -4,13 +4,14 @@ import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
 import { User } from "server/entity/user.entity";
+import { eventRulesLink } from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 
 export function optoutsField(event: BookshelfModel, entry: BookshelfModel, user: User, isEntryOwner: boolean): JSX.Element {
   const canEditOptouts = isEntryOwner || security.isMod(user);
   const optouts = entry.related("details").get("optouts");
-  const rulesLink = forms.isId(event.get("status_rules")) ? links.routeUrl(event.get("status_rules"), "post") : event.get("status_rules");
+  const rulesLink = eventRulesLink(event);
 
   return <div>
     <div id="edit-optouts" class={entry.get("division") === "unranked" ? "d-none" : ""}>
@@ -35,7 +36,7 @@ export function optoutsField(event: BookshelfModel, entry: BookshelfModel, user:
       </div>
     </div>
 
-    {ifTrue(event && event.get("status_entry") === "open" && rulesLink !== "off", () =>
+    {ifTrue(event && event.get("status_entry") === "open" && event.get("status_rules") !== "off", () =>
       <div id="accept-rules" class="alert alert-warning d-flex">
         <img src={links.staticUrl("/static/images/docs/play.png")} class="mr-3 mt-3" height="49" />
         <div>

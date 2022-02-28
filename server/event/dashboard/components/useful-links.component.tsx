@@ -1,13 +1,11 @@
 import { BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
-import forms from "server/core/forms";
 import links from "server/core/links";
+import { eventRulesLink } from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 
 export function eventDashboardUsefulLinks(event: BookshelfModel): JSX.Element {
-  const rulesLink = forms.isId(event.get("status_rules"))
-    ? links.routeUrl(event.get("status_rules"), "post")
-    : event.get("status_rules");
+  const rulesLink = eventRulesLink(event);
 
   return <>
     {ifTrue(rulesLink !== "off", () =>

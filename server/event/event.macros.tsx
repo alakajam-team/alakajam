@@ -2,6 +2,7 @@ import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import { capitalize, range, truncate } from "lodash";
 import React, { JSX } from "preact";
 import constants from "server/core/constants";
+import forms from "server/core/forms";
 import links from "server/core/links";
 import { digits } from "server/core/templating-filters";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
@@ -123,8 +124,7 @@ export function eventBanner(event: BookshelfModel, options: { withLogo?: boolean
     {ifTrue(options.withLogo, () =>
       <div class="event-banner__logo">
         <img src={logo} />
-      </div>
-    )}
+      </div>)}
   </div>;
 }
 
@@ -158,7 +158,6 @@ export function eventThemeStatus(theme: BookshelfModel, options: { uncensored?: 
     break;
   default:
   }
-
   return <span class={"badge " + badgeClass}>
     {label}
   </span>;
@@ -207,7 +206,7 @@ export function eventShortcutMyEntry(
 }
 
 export function eventShortcutMyPost(user: BookshelfModel, event: BookshelfModel, userPost: BookshelfModel,
-                                    options: { noTitle?: boolean; buttonsOnly?: boolean } = {}): JSX.Element {
+  options: { noTitle?: boolean; buttonsOnly?: boolean } = {}): JSX.Element {
   return <div class={`action-banner ${options.buttonsOnly ? "buttons-only" : ""}`}>
     <div class="action-banner__title">
       {ifTrue(!options.buttonsOnly && !options.noTitle, () =>
@@ -241,4 +240,17 @@ export function eventShortcutMyPost(user: BookshelfModel, event: BookshelfModel,
       </div>
     )}
   </div>;
+}
+
+export function eventRulesLink(event: BookshelfModel): string {
+  const DEFAULT_RULES_PAGE = "/article/docs/alakajam-competition-rules";
+
+  const rules = event.get("status_rules");
+  if (!rules || rules === "off") {
+    return DEFAULT_RULES_PAGE;
+  }
+  if (forms.isId(rules)) {
+    return links.routeUrl(rules, "post");
+  }
+  return rules;
 }
