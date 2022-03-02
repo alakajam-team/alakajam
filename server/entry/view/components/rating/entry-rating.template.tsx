@@ -27,7 +27,7 @@ export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryV
         {ifTrue(entry.get("division") === "unranked", () =>
           <div>
             <p>This game is an <strong>Unranked</strong> entry.{" "}
-            Most rules from the ranked competition do not apply{" "}
+            Most rules from the ranked competition do not apply, following the theme is not required either {" "}
             (see <a href={eventRulesLink(event) + "#unranked-division"}>Docs</a> for more info).</p>
             <p>Voting is disabled, please provide feedback instead to earn Karma.</p>
             <p style="margin-bottom: 0">
