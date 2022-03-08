@@ -27,6 +27,8 @@ export class EventService {
    */
   public createEvent(template?: BookshelfModel): BookshelfModel {
     const event = new models.Event({
+      title: "",
+      name: "",
       status: enums.EVENT.STATUS.PENDING,
       status_rules: enums.EVENT.STATUS_RULES.OFF,
       status_theme: enums.EVENT.STATUS_THEME.DISABLED,
@@ -224,8 +226,8 @@ export class EventService {
     return flags && flags[flag];
   }
 
-  public isMainAlakajamEvent(event: BookshelfModel): boolean {
-    return event.get("name").endsWith("-alakajam");
+  public isMainAlakajamEvent(event?: BookshelfModel): boolean {
+    return Boolean(event?.get("name")?.endsWith("-alakajam"));
   }
 
 }

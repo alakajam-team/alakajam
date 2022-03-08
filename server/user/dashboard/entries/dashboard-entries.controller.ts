@@ -15,7 +15,7 @@ export async function dashboardEntries(req: CustomRequest, res: CustomResponse<C
   const alakajamEntries: BookshelfModel[] = [];
   const otherEntries: BookshelfModel[] = [];
   const externalEntries: BookshelfModel[] = [];
-  entryCollection.models.forEach((entry) => {
+  entryCollection.models.forEach(entry => {
     if (entry.get("external_event") != null) {
       externalEntries.push(entry);
     } else if (eventService.isMainAlakajamEvent(entry.related<BookshelfModel>("event"))) {
