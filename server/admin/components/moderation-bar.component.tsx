@@ -5,9 +5,14 @@ import security from "server/core/security";
 import { ifTrue } from "server/macros/jsx-utils";
 
 export function moderationBar(context: CommonLocals, isAdmin: boolean): JSX.Element {
+  const hasNotifications = context.modNotifications > 0;
+
   return <div class="moderation-bar">
     <div class="container">
-      <a href="/admin" class="btn"><span class="fas fa-wrench"></span> Mod dashboard</a>
+      <a href="/admin" class={"btn " + (hasNotifications ? "btn-danger" : "")}>
+        <span class="fas fa-wrench"></span> Mod dashboard
+        {ifTrue(hasNotifications, () => ` (${context.modNotifications})`)}
+      </a>
 
       {moderationLink(context.event?.id && security.canUserWrite(context.user, context.event)
           && (!context.featuredEvent || context.event?.id !== context.featuredEvent?.id),

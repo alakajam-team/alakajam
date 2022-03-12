@@ -7,6 +7,7 @@ import log from "server/core/log";
 import * as models from "server/core/models";
 import security from "server/core/security";
 import { EventParticipation } from "server/entity/event-participation.entity";
+import { UserApprobationState } from "server/entity/transformer/user-approbation-state.transformer";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
 import { Mutable } from "server/types";
@@ -67,6 +68,7 @@ export class UserService {
     if (options.search) { where.title = ILike("%" + options.search + "%"); }
     if (options.isMod) { where.is_mod = Not(IsNull()); }
     if (options.isAdmin) { where.is_admin = Not(IsNull()); }
+    if (options.approbationState) { where.approbation_state = options.approbationState; }
     qb.where(where);
 
     // Advanced search
@@ -279,6 +281,7 @@ export interface FindUserOptions {
   withEntries?: boolean;
   isMod?: boolean;
   isAdmin?: boolean;
+  approbationState?: UserApprobationState;
   orderBy?: keyof User;
   orderByDesc?: boolean;
   page?: number;

@@ -1,6 +1,6 @@
 import { BookshelfModel } from "bookshelf";
 import * as crypto from "crypto";
-import { NextFunction, Response } from "express";
+import { NextFunction } from "express";
 import { JSX } from "preact";
 import forms from "server/core/forms";
 import security from "server/core/security";
@@ -12,7 +12,7 @@ import config from "./core/config";
 import { SETTING_FEATURED_EVENT_NAME } from "./core/settings-keys";
 import { User } from "./entity/user.entity";
 import commentService from "./post/comment/comment.service";
-import { Alert, CustomRequest } from "./types";
+import { Alert, CustomRequest, CustomResponse, Mutable } from "./types";
 
 export interface CommonLocals {
   [key: string]: any;
@@ -59,6 +59,12 @@ export interface CommonLocals {
   readonly unreadNotifications?: number;
 
   /**
+   * The number of unread notifications for the current logged in moderator (undefined if not a mod).
+   * Availabel everywhere.
+   */
+  readonly modNotifications?: number;
+
+  /**
    * The model of the currently featured event.
    * Available everywhere.
    */
@@ -93,7 +99,7 @@ export interface CommonLocals {
   readonly csrfTokenHTML: () => string;
 }
 
-export async function commonMiddleware(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+export async function commonMiddleware(req: CustomRequest, res: CustomResponse<Mutable<CommonLocals>>, next: NextFunction): Promise<void> {
   res.locals.path = req.originalUrl;
 
   // Init alerts, restore them from the session if needed
@@ -154,6 +160,9 @@ export async function commonMiddleware(req: CustomRequest, res: Response, next: 
   // Update unread notifications, from cache if possible
   if (res.locals.user && res.locals.path !== "/dashboard/feed") {
     res.locals.unreadNotifications = await notificationService.countUnreadNotifications(res.locals.user);
+  }
+  if (res.locals.user) {
+    res.locals.modNotifications = await userService.countUsers({ approbationState: "pending" });
   }
 
   next();

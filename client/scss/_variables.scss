@@ -36,6 +36,8 @@ $neutral-light: change-color($neutral, $alpha: .7);
 $neutral-lighter: change-color($neutral, $alpha: .25);
 $neutral-lightest: #e6e6e6;
 
+$danger: #dc3545;
+
 /* Mod / Admin colors */
 
 $moderation: $neutral;

@@ -83,7 +83,7 @@ export function post(postModel: BookshelfModel, options: {
             Pending approbation
           </p>
           In order to fight spam, new users must be approved in order to publish posts.<br />
-          Your post will be made public within a few hours, as soon as a moderator is available to review it. Thanks for your understanding.
+          Your post will be made public within a few hours, as soon as a moderator is available to review it. Thanks for your understanding!
         </div>;
       }
     })}

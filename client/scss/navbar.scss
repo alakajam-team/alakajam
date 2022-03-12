@@ -328,5 +328,10 @@ $event-navbar-height: 50px;
       background-color: $moderation;
       border-color: $moderation;
     }
+
+    &.btn-danger {
+      background-color: $danger;
+      border-color: $danger;
+    }
   }
 }

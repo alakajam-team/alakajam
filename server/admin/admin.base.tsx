@@ -11,7 +11,7 @@ export interface AdminBaseContext extends CommonLocals {
 }
 
 export default function adminBase(context: AdminBaseContext, contentsBlock: JSX.Element): JSX.Element {
-  const { path, devMode, user, infoMessage, errorMessage, alerts } = context;
+  const { path, devMode, user, infoMessage, errorMessage, alerts, modNotifications } = context;
 
   return base(context,
     <div class="container">
@@ -21,13 +21,15 @@ export default function adminBase(context: AdminBaseContext, contentsBlock: JSX.
             <div class="list-group-item list-group-item-default"><h4>Moderation</h4></div>
             {link("Announcements", "/admin", path, { exactCheck: true })}
             {link("Events", "/admin/events", path)}
+            {link("Users", "/admin/users", path, {
+              badgeSlot: () => <span class="badge badge-danger ml-2">{ modNotifications } pending</span>
+            })}
             {link("Settings", "/admin/settings", path)}
           </div>
 
           {ifTrue(user && user.get("is_admin") || config.DEBUG_ADMIN, () =>
             <div class="list-group mt-3">
               <div class="list-group-item list-group-item-default"><h4>Administration</h4></div>
-              {link("Users", "/admin/users", path, { isAdminLink: true })}
               {link("Event presets", "/admin/event-presets", path, { isAdminLink: true })}
               {link("Event templates", "/admin/event-templates", path, { isAdminLink: true })}
               {link("Platforms", "/admin/platforms", path, { isAdminLink: true })}
@@ -56,10 +58,12 @@ export default function adminBase(context: AdminBaseContext, contentsBlock: JSX.
   );
 }
 
-function link(label, targetPath, currentPath, options: { isAdminLink?: boolean; exactCheck?: boolean } = {}) {
+function link(label: string, targetPath: string, currentPath: string,
+    options: { isAdminLink?: boolean; exactCheck?: boolean; badgeSlot?: () => JSX.Element } = {}) {
   const colorClass = options.isAdminLink ? "list-group-item-danger" : "list-group-item-warning";
   const isLinkActive = currentPath === targetPath || (!options.exactCheck && currentPath.indexOf(targetPath) === 0);
   return <a href={targetPath} class={"list-group-item " + (isLinkActive ? colorClass : "")}>
     {label}
+    {ifSet(options.badgeSlot, () => options.badgeSlot())}
   </a>;
 }
