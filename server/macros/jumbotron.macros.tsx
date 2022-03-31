@@ -72,6 +72,17 @@ export function eventJumbotron(event: BookshelfModel, eventParticipation: EventP
                   {myEntryJumbotronContent(event, entry, eventParticipation, options)}
                 </div>
               </div>
+              <div class="col-xl-12 col-sm-6 mb">
+                <div class="card border-0 bg-jumbotron event-jumbotron__stats">
+                  <div class="card-header shortcut py-1">
+                    <span class="shortcut__icon"><span class="fas fa-chart-line"></span></span>
+                    <span class="shortcut__title">Stats</span>
+                  </div>
+                  <div class="text-center">
+                    {statsCounters(event)}
+                  </div>
+                </div>
+              </div>
             )}
 
           </div>
