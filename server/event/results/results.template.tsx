@@ -30,7 +30,7 @@ export default function render(context: CommonLocals): JSX.Element {
         const flags = event.related("details").get("flags");
         const displaySpecialAwards = flags.specialAwards && sortedBy === 7;
 
-        return <div class="container">
+        return <div class="container results-table">
           <div class="row">
             <div class="col">
               {podium(rankings, event, categoryTitles, division, sortedBy, { displaySpecialAwards })}
@@ -43,8 +43,8 @@ export default function render(context: CommonLocals): JSX.Element {
               <div class={`col-sm-9 col-md-${12 - categoryTitles.length} mb-3`}>&nbsp;</div>
               {categoryTitles.map((title, index) =>
                 ifFalse(flags.specialAwards && index + 1 === 7, () =>
-                  <div class={"col-sm-2 col-md-1 text-center " +((index + 1) !== sortedBy ? "d-none d-md-block" : "")}>
-                    <span style="font-weight: bold">{title}</span>
+                  <div class={"col-sm-2 col-md-1 results-table__header " + ((index + 1) !== sortedBy ? "d-none d-md-block" : "")}>
+                    {title}
                   </div>
                 )
               )}
@@ -55,10 +55,10 @@ export default function render(context: CommonLocals): JSX.Element {
             <div>
               {ifTrue(division !== enums.DIVISION.UNRANKED, () =>
                 <div class="row">
-                  <div class="col-sm-2 col-md-1 text-center text-sm-right">
+                  <div class="col-sm-2 col-md-1 text-center text-sm-right results-table__ranking">
                     {ifTrue(!displaySpecialAwards && previousRanking !== entry.related("details").get("ranking_" + sortedBy), () => {
                       previousRanking = entry.related("details").get("ranking_" + sortedBy);
-                      return <h2>{ordinal(previousRanking)}</h2>;
+                      return ordinal(previousRanking);
                     })}
                   </div>
                   <div class={`col-sm-7 col-md-${11 - categoryTitles.length} mb-1`}>
@@ -68,11 +68,9 @@ export default function render(context: CommonLocals): JSX.Element {
                     const categoryIndex = index + 1;
                     if (!(flags.specialAwards && categoryIndex === 7)) {
                       const rating = entry.related("details").get("rating_" + categoryIndex);
-                      return <div class={"col-sm-2 col-md-1 text-center " + (categoryIndex !== sortedBy ? "d-none d-md-block" : "")}
+                      return <div class={"col-sm-2 col-md-1 results-table__score " + (categoryIndex !== sortedBy ? "d-none d-md-block" : "")}
                         style={categoryIndex === sortedBy ? "background-color: #FAFAFA;" : ""}>
-                        <h4 style="line-height: 50px; vertical-align: middle;">
-                          {rating > 0 ? digits(rating, 3) : "N.A."}
-                        </h4>
+                        {rating > 0 ? digits(rating, 3) : "N.A."}
                       </div>;
                     }
                   })}
@@ -116,9 +114,8 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
           {categoryTitles.map((title, index) => {
             if (title) {
               const categoryIndex = index + 1;
-              return <a href={`?sortBy=${categoryIndex}&division=${!(flags.specialAwards && categoryIndex === 7)
-                ? selectedDivision : ""}`} type="button"
-              class={"btn btn-primary results-links__category " + (selectedCategoryIndex === categoryIndex ? "active" : "")}>
+              return <a href={`?sortBy=${categoryIndex}&division=${!(flags.specialAwards && categoryIndex === 7) ? selectedDivision : ""}`}
+                type="button" class={"btn btn-primary results-links__category " + (selectedCategoryIndex === categoryIndex ? "active" : "")}>
                 <span class={`entry-results__category-medal medal-category-${categoryIndex} medal-ranking-1`}></span>&nbsp;
                 <span class="d-none d-lg-inline">{categoryTitles[index]}</span>
               </a>;
@@ -131,7 +128,7 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
 }
 
 function podium(rankings, event: BookshelfModel, categoryTitles: string[], division: string, sortedBy: number,
-    options: { displaySpecialAwards?: boolean } = {}) {
+  options: { displaySpecialAwards?: boolean } = {}) {
   return <div class="results-podium">
     <h1 class="results-podium__event-name">{event.get("title")} results</h1>
     <h2 class="results-podium__title">
@@ -162,7 +159,7 @@ function podium(rankings, event: BookshelfModel, categoryTitles: string[], divis
               )}
             </div>
           </div>
-          {options.displaySpecialAwards ? "" : "rankings"}
+          {options.displaySpecialAwards ? "" : " rankings"}
         </>
       )}
       {ifTrue(division === enums.DIVISION.UNRANKED, () =>
@@ -170,7 +167,7 @@ function podium(rankings, event: BookshelfModel, categoryTitles: string[], divis
       )}
       {ifFalse(options.displaySpecialAwards, () =>
         <span class="results-podium__counter">
-          {event.related("details").get("division_counts")[division]}
+          {event.related("details").get("division_counts")[division] + " "}
           entries (out of {event.get("entry_count")})
         </span>
       )}
@@ -186,7 +183,7 @@ function podium(rankings, event: BookshelfModel, categoryTitles: string[], divis
 }
 
 function podiumSteps(rankings, event: BookshelfModel, categoryTitles: string[], division: string, sortedBy: number,
-    options: { displaySpecialAwards?: boolean } = {}) {
+  options: { displaySpecialAwards?: boolean } = {}) {
   const entryThumbOptions = { hideMedals: categoryTitles.length === 1 };
   const specialAwardTitles = event.related<BookshelfModel>("details").get("special_award_titles") as string[];
 

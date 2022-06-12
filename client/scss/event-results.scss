@@ -195,6 +195,38 @@
   }
 }
 
+.results-table {
+  &__header {
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0;
+    text-align: center;
+  }
+
+  &__score {
+    padding: 0;
+    text-align: center;
+    line-height: 50px;
+    vertical-align: middle;
+    font-size: 16px;
+    color: $neutral-dark;
+    
+    @media (max-width: 768px) {
+      margin: 0 15px 20px 15px;  
+    }
+  }
+
+  &__ranking {
+    font-size: 24px;
+    font-weight: bold;
+
+    @media (max-width: 768px) {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+  }
+}
+
 /* Results on entry page */
 .entry-results {
   @include shadow;

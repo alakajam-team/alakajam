@@ -83,7 +83,8 @@ export class EventService {
         } else if (flags.specialAwards && categoryIndex === 7) {
           return "Special awards";
         }
-      });
+      })
+      .filter(category => Boolean(category)); // Filter out empty
   }
 
   /**

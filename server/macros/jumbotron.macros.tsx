@@ -59,30 +59,32 @@ export function eventJumbotron(event: BookshelfModel, eventParticipation: EventP
             )}
 
             {ifFalse(isTournament, () =>
-              <div class="col-xl-12 col-sm-6 mb-3">
-                <div class="card bg-jumbotron border-0">
-                  {ifFalse(options.inviteToJoin, () =>
-                    <a class="card-header shortcut" href={links.routeUrl(event, "event", "dashboard")}>
-                      <h4 class="mb-0">
-                        <span class="shortcut__icon"><span class="fas fa-gamepad"></span></span>
-                        <span class="shortcut__title">My entry</span>
-                      </h4>
-                    </a>
-                  )}
-                  {myEntryJumbotronContent(event, entry, eventParticipation, options)}
-                </div>
-              </div>
-              <div class="col-xl-12 col-sm-6 mb">
-                <div class="card border-0 bg-jumbotron event-jumbotron__stats">
-                  <div class="card-header shortcut py-1">
-                    <span class="shortcut__icon"><span class="fas fa-chart-line"></span></span>
-                    <span class="shortcut__title">Stats</span>
-                  </div>
-                  <div class="text-center">
-                    {statsCounters(event)}
+              <>
+                <div class="col-xl-12 col-sm-6 mb-3">
+                  <div class="card bg-jumbotron border-0">
+                    {ifFalse(options.inviteToJoin, () =>
+                      <a class="card-header shortcut" href={links.routeUrl(event, "event", "dashboard")}>
+                        <h4 class="mb-0">
+                          <span class="shortcut__icon"><span class="fas fa-gamepad"></span></span>
+                          <span class="shortcut__title">My entry</span>
+                        </h4>
+                      </a>
+                    )}
+                    {myEntryJumbotronContent(event, entry, eventParticipation, options)}
                   </div>
                 </div>
-              </div>
+                <div class="col-xl-12 col-sm-6 mb">
+                  <div class="card border-0 bg-jumbotron event-jumbotron__stats">
+                    <div class="card-header shortcut py-1">
+                      <span class="shortcut__icon"><span class="fas fa-chart-line"></span></span>
+                      <span class="shortcut__title">Stats</span>
+                    </div>
+                    <div class="text-center">
+                      {statsCounters(event)}
+                    </div>
+                  </div>
+                </div>
+              </>
             )}
 
           </div>
@@ -150,7 +152,7 @@ function eventJumbotronPost(featuredPost, user, userLikes) {
 }
 
 export function myEntryJumbotronContent(event: BookshelfModel, entry: EntryBookshelfModel, eventParticipation: EventParticipation,
-                                        options: { inviteToJoin?: boolean } = {}, isTournament?: boolean): JSX.Element {
+  options: { inviteToJoin?: boolean } = {}, isTournament?: boolean): JSX.Element {
   const votingEnabled = ["voting", "voting_rescue"].includes(event.get("status_results"));
   if (entry) {
     if (votingEnabled) {
@@ -210,7 +212,7 @@ export function tournamentJumbotronContent(user: User, event: BookshelfModel, ev
     {ifSet(entry, () =>
       myEntryJumbotronContent(event, entry, eventParticipation, options, true)
     )}
-    <div class={`card-body text-center ${entry ? "px-2 pt-0 pb-2" : "p-2" }`}>
+    <div class={`card-body text-center ${entry ? "px-2 pt-0 pb-2" : "p-2"}`}>
       {tournamentMacros.userRanking(user, event, eventParticipation, tournamentScore, { compact: true })}
       {ifTrue(leaderboard, () =>
         <a href={links.routeUrl(event, "event", "tournament-leaderboard")} class="btn btn-alt d-block">Leaderboard</a>
