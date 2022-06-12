@@ -102,6 +102,7 @@ This page compiles a list of **free** resources for making games, especially for
 | Name | Description |
 | -------- | -------- |
 | [TilEd](http://www.mapeditor.org/)  | Powerful editor for 2D maps (platformers, RPGs, etc.), which can then be exported in either its own TFX format or simple JSON. Open Source. |
+| [LDtk](https://ldtk.io/) | A modern 2D level editor, with a strong focus on user-friendliness. Supports JSON and TFX exports. Open Source. |
 
 ## Learning
 
