@@ -43,8 +43,8 @@ export default function render(context: CommonLocals): JSX.Element {
               <div class={`col-sm-9 col-md-${12 - categoryTitles.length} mb-3`}>&nbsp;</div>
               {categoryTitles.map((title, index) =>
                 ifFalse(flags.specialAwards && index + 1 === 7, () =>
-                  <div class={"col-sm-2 col-md-1 text-center " +((index - 1) !== sortedBy ? "d-none d-md-block" : "")}>
-                    <span style="font-weight: bold">{categoryTitles[index]}</span>
+                  <div class={"col-sm-2 col-md-1 text-center " +((index + 1) !== sortedBy ? "d-none d-md-block" : "")}>
+                    <span style="font-weight: bold">{title}</span>
                   </div>
                 )
               )}
