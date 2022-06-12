@@ -1,5 +1,5 @@
 Alakajam! competition rules
-The *Alakajam!* competitions let people make a video game from scratch in a week-end, then play and rate each other! All games are made around a theme chosen by the community.
+The *Alakajam!* competitions let people make a game from scratch in a week-end, then play and rate each other! All games are made around a theme chosen by the community. Most entries are video games, but card games, board games and other non-video game entries are allowed too!
 
 ![](https://static.alakajam.com/static/presskit/images/schedule-infographic.png)
 
