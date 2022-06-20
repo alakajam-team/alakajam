@@ -72,6 +72,7 @@ export default {
     Web: "fas fa-globe",
     Mobile: "fas fa-mobile-alt",
     Retro: "fas fa-gamepad",
+    Physical: "fas fa-hand-paper",
   },
   DIVISION_ICONS: {
     solo: "fas fa-user",
