@@ -7,7 +7,7 @@ npm run ${BUILD:-build}
 tar -czf dist.tar.gz dist
 scp dist.tar.gz alakajam@alakajam.com:/var/www/alakajam/dist.tar.gz
 
-echo "Archive created."
+echo "Archive created and uploaded."
 echo ""
 echo "Manual actions on the server, as the alakajam user:"
 echo "> git pull && tar -xzf dist.tar.gz && rm dist.tar.gz && pm2 restart alakajam"

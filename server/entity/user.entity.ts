@@ -5,6 +5,7 @@ import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
 import { Comment } from "./comment.entity";
 import { EntryScore } from "./entry-score.entity";
+import { EntryVote } from "./entry-vote.entity";
 import { EventParticipation } from "./event-participation.entity";
 import { Like } from "./like.entity";
 import { Post } from "./post.entity";
@@ -107,6 +108,9 @@ export class User extends BookshelfCompatibleEntity {
   @OneToMany(() => ThemeVote, (themeVote) => themeVote.user, { cascade: true })
   public themeVotes: ThemeVote[];
 
+  @OneToMany(() => EntryVote, (entryVote) => entryVote.user, { cascade: true })
+  public entryVotes: EntryVote[];
+
   @OneToMany(() => EventParticipation, (eventParticipation) => eventParticipation.user, { cascade: true })
   public eventParticipations: EventParticipation[];
 
@@ -146,7 +150,7 @@ export class User extends BookshelfCompatibleEntity {
   }
 
   public dependents(): Array<keyof this> {
-    return [ "details", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes"];
+    return [ "details", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes", "entryVotes"];
   }
 
 }
