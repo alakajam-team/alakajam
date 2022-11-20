@@ -18,15 +18,15 @@ export default function render(context: CommonLocals): JSX.Element {
 
           <h2>Manage scores</h2>
 
-          <p>You can suspend here any score that seems invalid. Any suspended score will not be deleted,
-            it will simply no longer appear in the public high scores.</p>
+          <p>Clicking on the "Suspend" button near a score will hide it from view in the public leaderboard.
+            Any suspended score can be restored afterwards if needed.</p>
 
           <form method="post">
             {context.csrfToken()}
             {scoreMacros.highScores(entry, highScoresCollection, undefined, featuredEvent, { showActiveToggles: true, showDates: true })}
             <input type="submit" name="clearall" class="btn btn-danger" onclick="return confirm('
               This will actually delete all the scores. It\'s here in case you make gameplay changes that turn all scores obsolete.
-              Do you really want to reset all scores?')" value="Reset all scores" />
+              Do you really want to reset all scores?')" value="Delete all scores permanently" />
           </form>
         </div>
       </div>
