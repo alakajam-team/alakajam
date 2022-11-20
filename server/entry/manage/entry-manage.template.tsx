@@ -189,8 +189,9 @@ export default function render(context: CommonLocals): JSX.Element {
                       <>
                         {" "}
                         <a class="btn btn-danger" href={links.routeUrl(entry, "entry", "leave")}
-                          onclick="return confirm('Leave the team? If you want to join again, \
-                            the team owner will have to send a new invite!')">Leave the team</a>
+                          onclick="return confirm('Leave the team? If you want to join again, the team owner will have to send a new invite!')">
+                          Leave the team
+                        </a>
                       </>
                     )}
                   </span>

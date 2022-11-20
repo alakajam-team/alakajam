@@ -24,9 +24,9 @@ export default function render(context: CommonLocals): JSX.Element {
           <form method="post">
             {context.csrfToken()}
             {scoreMacros.highScores(entry, highScoresCollection, undefined, featuredEvent, { showActiveToggles: true, showDates: true })}
-            <input type="submit" name="clearall" class="btn btn-danger" onclick="return confirm('
-              This will actually delete all the scores. It\'s here in case you make gameplay changes that turn all scores obsolete.
-              Do you really want to reset all scores?')" value="Delete all scores permanently" />
+            <input type="submit" name="clearall" class="btn btn-danger" onclick={"return confirm('" +
+              "This will actually delete all the scores. It\\'s here in case you make gameplay changes that turn all scores obsolete. " +
+              "Do you really want to reset all scores?')"} value="Delete all scores permanently" />
           </form>
         </div>
       </div>
