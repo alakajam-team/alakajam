@@ -18,7 +18,7 @@ import userService from "../user/user.service";
 type Json = Record<string, any>;
 
 const PUBLIC_ATTRIBUTES_EVENT = ["id", "name", "title", "display_dates", "display_theme", "status", "status_theme",
-  "status_entry", "status_results", "countdown_config"];
+  "status_entry", "status_results", "countdown_config", "started_at"];
 const PUBLIC_ATTRIBUTES_ENTRY = ["id", "event_id", "event_name", "name", "title", "description", "links", "pictures",
   "category", "comment_count", "karma", "division"];
 const PUBLIC_ATTRIBUTES_ENTRY_DETAILS = ["body", "optouts", "rating_count"];
