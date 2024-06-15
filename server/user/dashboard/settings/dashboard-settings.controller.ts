@@ -9,6 +9,7 @@ import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
 import userTimezoneService from "../../user-timezone.service";
 import { DashboardLocals } from "../dashboard.middleware";
+import security from "server/core/security";
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const timezones = await userTimezoneService.getAllTimeZonesAsOptions();
@@ -26,9 +27,31 @@ export async function dashboardSettingsGet(req: CustomRequest, res: CustomRespon
 export async function dashboardSettingsPost(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   if (req.body.delete) {
     await _handleDeletion(req, res);
+  } else if (req.body.approve) {
+    await _handleApprobation(req, res);
   } else {
     await _handleSave(req, res);
   }
+}
+
+async function _handleApprobation(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
+  if (!security.isAdmin(res.locals.user)) {
+    res.errorPage(403);
+    return;
+  }
+
+  const { dashboardUser } = res.locals;
+  const { redirectTo } = req.body;
+
+  dashboardUser.approbation_state = "approved";
+  await userService.save(dashboardUser);
+
+  res.locals.alerts.push({
+    type: "success",
+    message: "User successfully approved"
+  });
+
+  res.redirect(redirectTo?.toString() ?? "/");
 }
 
 async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
@@ -117,17 +140,26 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
   const result = await userService.deleteUser(res.locals.dashboardUser, userEntries.length);
 
   if (!("error" in result)) {
+    res.locals.alerts.push({
+      type: "success",
+      message: "Account successfully deleted"
+    });
     if (deletingOwnAccount) {
       await logout(req, res);
     } else {
-      res.redirect("/events/people");
+      res.redirect(req.body.redirectTo?.toString() ?? "/events/people");
     }
+
   } else {
     res.locals.alerts.push({
       type: "danger",
       title: "Could not delete account",
       message: result.error
     });
-    await dashboardSettingsGet(req, res);
+    if (req.body.redirectTo) {
+      res.redirect(req.body.redirectTo?.toString() ?? "/");
+    } else {
+      await dashboardSettingsGet(req, res);
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { BookshelfModel, CommentBookshelfModel, EntryBookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
+import { userQuickActions } from "server/admin/users/admin-user-actions";
 import enums from "server/core/enums";
 import forms from "server/core/forms";
 import links from "server/core/links";
@@ -26,8 +27,9 @@ export function post(postModel: BookshelfModel, options: {
   commentsAnchorLinks?: boolean;
   smallTitle?: boolean;
   readOnly?: boolean;
+  csrfTokenForQuickModActions?: () => JSX.Element;
 } & SecurityOptions = {}): JSX.Element {
-  const author = postModel.related<BookshelfModel>("author");
+  const author = postModel.related<BookshelfModel>("author") as unknown as User;
   const isAuthorApproved = author.get("approbation_state") === USER_APPROVED_VALUE;
   const readingUser = options.readingUser;
 
@@ -68,14 +70,16 @@ export function post(postModel: BookshelfModel, options: {
 
     {ifTrue(!isAuthorApproved, () => {
       if (security.isMod(readingUser)) {
-        return <form class="alert alert-danger">
-          <p class="alert-title">
-            <span class="fas fa-wrench mr-2"></span>
-            User approbation required
-            <a href={`/dashboard/settings?user=${author.get("name")}`} class="btn btn-primary btn-sm ml-3">Manage user</a>
-          </p>
+        return <>
+          <div class="alert alert-danger d-flex">
+            <div>
+              <span class="fas fa-wrench mr-2"></span>
+              <b>User approbation required</b>
+            </div>
+            <div class="flex-fill">{userQuickActions(author, { csrfToken: options.csrfTokenForQuickModActions })}</div>
+          </div>
           <p>This post is invisible until the author is approved. Bots/spam accounts can be freely deleted.</p>
-        </form>;
+        </>;
       } else {
         return <div class="alert alert-warning">
           <p class="alert-title">

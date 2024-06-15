@@ -11,7 +11,7 @@ import { UserApprobationState } from "server/entity/transformer/user-approbation
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
 import { Mutable } from "server/types";
-import { FindConditions, FindOneOptions, getRepository, ILike, IsNull, Not, SelectQueryBuilder } from "typeorm";
+import { FindConditions, FindOneOptions, FindOptionsUtils, getRepository, ILike, IsNull, Not, SelectQueryBuilder } from "typeorm";
 
 export class UserService {
 
@@ -59,6 +59,12 @@ export class UserService {
   private createFindUsersQuery(options: FindUserOptions): SelectQueryBuilder<User> {
     const userRepository = getRepository(User);
     const qb = userRepository.createQueryBuilder("user");
+
+    // Joins
+
+    if (options.withDetails) {
+      qb.innerJoinAndSelect("user.details", "details");
+    }
 
     // Basic search
 
@@ -279,6 +285,7 @@ export interface FindUserOptions {
   eventId?: number;
   entriesCount?: boolean;
   withEntries?: boolean;
+  withDetails?: boolean;
   isMod?: boolean;
   isAdmin?: boolean;
   approbationState?: UserApprobationState;

@@ -113,7 +113,7 @@ export function routes(app: express.Application): void {
 
   // General
 
-  router.get("/", home);
+  router.get("/", csrf, home);
   router.get("/events", events);
   router.get("/events/games", games);
   router.get("/events/people", people);

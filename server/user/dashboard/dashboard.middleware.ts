@@ -29,6 +29,11 @@ export async function dashboardMiddleware(req: CustomRequest, res: CustomRespons
         req.query.user !== res.locals.user.get("name")) {
       res.locals.dashboardUser = await userService.findByName(forms.sanitizeString(req.query.user?.toString()));
       res.locals.dashboardAdminMode = true;
+
+      if (!res.locals.dashboardUser) {
+        res.errorPage(404, "No such user");
+        return;
+      }
     } else {
       res.locals.dashboardUser = await userService.findByName(res.locals.user.get("name"));
       res.locals.dashboardAdminMode = false;

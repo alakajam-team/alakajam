@@ -15,7 +15,7 @@ export async function adminUsers(req: CustomRequest, res: CustomResponse<CommonL
 
   const byTitle = (user1: User, user2: User): number => (user1.title || "").localeCompare(user2.title || "");
 
-  const unapprovedUsers = await userService.findUsers({ approbationState: "pending" });
+  const unapprovedUsers = await userService.findUsers({ approbationState: "pending", withDetails: true });
   unapprovedUsers.sort(byTitle);
 
   const newUsers = await userService.findUsers({ orderBy: "created_at", orderByDesc: true, pageSize: 20 });

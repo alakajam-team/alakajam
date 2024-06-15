@@ -13,7 +13,7 @@ import { HomeContext } from "./home.controller";
 export default function render(context: HomeContext): JSX.Element {
   const { user, featuredEvent, featuredPost, embedStreamer, jumboStream, featuredEventAnnouncement, path,
     eventsTimeline, eventParticipation, inviteToJoin, entry, tournamentScore,
-    suggestedEntries, posts, comments, userPost, userLikes, pageCount } = context;
+    suggestedEntries, posts, comments, userPost, userLikes, pageCount, csrfToken } = context;
 
   userMacros.registerTwitchEmbedScripts(context);
 
@@ -149,7 +149,7 @@ export default function render(context: HomeContext): JSX.Element {
                 </div>
 
                 {posts.map(post =>
-                  postMacros.post(post, { readingUser: user, readingUserLikes: userLikes })
+                  postMacros.post(post, { readingUser: user, readingUserLikes: userLikes, csrfTokenForQuickModActions: csrfToken })
                 )}
                 {navigationMacros.pagination(1, pageCount, "/posts")}
               </div>
