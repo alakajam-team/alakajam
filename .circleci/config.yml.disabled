@@ -1,3 +1,5 @@
+# TODO Fix CI step, app shutdown during E2E tests currently timeouts after execution
+
 version: 2
 jobs:
   build:
