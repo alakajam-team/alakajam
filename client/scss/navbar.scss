@@ -41,7 +41,7 @@ $event-navbar-height: 50px;
   & .navbar-brand__hover {
     width: 1px; /* force preload */
     height: 1px;
-    background: url('/static/images/brand_hover.svg?jamician');
+    background: url('/static/images/brand-hover.svg?jamician');
   }
   
   & .navbar-brand:hover .navbar-brand__hover {

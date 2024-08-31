@@ -21,7 +21,7 @@ export function eventJumbotron(event: BookshelfModel, eventParticipation: EventP
         <div class="col-xl-9">
           <div class="row">
             <div class="col-lg-4 event-jumbotron__logo-container">
-              {eventJumbotronAvatar(event, path)}
+              {eventJumbotronLogo(event, path)}
             </div>
 
             <div class="col-lg-8 mb-3 mb-lg-0 align-self-center">
@@ -94,13 +94,13 @@ export function eventJumbotron(event: BookshelfModel, eventParticipation: EventP
   </div>;
 }
 
-function eventJumbotronAvatar(event: BookshelfModel, path: string) {
+function eventJumbotronLogo(event: BookshelfModel, path: string) {
   const eventHome = links.routeUrl(event, "event");
   const eventLogo = event.get("logo");
-  const AvatarTag = (path.startsWith(eventHome)) ? "div" : "a";
-  return <AvatarTag href={eventHome} class="event-jumbotron__logo">
-    <img src={eventLogo ? links.pictureUrl(eventLogo, event) : links.staticUrl("/static/images/favicon196.png")} />
-  </AvatarTag>;
+  const LogoTag = (path.startsWith(eventHome)) ? "div" : "a";
+  return <LogoTag href={eventHome} class="event-jumbotron__logo">
+    <img src={eventLogo ? links.pictureUrl(eventLogo, event) : links.staticUrl("/static/images/default-event.png")} />
+  </LogoTag>;
 }
 
 function eventJumbotronCountdown(event, user) {
