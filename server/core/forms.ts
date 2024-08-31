@@ -21,6 +21,7 @@ export default {
   sanitizeString,
   sanitizeMarkdown,
   sanitizeInt,
+  sanitizeEnum,
 
   slug: slugCustom,
 
@@ -127,6 +128,11 @@ function sanitizeInt(int: string, options: { unsigned?: boolean } = {}): number 
   } else {
     return parsedInt;
   }
+}
+
+function sanitizeEnum<T>(str: string, allowedValues: T[], defaultValue: T): T {
+  const sanitizedString = sanitizeString(str) as unknown as T;
+  return allowedValues.includes(sanitizedString) ? sanitizedString : defaultValue;
 }
 
 /**

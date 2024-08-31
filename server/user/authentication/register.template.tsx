@@ -3,7 +3,7 @@ import base from "server/base.template";
 import config from "server/core/config";
 import constants from "server/core/constants";
 import * as formMacros from "server/macros/form.macros";
-import { ifSet } from "server/macros/jsx-utils";
+import { ifTrue } from "server/macros/jsx-utils";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
 import { RegisterContext } from "./register.controller";
 
@@ -28,11 +28,17 @@ export default function render(context: RegisterContext): JSX.Element {
             </div>
             <div class="form-group">
               <label for="username">Email address</label>
-              <p class="legend">
-                Only used for password recovery or exceptional circumstances.
-                Any upcoming feature involving emails will be opt-in.
-              </p>
               <input type="email" class="form-control" id="email" name="email" value={email} required />
+            </div>
+            <div class="form-group">
+              <div class="alert alert-info">
+                <p class="mb-0">
+                  Get emails about upcoming events <small>(~1 email per month)</small>.
+                  This can be changed later in your profile settings.
+                </p>
+                {formMacros.radio("email_marketing", "off", "No", "off")}
+                {formMacros.radio("email_marketing", "on", "Yes!")}
+              </div>
             </div>
             <div class="form-group">
               <label for="password">Password</label>
@@ -58,7 +64,7 @@ export default function render(context: RegisterContext): JSX.Element {
                 <input type="checkbox" name="remember-me" /> Remember me
               </label>
             </div>
-            {ifSet(config.HCAPTCHA_SITEKEY, () =>
+            {ifTrue(Boolean(config.HCAPTCHA_SITEKEY) && !config.DEBUG_DISABLE_CAPTCHA, () =>
               <div class="h-captcha mb-3" data-sitekey={config.HCAPTCHA_SITEKEY}></div>
             )}
 

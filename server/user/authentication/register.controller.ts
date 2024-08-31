@@ -2,11 +2,13 @@ import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
 import forms from "server/core/forms";
 import { allRules, rule, validateForm } from "server/core/forms-validation";
+import security from "server/core/security";
 import { CustomRequest, CustomResponse } from "server/types";
 import userServiceSingleton, { UserService } from "server/user/user.service";
 import captchaServiceSingleton, { CaptchaService } from "../captcha.service";
 import userTimezoneServiceSingleton, { TimezoneOption, UserTimeZoneService } from "../user-timezone.service";
 import { loginPost } from "./login.controller";
+import { USER_MARKETING_SETTINGS } from "server/entity/transformer/user-marketing-setting.transformer";
 
 export const TEMPLATE_REGISTER = "user/authentication/register";
 
@@ -28,6 +30,10 @@ export class RegisterController {
 
     if (config.READ_ONLY_MODE) {
       res.errorPage(401, "Website is in read-only mode");
+      return;
+    }
+    if (security.isAuthenticated(res.locals.user)) {
+      res.redirect("/");
       return;
     }
 
@@ -70,11 +76,10 @@ export class RegisterController {
       const result = await this.userService.register(req.body.email, req.body.name, req.body.password, req);
 
       if (typeof result === "object") {
-        if (req.body.timezone) {
-          const user = result;
-          user.set("timezone", forms.sanitizeString(req.body.timezone));
-          await this.userService.save(user);
-        }
+        const user = result;
+        user.set("timezone", forms.sanitizeString(req.body.timezone));
+        user.marketing.set("setting", forms.sanitizeEnum(req.body.email_marketing, USER_MARKETING_SETTINGS, "off"));
+        await this.userService.save(user);
         await loginPost(req, res);
         return;
 

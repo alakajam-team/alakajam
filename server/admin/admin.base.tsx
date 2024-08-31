@@ -30,6 +30,7 @@ export default function adminBase(context: AdminBaseContext, contentsBlock: JSX.
           {ifTrue(user && user.get("is_admin") || config.DEBUG_ADMIN, () =>
             <div class="list-group mt-3">
               <div class="list-group-item list-group-item-default"><h4>Administration</h4></div>
+              {link("Marketing", "/admin/marketing", path)}
               {link("Event presets", "/admin/event-presets", path, { isAdminLink: true })}
               {link("Event templates", "/admin/event-templates", path, { isAdminLink: true })}
               {link("Platforms", "/admin/platforms", path, { isAdminLink: true })}

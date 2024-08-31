@@ -61,6 +61,9 @@ export const User = bookshelf.model("User", {
   details() {
     return this.hasOne("UserDetails", "user_id");
   },
+  notification() {
+    return this.hasOne("UserMarketing", "user_id");
+  },
   roles() {
     return this.hasMany("UserRole", "user_id");
   },
@@ -87,7 +90,7 @@ export const User = bookshelf.model("User", {
   },
 }, {
   // Cascading
-  dependents: ["details", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes", "entryVotes"],
+  dependents: ["details", "marketing", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes", "entryVotes"],
 });
 
 /**
@@ -126,6 +129,18 @@ export const UserDetails = bookshelf.model("UserDetails", {
     if (attrs && attrs.social_links) { attrs.social_links = JSON.stringify(attrs.social_links); }
     return attrs;
   },
+});
+
+export const UserMarketing = bookshelf.model("UserMarketing", {
+  tableName: "user_notification",
+  idAttribute: "id",
+  hasTimestamps: true,
+
+  // Relations
+
+  user() {
+    return this.belongsTo("User", "user_id");
+  }
 });
 
 /**

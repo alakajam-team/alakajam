@@ -28,7 +28,7 @@ export function editor(editorName: string, editorContents: string,
   </>;
 }
 
-export function registerEditorScripts(locals: CommonLocals): void {
+export function  registerEditorScripts(locals: CommonLocals): void {
   locals.scripts.push(links.staticUrl("/static/scripts/easymde.min.js"));
 }
 
@@ -81,7 +81,7 @@ export function tooltip(title: string, options: { class?: string; placement?: st
 
 // Radio and check buttons
 
-export function radio(name: string, value: string, label: string, modelProperty: string,
+export function radio(name: string, value: string, label: string, modelProperty?: string,
   options: { textField?: boolean; textFieldEnabled?: boolean; placeholder?: string } = {}): JSX.Element {
   value = options.textFieldEnabled ? modelProperty : value;
   const inputId = slug(name + "-" + value);

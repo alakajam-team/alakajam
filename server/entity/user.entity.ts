@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 
-import { BeforeInsert, BeforeUpdate, Column, Entity, Index, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
+import { AfterLoad, Column, Entity, Index, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { Comment } from "./comment.entity";
 import { EntryScore } from "./entry-score.entity";
@@ -10,16 +9,18 @@ import { EventParticipation } from "./event-participation.entity";
 import { Like } from "./like.entity";
 import { Post } from "./post.entity";
 import { ThemeVote } from "./theme-vote.entity";
+import { TimestampedEntity } from "./timestamped.entity";
 import { TournamentScore } from "./tournament-score.entity";
-import UserApprobationStateTransformer, { UserApprobationState, USER_PENDING_VALUE } from "./transformer/user-approbation-state.transformer";
+import UserApprobationStateTransformer, { USER_PENDING_VALUE, UserApprobationState } from "./transformer/user-approbation-state.transformer";
 import { UserDetails } from "./user-details.entity";
+import { UserMarketing } from "./user-marketing.entity";
 import { UserRole } from "./user-role.entity";
 
 /**
  * User account information.
  */
 @Entity()
-export class User extends BookshelfCompatibleEntity {
+export class User extends TimestampedEntity {
 
   public constructor(name: string, email: string) {
     super();
@@ -27,6 +28,7 @@ export class User extends BookshelfCompatibleEntity {
     this.email = email;
     this.title = name;
     this.details = new UserDetails();
+    this.marketing = new UserMarketing();
   }
 
   @PrimaryGeneratedColumn()
@@ -114,23 +116,14 @@ export class User extends BookshelfCompatibleEntity {
   @OneToMany(() => EventParticipation, (eventParticipation) => eventParticipation.user, { cascade: true })
   public eventParticipations: EventParticipation[];
 
-  @Column(ColumnTypes.dateTime())
-  public created_at: Date;
-
-  @Column(ColumnTypes.dateTime())
-  public updated_at: Date;
+  @OneToOne(() => UserMarketing, (userMarketing) => userMarketing.user, { cascade: true })
+  public marketing: UserMarketing;
 
   // XXX @CreateDateColumn / @UpdateDateColumn not working on user table
 
-  @BeforeInsert()
-  public setCreateDate(): void {
-    this.created_at = new Date();
-    this.updated_at = new Date();
-  }
-
-  @BeforeUpdate()
-  public setUpdateDate(): void {
-    this.updated_at = new Date();
+  @AfterLoad()
+  public init(): void {
+    this.marketing ??= new UserMarketing();
   }
 
   /**
@@ -149,8 +142,12 @@ export class User extends BookshelfCompatibleEntity {
     await this.loadOneToOne(User, "details", UserDetails);
   }
 
+  public async loadNotification(): Promise<void> {
+    await this.loadOneToOne(User, "marketing", UserMarketing);
+  }
+
   public dependents(): Array<keyof this> {
-    return [ "details", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes", "entryVotes"];
+    return [ "details", "marketing", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes", "entryVotes"];
   }
 
 }

@@ -8,10 +8,11 @@ import * as models from "server/core/models";
 import security from "server/core/security";
 import { EventParticipation } from "server/entity/event-participation.entity";
 import { UserApprobationState } from "server/entity/transformer/user-approbation-state.transformer";
+import { ON_VALUE } from "server/entity/transformer/user-marketing-setting.transformer";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
 import { Mutable } from "server/types";
-import { FindConditions, FindOneOptions, FindOptionsUtils, getRepository, ILike, IsNull, Not, SelectQueryBuilder } from "typeorm";
+import { FindConditions, FindOneOptions, getRepository, ILike, IsNull, Not, SelectQueryBuilder } from "typeorm";
 
 export class UserService {
 
@@ -25,7 +26,7 @@ export class UserService {
   public async findByName(name: string, options: FindOneOptions<User> = {}): Promise<User> {
     return getRepository(User).findOne({
       where: { name: ILike(name) },
-      relations: ["details"],
+      relations: ["details", "marketing"],
       ...options
     });
   }
@@ -65,6 +66,9 @@ export class UserService {
     if (options.withDetails) {
       qb.innerJoinAndSelect("user.details", "details");
     }
+    if (options.withMarketing) {
+      qb.innerJoinAndSelect("user.marketing", "marketing");
+    }
 
     // Basic search
 
@@ -100,6 +104,10 @@ export class UserService {
       if (options.withEntries) {
         qb.andWhere('"entriesCount"."entries_count" > 0');
       }
+    }
+    if (options.userMarketingEnabled) {
+      qb.innerJoin("user.marketing", "m")
+        .andWhere(`m.setting = ${ON_VALUE}`);
     }
     if (options.page !== undefined || options.pageSize) {
       const page0Indexed = options.page ? options.page - 1 : 0;
@@ -286,9 +294,11 @@ export interface FindUserOptions {
   entriesCount?: boolean;
   withEntries?: boolean;
   withDetails?: boolean;
+  withMarketing?: boolean;
   isMod?: boolean;
   isAdmin?: boolean;
   approbationState?: UserApprobationState;
+  userMarketingEnabled?: boolean;
   orderBy?: keyof User;
   orderByDesc?: boolean;
   page?: number;

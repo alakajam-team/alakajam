@@ -1,20 +1,30 @@
+import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import { allRules, anyRule, rule, validateForm } from "server/core/forms-validation";
+import security from "server/core/security";
 import { USER_APPROVATION_STATES } from "server/entity/transformer/user-approbation-state.transformer";
+import { USER_MARKETING_SETTINGS } from "server/entity/transformer/user-marketing-setting.transformer";
+import { User } from "server/entity/user.entity";
 import entryService from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
-import userTimezoneService from "../../user-timezone.service";
+import userTimezoneService, { TimezoneOption } from "../../user-timezone.service";
 import { DashboardLocals } from "../dashboard.middleware";
-import security from "server/core/security";
+import { BookshelfModel } from "bookshelf";
+
+export interface DashboardSettingsContext extends CommonLocals {
+  dashboardUser: User & BookshelfModel;
+  dashboardAdminMode: boolean;
+  timezones: TimezoneOption[];
+}
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const timezones = await userTimezoneService.getAllTimeZonesAsOptions();
 
-  res.render<DashboardLocals>("user/dashboard/settings/dashboard-settings", {
+  res.render<DashboardSettingsContext>("user/dashboard/settings/dashboard-settings", {
     ...res.locals,
     ...req.body,
     timezones
@@ -91,6 +101,7 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
       twitch: forms.sanitizeString(req.body.twitch).replace(/.*\//g /* cleanup full URLs */, ""),
       youtube: forms.sanitizeString(req.body.youtube)
     };
+    dashboardUser.marketing.setting = forms.sanitizeEnum(req.body.email_marketing, USER_MARKETING_SETTINGS, "off");
     if (!isApprovedUser) {
       delete dashboardUser.details.social_links.youtube;
       delete dashboardUser.details.social_links.website;

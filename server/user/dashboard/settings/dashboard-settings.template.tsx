@@ -1,5 +1,4 @@
 import React, { JSX } from "preact";
-import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import security from "server/core/security";
 import { UserSocialLinks } from "server/entity/user-details.entity";
@@ -8,8 +7,9 @@ import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 import { unapprovedUserAlert } from "server/user/components/unapproved-user-alert.component";
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
 import dashboardBase from "../dashboard.base.template";
+import { DashboardSettingsContext } from "./dashboard-settings.controller";
 
-export default function render(context: CommonLocals): JSX.Element {
+export default function render(context: DashboardSettingsContext): JSX.Element {
   const { dashboardUser, dashboardAdminMode, timezones } = context;
 
   const isApprovedUser = dashboardUser.approbation_state === "approved";
@@ -77,6 +77,14 @@ export default function render(context: CommonLocals): JSX.Element {
               {formMacros.tooltip("Only used for password recovery. Any upcoming feature involving emails will be opt-in.", { placement: "right" })}
               <input type="email" class="form-control" id="email" name="email"
                 placeholder="Email address" value={dashboardUser.get("email")} required />
+            </div>
+
+            <div class="form-group">
+              <div class="alert alert-info">
+                <span class="mr-2">Get emails about upcoming events <small>(~1 email per month)</small></span>
+                {formMacros.radio("email_marketing", "off", "No", dashboardUser.marketing.setting)}
+                {formMacros.radio("email_marketing", "on", "Yes!", dashboardUser.marketing.setting)}
+              </div>
             </div>
 
             {userDashboardMacros.timezoneField(timezones, dashboardUser.get("timezone"))}

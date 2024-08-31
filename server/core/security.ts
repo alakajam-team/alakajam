@@ -28,6 +28,10 @@ export class Security {
 
   private readonly ORDERED_PERMISSIONS: SecurityPermission[] = ["read", "watch", "write", "manage"];
 
+  public isAuthenticated(user: User): boolean {
+    return Boolean(user);
+  }
+
   /**
    * Checks if a user is watching the given model for receiving notifications
    */
