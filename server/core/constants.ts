@@ -14,7 +14,7 @@ export default {
   UPLOADS_WEB_PATH: "/data/uploads/",
 
   // Sessions
-  REMEMBER_ME_MAX_AGE: 30 * 24 * 3600000 /* 30 days */,
+  REMEMBER_ME_MAX_AGE: 6 * 30 * 24 * 3600000 /* 6 months */,
 
   // User accounts
   USERNAME_MIN_LENGTH: 3,
