@@ -82,7 +82,7 @@ export default function render(context: DashboardSettingsContext): JSX.Element {
 
             <div class="form-group">
               <div class="alert alert-info">
-                <span class="mr-2">Get emails about upcoming events <small>(~1 email per month)</small></span>
+                <span class="mr-2">Receive emails alerts about upcoming events <small>(~1 per month)</small></span>
                 {formMacros.radio("email_marketing", "off", "No", dashboardUser.marketing.setting)}
                 {formMacros.radio("email_marketing", "on", "Yes!", dashboardUser.marketing.setting)}
               </div>

@@ -3,6 +3,7 @@ import constants from "server/core/constants";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
 import { allRules, anyRule, rule, validateForm } from "server/core/forms-validation";
+import links from "server/core/links";
 import security from "server/core/security";
 import { USER_APPROVATION_STATES } from "server/entity/transformer/user-approbation-state.transformer";
 import { USER_MARKETING_SETTINGS } from "server/entity/transformer/user-marketing-setting.transformer";
@@ -22,6 +23,16 @@ export interface DashboardSettingsContext extends CommonLocals {
 
 export async function dashboardSettingsGet(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
   const timezones = await userTimezoneService.getAllTimeZonesAsOptions();
+
+  if (req.query.allowEmailAlerts) { // Allows single-click enrollment at "/dashboard/settings?allowEmailAlerts=true"
+    await userService.allowMarketing(res.locals.dashboardUser);
+    res.locals.alerts.push({
+      type: "success",
+      message: "Email alerts have been successfully enabled."
+    });
+    res.redirect(links.routeUrl(res.locals.dashboardUser, "user", "settings"));
+    return;
+  }
 
   res.render<DashboardSettingsContext>("user/dashboard/settings/dashboard-settings", {
     ...res.locals,

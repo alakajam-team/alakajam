@@ -286,6 +286,11 @@ export class UserService {
     return jamEntryCount > 0;
   }
 
+  public async allowMarketing(user: User): Promise<void> {
+    user.marketing.setting = "on";
+    await this.save(user);
+  }
+
 }
 
 export interface FindUserOptions {

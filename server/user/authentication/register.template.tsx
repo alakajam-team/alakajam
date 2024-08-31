@@ -33,7 +33,7 @@ export default function render(context: RegisterContext): JSX.Element {
             <div class="form-group">
               <div class="alert alert-info">
                 <p class="mb-0">
-                  Get emails about upcoming events <small>(~1 email per month)</small>.
+                  Receive emails alerts about upcoming events <small>(~1 per month)</small>.
                   This can be changed later in your profile settings.
                 </p>
                 {formMacros.radio("email_marketing", "off", "No", "off")}
