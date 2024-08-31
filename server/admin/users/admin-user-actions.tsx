@@ -1,11 +1,11 @@
 import React, { JSX } from "preact";
 import links from "server/core/links";
 import { User } from "server/entity/user.entity";
-import { ifSet } from "server/macros/jsx-utils";
+import { ifTrue } from "server/macros/jsx-utils";
 
-export function userQuickActions(user: User, options: { csrfToken?: () => JSX.Element; redirectTo?: string } = {}): JSX.Element {
+export function userQuickActions(user: User, options: { csrfToken: () => JSX.Element; redirectTo?: string }): JSX.Element {
   return <>
-    {ifSet(options.csrfToken, () =>
+    {ifTrue(user.approbation_state === "pending" && Boolean(options.csrfToken), () =>
       <form method="post" action={"/dashboard/settings?user=" + user.get("name")} class="btn-group float-right">
         {options.csrfToken()}
         <input type="hidden" name="redirectTo" value={options.redirectTo ?? "/"} />
