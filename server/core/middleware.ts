@@ -157,7 +157,7 @@ export async function configure(app: express.Application): Promise<void> {
     };
 
     res.redirectToLogin = () => {
-      res.redirect("/login?redirect=" + req.url);
+      res.redirect("/login?redirect=" + req.originalUrl);
     };
 
     next();

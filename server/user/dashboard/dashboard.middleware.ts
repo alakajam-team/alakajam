@@ -23,7 +23,7 @@ export async function dashboardMiddleware(req: CustomRequest, res: CustomRespons
   res.locals.pageTitle = "User dashboard";
 
   if (!res.locals.user || res.locals.user === undefined) {
-    res.errorPage(403, "You are not logged in.");
+    res.redirectToLogin();
   } else {
     if (req.query.user && security.isAdmin(res.locals.user) &&
         req.query.user !== res.locals.user.get("name")) {
