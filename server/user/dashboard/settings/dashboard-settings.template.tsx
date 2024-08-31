@@ -8,6 +8,7 @@ import { unapprovedUserAlert } from "server/user/components/unapproved-user-aler
 import * as userDashboardMacros from "server/user/dashboard/dashboard.macros";
 import dashboardBase from "../dashboard.base.template";
 import { DashboardSettingsContext } from "./dashboard-settings.controller";
+import { BookshelfModel } from "bookshelf";
 
 export default function render(context: DashboardSettingsContext): JSX.Element {
   const { dashboardUser, dashboardAdminMode, timezones } = context;
@@ -131,7 +132,7 @@ export default function render(context: DashboardSettingsContext): JSX.Element {
           <div class="col-md-6 col-lg-5">
             <div class="form-group">
               <label for="name">Avatar</label>
-              {formMacros.pictureInput("avatar", dashboardUser.get("avatar"), { model: dashboardUser })}
+              {formMacros.pictureInput("avatar", dashboardUser.get("avatar"), { model: dashboardUser as unknown as BookshelfModel })}
             </div>
           </div>
         </div>

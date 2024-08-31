@@ -13,10 +13,9 @@ import { logout } from "server/user/authentication/logout.controller";
 import userService from "server/user/user.service";
 import userTimezoneService, { TimezoneOption } from "../../user-timezone.service";
 import { DashboardLocals } from "../dashboard.middleware";
-import { BookshelfModel } from "bookshelf";
 
 export interface DashboardSettingsContext extends CommonLocals {
-  dashboardUser: User & BookshelfModel;
+  dashboardUser: User;
   dashboardAdminMode: boolean;
   timezones: TimezoneOption[];
 }
