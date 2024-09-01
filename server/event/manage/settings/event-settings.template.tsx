@@ -89,7 +89,8 @@ export default function render(context: CommonLocals): JSX.Element {
               <div class="col-md-8">
                 <div class="form-group">
                   <label for="display-dates">Displayed dates</label>
-                  <input type="text" class="form-control" name="display-dates" value={event?.get("display_dates")} />
+                  <input type="text" class="form-control" name="display-dates" value={event?.get("display_dates")}
+                    placeholder="Example: 1-31 January 2020" />
                 </div>
               </div>
               <div class="col-md-4">
