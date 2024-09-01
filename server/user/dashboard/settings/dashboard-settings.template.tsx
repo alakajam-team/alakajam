@@ -90,6 +90,14 @@ export default function render(context: DashboardSettingsContext): JSX.Element {
 
             {userDashboardMacros.timezoneField(timezones, dashboardUser.get("timezone"))}
 
+            <h2 class="mt-4">Social links</h2>
+
+            <div class="form-group">
+              <label for="name"><span class="fas fa-home" style="color: black; font-size: 18px"></span> Website</label>
+              <input type="url" class="form-control" id="website" name="website" placeholder="http://"
+                value={socialLinks.website} disabled={!isApprovedUser} />
+            </div>
+
             <div class="form-group">
               <label for="twitter">
                 <img src={links.staticUrl("/static/images/social/twitter.svg")} class="no-border mr-1" style="width: 20px" />
@@ -118,9 +126,22 @@ export default function render(context: DashboardSettingsContext): JSX.Element {
             </div>
 
             <div class="form-group">
-              <label for="name"><span class="fas fa-home" style="color: black; font-size: 18px"></span> Website</label>
-              <input type="url" class="form-control" id="website" name="website" placeholder="http://"
-                value={socialLinks.website} disabled={!isApprovedUser} />
+              <label>
+                <img src={links.staticUrl("/static/images/social/other.svg")} class="no-border mr-1" style="width: 20px" />
+                Other social network
+              </label>
+              <div class="container-fluid no-padding">
+                <div class="row">
+                  <div class="col-md-4">
+                    <input type="text" class="form-control" id="social-other-title" name="social-other-title"
+                      placeholder="Label" value={socialLinks.other[0]?.label ?? ""} disabled={!isApprovedUser} />
+                  </div>
+                  <div class="col-md-8">
+                    <input type="text" class="form-control" id="social-other-url" name="social-other-url"
+                      placeholder="URL" value={socialLinks.other[0]?.url ?? ""} disabled={!isApprovedUser} />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="form-group">
@@ -161,8 +182,8 @@ export default function render(context: DashboardSettingsContext): JSX.Element {
         <div class="form-group">
           <input type="submit" name="delete" class="btn btn-danger" value="Delete account"
             onclick={"return confirm('Delete your account permanently? " +
-            "This will REALLY delete all your data, including posts and comments. " +
-            "IMPORTANT: this will only work *after* you have manually deleted or left the team for all your entries.')"} />
+              "This will REALLY delete all your data, including posts and comments. " +
+              "IMPORTANT: this will only work *after* you have manually deleted or left the team for all your entries.')"} />
         </div>
       </form>
     </div>

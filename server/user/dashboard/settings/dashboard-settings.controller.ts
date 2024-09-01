@@ -109,7 +109,11 @@ async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLoca
       website: req.body.website,
       twitter: forms.sanitizeString(req.body.twitter.replace(/.*\//g /* cleanup full URLs */, "").replace("@", "")),
       twitch: forms.sanitizeString(req.body.twitch).replace(/.*\//g /* cleanup full URLs */, ""),
-      youtube: forms.sanitizeString(req.body.youtube)
+      youtube: forms.sanitizeString(req.body.youtube),
+      other: [{
+        label: forms.sanitizeString(req.body["social-other-title"]),
+        url: forms.sanitizeString(req.body["social-other-url"]),
+      }]
     };
     dashboardUser.marketing.setting = forms.sanitizeEnum(req.body.email_marketing, USER_MARKETING_SETTINGS, "off");
     if (!isApprovedUser) {

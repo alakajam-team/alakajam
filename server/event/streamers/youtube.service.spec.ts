@@ -21,7 +21,8 @@ describe("Youtube service", () => {
     const user = new User("name", "email");
     user.details = new UserDetails();
     user.details.social_links = {
-      youtube: youtubeChannelUrl
+      youtube: youtubeChannelUrl,
+      other: []
     };
     return user;
   }

@@ -66,6 +66,14 @@ export default function render(context: CommonLocals): JSX.Element {
               </a>
             </div>
           )}
+          {socialLinks.other.map(otherSocialMedia =>
+            <div class="profile__social-link">
+              <a href={otherSocialMedia.url}>
+                <img src={links.staticUrl("/static/images/social/other.svg")} class="no-border mr-2" style="width: 32px" />
+                {otherSocialMedia.label}
+              </a>
+            </div>
+          )}
           {ifSet(socialLinks.twitch, () =>
             <div class="profile__social-link">
               {userMacros.twitchLink(profileUser)}

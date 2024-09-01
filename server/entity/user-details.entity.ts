@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { AfterLoad, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
 import { User } from "./user.entity";
@@ -10,6 +10,10 @@ export interface UserSocialLinks {
   twitter?: string;
   twitch?: string;
   youtube?: string;
+  other: Array<{
+    label: string;
+    url: string;
+  }>;
 }
 
 /**
@@ -33,6 +37,15 @@ export class UserDetails extends BookshelfCompatibleEntity {
 
   @Column(ColumnTypes.json({ nullable: true }))
   public social_links: UserSocialLinks;
+
+  @AfterLoad()
+  public initOtherSocialLinks(): void {
+    if (this.social_links) {
+      this.social_links.other ??= [];
+    } else {
+      this.social_links = { other: [] };
+    }
+  }
 
   public dependents(): Array<keyof this> {
     return [];
