@@ -11,7 +11,7 @@ export default function render(context: AdminMarketingContext): JSX.Element {
     <div>
       <h1>Marketing</h1>
 
-      <p>N.B. The website advertises sending notifications in the ballpark of one email per month. Please spam sparingly :)</p>
+      <p>Please spam sparingly :)</p>
 
       <h2>Users welcoming email notifications <span class="legend">({notifiableUsers.length})</span></h2>
 
