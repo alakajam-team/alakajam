@@ -61,7 +61,7 @@ export const User = bookshelf.model("User", {
   details() {
     return this.hasOne("UserDetails", "user_id");
   },
-  notification() {
+  marketing() {
     return this.hasOne("UserMarketing", "user_id");
   },
   roles() {
@@ -132,7 +132,7 @@ export const UserDetails = bookshelf.model("UserDetails", {
 });
 
 export const UserMarketing = bookshelf.model("UserMarketing", {
-  tableName: "user_notification",
+  tableName: "user_marketing",
   idAttribute: "id",
   hasTimestamps: true,
 
