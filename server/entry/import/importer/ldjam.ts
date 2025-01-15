@@ -151,7 +151,7 @@ async function fetchEntryDetails(entryReference: EntryReference): Promise<EntryD
 }
 
 function _replaceTripleSlashes(str) {
-  return str ? str.replace(/\/\/\//g, "https://static.jam.vg/") : str;
+  return str ? str.replace(/\/\/\/content/g, "https://static.jam.host/raw") : str;
 }
 
 async function _fetchLDJamTagNames() {
