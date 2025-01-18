@@ -117,7 +117,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
 
   // Gather posts and comments
   contextTasks.push(
-    postService.findPosts({ specialPostType: null })
+    postService.findPosts()
       .then(async (postsCollection) => {
         await postsCollection.load(["entry", "event", "entry.userRoles"]);
         context.posts = postsCollection.models;
