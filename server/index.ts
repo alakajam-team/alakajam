@@ -47,7 +47,6 @@ const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
  */
 
 decreaseProcessPriority();
-heapDumpOnSigpipe();
 createApp();
 
 /*
@@ -210,14 +209,4 @@ function decreaseProcessPriority() {
       log.warn("Failed to decrease process priority with renice: " + e.message);
     }
   }
-}
-
-function heapDumpOnSigpipe() { // kill -13
-  process.on("SIGPIPE", () => {
-    const heapdump = require("heapdump");
-    heapdump.writeSnapshot(path.resolve(__dirname, `${Date.now()}.heapsnapshot`));
-    heapdump.writeSnapshot((err, filename) => {
-      log.info(`Heap dump written to ${filename}`);
-    });
-  });
 }

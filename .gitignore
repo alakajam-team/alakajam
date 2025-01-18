@@ -1,5 +1,5 @@
 # Local files
-/node_modules
+/node_modules*
 /config.js
 
 # Generated output
