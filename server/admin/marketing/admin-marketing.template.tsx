@@ -11,18 +11,17 @@ export default function render(context: AdminMarketingContext): JSX.Element {
     <div>
       <h1>Marketing</h1>
 
-      <p>Please spam sparingly :)</p>
+      <p>List of all {notifiableUsers.length} users welcoming email notifications. Please spam sparingly :)</p>
 
-      <h2>Users welcoming email notifications <span class="legend">({notifiableUsers.length})</span></h2>
+      <h2>Email addresses <a class="btn btn-sm btn-primary" href="/admin/marketing/csv">Download as SendGrid CSV</a></h2>
 
-      <h3>Email addresses</h3>
       <p class="mb-3">
         <code>
           {notifiableUsers.map(u => u.email).join(", ")}
         </code>
       </p>
 
-      <h3>Detailed list</h3>
+      <h2>Detailed list</h2>
 
       <table class="table">
         <thead>

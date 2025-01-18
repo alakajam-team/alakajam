@@ -82,7 +82,7 @@ import { dashboardPosts } from "./user/dashboard/posts/dashboard-posts.controlle
 import { dashboardScores } from "./user/dashboard/scores/dashboard-scores.controller";
 import { dashboardSettingsGet, dashboardSettingsPost } from "./user/dashboard/settings/dashboard-settings.controller";
 import { userProfile } from "./user/user-profile.controller";
-import { adminNotification as adminMarketing } from "./admin/marketing/admin-marketing.controller";
+import { adminMarketing as adminMarketing, adminMarketingDownloadSendgridCsv } from "./admin/marketing/admin-marketing.controller";
 
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
@@ -164,6 +164,7 @@ export function routes(app: express.Application): void {
   router.post("/admin/settings", csrf, adminSettings);
   router.get("/admin/marketing", csrf, adminMarketing);
   router.post("/admin/marketing", csrf, adminMarketing);
+  router.get("/admin/marketing/csv", csrf, adminMarketingDownloadSendgridCsv);
   router.get("/admin/users", csrf, adminUsers);
   router.get("/admin/dev", ...csrfIfNotDebug, adminDev);
   router.post("/admin/dev", ...csrfIfNotDebug, adminDev);
