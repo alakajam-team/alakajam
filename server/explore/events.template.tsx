@@ -50,7 +50,7 @@ function eventTable(event: BookshelfModel, featuredEntries: TopEntriesByDivision
       <a href={ links.routeUrl(event, "event") } class="event-table__title">
         {event.get("title")}
         &nbsp;
-        {ifTrue(event.get("status") === "closed", () =>
+        {ifTrue(event.get("status") === "closed" && event.get("entry_count"), () =>
           <span class="count">({event.get("entry_count")} entries)</span>
         )}
         <div class="event-table__dates">
