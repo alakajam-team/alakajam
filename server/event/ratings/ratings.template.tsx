@@ -1,7 +1,7 @@
-import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
+import { divisionLabel } from "server/entry/view/components/division-label";
 import * as eventMacros from "server/event/event.macros";
 
 export default function render(context: CommonLocals): JSX.Element {
@@ -28,7 +28,7 @@ export default function render(context: CommonLocals): JSX.Element {
               {Object.entries(votesCategory.votesPerDivision).map(([division, votes]: [string, any]) =>
                 <div class="col-sm-6">
                   <div class="row">
-                    <div class="col-10 offset-2"><h4>{capitalize(division)} entries <span class="count">({votes.length})</span></h4></div>
+                    <div class="col-10 offset-2"><h4>{divisionLabel(division)} entries <span class="count">({votes.length})</span></h4></div>
                   </div>
                   {votes.map(vote =>
                     <div class="row">

@@ -1,5 +1,4 @@
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
-import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import links from "server/core/links";
 import * as templatingFilters from "server/core/templating-filters";
@@ -7,6 +6,7 @@ import { digits } from "server/core/templating-filters";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
+import { divisionLabel } from "./division-label";
 
 export default function entryMetadata(entry: BookshelfModel, external: boolean, event?: BookshelfModel): JSX.Element {
   return <div class="mb-4">
@@ -40,7 +40,7 @@ export default function entryMetadata(entry: BookshelfModel, external: boolean, 
       <>
         <div class="entry__info">
           <span class="entry__info-label">Division</span>
-          <span class="entry__info-value">{capitalize(entry.get("division"))}</span>
+          <span class="entry__info-value">{divisionLabel(entry.get("division"))}</span>
         </div>
         <div class="entry__info">
           <span class="entry__info-label">

@@ -1,8 +1,8 @@
-import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
 import { FindGamesOptions } from "server/entry/entry.service";
+import { divisionLabel } from "server/entry/view/components/division-label";
 import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 
 export function searchForm(context: Record<string, any>, options: { fixedEvent?: boolean } = {}): JSX.Element {
@@ -60,7 +60,7 @@ export function searchForm(context: Record<string, any>, options: { fixedEvent?:
         <select name="divisions" class="form-control js-select" multiple>
           {divisions?.map(division => {
             const active = !context.searchOptions.divisions || context.searchOptions.divisions.includes(division);
-            return <option value={division} selected={active}>{capitalize(division)}</option>;
+            return <option value={division} selected={active}>{divisionLabel(division)}</option>;
           })}
         </select>
       </div>

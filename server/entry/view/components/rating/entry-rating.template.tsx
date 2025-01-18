@@ -26,9 +26,9 @@ export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryV
       <div class="entry-voting__body">
         {ifTrue(entry.get("division") === "unranked", () =>
           <div>
-            <p>This game is an <strong>Unranked</strong> entry.{" "}
+            <p>This game is an <strong>unranked</strong> entry.{" "}
             Most rules from the ranked competition do not apply, following the theme is not required either {" "}
-            (see <a href={eventRulesLink(event) + "#unranked-division"}>Docs</a> for more info).</p>
+            (see <a href={eventRulesLink(event) + "#open-division"}>Docs</a> for more info).</p>
             <p>Voting is disabled, please provide feedback instead to earn Karma.</p>
             <p style="margin-bottom: 0">
               <i>Note: The Karma formula grants you as many points on this entry as on ranked ones.
@@ -72,7 +72,7 @@ export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryV
         <h2 class="entry-voting__header">Game ratings</h2>
         <div class="entry-voting__body">
           {ifTrue(entry.get("division") === "unranked", () =>
-            <p>This game is an <strong>Unranked</strong> entry.</p>
+            <p>This game is an <strong>unranked</strong> entry.</p>
           )}
           {ifTrue(entry.get("division") !== "unranked", () =>
             entryRatingCountPhrase(entry, entryVotes)

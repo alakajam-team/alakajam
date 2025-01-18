@@ -5,6 +5,7 @@ import constants from "server/core/constants";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import { digits } from "server/core/templating-filters";
+import { divisionLabel } from "server/entry/view/components/division-label";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 
 export function entryThumb(entry: EntryBookshelfModel, options: {
@@ -76,7 +77,7 @@ export function entryThumb(entry: EntryBookshelfModel, options: {
         {entry.get("platforms")?.map(platform =>
           entryPlatformIcon(platform, { hideLabel: true })
         )}
-        <span class="badge badge-secondary badge-sm ml-1">{capitalize(entry.get("division"))}</span>
+        <span class="badge badge-secondary badge-sm ml-1">{divisionLabel(entry.get("division"))}</span>
       </div>
     </div>
   </div>;

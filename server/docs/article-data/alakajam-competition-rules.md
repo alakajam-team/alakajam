@@ -9,7 +9,7 @@ Anyone can enter in any of the following divisions:
 
 * **Solo**, in which you make a whole game alone in 48 hours ;
 * **Team**, in which any number of persons can gather to make a game in 48 hours ;
-* **Unranked**, a more open division which grants about 72 hours to finish the game. Useful for those not interested in the competitive aspect of the event, or feel like the rules are too restrictive for them, or simply did not finish their game in time.
+* **Open**, a feedback-only division which grants about 72 hours to work on any project of yours, new or existing, and submit a build. Useful for those who don't like the competitive aspect of the event, or just want to join the jam atmosphere while still working on a long-term project.
 
 The jam always starts on a Friday, 7pm [UTC](https://www.timeanddate.com/worldclock/timezone/utc).
 
@@ -26,7 +26,7 @@ After the jam, Solo and Team divisions will be ranked separately through communi
 | Originality | How original you found the game, its art and sound. |
 | Theme | How well and how interestingly the game fit to the theme. |
 
-Unranked games won't get ratings but can expect as much plays & feedback as the others.
+Games from the Open division won't get ratings but can expect as much plays & feedback as the others.
 
 ## What is allowed?
 
@@ -50,9 +50,9 @@ Unranked games won't get ratings but can expect as much plays & feedback as the 
 
 Those third-party assets exceptions are only allowed as long as you have the license to use them. Please check the licensing terms and in doubt, consult the author.
 
-### Unranked division
+### <a name="open-division"></a>Open division
 
-Instead of the competitive jam, you can choose to enter the *Unranked* division, which has no ratings involved. This lets you join the excitement of the jam and the exchange of feedback, while keeping the freedom to work on pretty much anything. Even card & board games are welcome here. You must still observe this primary rule:
+Instead of the competitive jam, you can choose to enter the *Open* division, which has no ratings involved. This lets you join the excitement of the jam and the exchange of feedback, while keeping the freedom to work on pretty much anything. Even card & board games are welcome here. You must still observe this primary rule:
 
 * All third-party assets are allowed as long as you have the license to use them.
 

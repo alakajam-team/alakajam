@@ -4,7 +4,7 @@ Feedback Fortnight rules
 
 ## Divisions
 
-The only available division is *Unranked*, as the event doesn't produce winners. The focus is on plain feedback.
+The only available division is *Open*, as the event doesn't produce winners. The focus is on plain feedback.
 
 ## Schedule
 

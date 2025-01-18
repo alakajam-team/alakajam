@@ -9,7 +9,7 @@ One option is to just deal with it, and make a game that doesn't require pretty 
 
 Another popular option is to go for **pixel art**. It can be super fast to make, and with some effort it's easy enough to make something presentable. *Realm of the Mad God* is an example of successful game that has pretty simple (one could even say average) pixel art. Look through a couple tutorials to understand the basics, and don't be afraid to borrow the style or choice of colors from references.
 
-Finally, you can just grab third-party art and submit your entry in the *Unranked* division.
+Finally, you can just grab third-party art and submit your entry in the *Open* division.
 
 Check the [Resources](/article/docs/resources) page for a list of graphics software you can use.
 
@@ -21,7 +21,7 @@ I have good news: there's several, super easy ways to include sounds effects in 
 
 Now for **music**, if you don't have any experience but still want to start making music, you can look around the [Resources](/article/docs/resources) page and give a try to software like *Bosca Ceoil*. If this is new for you, it will definitely take some time to get comfortable with the tool and not cringe at your music too much, but it's not that hard to get something acceptable for a jam game.
 
-Alternately, you can just grab existing music submit your entry in the *Unranked* division. Or, you now, not have music, maybe even no sound at all, which is also acceptable.
+Alternately, you can just grab existing music submit your entry in the *Open* division. Or, you now, not have music, maybe even no sound at all, which is also acceptable.
 
 ## Being bad at code
 
@@ -31,6 +31,6 @@ Check the [Resources](/article/docs/resources) page for a wide range of engines 
 
 ## "I'm bad, I'm bad, really really bad" [*](https://www.youtube.com/watch?v=dsUXAEzaC3Q&feature=youtu.be&t=1m9s)
 
-If you're just new to all aspects of game development, you still have no excuses! Engines like *Twine* (text adventures) and *Scratch* (2D) are literally accessible for everyone. You can even enter without making the art *or* sounds yourself, by choosing the Unranked division.
+If you're just new to all aspects of game development, you still have no excuses! Engines like *Twine* (text adventures) and *Scratch* (2D) are literally accessible for everyone. You can even enter without making the art *or* sounds yourself, by choosing the *Open* division.
 
 Depending on what you want to learn, the suggestions above are still valid for advice on each aspect of game making.

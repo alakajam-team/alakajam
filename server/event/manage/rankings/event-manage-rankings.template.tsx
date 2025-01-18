@@ -1,8 +1,9 @@
 import { BookshelfModel } from "bookshelf";
-import { capitalize, range } from "lodash";
+import { range } from "lodash";
 import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import constants from "server/core/constants";
+import { divisionLabel } from "server/entry/view/components/division-label";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifTrue } from "server/macros/jsx-utils";
@@ -22,7 +23,7 @@ export default function render(context: CommonLocals): JSX.Element {
             ifTrue(division !== "unranked", () =>
               <a href={`?division=${division}&categoryIndex=${currentCategoryIndex}`}
                 class={"btn btn-primary " + (divisionQuery === division ? "active" : "")}>
-                {capitalize(division)}
+                {divisionLabel(division)}
               </a>
             );
           }
@@ -97,6 +98,6 @@ export default function render(context: CommonLocals): JSX.Element {
 
 function title(divisionQuery, categoryTitles, currentCategoryIndex) {
   const allDivisions = divisionQuery === "all";
-  const divisionName = allDivisions ? "All" : capitalize(divisionQuery);
+  const divisionName = allDivisions ? "All" : divisionLabel(divisionQuery);
   return `${divisionName} division${allDivisions ? "s" : ""}, category ${categoryTitles[currentCategoryIndex - 1]}`;
 }

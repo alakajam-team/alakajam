@@ -7,6 +7,7 @@ import constants from "server/core/constants";
 import enums from "server/core/enums";
 import { ordinal } from "server/core/formats";
 import { digits } from "server/core/templating-filters";
+import { divisionLabel } from "server/entry/view/components/division-label";
 import * as eventMacros from "server/event/event.macros";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as postMacros from "server/post/post.macros";
@@ -104,7 +105,7 @@ function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedC
           <a href={`?sortBy=${selectedCategoryIndex}&division=${division}`} type="button"
             class={`btn btn-primary results-links__division ${selectedDivision === division ? "active" : ""}`}>
             <span class={constants.DIVISION_ICONS[division]}></span>&nbsp;
-            {capitalize(division)}
+            {divisionLabel(division)}
           </a>
         )}
       </span>
@@ -136,13 +137,13 @@ function podium(rankings, event: BookshelfModel, categoryTitles: string[], divis
         {ifFalse(options.displaySpecialAwards, () =>
           <button class="dropdown-toggle" type="button" data-toggle="dropdown">
             <span class={constants.DIVISION_ICONS[division]}></span>
-            <span class="ml-1">{capitalize(division)} division</span>
+            <span class="ml-1">{divisionLabel(division)} division</span>
           </button>
         )}
         <div class="dropdown-menu">
           {Object.keys(event.get("divisions")).map(title =>
             <a class="dropdown-item" href={`?sortBy=${sortedBy}&division=${title}`}>
-              {capitalize(title)} division
+              {divisionLabel(title)} division
             </a>
           )}
         </div>

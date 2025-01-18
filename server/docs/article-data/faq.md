@@ -37,7 +37,7 @@ If you are entering a competitive division, make sure to rate & comment enough g
 Alakajam's karma uses a secret recipe transmitted from father to son since 50 generations! Its details are kept vague on purpose, but you might want to know that:
 
 * Both ratings & comments make you gain points
-* Unranked entries are worth **as many points** as Solo/Team ones, despite the lack of ratings.
+* Open division entries are worth **as many points** as Solo/Team ones, despite the lack of ratings.
 * Each team member gains points independently. That means two team members can rate the same game, and both of them will make their game's karma increase.
 * Very short, effortless comments gain fewer points.
 

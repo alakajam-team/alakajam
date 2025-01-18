@@ -6,7 +6,7 @@ Kajam rules
 Anyone can enter in one of the following divisions, unless a particular Kajam is organized differently:
 
 * **Ranked**, in which you make a game either alone or as a team ;
-* **Unranked**, for those not interested in the competitive aspect of the event, or who want to enter without focusing on the monthly topic.
+* **Open**, for those not interested in the competitive aspect of the event, or who want to enter without focusing on the monthly topic.
 
 Everyone has usually three to four weeks to submit their entries.
 
@@ -16,7 +16,7 @@ In the case of a ranked jam, *everyone* with an Alakajam! account is able to pla
 
 On each Ranked game you play, you will get to rate **a single aspect of the game, being the topic of the month**. You won't even see an *Overall* rating category, so making a finished, polished game with enough contents is not necessarily the goal!
 
-Unranked games won't get ratings but can expect as much plays & feedback as the others.
+*Open* division games won't get ratings but can expect as much plays & feedback as the others.
 
 ## What is allowed/not allowed?
 

@@ -2,10 +2,9 @@ import { BookshelfModel } from "bookshelf";
 import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import constants from "server/core/constants";
-import forms from "server/core/forms";
-import links from "server/core/links";
 import security from "server/core/security";
 import { User } from "server/entity/user.entity";
+import { divisionLabel } from "server/entry/view/components/division-label";
 import { eventRulesLink } from "server/event/event.macros";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
 
@@ -18,7 +17,7 @@ export function divisionField(entry: BookshelfModel, event: BookshelfModel, exte
     data-initial-division={entry.get("division")}>
     {ifFalse(external, () =>
       Object.entries(event.get("divisions")).map(([name, description]: [string, string]) =>
-        divisionButton(capitalize(name), description, constants.DIVISION_ICONS[name], name,
+        divisionButton(divisionLabel(name), description, constants.DIVISION_ICONS[name], name,
           entry.get("division"), canEditDivision, divisionTooltip, isMod)
       )
     )}

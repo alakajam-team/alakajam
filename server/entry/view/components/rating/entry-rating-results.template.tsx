@@ -1,10 +1,11 @@
 import { BookshelfModel } from "bookshelf";
-import { capitalize, range } from "lodash";
+import { range } from "lodash";
 import React, { JSX } from "preact";
 import { ordinal } from "server/core/formats";
 import links from "server/core/links";
 import { digits } from "server/core/templating-filters";
 import { ifFalse, ifTrue } from "server/macros/jsx-utils";
+import { divisionLabel } from "../division-label";
 
 export function entryRatingResults(entry: BookshelfModel, event: BookshelfModel): JSX.Element {
   let hasRatings = false;
@@ -48,7 +49,7 @@ export function entryRatingResults(entry: BookshelfModel, event: BookshelfModel)
 
       {ifTrue(hasRatings, () =>
         <div>
-          This game entered in the <strong>{capitalize(entry.get("division"))}</strong> competition
+          This game entered in the <strong>{divisionLabel(entry.get("division"))}</strong> competition
           (<strong>{entriesInDivision}</strong> entries).
         </div>
       )}

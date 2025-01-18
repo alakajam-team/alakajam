@@ -1,6 +1,5 @@
 import { BookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
-import forms from "server/core/forms";
 import links from "server/core/links";
 import security from "server/core/security";
 import { User } from "server/entity/user.entity";

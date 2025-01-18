@@ -1,7 +1,7 @@
-import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import { User } from "server/entity/user.entity";
+import { divisionLabel } from "server/entry/view/components/division-label";
 import * as eventMacros from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import { eventManageBase } from "../event-manage.base.template";
@@ -44,7 +44,7 @@ export default function render(context: CommonLocals): JSX.Element {
               <td>
                 {eventMacros.entrySmallThumb(entry)}
               </td>
-              <td>{capitalize(entry.get("division"))}</td>
+              <td>{divisionLabel(entry.get("division"))}</td>
               <td>{entry.get("karma")}</td>
               <td>{entry.get("division") !== "unranked" ? entry.related("details").get("rating_count") : "N.A."}</td>
               <td><a href={`?entryDetails=${entry.get("id") }&orderBy=${ orderBy}`} class="btn btn-outline-primary">Details</a></td>
