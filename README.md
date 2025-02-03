@@ -2,7 +2,7 @@
 
 ## Initial setup
 
-Requirement: NodeJS 14
+Requirement: NodeJS 14+
 
 1. `npm install --no-optional`
 2. `npm start`

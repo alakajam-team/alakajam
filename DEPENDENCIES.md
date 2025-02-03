@@ -22,13 +22,3 @@ Package                                  Current   Wanted   Latest  Location
 bookshelf                                 0.15.2   0.15.2    1.2.0  alakajam
 knex                                      0.17.6   0.17.6  0.21.12  alakajam
 ```
-
-* Webpack
-
-`@cypress/webpack-preprocessor` breaks on Webpack 5 due to https://github.com/cypress-io/cypress/issues/8948.
-
-```
-Package                                  Current  Wanted   Latest  Location
-webpack                                   4.44.2  4.44.2    5.4.0  alakajam
-terser-webpack-plugin                      4.2.3   4.2.3    5.0.3  alakajam
-```
