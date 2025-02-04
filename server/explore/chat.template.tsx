@@ -41,12 +41,6 @@ export default function render(context: CommonLocals): JSX.Element {
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12">
-          <h2>Embedded IRC chat</h2>
-          <iframe src="https://kiwiirc.com/client/irc.afternet.org/?nick=noob|?#akj-discord" style="border:0; width:100%; height:600px;">whop</iframe>
-        </div>
-      </div>
     </div>);
 
 }
