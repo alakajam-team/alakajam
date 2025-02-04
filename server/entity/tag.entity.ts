@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+
 
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";

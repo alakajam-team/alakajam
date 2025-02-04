@@ -87,7 +87,7 @@ import { adminMarketing as adminMarketing, adminMarketingDownloadSendgridCsv } f
 const upload = initUploadMiddleware();
 const csrf = initCSRFMiddleware();
 const csrfDisabled: RequestHandler = (req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction) => {
-  // eslint-disable-next-line @typescript-eslint/unbound-method
+
   req.csrfToken = () => "";
   next();
 };

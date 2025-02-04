@@ -1,5 +1,5 @@
 if (__filename.endsWith(".js")) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+
   require("module-alias/register");
 }
 
@@ -18,7 +18,7 @@ exports.up = async (_knex) => {
   if (config.DB_TYPE === "postgresql") { // SQLite unsupported due to having a single connection
     try {
       entries = await models.Entry.where({}).orderBy("id", "ASC").fetchAll() as BookshelfCollectionOf<EntryBookshelfModel>;
-    } catch (e) {
+    } catch {
       log.debug("Failed to fetch entry list to update thumbnails, assuming this is a fresh database.");
     }
   }

@@ -1,5 +1,4 @@
 import { BookshelfModel } from "bookshelf";
-import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";

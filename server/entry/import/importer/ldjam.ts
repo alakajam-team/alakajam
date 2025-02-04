@@ -164,7 +164,7 @@ async function _fetchLDJamTagNames() {
         platforms[tag.id] = tag.name;
       });
       return platforms;
-    } catch (e) {
+    } catch {
       return { error: "Failed to download platforms data" };
     }
   });

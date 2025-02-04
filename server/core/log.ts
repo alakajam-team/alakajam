@@ -22,10 +22,10 @@ const LOCAL_TIME_ZONE = new luxon.LocalZone();
 
 let level = "info";
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+
   const config = require(path.resolve(SOURCES_ROOT, "config"));
   level = config.LOG_LEVEL;
-} catch (e) {
+} catch {
   // Nothing (config file might not be created yet)
 }
 

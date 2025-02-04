@@ -30,7 +30,7 @@ export class DB {
   public async closeAnyConnection(): Promise<void> {
     try {
       await getConnection().close();
-    } catch (e) {
+    } catch {
       // Connection not found
     }
   }

@@ -17,9 +17,8 @@ import log from "./log";
 
 let sharp = null;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   sharp = require("sharp");
-} catch (e) {
+} catch {
   log.warn("Sharp dependency missing. Picture resizing disabled...");
 }
 
@@ -240,7 +239,7 @@ export class FileStorage {
     try {
       await fs.access(absolutePath, fs.constants.R_OK);
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   }

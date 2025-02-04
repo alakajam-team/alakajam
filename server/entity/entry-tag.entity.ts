@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+
 
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Entry } from "./entry.entity";

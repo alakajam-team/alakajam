@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-expressions */
+
 
 import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import { expect } from "chai";

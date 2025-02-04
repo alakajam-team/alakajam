@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+
 
 import { Column, Entity, Index, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";

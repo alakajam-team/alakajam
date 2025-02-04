@@ -29,7 +29,7 @@ export class ArticleService {
           return result;
         });
       }
-    } catch (e) {
+    } catch {
       log.warn("Article not found: " + articleName);
     }
   }

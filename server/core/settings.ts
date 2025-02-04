@@ -67,7 +67,7 @@ export class Settings {
         } else {
           log.error(`Invalid SETTING_ARTICLE_SIDEBAR setting: no "${category}" article category found`);
         }
-      } catch (e) {
+      } catch {
         log.error("Invalid SETTING_ARTICLE_SIDEBAR setting: malformed JSON");
       }
     }
