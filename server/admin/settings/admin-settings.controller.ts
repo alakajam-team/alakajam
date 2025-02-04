@@ -35,7 +35,7 @@ export async function adminSettings(req: CustomRequest, res: CustomResponse<Comm
         try {
           // Minimize JSON
           req.body.value = JSON.stringify(JSON.parse(req.body.value));
-        } catch (e) {
+        } catch {
           // We re-send the user to the edit page with an error message
           save = false;
           req.query.edit = req.body.key;
@@ -75,7 +75,7 @@ export async function adminSettings(req: CustomRequest, res: CustomResponse<Comm
     if (editableSetting?.isJson && settings.canUserEdit(user, editableSetting)) {
       try {
         currentEditValue = JSON.stringify(JSON.parse(currentEditValue), null, 4);
-      } catch (e) {
+      } catch {
         log.error("Field " + req.query.edit + " is not a valid JSON");
       }
     }

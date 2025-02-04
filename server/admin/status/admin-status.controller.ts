@@ -26,7 +26,7 @@ export function adminStatus(req: CustomRequest, res: CustomResponse<CommonLocals
   try {
     require("sharp");
     pictureResizeEnabled = true;
-  } catch (e) {
+  } catch {
     // Nothing
   }
 

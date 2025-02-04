@@ -22,7 +22,7 @@ exports.up = async (knex: Knex) => {
 
   try {
     await fs.rename(STATIC_UPLOADS, DATA_UPLOADS);
-  } catch (e) {
+  } catch {
     log.debug(`Failed to move uploads folder from ${STATIC_UPLOADS} to ${DATA_UPLOADS}`);
   }
 };
@@ -30,7 +30,7 @@ exports.up = async (knex: Knex) => {
 exports.down = async (knex: Knex) => {
   try {
     await fs.rename(DATA_UPLOADS, STATIC_UPLOADS);
-  } catch (e) {
+  } catch {
     log.debug(`Failed to move uploads folder from ${DATA_UPLOADS} to ${STATIC_UPLOADS}`);
   }
 

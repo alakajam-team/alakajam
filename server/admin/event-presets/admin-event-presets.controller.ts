@@ -45,7 +45,7 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
           parseInt(req.body["countdown-offset-h"], 10) * 60 +
           parseInt(req.body["countdown-offset-m"], 10);
         offset = offsetMinutes * 60000;
-      } catch (e) {
+      } catch {
         errorMessage = "Invalid deadline offset from start";
       }
       if (!req.body.title) {

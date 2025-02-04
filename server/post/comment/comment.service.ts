@@ -81,7 +81,7 @@ export class CommentService {
     }
     return models.Comment.query((qb) => {
       qb = qb.distinct()
-        .leftJoin("user_role", function () {
+        .leftJoin("user_role", function() {
           this.on("comment.node_id", "=", "user_role.node_id")
             .andOn("comment.node_type", "=", "user_role.node_type");
         })

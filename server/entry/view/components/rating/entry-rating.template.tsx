@@ -3,12 +3,11 @@ import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
 import { EventFlags } from "server/entity/event-details.entity";
-import * as formMacros from "server/macros/form.macros";
 import { User } from "server/entity/user.entity";
+import { eventRulesLink } from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import { entryRatingCountPhrase } from "./entry-rating-count-phrase.template";
 import { entryRatingForm } from "./entry-rating-form.template";
-import { eventRulesLink } from "server/event/event.macros";
 
 export function entryRating(event: BookshelfModel, entry: BookshelfModel, entryVotes: number, user: User, canVoteOnEntry: boolean,
   vote: BookshelfModel, minEntryVotes: number, csrfToken: () => JSX.Element): JSX.Element {

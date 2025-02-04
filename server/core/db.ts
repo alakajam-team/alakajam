@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 
 /**
  * Database storage configuration.
@@ -60,7 +60,7 @@ function initBookshelf(): DB {
           name: knex.raw("REPLACE(name, '.js', '.ts')")
         });
       }
-    } catch (e) {
+    } catch {
       // NOP
     }
 
@@ -107,7 +107,7 @@ function initBookshelf(): DB {
       } else {
         return false;
       }
-    } catch (e) {
+    } catch {
       return false;
     }
   };

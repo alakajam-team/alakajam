@@ -1,4 +1,5 @@
 module.exports = {
+    files: ["**/*.ts", "**/*.tsx"],
     parserOptions: {
         project: "./client/tsconfig.json"
     },

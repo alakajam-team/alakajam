@@ -1,5 +1,5 @@
 /* eslint-disable prefer-rest-params */
-/* eslint-disable no-underscore-dangle */
+
 
 /**
  * Bookshelf models

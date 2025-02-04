@@ -66,7 +66,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
     if (!errorMessage) {
       try {
         req.body.divisions = JSON.parse(req.body.divisions || "{}");
-      } catch (e) {
+      } catch {
         errorMessage = "Invalid divisions JSON";
       }
     }
@@ -76,14 +76,14 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         if (req.body["category-titles"].length > constants.MAX_CATEGORY_COUNT) {
           errorMessage = "Events cannot have more than " + constants.MAX_CATEGORY_COUNT + " rating categories";
         }
-      } catch (e) {
+      } catch {
         errorMessage = "Invalid rating category JSON";
       }
     }
     if (!errorMessage) {
       try {
         req.body.links = JSON.parse(req.body.links || "[]");
-      } catch (e) {
+      } catch {
         errorMessage = "Invalid links JSON";
       }
     }
