@@ -6,14 +6,17 @@ import * as eventMacros from "server/event/event.macros";
 import * as gamesSearchMacros from "server/macros/games-search.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";
+import { exploreTabs } from "./explore-tabs.template";
 
 export default function render(context: CommonLocals): JSX.Element {
   const { user, searchedEvent, featuredEvent, searchOptions, entriesCollection, rescueEntries, requiredVotes, path } = context;
 
   context.pageTitle = "Game search";
 
-  return base(context,
-    <div class="container-fluid">
+  return base(context, <>
+    <div class="container">
+      {exploreTabs(path)}
+
       <div class="row">
         <div class="col-sm-4 col-md-3">
           {gamesSearchMacros.searchForm(context)}
@@ -26,13 +29,6 @@ export default function render(context: CommonLocals): JSX.Element {
           </div>
         </div>
         <div class="col-sm-8 col-md-9">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb py-0">
-              <li class="breadcrumb-item"><a href="/events">Events</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Game search</li>
-            </ol>
-          </nav>
-
           <h1>
             {ifTrue(searchedEvent, () =>
               <>
@@ -66,7 +62,7 @@ export default function render(context: CommonLocals): JSX.Element {
         </div>
       </div>
     </div>
-  );
+  </>);
 }
 
 function ratingsPhaseBlock(featuredEvent, rescueEntries, requiredVotes) {

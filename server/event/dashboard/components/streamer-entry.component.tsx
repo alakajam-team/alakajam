@@ -59,7 +59,7 @@ export function eventDashboardStreamerEntry(eventParticipation: EventParticipati
     {ifTrue(event.get("status") === "closed" && !eventParticipation.isStreamer, () =>
       <div>
         <p>Streamer entries are now closed.</p>
-        <p><a href="/events" class="btn btn-secondary">Explore our upcoming events</a></p>
+        <p><a href="/explore/events" class="btn btn-secondary">Explore our upcoming events</a></p>
       </div>
     )}
   </form>;

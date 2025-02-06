@@ -172,7 +172,7 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
     if (deletingOwnAccount) {
       await logout(req, res);
     } else {
-      res.redirect(req.body.redirectTo?.toString() ?? "/events/people");
+      res.redirect(req.body.redirectTo?.toString() ?? "/explore/people");
     }
 
   } else {

@@ -115,13 +115,16 @@ export function routes(app: express.Application): void {
   // General
 
   router.get("/", csrf, home);
-  router.get("/events", events);
-  router.get("/events/games", games);
-  router.get("/events/people", people);
-  router.get("/events/people/mods", peopleMods);
   router.get("/user", usersRoot);
   router.get("/chat", chat);
   router.get("/changes", changes);
+
+  // Explorer
+
+  router.get("/explore/events", events);
+  router.get("/explore/games", games);
+  router.get("/explore/people", people);
+  router.get("/explore/people/mods", peopleMods);
 
   // Users
 

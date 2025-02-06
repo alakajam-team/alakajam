@@ -5,22 +5,16 @@ import links from "server/core/links";
 import * as eventMacros from "server/event/event.macros";
 import { ifTrue } from "server/macros/jsx-utils";
 import { EventsContext, TopEntriesByDivision } from "./events.controller";
+import { exploreTabs } from "./explore-tabs.template";
 
 export default function render(context: EventsContext): JSX.Element {
-  const { open, pending, closed, featuredEntries } = context;
+  const { open, pending, closed, featuredEntries, path } = context;
 
   return base(context,
-    <div class="container" style="width: 900px">
+    <div class="container">
 
-      <h1>
-        Events
-        <a href="/events/games" class="btn btn-outline-primary ml-2">
-          <span class="fa fa-gamepad"></span> Game search
-        </a>
-        <a href="/events/people" class="btn btn-outline-primary ml-2">
-          <span class="fa fa-user"></span> User search
-        </a>
-      </h1>
+      {exploreTabs(path)}
+
       {ifTrue(open.length > 0, () =>
         <div class="events-block events-block__live mr-2">
           <h2><span class="fas fa-play-circle"></span> On now!</h2>

@@ -20,7 +20,7 @@ export function moderationBar(context: CommonLocals, isAdmin: boolean): JSX.Elem
 
       {moderationLink(context.featuredEvent?.id,
         "Edit featured event", "calendar", links.routeUrl(context.featuredEvent, "event", "edit"))}
-      {moderationLink(context.path === "/events",
+      {moderationLink(context.path === "/explore/events",
         "Create event", "calendar", links.routeUrl(null, "event", "template"))}
 
       {moderationLink(context.event?.id,

@@ -7,7 +7,7 @@ import { CustomRequest, CustomResponse } from "server/types";
 import userService, { FindUserOptions } from "server/user/user.service";
 
 export function usersRoot(_req: CustomRequest, res: CustomResponse<CommonLocals>): void {
-  res.redirect("/events/people");
+  res.redirect("/explore/people");
 }
 
 /**

@@ -233,7 +233,7 @@ export default function render(context: CommonLocals): JSX.Element {
             {ifTrue(userScores.length === 0, () =>
               <div>
                 <p>No score submitted yet!</p>
-                <p><a class="btn btn-primary" href="/events/games?highScoresSupport=on">Find games with high scores</a></p>
+                <p><a class="btn btn-primary" href="/explore/games?highScoresSupport=on">Find games with high scores</a></p>
               </div>
             )}
           </div>

@@ -221,7 +221,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
 /**
  * Delete an event
  */
-export async function eventDelete(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
+export async function eventDelete(_: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   if (!security.isAdmin(res.locals.user)) {
     res.errorPage(403);
     return;
@@ -229,7 +229,7 @@ export async function eventDelete(req: CustomRequest, res: CustomResponse<EventL
 
   if (res.locals.event.get("status") === enums.EVENT.STATUS.PENDING) {
     await res.locals.event.destroy();
-    res.redirect("/events");
+    res.redirect("/explore/events");
   } else {
     res.errorPage(403, "Only pending events can be deleted");
   }

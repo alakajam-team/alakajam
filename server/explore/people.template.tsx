@@ -4,8 +4,9 @@ import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import { ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as navigationMacros from "server/macros/navigation.macros";
-import * as tabsMacros from "server/macros/tabs.macros";
 import * as userMacros from "server/user/user.macros";
+import { exploreTabs } from "./explore-tabs.template";
+import { peopleTabs } from "./people-tabs.macros";
 
 export default function render(context: CommonLocals): JSX.Element {
   const { events, searchOptions, path, userCount, searchedEvent, users, currentPage, pageCount } = context;
@@ -14,21 +15,16 @@ export default function render(context: CommonLocals): JSX.Element {
 
   return base(context,
     <div class="container">
-
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/events">Events</a></li>
-          <li class="breadcrumb-item active" aria-current="page">User search</li>
-        </ol>
-      </nav>
-
-      {tabsMacros.peopleTabs(path)}
+      {exploreTabs(path)}
 
       <div class="row spacing">
         <div class="col-sm-4 col-md-3">
+          {peopleTabs(path)}
           {searchForm(searchOptions, events)}
         </div>
+
         <div class="col-sm-8 col-md-9">
+
           <h1>Users <span class="count">({userCount})</span></h1>
 
           {ifTrue(searchOptions.search || searchOptions.eventId !== undefined || searchOptions.withEntries, () =>

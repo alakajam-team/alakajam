@@ -56,7 +56,7 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
 
           <div class="collapse navbar-collapse" id="navbar-dropdown">
             <ul class="navbar-nav">
-              <li class={"nav-item " + (path.startsWith("/events") ? "active" : "")}><a class="nav-link" href="/events">Events</a></li>
+              <li class={"nav-item " + (path.startsWith("/explore") ? "active" : "")}><a class="nav-link" href="/explore/events">Explore</a></li>
               <li class={"nav-item d-none d-sm-block " + (path === "/chat" ? "active" : "")}><a class="nav-link" href="/chat">Chat</a></li>
               <li class={"nav-item " + ((path.startsWith("/article/docs") || path.startsWith("/api")) ? "active" : "")}>
                 <a class="nav-link" href="/article/docs">Docs</a></li>

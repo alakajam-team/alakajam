@@ -74,7 +74,7 @@ export default function render(context: HomeContext): JSX.Element {
           <div class="row">
             <div class="col-sm-9 col-3">
               <div class="home-navbar__events">
-                <a class="home-navbar__events-home btn btn-outline-light border-0" href="/events">
+                <a class="home-navbar__events-home btn btn-outline-light border-0" href="/explore/events">
                   <span class="fa fa-calendar-alt"></span>
                   <span class="d-none d-sm-inline">Events<br />timeline</span>
                 </a>
