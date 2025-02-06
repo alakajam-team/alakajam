@@ -1,3 +1,6 @@
+@use "variables";
+@use "breakpoints";
+
 /**
  * All styling of navigation bars:
  * - The blue main bar
@@ -12,11 +15,11 @@ $navbar-brand-height: 50px;
 $event-navbar-height: 50px;
 
 .navbar#main-header {
-  @include header-shadow;
+  @include variables.header-shadow;
   padding: 0;
   font-size: 1.1rem;
   
-  @include media-breakpoint-up(md) {
+  @include breakpoints.media-breakpoint-up(md) {
     height: $navbar-height;
 
     .navbar-collapse {
@@ -49,7 +52,7 @@ $event-navbar-height: 50px;
     height: $navbar-brand-height;
   }
   
-  @include media-breakpoint-down(md) {
+  @include breakpoints.media-breakpoint-down(md) {
     & .navbar-brand {
       width: 42px;
     }
@@ -72,24 +75,24 @@ $event-navbar-height: 50px;
         background-color: white;
 
         & > .nav-link {
-        color: $main;
+        color: variables.$main;
         }
       }
 
       &, &.active {
-        @include transition;
+        @include variables.transition;
         font-size: 1.1rem;
         padding: 0 10px;
         height: $navbar-mobile-item-height;
         line-height: $navbar-mobile-item-height;
 
-        @include media-breakpoint-up(md) {
+        @include breakpoints.media-breakpoint-up(md) {
           line-height: $navbar-height;
           height: $navbar-height;
         }
 
         &:hover {
-          background-color: $main-light;
+          background-color: variables.$main-light;
 
           & > a {
             color: white;
@@ -148,7 +151,7 @@ $event-navbar-height: 50px;
 
   & .navbar-unread-notifications {
     position: absolute;
-    background-color: $neutral;
+    background-color: variables.$neutral;
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -161,22 +164,22 @@ $event-navbar-height: 50px;
     line-height: 20px;
     
     &.unread {
-      background-color: $alt;
+      background-color: variables.$alt;
     }
   }
 
 }
 
 .event-navbar {
-  @include header-shadow;
-  @include transition;
+  @include variables.header-shadow;
+  @include variables.transition;
   box-sizing: border-box;
   width: 100%;
   background-color: white;
-  color: $alt;
+  color: variables.$alt;
   position: relative;
 
-  @include media-breakpoint-up(md) {
+  @include breakpoints.media-breakpoint-up(md) {
     height: $event-navbar-height;
   }
 
@@ -198,7 +201,7 @@ $event-navbar-height: 50px;
   }
 
   &__name {
-    @include alt-font;
+    @include variables.alt-font;
     font-size: 1.3rem;
     line-height: 1.3rem;
     text-overflow: ellipsis;
@@ -207,10 +210,10 @@ $event-navbar-height: 50px;
     margin-top: 2px;
   }
   &__dates {
-    @include main-font;
+    @include variables.main-font;
     display: block;
     font-size: .8rem;
-    color: $text-light;
+    color: variables.$text-light;
     margin-top: -2px;
   }
   
@@ -235,10 +238,10 @@ $event-navbar-height: 50px;
     line-height: $event-navbar-height;
     font-size: 1.3rem;
     text-align: center;
-    color: $alt !important;
+    color: variables.$alt !important;
 
     &.disabled {
-     color: $neutral-light !important;
+     color: variables.$neutral-light !important;
     }
 
     @media (min-width: 768px) {
@@ -263,15 +266,15 @@ $event-navbar-height: 50px;
     }
     
     &:hover {
-      background-color: $alt-transparent;
+      background-color: variables.$alt-transparent;
     }
 
     &.active {
-      border-bottom: 4px solid $alt;
+      border-bottom: 4px solid variables.$alt;
     }
 
     &.disabled {
-      color: $text-lighter;
+      color: variables.$text-lighter;
       cursor: default;
       &:hover {
         background-color: inherit;
@@ -301,23 +304,23 @@ $event-navbar-height: 50px;
   }
     
   &__link-label {
-    color: $alt;
+    color: variables.$alt;
   }
 }
 
 .bg-moderation {
-  background-color: $moderation-dark;
+  background-color: variables.$moderation-dark;
 }
 
 .moderation-bar {
   width: 100%;
-  background-color: $moderation-dark;
+  background-color: variables.$moderation-dark;
   margin-top: -3px;
 
   & .btn {
-    background-color: $moderation-dark;
-    border-color: $moderation-dark;
-    color: $moderation-text;
+    background-color: variables.$moderation-dark;
+    border-color: variables.$moderation-dark;
+    color: variables.$moderation-text;
     padding: 0px 5px;
     font-size: 12px;
     line-height: 1.5;
@@ -325,13 +328,13 @@ $event-navbar-height: 50px;
     margin-right: 5px;
 
     &:hover {
-      background-color: $moderation;
-      border-color: $moderation;
+      background-color: variables.$moderation;
+      border-color: variables.$moderation;
     }
 
     &.btn-danger {
-      background-color: $danger;
-      border-color: $danger;
+      background-color: variables.$danger;
+      border-color: variables.$danger;
     }
   }
 }

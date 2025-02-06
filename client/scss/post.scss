@@ -2,7 +2,8 @@
  * Blog posts, comments & Markdown content in general
  */
 
-@import "./variables.scss";
+@use "sass:color";
+@use "variables.scss";
 
 .post {
   border-radius: 3px;
@@ -22,24 +23,24 @@
   }
 
   &__permalink {
-    color: $text-lightest;
+    color: variables.$text-lightest;
     font-size: 90%;
   }
 
   &__title {
-    @include main-font;
+    @include variables.main-font;
     font-weight: bold;
     margin: 0;
     padding-bottom: 5px;
-    color: $text;
+    color: variables.$text;
 
     &:hover {
-      color: $alt-dark;
+      color: variables.$alt-dark;
     }
   }
 
   &__comment-count {
-    color: $alt;
+    color: variables.$alt;
     font-size: 1.4rem;
     white-space: nowrap;
   }
@@ -48,19 +49,19 @@
     display: inline-block;
     font-size: 1.4rem;
     white-space: nowrap;
-    color: $text-light;
+    color: variables.$text-light;
 
     & button {
       border: none;
       background: none;
-      color: $text-light;
+      color: variables.$text-light;
     }
 
     &:hover,
     & button:hover,
     &.liked,
     &.liked button {
-      color: $alt;
+      color: variables.$alt;
     }
   }
 
@@ -75,7 +76,7 @@
   }
 
   &__details {
-    border-bottom: 1px solid $borders;
+    border-bottom: 1px solid variables.$borders;
     line-height: 36px;
     font-weight: bold;
     padding-right: 10px;
@@ -92,7 +93,7 @@
   }
 
   &__date {
-    color: $text-lighter;
+    color: variables.$text-lighter;
   }
 
   &__avatar {
@@ -103,10 +104,10 @@
   }
 
   &__special-type {
-    @include main-font;
+    @include variables.main-font;
     display: block;
     font-weight: bold;
-    background-color: $moderation-dark;
+    background-color: variables.$moderation-dark;
     white-space: nowrap;
     text-align: center;
   }
@@ -144,8 +145,8 @@
   }
 
   &.unread {
-    background-color: $alt-lightest;
-    border: 1px solid $alt-lighter;
+    background-color: variables.$alt-lightest;
+    border: 1px solid variables.$alt-lighter;
     padding-top: 10px;
     margin-bottom: 5px;
   }
@@ -190,7 +191,7 @@
   }
 
   & h1 {
-    @include main-font;
+    @include variables.main-font;
     font-weight: bold;
     display: inline-block;
     clear: both;
@@ -198,7 +199,7 @@
     padding-bottom: 3px;
     margin-bottom: 15px;
     font-size: 2rem;
-    border-bottom: 1px solid $neutral-light;
+    border-bottom: 1px solid variables.$neutral-light;
 
     &:first-child {
       margin-top: 0;
@@ -218,7 +219,7 @@
     margin-bottom: 10px;
     font-size: 1.4rem;
     font-weight: normal;
-    color: $text-light;
+    color: variables.$text-light;
 
     &:first-child {
       margin-top: 0;
@@ -229,18 +230,18 @@
     margin-bottom: 7px;
     font-size: 1.1rem;
     font-weight: normal;
-    color: $text-light;
+    color: variables.$text-light;
   }
 
   & blockquote {
     padding: 5px 10px;
     font-size: 1rem;
-    color: $text-light;
+    color: variables.$text-light;
   }
 
   & .spoiler {
-    border-left: 3px solid $borders;
-    color: change-color($text-light, $alpha: 0);
+    border-left: 3px solid variables.$borders;
+    color: color.change(variables.$text-light, $alpha: 0);
     font-size: 1rem;
     margin: 5px 0;
     padding: 3px 10px;
@@ -251,12 +252,12 @@
     cursor: help;
 
     &::before {
-      color: $alt-light;
+      color: variables.$alt-light;
       content: "Spoiler";
       display: block;
     }
     &:hover {
-      color: $text-light;
+      color: variables.$text-light;
       max-height: inherit;
       max-width: inherit;
       overflow: auto;
@@ -300,14 +301,14 @@
 
     & td,
     & th {
-      border: 1px solid $borders;
+      border: 1px solid variables.$borders;
       padding: 6px;
     }
 
     & th {
       padding-top: 11px;
       padding-bottom: 11px;
-      background-color: $main-light;
+      background-color: variables.$main-light;
       color: white;
     }
   }

@@ -1,7 +1,7 @@
-@import "_variables";
+@use "_variables";
 
 $theme-colors: (
-  "primary": $main,
+  "primary": variables.$main,
 );
 
 .container {
@@ -10,11 +10,11 @@ $theme-colors: (
 
 .list-group {
   & > a {
-    color: $text;
+    color: variables.$text;
 
     &:hover {
-      color: $text;
-      background-color: $neutral-lightest;
+      color: variables.$text;
+      background-color: variables.$neutral-lightest;
     }
   }
 
@@ -30,17 +30,17 @@ $theme-colors: (
 @media (min-width: 768px) {
   .nav.nav-tabs {
     width: 100%;
-    border-bottom: 1px solid $tabs;
+    border-bottom: 1px solid variables.$tabs;
 
     & .nav-link {
-      border: 0 solid $tabs;
-      color: $neutral-dark;
+      border: 0 solid variables.$tabs;
+      color: variables.$neutral-dark;
 
       &.active {
         background-color: transparent !important;
         border-width: 1px;
-        border-color: $tabs;
-        border-bottom-color: $bg;
+        border-color: variables.$tabs;
+        border-bottom-color: variables.$bg;
       }
     }
   }

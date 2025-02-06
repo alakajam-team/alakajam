@@ -1,3 +1,5 @@
+@use "variables";
+
 /**
  * Event pages & event macros
  */
@@ -7,7 +9,7 @@
 .action-banner {
   padding: 10px;
   margin-bottom: 15px;
-  background-color: $borders;
+  background-color: variables.$borders;
   min-width: 200px;
 
   &.buttons-only {
@@ -23,7 +25,7 @@
   &__title {
     vertical-align: top;
     padding-bottom: 5px;
-    color: $text;
+    color: variables.$text;
     font-weight: bold;
     font-size: 1.3rem;
     height: 35px;
@@ -35,14 +37,14 @@
   }
 
   &__post {
-    @include shadow;
+    @include variables.shadow;
     background-color: white;
     padding: 15px;
     overflow: hidden;
     width: 100%;
 
     & a {
-      @include alt-font;
+      @include variables.alt-font;
       font-size: 1.4rem;
       line-height: 1.4rem;
     }
@@ -61,12 +63,12 @@
   }
 
   &__live {
-    color: $alt-dark;
+    color: variables.$alt-dark;
   }
 }
 
 .event-table {
-  @include shadow;
+  @include variables.shadow;
   margin-top: 10px;
 
   &__header {
@@ -77,7 +79,7 @@
   &__logo {
     vertical-align: top;
     height: 60px;
-    border-right: 1px solid $borders;
+    border-right: 1px solid variables.$borders;
 
     @media (max-width: 767px) {
       display: none;
@@ -85,7 +87,7 @@
   }
 
   &__title {
-    @include alt-font;
+    @include variables.alt-font;
     display: inline-block;
     line-height: 42px;
     height: 60px;
@@ -99,19 +101,19 @@
     line-height: normal;
   }
   &.pending &__title {
-    background-color: $main;
+    background-color: variables.$main;
     color: white;
 
     &:hover {
-      background-color: $main-dark;
+      background-color: variables.$main-dark;
     }
   }
   &.open &__title {
-    background-color: $alt;
+    background-color: variables.$alt;
     color: white;
 
     &:hover {
-      background-color: $alt-dark;
+      background-color: variables.$alt-dark;
     }
   }
 
@@ -141,28 +143,28 @@
   }
 
   &__status {
-    @include main-font;
+    @include variables.main-font;
     font-size: 0.8rem;
     vertical-align: middle;
   }
   
   &__dates {
-    @include main-font;
+    @include variables.main-font;
     font-weight: normal;
     font-size: 0.8rem;
-    color: $text;
+    color: variables.$text;
     line-height: 1rem;
     margin-top: -5px;
     border-radius: 0;
     width: 100%;
   }
   &.pending &__dates, &.open &__dates {
-    color: $white-lighter;
+    color: variables.$white-lighter;
   }
 
   &__entries {
     padding: 15px;
-    background-color: $borders;
+    background-color: variables.$borders;
   }
 
   &__entry {
@@ -274,7 +276,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background: linear-gradient(to bottom, transparent 20%, $bg) 100%;
+    background: linear-gradient(to bottom, transparent 20%, variables.$bg) 100%;
     pointer-events: none;
   }
 }
