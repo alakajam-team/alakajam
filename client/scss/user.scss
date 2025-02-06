@@ -1,3 +1,5 @@
+@use "variables";
+
 /**
  * User pages & user macros
  */
@@ -31,7 +33,7 @@
   }
 
   &__name {
-    color: $text-light;
+    color: variables.$text-light;
     font-weight: normal;
   }
 
@@ -40,7 +42,7 @@
   }
 
   &__joined {
-    color: $text-light;
+    color: variables.$text-light;
   }
 
   &__social-link {
@@ -120,14 +122,14 @@
   }
 
   &__title {
-    @include alt-font;
+    @include variables.alt-font;
     font-size: 1.4rem;
     line-height: 1.6rem;
     padding-left: 60px;
     margin: 0;
 
     & a {
-      color: $text-alt-light;
+      color: variables.$text-alt-light;
     }
   }
   &.centered &__title {
@@ -137,7 +139,7 @@
   &__name {
     font-size: 0.85rem;
     font-weight: bold;
-    color: $text-light;
+    color: variables.$text-light;
     padding-left: 60px;
     margin-top: -3px;
   }
@@ -145,14 +147,14 @@
     float: right;
     font-size: 0.85rem;
     font-weight: bold;
-    color: $text;
+    color: variables.$text;
     padding: 0 25px 0 5px;
     margin-top: -3px;
   }
   &__entries {
     font-size: 0.75rem;
     font-weight: bold;
-    color: $text-light;
+    color: variables.$text-light;
     padding-left: 60px;
 
     & img {

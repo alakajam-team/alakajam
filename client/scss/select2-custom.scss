@@ -1,6 +1,6 @@
-@import "./variables.scss";
+@use "variables.scss";
 
 .select2-container--default .select2-selection--multiple,
 .select2-container--default .select2-selection--single {
-  border: 1px solid $borders-forms;
+  border: 1px solid variables.$borders-forms;
 }

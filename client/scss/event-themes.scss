@@ -1,3 +1,5 @@
+@use "variables";
+
 /**
  * Event themes page
  */
@@ -9,18 +11,18 @@
   }
   
   &__idea {
-    border-bottom: 1px solid $borders;
+    border-bottom: 1px solid variables.$borders;
     padding: 10px;
 
     & p {
       margin-bottom: 0;
-      color: $text-light;
+      color: variables.$text-light;
     }
     & .form-control {
       margin-bottom: 5px;
     }
     & input[type=text] {
-      @include alt-font;
+      @include variables.alt-font;
       letter-spacing: 1px;
     }
     &.form-inline input[type=text] {
@@ -33,7 +35,7 @@
     }
   }
   &__idea-label {
-    @include alt-font;
+    @include variables.alt-font;
     letter-spacing: 1px;
     margin-bottom: 0;
     font-size: 24px;
@@ -47,7 +49,7 @@
   & .progress {
     font-size: 0.9rem;
     height: 1.3rem;
-    border: 1px solid $neutral-light;
+    border: 1px solid variables.$neutral-light;
     margin-bottom: 15px;
   }
   
@@ -63,10 +65,10 @@
   & .theme-shortlist-line {
     position: relative;
     padding: 3px 0;
-    border-bottom: 1px solid $borders;
+    border-bottom: 1px solid variables.$borders;
     font-size: 1.4rem;
     font-weight: bold;
-    color: $text-light;
+    color: variables.$text-light;
 
     &:last-child {
       border-bottom: 0;
@@ -80,7 +82,7 @@
 
       & .theme-shortlist-line__label {
         text-decoration: line-through;
-        color: $text-lighter;
+        color: variables.$text-lighter;
       }
     }
     &.winner .theme-shortlist-line__label {
@@ -106,8 +108,8 @@
     }
 
     &__label {
-      @include alt-font;
-      color: $text;
+      @include variables.alt-font;
+      color: variables.$text;
       padding-left: 10px;
       font-weight: normal;
       font-size: 1.4rem;
@@ -135,7 +137,7 @@
     }
     
     &__label {
-      @include alt-font;
+      @include variables.alt-font;
       font-size: 2rem;
       overflow-wrap: break-word;
     }
@@ -151,7 +153,7 @@
     }
     
     &__label {
-      @include alt-font;
+      @include variables.alt-font;
       letter-spacing: 0;
       line-height: 0.9rem;
     }

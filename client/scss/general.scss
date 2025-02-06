@@ -2,32 +2,32 @@
  * Main tags customization, reusable classes & other general stuff.
  */
 
-@import "./variables.scss";
+@use "variables.scss";
 
 ::selection {
-  background: $text-lighter;
+  background: variables.$text-lighter;
   color: white;
 }
 
 html {
-  @include main-font;
+  @include variables.main-font;
   height: 100%;
   font-size: 15px;
 }
 
 body,
 p {
-  @include main-font;
+  @include variables.main-font;
 }
 
 body {
-  background-color: $bg;
-  color: $text;
+  background-color: variables.$bg;
+  color: variables.$text;
   height: 100%;
 }
 
 .body {
-  margin-top: $body-margin;
+  margin-top: variables.$body-margin;
 }
 
 .container.thin {
@@ -38,15 +38,15 @@ body {
 }
 
 h1 {
-  @include alt-font;
+  @include variables.alt-font;
   margin: 0 0 15px 0;
   font-size: 2.2rem;
   font-weight: normal;
   letter-spacing: 1px;
-  color: $text;
+  color: variables.$text;
 
   & a {
-    color: $text;
+    color: variables.$text;
   }
 }
 h2 {
@@ -61,7 +61,7 @@ h3 {
 h4 {
   font-size: 1.2rem;
   margin: 0 0 10px 0;
-  color: $text-light;
+  color: variables.$text-light;
 }
 
 textarea.form-control {
@@ -95,18 +95,18 @@ select[readonly].select2-hidden-accessible + .select2-container {
 }
 
 a {
-  color: $text-alt;
+  color: variables.$text-alt;
 
   & img {
     border: 0;
   }
 
   &:hover {
-    color: $alt;
+    color: variables.$alt;
     text-decoration: none;
 
     & img {
-      border: 4px solid $alt-light;
+      border: 4px solid variables.$alt-light;
       transition: 0.1s;
     }
   }
@@ -116,7 +116,7 @@ img.preview {
   max-width: 100%;
 
   &.upload-pending {
-    border: 2px dashed $neutral;
+    border: 2px dashed variables.$neutral;
   }
 }
 img.no-border:hover,
@@ -129,7 +129,7 @@ a:hover img.no-border {
 }
 
 blockquote {
-  border-left: 3px solid $neutral-light;
+  border-left: 3px solid variables.$neutral-light;
   padding: 10px 20px;
   margin: 0 0 20px;
   font-size: 17.5px;
@@ -255,29 +255,29 @@ input[type="submit"][data-disabled] {
 }
 
 .btn {
-  @include main-font;
+  @include variables.main-font;
   border-radius: 2px;
 }
 .btn-alt {
-  background-color: $alt;
+  background-color: variables.$alt;
   border: 0;
   color: white;
 
   &:hover,
   &:active {
-    background-color: $alt-dark;
+    background-color: variables.$alt-dark;
     color: white;
   }
 }
 .btn-outline-alt {
   background-color: transparent;
-  border: 1px solid $alt;
-  color: $alt;
+  border: 1px solid variables.$alt;
+  color: variables.$alt;
 
   &:hover,
   &:active {
-    border-color: $alt-dark;
-    color: $alt-dark;
+    border-color: variables.$alt-dark;
+    color: variables.$alt-dark;
   }
 }
 
@@ -291,18 +291,18 @@ input[type="submit"][data-disabled] {
   margin-bottom: 20px;
 
   & .page-link {
-    color: $alt;
+    color: variables.$alt;
   }
 
   & .active .page-link {
-    background-color: $alt;
-    border-color: $alt;
+    background-color: variables.$alt;
+    border-color: variables.$alt;
   }
 
   & .disabled .page-link,
   & .disabled .page-link:hover {
-    background-color: $borders;
-    color: $neutral;
+    background-color: variables.$borders;
+    color: variables.$neutral;
   }
 }
 
@@ -310,8 +310,8 @@ input[type="submit"][data-disabled] {
   width: 100%;
   margin: 1rem 0;
   font-weight: bold;
-  color: $text-lighter;
-  border-bottom: 1px solid $neutral-light;
+  color: variables.$text-lighter;
+  border-bottom: 1px solid variables.$neutral-light;
 
   & .btn {
     display: inline-block;
@@ -321,28 +321,28 @@ input[type="submit"][data-disabled] {
 }
 
 .featured {
-  background-color: $neutral-lightest;
-  border: 1px solid $neutral-lighter;
-  box-shadow: 1px 1px 2px $neutral-lighter;
+  background-color: variables.$neutral-lightest;
+  border: 1px solid variables.$neutral-lighter;
+  box-shadow: 1px 1px 2px variables.$neutral-lighter;
   padding: 20px;
   margin-bottom: 20px;
 
   &.live {
-    background-color: $alt-lightest;
-    border: 1px solid $alt-lighter;
-    box-shadow: 1px 1px 2px $alt-lighter;
+    background-color: variables.$alt-lightest;
+    border: 1px solid variables.$alt-lighter;
+    box-shadow: 1px 1px 2px variables.$alt-lighter;
   }
 }
 
 .count {
   /* deprecated, use legend */
-  @include main-font;
-  color: $text-light;
+  @include variables.main-font;
+  color: variables.$text-light;
   font-size: 0.8em;
   font-weight: bold;
 }
 .legend {
-  color: $text-light;
+  color: variables.$text-light;
   font-size: 0.75em;
   font-weight: bold;
   margin-bottom: 5px;
@@ -368,11 +368,11 @@ input[type="submit"][data-disabled] {
 
   & .container {
     padding: 20px 0;
-    border-top: 1px solid $neutral-lighter;
+    border-top: 1px solid variables.$neutral-lighter;
   }
 
   & a {
-    color: $neutral;
+    color: variables.$neutral;
   }
 
   &__link {
@@ -386,10 +386,10 @@ input[type="submit"][data-disabled] {
 
 /* Warning box */
 .warning-box {
-  @include shadow;
+  @include variables.shadow;
   padding: 10px;
-  background-color: $moderation;
-  color: $moderation-text;
+  background-color: variables.$moderation;
+  color: variables.$moderation-text;
   border-radius: 4px;
 }
 
@@ -406,13 +406,13 @@ input[type="submit"][data-disabled] {
 }
 
 .big-table {
-  @include shadow;
-  background-color: $borders;
+  @include variables.shadow;
+  background-color: variables.$borders;
   margin-bottom: 20px;
 
   &__header {
     padding: 10px;
-    background-color: $main;
+    background-color: variables.$main;
     color: white;
     font-weight: bold;
     font-size: 1.4rem;
@@ -508,7 +508,7 @@ table.sortable {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) inset;
 }
 @mixin progress-value {
-  background-color: $main-dark;
+  background-color: variables.$main-dark;
   border-radius: 4px 0 0 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) inset;
 }
@@ -539,7 +539,7 @@ progress[value]::-moz-progress-bar {
     display: inline-block;
     width: 36px;
     text-align: center;
-    color: $alt;
+    color: variables.$alt;
   }
   &__title {
     color: black;
@@ -557,7 +557,7 @@ progress[value]::-moz-progress-bar {
   }
 }
 a.shortcut:hover {
-  background-color: $neutral-lightest;
+  background-color: variables.$neutral-lightest;
 }
 
 .alert {
