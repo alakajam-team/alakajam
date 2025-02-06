@@ -98,9 +98,9 @@ export default function render(context: HomeContext): JSX.Element {
             </div>
             <div class="col-sm-3 col-9">
               <div class="home-navbar__social">
-                {socialLink("Twitter", "https://twitter.com/AlakajamBang", "twitter.svg")}
                 {socialLink("Discord", "https://discord.gg/yZPBpTn", "discord.svg")}
                 {socialLink("IRC", "/chat", "irc.svg")}
+                {socialLink("Twitter", "https://twitter.com/AlakajamBang", "twitter.svg")}
                 {socialLink("Reddit", "https://www.reddit.com/r/alakajam", "reddit.svg")}
                 {socialLink("Github", "https://github.com/alakajam-team", "github.svg")}
                 <a href="/post/1070/finances-of-the-alakajam-association" class="btn btn-secondary">
