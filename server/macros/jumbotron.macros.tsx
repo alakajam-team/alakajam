@@ -281,7 +281,7 @@ export function eventJumbotronCountdownTimezone(event: BookshelfModel, user: Use
   return user && event.get("countdown_config").date &&
     <div class="jumbotron-invite__timezone">
       Times for {(user && user.get("timezone")) ? timezone(user.get("timezone")) : "Unknown timezone"}
-      <a href={links.routeUrl(user, "user", "settings")} class="btn btn-outline btn-xs border-0">
+      <a href={links.routeUrl(user, "user", "settings")} class="btn btn-outline-light btn-xs border-0">
         <span class="fa fa-cog"></span>
       </a>
     </div>;
