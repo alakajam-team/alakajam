@@ -1,12 +1,11 @@
 import * as chokidar from "chokidar";
 import copy from "copy";
 import * as findUp from "find-up";
-import { writeFile } from "fs";
+import { writeFileSync } from "fs";
 import { copySync } from "fs-extra";
 import { debounce, intersection } from "lodash";
 import * as path from "path";
 import * as sass from "sass";
-import { promisify } from "util";
 import fileStorage from "../core/file-storage";
 import log from "../core/log";
 
@@ -18,16 +17,14 @@ class SassBuilder {
   private readonly ASSETS_GLOBS = ["png", "gif", "svg", "ttf", "woff", "woff2", "eot"].map((ext) => "./**/*." + ext);
   private readonly FA_WEBFONTS_FOLDER = path.join(this.ROOT_PATH, "./node_modules/@fortawesome/fontawesome-free/webfonts/");
 
-  private writeFileAsync = promisify(writeFile);
-
-  public async initialize({ watch = false }): Promise<[sass.LegacyResult, string[]] | undefined> {
+  public async initialize({ watch = false }): Promise<[sass.CompileResult, string[]] | undefined> {
     this.copyWebfonts();
 
     if (!watch) {
       log.info("Building SASS...");
 
       const { resolve: sassResolve, reject: sassReject, promise: sassPromise }
-        = this.createDeferredPromise<sass.LegacyResult>();
+        = this.createDeferredPromise<sass.CompileResult>();
       const { resolve: assetsResolve, reject: assetsReject, promise: assetsPromise }
         = this.createDeferredPromise<string[]>();
 
@@ -50,7 +47,7 @@ class SassBuilder {
       sassWatcher.on("all", debounce(this.sassBuild.bind(this), 500));
 
       const assetWatcher = chokidar.watch(this.ASSETS_GLOBS, { cwd: this.CLIENT_SRC_FOLDER });
-      assetWatcher.on("all", (eventName: string, assetPath: string) => {
+      assetWatcher.on("all", (_eventName: string, assetPath: string) => {
         this.copyAssets({
           assetsPath: assetPath,
           resolve: () => { log.debug(`Copied ${assetPath}`); }
@@ -65,37 +62,34 @@ class SassBuilder {
     log.debug(`Copied ${WEBFONTS_PATH}`);
   }
 
-  private async sassBuild(resolve?: (result: sass.LegacyResult) => void, reject?: (cause?: any) => void) {
+  private async sassBuild(resolve?: (result: sass.CompileResult) => void, reject?: (cause?: any) => void) {
     await fileStorage.createFolderIfMissing(path.resolve(this.CLIENT_DEST_FOLDER, "css"))
       .catch(reject);
     const inputFile = path.resolve(this.CLIENT_SRC_FOLDER, "scss/index.scss");
     const outputFile = path.resolve(this.CLIENT_DEST_FOLDER, "css/index.css");
 
-    sass.render({
-      file: inputFile,
-      sourceMap: false,
-      includePaths: [this.ROOT_PATH, path.resolve(this.CLIENT_SRC_FOLDER, "css")]
-    }, (error, result) => {
-      if (error) {
-        log.error(error.message, error.stack);
-        if (typeof reject === "function") { reject(error); }
-      } else {
-        this.writeFileAsync(outputFile, result.css)
-          .then(() => {
-            log.info(`Built CSS to ${outputFile} (${result.css.length / 1000.}kb)`);
-            if (typeof resolve === "function") { resolve(result); }
-          })
-          .catch(reject);
-      }
-    });
+    try {
+      const result = sass.compile(inputFile, {
+        sourceMap: false,
+        quietDeps: true,
+        loadPaths: [this.ROOT_PATH, path.resolve(this.CLIENT_SRC_FOLDER, "css")]
+      });
+
+      writeFileSync(outputFile, result.css)
+      log.info(`Built CSS to ${outputFile} (${result.css.length / 1000.}kb)`);
+      if (typeof resolve === "function") { resolve(result); }
+    } catch (error) {
+      log.error(error.message, error.stack);
+      if (typeof reject === "function") { reject(error); }
+    }
   }
 
   private copyAssets({ assetsPath, reject, resolve }:
-  {
-    assetsPath?: string | string[];
-    reject?: (reason: any) => void;
-    resolve?: (files: string[]) => void;
-  }) {
+    {
+      assetsPath?: string | string[];
+      reject?: (reason: any) => void;
+      resolve?: (files: string[]) => void;
+    }) {
     copy(
       assetsPath,
       this.CLIENT_DEST_FOLDER,
