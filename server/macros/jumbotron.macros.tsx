@@ -228,7 +228,7 @@ export function statsCounters(event: BookshelfModel): JSX.Element {
   const participants = event.related<BookshelfModel>("details").get("participation_count");
   const statsElements = [];
 
-  statsElements.push(<a href={`/events/people?search=&eventId=${event.get("id")}`} class="d-block">
+  statsElements.push(<a href={`/explore/people?search=&eventId=${event.get("id")}`} class="d-block">
     <span class="event-jumbotron__stats-counter">{participants}</span>&nbsp;
     entrant{participants !== 1 ? "s" : ""}
   </a>);
