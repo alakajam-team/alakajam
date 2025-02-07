@@ -72,6 +72,7 @@ class SassBuilder {
       const result = sass.compile(inputFile, {
         sourceMap: false,
         quietDeps: true,
+        silenceDeprecations: ['import'],
         loadPaths: [this.ROOT_PATH, path.resolve(this.CLIENT_SRC_FOLDER, "css")]
       });
 
