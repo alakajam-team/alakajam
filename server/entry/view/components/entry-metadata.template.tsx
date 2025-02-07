@@ -23,7 +23,7 @@ export default function entryMetadata(entry: BookshelfModel, external: boolean, 
         <span class="entry__info-label">Tags</span>
         <div class="entry__info-value" style="width: 215px">
           {entry.related<BookshelfCollection>("tags").models.map(tag =>
-            <a href={`/events/games?tags=${tag.get("id")}`} class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get("value")}</a>
+            <a href={`/explore/games?tags=${tag.get("id")}`} class="btn btn-outline-secondary btn-sm ml-1 mb-1">{tag.get("value")}</a>
           )}
         </div>
       </div>
