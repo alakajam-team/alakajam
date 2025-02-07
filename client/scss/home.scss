@@ -84,6 +84,11 @@ $arrowSize: 9.5px;
   &__post {
     margin-top: 15px;
 
+    .card {
+      backdrop-filter: blur(10px);
+      background-color: color.change($bg, $alpha: .8);
+    }
+
     & .post {
       margin: 5px 10px 0;
     }
@@ -120,6 +125,7 @@ $arrowSize: 9.5px;
   cursor: pointer;
   color: white;
   margin-bottom: 15px;
+  padding: 15px 20px;
 
   &:hover {
     background-color: $alt-dark;
@@ -134,19 +140,25 @@ $arrowSize: 9.5px;
   &__phrase {
     font-size: 1.2rem;
     font-weight: bold;
+    line-height: 1.5rem;
+    margin-bottom: 12px;
   }
 
   &__timezone {
     font-size: 0.9rem;
   }
 
-  &__countdown {
+  &__countdown, &__countdown-details {
     float: right;
     width: 296px;
 
     @include media-breakpoint-down(lg) {
       float: none;
     }
+  }
+
+  &__countdown-details {
+    text-align: right;
   }
 }
 

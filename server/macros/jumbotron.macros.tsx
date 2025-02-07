@@ -108,18 +108,21 @@ function eventJumbotronCountdown(event, user) {
     const rawHypeLink = event.get("countdown_config").link;
     const hypeLink = (rawHypeLink && rawHypeLink.indexOf("/") !== -1) ? rawHypeLink : links.routeUrl(event, "event", rawHypeLink);
     const animatedCountdownEnabled = event.get("countdown_config").enabled;
-    return <div class="card card-body jumbotron-invite"
+    return <div class="card jumbotron-invite"
       onclick={hypeLink ? ("window.location = '" + hypeLink + "'") : ""}>
       <div class="row align-items-center">
         <div class={"col-12 " + (animatedCountdownEnabled ? "col-lg-6 mb-3 mb-xl-0" : "")}>
           <h1 class="jumbotron-invite__title">{event.get("countdown_config").message}</h1>
-          <div class="jumbotron-invite__details">
+          {!animatedCountdownEnabled && <div class="jumbotron-invite__details mt-3">
             {eventJumbotronCountdownPhrase(event, user)}
-          </div>
+            {eventJumbotronCountdownTimezone(event, user)}
+          </div>}
         </div>
         {ifTrue(animatedCountdownEnabled, () =>
           <div class="col-xl-6 d-none d-sm-block">
+            <div class="jumbotron-invite__countdown-details">{eventJumbotronCountdownPhrase(event, user)}</div>
             <div class="jumbotron-invite__countdown js-countdown" data-countdown-to-date={event.get("countdown_config").date}></div>
+            <div class="jumbotron-invite__countdown-details">{eventJumbotronCountdownTimezone(event, user)}</div>
           </div>
         )}
       </div>
@@ -267,19 +270,21 @@ export function eventJumbotronCountdownPhrase(event: BookshelfModel, user: User)
   if (event.get("countdown_config").phrase) {
     return <>
       <div class="jumbotron-invite__phrase">
-        {event.get("countdown_config").phrase}&nbsp;
+        {event.get("countdown_config").phrase}<br />
         {featuredEventDateTime(event.get("countdown_config").date, user)}
       </div>
-      {ifTrue(user && event.get("countdown_config").date, () =>
-        <div class="jumbotron-invite__timezone">
-          Times for {(user && user.get("timezone")) ? timezone(user.get("timezone")) : "Unknown timezone"}
-          <a href={links.routeUrl(user, "user", "settings")} class="btn btn-outline-light btn-xs border-0">
-            <span class="fa fa-cog"></span>
-          </a>
-        </div>
-      )}
     </>;
   }
+}
+
+export function eventJumbotronCountdownTimezone(event: BookshelfModel, user: User): JSX.Element {
+  return user && event.get("countdown_config").date &&
+    <div class="jumbotron-invite__timezone">
+      Times for {(user && user.get("timezone")) ? timezone(user.get("timezone")) : "Unknown timezone"}
+      <a href={links.routeUrl(user, "user", "settings")} class="btn btn-outline btn-xs border-0">
+        <span class="fa fa-cog"></span>
+      </a>
+    </div>;
 }
 
 export function backgroundImage(event: BookshelfModel): string {

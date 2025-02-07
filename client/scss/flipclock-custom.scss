@@ -1,6 +1,7 @@
 .flip-clock {
   font-size: .52rem;
-  margin-top: 15px;
+  margin-top: 0;
+  margin-bottom: 30px;
 }
 
 .flip-clock .flip-clock-divider {
@@ -8,7 +9,9 @@
 }
 
 .flip-clock .flip-clock-group .flip-clock-label {
+  margin-top: 70px;
   font-size: .8rem;
+  opacity: .7;
 }
 
 .flip-clock .flip-clock-group .flip-clock-list {
