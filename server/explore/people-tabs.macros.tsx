@@ -2,7 +2,7 @@ import React, { JSX } from "preact";
 
 export function peopleTabs(path: string): JSX.Element {
   return <div class="list-group mb-3">
-    { tab("/explore/people", "All members", path) }
+    { tab("/explore/people", "Users", path) }
     { tab("/explore/people/mods", "Admins & mods", path) }
   </div>;
 }
