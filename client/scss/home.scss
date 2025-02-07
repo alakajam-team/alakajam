@@ -1,6 +1,4 @@
-/**
- * Home page
- */
+@use "sass:color";
 
 $homeNavbarHeight: 50px;
 $homeNavbarMutedColor: #FFFFFFAA;
@@ -80,7 +78,7 @@ $arrowSize: 9.5px;
   }
 
   & .card.bg-jumbotron {
-    background-color: change-color($bg, $alpha: .9);
+    background-color: color.change($bg, $alpha: .9);
   }
 
   &__post {

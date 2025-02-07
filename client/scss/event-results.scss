@@ -1,6 +1,4 @@
-/**
- * Event results page
- */
+@use "sass:list";
 
 .results-links {
   margin-bottom: 10px;
@@ -286,10 +284,10 @@
     /* Per-rating-category medals */
     $medal-category-y: -240px -273px -307px -341px -375px -409px -240px;
     $medal-ranking-x: -133px -167px -201px;
-    @for $category from 1 through length($medal-category-y) {
-      @for $ranking from 1 through length($medal-ranking-x) {
+    @for $category from 1 through list.length($medal-category-y) {
+      @for $ranking from 1 through list.length($medal-ranking-x) {
         &.medal-category-#{$category}.medal-ranking-#{$ranking} {
-          background-position: nth($medal-ranking-x, $ranking) nth($medal-category-y, $category);
+          background-position: list.nth($medal-ranking-x, $ranking) list.nth($medal-category-y, $category);
         }
       }
     }

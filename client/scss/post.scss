@@ -2,6 +2,8 @@
  * Blog posts, comments & Markdown content in general
  */
 
+@use "sass:color";
+
 @import "./variables.scss";
 
 .post {
@@ -240,7 +242,7 @@
 
   & .spoiler {
     border-left: 3px solid $borders;
-    color: change-color($text-light, $alpha: 0);
+    color: color.change($text-light, $alpha: 0);
     font-size: 1rem;
     margin: 5px 0;
     padding: 3px 10px;

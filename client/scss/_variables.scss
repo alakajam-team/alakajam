@@ -1,6 +1,4 @@
-/**
- * CSS Variables
- */
+@use "sass:color";
 
 /* Main colors */
 
@@ -9,31 +7,31 @@ $borders: #dadada;
 $borders-forms: #ced4da;
 $tabs: #bbb;
 $text: #1f3038;
-$text-light: change-color($text, $alpha: .7);
-$text-lighter: change-color($text, $alpha: .5);
-$text-lightest: change-color($text, $alpha: .3);
+$text-light: color.change($text, $alpha: .7);
+$text-lighter: color.change($text, $alpha: .5);
+$text-lightest: color.change($text, $alpha: .3);
 $text-alt: #d90023;
 $text-alt-light: #ec3955;
 
-$white-lighter: change-color(white, $alpha: .9);
+$white-lighter: color.change(white, $alpha: .9);
 
 $main: #00abd6;
-$main-light: change-color($main, $lightness: 46%);
-$main-lighter: change-color($main, $lightness: 85%);
-$main-dark: change-color($main, $lightness: 32%);
-$main-transparent: change-color($main, $alpha: .1);
+$main-light: color.change($main, $lightness: 46%);
+$main-lighter: color.change($main, $lightness: 85%);
+$main-dark: color.change($main, $lightness: 32%);
+$main-transparent: color.change($main, $alpha: .1);
 
 $alt: #f2536d;
 $alt-light: #f47171;
-$alt-lighter: change-color($alt, $alpha: .25);
+$alt-lighter: color.change($alt, $alpha: .25);
 $alt-lightest: #ffded6;
-$alt-dark: change-color($alt, $lightness: 42%);
-$alt-transparent: change-color($alt, $alpha: .1);
+$alt-dark: color.change($alt, $lightness: 42%);
+$alt-transparent: color.change($alt, $alpha: .1);
 
 $neutral: #999;
-$neutral-dark: change-color($neutral, $lightness: 40%);
-$neutral-light: change-color($neutral, $alpha: .7);
-$neutral-lighter: change-color($neutral, $alpha: .25);
+$neutral-dark: color.change($neutral, $lightness: 40%);
+$neutral-light: color.change($neutral, $alpha: .7);
+$neutral-lighter: color.change($neutral, $alpha: .25);
 $neutral-lightest: #e6e6e6;
 
 $danger: #dc3545;
@@ -44,7 +42,7 @@ $moderation: $neutral;
 $moderation-light: $neutral-lighter;
 $moderation-lightest: $neutral-lightest;
 $moderation-dark: $neutral-light;
-$moderation-text: change-color(white, $alpha: .9);
+$moderation-text: color.change(white, $alpha: .9);
 
 /* Shared sizes */
 
