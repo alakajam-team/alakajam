@@ -17,7 +17,7 @@ export function teamField(event: BookshelfModel, entry: BookshelfModel, isEntryO
 
     <div class="form-group">
       <label for="members">Team members {isEntryOwner ? "" : formMacros.tooltip("You can leave the team at the bottom of this form.")}</label>
-      <select name="members" class="bigdrop js-search-members" multiple readOnly={!isEntryOwner}
+      <select name="members" class="bigdrop js-search-members" multiple readonly={!isEntryOwner}
         title={isEntryOwner ? "" : "Only the entry owner can change this setting. You can leave the team at the bottom of this form."}>
         {members.map(member =>
           <option value={member.id} data-locked={member.locked.toString()} data-invite={member.invite.toString()}

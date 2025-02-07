@@ -27,7 +27,7 @@ export default function render(context: CommonLocals): JSX.Element {
 
       {postMacros.post(post, { commentsAnchorLinks: true, readingUser: user, readingUserLikes: userLikes })}
 
-      <a class="anchor" name="comments"></a>
+      <a class="anchor" id="comments"></a>
       <h2 class="spacing">
         Comments <span class="legend">({post.get("comment_count") || "0"})</span>
         {ifSet(user, () =>

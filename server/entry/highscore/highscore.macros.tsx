@@ -56,7 +56,7 @@ export function highScores(entry: BookshelfModel, scoreCollection: BookshelfColl
         scoreCollection.models.map(score => {
           const isOwnScore = userScore && score.get("id") === userScore.get("id");
           return <tr class={isOwnScore ? "active" : ""}>
-            <td><a name={"score-rank-" + score.get("ranking")}></a>{printRanking(score.get("ranking"))}</td>
+            <td><a id={"score-rank-" + score.get("ranking")}></a>{printRanking(score.get("ranking"))}</td>
             <td>{userMacros.userLink(score.related<BookshelfModel>("user"))}
               {streamerBadge(score.related<BookshelfModel>("user"), options.streamerBadges, featuredEvent)}</td>
             <td><b>{printScore(entry, score, { showEditLink: isOwnScore })}</b></td>

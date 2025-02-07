@@ -38,6 +38,8 @@ declare module "preact" {
       formnovalidate?: boolean;
       charset?: string;
       allow?: string;
+      disabled?: boolean;
+      width?: string;
     }
   }
 }

@@ -31,7 +31,7 @@ export default function render(context: CommonLocals): JSX.Element {
           <div class="row d-flex justify-content-center text-left">
             {eventParticipations.map(eventParticipation =>
               <div class="col-lg-4 col-md-6">
-                <a name={eventParticipation.userId}></a>
+                <a id={eventParticipation.userId}></a>
                 <div class={`card mb-4 ${eventParticipation.streamerStatus}`}>
                   <div class="card-header">
                     {userMacros.userThumb(eventParticipation.user, { fullWidth: true })}

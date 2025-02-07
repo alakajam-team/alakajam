@@ -42,7 +42,7 @@ export function post(postModel: BookshelfModel, options: {
     {ifFalse(options.hideHeading, () => {
       const H = options.smallTitle ? "h4" : "h1";
       return <H>
-        <a name={"p" + postModel.get("id")} class="anchor" />
+        <a id={"p" + postModel.get("id")} class="anchor" />
         <a href={links.routeUrl(postModel, "post")} class="post__title">
           {postModel.get("title")}
         </a>
@@ -232,7 +232,7 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
               </div>;
             })}
             <div class="offset-1 col-11">
-              <a class="anchor" name={"c" + (comment?.id || "")}></a>
+              <a class="anchor" id={"c" + (comment?.id || "")}></a>
               <div class="comment__details d-flex">
                 {ifTrue(isOwnAnonComment, () =>
                   <a href={links.routeUrl(options.readingUser, "user")}>
@@ -329,7 +329,7 @@ export function commentEditor(commentModel: BookshelfModel, path: string, csrfTo
       {csrfToken()}
       <input type="hidden" name="action" value="comment" />
       <input type="hidden" name="id" value={commentModel?.id} />
-      <a class="anchor" name={commentModel ? ("c" + commentModel.id) : ""}></a>
+      <a class="anchor" id={commentModel ? ("c" + commentModel.id) : ""}></a>
       <div class="row">
         <div class="offset-1 col-11">
           <div class="comment__details">

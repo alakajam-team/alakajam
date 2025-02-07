@@ -164,7 +164,7 @@ function themesTableRow(theme: BookshelfModel, editTheme: BookshelfModel | undef
   return <tr>
     <td class="legend">#{theme.get("id")}</td>
     <td>
-      <a name={theme.get("id")}></a>
+      <a id={theme.get("id")}></a>
       {ifTrue(isEditedTheme, () =>
         <form method="post" action={"?#" + theme.get("id")} class="form-inline">
           {csrfToken()}

@@ -13,7 +13,7 @@ export function entryRatingResults(entry: BookshelfModel, event: BookshelfModel)
   const entriesInDivision = event.related("details").get("division_counts")[entry.get("division")];
 
   return <div class="entry-results">
-    <h2 class="entry-results__header"><a name="results"></a>Voting results</h2>
+    <h2 class="entry-results__header"><a id="results"></a>Voting results</h2>
     <div class="entry-results__body">
       <p>
         {event.related("details").get("category_titles").map((categoryTitle, index) => {

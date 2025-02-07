@@ -91,7 +91,7 @@ export default function render(context: EntryLocals): JSX.Element {
 
             {ifTrue(entry.get("status_high_score") !== "off", () =>
               <div>
-                <h3 name="high-scores" class="mt-4">High scores {scoreMacros.highScoresLinks(entry, user, context.path)}</h3>
+                <h3 class="mt-4"><a id="high-scores" />High scores {scoreMacros.highScoresLinks(entry, user, context.path)}</h3>
                 {scoreMacros.tournamentEventBanner(context.tournamentEvent)}
                 {scoreMacros.highScores(entry, context.highScoresCollection, context.userScore, featuredEvent)}
               </div>

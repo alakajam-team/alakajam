@@ -29,7 +29,7 @@ import config, * as configUtils from "./config";
 import db from "./db";
 import fileStorage from "./file-storage";
 import log from "./log";
-import { setUpJSXLocals } from "./middleware.jsx";
+import { setUpJSXLocals } from "./middleware-jsx";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
 
 const LAUNCH_TIME = Date.now();

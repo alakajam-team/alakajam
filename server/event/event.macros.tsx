@@ -96,7 +96,7 @@ export function entrySmallThumb(
       return <div class="entry-small-thumb__details">
         <a href={links.routeUrl(entry, "entry")}>
           <div class="entry-small-thumb__picture js-lazy" data-src={picturePath}></div>
-          <div class="entry-small-thumb__title" href={links.routeUrl(entry, "entry")}>
+          <div class="entry-small-thumb__title">
             {entry.get("title")}
           </div>
         </a>

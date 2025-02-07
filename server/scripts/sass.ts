@@ -20,14 +20,14 @@ class SassBuilder {
 
   private writeFileAsync = promisify(writeFile);
 
-  public async initialize({ watch = false }): Promise<[sass.Result, string[]] | undefined> {
+  public async initialize({ watch = false }): Promise<[sass.LegacyResult, string[]] | undefined> {
     this.copyWebfonts();
 
     if (!watch) {
       log.info("Building SASS...");
 
       const { resolve: sassResolve, reject: sassReject, promise: sassPromise }
-        = this.createDeferredPromise<sass.Result>();
+        = this.createDeferredPromise<sass.LegacyResult>();
       const { resolve: assetsResolve, reject: assetsReject, promise: assetsPromise }
         = this.createDeferredPromise<string[]>();
 
@@ -65,7 +65,7 @@ class SassBuilder {
     log.debug(`Copied ${WEBFONTS_PATH}`);
   }
 
-  private async sassBuild(resolve?: (result: sass.Result) => void, reject?: (cause?: any) => void) {
+  private async sassBuild(resolve?: (result: sass.LegacyResult) => void, reject?: (cause?: any) => void) {
     await fileStorage.createFolderIfMissing(path.resolve(this.CLIENT_DEST_FOLDER, "css"))
       .catch(reject);
     const inputFile = path.resolve(this.CLIENT_SRC_FOLDER, "scss/index.scss");
