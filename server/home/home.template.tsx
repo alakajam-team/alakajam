@@ -98,6 +98,7 @@ export default function render(context: HomeContext): JSX.Element {
             </div>
             <div class="col-sm-3 col-9">
               <div class="home-navbar__social">
+                {socialLink("Mastodon", "https://mastodon.gamedev.place/@alakajam", "mastodon.svg")}
                 {socialLink("Discord", "https://discord.gg/yZPBpTn", "discord.svg")}
                 {socialLink("IRC", "/chat", "irc.svg")}
                 {socialLink("Twitter", "https://twitter.com/AlakajamBang", "twitter.svg")}

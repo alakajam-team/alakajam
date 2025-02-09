@@ -189,19 +189,22 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
         <div class="container p-4">
           <div class="row">
             <div class="col-12 col-lg-6">
-              <a href="https://twitter.com/AlakajamBang" class="footer__link">
-                <img src={links.staticUrl("/static/images/social/black-twitter.svg")} class="footer__icon no-border" />
-                <strong>@AlakajamBang</strong>
+              <a href="https://mastodon.gamedev.place/@alakajam" class="footer__link">
+                <img src={links.staticUrl("/static/images/social/black-mastodon.svg")} class="footer__icon no-border" />
+                &nbsp;<strong>@Alakajam</strong>
               </a>
               <a href="/post/1070/finances-of-the-alakajam-association" class="footer__link">
                 <img src={links.staticUrl("/static/images/social/black-paypal.svg")} class="footer__icon no-border" />
-                <strong>Donate</strong>
+                &nbsp;<strong>Donate</strong>
+              </a>
+              <a href="https://discord.gg/yZPBpTn" class="footer__link">
+                <img src={links.staticUrl("/static/images/social/black-discord.svg")} class="footer__icon no-border" />
               </a>
               <a href="/chat" class="footer__link">
                 <img src={links.staticUrl("/static/images/social/black-irc.svg")} class="footer__icon no-border" />
               </a>
-              <a href="https://discord.gg/yZPBpTn" class="footer__link">
-                <img src={links.staticUrl("/static/images/social/black-discord.svg")} class="footer__icon no-border" />
+              <a href="https://twitter.com/AlakajamBang" class="footer__link">
+                <img src={links.staticUrl("/static/images/social/black-twitter.svg")} class="footer__icon no-border" />
               </a>
               <a href="https://www.reddit.com/r/alakajam/" class="footer__link">
                 <img src={links.staticUrl("/static/images/social/black-reddit.svg")} class="footer__icon no-border" />
