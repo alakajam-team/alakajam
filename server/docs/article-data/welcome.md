@@ -1,6 +1,6 @@
 Welcome!
 ## About this site
-<img src="/static/images/docs/play.png" class="pull-right" width="26%" />Alakajam! is a young community gathering game development enthusiasts from all backgrounds. We host a series of informal events, that give you a chance to both make games *and* get people to play them:
+<img src="/static/images/docs/play.png" class="pull-right" width="26%" />Founded in 2017, Alakajam! is a community gathering game development enthusiasts from all backgrounds. We host informal events that give you a chance to both make games *and* get people to play them:
 
 * **Alakajam!** competitions, taking place over a week-end, three times a year. Start/end times are suited to European timezones.
 * **Kajam!** month-long events, inviting people to learn and experiment around a specific topic.
