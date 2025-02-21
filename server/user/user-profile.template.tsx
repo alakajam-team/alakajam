@@ -66,11 +66,11 @@ export default function render(context: CommonLocals): JSX.Element {
               </a>
             </div>
           )}
-          {socialLinks.other.map(otherSocialMedia =>
+          {socialLinks.other.filter(s => Boolean(s.url.trim())).map(otherSocialMedia =>
             <div class="profile__social-link">
-              <a href={otherSocialMedia.url}>
+              <a href={otherSocialMedia.url.trim()}>
                 <img src={links.staticUrl("/static/images/social/other.svg")} class="no-border mr-2" style="width: 32px" />
-                {otherSocialMedia.label}
+                {otherSocialMedia.label || "Link"}
               </a>
             </div>
           )}
