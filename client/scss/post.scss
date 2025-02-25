@@ -276,11 +276,6 @@
     & .editor-toolbar {
       border: none;
       border-bottom: 1px solid #aab2bd;
-
-      /* Fix Bootstrap/EasyMDE CSS conflicts */
-      & .table {
-        width: unset;
-      }
     }
 
     & .CodeMirror {

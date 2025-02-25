@@ -330,7 +330,7 @@ function markdownToHtml(markdown: string, options: MarkdownToHtmlOptions = {}): 
     });
 
   const unsafeHtml = showdownConverter.makeHtml(markdown);
-  let safeHtml = sanitizeHtml(unsafeHtml, {
+  let safeHtml: string = sanitizeHtml(unsafeHtml, {
     ...sanitizeHtmlOptions,
     ...options
   })
@@ -348,11 +348,14 @@ function markdownToHtml(markdown: string, options: MarkdownToHtmlOptions = {}): 
   }
 
   if (options.maxLength) {
+    const ELLIPSIS_MARKER = "___ELLIPSIS___";
+
     safeHtml = truncateHtml(safeHtml, {
       length: options.maxLength,
       byWords: options.truncateByWords,
-      ellipsis: options.readMoreLink ? `... <a href="${options.readMoreLink}">(read more)</a>` : "...",
-    });
+      ellipsis: ELLIPSIS_MARKER,
+    }) as string;
+    safeHtml = safeHtml.replace(ELLIPSIS_MARKER, options.readMoreLink ? `... <a href="${options.readMoreLink}">(read more)</a>` : "...");
   }
 
   return safeHtml;

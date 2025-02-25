@@ -289,6 +289,11 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
               </div>
               <div class="card">
                 <div class="card-body comment__body user-contents">
+                  {console.log(markdown(comment.get("body"), {
+                      maxLength: 30,
+                      truncateByWords: true,
+                      readMoreLink: commentUrl(node, comment),
+                    }))}
                   {ifTrue(options.preview, () =>
                     <div dangerouslySetInnerHTML={markdown(comment.get("body"), {
                       maxLength: 30,
