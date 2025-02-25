@@ -34,7 +34,8 @@ const cp = childProcess.spawn(mochaPath, mochaArgs, {
   windowsVerbatimArguments: true,
   env: {
     CONFIG_PATH: "server/scripts/mocha-config.js"
-  }
+  },
+  shell: true
 });
 
 process.on("SIGINT", () => {
