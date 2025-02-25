@@ -59,3 +59,8 @@ body .breadcrumb {
   background-color: transparent;
   padding: 0.75rem 0rem;
 }
+
+/* Fix CSS conflict */
+.EasyMDEContainer .table {
+  width: unset;
+}
