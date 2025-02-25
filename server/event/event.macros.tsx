@@ -70,7 +70,7 @@ export function entryThumb(entry: EntryBookshelfModel, options: {
       <div class="entry-thumb__icons">
         {ifTrue(options.showKarma, () =>
           <span class="entry-thumb__karma" data-toggle="tooltip"
-            title="Rate && review other games to increase your karma, && get featured higher on the list!">
+            title="Rate and review other games to increase your karma and get featured higher on the list!">
             Karma: {digits(entry.get("karma"), 0)}
           </span>
         )}

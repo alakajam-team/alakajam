@@ -11,7 +11,7 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
   const { pageImage, launchTime, rootUrl, path, event, user, unreadNotifications } = context;
 
   const pageTitle = (context.pageTitle ? (context.pageTitle + " | ") : "") + "Alakajam!";
-  const pageDescription = context.pageDescription || "A community for game development enthusiasts, organizing regular events && competitions.";
+  const pageDescription = context.pageDescription || "A community for game development enthusiasts, organizing regular events and competitions.";
   const inEvent = event && event.get("id");
 
   return <html lang="en">

@@ -78,7 +78,7 @@ export default function render(context: CommonLocals): JSX.Element {
             sorted by&nbsp;
             {ifTrue(searchOptions.sortBy === "karma", () =>
               <span>
-                Karma {formMacros.tooltip("Rate and review other games to increase your karma, && get featured higher on the list!")}
+                Karma {formMacros.tooltip("Rate and review other games to increase your karma and get featured higher on the list!")}
               </span>
             )}
             {ifFalse(searchOptions.sortBy === "karma", () =>
