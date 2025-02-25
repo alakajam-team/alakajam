@@ -32,23 +32,25 @@ Games from the Open division won't get ratings but can expect as much plays & fe
 
 ### Solo/Team divisions
 
-* **Graphical asset reuse:** You must make all your graphical assets during the event, even if you opt-out of the graphics category. Derivative work of existing assets (ie. you used some existing assets but significantly transformed them) is acceptable, as long as you list the original assets in your game page for the raters to appreciate. You are also *allowed* to use:
+* **Graphical asset reuse:** You must put *significant creative effort*(*) into *all of* your graphical assets (even if you opt-out of the graphics category), save for these allowed exceptions:
     * Third-party fonts and brushes ;
-    * Procedurally generated assets ;
     * Your engine's default appearance for UI elements ;
     * Pre-made game author & engine splash screens.
+ 
+> (*) "Significant creative effort" means that derivative work of existing assets (as in you significantly transformed them) is acceptable. Basic procedural generation is fine too (eg. noise-based texture generators), but using a tool such as modern AI to get art you can use with little to no effort is forbidden. List any assets and unusual generation tools in your game page to let people appreciate your work's true value.
+
 * **Audio asset reuse:** You must make your own music during the event, even if you opt-out of the audio category. However:
     * While creating sounds yourself is encouraged (eg. with the help of [sound generation tools](/article/docs/resources#audio-software), musical instruments, or microphones), reusing existing sound effects is tolerated.
-    * You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed ;
+    * You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed.
 * **Code reuse:** You are allowed to use/reuse any third party library or personal code made prior to the event. This includes shaders and code snippets found online. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.
-* **Tools:** All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.
+* **Supported platforms:** All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.
 * **Post-jam changes:** From the minute the jam ends, you are not allowed to add any features, assets or contents to your game. While you're supposed to have properly tested your game, stuff happens, so we do allow to:
     * Package or improve the packaging of your game ;
     * Port your game to other platforms ;
     * Fix bugs ;
     * Fix balance issues or annoyances *but only* if they're so terrible that people can't properly finish your game.
 
-Those third-party assets exceptions are only allowed as long as you have the license to use them. Please check the licensing terms and in doubt, consult the author.
+The third-party assets exceptions are only allowed as long as you have the license to use them. Please check the licensing terms and in doubt, consult the authors.
 
 ### <a name="open-division"></a>Open division
 
