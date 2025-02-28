@@ -11,7 +11,7 @@ On each game, players are awarded a number of points for being in the top 10, as
 
 ![](https://i.imgur.com/CvSqPvV.jpg)
 
-Look for tournaments in the [events history page](/events#other_events) to see how things work, who are the title holders... and when the next one is due! :)
+Look for tournaments in the [events history page](/explore/events) to see how things work, who are the title holders... and when the next one is due! :)
 
 ## We need your games!
 You might be wondering, _how do I get my game in there?_ If you've submitted a game on *Alakajam!* which has high scores and might be suitable, make sure you have ticked the **"Allow use for tournaments"** checkbox in your entry. To attract the attention of the hosts to your game, you can also [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSee7pb1iBkJPVYkQfGsn1rMjzW4o7WrVAzoE_Q5bWPcio0_uw/viewform).
