@@ -6,7 +6,7 @@ Welcome!
 * **Kajam!** month-long events, inviting people to learn and experiment around a specific topic.
 * And finally **Tournaments** where everyone can compete on the games we made!
 
-Sounds exciting? Come join us! You can start by making an account [in a few clicks](/register), then check the home page or the [Events](/events) to learn the date of the next jam. Feel free to introduce yourself [with a blog post](/post/create)!
+Sounds exciting? Come join us! You can start by making an account [in a few clicks](/register), then check the home page or the [Events](/explore/events) to learn the date of the next jam. Feel free to introduce yourself [with a blog post](/post/create)!
 
 If you want to give a hand to our little community, check the [contributing page](/article/about/contributing).
 
