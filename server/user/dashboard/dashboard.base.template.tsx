@@ -30,14 +30,7 @@ export default function dashboardBase(context: CommonLocals, contentsBlock: JSX.
         </div>
       </div>
       <div class="col-sm-8 col-md-9">
-        {ifTrue(dashboardAdminMode, () =>
-          <h2 class="mb-3">
-            <span class="badge badge-danger">
-              <span class="fas fa-user mr-2"></span>
-              {dashboardUser.get("title")}
-            </span>
-          </h2>
-        )}
+        {ifTrue(dashboardAdminMode, () => userMacros.impersonatedUserBadge(dashboardUser))}
 
         {ifSet(infoMessage, () =>
           <div class="alert alert-info">{infoMessage}</div>

@@ -20,7 +20,7 @@ export default function render(context: CommonLocals): JSX.Element {
 
           {scoreMacros.tournamentEventBanner(tournamentEvent)}
           {scoreMacros.highScores(entry, highScoresCollection, entryScore, featuredEvent,
-            { hideViewAllScores: true, showDates: true, streamerBadges })}
+            { hideViewAllScores: true, showDates: true, streamerBadges, currentUser: user })}
         </div>
       </div>
     </div>

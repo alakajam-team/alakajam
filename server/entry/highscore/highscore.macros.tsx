@@ -32,7 +32,7 @@ export function tournamentEventBanner(tournamentEvent: BookshelfModel): JSX.Elem
 }
 
 export function highScores(entry: BookshelfModel, scoreCollection: BookshelfCollection, userScore = null, featuredEvent: BookshelfModel,
-                           options: { showDates?: boolean; showActiveToggles?: boolean;
+                           options: { currentUser?: User; showDates?: boolean; showActiveToggles?: boolean;
                              streamerBadges?: Set<number>; hideViewAllScores?: boolean; } = {}): JSX.Element {
   const highScoreType = entry.related("details").get("high_score_type");
   const colspan = 4 + (options.showDates ? 1 : 0) + (options.showActiveToggles ? 1 : 0);
@@ -55,11 +55,12 @@ export function highScores(entry: BookshelfModel, scoreCollection: BookshelfColl
       {ifTrue(scoreCollection.length > 0, () =>
         scoreCollection.models.map(score => {
           const isOwnScore = userScore && score.get("id") === userScore.get("id");
+          const canEdit = isOwnScore || security.canUserWrite(options.currentUser, entry, { allowMods: true });
           return <tr class={isOwnScore ? "active" : ""}>
             <td><a id={"score-rank-" + score.get("ranking")}></a>{printRanking(score.get("ranking"))}</td>
             <td>{userMacros.userLink(score.related<BookshelfModel>("user"))}
               {streamerBadge(score.related<BookshelfModel>("user"), options.streamerBadges, featuredEvent)}</td>
-            <td><b>{printScore(entry, score, { showEditLink: isOwnScore })}</b></td>
+            <td><b>{printScore(entry, score, { showEditLink: canEdit })}</b></td>
             {ifTrue(options.showDates, () =>
               <td style="font-size: 0.8rem"> {date(score.get("submitted_at"))}</td>
             )}
@@ -154,7 +155,7 @@ export function printScore(entry: BookshelfModel, score: BookshelfModel, options
     {ifTrue(options.showEditLink, () =>
       <>
         {" "}
-        <a href={links.routeUrl(entry, "entry", "submit-score")}>
+        <a href={links.routeUrl(entry, "entry", "submit-score", { scoreUserId: score.get("user_id") })}>
           <span class="fas fa-edit"></span>
         </a>
       </>

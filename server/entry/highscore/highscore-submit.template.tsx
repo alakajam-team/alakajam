@@ -10,14 +10,16 @@ import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
+import * as userMacros from "server/user/user.macros";
 
 export default function render(context: CommonLocals): JSX.Element {
   const { featuredEvent, entry, entryScore, errorMessage, scoreMn, scoreS, scoreMs,
-    isExternalProof, tournamentEvent, highScoresCollection } = context;
+    isExternalProof, tournamentEvent, highScoresCollection, user } = context;
 
   formMacros.registerEditorScripts(context);
 
   const instructions = entry.related("details").get("high_score_instructions");
+  const isImpersonatingUser = user.get("id") !== entryScore.related("user").get("id");
 
   return base(context,
 
@@ -29,6 +31,8 @@ export default function render(context: CommonLocals): JSX.Element {
       </div>
       <div class="row">
         <div class="col-md-8">
+          {isImpersonatingUser && userMacros.impersonatedUserBadge(entryScore.related("user"))}
+
           {ifSet(entryScore.get("id"), () =>
             <h2>Update your high score</h2>
           )}
@@ -114,7 +118,7 @@ export default function render(context: CommonLocals): JSX.Element {
           <h2>High scores</h2>
           {eventMacros.entryThumb(entry)}
           {scoreMacros.tournamentEventBanner(tournamentEvent)}
-          {scoreMacros.highScores(entry, highScoresCollection, entryScore, featuredEvent)}
+          {scoreMacros.highScores(entry, highScoresCollection, entryScore, featuredEvent, { currentUser: user })}
         </div>
       </div>
     </div>

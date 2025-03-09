@@ -142,12 +142,13 @@ export class User extends TimestampedEntity {
     await this.loadOneToOne(User, "details", UserDetails);
   }
 
-  public async loadNotification(): Promise<void> {
+  public async loadMarketing(): Promise<void> {
     await this.loadOneToOne(User, "marketing", UserMarketing);
   }
 
   public dependents(): Array<keyof this> {
-    return [ "details", "marketing", "roles", "entryScores", "tournamentScores", "comments", "posts", "likes", "themeVotes", "entryVotes"];
+    return [ "details", "marketing", "roles", "entryScores", "tournamentScores", "comments",
+      "posts", "likes", "themeVotes", "entryVotes", "eventParticipations", "marketing" ];
   }
 
 }

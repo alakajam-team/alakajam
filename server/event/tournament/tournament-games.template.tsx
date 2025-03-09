@@ -69,7 +69,8 @@ export default function render(context: CommonLocals): JSX.Element {
                   {scoreMacros.highScoresLinks(entry, user, path)}
                 </div>
                 <div style="display: flex">
-                  {scoreMacros.highScores(entry, highScoresMap[entry.get("id")], userScoresMap[entry.get("id")], featuredEvent, { streamerBadges })}
+                  {scoreMacros.highScores(entry, highScoresMap[entry.get("id")], userScoresMap[entry.get("id")],
+                    featuredEvent, { streamerBadges, currentUser: user })}
                 </div>
               </div>
             )}

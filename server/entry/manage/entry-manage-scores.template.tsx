@@ -6,7 +6,7 @@ import * as scoreMacros from "server/entry/highscore/highscore.macros";
 import * as formMacros from "server/macros/form.macros";
 
 export default function render(context: CommonLocals): JSX.Element {
-  const { entry, highScoresCollection, featuredEvent } = context;
+  const { entry, highScoresCollection, featuredEvent, user } = context;
 
   formMacros.registerEditorScripts(context);
 
@@ -23,7 +23,8 @@ export default function render(context: CommonLocals): JSX.Element {
 
           <form method="post">
             {context.csrfToken()}
-            {scoreMacros.highScores(entry, highScoresCollection, undefined, featuredEvent, { showActiveToggles: true, showDates: true })}
+            {scoreMacros.highScores(entry, highScoresCollection, undefined, featuredEvent,
+              { showActiveToggles: true, showDates: true, currentUser: user })}
             <input type="submit" name="clearall" class="btn btn-danger" onclick={"return confirm('" +
               "This will actually delete all the scores. It\\'s here in case you make gameplay changes that turn all scores obsolete. " +
               "Do you really want to reset all scores?')"} value="Delete all scores permanently" />

@@ -93,7 +93,7 @@ export default function render(context: EntryLocals): JSX.Element {
               <div>
                 <h3 class="mt-4"><a id="high-scores" />High scores {scoreMacros.highScoresLinks(entry, user, context.path)}</h3>
                 {scoreMacros.tournamentEventBanner(context.tournamentEvent)}
-                {scoreMacros.highScores(entry, context.highScoresCollection, context.userScore, featuredEvent)}
+                {scoreMacros.highScores(entry, context.highScoresCollection, context.userScore, featuredEvent, { currentUser: user })}
               </div>
             )}
 

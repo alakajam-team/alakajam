@@ -5,12 +5,15 @@ import highscoreService from "server/entry/highscore/highscore.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EntryLocals } from "../entry.middleware";
+import security from "server/core/security";
+import userService from "server/user/user.service";
 
 /**
  * Submit a high score
  */
 export async function entryHighscoreSubmit(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { user, entry } = res.locals;
+  const scoreUserId = req.query.user ? forms.parseInt(req.query.user) : user.id;
 
   if (!user) {
     res.redirect("/login?redirect=" + req.url);
@@ -18,16 +21,26 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
   } else if (entry.get("status_high_score") === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
     res.errorPage(403, "High scores are disabled on this entry");
     return;
+  } else if (scoreUserId !== user.id && !security.canUserWrite(user, entry, { allowMods: true })) {
+    res.errorPage(403, "Well played, but you are not allowed to edit other player's scores on other people's entries");
+    return;
+  } else if (scoreUserId !== user.id) {
+    const scoreUser = await userService.findById(scoreUserId);
+    if (!scoreUser) {
+      res.errorPage(404, "User not found");
+      return;
+    }
   }
 
+
   // Fetch existing score, handle deletion
-  let entryScore = await highscoreService.findEntryScore(user.get("id"), entry.get("id"));
+  let entryScore = await highscoreService.findEntryScore(scoreUserId, entry.get("id"));
   if (req.method === "POST" && req.body.delete && entryScore) {
     await highscoreService.deleteEntryScore(entryScore, entry);
     entryScore = null;
   }
   if (!entryScore) {
-    entryScore = await highscoreService.createEntryScore(user.get("id"), entry.get("id"));
+    entryScore = await highscoreService.createEntryScore(scoreUserId, entry.get("id"));
   }
 
   let rankingPercent;
@@ -74,7 +87,7 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
       entryScore.set("proof", forms.sanitizeString(req.body.proof));
     } else {
       if (req.file || req.body["upload-delete"]) {
-        const proofPath = `/scores/${entry.get("id")}/${entryScore.get("user_id")}`;
+        const proofPath = `/scores/${entry.get("id")}/${scoreUserId}`;
         const result = await fileStorage.savePictureToModel(entryScore,
           "proof", req.file, req.body["upload-delete"], proofPath);
         if ("error" in result) {

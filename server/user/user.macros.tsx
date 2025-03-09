@@ -56,7 +56,17 @@ export function userAvatar(user: User, options: { small?: boolean } = {}): JSX.E
 }
 
 export function userLink(user: BookshelfModel | User): JSX.Element {
-  return <a href={links.routeUrl(user, "user")}>@{user.get("title")}</a>;
+  return <a href={links.routeUrl(user, "user")}>
+    <span class="user-link__avatar">
+      {ifSet(user.get("avatar"), () =>
+        <img src={links.pictureUrl(user.get("avatar"), user)} />
+      )}
+      {ifNotSet(user.get("avatar"), () =>
+        <img src={links.staticUrl("/static/images/default-avatar.png")} />
+      )}
+    </span>
+    <span>{user.get("title")}</span>
+  </a>;
 }
 
 export function twitchLink(user: User): JSX.Element {
@@ -89,7 +99,7 @@ export function twitchEmbed(twitchUsername: string, options: { height?: number; 
             autoplay: ${options.autoplay ? "true" : "false"},
             muted: ${options.autoplay ? "true" : "false"},
             width: "100%",
-            height: ${options.height ? options.height : "200" },
+            height: ${options.height ? options.height : "200"},
             layout: "video",
             channel: "${twitchUsername}"
           });
@@ -111,4 +121,12 @@ export function youtubeEmbed(src: string, options: { height?: number } = {}): JS
 
 export function registerTwitchEmbedScripts(context: CommonLocals): void {
   context.scripts.push("https://embed.twitch.tv/embed/v1.js");
+}
+
+export function impersonatedUserBadge(user: BookshelfModel | User): JSX.Element {
+  return <div class="mb-3 alert alert-danger d-inline-flex align-items-center">
+    <i class="fas fa-exclamation-triangle mr-2"></i>
+    <div class="mr-2">Using special permissions to make actions in the name of</div>
+    <div>{userLink(user)}</div>
+  </div>;
 }

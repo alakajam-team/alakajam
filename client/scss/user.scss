@@ -175,3 +175,13 @@
   height: 50px;
   margin-bottom: 12px;
 }
+
+/** User link */
+
+.user-link {
+  &__avatar img {
+    max-width: 24px;
+    max-height: 24px;
+    margin-right: 5px;
+  }
+}

@@ -214,6 +214,7 @@ export class UserService {
 
   public async save(user: User): Promise<void> {
     await user.loadDetails();
+    await user.loadMarketing();
     await getRepository(User).save(user);
   }
 

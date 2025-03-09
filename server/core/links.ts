@@ -6,6 +6,14 @@ import config from "./config";
 const DASHBOARD_PAGES = ["feed", "entries", "posts", "scores", "invite", "settings", "password", "entry-import"];
 const ALTERNATE_STATIC_ROOT_URL = config.ROOT_URL;
 
+export type RouteUrlFunction =
+  ((model: BookshelfModel, type: "event", subPage?: string | null, options?: any) => string)
+  & ((model: BookshelfModel | User, type: "user", subPage?: string | null, options?: any) => string)
+  & ((model: BookshelfModel, type: "post", subPage?: string | null, options?: any) => string)
+  & ((model: BookshelfModel, type: "comment", subPage?: string | null, options?: any) => string)
+  & ((model: BookshelfModel, type: "tags", subPage?: string | null, options?: any) => string)
+  & ((model: BookshelfModel, type: "entry", subPage?: string, options?: { scoreUserId?: string }) => string);
+
 export class Links {
 
   public pictureUrl(picturePath: string, model: BookshelfModel | User): string {
@@ -23,11 +31,11 @@ export class Links {
   /**
    * Determines the route to a page given a model, its type and an optional sub-page
    */
-  public routeUrl(
+  public routeUrl: RouteUrlFunction = (
     model: BookshelfModel | User,
-    type: "event" | "entry" | "user" | "post" | "comment" | "tags",
+    type: "event" | "entry" | "user" | "post" | "comment" | "tags" | "score",
     subPage: string | null = null,
-    options: any = {}): string {
+    options: any = {}): string => {
     try {
       let subPagePath = (subPage ? "/" + subPage : "");
 
@@ -51,7 +59,8 @@ export class Links {
         } else {
           array.push(subPage || "create-entry");
         }
-        return array.join("/").replace("//", "/");
+        const queryParams = options.scoreUserId ? "?user=" + options.scoreUserId : "";
+        return array.join("/").replace("//", "/") + queryParams;
 
       } else if (type === "user") {
         // User Role model / User model
@@ -101,7 +110,7 @@ export class Links {
     } catch (e) {
       throw new Error('Failed to build URL for model "' + model + '" of type "' + type + '": ' + e.message);
     }
-  }
+  };
 
 }
 
