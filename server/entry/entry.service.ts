@@ -33,7 +33,7 @@ export class EntryService {
       name: "untitled",
       title: "",
       comment_count: 0,
-      pictures: "{previews: []}",
+      pictures: {previews: []},
     }) as EntryBookshelfModel;
 
     if (event) {
