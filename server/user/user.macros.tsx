@@ -126,7 +126,7 @@ export function registerTwitchEmbedScripts(context: CommonLocals): void {
 export function impersonatedUserBadge(user: BookshelfModel | User): JSX.Element {
   return <div class="mb-3 alert alert-danger d-inline-flex align-items-center">
     <i class="fas fa-exclamation-triangle mr-2"></i>
-    <div class="mr-2">Using special permissions to make actions in the name of</div>
+    <div class="mr-2">Using mod permissions to make actions in the name of</div>
     <div>{userLink(user)}</div>
   </div>;
 }

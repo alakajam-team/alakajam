@@ -55,7 +55,7 @@ export function highScores(entry: BookshelfModel, scoreCollection: BookshelfColl
       {ifTrue(scoreCollection.length > 0, () =>
         scoreCollection.models.map(score => {
           const isOwnScore = userScore && score.get("id") === userScore.get("id");
-          const canEdit = isOwnScore || security.canUserWrite(options.currentUser, entry, { allowMods: true });
+          const canEdit = isOwnScore || security.isMod(options.currentUser);
           return <tr class={isOwnScore ? "active" : ""}>
             <td><a id={"score-rank-" + score.get("ranking")}></a>{printRanking(score.get("ranking"))}</td>
             <td>{userMacros.userLink(score.related<BookshelfModel>("user"))}

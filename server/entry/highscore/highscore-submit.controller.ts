@@ -21,8 +21,8 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
   } else if (entry.get("status_high_score") === enums.ENTRY.STATUS_HIGH_SCORE.OFF) {
     res.errorPage(403, "High scores are disabled on this entry");
     return;
-  } else if (scoreUserId !== user.id && !security.canUserWrite(user, entry, { allowMods: true })) {
-    res.errorPage(403, "Well played, but you are not allowed to edit other player's scores on other people's entries");
+  } else if (scoreUserId !== user.id && !security.isMod(user)) {
+    res.errorPage(403, "Well tried, but you are not allowed to edit other player's scores");
     return;
   } else if (scoreUserId !== user.id) {
     const scoreUser = await userService.findById(scoreUserId);
@@ -31,7 +31,6 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
       return;
     }
   }
-
 
   // Fetch existing score, handle deletion
   let entryScore = await highscoreService.findEntryScore(scoreUserId, entry.get("id"));
