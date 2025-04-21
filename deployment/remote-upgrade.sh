@@ -1,6 +1,8 @@
 #!/bin/sh
 
-# This temporary script lets you do a build from your machine before deploying it to the server.
+# This script lets you do a build from your machine before deploying it to the server.
+# Note that the primary deployment method is to use `upgrade.sh` script on the server itself.
+
 # Prerequisite: add your personal SSH key to Alakajam's authorized_keys
 
 npm run ${BUILD:-build}
