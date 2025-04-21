@@ -5,7 +5,7 @@ import adminBase from "../admin.base";
 import { AdminMarketingContext } from "./admin-marketing.controller";
 
 export default function render(context: AdminMarketingContext): JSX.Element {
-  const { notifiableUsers, user: readingUser } = context;
+  const { notifiableUsers, sendgridCSVPages, sendGridContactLimit, user: readingUser } = context;
 
   return adminBase(context,
     <div>
@@ -13,7 +13,17 @@ export default function render(context: AdminMarketingContext): JSX.Element {
 
       <p>List of all {notifiableUsers.length} users welcoming email notifications. Please spam sparingly :)</p>
 
-      <h2>Email addresses <a class="btn btn-sm btn-primary" href="/admin/marketing/csv">Download as SendGrid CSV</a></h2>
+
+      <h2>SendGrid contact lists</h2>
+
+      <p>
+        Due to a {sendGridContactLimit} contact and as many emails-per-day limit,
+        we must swap contacts between these CSVs to run a full campaign.<br />
+        {new Array(sendgridCSVPages).fill(true).map((_, i) =>
+          <a class="btn btn-sm btn-primary mr-1" href={`/admin/marketing/csv?page=${i}`}>SendGrid CSV (batch #{i})</a>)}
+      </p>
+
+      <h2>Email addresses</h2>
 
       <p class="mb-3">
         <code>
@@ -28,7 +38,6 @@ export default function render(context: AdminMarketingContext): JSX.Element {
           <th>Title</th>
           <th>Name</th>
           <th>Email</th>
-          {/* <th>Last notified</th> */}
         </thead>
         <tbody>{notifiableUsers.map(user => userRow(user, { readingUser }))}</tbody>
       </table>
@@ -42,6 +51,5 @@ function userRow(user: User, _options: { readingUser: User }): JSX.Element {
     <td><a href={links.routeUrl(user, "user")}>{user.title}</a></td>
     <td>{user.name}</td>
     <td>{user.email}</td>
-    {/* <td>{formatDate(user.marketing.last_notified_at, options.readingUser, constants.DATE_TIME_FORMAT)}</td> */}
   </tr>;
 }

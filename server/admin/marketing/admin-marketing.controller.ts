@@ -1,5 +1,6 @@
 import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
+import forms from "server/core/forms";
 import security from "server/core/security";
 import { User } from "server/entity/user.entity";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -17,14 +18,19 @@ export async function adminMarketing(_req: CustomRequest, res: CustomResponse<Co
     res.errorPage(403);
   }
 
+  const notifiableUsers = await marketingService.findNotifiableUsers();
+
   res.render<AdminMarketingContext>("admin/marketing/admin-marketing", {
     ...res.locals,
-    notifiableUsers: await marketingService.findNotifiableUsers()
+    notifiableUsers,
+    sendgridCSVPages: marketingService.getSendgridCSVPageCount(notifiableUsers.length)
   });
 }
 
-export async function adminMarketingDownloadSendgridCsv(_req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
+export async function adminMarketingDownloadSendgridCsv(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
+  const page = forms.parseInt(req.query.page, 0);
+
   res.contentType("text/csv");
-  res.header("Content-Disposition", "attachment; filename=alakajam-marketing.csv");
-  res.end(await marketingService.generateSendgridCSV());
+  res.header("Content-Disposition", `attachment; filename=alakajam-marketing-${page}.csv`);
+  res.end(await marketingService.generateSendgridCSV(page));
 }
