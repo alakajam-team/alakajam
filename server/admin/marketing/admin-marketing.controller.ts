@@ -5,7 +5,7 @@ import security from "server/core/security";
 import { User } from "server/entity/user.entity";
 import { CustomRequest, CustomResponse } from "server/types";
 import { AdminBaseContext } from "../admin.base";
-import marketingService from "./marketing.service";
+import marketingService, { MarketingService } from "./marketing.service";
 
 export interface AdminMarketingContext extends AdminBaseContext {
   notifiableUsers: User[];
@@ -23,7 +23,8 @@ export async function adminMarketing(_req: CustomRequest, res: CustomResponse<Co
   res.render<AdminMarketingContext>("admin/marketing/admin-marketing", {
     ...res.locals,
     notifiableUsers,
-    sendgridCSVPages: marketingService.getSendgridCSVPageCount(notifiableUsers.length)
+    sendgridCSVPages: marketingService.getSendgridCSVPageCount(notifiableUsers.length),
+    sendgridContactLimit: MarketingService.SENDGRID_CONTACT_LIMIT,
   });
 }
 

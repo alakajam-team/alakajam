@@ -5,7 +5,7 @@ import adminBase from "../admin.base";
 import { AdminMarketingContext } from "./admin-marketing.controller";
 
 export default function render(context: AdminMarketingContext): JSX.Element {
-  const { notifiableUsers, sendgridCSVPages, sendGridContactLimit, user: readingUser } = context;
+  const { notifiableUsers, sendgridCSVPages, sendgridContactLimit, user: readingUser } = context;
 
   return adminBase(context,
     <div>
@@ -17,7 +17,7 @@ export default function render(context: AdminMarketingContext): JSX.Element {
       <h2>SendGrid contact lists</h2>
 
       <p>
-        Due to a {sendGridContactLimit} contact and as many emails-per-day limit,
+        Due to a {sendgridContactLimit} contact and as many emails-per-day limit,
         we must swap contacts between these CSVs to run a full campaign.<br />
         {new Array(sendgridCSVPages).fill(true).map((_, i) =>
           <a class="btn btn-sm btn-primary mr-1" href={`/admin/marketing/csv?page=${i}`}>SendGrid CSV (batch #{i})</a>)}
