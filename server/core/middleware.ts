@@ -20,7 +20,7 @@ import * as path from "path";
 import * as randomKey from "random-key";
 import { CommonLocals } from "server/common.middleware";
 import settings from "server/core/settings";
-import { createErrorRenderingMiddleware, errorPage } from "server/error.middleware";
+import { renderError, errorPage } from "server/error.middleware";
 import { routes } from "server/routes";
 import { CustomRequest, CustomResponse, Mutable } from "server/types";
 import passwordRecoveryService from "server/user/password-recovery/password-recovery.service";
@@ -167,7 +167,12 @@ export async function configure(app: express.Application): Promise<void> {
   routes(app);
 
   // Routing: 500/404
-  app.use(createErrorRenderingMiddleware(app.locals.devMode));
+  app.use((err: any, req: CustomRequest, res: CustomResponse<CommonLocals>, _next: NextFunction) => {
+    renderError(err, req, res, app.locals.devMode);
+  });
+  app.use((req: CustomRequest, res: CustomResponse<CommonLocals>) => {
+    renderError(undefined, req, res, app.locals.devMode);
+  });
 }
 
 export function traceRequestsMiddleware(req: Request, res: Response, next: NextFunction): void {

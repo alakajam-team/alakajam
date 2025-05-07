@@ -1,4 +1,3 @@
-import { ErrorRequestHandler, NextFunction } from "express";
 import log from "server/core/log";
 import { CommonLocals } from "./common.middleware";
 import { CustomRequest, CustomResponse } from "./types";
@@ -7,23 +6,21 @@ import { CustomRequest, CustomResponse } from "./types";
  * Routing: 500/404
  * @param devMode
  */
-export function createErrorRenderingMiddleware(devMode: boolean): ErrorRequestHandler {
-  return (error: any, req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction): void => {
-    if (!error) {
-      errorPage(req, res, 404, undefined, {showErrorDetails: devMode});
-    } else {
-      if (error.code === "EBADCSRFTOKEN") {
-        // Replace the default error message from csurf by something more user friendly.
-        error.message = "Invalid CSRF token. Your session may have expired. Please go back and try again.";
-      } else if (error.code === "LIMIT_FILE_SIZE") {
-        // Same with multer's upload size limit
-        error.statusCode = 400;
-        error.message = "Attachment is too large, please go back and check the size limit";
-      }
-      errorPage(req, res, error.statusCode || 500, error, {showErrorDetails: devMode});
+export function renderError(error: any, req: CustomRequest, res: CustomResponse<CommonLocals>, devMode: boolean): void {
+  if (!error) {
+    errorPage(req, res, 404, undefined, { showErrorDetails: devMode });
+  } else {
+    if (error.code === "EBADCSRFTOKEN") {
+      // Replace the default error message from csurf by something more user friendly.
+      error.message = "Invalid CSRF token. Your session may have expired. Please go back and try again.";
+    } else if (error.code === "LIMIT_FILE_SIZE") {
+      // Same with multer's upload size limit
+      error.statusCode = 400;
+      error.message = "Attachment is too large, please go back and check the size limit";
     }
-  };
-}
+    errorPage(req, res, error.statusCode || 500, error, { showErrorDetails: devMode });
+  }
+};
 
 /**
  * Function displaying an error page
@@ -32,8 +29,8 @@ export function errorPage(
   req: CustomRequest,
   res: CustomResponse<CommonLocals>,
   httpCode: number,
-  error?: Error|string,
-  options: {showErrorDetails?: boolean} = {}): void {
+  error?: Error | string,
+  options: { showErrorDetails?: boolean } = {}): void {
 
   const stack = (options.showErrorDetails && typeof error === "object") ? error.stack : undefined;
   let message = (typeof error === "object") ? error.message : error;
