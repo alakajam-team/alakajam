@@ -37,7 +37,7 @@ export function errorPage(
   let title;
   switch (httpCode) {
   case 404:
-    title = "Page not found";
+    title = "Page not found. Look at all the space below: it's like a blank sheet of paper, so empty and yet so full of potential!";
     break;
   case 403:
     title = "Forbidden";
