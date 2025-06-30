@@ -1,4 +1,7 @@
 import log from "server/core/log";
+import links from "server/core/links";
+import eventService from "server/event/event.service";
+import entryService from "server/entry/entry.service";
 import { CommonLocals } from "./common.middleware";
 import { CustomRequest, CustomResponse } from "./types";
 
@@ -8,7 +11,7 @@ import { CustomRequest, CustomResponse } from "./types";
  */
 export function renderError(error: any, req: CustomRequest, res: CustomResponse<CommonLocals>, devMode: boolean): void {
   if (!error) {
-    errorPage(req, res, 404, undefined, { showErrorDetails: devMode });
+    render404KajamGame(req, res, devMode);
   } else {
     if (error.code === "EBADCSRFTOKEN") {
       // Replace the default error message from csurf by something more user friendly.
@@ -20,7 +23,7 @@ export function renderError(error: any, req: CustomRequest, res: CustomResponse<
     }
     errorPage(req, res, error.statusCode || 500, error, { showErrorDetails: devMode });
   }
-};
+}
 
 /**
  * Function displaying an error page
@@ -37,7 +40,7 @@ export function errorPage(
   let title;
   switch (httpCode) {
   case 404:
-    title = "Page not found. Look at all the space below: it's like a blank sheet of paper, so empty and yet so full of potential!";
+    title = "Neither page nor 404 Kajam was found!";
     break;
   case 403:
     title = "Forbidden";
@@ -69,4 +72,17 @@ export function errorPage(
     stack,
     path: req.originalUrl, // Needed by _page.html, normally added by global.middleware
   });
+}
+
+/**
+ * Handle a 404 Not Found error by rendering a random entry from the 404 Kajam.
+ */
+export async function render404KajamGame(req: CustomRequest, res: CustomResponse<CommonLocals>, devMode: boolean): Promise<void> {
+  const event = await eventService.findEventByName("16th-kajam");
+  if (event) {
+    const entry = await entryService.findRandomEntryForEvent(event.id);
+    res.redirect(links.routeUrl(entry, "entry"));
+  } else {
+    errorPage(req, res, 404, undefined, { showErrorDetails: devMode });
+  }
 }
