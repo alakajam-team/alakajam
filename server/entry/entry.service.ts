@@ -319,6 +319,18 @@ export class EntryService {
     }).fetch({ withRelated: ["userRoles"], ...options }) as any;
   }
 
+  /**
+   * Retrieves a random entry submitted to an event
+   */
+  public findRandomEntryForEvent(eventId: number, options: FetchOptions = {}): Promise<EntryBookshelfModel> {
+    return models.Entry.query((query) => {
+      void query
+        .where({"entry.event_id": eventId})
+        .orderByRaw("RANDOM()")
+        .limit(1);
+    }).fetch({ withRelated: ["userRoles"], ...options }) as any;
+  }
+
   public async findRescueEntries(event: BookshelfModel, user: User, options: any = {}): Promise<BookshelfCollection> {
     const minRatings = await settings.findNumber(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 10);
 
