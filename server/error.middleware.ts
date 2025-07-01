@@ -81,6 +81,10 @@ export async function render404KajamGame(req: CustomRequest, res: CustomResponse
   const event = await eventService.findEventByName("16th-kajam");
   if (event) {
     const entry = await entryService.findRandomEntryForEvent(event.id);
+    res.locals.alerts.push({
+      type: "warning",
+      message: "Oops! That page doesn't exist. Here, have a game instead.",
+    });
     res.redirect(links.routeUrl(entry, "entry"));
   } else {
     errorPage(req, res, 404, undefined, { showErrorDetails: devMode });
