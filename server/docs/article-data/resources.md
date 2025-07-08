@@ -92,7 +92,6 @@ This page compiles a list of **free** resources for making games, especially for
 | -------- | -------- |
 | [Open Broadcaster Software](https://obsproject.com)  | Lets you record your desktop to either videos or streaming platforms. |
 | [ScreenToGif](http://www.screentogif.com) | Powerful tool for recording short sequences from your screen, editing them and exporting them as gifs (Windows only). |
-| [GifCam](https://blog.bahraniapps.com/gifcam/#download) | A lightweight tool for capturing Gifs from your screen  (Windows only). |
 | [Peek](https://github.com/phw/peek) | Simple animated GIF screen recorder with an easy to use interface. Cross-platform. |
 | [Gyazo](https://gyazo.com/) | Service letting you capture your screen (as a picture or GIF) *and* automatically publishing the result to a dedicated website. |
 | [Snipping Tool](https://support.microsoft.com/en-us/help/13776/windows-use-snipping-tool-to-capture-screenshots) | A native and often underrated Windows program for capturing screnshots. |
