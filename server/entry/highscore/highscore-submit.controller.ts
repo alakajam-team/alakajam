@@ -13,7 +13,7 @@ import userService from "server/user/user.service";
  */
 export async function entryHighscoreSubmit(req: CustomRequest, res: CustomResponse<EntryLocals>): Promise<void> {
   const { user, entry } = res.locals;
-  const scoreUserId = req.query.user ? forms.parseInt(req.query.user) : user.id;
+  const scoreUserId = req.query.user ? forms.parseInt(req.query.user) : user?.id;
 
   if (!user) {
     res.redirect("/login?redirect=" + req.url);
