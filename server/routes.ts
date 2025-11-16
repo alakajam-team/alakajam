@@ -148,7 +148,14 @@ export function routes(app: express.Application): void {
   router.post("/dashboard/password", csrf, dashboardPasswordPost);
   router.get("/dashboard/entry-import", csrf, dashboardEntryImport);
   router.post("/dashboard/entry-import", csrf, dashboardEntryImport);
+
+  // User profiles
+
+  configUtils.getUserRedirects().forEach(({ from, to }) => {
+    router.get(`/user/${from}`, (_req, res) => res.redirect(301, `/user/${to}`));
+  });
   router.get("/user/:name", csrf, userProfile);
+
 
   // Mod dashboard
 

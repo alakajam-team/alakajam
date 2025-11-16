@@ -32,6 +32,7 @@ export interface Config {
   // Misc
   readonly SECURE_SESSION_COOKIES: boolean;
   readonly READ_ONLY_MODE: boolean;
+  readonly USER_REDIRECTS: string;
 
   // Debug: general options
   readonly DEBUG_INSERT_SAMPLES: boolean;
@@ -117,4 +118,11 @@ export function staticPathAbsolute(): string {
 
 export function ilikeOperator(): string {
   return config.DB_TYPE === "sqlite3" ? "like" : "ilike";
+}
+
+export function getUserRedirects(): Array<{ from: string; to: string }> {
+  return config.USER_REDIRECTS.split(",").map(line => {
+    const [from, to] = line.split(">").map(part => part.trim());
+    return { from, to };
+  });
 }
