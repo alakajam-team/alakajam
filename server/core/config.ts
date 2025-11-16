@@ -121,7 +121,7 @@ export function ilikeOperator(): string {
 }
 
 export function getUserRedirects(): Array<{ from: string; to: string }> {
-  return config.USER_REDIRECTS.split(",").map(line => {
+  return (config.USER_REDIRECTS || '').split(",").map(line => {
     const [from, to] = line.split(">").map(part => part.trim());
     return { from, to };
   });

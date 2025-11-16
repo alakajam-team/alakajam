@@ -5,6 +5,7 @@ module.exports = {
   STATIC_ROOT_URL: false,
   SECURE_SESSION_COOKIES: false,
   READ_ONLY_MODE: false,
+  USER_REDIRECTS: '',  // format: 'oldname > newname,oldname2 > newname2'
 
   // File storage
   DATA_PATH: 'data/',
