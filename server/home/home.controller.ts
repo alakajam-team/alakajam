@@ -174,6 +174,6 @@ async function loadEventsTimeline(featuredEvent?: BookshelfModel): Promise<Books
     return eventsTimeline.slice(startIndex, startIndex + eventCount).reverse();
   } else {
     const fetchedEventsCollection = await eventService.findEvents({ pageSize: 5 });
-    return fetchedEventsCollection.models;
+    return fetchedEventsCollection.models.reverse();
   }
 }
