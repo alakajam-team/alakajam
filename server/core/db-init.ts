@@ -35,10 +35,9 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
 
   await userService.register("administrator@example.com", "administrator", "administrator");
   const adminUser = await userService.findByName("administrator");
-  adminUser.set({
-    title: "Administrator",
-    is_admin: true,
-  });
+  adminUser.title = "Administrator";
+  adminUser.is_admin = "true";
+  adminUser.approbation_state = "approved";
   await userService.save(adminUser);
 
   await settings.save(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1);
@@ -56,12 +55,9 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
 
     await userService.register("entrant@example.com", "entrant", "entrant");
     const entrantUser = await userService.findByName("entrant");
-    entrantUser.set({
-      title: "Entrant",
-    });
-    entrantUser.related<BookshelfModel>("details").set({
-      body: "I am definitely **not** a robot.",
-    });
+    entrantUser.title = "Entrant";
+    entrantUser.approbation_state = "approved";
+    entrantUser.details.body = "I am definitely **not** a robot.";
     await userService.save(entrantUser);
 
     // 1st event

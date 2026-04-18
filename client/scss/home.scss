@@ -7,8 +7,16 @@ $arrowSize: 9.5px;
 .home-welcome {
   margin: -20px 0 20px 0;
   padding: 10px;
-  background-color: $main-lighter;
   font-size: 1.2rem;
+  background-color: $main-lighter;
+
+  &.home-welcome--post {
+    background: url("/static/images/default-background.png") center/cover no-repeat;
+
+    .post__title {
+      color: white;
+    }
+  }
 
   &__container {
     align-items: center;
@@ -35,6 +43,7 @@ $arrowSize: 9.5px;
       text-decoration: underline;
     }
   }
+
 }
 
 .home-stream-container {

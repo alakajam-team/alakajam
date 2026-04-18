@@ -46,26 +46,23 @@ export default function render(context: HomeContext): JSX.Element {
 
       {/* ===== EVENT JUMBOTRON ===== */}
 
-      {ifSet(featuredEvent, () =>
-        <>
-          {ifSet(featuredPost, () =>
-            <div class="home-welcome pt-3">
-              <div class="container">{postMacros.post(featuredPost, { readOnly: true })}</div>
-            </div>
-          )}
-          {jumbotronMacros.eventJumbotron(featuredEvent, eventParticipation, featuredEventAnnouncement, user, userLikes,
-            entry, tournamentScore, path, { inviteToJoin })}
-        </>
+      {ifSet(featuredPost, () =>
+        <div class="home-welcome home-welcome--post pt-3" style={!featuredEvent && { marginBottom: 0 }}>
+          <div class="container">{postMacros.post(featuredPost, { readOnly: true })}</div>
+        </div>
       )}
-      {ifNotSet(featuredEvent, () =>
+      {ifSet(featuredEvent, () =>
+        jumbotronMacros.eventJumbotron(featuredEvent, eventParticipation, featuredEventAnnouncement, user, userLikes,
+          entry, tournamentScore, path, { inviteToJoin })
+      )}
+      {!featuredEvent && !featuredPost &&
         <div class="event-jumbotron" style={jumbotronMacros.backgroundImage(featuredEvent)}>
           <div class="container">
             {ifNotSet(featuredPost, () =>
               <h1 class="card card-body text-center">Next event not announced yet.</h1>
             )}
           </div>
-        </div>
-      )}
+        </div>}
 
       {/* ===== EVENTS TIMELINE NAVBAR ===== */}
 
