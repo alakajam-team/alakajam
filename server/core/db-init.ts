@@ -128,22 +128,7 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
       otherEntry.set("published_at", createLuxonDate().toJSDate());
       await otherEntry.save();
     }
-    for (let i = 2; i <= 10; i++) {
-      const userA = await userService.findByName("entrant" + i);
-      for (let j = 1; j <= 10; j++) {
-        let ji = (i + j) % 11;
-        if (ji < 2) {
-          ji = 2;
-        }
-        const userB = await userService.findByName("entrant" + ji);
-        const entryB = await entryService.findUserEntryForEvent(userB as any, event2.get("id"));
-        const votes = [];
-        for (let k = 0; k < 6; k++) {
-          votes[k] = 3 + Math.floor(Math.random() * 4);
-        }
-        await ratingService.saveEntryVote(userA, entryB, event2, votes);
-      }
-    }
+    await insertSampleVotes(event2, 2, 10);
 
     let post = await postService.createPost(entrantUser as any, event2.get("id"));
     post.set({
@@ -165,10 +150,9 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
     });
     if (samples === "nightly") {
       const nightlyPostBuffer = await fileStorage.read("deployment/NIGHTLY_POST.md");
-      const changesBuffer = await fileStorage.read("CHANGES.md");
       post.set({
         title: "Nightly: " + formatDate(Date.now(), undefined, constants.DATE_FORMAT),
-        body: nightlyPostBuffer.toString() + changesBuffer.toString(),
+        body: nightlyPostBuffer.toString(),
       });
     }
     await post.save();
@@ -212,6 +196,43 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
   }
 }
 
+/**
+ * Inserts random votes between the sample users "entrant<first>" to "entrant<last>", in bulk
+ * (going through the rating service for each vote would refresh the ratings & karma each time).
+ */
+async function insertSampleVotes(event: BookshelfModel, first: number, last: number): Promise<void> {
+  const users: BookshelfModel[] = [];
+  const entries: BookshelfModel[] = [];
+  for (let i = first; i <= last; i++) {
+    const user = await userService.findByName("entrant" + i);
+    users[i] = user as any;
+    entries[i] = await entryService.findUserEntryForEvent(user as any, event.get("id"));
+  }
+
+  const knex = db.knex;
+  const now = knex.fn.now();
+  const votes = new Map<string, Record<string, any>>();
+  for (let i = first; i <= last; i++) {
+    for (let j = 1; j <= 10; j++) {
+      const targetEntry = entries[Math.max(first, (i + j) % 11)];
+      const vote: Record<string, any> = {
+        user_id: users[i].get("id"), entry_id: targetEntry.get("id"), event_id: event.get("id"),
+        created_at: now, updated_at: now,
+      };
+      for (let k = 1; k <= 6; k++) {
+        vote["vote_" + k] = 3 + Math.floor(Math.random() * 4);
+      }
+      votes.set(vote.user_id + "_" + vote.entry_id, vote);
+    }
+  }
+  await knex("entry_vote").insert([...votes.values()]);
+
+  for (const entry of entries.filter(Boolean)) {
+    await ratingService.refreshEntryRatings(entry as any);
+    await ratingService.refreshEntryKarma(entry as any, event);
+  }
+}
+
 function defaultArticleSidebar() {
   return `{
     "about": [
@@ -239,10 +260,6 @@ function defaultArticleSidebar() {
         {
             "title": "Behind the scenes",
             "links": [
-                {
-                    "title": "Site changelog",
-                    "url": "/changes"
-                },
                 {
                     "title": "NPO constitution",
                     "url": "/article/about/npo-constitution"
