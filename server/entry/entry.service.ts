@@ -84,7 +84,10 @@ export class EntryService {
       await entry.load(["userRoles.user", "comments.user"], { transacting: transaction } as any);
 
       for (const userRole of entry.related<BookshelfCollection>("userRoles").models) {
-        cache.user(userRole.related<any>("user")).del("latestEntry");
+        const userCache = cache.user(userRole.related<any>("user"));
+        userCache.del("latestEntry");
+        userCache.del("toUserCollection");
+        userCache.del("unreadNotifications");
         await userRole.destroy({ transacting: transaction });
       }
       for (const comment of entry.related<BookshelfCollection>("comments").models) {

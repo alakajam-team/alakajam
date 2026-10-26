@@ -163,7 +163,10 @@ export class PostService {
   public async deletePost(post: BookshelfModel): Promise<void> {
     await post.load(["userRoles.user", "comments.user"]);
     post.related<BookshelfCollection>("userRoles").forEach((userRole) => {
-      cache.user(userRole.related<BookshelfModel>("user").get("name")).del("latestPostsCollection");
+      const userCache = cache.user(userRole.related<BookshelfModel>("user").get("name"));
+      userCache.del("latestPostsCollection");
+      userCache.del("toUserCollection");
+      userCache.del("unreadNotifications");
       userRole.destroy()
         .catch(e => log.error(e));
     });
