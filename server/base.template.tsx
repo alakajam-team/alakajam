@@ -6,6 +6,7 @@ import links from "./core/links";
 import { ifFalse, ifNotSet, ifSet, ifTrue } from "./macros/jsx-utils";
 import { BookshelfModel } from "bookshelf";
 import config from "./core/config";
+import { LIVE_RELOAD_CLIENT_SCRIPT } from "./core/live-reload";
 
 export default function base(context: CommonLocals, contents: JSX.Element): JSX.Element {
   const { pageImage, launchTime, rootUrl, path, event, user, unreadNotifications } = context;
@@ -229,7 +230,9 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
         </div>
       </footer>
 
-      {ifSet(process.env.BROWSER_REFRESH_URL, () => <script src={process.env.BROWSER_REFRESH_URL}></script>)}
+      {ifTrue(context.liveReload, () =>
+        <script type="text/javascript" dangerouslySetInnerHTML={{ __html: LIVE_RELOAD_CLIENT_SCRIPT }} />
+      )}
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/site.js?" + launchTime)}></script>
       {context.scripts?.map(scriptUrl => <script type="text/javascript" src={scriptUrl}></script>)}
       {analytics()}

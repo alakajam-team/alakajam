@@ -27,7 +27,6 @@ if (config.DEBUG_LONG_PROMISE_TRACES) {
  */
 
 import express from "express";
-import * as findUp from "find-up";
 import * as fs from "fs-extra";
 import mkdirp from "mkdirp";
 import * as path from "path";
@@ -40,7 +39,6 @@ if (process.env.NODE_ENV !== "production") {
   process.env.NODE_ENV = "development";
 }
 const DEV_ENVIRONMENT = process.env.NODE_ENV === "development";
-const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
 
 /**
  * App launch!
@@ -83,10 +81,6 @@ function createApp() {
       }
 
       log.info(`Server started in ${startSeconds.toFixed(1)}s: ${advertisedUrls.join(" or ")}`);
-
-      if (process.send) {
-        process.send("online"); // browser-refresh event
-      }
     });
   })().catch(e => log.error(e));
 }
@@ -131,46 +125,22 @@ async function initFilesLayout() {
   await _createFolderIfMissing(configUtils.tmpPathAbsolute());
   await _createFolderIfMissing(configUtils.uploadsPathAbsolute());
 
-  // Configure browser-refresh
-  try {
-    configureBrowserRefresh();
-  } catch (e) {
-    if (DEV_ENVIRONMENT) {
-      log.error(e.message);
-    }
-  }
-
-  // Run CSS build (or bootstrap sources watcher in dev mode)
-  if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
-    process.chdir(ROOT_PATH);
-    await require("./scripts/sass").default.initialize({ watch: DEV_ENVIRONMENT });
-  }
+  // Check that client assets have been built (the server never builds them itself)
+  _warnIfClientBuildMissing();
 }
 
 /*
- * Use browser-refresh to refresh the browser automatically during development
+ * Client assets are built by separate processes (see the `build` & `dev` npm scripts)
  */
-function configureBrowserRefresh() {
-  const browserRefreshClient = require("browser-refresh-client");
-
-  const CLIENT_RESOURCES = "*.html *.js *.css *.png *.jpg *.gif";
-
-  // Configure for client-side resources
-  if (config.DEBUG_REFRESH_BROWSER) {
-    browserRefreshClient
-      .enableSpecialReload(CLIENT_RESOURCES)
-      .onFileModified((filePath) => {
-        if (filePath.endsWith(".css")) {
-          browserRefreshClient.refreshStyles();
-        } else if (filePath.endsWith(".gif") || filePath.endsWith(".jpg") || filePath.endsWith(".png")) {
-          browserRefreshClient.refreshImages();
-        } else {
-          browserRefreshClient.refreshPage();
-        }
-      });
-  } else {
-    browserRefreshClient
-      .enableSpecialReload(CLIENT_RESOURCES, { autoRefresh: false });
+function _warnIfClientBuildMissing() {
+  const clientBuildPath = configUtils.clientBuildPathAbsolute();
+  const missingFiles = ["scripts/site.js", "css/index.css"]
+    .filter((file) => !fs.existsSync(path.join(clientBuildPath, file)));
+  if (missingFiles.length > 0) {
+    const advice = DEV_ENVIRONMENT
+      ? "use `npm run dev` to build them automatically, or run `npm run build`"
+      : "run `npm run build`";
+    log.warn(`Client assets missing from ${clientBuildPath} (${missingFiles.join(", ")}): ${advice}`);
   }
 }
 

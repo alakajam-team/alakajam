@@ -35,7 +35,6 @@ module.exports = {
   */
 
   // Debug: general options
-  DEBUG_DISABLE_STARTUP_BUILD: false, // Makes the server start faster by not building the client JS/CSS (you will have to "npm run build" by hand)
   DEBUG_INSERT_SAMPLES: true, // Inserts sample data upon DB init (false/true/'nightly')
   DEBUG_DISABLE_CACHE: true, // Prevents caching pages for performance optimisation
   DEBUG_REFRESH_BROWSER: true, // Refreshes the browser automatically upon code changes

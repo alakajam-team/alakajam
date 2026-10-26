@@ -2,14 +2,15 @@
  * Entry point for the end-to-end test server
  */
 
-import log from "../core/log";
-log.info("Launching server with forced end-to-end configuration...");
-process.env.CONFIG_PATH = "server/scripts/e2e-config.js";
+import "./e2e-env";
 
 import * as fs from "fs";
 import * as path from "path";
 import config from "../core/config";
 import constants from "../core/constants";
+import log from "../core/log";
+
+log.info("Launching server with forced end-to-end configuration...");
 
 // Initialize backup for restoration throughout tests
 // XXX Should be done after DB migration
@@ -17,4 +18,5 @@ const DB_SQLITE_PATH = path.resolve(constants.ROOT_PATH, config.DB_SQLITE_FILENA
 log.info(`Backing up DB to ${DB_SQLITE_PATH}.backup to restore its state between tests...`);
 fs.copyFileSync(DB_SQLITE_PATH, DB_SQLITE_PATH + ".backup");
 
-import "../index";
+// Launch the server only now (a static import would be evaluated before the backup)
+require("../index"); // eslint-disable-line @typescript-eslint/no-var-requires

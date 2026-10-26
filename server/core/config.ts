@@ -40,7 +40,6 @@ export interface Config {
   readonly DEBUG_REFRESH_BROWSER: boolean;
   readonly DEBUG_ADMIN: boolean;
   readonly DEBUG_TEST_MAILER: boolean;
-  readonly DEBUG_DISABLE_STARTUP_BUILD: boolean;
   readonly DEBUG_ARTICLES: boolean;
   readonly DEBUG_LONG_PROMISE_TRACES: boolean;
   readonly DEBUG_DISABLE_SLOW_DOWN: boolean;

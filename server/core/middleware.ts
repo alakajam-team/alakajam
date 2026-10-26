@@ -28,6 +28,7 @@ import { promisify } from "util";
 import config, * as configUtils from "./config";
 import db from "./db";
 import fileStorage from "./file-storage";
+import { LIVE_RELOAD_PATH, LiveReload } from "./live-reload";
 import log from "./log";
 import { setUpJSXLocals } from "./middleware-jsx";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
@@ -50,6 +51,14 @@ export async function configure(app: express.Application): Promise<void> {
   app.use("/static", express.static(configUtils.staticPathAbsolute()));
   app.use("/dist/client", express.static(configUtils.clientBuildPathAbsolute()));
   app.use("/data/uploads", express.static(configUtils.uploadsPathAbsolute()));
+
+  // Live reload (development only, registered before the session & speed limit middleware)
+  app.locals.liveReload = app.locals.devMode && config.DEBUG_REFRESH_BROWSER;
+  if (app.locals.liveReload) {
+    const liveReload = new LiveReload();
+    liveReload.watch();
+    app.get(LIVE_RELOAD_PATH, liveReload.handler);
+  }
 
   // Trace requests
   if (config.DEBUG_TRACE_REQUESTS) {
@@ -113,6 +122,7 @@ export async function configure(app: express.Application): Promise<void> {
   app.use(function templateTooling(req: CustomRequest, res: CustomResponse<Mutable<CommonLocals>>, next: NextFunction): void {
     res.locals.rootUrl = config.ROOT_URL;
     res.locals.devMode = app.locals.devMode;
+    res.locals.liveReload = app.locals.liveReload;
     res.locals.launchTime = LAUNCH_TIME;
     setUpJSXLocals(req, res);
 
