@@ -1,6 +1,8 @@
 import { clickAndWaitForLoad, createPost, expectNotFound, loginAs, restoreDB, visit } from "../support/commands";
 import {
   ADMIN_POST_WITHOUT_COMMENTS,
+  ADMIN_POST_WITHOUT_COMMENTS_LEGACY_ID,
+  ADMIN_POST_WITHOUT_COMMENTS_SLUG,
   ADMIN_POST_WITHOUT_COMMENTS_TITLE,
   DUMBLEDORE_ENTRY_NAME_SUBMISSIONS_OPEN,
   DUMBLEDORE_ENTRY_SUBMISSIONS_OPEN,
@@ -128,6 +130,25 @@ test.describe("Post", () => {
 
     await userProfilePo.visit(USER_DUMBLEDORE);
     await expect(userProfilePo.postsTitles).toContainText(["Devlog #1"]);
+  });
+
+  test("redirects legacy post URLs permanently", async ({ page, postPo }) => {
+    const legacyUrls = [
+      [`/post/${ADMIN_POST_WITHOUT_COMMENTS_LEGACY_ID}`, `/post/${ADMIN_POST_WITHOUT_COMMENTS}`],
+      [`/post/${ADMIN_POST_WITHOUT_COMMENTS_LEGACY_ID}/${ADMIN_POST_WITHOUT_COMMENTS_SLUG}`,
+        `/post/${ADMIN_POST_WITHOUT_COMMENTS}/${ADMIN_POST_WITHOUT_COMMENTS_SLUG}`]
+    ];
+    for (const [legacyUrl, expectedUrl] of legacyUrls) {
+      const response = await page.request.get(legacyUrl, { maxRedirects: 0 });
+      expect(response.status(), `visiting ${legacyUrl}`).toBe(301);
+      expect(response.headers().location, `visiting ${legacyUrl}`).toBe(expectedUrl);
+    }
+
+    await visit(page, `/post/${ADMIN_POST_WITHOUT_COMMENTS_LEGACY_ID}/${ADMIN_POST_WITHOUT_COMMENTS_SLUG}`);
+    await expect(page).toHaveURL(`/post/${ADMIN_POST_WITHOUT_COMMENTS}/${ADMIN_POST_WITHOUT_COMMENTS_SLUG}`);
+    await expect(postPo.postTitle).toContainText(ADMIN_POST_WITHOUT_COMMENTS_TITLE);
+
+    await expectNotFound(page, "/post/99");
   });
 
   test("supports deleting a post with comments and likes", async ({ page, postPo, postEditPo, homePo, dashboardPo,

@@ -50,7 +50,7 @@ export async function entryView(req: CustomRequest, res: CustomResponse<EntryLoc
 
   let editableAnonComments = null;
   if (res.locals.user && entry.get("allow_anonymous")) {
-    editableAnonComments = await commentService.findOwnAnonymousCommentIds(res.locals.user, entry.get("id"), "entry");
+    editableAnonComments = await commentService.findOwnAnonymousCommentIds(res.locals.user, entry.get("id"));
   }
 
   const posts = await postService.findPosts({

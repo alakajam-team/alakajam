@@ -9,7 +9,7 @@ export async function postWatch(req: CustomRequest, res: CustomResponse<CommonLo
     if (security.isUserWatching(user, post)) {
       await security.removeUserRight(user, post, "watch");
     } else {
-      await security.addUserRight(user, post, "post", "watch");
+      await security.addUserRight(user, post, "watch");
     }
   }
 

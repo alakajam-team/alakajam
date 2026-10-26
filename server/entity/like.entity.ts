@@ -1,27 +1,26 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
+import { Node } from "./node.entity";
 import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
 
 @Entity()
-@Index([ "node_id", "node_type" ])
 export class Like extends TimestampedEntity {
 
   @PrimaryGeneratedColumn()
   public id: number;
 
   /**
-   * ID of the target node
+   * ID of the target node (post or entry)
    */
   @Column()
+  @Index()
   public node_id: number;
 
-  /**
-   * Type of the target node ('entry' or 'post')
-   */
-  @Column(ColumnTypes.varchar())
-  public node_type: string;
+  @ManyToOne(() => Node, (node) => node.likes, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "node_id" })
+  public node: Relation<Node>;
 
   /**
    * Author user ID

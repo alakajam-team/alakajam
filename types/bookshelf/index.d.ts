@@ -14,6 +14,14 @@ declare module "bookshelf" {
     public likes: () => BookshelfCollection;
     public userRoles: () => BookshelfCollection;
     public comments: () => BookshelfCollection;
+    public nodeType: () => "post" | "entry";
+  }
+
+  /**
+   * Comments, likes and user roles. Requires loading both `post` and `entry` relations.
+   */
+  class NodeChildBookshelfModel extends BookshelfModel {
+    public node: () => NodeBookshelfModel;
   }
 
   class EntryBookshelfModel extends NodeBookshelfModel {
@@ -30,7 +38,7 @@ declare module "bookshelf" {
     public author: () => BookshelfModel;
   }
 
-  class CommentBookshelfModel extends NodeBookshelfModel {
+  class CommentBookshelfModel extends NodeChildBookshelfModel {
     public wasEdited: () => boolean;
   }
 

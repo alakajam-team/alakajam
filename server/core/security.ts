@@ -3,7 +3,7 @@
  * Security service. Helps with checking permissions.
  */
 
-import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, CommentBookshelfModel } from "bookshelf";
 import { USER_APPROVED_VALUE } from "server/entity/transformer/user-approbation-state.transformer";
 import { User } from "server/entity/user.entity";
 import constants from "./constants";
@@ -75,7 +75,7 @@ export class Security {
     // Comment
     if (modelType === "comment") {
       if (permission === "read") {
-        return this.canUser(user, model.related("node"), permission, options);
+        return this.canUser(user, (model as CommentBookshelfModel).node(), permission, options);
       } else {
         return model.get("user_id") === user?.get("id");
       }
@@ -152,7 +152,6 @@ export class Security {
   public async addUserRight(
     user: User,
     node: BookshelfModel,
-    nodeType: "post" | "entry",
     permission: SecurityPermission): Promise<void> {
     await node.load("userRoles");
 
@@ -174,7 +173,6 @@ export class Security {
           user_name: user.get("name"),
           user_title: user.get("title"),
           node_id: node.get("id"),
-          node_type: nodeType,
           permission,
           event_id: node.get("event_id"),
         }) as BookshelfModel;

@@ -94,10 +94,12 @@ async function seedSubmissionsOpenEvent(users: Users): Promise<void> {
   event.set("status_rules", rulesPost.get("id"));
   await event.save();
 
-  await createPost(users.administrator, {
+  const postWithoutComments = await createPost(users.administrator, {
     ...E2E_POSTS.adminWithoutComments,
     body: "Don't add comments here except in automated tests"
   });
+  // Simulate a post created before posts and entries shared their IDs (see migration 0047)
+  await postWithoutComments.save({ legacy_id: E2E_POSTS.adminWithoutComments.legacyId }, { patch: true });
 }
 
 async function seedPendingEvent(): Promise<void> {

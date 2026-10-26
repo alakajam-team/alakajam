@@ -1,6 +1,5 @@
 
 import { BookshelfCollection, BookshelfModel, PostBookshelfModel } from "bookshelf";
-import cache from "server/core/cache";
 import constants from "server/core/constants";
 import { createLuxonDate, ZONE_UTC } from "server/core/formats";
 import forms from "server/core/forms";
@@ -9,6 +8,7 @@ import * as models from "server/core/models";
 import security from "server/core/security";
 import entryService from "server/entry/entry.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import userService from "server/user/user.service";
 import { buildPostContext } from "../post-view.controller";
 import { PostLocals } from "../post.middleware";
 import postService from "../post.service";
@@ -133,7 +133,7 @@ export async function postSave(req: CustomRequest, res: CustomResponse<PostLocal
 
       // Save
       await post.save();
-      cache.user(res.locals.user.get("name")).del("latestPostsCollection");
+      userService.invalidateUserCaches(res.locals.user);
     } else if (!post) {
       post = new models.Post() as PostBookshelfModel;
     }

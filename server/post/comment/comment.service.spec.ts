@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
-import { BookshelfModel } from "bookshelf";
+import { BookshelfModel, CommentBookshelfModel } from "bookshelf";
 import { expect } from "chai";
 import constants from "server/core/constants";
 import { createLuxonDate } from "server/core/formats";
@@ -11,7 +11,7 @@ import {
   createTestEntry,
   createTestEvent,
   createTestPost,
-  createTestPostAndEntryWithSameId,
+  createTestPostAndEntry,
   createTestUser
 } from "server/testing/testing-fixtures";
 import { afterAll, beforeAll, describe, it } from "vitest";
@@ -65,7 +65,7 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
     it("should keep comments of a post and an entry sharing the same ID separate", async () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
 
       const postComment = await commentService.createComment(entryOwner, post, "On post");
       const entryComment = await commentService.createComment(postAuthor, entry, "On entry");
@@ -77,14 +77,14 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
       const commentsByEntryOwner = await commentService.findCommentsByUser(entryOwner);
       expect(commentsByEntryOwner.length).to.equal(1);
       expect(commentsByEntryOwner.at(0).get("id")).to.equal(postComment.get("id"));
-      expect(commentsByEntryOwner.at(0).related<BookshelfModel>("node").tableName).to.equal("post");
-      expect(commentsByEntryOwner.at(0).related<BookshelfModel>("node").get("title")).to.equal(post.get("title"));
+      expect((commentsByEntryOwner.at(0) as CommentBookshelfModel).node().nodeType()).to.equal("post");
+      expect((commentsByEntryOwner.at(0) as CommentBookshelfModel).node().get("title")).to.equal(post.get("title"));
 
       const commentsByPostAuthor = await commentService.findCommentsByUser(postAuthor);
       expect(commentsByPostAuthor.length).to.equal(1);
       expect(commentsByPostAuthor.at(0).get("id")).to.equal(entryComment.get("id"));
-      expect(commentsByPostAuthor.at(0).related<BookshelfModel>("node").tableName).to.equal("entry");
-      expect(commentsByPostAuthor.at(0).related<BookshelfModel>("node").get("title")).to.equal(entry.get("title"));
+      expect((commentsByPostAuthor.at(0) as CommentBookshelfModel).node().nodeType()).to.equal("entry");
+      expect((commentsByPostAuthor.at(0) as CommentBookshelfModel).node().get("title")).to.equal(entry.get("title"));
     });
 
   });
@@ -138,13 +138,13 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
       const commenter = await createTestUser();
       const entry = await createTestEntry(owner, undefined, { allow_anonymous: true });
       const comment = await commentService.createComment(commenter, entry, "Anonymous", true);
-      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id"), "entry"))
+      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id")))
         .to.deep.equal([comment.get("id")]);
 
       await commentService.deleteComment(comment);
 
       expect(await findCommentBodiesOnNode(entry)).to.deep.equal([]);
-      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id"), "entry")).to.deep.equal([]);
+      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id"))).to.deep.equal([]);
     });
 
   });
@@ -160,9 +160,9 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
 
       const fetchedComment = await commentService.findCommentById(comment.get("id"));
       expect(fetchedComment.get("user_id")).to.equal(constants.ANONYMOUS_USER_ID);
-      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id"), "entry"))
+      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id")))
         .to.deep.equal([comment.get("id")]);
-      expect(await commentService.findOwnAnonymousCommentIds(owner, entry.get("id"), "entry")).to.deep.equal([]);
+      expect(await commentService.findOwnAnonymousCommentIds(owner, entry.get("id"))).to.deep.equal([]);
     });
 
     it("should not create anonymous comments on entries disallowing them", async () => {
@@ -173,7 +173,7 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
       const comment = await commentService.createComment(commenter, entry, "Not anonymous", true);
 
       expect(comment.get("user_id")).to.equal(commenter.id);
-      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id"), "entry")).to.deep.equal([]);
+      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id"))).to.deep.equal([]);
     });
 
     it("should not create anonymous comments for users disallowed to", async () => {
@@ -200,16 +200,16 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
       const commenter = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       await entry.save({ allow_anonymous: true }, { patch: true });
       const otherEntry = await createTestEntry(entryOwner, undefined, { allow_anonymous: true });
       const comment = await commentService.createComment(commenter, entry, "Anonymous", true);
       await commentService.createComment(commenter, otherEntry, "Anonymous elsewhere", true);
       await commentService.createComment(commenter, post, "On post", true);
 
-      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id"), "entry"))
+      expect(await commentService.findOwnAnonymousCommentIds(commenter, entry.get("id")))
         .to.deep.equal([comment.get("id")]);
-      expect(await commentService.findOwnAnonymousCommentIds(commenter, post.get("id"), "post")).to.deep.equal([]);
+      expect(await commentService.findOwnAnonymousCommentIds(commenter, post.get("id"))).to.deep.equal([]);
     });
 
     it("should tell that a regular comment is not an own anonymous comment", async () => {
@@ -246,7 +246,7 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
       const comments = await commentService.findCommentsByUser(commenter);
       expect(comments.map((c) => c.get("body")).sort()).to.deep.equal(["On entry", "On post"]);
       for (const comment of comments.models) {
-        expect(comment.related<BookshelfModel>("node").get("id")).to.be.ok;
+        expect((comment as CommentBookshelfModel).node().get("id")).to.be.ok;
       }
     });
 
@@ -273,7 +273,7 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
       const entryOwner = await createTestUser();
       const commenter = await createTestUser();
       const event = await createTestEvent();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       await entry.save({ event_id: event.get("id") }, { patch: true });
       await commentService.createComment(commenter, post, "On post");
 
@@ -304,7 +304,7 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
       const member = await createTestUser();
       const commenter = await createTestUser();
       const entry = await createTestEntry(owner);
-      await security.addUserRight(member, entry, "entry", "write");
+      await security.addUserRight(member, entry, "write");
       // Make sure the comment is more recent than the role
       await waitMs(5);
       await commentService.createComment(commenter, entry, "On team entry");
@@ -328,18 +328,18 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
       const commenter = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       await waitMs(5);
       await commentService.createComment(commenter, entry, "On entry");
       await commentService.createComment(commenter, post, "On post");
 
       const postAuthorComments = await commentService.findCommentsToUser(postAuthor);
       expect(postAuthorComments.map((c) => c.get("body"))).to.deep.equal(["On post"]);
-      expect(postAuthorComments.at(0).related<BookshelfModel>("node").tableName).to.equal("post");
+      expect((postAuthorComments.at(0) as CommentBookshelfModel).node().nodeType()).to.equal("post");
 
       const entryOwnerComments = await commentService.findCommentsToUser(entryOwner);
       expect(entryOwnerComments.map((c) => c.get("body"))).to.deep.equal(["On entry"]);
-      expect(entryOwnerComments.at(0).related<BookshelfModel>("node").tableName).to.equal("entry");
+      expect((entryOwnerComments.at(0) as CommentBookshelfModel).node().nodeType()).to.equal("entry");
     });
 
   });

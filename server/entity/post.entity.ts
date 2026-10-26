@@ -1,7 +1,8 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { Entry } from "./entry.entity";
 import { Event } from "./event.entity";
+import { Node } from "./node.entity";
 import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
@@ -9,8 +10,21 @@ import { User } from "./user.entity";
 @Entity()
 export class Post extends TimestampedEntity {
 
-  @PrimaryGeneratedColumn()
+  /**
+   * Primary key, shared with the node (generated upon insertion, see NodeSubscriber)
+   */
+  @PrimaryColumn()
   public id: number;
+
+  @OneToOne(() => Node, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "id" })
+  public node: Relation<Node>;
+
+  /**
+   * ID before posts started sharing their IDs with entries (see constants.POST_ID_FLOOR)
+   */
+  @Column({ nullable: true, unique: true })
+  public legacy_id: number;
 
   /**
    * Author user ID
@@ -91,7 +105,7 @@ export class Post extends TimestampedEntity {
   public hotness: number;
 
   public dependents(): Array<keyof this> {
-    return []; // ["likes" /* TODO handle morph relation */, "comments", "userRoles"]; // careful of issue #93 when trying to restore
+    return []; // Comments, likes & user roles are cascaded by the DB through the node
   }
 
 }

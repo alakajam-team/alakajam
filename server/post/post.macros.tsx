@@ -1,4 +1,4 @@
-import { BookshelfModel, CommentBookshelfModel, EntryBookshelfModel } from "bookshelf";
+import { BookshelfModel, CommentBookshelfModel, EntryBookshelfModel, NodeBookshelfModel } from "bookshelf";
 import React, { JSX } from "preact";
 import { userQuickActions } from "server/admin/users/admin-user-actions";
 import enums from "server/core/enums";
@@ -220,7 +220,7 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
         )}
         {ifFalse(showEditor, () => {
           const author = comment.related<BookshelfModel>("user");
-          const node = comment.related<BookshelfModel>("node");
+          const node = comment.node();
           const isOwnAnonComment = options.editableAnonComments && options.editableAnonComments.includes(comment.get("id"));
 
           return <div class={"row comment mb-3 "
@@ -317,8 +317,8 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
   </>;
 }
 
-export function commentUrl(node: BookshelfModel, commentModel: BookshelfModel): string {
-  return links.routeUrl(node, commentModel.get("node_type")) + "#c" + commentModel.id;
+export function commentUrl(node: NodeBookshelfModel, commentModel: BookshelfModel): string {
+  return links.routeUrl(node, node.nodeType()) + "#c" + commentModel.id;
 }
 
 export function commentEditor(commentModel: BookshelfModel, path: string, csrfToken: () => JSX.Element, options: CommentEditorOptions): JSX.Element {

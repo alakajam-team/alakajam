@@ -1,5 +1,5 @@
 import Bluebird from "bluebird";
-import { BookshelfCollection, BookshelfModel, FetchPageOptions, NodeBookshelfModel } from "bookshelf";
+import { BookshelfCollection, BookshelfModel, CommentBookshelfModel, FetchPageOptions, NodeBookshelfModel } from "bookshelf";
 import { ilikeOperator } from "server/core/config";
 import constants from "server/core/constants";
 import db from "server/core/db";
@@ -18,13 +18,12 @@ export class CommentService {
     const comments = await models.Comment.where({})
       .orderBy("created_at", "DESC")
       .fetchPage({
-        withRelated: ["user", "node", "node.author"],
+        withRelated: ["user", "post", "post.author", "entry"],
         ...options
       });
 
     return comments.filter((comment: BookshelfModel) => {
-      const node = comment.related<BookshelfModel>("node");
-      return security.canUserRead(ANONYMOUS_USER, node);
+      return security.canUserRead(ANONYMOUS_USER, (comment as CommentBookshelfModel).node());
     });
   }
 
@@ -44,7 +43,7 @@ export class CommentService {
   public async findCommentsByUser(user: User): Promise<BookshelfCollection> {
     return models.Comment.where("user_id", user.id)
       .orderBy("created_at", "DESC")
-      .fetchAll({ withRelated: ["user", "node"] }) as Bluebird<BookshelfCollection>;
+      .fetchAll({ withRelated: ["user", "post", "entry"] }) as Bluebird<BookshelfCollection>;
   }
 
   /**
@@ -58,7 +57,6 @@ export class CommentService {
       void qb.innerJoin("entry", "comment.node_id", "entry.id")
         .where({
           "user_id": userId,
-          "node_type": "entry",
           "entry.event_id": eventId,
         });
     })
@@ -81,10 +79,7 @@ export class CommentService {
     }
     return models.Comment.query((qb) => {
       qb = qb.distinct()
-        .leftJoin("user_role", function() {
-          this.on("comment.node_id", "=", "user_role.node_id")
-            .andOn("comment.node_type", "=", "user_role.node_type");
-        })
+        .leftJoin("user_role", "comment.node_id", "user_role.node_id")
         .where("user_role.user_id", user.id)
         .andWhere("comment.user_id", "<>", user.id)
         .andWhere("comment.updated_at", ">", notificationsLastRead)
@@ -93,24 +88,22 @@ export class CommentService {
     })
       .where("comment.updated_at", ">", notificationsLastRead as any)
       .orderBy("created_at", "DESC")
-      .fetchAll({ withRelated: ["user", "node"] }) as Bluebird<BookshelfCollection>;
+      .fetchAll({ withRelated: ["user", "post", "entry"] }) as Bluebird<BookshelfCollection>;
   }
 
   /**
    * Retrieves an array of anonmous comment IDs a user wrote on a node
    * @param  {User} user
    * @param  {number} nodeId
-   * @param  {string} nodeType
    * @return {array(number)}
    */
-  public async findOwnAnonymousCommentIds(user: User, nodeId: number, nodeType: string): Promise<number[]> {
+  public async findOwnAnonymousCommentIds(user: User, nodeId: number): Promise<number[]> {
     const results = await db.knex("anonymous_comment_user")
       .select("anonymous_comment_user.comment_id")
       .leftJoin("comment", "comment.id", "anonymous_comment_user.comment_id")
       .where({
         "anonymous_comment_user.user_id": user.get("id"),
         "comment.node_id": nodeId,
-        "comment.node_type": nodeType,
       }) as any;
     return results.map((row) => row.comment_id);
   }

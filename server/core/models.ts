@@ -7,10 +7,81 @@
  * NB. To be deprecated/retired someday. The goal is to progressively migrate from Bookshelf to TypeORM.
  */
 
+import { NodeType } from "server/entity/column-types";
+import config from "./config";
 import bookshelf from "./db";
 import forms from "./forms";
 
 // TODO Set up BaseModel to make code more concise
+
+// ===============================================================
+// NODES
+// ===============================================================
+
+/**
+ * Behaviour shared by posts and entries, a.k.a. nodes.
+ *
+ * Their primary key is also a foreign key to the `node` table: the node row is inserted along with them
+ * (in one transaction), and deleted after them so that the database cascades to comments, likes & user roles.
+ */
+function nodeModel(nodeType: NodeType) {
+  return {
+    initializeNode() {
+      this.on("creating", async (model, attrs, options) => {
+        const returning = config.DB_TYPE === "postgresql" ? "id" : undefined; // SQLite returns the ID anyway
+        const [id] = await withTransaction(bookshelf.knex("node").insert({ type: nodeType }, returning), options);
+        model.set(model.idAttribute, id);
+      });
+      this.on("destroyed", async (model, options) => {
+        await withTransaction(bookshelf.knex("node").where("id", model.previous(model.idAttribute)).delete(), options);
+      });
+    },
+
+    save(key, val, options) {
+      const isAttributesSignature = key === null || key === undefined || typeof key === "object";
+      const saveOptions = (isAttributesSignature ? val : options) || {};
+      const save = bookshelf.Model.prototype.save;
+      if (!this.isNew() || saveOptions.transacting) {
+        return save.apply(this, arguments);
+      }
+      return bookshelf.transaction((transacting) => isAttributesSignature
+        ? save.call(this, key, { ...saveOptions, transacting })
+        : save.call(this, key, val, { ...saveOptions, transacting }));
+    },
+
+    nodeType(): NodeType {
+      return nodeType;
+    },
+
+    userRoles() {
+      return this.hasMany("UserRole", "node_id");
+    },
+    comments() {
+      return this.hasMany("Comment", "node_id");
+    },
+  };
+}
+
+/**
+ * Relations shared by the models pointing to a node (comments, likes, user roles).
+ * Load both `post` and `entry` relations, then use `node()`.
+ */
+const nodeChildModel = {
+  post() {
+    return this.belongsTo("Post", "node_id");
+  },
+  entry() {
+    return this.belongsTo("Entry", "node_id");
+  },
+  node() {
+    const post = this.related("post");
+    return (post && post.id) ? post : this.related("entry");
+  },
+};
+
+function withTransaction(query, options?: { transacting?: any }) {
+  return options?.transacting ? query.transacting(options.transacting) : query;
+}
 
 /**
  * Setting model
@@ -152,8 +223,7 @@ export const UserMarketing = bookshelf.model("UserMarketing", {
  * | integer | user_id | User ID (not null)
  * | string | user_name | Local copy of the user name (not null)
  * | string | user_title | Local copy of the user title
- * | integer | node_id | ID of the target node (not null)
- * | string | node_type | Type of the target node ('entry' or 'post', not null)
+ * | integer | node_id | ID of the target node (post or entry, not null)
  * | string | permission | Permission: 'read', 'write', 'manage' (not null)
  * | integer | event_id | Event ID
  * | date | created_at | Creation time (not null)
@@ -165,11 +235,9 @@ export const UserRole = bookshelf.model("UserRole", {
   hasTimestamps: true,
   requireFetch: false,
 
+  ...nodeChildModel,
   user() {
     return this.belongsTo("User", "user_id");
-  },
-  node() {
-    return this.morphTo("node", ["node_type", "node_id"], "Entry", "Post");
   },
 });
 
@@ -425,7 +493,7 @@ export const EventTemplate = bookshelf.model("EventTemplate", {
  *
  * | type | name | description
  * |--    |--    |--
- * | increments | id | Primary key
+ * | integer | id | Primary key, also a node ID
  * | integer | event_id | Event ID (can be null in case of an external entry)
  * | string | event_name | Name (used in the URL, can be null in case of an external entry)
  * | string | external_event | External event title (if not an Alakajam! game, ie. event_id is null)
@@ -450,6 +518,7 @@ export const Entry = bookshelf.model("Entry", {
   idAttribute: "id",
   hasTimestamps: true,
   requireFetch: false,
+  ...nodeModel("entry"),
 
   // Relations
 
@@ -458,12 +527,6 @@ export const Entry = bookshelf.model("Entry", {
   },
   event() {
     return this.belongsTo("Event", "event_id");
-  },
-  userRoles() {
-    return this.morphMany("UserRole", "node", ["node_type", "node_id"]);
-  },
-  comments() {
-    return this.morphMany("Comment", "node", ["node_type", "node_id"]);
   },
   entryPlatforms() {
     return this.hasMany("EntryPlatform", "entry_id");
@@ -488,6 +551,7 @@ export const Entry = bookshelf.model("Entry", {
 
   initialize: function initialize(attrs) {
     this.constructor.__super__.initialize.apply(this, arguments);
+    this.initializeNode();
     this.on("saving", (model) => {
       model.set("name", forms.slug(model.get("title") || "").toLowerCase() || "unnamed");
     });
@@ -550,7 +614,7 @@ export const Entry = bookshelf.model("Entry", {
 
 }, {
   // Cascading
-  dependents: ["details", "entryPlatforms", "votes", "invites", "tags", "scores"], // 'comments', 'userRoles' removed because of issue #93
+  dependents: ["details", "entryPlatforms", "votes", "invites", "tags", "scores"], // Comments & user roles are cascaded by the DB
 });
 
 /**
@@ -921,7 +985,8 @@ export const TournamentScore = bookshelf.model("TournamentScore", {
  *
  * | type | name | description
  * |--    |--    |--
- * | increments | id | Primary key
+ * | integer | id | Primary key, also a node ID
+ * | integer | legacy_id | ID before the introduction of nodes (see `constants.POST_ID_FLOOR`)
  * | integer | author_user_id | Author user ID (not null)
  * | string | name | Name (used in the URL, not null)
  * | string | title | Title (not null)
@@ -941,11 +1006,13 @@ export const Post = bookshelf.model("Post", {
   tableName: "post",
   hasTimestamps: true,
   requireFetch: false,
+  ...nodeModel("post"),
 
   // Listeners
 
   initialize: function initialize(attrs) {
     this.constructor.__super__.initialize.apply(this, arguments);
+    this.initializeNode();
 
     this.on("saving", () => {
       this.trigger("titleChanged");
@@ -978,19 +1045,9 @@ export const Post = bookshelf.model("Post", {
   author() {
     return this.belongsTo("User", "author_user_id");
   },
-  userRoles() {
-    // TODO isn't it sufficient to specify either 'node' or ['node_type', 'node_id']?
-    return this.morphMany("UserRole", "node", ["node_type", "node_id"]);
-  },
-  comments() {
-    return this.morphMany("Comment", "node", ["node_type", "node_id"]);
-  },
   likes() {
-    return this.morphMany("Like", "node", ["node_type", "node_id"]);
+    return this.hasMany("Like", "node_id");
   }
-}, {
-  // Cascading
-  dependents: ["likes"], // 'comments', 'userRoles' removed because of issue #93
 });
 
 /**
@@ -999,8 +1056,7 @@ export const Post = bookshelf.model("Post", {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | node_id | ID of the target node (not null)
- * | string | node_type | Type of the target node ('entry' or 'post', not null)
+ * | integer | node_id | ID of the target node (post or entry, not null)
  * | integer | user_id | Author user ID (not null)
  * | integer | parent_id | Parent comment ID
  * | string | body | Comment body (max size: 10000)
@@ -1015,9 +1071,7 @@ export const Comment = bookshelf.model("Comment", {
 
   // Relations
 
-  node() {
-    return this.morphTo("node", ["node_type", "node_id"], "Entry", "Post");
-  },
+  ...nodeChildModel,
   user() {
     return this.belongsTo("User", "user_id", "id");
   },
@@ -1044,8 +1098,7 @@ export const Comment = bookshelf.model("Comment", {
  * | type | name | description
  * |--    |--    |--
  * | increments | id | Primary key
- * | integer | node_id | ID of the target node (not null)
- * | string | node_type | Type of the target node ('entry' or 'post', not null)
+ * | integer | node_id | ID of the target post (not null)
  * | integer | user_id | Author user ID (not null)
  * | integer | type | Like type
  * | date | created_at | Creation time (not null)
@@ -1058,8 +1111,8 @@ export const Like = bookshelf.model("Like", {
 
   // Relations
 
-  node() {
-    return this.morphTo("node", ["node_type", "node_id"], "Post");
+  post() {
+    return this.belongsTo("Post", "node_id");
   },
   user() {
     return this.belongsTo("User", "user_id", "id");

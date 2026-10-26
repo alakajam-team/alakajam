@@ -1,6 +1,5 @@
 
 import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, NodeBookshelfModel } from "bookshelf";
-import cache from "server/core/cache";
 import constants from "server/core/constants";
 import db from "server/core/db";
 import forms from "server/core/forms";
@@ -12,6 +11,7 @@ import karmaService from "server/event/ratings/karma.service";
 import ratingService from "server/event/ratings/rating.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import userService from "server/user/user.service";
 import { PostLocals } from "../post.middleware";
 import commentService from "./comment.service";
 
@@ -49,7 +49,6 @@ export async function handleSaveComment(reqBody: Record<string, any>, currentUse
   let isCreation = false;
   const isDeletion = reqBody.delete;
   let hasWritePermissions = false;
-  let nodeType = null;
   let userId = null;
   if (reqBody.id) {
     if (forms.isId(reqBody.id)) {
@@ -61,7 +60,6 @@ export async function handleSaveComment(reqBody: Record<string, any>, currentUse
     if (hasWritePermissions) {
       if (isDeletion) {
         // Delete comment
-        nodeType = comment.get("node_type");
         userId = comment.get("user_id");
         await commentService.deleteComment(comment);
       } else {
@@ -80,11 +78,10 @@ export async function handleSaveComment(reqBody: Record<string, any>, currentUse
 
   // Comment repercussions
   if (hasWritePermissions) {
-    nodeType = nodeType || comment.get("node_type");
     userId = userId || comment.get("user_id");
 
     // Entry-specific updates
-    if (nodeType === "entry") {
+    if (currentNode.nodeType() === "entry") {
       if (isCreation) {
         if (!currentUser.get("disallow_anonymous") && reqBody["comment-anonymously"]
             && currentNode.get("allow_anonymous")) {
@@ -112,27 +109,14 @@ export async function handleSaveComment(reqBody: Record<string, any>, currentUse
       }
     }
 
-    // Cache invalidation: comment feed and unread notifications of users associated with the post/entry
-    const userRoles = currentNode.related<BookshelfCollection>("userRoles");
-    userRoles.forEach((userRole) => {
-      const userCache = cache.user(userRole.get("user_name"));
-      userCache.del("toUserCollection");
-      userCache.del("unreadNotifications");
-    });
-
-    // Cache invalidation: Users @mentioned in the comment
-    if (typeof commentBody === "string") {
-      commentBody.split(" ").forEach((word) => {
-        if (word.length > 0 && word.startsWith("@")) {
-          const userCache = cache.user(word.slice(1));
-          userCache.del("toUserCollection");
-          userCache.del("unreadNotifications");
-        }
-      });
-    }
-
-    // Cache invalidation: User's own comment history
-    cache.user(currentUser.get("name")).del("byUserCollection");
+    // Cache invalidation: users associated with the post/entry, @mentioned in the comment, and the author
+    const mentionedUserNames = (typeof commentBody === "string" ? commentBody.split(" ") : [])
+      .filter((word) => word.length > 1 && word.startsWith("@"))
+      .map((word) => word.slice(1));
+    userService.invalidateUserCaches(
+      ...currentNode.related<BookshelfCollection>("userRoles").map((userRole) => userRole.get("user_name")),
+      ...mentionedUserNames,
+      currentUser.get("name"));
 
     // Refresh node comment count
     if (isDeletion || isCreation) {

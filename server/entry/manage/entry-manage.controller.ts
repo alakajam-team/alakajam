@@ -1,5 +1,4 @@
 import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "bookshelf";
-import cache from "server/core/cache";
 import constants from "server/core/constants";
 import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
@@ -18,6 +17,7 @@ import eventService from "server/event/event.service";
 import ratingService from "server/event/ratings/rating.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
+import userService from "server/user/user.service";
 import entryPicturesService from "../entry-pictures.service";
 import { EntryLocals } from "../entry.middleware";
 import entryService from "../entry.service";
@@ -263,7 +263,7 @@ export async function entryManage(req: CustomRequest, res: CustomResponse<EntryL
 
       // Set or remove platforms.
       await platformRepository.setEntryPlatforms(entry, platforms || []);
-      cache.user(res.locals.user.get("name")).del("latestEntry");
+      userService.invalidateUserCaches(res.locals.user);
       await entry.load(["userRoles.user", "comments", "details", "tags"]);
 
       // Save entry: Redirect to view upon success
@@ -304,7 +304,7 @@ export async function entryDelete(req: CustomRequest, res: CustomResponse<EntryL
       eventService.refreshEventCounts(event) // No need to await
         .catch(e => log.error(e));
     }
-    cache.user(res.locals.user.get("name")).del("latestEntry");
+    userService.invalidateUserCaches(res.locals.user);
   }
 
   if (event) {
@@ -339,7 +339,7 @@ export async function entryLeave(req: CustomRequest, res: CustomResponse<EntryLo
     });
     await teamService.setTeamMembers(user, entry, newTeamMembers);
 
-    cache.user(user.get("name")).del("latestEntry");
+    userService.invalidateUserCaches(user);
   }
 
   if (res.locals.event) {

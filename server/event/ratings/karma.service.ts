@@ -3,10 +3,10 @@ import { BookshelfCollection, BookshelfModel } from "bookshelf";
 export class KarmaService {
 
   public async refreshCommentKarma(comment: BookshelfModel): Promise<void> {
-    await comment.load(["node.comments", "node.userRoles"]);
+    await comment.load(["entry.comments", "entry.userRoles"]);
 
     let isTeamMember = false;
-    const entry = comment.related<BookshelfModel>("node");
+    const entry = comment.related<BookshelfModel>("entry");
     const entryUserRoles = entry.related<BookshelfCollection>("userRoles");
     for (const userRole of entryUserRoles.models) {
       if (userRole.get("user_id") === comment.get("user_id")) {

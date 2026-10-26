@@ -143,7 +143,17 @@ function initBookshelf(): DB {
  * @return {Knex}
  */
 function createKnexInstance(): Knex {
-  const knexConfig = (knexfile as any).development;
+  let knexConfig = (knexfile as any).development;
+  if (config.DB_TYPE === "sqlite3") {
+    // SQLite only enforces foreign keys (and their cascades) when asked to, on each connection
+    knexConfig = {
+      ...knexConfig,
+      pool: {
+        ...knexConfig.pool,
+        afterCreate: (connection, done) => connection.run("PRAGMA foreign_keys = ON", done)
+      }
+    };
+  }
   const knex = require("knex")(knexConfig);
 
   const traceSqlThreshold = config.DEBUG_TRACE_SQL ? 0 : config.DEBUG_TRACE_SLOW_SQL;

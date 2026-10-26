@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { EntryDetails } from "./entry-details.entity";
 import { EntryInvite } from "./entry-invite.entity";
@@ -7,6 +7,7 @@ import { EntryScore } from "./entry-score.entity";
 import { EntryTag } from "./entry-tag.entity";
 import { EntryVote } from "./entry-vote.entity";
 import { Event } from "./event.entity";
+import { Node } from "./node.entity";
 import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 
@@ -24,8 +25,15 @@ export interface EntryPictures {
 @Entity()
 export class Entry extends TimestampedEntity {
 
-  @PrimaryGeneratedColumn()
+  /**
+   * Primary key, shared with the node (generated upon insertion, see NodeSubscriber)
+   */
+  @PrimaryColumn()
   public id: number;
+
+  @OneToOne(() => Node, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "id" })
+  public node: Relation<Node>;
 
   @OneToOne(() => EntryDetails, (entryDetails) => entryDetails.entry)
   public details: Relation<EntryDetails>;
@@ -140,20 +148,6 @@ export class Entry extends TimestampedEntity {
   public dependents(): Array<keyof this> {
     return ["details", "entryPlatforms", "votes", "invites", "tags", "scores"];
   }
-
-  /**
-   * FIXME May be impossible to implement at entity level in TypeORM due to morph relation
-   */
-  /* public sortedUserRoles() {
-    return this.userRoles.sortBy((userRole) => {
-      // List owners first, otherwise sort alphabetically
-      if (userRole.get("permission") === "manage") {
-        return " " + userRole.get("user_title");
-      } else {
-        return userRole.get("user_title");
-      }
-    });
-  }*/
 
   public picturePreviews(): string[] {
     if (this.pictures && this.pictures.previews) {

@@ -1,4 +1,4 @@
-import { BookshelfCollection, BookshelfModel, EntryBookshelfModel, PostBookshelfModel } from "bookshelf";
+import { BookshelfModel, EntryBookshelfModel, PostBookshelfModel } from "bookshelf";
 import { createLuxonDate } from "server/core/formats";
 import { User } from "server/entity/user.entity";
 import entryService from "server/entry/entry.service";
@@ -82,43 +82,14 @@ export async function createTestEntry(
 }
 
 /**
- * Creates a post and an entry, trying to make them share the same numeric ID
- * (which is possible as long as posts and entries have separate ID sequences).
- * If IDs can't be aligned (e.g. once posts and entries share a common ID sequence),
- * the returned post & entry simply have different IDs, which is fine for isolation tests.
+ * Creates a post and an entry. They used to be able to share the same numeric ID,
+ * which was a source of bugs that isolation tests keep checking.
  */
-export async function createTestPostAndEntryWithSameId(
+export async function createTestPostAndEntry(
   postAuthor: User,
-  entryOwner: User,
-  maxAttempts = 50): Promise<{ post: PostBookshelfModel; entry: EntryBookshelfModel; sameId: boolean }> {
-  // Filler nodes are owned by a throwaway user so that they don't pollute the given users' data
-  const fillerUser = await createTestUser();
-  let post = await createTestPost(postAuthor);
-  let entry = await createTestEntry(entryOwner);
-
-  for (let attempt = 0; attempt < maxAttempts && post.get("id") !== entry.get("id"); attempt++) {
-    if (post.get("id") < entry.get("id")) {
-      await reassignToFiller(post, fillerUser);
-      post = await createTestPost(postAuthor);
-    } else {
-      await reassignToFiller(entry, fillerUser);
-      entry = await createTestEntry(entryOwner);
-    }
-  }
-
-  return { post, entry, sameId: post.get("id") === entry.get("id") };
-}
-
-async function reassignToFiller(node: BookshelfModel, fillerUser: User): Promise<void> {
-  await node.load("userRoles");
-  for (const userRole of node.related<BookshelfCollection>("userRoles").models) {
-    await userRole.save({
-      user_id: fillerUser.id,
-      user_name: fillerUser.name,
-      user_title: fillerUser.title
-    }, { patch: true });
-  }
-  if (node.tableName === "post") {
-    await node.save({ author_user_id: fillerUser.id }, { patch: true });
-  }
+  entryOwner: User): Promise<{ post: PostBookshelfModel; entry: EntryBookshelfModel }> {
+  return {
+    post: await createTestPost(postAuthor),
+    entry: await createTestEntry(entryOwner)
+  };
 }
