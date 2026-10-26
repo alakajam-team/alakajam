@@ -1,5 +1,4 @@
 import { Page } from "@playwright/test";
-import { CodeMirror } from "../components/code-mirror";
 
 export default class AdminSettingsPO {
 
@@ -11,10 +10,10 @@ export default class AdminSettingsPO {
   }
 
   /**
-   * Value of the edited setting. Text settings are turned into a code editor, just like JSON ones.
+   * Value of the edited setting, for plain text settings (JSON ones use a code editor)
    */
-  public get valueEditor() {
-    return new CodeMirror(this.page);
+  public get valueInput() {
+    return this.page.locator("textarea[name=value]");
   }
 
   public get saveButton() {
