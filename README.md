@@ -2,10 +2,10 @@
 
 ## Initial setup
 
-Requirement: NodeJS 14+
+Requirement: NodeJS 22 LTS or newer
 
-1. `npm install --no-optional`
-2. `npm start`
+1. `npm install`
+2. `npm run dev`
 3. Browse to `http://localhost:8000`
 4. You can login as `administrator`/`administrator`
 
@@ -20,7 +20,7 @@ Tips:
 
 #### ...Debug the server with VSCode
 
-Put this in `.vscode/launch.json`:
+Either run `npm run start:debug` and attach the debugger (the server waits for it before starting), or put this in `.vscode/launch.json`. In both cases, build the client assets first (`npm run build:css && npm run build:client`), or keep them up to date with `npm run dev:client` and `npm run build:css -- --watch`.
 
 ```
 {
@@ -30,11 +30,10 @@ Put this in `.vscode/launch.json`:
       "name": "Debug Alakajam!",
       "type": "node",
       "request": "launch",
-      "args": ["${workspaceFolder}\\server\\index.ts"],
-      "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only", "-r", "tsconfig-paths/register"],
+      "args": ["${workspaceFolder}/server/index.ts"],
+      "runtimeArgs": ["-r", "@swc-node/register", "-r", "tsconfig-paths/register"],
       "sourceMaps": true,
       "cwd": "${workspaceRoot}",
-      "protocol": "inspector",
       "outputCapture": "std"
     }
   ]
@@ -48,12 +47,10 @@ Put this in `.vscode/launch.json`:
 
 #### ...Enable picture resizing
 
-Run `npm install` without the `--no-optional` flag to try and set up the `sharp` dependency. If it fails to install (especially on Windows), follow the instructions to install the [sharp dependencies](https://sharp.pixelplumbing.com/en/stable/install/), then try `npm install` again.
+Picture resizing relies on the optional `sharp` dependency. If it fails to install (especially on Windows), `npm install` carries on without it: follow the instructions to install the [sharp dependencies](https://sharp.pixelplumbing.com/en/stable/install/), then try `npm install` again.
 
 #### ...Run only one unit test
 
-Run only partial tests by appending the required file as an argument. For instance:
-
 ```bash
-npm run test:unit -- user.service
+npx vitest run user.service
 ```

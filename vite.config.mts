@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
       "process.env.NODE_ENV": JSON.stringify(mode)
     },
     plugins: [
-      // Legacy code expects jQuery as a free variable (like webpack's ProvidePlugin used to do)
+      // Legacy code expects jQuery as a free variable
       inject({
         include: "client/scripts/**",
         $: "jquery",
