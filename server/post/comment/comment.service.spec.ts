@@ -220,9 +220,7 @@ describe("Comment service", { timeout: DB_TEST_TIMEOUT }, () => {
       expect(await commentService.isOwnAnonymousComment(comment, owner)).to.be.false;
     });
 
-    // BUG (current behaviour): isOwnAnonymousComment() queries a misspelled table ("anonyous_comment_user"),
-    // so it throws for any anonymous comment. As a result, anonymous comment authors can't edit/delete their comments.
-    it.skip("should tell that an anonymous comment belongs to its author", async () => {
+    it("should tell that an anonymous comment belongs to its author", async () => {
       const owner = await createTestUser();
       const commenter = await createTestUser();
       const entry = await createTestEntry(owner, undefined, { allow_anonymous: true });
