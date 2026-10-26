@@ -1,7 +1,7 @@
 import { Connection, ConnectionOptions, createConnection, getConnection } from "typeorm";
 import { BaseConnectionOptions } from "typeorm/connection/BaseConnectionOptions";
 import { LoggerOptions } from "typeorm/logger/LoggerOptions";
-import { entities } from "../entity";
+import { entities, subscribers } from "../entity";
 import config from "./config";
 import dbTypeormLogger from "./db-typeorm-logger";
 import log from "./log";
@@ -43,6 +43,7 @@ export class DB {
       type: null,
       synchronize: false,
       entities,
+      subscribers,
       logging,
       logger: logging ? dbTypeormLogger : undefined,
       ...options

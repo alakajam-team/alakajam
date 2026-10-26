@@ -47,26 +47,34 @@ function initBookshelf(): DB {
       (bookshelf as any).knex = knex = createKnexInstance();
     }
 
-    // Migrating the migrations table... Switch file names between TypeScript & JavaScript to please knex
-    // Will possibly be made irrelevant with https://github.com/tgriesser/knex/issues/2756
+    // Migrations run without enforcing foreign keys, as SQLite needs to rebuild tables to alter them
+    const migrationKnex = createKnexInstance({ foreignKeys: false });
+    let previousVersion: string;
+    let newVersion: string;
     try {
-      const migrationsTableName = (knexfile as any).development.migrations.tableName;
-      if (__filename.endsWith(".js")) {
-        await knex(migrationsTableName).update({
-          name: knex.raw("REPLACE(name, '.ts', '.js')")
-        });
-      } else {
-        await knex(migrationsTableName).update({
-          name: knex.raw("REPLACE(name, '.js', '.ts')")
-        });
+      // Migrating the migrations table... Switch file names between TypeScript & JavaScript to please knex
+      // Will possibly be made irrelevant with https://github.com/tgriesser/knex/issues/2756
+      try {
+        const migrationsTableName = (knexfile as any).development.migrations.tableName;
+        if (__filename.endsWith(".js")) {
+          await migrationKnex(migrationsTableName).update({
+            name: migrationKnex.raw("REPLACE(name, '.ts', '.js')")
+          });
+        } else {
+          await migrationKnex(migrationsTableName).update({
+            name: migrationKnex.raw("REPLACE(name, '.js', '.ts')")
+          });
+        }
+      } catch (e) {
+        // NOP
       }
-    } catch (e) {
-      // NOP
-    }
 
-    const previousVersion = await knex.migrate.currentVersion();
-    await knex.migrate.latest((knexfile as any).development.migrations);
-    const newVersion = await knex.migrate.currentVersion();
+      previousVersion = await migrationKnex.migrate.currentVersion();
+      await migrationKnex.migrate.latest((knexfile as any).development.migrations);
+      newVersion = await migrationKnex.migrate.currentVersion();
+    } finally {
+      await migrationKnex.destroy();
+    }
 
     if (!options.silent) {
       if (previousVersion !== newVersion) {
@@ -142,8 +150,18 @@ function initBookshelf(): DB {
  * Knex (SQL builder) init
  * @return {Knex}
  */
-function createKnexInstance(): Knex {
-  const knexConfig = (knexfile as any).development;
+function createKnexInstance(options: { foreignKeys?: boolean } = {}): Knex {
+  let knexConfig = (knexfile as any).development;
+  if (config.DB_TYPE === "sqlite3" && options.foreignKeys !== false) {
+    // SQLite only enforces foreign keys (and their cascades) when asked to, on each connection
+    knexConfig = {
+      ...knexConfig,
+      pool: {
+        ...knexConfig.pool,
+        afterCreate: (connection, done) => connection.run("PRAGMA foreign_keys = ON", done)
+      }
+    };
+  }
   const knex = require("knex")(knexConfig);
 
   const traceSqlThreshold = config.DEBUG_TRACE_SQL ? 0 : config.DEBUG_TRACE_SLOW_SQL;

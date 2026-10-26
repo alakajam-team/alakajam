@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Index } from "typeorm";
-import { NodeType, PermissionType, ColumnTypes } from "./column-types";
+import { PermissionType, ColumnTypes } from "./column-types";
 import { Event } from "./event.entity";
+import { Node } from "./node.entity";
 import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
@@ -10,7 +11,6 @@ import { User } from "./user.entity";
  * Serve as permissions.
  */
 @Entity()
-@Index([ "node_id", "node_type" ])
 export class UserRole extends TimestampedEntity {
 
   @PrimaryGeneratedColumn()
@@ -29,13 +29,16 @@ export class UserRole extends TimestampedEntity {
   @Column(ColumnTypes.varchar({ nullable: true }))
   public user_title: string;
 
+  /**
+   * ID of the target node (post or entry)
+   */
   @Column()
+  @Index()
   public node_id: number;
 
-  @Column(ColumnTypes.varchar())
-  public node_type: NodeType;
-
-  // @ManyToOne Node ?
+  @ManyToOne(() => Node, (node) => node.userRoles, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "node_id" })
+  public node: Relation<Node>;
 
   @Column(ColumnTypes.varchar())
   public permission: PermissionType;

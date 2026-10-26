@@ -1,33 +1,26 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
+import { Node } from "./node.entity";
 import { Relation } from "./relation";
 import { User } from "./user.entity";
 
 @Entity()
-@Index([ "node_id", "node_type" ])
 export class Comment extends BookshelfCompatibleEntity {
 
   @PrimaryGeneratedColumn()
   public id: number;
 
   /**
-   * ID of the target node
+   * ID of the target node (post or entry)
    */
   @Column()
+  @Index()
   public node_id: number;
 
-  /**
-   * Type of the target node ('entry' or 'post')
-   */
-  @Column(ColumnTypes.varchar())
-  public node_type: string;
-
-  /*
-  TODO
-  @OneToMany(() => Post | Entry, (node: Post | Entry) => node.comments)
-  private node: Post | Entry;
-  */
+  @ManyToOne(() => Node, (node) => node.comments, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "node_id" })
+  public node: Relation<Node>;
 
   /**
    * Author user ID

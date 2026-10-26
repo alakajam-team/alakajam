@@ -14,7 +14,7 @@ import {
   createTestEntry,
   createTestEvent,
   createTestPost,
-  createTestPostAndEntryWithSameId,
+  createTestPostAndEntry,
   createTestUser
 } from "server/testing/testing-fixtures";
 import { getRepository } from "typeorm";
@@ -89,7 +89,7 @@ describe("Post service", { timeout: DB_TEST_TIMEOUT }, () => {
     it("should not load roles of an entry sharing the same ID", async () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
 
       const fetchedPost = await postService.findPostById(post.get("id"));
       const roleUserIds = fetchedPost.related<BookshelfCollection>("userRoles").map((role) => role.get("user_id"));
@@ -112,8 +112,8 @@ describe("Post service", { timeout: DB_TEST_TIMEOUT }, () => {
       const writer = await createTestUser();
       const watcher = await createTestUser();
       const post = await createTestPost(author);
-      await security.addUserRight(writer, post, "post", "write");
-      await security.addUserRight(watcher, post, "post", "watch");
+      await security.addUserRight(writer, post, "write");
+      await security.addUserRight(watcher, post, "watch");
 
       expect(await findPostIds({ userId: author.id })).to.deep.equal([post.get("id")]);
       expect(await findPostIds({ userId: writer.id })).to.deep.equal([post.get("id")]);
@@ -123,7 +123,7 @@ describe("Post service", { timeout: DB_TEST_TIMEOUT }, () => {
     it("should not find posts through roles on an entry sharing the same ID", async () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
-      const { post } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post } = await createTestPostAndEntry(postAuthor, entryOwner);
 
       expect(await findPostIds({ userId: postAuthor.id })).to.deep.equal([post.get("id")]);
       expect(await findPostIds({ userId: entryOwner.id })).to.deep.equal([]);
@@ -193,7 +193,7 @@ describe("Post service", { timeout: DB_TEST_TIMEOUT }, () => {
     it("should not count comments of an entry sharing the same ID", async () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       await commentService.createComment(entryOwner, entry, "Entry comment 1");
       await commentService.createComment(entryOwner, entry, "Entry comment 2");
       await commentService.createComment(postAuthor, post, "Post comment");
@@ -213,7 +213,7 @@ describe("Post service", { timeout: DB_TEST_TIMEOUT }, () => {
       const author = await createTestUser();
       const commenter = await createTestUser();
       const post = await createTestPost(author);
-      await security.addUserRight(commenter, post, "post", "watch");
+      await security.addUserRight(commenter, post, "watch");
       const comment = await commentService.createComment(commenter, post, "Nice post");
       await likeService.like(post, commenter.id, "like");
       const postId = post.get("id");
@@ -233,7 +233,7 @@ describe("Post service", { timeout: DB_TEST_TIMEOUT }, () => {
     it("should leave other posts and entries untouched", async () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       const otherPost = await createTestPost(postAuthor);
       await commentService.createComment(postAuthor, post, "Comment on deleted post");
       const otherPostComment = await commentService.createComment(entryOwner, otherPost, "Comment on other post");
@@ -291,7 +291,7 @@ describe("Post service", { timeout: DB_TEST_TIMEOUT }, () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
       const event = await createTestEvent();
-      const { post } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post } = await createTestPostAndEntry(postAuthor, entryOwner);
       post.set("event_id", event.get("id"));
       await post.save();
       const targetEntry = await createTestEntry(postAuthor);

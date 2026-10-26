@@ -6,6 +6,7 @@ import { BookshelfCollection } from "bookshelf";
 import constants from "server/core/constants";
 import security from "server/core/security";
 import { EventParticipation } from "server/entity/event-participation.entity";
+import { Node } from "server/entity/node.entity";
 import { Event } from "server/entity/event.entity";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
@@ -224,7 +225,7 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
       const owner = await createTestUser();
       const member = await createTestUser();
       const entry = await createTestEntry(owner, await createTestEvent());
-      await security.addUserRight(member, entry, "entry", "write");
+      await security.addUserRight(member, entry, "write");
       expect(await userService.isApprovedUser(member)).to.be.true;
     });
 
@@ -265,7 +266,7 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
       const ownPost = await createTestPost(user);
       const otherPost = await createTestPost(otherUser);
       const otherEntry = await createTestEntry(otherUser);
-      await security.addUserRight(user, otherPost, "post", "watch");
+      await security.addUserRight(user, otherPost, "watch");
       const commentOnPost = await commentService.createComment(user, otherPost, "By deleted user");
       const commentOnEntry = await commentService.createComment(user, otherEntry, "By deleted user");
       const keptComment = await commentService.createComment(otherUser, otherPost, "By other user");
@@ -290,15 +291,11 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
         .to.deep.equal([otherUser.id]);
     });
 
-    // BUG (current behaviour): user deletion cascades to their posts through raw SQL deletes (bookshelf-cascade-delete),
-    // which only handles the Post "dependents" (likes). Comments & roles of other users on the deleted posts are left
-    // orphaned (and could even get attached to a future post reusing the same ID on SQLite).
-    // Should be fixed by the node table refactoring (#682) through ON DELETE CASCADE.
-    it.skip("should delete comments and roles of other users on the deleted user's posts", async () => {
+    it("should delete comments and roles of other users on the deleted user's posts", async () => {
       const user = await createTestUser();
       const otherUser = await createTestUser();
       const ownPost = await createTestPost(user);
-      await security.addUserRight(otherUser, ownPost, "post", "write");
+      await security.addUserRight(otherUser, ownPost, "write");
       const commentOnOwnPost = await commentService.createComment(otherUser, ownPost, "On deleted post");
 
       await userService.deleteUser(user, 0);
@@ -337,10 +334,10 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
     return user;
   }
 
-  function createUserRole(user: User, attributes: Partial<UserRole> = {}): Promise<UserRole> {
+  async function createUserRole(user: User, attributes: Partial<UserRole> = {}): Promise<UserRole> {
+    const entryNode = await getRepository(Node).save({ type: "entry" });
     const userRole = new UserRole();
-    userRole.node_id = 1;
-    userRole.node_type = "entry";
+    userRole.node_id = entryNode.id;
     userRole.user_id = user.id;
     userRole.user_name = user.name;
     userRole.user_title = user.title;

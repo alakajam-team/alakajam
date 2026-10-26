@@ -41,7 +41,6 @@ export class TeamInviteService {
         // Check if the user role already exists
         let userRole = await models.UserRole.where({
           node_id: entry.get("id"),
-          node_type: "entry",
           user_id: user.get("id"),
         }).fetch({ transacting: transaction });
 
@@ -72,7 +71,6 @@ export class TeamInviteService {
             user_name: user.get("name"),
             user_title: user.get("title"),
             node_id: entry.get("id"),
-            node_type: "entry",
             permission: invite.get("permission"),
             event_id: entry.get("event_id"),
           }) as BookshelfModel;

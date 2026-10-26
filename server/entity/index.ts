@@ -13,6 +13,8 @@ import { EventPreset } from "./event-preset.entity";
 import { EventTemplate } from "./event-template.entity";
 import { Event } from "./event.entity";
 import { Like } from "./like.entity";
+import { Node } from "./node.entity";
+import { NodeSubscriber } from "./node.subscriber";
 import { Platform } from "./platform.entity";
 import { Post } from "./post.entity";
 import { Setting } from "./setting.entity";
@@ -47,6 +49,7 @@ export const entities = [
   EventPreset,
   EventTemplate,
   Like,
+  Node,
   Platform,
   Post,
   Setting,
@@ -59,4 +62,11 @@ export const entities = [
   UserDetails,
   UserMarketing,
   UserRole
+];
+
+/**
+ * Every class decorated with @EventSubscriber, registered explicitly like entities.
+ */
+export const subscribers = [
+  NodeSubscriber
 ];

@@ -12,7 +12,7 @@ import {
   createTestEntry,
   createTestEvent,
   createTestPost,
-  createTestPostAndEntryWithSameId,
+  createTestPostAndEntry,
   createTestUser
 } from "server/testing/testing-fixtures";
 import { afterAll, beforeAll, describe, it } from "vitest";
@@ -86,7 +86,7 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const reader = await createTestUser();
       const otherUser = await createTestUser();
       const post = await createTestPost(author, { published_at: createLuxonDate().plus({ days: 1 }).toJSDate() });
-      await security.addUserRight(reader, post, "post", "read");
+      await security.addUserRight(reader, post, "read");
 
       const fetchedPost = await postService.findPostById(post.get("id"));
       expect(security.canUserRead(author, fetchedPost)).to.be.true;
@@ -139,7 +139,7 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const owner = await createTestUser();
       const member = await createTestUser();
       const entry = await createTestEntry(owner);
-      await security.addUserRight(member, entry, "entry", "write");
+      await security.addUserRight(member, entry, "write");
 
       const fetchedEntry = await entryService.findEntryById(entry.get("id"));
       expect(security.canUserRead(member, fetchedEntry)).to.be.true;
@@ -170,8 +170,8 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const draftPost = await createTestPost(draftAuthor, { published_at: null });
       const publishedComment = await commentService.createComment(author, publishedPost, "Comment");
       const draftComment = await commentService.createComment(draftAuthor, draftPost, "Comment");
-      await publishedComment.load(["node", "node.author"]);
-      await draftComment.load(["node", "node.author", "node.userRoles"]);
+      await publishedComment.load(["post", "post.author"]);
+      await draftComment.load(["post", "post.author", "post.userRoles"]);
 
       expect(security.canUserRead(undefined, publishedComment)).to.be.true;
       expect(security.canUserRead(undefined, draftComment)).to.be.false;
@@ -206,7 +206,7 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const event = await createTestEvent();
       const post = await createTestPost(author, {}, { eventId: event.get("id") });
 
-      await security.addUserRight(user, post, "post", "watch");
+      await security.addUserRight(user, post, "watch");
 
       const roles = await findRolesOfUser(post, user);
       expect(roles.length).to.equal(1);
@@ -220,12 +220,12 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const user = await createTestUser();
       const entry = await createTestEntry(owner);
 
-      await security.addUserRight(user, entry, "entry", "read");
-      await security.addUserRight(user, entry, "entry", "write");
+      await security.addUserRight(user, entry, "read");
+      await security.addUserRight(user, entry, "write");
       let roles = await findRolesOfUser(entry, user);
       expect(roles.map((role) => role.get("permission"))).to.deep.equal(["write"]);
 
-      await security.addUserRight(user, entry, "entry", "watch");
+      await security.addUserRight(user, entry, "watch");
       roles = await findRolesOfUser(entry, user);
       expect(roles.map((role) => role.get("permission"))).to.deep.equal(["write"]);
     });
@@ -235,8 +235,8 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const user = await createTestUser();
       const entry = await createTestEntry(owner);
 
-      await security.addUserRight(user, entry, "entry", "write");
-      await security.addUserRight(user, entry, "entry", "write");
+      await security.addUserRight(user, entry, "write");
+      await security.addUserRight(user, entry, "write");
 
       expect((await findRolesOfUser(entry, user)).length).to.equal(1);
     });
@@ -245,9 +245,9 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
       const user = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
 
-      await security.addUserRight(user, post, "post", "write");
+      await security.addUserRight(user, post, "write");
 
       const fetchedPost = await postService.findPostById(post.get("id"));
       const fetchedEntry = await entryService.findEntryById(entry.get("id"));
@@ -265,7 +265,7 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const owner = await createTestUser();
       const user = await createTestUser();
       const entry = await createTestEntry(owner);
-      await security.addUserRight(user, entry, "entry", "write");
+      await security.addUserRight(user, entry, "write");
 
       await security.removeUserRight(user, entry, "write");
 
@@ -279,7 +279,7 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const owner = await createTestUser();
       const user = await createTestUser();
       const entry = await createTestEntry(owner);
-      await security.addUserRight(user, entry, "entry", "write");
+      await security.addUserRight(user, entry, "write");
 
       await security.removeUserRight(user, entry, "read");
 
@@ -290,8 +290,8 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
       const user = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
-      await security.addUserRight(user, post, "post", "write");
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
+      await security.addUserRight(user, post, "write");
 
       await security.removeUserRight(user, entry, "write");
       await security.removeUserRight(postAuthor, entry, "manage");

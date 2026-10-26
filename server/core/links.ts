@@ -12,7 +12,8 @@ export type RouteUrlFunction =
   & ((model: BookshelfModel, type: "post", subPage?: string | null, options?: any) => string)
   & ((model: BookshelfModel, type: "comment", subPage?: string | null, options?: any) => string)
   & ((model: BookshelfModel, type: "tags", subPage?: string | null, options?: any) => string)
-  & ((model: BookshelfModel, type: "entry", subPage?: string, options?: { scoreUserId?: string }) => string);
+  & ((model: BookshelfModel, type: "entry", subPage?: string, options?: { scoreUserId?: string }) => string)
+  & ((model: BookshelfModel, type: "post" | "entry", subPage?: string | null) => string);
 
 export class Links {
 
