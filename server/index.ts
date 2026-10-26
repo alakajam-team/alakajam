@@ -140,13 +140,10 @@ async function initFilesLayout() {
     }
   }
 
-  // Run CSS and JS build (or bootstrap sources watcher in dev mode)
+  // Run CSS build (or bootstrap sources watcher in dev mode)
   if (!config.DEBUG_DISABLE_STARTUP_BUILD) {
     process.chdir(ROOT_PATH);
-    await Promise.all([
-      require("./scripts/sass").default.initialize({ watch: DEV_ENVIRONMENT }),
-      require("./scripts/webpack").default.initialize({ watch: DEV_ENVIRONMENT })
-    ]);
+    await require("./scripts/sass").default.initialize({ watch: DEV_ENVIRONMENT });
   }
 }
 

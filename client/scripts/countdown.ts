@@ -1,6 +1,6 @@
 import evalRawScript from "./core/eval-raw-script";
 
-import("raw-loader!flipclock/dist/flipclock.min.js").then(evalRawScript).catch(e => console.error(e));
+import("flipclock/dist/flipclock.min.js?raw").then(evalRawScript).catch(e => console.error(e));
 
 export default function countdown(selector: string): void {
   $(selector).each(function() {

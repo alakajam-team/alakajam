@@ -2,6 +2,9 @@
  * JavaScript bundle root to be served up to the browser.
  */
 
+// Must come first: exposes jQuery globally before any other script relies on it
+import "./core/jquery-global";
+
 import evalRawScript from "./core/eval-raw-script";
 
 import alerts from "./common/alerts";
@@ -44,17 +47,14 @@ import like from "./post/like";
 import dashboardEntryImport from "./user/dashboard-entry-import";
 import dashboardSettingsTimezone from "./user/dashboard-settings-timezone";
 
-// Keep jQuery exposed for development
-(window as any).$ = (window as any).jQuery = $;
-
 // Global exports
-// Global JS libraries (using raw-loader when module support is missing)
+// Global JS libraries (evaluated as raw scripts when module support is missing)
 import "popper.js";
 import "bootstrap";
-import("select2/dist/js/select2.full.min").then(evalRawScript).catch(e => console.error(e));
-import("raw-loader!icheck/icheck.min.js").then(evalRawScript).catch(e => console.error(e));
-import("raw-loader!tablesort/dist/tablesort.min.js").then(evalRawScript).catch(e => console.error(e));
-import("raw-loader!tablesort/dist/sorts/tablesort.number.min.js").then(evalRawScript).catch(e => console.error(e));
+import("select2/dist/js/select2.full.min.js?raw").then(evalRawScript).catch(e => console.error(e));
+import("icheck/icheck.min.js?raw").then(evalRawScript).catch(e => console.error(e));
+import("tablesort/dist/tablesort.min.js?raw").then(evalRawScript).catch(e => console.error(e));
+import("tablesort/dist/sorts/tablesort.number.min.js?raw").then(evalRawScript).catch(e => console.error(e));
 
 $(function domReady() {
 

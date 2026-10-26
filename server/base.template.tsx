@@ -230,7 +230,6 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
       </footer>
 
       {ifSet(process.env.BROWSER_REFRESH_URL, () => <script src={process.env.BROWSER_REFRESH_URL}></script>)}
-      <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/vendors.js?" + launchTime)}></script>
       <script type="text/javascript" src={links.staticUrl("/dist/client/scripts/site.js?" + launchTime)}></script>
       {context.scripts?.map(scriptUrl => <script type="text/javascript" src={scriptUrl}></script>)}
       {analytics()}
