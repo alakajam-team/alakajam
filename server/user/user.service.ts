@@ -2,6 +2,7 @@ import * as crypto from "crypto";
 import { Request } from "express";
 import * as randomKey from "random-key";
 import constants from "server/core/constants";
+import db from "server/core/db";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
@@ -96,7 +97,8 @@ export class UserService {
             "COUNT(roles.event_id) as akj_entries_count",
             "user.id as id"
           ])
-          .innerJoin("user.roles", "roles", "roles.node_type = 'entry'")
+          .innerJoin("user.roles", "roles")
+          .innerJoin("roles.node", "node", "node.type = 'entry'")
           .groupBy("user.id");
         return entriesCountQb;
       }, "entriesCount", '"entriesCount"."id" = user.id');
@@ -200,6 +202,11 @@ export class UserService {
 
       await getRepository(EventParticipation).delete({ userId: user.id }); // XXX Should ideally be cascaded through TypeORM User deletion
 
+      // Deleting the nodes of the user posts cascades to the posts, and to their comments, likes & user roles
+      await db.knex("node")
+        .whereIn("id", db.knex("post").select("id").where("author_user_id", user.id))
+        .delete();
+
       const bookshelfUser = await models.User.where("id", user.id).fetch();
       await bookshelfUser.destroy(); // XXX Comment/entry counters are not refreshed
       log.info("User %s has been deleted", userId);
@@ -276,14 +283,11 @@ export class UserService {
       return true;
     }
 
-    const userRoleRepository = getRepository(UserRole);
-    const jamEntryCount = await userRoleRepository.count({
-      where: {
-        user_id: user.id,
-        node_type: "entry",
-        event_id: Not(IsNull())
-      }
-    });
+    const jamEntryCount = await getRepository(UserRole).createQueryBuilder("role")
+      .innerJoin("role.node", "node", "node.type = 'entry'")
+      .where("role.user_id = :userId", { userId: user.id })
+      .andWhere("role.event_id IS NOT NULL")
+      .getCount();
     return jamEntryCount > 0;
   }
 

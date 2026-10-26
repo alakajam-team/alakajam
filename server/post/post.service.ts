@@ -2,7 +2,7 @@ import { BookshelfCollection, BookshelfCollectionOf, BookshelfModel, PostBookshe
 import cache from "server/core/cache";
 import constants from "server/core/constants";
 import { createLuxonDate } from "server/core/formats";
-import log from "server/core/log";
+import db from "server/core/db";
 import * as models from "server/core/models";
 import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import { User } from "server/entity/user.entity";
@@ -56,10 +56,7 @@ export class PostService {
       if (options.entryId) { qb = qb.where("post.entry_id", options.entryId); }
       if (options.userId) {
         qb = qb.innerJoin("user_role", "post.id", "user_role.node_id")
-          .where({
-            "user_role.user_id": options.userId,
-            "user_role.node_type": "post",
-          })
+          .where("user_role.user_id", options.userId)
           .whereIn("permission", security.getPermissionsEqualOrAbove("write"));
       }
 
@@ -79,6 +76,13 @@ export class PostService {
   public findPostById(postId: number): Promise<PostBookshelfModel> {
     return models.Post.where("id", postId)
       .fetch({ withRelated: ["author", "userRoles", "event", "entry", "entry.userRoles"] }) as any;
+  }
+
+  /**
+   * Finds a post by the ID it had before posts started sharing IDs with entries (see constants.POST_ID_FLOOR)
+   */
+  public findPostByLegacyId(legacyId: number): Promise<PostBookshelfModel> {
+    return models.Post.where("legacy_id", legacyId).fetch() as any;
   }
 
   /**
@@ -128,21 +132,23 @@ export class PostService {
    * @param eventId the optional ID of an event to associate with.
    */
   public async createPost(user: User, eventId?: number): Promise<PostBookshelfModel> {
-    const post = new models.Post({
-      author_user_id: user.get("id"),
-      name: "",
-      title: "",
-    }) as PostBookshelfModel;
-    await post.save(); // otherwise the user role won't have a node_id
+    return db.transaction(async (transacting) => {
+      const post = new models.Post({
+        author_user_id: user.get("id"),
+        name: "",
+        title: "",
+      }) as PostBookshelfModel;
+      await post.save(null, { transacting }); // otherwise the user role won't have a node_id
 
-    await post.userRoles().create({
-      user_id: user.get("id"),
-      user_name: user.get("name"),
-      user_title: user.get("title"),
-      event_id: eventId,
-      permission: SECURITY_PERMISSION_MANAGE,
+      await post.userRoles().create({
+        user_id: user.get("id"),
+        user_name: user.get("name"),
+        user_title: user.get("title"),
+        event_id: eventId,
+        permission: SECURITY_PERMISSION_MANAGE,
+      }, { transacting });
+      return post;
     });
-    return post;
   }
 
   /**
@@ -156,7 +162,7 @@ export class PostService {
   }
 
   /**
-   * Deletes the given post
+   * Deletes the given post, along with its comments, likes and user roles (cascaded by the DB)
    * @param {Post} post
    * @return {void}
    */
@@ -167,13 +173,9 @@ export class PostService {
       userCache.del("latestPostsCollection");
       userCache.del("toUserCollection");
       userCache.del("unreadNotifications");
-      userRole.destroy()
-        .catch(e => log.error(e));
     });
     post.related<BookshelfCollection>("comments").forEach((comment) => {
       cache.user(comment.related<BookshelfModel>("user").get("name")).del("byUserCollection");
-      comment.destroy()
-        .catch(e => log.error(e));
     });
 
     await post.destroy();

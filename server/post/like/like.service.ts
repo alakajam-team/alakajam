@@ -13,7 +13,6 @@ export class LikeService {
   /**
    * Get all user likes on a set of nodes
    * LIMITATIONS:
-   * - All nodes must be of the same model type.
    * - Make sure the nodes array size has a reasonable max value or the SQL might overflow (IN clause).
    * @param nodes node array, can contain holes
    * @param user
@@ -26,10 +25,7 @@ export class LikeService {
 
     const likeData = await db.knex("like")
       .select("node_id", "type")
-      .where({
-        node_type: nodes[0].tableName,
-        user_id: user.get("id"),
-      })
+      .where("user_id", user.get("id"))
       .where("node_id", "IN", nodes.map((node) => node.get("id")));
 
     const result: Record<number, string> = {};
@@ -41,7 +37,6 @@ export class LikeService {
 
   public async findLike(node: NodeBookshelfModel, userId: number): Promise<BookshelfModel> {
     return models.Like.where({
-      node_type: node.tableName,
       node_id: node.get("id"),
       user_id: userId,
     }).fetch();
@@ -103,10 +98,7 @@ export class LikeService {
       // Recompute like count
       let likeCount = node.get("like_count");
       if ((!addLikeType) !== (!removeLikeType)) {
-        likeCount = await models.Like.where({
-          node_type: node.tableName,
-          node_id: node.get("id"),
-        }).count();
+        likeCount = await models.Like.where("node_id", node.get("id")).count();
       }
 
       // Update node

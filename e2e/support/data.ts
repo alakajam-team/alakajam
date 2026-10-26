@@ -11,6 +11,9 @@ import { E2E_ENTRIES, E2E_EVENTS, E2E_POSTS, E2E_USERS } from "../../server/test
 export const USER_ADMINISTRATOR = E2E_USERS.administrator;
 export const ADMIN_POST_WITHOUT_COMMENTS = E2E_POSTS.adminWithoutComments.id;
 export const ADMIN_POST_WITHOUT_COMMENTS_TITLE = E2E_POSTS.adminWithoutComments.title;
+export const ADMIN_POST_WITHOUT_COMMENTS_SLUG = E2E_POSTS.adminWithoutComments.name;
+/** ID of the post before posts and entries started sharing their IDs */
+export const ADMIN_POST_WITHOUT_COMMENTS_LEGACY_ID = E2E_POSTS.adminWithoutComments.legacyId;
 /** Post commented by Dumbledore ("Hello") */
 export const ADMIN_POST_WITH_COMMENTS = E2E_POSTS.adminPlog.id;
 export const ADMIN_POST_WITH_COMMENTS_TITLE = E2E_POSTS.adminPlog.title;

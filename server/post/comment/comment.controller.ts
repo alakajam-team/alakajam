@@ -49,7 +49,6 @@ export async function handleSaveComment(reqBody: Record<string, any>, currentUse
   let isCreation = false;
   const isDeletion = reqBody.delete;
   let hasWritePermissions = false;
-  let nodeType = null;
   let userId = null;
   if (reqBody.id) {
     if (forms.isId(reqBody.id)) {
@@ -61,7 +60,6 @@ export async function handleSaveComment(reqBody: Record<string, any>, currentUse
     if (hasWritePermissions) {
       if (isDeletion) {
         // Delete comment
-        nodeType = comment.get("node_type");
         userId = comment.get("user_id");
         await commentService.deleteComment(comment);
       } else {
@@ -80,11 +78,10 @@ export async function handleSaveComment(reqBody: Record<string, any>, currentUse
 
   // Comment repercussions
   if (hasWritePermissions) {
-    nodeType = nodeType || comment.get("node_type");
     userId = userId || comment.get("user_id");
 
     // Entry-specific updates
-    if (nodeType === "entry") {
+    if (currentNode.nodeType() === "entry") {
       if (isCreation) {
         if (!currentUser.get("disallow_anonymous") && reqBody["comment-anonymously"]
             && currentNode.get("allow_anonymous")) {

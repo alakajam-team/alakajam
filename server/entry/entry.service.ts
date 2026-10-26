@@ -47,21 +47,23 @@ export class EntryService {
       });
     }
 
-    await entry.save(); // otherwise the user role won't have a node_id
+    await db.transaction(async (transacting) => {
+      await entry.save(null, { transacting }); // otherwise the user role won't have a node_id
 
-    const userRoles = entry.related<BookshelfCollection>("userRoles");
-    await userRoles.create({
-      user_id: user.get("id"),
-      user_name: user.get("name"),
-      user_title: user.get("title"),
-      event_id: event ? event.get("id") : null,
-      permission: SECURITY_PERMISSION_MANAGE,
-    });
+      const userRoles = entry.related<BookshelfCollection>("userRoles");
+      await userRoles.create({
+        user_id: user.get("id"),
+        user_name: user.get("name"),
+        user_title: user.get("title"),
+        event_id: event ? event.get("id") : null,
+        permission: SECURITY_PERMISSION_MANAGE,
+      }, { transacting });
 
-    const entryDetails = new models.EntryDetails({
-      entry_id: entry.get("id"),
+      const entryDetails = new models.EntryDetails({
+        entry_id: entry.get("id"),
+      });
+      await entryDetails.save(null, { transacting });
     });
-    await entryDetails.save();
     await entry.load("details");
 
     // Attach posts from same event
@@ -80,19 +82,16 @@ export class EntryService {
     }
 
     await db.transaction(async (transaction) => {
-      // Delete user roles & comments manually (because no cascading)
+      // User roles & comments are cascaded by the DB, only invalidate caches
       await entry.load(["userRoles.user", "comments.user"], { transacting: transaction } as any);
-
       for (const userRole of entry.related<BookshelfCollection>("userRoles").models) {
         const userCache = cache.user(userRole.related<any>("user"));
         userCache.del("latestEntry");
         userCache.del("toUserCollection");
         userCache.del("unreadNotifications");
-        await userRole.destroy({ transacting: transaction });
       }
       for (const comment of entry.related<BookshelfCollection>("comments").models) {
         cache.user(comment.related<any>("user")).del("byUserCollection");
-        await comment.destroy({ transacting: transaction });
       }
 
       // Delete pictures
@@ -184,10 +183,7 @@ export class EntryService {
           .whereNull("entry_vote.id")
           // Hide commented
           .where("entry.id", "NOT IN", db.knex("comment")
-            .where({
-              user_id: options.notReviewedById,
-              node_type: "entry",
-            })
+            .where("user_id", options.notReviewedById)
             .select("node_id"));
 
         // If this option is set, this has already been done (to avoid multiple joins on same table)
@@ -204,10 +200,7 @@ export class EntryService {
     if (options.userId) {
       query = query.query((qb) => {
         qb = qb.innerJoin("user_role", "entry.id", "user_role.node_id")
-          .where({
-            "user_role.user_id": options.userId,
-            "user_role.node_type": "entry",
-          });
+          .where("user_role.user_id", options.userId);
         // Hide own entry (not strictly requested, but sensible)
         if (options.notReviewedById) {
           void qb.whereNot({
@@ -272,10 +265,7 @@ export class EntryService {
     const entriesCollection = await models.Entry.query((qb) => {
       void qb.distinct()
         .innerJoin("user_role", "entry.id", "user_role.node_id")
-        .where({
-          "user_role.user_id": user.get("id"),
-          "user_role.node_type": "entry",
-        });
+        .where("user_role.user_id", user.get("id"));
     })
       .orderBy("published_at", "desc")
       .orderBy("external_event", "desc")
@@ -296,10 +286,7 @@ export class EntryService {
       void qb.distinct()
         .innerJoin("user_role", "entry.id", "user_role.node_id")
         .whereNotNull("entry.event_id")
-        .where({
-          "user_role.user_id": user.get("id"),
-          "user_role.node_type": "entry",
-        });
+        .where("user_role.user_id", user.get("id"));
     })
       .orderBy("created_at", "desc")
       .fetch({
@@ -317,7 +304,6 @@ export class EntryService {
         .where({
           "entry.event_id": eventId,
           "user_role.user_id": user.get("id"),
-          "user_role.node_type": "entry",
         });
     }).fetch({ withRelated: ["userRoles"], ...options }) as any;
   }

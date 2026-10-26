@@ -11,7 +11,7 @@ import {
   createTestEntry,
   createTestEvent,
   createTestPost,
-  createTestPostAndEntryWithSameId,
+  createTestPostAndEntry,
   createTestUser
 } from "server/testing/testing-fixtures";
 import { afterAll, beforeAll, describe, it } from "vitest";
@@ -34,7 +34,7 @@ describe("Team service", { timeout: DB_TEST_TIMEOUT }, () => {
       const member = await createTestUser({ title: "Member" });
       const invitee = await createTestUser({ title: "Invitee" });
       const entry = await createTestEntry(owner, undefined, { division: enums.DIVISION.TEAM });
-      await security.addUserRight(member, entry, "entry", "write");
+      await security.addUserRight(member, entry, "write");
       await teamService.setTeamMembers(owner, entry, ids(owner, member, invitee));
 
       const members = await teamService.findTeamMembers(await reloadEntry(entry));
@@ -59,7 +59,7 @@ describe("Team service", { timeout: DB_TEST_TIMEOUT }, () => {
     it("should not list users with roles on a post sharing the same ID", async () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
-      const { entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { entry } = await createTestPostAndEntry(postAuthor, entryOwner);
 
       const members = await teamService.findTeamMembers(await reloadEntry(entry));
 
@@ -94,8 +94,8 @@ describe("Team service", { timeout: DB_TEST_TIMEOUT }, () => {
       const removedInvitee = await createTestUser();
       const event = await createTestEvent();
       const entry = await createTestEntry(owner, event, { division: enums.DIVISION.TEAM });
-      await security.addUserRight(member, entry, "entry", "write");
-      await security.addUserRight(removedMember, entry, "entry", "write");
+      await security.addUserRight(member, entry, "write");
+      await security.addUserRight(removedMember, entry, "write");
       await teamService.setTeamMembers(owner, entry, ids(owner, member, removedMember, removedInvitee));
 
       const result = await teamService.setTeamMembers(owner, entry, ids(owner, member));
@@ -130,7 +130,7 @@ describe("Team service", { timeout: DB_TEST_TIMEOUT }, () => {
       const invitee = await createTestUser();
       const event = await createTestEvent();
       const entry = await createTestEntry(owner, event, { division: enums.DIVISION.TEAM });
-      await security.addUserRight(member, entry, "entry", "write");
+      await security.addUserRight(member, entry, "write");
       await teamService.setTeamMembers(owner, entry, ids(owner, member, invitee));
       await entry.save({ division: enums.DIVISION.SOLO }, { patch: true });
 
@@ -147,8 +147,8 @@ describe("Team service", { timeout: DB_TEST_TIMEOUT }, () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
       const postWriter = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
-      await security.addUserRight(postWriter, post, "post", "write");
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
+      await security.addUserRight(postWriter, post, "write");
 
       await entry.save({ division: enums.DIVISION.TEAM }, { patch: true });
       await teamService.setTeamMembers(entryOwner, entry, ids(entryOwner));
@@ -165,7 +165,7 @@ describe("Team service", { timeout: DB_TEST_TIMEOUT }, () => {
       const member = await createTestUser();
       const event = await createTestEvent();
       const entry = await createTestEntry(owner, event, { division: enums.DIVISION.TEAM });
-      await security.addUserRight(member, entry, "entry", "write");
+      await security.addUserRight(member, entry, "write");
       const ownerPost = await createTestPost(owner, { entry_id: entry.get("id") }, { eventId: event.get("id") });
       const memberPost = await createTestPost(member, { entry_id: entry.get("id") }, { eventId: event.get("id") });
 
@@ -210,7 +210,7 @@ describe("Team service", { timeout: DB_TEST_TIMEOUT }, () => {
       const postAuthor = await createTestUser({ name: "postsearchauthor" });
       const entryOwner = await createTestUser({ name: "postsearchowner" });
       const event = await createTestEvent();
-      const { entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       await postService.createPost(postAuthor, event.get("id"));
 
       const eventResults = await teamService.searchForTeamMembers("postsearch", event.get("id"));
@@ -281,7 +281,7 @@ describe("Team service", { timeout: DB_TEST_TIMEOUT }, () => {
       const invitee = await createTestUser();
       const entry = await createTestEntry(owner, undefined, { division: enums.DIVISION.TEAM });
       await teamService.setTeamMembers(owner, entry, ids(owner, invitee));
-      await security.addUserRight(invitee, entry, "entry", "read");
+      await security.addUserRight(invitee, entry, "read");
 
       await teamInviteService.acceptInvite(invitee, entry);
 
@@ -329,7 +329,7 @@ describe("Team service", { timeout: DB_TEST_TIMEOUT }, () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
       const invitee = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       await entry.save({ division: enums.DIVISION.TEAM }, { patch: true });
       await teamService.setTeamMembers(entryOwner, entry, ids(entryOwner, invitee));
 

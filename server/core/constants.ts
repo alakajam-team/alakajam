@@ -28,6 +28,11 @@ export default {
   SPECIAL_POST_TYPE_ANNOUNCEMENT,
   SPECIAL_POST_TYPE_HIDDEN,
   SPECIAL_POST_TYPES,
+  /**
+   * Posts were moved above this ID when they started sharing their IDs with entries (see migration 0047).
+   * Post IDs below it are legacy IDs, see `post.legacy_id`.
+   */
+  POST_ID_FLOOR: 2000,
   REQUIRED_ARTICLES: ["docs", "faq"],
   ALLOWED_POST_TAGS: [
     "b", "i", "em", "strong", "a", "u", "del", "code", "br", "hr", "iframe", "img", "h1", "h2", "h3", "h4", "h5", "h6",

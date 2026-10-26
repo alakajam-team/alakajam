@@ -1,6 +1,7 @@
 
 import { PostBookshelfModel } from "bookshelf";
 import { CommonLocals } from "server/common.middleware";
+import constants from "server/core/constants";
 import forms from "server/core/forms";
 import postService from "./post.service";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -18,7 +19,12 @@ export interface PostLocals extends CommonLocals {
 export async function postMiddleware(req: CustomRequest, res: CustomResponse<CommonLocals>, next: NextFunction): Promise<void> {
   if (req.params.postId && req.params.postId !== "create") {
     if (forms.isId(req.params.postId)) {
-      res.locals.post = await postService.findPostById(parseInt(req.params.postId, 10));
+      const postId = parseInt(req.params.postId, 10);
+      if (await redirectLegacyPostIds(req, res, postId)) {
+        return;
+      }
+
+      res.locals.post = await postService.findPostById(postId);
       if (res.locals.post && res.locals.post.get("event_id")) {
         res.locals.event = res.locals.post.related("event");
         if (res.locals.event) {
@@ -39,4 +45,15 @@ export async function postMiddleware(req: CustomRequest, res: CustomResponse<Com
   }
 
   next();
+}
+
+async function redirectLegacyPostIds(req: CustomRequest, res: CustomResponse, postId: number): Promise<boolean> {
+  if (postId < constants.POST_ID_FLOOR) {
+    const legacyPost = await postService.findPostByLegacyId(postId);
+    if (legacyPost) {
+      res.redirect(301, req.originalUrl.replace(/^\/post\/\d+/, "/post/" + legacyPost.get("id")));
+      return true;
+    }
+  }
+  return false;
 }

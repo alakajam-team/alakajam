@@ -1,4 +1,5 @@
 import { BookshelfCollection, BookshelfModel, EntryBookshelfModel } from "bookshelf";
+import * as Knex from "knex";
 import cache from "server/core/cache";
 import { ilikeOperator } from "server/core/config";
 import db from "server/core/db";
@@ -30,14 +31,12 @@ export class TeamService {
     // SELECT "user".name, "user".title, entered.node_id
     // FROM "user"
     // LEFT JOIN (
-    //   SELECT user_id, event_id, node_type FROM user_role
-    //   WHERE node_type = 'entry' AND event_id = ${eventId}
+    //   SELECT user_id, event_id, node_id FROM user_role
+    //   WHERE node_id IN (SELECT id FROM node WHERE type = 'entry') AND event_id = ${eventId}
     // ) entered
     // ON "user".id = entered.user_id;
 
-    const alreadyEnteredWhereClause: any = {
-      node_type: "entry",
-    };
+    const alreadyEnteredWhereClause: any = {};
     if (eventId) {
       // general case: detect people who entered in the same event
       alreadyEnteredWhereClause.event_id = eventId;
@@ -49,6 +48,7 @@ export class TeamService {
 
     const alreadyEntered = db.knex("user_role")
       .select("user_id", "event_id", "node_id")
+      .whereIn("node_id", entryNodeIds(db.knex))
       .where(alreadyEnteredWhereClause);
 
     return db.knex
@@ -109,10 +109,7 @@ export class TeamService {
         // Force only keeping the owner role
         numRemoved = await transaction("user_role")
           .whereNot("permission", SECURITY_PERMISSION_MANAGE)
-          .andWhere({
-            node_type: "entry",
-            node_id: entryId,
-          })
+          .andWhere("node_id", entryId)
           .del();
 
         // Delete any pending invites
@@ -132,10 +129,7 @@ export class TeamService {
         // Remove users not in team list.
         numRemoved = await transaction("user_role")
           .whereNotIn("user_id", userIds)
-          .andWhere({
-            node_type: "entry",
-            node_id: entryId,
-          })
+          .andWhere("node_id", entryId)
           .del();
 
         // Remove invites not in team list
@@ -149,15 +143,11 @@ export class TeamService {
           .select("user_id", "user_title", "node_id")
           .whereIn("user_id", userIds);
         if (entry.get("event_id")) {
-          alreadyEntered = await existingRolesQuery.andWhere({
-            node_type: "entry",
-            event_id: entry.get("event_id"),
-          });
+          alreadyEntered = await existingRolesQuery
+            .whereIn("node_id", entryNodeIds(transaction))
+            .andWhere("event_id", entry.get("event_id"));
         } else {
-          alreadyEntered = await existingRolesQuery.andWhere({
-            node_type: "entry",
-            node_id: entryId,
-          });
+          alreadyEntered = await existingRolesQuery.andWhere("node_id", entryId);
         }
         if (entry.get("id")) {
           const pendingInvites = await transaction("entry_invite")
@@ -241,4 +231,8 @@ interface SetTeamMembersResult {
   numAdded: number;
   /* Details of users already entered */
   alreadyEntered: UserEntryData[];
+}
+
+function entryNodeIds(knex: Knex) {
+  return knex("node").select("id").where("type", "entry");
 }

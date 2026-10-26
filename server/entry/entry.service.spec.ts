@@ -11,7 +11,7 @@ import {
   createTestEntry,
   createTestEvent,
   createTestPost,
-  createTestPostAndEntryWithSameId,
+  createTestPostAndEntry,
   createTestUser
 } from "server/testing/testing-fixtures";
 import { getRepository } from "typeorm";
@@ -110,7 +110,7 @@ describe("Entry service", { timeout: DB_TEST_TIMEOUT }, () => {
       const owner = await createTestUser();
       const member = await createTestUser();
       const entry = await createTestEntry(owner);
-      await security.addUserRight(member, entry, "entry", "write");
+      await security.addUserRight(member, entry, "write");
 
       const entries = await entryService.findUserEntries(member);
       expect(entries.map((e) => e.get("id"))).to.deep.equal([entry.get("id")]);
@@ -140,7 +140,7 @@ describe("Entry service", { timeout: DB_TEST_TIMEOUT }, () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
       const event = await createTestEvent();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       await entry.save({ event_id: event.get("id") }, { patch: true });
       await post.save({ event_id: event.get("id") }, { patch: true });
 
@@ -184,7 +184,7 @@ describe("Entry service", { timeout: DB_TEST_TIMEOUT }, () => {
       const entryOwner = await createTestUser();
       const reviewer = await createTestUser();
       const event = await createTestEvent();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       await entry.save({ event_id: event.get("id") }, { patch: true });
       await commentService.createComment(reviewer, post, "Comment on the post");
 
@@ -197,14 +197,11 @@ describe("Entry service", { timeout: DB_TEST_TIMEOUT }, () => {
       expect(entries.map((e) => e.get("id"))).to.deep.equal([entry.get("id")]);
     });
 
-    // BUG (current behaviour): the "hide own entry" join on user_role only matches node_id, not node_type,
-    // so an entry gets hidden from a reviewer who happens to have a role on a post with the same numeric ID.
-    // Should be fixed by the node table refactoring (#682).
-    it.skip("should not hide entries just because the user has a role on a post sharing the same ID", async () => {
+    it("should not hide entries just because the reviewer has a role on a post", async () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
       const event = await createTestEvent();
-      const { entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       await entry.save({ event_id: event.get("id") }, { patch: true });
 
       const entries = await entryService.findEntries({
@@ -226,7 +223,7 @@ describe("Entry service", { timeout: DB_TEST_TIMEOUT }, () => {
       const commenter = await createTestUser();
       const event = await createTestEvent();
       const entry = await createTestEntry(owner, event);
-      await security.addUserRight(member, entry, "entry", "write");
+      await security.addUserRight(member, entry, "write");
       const comment = await commentService.createComment(commenter, entry, "Nice game");
       const entryId = entry.get("id");
 
@@ -255,7 +252,7 @@ describe("Entry service", { timeout: DB_TEST_TIMEOUT }, () => {
     it("should leave a post sharing the same ID untouched", async () => {
       const postAuthor = await createTestUser();
       const entryOwner = await createTestUser();
-      const { post, entry } = await createTestPostAndEntryWithSameId(postAuthor, entryOwner);
+      const { post, entry } = await createTestPostAndEntry(postAuthor, entryOwner);
       const postComment = await commentService.createComment(entryOwner, post, "Comment on post");
       await commentService.createComment(postAuthor, entry, "Comment on entry");
       const postId = post.get("id");
