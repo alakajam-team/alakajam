@@ -76,6 +76,10 @@ export default class EntryPO {
     return this.page.locator(".user-thumb");
   }
 
+  public get relatedPostsTitles() {
+    return this.page.locator(".list-group .post__title");
+  }
+
   public get highScores() {
     return this.page.locator("table.table tbody tr");
   }

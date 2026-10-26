@@ -37,6 +37,13 @@ export default class PostPO {
     return this.likeCounter;
   }
 
+  /**
+   * Author, event and related entry of the post
+   */
+  public get postDetails() {
+    return this.page.locator(".post__details");
+  }
+
   // Body
 
   public get postBody() {
