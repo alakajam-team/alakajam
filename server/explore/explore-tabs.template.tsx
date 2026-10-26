@@ -11,9 +11,9 @@ export function exploreTabs(currentPath: string) {
     <li role="presentation" class="nav-item">
       <a class={"nav-link " + activeIfPath(currentPath, "/explore/people")} href="/explore/people">Users</a>
     </li>
-  </ul>
+  </ul>;
 }
 
 function activeIfPath(currentPath: string, path: string) {
-  return (currentPath.startsWith(path) ? "active" : "")
+  return (currentPath.startsWith(path) ? "active" : "");
 }

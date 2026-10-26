@@ -3,7 +3,7 @@ import { CustomRequest, CustomResponse, Mutable } from "server/types";
 
 export type JSXRenderFunction<T> = (context: T) => JSX.Element;
 
-export function setUpJSXLocals<T extends { csrfToken: Function, csrfTokenHTML: Function }>(req: CustomRequest, res: CustomResponse<Mutable<T>>): void {
+export function setUpJSXLocals<T extends { csrfToken: Function; csrfTokenHTML: Function }>(req: CustomRequest, res: CustomResponse<Mutable<T>>): void {
   res.locals.csrfToken = () => {
     _detectMissingToken(req);
     return <input type="hidden" name="_csrf" value={req.csrfToken()} />;
@@ -11,7 +11,7 @@ export function setUpJSXLocals<T extends { csrfToken: Function, csrfTokenHTML: F
   res.locals.csrfTokenHTML = () => {
     _detectMissingToken(req);
     return `<input type="hidden" name="_csrf" value="${req.csrfToken()}" />`;
-  }
+  };
 }
 
 function _detectMissingToken(req: CustomRequest) {

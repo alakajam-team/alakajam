@@ -9,6 +9,6 @@ export function peopleTabs(path: string): JSX.Element {
 
 function tab(linkPath, title, path) {
   return <a class={"list-group-item " + (path.replace(/\?.*/g, "") === linkPath ? "active" : "")} href={ linkPath }>
-      { title }
-    </a>;
+    { title }
+  </a>;
 }

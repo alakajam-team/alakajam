@@ -72,11 +72,11 @@ class SassBuilder {
       const result = sass.compile(inputFile, {
         sourceMap: false,
         quietDeps: true,
-        silenceDeprecations: ['import'],
+        silenceDeprecations: ["import"],
         loadPaths: [this.ROOT_PATH, path.resolve(this.CLIENT_SRC_FOLDER, "css")]
       });
 
-      writeFileSync(outputFile, result.css)
+      writeFileSync(outputFile, result.css);
       log.info(`Built CSS to ${outputFile} (${result.css.length / 1000.}kb)`);
       if (typeof resolve === "function") { resolve(result); }
     } catch (error) {
@@ -86,11 +86,11 @@ class SassBuilder {
   }
 
   private copyAssets({ assetsPath, reject, resolve }:
-    {
-      assetsPath?: string | string[];
-      reject?: (reason: any) => void;
-      resolve?: (files: string[]) => void;
-    }) {
+  {
+    assetsPath?: string | string[];
+    reject?: (reason: any) => void;
+    resolve?: (files: string[]) => void;
+  }) {
     copy(
       assetsPath,
       this.CLIENT_DEST_FOLDER,
