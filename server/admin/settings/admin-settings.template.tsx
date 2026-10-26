@@ -41,7 +41,7 @@ function editSetting(setting: EditableSettingInstance) {
   if (setting.isMarkdown) {
     return formMacros.editor("value", setting.value, { autofocus: true });
   } else {
-    return <textarea name="value" class={"form-control" + setting.isJson ? "json-setting codemirror" : ""} autofocus>{setting.value}</textarea>;
+    return <textarea name="value" class={"form-control " + (setting.isJson ? "json-setting codemirror" : "")} autofocus>{setting.value}</textarea>;
   }
 }
 
