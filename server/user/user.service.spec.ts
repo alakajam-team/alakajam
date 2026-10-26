@@ -2,12 +2,19 @@
 
 import { afterAll, beforeAll, beforeEach, describe, it } from "vitest";
 import { expect } from "chai";
+import { BookshelfCollection } from "bookshelf";
 import constants from "server/core/constants";
+import security from "server/core/security";
 import { EventParticipation } from "server/entity/event-participation.entity";
 import { Event } from "server/entity/event.entity";
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
+import * as models from "server/core/models";
+import commentService from "server/post/comment/comment.service";
+import likeService from "server/post/like/like.service";
+import postService from "server/post/post.service";
 import { closeTestDB, DB_TEST_TIMEOUT, startTestDB } from "server/testing/testing-db";
+import { createTestEntry, createTestEvent, createTestPost, createTestUser } from "server/testing/testing-fixtures";
 import { getRepository } from "typeorm";
 import userService from "./user.service";
 
@@ -172,6 +179,141 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
 
   });
 
+
+  describe("entries count from real nodes", () => {
+
+    it("should count entries but not posts", async () => {
+      const user = await createTestUser({ title: "Countme Nodes" });
+      const event = await createTestEvent();
+      await createTestEntry(user, event);
+      await createTestEntry(user);
+      await createTestPost(user, {}, { eventId: event.get("id") });
+      await createTestPost(user);
+
+      const foundUsers = await userService.findUsers({ search: "countme nodes", entriesCount: true });
+      expect(foundUsers.length).to.equal(1);
+      expect(foundUsers[0].entriesCount).to.equal(2);
+      expect(foundUsers[0].akjEntriesCount).to.equal(1);
+    });
+
+    it("should not consider users with only posts as having entries", async () => {
+      const user = await createTestUser({ title: "Postonly Nodes" });
+      await createTestPost(user, {}, { eventId: (await createTestEvent()).get("id") });
+
+      const foundUsers = await userService.findUsers({ search: "postonly nodes", entriesCount: true, withEntries: true });
+      expect(foundUsers.length).to.equal(0);
+    });
+
+  });
+
+
+  describe("approved user", () => {
+
+    it("should not approve users without entries", async () => {
+      const user = await createTestUser();
+      expect(await userService.isApprovedUser(user)).to.be.false;
+    });
+
+    it("should approve users with an event entry", async () => {
+      const user = await createTestUser();
+      await createTestEntry(user, await createTestEvent());
+      expect(await userService.isApprovedUser(user)).to.be.true;
+    });
+
+    it("should approve team members of an event entry", async () => {
+      const owner = await createTestUser();
+      const member = await createTestUser();
+      const entry = await createTestEntry(owner, await createTestEvent());
+      await security.addUserRight(member, entry, "entry", "write");
+      expect(await userService.isApprovedUser(member)).to.be.true;
+    });
+
+    it("should not approve users with only external entries", async () => {
+      const user = await createTestUser();
+      await createTestEntry(user);
+      expect(await userService.isApprovedUser(user)).to.be.false;
+    });
+
+    it("should not approve users with only event posts", async () => {
+      const user = await createTestUser();
+      await createTestPost(user, {}, { eventId: (await createTestEvent()).get("id") });
+      expect(await userService.isApprovedUser(user)).to.be.false;
+    });
+
+    it("should approve mods", async () => {
+      const mod = await createTestUser({ is_mod: "true" });
+      expect(await userService.isApprovedUser(mod)).to.be.true;
+    });
+
+  });
+
+
+  describe("delete user", () => {
+
+    it("should refuse to delete users with entries", async () => {
+      const user = await createTestUser();
+
+      const result = await userService.deleteUser(user, 1);
+
+      expect(result.error).to.be.ok;
+      expect(await userService.findById(user.id)).to.be.ok;
+    });
+
+    it("should delete the user along with their posts, comments, likes and roles", async () => {
+      const user = await createTestUser();
+      const otherUser = await createTestUser();
+      const ownPost = await createTestPost(user);
+      const otherPost = await createTestPost(otherUser);
+      const otherEntry = await createTestEntry(otherUser);
+      await security.addUserRight(user, otherPost, "post", "watch");
+      const commentOnPost = await commentService.createComment(user, otherPost, "By deleted user");
+      const commentOnEntry = await commentService.createComment(user, otherEntry, "By deleted user");
+      const keptComment = await commentService.createComment(otherUser, otherPost, "By other user");
+      await likeService.like(otherPost, user.id, "like");
+      await likeService.like(ownPost, otherUser.id, "like");
+      const ownPostId = ownPost.get("id");
+
+      const result = await userService.deleteUser(user, 0);
+
+      expect(result.error).to.not.be.ok;
+      expect(await userService.findById(user.id)).to.not.be.ok;
+      expect(await postService.findPostById(ownPostId)).to.not.be.ok;
+      expect(await commentService.findCommentById(commentOnPost.get("id"))).to.not.be.ok;
+      expect(await commentService.findCommentById(commentOnEntry.get("id"))).to.not.be.ok;
+      expect(await commentService.findCommentById(keptComment.get("id"))).to.be.ok;
+      expect(await likeService.findLike(otherPost, user.id)).to.not.be.ok;
+      expect(await countLikesByUser(otherUser.id)).to.equal(0); // Like on the deleted post
+      expect(await getRepository(UserRole).count({ where: { user_id: user.id } })).to.equal(0);
+
+      const fetchedOtherPost = await postService.findPostById(otherPost.get("id"));
+      expect(fetchedOtherPost.related<BookshelfCollection>("userRoles").map((role) => role.get("user_id")))
+        .to.deep.equal([otherUser.id]);
+    });
+
+    // BUG (current behaviour): user deletion cascades to their posts through raw SQL deletes (bookshelf-cascade-delete),
+    // which only handles the Post "dependents" (likes). Comments & roles of other users on the deleted posts are left
+    // orphaned (and could even get attached to a future post reusing the same ID on SQLite).
+    // Should be fixed by the node table refactoring (#682) through ON DELETE CASCADE.
+    it.skip("should delete comments and roles of other users on the deleted user's posts", async () => {
+      const user = await createTestUser();
+      const otherUser = await createTestUser();
+      const ownPost = await createTestPost(user);
+      await security.addUserRight(otherUser, ownPost, "post", "write");
+      const commentOnOwnPost = await commentService.createComment(otherUser, ownPost, "On deleted post");
+
+      await userService.deleteUser(user, 0);
+
+      expect(await commentService.findCommentById(commentOnOwnPost.get("id"))).to.not.be.ok;
+      expect(await getRepository(UserRole).count({ where: { user_id: otherUser.id } })).to.equal(0);
+    });
+
+  });
+
+
+  async function countLikesByUser(userId: number): Promise<number> {
+    const count = await models.Like.where({ user_id: userId }).count();
+    return parseInt(count.toString(), 10);
+  }
 
   let createdUsers = 0;
 
