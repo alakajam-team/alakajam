@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { AfterLoad, Column, Entity, Index, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { Comment } from "./comment.entity";

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { AfterLoad, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";

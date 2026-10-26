@@ -7,10 +7,10 @@ const editableKnexfile = knexfile as any;
 
 editableConfig.DB_TYPE
   = editableKnexfile.development.client
-  = "sqlite3";
+    = "sqlite3";
 
 editableConfig.DB_SQLITE_FILENAME
   = editableKnexfile.development.connection.filename
-  = path.resolve(configUtils.tmpPathAbsolute(), "unit-test.sqlite");
+    = path.resolve(configUtils.tmpPathAbsolute(), "unit-test.sqlite");
 
 delete editableKnexfile.development.pool;

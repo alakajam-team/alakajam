@@ -28,3 +28,4 @@
 .vscode
 yarn.lock
 .nyc_output
+.claude/worktrees

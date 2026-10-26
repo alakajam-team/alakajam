@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 /*
  * Bootstrap Notify integration
  * https://github.com/mouse0270/bootstrap-notify

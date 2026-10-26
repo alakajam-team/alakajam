@@ -1,4 +1,3 @@
-
 import { BookshelfModel } from "bookshelf";
 import db from "server/core/db";
 import log from "server/core/log";
@@ -77,7 +76,7 @@ export class PlatformRepositoryBookshelf {
           await transaction("entry_platform")
             .select("platform_id")
             .where("entry_id", entryId)
-        ).map(({ platform_id }) => platform_id); // eslint-disable-line camelcase
+        ).map(({ platform_id }) => platform_id);
         const toRemoveIds = existingIds.filter((id) => !platformIds.includes(id));
         const toAdd = platforms
           .filter((p) => !existingIds.includes(p.id))

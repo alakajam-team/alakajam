@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-expressions */
-
 /**
  * http://tristen.ca/tablesort/demo/
  */

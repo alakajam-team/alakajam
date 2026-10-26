@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 import { TimestampedEntity } from "./timestamped.entity";
 import { ColumnTypes } from "./column-types";

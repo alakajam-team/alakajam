@@ -1,4 +1,3 @@
-
 /**
  * File & folder manipulation, mostly for picture storage.
  */
@@ -17,7 +16,7 @@ import log from "./log";
 
 let sharp = null;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   sharp = require("sharp");
 } catch (e) {
   log.warn("Sharp dependency missing. Picture resizing disabled...");

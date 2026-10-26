@@ -11,7 +11,7 @@ import { CustomRequest, CustomResponse } from "./types";
  */
 export function renderError(error: any, req: CustomRequest, res: CustomResponse<CommonLocals>, devMode: boolean): void {
   if (!error) {
-    render404KajamGame(req, res, devMode);
+    void render404KajamGame(req, res, devMode);
   } else {
     if (error.code === "EBADCSRFTOKEN") {
       // Replace the default error message from csurf by something more user friendly.

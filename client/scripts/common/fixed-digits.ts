@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 function manageZeroes($input, caretPosition, digits) {
   let value = $input.val();
   if (value) {

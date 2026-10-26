@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { BookshelfModel } from "bookshelf";
 import { BeforeInsert, BeforeUpdate, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";

@@ -19,4 +19,4 @@ log.info(`Backing up DB to ${DB_SQLITE_PATH}.backup to restore its state between
 fs.copyFileSync(DB_SQLITE_PATH, DB_SQLITE_PATH + ".backup");
 
 // Launch the server only now (a static import would be evaluated before the backup)
-require("../index"); // eslint-disable-line @typescript-eslint/no-var-requires
+require("../index"); // eslint-disable-line @typescript-eslint/no-require-imports

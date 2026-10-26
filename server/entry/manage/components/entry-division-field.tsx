@@ -1,5 +1,4 @@
 import { BookshelfModel } from "bookshelf";
-import { capitalize } from "lodash";
 import React, { JSX } from "preact";
 import constants from "server/core/constants";
 import security from "server/core/security";

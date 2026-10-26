@@ -53,7 +53,7 @@ alakajam/
 |__ vite.config.mts           Client bundle build configuration (Vite)
 |__ vitest.config.ts          Unit tests configuration
 |__ nodemon.json              Dev server watch/restart configuration
-|__ .eslintrc.js              ESLint configuration
+|__ eslint.config.mjs              ESLint configuration
 |__ README.md                 Setup and basic usage
 ```
 

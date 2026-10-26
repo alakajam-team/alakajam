@@ -3,7 +3,6 @@ import React, { JSX } from "preact";
 import links from "server/core/links";
 import security from "server/core/security";
 import { EventFlags } from "server/entity/event-details.entity";
-import * as formMacros from "server/macros/form.macros";
 import { User } from "server/entity/user.entity";
 import { ifTrue } from "server/macros/jsx-utils";
 import { entryRatingCountPhrase } from "./entry-rating-count-phrase.template";

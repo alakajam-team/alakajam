@@ -1,9 +1,8 @@
-
 /**
  * Service for importing entries from third-party websites
  */
 
-import Bluebird = require("bluebird");
+import Bluebird = require("bluebird"); // eslint-disable-line @typescript-eslint/no-require-imports
 import { BookshelfCollection, BookshelfModel, FetchAllOptions, FetchOptions, SortOrder } from "bookshelf";
 import db from "server/core/db";
 import enums from "server/core/enums";

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { Column, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { Relation } from "./relation";

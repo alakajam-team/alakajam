@@ -24,7 +24,7 @@ export function adminStatus(req: CustomRequest, res: CustomResponse<CommonLocals
 
   let pictureResizeEnabled = false;
   try {
-    require("sharp");
+    require("sharp"); // eslint-disable-line @typescript-eslint/no-require-imports
     pictureResizeEnabled = true;
   } catch (e) {
     // Nothing

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Index } from "typeorm";
 import { NodeType, PermissionType, ColumnTypes } from "./column-types";
 import { Event } from "./event.entity";

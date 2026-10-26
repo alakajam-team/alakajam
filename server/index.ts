@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 
 /**
  * Entry point for the Alakajam! server
@@ -11,14 +11,14 @@ import log from "./core/log";
 
 if (__filename.includes(".js")) {
   // Fix root-relative import paths from build
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+
   require("module-alias/register");
 }
 
 
 log.warn("Starting server...");
 if (config.DEBUG_LONG_PROMISE_TRACES) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+
   require("longjohn");
 }
 

@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 
 import { afterAll, beforeAll, beforeEach, describe, it } from "vitest";
 import { expect } from "chai";
