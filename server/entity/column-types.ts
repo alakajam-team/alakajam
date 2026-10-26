@@ -2,7 +2,7 @@ import config from "server/core/config";
 import { ColumnOptions, ColumnType } from "typeorm";
 
 const dbSpecificTypes: Record<string, ColumnType> = {
-  dateTime: "date",
+  dateTime: "datetime",
 };
 if (config.DB_TYPE === "postgresql") {
   dbSpecificTypes.dateTime = "timestamp with time zone";
