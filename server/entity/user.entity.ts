@@ -142,7 +142,9 @@ export class User extends TimestampedEntity {
   }
 
   public async loadMarketing(): Promise<void> {
+    const unsavedMarketing = this.marketing;
     await this.loadOneToOne(User, "marketing", UserMarketing);
+    this.marketing ??= unsavedMarketing; // No DB row yet: keep the (possibly edited) default instead of losing it
   }
 
   public dependents(): Array<keyof this> {

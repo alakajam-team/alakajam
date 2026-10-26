@@ -21,7 +21,6 @@ import { adminUsers } from "./admin/users/admin-users.controller";
 import * as apiController from "./api/api.controller";
 import { CommonLocals, commonMiddleware } from "./common.middleware";
 import { articleApiRoot, articleView } from "./docs/article.controller";
-import { changes } from "./docs/changes/changes.controller";
 import { entryMiddleware } from "./entry/entry.middleware";
 import { entryHighscoreSubmit } from "./entry/highscore/highscore-submit.controller";
 import { entryHighscores } from "./entry/highscore/highscores.controller";
@@ -117,7 +116,6 @@ export function routes(app: express.Application): void {
   router.get("/", csrf, home);
   router.get("/user", usersRoot);
   router.get("/chat", chat);
-  router.get("/changes", changes);
 
   // Explorer
 

@@ -61,7 +61,7 @@ export default function base(context: CommonLocals, contents: JSX.Element): JSX.
               <li class={"nav-item d-none d-sm-block " + (path === "/chat" ? "active" : "")}><a class="nav-link" href="/chat">Chat</a></li>
               <li class={"nav-item " + ((path.startsWith("/article/docs") || path.startsWith("/api")) ? "active" : "")}>
                 <a class="nav-link" href="/article/docs">Docs</a></li>
-              <li class={"nav-item " + ((path.startsWith("/article/about") || path === "/changes") ? "active" : "")}>
+              <li class={"nav-item " + (path.startsWith("/article/about") ? "active" : "")}>
                 <a class="nav-link" href="/article/about">About</a></li>
 
               {ifSet(user, () =>
