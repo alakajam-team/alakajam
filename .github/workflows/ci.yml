@@ -20,7 +20,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Lint (check only)
-        run: npx eslint server/ client/ cypress/
+        run: npx eslint server/ client/ e2e/ playwright.config.ts
       - run: npm run build
       - run: npm run test:unit:ci
 
@@ -33,13 +33,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
-      - name: Upload Cypress artifacts
+      - name: Upload Playwright artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-artifacts
+          name: playwright-artifacts
           path: |
-            cypress/screenshots
-            cypress/videos
+            e2e/playwright-report
+            e2e/test-results
           if-no-files-found: ignore

@@ -10,7 +10,7 @@ export class AdminDevService {
       return { type: "success", message: "Backup created." };
     }
     else {
-      // Don't override backups (ensures stability when working on Cypress tests)
+      // Don't override backups (ensures stability when working on E2E tests)
       return { type: "danger", message: "A backup already exists, please delete it first" };
     }
   }

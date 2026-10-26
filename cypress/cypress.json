@@ -1,7 +1,0 @@
-{
-  "baseUrl": "http://localhost:8001",
-  "pluginsFile": "cypress/plugins.js",
-  "supportFile": "cypress/support/commands.ts",
-  "video": false,
-  "chromeWebSecurity": false 
-}

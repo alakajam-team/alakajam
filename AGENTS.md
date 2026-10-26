@@ -13,7 +13,7 @@
 - JSX/TSX for templates (server-side rendering with Preact)
 - Sass, Bootstrap 4.6
 - Vite (client bundle), SWC + nodemon (dev server)
-- Vitest (unit tests), Cypress (E2E tests)
+- Vitest (unit tests), Playwright (E2E tests)
 
 ## Folder Structure & Useful Files
 
@@ -42,7 +42,7 @@ alakajam/
 |   |__ images/               Client images
 |
 |__ static/                    Static assets served directly
-|__ cypress/                   End-to-end tests
+|__ e2e/                       End-to-end tests (Playwright)
 |__ deployment/                Deployment scripts and configuration
 |__ types/                     TypeScript type definitions
 |
@@ -52,6 +52,7 @@ alakajam/
 |__ config.sample.js          Sample configuration (copy to config.js)
 |__ vite.config.mts           Client bundle build configuration (Vite)
 |__ vitest.config.ts          Unit tests configuration
+|__ playwright.config.ts      E2E tests configuration
 |__ nodemon.json              Dev server watch/restart configuration
 |__ eslint.config.mjs              ESLint configuration
 |__ README.md                 Setup and basic usage
@@ -97,14 +98,14 @@ npm test
 # Run unit tests once
 npm run test:unit:ci
 
-# Run E2E tests (Cypress)
+# Run E2E tests (Playwright, starts the E2E server automatically)
 npm run test:e2e
 
 # Run all tests (CI mode)
 npm run test:ci
 
-# Open Cypress UI
-npm run cypress
+# Open Playwright UI mode
+npm run test:e2e:ui
 
 # Run specific unit test
 npx vitest run <filename>

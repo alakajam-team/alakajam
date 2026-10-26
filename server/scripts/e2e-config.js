@@ -4,14 +4,14 @@ module.exports = {
   STATIC_ROOT_URL: false,
   SECURE_SESSION_COOKIES: false,
   
-  DATA_PATH: 'cypress/',
+  DATA_PATH: 'e2e/',
 
   DB_TYPE: 'sqlite3',
   DB_HOST: 'localhost',
   DB_USER: 'root',
   DB_PASSWORD: '',
   DB_NAME: '',
-  DB_SQLITE_FILENAME: 'cypress/e2e.sqlite',
+  DB_SQLITE_FILENAME: 'e2e/e2e.sqlite',
 
   DEBUG_INSERT_SAMPLES: false,
   DEBUG_DISABLE_CACHE: true, 

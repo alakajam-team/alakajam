@@ -11,8 +11,9 @@
 # Data
 /data
 /coverage
-/cypress/tmp
-/cypress/screenshots
+/e2e/tmp
+/e2e/test-results
+/e2e/playwright-report
 *.log
 *.out
 *.pid

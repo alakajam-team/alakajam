@@ -8,9 +8,7 @@ export default tseslint.config(
     ignores: [
       "dist/", "node_modules/", ".claude/",
       "static/", "client/css/",
-      "cypress/screenshots/", "cypress/tmp/", "cypress/uploads/",
-      // Shadowed by commands.ts in the tsconfig, so the project service cannot load it
-      "cypress/support/commands.d.ts"
+      "e2e/test-results/", "e2e/playwright-report/", "e2e/tmp/"
     ]
   },
   {
@@ -19,7 +17,7 @@ export default tseslint.config(
     languageOptions: {
       globals: globals.node,
       parserOptions: {
-        projectService: true,
+        projectService: { allowDefaultProject: ["playwright.config.ts"] },
         tsconfigRootDir: import.meta.dirname,
         ecmaFeatures: {
           jsx: true
