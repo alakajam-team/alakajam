@@ -5,7 +5,8 @@ import config from "server/core/config";
 import constants from "server/core/constants";
 import log from "server/core/log";
 import { User } from "server/entity/user.entity";
-import { ApiClient, ClientCredentialsAuthProvider, HelixStream } from "twitch";
+import { ApiClient, HelixStream } from "@twurple/api";
+import { AppTokenAuthProvider } from "@twurple/auth";
 import eventParticipationService from "../dashboard/event-participation.service";
 
 export class TwitchService {
@@ -14,7 +15,7 @@ export class TwitchService {
 
   public constructor() {
     if (config.TWITCH_CLIENT_ID && config.TWITCH_CLIENT_SECRET) {
-      const authProvider = new ClientCredentialsAuthProvider(config.TWITCH_CLIENT_ID, config.TWITCH_CLIENT_SECRET);
+      const authProvider = new AppTokenAuthProvider(config.TWITCH_CLIENT_ID, config.TWITCH_CLIENT_SECRET);
       this.twitchClient = new ApiClient({ authProvider });
     }
   }
@@ -71,9 +72,9 @@ export class TwitchService {
 
   private async listCurrentLiveStreams(channels: string[]): Promise<HelixStream[]> {
     if (this.twitchClient && channels.length > 0) {
-      const streams = await this.twitchClient.helix.streams.getStreams({
+      const streams = await this.twitchClient.streams.getStreams({
         userName: channels,
-        limit: clamp(channels.length, 1, 100).toString()
+        limit: clamp(channels.length, 1, 100)
       });
       return streams.data;
     } else {
