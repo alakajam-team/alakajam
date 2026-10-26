@@ -42,7 +42,7 @@ test.describe("Home page", () => {
     await expect(homePo.featuredPost).toHaveCount(0);
 
     await adminSettingsPo.visit({ edit: "featured_post_id" });
-    await adminSettingsPo.valueEditor.type(ADMIN_POST_WITHOUT_COMMENTS.toString());
+    await adminSettingsPo.valueInput.fill(ADMIN_POST_WITHOUT_COMMENTS.toString());
     await clickAndWaitForLoad(adminSettingsPo.saveButton);
     await expect(adminSettingsPo.settingRow("featured_post_id")).toContainText(ADMIN_POST_WITHOUT_COMMENTS.toString());
 
