@@ -114,7 +114,7 @@ sudo apt-get install man-db git vim apache2 make gcc g++ python2.7 postgresql bo
 sudo a2enmod headers proxy proxy_http reqtimeout rewrite ssl proxy_wstunnel
 sudo service apache2 restart
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-nvm install 14
+nvm install 22
 
 
 # Add Alakajam! user

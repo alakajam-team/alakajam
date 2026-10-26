@@ -16,7 +16,7 @@ In any case you are welcome to join us on [our Discord server](https://alakajam.
 
 * You are allowed to create an issue for sharing ideas and suggestions or even for just asking questions. Alternately you can also join our [Discord](https://alakajam.com/chat).
 * Issues labeled "[good first issue](https://github.com/alakajam-team/alakajam/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)" should be the most accessible to new contributors.
-* Please install the `eslint` Githook mentioned in the [Readme](https://github.com/alakajam-team/alakajam/blob/master/README.md) to ensure your code looks clean.
+* Please install the `eslint` Githook (run `githooks/install.sh`, or `githooks/install.bat` on Windows) to ensure your code looks clean. See the [Readme](https://github.com/alakajam-team/alakajam/blob/master/README.md) for the development setup.
 * Interested in following Alakajam! behind the scenes? [Join our mailing-list.](https://framalistes.org/sympa/arc/alakajam-team)
 
 ## What to do if...
