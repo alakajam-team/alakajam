@@ -123,8 +123,8 @@ export class CommentService {
    */
   public async isOwnAnonymousComment(comment: BookshelfModel, user: User): Promise<boolean> {
     if (comment.get("user_id") === constants.ANONYMOUS_USER_ID) {
-      const result = await db.knex("anonyous_comment_user")
-        .count()
+      const result = await db.knex("anonymous_comment_user")
+        .count("* as count")
         .where({
           comment_id: comment.get("id"),
           user_id: user.get("id"),
