@@ -267,7 +267,7 @@ async function getOrCreateSessionSecret() {
   return secret;
 }
 
-function createSessionStore() {
+export function createSessionStore(): any {
   const KnexSessionStore = (connectSessionKnex as any)(expressSession);
   return new KnexSessionStore({
     knex: db.knex as any,

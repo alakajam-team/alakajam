@@ -1,18 +1,21 @@
-import { BookshelfModel } from "bookshelf";
+import { EntryBookshelfModel } from "bookshelf";
 import * as luxon from "luxon";
 import settings from "server/core/settings";
-import entryService from "server/entry/entry.service";
-import themeService from "server/event/theme/theme.service";
-import commentService from "server/post/comment/comment.service";
-import eventService from "../event/event.service";
-import ratingService from "../event/ratings/rating.service";
-import postService from "../post/post.service";
-import userService from "../user/user.service";
+import { User } from "server/entity/user.entity";
 import constants from "./constants";
-import db from "./db";
+import {
+  createComment,
+  createEntry,
+  createEvent,
+  createPlatforms,
+  createPost,
+  createUser,
+  insertEntryVotes,
+  submitThemes
+} from "./db-seed-helpers";
 import enums from "./enums";
 import fileStorage from "./file-storage";
-import { createLuxonDate, formatDate } from "./formats";
+import { formatDate } from "./formats";
 import log from "./log";
 import {
   SETTING_ARTICLE_SIDEBAR,
@@ -29,16 +32,9 @@ import {
  * @returns {void}
  */
 export async function insertInitialData(samples: boolean | "nightly"): Promise<void> {
-  const knex = db.knex;
-
   // Mandatory admin account & important settings
 
-  await userService.register("administrator@example.com", "administrator", "administrator");
-  const adminUser = await userService.findByName("administrator");
-  adminUser.title = "Administrator";
-  adminUser.is_admin = "true";
-  adminUser.approbation_state = "approved";
-  await userService.save(adminUser);
+  const adminUser = await createUser("administrator", { title: "Administrator", admin: true });
 
   await settings.save(SETTING_EVENT_REQUIRED_ENTRY_VOTES, 1);
   await settings.save(SETTING_EVENT_THEME_ELIMINATION_MODULO, 5);
@@ -53,17 +49,11 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
 
     // Users
 
-    await userService.register("entrant@example.com", "entrant", "entrant");
-    const entrantUser = await userService.findByName("entrant");
-    entrantUser.title = "Entrant";
-    entrantUser.approbation_state = "approved";
-    entrantUser.details.body = "I am definitely **not** a robot.";
-    await userService.save(entrantUser);
+    const entrantUser = await createUser("entrant", { title: "Entrant", bio: "I am definitely **not** a robot." });
 
     // 1st event
 
-    const event1 = eventService.createEvent();
-    event1.set({
+    const event1 = await createEvent({
       title: "1st Alakajam",
       name: "1st-alakajam",
       status: enums.EVENT.STATUS.CLOSED,
@@ -73,15 +63,11 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
       status_entry: enums.EVENT.STATUS_ENTRY.OFF,
       status_results: enums.EVENT.STATUS_RESULTS.DISABLED,
     });
-    await event1.save();
-    let userEntry = await entryService.createEntry(entrantUser, event1);
-    userEntry.set("title", "Old Game");
-    await userEntry.save();
+    await createEntry(entrantUser, { title: "Old Game", event: event1, unpublished: true });
 
     // 2nd event
 
-    const event2 = eventService.createEvent();
-    event2.set({
+    const event2 = await createEvent({
       title: "2nd Alakajam",
       name: "2nd-alakajam",
       status: enums.EVENT.STATUS.OPEN,
@@ -95,77 +81,51 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
         date: luxon.DateTime.local().plus({ days: 1 }).toJSDate(),
         enabled: false,
       },
-    });
-    await event2.save();
-    const event2Details = event2.related<BookshelfModel>("details");
-    event2Details.set({
+    }, {
       category_titles: ["Overall", "Graphics", "Audio", "Gameplay", "Originality", "Theme"],
     });
-    await event2Details.save();
 
     await settings.save(SETTING_FEATURED_EVENT_NAME, "2nd-alakajam");
 
-    await themeService.saveThemeSubmissions(entrantUser as any, event2, [
-      { title: "Alone" },
-      { title: "Evolution" },
-      { title: "Two buttons" },
-    ]);
+    await submitThemes(entrantUser, event2, ["Alone", "Evolution", "Two buttons"]);
 
-    const adminEntry = await entryService.createEntry(adminUser, event2);
-    adminEntry.set("title", "Super Game");
-    await adminEntry.save();
+    await createEntry(adminUser, { title: "Super Game", event: event2, unpublished: true });
+    const userEntry = await createEntry(entrantUser, { title: "Game 1", event: event2 });
 
-    userEntry = await entryService.createEntry(entrantUser, event2);
-    userEntry.set("title", "Game 1");
-    userEntry.set("published_at", createLuxonDate().toJSDate());
-    await userEntry.save();
-
+    const otherEntrants: Array<{ user: User; entry: EntryBookshelfModel }> = [];
     for (let i = 2; i <= 10; i++) {
-      await userService.register(`entrant${i}@example.com`, "entrant" + i, "entrant" + i);
-      const otherUser = await userService.findByName("entrant" + i);
-      const otherEntry = await entryService.createEntry(otherUser, event2);
-      otherEntry.set("title", "Game " + i);
-      otherEntry.set("published_at", createLuxonDate().toJSDate());
-      await otherEntry.save();
+      const user = await createUser("entrant" + i);
+      otherEntrants.push({ user, entry: await createEntry(user, { title: "Game " + i, event: event2 }) });
     }
-    await insertSampleVotes(event2, 2, 10);
+    await insertEntryVotes(event2, randomVotes(otherEntrants));
 
-    let post = await postService.createPost(entrantUser as any, event2.get("id"));
-    post.set({
+    await createPost(entrantUser, {
       title: "I'm in!",
       body: "This is my second game and I'm really excited.",
-      event_id: event2.get("id"),
-      entry_id: userEntry.get("id"),
-      published_at: createLuxonDate().toJSDate(),
+      event: event2,
+      entry: userEntry,
     });
-    await post.save();
 
-    post = await postService.createPost(adminUser as any, event2.get("id"));
-    post.set({
+    const announcement = (samples === "nightly") ? {
+      title: "Nightly: " + formatDate(Date.now(), undefined, constants.DATE_FORMAT),
+      body: (await fileStorage.read("deployment/NIGHTLY_POST.md")).toString(),
+    } : {
       title: "Event started!",
       body: "The theme is `You are not alone`. Have fun!",
-      event_id: event2.get("id"),
-      special_post_type: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
-      published_at: createLuxonDate().toJSDate(),
+    };
+    const post = await createPost(adminUser, {
+      ...announcement,
+      event: event2,
+      specialPostType: constants.SPECIAL_POST_TYPE_ANNOUNCEMENT,
     });
-    if (samples === "nightly") {
-      const nightlyPostBuffer = await fileStorage.read("deployment/NIGHTLY_POST.md");
-      post.set({
-        title: "Nightly: " + formatDate(Date.now(), undefined, constants.DATE_FORMAT),
-        body: nightlyPostBuffer.toString(),
-      });
-    }
-    await post.save();
     event2.set("status_rules", post.get("id"));
     await event2.save();
 
-    await commentService.createComment(entrantUser, post, "I'm in!");
-    await postService.refreshCommentCount(post);
+    await createComment(entrantUser, post, "I'm in!");
 
     // Planned 3rd event
 
-    const event3 = eventService.createEvent();
-    event3.set({
+    await createEvent({
       title: "3rd Alakajam",
       name: "3rd-alakajam",
       status: enums.EVENT.STATUS.PENDING,
@@ -174,63 +134,28 @@ export async function insertInitialData(samples: boolean | "nightly"): Promise<v
       status_entry: enums.EVENT.STATUS_ENTRY.OFF,
       status_results: enums.EVENT.STATUS_RESULTS.OFF,
     });
-    await event3.save();
 
     // Platforms
-    const platformNames = [
-      "Linux",
-      "Mac",
-      "Windows",
-      "Web",
-      "Mobile",
-      "Retro",
-    ];
-    const now = knex.fn.now();
-    await knex("platform").insert(platformNames.map((name) => ({
-      name,
-      created_at: now,
-      updated_at: now,
-    })));
+
+    await createPlatforms(["Linux", "Mac", "Windows", "Web", "Mobile", "Retro"]);
 
     log.info("Samples inserted");
   }
 }
 
 /**
- * Inserts random votes between the sample users "entrant<first>" to "entrant<last>", in bulk
- * (going through the rating service for each vote would refresh the ratings & karma each time).
+ * Makes each entrant rate the entries of the next 10 entrants (looping), with random ratings.
  */
-async function insertSampleVotes(event: BookshelfModel, first: number, last: number): Promise<void> {
-  const users: BookshelfModel[] = [];
-  const entries: BookshelfModel[] = [];
-  for (let i = first; i <= last; i++) {
-    const user = await userService.findByName("entrant" + i);
-    users[i] = user as any;
-    entries[i] = await entryService.findUserEntryForEvent(user as any, event.get("id"));
-  }
-
-  const knex = db.knex;
-  const now = knex.fn.now();
-  const votes = new Map<string, Record<string, any>>();
-  for (let i = first; i <= last; i++) {
+function randomVotes(entrants: Array<{ user: User; entry: EntryBookshelfModel }>) {
+  const votes = new Map<string, { user: User; entry: EntryBookshelfModel; ratings: number[] }>();
+  entrants.forEach(({ user }, i) => {
     for (let j = 1; j <= 10; j++) {
-      const targetEntry = entries[Math.max(first, (i + j) % 11)];
-      const vote: Record<string, any> = {
-        user_id: users[i].get("id"), entry_id: targetEntry.get("id"), event_id: event.get("id"),
-        created_at: now, updated_at: now,
-      };
-      for (let k = 1; k <= 6; k++) {
-        vote["vote_" + k] = 3 + Math.floor(Math.random() * 4);
-      }
-      votes.set(vote.user_id + "_" + vote.entry_id, vote);
+      const { entry } = entrants[Math.max(0, (i + j + 2) % 11 - 2)];
+      const ratings = [1, 2, 3, 4, 5, 6].map(() => 3 + Math.floor(Math.random() * 4));
+      votes.set(user.id + "_" + entry.get("id"), { user, entry, ratings });
     }
-  }
-  await knex("entry_vote").insert([...votes.values()]);
-
-  for (const entry of entries.filter(Boolean)) {
-    await ratingService.refreshEntryRatings(entry as any);
-    await ratingService.refreshEntryKarma(entry as any, event);
-  }
+  });
+  return [...votes.values()];
 }
 
 function defaultArticleSidebar() {

@@ -5,7 +5,7 @@ This folder contains regression tests written using [Playwright](https://playwri
 * `tests/`: the test specs
 * `support/`: page objects and helpers. Specs import `test` and `expect` from `support/test.ts`, which provides the page objects as fixtures
 * `fixtures/`: static files used by tests
-* `e2e.sqlite`, `uploads/`: data of the end-to-end server
+* `tmp/data/`: data of the end-to-end server (generated, see below)
 
 ### Launch
 
@@ -17,6 +17,5 @@ Build the website first with `npm run build`, then:
 
 To launch the end-to-end server by hand, run `npm run start:e2e`.
 The e2e website can then be reached directly at http://localhost:8001.
-You can interact with it to add any data needed to run tests.
 
 After a failure, `npx playwright show-report e2e/playwright-report` shows traces and screenshots.

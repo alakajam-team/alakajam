@@ -98,7 +98,7 @@ export class TeamService {
    * @param {Bookshelf.Model} entry the entry model.
    * @param {string[]} userIds the desired member user IDs.
    */
-  public setTeamMembers(currentUser: User, entry: EntryBookshelfModel, userIds: string[]): Promise<SetTeamMembersResult> {
+  public setTeamMembers(currentUser: User, entry: EntryBookshelfModel, userIds: number[]): Promise<SetTeamMembersResult> {
     return db.transaction(async (transaction) => {
       let numRemoved = 0;
       let numAdded = 0;
