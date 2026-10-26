@@ -89,6 +89,12 @@ export interface CommonLocals {
   readonly inlineStyles: string[];
 
   /**
+   * Whether to inject the development live reload client script.
+   * Available everywhere.
+   */
+  readonly liveReload?: boolean;
+
+  /**
    * Generates a JSX element to be inserted in all forms for CSRF protection.
    */
   readonly csrfToken: () => JSX.Element;

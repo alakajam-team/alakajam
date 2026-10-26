@@ -15,7 +15,6 @@ module.exports = {
   DB_NAME: '',
   DB_SQLITE_FILENAME: 'data/db.sqlite',
 
-  DEBUG_DISABLE_STARTUP_BUILD: true,
   DEBUG_INSERT_SAMPLES: false,
   DEBUG_DISABLE_CACHE: false, 
   DEBUG_REFRESH_BROWSER: true, 

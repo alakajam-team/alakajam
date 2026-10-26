@@ -13,10 +13,9 @@ module.exports = {
   DB_NAME: '',
   DB_SQLITE_FILENAME: 'cypress/e2e.sqlite',
 
-  DEBUG_DISABLE_STARTUP_BUILD: true,
   DEBUG_INSERT_SAMPLES: false,
   DEBUG_DISABLE_CACHE: true, 
-  DEBUG_REFRESH_BROWSER: true, 
+  DEBUG_REFRESH_BROWSER: false, 
   DEBUG_ADMIN: true, 
   DEBUG_TEST_MAILER: true, 
   DEBUG_ARTICLES: true, 
