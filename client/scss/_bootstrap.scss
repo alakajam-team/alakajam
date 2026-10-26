@@ -1,0 +1,5 @@
+// Bootstrap 4 isn't compatible with @use (it relies on global variables and mixins),
+// so it is the only place still relying on @import.
+
+@import "./bootstrap-custom.scss";
+@import "node_modules/bootstrap/scss/bootstrap";

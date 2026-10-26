@@ -2,9 +2,11 @@
  * Event tournament styles
  */
 
+@use "variables";
+
  .tournament-ranking {
   font-weight: bold;
-  color: $text;
+  color: variables.$text;
 }
 
 .tournament-user-banner {

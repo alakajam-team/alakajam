@@ -1,4 +1,6 @@
 @use "sass:color";
+@use "variables";
+@use "breakpoints";
 
 $homeNavbarHeight: 50px;
 $homeNavbarMutedColor: #FFFFFFAA;
@@ -8,7 +10,7 @@ $arrowSize: 9.5px;
   margin: -20px 0 20px 0;
   padding: 10px;
   font-size: 1.2rem;
-  background-color: $main-lighter;
+  background-color: variables.$main-lighter;
 
   &.home-welcome--post {
     background: url("/static/images/default-background.png") center/cover no-repeat;
@@ -29,7 +31,7 @@ $arrowSize: 9.5px;
   }
 
   &__brand {
-    @include alt-font;
+    @include variables.alt-font;
     display: inline;
     letter-spacing: 0px;
   }
@@ -39,7 +41,7 @@ $arrowSize: 9.5px;
     margin-left: 5px;
     
     &:hover {
-      color: $text;
+      color: variables.$text;
       text-decoration: underline;
     }
   }
@@ -55,7 +57,7 @@ $arrowSize: 9.5px;
 
 .event-jumbotron,
 .home-jumbotron {
-  margin-top: -$body-margin;
+  margin-top: variables.$body-margin * -1;
   padding: 20px 0;
   background-size: cover;
   overflow: hidden;
@@ -87,7 +89,7 @@ $arrowSize: 9.5px;
   }
 
   & .card.bg-jumbotron {
-    background-color: color.change($bg, $alpha: .9);
+    background-color: color.change(variables.$bg, $alpha: .9);
   }
 
   &__post {
@@ -95,7 +97,7 @@ $arrowSize: 9.5px;
 
     .card {
       backdrop-filter: blur(10px);
-      background-color: color.change($bg, $alpha: .8);
+      background-color: color.change(variables.$bg, $alpha: .8);
     }
 
     & .post {
@@ -115,10 +117,10 @@ $arrowSize: 9.5px;
       font-size: 1.2rem;
 
       & a {
-        color: $text;
+        color: variables.$text;
 
         &:hover {
-          color: $alt-light;
+          color: variables.$alt-light;
         }
       }
     }
@@ -130,14 +132,14 @@ $arrowSize: 9.5px;
 }
 
 .jumbotron-invite {
-  background-color: $alt;
+  background-color: variables.$alt;
   cursor: pointer;
   color: white;
   margin-bottom: 15px;
   padding: 15px 20px;
 
   &:hover {
-    background-color: $alt-dark;
+    background-color: variables.$alt-dark;
   }
 
   &__title {
@@ -161,7 +163,7 @@ $arrowSize: 9.5px;
     float: right;
     width: 296px;
 
-    @include media-breakpoint-down(lg) {
+    @include breakpoints.media-breakpoint-down(lg) {
       float: none;
     }
   }

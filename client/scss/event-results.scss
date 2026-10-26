@@ -1,4 +1,6 @@
 @use "sass:list";
+@use "variables";
+@use "breakpoints";
 
 .results-links {
   margin-bottom: 10px;
@@ -7,9 +9,9 @@
     font-size: 1.5rem;
     font-weight: bold;
     padding: 8px;
-    background-color: $main;
+    background-color: variables.$main;
 
-    @include media-breakpoint-up(sm) {
+    @include breakpoints.media-breakpoint-up(sm) {
       padding: 8px 30px;
     }
   }
@@ -17,16 +19,16 @@
   &__category {
     font-size: 1.2rem;
     padding: 8px;
-    background-color: $main;
+    background-color: variables.$main;
 
-    @include media-breakpoint-up(sm) {
+    @include breakpoints.media-breakpoint-up(sm) {
       padding: 8px 15px;
     }
   }
 
   &__division, &__category {
     &.active, &.active:hover, &.active:active, &.active:focus {
-      background-color: $main-dark;
+      background-color: variables.$main-dark;
       border-color: #3bafda;
       cursor: default;
     }
@@ -34,7 +36,7 @@
 }
 
 .results-podium {
-  @include shadow;
+  @include variables.shadow;
   background-color: #DDD;
   margin-bottom: 20px;
 
@@ -47,11 +49,11 @@
   }
 
   &__title {
-    @include alt-font;
+    @include variables.alt-font;
     font-weight: normal;
     font-size: 2.0rem;
     text-align: center;
-    background-color: $alt;
+    background-color: variables.$alt;
     color: white;
     padding: 10px;
     margin-bottom: 0;
@@ -66,7 +68,7 @@
       color: white;
 
       &:hover {
-        background-color: $alt-dark;
+        background-color: variables.$alt-dark;
       }
 
       &::after {
@@ -76,7 +78,7 @@
   }
 
   &__counter {
-    @include main-font;
+    @include variables.main-font;
     display: block;
     font-size: 1.4rem;
     font-weight: bold;
@@ -102,7 +104,7 @@
       margin: 10px 0 15px 0;
     }
     &::after {
-      @include sprite4;
+      @include variables.sprite4;
       background-position: -256px -64px;
       content: '';
       display: block;
@@ -141,7 +143,7 @@
     }
 
     & .award-label {
-      @include alt-font;
+      @include variables.alt-font;
       position: absolute;
       margin-top: -10px;
       z-index: 1;
@@ -207,7 +209,7 @@
     line-height: 50px;
     vertical-align: middle;
     font-size: 16px;
-    color: $neutral-dark;
+    color: variables.$neutral-dark;
     
     @media (max-width: 768px) {
       margin: 0 15px 20px 15px;  
@@ -227,13 +229,13 @@
 
 /* Results on entry page */
 .entry-results {
-  @include shadow;
-  background-color: $borders;
+  @include variables.shadow;
+  background-color: variables.$borders;
   margin-bottom: 20px;
 
   &__header {
     padding: 10px;
-    background-color: $main;
+    background-color: variables.$main;
     color: white;
   }
 
@@ -264,7 +266,7 @@
   }
 
   &__category-medal {
-    @include sprite2;
+    @include variables.sprite2;
     display: inline-block;
     height: 32px;
     width: 32px;

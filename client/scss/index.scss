@@ -2,42 +2,41 @@
  * Bootstrap
  */
 
-@import "./bootstrap-custom.scss";
-@import "node_modules/bootstrap/scss/bootstrap";
-@import "node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min";
-@import "node_modules/tempusdominus-bootstrap-4/build/css/tempusdominus-bootstrap-4.min";
+@use "bootstrap";
+@use "node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min";
+@use "node_modules/tempusdominus-bootstrap-4/build/css/tempusdominus-bootstrap-4.min";
 
 /**
  * Other libraries
  */
 
-@import "node_modules/easymde/dist/easymde.min";
-@import "node_modules/select2/dist/css/select2.min";
-@import "node_modules/@fortawesome/fontawesome-free/css/all.min";
-@import "node_modules/icheck/skins/flat/_all";
-@import "node_modules/chartist/dist/chartist";
-@import "node_modules/flipclock/dist/flipclock";
-@import "./lib/animate";
-@import "./flipclock-custom.scss";
-@import "./select2-custom.scss";
+@use "node_modules/easymde/dist/easymde.min";
+@use "node_modules/select2/dist/css/select2.min";
+@use "node_modules/@fortawesome/fontawesome-free/css/all.min" as fontawesome;
+@use "node_modules/icheck/skins/flat/_all" as icheck;
+@use "node_modules/chartist/dist/chartist";
+@use "node_modules/flipclock/dist/flipclock";
+@use "lib/animate";
+@use "flipclock-custom";
+@use "select2-custom";
 
 /**
  * Site styling
  */
 
-@import "./general.scss";
-@import "./navbar.scss";
-@import "./home.scss";
-@import "./post.scss";
-@import "./user.scss";
-@import "./event.scss";
-@import "./event-themes.scss";
-@import "./event-tournament.scss";
-@import "./event-results.scss";
-@import "./entry.scss";
-@import "./user-register.scss";
+@use "general";
+@use "navbar";
+@use "home";
+@use "post";
+@use "user";
+@use "event";
+@use "event-themes";
+@use "event-tournament";
+@use "event-results";
+@use "entry";
+@use "user-register";
 
 /**
  * IE Hacks
  */
-@import "./ie.scss";
+@use "ie";

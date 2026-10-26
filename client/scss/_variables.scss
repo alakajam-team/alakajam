@@ -1,6 +1,6 @@
 @use "sass:color";
 
-/* Main colors */
+// Main colors
 
 $bg: #eee;
 $borders: #dadada;
@@ -36,7 +36,7 @@ $neutral-lightest: #e6e6e6;
 
 $danger: #dc3545;
 
-/* Mod / Admin colors */
+// Mod / Admin colors
 
 $moderation: $neutral;
 $moderation-light: $neutral-lighter;
@@ -44,11 +44,11 @@ $moderation-lightest: $neutral-lightest;
 $moderation-dark: $neutral-light;
 $moderation-text: color.change(white, $alpha: .9);
 
-/* Shared sizes */
+// Shared sizes
 
 $body-margin: 20px;
 
-/* Mixins */
+// Mixins
 
 @mixin main-font {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;

@@ -1,0 +1,28 @@
+@use "sass:map";
+
+// Same breakpoints as Bootstrap 4, as a module (Bootstrap's own mixins can't be loaded through @use).
+
+$breakpoints: (
+  "sm": 576px,
+  "md": 768px,
+  "lg": 992px,
+  "xl": 1200px,
+);
+
+@mixin media-breakpoint-up($name) {
+  @media (min-width: map.get($breakpoints, $name)) {
+    @content;
+  }
+}
+
+// Like Bootstrap 4: the max-width is just below the *next* breakpoint
+@mixin media-breakpoint-down($name) {
+  $next: (
+    "sm": "md",
+    "md": "lg",
+    "lg": "xl",
+  );
+  @media (max-width: map.get($breakpoints, map.get($next, $name)) - .02px) {
+    @content;
+  }
+}
