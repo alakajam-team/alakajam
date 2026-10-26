@@ -3,6 +3,7 @@
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
+import { Relation } from "./relation";
 import { User } from "./user.entity";
 
 @Entity()
@@ -38,7 +39,7 @@ export class Comment extends BookshelfCompatibleEntity {
 
   @OneToOne(() => User, (user) => user.comments)
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
 
   /**
    * Parent comment ID
@@ -48,7 +49,7 @@ export class Comment extends BookshelfCompatibleEntity {
 
   @OneToOne(() => Comment, undefined, { nullable: true })
   @JoinColumn({ name: "parent_id" })
-  public comment: Comment;
+  public comment: Relation<Comment>;
 
   /**
    * Comment body

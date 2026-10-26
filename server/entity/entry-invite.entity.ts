@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { ColumnTypes } from "./column-types";
 import { Entry } from "./entry.entity";
@@ -17,7 +18,7 @@ export class EntryInvite extends TimestampedEntity {
 
   @ManyToOne(() => Entry, (entry) => entry.invites)
   @JoinColumn({ name: "entry_id" })
-  public entry: Entry;
+  public entry: Relation<Entry>;
 
   /**
    * User ID of the person invited

@@ -1,5 +1,6 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn, OneToOne, JoinColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { Entry } from "./entry.entity";
 
@@ -14,7 +15,7 @@ export class EntryDetails extends TimestampedEntity {
 
   @OneToOne(() => Entry, (entry) => entry.details)
   @JoinColumn({ name: "entry_id" })
-  public entry: Entry;
+  public entry: Relation<Entry>;
 
   /**
    * Detailed description

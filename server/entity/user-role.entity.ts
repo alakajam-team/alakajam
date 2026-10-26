@@ -3,6 +3,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Index } from "typeorm";
 import { NodeType, PermissionType, ColumnTypes } from "./column-types";
 import { Event } from "./event.entity";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
 
@@ -22,7 +23,7 @@ export class UserRole extends TimestampedEntity {
 
   @ManyToOne(() => User, (user) => user.roles)
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
 
   @Column(ColumnTypes.varchar())
   public user_name: string;
@@ -46,7 +47,7 @@ export class UserRole extends TimestampedEntity {
 
   @ManyToOne((type) => Event)
   @JoinColumn({ name: "event_id" })
-  public event: Event;
+  public event: Relation<Event>;
 
   public dependents(): Array<keyof this> {
     return [];

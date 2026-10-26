@@ -4,6 +4,7 @@ import { Entry } from "./entry.entity";
 import { EventDetails } from "./event-details.entity";
 import { EventParticipation } from "./event-participation.entity";
 import { EventPreset } from "./event-preset.entity";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 
 export type EventDivisions = Record<string, string>;
@@ -38,7 +39,7 @@ export class Event extends TimestampedEntity {
   public title: string;
 
   @OneToOne(() => EventDetails, (eventDetails) => eventDetails.event, { cascade: true })
-  public details: EventDetails;
+  public details: Relation<EventDetails>;
 
   /**
    * Arbitrary dates string used for display only
@@ -66,7 +67,7 @@ export class Event extends TimestampedEntity {
 
   @ManyToOne(() => EventPreset, undefined, { nullable: true })
   @JoinColumn({ name: "event_preset_id" })
-  public eventPreset: EventPreset;
+  public eventPreset: Relation<EventPreset>;
 
   /**
    * General status

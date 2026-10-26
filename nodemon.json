@@ -1,0 +1,7 @@
+{
+  "watch": ["server", "config.js"],
+  "ext": "ts,tsx,js,json",
+  "ignore": ["server/**/*.spec.ts", "server/migrations", "data", "dist", "client", "cypress"],
+  "exec": "node -r @swc-node/register -r tsconfig-paths/register server/index.ts",
+  "delay": 300
+}

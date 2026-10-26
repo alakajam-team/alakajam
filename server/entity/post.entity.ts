@@ -4,6 +4,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } 
 import { ColumnTypes } from "./column-types";
 import { Entry } from "./entry.entity";
 import { Event } from "./event.entity";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
 
@@ -21,7 +22,7 @@ export class Post extends TimestampedEntity {
 
   @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn({ name: "author_user_id" })
-  public author: User;
+  public author: Relation<User>;
 
   /**
    * Name (used in the URL)
@@ -40,14 +41,14 @@ export class Post extends TimestampedEntity {
 
   @ManyToOne(() => Entry)
   @JoinColumn({ name: "entry_id" })
-  public entry: Entry;
+  public entry: Relation<Entry>;
 
   @Column({ nullable: true })
   public event_id: number;
 
   @ManyToOne(() => Event)
   @JoinColumn({ name: "event_id" })
-  public event: Event;
+  public event: Relation<Event>;
 
   /**
    * Post body
