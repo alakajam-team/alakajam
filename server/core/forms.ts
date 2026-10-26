@@ -10,7 +10,6 @@ import showdown from "showdown";
 import slug from "slug";
 import striptags from "striptags";
 import TurndownService from "turndown";
-import * as url from "url";
 import * as validator from "validator";
 import truncateHtml from "truncate-html";
 import config from "./config";
@@ -85,8 +84,12 @@ const sanitizeHtmlOptions = {
   },
   exclusiveFilter(frame) {
     if (frame.tag === "iframe") {
-      const srcUrl = url.parse(frame.attribs.src);
-      return constants.ALLOWED_IFRAME_HOSTS.indexOf(srcUrl.host) === -1;
+      try {
+        const srcUrl = new URL(frame.attribs.src);
+        return constants.ALLOWED_IFRAME_HOSTS.indexOf(srcUrl.host) === -1;
+      } catch {
+        return true; // Invalid or relative URL
+      }
     } else {
       return false;
     }

@@ -11,7 +11,6 @@ import * as configUtils from "server/core/config";
 import enums from "server/core/enums";
 import log from "server/core/log";
 import { User } from "server/entity/user.entity";
-import * as url from "url";
 import entryPicturesService from "../entry-pictures.service";
 import entryService from "../entry.service";
 import { EntryImporter, EntryImporterError, EntryReference } from "./entry-import";
@@ -118,7 +117,7 @@ export class EntryUmportService {
         // Choose temporary path
         let temporaryPath: string | boolean = false;
         try {
-          const extension = path.extname(url.parse(entryDetails.picture).pathname) || "";
+          const extension = path.extname(new URL(entryDetails.picture).pathname) || "";
           temporaryPath = path.join(configUtils.dataPathAbsolute(), "tmp", entryReference.id + extension);
         } catch (e) {
           log.warn("Failed to detect picture file name of " + entryDetails.picture, e);
