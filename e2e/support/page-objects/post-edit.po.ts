@@ -1,5 +1,6 @@
 import { Page } from "@playwright/test";
 import { CodeMirror } from "../components/code-mirror";
+import { Select2 } from "../components/select2";
 
 export default class PostEditPO {
 
@@ -8,6 +9,10 @@ export default class PostEditPO {
 
   public async visit({ postId }: { postId: number | string }) {
     await this.page.goto(`/post/${postId}/edit`);
+  }
+
+  public async visitCreate() {
+    await this.page.goto("/post/create");
   }
 
   // Header
@@ -24,6 +29,10 @@ export default class PostEditPO {
 
   public get relatedEventDropdown() {
     return this.page.locator("select[name=event-id]");
+  }
+
+  public get relatedEventSelect2Dropdown() {
+    return new Select2(this.page, this.relatedEventDropdown, "dropdown");
   }
 
   public get editor() {

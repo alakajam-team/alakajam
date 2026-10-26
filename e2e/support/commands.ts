@@ -1,6 +1,7 @@
 import { APIRequestContext, expect, Locator, Page } from "@playwright/test";
 import HeaderPO from "./page-objects/header.po";
 import LoginPO from "./page-objects/login.po";
+import PostEditPO from "./page-objects/post-edit.po";
 
 export async function restoreDB(request: APIRequestContext) {
   const response = await request.post("/admin/dev", {
@@ -42,4 +43,30 @@ export async function clickAndWaitForLoad(locator: Locator) {
     locator.page().waitForEvent("load"),
     locator.click()
   ]);
+}
+
+/**
+ * Creates and publishes a post as the current user.
+ * @param options.eventTitle the related event (otherwise the featured event)
+ * @returns the path of the created post
+ */
+export async function createPost(page: Page, options: { title: string; body: string; eventTitle?: string }): Promise<string> {
+  const postEditPo = new PostEditPO(page);
+  await postEditPo.visitCreate();
+  await postEditPo.titleInput.fill(options.title);
+  await postEditPo.editor.type(options.body);
+  if (options.eventTitle) {
+    await postEditPo.relatedEventSelect2Dropdown.choose(options.eventTitle);
+  }
+  await clickAndWaitForLoad(postEditPo.publishButton);
+  await expect(page).toHaveURL(/\/post\/\d+/);
+  return new URL(page.url()).pathname;
+}
+
+/**
+ * Expects a page to respond with a 404 error.
+ */
+export async function expectNotFound(page: Page, url: string) {
+  const response = await page.goto(url);
+  expect(response?.status(), `visiting ${url}`).toBe(404);
 }
