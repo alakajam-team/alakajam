@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 
+import { describe, it } from "vitest";
 import { expect } from "chai";
 import { DateTime } from "luxon";
 import userTimezoneService from "./user-timezone.service";

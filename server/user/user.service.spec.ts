@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 
+import { afterAll, beforeAll, beforeEach, describe, it } from "vitest";
 import { expect } from "chai";
 import constants from "server/core/constants";
 import { EventParticipation } from "server/entity/event-participation.entity";
@@ -10,10 +11,8 @@ import { closeTestDB, DB_TEST_TIMEOUT, startTestDB } from "server/testing/testin
 import { getRepository } from "typeorm";
 import userService from "./user.service";
 
-describe("User service", function() {
-  this.timeout(DB_TEST_TIMEOUT);
-
-  before(async () => {
+describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
+  beforeAll(async () => {
     await startTestDB();
   });
 
@@ -21,7 +20,7 @@ describe("User service", function() {
     // XXX Date should be reset before each test
   });
 
-  after(async () => {
+  afterAll(async () => {
     await closeTestDB();
   });
 

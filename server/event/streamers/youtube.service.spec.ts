@@ -1,3 +1,4 @@
+import { describe, it } from "vitest";
 import { expect } from "chai";
 import { UserDetails } from "server/entity/user-details.entity";
 import { User } from "server/entity/user.entity";

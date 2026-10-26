@@ -131,3 +131,8 @@ npm run knex -- <command>
 # Start production server (requires build first)
 npm run start:production
 ```
+
+## Best practices
+
+* Stay on the user's branch unless specified otherwise or working in Cloud mode. If anything looks fishy request a confirmation only.
+* Files read from top to down to tell a story: public methods at the top, their private utilities come next.

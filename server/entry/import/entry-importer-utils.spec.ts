@@ -1,3 +1,4 @@
+import { describe, it } from "vitest";
 import { expect } from "chai";
 import enums from "server/core/enums";
 import { capitalizeAllWords, guessPlatforms } from "./entry-importer-utils";

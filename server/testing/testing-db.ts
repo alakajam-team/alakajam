@@ -4,11 +4,15 @@ import config from "server/core/config";
 import db from "server/core/db";
 import { insertInitialData } from "server/core/db-init";
 import dbTypeorm from "server/core/db-typeorm";
+import "./testing-db-config"; // Override the DB config
 
 export const DB_TEST_TIMEOUT = 5000;
 
 export const startTestDB = async (): Promise<void> => {
-  require("server/testing/testing-db-config");
+  if (!config.DB_SQLITE_FILENAME) {
+    throw new Error("DB_SQLITE_FILENAME is not configured");
+  }
+
   mkdirpSync(path.dirname(config.DB_SQLITE_FILENAME));
 
   await db.emptyDatabase(); // Abort initial connection as it uses the default config due to module loading

@@ -1,9 +1,8 @@
-import * as path from "path";
 import { Connection, ConnectionOptions, createConnection, getConnection } from "typeorm";
 import { BaseConnectionOptions } from "typeorm/connection/BaseConnectionOptions";
 import { LoggerOptions } from "typeorm/logger/LoggerOptions";
+import { entities } from "../entity";
 import config from "./config";
-import constants from "./constants";
 import dbTypeormLogger from "./db-typeorm-logger";
 import log from "./log";
 
@@ -13,10 +12,6 @@ import log from "./log";
  * /!\ Work in progress. The goal is to progressively migrate from Bookshelf to TypeORM.
  */
 export class DB {
-
-  private readonly ENTITIES_PATH = (__filename.endsWith(".js"))
-    ? path.resolve(constants.ROOT_PATH, "dist/server/entity/*.entity.js")
-    : path.resolve(constants.ROOT_PATH, "server/entity/*.entity.ts");
 
   private connectionInstance: Connection = null;
 
@@ -47,7 +42,7 @@ export class DB {
     const baseConnectionOptions: BaseConnectionOptions = {
       type: null,
       synchronize: false,
-      entities: [this.ENTITIES_PATH],
+      entities,
       logging,
       logger: logging ? dbTypeormLogger : undefined,
       ...options

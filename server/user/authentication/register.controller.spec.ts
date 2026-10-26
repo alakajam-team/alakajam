@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 
+import { beforeAll, describe, it } from "vitest";
 import { expect } from "chai";
 import { isAlertPresent } from "server/testing/assertions";
 import { mockRequest, mockResponse } from "server/testing/mocks";
@@ -18,7 +19,7 @@ describe("Register controller", () => {
     userServiceStub as any,
     userTimeZoneServiceStub as any);
 
-  before(() => {
+  beforeAll(() => {
     userTimeZoneServiceStub.getAllTimeZones.returns(Promise.resolve(TIMEZONES));
   });
 

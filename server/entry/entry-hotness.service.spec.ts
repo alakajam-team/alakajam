@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 
+import { describe, it } from "vitest";
 import { BookshelfModel, EntryBookshelfModel } from "bookshelf";
 import { expect } from "chai";
 import { createLuxonDate } from "server/core/formats";

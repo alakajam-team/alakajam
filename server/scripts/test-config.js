@@ -3,6 +3,8 @@ module.exports = {
   ROOT_URL: 'http://localhost:8000',
   STATIC_ROOT_URL: false,
   SECURE_SESSION_COOKIES: false,
+  READ_ONLY_MODE: false,
+  USER_REDIRECTS: "",
   
   DATA_PATH: 'data/',
 
@@ -28,4 +30,5 @@ module.exports = {
   DEBUG_TRACE_SLOW_SQL: -1, 
   DEBUG_TRACE_REQUESTS: false, 
   DEBUG_TRACE_SLOW_REQUESTS: -1, 
+  DEBUG_DISABLE_CAPTCHA: true,
 }
