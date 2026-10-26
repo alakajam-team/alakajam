@@ -44,6 +44,31 @@ export default class EventEditPO {
     return this.page.locator(`[for=status-tournament-${status}]`);
   }
 
+  /**
+   * Sets a status field to a post ID, through the radio with a "Post ID" text field.
+   * Rules are edited from the Appearance tab, other statuses from the State tab.
+   */
+  public async setStatusToPostId(status: "status-rules" | "status-theme" | "status-results", postId: number | string) {
+    if (status === "status-rules") {
+      await this.appearanceTab.click();
+    } else {
+      await this.stateTab.click();
+    }
+    await this.statusPostIdRadio(status).click();
+    const textField = this.statusPostIdField(status);
+    await textField.fill(postId.toString());
+    await textField.dispatchEvent("change"); // Copies the text field value into the radio value
+  }
+
+  public statusPostIdRadio(status: "status-rules" | "status-theme" | "status-results") {
+    return this.page.locator(`label[for^=${status}]`, { has: this.statusPostIdField(status) })
+      .locator(".iradio_flat"); // Radio styled by iCheck
+  }
+
+  public statusPostIdField(status: "status-rules" | "status-theme" | "status-results") {
+    return this.page.locator(`.js-radio-text-field[data-target^=${status}]`);
+  }
+
   // Common
 
   public get saveButton() {

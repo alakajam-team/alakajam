@@ -45,5 +45,23 @@ export default class UserProfilePO {
     return this.page.locator(".tab-content");
   }
 
+  public get alakajamEntriesTitles() {
+    return this.page.locator("#entries .entry-thumb__title");
+  }
+
+  public get externalEntriesTitles() {
+    return this.page.locator("#entries-ext .entry-thumb__title");
+  }
+
+  public get postsTitles() {
+    return this.page.locator("#posts .post__title");
+  }
+
+  public post(title: string) {
+    return this.page.locator("#posts .post", {
+      has: this.page.locator(".post__title", { hasText: title })
+    });
+  }
+
 }
 

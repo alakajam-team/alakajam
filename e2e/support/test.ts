@@ -1,4 +1,5 @@
 import { expect, test as base } from "@playwright/test";
+import AdminSettingsPO from "./page-objects/admin-settings.po";
 import DashboardPO from "./page-objects/dashboard.po";
 import EntryEditPO from "./page-objects/entry-edit.po";
 import EntryHighscoreSubmitPO from "./page-objects/entry-highscore-submit.po";
@@ -7,6 +8,7 @@ import EventEditPO from "./page-objects/event-edit.po";
 import EventPO from "./page-objects/event.po";
 import GamesPO from "./page-objects/games.po";
 import HeaderPO from "./page-objects/header.po";
+import HomePO from "./page-objects/home.po";
 import LoginPO from "./page-objects/login.po";
 import PeoplePO from "./page-objects/people.po";
 import PostEditPO from "./page-objects/post-edit.po";
@@ -15,6 +17,7 @@ import RegisterPO from "./page-objects/register.po";
 import UserProfilePO from "./page-objects/user-profile.po";
 
 interface PageObjects {
+  adminSettingsPo: AdminSettingsPO;
   dashboardPo: DashboardPO;
   entryEditPo: EntryEditPO;
   entryHighscoreSubmitPo: EntryHighscoreSubmitPO;
@@ -23,6 +26,7 @@ interface PageObjects {
   eventPo: EventPO;
   gamesPo: GamesPO;
   headerPo: HeaderPO;
+  homePo: HomePO;
   loginPo: LoginPO;
   peoplePo: PeoplePO;
   postEditPo: PostEditPO;
@@ -44,6 +48,7 @@ export const test = base.extend<PageObjects>({
     expect(pageErrors, "uncaught errors in the page").toEqual([]);
   },
 
+  adminSettingsPo: async ({ page }, use) => use(new AdminSettingsPO(page)),
   dashboardPo: async ({ page }, use) => use(new DashboardPO(page)),
   entryEditPo: async ({ page }, use) => use(new EntryEditPO(page)),
   entryHighscoreSubmitPo: async ({ page }, use) => use(new EntryHighscoreSubmitPO(page)),
@@ -52,6 +57,7 @@ export const test = base.extend<PageObjects>({
   eventPo: async ({ page }, use) => use(new EventPO(page)),
   gamesPo: async ({ page }, use) => use(new GamesPO(page)),
   headerPo: async ({ page }, use) => use(new HeaderPO(page)),
+  homePo: async ({ page }, use) => use(new HomePO(page)),
   loginPo: async ({ page }, use) => use(new LoginPO(page)),
   peoplePo: async ({ page }, use) => use(new PeoplePO(page)),
   postEditPo: async ({ page }, use) => use(new PostEditPO(page)),

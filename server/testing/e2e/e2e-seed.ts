@@ -178,7 +178,7 @@ async function seedGameRatingsEvent(users: Users): Promise<void> {
     allowAnonymous: true
   });
   const rateMeFirstEntry = await createEntry(users.dumbledore, { ...E2E_ENTRIES.dumbledoreGameRatings, event });
-  const unrankedEntry = await createEntry(users.yoda, { title: "I'm unranked", event, division: "unranked" });
+  const unrankedEntry = await createEntry(users.yoda, { ...E2E_ENTRIES.yodaGameRatingsUnranked, event, division: "unranked" });
   await createComment(users.administrator, unrankedEntry, "Cool stuff");
   const teamEntry = await createEntry(users.gandalf, {
     ...E2E_ENTRIES.gandalfGameRatingsTeam,

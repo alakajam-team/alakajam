@@ -36,6 +36,7 @@ export const E2E_ENTRIES = {
   adminTournamentGame2: { id: 3, eventName: E2E_EXTERNAL_EVENT_NAME, name: "tournament-game-2", title: "Tournament game 2" },
   adminGameRatingsOptedOut: { id: 4, eventName: E2E_EVENTS.gameRatings.name, name: "opted-out", title: "Opted out" },
   dumbledoreGameRatings: { id: 5, eventName: E2E_EVENTS.gameRatings.name, name: "rate-me-first", title: "Rate me first" },
+  yodaGameRatingsUnranked: { id: 6, eventName: E2E_EVENTS.gameRatings.name, name: "im-unranked", title: "I'm unranked" },
   gandalfGameRatingsTeam: { id: 7, eventName: E2E_EVENTS.gameRatings.name, name: "team-game", title: "Team game" },
   adminResultsOut: { id: 8, eventName: E2E_EVENTS.resultsOut.name, name: "game-search-test-1", title: "Game search test #1" },
   adminExternalWithScores: { id: 13, eventName: E2E_EXTERNAL_EVENT_NAME, name: "my-external-entry", title: "My external entry" },

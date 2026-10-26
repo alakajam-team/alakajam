@@ -8,7 +8,7 @@ export default class EventPO {
 
   public async visit({ eventName, page }: {
     eventName: string;
-    page?: "announcements" | "posts" | "themes" | "games" | "tournament-games" | "tournament-leaderboard";
+    page?: "announcements" | "posts" | "themes" | "games" | "results" | "dashboard" | "tournament-games" | "tournament-leaderboard";
   }) {
     await this.page.goto(`/${eventName}/${page || ""}`);
   }
@@ -19,6 +19,33 @@ export default class EventPO {
 
   public get postsTitles() {
     return this.page.locator(".post__title");
+  }
+
+  public post(title: string) {
+    return this.page.locator(".post", {
+      has: this.page.locator(".post__title", { hasText: title })
+    });
+  }
+
+  public postBody(title: string) {
+    return this.post(title).locator(".post__body");
+  }
+
+  /**
+   * Author, event and related entry of the post
+   */
+  public postDetails(title: string) {
+    return this.post(title).locator(".post__details");
+  }
+
+  // Event dashboard
+
+  public get joinEventButton() {
+    return this.page.locator("a.btn", { hasText: "Join event" });
+  }
+
+  public get rulesLink() {
+    return this.page.locator("a.shortcut", { hasText: "Detailed rules" });
   }
 
   public get games() {
