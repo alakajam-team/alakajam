@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Event } from "./event.entity";
+import { Relation } from "./relation";
 import { User } from "./user.entity";
 
 export type StreamerStatus = "off" | "requested" | "approved" | "banned";
@@ -20,14 +21,14 @@ export class EventParticipation {
 
   @ManyToOne(() => Event, (event) => event.participations)
   @JoinColumn({ name: "event_id" })
-  public event: Event;
+  public event: Relation<Event>;
 
   @Column({ name: "user_id" })
   public userId: number;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
 
   @Column({ name: "streamer_status", nullable: true })
   public streamerStatus: "off" | "requested" | "approved" | "banned";

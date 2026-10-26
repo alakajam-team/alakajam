@@ -4,6 +4,7 @@ import { ColumnTypes } from "./column-types";
 import { EventLink } from "./event-details.entity";
 import { EventPreset } from "./event-preset.entity";
 import { EventDivisions } from "./event.entity";
+import { Relation } from "./relation";
 
 @Entity()
 export class EventTemplate extends BookshelfCompatibleEntity {
@@ -27,7 +28,7 @@ export class EventTemplate extends BookshelfCompatibleEntity {
   public event_preset_id: number;
 
   @ManyToOne(() => EventPreset, undefined)
-  public eventPreset: EventPreset;
+  public eventPreset: Relation<EventPreset>;
 
   /**
    * Default spacial pages (to be applied in EventDetails)

@@ -1,6 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { Entry } from "./entry.entity";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
 
@@ -15,14 +16,14 @@ export class EntryScore extends TimestampedEntity {
 
   @ManyToOne(() => User, (user) => user.entryScores)
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
 
   @Column()
   public entry_id: number;
 
   @ManyToOne(() => Entry, (entry) => entry.scores)
   @JoinColumn({ name: "entry_id" })
-  public entry: Entry;
+  public entry: Relation<Entry>;
 
   /**
     * Score ([-999.999.999.999,999;999.999.999.999,999],

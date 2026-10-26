@@ -1,3 +1,4 @@
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, Entity } from "typeorm";
 import { Event } from "./event.entity";
@@ -38,7 +39,7 @@ export class EventDetails extends TimestampedEntity {
 
   @OneToOne(() => Event, (event) => event.details, { onDelete: "CASCADE" })
   @JoinColumn({ name: "event_id" })
-  public event: Event;
+  public event: Relation<Event>;
 
   /**
     * Category names

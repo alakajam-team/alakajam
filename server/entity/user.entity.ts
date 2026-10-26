@@ -8,6 +8,7 @@ import { EntryVote } from "./entry-vote.entity";
 import { EventParticipation } from "./event-participation.entity";
 import { Like } from "./like.entity";
 import { Post } from "./post.entity";
+import { Relation } from "./relation";
 import { ThemeVote } from "./theme-vote.entity";
 import { TimestampedEntity } from "./timestamped.entity";
 import { TournamentScore } from "./tournament-score.entity";
@@ -87,7 +88,7 @@ export class User extends TimestampedEntity {
   public approbation_state: UserApprobationState;
 
   @OneToOne(() => UserDetails, (userDetails) => userDetails.user, { cascade: true })
-  public details: UserDetails;
+  public details: Relation<UserDetails>;
 
   @OneToMany(() => UserRole, (userRole) => userRole.user, { cascade: true })
   public roles: UserRole[];
@@ -117,7 +118,7 @@ export class User extends TimestampedEntity {
   public eventParticipations: EventParticipation[];
 
   @OneToOne(() => UserMarketing, (userMarketing) => userMarketing.user, { cascade: true })
-  public marketing: UserMarketing;
+  public marketing: Relation<UserMarketing>;
 
   // XXX @CreateDateColumn / @UpdateDateColumn not working on user table
 

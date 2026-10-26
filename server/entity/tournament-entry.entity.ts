@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Entry } from "./entry.entity";
 import { Event } from "./event.entity";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 
 @Entity()
@@ -17,14 +18,14 @@ export class TournamentEntry extends TimestampedEntity {
 
   @ManyToOne(() => Event)
   @JoinColumn({ name: "event_id" })
-  public event: Event;
+  public event: Relation<Event>;
 
   @Column()
   public entry_id: number;
 
   @ManyToOne(() => Entry)
   @JoinColumn({ name: "entry_id" })
-  public entry: Entry;
+  public entry: Relation<Entry>;
 
   /**
    * Listing order

@@ -2,6 +2,7 @@
 
 import { Column, Entity, Index, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
 
@@ -32,7 +33,7 @@ export class Like extends TimestampedEntity {
 
   @ManyToOne(() => User, (user) => user.likes)
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
 
   /**
    * Like type

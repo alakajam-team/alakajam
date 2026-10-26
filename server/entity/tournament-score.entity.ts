@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { Event } from "./event.entity";
 import { User } from "./user.entity";
@@ -19,7 +20,7 @@ export class TournamentScore extends TimestampedEntity {
 
   @ManyToOne(() => User, (user) => user.tournamentScores)
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
 
   /**
    * Tournament event ID
@@ -29,7 +30,7 @@ export class TournamentScore extends TimestampedEntity {
 
   @ManyToOne(() => Event)
   @JoinColumn({ name: "event_id" })
-  public entry: Event;
+  public entry: Relation<Event>;
 
   /**
    * [-999.999.999.999,999;999.999.999.999,999]

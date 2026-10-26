@@ -4,6 +4,7 @@ import { Column, Entity, Index, JoinColumn, OneToOne, PrimaryColumn } from "type
 import { ColumnTypes } from "./column-types";
 import { Entry } from "./entry.entity";
 import { Platform } from "./platform.entity";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 
 @Entity()
@@ -14,14 +15,14 @@ export class EntryPlatform extends TimestampedEntity {
 
   @OneToOne(() => Platform)
   @JoinColumn({ name: "platform_id" })
-  public platform: Platform;
+  public platform: Relation<Platform>;
 
   @PrimaryColumn()
   public entry_id: number;
 
   @OneToOne(() => Entry, (entry) => entry.entryPlatforms)
   @JoinColumn({ name: "entry_id" })
-  public entry: Entry;
+  public entry: Relation<Entry>;
 
   @Column(ColumnTypes.varchar())
   @Index()

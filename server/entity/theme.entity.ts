@@ -1,6 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { ColumnTypes } from "./column-types";
 import { Event } from "./event.entity";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
 import { ThemeVote } from "./theme-vote.entity";
@@ -16,14 +17,14 @@ export class Theme extends TimestampedEntity {
 
   @ManyToOne(() => Event)
   @JoinColumn({ name: "event_id" })
-  public event: Event;
+  public event: Relation<Event>;
 
   @Column()
   public user_id: number;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
   /**
    * Max size: 100
    */

@@ -2,6 +2,7 @@
 
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Entry } from "./entry.entity";
+import { Relation } from "./relation";
 import { Tag } from "./tag.entity";
 import { TimestampedEntity } from "./timestamped.entity";
 
@@ -13,14 +14,14 @@ export class EntryTag extends TimestampedEntity {
 
   @ManyToOne(() => Entry, (entry) => entry.tags)
   @JoinColumn({ name: "entry_id" })
-  public entry: Entry;
+  public entry: Relation<Entry>;
 
   @PrimaryColumn()
   public tag_id: number;
 
   @ManyToOne(() => Tag)
   @JoinColumn({ name: "tag_id" })
-  public tag: Tag;
+  public tag: Relation<Tag>;
 
   public dependents(): Array<keyof this> {
     return [];

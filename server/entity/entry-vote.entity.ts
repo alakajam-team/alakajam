@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { ColumnTypes } from "./column-types";
 import { Entry } from "./entry.entity";
 import { Event } from "./event.entity";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import { User } from "./user.entity";
 
@@ -19,7 +20,7 @@ export class EntryVote extends TimestampedEntity {
 
   @ManyToOne(() => Entry, (entry) => entry.votes)
   @JoinColumn({ name: "entry_id" })
-  public entry: Entry;
+  public entry: Relation<Entry>;
 
   /**
    * Event ID
@@ -29,7 +30,7 @@ export class EntryVote extends TimestampedEntity {
 
   @ManyToOne(() => Event)
   @JoinColumn({ name: "event_id" })
-  public event: Event;
+  public event: Relation<Event>;
 
   /**
    * User ID
@@ -39,7 +40,7 @@ export class EntryVote extends TimestampedEntity {
 
   @ManyToOne(() => User)
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
 
   /**
    * Vote for categories 1 to 6 ([-999.99,999.99])

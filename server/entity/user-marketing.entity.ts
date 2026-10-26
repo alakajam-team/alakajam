@@ -2,6 +2,7 @@
 
 import { Column, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnTypes } from "./column-types";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 import UserMarketingSettingTransformer, { UserMarketingSetting, OFF_VALUE } from "./transformer/user-marketing-setting.transformer";
 import { User } from "./user.entity";
@@ -20,7 +21,7 @@ export class UserMarketing extends TimestampedEntity {
 
   @OneToOne(() => User, (user) => user.details, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
 
   @Column(ColumnTypes.numeric(1, 0, { transformer: UserMarketingSettingTransformer, default: OFF_VALUE }))
   @Index()

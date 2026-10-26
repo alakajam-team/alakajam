@@ -3,6 +3,7 @@
 import { AfterLoad, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BookshelfCompatibleEntity } from "./bookshelf-compatible.entity";
 import { ColumnTypes } from "./column-types";
+import { Relation } from "./relation";
 import { User } from "./user.entity";
 
 export interface UserSocialLinks {
@@ -30,7 +31,7 @@ export class UserDetails extends BookshelfCompatibleEntity {
 
   @OneToOne(() => User, (user) => user.details, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
-  public user: User;
+  public user: Relation<User>;
 
   @Column(ColumnTypes.varchar({ length: 100000, nullable: true }))
   public body: string;

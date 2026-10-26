@@ -5,10 +5,10 @@
   "license": "MIT",
   "main": "dist/server/index.js",
   "scripts": {
-    "start": "ts-node-dev --transpile-only -r tsconfig-paths/register --ignore-watch node_modules --ignore-watch \".*.tsx\" server/index.ts",
+    "start": "nodemon",
     "start:refresh": "npm run build:server && concurrently --kill-others \"npm run build:server -- -w\" \"browser-refresh\"",
     "start:e2e": "ts-node --transpile-only -r tsconfig-paths/register server/scripts/e2e.ts",
-    "start:debug": "tsc && ts-node --transpile-only --nolazy -r tsconfig-paths/register --inspect-brk dist/server/index.js",
+    "start:debug": "node --inspect-brk -r @swc-node/register -r tsconfig-paths/register server/index.ts",
     "start:production": "node dist/server/index.js",
     "build": "npm run build:css && npm run build:client && npm run build:server",
     "build:css": "ts-node --transpile-only server/scripts/sass.ts",
@@ -148,6 +148,7 @@
     "sharp": "^0.27.2"
   },
   "devDependencies": {
+    "@swc-node/register": "^1.12.1",
     "@swc/core": "^1.16.20",
     "browser-refresh": "^1.7.3",
     "browser-refresh-client": "^1.1.4",
@@ -158,6 +159,7 @@
     "cypress-file-upload": "^5.0.8",
     "eslint": "^7.22.0",
     "eslint-plugin-react": "^7.22.0",
+    "nodemon": "^3.1.14",
     "sinon": "^9.2.4",
     "start-server-and-test": "^1.12.1",
     "ts-loader": "^8.0.18",

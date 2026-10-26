@@ -7,6 +7,7 @@ import { EntryScore } from "./entry-score.entity";
 import { EntryTag } from "./entry-tag.entity";
 import { EntryVote } from "./entry-vote.entity";
 import { Event } from "./event.entity";
+import { Relation } from "./relation";
 import { TimestampedEntity } from "./timestamped.entity";
 
 export interface EntryLink {
@@ -27,7 +28,7 @@ export class Entry extends TimestampedEntity {
   public id: number;
 
   @OneToOne(() => EntryDetails, (entryDetails) => entryDetails.entry)
-  public details: EntryDetails;
+  public details: Relation<EntryDetails>;
 
   /**
    * Event ID (can be null in case of an external entry)
@@ -37,7 +38,7 @@ export class Entry extends TimestampedEntity {
 
   @ManyToOne(() => Event, (event) => event.entries, { nullable: true })
   @JoinColumn({ name: "event_id" })
-  public event: Event;
+  public event: Relation<Event>;
 
   /**
    * Name (used in the URL, can be null in case of an external entry)
