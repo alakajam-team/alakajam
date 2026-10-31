@@ -1,6 +1,5 @@
 import * as chokidar from "chokidar";
 import copy from "copy";
-import * as findUp from "find-up";
 import { writeFileSync } from "fs";
 import { copySync } from "fs-extra";
 import { debounce, intersection } from "lodash";
@@ -8,10 +7,11 @@ import * as path from "path";
 import * as sass from "sass";
 import fileStorage from "../core/file-storage";
 import log from "../core/log";
+import { findProjectRoot } from "../core/root-path";
 
 class SassBuilder {
 
-  private readonly ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
+  private readonly ROOT_PATH = findProjectRoot(__dirname);
   private readonly CLIENT_SRC_FOLDER = path.join(this.ROOT_PATH, "./client/");
   private readonly CLIENT_DEST_FOLDER = path.join(this.ROOT_PATH, "./dist/client/");
   private readonly ASSETS_GLOBS = ["png", "gif", "svg", "ttf", "woff", "woff2", "eot"].map((ext) => "./**/*." + ext);

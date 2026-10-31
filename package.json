@@ -58,7 +58,6 @@
     "express-session": "^1.17.1",
     "express-slow-down": "^1.4.0",
     "find": "^0.3.0",
-    "find-up": "^5.0.0",
     "fs-extra": "^11.4.1",
     "hcaptcha": "^0.1.0",
     "html-to-text": "^10.0.1",

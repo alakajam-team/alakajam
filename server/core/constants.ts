@@ -1,8 +1,7 @@
-import { sync as findUp } from "find-up";
-import * as path from "path";
+import { findProjectRoot } from "./root-path";
 import { SETTING_SESSION_KEY } from "./settings-keys";
 
-const ROOT_PATH = path.dirname(findUp("package.json", { cwd: __dirname }));
+const ROOT_PATH = findProjectRoot(__dirname);
 
 const SPECIAL_POST_TYPE_ANNOUNCEMENT = "announcement";
 const SPECIAL_POST_TYPE_HIDDEN = "hidden";

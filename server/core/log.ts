@@ -10,14 +10,14 @@
  * ```
  */
 
-import { sync as findUp } from "find-up";
+import { findProjectRoot } from "./root-path";
 import { TransformableInfo } from "logform";
 import * as luxon from "luxon";
 import * as path from "path";
 import * as util from "util";
 import { createLogger, format, Logger, transports } from "winston";
 
-const SOURCES_ROOT = path.dirname(findUp("package.json", { cwd: __dirname }));
+const SOURCES_ROOT = findProjectRoot(__dirname);
 const LOCAL_TIME_ZONE = new luxon.LocalZone();
 
 let level = "info";
