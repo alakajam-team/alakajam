@@ -26,6 +26,14 @@ $arrowSize: 40px;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
 
+    // Mobile: bleed to the screen edges (cancels the container's 15px padding) so the peeking card isn't cropped
+    @media (max-width: 575.98px) {
+      margin: 0 -15px;
+      padding-left: 15px;
+      padding-right: 15px;
+      scroll-padding-left: 15px;
+    }
+
     &::-webkit-scrollbar {
       display: none;
     }
@@ -79,10 +87,10 @@ $arrowSize: 40px;
     }
 
     &--prev {
-      left: calc(#{$arrowSize} / -2);
+      left: 8px;
     }
     &--next {
-      right: calc(#{$arrowSize} / -2);
+      right: 8px;
     }
 
     // Touch devices swipe instead
