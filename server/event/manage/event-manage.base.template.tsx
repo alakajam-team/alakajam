@@ -3,6 +3,7 @@ import base from "server/base.template";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
 import { ifTrue } from "server/macros/jsx-utils";
+import { isMenuLinkActive } from "./event-manage-menu.utils";
 
 export function eventManageBase(context: CommonLocals, editEventBody: JSX.Element): JSX.Element {
   const { event, path, infoMessage, errorMessage } = context;
@@ -44,6 +45,6 @@ export function eventManageBase(context: CommonLocals, editEventBody: JSX.Elemen
 function editEventLink(event, createdEvent, page, label, path, options: { disabled?: boolean } = {}) {
   const url = links.routeUrl(event, "event", page);
   return <a href={url} class={"list-group-item " +
-    (path === url && createdEvent ? "active list-group-item-primary " : "") +
+    (isMenuLinkActive(path, url) && createdEvent ? "active list-group-item-primary " : "") +
     ((!createdEvent || options.disabled) ? "disabled" : "")}>{label}</a>;
 }

@@ -20,7 +20,7 @@ export default function render(context: CommonLocals): JSX.Element {
       <div class="form-group">
         <div class="btn-group" role="group" aria-label="Divisions">
           {Object.keys(event.get("divisions")).map(division => {
-            ifTrue(division !== "unranked", () =>
+            return ifTrue(division !== "unranked", () =>
               <a href={`?division=${division}&categoryIndex=${currentCategoryIndex}`}
                 class={"btn btn-primary " + (divisionQuery === division ? "active" : "")}>
                 {divisionLabel(division)}
