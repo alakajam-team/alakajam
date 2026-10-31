@@ -18,7 +18,7 @@ import * as util from "util";
 import { createLogger, format, Logger, transports } from "winston";
 
 const SOURCES_ROOT = findProjectRoot(__dirname);
-const LOCAL_TIME_ZONE = new luxon.LocalZone();
+const LOCAL_TIME_ZONE = luxon.SystemZone.instance;
 
 let level = "info";
 try {

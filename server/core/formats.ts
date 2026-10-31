@@ -6,7 +6,7 @@ import constants from "./constants";
 export const ZONE_UTC = "utc";
 
 luxon.Settings.defaultLocale = "en";
-luxon.Settings.defaultZoneName = ZONE_UTC;
+luxon.Settings.defaultZone = ZONE_UTC;
 
 /**
  * Luxon docs: https://moment.github.io/luxon/docs/
@@ -17,7 +17,7 @@ export function createLuxonDate(
   format?: string): luxon.DateTime {
   options.zone = options.zone || ZONE_UTC;
   if (date === undefined) {
-    return luxon.DateTime.fromObject(options);
+    return luxon.DateTime.fromObject({}, options);
   } else if (typeof date === "number") {
     return luxon.DateTime.fromMillis(date, options);
   } else if (typeof date === "string") {
