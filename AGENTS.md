@@ -156,3 +156,4 @@ npm run start:production
 
 * Stay on the user's branch unless specified otherwise or working in Cloud mode. If anything looks fishy request a confirmation only.
 * Files read from top to down to tell a story: public methods at the top, their private utilities come next.
+* Use one-liner commits without any additional descriptions or authorship/conversation details

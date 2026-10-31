@@ -29,12 +29,6 @@ Do not use `pkill -f` with a pattern that appears in your own command line (it k
 
 ## Remaining batches, lowest risk first
 
-### Batch 2 - media and markdown
-- `sharp` 0.27 -> 0.35: bundled types since 0.32, so drop `@types/sharp`. Review `server/entry/entry-pictures.service.ts` and any `sharp(` use (resize options, `toFile`, metadata). Needs Node >= 18 and new prebuilt binaries: check the production install (`npm ci` then `node -e "require('sharp')"`). README mentions sharp is optional: keep that behavior.
-- `showdown` 1.9 -> 2.1 (+ `@types/showdown` 2): output and default options changed. **First** add snapshot-style tests of `forms.markdownToHtml` / `markdownToText` on representative content (headings ids, tables, code, links, line breaks, emoji), then upgrade and review each diff deliberately. User content is stored as markdown, so rendering regressions are visible site-wide.
-- `hcaptcha` 0.1 -> 0.2: read the changelog, tiny surface (registration only).
-- `reflect-metadata` 0.1 -> 0.2: only if the installed TypeORM 0.2 peer range allows it, else leave.
-
 ### Batch 3 - Express 5 (the big one)
 `express` 5, `@types/express` 5, `@types/express-serve-static-core` 5, `body-parser` 2 (Express 5 bundles `express.json/urlencoded`: consider dropping the package), `express-slow-down` 3, `connect-session-knex` 5, `express-promise-router` (Express 5 handles rejected promises natively: likely removable), `express-session`, `csurf` (deprecated, no upgrade exists: keep, or plan a replacement separately).
 - Before upgrading, add route-level tests (supertest-style against `server/routes.ts` or a minimal app) for: a GET page, a POST with CSRF, session login/logout, multer upload, an error page (404/500 via `error.middleware.ts`), rate limiting.
