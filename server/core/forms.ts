@@ -169,7 +169,7 @@ function isURL(str: string): boolean {
  * @return {Boolean}
  */
 function isUsername(str: string): boolean {
-  return str.length >= constants.USERNAME_MIN_LENGTH && /^[a-zA-Z][0-9a-zA-Z_-]+$/.test(str);
+  return str.length >= constants.USERNAME_MIN_LENGTH && str.length <= constants.USERNAME_MAX_LENGTH && /^[a-zA-Z][0-9a-zA-Z_-]+$/.test(str);
 }
 
 /**
