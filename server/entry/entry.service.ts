@@ -169,7 +169,7 @@ export class EntryService {
           .whereIn("entry_tag.tag_id", options.tags.map((tag) => tag.id));
       });
     }
-    if (options.divisions) {
+    if (options.divisions?.length > 0) {
       query = query.where("division", "in", options.divisions);
     }
     if (options.notReviewedById) {
