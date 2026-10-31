@@ -9,10 +9,10 @@ export function carousel(items: JSX.Element[], options: {
   /** Modifier for the row, rendered as `carousel-row--<id>` (handy for tests/styling) */
   id?: string;
   title?: string;
+  /** Makes the title a link, e.g. to the complete list */
+  titleHref?: string;
   /** Extra content aligned next to the title */
   headerActions?: JSX.Element;
-  /** Optional last card, e.g. a "see all" link */
-  endCard?: JSX.Element;
 } = {}): JSX.Element {
   if (!items || items.length === 0) {
     return <></>;
@@ -22,7 +22,13 @@ export function carousel(items: JSX.Element[], options: {
     aria-roledescription="carousel" aria-label={options.title}>
     {ifSet(options.title, () =>
       <div class="d-flex mt-3">
-        <div class="horizontal-bar mt-0">{options.title}</div>
+        <div class="horizontal-bar mt-0">
+          {options.titleHref
+            ? <a href={options.titleHref} class="carousel-row__title-link">
+              {options.title} <span class="fas fa-chevron-right carousel-row__title-chevron"></span>
+            </a>
+            : options.title}
+        </div>
         {ifSet(options.headerActions, () =>
           <div class="mt-3 ml-2 text-right">{options.headerActions}</div>
         )}
@@ -36,21 +42,10 @@ export function carousel(items: JSX.Element[], options: {
         {items.map(item =>
           <div class="carousel-row__item">{item}</div>
         )}
-        {ifSet(options.endCard, () =>
-          <div class="carousel-row__item carousel-row__item--end">{options.endCard}</div>
-        )}
       </div>
       <button type="button" class="carousel-row__arrow carousel-row__arrow--next" aria-label="Next" hidden>
         <span class="fas fa-chevron-right"></span>
       </button>
     </div>
   </div>;
-}
-
-/** Generic last card of a carousel, linking to the complete list */
-export function seeAllCard(label: string, href: string): JSX.Element {
-  return <a href={href} class="card carousel-row__see-all">
-    <span class="fas fa-arrow-circle-right carousel-row__see-all-icon"></span>
-    <span>{label}</span>
-  </a>;
 }

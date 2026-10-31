@@ -154,10 +154,10 @@ export default function render(context: HomeContext): JSX.Element {
           {
             id: "posts",
             title: "Latest posts",
+            titleHref: "/posts",
             headerActions: user && featuredEvent
               ? eventMacros.eventShortcutMyPost(user as any, featuredEvent, userPost, { buttonsOnly: true })
-              : undefined,
-            endCard: carouselMacros.seeAllCard("See all posts", "/posts")
+              : undefined
           })}
 
         {/* ===== LATEST COMMENTS ===== */}

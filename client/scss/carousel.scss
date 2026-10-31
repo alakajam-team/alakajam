@@ -96,25 +96,21 @@ $arrowSize: 40px;
     }
   }
 
-  &__see-all {
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    min-height: 120px;
-    font-weight: bold;
-    text-align: center;
-    color: variables.$text-light;
-    border-style: dashed;
-    background: transparent;
+  &__title-link {
+    color: inherit;
 
     &:hover {
       color: variables.$alt;
-      border-color: variables.$alt;
       text-decoration: none;
+
+      .carousel-row__title-chevron {
+        transform: translateX(3px);
+      }
     }
   }
 
-  &__see-all-icon {
-    font-size: 2rem;
+  &__title-chevron {
+    font-size: 0.75em;
+    @include variables.transition;
   }
 }

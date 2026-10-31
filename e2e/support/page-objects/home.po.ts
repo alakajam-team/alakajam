@@ -39,8 +39,8 @@ export default class HomePO {
     return this.post(title).locator(".post__comment-count");
   }
 
-  public get seeAllPostsCard() {
-    return this.page.locator(".carousel-row--posts .carousel-row__see-all");
+  public get postsTitleLink() {
+    return this.page.locator(".carousel-row--posts .carousel-row__title-link");
   }
 
   public get postsCarouselNextArrow() {
