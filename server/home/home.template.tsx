@@ -13,7 +13,7 @@ import { HomeContext } from "./home.controller";
 export default function render(context: HomeContext): JSX.Element {
   const { user, featuredEvent, featuredPost, embedStreamer, jumboStream, featuredEventAnnouncement, path,
     eventsTimeline, eventParticipation, inviteToJoin, entry, tournamentScore, tournamentScoreCount,
-    suggestedEntries, posts, comments, userPost, userLikes } = context;
+    suggestedEntries, awardedEntries, posts, comments, userPost, userLikes } = context;
 
   userMacros.registerTwitchEmbedScripts(context);
 
@@ -146,6 +146,12 @@ export default function render(context: HomeContext): JSX.Element {
             </div>
           </div>
         )}
+
+        {/* ===== AWARDED ENTRIES ===== */}
+
+        {carouselMacros.carousel(
+          (awardedEntries || []).map(awardedEntry => eventMacros.entryThumb(awardedEntry, { showEvent: true })),
+          { id: "awarded-entries", title: "Past jam winners" })}
 
         {/* ===== LATEST BLOG POSTS ===== */}
 

@@ -20,6 +20,8 @@ import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
 
+const AWARDED_ENTRIES_COUNT = 10;
+
 export interface HomeContext extends CommonLocals {
   featuredPost?: PostBookshelfModel;
   featuredEventAnnouncement?: BookshelfModel;
@@ -27,6 +29,7 @@ export interface HomeContext extends CommonLocals {
   embedStreamer?: User;
   eventsTimeline: BookshelfModel[];
   suggestedEntries: EntryBookshelfModel[];
+  awardedEntries: EntryBookshelfModel[];
   posts: PostBookshelfModel[];
   comments: BookshelfModel[];
   pageCount: number;
@@ -114,6 +117,14 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
           context.suggestedEntries = suggestedEntriesCollection.models;
         })
         .catch(logErrorAnd(() => context.suggestedEntries = [])));
+  }
+
+  // Gather awarded entries when there is no event in progress
+  if (!featuredEvent || featuredEvent.get("status") === enums.EVENT.STATUS.PENDING) {
+    contextTasks.push(
+      entryService.findRandomAwardedEntries(AWARDED_ENTRIES_COUNT)
+        .then((awardedEntries) => context.awardedEntries = awardedEntries)
+        .catch(logErrorAnd(() => context.awardedEntries = [])));
   }
 
   // Gather posts and comments

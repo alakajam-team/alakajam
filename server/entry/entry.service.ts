@@ -231,6 +231,25 @@ export class EntryService {
   }
 
   /**
+   * Fetches a random selection of entries that won the overall category of any event.
+   */
+  public async findRandomAwardedEntries(limit: number): Promise<EntryBookshelfModel[]> {
+    const entries = await new models.Entry()
+      .query((qb) => {
+        void qb.innerJoin("entry_details", "entry_details.entry_id", "entry.id")
+          .innerJoin("event", "entry.event_id", "event.id")
+          .where("event.status", enums.EVENT.STATUS.CLOSED)
+          .where("event.status_results", enums.EVENT.STATUS_RESULTS.RESULTS)
+          .where("entry.division", "!=", enums.DIVISION.UNRANKED)
+          .where("entry_details.ranking_1", "=", 1)
+          .orderByRaw("RANDOM()")
+          .limit(limit);
+      })
+      .fetchAll({ withRelated: ["details", "event", "userRoles"] }) as BookshelfCollectionOf<EntryBookshelfModel>;
+    return entries.models;
+  }
+
+  /**
    * Fetches the latest entries of any event
    * @param id {id} models.Entry ID
    * @returns {Entry}
