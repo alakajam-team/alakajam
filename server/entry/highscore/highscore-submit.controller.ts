@@ -1,6 +1,7 @@
 import enums from "server/core/enums";
 import fileStorage from "server/core/file-storage";
 import forms from "server/core/forms";
+import links from "server/core/links";
 import highscoreService from "server/entry/highscore/highscore.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -107,7 +108,7 @@ export async function entryHighscoreSubmit(req: CustomRequest, res: CustomRespon
       }
 
       if (!errorMessage && req.query.redirectTo) {
-        res.redirect(req.query.redirectTo?.toString());
+        res.redirect(links.safeRedirectPath(req.query.redirectTo));
         return;
       }
     }

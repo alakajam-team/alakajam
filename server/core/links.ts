@@ -24,6 +24,23 @@ export class Links {
     return this.staticUrl(picturePath + "?" + timestamp);
   }
 
+  /**
+   * Validates a user-provided redirect target, only allowing local paths (prevents open redirects).
+   * @returns the target if it is a local path (e.g. "/foo?bar=1"), or the fallback otherwise
+   */
+  public safeRedirectPath(target: unknown, fallback = "/"): string {
+    if (typeof target !== "string" || !target.startsWith("/") || /[\\\u0000-\u001f]/.test(target)) {
+      return fallback;
+    }
+    // "//host" and "/\host" are protocol-relative: make sure the target still resolves on our own origin
+    const base = "http://local.invalid";
+    try {
+      return new URL(target, base).origin === base ? target : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
   public staticUrl(path: string): string {
     const rootUrl = config.STATIC_ROOT_URL || ALTERNATE_STATIC_ROOT_URL;
     return url.resolve(rootUrl, path);
