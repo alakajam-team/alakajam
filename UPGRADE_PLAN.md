@@ -29,12 +29,6 @@ Do not use `pkill -f` with a pattern that appears in your own command line (it k
 
 ## Remaining batches, lowest risk first
 
-### Batch 1 - test stack
-`vitest` 5, `chai` 6, `sinon` 22, then drop `@types/chai` and `@types/sinon` (bundled types in recent majors; verify).
-- Check `vite` 8 / `unplugin-swc` compatibility (TypeORM decorator metadata in tests depends on it).
-- chai 5+ is ESM-only: confirm it still loads from specs under vitest (it should, vitest handles ESM), and that `e2e/` and any `require` use is unaffected.
-- Risk: low for production (dev-only). Done when all 193+ tests pass unchanged.
-
 ### Batch 2 - media and markdown
 - `sharp` 0.27 -> 0.35: bundled types since 0.32, so drop `@types/sharp`. Review `server/entry/entry-pictures.service.ts` and any `sharp(` use (resize options, `toFile`, metadata). Needs Node >= 18 and new prebuilt binaries: check the production install (`npm ci` then `node -e "require('sharp')"`). README mentions sharp is optional: keep that behavior.
 - `showdown` 1.9 -> 2.1 (+ `@types/showdown` 2): output and default options changed. **First** add snapshot-style tests of `forms.markdownToHtml` / `markdownToText` on representative content (headings ids, tables, code, links, line breaks, emoji), then upgrade and review each diff deliberately. User content is stored as markdown, so rendering regressions are visible site-wide.
