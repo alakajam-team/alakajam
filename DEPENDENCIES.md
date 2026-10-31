@@ -26,7 +26,9 @@ Stays on 4.x (the markup, jQuery plugins and theme packages all target it). Upgr
 
 * TypeORM
 
-Used at runtime alongside Bookshelf (entities, `server/core/db-typeorm.ts`). Must be kept.
+Used at runtime alongside Bookshelf (entities, `server/core/db-typeorm.ts`). Must be kept.  
+Plan: go to 0.3.31 first, and to 1.x only once Bookshelf is gone (1.x drops the `sqlite3` driver, which Knex 0.17 needs).
+See `server/entity/BOOKSHELF_MIGRATION.md`.
 
 ## Non-obvious dependencies
 
