@@ -87,9 +87,11 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         errorMessage = "Invalid links JSON";
       }
     }
+    // On creation there is no event yet: upload the logo onto the new (unsaved) model
+    const eventToSave = event || eventService.createEvent();
     if (!errorMessage && (files.logo || req.body["logo-delete"])) {
       const file = files.logo ? files.logo[0] : null;
-      const result = await fileStorage.savePictureToModel(event, "logo", file,
+      const result = await fileStorage.savePictureToModel(eventToSave, "logo", file,
         req.body["logo-delete"], `/events/${req.body.name}/logo`, { maxDiagonal: 1000 });
       if ("error" in result) {
         errorMessage = result.error;
@@ -97,9 +99,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
     }
 
     if (!errorMessage) {
-      if (creation) {
-        event = eventService.createEvent();
-      }
+      event = eventToSave;
 
       // Update event
       const previousName = event.get("name");
