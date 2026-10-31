@@ -61,7 +61,7 @@ export class RegisterController {
       "name": allRules(
         rule(forms.isSet, "Name is not set"),
         rule(forms.isUsername,
-          "Your usename is too weird (either too short, "
+          "Your usename is too weird (either too short or too long (max 32), "
           + "or has special chars other than '_' or '-', or starts with a number)")),
       "email": rule(forms.isSet, "Email is not set"),
       "password": rule(forms.isSet, "Password is not set"),

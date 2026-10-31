@@ -18,6 +18,8 @@ export default {
 
   // User accounts
   USERNAME_MIN_LENGTH: 3,
+  /** Only enforced on registration: some existing accounts have longer names. */
+  USERNAME_MAX_LENGTH: 32,
   PASSWORD_MIN_LENGTH: 6,
   PASSWORD_RECOVERY_LINK_MAX_AGE: 24 * 3600000, /* 1 day */
 
