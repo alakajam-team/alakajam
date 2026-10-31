@@ -107,14 +107,14 @@ export async function postEventManageRankings(req: CustomRequest, res: CustomRes
 
 }
 
-function parseQueryParameters(req: CustomRequest, event: BookshelfModel) {
+export function parseQueryParameters(req: CustomRequest, event: BookshelfModel) {
   let currentCategoryIndex = 1;
   if (forms.isInt(req.query.categoryIndex?.toString(), { min: 1, max: constants.MAX_CATEGORY_COUNT })) {
     currentCategoryIndex = forms.parseInt(req.query.categoryIndex.toString());
   }
   const availableDivisions = Object.keys(event.get("divisions"));
   const divisionQuery = forms.sanitizeString(req.query.division?.toString()) || availableDivisions[0];
-  let currentDivisions = [availableDivisions[0]];
+  let currentDivisions = availableDivisions.slice(0, 1);
   if (availableDivisions.includes(divisionQuery)) {
     currentDivisions = [divisionQuery];
   } else if (req.query.division === "all") {
