@@ -71,7 +71,7 @@ async function _handleApprobation(req: CustomRequest, res: CustomResponse<Dashbo
     message: "User successfully approved"
   });
 
-  res.redirect(links.safeRedirectPath(redirectTo));
+  res.redirect(redirectTo?.toString() ?? "/");
 }
 
 async function _handleSave(req: CustomRequest, res: CustomResponse<DashboardLocals>): Promise<void> {
@@ -172,7 +172,7 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
     if (deletingOwnAccount) {
       await logout(req, res);
     } else {
-      res.redirect(links.safeRedirectPath(req.body.redirectTo, "/explore/people"));
+      res.redirect(req.body.redirectTo?.toString() ?? "/explore/people");
     }
 
   } else {
@@ -182,7 +182,7 @@ async function _handleDeletion(req: CustomRequest, res: CustomResponse<Dashboard
       message: result.error
     });
     if (req.body.redirectTo) {
-      res.redirect(links.safeRedirectPath(req.body.redirectTo));
+      res.redirect(req.body.redirectTo?.toString() ?? "/");
     } else {
       await dashboardSettingsGet(req, res);
     }

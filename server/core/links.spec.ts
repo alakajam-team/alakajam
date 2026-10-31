@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
 import links from "./links";
 
-describe("links.safeRedirectPath()", () => {
+describe("links.isLocalPath()", () => {
   it("allows local paths", () => {
-    expect(links.safeRedirectPath("/")).toBe("/");
-    expect(links.safeRedirectPath("/user/foo?bar=1#baz")).toBe("/user/foo?bar=1#baz");
+    for (const target of ["/", "/user/foo?bar=1#baz"]) {
+      expect(links.isLocalPath(target)).toBe(true);
+    }
   });
 
-  it("rejects external and protocol-relative targets", () => {
-    for (const target of ["https://evil.com", "//evil.com", "/\\evil.com", "\\\\evil.com", "/\t/evil.com",
-      "javascript:alert(1)", "evil.com", "", undefined, null, ["/a"]]) {
-      expect(links.safeRedirectPath(target, "/fallback")).toBe("/fallback");
+  it("rejects anything else", () => {
+    for (const target of ["https://evil.com", "//evil.com", "/\\evil.com", "/\t/evil.com", "javascript:alert(1)", ".", "?x=1", ""]) {
+      expect(links.isLocalPath(target)).toBe(false);
     }
   });
 });

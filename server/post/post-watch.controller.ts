@@ -1,4 +1,5 @@
 import { CommonLocals } from "server/common.middleware";
+import links from "server/core/links";
 import security from "server/core/security";
 import { CustomRequest, CustomResponse } from "server/types";
 
@@ -13,5 +14,5 @@ export async function postWatch(req: CustomRequest, res: CustomResponse<CommonLo
     }
   }
 
-  res.redirect(".");
+  res.redirect(links.routeUrl(post, "post"));
 }

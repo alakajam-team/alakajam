@@ -29,6 +29,7 @@ import config, * as configUtils from "./config";
 import db from "./db";
 import fileStorage from "./file-storage";
 import { LIVE_RELOAD_PATH, LiveReload } from "./live-reload";
+import links from "./links";
 import log from "./log";
 import { setUpJSXLocals } from "./middleware-jsx";
 import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
@@ -163,7 +164,12 @@ export async function configure(app: express.Application): Promise<void> {
         req.session.alerts = res.locals.alerts;
         await req.session.saveAsync();
       }
-      nativeRedirect.apply(res, args);
+      // Safeguard against open redirects: only local paths are allowed
+      const targetIndex = args.findIndex(arg => typeof arg === "string");
+      if (targetIndex >= 0 && !links.isLocalPath(args[targetIndex] as string)) {
+        args[targetIndex] = "/";
+      }
+      nativeRedirect.apply(res, args as any);
     };
 
     res.redirectToLogin = () => {

@@ -25,6 +25,6 @@ export async function likePost(req: CustomRequest, res: CustomResponse<PostLocal
       userLikes: await likeService.findUserLikeInfo([post], user),
     });
   } else {
-    res.redirect(links.safeRedirectPath(req.query.redirect, links.routeUrl(post, "post")));
+    res.redirect(req.query.redirect?.toString() || links.routeUrl(post, "post"));
   }
 }

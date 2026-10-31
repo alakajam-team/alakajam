@@ -2,7 +2,6 @@ import { CommonLocals } from "server/common.middleware";
 import config from "server/core/config";
 import constants from "server/core/constants";
 import forms from "server/core/forms";
-import links from "server/core/links";
 import { Alert, CustomRequest, CustomResponse, RenderContext } from "server/types";
 import userService from "server/user/user.service";
 
@@ -56,7 +55,7 @@ export async function loginPost(req: CustomRequest, res: CustomResponse<CommonLo
       message: "Login successful",
       floating: true
     });
-    res.redirect(links.safeRedirectPath(context.redirect));
+    res.redirect(context.redirect);
   } else {
     res.locals.alerts.push(...errors);
     res.render<CommonLocals>("user/authentication/login", {

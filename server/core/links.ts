@@ -25,19 +25,15 @@ export class Links {
   }
 
   /**
-   * Validates a user-provided redirect target, only allowing local paths (prevents open redirects).
-   * @returns the target if it is a local path (e.g. "/foo?bar=1"), or the fallback otherwise
+   * Whether a redirect target is a simple local path (e.g. "/foo?bar=1"), as opposed to an external URL.
+   * The URL parser catches tricks like "//evil.com" or "/\\evil.com", which browsers resolve to other hosts.
    */
-  public safeRedirectPath(target: unknown, fallback = "/"): string {
-    if (typeof target !== "string" || !target.startsWith("/") || /[\\\u0000-\u001f]/.test(target)) {
-      return fallback;
-    }
-    // "//host" and "/\host" are protocol-relative: make sure the target still resolves on our own origin
+  public isLocalPath(target: string): boolean {
     const base = "http://local.invalid";
     try {
-      return new URL(target, base).origin === base ? target : fallback;
+      return target.startsWith("/") && new URL(target, base).origin === base;
     } catch {
-      return fallback;
+      return false;
     }
   }
 
