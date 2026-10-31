@@ -47,6 +47,24 @@ export class TournamentService {
     });
   }
 
+  /**
+   * Counts the active (non-suspended) high scores submitted on the tournament games.
+   * @returns undefined if the event is not a tournament
+   */
+  public async countSubmittedScores(event: BookshelfModel): Promise<number | undefined> {
+    const tournamentStatuses = [enums.EVENT.STATUS_TOURNAMENT.DISABLED, enums.EVENT.STATUS_TOURNAMENT.OFF] as string[];
+    if (tournamentStatuses.includes(event.get("status_tournament"))) {
+      return undefined;
+    }
+    const result = await db.knex("entry_score")
+      .join("tournament_entry", "tournament_entry.entry_id", "entry_score.entry_id")
+      .where("tournament_entry.event_id", event.get("id"))
+      .where("entry_score.active", true)
+      .count({ count: "entry_score.id" })
+      .first();
+    return Number(result?.count ?? 0);
+  }
+
   public async findTournamentEntries(event: BookshelfModel, options: { withDetails?: boolean } = {}): Promise<BookshelfModel[]> {
     if (options.withDetails) {
       await event.load(["tournamentEntries.entry.userRoles", "tournamentEntries.entry.details"]);
