@@ -13,7 +13,6 @@ import * as postMacros from "server/post/post.macros";
 
 export default function render(context: CommonLocals): JSX.Element {
   const { resultsPost, event, user, userLikes, rankings, categoryTitles, division, sortedBy } = context;
-  const hasEventBanner = event.related("details").get("background");
   let previousRanking = -1;
 
   return base(context,
@@ -21,7 +20,7 @@ export default function render(context: CommonLocals): JSX.Element {
       {eventMacros.eventBanner(event)}
 
       {ifSet(resultsPost, () =>
-        <div class={"container thin " + (hasEventBanner ? "event-banner-offset" : "")}>
+        <div class="container thin event-banner-offset">
           {postMacros.post(resultsPost, { readingUser: user, readingUserLikes: userLikes })}
         </div>
       )}
