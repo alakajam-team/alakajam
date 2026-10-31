@@ -7,6 +7,27 @@
 
 ## Blocked NPM versions
 
+* Bookshelf / Knex
+
+Upstream Bookshelf 1.x has a blocking bug for us: https://github.com/alakajam-team/alakajam/issues/478  
+We run a patched fork instead: `github:mkalam-alami/bookshelf#v1.2.0-alakajam.1` (Bookshelf 1.2.0 + the fix). `bookshelf-cascade-delete` is overridden to use it (see `overrides` in `package.json`).  
+The fork keeps upstream's peer range `knex >=0.15 <0.22`, so **Knex is now capped at 0.21.x** (was 0.17 before the fork). Moving past it needs the fork to widen that range (or upstream Bookshelf to move, which is unlikely).  
+
+```
+Package                                  Current   Wanted   Latest  Location
+@types/bookshelf                          1.2.9    1.2.9    1.2.9   alakajam
+knex                                      0.21.21  0.21.21  3.x     alakajam   (capped by the fork's peer range)
+```
+
+`sqlite3` stays on 5.x (5.1.7 is the last 5.x; Knex 0.21 only declares `sqlite3 ^5`). `sqlite3` 6 requires a much newer Knex, so it remains blocked.  
+`connect-session-knex` is not constrained by the pin: it receives our Knex instance and bundles its own Knex copy for its internals.
+
+* Bootstrap
+  * General https://getbootstrap.com/docs/4.1/getting-started/introduction/
+  * CSS utilities https://getbootstrap.com/docs/4.1/utilities/flex/
+
+## Blocked NPM versions
+
 * Bookshelf
 
 1.X has a blocking bug for us: https://github.com/alakajam-team/alakajam/issues/478  

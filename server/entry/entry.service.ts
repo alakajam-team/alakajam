@@ -224,7 +224,7 @@ export class EntryService {
     if (options.count) {
       return query.count();
     } else if (options.pageSize) {
-      return query.fetchPage(options);
+      return query.fetchPage(options) as unknown as Bluebird<BookshelfCollectionOf<EntryBookshelfModel>>;
     } else {
       return query.fetchAll(options) as Bluebird<BookshelfCollectionOf<EntryBookshelfModel>>;
     }

@@ -70,7 +70,7 @@ export class PostService {
       page: options.page,
       transacting: options.transacting,
       withRelated: ["author", "userRoles"],
-    });
+    }) as unknown as Promise<BookshelfCollectionOf<PostBookshelfModel>>;
   }
 
   public findPostById(postId: number): Promise<PostBookshelfModel> {
@@ -98,7 +98,7 @@ export class PostService {
     specialPostType?: string;
     allowDrafts?: boolean;
   }): Promise<BookshelfModel> {
-    let query = models.Post as BookshelfModel;
+    let query = models.Post as unknown as BookshelfModel;
     if (options.id) { query = query.where("id", options.id); }
     if (options.name) { query = query.where("name", options.name); }
     if (options.eventId) { query = query.where("event_id", options.eventId); }
