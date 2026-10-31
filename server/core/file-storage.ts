@@ -5,7 +5,6 @@
 import { BookshelfModel } from "bookshelf";
 import * as fs from "fs-extra";
 import * as mime from "mime-types";
-import mkdirp from "mkdirp";
 import * as path from "path";
 import { User } from "server/entity/user.entity";
 import * as url from "url";
@@ -270,7 +269,7 @@ export class FileStorage {
 
     const absolutePath = this.toAbsolutePath(documentPath);
     await this.createFolderIfMissing(path.dirname(documentPath));
-    await fs.writeFile(absolutePath, data);
+    await fs.writeFile(absolutePath, data as string);
   }
 
   public async remove(documentPath: string): Promise<void> {
@@ -294,7 +293,7 @@ export class FileStorage {
    */
   public async createFolderIfMissing(folderPath: string): Promise<void> {
     if (!await this.exists(folderPath)) {
-      await mkdirp(folderPath);
+      await fs.mkdir(folderPath, { recursive: true });
     }
   }
 

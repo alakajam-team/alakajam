@@ -45,7 +45,7 @@ export default {
   markdownToHtml,
   markdownToText,
   htmlToMarkdown,
-  htmlToText: htmlToText.fromString,
+  htmlToText: (html: string) => htmlToText.convert(html),
 };
 
 const MAX_POSTGRESQL_INTEGER = 2147483647;
