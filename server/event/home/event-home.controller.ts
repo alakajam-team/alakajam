@@ -35,6 +35,7 @@ export async function viewEventHome(req: CustomRequest, res: CustomResponse<Even
     ...res.locals,
     posts,
     tournamentScore,
+    tournamentScoreCount: await tournamentService.countSubmittedScores(event),
     userEntry,
     userLikes: await likeService.findUserLikeInfo(posts.models, res.locals.user),
     inviteToJoin,
