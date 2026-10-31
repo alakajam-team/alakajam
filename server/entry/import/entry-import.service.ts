@@ -16,11 +16,9 @@ import entryService from "../entry.service";
 import { EntryImporter, EntryImporterError, EntryReference } from "./entry-import";
 import entryImporterItch from "./importer/itch";
 import entryImporterLDJam from "./importer/ldjam";
-import entryImporterLudumDare from "./importer/ludumdare";
 
 const importers: EntryImporter[] = [
   entryImporterItch,
-  entryImporterLudumDare,
   entryImporterLDJam
 ];
 
