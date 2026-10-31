@@ -28,7 +28,6 @@ if (config.DEBUG_LONG_PROMISE_TRACES) {
 
 import express from "express";
 import * as fs from "fs-extra";
-import mkdirp from "mkdirp";
 import * as path from "path";
 
 /**
@@ -151,7 +150,7 @@ async function _createFolderIfMissing(folderPath) {
   try {
     await fs.access(folderPath, fs.constants.R_OK);
   } catch (e) {
-    await mkdirp(folderPath);
+    await fs.mkdir(folderPath, { recursive: true });
   }
 }
 
