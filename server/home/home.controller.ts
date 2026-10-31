@@ -8,6 +8,7 @@ import log from "server/core/log";
 import { logErrorAnd } from "server/core/middleware";
 import settings from "server/core/settings";
 import { SETTING_FEATURED_POST_ID, SETTING_FEATURED_TWITCH_CHANNEL, SETTING_HOME_TIMELINE_SIZE } from "server/core/settings-keys";
+import { Post } from "server/entity/post.entity";
 import { User } from "server/entity/user.entity";
 import entryService from "server/entry/entry.service";
 import eventParticipationService from "server/event/dashboard/event-participation.service";
@@ -91,10 +92,9 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
 
   // Find latest announcement for featured event
   if (featuredEvent) {
-    contextTasks.push(
-      postService.findLatestAnnouncement({ eventId: featuredEvent.get("id") })
-        .then((announcement) => context.featuredEventAnnouncement = announcement)
-        .catch(log.error));
+    await postService.findLatestAnnouncement({ eventId: featuredEvent.get("id") })
+      .then((announcement) => context.featuredEventAnnouncement = announcement)
+      .catch(log.error);
   }
 
   // Fetch event schedule (preferably without displaying too many events after the featured one)
@@ -109,7 +109,6 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
     contextTasks.push(
       entryService.findEntries({
         eventId: featuredEvent.get("id"),
-        pageSize: 3,
         notReviewedById: user ? user.get("id") : undefined,
       })
         .then((suggestedEntriesCollection: BookshelfCollectionOf<EntryBookshelfModel>) => {
@@ -123,7 +122,7 @@ async function loadHomeContext(res: CustomResponse<CommonLocals>): Promise<HomeC
     postService.findPosts()
       .then(async (postsCollection) => {
         await postsCollection.load(["entry", "event", "entry.userRoles"]);
-        context.posts = postsCollection.models;
+        context.posts = postsCollection.models.filter((p: PostBookshelfModel) => p.id !== context.featuredEventAnnouncement?.id);
         context.pageCount = postsCollection.pagination.pageCount;
       })
       .catch(logErrorAnd(() => {
@@ -161,7 +160,7 @@ async function loadEventsTimeline(featuredEvent?: BookshelfModel): Promise<Books
   if (featuredEvent) {
     let featuredEventIndex;
     let fetchedEventsCollection;
-    let eventsTimeline = [];
+    let eventsTimeline: BookshelfModel[] = [];
     let page = 1;
     do {
       fetchedEventsCollection = await eventService.findEvents({ pageSize: 10, page: page++ });

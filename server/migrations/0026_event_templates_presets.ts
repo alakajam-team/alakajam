@@ -37,7 +37,11 @@ exports.up = async (knex) => {
   }
 
   await knex.schema.table("event", (table) => {
-    table.integer("event_preset_id").references("event_preset.id");
+    // SQLite can't add foreign keys to an existing table
+    const column = table.integer("event_preset_id");
+    if (config.DB_TYPE === "postgresql") {
+      column.references("event_preset.id");
+    }
   });
 };
 

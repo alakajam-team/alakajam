@@ -15,7 +15,9 @@ exports.up = async (knex: Knex) => {
   const tmpPath = configUtils.tmpPathAbsolute();
   try {
     const { removed, failed } = await emptyDirectory(tmpPath, isDatabaseFile);
-    log.info(`Purged ${removed} leaked upload temp file(s) from ${tmpPath}` + (failed ? ` (${failed} could not be removed)` : ""));
+    if (removed > 0) {
+      log.info(`Purged ${removed} leaked upload temp file(s) from ${tmpPath}` + (failed ? ` (${failed} could not be removed)` : ""));
+    }
   } catch (e) {
     log.error("Could not purge upload temp folder " + tmpPath, e);
   }

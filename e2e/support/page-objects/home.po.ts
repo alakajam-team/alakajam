@@ -22,11 +22,11 @@ export default class HomePO {
   // Latest posts
 
   public get postTitles() {
-    return this.page.locator(".col-md-8 .post .post__title");
+    return this.page.locator(".carousel-row--posts .post-card .post__title");
   }
 
   public post(title: string) {
-    return this.page.locator(".col-md-8 .post", {
+    return this.page.locator(".carousel-row--posts .post-card", {
       has: this.page.locator(".post__title", { hasText: title })
     });
   }
@@ -39,14 +39,26 @@ export default class HomePO {
     return this.post(title).locator(".post__comment-count");
   }
 
+  public get postsTitleLink() {
+    return this.page.locator(".carousel-row--posts .carousel-row__title-link");
+  }
+
+  public get postsCarouselNextArrow() {
+    return this.page.locator(".carousel-row--posts .carousel-row__arrow--next");
+  }
+
+  public get postsCarouselViewport() {
+    return this.page.locator(".carousel-row--posts .carousel-row__viewport");
+  }
+
   // Latest comments
 
   public get latestComments() {
-    return this.page.locator(".col-md-4 .comment");
+    return this.page.locator(".carousel-row--comments .comment-card");
   }
 
   public get latestCommentsNodeLinks() {
-    return this.page.locator(".col-md-4 .comment a:has(> h4.post__title)");
+    return this.page.locator(".carousel-row--comments .comment-card a:has(> h4.post__title)");
   }
 
 }

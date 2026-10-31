@@ -11,7 +11,11 @@ import config from "server/core/config";
 
 exports.up = async (knex) => {
   await knex.schema.table("user_role", (table) => {
-    table.integer("event_id").references("event.id");
+    // SQLite can't add foreign keys to an existing table
+    const column = table.integer("event_id");
+    if (config.DB_TYPE === "postgresql") {
+      column.references("event.id");
+    }
   });
 
   // The `entry` and `post` tables both have a nullable `event_id`. We'd rather

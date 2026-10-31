@@ -8,6 +8,7 @@ import "./core/jquery-global";
 import evalRawScript from "./core/eval-raw-script";
 
 import alerts from "./common/alerts";
+import carousel from "./common/carousel";
 import checkAllNone from "./common/check-all-none";
 import datePicker from "./common/date-picker";
 import disabledLinks from "./common/disabled-links";
@@ -68,6 +69,7 @@ $(function domReady() {
   icheck();
   lazyImages(".js-lazy, .user-contents img");
   alerts("#js-alerts");
+  carousel(".carousel-row");
   pictureInput();
   radioTextField();
   select();
