@@ -4,6 +4,7 @@ import db from "server/core/db";
 import forms from "server/core/forms";
 import links from "server/core/links";
 import entryService from "server/entry/entry.service";
+import tournamentService from "server/event/tournament/tournament.service";
 import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { CustomRequest, CustomResponse } from "server/types";
@@ -72,6 +73,7 @@ async function myEntryHavingJoined(res: CustomResponse<EventLocals>): Promise<vo
   res.render<EventLocals>("event/dashboard/event-my-dashboard", {
     ...res.locals,
     entry,
+    tournamentScoreCount: await tournamentService.countSubmittedScores(event),
     latestPost,
     posts: postsCollection.models,
     userLikes: await likeService.findUserLikeInfo(postsCollection.models, user),

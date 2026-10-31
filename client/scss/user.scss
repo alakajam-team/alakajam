@@ -30,11 +30,16 @@
   &__title {
     margin: 20px 0 0 0;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__name {
     color: variables.$text-light;
     font-weight: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__id {
@@ -127,6 +132,9 @@
     line-height: 1.6rem;
     padding-left: 60px;
     margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     & a {
       color: variables.$text-alt-light;
@@ -142,6 +150,9 @@
     color: variables.$text-light;
     padding-left: 60px;
     margin-top: -3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   &__pending {
     float: right;

@@ -20,6 +20,9 @@ export const CACHE_KEY_ACTIVE_TOURNAMENT_EVENT = "active-tournament-event";
  */
 export class TournamentService {
 
+  /** Pending tournament score refreshes by event ID, so that they run one at a time */
+  private refreshQueues: Record<number, Promise<void>> = {};
+
   public constructor() {
     tournamentEntryRankingChangeListener.init();
   }
@@ -45,6 +48,24 @@ export class TournamentService {
         .where("status_tournament", "IN", [enums.EVENT.STATUS_TOURNAMENT.PLAYING, enums.EVENT.STATUS_TOURNAMENT.CLOSED])
         .fetch({ withRelated: ["tournamentEntries"] });
     });
+  }
+
+  /**
+   * Counts the active (non-suspended) high scores submitted on the tournament games.
+   * @returns undefined if the event is not a tournament
+   */
+  public async countSubmittedScores(event: BookshelfModel): Promise<number | undefined> {
+    const tournamentStatuses = [enums.EVENT.STATUS_TOURNAMENT.DISABLED, enums.EVENT.STATUS_TOURNAMENT.OFF] as string[];
+    if (tournamentStatuses.includes(event.get("status_tournament"))) {
+      return undefined;
+    }
+    const result = await db.knex("entry_score")
+      .join("tournament_entry", "tournament_entry.entry_id", "entry_score.entry_id")
+      .where("tournament_entry.event_id", event.get("id"))
+      .where("entry_score.active", true)
+      .count({ count: "entry_score.id" })
+      .first();
+    return Number(result?.count ?? 0);
   }
 
   public async findTournamentEntries(event: BookshelfModel, options: { withDetails?: boolean } = {}): Promise<BookshelfModel[]> {
@@ -119,6 +140,27 @@ export class TournamentService {
     triggeringUserId?: number,
     impactedEntryScores: BookshelfModel[] = [],
     options: { allowedTournamentStates?: string[] } = {}): Promise<void> {
+    // Refreshes are fire-and-forget from the ranking change listener: concurrent runs would
+    // overwrite each other's results, or create duplicate tournament scores for the same user.
+    const eventId = event.get("id");
+    const previousRefresh = this.refreshQueues[eventId] || Promise.resolve();
+    const refresh = previousRefresh
+      .catch(() => undefined)
+      .then(() => this.doRefreshTournamentScores(event, triggeringUserId, impactedEntryScores, options));
+    const queued = refresh.catch(() => undefined).then(() => {
+      if (this.refreshQueues[eventId] === queued) {
+        delete this.refreshQueues[eventId];
+      }
+    });
+    this.refreshQueues[eventId] = queued;
+    return refresh;
+  }
+
+  private async doRefreshTournamentScores(
+    event: BookshelfModel,
+    triggeringUserId: number | undefined,
+    impactedEntryScores: BookshelfModel[],
+    options: { allowedTournamentStates?: string[] }): Promise<void> {
     const allowedTournamentStates = options.allowedTournamentStates || [enums.EVENT.STATUS_TOURNAMENT.PLAYING];
     if (!allowedTournamentStates.includes(event.get("status_tournament"))) {
       return;
@@ -254,7 +296,7 @@ export class TournamentService {
             }
             ranking++;
           } else {
-            await tScore.destroy({ transacting: transaction });
+            await tScore.destroy({ transacting: transaction, require: false });
           }
         }
       });

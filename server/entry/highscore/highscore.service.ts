@@ -71,15 +71,19 @@ export class HighScoreService {
   }
 
   /**
-   * Retrieves all user scores
+   * Retrieves all user scores (suspended ones are excluded unless `withSuspended` is set)
    */
   public async findUserScores(
     userId: number,
-    options: FetchAllOptions & { sortBy?: "ranking" | "submitted_at" | any } = {}): Promise<BookshelfCollection> {
+    options: FetchAllOptions & { sortBy?: "ranking" | "submitted_at" | any; withSuspended?: boolean } = {}): Promise<BookshelfCollection> {
     if (!userId) { return null; }
 
+    const { sortBy, withSuspended, ...fetchOptions } = options;
     let query = models.EntryScore.where("user_id", userId) as BookshelfModel;
-    switch (options.sortBy) {
+    if (!withSuspended) {
+      query = query.where("active", true);
+    }
+    switch (sortBy) {
     case "ranking":
       query = query.orderBy("ranking");
       break;
@@ -92,7 +96,7 @@ export class HighScoreService {
     // PERF: Entry details required to format scores
     return query.fetchAll({
       withRelated: ["entry.userRoles", "entry.details"],
-      ...options
+      ...fetchOptions
     }) as Bluebird<BookshelfCollection>;
   }
 
@@ -225,14 +229,20 @@ export class HighScoreService {
   }
 
   public async deleteAllEntryScores(entry: BookshelfModel): Promise<void> {
+    // Deleted scores are reported as impacted, so that tournament scores of their authors get refreshed
+    const deletedEntryScores = (await models.EntryScore
+      .where("entry_id", entry.get("id"))
+      .fetchAll() as BookshelfCollection).models;
     await db.knex("entry_score")
       .where("entry_id", entry.get("id"))
       .delete();
-    await this.refreshEntryRankings(entry);
+    await this.refreshEntryRankings(entry, { additionalImpactedEntryScores: deletedEntryScores });
   }
 
   public async refreshEntryRankings(entry: BookshelfModel, options: {
     triggeringEntryScore?: BookshelfModel; triggeringUserId?: number; updateTournamentIfClosed?: boolean;
+    /** Scores that are not part of the rankings anymore (typically deleted), but whose owners need refreshing */
+    additionalImpactedEntryScores?: BookshelfModel[];
   } = {}
   ): Promise<BookshelfModel | undefined> {
 
@@ -272,7 +282,7 @@ export class HighScoreService {
     }
 
     // Refresh active tournament scores
-    await highscoreEvents.fireEntryRankingChange(entry, impactedEntryScores, options);
+    await highscoreEvents.fireEntryRankingChange(entry, [...impactedEntryScores, ...(options.additionalImpactedEntryScores || [])], options);
 
     if (updatedEntryScore) {
       await updatedEntryScore.load(["user"]);

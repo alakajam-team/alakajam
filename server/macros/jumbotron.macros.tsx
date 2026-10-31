@@ -12,7 +12,7 @@ import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 
 export function eventJumbotron(event: BookshelfModel, eventParticipation: EventParticipation, featuredPost: BookshelfModel,
   user: User, userLikes: unknown[], entry: EntryBookshelfModel, tournamentScore: BookshelfModel, path: string,
-  options: { inviteToJoin?: boolean } = {}): JSX.Element {
+  options: { inviteToJoin?: boolean; tournamentScoreCount?: number } = {}): JSX.Element {
   const isTournament = !["disabled", "off"].includes(event.get("status_tournament"));
 
   return <div class="event-jumbotron" style={backgroundImage(event)}>
@@ -54,6 +54,20 @@ export function eventJumbotron(event: BookshelfModel, eventParticipation: EventP
                     }
                   })}
                   {tournamentJumbotronContent(user, event, eventParticipation, tournamentScore, entry, options)}
+                </div>
+              </div>
+            )}
+
+            {ifTrue(isTournament, () =>
+              <div class="col-xl-12 col-sm-6 mb">
+                <div class="card border-0 bg-jumbotron event-jumbotron__stats">
+                  <div class="card-header shortcut py-1">
+                    <span class="shortcut__icon"><span class="fas fa-chart-line"></span></span>
+                    <span class="shortcut__title">Stats</span>
+                  </div>
+                  <div class="text-center">
+                    {statsCounters(event, options.tournamentScoreCount)}
+                  </div>
                 </div>
               </div>
             )}
@@ -227,7 +241,10 @@ export function tournamentJumbotronContent(user: User, event: BookshelfModel, ev
   </>;
 }
 
-export function statsCounters(event: BookshelfModel): JSX.Element {
+/**
+ * @param tournamentScoreCount Set for tournaments, to show the submitted scores in place of the entries
+ */
+export function statsCounters(event: BookshelfModel, tournamentScoreCount?: number): JSX.Element {
   const participants = event.related<BookshelfModel>("details").get("participation_count");
   const statsElements = [];
 
@@ -236,7 +253,13 @@ export function statsCounters(event: BookshelfModel): JSX.Element {
     entrant{participants !== 1 ? "s" : ""}
   </a>);
 
-  if (event.get("status_entry") !== "off") {
+  if (tournamentScoreCount !== undefined) {
+    statsElements.push(
+      <a href={links.routeUrl(event, "event", "tournament-games")} class="d-block">
+        <span class="event-jumbotron__stats-counter">{tournamentScoreCount}</span>&nbsp;
+        score{tournamentScoreCount !== 1 ? "s" : ""} submitted
+      </a>);
+  } else if (event.get("status_entry") !== "off") {
     const entries = event.get("entry_count");
     statsElements.push(
       <a href={links.routeUrl(event, "event", "games")} class="d-block">

@@ -13,7 +13,6 @@ import * as postMacros from "server/post/post.macros";
 
 export default function render(context: CommonLocals): JSX.Element {
   const { resultsPost, event, user, userLikes, rankings, categoryTitles, division, sortedBy } = context;
-  const hasEventBanner = event.related("details").get("background");
   let previousRanking = -1;
 
   return base(context,
@@ -21,7 +20,7 @@ export default function render(context: CommonLocals): JSX.Element {
       {eventMacros.eventBanner(event)}
 
       {ifSet(resultsPost, () =>
-        <div class={"container thin " + (hasEventBanner ? "event-banner-offset" : "")}>
+        <div class="container thin event-banner-offset">
           {postMacros.post(resultsPost, { readingUser: user, readingUserLikes: userLikes })}
         </div>
       )}
@@ -29,6 +28,7 @@ export default function render(context: CommonLocals): JSX.Element {
       {ifNotSet(resultsPost, () => {
         const flags = event.related("details").get("flags");
         const displaySpecialAwards = flags.specialAwards && sortedBy === 7;
+        const visibleCategories = getVisibleCategories(rankings, categoryTitles, flags.specialAwards, sortedBy);
 
         return <div class="container results-table">
           <div class="row">
@@ -40,9 +40,9 @@ export default function render(context: CommonLocals): JSX.Element {
 
           {ifTrue(rankings.length > 0 && division !== enums.DIVISION.UNRANKED, () =>
             <div class="row">
-              <div class={`col-sm-9 col-md-${12 - categoryTitles.length} mb-3`}>&nbsp;</div>
+              <div class={`col-sm-9 col-md-${12 - visibleCategories.length} mb-3`}>&nbsp;</div>
               {categoryTitles.map((title, index) =>
-                ifFalse(flags.specialAwards && index + 1 === 7, () =>
+                ifTrue(visibleCategories.includes(index + 1), () =>
                   <div class={"col-sm-2 col-md-1 results-table__header " + ((index + 1) !== sortedBy ? "d-none d-md-block" : "")}>
                     {title}
                   </div>
@@ -61,12 +61,12 @@ export default function render(context: CommonLocals): JSX.Element {
                       return ordinal(previousRanking);
                     })}
                   </div>
-                  <div class={`col-sm-7 col-md-${11 - categoryTitles.length} mb-1`}>
+                  <div class={`col-sm-7 col-md-${11 - visibleCategories.length} mb-1`}>
                     {eventMacros.entrySmallThumb(entry)}
                   </div>
                   {categoryTitles.map((_title, index) => {
                     const categoryIndex = index + 1;
-                    if (!(flags.specialAwards && categoryIndex === 7)) {
+                    if (visibleCategories.includes(categoryIndex)) {
                       const rating = entry.related("details").get("rating_" + categoryIndex);
                       return <div class={"col-sm-2 col-md-1 results-table__score " + (categoryIndex !== sortedBy ? "d-none d-md-block" : "")}
                         style={categoryIndex === sortedBy ? "background-color: #FAFAFA;" : ""}>
@@ -94,6 +94,18 @@ export default function render(context: CommonLocals): JSX.Element {
       })}
     </div>
   );
+}
+
+/**
+ * Categories worth a column: skips the special awards pseudo-category and categories
+ * which no listed entry was rated in (they would only show "N.A.").
+ */
+export function getVisibleCategories(rankings: BookshelfModel[], categoryTitles: string[], specialAwards: boolean, sortedBy: number): number[] {
+  return categoryTitles
+    .map((_title, index) => index + 1)
+    .filter(categoryIndex => !(specialAwards && categoryIndex === 7)
+      && (categoryIndex === sortedBy
+        || rankings.some(entry => entry.related("details").get("rating_" + categoryIndex) > 0)));
 }
 
 function pageLinks(event, divisions, categoryTitles, selectedDivision, selectedCategoryIndex) {
