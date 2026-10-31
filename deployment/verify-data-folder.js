@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env node
 
+const fs = require('fs');
 const config = require('../config');
-const mkdirp = require('mkdirp');
 
-mkdirp(config.DATA_PATH);
+fs.mkdirSync(config.DATA_PATH, { recursive: true });

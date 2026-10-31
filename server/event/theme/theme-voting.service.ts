@@ -59,7 +59,7 @@ export class ThemeService {
    * @param event {Event} event model
    */
   public async findThemesToVoteOn(user: User, event: BookshelfModel): Promise<BookshelfCollection> {
-    let query = models.Theme as BookshelfModel;
+    let query = models.Theme as unknown as BookshelfModel;
     if (user) {
       query = query.query((qb) => {
         void qb.leftOuterJoin("theme_vote", function() {

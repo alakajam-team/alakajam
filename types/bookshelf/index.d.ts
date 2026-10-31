@@ -49,42 +49,30 @@ declare module "bookshelf" {
    * There are also a number of mistakes and annoyances, some fixable here, some not (eg. count(), use of Bluebird, etc.)
    */
 
-  export interface FetchPageOptions extends FetchAllOptions {
-    pageSize?: number;
-    page?: number;
-    limit?: number;
-    offset?: number;
-    debug?: boolean;
-  }
-
   class BookshelfModel extends Model<BookshelfModel> {
     public relations?: Record<string, any>;
     public related<T extends BookshelfModel | BookshelfCollection>(relation: string): T;
     public related<R extends Model<any>>(relation: string): R | Collection<R>;
-    public fetchPage?<T extends BookshelfModel>(options: FetchPageOptions): Promise<BookshelfCollectionOf<T>>;
     public load<T extends BookshelfModel | BookshelfCollection>(
       relations: string | string[], options?: SyncOptions): BlueBird<T>; // Fix wrong options type
+  }
+
+  // Fixes & additions to the original Collection typings (merged so that plain Collections remain assignable)
+  interface Collection<T extends Model<any>> {
+    /**
+     * Actually returns T or T[]
+     */
+    where(match: { [key: string]: any }, firstOnly?: boolean): any;
+    difference(arrayValue: T[] | Collection<T>): T[];
+    difference(...values: T[]): T[];
+    slice(begin?: number, end?: number): T[];
+    pagination?: Pagination["pagination"];
   }
 
   class BookshelfCollection extends BookshelfCollectionOf<BookshelfModel> { }
 
   class BookshelfCollectionOf<T extends BookshelfModel> extends Collection<BookshelfModel> {
     public models?: T[];
-    public pagination?: {
-      rowCount: number;
-      pageCount: number;
-      page: number;
-      pageSize: number;
-    };
-
-    /**
-     * Actually returns T or T[]
-     */
-    public where(match: { [key: string]: any }, firstOnly?: boolean): any;
-    public difference(arrayValue: T[] | BookshelfCollectionOf<T>): T[];
-    public difference(...values: T[]): T[];
-    public slice(begin?: number, end?: number): T[];
-    public includes(value: any, fromIndex?: number): boolean;
   }
 
 }
