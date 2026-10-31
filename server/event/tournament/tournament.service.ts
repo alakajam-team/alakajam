@@ -20,6 +20,9 @@ export const CACHE_KEY_ACTIVE_TOURNAMENT_EVENT = "active-tournament-event";
  */
 export class TournamentService {
 
+  /** Pending tournament score refreshes by event ID, so that they run one at a time */
+  private refreshQueues: Record<number, Promise<void>> = {};
+
   public constructor() {
     tournamentEntryRankingChangeListener.init();
   }
@@ -137,6 +140,27 @@ export class TournamentService {
     triggeringUserId?: number,
     impactedEntryScores: BookshelfModel[] = [],
     options: { allowedTournamentStates?: string[] } = {}): Promise<void> {
+    // Refreshes are fire-and-forget from the ranking change listener: concurrent runs would
+    // overwrite each other's results, or create duplicate tournament scores for the same user.
+    const eventId = event.get("id");
+    const previousRefresh = this.refreshQueues[eventId] || Promise.resolve();
+    const refresh = previousRefresh
+      .catch(() => undefined)
+      .then(() => this.doRefreshTournamentScores(event, triggeringUserId, impactedEntryScores, options));
+    const queued = refresh.catch(() => undefined).then(() => {
+      if (this.refreshQueues[eventId] === queued) {
+        delete this.refreshQueues[eventId];
+      }
+    });
+    this.refreshQueues[eventId] = queued;
+    return refresh;
+  }
+
+  private async doRefreshTournamentScores(
+    event: BookshelfModel,
+    triggeringUserId: number | undefined,
+    impactedEntryScores: BookshelfModel[],
+    options: { allowedTournamentStates?: string[] }): Promise<void> {
     const allowedTournamentStates = options.allowedTournamentStates || [enums.EVENT.STATUS_TOURNAMENT.PLAYING];
     if (!allowedTournamentStates.includes(event.get("status_tournament"))) {
       return;
@@ -272,7 +296,7 @@ export class TournamentService {
             }
             ranking++;
           } else {
-            await tScore.destroy({ transacting: transaction });
+            await tScore.destroy({ transacting: transaction, require: false });
           }
         }
       });

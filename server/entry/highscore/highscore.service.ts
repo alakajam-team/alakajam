@@ -229,14 +229,20 @@ export class HighScoreService {
   }
 
   public async deleteAllEntryScores(entry: BookshelfModel): Promise<void> {
+    // Deleted scores are reported as impacted, so that tournament scores of their authors get refreshed
+    const deletedEntryScores = (await models.EntryScore
+      .where("entry_id", entry.get("id"))
+      .fetchAll() as BookshelfCollection).models;
     await db.knex("entry_score")
       .where("entry_id", entry.get("id"))
       .delete();
-    await this.refreshEntryRankings(entry);
+    await this.refreshEntryRankings(entry, { additionalImpactedEntryScores: deletedEntryScores });
   }
 
   public async refreshEntryRankings(entry: BookshelfModel, options: {
     triggeringEntryScore?: BookshelfModel; triggeringUserId?: number; updateTournamentIfClosed?: boolean;
+    /** Scores that are not part of the rankings anymore (typically deleted), but whose owners need refreshing */
+    additionalImpactedEntryScores?: BookshelfModel[];
   } = {}
   ): Promise<BookshelfModel | undefined> {
 
@@ -276,7 +282,7 @@ export class HighScoreService {
     }
 
     // Refresh active tournament scores
-    await highscoreEvents.fireEntryRankingChange(entry, impactedEntryScores, options);
+    await highscoreEvents.fireEntryRankingChange(entry, [...impactedEntryScores, ...(options.additionalImpactedEntryScores || [])], options);
 
     if (updatedEntryScore) {
       await updatedEntryScore.load(["user"]);
