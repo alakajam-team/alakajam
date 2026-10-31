@@ -39,7 +39,7 @@ export default function render(context: CommonLocals): JSX.Element {
 
           <h2 class="mb-2 mt-4">Event stats</h2>
           <div class="card card-body">
-            {jumbotronMacros.statsCounters(event)}
+            {jumbotronMacros.statsCounters(event, context.tournamentScoreCount)}
           </div>
         </div>
 

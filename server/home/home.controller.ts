@@ -53,6 +53,8 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
     joinEnabled = false;
   }
 
+  const tournamentScoreCount = featuredEvent ? await tournamentService.countSubmittedScores(featuredEvent) : undefined;
+
   if (user) {
     const allPostsInPage = [context.featuredEventAnnouncement, context.featuredPost].concat(context.posts);
 
@@ -76,7 +78,8 @@ export async function home(req: CustomRequest, res: CustomResponse<CommonLocals>
 
   res.render<CommonLocals>("home/home", {
     ...res.locals,
-    ...context
+    ...context,
+    tournamentScoreCount
   });
 }
 

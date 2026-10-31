@@ -12,7 +12,7 @@ import { HomeContext } from "./home.controller";
 
 export default function render(context: HomeContext): JSX.Element {
   const { user, featuredEvent, featuredPost, embedStreamer, jumboStream, featuredEventAnnouncement, path,
-    eventsTimeline, eventParticipation, inviteToJoin, entry, tournamentScore,
+    eventsTimeline, eventParticipation, inviteToJoin, entry, tournamentScore, tournamentScoreCount,
     suggestedEntries, posts, comments, userPost, userLikes, pageCount, csrfToken } = context;
 
   userMacros.registerTwitchEmbedScripts(context);
@@ -53,7 +53,7 @@ export default function render(context: HomeContext): JSX.Element {
       )}
       {ifSet(featuredEvent, () =>
         jumbotronMacros.eventJumbotron(featuredEvent, eventParticipation, featuredEventAnnouncement, user, userLikes,
-          entry, tournamentScore, path, { inviteToJoin })
+          entry, tournamentScore, path, { inviteToJoin, tournamentScoreCount })
       )}
       {!featuredEvent && !featuredPost &&
         <div class="event-jumbotron" style={jumbotronMacros.backgroundImage(featuredEvent)}>
