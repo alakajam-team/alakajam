@@ -71,15 +71,19 @@ export class HighScoreService {
   }
 
   /**
-   * Retrieves all user scores
+   * Retrieves all user scores (suspended ones are excluded unless `withSuspended` is set)
    */
   public async findUserScores(
     userId: number,
-    options: FetchAllOptions & { sortBy?: "ranking" | "submitted_at" | any } = {}): Promise<BookshelfCollection> {
+    options: FetchAllOptions & { sortBy?: "ranking" | "submitted_at" | any; withSuspended?: boolean } = {}): Promise<BookshelfCollection> {
     if (!userId) { return null; }
 
+    const { sortBy, withSuspended, ...fetchOptions } = options;
     let query = models.EntryScore.where("user_id", userId) as BookshelfModel;
-    switch (options.sortBy) {
+    if (!withSuspended) {
+      query = query.where("active", true);
+    }
+    switch (sortBy) {
     case "ranking":
       query = query.orderBy("ranking");
       break;
@@ -92,7 +96,7 @@ export class HighScoreService {
     // PERF: Entry details required to format scores
     return query.fetchAll({
       withRelated: ["entry.userRoles", "entry.details"],
-      ...options
+      ...fetchOptions
     }) as Bluebird<BookshelfCollection>;
   }
 
