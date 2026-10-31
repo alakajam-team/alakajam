@@ -13,6 +13,7 @@ import {
   SETTING_EVENT_THEME_SHORTLIST_SIZE
 } from "server/core/settings-keys";
 import { User } from "server/entity/user.entity";
+import { computeThemeRatings } from "./theme-rating";
 import themeShortlistService from "./theme-shortlist.service";
 import themeStatsService from "./theme-stats.service";
 import themeService from "./theme.service";
@@ -134,13 +135,7 @@ export class ThemeService {
         }
 
         if (event.get("status_theme") !== enums.EVENT.STATUS_THEME.SHORTLIST) {
-          const positiveVotes = (theme.get("notes") + theme.get("score")) / 2.0;
-          const wilsonBounds = this.computeWilsonBounds(positiveVotes, theme.get("notes"));
-          theme.set({
-            rating_elimination: wilsonBounds.high,
-            rating_shortlist: wilsonBounds.low,
-            normalized_score: 1.0 * theme.get("score") / theme.get("notes"),
-          });
+          theme.set(computeThemeRatings(theme.get("notes"), theme.get("score")));
         }
 
         result = {
@@ -168,22 +163,6 @@ export class ThemeService {
     }
 
     return result;
-  }
-
-  private computeWilsonBounds(positive: number, total: number) {
-    if (total === 0) {
-      return { low: 0, high: 1 };
-    } else {
-      // Equation source: http://www.evanmiller.org/how-not-to-sort-by-average-rating.html
-      const z = 3.0;
-      const phat = 1.0 * positive / total;
-      const zsqbyn = z * z / total;
-      const uncertainty = z * Math.sqrt((phat * (1 - phat) + zsqbyn / 4) / total);
-      return {
-        low: (phat + zsqbyn / 2 - uncertainty) / (1 + zsqbyn),
-        high: (phat + zsqbyn / 2 + uncertainty) / (1 + zsqbyn),
-      };
-    }
   }
 
   private async eliminateLowestThemes(event: BookshelfModel) {
