@@ -4,6 +4,25 @@ import forms from "./forms";
 
 describe("Forms", () => {
 
+  describe("isUsername", () => {
+
+    it("should accept usernames within the length limits", () => {
+      expect(forms.isUsername("abc")).to.equal(true);
+      expect(forms.isUsername("a".repeat(32))).to.equal(true);
+    });
+
+    it("should reject too short or too long usernames", () => {
+      expect(forms.isUsername("ab")).to.equal(false);
+      expect(forms.isUsername("a".repeat(33))).to.equal(false);
+    });
+
+    it("should reject invalid characters", () => {
+      expect(forms.isUsername("1abc")).to.equal(false);
+      expect(forms.isUsername("ab cd")).to.equal(false);
+    });
+
+  });
+
   describe("markdownToHtml", () => {
 
     it("should support read more links", () => {
