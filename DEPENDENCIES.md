@@ -20,15 +20,19 @@ bookshelf                                 0.15.2   0.15.2    1.2.0  alakajam
 knex                                      0.17.6   0.17.6  0.21.12  alakajam
 ```
 
-* @types/node
+* Bootstrap
 
-Still on 14.x, which conflicts with the peer dependencies of Vitest 3.
-`.npmrc` sets `legacy-peer-deps=true` so that `npm install` / `npm ci` still work.
+Stays on 4.x (the markup, jQuery plugins and theme packages all target it). Upgrading is a separate migration.
+
+* TypeORM
+
+Used at runtime alongside Bookshelf (entities, `server/core/db-typeorm.ts`). Must be kept.
 
 ## Non-obvious dependencies
 
-* `vite`, `@rollup/plugin-inject`, `sass`, `typescript`, `ts-node`: needed by `npm run build`, which also runs on the production server after a `NODE_ENV=production npm ci` (see `deployment/upgrade.sh`). They must stay in `dependencies`, not `devDependencies`.
+* `vite`, `@rollup/plugin-inject`, `sass`, `typescript`, `ts-node`, `copy`, `@types/*` and the client-side libraries bundled by Vite or copied by Sass: build-time only, so they live in `devDependencies`. `deployment/upgrade.sh` installs them to build, then runs `npm prune --omit=dev`.
+* `sqlite3` and `pg`: database drivers picked at runtime through `DB_TYPE`, both stay in `dependencies`.
 * `@babel/plugin-proposal-optional-chaining`: used at runtime by jsx-pistols to compile the server templates (`server/core/middleware.ts`).
-* `chokidar`: file watching for the Sass build (`server/scripts/sass.ts`) and the dev live reload (`server/core/live-reload.ts`).
+* `chokidar`: file watching for the Sass build (`server/scripts/sass.ts`) and the dev live reload (`server/core/live-reload.ts`), imported by server code so it is a runtime dependency.
 * `@swc-node/register`, `@swc/core`, `nodemon`, `tsconfig-paths`: dev server (`npm start`, see `nodemon.json`).
 * `unplugin-swc`: lets Vitest emit the decorator metadata required by TypeORM entities.
