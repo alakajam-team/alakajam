@@ -9,8 +9,6 @@ export function carousel(items: JSX.Element[], options: {
   /** Modifier for the row, rendered as `carousel-row--<id>` (handy for tests/styling) */
   id?: string;
   title?: string;
-  /** Look of the row: boxed cards (default), invisible cards, or a single global border */
-  variant?: "cards" | "plain" | "framed";
   /** Makes the title a link, e.g. to the complete list */
   titleHref?: string;
   /** Extra content aligned next to the title */
@@ -20,7 +18,7 @@ export function carousel(items: JSX.Element[], options: {
     return <></>;
   }
 
-  return <div class={`carousel-row carousel-row--${options.variant || "cards"} ${options.id ? "carousel-row--" + options.id : ""}`} role="region"
+  return <div class={`carousel-row ${options.id ? "carousel-row--" + options.id : ""}`} role="region"
     aria-roledescription="carousel" aria-label={options.title}>
     {ifSet(options.title, () =>
       <div class="d-flex mt-3">

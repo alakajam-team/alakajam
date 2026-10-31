@@ -327,7 +327,7 @@
   }
 }
 
-/* Compact cards, used in carousels (look is set by the carousel variant) */
+/* Compact cards, used in carousels */
 
 .post-card {
   height: 100%;
@@ -335,35 +335,16 @@
   .post {
     margin: 0;
 
-    // Same heading as full posts, but the title is clamped and counters stay inline after it
+    // Same heading as full posts: counters stay inline at the end of the title
     h1 {
-      display: flex;
-      align-items: baseline;
-      gap: 0.4rem;
       padding: 0;
       margin-bottom: 4px;
       line-height: 1.2;
-    }
-
-    h1 > .anchor {
-      position: absolute; // Keep the permalink target out of the flex flow
+      overflow-wrap: anywhere;
     }
 
     .post__title {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-      overflow: hidden;
-      overflow-wrap: anywhere;
-      min-width: 0;
       padding-bottom: 0;
-    }
-
-    h1 > .btn,
-    .post__comment-count,
-    .js-like {
-      flex: none;
-      margin-left: 0 !important;
     }
 
     // The details are not boxed in a card of their own here

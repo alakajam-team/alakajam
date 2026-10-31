@@ -104,40 +104,12 @@ $arrowSize: 40px;
     }
   }
 
-  // ===== Looks (chosen through the `variant` option of the macro) =====
-
-  // Boxed cards: white background, border and shadow on each card
-  &--cards &__item > * {
+  // White cards with gaps between them
+  &__item > * {
     padding: 10px;
     background-color: white;
     border: 1px solid variables.$borders;
     @include variables.shadow;
-  }
-
-  // Invisible cards: content straight on the page background, separated by space only
-  &--plain {
-    --carousel-gap: 25px;
-  }
-
-  // Global border: a single box around the whole row, cards separated by thin dividers
-  &--framed {
-    --carousel-gap: 0px;
-
-    .carousel-row__viewport {
-      padding: 0;
-      margin: 0;
-      background-color: white;
-      border: 1px solid variables.$borders;
-      @include variables.shadow;
-    }
-
-    .carousel-row__item {
-      padding: 10px 14px;
-
-      &:not(:last-child) {
-        border-right: 1px solid variables.$borders;
-      }
-    }
   }
 
   &__title-link {
