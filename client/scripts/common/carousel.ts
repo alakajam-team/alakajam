@@ -23,7 +23,11 @@ function bindCarousel(row: HTMLElement): void {
   let frame = 0;
   const scheduleUpdate = () => {
     cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(() => updateArrows(viewport, prev, next));
+    frame = requestAnimationFrame(() => {
+      updateArrows(viewport, prev, next);
+      // Lazy-loaded images only re-check on window events, which don't fire for scrolling inside the row
+      window.dispatchEvent(new Event("scroll"));
+    });
   };
   viewport.addEventListener("scroll", scheduleUpdate, { passive: true });
   window.addEventListener("resize", scheduleUpdate);

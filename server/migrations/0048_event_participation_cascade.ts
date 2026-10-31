@@ -11,8 +11,8 @@ exports.up = async (knex: Knex) => {
     return;
   }
   await knex.schema.alterTable("event_participation", (table) => {
-    table.dropForeign("event_id");
-    table.dropForeign("user_id");
+    table.dropForeign(["event_id"]);
+    table.dropForeign(["user_id"]);
   });
   await knex.schema.alterTable("event_participation", (table) => {
     table.foreign("event_id").references("event.id").onDelete("CASCADE");
@@ -25,8 +25,8 @@ exports.down = async (knex: Knex) => {
     return;
   }
   await knex.schema.alterTable("event_participation", (table) => {
-    table.dropForeign("event_id");
-    table.dropForeign("user_id");
+    table.dropForeign(["event_id"]);
+    table.dropForeign(["user_id"]);
   });
   await knex.schema.alterTable("event_participation", (table) => {
     table.foreign("event_id").references("event.id");
