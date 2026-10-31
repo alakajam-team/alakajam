@@ -20,7 +20,6 @@ git checkout -- .
 git fetch
 git reset --hard origin/master
 
-# Build tooling lives in devDependencies: install everything, build, then drop it
 npm ci --include=dev
 NODE_ENV=production npm run build
 npm prune --omit=dev
