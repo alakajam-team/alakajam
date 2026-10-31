@@ -1,0 +1,120 @@
+/**
+ * Carousel: swipeable row on mobile (next card peeks), arrow-paged list on tablet/desktop.
+ */
+
+@use "variables";
+@use "breakpoints";
+
+$gap: 15px;
+$arrowSize: 40px;
+
+.carousel-row {
+  margin-bottom: 1rem;
+
+  &__frame {
+    position: relative;
+  }
+
+  &__viewport {
+    display: flex;
+    gap: $gap;
+    overflow-x: auto;
+    padding: 2px 2px 8px; // room for card shadows
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__item {
+    flex: 0 0 80%; // Mobile: hints that more cards are available
+    min-width: 0;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+
+    @include breakpoints.media-breakpoint-up(sm) {
+      flex-basis: calc((100% - #{$gap}) / 2);
+    }
+    @include breakpoints.media-breakpoint-up(lg) {
+      flex-basis: calc((100% - #{$gap * 2}) / 3);
+    }
+
+    & > * {
+      flex: 1;
+    }
+  }
+
+  &__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: none;
+    width: $arrowSize;
+    height: $arrowSize;
+    margin-top: calc(#{$arrowSize} / -2);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: white;
+    background-color: variables.$main;
+    opacity: 0.9;
+    cursor: pointer;
+    @include variables.shadow;
+    @include variables.transition;
+
+    &:hover {
+      background-color: variables.$alt;
+      opacity: 1;
+    }
+
+    &:focus-visible {
+      outline: 2px solid variables.$alt-dark;
+      outline-offset: 2px;
+    }
+
+    &--prev {
+      left: calc(#{$arrowSize} / -2);
+    }
+    &--next {
+      right: calc(#{$arrowSize} / -2);
+    }
+
+    // Touch devices swipe instead
+    @include breakpoints.media-breakpoint-up(md) {
+      &:not([hidden]) {
+        display: block;
+      }
+    }
+    @media (hover: none) {
+      display: none !important;
+    }
+  }
+
+  &__see-all {
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 120px;
+    font-weight: bold;
+    text-align: center;
+    color: variables.$text-light;
+    border-style: dashed;
+    background: transparent;
+
+    &:hover {
+      color: variables.$alt;
+      border-color: variables.$alt;
+      text-decoration: none;
+    }
+  }
+
+  &__see-all-icon {
+    font-size: 2rem;
+  }
+}

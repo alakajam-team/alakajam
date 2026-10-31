@@ -36,6 +36,19 @@ test.describe("Home page", () => {
     await expect(postPo.comments.filter({ hasText: ADMIN_POST_WITH_COMMENTS_COMMENT })).toBeVisible();
   });
 
+  test("browses latest posts in a carousel ending with a link to all posts", async ({ page, homePo }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await homePo.visit();
+
+    await expect(homePo.postTitles.first()).toBeVisible();
+    await expect(homePo.seeAllPostsCard).toHaveAttribute("href", "/posts");
+    await expect(homePo.postsCarouselNextArrow).toBeVisible();
+
+    await homePo.postsCarouselNextArrow.click();
+    await expect.poll(() => homePo.postsCarouselViewport.evaluate(el => el.scrollLeft)).toBeGreaterThan(0);
+    await expect(homePo.seeAllPostsCard).toBeInViewport();
+  });
+
   test("shows the featured post set by an administrator", async ({ page, homePo, adminSettingsPo, postPo }) => {
     await loginAs(page, USER_ADMINISTRATOR);
     await homePo.visit();

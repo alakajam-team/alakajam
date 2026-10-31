@@ -326,3 +326,102 @@
     margin-right: 0;
   }
 }
+
+/* Compact cards, used in carousels */
+
+.post-card,
+.comment-card {
+  height: 100%;
+  background-color: white;
+  @include variables.shadow;
+
+  .post__title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    padding-bottom: 0;
+  }
+}
+
+.post-card {
+  &.pending-approbation {
+    opacity: 0.5;
+  }
+
+  &__title {
+    padding: 10px 10px 4px;
+    font-size: 1.25rem;
+    line-height: 1.3;
+    min-height: 3.4rem; // Align cards of a same row
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .post__details {
+    border-top: 1px solid variables.$borders;
+    border-bottom: 0;
+    line-height: 1.6;
+    padding: 8px 10px;
+    flex: 1;
+
+    & > a:first-child {
+      display: block;
+      margin-left: 0;
+      line-height: 36px;
+    }
+  }
+
+  &__footer {
+    padding: 4px 10px 6px;
+    white-space: nowrap;
+  }
+}
+
+.comment-card {
+  padding: 10px 10px 0;
+
+  &__node {
+    display: block;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    .post__title {
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+  }
+
+  .comment__details {
+    align-items: center;
+    flex-wrap: wrap;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  // In a card, the avatar sits inline instead of in the left gutter of a thread
+  .comment__avatar-container {
+    position: static;
+    display: inline-block;
+    vertical-align: middle;
+    width: auto;
+    margin-right: 6px;
+
+    img {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 0;
+      object-fit: cover;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    overflow: hidden;
+    padding: 0 0 10px;
+  }
+}
