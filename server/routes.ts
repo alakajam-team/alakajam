@@ -2,11 +2,9 @@ import csurf from "csurf";
 import express, { NextFunction, RequestHandler } from "express";
 import expressPromiseRouter from "express-promise-router";
 import expressSlowDown from "express-slow-down";
-import multer from "multer";
-import * as randomKey from "random-key";
 import config, * as configUtils from "server/core/config";
-import constants from "server/core/constants";
 import log from "server/core/log";
+import { initUploadMiddleware } from "server/core/upload-middleware";
 import { adminMiddleware } from "./admin/admin.middleware";
 import { adminAnnouncements } from "./admin/announcements/admin-announcements.controller";
 import { adminDev } from "./admin/dev/admin-dev.controller";
@@ -273,28 +271,6 @@ export function routes(app: express.Application): void {
   router.get("/api/user/:user", apiController.getUser);
   router.get("/api/user/:user/latestEntry", apiController.getUserLatestEntry);
   router.get("/api/theme/:theme", apiController.getThemeStats);
-}
-
-function initUploadMiddleware() {
-  // Multipart form parser
-  const uploadStorage = multer.diskStorage({
-    destination(req, file, cb) {
-      cb(null, configUtils.tmpPathAbsolute());
-    },
-    filename(req, file, cb) {
-      file.filename = randomKey.generate() + "-" + file.originalname;
-      cb(null, file.filename);
-    },
-  });
-  return multer({
-    storage: uploadStorage,
-    limits: {
-      fields: 1000,
-      fileSize: constants.MAX_UPLOAD_SIZE,
-      files: 20,
-      parts: 2000,
-    },
-  });
 }
 
 function initCSRFMiddleware() {
