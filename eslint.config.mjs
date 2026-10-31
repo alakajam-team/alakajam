@@ -1,6 +1,5 @@
 import tseslint from "typescript-eslint";
 import stylistic from "@stylistic/eslint-plugin";
-import react from "eslint-plugin-react";
 import globals from "globals";
 
 export default tseslint.config(
@@ -25,14 +24,7 @@ export default tseslint.config(
       }
     },
     plugins: {
-      react,
       "@stylistic": stylistic
-    },
-    settings: {
-      react: {
-        // The code uses Preact, which would make auto-detection warn
-        version: "16.0"
-      }
     },
     rules: {
       // Too slow for what they're worth
@@ -49,8 +41,6 @@ export default tseslint.config(
       "@typescript-eslint/no-redundant-type-constituents": "off",
 
       "@typescript-eslint/consistent-type-definitions": "error",
-      "react/jsx-uses-react": 1,
-      "react/jsx-uses-vars": 1,
       "@typescript-eslint/no-unused-vars": ["error", {
         "vars": "all",
         "args": "none",
