@@ -23,6 +23,8 @@ export function post(postModel: BookshelfModel, options: {
   hideHeading?: boolean;
   hideBody?: boolean;
   hideDetails?: boolean;
+  /** Author, date and related event/entry each get their own line */
+  stackedDetails?: boolean;
   showId?: boolean;
   commentsAnchorLinks?: boolean;
   smallTitle?: boolean;
@@ -94,7 +96,7 @@ export function post(postModel: BookshelfModel, options: {
 
     {ifFalse(options.hideDetails, () => {
       return <div class="card">
-        {postDetails(postModel, author, readingUser)}
+        {postDetails(postModel, author, readingUser, options.stackedDetails)}
 
         {ifFalse(options.hideBody, () =>
           <div class="post__body card-body user-contents" dangerouslySetInnerHTML={markdown(postModel.get("body"))} />
@@ -116,32 +118,15 @@ export function post(postModel: BookshelfModel, options: {
 }
 
 /**
- * Compact post card: title and metadata only (no body), meant for carousels & lists.
+ * Compact post card: the heading (title, comments, likes) and stacked details of a post, but no body.
+ * Meant for carousels & lists.
  */
 export function postCard(postModel: BookshelfModel, options: {
   readingUser?: User;
   readingUserLikes?: Record<number, string>;
 } = {}): JSX.Element {
-  const author = postModel.related<BookshelfModel>("author") as unknown as User;
-  const isAuthorApproved = author.get("approbation_state") === USER_APPROVED_VALUE;
-
-  if (!security.canUserRead(options.readingUser, postModel, { allowMods: true })) {
-    return <></>;
-  }
-
-  return <div class={`card post-card ${!isAuthorApproved ? "pending-approbation" : ""}`}>
-    <a href={links.routeUrl(postModel, "post")} class="post-card__title post__title">
-      {postModel.get("title")}
-    </a>
-    {postDetails(postModel, author, options.readingUser)}
-    <div class="post-card__footer">
-      <a href={links.routeUrl(postModel, "post", "#comments")} class="post__comment-count">
-        <span class="fas fa-comments"></span> {postModel.get("comment_count") || 0}
-      </a>
-      <span class="js-like ml-2">
-        {postLikes(postModel, options)}
-      </span>
-    </div>
+  return <div class="post-card">
+    {post(postModel, { ...options, hideBody: true, stackedDetails: true, readOnly: false })}
   </div>;
 }
 
@@ -250,11 +235,11 @@ export function commentCard(comment: CommentBookshelfModel, options: { readingUs
   const author = comment.related<BookshelfModel>("user");
   const node = comment.node();
 
-  return <div class="card comment-card comment">
+  return <div class="comment-card comment">
     <a href={commentUrl(node, comment)} class="comment-card__node">
       <h4 class="post__title">{node.get("title")}</h4>
     </a>
-    {commentDetails(comment, author, { readingUser: options.readingUser, linkToNode: true, readOnly: true })}
+    {commentDetails(comment, author, { readingUser: options.readingUser, linkToNode: true, readOnly: true, stacked: true })}
     <div class="comment-card__body comment__body user-contents" dangerouslySetInnerHTML={markdown(comment.get("body"), {
       maxLength: 30,
       truncateByWords: true,
@@ -319,66 +304,71 @@ export function commentEditor(commentModel: BookshelfModel, path: string, csrfTo
   }
 }
 
-function postDetails(postModel: BookshelfModel, author: User, readingUser?: User): JSX.Element {
+function postDetails(postModel: BookshelfModel, author: User, readingUser?: User, stacked = false): JSX.Element {
   const isPublished = forms.isPast(postModel.get("published_at"));
   const relatedEvent = postModel.related<BookshelfModel>("event");
   const relatedEntry = postModel.related<BookshelfModel>("entry") as EntryBookshelfModel;
 
-  return <div class="post__details">
-      <a href={links.routeUrl(author, "user")}>
-        {ifSet(author.get("avatar"), () =>
-          <img src={links.pictureUrl(author.get("avatar"), author)} class="post__avatar" />
-        )}
-        {ifNotSet(author.get("avatar"), () =>
-          <img src={links.staticUrl("/static/images/default-avatar.png")} class="post__avatar" />
-        )}
-        {author.get("title")}
-      </a>
-      <span>
-        &nbsp;•&nbsp;
-        {ifTrue(isPublished, () =>
-          <span data-toggle="tooltip" title={dateTime(postModel.get("published_at"), readingUser)}>
-            {relativeTime(postModel.get("published_at"))}&nbsp;
-          </span>
-        )}
-        {ifTrue(postModel.get("published_at") && !isPublished, () =>
-          <>
-            <span class="badge">Scheduled</span> for {dateTime(postModel.get("published_at"), readingUser)}
-            &nbsp;
-          </>
-        )}
-        {ifTrue(!postModel.get("published_at") && !isPublished, () =>
-          <span class="badge">Draft</span>
-        )}
-      </span>
-
-      {ifSet(relatedEvent.get("id"), () =>
-        <>
-          on <a href={links.routeUrl(relatedEvent, "event")}>{relatedEvent.get("title")}</a>&nbsp;
-        </>
+  return <div class={`post__details ${stacked ? "post__details--stacked" : ""}`}>
+    <a href={links.routeUrl(author, "user")}>
+      {ifSet(author.get("avatar"), () =>
+        <img src={links.pictureUrl(author.get("avatar"), author)} class="post__avatar" />
       )}
-      {ifSet(relatedEntry.get("id"), () =>
-        <span style="display: inline-block;">
-          entry <a href={links.routeUrl(relatedEntry, "entry")}>
-            {ifSet(relatedEntry.pictureIcon(), () =>
-              <img data-src={links.pictureUrl(relatedEntry.pictureIcon(), relatedEntry)}
-                class="no-border js-lazy" style="max-height: 32px; margin-top: -2px;" />
-            )}
-            &nbsp;
-            {relatedEntry.get("title")}
-          </a>
+      {ifNotSet(author.get("avatar"), () =>
+        <img src={links.staticUrl("/static/images/default-avatar.png")} class="post__avatar" />
+      )}
+      {author.get("title")}
+    </a>
+    <span class="post__details-line">
+      {ifFalse(stacked, () => <>&nbsp;•&nbsp;</>)}
+      {ifTrue(isPublished, () =>
+        <span data-toggle="tooltip" title={dateTime(postModel.get("published_at"), readingUser)}>
+          {relativeTime(postModel.get("published_at"))}&nbsp;
         </span>
       )}
-    </div>;
+      {ifTrue(postModel.get("published_at") && !isPublished, () =>
+        <>
+          <span class="badge">Scheduled</span> for {dateTime(postModel.get("published_at"), readingUser)}
+          &nbsp;
+        </>
+      )}
+      {ifTrue(!postModel.get("published_at") && !isPublished, () =>
+        <span class="badge">Draft</span>
+      )}
+    </span>
+
+    {ifSet(relatedEvent.get("id"), () =>
+      <span class="post__details-line">
+        on <a href={links.routeUrl(relatedEvent, "event")}>{relatedEvent.get("title")}</a>&nbsp;
+      </span>
+    )}
+    {ifSet(relatedEntry.get("id"), () =>
+      <span class="post__details-line" style="display: inline-block;">
+        entry <a href={links.routeUrl(relatedEntry, "entry")}>
+          {ifSet(relatedEntry.pictureIcon(), () =>
+            <img data-src={links.pictureUrl(relatedEntry.pictureIcon(), relatedEntry)}
+              class="no-border js-lazy" style="max-height: 32px; margin-top: -2px;" />
+          )}
+          &nbsp;
+          {relatedEntry.get("title")}
+        </a>
+      </span>
+    )}
+  </div>;
 }
 
-type CommentDisplayOptions = Pick<Parameters<typeof comments>[2],
-  "readingUser" | "editableAnonComments" | "linkToNode" | "nodeAuthorIds" | "readOnly">;
+interface CommentDisplayOptions extends Pick<Parameters<typeof comments>[2],
+  "readingUser" | "editableAnonComments" | "linkToNode" | "nodeAuthorIds" | "readOnly"> {
+  /** Author and date each get their own line */
+  stacked?: boolean;
+}
 
 function commentDetails(comment: CommentBookshelfModel, author: BookshelfModel, options: CommentDisplayOptions): JSX.Element {
   const isOwnAnonComment = options.editableAnonComments && options.editableAnonComments.includes(comment.get("id"));
+  const group = (className: string, content: JSX.Element) => options.stacked ? <div class={className}>{content}</div> : content;
 
-  return <div class="comment__details d-flex">
+  return <div class={`comment__details ${options.stacked ? "comment__details--stacked" : "d-flex"}`}>
+    {group("comment__author", <>
       {ifTrue(isOwnAnonComment, () =>
         <a href={links.routeUrl(options.readingUser, "user")}>
           <div class="comment__avatar-container">
@@ -414,7 +404,10 @@ function commentDetails(comment: CommentBookshelfModel, author: BookshelfModel, 
           <span>&nbsp;</span><span class="fas fa-pen-nib mt-1" data-toggle="tooltip" title="Page owner"></span>
         </>
       )}
-      <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip" title={dateTime(comment.get("created_at"), options.readingUser)}>
+    </>)}
+    {group("comment__when", <>
+      {ifFalse(options.stacked, () => <span>&nbsp;•&nbsp;</span>)}
+      <span data-toggle="tooltip" title={dateTime(comment.get("created_at"), options.readingUser)}>
         {relativeTime(comment.get("created_at"))}</span>
       {ifTrue(comment.wasEdited(), () =>
         <>
@@ -427,9 +420,10 @@ function commentDetails(comment: CommentBookshelfModel, author: BookshelfModel, 
           <span>&nbsp;•&nbsp;</span><a href={"#c" + comment.id}><i class="fas fa-link" aria-hidden="true"></i></a>
         </>
       )}
-      {ifTrue(!options.readOnly && (security.canUserWrite(options.readingUser, comment) || isOwnAnonComment), () =>
-        <a class="btn btn-outline-primary btn-sm ml-auto"
-          href={links.routeUrl(comment, "comment", "edit")}><span class="fas fa-pencil-alt"></span></a>
-      )}
-    </div>;
+    </>)}
+    {ifTrue(!options.readOnly && (security.canUserWrite(options.readingUser, comment) || isOwnAnonComment), () =>
+      <a class="btn btn-outline-primary btn-sm ml-auto"
+        href={links.routeUrl(comment, "comment", "edit")}><span class="fas fa-pencil-alt"></span></a>
+    )}
+  </div>;
 }
