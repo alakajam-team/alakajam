@@ -353,8 +353,8 @@ function postDetails(postModel: BookshelfModel, author: User, readingUser?: User
   </div>;
 }
 
-interface CommentDisplayOptions extends Pick<Parameters<typeof comments>[2],
-  "readingUser" | "editableAnonComments" | "linkToNode" | "nodeAuthorIds" | "readOnly"> { }
+type CommentDisplayOptions = Pick<Parameters<typeof comments>[2],
+  "readingUser" | "editableAnonComments" | "linkToNode" | "nodeAuthorIds" | "readOnly">;
 
 function commentDetails(comment: CommentBookshelfModel, author: BookshelfModel, options: CommentDisplayOptions): JSX.Element {
   const isOwnAnonComment = options.editableAnonComments && options.editableAnonComments.includes(comment.get("id"));
