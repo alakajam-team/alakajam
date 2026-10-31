@@ -1,9 +1,9 @@
-import * as findUp from "find-up";
+import { findProjectRoot } from "./root-path";
 import * as fs from "fs";
 import * as path from "path";
 import log from "./log";
 
-const ROOT_PATH = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
+const ROOT_PATH = findProjectRoot(__dirname);
 
 export interface Config {
   readonly SERVER_PORT: number;
@@ -57,7 +57,7 @@ export interface Config {
   readonly HCAPTCHA_SECRET?: string;
 }
 
-const SOURCES_ROOT = path.dirname(findUp.sync("package.json", { cwd: __dirname }));
+const SOURCES_ROOT = findProjectRoot(__dirname);
 const CONFIG_PATH = path.join(SOURCES_ROOT, process.env.CONFIG_PATH || "config.js");
 const CONFIG_SAMPLE_PATH = path.join(SOURCES_ROOT, "config.sample.js");
 
