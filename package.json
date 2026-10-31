@@ -64,7 +64,7 @@
     "@types/sinon": "^9.0.11",
     "@types/slug": "^0.9.1",
     "body-parser": "^1.19.0",
-    "bookshelf": "^0.15.2",
+    "bookshelf": "github:mkalam-alami/bookshelf#081a17f4c3552f4c9d6e4f997050a470821b6613",
     "bookshelf-cascade-delete": "^2.0.1",
     "bootstrap": "^4.6.0",
     "bootstrap-notify": "^3.1.3",

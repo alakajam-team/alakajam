@@ -9,9 +9,10 @@
 
 * Bookshelf
 
-1.X has a blocking bug for us: https://github.com/alakajam-team/alakajam/issues/478  
-Also forces Knex to a compatible version.  
-Easiest resolution would be to contribute the fix to Bookshelf ourselves.  
+1.X had a blocking bug for us (saving eager loaded relations): https://github.com/alakajam-team/alakajam/issues/478  
+We now use our fork https://github.com/mkalam-alami/bookshelf (upstream 1.2.0 + the fix, tag `v1.2.0-alakajam.1`).  
+Bookshelf requires Knex `>=0.15 <0.22`.  
+Ideally contribute the fix upstream (bookshelf/bookshelf#2046) and go back to the official package.  
 
 ```
 Package                                  Current   Wanted   Latest  Location
