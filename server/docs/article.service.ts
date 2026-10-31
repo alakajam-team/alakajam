@@ -1,6 +1,5 @@
 import * as fs from "fs-extra";
 import * as path from "path";
-import requestPromise from "request-promise-native";
 import cache from "../core/cache";
 import config from "../core/config";
 import constants from "../core/constants";
@@ -24,9 +23,11 @@ export class ArticleService {
         }
       } else {
         return cache.getOrFetch(cache.articles, articleName, async () => {
-          let result = null;
-          result = await requestPromise(constants.ARTICLES_ROOT_URL + articleName + ".md");
-          return result;
+          const response = await fetch(constants.ARTICLES_ROOT_URL + articleName + ".md");
+          if (!response.ok) {
+            throw new Error("Unexpected status " + response.status);
+          }
+          return response.text();
         });
       }
     } catch (e) {

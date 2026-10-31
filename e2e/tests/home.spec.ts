@@ -1,4 +1,4 @@
-import { clickAndWaitForLoad, loginAs, logout, restoreDB } from "../support/commands";
+import { clickAndWaitForLoad, createPost, loginAs, logout, restoreDB } from "../support/commands";
 import {
   ADMIN_POST_WITHOUT_COMMENTS,
   ADMIN_POST_WITHOUT_COMMENTS_TITLE,
@@ -37,7 +37,11 @@ test.describe("Home page", () => {
   });
 
   test("browses latest posts in a carousel whose title links to all posts", async ({ page, homePo }) => {
-    await page.setViewportSize({ width: 820, height: 900 }); // 2 cards visible: the 3 seeded posts overflow;
+    await page.setViewportSize({ width: 820, height: 900 }); // 2 cards visible
+    // The seeded event announcement is excluded from the carousel, so add a post to overflow the 2 cards
+    await loginAs(page, USER_ADMINISTRATOR);
+    await createPost(page, { title: "Carousel overflow post", body: "Third card" });
+    await logout(page);
     await homePo.visit();
 
     await expect(homePo.postTitles.first()).toBeVisible();

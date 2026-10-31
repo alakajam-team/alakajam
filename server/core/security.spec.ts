@@ -305,7 +305,7 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
 
   async function findRolesOfUser(node: BookshelfModel, user: { id: number }): Promise<BookshelfModel[]> {
     await node.load("userRoles");
-    return node.related<BookshelfCollection>("userRoles").where({ user_id: user.id }) as BookshelfModel[];
+    return node.related<BookshelfCollection>("userRoles").models.filter((role) => role.get("user_id") === user.id) as BookshelfModel[];
   }
 
 });

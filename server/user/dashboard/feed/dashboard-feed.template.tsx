@@ -75,7 +75,7 @@ export default function render(context: CommonLocals): JSX.Element {
         <div class="list-group">
           {latestPosts.map( post =>
             <div class="list-group-item">
-              {postMacros.post(post, { hideDetails: true, readingUser: user, readingUserLikes: {}, smallTitle: true })}
+              {postMacros.post(post, { hideDetails: true, readingUser: user, readingUserLikes: {}, titleTag: "h4" })}
             </div>
           )}
         </div>

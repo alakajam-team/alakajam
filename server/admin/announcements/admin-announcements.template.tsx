@@ -28,13 +28,13 @@ export default function render(context: AdminAnnouncementContext): JSX.Element {
       {ifTrue(draftPosts.length > 0, () => <div>
         <h2>Drafts</h2>
         {draftPosts.map(post =>
-          postMacros.post(post, { allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes, smallTitle: true })
+          postMacros.post(post, { allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes, titleTag: "h4" })
         )}
         <h2>Published</h2>
       </div>)}
 
       {publishedPosts.map(post =>
-        postMacros.post(post, { allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes, smallTitle: true })
+        postMacros.post(post, { allowMods: true, hideBody: true, readingUser: user, readingUserLikes: userLikes, titleTag: "h4" })
       )}
 
       {ifTrue(publishedPosts.length === 0, () =>

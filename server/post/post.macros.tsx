@@ -25,7 +25,7 @@ export function post(postModel: BookshelfModel, options: {
   hideDetails?: boolean;
   showId?: boolean;
   commentsAnchorLinks?: boolean;
-  smallTitle?: boolean;
+  titleTag?: "h1" | "h2" | "h4";
   readOnly?: boolean;
   csrfTokenForQuickModActions?: () => JSX.Element;
 } & SecurityOptions = {}): JSX.Element {
@@ -40,7 +40,7 @@ export function post(postModel: BookshelfModel, options: {
   return <div class={`post ${!isAuthorApproved ? "pending-approbation" : ""}`}>
 
     {ifFalse(options.hideHeading, () => {
-      const H = options.smallTitle ? "h4" : "h1";
+      const H = options.titleTag ?? "h1";
       return <H>
         <a id={"p" + postModel.get("id")} class="anchor" />
         <a href={links.routeUrl(postModel, "post")} class="post__title">
@@ -120,7 +120,7 @@ export function postCard(postModel: BookshelfModel, options: {
   readingUserLikes?: Record<number, string>;
 } = {}): JSX.Element {
   return <div class="post-card">
-    {post(postModel, { ...options, hideBody: true, readOnly: false, smallTitle: true })}
+    {post(postModel, { ...options, hideBody: true, readOnly: false, titleTag: "h2" })}
   </div>;
 }
 
@@ -158,7 +158,7 @@ export function postLikes(postModel: BookshelfModel, options: {
   </span>;
 }
 
-export function comments(commentsParam: BookshelfModel[], path: string, options: {
+type CommentOptions = {
   readingUser?: User;
   editComment?: BookshelfModel;
   csrfToken?: () => JSX.Element;
@@ -168,7 +168,9 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
   readOnly?: boolean;
   preview?: boolean;
   highlightNewerThan?: any;
-} & CommentEditorOptions): JSX.Element {
+} & CommentEditorOptions;
+
+export function comments(commentsParam: BookshelfModel[], path: string, options: CommentOptions): JSX.Element {
   let lastLinkedNode: BookshelfModel | undefined;
 
   return <>
@@ -233,8 +235,8 @@ export function commentCard(comment: CommentBookshelfModel, options: { readingUs
     <a href={commentUrl(node, comment)} class="comment-card__node">
       <h4 class="post__title">{node.get("title")}</h4>
     </a>
+    {commentDetails(comment, author, { readingUser: options.readingUser, linkToNode: true, readOnly: true })}
     <div class="card">
-      {commentDetails(comment, author, { readingUser: options.readingUser, linkToNode: true, readOnly: true })}
       <div class="comment-card__body comment__body user-contents" dangerouslySetInnerHTML={markdown(comment.get("body"), {
         maxLength: 30,
         truncateByWords: true,
@@ -353,8 +355,13 @@ function postDetails(postModel: BookshelfModel, author: User, readingUser?: User
   </div>;
 }
 
-interface CommentDisplayOptions extends Pick<Parameters<typeof comments>[2],
-  "readingUser" | "editableAnonComments" | "linkToNode" | "nodeAuthorIds" | "readOnly"> { }
+interface CommentDisplayOptions {
+  readingUser?: User;
+  editableAnonComments?: number[];
+  linkToNode?: boolean;
+  nodeAuthorIds?: number[];
+  readOnly?: boolean;
+};
 
 function commentDetails(comment: CommentBookshelfModel, author: BookshelfModel, options: CommentDisplayOptions): JSX.Element {
   const isOwnAnonComment = options.editableAnonComments && options.editableAnonComments.includes(comment.get("id"));

@@ -8,7 +8,6 @@ import log from "server/core/log";
 import { logErrorAnd } from "server/core/middleware";
 import settings from "server/core/settings";
 import { SETTING_FEATURED_POST_ID, SETTING_FEATURED_TWITCH_CHANNEL, SETTING_HOME_TIMELINE_SIZE } from "server/core/settings-keys";
-import { Post } from "server/entity/post.entity";
 import { User } from "server/entity/user.entity";
 import entryService from "server/entry/entry.service";
 import eventParticipationService from "server/event/dashboard/event-participation.service";

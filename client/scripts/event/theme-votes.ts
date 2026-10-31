@@ -1,4 +1,4 @@
-import template from "lodash.template";
+import template from "lodash/template";
 
 export default function themeVotes(): void {
   const $themeVote = $("#js-theme-vote");

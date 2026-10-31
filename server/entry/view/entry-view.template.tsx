@@ -103,7 +103,7 @@ export default function render(context: EntryLocals): JSX.Element {
                 <div class="list-group">
                   {posts.models.map(post =>
                     <div class="list-group-item" style="margin-bottom: -10px">
-                      {postMacros.post(post, { hideDetails: true, readingUser: user, readingUserLikes: context.userLikes, smallTitle: true })}
+                      {postMacros.post(post, { hideDetails: true, readingUser: user, readingUserLikes: context.userLikes, titleTag: "h4" })}
                     </div>
                   )}
                 </div>

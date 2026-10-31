@@ -111,7 +111,7 @@ export class Security {
     const acceptPermissions = this.getPermissionsEqualOrAbove(permission);
     const allUserRoles = model.related<BookshelfCollection>("userRoles");
     if (acceptPermissions && allUserRoles) {
-      const userRoles = allUserRoles.where({ user_id: user.get("id") }) as BookshelfModel[];
+      const userRoles = allUserRoles.models.filter((role) => role.get("user_id") === user.get("id")) as BookshelfModel[];
       for (const userRole of userRoles) {
         if (acceptPermissions.includes(userRole.get("permission"))) {
           return true;

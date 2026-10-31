@@ -81,7 +81,8 @@ export class LikeService {
     removeLikeType?: string): Promise<void> {
     if (addLikeType || removeLikeType) {
       // Update like details
-      const likeDetails = node.get("like_details") || {}; // {type: count}
+      const currentLikeDetails = node.get("like_details");
+      const likeDetails = currentLikeDetails && !Array.isArray(currentLikeDetails) ? currentLikeDetails : {}; // {type: count}
       if (removeLikeType && likeDetails[removeLikeType]) {
         likeDetails[removeLikeType]--;
         if (likeDetails[removeLikeType] === 0) {

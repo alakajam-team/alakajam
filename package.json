@@ -42,7 +42,7 @@
     "@twurple/api": "^8.2.0",
     "@twurple/auth": "^8.2.0",
     "body-parser": "^1.19.0",
-    "bookshelf": "^0.15.2",
+    "bookshelf": "github:mkalam-alami/bookshelf#v1.2.0-alakajam.1",
     "bookshelf-cascade-delete": "^2.0.1",
     "bootstrap": "^4.6.0",
     "cheerio": "^1.0.0-rc.5",
@@ -76,8 +76,6 @@
     "random-key": "^0.3.2",
     "reflect-metadata": "^0.1.13",
     "remove-markdown": "^0.8.0",
-    "request": "^2.88.2",
-    "request-promise-native": "^1.0.9",
     "sanitize-html": "^2.3.3",
     "showdown": "^1.9.0",
     "slug": "^4.0.3",
@@ -93,6 +91,8 @@
     "sharp": "^0.27.2"
   },
   "devDependencies": {
+    "@emnapi/core": "1.11.3",
+    "@emnapi/runtime": "1.11.3",
     "@eslint/js": "^10.0.1",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@playwright/test": "^1.64.1",
@@ -132,7 +132,6 @@
     "icheck": "^1.0.2",
     "jquery": "^3.7.1",
     "jquery-lazy": "^1.7.11",
-    "lodash.template": "^4.5.0",
     "nodemon": "^3.1.14",
     "popper.js": "^1.16.1",
     "sass": "^1.106.1",
@@ -152,5 +151,13 @@
   },
   "_moduleAliases": {
     "server": "dist/server"
+  },
+  "overrides": {
+    "typeorm": {
+      "uuid": "^11.1.0"
+    },
+    "bookshelf-cascade-delete": {
+      "bookshelf": "$bookshelf"
+    }
   }
 }

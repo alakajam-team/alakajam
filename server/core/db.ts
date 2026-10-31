@@ -194,8 +194,6 @@ function createKnexInstance(options: { foreignKeys?: boolean } = {}): Knex {
  */
 function createBookshelfInstance(knex: Knex) {
   const bookshelf = Bookshelf(knex as any);
-  bookshelf.plugin("registry");
-  bookshelf.plugin("pagination");
   bookshelf.plugin(require("bookshelf-cascade-delete"));
   return bookshelf;
 }

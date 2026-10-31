@@ -24,7 +24,7 @@ export function eventDashboardBlogPosts(user: User, event: BookshelfModel, entry
 
     <div class="mt-4">
       {posts.map(post =>
-        postMacros.post(post, { hideBody: true, smallTitle: true, readingUser: user, readingUserLikes: userLikes })
+        postMacros.post(post, { hideBody: true, titleTag: "h4", readingUser: user, readingUserLikes: userLikes })
       )}
     </div>
   </>;

@@ -8,13 +8,13 @@ export function get(callback: JSXProvider): JSXContent {
   return callback();
 }
 
-export function ifTrue(expression: boolean, callback: JSXProvider): JSXContent | undefined {
+export function ifTrue(expression: boolean | undefined, callback: JSXProvider): JSXContent | undefined {
   if (expression) {
     return callback();
   }
 }
 
-export function ifFalse(expression: boolean, callback: JSXProvider): JSXContent | undefined {
+export function ifFalse(expression: boolean | undefined, callback: JSXProvider): JSXContent | undefined {
   return ifTrue(!expression, callback);
 }
 

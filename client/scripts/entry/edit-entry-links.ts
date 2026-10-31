@@ -1,4 +1,4 @@
-import template from "lodash.template";
+import template from "lodash/template";
 import Sortable from "sortablejs";
 
 interface EntryLink {
