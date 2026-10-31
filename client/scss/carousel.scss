@@ -1,0 +1,132 @@
+/**
+ * Carousel: swipeable row on mobile (next card peeks), arrow-paged list on tablet/desktop.
+ */
+
+@use "variables";
+@use "breakpoints";
+
+$arrowSize: 40px;
+
+.carousel-row {
+  --carousel-gap: 15px;
+  margin-bottom: 1rem;
+
+  &__frame {
+    position: relative;
+  }
+
+  &__viewport {
+    display: flex;
+    gap: var(--carousel-gap);
+    overflow-x: auto;
+    padding: 2px 2px 8px; // room for card shadows
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+
+    // Mobile: bleed to the screen edges (cancels the container's 15px padding) so the peeking card isn't cropped
+    @media (max-width: 575.98px) {
+      margin: 0 -15px;
+      padding-left: 15px;
+      padding-right: 15px;
+      scroll-padding-left: 15px;
+    }
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__item {
+    flex: 0 0 80%; // Mobile: hints that more cards are available
+    min-width: 0;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+
+    @include breakpoints.media-breakpoint-up(sm) {
+      flex-basis: calc((100% - var(--carousel-gap)) / 2);
+    }
+    @include breakpoints.media-breakpoint-up(lg) {
+      flex-basis: calc((100% - var(--carousel-gap) * 2) / 3);
+    }
+
+    & > * {
+      flex: 1;
+    }
+  }
+
+  &__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: none;
+    width: $arrowSize;
+    height: $arrowSize;
+    margin-top: calc(#{$arrowSize} / -2);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: white;
+    background-color: variables.$main;
+    opacity: 0.9;
+    cursor: pointer;
+    @include variables.shadow;
+    @include variables.transition;
+
+    &:hover {
+      background-color: variables.$alt;
+      opacity: 1;
+    }
+
+    &:focus-visible {
+      outline: 2px solid variables.$alt-dark;
+      outline-offset: 2px;
+    }
+
+    &--prev {
+      left: 8px;
+    }
+    &--next {
+      right: 8px;
+    }
+
+    // Touch devices swipe instead
+    @include breakpoints.media-breakpoint-up(md) {
+      &:not([hidden]) {
+        display: block;
+      }
+    }
+    @media (hover: none) {
+      display: none !important;
+    }
+  }
+
+  // White cards with gaps between them
+  &__item > * {
+    padding: 10px;
+    background-color: white;
+    border: 1px solid variables.$borders;
+    @include variables.shadow;
+  }
+
+  &__title-link {
+    color: inherit;
+
+    &:hover {
+      color: variables.$alt;
+      text-decoration: none;
+
+      .carousel-row__title-chevron {
+        transform: translateX(3px);
+      }
+    }
+  }
+
+  &__title-chevron {
+    font-size: 0.75em;
+    @include variables.transition;
+  }
+}

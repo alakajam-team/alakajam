@@ -1,11 +1,11 @@
 import React, { JSX } from "preact";
 import base from "server/base.template";
 import links from "server/core/links";
+import * as carouselMacros from "server/macros/carousel.macros";
 import * as eventMacros from "server/event/event.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifNotSet, ifSet, ifTrue } from "server/macros/jsx-utils";
 import * as jumbotronMacros from "server/macros/jumbotron.macros";
-import * as navigationMacros from "server/macros/navigation.macros";
 import * as postMacros from "server/post/post.macros";
 import * as userMacros from "server/user/user.macros";
 import { HomeContext } from "./home.controller";
@@ -13,7 +13,7 @@ import { HomeContext } from "./home.controller";
 export default function render(context: HomeContext): JSX.Element {
   const { user, featuredEvent, featuredPost, embedStreamer, jumboStream, featuredEventAnnouncement, path,
     eventsTimeline, eventParticipation, inviteToJoin, entry, tournamentScore,
-    suggestedEntries, posts, comments, userPost, userLikes, pageCount, csrfToken } = context;
+    suggestedEntries, posts, comments, userPost, userLikes } = context;
 
   userMacros.registerTwitchEmbedScripts(context);
 
@@ -112,75 +112,59 @@ export default function render(context: HomeContext): JSX.Element {
       </div>
 
       <div class="container">
-        <div class="row">
+        {/* ===== FEATURED STREAMER ===== */}
 
-          <div class="col-md-8 col-12 order-md-1 order-2">
-            {/* ===== GAME RATING SUGGESTIONS ===== */}
-
-            {ifTrue(user && suggestedEntries && suggestedEntries.length > 0, () =>
-              <div>
-                <div class="horizontal-bar">
-                  Suggested entries to play
-                  {formMacros.tooltip("Rate and comment other games to increase your karma. The Top 3 are featured on the front page!")}
-                </div>
-                <div class="home-grid game-grid pb-1">
-                  {suggestedEntries.map(suggestedEntry =>
-                    <div class="game-grid-entry">
-                      {eventMacros.entryThumb(suggestedEntry)}
-                    </div>
-                  )}
-                </div>
+        {ifTrue(featuredEvent && featuredEvent.get("status") === "open" && embedStreamer && !jumboStream, () =>
+          <div>
+            <div class="horizontal-bar">Featured streamer</div>
+            <div class="featured p-0 mb-1">
+              {userMacros.twitchEmbed(embedStreamer.details.social_links.twitch, { height: 250 })}
+              <div class="my-1">
+                {userMacros.userThumb(embedStreamer)}
+                <a href={links.routeUrl(featuredEvent, "event", "streamers")} class="mx-3">
+                  <span class="fa fa-tv"></span> Browse all streamers
+                </a>
               </div>
-            )}
-
-            {/* ===== LATEST BLOG POSTS ===== */}
-
-            {ifTrue(posts && posts.length > 0, () =>
-              <div>
-                <div class="d-flex mt-3">
-                  <div class="horizontal-bar mt-0">Latest posts</div>
-                  <div class="mt-3 ml-2 text-right">
-                    {ifTrue(Boolean(user && featuredEvent), () =>
-                      eventMacros.eventShortcutMyPost(user as any, featuredEvent, userPost, { buttonsOnly: true })
-                    )}
-                  </div>
-                </div>
-
-                {posts.map(post =>
-                  postMacros.post(post, { readingUser: user, readingUserLikes: userLikes, csrfTokenForQuickModActions: csrfToken })
-                )}
-                {navigationMacros.pagination(1, pageCount, "/posts")}
-              </div>
-            )}
-          </div>
-
-          {/* ===== LATEST COMMENTS ===== */}
-
-          <div class="col-md-4 col-12 order-md-2 order-1">
-            {ifTrue(featuredEvent && featuredEvent.get("status") === "open", () => {
-              if (embedStreamer && !jumboStream) {
-                return <div>
-                  <div class="horizontal-bar">Featured streamer</div>
-                  <div class="featured p-0 mb-1">
-                    {userMacros.twitchEmbed(embedStreamer.details.social_links.twitch, { height: 250 })}
-                    <div class="my-1">
-                      {userMacros.userThumb(embedStreamer)}
-                      <a href={links.routeUrl(featuredEvent, "event", "streamers")} class="mx-3">
-                        <span class="fa fa-tv"></span> Browse all streamers
-                      </a>
-                    </div>
-                  </div>
-                </div>;
-              }
-            })}
-
-            <div class="d-md-block d-none">
-              <div class="horizontal-bar">Latest comments</div>
-
-              {postMacros.comments(comments, path, { readingUser: user, readOnly: true, linkToNode: true, preview: true })}
             </div>
           </div>
-        </div>
+        )}
+
+        {/* ===== GAME RATING SUGGESTIONS ===== */}
+
+        {ifTrue(user && suggestedEntries && suggestedEntries.length > 0, () =>
+          <div>
+            <div class="horizontal-bar">
+              Suggested entries to play
+              {formMacros.tooltip("Rate and comment other games to increase your karma. The Top 3 are featured on the front page!")}
+            </div>
+            <div class="home-grid game-grid pb-1">
+              {suggestedEntries.map(suggestedEntry =>
+                <div class="game-grid-entry">
+                  {eventMacros.entryThumb(suggestedEntry)}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ===== LATEST BLOG POSTS ===== */}
+
+        {carouselMacros.carousel(
+          (posts || []).map(post => postMacros.postCard(post, { readingUser: user, readingUserLikes: userLikes })),
+          {
+            id: "posts",
+            title: "Latest posts",
+            titleHref: "/posts",
+            headerActions: user && featuredEvent
+              ? eventMacros.eventShortcutMyPost(user as any, featuredEvent, userPost, { buttonsOnly: true })
+              : undefined
+          })}
+
+        {/* ===== LATEST COMMENTS ===== */}
+
+        {carouselMacros.carousel(
+          (comments || []).map(comment => postMacros.commentCard(comment as any, { readingUser: user })),
+          { id: "comments", title: "Latest comments" })}
       </div>
     </div>);
 }

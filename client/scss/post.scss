@@ -326,3 +326,119 @@
     margin-right: 0;
   }
 }
+
+/* Compact cards, used in carousels */
+
+.post-card {
+  height: 100%;
+
+  .post {
+    margin: 0;
+
+    // Same heading as full posts: counters stay inline at the end of the title
+    h1 {
+      padding: 0;
+      margin-bottom: 4px;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .post__title {
+      padding-bottom: 0;
+    }
+
+    // The details are not boxed in a card of their own here
+    & > .card {
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+  }
+
+  .post__details {
+    border: 0;
+    padding: 0;
+    line-height: 1.6;
+
+    & > a:first-child {
+      margin-left: 0;
+    }
+  }
+
+  .post__details--stacked {
+    & > a:first-child,
+    .post__details-line {
+      display: block;
+    }
+
+    .post__details-line {
+      font-weight: normal;
+      color: variables.$text-light;
+    }
+  }
+}
+
+.comment-card {
+  height: 100%;
+
+  &__node {
+    display: block;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    .post__title {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+      font-size: 1.25rem;
+      line-height: 1.2;
+      padding-bottom: 0;
+      margin-bottom: 4px;
+    }
+  }
+
+  .comment__details--stacked {
+    font-weight: bold;
+    margin-bottom: 6px;
+    line-height: 1.5;
+
+    .comment__when {
+      font-weight: normal;
+      color: variables.$text-light;
+    }
+  }
+
+  // In a card, the avatar sits inline instead of in the left gutter of a thread
+  .comment__avatar-container {
+    position: static;
+    display: inline-block;
+    vertical-align: middle;
+    width: auto;
+    margin-right: 6px;
+
+    img {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 0;
+      object-fit: cover;
+    }
+  }
+
+  // Word truncation (see commentCard) adds "(read more)"; this caps comments made of many short lines
+  &__body {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 8;
+    overflow: hidden;
+    padding: 0;
+    overflow-wrap: anywhere;
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

@@ -23,6 +23,8 @@ export function post(postModel: BookshelfModel, options: {
   hideHeading?: boolean;
   hideBody?: boolean;
   hideDetails?: boolean;
+  /** Author, date and related event/entry each get their own line */
+  stackedDetails?: boolean;
   showId?: boolean;
   commentsAnchorLinks?: boolean;
   smallTitle?: boolean;
@@ -93,57 +95,8 @@ export function post(postModel: BookshelfModel, options: {
     })}
 
     {ifFalse(options.hideDetails, () => {
-      const isPublished = forms.isPast(postModel.get("published_at"));
-      const relatedEvent = postModel.related<BookshelfModel>("event");
-      const relatedEntry = postModel.related<BookshelfModel>("entry") as EntryBookshelfModel;
-
       return <div class="card">
-        <div class="post__details">
-          <a href={links.routeUrl(author, "user")}>
-            {ifSet(author.get("avatar"), () =>
-              <img src={links.pictureUrl(author.get("avatar"), author)} class="post__avatar" />
-            )}
-            {ifNotSet(author.get("avatar"), () =>
-              <img src={links.staticUrl("/static/images/default-avatar.png")} class="post__avatar" />
-            )}
-            {author.get("title")}
-          </a>
-          <span>
-            &nbsp;•&nbsp;
-            {ifTrue(isPublished, () =>
-              <span data-toggle="tooltip" title={dateTime(postModel.get("published_at"), options.readingUser)}>
-                {relativeTime(postModel.get("published_at"))}&nbsp;
-              </span>
-            )}
-            {ifTrue(postModel.get("published_at") && !isPublished, () =>
-              <>
-                <span class="badge">Scheduled</span> for {dateTime(postModel.get("published_at"), options.readingUser)}
-                &nbsp;
-              </>
-            )}
-            {ifTrue(!postModel.get("published_at") && !isPublished, () =>
-              <span class="badge">Draft</span>
-            )}
-          </span>
-
-          {ifSet(relatedEvent.get("id"), () =>
-            <>
-              on <a href={links.routeUrl(relatedEvent, "event")}>{relatedEvent.get("title")}</a>&nbsp;
-            </>
-          )}
-          {ifSet(relatedEntry.get("id"), () =>
-            <span style="display: inline-block;">
-              entry <a href={links.routeUrl(relatedEntry, "entry")}>
-                {ifSet(relatedEntry.pictureIcon(), () =>
-                  <img data-src={links.pictureUrl(relatedEntry.pictureIcon(), relatedEntry)}
-                    class="no-border js-lazy" style="max-height: 32px; margin-top: -2px;" />
-                )}
-                &nbsp;
-                {relatedEntry.get("title")}
-              </a>
-            </span>
-          )}
-        </div>
+        {postDetails(postModel, author, readingUser, options.stackedDetails)}
 
         {ifFalse(options.hideBody, () =>
           <div class="post__body card-body user-contents" dangerouslySetInnerHTML={markdown(postModel.get("body"))} />
@@ -161,6 +114,19 @@ export function post(postModel: BookshelfModel, options: {
 
     })}
 
+  </div>;
+}
+
+/**
+ * Compact post card: the heading (title, comments, likes) and stacked details of a post, but no body.
+ * Meant for carousels & lists.
+ */
+export function postCard(postModel: BookshelfModel, options: {
+  readingUser?: User;
+  readingUserLikes?: Record<number, string>;
+} = {}): JSX.Element {
+  return <div class="post-card">
+    {post(postModel, { ...options, hideBody: true, stackedDetails: true, readOnly: false })}
   </div>;
 }
 
@@ -221,8 +187,6 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
         {ifFalse(showEditor, () => {
           const author = comment.related<BookshelfModel>("user");
           const node = comment.node();
-          const isOwnAnonComment = options.editableAnonComments && options.editableAnonComments.includes(comment.get("id"));
-
           return <div class={"row comment mb-3 "
             + ((options.highlightNewerThan && options.highlightNewerThan < comment.get("created_at")) ? "unread" : "")}>
             {ifTrue(options.linkToNode && (!lastLinkedNode || node !== lastLinkedNode), () => {
@@ -233,60 +197,7 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
             })}
             <div class="offset-1 col-11">
               <a class="anchor" id={"c" + (comment?.id || "")}></a>
-              <div class="comment__details d-flex">
-                {ifTrue(isOwnAnonComment, () =>
-                  <a href={links.routeUrl(options.readingUser, "user")}>
-                    <div class="comment__avatar-container">
-                      {ifSet(options.readingUser.get("avatar"), () =>
-                        <img src={links.pictureUrl(options.readingUser.get("avatar"), options.readingUser)} />
-                      )}
-                      {ifNotSet(options.readingUser.get("avatar"), () =>
-                        <img src={links.staticUrl("/static/images/default-avatar.png")} />
-                      )}
-                    </div>
-                    {options.readingUser.get("title")} <span style="color: black">(as Anonymous)</span>
-                  </a>
-                )}
-                {ifFalse(isOwnAnonComment, () => {
-                  const AuthorLink = author.get("name") !== "anonymous" ? "a" : "span";
-                  return <AuthorLink href={links.routeUrl(author, "user")}>
-                    <div class="comment__avatar-container">
-                      {ifSet(author.get("avatar"), () =>
-                        <img src={links.pictureUrl(author.get("avatar"), author)} />
-                      )}
-                      {ifNotSet(author.get("avatar"), () =>
-                        <img src={links.staticUrl("/static/images/default-avatar.png")} />
-                      )}
-                    </div>
-                    {author.get("title")}
-                  </AuthorLink>;
-                })}
-                {ifTrue(author.get("title") && author.get("name").toLowerCase() !== author.get("title").toLowerCase(), () =>
-                  <span class="ml-1">(@{author.get("name")})</span>
-                )}
-                {ifTrue(options.nodeAuthorIds && options.nodeAuthorIds.includes(author.get("id")), () =>
-                  <>
-                    <span>&nbsp;</span><span class="fas fa-pen-nib mt-1" data-toggle="tooltip" title="Page owner"></span>
-                  </>
-                )}
-                <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip" title={dateTime(comment.get("created_at"), options.readingUser)}>
-                  {relativeTime(comment.get("created_at"))}</span>
-                {ifTrue(comment.wasEdited(), () =>
-                  <>
-                    <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip"
-                      title={dateTime(comment.get("updated_at"), options.readingUser)}>edited</span>
-                  </>
-                )}
-                {ifTrue(comment && !options.linkToNode, () =>
-                  <>
-                    <span>&nbsp;•&nbsp;</span><a href={"#c" + comment.id}><i class="fas fa-link" aria-hidden="true"></i></a>
-                  </>
-                )}
-                {ifTrue(!options.readOnly && (security.canUserWrite(options.readingUser, comment) || isOwnAnonComment), () =>
-                  <a class="btn btn-outline-primary btn-sm ml-auto"
-                    href={links.routeUrl(comment, "comment", "edit")}><span class="fas fa-pencil-alt"></span></a>
-                )}
-              </div>
+              {commentDetails(comment, author, options)}
               <div class="card">
                 <div class="card-body comment__body user-contents">
                   {ifTrue(options.preview, () =>
@@ -315,6 +226,26 @@ export function comments(commentsParam: BookshelfModel[], path: string, options:
       commentEditor(null, path, options.csrfToken, options)
     )}
   </>;
+}
+
+/**
+ * Compact comment card: linked page title, author/time and a short preview, meant for carousels & lists.
+ */
+export function commentCard(comment: CommentBookshelfModel, options: { readingUser?: User } = {}): JSX.Element {
+  const author = comment.related<BookshelfModel>("user");
+  const node = comment.node();
+
+  return <div class="comment-card comment">
+    <a href={commentUrl(node, comment)} class="comment-card__node">
+      <h4 class="post__title">{node.get("title")}</h4>
+    </a>
+    {commentDetails(comment, author, { readingUser: options.readingUser, linkToNode: true, readOnly: true, stacked: true })}
+    <div class="comment-card__body comment__body user-contents" dangerouslySetInnerHTML={markdown(comment.get("body"), {
+      maxLength: 30,
+      truncateByWords: true,
+      readMoreLink: commentUrl(node, comment),
+    })} />
+  </div>;
 }
 
 export function commentUrl(node: NodeBookshelfModel, commentModel: BookshelfModel): string {
@@ -371,4 +302,128 @@ export function commentEditor(commentModel: BookshelfModel, path: string, csrfTo
   } else {
     return <a class="btn btn-primary" href={`/login?redirect=${encodeURIComponent(path)}`}>Login to comment</a>;
   }
+}
+
+function postDetails(postModel: BookshelfModel, author: User, readingUser?: User, stacked = false): JSX.Element {
+  const isPublished = forms.isPast(postModel.get("published_at"));
+  const relatedEvent = postModel.related<BookshelfModel>("event");
+  const relatedEntry = postModel.related<BookshelfModel>("entry") as EntryBookshelfModel;
+
+  return <div class={`post__details ${stacked ? "post__details--stacked" : ""}`}>
+    <a href={links.routeUrl(author, "user")}>
+      {ifSet(author.get("avatar"), () =>
+        <img src={links.pictureUrl(author.get("avatar"), author)} class="post__avatar" />
+      )}
+      {ifNotSet(author.get("avatar"), () =>
+        <img src={links.staticUrl("/static/images/default-avatar.png")} class="post__avatar" />
+      )}
+      {author.get("title")}
+    </a>
+    <span class="post__details-line">
+      {ifFalse(stacked, () => <>&nbsp;•&nbsp;</>)}
+      {ifTrue(isPublished, () =>
+        <span data-toggle="tooltip" title={dateTime(postModel.get("published_at"), readingUser)}>
+          {relativeTime(postModel.get("published_at"))}&nbsp;
+        </span>
+      )}
+      {ifTrue(postModel.get("published_at") && !isPublished, () =>
+        <>
+          <span class="badge">Scheduled</span> for {dateTime(postModel.get("published_at"), readingUser)}
+          &nbsp;
+        </>
+      )}
+      {ifTrue(!postModel.get("published_at") && !isPublished, () =>
+        <span class="badge">Draft</span>
+      )}
+    </span>
+
+    {ifSet(relatedEvent.get("id"), () =>
+      <span class="post__details-line">
+        on <a href={links.routeUrl(relatedEvent, "event")}>{relatedEvent.get("title")}</a>&nbsp;
+      </span>
+    )}
+    {ifSet(relatedEntry.get("id"), () =>
+      <span class="post__details-line" style="display: inline-block;">
+        entry <a href={links.routeUrl(relatedEntry, "entry")}>
+          {ifSet(relatedEntry.pictureIcon(), () =>
+            <img data-src={links.pictureUrl(relatedEntry.pictureIcon(), relatedEntry)}
+              class="no-border js-lazy" style="max-height: 32px; margin-top: -2px;" />
+          )}
+          &nbsp;
+          {relatedEntry.get("title")}
+        </a>
+      </span>
+    )}
+  </div>;
+}
+
+interface CommentDisplayOptions extends Pick<Parameters<typeof comments>[2],
+  "readingUser" | "editableAnonComments" | "linkToNode" | "nodeAuthorIds" | "readOnly"> {
+  /** Author and date each get their own line */
+  stacked?: boolean;
+}
+
+function commentDetails(comment: CommentBookshelfModel, author: BookshelfModel, options: CommentDisplayOptions): JSX.Element {
+  const isOwnAnonComment = options.editableAnonComments && options.editableAnonComments.includes(comment.get("id"));
+  const group = (className: string, content: JSX.Element) => options.stacked ? <div class={className}>{content}</div> : content;
+
+  return <div class={`comment__details ${options.stacked ? "comment__details--stacked" : "d-flex"}`}>
+    {group("comment__author", <>
+      {ifTrue(isOwnAnonComment, () =>
+        <a href={links.routeUrl(options.readingUser, "user")}>
+          <div class="comment__avatar-container">
+            {ifSet(options.readingUser.get("avatar"), () =>
+              <img src={links.pictureUrl(options.readingUser.get("avatar"), options.readingUser)} />
+            )}
+            {ifNotSet(options.readingUser.get("avatar"), () =>
+              <img src={links.staticUrl("/static/images/default-avatar.png")} />
+            )}
+          </div>
+          {options.readingUser.get("title")} <span style="color: black">(as Anonymous)</span>
+        </a>
+      )}
+      {ifFalse(isOwnAnonComment, () => {
+        const AuthorLink = author.get("name") !== "anonymous" ? "a" : "span";
+        return <AuthorLink href={links.routeUrl(author, "user")}>
+          <div class="comment__avatar-container">
+            {ifSet(author.get("avatar"), () =>
+              <img src={links.pictureUrl(author.get("avatar"), author)} />
+            )}
+            {ifNotSet(author.get("avatar"), () =>
+              <img src={links.staticUrl("/static/images/default-avatar.png")} />
+            )}
+          </div>
+          {author.get("title")}
+        </AuthorLink>;
+      })}
+      {ifTrue(author.get("title") && author.get("name").toLowerCase() !== author.get("title").toLowerCase(), () =>
+        <span class="ml-1">(@{author.get("name")})</span>
+      )}
+      {ifTrue(options.nodeAuthorIds && options.nodeAuthorIds.includes(author.get("id")), () =>
+        <>
+          <span>&nbsp;</span><span class="fas fa-pen-nib mt-1" data-toggle="tooltip" title="Page owner"></span>
+        </>
+      )}
+    </>)}
+    {group("comment__when", <>
+      {ifFalse(options.stacked, () => <span>&nbsp;•&nbsp;</span>)}
+      <span data-toggle="tooltip" title={dateTime(comment.get("created_at"), options.readingUser)}>
+        {relativeTime(comment.get("created_at"))}</span>
+      {ifTrue(comment.wasEdited(), () =>
+        <>
+          <span>&nbsp;•&nbsp;</span><span data-toggle="tooltip"
+            title={dateTime(comment.get("updated_at"), options.readingUser)}>edited</span>
+        </>
+      )}
+      {ifTrue(comment && !options.linkToNode, () =>
+        <>
+          <span>&nbsp;•&nbsp;</span><a href={"#c" + comment.id}><i class="fas fa-link" aria-hidden="true"></i></a>
+        </>
+      )}
+    </>)}
+    {ifTrue(!options.readOnly && (security.canUserWrite(options.readingUser, comment) || isOwnAnonComment), () =>
+      <a class="btn btn-outline-primary btn-sm ml-auto"
+        href={links.routeUrl(comment, "comment", "edit")}><span class="fas fa-pencil-alt"></span></a>
+    )}
+  </div>;
 }
