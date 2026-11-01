@@ -283,23 +283,14 @@ export const Event = bookshelf.model("Event", {
     return this.hasMany("TournamentEntry", "event_id");
   },
   preset() {
-    return this.hasOne("EventPreset", "event_preset_id");
+    return this.belongsTo("EventPreset", "event_preset_id");
   },
 
   // Listeners
 
-  initialize: function initialize(attrs) {
-    this.constructor.__super__.initialize.apply(this, arguments);
-    attrs = attrs || {};
-    attrs.countdown_config = attrs.countdown_config || {};
-    attrs.cron_config = attrs.cron_config || {};
-    attrs.divisions = attrs.divisions || {};
-    return attrs;
-  },
   parse: function parse(attrs) {
     if (attrs) {
       if (attrs.countdown_config) { attrs.countdown_config = JSON.parse(attrs.countdown_config); }
-      if (attrs.cron_config) { attrs.cron_config = JSON.parse(attrs.cron_config); }
       if (attrs.divisions) { attrs.divisions = JSON.parse(attrs.divisions); }
     }
     return attrs;
@@ -307,7 +298,6 @@ export const Event = bookshelf.model("Event", {
   format: function format(attrs) {
     if (attrs) {
       if (attrs.countdown_config) { attrs.countdown_config = JSON.stringify(attrs.countdown_config); }
-      if (attrs.cron_config) { attrs.cron_config = JSON.stringify(attrs.cron_config); }
       if (attrs.divisions) { attrs.divisions = JSON.stringify(attrs.divisions); }
     }
     return attrs;
@@ -415,12 +405,6 @@ export const EventPreset = bookshelf.model("EventPreset", {
 
   // Listeners
 
-  initialize: function initialize(attrs) {
-    this.constructor.__super__.initialize.apply(this, arguments);
-    attrs = attrs || {};
-    attrs.countdown_config = attrs.countdown_config || {};
-    return attrs;
-  },
   parse: function parse(attrs) {
     if (attrs && attrs.countdown_config) { attrs.countdown_config = JSON.parse(attrs.countdown_config); }
     return attrs;
@@ -451,19 +435,11 @@ export const EventTemplate = bookshelf.model("EventTemplate", {
   // Relations
 
   preset() {
-    return this.hasOne("EventPreset", "event_preset_id");
+    return this.belongsTo("EventPreset", "event_preset_id");
   },
 
   // Listeners
 
-  initialize: function initialize(attrs) {
-    this.constructor.__super__.initialize.apply(this, arguments);
-    attrs = attrs || {};
-    attrs.links = attrs.links || [];
-    attrs.divisions = attrs.divisions || {};
-    attrs.category_titles = attrs.category_titles || [];
-    return attrs;
-  },
   parse: function parse(attrs) {
     if (attrs) {
       if (attrs.links) { attrs.links = JSON.parse(attrs.links); }

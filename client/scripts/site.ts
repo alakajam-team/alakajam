@@ -94,7 +94,6 @@ $(function domReady() {
   editEntryLinks();
   editEntryPlatforms();
   editEntryTeam();
-  editEventStatus();
   viewEntryVoting();
 
   // Event

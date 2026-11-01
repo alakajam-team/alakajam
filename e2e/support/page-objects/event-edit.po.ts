@@ -28,6 +28,31 @@ export default class EventEditPO {
 
   // General > Status tab
 
+  public async selectPreset(title: string) {
+    await this.page.locator(".select2-selection", { has: this.page.locator("#select2-js-edit-event-status-preset-container") }).click();
+    await this.page.locator(".select2-results__option", { hasText: title }).click();
+  }
+
+  public get presetSelect() {
+    return this.page.locator("#js-edit-event-status-preset");
+  }
+
+  public get advancedStateForm() {
+    return this.page.locator("#js-state-advanced");
+  }
+
+  public advancedStateToggle(value: "Hide" | "Show") {
+    return this.page.locator(`#js-edit-event-status-toggles input[value=${value}]`);
+  }
+
+  public statusInput(name: "status" | "status-theme" | "status-entry" | "status-results" | "status-tournament", value: string) {
+    return this.page.locator(`input[type=radio][name=${name}][value=${value}]`);
+  }
+
+  public countdownInput(name: "countdown-message" | "countdown-link" | "countdown-phrase" | "countdown-date") {
+    return this.page.locator(`input[name=${name}]`);
+  }
+
   public themeVotingStatusRadio(status: "disabled" | "off" | "voting" | "shortlist" | "closed" | "results") {
     return this.page.locator(`[for=status-theme-${status}]`);
   }

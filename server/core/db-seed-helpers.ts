@@ -10,6 +10,7 @@ import teamInviteService from "server/entry/team/team-invite.service";
 import teamService from "server/entry/team/team.service";
 import eventParticipationService from "server/event/dashboard/event-participation.service";
 import eventService from "server/event/event.service";
+import eventPresetService from "server/event/manage/settings/event-preset.service";
 import ratingService from "server/event/ratings/rating.service";
 import themeStatsService from "server/event/theme/theme-stats.service";
 import themeVotingService from "server/event/theme/theme-voting.service";
@@ -98,6 +99,16 @@ export async function createEvent(
   eventDetails.set({ category_titles: [], flags: {}, ...details }); // Always set by the event edition form
   await eventDetails.save();
   return event;
+}
+
+export async function createEventPreset(
+  attributes: ExpectedId & { title: string } & Record<string, unknown>): Promise<BookshelfModel> {
+  const { id, ...presetAttributes } = attributes;
+  const preset = eventPresetService.initEventPreset();
+  preset.set(presetAttributes);
+  await preset.save();
+  assertExpectedId(preset, { id }, attributes.title);
+  return preset;
 }
 
 /**

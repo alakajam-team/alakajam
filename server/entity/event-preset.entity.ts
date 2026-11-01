@@ -49,7 +49,7 @@ export class EventPreset extends BookshelfCompatibleEntity {
   @Column(ColumnTypes.varchar({ nullable: true }))
   public status_tournament: EventTournamentStatus;
 
-  @OneToMany(() => Event, (event) => event.event_preset_id)
+  @OneToMany(() => Event, (event) => event.eventPreset)
   public events: Event[];
 
   /**

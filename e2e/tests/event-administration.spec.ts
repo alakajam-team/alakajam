@@ -3,9 +3,11 @@ import {
   ADMIN_POST_WITHOUT_COMMENTS,
   ADMIN_POST_WITHOUT_COMMENTS_TITLE,
   EVENT_NAME_GAME_RATINGS,
+  EVENT_NAME_PENDING,
   EVENT_NAME_SUBMISSIONS_OPEN,
   EVENT_NAME_THEME_SHORTLIST,
   EVENT_NAME_THEME_VOTING,
+  EVENT_PRESET_JAM_STARTED,
   EVENT_SUBMISSIONS_OPEN_RULES_POST,
   EVENT_SUBMISSIONS_OPEN_RULES_POST_TITLE,
   USER_ADMINISTRATOR
@@ -21,6 +23,46 @@ test.describe("Event: Administration", () => {
 
   test.afterAll(async ({ request }) => {
     await restoreDB(request);
+  });
+
+  test("supports applying a state preset", async ({ page, eventEditPo }) => {
+    await eventEditPo.visit({ eventName: EVENT_NAME_PENDING, page: "edit#state" });
+    await eventEditPo.selectPreset(EVENT_PRESET_JAM_STARTED);
+
+    await expect(eventEditPo.statusInput("status", "open")).toBeChecked();
+    await expect(eventEditPo.statusInput("status-theme", "results")).toBeChecked();
+    await expect(eventEditPo.statusInput("status-entry", "open")).toBeChecked();
+    await expect(eventEditPo.countdownInput("countdown-message")).toHaveValue("Submit your game");
+    await expect(eventEditPo.countdownInput("countdown-phrase")).toHaveValue("ends");
+    await expect(eventEditPo.countdownInput("countdown-date")).toHaveValue("2099-01-03 00:00"); // Event start + 48h
+
+    await clickAndWaitForLoad(eventEditPo.saveButton);
+    await page.reload();
+    await expect(eventEditPo.presetSelect).toHaveValue(/^\d+$/);
+    await expect(eventEditPo.advancedStateForm).toBeHidden();
+    await expect(eventEditPo.statusInput("status-entry", "open")).toBeChecked();
+    await expect(eventEditPo.countdownInput("countdown-date")).toHaveValue("2099-01-03 00:00");
+  });
+
+  test("clears the state preset upon manual state changes", async ({ eventEditPo }) => {
+    await eventEditPo.visit({ eventName: EVENT_NAME_PENDING, page: "edit#state" });
+    await eventEditPo.selectPreset(EVENT_PRESET_JAM_STARTED);
+    await expect(eventEditPo.presetSelect).not.toHaveValue("");
+
+    await eventEditPo.entrySubmissionStatusRadio("closed").click();
+
+    await expect(eventEditPo.presetSelect).toHaveValue("");
+  });
+
+  test("supports toggling the advanced state form", async ({ eventEditPo }) => {
+    await eventEditPo.visit({ eventName: EVENT_NAME_PENDING, page: "edit#state" });
+    await expect(eventEditPo.advancedStateForm).toBeVisible();
+
+    await eventEditPo.advancedStateToggle("Hide").click();
+    await expect(eventEditPo.advancedStateForm).toBeHidden();
+
+    await eventEditPo.advancedStateToggle("Show").click();
+    await expect(eventEditPo.advancedStateForm).toBeVisible();
   });
 
   test("supports switching from theme submissions to theme shortlist phase", async ({ eventEditPo }) => {

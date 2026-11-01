@@ -1,5 +1,5 @@
 import * as path from "path";
-import { E2E_ENTRIES, E2E_EVENTS, E2E_POSTS, E2E_USERS } from "../../server/testing/e2e/e2e-seed-data";
+import { E2E_ENTRIES, E2E_EVENT_PRESETS, E2E_EVENTS, E2E_POSTS, E2E_USERS } from "../../server/testing/e2e/e2e-seed-data";
 
 /*
  * Seeded data used by the tests, see server/testing/e2e/e2e-seed.ts
@@ -59,7 +59,13 @@ export const EVENT_NAME_THEME_SHORTLIST = E2E_EVENTS.themeShortlist.name;
 export const EVENT_NAME_SUBMISSIONS_OPEN = E2E_EVENTS.submissionsOpen.name;
 export const EVENT_NAME_GAME_RATINGS = E2E_EVENTS.gameRatings.name;
 export const EVENT_NAME_LIVE_TOURNAMENT = E2E_EVENTS.liveTournament.name;
+export const EVENT_NAME_PENDING = E2E_EVENTS.pending.name;
 export const EVENT_TITLE_SUBMISSIONS_OPEN = E2E_EVENTS.submissionsOpen.title;
+
+/**
+ * Opens submissions, with a deadline 48 hours after the event start
+ */
+export const EVENT_PRESET_JAM_STARTED = E2E_EVENT_PRESETS.jamStarted.title;
 
 export const DEFAULT_PICTURE = path.join(__dirname, "../fixtures/picture.jpg");
 

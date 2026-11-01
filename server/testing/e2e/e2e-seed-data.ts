@@ -28,6 +28,10 @@ export const E2E_EVENTS = {
   themeShortlist: { id: 7, name: "theme-shortlist", title: "Theme shortlist" }
 };
 
+export const E2E_EVENT_PRESETS = {
+  jamStarted: { id: 1, title: "Jam started" }
+};
+
 /** Event name used in the URLs of entries made outside of Alakajam! events */
 export const E2E_EXTERNAL_EVENT_NAME = "external-entry";
 

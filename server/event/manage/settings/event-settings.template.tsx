@@ -59,7 +59,7 @@ export default function render(context: CommonLocals): JSX.Element {
                 </div>
               </div>
             </div>
-            <div id="js-state-advanced d-none">
+            <div id="js-state-advanced" class={(!event || event.get("event_preset_id")) ? "d-none" : ""}>
               {editEventMacros.countdownForm(event, user)}
               {editEventMacros.stateForm(event)}
             </div>

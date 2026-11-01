@@ -13,6 +13,7 @@ import ratingService from "server/event/ratings/rating.service";
 import tournamentService, { CACHE_KEY_ACTIVE_TOURNAMENT_EVENT } from "server/event/tournament/tournament.service";
 import { CustomRequest, CustomResponse } from "server/types";
 import { EventLocals } from "../../event.middleware";
+import { validateEventStatuses } from "../event-status-validation";
 import themeShortlistService from "../../theme/theme-shortlist.service";
 import eventTemplateService from "../create/event-template.service";
 
@@ -41,20 +42,10 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
       errorMessage = "Name is not a valid slug";
     } else if (req.body.name.indexOf("-") === -1) {
       errorMessage = "Name must contain at least one hyphen (-)";
-    } else if (req.body["event-preset-id"] && !forms.isInt(req.body["event-preset-id"])) {
+    } else if (req.body["event-preset-id"] && !(await eventPresetService.isValidEventPresetId(req.body["event-preset-id"]))) {
       errorMessage = "Invalid event preset ID";
-    } else if (!forms.isIn(req.body.status, enums.EVENT.STATUS)) {
-      errorMessage = "Invalid status";
-    } else if (!forms.isIn(req.body["status-theme"], enums.EVENT.STATUS_THEME) &&
-        !forms.isId(req.body["status-theme"])) {
-      errorMessage = "Invalid theme status";
-    } else if (!forms.isIn(req.body["status-entry"], enums.EVENT.STATUS_ENTRY)) {
-      errorMessage = "Invalid entry status";
-    } else if (!forms.isIn(req.body["status-results"], enums.EVENT.STATUS_RESULTS) &&
-        !forms.isId(req.body["status-results"])) {
-      errorMessage = "Invalid results status";
-    } else if (!forms.isIn(req.body["status-tournament"], enums.EVENT.STATUS_TOURNAMENT)) {
-      errorMessage = "Invalid tournament status";
+    } else if (validateEventStatuses(req.body)) {
+      errorMessage = validateEventStatuses(req.body);
     } else if (event) {
       const matchingEventsCollection = await eventService.findEvents({ name: req.body.name });
       for (const matchingEvent of matchingEventsCollection.models) {

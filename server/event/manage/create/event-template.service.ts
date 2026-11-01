@@ -24,8 +24,8 @@ export class EventTemplateService {
    * Finds an event template.
    * @param {number} id
    */
-  public async findEventTemplateById(id: number): Promise<BookshelfModel> {
-    return models.EventTemplate.where({ id }).fetch();
+  public async findEventTemplateById(id: number): Promise<BookshelfModel | null> {
+    return models.EventTemplate.where({ id }).fetch({ require: false });
   }
 
   /**

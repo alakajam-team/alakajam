@@ -3,6 +3,7 @@ import { CommonLocals } from "server/common.middleware";
 import forms from "server/core/forms";
 import eventPresetService from "server/event/manage/settings/event-preset.service";
 import { EventCountdownOffset } from "server/event/manage/event-manage.macros";
+import { validateEventStatuses } from "server/event/manage/event-status-validation";
 import { CustomRequest, CustomResponse } from "server/types";
 import { AdminBaseContext } from "../admin.base";
 
@@ -16,7 +17,7 @@ export interface AdminEventPresetsContext extends AdminBaseContext {
  * Event presets management
  */
 export async function adminEventPresets(req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
-  // Find template to edit
+  // Find preset to edit
   let editEventPreset: BookshelfModel;
   const editEventPresetId = req.query.edit || req.body.id;
   if (forms.isId(editEventPresetId)) {
@@ -34,20 +35,26 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
   if (req.method === "POST") {
     if (req.body.delete !== undefined) {
       // Delete model
-      await eventPresetService.deleteEventPreset(editEventPreset);
-      editEventPreset = undefined;
+      if (editEventPreset) {
+        try {
+          await eventPresetService.deleteEventPreset(editEventPreset);
+          editEventPreset = undefined;
+        } catch (e) {
+          errorMessage = e.message;
+        }
+      }
     } else {
       // Validation / Compute deadline offset
-      // TODO Status radios validation (to be put in common with the event edition form)
+      const offsetFields = ["countdown-offset-d", "countdown-offset-h", "countdown-offset-m"]
+        .map((field) => req.body[field] || "0");
       let offset = 0;
-      try {
-        const offsetMinutes = parseInt(req.body["countdown-offset-d"], 10) * 60 * 24 +
-          parseInt(req.body["countdown-offset-h"], 10) * 60 +
-          parseInt(req.body["countdown-offset-m"], 10);
-        offset = offsetMinutes * 60000;
-      } catch (e) {
+      if (offsetFields.every((value) => forms.isInt(value))) {
+        const [days, hours, minutes] = offsetFields.map((value) => forms.parseInt(value));
+        offset = ((days * 24 + hours) * 60 + minutes) * MS_PER_MINUTE;
+      } else {
         errorMessage = "Invalid deadline offset from start";
       }
+      errorMessage = validateEventStatuses(req.body, { allowEmpty: true }) || errorMessage;
       if (!req.body.title) {
         errorMessage = "Title is required";
       }
@@ -56,12 +63,12 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
       editEventPreset = editEventPreset || eventPresetService.initEventPreset();
       editEventPreset.set({
         title: forms.sanitizeString(req.body.title),
-        status: forms.sanitizeString(req.body.status),
-        status_rules: forms.sanitizeString(req.body["status-rules"]),
-        status_theme: forms.sanitizeString(req.body["status-theme"]),
-        status_entry: forms.sanitizeString(req.body["status-entry"]),
-        status_results: forms.sanitizeString(req.body["status-results"]),
-        status_tournament: forms.sanitizeString(req.body["status-tournament"]),
+        status: forms.sanitizeString(req.body.status) || null,
+        status_rules: forms.sanitizeString(req.body["status-rules"]) || null,
+        status_theme: forms.sanitizeString(req.body["status-theme"]) || null,
+        status_entry: forms.sanitizeString(req.body["status-entry"]) || null,
+        status_results: forms.sanitizeString(req.body["status-results"]) || null,
+        status_tournament: forms.sanitizeString(req.body["status-tournament"]) || null,
         countdown_config: {
           message: forms.sanitizeString(req.body["countdown-message"]),
           link: forms.sanitizeString(req.body["countdown-link"]),
@@ -85,21 +92,26 @@ export async function adminEventPresets(req: CustomRequest, res: CustomResponse<
     ...res.locals,
     eventPresets: eventPresetsCollection.models,
     editEventPreset,
-    countdownOffset: undefined
+    countdownOffset: undefined,
+    errorMessage
   };
   if (editEventPreset) {
-    const rawOffset = 1.0 * (editEventPreset.get("countdown_config").offset || 0);
-    const minutesPerDay = 60.0 * 24.0;
-    const days = Math.floor(rawOffset / minutesPerDay);
-    const rawOffsetWithoutDays = rawOffset - days * minutesPerDay;
-    context.countdownOffset = {
-      d: days,
-      h: Math.floor(rawOffsetWithoutDays / 60),
-      m: rawOffsetWithoutDays % 60,
-    };
+    context.countdownOffset = toCountdownOffset(editEventPreset.get("countdown_config")?.offset);
   }
-  res.render<AdminEventPresetsContext>("admin/event-presets/admin-event-presets", {
-    ...res.locals,
-    ...context
-  });
+  res.render<AdminEventPresetsContext>("admin/event-presets/admin-event-presets", context);
+}
+
+const MS_PER_MINUTE = 60000;
+
+/**
+ * Splits an offset in milliseconds into days, hours and minutes. Negative offsets are split towards zero.
+ */
+function toCountdownOffset(offsetMs = 0): EventCountdownOffset {
+  const sign = offsetMs < 0 ? -1 : 1;
+  const totalMinutes = Math.round(Math.abs(offsetMs) / MS_PER_MINUTE);
+  return {
+    d: sign * Math.floor(totalMinutes / (60 * 24)),
+    h: sign * Math.floor(totalMinutes / 60) % 24,
+    m: sign * (totalMinutes % 60),
+  };
 }

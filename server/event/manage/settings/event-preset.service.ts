@@ -1,25 +1,25 @@
 import Bluebird from "bluebird";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
+import forms from "server/core/forms";
 import * as models from "server/core/models";
 
 export class EventPresetService {
 
-  /*
+  /**
    * Creates an empty, unpersisted event preset.
    * @param {EventPreset} referencePreset Optional reference preset to clone data from
    */
   public initEventPreset(referencePreset?: BookshelfModel): BookshelfModel {
     const eventPreset = new models.EventPreset({
-      countdown_config: { date: new Date(0) },
+      countdown_config: {},
     });
     if (referencePreset) {
-      const overrideAttributes = {
+      eventPreset.set({
+        ...referencePreset.attributes,
         id: null,
         title: (referencePreset.get("title") || "") + " (copy)",
-      };
-      eventPreset.set("countdown_config",
-        Object.assign({}, referencePreset.get("countdown_config"), eventPreset.get("countdown_config")));
-      eventPreset.set(Object.assign({}, referencePreset.attributes, overrideAttributes));
+        countdown_config: { ...referencePreset.get("countdown_config") },
+      });
     }
     return eventPreset as BookshelfModel;
   }
@@ -38,10 +38,17 @@ export class EventPresetService {
    * Finds an event preset.
    * @param {number} id
    */
-  public async findEventPresetById(id: number): Promise<BookshelfModel> {
+  public async findEventPresetById(id: number): Promise<BookshelfModel | null> {
     return models.EventPreset
       .where({ id })
-      .fetch({ withRelated: ["events"] });
+      .fetch({ withRelated: ["events"], require: false });
+  }
+
+  /**
+   * Checks that the given form value is the ID of an existing event preset.
+   */
+  public async isValidEventPresetId(id: unknown): Promise<boolean> {
+    return forms.isId(id) && Boolean(await models.EventPreset.where({ id: forms.parseInt(id) }).fetch({ require: false }));
   }
 
   /**

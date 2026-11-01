@@ -5,6 +5,7 @@ import {
   createComment,
   createEntry,
   createEvent,
+  createEventPreset,
   createPlatforms,
   createPost,
   createTags,
@@ -23,7 +24,7 @@ import ratingService from "server/event/ratings/rating.service";
 import themeShortlistService from "server/event/theme/theme-shortlist.service";
 import tournamentService from "server/event/tournament/tournament.service";
 import userService from "server/user/user.service";
-import { E2E_ENTRIES, E2E_EVENTS, E2E_POSTS, E2E_USERS } from "./e2e-seed-data";
+import { E2E_ENTRIES, E2E_EVENT_PRESETS, E2E_EVENTS, E2E_POSTS, E2E_USERS } from "./e2e-seed-data";
 
 const PICTURE = path.join(constants.ROOT_PATH, "e2e/fixtures/picture.jpg");
 
@@ -47,6 +48,7 @@ export async function seedE2EData(): Promise<void> {
   await seedResultsOutEvent(users);
   await seedThemeShortlistEvent(users);
   await seedExternalEntries(users);
+  await seedEventPresets();
 }
 
 async function seedUsers(): Promise<Users> {
@@ -100,6 +102,21 @@ async function seedSubmissionsOpenEvent(users: Users): Promise<void> {
   });
   // Simulate a post created before posts and entries shared their IDs (see migration 0047)
   await postWithoutComments.save({ legacy_id: E2E_POSTS.adminWithoutComments.legacyId }, { patch: true });
+}
+
+/**
+ * Jam phase where submissions are open, with a deadline 48 hours after the event start
+ */
+async function seedEventPresets(): Promise<void> {
+  await createEventPreset({
+    ...E2E_EVENT_PRESETS.jamStarted,
+    status: enums.EVENT.STATUS.OPEN,
+    status_theme: enums.EVENT.STATUS_THEME.RESULTS,
+    status_entry: enums.EVENT.STATUS_ENTRY.OPEN,
+    status_results: enums.EVENT.STATUS_RESULTS.DISABLED,
+    status_tournament: enums.EVENT.STATUS_TOURNAMENT.DISABLED,
+    countdown_config: { message: "Submit your game", link: "create-entry", phrase: "ends", offset: 48 * 3600 * 1000, enabled: true }
+  });
 }
 
 async function seedPendingEvent(): Promise<void> {

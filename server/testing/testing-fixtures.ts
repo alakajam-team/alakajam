@@ -1,8 +1,11 @@
 import { BookshelfModel, EntryBookshelfModel, PostBookshelfModel } from "bookshelf";
+import enums from "server/core/enums";
 import { createLuxonDate } from "server/core/formats";
 import { User } from "server/entity/user.entity";
 import entryService from "server/entry/entry.service";
 import eventService from "server/event/event.service";
+import eventTemplateService from "server/event/manage/create/event-template.service";
+import eventPresetService from "server/event/manage/settings/event-preset.service";
 import postService from "server/post/post.service";
 import userService from "server/user/user.service";
 
@@ -44,6 +47,46 @@ export async function createTestEvent(attributes: Record<string, any> = {}): Pro
   });
   await event.save();
   return event;
+}
+
+export const TEST_PRESET_OFFSET_MS = 48 * 3600 * 1000;
+
+/**
+ * Creates an event preset resembling a "jam started" phase, with a 48h countdown offset.
+ */
+export async function createTestPreset(attributes: Record<string, any> = {}): Promise<BookshelfModel> {
+  const id = nextId();
+  const preset = eventPresetService.initEventPreset();
+  preset.set({
+    title: `Fixture preset ${id}`,
+    status: enums.EVENT.STATUS.OPEN,
+    status_rules: enums.EVENT.STATUS_RULES.OFF,
+    status_theme: enums.EVENT.STATUS_THEME.RESULTS,
+    status_entry: enums.EVENT.STATUS_ENTRY.OPEN,
+    status_results: enums.EVENT.STATUS_RESULTS.DISABLED,
+    status_tournament: enums.EVENT.STATUS_TOURNAMENT.DISABLED,
+    countdown_config: {
+      message: "Submit your game",
+      link: "create-entry",
+      phrase: "ends",
+      offset: TEST_PRESET_OFFSET_MS,
+      enabled: true
+    },
+    ...attributes
+  });
+  await preset.save();
+  return preset;
+}
+
+export async function createTestTemplate(attributes: Record<string, any> = {}): Promise<BookshelfModel> {
+  const id = nextId();
+  const template = eventTemplateService.initEventTemplate();
+  template.set({
+    title: `Fixture template ${id}`,
+    ...attributes
+  });
+  await template.save();
+  return template;
 }
 
 /**
