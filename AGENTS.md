@@ -154,6 +154,8 @@ npm run start:production
 
 ## Best practices
 
+* Do not add comments unless really necessary, prefer encapsulating code in self-descripting functions.
 * Stay on the user's branch unless specified otherwise or working in Cloud mode. If anything looks fishy request a confirmation only.
 * Files read from top to down to tell a story: public methods at the top, their private utilities come next.
 * Use one-liner commits without any additional descriptions or authorship/conversation details
+* After implementing library upgrades, remove any tests that were only meant as baselines to pin down library behavior
