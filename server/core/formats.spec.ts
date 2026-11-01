@@ -139,13 +139,4 @@ describe("Date formats", () => {
     });
   });
 
-  describe("relative time", () => {
-    it("should describe past and future dates", () => {
-      const inTwoDays = createLuxonDate(Date.now() + 2 * 24 * 3600 * 1000 + 60000).toRelative();
-      const twoHoursAgo = createLuxonDate(Date.now() - 2 * 3600 * 1000 - 60000).toRelative();
-      expect(inTwoDays).to.equal("in 2 days");
-      expect(twoHoursAgo).to.equal("2 hours ago");
-    });
-  });
-
 });

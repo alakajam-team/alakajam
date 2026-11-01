@@ -26,8 +26,12 @@ export class User extends TimestampedEntity {
     this.name = name;
     this.email = email;
     this.title = name;
-    this.details = new UserDetails();
-    this.marketing = new UserMarketing();
+    // TypeORM also calls this constructor without arguments to hydrate rows, and deep-merges joined relations
+    // into any object already set on the property (which loses the loaded values): only prepare new users
+    if (name !== undefined) {
+      this.details = new UserDetails();
+      this.marketing = new UserMarketing();
+    }
   }
 
   @PrimaryGeneratedColumn()
@@ -139,12 +143,13 @@ export class User extends TimestampedEntity {
 
   public async loadDetails(): Promise<void> {
     await this.loadOneToOne(User, "details", UserDetails);
+    this.details ??= new UserDetails();
   }
 
   public async loadMarketing(): Promise<void> {
     const unsavedMarketing = this.marketing;
     await this.loadOneToOne(User, "marketing", UserMarketing);
-    this.marketing ??= unsavedMarketing; // No DB row yet: keep the (possibly edited) default instead of losing it
+    this.marketing ??= unsavedMarketing ?? new UserMarketing(); // No DB row yet: keep the (possibly edited) default instead of losing it
   }
 
   public dependents(): Array<keyof this> {
