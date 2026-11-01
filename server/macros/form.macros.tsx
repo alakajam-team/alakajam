@@ -5,7 +5,7 @@ import links from "server/core/links";
 import * as templatingFilters from "server/core/templating-filters";
 import { User } from "server/entity/user.entity";
 import { Alert } from "server/types";
-import slug from "slug";
+import slug from "../core/slug";
 import { ifFalse, ifSet, ifTrue } from "./jsx-utils";
 
 // Markdown editor
