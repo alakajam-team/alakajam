@@ -1,4 +1,5 @@
-import { getManager, ObjectType, getRepository, getConnection, EntityTarget } from "typeorm";
+import dbTypeorm from "server/core/db-typeorm";
+import { ObjectType, EntityTarget } from "typeorm";
 import { BookshelfCollection, BookshelfModel } from "bookshelf";
 
 export interface DependentEntity {
@@ -28,8 +29,8 @@ export abstract class BookshelfCompatibleEntity {
 
   protected async loadOneToOne<T extends EntityTarget<unknown>, U extends EntityTarget<unknown>>(
     currentType: T, fieldName: string, fieldType: U): Promise<void> {
-    if (!getRepository(fieldType).hasId(this[fieldName])) {
-      this[fieldName] = await getConnection()
+    if (!dbTypeorm.dataSource.getRepository(fieldType).hasId(this[fieldName])) {
+      this[fieldName] = await dbTypeorm.dataSource
         .createQueryBuilder()
         .relation(currentType, fieldName)
         .of(this)
@@ -38,7 +39,7 @@ export abstract class BookshelfCompatibleEntity {
   }
 
   public async destroy(): Promise<any> {
-    const entityManager = getManager();
+    const entityManager = dbTypeorm.dataSource.manager;
     for (const dependent of this.dependents()) {
       if (this[dependent]) {
         await entityManager.remove(this[dependent]);

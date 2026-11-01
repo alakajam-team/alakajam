@@ -81,7 +81,7 @@
     "striptags": "^3.0.1",
     "truncate-html": "^1.0.3",
     "turndown": "^7.0.0",
-    "typeorm": "^0.2.31",
+    "typeorm": "^0.3.31",
     "validator": "^13.5.2",
     "winston": "^3.3.3"
   },

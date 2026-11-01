@@ -47,5 +47,5 @@ async function seed() {
  */
 async function disableDiskSyncs() {
   await db.knex.raw("PRAGMA synchronous = OFF");
-  await dbTypeorm.connection.query("PRAGMA synchronous = OFF");
+  await dbTypeorm.dataSource.query("PRAGMA synchronous = OFF");
 }

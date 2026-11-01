@@ -1,9 +1,9 @@
 import { BookshelfModel } from "bookshelf";
 import db from "server/core/db";
+import dbTypeorm from "server/core/db-typeorm";
 import log from "server/core/log";
 import * as models from "server/core/models";
 import { Platform } from "server/entity/platform.entity";
-import { getRepository } from "typeorm";
 
 export class PlatformRepositoryBookshelf {
 
@@ -105,12 +105,12 @@ export class PlatformRepositoryBookshelf {
   }
 
   public save(platform: Platform): Promise<Platform> {
-    return getRepository(Platform).save(platform);
+    return dbTypeorm.dataSource.getRepository(Platform).save(platform);
   }
 
   public async delete(id: number): Promise<void> {
     if (id) {
-      await getRepository(Platform).delete({ id });
+      await dbTypeorm.dataSource.getRepository(Platform).delete({ id });
     }
   }
 
