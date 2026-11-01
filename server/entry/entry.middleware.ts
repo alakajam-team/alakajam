@@ -40,7 +40,7 @@ export async function entryMiddleware(req: CustomRequest, res: CustomResponse<Ev
 
   if (req.params.eventName !== "external-entry" &&
       (req.params.eventName !== entry.get("event_name") || req.params.entryName !== entry.get("name"))) {
-    res.redirect(links.routeUrl(entry, "entry", req.params.rest));
+    res.redirect(links.routeUrl(entry, "entry", ([] as string[]).concat(req.params.rest ?? []).join("/")));
     return;
   }
 
