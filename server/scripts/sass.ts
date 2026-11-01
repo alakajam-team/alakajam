@@ -14,7 +14,9 @@ class SassBuilder {
   private readonly ROOT_PATH = findProjectRoot(__dirname);
   private readonly CLIENT_SRC_FOLDER = path.join(this.ROOT_PATH, "./client/");
   private readonly CLIENT_DEST_FOLDER = path.join(this.ROOT_PATH, "./dist/client/");
-  private readonly ASSETS_GLOBS = ["png", "gif", "svg", "ttf", "woff", "woff2", "eot"].map((ext) => "./**/*." + ext);
+  private readonly FILE_EVENTS = ["add", "change", "unlink"]; // chokidar 4+ also reports directories
+  private readonly ASSETS_EXTENSIONS = ["png", "gif", "svg", "ttf", "woff", "woff2", "eot"];
+  private readonly ASSETS_GLOBS = this.ASSETS_EXTENSIONS.map((ext) => "./**/*." + ext);
   private readonly FA_WEBFONTS_FOLDER = path.join(this.ROOT_PATH, "./node_modules/@fortawesome/fontawesome-free/webfonts/");
 
   public async initialize({ watch = false }): Promise<[sass.CompileResult, string[]] | undefined> {
@@ -43,17 +45,31 @@ class SassBuilder {
 
     } else {
       log.info("Setting up automatic SASS build...");
-      const sassWatcher = chokidar.watch("**/*.scss", { cwd: this.CLIENT_SRC_FOLDER });
-      sassWatcher.on("all", debounce(this.sassBuild.bind(this), 500));
+      const sassWatcher = this.watchClientFiles(["scss"]);
+      const debouncedSassBuild = debounce(this.sassBuild.bind(this), 500);
+      sassWatcher.on("all", (eventName: string) => {
+        if (this.FILE_EVENTS.includes(eventName)) { debouncedSassBuild(); }
+      });
 
-      const assetWatcher = chokidar.watch(this.ASSETS_GLOBS, { cwd: this.CLIENT_SRC_FOLDER });
-      assetWatcher.on("all", (_eventName: string, assetPath: string) => {
+      const assetWatcher = this.watchClientFiles(this.ASSETS_EXTENSIONS);
+      assetWatcher.on("all", (eventName: string, assetPath: string) => {
+        if (!this.FILE_EVENTS.includes(eventName)) { return; }
         this.copyAssets({
           assetsPath: assetPath,
           resolve: () => { log.debug(`Copied ${assetPath}`); }
         });
       });
     }
+  }
+
+  /**
+   * Chokidar 4+ dropped glob support: watch the whole folder and filter files by extension instead.
+   */
+  private watchClientFiles(extensions: string[]) {
+    return chokidar.watch(this.CLIENT_SRC_FOLDER, {
+      cwd: this.CLIENT_SRC_FOLDER,
+      ignored: (filePath, stats) => !!stats?.isFile() && !extensions.some((ext) => filePath.endsWith("." + ext)),
+    });
   }
 
   private copyWebfonts() {
