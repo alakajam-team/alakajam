@@ -9,7 +9,7 @@ Read `DEPENDENCIES.md` first for the hard constraints.
 - **Tests first for risky batches:** write characterization tests against the *current* version, confirm they pass, then upgrade (this is how luxon was done: `server/core/formats.spec.ts`).
 - Prefer removing a dependency over adapting to a new API when Node covers it (done for `mkdirp`, `find-up`).
 - Libraries without types hide breakage from `tsc` (html-to-text's removed `fromString` slipped through). Add `@types/*` when the library has no bundled types, and smoke-test at runtime.
-- Node >= 22.12, CommonJS output (`module: commonjs`). ESM-only packages load through `require(esm)` (works for `slug` 12 and `chokidar` 5); check each candidate's `engines` before upgrading.
+- Node >= 22.12, CommonJS output (`module: commonjs`). ESM-only packages load through `require(esm)` (works for `chokidar` 5); check each candidate's `engines` before upgrading.
 
 ## Verification protocol (every batch)
 
@@ -27,18 +27,19 @@ npm run test:e2e   # not yet run on this branch: run it before merging, at least
 
 Do not use `pkill -f` with a pattern that appears in your own command line (it kills the shell).
 
-## Remaining batches, lowest risk first
+## Completed batches
 
-### Batch 3b - connect-session-knex (left over from Express 5)
-`connect-session-knex` is still 2.1.2: it was not needed for Express 5. 5.x is not blocked by the Knex pin (own `knex@3` dependency, receives our Knex instance in `createSessionStore`, `server/core/middleware.ts`). Check whether its factory API changed, then verify real session reads/writes on SQLite and PostgreSQL (login, logout, alerts across a redirect).
+- **Slug**: `slug` replaced by a local helper (`server/core/slug.ts`, covered by `slug.spec.ts`). Non-Latin titles now slugify to an empty string (the old library produced base64-like output); the model fallbacks (`unnamed`) already handle it.
+- **Batch 3b, connect-session-knex 5**: the factory became the `ConnectSessionKnexStore` class (`tableName`/`cleanupInterval` options); the existing `sessions` table is reused as is. The restore of the SQLite backup now swaps `store.options.knex` (`server/core/db.ts`). Verified on SQLite with the e2e suite (login/logout/alerts); **not tried on PostgreSQL**.
+- **Batch 4b, flipclock 1**: `countdown.ts` rewritten on `flipClock`/`elapsedTime` (format `[DD] [hh] [mm] [ss]`, one label per bracket group), bundled by Vite instead of eval'ed. Judged visually against the 0.10 version with screenshots (jumbotron countdown, future and past dates); **a real check on an event page with a configured countdown is still worth doing**.
+- **Batch 4b, Font Awesome 7**: every `fa-*` class used in templates resolves in the v7 CSS (aliases for the old v5 names are included) and renders; `fa-external-link` was blank in v5 and now works. Only `dist/client/webfonts` keeps stale v5 files until `dist/` is cleaned.
+- **Batch 5, preact 11 + jsx-pistols 0.6**: ~90 pages (public, admin, user, from `e2e/support/page-lists.ts`) rendered before/after and diffed. Only differences: ` />` -> `/>`, `data-sort-default` -> `data-sort-default="true"`, `autoFocus` -> `autofocus`, and `role="button"` dropped from the entry division `<label>`s (Preact 11 types forbid it). The Babel optional chaining plugin was dropped (Node 22 runs it natively). The JSX type augmentation (`types/preact/index.d.ts`) now targets `preact/src/dom`.
 
-### Batch 4b - client libraries needing visual sign-off
-- `flipclock` 0.10 -> 1: full redesign (new DOM, theme CSS and face API: `face: dayCounter(...)`), so `client/scripts/countdown.ts`, the `types.d.ts` declaration and `client/scss/flipclock-custom.scss` must be rewritten and the countdown judged visually (jumbotron on the event pages). Not started.
-- `@fortawesome/fontawesome-free` 5 -> 7: icon names and style prefixes changed (`fas/far/fab`); needs a template-wide icon audit. Do last, or skip.
+All batches: type-check, lint, unit tests, build, production boot and the 51 e2e tests pass.
+
+## Remaining
+
 - `@types/jquery` 4 / `jquery` 4: **blocked by Bootstrap 4**.
-
-### Batch 5 - rendering core
-`preact` 11 + `jsx-pistols` 0.6 (+ its nested `preact-render-to-string`). All server templates are TSX rendered through jsx-pistols (`server/core/middleware.ts`, babel plugin `@babel/plugin-proposal-optional-chaining`). Highest blast radius in the app: render a representative set of pages before/after and diff the HTML. Check that jsx-pistols 0.6 supports preact 11 before starting; otherwise wait.
 
 ### Not planned / blocked
 - **Knex 0.21 -> 1+/3, `sqlite3` 6**: blocked by the Bookshelf fork's peer range (`knex <0.22`). Unblocking means widening the fork's range and testing Bookshelf 1.2 against newer Knex, treated as its own project with the migrations suite as the safety net. (Bookshelf 1.x itself and Knex 0.21 are done.)
@@ -48,5 +49,4 @@ Do not use `pkill -f` with a pattern that appears in your own command line (it k
 - **`@types/node`**: stay on 22 to match the runtime. Bump together with the Node version.
 
 ## Open questions for the owner
-- Slug replacement: local helper vs waiting for an ESM server build?
 - Should `deployment/upgrade.sh` change (install dev deps, build, prune) be tried on a staging server before the next real deploy?

@@ -41,7 +41,6 @@
     "node": ">=22.12"
   },
   "dependencies": {
-    "@babel/plugin-proposal-optional-chaining": "^7.13.8",
     "@twurple/api": "^8.2.0",
     "@twurple/auth": "^8.2.0",
     "bookshelf": "github:mkalam-alami/bookshelf#v1.2.0-alakajam.1",
