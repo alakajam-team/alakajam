@@ -29,12 +29,8 @@ Do not use `pkill -f` with a pattern that appears in your own command line (it k
 
 ## Remaining batches, lowest risk first
 
-### Batch 3 - Express 5 (the big one)
-`express` 5, `@types/express` 5, `@types/express-serve-static-core` 5, `body-parser` 2 (Express 5 bundles `express.json/urlencoded`: consider dropping the package), `express-slow-down` 3, `connect-session-knex` 5, `express-promise-router` (Express 5 handles rejected promises natively: likely removable), `express-session`, `csurf` (deprecated, no upgrade exists: keep, or plan a replacement separately).
-- Before upgrading, add route-level tests (supertest-style against `server/routes.ts` or a minimal app) for: a GET page, a POST with CSRF, session login/logout, multer upload, an error page (404/500 via `error.middleware.ts`), rate limiting.
-- Known Express 5 changes to grep for: path syntax (`*` wildcards must be named, optional `?` and regexp routes change; review every route in `server/routes.ts`), `req.query` is a read-only getter and the default query parser is `simple`, `req.body` is `undefined` when no body is parsed (was `{}`), removed `req.param()`, `res.redirect("back")`, `app.del`, `res.json(status, body)` signatures, `req.host`.
-- `connect-session-knex` 5 is **not blocked by the Knex pin**: it has no knex peer, it depends on its own `knex@3` copy (2.1.2 already nests knex 1.0.7) and is handed our Knex instance in `createSessionStore` (`server/core/middleware.ts`). Knex is now on 0.21 (see Done); check whether its 5.x API (the `connectSessionKnex(expressSession)` factory may have changed) works with a Knex 0.21 instance; verify against real session reads/writes on SQLite and Postgres.
-- Needs the full E2E suite, plus a manual pass on login, uploads and the admin pages.
+### Batch 3b - connect-session-knex (left over from Express 5)
+`connect-session-knex` is still 2.1.2: it was not needed for Express 5. 5.x is not blocked by the Knex pin (own `knex@3` dependency, receives our Knex instance in `createSessionStore`, `server/core/middleware.ts`). Check whether its factory API changed, then verify real session reads/writes on SQLite and PostgreSQL (login, logout, alerts across a redirect).
 
 ### Batch 4 - ESM-only and client libraries
 - `slug` 4 -> 12 (ESM-only; used in `server/macros/form.macros.tsx` and the client bundle). Options: replace with a small local transliterating helper, or keep 4.x until the server moves to ESM. Pin down current slug output with tests first, since slugs are persisted in URLs.
@@ -54,7 +50,5 @@ Do not use `pkill -f` with a pattern that appears in your own command line (it k
 - **`@types/node`**: stay on 22 to match the runtime. Bump together with the Node version.
 
 ## Open questions for the owner
-- Is it acceptable to drop `body-parser` and `express-promise-router` once Express 5 lands?
 - Slug replacement: local helper vs waiting for an ESM server build?
 - Should `deployment/upgrade.sh` change (install dev deps, build, prune) be tried on a staging server before the next real deploy?
-- E2E has not been run on this branch yet; CI will be the first run.
