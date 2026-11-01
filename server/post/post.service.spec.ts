@@ -17,7 +17,7 @@ import {
   createTestPostAndEntry,
   createTestUser
 } from "server/testing/testing-fixtures";
-import { getRepository } from "typeorm";
+import dbTypeorm from "server/core/db-typeorm";
 import { afterAll, beforeAll, describe, it, vi } from "vitest";
 import postService from "./post.service";
 
@@ -309,7 +309,7 @@ describe("Post service", { timeout: DB_TEST_TIMEOUT }, () => {
   }
 
   function countUserRoles(userId: number): Promise<number> {
-    return getRepository(UserRole).count({ where: { user_id: userId } });
+    return dbTypeorm.dataSource.getRepository(UserRole).count({ where: { user_id: userId } });
   }
 
   async function countLikesByUser(userId: number): Promise<number> {

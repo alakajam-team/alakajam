@@ -1,9 +1,10 @@
 import { BookshelfModel } from "bookshelf";
 import cache from "server/core/cache";
+import dbTypeorm from "server/core/db-typeorm";
 import enums from "server/core/enums";
 import { EventParticipation, StreamerStatus } from "server/entity/event-participation.entity";
 import { User } from "server/entity/user.entity";
-import { FindConditions, getRepository, In, Not } from "typeorm";
+import { FindOptionsWhere, In, Not } from "typeorm";
 import tournamentService from "../tournament/tournament.service";
 
 export class EventParticipationService {
@@ -13,7 +14,7 @@ export class EventParticipationService {
   }
 
   public async joinEvent(event: BookshelfModel, user: User): Promise<void> {
-    const epRepository = getRepository(EventParticipation);
+    const epRepository = dbTypeorm.dataSource.getRepository(EventParticipation);
     if (!await this.hasJoinedEvent(event, user)) {
       await epRepository.save(new EventParticipation(event.get("id"), user.id));
     }
@@ -22,7 +23,7 @@ export class EventParticipationService {
   }
 
   public async leaveEvent(event: BookshelfModel, user: User): Promise<void> {
-    const epRepository = getRepository(EventParticipation);
+    const epRepository = dbTypeorm.dataSource.getRepository(EventParticipation);
 
     const eventParticipation = await this.getEventParticipation(event.get("id"), user.id);
     if (eventParticipation) {
@@ -41,7 +42,7 @@ export class EventParticipationService {
   }
 
   public async countParticipants(event: BookshelfModel): Promise<number> {
-    const epRepository = getRepository(EventParticipation);
+    const epRepository = dbTypeorm.dataSource.getRepository(EventParticipation);
     return epRepository.count({
       where: {
         eventId: event.get("id")
@@ -75,7 +76,7 @@ export class EventParticipationService {
 
       eventParticipation.streamerStatus = preferences.streamerStatus;
       eventParticipation.streamerDescription = preferences.streamerDescription;
-      const epRepository = getRepository(EventParticipation);
+      const epRepository = dbTypeorm.dataSource.getRepository(EventParticipation);
       await epRepository.save(eventParticipation);
 
       if (tournamentRefreshRequired) {
@@ -89,7 +90,7 @@ export class EventParticipationService {
 
   public async getEventParticipation(eventId: number, userId: number): Promise<EventParticipation | undefined> {
     if (userId) {
-      const epRepository = getRepository(EventParticipation);
+      const epRepository = dbTypeorm.dataSource.getRepository(EventParticipation);
       return epRepository.findOne({
         where: {
           eventId,
@@ -101,11 +102,11 @@ export class EventParticipationService {
 
   public async getEventParticipations(event: BookshelfModel, options:
   { filter?: "streamers" | "all-streamer-states" } = {}): Promise<EventParticipation[]> {
-    const criteria: FindConditions<EventParticipation> = { eventId: event.get("id") };
+    const criteria: FindOptionsWhere<EventParticipation> = { eventId: event.get("id") };
     if (options.filter === "all-streamer-states") { criteria.streamerStatus = Not("off"); }
     if (options.filter === "streamers") { criteria.streamerStatus = In(["approved", "requested"]); }
 
-    const epRepository = getRepository(EventParticipation);
+    const epRepository = dbTypeorm.dataSource.getRepository(EventParticipation);
     return epRepository.find({
       where: criteria,
       relations: ["user", "user.details"],

@@ -1,7 +1,6 @@
-import { Connection, ConnectionOptions, createConnection, getConnection } from "typeorm";
-import { BaseConnectionOptions } from "typeorm/connection/BaseConnectionOptions";
+import { BaseDataSourceOptions } from "typeorm/data-source/BaseDataSourceOptions";
+import { DataSource, DataSourceOptions } from "typeorm";
 import { LoggerOptions } from "typeorm/logger/LoggerOptions";
-import { entities, subscribers } from "../entity";
 import config from "./config";
 import dbTypeormLogger from "./db-typeorm-logger";
 import log from "./log";
@@ -13,24 +12,23 @@ import log from "./log";
  */
 export class DB {
 
-  private connectionInstance: Connection = null;
+  private dataSourceInstance: DataSource = null;
 
-  public get connection(): Connection {
-    if (this.connectionInstance == null) {
+  public get dataSource(): DataSource {
+    if (this.dataSourceInstance == null) {
       throw new Error("no DB connection, please call connect() first");
     }
-    return this.connectionInstance;
+    return this.dataSourceInstance;
   }
 
   public async closeAnyConnection(): Promise<void> {
-    try {
-      await getConnection().close();
-    } catch (e) {
-      // Connection not found
+    if (this.dataSourceInstance?.isInitialized) {
+      await this.dataSourceInstance.destroy();
     }
+    this.dataSourceInstance = null;
   }
 
-  public async connect(options: Partial<BaseConnectionOptions> = {}): Promise<void> {
+  public async connect(options: Partial<BaseDataSourceOptions> = {}): Promise<void> {
     let logging: LoggerOptions = ["error"];
     if (options.logging !== undefined) {
       logging = options.logging;
@@ -39,8 +37,9 @@ export class DB {
       logging = "all";
     }
 
-    const baseConnectionOptions: BaseConnectionOptions = {
-      type: null,
+    // Loaded lazily: entities import this module to reach the data source, so a top-level import would be circular
+    const { entities, subscribers } = await import("../entity");
+    const baseDataSourceOptions: Omit<BaseDataSourceOptions, "type" | "poolSize"> = {
       synchronize: false,
       entities,
       subscribers,
@@ -49,10 +48,10 @@ export class DB {
       ...options
     };
 
-    let connectionOptions: ConnectionOptions;
+    let dataSourceOptions: DataSourceOptions;
     if (config.DB_TYPE === "postgresql") {
-      connectionOptions = {
-        ...baseConnectionOptions,
+      dataSourceOptions = {
+        ...baseDataSourceOptions,
         type: "postgres",
         host: config.DB_HOST,
         username: config.DB_USER,
@@ -60,14 +59,14 @@ export class DB {
         database: config.DB_NAME
       };
     } else {
-      connectionOptions = {
-        ...baseConnectionOptions,
+      dataSourceOptions = {
+        ...baseDataSourceOptions,
         type: "sqlite",
         database: config.DB_SQLITE_FILENAME
       };
     }
 
-    this.connectionInstance = await createConnection(connectionOptions);
+    this.dataSourceInstance = await new DataSource(dataSourceOptions).initialize();
     if (options.logging !== false) {
       log.info("TypeORM connection initialized");
     }

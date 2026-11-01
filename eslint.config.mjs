@@ -145,6 +145,19 @@ export default tseslint.config(
       "no-invalid-this": "off",
       "@stylistic/no-multiple-empty-lines": "error",
       "no-new-wrappers": "error",
+      "no-restricted-imports": ["error", {
+        patterns: [
+          {
+            group: ["**/core/models", "./models"],
+            message: "Bookshelf models are being migrated to TypeORM, see server/entity/BOOKSHELF_MIGRATION.md"
+          },
+          {
+            group: ["typeorm"],
+            importNames: ["getRepository", "getManager", "getConnection", "createConnection", "Connection"],
+            message: "Global TypeORM helpers are removed in 1.x, use dbTypeorm.dataSource instead"
+          }
+        ]
+      }],
       "no-shadow": [
         "error",
         {
@@ -179,6 +192,44 @@ export default tseslint.config(
       "@stylistic/spaced-comment": "error",
       "use-isnan": "error",
       "valid-typeof": "off"
+    }
+  },
+  {
+    // Shrinking allowlist: remove a file from here once it no longer uses the Bookshelf models (see BOOKSHELF_MIGRATION.md).
+    // Do not add new entries.
+    files: [
+      "server/core/security.spec.ts",
+      "server/core/security.ts",
+      "server/core/settings.ts",
+      "server/entry/entry-hotness.service.spec.ts",
+      "server/entry/entry.service.ts",
+      "server/entry/highscore/highscore.service.ts",
+      "server/entry/manage/entry-manage.controller.ts",
+      "server/entry/platform/platform.repository.ts",
+      "server/entry/tag/tag.service.ts",
+      "server/entry/team/team-invite.service.ts",
+      "server/entry/team/team.service.ts",
+      "server/event/event.service.ts",
+      "server/event/manage/create/event-template.service.ts",
+      "server/event/manage/settings/event-preset.service.ts",
+      "server/event/ratings/rating.service.ts",
+      "server/event/theme/theme-shortlist.service.ts",
+      "server/event/theme/theme-stats.service.ts",
+      "server/event/theme/theme-voting.service.ts",
+      "server/event/theme/theme.service.ts",
+      "server/event/tournament/tournament.service.ts",
+      "server/migrations/0029_upgrade_thumbnails.ts",
+      "server/post/comment/comment.service.ts",
+      "server/post/like/like.service.spec.ts",
+      "server/post/like/like.service.ts",
+      "server/post/manage/post-manage.controller.ts",
+      "server/post/post.service.spec.ts",
+      "server/post/post.service.ts",
+      "server/user/user.service.spec.ts",
+      "server/user/user.service.ts"
+    ],
+    rules: {
+      "no-restricted-imports": "off"
     }
   },
   {

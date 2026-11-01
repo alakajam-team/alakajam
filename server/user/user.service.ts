@@ -3,6 +3,7 @@ import { Request } from "express";
 import * as randomKey from "random-key";
 import constants from "server/core/constants";
 import db from "server/core/db";
+import dbTypeorm from "server/core/db-typeorm";
 import forms from "server/core/forms";
 import log from "server/core/log";
 import * as models from "server/core/models";
@@ -13,19 +14,19 @@ import { ON_VALUE } from "server/entity/transformer/user-marketing-setting.trans
 import { UserRole } from "server/entity/user-role.entity";
 import { User } from "server/entity/user.entity";
 import { Mutable } from "server/types";
-import { FindConditions, FindOneOptions, getRepository, ILike, IsNull, Not, SelectQueryBuilder } from "typeorm";
+import { FindOneOptions, FindOptionsWhere, ILike, IsNull, Not, SelectQueryBuilder } from "typeorm";
 
 export class UserService {
 
   public async findById(id: number): Promise<User> {
-    return getRepository(User).findOne({ where: { id } });
+    return dbTypeorm.dataSource.getRepository(User).findOne({ where: { id } });
   }
 
   /**
    * Fetches a user
    */
   public async findByName(name: string, options: FindOneOptions<User> = {}): Promise<User> {
-    return getRepository(User).findOne({
+    return dbTypeorm.dataSource.getRepository(User).findOne({
       where: { name: ILike(name) },
       relations: ["details", "marketing"],
       ...options
@@ -33,7 +34,7 @@ export class UserService {
   }
 
   public async findByEmail(email: string): Promise<User> {
-    return getRepository(User).findOne({ where: { email } });
+    return dbTypeorm.dataSource.getRepository(User).findOne({ where: { email } });
   }
 
   public async countUsers(options: FindUserOptions = {}): Promise<number> {
@@ -59,7 +60,7 @@ export class UserService {
   }
 
   private createFindUsersQuery(options: FindUserOptions): SelectQueryBuilder<User> {
-    const userRepository = getRepository(User);
+    const userRepository = dbTypeorm.dataSource.getRepository(User);
     const qb = userRepository.createQueryBuilder("user");
 
     // Joins
@@ -73,7 +74,7 @@ export class UserService {
 
     // Basic search
 
-    const where: FindConditions<User> = {
+    const where: FindOptionsWhere<User> = {
       id: Not(constants.ANONYMOUS_USER_ID)
     };
     if (options.search) { where.title = ILike("%" + options.search + "%"); }
@@ -138,7 +139,7 @@ export class UserService {
         ` and must start with a letter. Length must be between ${constants.USERNAME_MIN_LENGTH} and ${constants.USERNAME_MAX_LENGTH}. `;
     }
 
-    const userRepository = getRepository(User);
+    const userRepository = dbTypeorm.dataSource.getRepository(User);
     const conflictingUsers = await userRepository.createQueryBuilder()
       .where([
         { name: ILike(name) },
@@ -175,7 +176,7 @@ export class UserService {
    * @returns {User} The models.User, or false if the authentication failed
    */
   public async authenticate(name: string, password: string): Promise<User | false> {
-    const user = await getRepository(User)
+    const user = await dbTypeorm.dataSource.getRepository(User)
       .createQueryBuilder()
       .where([
         { email: ILike(name) },
@@ -200,7 +201,8 @@ export class UserService {
     if (userEntryCount === 0) {
       const userId = user.id;
 
-      await getRepository(EventParticipation).delete({ userId: user.id }); // XXX Should ideally be cascaded through TypeORM User deletion
+      // XXX Should ideally be cascaded through TypeORM User deletion
+      await dbTypeorm.dataSource.getRepository(EventParticipation).delete({ userId: user.id });
 
       // Deleting the nodes of the user posts cascades to the posts, and to their comments, likes & user roles
       await db.knex("node")
@@ -222,7 +224,7 @@ export class UserService {
   public async save(user: User): Promise<void> {
     await user.loadDetails();
     await user.loadMarketing();
-    await getRepository(User).save(user);
+    await dbTypeorm.dataSource.getRepository(User).save(user);
   }
 
   /**
@@ -248,7 +250,7 @@ export class UserService {
    * @param {User} user
    */
   public async refreshUserReferences(user: User): Promise<void> {
-    const userRoleRepository = getRepository(UserRole);
+    const userRoleRepository = dbTypeorm.dataSource.getRepository(UserRole);
     const userRoles = await userRoleRepository.find({
       where: { user_id: user.id }
     });
@@ -283,7 +285,7 @@ export class UserService {
       return true;
     }
 
-    const jamEntryCount = await getRepository(UserRole).createQueryBuilder("role")
+    const jamEntryCount = await dbTypeorm.dataSource.getRepository(UserRole).createQueryBuilder("role")
       .innerJoin("role.node", "node", "node.type = 'entry'")
       .where("role.user_id = :userId", { userId: user.id })
       .andWhere("role.event_id IS NOT NULL")

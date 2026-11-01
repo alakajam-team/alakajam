@@ -16,7 +16,7 @@ import likeService from "server/post/like/like.service";
 import postService from "server/post/post.service";
 import { closeTestDB, DB_TEST_TIMEOUT, startTestDB } from "server/testing/testing-db";
 import { createTestEntry, createTestEvent, createTestPost, createTestUser } from "server/testing/testing-fixtures";
-import { getRepository } from "typeorm";
+import dbTypeorm from "server/core/db-typeorm";
 import userService from "./user.service";
 
 describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
@@ -284,7 +284,7 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
       expect(await commentService.findCommentById(keptComment.get("id"))).to.be.ok;
       expect(await likeService.findLike(otherPost, user.id)).to.not.be.ok;
       expect(await countLikesByUser(otherUser.id)).to.equal(0); // Like on the deleted post
-      expect(await getRepository(UserRole).count({ where: { user_id: user.id } })).to.equal(0);
+      expect(await dbTypeorm.dataSource.getRepository(UserRole).count({ where: { user_id: user.id } })).to.equal(0);
 
       const fetchedOtherPost = await postService.findPostById(otherPost.get("id"));
       expect(fetchedOtherPost.related<BookshelfCollection>("userRoles").map((role) => role.get("user_id")))
@@ -301,7 +301,7 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
       await userService.deleteUser(user, 0);
 
       expect(await commentService.findCommentById(commentOnOwnPost.get("id"))).to.not.be.ok;
-      expect(await getRepository(UserRole).count({ where: { user_id: otherUser.id } })).to.equal(0);
+      expect(await dbTypeorm.dataSource.getRepository(UserRole).count({ where: { user_id: otherUser.id } })).to.equal(0);
     });
 
   });
@@ -323,7 +323,7 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
 
     // Support overriding created_at/updated_at
     if (Object.keys(attributes).length > 0) {
-      await getRepository(User)
+      await dbTypeorm.dataSource.getRepository(User)
         .createQueryBuilder()
         .update()
         .set(attributes)
@@ -335,7 +335,7 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
   }
 
   async function createUserRole(user: User, attributes: Partial<UserRole> = {}): Promise<UserRole> {
-    const entryNode = await getRepository(Node).save({ type: "entry" });
+    const entryNode = await dbTypeorm.dataSource.getRepository(Node).save({ type: "entry" });
     const userRole = new UserRole();
     userRole.node_id = entryNode.id;
     userRole.user_id = user.id;
@@ -344,7 +344,7 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
     userRole.permission = "manage";
     Object.assign(userRole, attributes);
 
-    const userRoleRepository = getRepository(UserRole);
+    const userRoleRepository = dbTypeorm.dataSource.getRepository(UserRole);
     return userRoleRepository.save(userRole);
   }
 
@@ -354,12 +354,12 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
     const ep = new EventParticipation(eventId, user.id);
     Object.assign(ep, attributes);
 
-    const epRepository = getRepository(EventParticipation);
+    const epRepository = dbTypeorm.dataSource.getRepository(EventParticipation);
     return epRepository.save(ep);
   }
 
   async function createEventIfMissing(eventId: number): Promise<void> {
-    const eventRepository = getRepository(Event);
+    const eventRepository = dbTypeorm.dataSource.getRepository(Event);
     const existingEvent = await eventRepository.findOne({ where: { id: eventId } });
     if (!existingEvent) {
       const event = new Event();
@@ -377,8 +377,8 @@ describe("User service", { timeout: DB_TEST_TIMEOUT }, () => {
   }
 
   function findUserRole(userRoleId: number): Promise<UserRole> {
-    const userRoleRepository = getRepository(UserRole);
-    return userRoleRepository.findOne(userRoleId);
+    const userRoleRepository = dbTypeorm.dataSource.getRepository(UserRole);
+    return userRoleRepository.findOneBy({ id: userRoleId });
   }
 
 });
