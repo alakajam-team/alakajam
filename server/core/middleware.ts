@@ -35,8 +35,6 @@ import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
 
 const LAUNCH_TIME = Date.now();
 
-const jsxPistolsBabelOptions = defaultBabelOptions;
-jsxPistolsBabelOptions.plugins.push("@babel/plugin-proposal-optional-chaining");
 
 /*
  * Setup app middleware
@@ -86,7 +84,7 @@ export async function configure(app: express.Application): Promise<void> {
   const templatesRootPath = path.join(__dirname, "..");
   const jsxPistols = new JSXPistols({
     rootPath: templatesRootPath,
-    babelOptions: jsxPistolsBabelOptions,
+    babelOptions: defaultBabelOptions,
     expressApp: app
   });
   const expressEngine = async (filePath: string, options: any, callback: (e?: Error, output?: string) => void) => {
