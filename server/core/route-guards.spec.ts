@@ -40,7 +40,7 @@ describe("Route guards & Express 5 path syntax", () => {
       res.status(500).send("handled: " + err.message);
     });
 
-    await new Promise<void>((resolve) => { server = app.listen(0, resolve); });
+    await new Promise<void>((resolve) => { server = app.listen(0, () => resolve()); });
     baseUrl = `http://localhost:${(server.address() as AddressInfo).port}`;
   });
 
