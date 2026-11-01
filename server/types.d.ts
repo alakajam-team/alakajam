@@ -34,7 +34,7 @@ export interface CustomApplicationLocals {
   };
 }
 
-export interface CustomRequest extends Request {
+export interface CustomRequest extends Request<Record<string, string>> {
   /**
    * The user session. The object can be used to store any data we want to retain across the user session.
    * Be careful to save it (with session.saveAsync()) if you set anything, otherwise it will make the server stateful.

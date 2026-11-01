@@ -8,13 +8,11 @@
  * - Error pages
  */
 
-import * as bodyParser from "body-parser";
 import connectSessionKnex from "connect-session-knex";
 import * as cookies from "cookies";
 import * as crypto from "crypto";
 import express, { NextFunction, Request, Response } from "express";
 import expressSession from "express-session";
-import expressSlowDown from "express-slow-down";
 import JSXPistols, { defaultBabelOptions } from "jsx-pistols";
 import * as path from "path";
 import * as randomKey from "random-key";
@@ -28,6 +26,7 @@ import { promisify } from "util";
 import config, * as configUtils from "./config";
 import db from "./db";
 import fileStorage from "./file-storage";
+import { initSlowDownMiddleware } from "./slow-down-middleware";
 import { LIVE_RELOAD_PATH, LiveReload } from "./live-reload";
 import links from "./links";
 import log from "./log";
@@ -68,13 +67,11 @@ export async function configure(app: express.Application): Promise<void> {
 
   // Speed limit against bots
   if (!config.DEBUG_DISABLE_SLOW_DOWN) {
-    const slowDownMiddleware = expressSlowDown({
+    const slowDownMiddleware = initSlowDownMiddleware({
       windowMs: 60 * 1000, // 1 minute
       delayAfter: 60,
       delayMs: 500,
-      onLimitReached: (req) => {
-        log.info("Slowing down IP " + req.ip);
-      }
+      logMessage: "Slowing down IP ",
     });
     app.use(slowDownMiddleware);
   }
@@ -111,7 +108,12 @@ export async function configure(app: express.Application): Promise<void> {
   app.set("views", templatesRootPath);
 
   // Body parsers config
-  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(express.urlencoded({ extended: false }));
+  app.use((req: Request, _res: Response, next: NextFunction) => {
+    // Express 5 leaves `req.body` undefined when no body was parsed (eg. GET requests), controllers expect an object
+    req.body ??= {};
+    next();
+  });
   app.use((req: Request, res: Response, next: NextFunction) => {
     // Multer auto cleanup (actual Multer middleware is declared at initUploadMiddleware())
     res.on("finish", cleanupFormFilesCallback(req, res));

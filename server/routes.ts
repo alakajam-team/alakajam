@@ -1,9 +1,8 @@
 import csurf from "csurf";
 import express, { NextFunction, RequestHandler } from "express";
-import expressPromiseRouter from "express-promise-router";
-import expressSlowDown from "express-slow-down";
 import config, * as configUtils from "server/core/config";
-import log from "server/core/log";
+import { requireDigits, skipRouteUnless } from "server/core/route-guards";
+import { initSlowDownMiddleware } from "server/core/slow-down-middleware";
 import { initUploadMiddleware } from "server/core/upload-middleware";
 import { adminMiddleware } from "./admin/admin.middleware";
 import { adminAnnouncements } from "./admin/announcements/admin-announcements.controller";
@@ -92,22 +91,20 @@ const csrfIfNotDebug = config.DEBUG_ADMIN ? [csrfDisabled] : [csrf];
 const sensitiveActionsSlowDown: RequestHandler = initSensitiveActionsSlowDownMiddleware();
 
 export function routes(app: express.Application): void {
-  // Using express-promise-router instead of the default express.Router
-  // allows our routes to return rejected promises to trigger the error
-  // handling.
-  const router = expressPromiseRouter();
+  const router = express.Router();
   app.use(router);
+
+  router.param("eventName", skipRouteUnless((value) => value.includes("-")));
+  router.param("entryId", skipRouteUnless((value) => /^\d+$/.test(value)));
 
   // Run all middleware before any actual route handlers
 
-  router.use("*", commonMiddleware);
-  router.use("/admin*", adminMiddleware);
-  // Why `{0,}` instead of `*`? See: https://github.com/expressjs/express/issues/2495
-  router.use("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?/:rest*?", entryMiddleware);
-  router.use("/:eventName([^/]{0,}-[^/]{0,})", eventMiddleware);
+  router.use(commonMiddleware);
+  router.use("/admin", adminMiddleware);
+  router.use("/:eventName/:entryId{/:entryName}{/*rest}", entryMiddleware);
+  router.use("/:eventName", eventMiddleware);
   router.use("/post/:postId", postMiddleware);
-  router.use("/post/:postId/*", postMiddleware);
-  router.use("/dashboard*", dashboardMiddleware);
+  router.use("/dashboard", dashboardMiddleware);
 
   // General
 
@@ -134,7 +131,7 @@ export function routes(app: express.Application): void {
   router.get("/passwordRecovery", csrf, passwordRecovery);
   router.post("/passwordRecovery", sensitiveActionsSlowDown, csrf, passwordRecovery);
 
-  router.get("/dashboard(/feed)?", csrf, dashboardFeed);
+  router.get("/dashboard{/feed}", csrf, dashboardFeed);
   router.get("/dashboard/entries", csrf, dashboardEntries);
   router.get("/dashboard/posts", csrf, dashboardPosts);
   router.get("/dashboard/scores", csrf, dashboardScores);
@@ -181,22 +178,22 @@ export function routes(app: express.Application): void {
   const entryFormParser = upload.single("picture");
   router.get("/events/ajax-find-external-event", apiSearchForExternalEvents);
   router.get("/tags/ajax-find-tags", apiSearchForTags);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/create-entry", csrf, entryManage);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/create-entry", entryFormParser, csrf, entryManage);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/ajax-find-team-mate", apiSearchForTeammate);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?", csrf, entryView);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName?", csrf, entrySaveCommentOrVote);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit", csrf, entryManage);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit", entryFormParser, csrf, entryManage);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/delete", csrf, entryDelete);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/leave", csrf, entryLeave);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/accept-invite", csrf, inviteAccept);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/decline-invite", csrf, inviteDecline);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/submit-score", csrf, entryHighscoreSubmit);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/submit-score", upload.single("upload"), csrf, entryHighscoreSubmit);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/scores", entryHighscores);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit-scores", csrf, entryHighscoresManage);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/:entryId(\\d+)/:entryName/edit-scores", csrf, entryHighscoresManage);
+  router.get("/:eventName/create-entry", csrf, entryManage);
+  router.post("/:eventName/create-entry", entryFormParser, csrf, entryManage);
+  router.get("/:eventName/ajax-find-team-mate", apiSearchForTeammate);
+  router.get("/:eventName/:entryId{/:entryName}", csrf, entryView);
+  router.post("/:eventName/:entryId{/:entryName}", csrf, entrySaveCommentOrVote);
+  router.get("/:eventName/:entryId/:entryName/edit", csrf, entryManage);
+  router.post("/:eventName/:entryId/:entryName/edit", entryFormParser, csrf, entryManage);
+  router.get("/:eventName/:entryId/:entryName/delete", csrf, entryDelete);
+  router.get("/:eventName/:entryId/:entryName/leave", csrf, entryLeave);
+  router.get("/:eventName/:entryId/:entryName/accept-invite", csrf, inviteAccept);
+  router.get("/:eventName/:entryId/:entryName/decline-invite", csrf, inviteDecline);
+  router.get("/:eventName/:entryId/:entryName/submit-score", csrf, entryHighscoreSubmit);
+  router.post("/:eventName/:entryId/:entryName/submit-score", upload.single("upload"), csrf, entryHighscoreSubmit);
+  router.get("/:eventName/:entryId/:entryName/scores", entryHighscores);
+  router.get("/:eventName/:entryId/:entryName/edit-scores", csrf, entryHighscoresManage);
+  router.post("/:eventName/:entryId/:entryName/edit-scores", csrf, entryHighscoresManage);
 
   const eventFormParser = upload.fields([
     { name: "logo", maxCount: 1 },
@@ -206,53 +203,53 @@ export function routes(app: express.Application): void {
   router.get("/pick_event_template", csrf, eventCreate);
   router.get("/create_event", csrf, eventManage);
   router.post("/create_event", eventFormParser, csrf, eventManage);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})", viewEventHome);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard", csrf, viewEventDashboard);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard", csrf, postEventDashboard);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", csrf, viewStreamerPreferences);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/dashboard-streamer-preferences", csrf, saveStreamerPreferences);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/my-entry", viewEventDashboard); // deprecated
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/join", joinLeaveEvent);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/announcements", viewEventHome); // deprecated
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/posts", viewEventPosts);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/themes", csrf, eventThemes);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/themes", csrf, eventThemes);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/ajax-find-themes", ajaxFindThemes);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/ajax-save-vote", ajaxSaveThemeVote);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/games", csrf, viewEventGames);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/ratings", csrf, viewEventRatings);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/results", viewEventResults);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-games", csrf, viewEventTournamentGames);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/tournament-leaderboard", viewEventTournamentLeaderboard);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/streamers", csrf, eventStreamers);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/streamers", csrf, moderateEventStreamers);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/streamers-doc", eventStreamersDoc);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/edit", csrf, eventManage);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/edit", eventFormParser, csrf, eventManage);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventManageThemes);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/edit-themes", csrf, eventManageThemes);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/edit-entries", csrf, eventManageEntries);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/edit-entries", csrf, eventManageEntriesPost);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/edit-rankings", csrf, viewEventManageRankings);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/edit-rankings", csrf, postEventManageRankings);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/edit-tournament-games", csrf, eventManageTournament);
-  router.post("/:eventName([^/]{0,}-[^/]{0,})/edit-tournament-games", csrf, eventManageTournament);
-  router.get("/:eventName([^/]{0,}-[^/]{0,})/delete", csrf, eventDelete);
+  router.get("/:eventName", viewEventHome);
+  router.get("/:eventName/dashboard", csrf, viewEventDashboard);
+  router.post("/:eventName/dashboard", csrf, postEventDashboard);
+  router.get("/:eventName/dashboard-streamer-preferences", csrf, viewStreamerPreferences);
+  router.post("/:eventName/dashboard-streamer-preferences", csrf, saveStreamerPreferences);
+  router.get("/:eventName/my-entry", viewEventDashboard); // deprecated
+  router.get("/:eventName/join", joinLeaveEvent);
+  router.get("/:eventName/announcements", viewEventHome); // deprecated
+  router.get("/:eventName/posts", viewEventPosts);
+  router.get("/:eventName/themes", csrf, eventThemes);
+  router.post("/:eventName/themes", csrf, eventThemes);
+  router.get("/:eventName/ajax-find-themes", ajaxFindThemes);
+  router.post("/:eventName/ajax-save-vote", ajaxSaveThemeVote);
+  router.get("/:eventName/games", csrf, viewEventGames);
+  router.get("/:eventName/ratings", csrf, viewEventRatings);
+  router.get("/:eventName/results", viewEventResults);
+  router.get("/:eventName/tournament-games", csrf, viewEventTournamentGames);
+  router.get("/:eventName/tournament-leaderboard", viewEventTournamentLeaderboard);
+  router.get("/:eventName/streamers", csrf, eventStreamers);
+  router.post("/:eventName/streamers", csrf, moderateEventStreamers);
+  router.get("/:eventName/streamers-doc", eventStreamersDoc);
+  router.get("/:eventName/edit", csrf, eventManage);
+  router.post("/:eventName/edit", eventFormParser, csrf, eventManage);
+  router.get("/:eventName/edit-themes", csrf, eventManageThemes);
+  router.post("/:eventName/edit-themes", csrf, eventManageThemes);
+  router.get("/:eventName/edit-entries", csrf, eventManageEntries);
+  router.post("/:eventName/edit-entries", csrf, eventManageEntriesPost);
+  router.get("/:eventName/edit-rankings", csrf, viewEventManageRankings);
+  router.post("/:eventName/edit-rankings", csrf, postEventManageRankings);
+  router.get("/:eventName/edit-tournament-games", csrf, eventManageTournament);
+  router.post("/:eventName/edit-tournament-games", csrf, eventManageTournament);
+  router.get("/:eventName/delete", csrf, eventDelete);
 
   // Posts
 
-  router.get("/posts?", postsView);
+  router.get("/post{s}", postsView);
 
   router.get("/post/create", csrf, postEdit);
   router.post("/post/create", csrf, postSave);
   router.get("/post/:postId", csrf, postView);
-  router.get("/post/:postId(\\d+)/:postName?", csrf, postView);
-  router.post("/post/:postId(\\d+)/:postName?", csrf, commentSave);
-  router.post("/post/:postId(\\d+)/:postName/edit", csrf, postSave);
-  router.get("/post/:postId(\\d+)/:postName/edit", csrf, postEdit);
-  router.get("/post/:postId(\\d+)/:postName/delete", csrf, postDelete);
-  router.post("/post/:postId(\\d+)/:postName/watch", csrf, postWatch);
-  router.post("/post/:postId(\\d+)/:postName/like", likePost);
+  router.get("/post/:postId{/:postName}", requireDigits("postId"), csrf, postView);
+  router.post("/post/:postId{/:postName}", requireDigits("postId"), csrf, commentSave);
+  router.post("/post/:postId/:postName/edit", requireDigits("postId"), csrf, postSave);
+  router.get("/post/:postId/:postName/edit", requireDigits("postId"), csrf, postEdit);
+  router.get("/post/:postId/:postName/delete", requireDigits("postId"), csrf, postDelete);
+  router.post("/post/:postId/:postName/watch", requireDigits("postId"), csrf, postWatch);
+  router.post("/post/:postId/:postName/like", requireDigits("postId"), likePost);
 
   // Articles
 
@@ -286,13 +283,11 @@ function initSensitiveActionsSlowDownMiddleware(): RequestHandler {
   if (config.DEBUG_DISABLE_SLOW_DOWN) {
     return (_req, _res, next) => { next(); };
   } else {
-    return expressSlowDown({
+    return initSlowDownMiddleware({
       windowMs: 10 * 60 * 1000, // 10 minutes
       delayAfter: 10,
       delayMs: 500,
-      onLimitReached: (req) => {
-        log.info("Slowing down sensitive actions for IP " + req.ip);
-      }
+      logMessage: "Slowing down sensitive actions for IP ",
     });
   }
 }
