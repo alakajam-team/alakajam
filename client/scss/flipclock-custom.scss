@@ -1,19 +1,29 @@
 .flip-clock {
-  font-size: .52rem;
+  --font-size: 1.8rem;
+
+  display: flex;
+  justify-content: center;
   margin-top: 0;
   margin-bottom: 30px;
+  gap: 0;
 }
 
-.flip-clock .flip-clock-divider {
-  margin-left: -2px;
+.flip-clock .flip-clock-divider[data-value=" "] {
+  min-width: .25rem;
+}
+
+.flip-clock .flip-clock-group + .flip-clock-group {
+  margin-left: 0;
 }
 
 .flip-clock .flip-clock-group .flip-clock-label {
-  margin-top: 70px;
+  margin-top: 4px;
+  margin-bottom: 0;
   font-size: .8rem;
   opacity: .7;
+  order: 2;
 }
 
-.flip-clock .flip-clock-group .flip-clock-list {
+.flip-clock .flip-clock-card {
   color: #EEE;
 }
