@@ -8,7 +8,7 @@
  * - Error pages
  */
 
-import connectSessionKnex from "connect-session-knex";
+import { ConnectSessionKnexStore } from "connect-session-knex";
 import * as cookies from "cookies";
 import * as crypto from "crypto";
 import express, { NextFunction, Request, Response } from "express";
@@ -275,13 +275,12 @@ async function getOrCreateSessionSecret() {
   return secret;
 }
 
-export function createSessionStore(): any {
-  const KnexSessionStore = (connectSessionKnex as any)(expressSession);
-  return new KnexSessionStore({
+export function createSessionStore(): ConnectSessionKnexStore {
+  return new ConnectSessionKnexStore({
     knex: db.knex as any,
-    tablename: "sessions",
+    tableName: "sessions",
     createTable: true,
-    clearInterval: 60000, // Milliseconds between clearing expired sessions
+    cleanupInterval: 60000, // Milliseconds between clearing expired sessions
   });
 }
 
