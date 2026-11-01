@@ -8,7 +8,7 @@
  * - Error pages
  */
 
-import connectSessionKnex from "connect-session-knex";
+import { ConnectSessionKnexStore } from "connect-session-knex";
 import * as cookies from "cookies";
 import * as crypto from "crypto";
 import express, { NextFunction, Request, Response } from "express";
@@ -35,8 +35,6 @@ import { SETTING_SESSION_KEY, SETTING_SESSION_SECRET } from "./settings-keys";
 
 const LAUNCH_TIME = Date.now();
 
-const jsxPistolsBabelOptions = defaultBabelOptions;
-jsxPistolsBabelOptions.plugins.push("@babel/plugin-proposal-optional-chaining");
 
 /*
  * Setup app middleware
@@ -86,7 +84,7 @@ export async function configure(app: express.Application): Promise<void> {
   const templatesRootPath = path.join(__dirname, "..");
   const jsxPistols = new JSXPistols({
     rootPath: templatesRootPath,
-    babelOptions: jsxPistolsBabelOptions,
+    babelOptions: defaultBabelOptions,
     expressApp: app
   });
   const expressEngine = async (filePath: string, options: any, callback: (e?: Error, output?: string) => void) => {
@@ -275,13 +273,12 @@ async function getOrCreateSessionSecret() {
   return secret;
 }
 
-export function createSessionStore(): any {
-  const KnexSessionStore = (connectSessionKnex as any)(expressSession);
-  return new KnexSessionStore({
+export function createSessionStore(): ConnectSessionKnexStore {
+  return new ConnectSessionKnexStore({
     knex: db.knex as any,
-    tablename: "sessions",
+    tableName: "sessions",
     createTable: true,
-    clearInterval: 60000, // Milliseconds between clearing expired sessions
+    cleanupInterval: 60000, // Milliseconds between clearing expired sessions
   });
 }
 

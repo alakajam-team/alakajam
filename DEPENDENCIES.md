@@ -55,7 +55,6 @@ See `server/entity/BOOKSHELF_MIGRATION.md`.
 
 * `vite`, `@rollup/plugin-inject`, `sass`, `typescript`, `ts-node`, `copy`, `@types/*` and the client-side libraries bundled by Vite or copied by Sass: build-time only, so they live in `devDependencies`. `deployment/upgrade.sh` installs them to build, then runs `npm prune --omit=dev`.
 * `sqlite3` and `pg`: database drivers picked at runtime through `DB_TYPE`, both stay in `dependencies`.
-* `@babel/plugin-proposal-optional-chaining`: used at runtime by jsx-pistols to compile the server templates (`server/core/middleware.ts`).
 * `chokidar`: file watching for the Sass build (`server/scripts/sass.ts`) and the dev live reload (`server/core/live-reload.ts`), imported by server code so it is a runtime dependency.
 * `@swc-node/register`, `@swc/core`, `nodemon`, `tsconfig-paths`: dev server (`npm start`, see `nodemon.json`).
 * `unplugin-swc`: lets Vitest emit the decorator metadata required by TypeORM entities.
