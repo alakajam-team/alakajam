@@ -13,7 +13,10 @@ import db from "server/core/db";
 import enums from "server/core/enums";
 import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
+import security, { SECURITY_PERMISSION_MANAGE } from "server/core/security";
 import { EventFlags } from "server/entity/event-details.entity";
+import { User } from "server/entity/user.entity";
+import userService from "server/user/user.service";
 
 
 /**
@@ -93,7 +96,7 @@ export class EventService {
   public async findEventById(id: number): Promise<BookshelfModel> {
     if (!cache.eventsById.get(id)) {
       const event = await models.Event.where("id", id)
-        .fetch({ withRelated: ["details"] });
+        .fetch({ withRelated: ["details", "userRoles"] });
       cache.eventsById.set(id, event);
     }
     return cache.eventsById.get<BookshelfModel>(id);
@@ -105,7 +108,7 @@ export class EventService {
   public async findEventByName(name: string): Promise<BookshelfModel> {
     if (!cache.eventsByName.get(name)) {
       const event = await models.Event.where("name", name)
-        .fetch({ withRelated: ["details"] });
+        .fetch({ withRelated: ["details", "userRoles"] });
       cache.eventsByName.set(name, event);
     }
     return cache.eventsByName.get<BookshelfModel>(name);
@@ -170,6 +173,40 @@ export class EventService {
       return a.localeCompare(b);
     });
     return formattedResults;
+  }
+
+  /**
+   * Sets the moderators of an event: grants a role to the given users and revokes all the others.
+   * Users who are not mods yet get promoted. Clearing the event caches is up to the caller.
+   * @param userIds the desired moderator user IDs.
+   * @returns the users who got promoted to mod.
+   */
+  public async setEventModerators(event: BookshelfModel, userIds: number[]): Promise<User[]> {
+    const eventId = event.get("id");
+    await db.knex("event_role").where("event_id", eventId).whereNotIn("user_id", userIds).del();
+    const existingIds: number[] = await db.knex("event_role").where("event_id", eventId).pluck("user_id");
+    const newIds = [...new Set(userIds)].filter(id => !existingIds.includes(id));
+    if (newIds.length > 0) {
+      const now = new Date();
+      await db.knex("event_role").insert(newIds.map(userId => ({
+        user_id: userId,
+        event_id: eventId,
+        permission: SECURITY_PERMISSION_MANAGE,
+        created_at: now,
+        updated_at: now,
+      })));
+    }
+
+    const promotedUsers: User[] = [];
+    for (const userId of newIds) {
+      const user = await userService.findById(userId);
+      if (user && !security.isMod(user)) {
+        user.is_mod = "true";
+        await userService.save(user);
+        promotedUsers.push(user);
+      }
+    }
+    return promotedUsers;
   }
 
   /**

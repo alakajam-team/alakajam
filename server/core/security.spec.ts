@@ -5,6 +5,7 @@ import { expect } from "chai";
 import { createLuxonDate } from "server/core/formats";
 import * as models from "server/core/models";
 import entryService from "server/entry/entry.service";
+import eventService from "server/event/event.service";
 import commentService from "server/post/comment/comment.service";
 import postService from "server/post/post.service";
 import { closeTestDB, DB_TEST_TIMEOUT, startTestDB } from "server/testing/testing-db";
@@ -182,18 +183,28 @@ describe("Security", { timeout: DB_TEST_TIMEOUT }, () => {
 
   describe("event permissions", () => {
 
-    it("should let anyone read events but only mods edit them, and only admins once closed", async () => {
+    it("should let anyone read events but only admins and mods with a role edit them", async () => {
       const user = await createTestUser();
       const mod = await createTestUser({ is_mod: "true" });
+      const modWithRole = await createTestUser({ is_mod: "true" });
       const admin = await createTestUser({ is_admin: "true" });
       const openEvent = await createTestEvent({ status: enums.EVENT.STATUS.OPEN });
       const closedEvent = await createTestEvent({ status: enums.EVENT.STATUS.CLOSED });
+      await eventService.setEventModerators(openEvent, [modWithRole.id]);
+      await eventService.setEventModerators(closedEvent, [modWithRole.id]);
+      await openEvent.load("userRoles");
+      await closedEvent.load("userRoles");
 
       expect(security.canUserRead(undefined, openEvent)).to.be.true;
       expect(security.canUserWrite(user, openEvent)).to.not.be.ok;
-      expect(security.canUserWrite(mod, openEvent)).to.be.ok;
-      expect(security.canUserWrite(mod, closedEvent)).to.not.be.ok;
+      expect(security.canUserWrite(mod, openEvent)).to.not.be.ok;
+      expect(security.canUserWrite(modWithRole, openEvent)).to.be.ok;
+      expect(security.canUserWrite(modWithRole, closedEvent)).to.not.be.ok;
+      expect(security.canUserWrite(admin, openEvent)).to.be.ok;
       expect(security.canUserWrite(admin, closedEvent)).to.be.ok;
+
+      modWithRole.is_mod = null;
+      expect(security.canUserWrite(modWithRole, openEvent)).to.not.be.ok;
     });
 
   });

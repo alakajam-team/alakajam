@@ -17,7 +17,7 @@ import { EventLocals } from "../../event.middleware";
 export async function eventManageEntries(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   res.locals.pageTitle += " | Entries";
 
-  if (!security.isMod(res.locals.user)) {
+  if (!security.canUserWrite(res.locals.user, res.locals.event)) {
     res.errorPage(403);
     return;
   }

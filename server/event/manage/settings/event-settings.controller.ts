@@ -23,7 +23,7 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
   const { user } = res.locals;
   let { event } = res.locals;
 
-  if (!security.canUserManage(user, event) && !security.isAdmin(user)) {
+  if (!(event ? security.canUserManage(user, event) : security.isMod(user))) {
     res.errorPage(403);
     return;
   }
@@ -181,6 +181,17 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
       }
       await eventDetails.save();
 
+      // Update moderators (event creators are granted a role automatically)
+      if (security.isAdmin(user) && req.body["moderators-submitted"]) {
+        const moderatorIds = [].concat(req.body.moderators || []).filter(forms.isId).map(id => forms.parseInt(id));
+        const promotedUsers = await eventService.setEventModerators(event, moderatorIds);
+        if (promotedUsers.length > 0) {
+          infoMessage = (infoMessage + " Promoted to mod: " + promotedUsers.map(promoted => promoted.title).join(", ")).trim();
+        }
+      } else if (creation && !security.isAdmin(user)) {
+        await eventService.setEventModerators(event, [user.id]);
+      }
+
       // Caches clearing
       cache.general.del(CACHE_KEY_ACTIVE_TOURNAMENT_EVENT);
       cache.eventsById.del(event.get("id"));
@@ -205,6 +216,10 @@ export async function eventManage(req: CustomRequest, res: CustomResponse<EventL
         eventTemplate = await eventTemplateService.findEventTemplateById(forms.parseInt(req.query["event-template-id"]?.toString()));
       }
       event = eventService.createEvent(eventTemplate);
+    }
+
+    if (event.get("id")) {
+      await event.load("userRoles.user");
     }
 
     // Render

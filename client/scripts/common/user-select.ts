@@ -14,11 +14,13 @@ export default function userSelect(): void {
           };
         },
         processResults(data, params) {
+          const flagNonMods = $select.is("[data-flag-non-mods]");
           return {
             results: data.users.map((userInfo) => {
+              const promoted = flagNonMods && !userInfo.is_mod && !userInfo.is_admin;
               return {
                 id: userInfo.id,
-                text: userInfo.title
+                text: userInfo.title + (promoted ? " (will be promoted to mod)" : "")
               };
             })
           };

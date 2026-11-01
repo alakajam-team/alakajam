@@ -18,7 +18,7 @@ export function moderationBar(context: CommonLocals, isAdmin: boolean): JSX.Elem
           && (!context.featuredEvent || context.event?.id !== context.featuredEvent?.id),
       "Edit event", "calendar", links.routeUrl(context.event, "event", "edit"))}
 
-      {moderationLink(context.featuredEvent?.id,
+      {moderationLink(context.featuredEvent?.id && security.canUserWrite(context.user, context.featuredEvent),
         "Edit featured event", "calendar", links.routeUrl(context.featuredEvent, "event", "edit"))}
       {moderationLink(context.path === "/explore/events",
         "Create event", "calendar", links.routeUrl(null, "event", "template"))}

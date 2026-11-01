@@ -85,7 +85,7 @@ function withTransaction(query, options?: { transacting?: any }) {
  * | string | key | Primary key
  * | string | value | Setting value (max size: 10000)
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const Setting = bookshelf.model("Setting", {
   tableName: "setting",
@@ -114,7 +114,7 @@ export const Setting = bookshelf.model("Setting", {
  * | string | password_salt | (not null)
  * | dateTime | notifications_last_read |
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  * | boolean | disallow_anonymous | Disallow this user to post anonymous comments
  */
 export const User = bookshelf.model("User", {
@@ -221,7 +221,7 @@ export const UserMarketing = bookshelf.model("UserMarketing", {
  * | string | permission | Permission: 'read', 'write', 'manage' (not null)
  * | integer | event_id | Event ID
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const UserRole = bookshelf.model("UserRole", {
   tableName: "user_role",
@@ -230,6 +230,28 @@ export const UserRole = bookshelf.model("UserRole", {
   requireFetch: false,
 
   ...nodeChildModel,
+  user() {
+    return this.belongsTo("User", "user_id");
+  },
+});
+
+/**
+ * Event Role model (event moderators)
+ *
+ * | type | name | description
+ * |--    |--    |--
+ * | integer (increments) | id | Primary key
+ * | integer | user_id | User ID (not null)
+ * | integer | event_id | Event ID (not null)
+ * | string | permission | Permission: 'manage' (not null)
+ * | date | created_at | Creation time (not null)
+ * | date | updated_at | Last modification time (not null)
+ */
+export const EventRole = bookshelf.model("EventRole", {
+  tableName: "event_role",
+  idAttribute: "id",
+  hasTimestamps: true,
+
   user() {
     return this.belongsTo("User", "user_id");
   },
@@ -263,7 +285,7 @@ export const UserRole = bookshelf.model("UserRole", {
  * | integer | tournament_count | Total number of entrants (if a tournament) in the event.
  * | date | started_at | Event start date, for sorting purposes
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const Event = bookshelf.model("Event", {
   tableName: "event",
@@ -278,6 +300,9 @@ export const Event = bookshelf.model("Event", {
   },
   entries() {
     return this.hasMany("Entry", "event_id");
+  },
+  userRoles() {
+    return this.hasMany("EventRole", "event_id");
   },
   tournamentEntries() {
     return this.hasMany("TournamentEntry", "event_id");
@@ -337,7 +362,7 @@ export const Event = bookshelf.model("Event", {
  * | string | links | Config for a list of special pages to link to: (JSON: [{"title": string, "link": string, "icon": string}]
  * | string | special_award_titles | JSON: ["award1","award2","award3"]
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const EventDetails = bookshelf.model("EventDetails", {
   tableName: "event_details",
@@ -502,7 +527,7 @@ export const EventTemplate = bookshelf.model("EventTemplate", {
  * | dateTime | published_at |
  * | integer | comment_count | (not null)
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  * | boolean | allow_anonymous | Are anonymous comments allowed on this entry?
  * | string | status_high_score | High score enablement status ('off', 'normal', 'reversed')
  * | decimal | hotness | ([-999.99999;999.99999], the higher the hotter)
@@ -628,7 +653,7 @@ export const Entry = bookshelf.model("Entry", {
  * | integer | high_score_instructions | Markdown text to be shown when submitting a score (max size: 200
  * | boolean | allow_tournament_use | Whether the authors allow using the game for tournaments0)
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const EntryDetails = bookshelf.model("EntryDetails", {
   tableName: "entry_details",
@@ -739,7 +764,7 @@ export const EntryTag = bookshelf.model("EntryTag", {
  * | integer | user_id | User ID (not null)
  * | decimal | vote_1 .. 7 | Vote for categories 1 to 6 ([-999.99,999.99])
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const EntryVote = bookshelf.model("EntryVote", {
   tableName: "entry_vote",
@@ -806,7 +831,7 @@ export const EntryInvite = bookshelf.model("EntryInvite", {
  * | integer | reports | total reports (defaults to 0, not null)
  * | string | status | 'active', 'out', 'banned', 'shortlist' (not null)
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const Theme = bookshelf.model("Theme", {
   tableName: "theme",
@@ -842,7 +867,7 @@ export const Theme = bookshelf.model("Theme", {
  * | integer | user_id | User ID (not null)
  * | integer | score | (not null)
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const ThemeVote = bookshelf.model("ThemeVote", {
   tableName: "theme_vote",
@@ -880,7 +905,7 @@ export const ThemeVote = bookshelf.model("ThemeVote", {
  * | integer | ranking | User ranking on that entry
  * | date | submitted_at | Submission time (not null)
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const EntryScore = bookshelf.model("EntryScore", {
   tableName: "entry_score",
@@ -907,7 +932,7 @@ export const EntryScore = bookshelf.model("EntryScore", {
  * | integer | entry_id | Entry ID (not null)
  * | integer | ordering | Entry order
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const TournamentEntry = bookshelf.model("TournamentEntry", {
   tableName: "tournament_entry",
@@ -936,7 +961,7 @@ export const TournamentEntry = bookshelf.model("TournamentEntry", {
  * | string | entry_scores | JSON caching of the entry scores used to compute the tournament score: {entryId: {score, ranking}}
  * | integer | ranking | User ranking on that tournament
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const TournamentScore = bookshelf.model("TournamentScore", {
   tableName: "tournament_score",
@@ -994,7 +1019,7 @@ export const TournamentScore = bookshelf.model("TournamentScore", {
  * | string | like_details | JSON array: {type: count}
  * | decimal | hotness | ([-999.99999;999.99999], the higher the hotter)
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const Post = bookshelf.model("Post", {
   tableName: "post",
@@ -1056,7 +1081,7 @@ export const Post = bookshelf.model("Post", {
  * | string | body | Comment body (max size: 10000)
  * | integer | karma | Karma gained through this comment (between 1 & 3, not null)
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const Comment = bookshelf.model("Comment", {
   tableName: "comment",
@@ -1096,7 +1121,7 @@ export const Comment = bookshelf.model("Comment", {
  * | integer | user_id | Author user ID (not null)
  * | integer | type | Like type
  * | date | created_at | Creation time (not null)
- * | date | modified_at | Last modification time (not null)
+ * | date | updated_at | Last modification time (not null)
  */
 export const Like = bookshelf.model("Like", {
   tableName: "like",

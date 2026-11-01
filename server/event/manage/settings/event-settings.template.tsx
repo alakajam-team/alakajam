@@ -1,6 +1,7 @@
 import React, { JSX } from "preact";
 import { CommonLocals } from "server/common.middleware";
 import links from "server/core/links";
+import security from "server/core/security";
 import * as editEventMacros from "server/event/manage/event-manage.macros";
 import * as formMacros from "server/macros/form.macros";
 import { ifTrue } from "server/macros/jsx-utils";
@@ -153,6 +154,7 @@ export default function render(context: CommonLocals): JSX.Element {
 
         <div id="config" class="tab-pane show">
           {editEventMacros.jamConfigForm(event, event?.related("details"))}
+          {ifTrue(user.get("is_admin"), () => moderatorsField(event))}
         </div>
       </div>
 
@@ -184,6 +186,28 @@ export default function render(context: CommonLocals): JSX.Element {
 
     </form>
   </div>);
+}
+
+function moderatorsField(event) {
+  const roles = event?.id ? event.related("userRoles").models : [];
+  return <div class="container">
+    <div class="form-group">
+      <label for="moderators"><b>Moderators</b></label>
+      <select id="moderators" name="moderators" multiple class="form-control js-user-select" data-flag-non-mods>
+        {roles.map(role => {
+          const roleUser = role.related("user");
+          const demoted = !security.isMod(roleUser);
+          return <option value={roleUser.get("id")} selected>
+            {roleUser.get("title") + (demoted ? " (no longer a mod, no access)" : "")}
+          </option>;
+        })}
+      </select>
+      <input type="hidden" name="moderators-submitted" value="true" />
+      <small class="form-text text-muted">
+        Users who aren't mods yet will be promoted to mods on save. Admins can manage all events without a role.
+      </small>
+    </div>
+  </div>;
 }
 
 function rulesBlogPostField(event) {

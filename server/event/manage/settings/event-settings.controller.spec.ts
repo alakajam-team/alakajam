@@ -29,6 +29,7 @@ describe("Event settings controller", () => {
     };
     stubs.push(
       stub(security, "isAdmin").returns(true),
+      stub(security, "isMod").returns(true),
       stub(security, "canUserManage").returns(true),
       stub(eventService, "createEvent").returns(createdEvent),
       stub(fileStorage, "savePictureToModel").resolves({} as any),

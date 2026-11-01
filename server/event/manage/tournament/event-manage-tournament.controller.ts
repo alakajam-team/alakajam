@@ -14,7 +14,7 @@ export async function eventManageTournament(req: CustomRequest, res: CustomRespo
 
   const { user, event } = res.locals;
 
-  if (!security.isMod(user)) {
+  if (!security.canUserWrite(user, event)) {
     res.errorPage(403);
     return;
   }

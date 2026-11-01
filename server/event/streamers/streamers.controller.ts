@@ -13,7 +13,7 @@ import twitchService from "./twitch.service";
 export async function eventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { user, event } = res.locals;
 
-  const filter = security.isMod(user) ? "all-streamer-states" : "streamers";
+  const filter = security.canUserWrite(user, event) ? "all-streamer-states" : "streamers";
   const eventParticipations = await eventParticipationService.getEventParticipations(event, { filter });
   const streamerOnlyTournamentIsLive = eventService.getEventFlag(event, "streamerOnlyTournament")
     && ![enums.EVENT.STATUS_TOURNAMENT.DISABLED, enums.EVENT.STATUS_TOURNAMENT.OFF].includes(event.get("status_tournament"));
@@ -46,7 +46,7 @@ export function eventStreamersDoc(req: CustomRequest, res: CustomResponse<EventL
 export async function moderateEventStreamers(req: CustomRequest, res: CustomResponse<EventLocals>): Promise<void> {
   const { event, user } = res.locals;
 
-  if (!security.isMod(user)) {
+  if (!security.canUserWrite(user, event)) {
     res.errorPage(403);
     return;
   }

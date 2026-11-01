@@ -81,13 +81,15 @@ export class Security {
       }
     }
 
-    // Event (mods can only edit pending/open events)
+    // Event (admins can edit all events, mods only the pending/open events they have a role on)
     if (modelType === "event") {
-      if (permission === "read") {
+      if (permission === "read" || this.isAdmin(user)) {
         return true;
-      } else {
-        return model.get("status") === enums.EVENT.STATUS.CLOSED ? this.isAdmin(user) : this.isMod(user);
       }
+      if (model.get("status") === enums.EVENT.STATUS.CLOSED || !this.isMod(user)) {
+        return false;
+      }
+      // Otherwise, check permissions
     }
 
     // User/Post read

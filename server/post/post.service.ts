@@ -75,7 +75,7 @@ export class PostService {
 
   public findPostById(postId: number): Promise<PostBookshelfModel> {
     return models.Post.where("id", postId)
-      .fetch({ withRelated: ["author", "userRoles", "event", "entry", "entry.userRoles"] }) as any;
+      .fetch({ withRelated: ["author", "userRoles", "event.userRoles", "entry", "entry.userRoles"] }) as any;
   }
 
   /**

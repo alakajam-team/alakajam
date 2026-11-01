@@ -13,6 +13,7 @@ export interface AdminEventsContext extends CommonLocals {
  */
 export async function adminEvents(_req: CustomRequest, res: CustomResponse<CommonLocals>): Promise<void> {
   const eventsCollection = await eventService.findEvents();
+  await eventsCollection.load("userRoles");
 
   res.render<AdminEventsContext>("admin/events/admin-events", {
     ...res.locals,
