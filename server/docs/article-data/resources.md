@@ -22,6 +22,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [MagicaVoxel](https://ephtracy.github.io/)  | Voxel editor, which is a cool way to make original assets, either in 2D or 3D. |
 | [Piskel](http://www.piskelapp.com/) | Editor for animated sprites, has an online version. Ad-supported. |
 | [GraphicsGale](https://graphicsgale.com/)  | Old-school looking but powerful pixel art editor, supports animations. |
+| [SimplePixelArt](https://simplepixelart.com/editor) | Online pixel art editor with animation, palettes and a tileset/autotile editor that exports to Godot and Tiled. No account needed. Open Source. |
 
 
 ## Audio software
