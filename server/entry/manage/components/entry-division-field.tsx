@@ -53,7 +53,7 @@ export function divisionField(entry: BookshelfModel, event: BookshelfModel, exte
 function divisionButton(title: string, legend: string, icon: string, value: string, currentValue: string,
   canEditDivision: boolean, tooltipMessage: string, isMod: boolean): JSX.Element {
   if (canEditDivision || isMod) {
-    return <label class={`btn entry-division js-division-button ${value === currentValue ? "active" : ""}`} role="button">
+    return <label class={`btn entry-division js-division-button ${value === currentValue ? "active" : ""}`}>
       <div class={icon}></div>
       <input type="radio" name="division" value={value} autocomplete="off" class="d-none" checked={value === currentValue} />
       {title}

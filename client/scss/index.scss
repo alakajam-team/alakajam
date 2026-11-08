@@ -14,7 +14,7 @@
 @use "node_modules/select2/dist/css/select2.min";
 @use "node_modules/@fortawesome/fontawesome-free/css/all.min" as fontawesome;
 @use "node_modules/icheck/skins/flat/_all" as icheck;
-@use "node_modules/flipclock/dist/flipclock";
+@use "node_modules/flipclock/dist/themes/flipclock.css";
 @use "lib/animate";
 @use "flipclock-custom";
 @use "select2-custom";

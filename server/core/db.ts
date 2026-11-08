@@ -125,7 +125,7 @@ function initBookshelf(): DB {
     await knex.destroy();
     await fs.copyFile(BACKUP_PATH, config.DB_SQLITE_FILENAME);
     if (sessionStore) {
-      sessionStore.knex = bookshelf.knex = knex = createKnexInstance() as any;
+      sessionStore.options.knex = bookshelf.knex = knex = createKnexInstance() as any;
     }
     await bookshelf.upgradeDatabase({ silent: true });
   };

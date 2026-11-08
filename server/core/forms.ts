@@ -7,7 +7,7 @@ import * as luxon from "luxon";
 import removeMarkdown from "remove-markdown";
 import sanitizeHtml from "sanitize-html";
 import showdown from "showdown";
-import slug from "slug";
+import slug from "./slug";
 import striptags from "striptags";
 import TurndownService from "turndown";
 import * as validator from "validator";
@@ -49,7 +49,6 @@ export default {
 };
 
 const MAX_POSTGRESQL_INTEGER = 2147483647;
-const SLUG_SETTINGS = { symbols: false };
 
 // Libs init
 
@@ -142,7 +141,7 @@ function sanitizeEnum<T>(str: string, allowedValues: T[], defaultValue: T): T {
  * Turns a string into a slug suitable for URLs.
  */
 function slugCustom(str: string): string {
-  return slug(str, SLUG_SETTINGS).toLowerCase();
+  return slug(str);
 }
 
 /**

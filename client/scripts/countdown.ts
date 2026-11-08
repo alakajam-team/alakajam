@@ -1,39 +1,25 @@
-import evalRawScript from "./core/eval-raw-script";
-
-import("flipclock/dist/flipclock.min.js?raw").then(evalRawScript).catch(e => console.error(e));
+import { elapsedTime, flipClock, theme } from "flipclock";
 
 export default function countdown(selector: string): void {
   $(selector).each(function() {
     const $countdown = $(this);
 
-    const startTime = roundToNearestSecond(Date.now());
+    const now = Date.now();
     const endTime = Date.parse($countdown.attr("data-countdown-to-date"));
-    const targetDate = new Date(Math.max(Date.now(), endTime));
+    const targetDate = new Date(Math.max(now, endTime));
 
     $countdown.show();
 
-    const clock = new FlipClock(this, targetDate, {
-      face: "DayCounter",
-      countdown: true,
-      autoStart: false
+    // Past dates are displayed as zeros, so the clock is mounted but not started
+    flipClock({
+      parent: this,
+      autoStart: endTime > now,
+      face: elapsedTime({ to: targetDate, format: "[DD] [hh] [mm] [ss]" }),
+      theme: theme({
+        dividers: " ",
+        // One single-label list per group of the format below
+        labels: [["Days"], ["Hours"], ["Minutes"], ["Seconds"]]
+      })
     });
-
-    if (endTime > startTime) {
-      clock.timer.on("interval", () => {
-        // FlipClock actually decreases the target date every second, down to the initial date.
-        // It also seems to have rounding issues when decreasing time
-        clock.value.value = new Date(roundToNearestSecond(clock.value.value.getTime()));
-        if (clock.value.value.getTime() <= startTime + .5) {
-          clock.stop();
-        }
-      });
-
-      clock.start();
-    }
-
   });
-}
-
-function roundToNearestSecond(timeMs: number) {
-  return Math.round(timeMs / 1000) * 1000;
 }
