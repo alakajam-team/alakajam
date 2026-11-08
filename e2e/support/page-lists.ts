@@ -38,7 +38,6 @@ export const PAGES_COMMON: Record<string, string> = {
   "people-mods": "/explore/people/mods",
   "chat": "/chat",
   "about-home": "/article/about",
-  "docs-resources": "/article/docs/resources",
 
   "register": "/register",
   "login": "/login",

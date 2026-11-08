@@ -197,10 +197,6 @@ function defaultArticleSidebar() {
           "title": "Game jam tips",
           "links": [
               {
-                  "title": "Game making resources",
-                  "url": "/article/docs/resources"
-              },
-              {
                   "title": "Managing scope",
                   "url": "/article/docs/gjt-scope"
               },

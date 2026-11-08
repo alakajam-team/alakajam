@@ -40,7 +40,7 @@ Games from the Open division won't get ratings but can expect as much plays & fe
 > (*) "Significant creative effort" means that derivative work of existing assets (as in you significantly transformed them) is acceptable. Basic procedural generation is fine too (eg. noise-based texture generators), but using a tool such as modern AI to get art you can use with little to no effort is forbidden. List any assets and unusual generation tools in your game page to let people appreciate your work's true value.
 
 * **Audio asset reuse:** You must make your own music during the event, even if you opt-out of the audio category. However:
-    * While creating sounds yourself is encouraged (eg. with the help of [sound generation tools](/article/docs/resources#audio-software), musical instruments, or microphones), reusing existing sound effects is tolerated.
+    * While creating sounds yourself is encouraged (eg. with the help of sound generation tools, musical instruments, or microphones), reusing existing sound effects is tolerated.
     * You can also reuse *short* samples for music (eg. drums and other sampled instruments). Reusing whole loops or full tracks is not allowed.
 * **Code reuse:** You are allowed to use/reuse any third party library or personal code made prior to the event. This includes shaders and code snippets found online. You can also prepare your project by initializing the sources in advance. However, you cannot work on a game you started before the event.
 * **Supported platforms:** All software is allowed without restriction. It is recommended though that your game engine supports targetting either HTML5, Windows or Linux, to make sure most contestants can play it.
