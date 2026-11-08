@@ -83,6 +83,7 @@ This page compiles a list of **free** resources for making games, especially for
 | [Nobiax Texture Pack](https://github.com/Fretek/NobiaxTexturePack)  | A pack of 1300+ quality textures and patterns. Public domain. |
 | [Free Music Archive](http://freemusicarchive.org)  | A large database of permissive music (mostly Creative Commons), featuring a wide range of styles. |
 | [FreeSound](http://freesound.org/)  | A huge database of sound effects (mix of Creative Commons and Public Domain). |
+| [SFXMint](https://sfxmint.com/) | A library of 10,300+ ready-made sound effects. CC0 1.0. |
 | [Soniss GDC 2018 Bundle](https://sonniss.com/gameaudiogdc18/) \| [2017](https://sonniss.com/gameaudiogdc2017/) | Massive packs of game-related royalty-free sounds. |
 | [Universal LPC Sprite Sheet Generator](https://liberatedpixelcup.github.io/Universal-LPC-Spritesheet-Character-Generator/) | Customizable character sprite sheets assembled from open art. |  
 
